@@ -1964,20 +1964,21 @@ func (e ProjectSortField) MarshalGQL(w io.Writer) {
 type PropertySchemaFieldUI string
 
 const (
-	PropertySchemaFieldUILayer      PropertySchemaFieldUI = "LAYER"
-	PropertySchemaFieldUIMultiline  PropertySchemaFieldUI = "MULTILINE"
-	PropertySchemaFieldUISelection  PropertySchemaFieldUI = "SELECTION"
-	PropertySchemaFieldUIColor      PropertySchemaFieldUI = "COLOR"
-	PropertySchemaFieldUIRange      PropertySchemaFieldUI = "RANGE"
-	PropertySchemaFieldUISlider     PropertySchemaFieldUI = "SLIDER"
-	PropertySchemaFieldUIImage      PropertySchemaFieldUI = "IMAGE"
-	PropertySchemaFieldUIVideo      PropertySchemaFieldUI = "VIDEO"
-	PropertySchemaFieldUIFile       PropertySchemaFieldUI = "FILE"
-	PropertySchemaFieldUICameraPose PropertySchemaFieldUI = "CAMERA_POSE"
-	PropertySchemaFieldUIDatetime   PropertySchemaFieldUI = "DATETIME"
-	PropertySchemaFieldUIMargin     PropertySchemaFieldUI = "MARGIN"
-	PropertySchemaFieldUIPadding    PropertySchemaFieldUI = "PADDING"
-	PropertySchemaFieldUIZoomlevel  PropertySchemaFieldUI = "ZOOMLEVEL"
+	PropertySchemaFieldUILayer            PropertySchemaFieldUI = "LAYER"
+	PropertySchemaFieldUIMultiline        PropertySchemaFieldUI = "MULTILINE"
+	PropertySchemaFieldUISelection        PropertySchemaFieldUI = "SELECTION"
+	PropertySchemaFieldUIColor            PropertySchemaFieldUI = "COLOR"
+	PropertySchemaFieldUIRange            PropertySchemaFieldUI = "RANGE"
+	PropertySchemaFieldUISlider           PropertySchemaFieldUI = "SLIDER"
+	PropertySchemaFieldUIImage            PropertySchemaFieldUI = "IMAGE"
+	PropertySchemaFieldUIVideo            PropertySchemaFieldUI = "VIDEO"
+	PropertySchemaFieldUIFile             PropertySchemaFieldUI = "FILE"
+	PropertySchemaFieldUICameraPose       PropertySchemaFieldUI = "CAMERA_POSE"
+	PropertySchemaFieldUIDatetime         PropertySchemaFieldUI = "DATETIME"
+	PropertySchemaFieldUIMargin           PropertySchemaFieldUI = "MARGIN"
+	PropertySchemaFieldUIPadding          PropertySchemaFieldUI = "PADDING"
+	PropertySchemaFieldUIZoomlevel        PropertySchemaFieldUI = "ZOOMLEVEL"
+	PropertySchemaFieldUIPropertySelector PropertySchemaFieldUI = "PROPERTY_SELECTOR"
 )
 
 var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
@@ -1995,11 +1996,12 @@ var AllPropertySchemaFieldUI = []PropertySchemaFieldUI{
 	PropertySchemaFieldUIMargin,
 	PropertySchemaFieldUIPadding,
 	PropertySchemaFieldUIZoomlevel,
+	PropertySchemaFieldUIPropertySelector,
 }
 
 func (e PropertySchemaFieldUI) IsValid() bool {
 	switch e {
-	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding, PropertySchemaFieldUIZoomlevel:
+	case PropertySchemaFieldUILayer, PropertySchemaFieldUIMultiline, PropertySchemaFieldUISelection, PropertySchemaFieldUIColor, PropertySchemaFieldUIRange, PropertySchemaFieldUISlider, PropertySchemaFieldUIImage, PropertySchemaFieldUIVideo, PropertySchemaFieldUIFile, PropertySchemaFieldUICameraPose, PropertySchemaFieldUIDatetime, PropertySchemaFieldUIMargin, PropertySchemaFieldUIPadding, PropertySchemaFieldUIZoomlevel, PropertySchemaFieldUIPropertySelector:
 		return true
 	}
 	return false

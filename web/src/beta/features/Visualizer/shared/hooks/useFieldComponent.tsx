@@ -10,7 +10,8 @@ import {
   SwitchField,
   TimePeriodField,
   TimePointField,
-  TwinInputField
+  TwinInputField,
+  PropertySelectorField
 } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
@@ -20,7 +21,8 @@ export const FieldComponent = ({
   groupId,
   fieldId,
   field,
-  onPropertyUpdate
+  onPropertyUpdate,
+  sketchCustomProperties
 }: {
   propertyId: string;
   groupId: string;
@@ -49,6 +51,7 @@ export const FieldComponent = ({
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
+  sketchCustomProperties?: string[] | undefined;
 }) => {
   const t = useT();
   const handlePropertyValueUpdate = useCallback(
@@ -81,6 +84,13 @@ export const FieldComponent = ({
           ? ["file" as const]
           : undefined,
     [field.ui]
+  );
+
+  const sketchCustomPropertiesOption = sketchCustomProperties?.map(
+    (property) => ({
+      value: property,
+      label: property
+    })
   );
 
   return field?.type === "spacing" ? (
@@ -210,6 +220,24 @@ export const FieldComponent = ({
           ) || []
         }
         onChange={handlePropertyValueUpdate(
+          groupId,
+          propertyId,
+          fieldId,
+          field?.type
+        )}
+      />
+    ) : field?.ui === "propertySelector" ? (
+      <PropertySelectorField
+        key={field.id}
+        title={field?.title}
+        value={field?.value}
+        description={field?.description}
+        placeholder={field?.placeholder}
+        options={sketchCustomPropertiesOption}
+        displayLabel="{}"
+        displayWidth={38}
+        menuWidth={107}
+        onBlur={handlePropertyValueUpdate(
           groupId,
           propertyId,
           fieldId,

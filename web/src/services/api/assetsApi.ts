@@ -33,7 +33,7 @@ export default () => {
       GET_ASSETS,
       {
         variables: input,
-        skip: !input.teamId
+        skip: !input.teamId 
       }
     );
 
@@ -72,6 +72,7 @@ export default () => {
   const useCreateAssets = useCallback(
     async ({
       teamId,
+      projectId,
       file
     }: CreateAssetInput): Promise<
       | {
@@ -80,13 +81,13 @@ export default () => {
         }
       | undefined
     > => {
-      if (!file || !teamId) return;
+      if (!file || !teamId || !projectId) return;
 
       try {
         const results = await Promise.all(
           Array.from(file).map((f) =>
             createAssetMutation({
-              variables: { teamId, file: f, coreSupport: true }
+              variables: { teamId, projectId, file: f, coreSupport: true }
             })
           )
         );

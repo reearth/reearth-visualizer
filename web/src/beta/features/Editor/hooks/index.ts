@@ -152,6 +152,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
 
   const mapPageValue: MapPageContextType = useMemo(
     () => ({
+      visualizerRef,
       handleVisualizerResize,
       scene,
       selectedSceneSetting,
@@ -193,6 +194,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleRemoveCustomProperty
     }),
     [
+      visualizerRef,
       handleVisualizerResize,
       scene,
       selectedSceneSetting,

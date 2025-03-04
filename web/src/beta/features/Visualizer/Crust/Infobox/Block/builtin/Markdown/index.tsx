@@ -8,11 +8,13 @@ import gfm from "remark-gfm";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
+import useSketchCustomPropertyNames from "../useSketchCustomPropertyNames";
 
 const plugins = [gfm];
 
 const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   block,
+  layer,
   isSelected,
   ...props
 }) => {
@@ -22,6 +24,8 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
+  const sketchCustomPropertyNames: string[] | undefined =
+    useSketchCustomPropertyNames(layer);
   const LinkRenderer = ({
     href,
     children
@@ -40,6 +44,7 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
+      sketchCustomProperties={sketchCustomPropertyNames}
       {...props}
     >
       {evaluatedSrc !== undefined ? (

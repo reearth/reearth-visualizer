@@ -53,9 +53,7 @@ const Tooltip: FC<TooltipProps> = ({
           <IconWrapper>
             <Icon
               icon={tooltipIcon}
-              color={
-                type === "experimental" ? theme.warning.weakest : iconColor
-              }
+              color={type === "experimental" ? theme.warning.weak : iconColor}
             />
           </IconWrapper>
         ) : (
@@ -69,9 +67,7 @@ const Tooltip: FC<TooltipProps> = ({
         <Typography
           size="footnote"
           color={
-            type === "experimental"
-              ? theme.warning.weakest
-              : theme.content.strong
+            type === "experimental" ? theme.warning.weak : theme.content.strong
           }
         >
           {tooltipText}

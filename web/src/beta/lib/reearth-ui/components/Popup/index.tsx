@@ -11,6 +11,7 @@ import { Button } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import {
   forwardRef,
+  SyntheticEvent,
   useCallback,
   useEffect,
   useMemo,
@@ -164,6 +165,17 @@ export const Popup = ({
     [extendContentWidth, extendedWidth]
   );
 
+  const handleContentClick = useCallback(
+    (e: SyntheticEvent) => {
+      if (tooltip) {
+        e.stopPropagation();
+        return;
+      }
+      handleAutoClose();
+    },
+    [handleAutoClose, tooltip]
+  );
+
   return (
     <PopoverContext.Provider value={{ ...popover, setOpen: popover.setOpen }}>
       <Trigger
@@ -173,7 +185,11 @@ export const Popup = ({
       >
         {trigger}
       </Trigger>
-      <Content tooltip={tooltip} onClick={handleAutoClose} style={contentStyle}>
+      <Content
+        tooltip={tooltip}
+        onClick={handleContentClick}
+        style={contentStyle}
+      >
         {children}
       </Content>
     </PopoverContext.Provider>

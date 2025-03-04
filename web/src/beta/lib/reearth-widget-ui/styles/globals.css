@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @layer base {
-  html {
-    font-size: 12px;
-  }
-} */
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -21,7 +15,7 @@
     --input: 214.3 31.8% 91.4%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
-    --primary: 222.2 47.4% 11.2%;
+    --primary: 222.2 0% 11.2%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;

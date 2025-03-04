@@ -8,12 +8,11 @@ import {
 import type { RefObject } from "react";
 import { createPortal } from "react-dom";
 
-import { AutoResize } from "../IFrame";
-import SafeIframe from "../SafeIFrame";
+import SafeIframe, { AutoResize } from "../SafeIFrame";
 
 import useHooks, { Ref } from "./hooks";
 
-export type { AutoResize } from "../IFrame";
+export type { AutoResize } from "../SafeIFrame";
 export type { IFrameAPI, Ref } from "./hooks";
 
 export type Props = {
