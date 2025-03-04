@@ -1549,6 +1549,7 @@ export enum PropertySchemaFieldUi {
   Margin = 'MARGIN',
   Multiline = 'MULTILINE',
   Padding = 'PADDING',
+  PropertySelector = 'PROPERTY_SELECTOR',
   Range = 'RANGE',
   Selection = 'SELECTION',
   Slider = 'SLIDER',

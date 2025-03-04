@@ -8,9 +8,11 @@ import Player from "react-player";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
+import useSketchCustomPropertyNames from "../useSketchCustomPropertyNames";
 
 const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   block,
+  layer,
   isSelected,
   ...props
 }) => {
@@ -22,6 +24,8 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
+  const sketchCustomPropertyNames: string[] | undefined =
+    useSketchCustomPropertyNames(layer);
 
   const handleVideoReady = useCallback((player: ReactPlayer) => {
     const height = player.getInternalPlayer().videoHeight;
@@ -37,6 +41,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
+      sketchCustomProperties={sketchCustomPropertyNames}
       {...props}
     >
       {evaluatedSrc !== undefined ? (
