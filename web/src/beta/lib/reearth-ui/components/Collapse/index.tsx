@@ -62,7 +62,9 @@ export const Collapse: FC<CollapseProps> = ({
           <Typography
             size="body"
             weight={weight}
-            otherProperties={{ whiteSpace: "nowrap" }}
+            otherProperties={{
+              whiteSpace: "nowrap"
+            }}
           >
             {title}
           </Typography>
@@ -130,7 +132,8 @@ const StyledHeader = styled("div")<{
 const TitleWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.small
+  gap: theme.spacing.small,
+  overflow: "hidden"
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({

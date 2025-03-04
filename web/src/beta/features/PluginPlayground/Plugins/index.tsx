@@ -249,6 +249,7 @@ const PluginList = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.smallest,
   overflowY: "auto",
+  overflowX: "hidden",
   maxHeight: "100%"
 }));
 
