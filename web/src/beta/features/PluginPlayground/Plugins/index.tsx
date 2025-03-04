@@ -247,14 +247,17 @@ const PluginList = styled("div")(({ theme }) => ({
   paddingRight: theme.spacing.small,
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest
+  gap: theme.spacing.smallest,
+  overflowY: "auto",
+  maxHeight: "100%"
 }));
 
 const PluginListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   height: "100%",
   marginLeft: -theme.spacing.smallest,
-  overflowY: "auto"
+  flexGrow: 1,
+  overflow: "hidden"
 }));
 
 const PluginSubList = styled("div")(({ theme }) => ({
@@ -276,7 +279,10 @@ const FileListWrapper = styled("div")(({ theme }) => ({
   paddingLeft: theme.spacing.small,
   width: "50%",
   borderLeft: `1px solid ${theme.outline.weaker}`,
-  gap: theme.spacing.small
+  gap: theme.spacing.small,
+  overflow: "hidden",
+  minHeight: 0,
+  maxHeight: "100%"
 }));
 
 const FileList = styled("div")(({ theme }) => ({
@@ -290,10 +296,7 @@ const IconList = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.small,
   marginBottom: theme.spacing.small,
-  position: "sticky",
-  top: 0,
-  zIndex: 10,
-  padding: `${theme.spacing.small}px 0`
+  flexShrink: 0
 }));
 
 export default Plugins;
