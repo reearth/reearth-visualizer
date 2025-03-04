@@ -1,18 +1,138 @@
 {
   "data": {
     "node": {
-      "id": "01jnhpwpe127hzqy95xp3xaqam",
+      "id": "01jnhr57t0ymw9b8y23v1b6xa4",
       "teamId": "01jnhpwb1d4k71r73txbccgv2k",
-      "projectId": "01jnhpwpczrs0d1n3fd5eqydks",
+      "projectId": "01jnhr57skc8krpj208y6rjprj",
       "property": {
-        "id": "01jnhpwpezp4h36bwtrebhv7pv",
+        "id": "01jnhr57tcnxd516pmbqmtrdpc",
         "items": [
           {
-            "id": "01jnhpwpezp4h36bwtrhmddc7f",
+            "id": "01jnhr57tcnxd516pmbtb77z7k",
+            "schemaGroupId": "default",
+            "fields": [
+              {
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmbtb77z7k_ion",
+                "fieldId": "ion",
+                "type": "STRING",
+                "value": "",
+                "links": null,
+                "__typename": "PropertyField"
+              }
+            ],
+            "__typename": "PropertyGroup"
+          },
+          {
+            "id": "01jnhr57tcnxd516pmbxxztf0f",
+            "schemaGroupId": "globeAtmosphere",
+            "fields": [
+              {
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmbxxztf0f_globeAtmosphereIntensity",
+                "fieldId": "globeAtmosphereIntensity",
+                "type": "NUMBER",
+                "value": 30,
+                "links": null,
+                "__typename": "PropertyField"
+              }
+            ],
+            "__typename": "PropertyGroup"
+          },
+          {
+            "id": "01jnhr57tcnxd516pmbzzfkspr",
+            "schemaGroupId": "globeLighting",
+            "fields": [
+              {
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmbzzfkspr_globeLighting",
+                "fieldId": "globeLighting",
+                "type": "BOOL",
+                "value": true,
+                "links": null,
+                "__typename": "PropertyField"
+              }
+            ],
+            "__typename": "PropertyGroup"
+          },
+          {
+            "id": "01jnhr57tcnxd516pmc1kvjd06",
+            "schemaGroupId": "skyAtmosphere",
+            "fields": [
+              {
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmc1kvjd06_skyAtmosphere",
+                "fieldId": "skyAtmosphere",
+                "type": "BOOL",
+                "value": true,
+                "links": null,
+                "__typename": "PropertyField"
+              },
+              {
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmc1kvjd06_skyAtmosphereIntensity",
+                "fieldId": "skyAtmosphereIntensity",
+                "type": "NUMBER",
+                "value": 200,
+                "links": null,
+                "__typename": "PropertyField"
+              }
+            ],
+            "__typename": "PropertyGroup"
+          },
+          {
+            "id": "01jnhr57tcnxd516pmc2heb3jy",
+            "schemaGroupId": "skyBox",
+            "fields": [
+              {
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmc2heb3jy_skyBox",
+                "fieldId": "skyBox",
+                "type": "BOOL",
+                "value": true,
+                "links": null,
+                "__typename": "PropertyField"
+              }
+            ],
+            "__typename": "PropertyGroup"
+          },
+          {
+            "id": "01jnhr57tcnxd516pmc4s9j15f",
+            "schemaGroupId": "terrain",
+            "fields": [
+              {
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmc4s9j15f_terrain",
+                "fieldId": "terrain",
+                "type": "BOOL",
+                "value": false,
+                "links": null,
+                "__typename": "PropertyField"
+              }
+            ],
+            "__typename": "PropertyGroup"
+          },
+          {
+            "id": "01jnhr57tcnxd516pmc6fa2b92",
+            "schemaGroupId": "tiles",
+            "groups": [
+              {
+                "id": "01jnhr57tcnxd516pmc8tbv1tg",
+                "schemaGroupId": "tiles",
+                "fields": [
+                  {
+                    "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmc6fa2b92_01jnhr57tcnxd516pmc8tbv1tg_tile_type",
+                    "fieldId": "tile_type",
+                    "type": "STRING",
+                    "value": "esri_world_topo",
+                    "links": null,
+                    "__typename": "PropertyField"
+                  }
+                ],
+                "__typename": "PropertyGroup"
+              }
+            ],
+            "__typename": "PropertyGroupList"
+          },
+          {
+            "id": "01jnhr57tcnxd516pmcb6tmx7y",
             "schemaGroupId": "camera",
             "fields": [
               {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrhmddc7f_camera",
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmcb6tmx7y_camera",
                 "fieldId": "camera",
                 "type": "CAMERA",
                 "value": {
@@ -28,7 +148,7 @@
                 "__typename": "PropertyField"
               },
               {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrhmddc7f_fov",
+                "id": "01jnhr57tcnxd516pmbqmtrdpc_01jnhr57tcnxd516pmcb6tmx7y_fov",
                 "fieldId": "fov",
                 "type": "NUMBER",
                 "value": 1,
@@ -37,126 +157,6 @@
               }
             ],
             "__typename": "PropertyGroup"
-          },
-          {
-            "id": "01jnhpwpezp4h36bwtrnddvkw5",
-            "schemaGroupId": "default",
-            "fields": [
-              {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrnddvkw5_ion",
-                "fieldId": "ion",
-                "type": "STRING",
-                "value": "",
-                "links": null,
-                "__typename": "PropertyField"
-              }
-            ],
-            "__typename": "PropertyGroup"
-          },
-          {
-            "id": "01jnhpwpezp4h36bwtrnfryzk3",
-            "schemaGroupId": "globeAtmosphere",
-            "fields": [
-              {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrnfryzk3_globeAtmosphereIntensity",
-                "fieldId": "globeAtmosphereIntensity",
-                "type": "NUMBER",
-                "value": 30,
-                "links": null,
-                "__typename": "PropertyField"
-              }
-            ],
-            "__typename": "PropertyGroup"
-          },
-          {
-            "id": "01jnhpwpezp4h36bwtrr631y8r",
-            "schemaGroupId": "globeLighting",
-            "fields": [
-              {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrr631y8r_globeLighting",
-                "fieldId": "globeLighting",
-                "type": "BOOL",
-                "value": true,
-                "links": null,
-                "__typename": "PropertyField"
-              }
-            ],
-            "__typename": "PropertyGroup"
-          },
-          {
-            "id": "01jnhpwpezp4h36bwtrrzaz5ys",
-            "schemaGroupId": "skyAtmosphere",
-            "fields": [
-              {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrrzaz5ys_skyAtmosphere",
-                "fieldId": "skyAtmosphere",
-                "type": "BOOL",
-                "value": true,
-                "links": null,
-                "__typename": "PropertyField"
-              },
-              {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrrzaz5ys_skyAtmosphereIntensity",
-                "fieldId": "skyAtmosphereIntensity",
-                "type": "NUMBER",
-                "value": 200,
-                "links": null,
-                "__typename": "PropertyField"
-              }
-            ],
-            "__typename": "PropertyGroup"
-          },
-          {
-            "id": "01jnhpwpezp4h36bwtrv9za84a",
-            "schemaGroupId": "skyBox",
-            "fields": [
-              {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrv9za84a_skyBox",
-                "fieldId": "skyBox",
-                "type": "BOOL",
-                "value": true,
-                "links": null,
-                "__typename": "PropertyField"
-              }
-            ],
-            "__typename": "PropertyGroup"
-          },
-          {
-            "id": "01jnhpwpezp4h36bwtry707a2a",
-            "schemaGroupId": "terrain",
-            "fields": [
-              {
-                "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtry707a2a_terrain",
-                "fieldId": "terrain",
-                "type": "BOOL",
-                "value": false,
-                "links": null,
-                "__typename": "PropertyField"
-              }
-            ],
-            "__typename": "PropertyGroup"
-          },
-          {
-            "id": "01jnhpwpezp4h36bwtrz3r3jgv",
-            "schemaGroupId": "tiles",
-            "groups": [
-              {
-                "id": "01jnhpwpezp4h36bwts2se1bhn",
-                "schemaGroupId": "tiles",
-                "fields": [
-                  {
-                    "id": "01jnhpwpezp4h36bwtrebhv7pv_01jnhpwpezp4h36bwtrz3r3jgv_01jnhpwpezp4h36bwts2se1bhn_tile_type",
-                    "fieldId": "tile_type",
-                    "type": "STRING",
-                    "value": "esri_world_topo",
-                    "links": null,
-                    "__typename": "PropertyField"
-                  }
-                ],
-                "__typename": "PropertyGroup"
-              }
-            ],
-            "__typename": "PropertyGroupList"
           }
         ],
         "__typename": "Property",
@@ -1623,13 +1623,13 @@
       ],
       "widgets": [
         {
-          "id": "01jnhpwpezp4h36bwtrbamvxxd",
+          "id": "01jnhr57tcnxd516pmbpf8vyj3",
           "enabled": true,
           "extended": false,
           "pluginId": "reearth",
           "extensionId": "dataAttribution",
           "property": {
-            "id": "01jnhpwpeyg83gjysqz1jc1ywr",
+            "id": "01jnhr57tbe1gzbbz0r64z0xka",
             "items": [],
             "__typename": "Property",
             "schema": {
@@ -1733,7 +1733,7 @@
               "__typename": "WidgetArea"
             },
             "bottom": {
-              "widgetIds": ["01jnhpwpezp4h36bwtrbamvxxd"],
+              "widgetIds": ["01jnhr57tcnxd516pmbpf8vyj3"],
               "align": "START",
               "padding": null,
               "gap": null,
@@ -1902,7 +1902,7 @@
       },
       "stories": [
         {
-          "id": "01jnhpwphg4g3s8wrxxp4t8nbc",
+          "id": "01jnhr57vwjhe735kanm2k5mn7",
           "title": "Default",
           "panelPosition": "LEFT",
           "bgColor": "",
@@ -1919,19 +1919,27 @@
           "trackingId": "",
           "pages": [
             {
-              "id": "01jnhpwph6jtbj78wpkg1v1f64",
+              "id": "01jnhr57vpq214bm65xjye9aer",
               "title": "Untitled",
               "swipeable": false,
-              "propertyId": "01jnhpwph3ezsac7jy077rw78c",
+              "propertyId": "01jnhr57vnew95g6z879wgghaa",
               "property": {
-                "id": "01jnhpwph3ezsac7jy077rw78c",
+                "id": "01jnhr57vnew95g6z879wgghaa",
                 "items": [
                   {
-                    "id": "01jnhpwph3ezsac7jy09fdtwcc",
+                    "id": "01jnhr57vnew95g6z87d6019h0",
                     "schemaGroupId": "cameraAnimation",
                     "fields": [
                       {
-                        "id": "01jnhpwph3ezsac7jy077rw78c_01jnhpwph3ezsac7jy09fdtwcc_cameraPosition",
+                        "id": "01jnhr57vnew95g6z879wgghaa_01jnhr57vnew95g6z87d6019h0_cameraDuration",
+                        "fieldId": "cameraDuration",
+                        "type": "NUMBER",
+                        "value": 6,
+                        "links": null,
+                        "__typename": "PropertyField"
+                      },
+                      {
+                        "id": "01jnhr57vnew95g6z879wgghaa_01jnhr57vnew95g6z87d6019h0_cameraPosition",
                         "fieldId": "cameraPosition",
                         "type": "CAMERA",
                         "value": {
@@ -1945,24 +1953,16 @@
                         },
                         "links": null,
                         "__typename": "PropertyField"
-                      },
-                      {
-                        "id": "01jnhpwph3ezsac7jy077rw78c_01jnhpwph3ezsac7jy09fdtwcc_cameraDuration",
-                        "fieldId": "cameraDuration",
-                        "type": "NUMBER",
-                        "value": 6,
-                        "links": null,
-                        "__typename": "PropertyField"
                       }
                     ],
                     "__typename": "PropertyGroup"
                   },
                   {
-                    "id": "01jnhpwph3ezsac7jy0afgnqgv",
+                    "id": "01jnhr57vnew95g6z87gm66rxm",
                     "schemaGroupId": "timePoint",
                     "fields": [
                       {
-                        "id": "01jnhpwph3ezsac7jy077rw78c_01jnhpwph3ezsac7jy0afgnqgv_timePoint",
+                        "id": "01jnhr57vnew95g6z879wgghaa_01jnhr57vnew95g6z87gm66rxm_timePoint",
                         "fieldId": "timePoint",
                         "type": "STRING",
                         "value": "2025-01-08T10:00:00+09:00",
@@ -1973,11 +1973,11 @@
                     "__typename": "PropertyGroup"
                   },
                   {
-                    "id": "01jnhpwph3ezsac7jy0e3hpyn8",
+                    "id": "01jnhr57vnew95g6z87mk8v4c2",
                     "schemaGroupId": "title",
                     "fields": [
                       {
-                        "id": "01jnhpwph3ezsac7jy077rw78c_01jnhpwph3ezsac7jy0e3hpyn8_color",
+                        "id": "01jnhr57vnew95g6z879wgghaa_01jnhr57vnew95g6z87mk8v4c2_color",
                         "fieldId": "color",
                         "type": "STRING",
                         "value": "#ff787b80",
@@ -1985,7 +1985,7 @@
                         "__typename": "PropertyField"
                       },
                       {
-                        "id": "01jnhpwph3ezsac7jy077rw78c_01jnhpwph3ezsac7jy0e3hpyn8_title",
+                        "id": "01jnhr57vnew95g6z879wgghaa_01jnhr57vnew95g6z87mk8v4c2_title",
                         "fieldId": "title",
                         "type": "STRING",
                         "value": "1_sjkdjksjk_yuyuyuy",
@@ -2212,18 +2212,18 @@
               "layersIds": [],
               "blocks": [
                 {
-                  "id": "01jnhpwpgvhyc8rf5qbgsmkq9w",
+                  "id": "01jnhr57vj4939qpz41ab0d857",
                   "pluginId": "reearth",
                   "extensionId": "mdTextStoryBlock",
                   "property": {
-                    "id": "01jnhpwpgsgacxp68eacv6z30s",
+                    "id": "01jnhr57vhmwjnyckntvmjq6tz",
                     "items": [
                       {
-                        "id": "01jnhpwpgsgacxp68eae8923xk",
+                        "id": "01jnhr57vhmwjnyckntvsmgmnt",
                         "schemaGroupId": "default",
                         "fields": [
                           {
-                            "id": "01jnhpwpgsgacxp68eacv6z30s_01jnhpwpgsgacxp68eae8923xk_text",
+                            "id": "01jnhr57vhmwjnyckntvmjq6tz_01jnhr57vhmwjnyckntvsmgmnt_text",
                             "fieldId": "text",
                             "type": "STRING",
                             "value": "\n\n# 11\n",
@@ -2307,18 +2307,18 @@
                   "__typename": "StoryBlock"
                 },
                 {
-                  "id": "01jnhpwpgxcvvdnhmfv8x6erh8",
+                  "id": "01jnhr57vk43zkg3rxjcapdb5g",
                   "pluginId": "reearth",
                   "extensionId": "cameraButtonStoryBlock",
                   "property": {
-                    "id": "01jnhpwpgvhyc8rf5qbmpmt9ve",
+                    "id": "01jnhr57vj4939qpz41b6zmw3w",
                     "items": [
                       {
-                        "id": "01jnhpwpgvhyc8rf5qbnjvrcja",
+                        "id": "01jnhr57vj4939qpz41dr3raz1",
                         "schemaGroupId": "default",
                         "groups": [
                           {
-                            "id": "01jnhpwpgvhyc8rf5qbs4dx9ag",
+                            "id": "01jnhr57vj4939qpz41fmfey2k",
                             "schemaGroupId": "default",
                             "fields": [],
                             "__typename": "PropertyGroup"
@@ -2476,11 +2476,11 @@
                   "__typename": "StoryBlock"
                 },
                 {
-                  "id": "01jnhpwpgyqtvd34jzyqpd3gxa",
+                  "id": "01jnhr57vmnk966xzy3zk8hpne",
                   "pluginId": "reearth",
                   "extensionId": "textStoryBlock",
                   "property": {
-                    "id": "01jnhpwpgxcvvdnhmfvcvcye4f",
+                    "id": "01jnhr57vk43zkg3rxjfhfy7pt",
                     "items": [],
                     "__typename": "Property",
                     "schema": {
@@ -2555,22 +2555,22 @@
                   "__typename": "StoryBlock"
                 },
                 {
-                  "id": "01jnhpwph01npkrw5xacx73zqq",
+                  "id": "01jnhr57vmnk966xzy45z1eey5",
                   "pluginId": "reearth",
                   "extensionId": "cameraButtonStoryBlock",
                   "property": {
-                    "id": "01jnhpwpgyqtvd34jzyr76d8ym",
+                    "id": "01jnhr57vmnk966xzy402ea139",
                     "items": [
                       {
-                        "id": "01jnhpwpgyqtvd34jzyw4qdjnq",
+                        "id": "01jnhr57vmnk966xzy40ktz9hk",
                         "schemaGroupId": "default",
                         "groups": [
                           {
-                            "id": "01jnhpwpgyqtvd34jzyxp39kne",
+                            "id": "01jnhr57vmnk966xzy43sj2dy7",
                             "schemaGroupId": "default",
                             "fields": [
                               {
-                                "id": "01jnhpwpgyqtvd34jzyr76d8ym_01jnhpwpgyqtvd34jzyw4qdjnq_01jnhpwpgyqtvd34jzyxp39kne_title",
+                                "id": "01jnhr57vmnk966xzy402ea139_01jnhr57vmnk966xzy40ktz9hk_01jnhr57vmnk966xzy43sj2dy7_title",
                                 "fieldId": "title",
                                 "type": "STRING",
                                 "value": "123123",
@@ -2733,21 +2733,21 @@
                   "__typename": "StoryBlock"
                 },
                 {
-                  "id": "01jnhpwph3ezsac7jy03t7tvye",
+                  "id": "01jnhr57vnew95g6z87697vr6g",
                   "pluginId": "reearth",
                   "extensionId": "imageStoryBlock",
                   "property": {
-                    "id": "01jnhpwph01npkrw5xae9m6f6a",
+                    "id": "01jnhr57vmnk966xzy46qrws4p",
                     "items": [
                       {
-                        "id": "01jnhpwph01npkrw5xahttch0e",
+                        "id": "01jnhr57vnew95g6z872sr9gg3",
                         "schemaGroupId": "default",
                         "fields": [
                           {
-                            "id": "01jnhpwph01npkrw5xae9m6f6a_01jnhpwph01npkrw5xahttch0e_src",
+                            "id": "01jnhr57vmnk966xzy46qrws4p_01jnhr57vnew95g6z872sr9gg3_src",
                             "fieldId": "src",
                             "type": "URL",
-                            "value": "http://localhost:8080/assets/01jnhpwpdtdsbfdddpb017sgnr.png",
+                            "value": "http://localhost:8080/assets/01jnhr57sx3p7ksqhkhp25kbqc.png",
                             "links": null,
                             "__typename": "PropertyField"
                           }
@@ -2831,19 +2831,19 @@
               "__typename": "StoryPage"
             },
             {
-              "id": "01jnhpwphcn5xrtfcrqgnvb6cc",
+              "id": "01jnhr57vshhjp2700dds0662f",
               "title": "Page",
               "swipeable": false,
-              "propertyId": "01jnhpwpha5wgbxf5ba6vsnnhq",
+              "propertyId": "01jnhr57vr2w4e5c9h0zmfqebh",
               "property": {
-                "id": "01jnhpwpha5wgbxf5ba6vsnnhq",
+                "id": "01jnhr57vr2w4e5c9h0zmfqebh",
                 "items": [
                   {
-                    "id": "01jnhpwpha5wgbxf5ba8vd9x0c",
+                    "id": "01jnhr57vr2w4e5c9h114ard5h",
                     "schemaGroupId": "cameraAnimation",
                     "fields": [
                       {
-                        "id": "01jnhpwpha5wgbxf5ba6vsnnhq_01jnhpwpha5wgbxf5ba8vd9x0c_cameraPosition",
+                        "id": "01jnhr57vr2w4e5c9h0zmfqebh_01jnhr57vr2w4e5c9h114ard5h_cameraPosition",
                         "fieldId": "cameraPosition",
                         "type": "CAMERA",
                         "value": {
@@ -2862,11 +2862,11 @@
                     "__typename": "PropertyGroup"
                   },
                   {
-                    "id": "01jnhpwpha5wgbxf5ba9kg55vm",
+                    "id": "01jnhr57vr2w4e5c9h12rcr130",
                     "schemaGroupId": "timePoint",
                     "fields": [
                       {
-                        "id": "01jnhpwpha5wgbxf5ba6vsnnhq_01jnhpwpha5wgbxf5ba9kg55vm_timePoint",
+                        "id": "01jnhr57vr2w4e5c9h0zmfqebh_01jnhr57vr2w4e5c9h12rcr130_timePoint",
                         "fieldId": "timePoint",
                         "type": "STRING",
                         "value": "2025-01-08T22:00:00+09:00",
@@ -2877,11 +2877,11 @@
                     "__typename": "PropertyGroup"
                   },
                   {
-                    "id": "01jnhpwpha5wgbxf5babffpkt8",
+                    "id": "01jnhr57vr2w4e5c9h13hzmzwb",
                     "schemaGroupId": "title",
                     "fields": [
                       {
-                        "id": "01jnhpwpha5wgbxf5ba6vsnnhq_01jnhpwpha5wgbxf5babffpkt8_title",
+                        "id": "01jnhr57vr2w4e5c9h0zmfqebh_01jnhr57vr2w4e5c9h13hzmzwb_title",
                         "fieldId": "title",
                         "type": "STRING",
                         "value": "2",
@@ -3108,18 +3108,18 @@
               "layersIds": [],
               "blocks": [
                 {
-                  "id": "01jnhpwph8thd3baedc3c1z8st",
+                  "id": "01jnhr57vqr8zzvafcmh4bf8b7",
                   "pluginId": "reearth",
                   "extensionId": "textStoryBlock",
                   "property": {
-                    "id": "01jnhpwph6jtbj78wpkhbx7djm",
+                    "id": "01jnhr57vpq214bm65xpxw9175",
                     "items": [
                       {
-                        "id": "01jnhpwph6jtbj78wpkm34ree6",
+                        "id": "01jnhr57vpq214bm65xqjahah1",
                         "schemaGroupId": "default",
                         "fields": [
                           {
-                            "id": "01jnhpwph6jtbj78wpkhbx7djm_01jnhpwph6jtbj78wpkm34ree6_text",
+                            "id": "01jnhr57vpq214bm65xpxw9175_01jnhr57vpq214bm65xqjahah1_text",
                             "fieldId": "text",
                             "type": "STRING",
                             "value": "{\"root\":{\"children\":[{\"children\":[{\"detail\":0,\"format\":0,\"mode\":\"normal\",\"style\":\"\",\"text\":\"this is Japan\",\"type\":\"text\",\"version\":1}],\"direction\":\"ltr\",\"format\":\"\",\"indent\":0,\"type\":\"paragraph\",\"version\":1}],\"direction\":\"ltr\",\"format\":\"\",\"indent\":0,\"type\":\"root\",\"version\":1}}",
@@ -3203,21 +3203,21 @@
                   "__typename": "StoryBlock"
                 },
                 {
-                  "id": "01jnhpwpha5wgbxf5ba45tt01t",
+                  "id": "01jnhr57vr2w4e5c9h0z1scyqv",
                   "pluginId": "reearth",
                   "extensionId": "imageStoryBlock",
                   "property": {
-                    "id": "01jnhpwph8thd3baedc50r7bhc",
+                    "id": "01jnhr57vqr8zzvafcmmxkbhq2",
                     "items": [
                       {
-                        "id": "01jnhpwph8thd3baedc67wdnkc",
+                        "id": "01jnhr57vqr8zzvafcmnwen9xd",
                         "schemaGroupId": "default",
                         "fields": [
                           {
-                            "id": "01jnhpwph8thd3baedc50r7bhc_01jnhpwph8thd3baedc67wdnkc_src",
+                            "id": "01jnhr57vqr8zzvafcmmxkbhq2_01jnhr57vqr8zzvafcmnwen9xd_src",
                             "fieldId": "src",
                             "type": "URL",
-                            "value": "http://localhost:8080/assets/01jnhpwpdw9cen6msfah82qr6e.",
+                            "value": "http://localhost:8080/assets/01jnhr57sm9wx3zm1jjvp4h4nz",
                             "links": null,
                             "__typename": "PropertyField"
                           }
@@ -3301,19 +3301,34 @@
               "__typename": "StoryPage"
             },
             {
-              "id": "01jnhpwphfgmngh2wsygbw2cw6",
+              "id": "01jnhr57vvf73vdtry7yhh3aj6",
               "title": "Page",
               "swipeable": false,
-              "propertyId": "01jnhpwphd3qhbbs52g8xgrdjk",
+              "propertyId": "01jnhr57vthmx955yg19a166px",
               "property": {
-                "id": "01jnhpwphd3qhbbs52g8xgrdjk",
+                "id": "01jnhr57vthmx955yg19a166px",
                 "items": [
                   {
-                    "id": "01jnhpwphd3qhbbs52gcjk2vf2",
+                    "id": "01jnhr57vthmx955yg1cmbmp0f",
+                    "schemaGroupId": "title",
+                    "fields": [
+                      {
+                        "id": "01jnhr57vthmx955yg19a166px_01jnhr57vthmx955yg1cmbmp0f_title",
+                        "fieldId": "title",
+                        "type": "STRING",
+                        "value": "3",
+                        "links": null,
+                        "__typename": "PropertyField"
+                      }
+                    ],
+                    "__typename": "PropertyGroup"
+                  },
+                  {
+                    "id": "01jnhr57vthmx955yg1dz64tbf",
                     "schemaGroupId": "cameraAnimation",
                     "fields": [
                       {
-                        "id": "01jnhpwphd3qhbbs52g8xgrdjk_01jnhpwphd3qhbbs52gcjk2vf2_cameraPosition",
+                        "id": "01jnhr57vthmx955yg19a166px_01jnhr57vthmx955yg1dz64tbf_cameraPosition",
                         "fieldId": "cameraPosition",
                         "type": "CAMERA",
                         "value": {
@@ -3325,21 +3340,6 @@
                           "roll": 0.0021543678703661584,
                           "fov": 1.0471975511965976
                         },
-                        "links": null,
-                        "__typename": "PropertyField"
-                      }
-                    ],
-                    "__typename": "PropertyGroup"
-                  },
-                  {
-                    "id": "01jnhpwphd3qhbbs52gdd4mr93",
-                    "schemaGroupId": "title",
-                    "fields": [
-                      {
-                        "id": "01jnhpwphd3qhbbs52g8xgrdjk_01jnhpwphd3qhbbs52gdd4mr93_title",
-                        "fieldId": "title",
-                        "type": "STRING",
-                        "value": "3",
                         "links": null,
                         "__typename": "PropertyField"
                       }
@@ -3563,18 +3563,18 @@
               "layersIds": [],
               "blocks": [
                 {
-                  "id": "01jnhpwphd3qhbbs52g5mzxfjr",
+                  "id": "01jnhr57vthmx955yg196bkt1x",
                   "pluginId": "reearth",
                   "extensionId": "timelineStoryBlock",
                   "property": {
-                    "id": "01jnhpwphcn5xrtfcrqgz0yv5r",
+                    "id": "01jnhr57vshhjp2700dg8z18er",
                     "items": [
                       {
-                        "id": "01jnhpwphcn5xrtfcrqhk7af98",
+                        "id": "01jnhr57vshhjp2700dhrz79d5",
                         "schemaGroupId": "default",
                         "fields": [
                           {
-                            "id": "01jnhpwphcn5xrtfcrqgz0yv5r_01jnhpwphcn5xrtfcrqhk7af98_timelineSetting",
+                            "id": "01jnhr57vshhjp2700dg8z18er_01jnhr57vshhjp2700dhrz79d5_timelineSetting",
                             "fieldId": "timelineSetting",
                             "type": "TIMELINE",
                             "value": {
@@ -3704,10 +3704,10 @@
       ],
       "newLayers": [
         {
-          "id": "01jnhpwpf5mgk03dyzzjt8f2bn",
+          "id": "01jnhr57tjrxyqjyx1tsrkw5mz",
           "index": 2,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson",
@@ -3787,7 +3787,7 @@
                 "type": "FeatureCollection"
               }
             },
-            "layerStyleId": "01jnhnjqhz7kk3n3rh3qkzg14s"
+            "layerStyleId": "01hkrksfctv6e7emwtqpbngaqk"
           },
           "title": "geojson_222",
           "visible": true,
@@ -3797,16 +3797,16 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpfee950hjwvh4pwtkpn",
+          "id": "01jnhr57tm4fs5d7jaep0cctdc",
           "index": 3,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "3dtiles",
               "url": "http://localhost:8080/assets/11/6d05db-ed47-4f88-b565-9eb385b1ebb0/13100_tokyo23-ku_2022_3dtiles%20_1_1_op_bldg_13101_chiyoda-ku_lod1/tileset.json"
             },
-            "layerStyleId": "01jnhnjqhz7kk3n3rh3qqk3rrq"
+            "layerStyleId": ""
           },
           "title": "chiyoda_ku",
           "visible": true,
@@ -3816,15 +3816,15 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpffngh5y2p15htfvrp5",
+          "id": "01jnhr57tndqjyacz8gyyd0ahq",
           "index": 0,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson"
             },
-            "layerStyleId": "01jnhpwpg7hkqxxh9ns3j2f06r",
+            "layerStyleId": "",
             "properties": {
               "name": "no.5 layer"
             }
@@ -3845,15 +3845,15 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpfgzbg6hqhqfx051tqf",
+          "id": "01jnhr57tpzeqa8b0z6c8nh58n",
           "index": 5,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson"
             },
-            "layerStyleId": "01jnhnjqhz7kk3n3rh3trewq1y",
+            "layerStyleId": "",
             "properties": {
               "name": "no.6 layer"
             }
@@ -3874,10 +3874,10 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpfj8dnax550kkwcybt2",
+          "id": "01jnhr57tq96x83zmfpc8g19vp",
           "index": 6,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson"
@@ -3903,10 +3903,10 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpfk34s2gn63n05zkb3z",
+          "id": "01jnhr57tre9jtqxafwa96ksqt",
           "index": 7,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson"
@@ -3932,15 +3932,15 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpfmrhqd9gf7q1jmgetc",
+          "id": "01jnhr57tsn650rfrys2j717kn",
           "index": 4,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson"
             },
-            "layerStyleId": "01jnhnjqhz7kk3n3rh3t87y9ae",
+            "layerStyleId": "01jd9b3mrx1f2k4dvncs5ddp69",
             "properties": {
               "name": "skectch_layer"
             }
@@ -3948,11 +3948,11 @@
           "title": "skectch_layer",
           "visible": true,
           "infobox": {
-            "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
-            "layerId": "01jnhpwpfmrhqd9gf7q1jmgetc",
-            "propertyId": "01jnhpwpfmrhqd9gf7q2ht0cp8",
+            "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
+            "layerId": "01jnhr57tsn650rfrys2j717kn",
+            "propertyId": "01jnhr57tsn650rfrys63cwx1w",
             "property": {
-              "id": "01jnhpwpfmrhqd9gf7q2ht0cp8",
+              "id": "01jnhr57tsn650rfrys63cwx1w",
               "items": [],
               "__typename": "Property",
               "schema": {
@@ -4087,12 +4087,12 @@
             },
             "blocks": [
               {
-                "id": "01jnhpwpfnj21ym734y2bv5xee",
+                "id": "01jnhr57tvxrpewmj1j632nk18",
                 "pluginId": "reearth",
                 "extensionId": "imageInfoboxBetaBlock",
-                "propertyId": "01jnhpwpfmrhqd9gf7q55qq5h9",
+                "propertyId": "01jnhr57ttjsfbf6erhc0c1td4",
                 "property": {
-                  "id": "01jnhpwpfmrhqd9gf7q55qq5h9",
+                  "id": "01jnhr57ttjsfbf6erhc0c1td4",
                   "items": [],
                   "__typename": "Property",
                   "schema": {
@@ -4228,13 +4228,20 @@
                 "__typename": "InfoboxBlock"
               },
               {
-                "id": "01jnhpwpfp2yammr3k9571f1x0",
+                "id": "01jnhr57twncv10dw88zc70cy7",
                 "pluginId": "reearth",
                 "extensionId": "propertyInfoboxBetaBlock",
-                "propertyId": "01jnhpwpfnj21ym734y5h7ddcj",
+                "propertyId": "01jnhr57tvxrpewmj1j7q1f0pe",
                 "property": {
-                  "id": "01jnhpwpfnj21ym734y5h7ddcj",
-                  "items": [],
+                  "id": "01jnhr57tvxrpewmj1j7q1f0pe",
+                  "items": [
+                    {
+                      "id": "01jnhr57tvxrpewmj1j8zwffxg",
+                      "schemaGroupId": "default",
+                      "fields": [],
+                      "__typename": "PropertyGroup"
+                    }
+                  ],
                   "__typename": "Property",
                   "schema": {
                     "id": "reearth/infobox-beta",
@@ -4369,13 +4376,20 @@
                 "__typename": "InfoboxBlock"
               },
               {
-                "id": "01jnhpwpfqf9g79q2e2tdfbr8d",
+                "id": "01jnhr57twncv10dw897ck6msd",
                 "pluginId": "reearth",
                 "extensionId": "textInfoboxBetaBlock",
-                "propertyId": "01jnhpwpfp2yammr3k97783rkq",
+                "propertyId": "01jnhr57twncv10dw892ghc2mt",
                 "property": {
-                  "id": "01jnhpwpfp2yammr3k97783rkq",
-                  "items": [],
+                  "id": "01jnhr57twncv10dw892ghc2mt",
+                  "items": [
+                    {
+                      "id": "01jnhr57twncv10dw893mmj6dt",
+                      "schemaGroupId": "default",
+                      "fields": [],
+                      "__typename": "PropertyGroup"
+                    }
+                  ],
                   "__typename": "Property",
                   "schema": {
                     "id": "reearth/infobox-beta",
@@ -4510,13 +4524,20 @@
                 "__typename": "InfoboxBlock"
               },
               {
-                "id": "01jnhpwpfrnrs6stw8q1s61gkd",
+                "id": "01jnhr57tywd2v0x6h5czhqg1w",
                 "pluginId": "reearth",
                 "extensionId": "propertyInfoboxBetaBlock",
-                "propertyId": "01jnhpwpfqf9g79q2e2wyza2ze",
+                "propertyId": "01jnhr57txnx3p537wazm6dtsd",
                 "property": {
-                  "id": "01jnhpwpfqf9g79q2e2wyza2ze",
-                  "items": [],
+                  "id": "01jnhr57txnx3p537wazm6dtsd",
+                  "items": [
+                    {
+                      "id": "01jnhr57txnx3p537wb1y5xphz",
+                      "schemaGroupId": "default",
+                      "fields": [],
+                      "__typename": "PropertyGroup"
+                    }
+                  ],
                   "__typename": "Property",
                   "schema": {
                     "id": "reearth/infobox-beta",
@@ -4664,7 +4685,7 @@
               "type": "FeatureCollection",
               "features": [
                 {
-                  "id": "01jnhpwpfrnrs6stw8q7727941",
+                  "id": "01jnhr57tywd2v0x6h5d8th20s",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -4688,7 +4709,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfrnrs6stw8q84nnr60",
+                  "id": "01jnhr57tywd2v0x6h5ews4dj8",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -4713,15 +4734,15 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpft8dapghw4mngegz9f",
+          "id": "01jnhr57tzny144ted6j83r5x3",
           "index": 1,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson"
             },
-            "layerStyleId": "01jnhnjqhz7kk3n3rh3mwpp2jb",
+            "layerStyleId": "01jd9b22st3gkk85k9mbexymse",
             "properties": {
               "name": "ss"
             }
@@ -4729,18 +4750,18 @@
           "title": "ss",
           "visible": true,
           "infobox": {
-            "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
-            "layerId": "01jnhpwpft8dapghw4mngegz9f",
-            "propertyId": "01jnhpwpft8dapghw4mpfck9kr",
+            "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
+            "layerId": "01jnhr57tzny144ted6j83r5x3",
+            "propertyId": "01jnhr57tzny144ted6jjv6d7n",
             "property": {
-              "id": "01jnhpwpft8dapghw4mpfck9kr",
+              "id": "01jnhr57tzny144ted6jjv6d7n",
               "items": [
                 {
-                  "id": "01jnhpwpft8dapghw4mrb26nb4",
+                  "id": "01jnhr57tzny144ted6p4wzzd9",
                   "schemaGroupId": "default",
                   "fields": [
                     {
-                      "id": "01jnhpwpft8dapghw4mpfck9kr_01jnhpwpft8dapghw4mrb26nb4_enabled",
+                      "id": "01jnhr57tzny144ted6jjv6d7n_01jnhr57tzny144ted6p4wzzd9_enabled",
                       "fieldId": "enabled",
                       "type": "BOOL",
                       "value": false,
@@ -4884,13 +4905,20 @@
             },
             "blocks": [
               {
-                "id": "01jnhpwpfw5g6rt4m5tpxe9nzp",
+                "id": "01jnhr57v1tskznntvfgtd14s3",
                 "pluginId": "reearth",
                 "extensionId": "textInfoboxBetaBlock",
-                "propertyId": "01jnhpwpfvbp6z1ne8na67b5fz",
+                "propertyId": "01jnhr57v0d5g8d6ps8jaqrhy6",
                 "property": {
-                  "id": "01jnhpwpfvbp6z1ne8na67b5fz",
-                  "items": [],
+                  "id": "01jnhr57v0d5g8d6ps8jaqrhy6",
+                  "items": [
+                    {
+                      "id": "01jnhr57v0d5g8d6ps8nwzy6qk",
+                      "schemaGroupId": "default",
+                      "fields": [],
+                      "__typename": "PropertyGroup"
+                    }
+                  ],
                   "__typename": "Property",
                   "schema": {
                     "id": "reearth/infobox-beta",
@@ -5025,13 +5053,20 @@
                 "__typename": "InfoboxBlock"
               },
               {
-                "id": "01jnhpwpfx3zxt7ef1jnxc8msq",
+                "id": "01jnhr57v5vbe418afp7y3vvpq",
                 "pluginId": "reearth",
                 "extensionId": "imageInfoboxBetaBlock",
-                "propertyId": "01jnhpwpfw5g6rt4m5tt8d3a03",
+                "propertyId": "01jnhr57v1tskznntvfhapzm1t",
                 "property": {
-                  "id": "01jnhpwpfw5g6rt4m5tt8d3a03",
-                  "items": [],
+                  "id": "01jnhr57v1tskznntvfhapzm1t",
+                  "items": [
+                    {
+                      "id": "01jnhr57v1tskznntvfhwhdd69",
+                      "schemaGroupId": "default",
+                      "fields": [],
+                      "__typename": "PropertyGroup"
+                    }
+                  ],
                   "__typename": "Property",
                   "schema": {
                     "id": "reearth/infobox-beta",
@@ -5179,7 +5214,7 @@
               "type": "FeatureCollection",
               "features": [
                 {
-                  "id": "01jnhpwpfx3zxt7ef1jrh9r06z",
+                  "id": "01jnhr57v5vbe418afpdd2vh0b",
                   "type": "Feature",
                   "properties": {
                     "description": "这是我的面 qrqrq",
@@ -5289,7 +5324,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1jv4323an",
+                  "id": "01jnhr57v5vbe418afpe8c5yqx",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5338,7 +5373,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1jw7hvdfa",
+                  "id": "01jnhr57v5vbe418afphjat427",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5387,7 +5422,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1jyw0yapn",
+                  "id": "01jnhr57v5vbe418afpkwrhy6r",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5408,7 +5443,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1k1t0y9x1",
+                  "id": "01jnhr57v5vbe418afpn8m6x5y",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5429,7 +5464,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1k3czdgdz",
+                  "id": "01jnhr57v5vbe418afpqfzka8t",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5466,7 +5501,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1k5bhdm27",
+                  "id": "01jnhr57v5vbe418afpqr3z5tm",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5509,7 +5544,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1k7bmqsmg",
+                  "id": "01jnhr57v5vbe418afptxe05gw",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5602,7 +5637,7 @@
                   "__typename": "Feature"
                 },
                 {
-                  "id": "01jnhpwpfx3zxt7ef1ka2gp3es",
+                  "id": "01jnhr57v5vbe418afpv0ay750",
                   "type": "Feature",
                   "properties": {
                     "extrudedHeight": 0,
@@ -5698,14 +5733,14 @@
           "__typename": "NLSLayerSimple"
         },
         {
-          "id": "01jnhpwpg1gzhjja19tdtjp88x",
+          "id": "01jnhr57v7tghram2xrx81ne9t",
           "index": 8,
           "layerType": "simple",
-          "sceneId": "01jnhpwpe127hzqy95xp3xaqam",
+          "sceneId": "01jnhr57t0ymw9b8y23v1b6xa4",
           "config": {
             "data": {
               "type": "geojson",
-              "url": "http://localhost:8080/assets/01jnhpwpdcb5f51kgzk1fyhxjn.geojson"
+              "url": "http://localhost:8080/assets/01jnhr57st2bpzk9w11kaafrv5.geojson"
             },
             "layerStyleId": "01jd9b22st3gkk85k9mbexymse"
           },
@@ -5719,7 +5754,7 @@
       ],
       "styles": [
         {
-          "id": "01jnhpwpg7hkqxxh9ns05jb2ne",
+          "id": "01jnhr57vb1g0dqs0f0ddg4tws",
           "name": "Color_buildings_by_height.01",
           "value": {
             "3dtiles": {
@@ -5743,7 +5778,7 @@
           "__typename": "Style"
         },
         {
-          "id": "01jnhpwpg7hkqxxh9ns3j2f06r",
+          "id": "01jnhr57vb1g0dqs0f0h5zbr4p",
           "name": "スタイル.01",
           "value": {
             "3dtiles": {
@@ -5753,7 +5788,7 @@
           "__typename": "Style"
         },
         {
-          "id": "01jnhpwpg7hkqxxh9ns6vqwpqf",
+          "id": "01jnhr57vb1g0dqs0f0jdxs21m",
           "name": "Professional.01",
           "value": {
             "marker": {
@@ -5790,7 +5825,7 @@
           "__typename": "Style"
         },
         {
-          "id": "01jnhpwpg7hkqxxh9ns879mamq",
+          "id": "01jnhr57vb1g0dqs0f0m54mwz6",
           "name": "Style.01",
           "value": {
             "marker": {
@@ -5804,7 +5839,7 @@
           "__typename": "Style"
         },
         {
-          "id": "01jnhpwpg7hkqxxh9ns8r2r2tc",
+          "id": "01jnhr57vb1g0dqs0f0n77fkt4",
           "name": "Style_1",
           "value": {
             "marker": {
@@ -5820,7 +5855,7 @@
           "__typename": "Style"
         },
         {
-          "id": "01jnhpwpg7hkqxxh9ns9mdyn2e",
+          "id": "01jnhr57vb1g0dqs0f0qqcqvrh",
           "name": "Points.01",
           "value": {
             "marker": {
