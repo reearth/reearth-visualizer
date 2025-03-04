@@ -238,7 +238,8 @@ const Wrapper = styled("div")(() => ({
   height: "100%",
   display: "flex",
   flexDirection: "column",
-  flexGrow: 1
+  flexGrow: 1,
+  overflow: "hidden"
 }));
 
 const PluginList = styled("div")(({ theme }) => ({
@@ -252,7 +253,8 @@ const PluginList = styled("div")(({ theme }) => ({
 const PluginListWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   height: "100%",
-  marginLeft: -theme.spacing.smallest
+  marginLeft: -theme.spacing.smallest,
+  overflowY: "auto"
 }));
 
 const PluginSubList = styled("div")(({ theme }) => ({
@@ -287,7 +289,11 @@ const IconList = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small,
-  marginBottom: theme.spacing.small
+  marginBottom: theme.spacing.small,
+  position: "sticky",
+  top: 0,
+  zIndex: 10,
+  padding: `${theme.spacing.small}px 0`
 }));
 
 export default Plugins;
