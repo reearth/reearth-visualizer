@@ -10,7 +10,7 @@ import { useParams } from "react-router-dom";
 function isProjectSettingTab(
   tab: string | undefined
 ): tab is ProjectSettingsTab {
-  return projectSettingsTabs.includes(tab as ProjectSettingsTab);
+  return projectSettingsTabs.includes(tab as ProjectSettingsTab) || !tab;
 }
 
 const ProjectSettingsPage: FC = () => {
@@ -20,7 +20,7 @@ const ProjectSettingsPage: FC = () => {
     subId?: string;
   }>();
 
-  return !projectId || (tab && !isProjectSettingTab(tab)) ? (
+  return !projectId || !isProjectSettingTab(tab) ? (
     <NotFound />
   ) : (
     <Page
@@ -28,7 +28,7 @@ const ProjectSettingsPage: FC = () => {
       renderItem={(props) => (
         <ProjectSettings
           projectId={projectId}
-          tab={tab}
+          tab={tab || "general"}
           subId={subId}
           {...props}
         />

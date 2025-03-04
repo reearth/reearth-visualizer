@@ -92,6 +92,12 @@ export default ({
       icon: "setting"
     },
     {
+      id: "assets",
+      title: t("Project Assets"),
+      path: `/settings/projects/${project.id}/assets`,
+      icon: "file"
+    },
+    {
       id: "export",
       title: t("Export"),
       icon: "downloadSimple",
