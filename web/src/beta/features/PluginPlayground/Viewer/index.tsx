@@ -1,6 +1,6 @@
 import Visualizer from "@reearth/beta/features/Visualizer";
 import { Layer, MapRef } from "@reearth/core";
-import { styled } from "@reearth/services/styled";
+import { styled } from "@reearth/services/theme";
 import { ComponentProps, FC, MutableRefObject } from "react";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel";
