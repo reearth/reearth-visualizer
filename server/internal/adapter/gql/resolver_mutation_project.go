@@ -17,7 +17,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
@@ -268,47 +267,54 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	if err != nil {
 		return nil, err
 	}
-	oldSceneID, tempData, _ := replaceOldSceneID(tempData, sce)
 
-	// Plugin file import
+	newSceneID := sce.ID().String()
+
+	// Replace the SceneID with the new SceneID
+	oldSceneID, tempData, _ := replaceOldSceneID(tempData, newSceneID)
+
+	// Plugin file upload
 	for fileName, file := range plugins {
 
 		parts := strings.Split(fileName, "/")
 		oldPID := parts[0]
 		fileName := parts[1]
 
-		newPID := strings.Replace(oldPID, oldSceneID, sce.ID().String(), 1)
-		pid, err := id.PluginIDFrom(newPID)
-		if err != nil {
-			return nil, err
-		}
-		if err := usecases(ctx).Plugin.ImporPluginFile(ctx, pid, fileName, file); err != nil {
+		// this is the name of the file path
+		newPluginId := strings.Replace(oldPID, oldSceneID, newSceneID, 1)
+
+		if err := usecases(ctx).Plugin.ImporPluginFile(ctx, newPluginId, fileName, file); err != nil {
 			return nil, errors.New("Fail ImporPluginFile :" + err.Error())
 		}
 	}
 
 	pluginsData, sceneData, schemaData, _ := unmarshalPluginsScene(tempData)
 
+	// Plugin data save
 	plgs, pss, err := usecases(ctx).Plugin.ImportPlugins(ctx, sce, pluginsData, schemaData)
 	if err != nil {
 		return nil, errors.New("Fail ImportPlugins :" + err.Error())
 	}
 
+	// Scene data save
 	sce, err = usecases(ctx).Scene.ImportScene(ctx, sce, prj, plgs, sceneData)
 	if err != nil {
 		return nil, errors.New("Fail ImportScene :" + err.Error())
 	}
 
-	nlayers, replaceNLSLayerIDs, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData)
-	if err != nil {
-		return nil, errors.New("Fail ImportNLSLayers :" + err.Error())
-	}
-
-	styleList, err := usecases(ctx).Style.ImportStyles(ctx, sce.ID(), sceneData)
+	// Styles data save
+	styleList, replaceStyleIDs, err := usecases(ctx).Style.ImportStyles(ctx, sce.ID(), sceneData)
 	if err != nil {
 		return nil, errors.New("Fail ImportStyles :" + err.Error())
 	}
 
+	// NLSLayers data save
+	nlayers, replaceNLSLayerIDs, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData, replaceStyleIDs)
+	if err != nil {
+		return nil, errors.New("Fail ImportNLSLayers :" + err.Error())
+	}
+
+	// Story data save
 	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sce.ID(), sceneData, replaceNLSLayerIDs)
 	if err != nil {
 		return nil, errors.New("Fail ImportStory :" + err.Error())
@@ -330,7 +336,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 
 }
 
-func replaceOldSceneID(data []byte, sce *scene.Scene) (string, []byte, error) {
+func replaceOldSceneID(data []byte, newSceneID string) (string, []byte, error) {
 	var jsonData map[string]interface{}
 	if err := json.Unmarshal(data, &jsonData); err != nil {
 		return "", nil, err
@@ -338,7 +344,7 @@ func replaceOldSceneID(data []byte, sce *scene.Scene) (string, []byte, error) {
 
 	oldSceneData, _ := jsonData["scene"].(map[string]interface{})
 	oldSceneID := oldSceneData["id"].(string)
-	return oldSceneID, bytes.Replace(data, []byte(oldSceneID), []byte(sce.ID().String()), -1), nil
+	return oldSceneID, bytes.Replace(data, []byte(oldSceneID), []byte(newSceneID), -1), nil
 }
 
 func unmarshalProject(data []byte) (map[string]interface{}, error) {

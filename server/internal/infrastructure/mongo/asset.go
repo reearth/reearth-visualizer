@@ -44,6 +44,12 @@ func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
 	}
 }
 
+func (r *Asset) FindByURL(ctx context.Context, path string) (*asset.Asset, error) {
+	return r.findOne(ctx, bson.M{
+		"url": path,
+	})
+}
+
 func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, error) {
 	return r.findOne(ctx, bson.M{
 		"id": id.String(),

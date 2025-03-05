@@ -316,7 +316,7 @@ func TestImportNLSLayers(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, _, err := ifl.ImportNLSLayers(ctx, scene.ID(), sceneData)
+	result, _, err := ifl.ImportNLSLayers(ctx, scene.ID(), sceneData, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 

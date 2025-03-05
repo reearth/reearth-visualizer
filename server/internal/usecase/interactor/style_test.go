@@ -54,7 +54,7 @@ func TestImportStyles(t *testing.T) {
 	assert.NoError(t, err)
 
 	// invoke the target function
-	result, err := ifs.ImportStyles(ctx, scene.ID(), sceneData)
+	result, _, err := ifs.ImportStyles(ctx, scene.ID(), sceneData)
 	assert.NoError(t, err)
 	assert.NotNil(t, result)
 
