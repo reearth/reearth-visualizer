@@ -1,7 +1,7 @@
 import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent, ReactNode } from "react";
 
-import { IconName, Icon } from "../Icon";
+import { IconName, Icon, IconProps } from "../Icon";
 
 export type ButtonProps = {
   appearance?: "primary" | "secondary" | "dangerous" | "simple";
@@ -19,7 +19,7 @@ export type ButtonProps = {
   onClick?: (e: MouseEvent<HTMLElement>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLElement>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement>) => void;
-};
+} & Pick<IconProps, "placement" | "tooltipText">;
 
 export const Button: FC<ButtonProps> = ({
   appearance = "secondary",
@@ -34,6 +34,8 @@ export const Button: FC<ButtonProps> = ({
   minWidth,
   background,
   tileComponent,
+  tooltipText,
+  placement,
   onClick,
   onMouseEnter,
   onMouseLeave
@@ -51,7 +53,14 @@ export const Button: FC<ButtonProps> = ({
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {icon && <Icon icon={icon} color={iconColor} />}
+      {icon && (
+        <Icon
+          icon={icon}
+          color={iconColor}
+          tooltipText={tooltipText}
+          placement={placement}
+        />
+      )}
       {!iconButton && title}
       {iconRight && <Icon icon={iconRight} />}
       {tileComponent}

@@ -32,6 +32,23 @@ func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
 	}
 }
 
+func (r *Asset) FindByURL(_ context.Context, path string) (*asset.Asset, error) {
+	var result *asset.Asset
+	r.data.Range(func(id id.AssetID, asset *asset.Asset) bool {
+		if asset.URL() == path {
+			if r.f.CanRead(asset.Workspace()) {
+				result = asset
+				return false
+			}
+		}
+		return true
+	})
+	if result != nil {
+		return result, nil
+	}
+	return &asset.Asset{}, rerror.ErrNotFound
+}
+
 func (r *Asset) FindByID(_ context.Context, id id.AssetID) (*asset.Asset, error) {
 	d, ok := r.data.Load(id)
 	if ok && r.f.CanRead(d.Workspace()) {

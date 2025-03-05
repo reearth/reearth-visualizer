@@ -29,6 +29,7 @@ import (
 
 type Scene struct {
 	common
+	assetRepo          repo.Asset
 	sceneRepo          repo.Scene
 	propertyRepo       repo.Property
 	propertySchemaRepo repo.PropertySchema
@@ -48,6 +49,7 @@ type Scene struct {
 
 func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 	return &Scene{
+		assetRepo:          r.Asset,
 		sceneRepo:          r.Scene,
 		propertyRepo:       r.Property,
 		propertySchemaRepo: r.PropertySchema,
@@ -690,6 +692,9 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 
 	// nlsLayer file resources
 	for _, nLayer := range nlsLayers {
+		if nLayer == nil {
+			continue
+		}
 		actualLayer := *nLayer
 		c := actualLayer.Config()
 		if c != nil {
@@ -697,9 +702,40 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 			if data, ok := actualConfig["data"].(map[string]any); ok {
 				if urlStr, ok := data["url"].(string); ok {
 					u, _ := url.Parse(urlStr)
-					if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
+					if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, u.Path); err != nil {
 						log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
 					}
+				}
+			}
+		}
+
+		if actualLayer.Sketch() == nil ||
+			actualLayer.Sketch().FeatureCollection() == nil ||
+			actualLayer.Sketch().FeatureCollection().Features() == nil {
+			continue
+		}
+
+		for _, vFeature := range actualLayer.Sketch().FeatureCollection().Features() {
+			for key, value := range *vFeature.Properties() {
+				if key == "threed_model_url" {
+					if threed_model_url, ok := value.(string); ok {
+						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, threed_model_url); err != nil {
+							log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
+						}
+					}
+				}
+			}
+		}
+	}
+	for _, lStyle := range *layerStyles {
+		if lStyle.Value() == nil {
+			continue
+		}
+		v := *lStyle.Value()
+		if marker, ok := v["marker"].(map[string]any); ok {
+			if image, ok := marker["image"].(string); ok {
+				if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, image); err != nil {
+					log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
 				}
 			}
 		}
@@ -726,7 +762,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 				}
 				if field.GuessSchema().ID().String() == "buttonIcon" {
 					if u, ok := field.Value().Value().(*url.URL); ok {
-						if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
+						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, u.Path); err != nil {
 							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
 						}
 					}
@@ -751,7 +787,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 			for _, field := range item.Fields(nil) {
 				if field.GuessSchema().ID().String() == "src" {
 					if u, ok := field.Value().Value().(*url.URL); ok {
-						if err := AddZipAsset(ctx, i.file, zipWriter, u.Path); err != nil {
+						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, u.Path); err != nil {
 							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
 						}
 					}
