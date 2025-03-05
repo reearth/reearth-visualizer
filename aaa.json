@@ -1,0 +1,2085 @@
+{
+  "data": {
+    "node": {
+      "id": "01jnhs9dpendwyj74yvj5xzzq4",
+      "teamId": "01jnhs8r59r6krgqyz5ktwhv2y",
+      "projectId": "01jnhs9dnyry5jf9yfbexf3fym",
+      "property": {
+        "id": "01jnhs9dqe00d496xmq65nv9bx",
+        "items": [
+          {
+            "id": "01jnhs9dqe00d496xmq7s2n4zv",
+            "schemaGroupId": "tiles",
+            "groups": [
+              {
+                "id": "01jnhs9dqe00d496xmq9h02j93",
+                "schemaGroupId": "tiles",
+                "fields": [],
+                "__typename": "PropertyGroup"
+              }
+            ],
+            "__typename": "PropertyGroupList"
+          }
+        ],
+        "__typename": "Property",
+        "schema": {
+          "id": "reearth/cesium-beta",
+          "groups": [
+            {
+              "schemaGroupId": "default",
+              "title": "Main",
+              "collection": "main",
+              "translatedTitle": "Main",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "sceneMode",
+                  "title": "Scene mode",
+                  "description": "Specify scene mode.",
+                  "placeholder": "",
+                  "translatedTitle": "Scene mode",
+                  "translatedDescription": "Specify scene mode.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": "3d",
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": [
+                    {
+                      "key": "3d",
+                      "icon": null,
+                      "title": "3D",
+                      "translatedTitle": "3D",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "2d",
+                      "icon": null,
+                      "title": "2D",
+                      "translatedTitle": "2D",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "columbus",
+                      "icon": null,
+                      "title": "2.5D (Columbus View)",
+                      "translatedTitle": "2.5D (Columbus View)",
+                      "__typename": "PropertySchemaFieldChoice"
+                    }
+                  ],
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "ion",
+                  "title": "Cesium Ion API access token",
+                  "description": "Cesium Ion account users may use their personal API keys to be able to use their Cesium Ion assets(tile data, 3D data, etc) with their project.",
+                  "placeholder": "",
+                  "translatedTitle": "Cesium Ion API access token",
+                  "translatedDescription": "Cesium Ion account users may use their personal API keys to be able to use their Cesium Ion assets(tile data, 3D data, etc) with their project.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "vr",
+                  "title": "VR",
+                  "description": "Enable VR mode to split the screen into left and right.",
+                  "placeholder": "",
+                  "translatedTitle": "VR",
+                  "translatedDescription": "Enable VR mode to split the screen into left and right.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "tiles",
+              "title": "Tiles",
+              "collection": "tiles",
+              "translatedTitle": "Tiles",
+              "isList": true,
+              "representativeFieldId": "tile_type",
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "tile_type",
+                  "title": "Tile type",
+                  "description": "",
+                  "placeholder": "please enter tile type",
+                  "translatedTitle": "Tile type",
+                  "translatedDescription": "",
+                  "translatedPlaceholder": "please enter tile type",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": "default",
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": [
+                    {
+                      "key": "default",
+                      "icon": null,
+                      "title": "Default",
+                      "translatedTitle": "Default",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "default_label",
+                      "icon": null,
+                      "title": "Labelled",
+                      "translatedTitle": "Labelled",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "default_road",
+                      "icon": null,
+                      "title": "Road Map",
+                      "translatedTitle": "Road Map",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "open_street_map",
+                      "icon": null,
+                      "title": "OpenStreetMap",
+                      "translatedTitle": "OpenStreetMap",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "esri_world_topo",
+                      "icon": null,
+                      "title": "ESRI Topography",
+                      "translatedTitle": "ESRI Topography",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "black_marble",
+                      "icon": null,
+                      "title": "Earth at night",
+                      "translatedTitle": "Earth at night",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "japan_gsi_standard",
+                      "icon": null,
+                      "title": "Japan GSI Standard Map",
+                      "translatedTitle": "Japan GSI Standard Map",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "url",
+                      "icon": null,
+                      "title": "URL",
+                      "translatedTitle": "URL",
+                      "__typename": "PropertySchemaFieldChoice"
+                    }
+                  ],
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "tile_url",
+                  "title": "Tile map URL",
+                  "description": "",
+                  "placeholder": "please enter tile url",
+                  "translatedTitle": "Tile map URL",
+                  "translatedDescription": "",
+                  "translatedPlaceholder": "please enter tile url",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "tile_type",
+                    "type": "STRING",
+                    "value": "url",
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "tile_zoomLevel",
+                  "title": "Zoom level",
+                  "description": "Change the zoom level of the selected tile map. Min:0, Max:25",
+                  "placeholder": "please enter tile zoom level",
+                  "translatedTitle": "Zoom level",
+                  "translatedDescription": "Change the zoom level of the selected tile map. Min:0, Max:25",
+                  "translatedPlaceholder": "please enter tile zoom level",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "ARRAY",
+                  "defaultValue": [null, null],
+                  "ui": "ZOOMLEVEL",
+                  "min": 0,
+                  "max": 25,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "tile_opacity",
+                  "title": "Opacity",
+                  "description": "Change the opacity of the selected tile map. Min: 0 Max: 1",
+                  "placeholder": "please enter tile opacity",
+                  "translatedTitle": "Opacity",
+                  "translatedDescription": "Change the opacity of the selected tile map. Min: 0 Max: 1",
+                  "translatedPlaceholder": "please enter tile opacity",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "NUMBER",
+                  "defaultValue": 1,
+                  "ui": "SLIDER",
+                  "min": 0,
+                  "max": 1,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "terrain",
+              "title": "Terrain",
+              "collection": "terrain",
+              "translatedTitle": "Terrain",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "terrain",
+                  "title": "Enable",
+                  "description": "Show elevation when close to the surface.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "Show elevation when close to the surface.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "terrainType",
+                  "title": "Terrain type",
+                  "description": "Specify terrain type.",
+                  "placeholder": "",
+                  "translatedTitle": "Terrain type",
+                  "translatedDescription": "Specify terrain type.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": "cesium",
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": [
+                    {
+                      "key": "cesium",
+                      "icon": null,
+                      "title": "Cesium World Terrain",
+                      "translatedTitle": "Cesium World Terrain",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "arcgis",
+                      "icon": null,
+                      "title": "ArcGIS Terrain",
+                      "translatedTitle": "ArcGIS Terrain",
+                      "__typename": "PropertySchemaFieldChoice"
+                    },
+                    {
+                      "key": "cesiumion",
+                      "icon": null,
+                      "title": "Cesium Ion",
+                      "translatedTitle": "Cesium Ion",
+                      "__typename": "PropertySchemaFieldChoice"
+                    }
+                  ],
+                  "isAvailableIf": {
+                    "fieldId": "terrain",
+                    "type": "BOOL",
+                    "value": true,
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "terrainCesiumIonAsset",
+                  "title": "Terrain Cesium Ion asset ID",
+                  "description": "Specify the ID of a terrain asset registered on Cesium Ion.",
+                  "placeholder": "",
+                  "translatedTitle": "Terrain Cesium Ion asset ID",
+                  "translatedDescription": "Specify the ID of a terrain asset registered on Cesium Ion.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "terrainType",
+                    "type": "STRING",
+                    "value": "cesiumion",
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "terrainCesiumIonAccessToken",
+                  "title": "Terrain Cesium Ion access token",
+                  "description": "Specify a Cesium Ion access token if you want to override the access token in the scene-wide settings for this tile.",
+                  "placeholder": "",
+                  "translatedTitle": "Terrain Cesium Ion access token",
+                  "translatedDescription": "Specify a Cesium Ion access token if you want to override the access token in the scene-wide settings for this tile.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "terrainType",
+                    "type": "STRING",
+                    "value": "cesiumion",
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "terrainCesiumIonUrl",
+                  "title": "Terrain URL",
+                  "description": "Specify the URL of Cesium's terrain server if it is delivered on-premises rather than Cesum Ion. This takes precedence over the asset ID setting.",
+                  "placeholder": "",
+                  "translatedTitle": "Terrain URL",
+                  "translatedDescription": "Specify the URL of Cesium's terrain server if it is delivered on-premises rather than Cesum Ion. This takes precedence over the asset ID setting.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "STRING",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "terrainType",
+                    "type": "STRING",
+                    "value": "cesiumion",
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "terrainExaggeration",
+                  "title": "Terrain exaggeration",
+                  "description": "A scalar used to exaggerate the terrain. Defaults to 1.0 (no exaggeration). A value of 2.0 scales the terrain by 2x. A value of 0.0 makes the terrain completely flat.",
+                  "placeholder": "",
+                  "translatedTitle": "Terrain exaggeration",
+                  "translatedDescription": "A scalar used to exaggerate the terrain. Defaults to 1.0 (no exaggeration). A value of 2.0 scales the terrain by 2x. A value of 0.0 makes the terrain completely flat.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": "x",
+                  "type": "NUMBER",
+                  "defaultValue": 1,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "terrain",
+                    "type": "BOOL",
+                    "value": true,
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "terrainExaggerationRelativeHeight",
+                  "title": "Terrain exaggeration relative height",
+                  "description": "The height from which terrain is exaggerated. Defaults to 0.0. Terrain that is above this height will scale upwards and terrain that is below this height will scale downwards.",
+                  "placeholder": "",
+                  "translatedTitle": "Terrain exaggeration relative height",
+                  "translatedDescription": "The height from which terrain is exaggerated. Defaults to 0.0. Terrain that is above this height will scale upwards and terrain that is below this height will scale downwards.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": "m",
+                  "type": "NUMBER",
+                  "defaultValue": 0,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "terrain",
+                    "type": "BOOL",
+                    "value": true,
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "globeLighting",
+              "title": "Globe Lighting",
+              "collection": "globe",
+              "translatedTitle": "Globe Lighting",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "globeLighting",
+                  "title": "Enable",
+                  "description": "This property will support the globe receive an Entity's Lighting.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "This property will support the globe receive an Entity's Lighting.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": false,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "globeShadow",
+              "title": "Globe Shadow",
+              "collection": "globe",
+              "translatedTitle": "Globe Shadow",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "globeShadow",
+                  "title": "Enable",
+                  "description": "This property will support the globe receive an Entity's shadows.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "This property will support the globe receive an Entity's shadows.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": false,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "globeAtmosphere",
+              "title": "Globe Atmosphere",
+              "collection": "globe",
+              "translatedTitle": "Globe Atmosphere",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "globeAtmosphere",
+                  "title": "Enable",
+                  "description": "This setting handles the so-called atmosphere effect of Earth.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "This setting handles the so-called atmosphere effect of Earth.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": true,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "globeAtmosphereIntensity",
+                  "title": "Light Intensity",
+                  "description": "Change the light intensity of the selected tile map. Min: 0 Max: 30",
+                  "placeholder": "",
+                  "translatedTitle": "Light Intensity",
+                  "translatedDescription": "Change the light intensity of the selected tile map. Min: 0 Max: 30",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "NUMBER",
+                  "defaultValue": 10,
+                  "ui": "SLIDER",
+                  "min": 0,
+                  "max": 30,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "globeAtmosphere",
+                    "type": "BOOL",
+                    "value": true,
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "globeDepthTestAgainstTerrain",
+              "title": "Hide objects under ground",
+              "collection": "globe",
+              "translatedTitle": "Hide objects under ground",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "depthTestAgainstTerrain",
+                  "title": "Enable",
+                  "description": "",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "skyBox",
+              "title": "Sky Box",
+              "collection": "sky",
+              "translatedTitle": "Sky Box",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "skyBox",
+                  "title": "Enable",
+                  "description": "Description needed.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "Description needed.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": true,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "sun",
+              "title": "Sun",
+              "collection": "sky",
+              "translatedTitle": "Sun",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "sun",
+                  "title": "Enable",
+                  "description": "Description needed.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "Description needed.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": true,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "moon",
+              "title": "Moon",
+              "collection": "sky",
+              "translatedTitle": "Moon",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "moon",
+                  "title": "Enable",
+                  "description": "Description needed.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "Description needed.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": true,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "skyAtmosphere",
+              "title": "Sky Atmosphere",
+              "collection": "sky",
+              "translatedTitle": "Sky Atmosphere",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "skyAtmosphere",
+                  "title": "Enable",
+                  "description": "Description neeeded.",
+                  "placeholder": "",
+                  "translatedTitle": "Enable",
+                  "translatedDescription": "Description neeeded.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": true,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "skyAtmosphereIntensity",
+                  "title": "Light Intensity",
+                  "description": "Change the light intensity of the selected tile map. Min: 0 Max: 200",
+                  "placeholder": "",
+                  "translatedTitle": "Light Intensity",
+                  "translatedDescription": "Change the light intensity of the selected tile map. Min: 0 Max: 200",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "NUMBER",
+                  "defaultValue": 50,
+                  "ui": "SLIDER",
+                  "min": 0,
+                  "max": 200,
+                  "choices": null,
+                  "isAvailableIf": {
+                    "fieldId": "skyAtmosphere",
+                    "type": "BOOL",
+                    "value": true,
+                    "__typename": "PropertyCondition"
+                  },
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            },
+            {
+              "schemaGroupId": "camera",
+              "title": "Camera",
+              "collection": "camera",
+              "translatedTitle": "Camera",
+              "isList": false,
+              "representativeFieldId": null,
+              "isAvailableIf": null,
+              "fields": [
+                {
+                  "fieldId": "camera",
+                  "title": "Initial camera position",
+                  "description": "You can set an initial camera position to ensure that the same area is viewed each time the project is opened.",
+                  "placeholder": "",
+                  "translatedTitle": "Initial camera position",
+                  "translatedDescription": "You can set an initial camera position to ensure that the same area is viewed each time the project is opened.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "CAMERA",
+                  "defaultValue": null,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "allowEnterGround",
+                  "title": "Enter the ground",
+                  "description": "When this property is set to true, the camera can move through the terrain, allowing it to enter underground areas.",
+                  "placeholder": "",
+                  "translatedTitle": "Enter the ground",
+                  "translatedDescription": "When this property is set to true, the camera can move through the terrain, allowing it to enter underground areas.",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "BOOL",
+                  "defaultValue": false,
+                  "ui": null,
+                  "min": null,
+                  "max": null,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                },
+                {
+                  "fieldId": "fov",
+                  "title": "FOV",
+                  "description": "The field of view (FOV) of the camera, in radians. It defines the vertical angular extent of the scene visible to the camera. And the range supported in our system is from 0.1 to 2.0",
+                  "placeholder": "",
+                  "translatedTitle": "FOV",
+                  "translatedDescription": "The field of view (FOV) of the camera, in radians. It defines the vertical angular extent of the scene visible to the camera. And the range supported in our system is from 0.1 to 2.0",
+                  "translatedPlaceholder": "",
+                  "prefix": null,
+                  "suffix": null,
+                  "type": "NUMBER",
+                  "defaultValue": 1,
+                  "ui": "SLIDER",
+                  "min": 0.1,
+                  "max": 2,
+                  "choices": null,
+                  "isAvailableIf": null,
+                  "__typename": "PropertySchemaField"
+                }
+              ],
+              "__typename": "PropertySchemaGroup"
+            }
+          ],
+          "__typename": "PropertySchema"
+        }
+      },
+      "plugins": [
+        {
+          "property": null,
+          "plugin": {
+            "id": "reearth",
+            "name": "Re:Earth Official Plugin",
+            "extensions": [
+              {
+                "extensionId": "cesium-beta",
+                "description": "Description",
+                "name": "Cesium Beta",
+                "translatedDescription": "Description",
+                "translatedName": "Cesium Beta",
+                "icon": "",
+                "singleOnly": false,
+                "type": "VISUALIZER",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "cesium",
+                "description": "Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.",
+                "name": "Cesium",
+                "translatedDescription": "Select here to find scene settings in the right panel. This includes setting map tiles, atmospheric conditions, real lighting, and more.",
+                "translatedName": "Cesium",
+                "icon": "",
+                "singleOnly": false,
+                "type": "VISUALIZER",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "infobox",
+                "description": "Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.",
+                "name": "Infobox",
+                "translatedDescription": "Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.",
+                "translatedName": "Infobox",
+                "icon": "",
+                "singleOnly": false,
+                "type": "INFOBOX",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "marker",
+                "description": "A standard map marker.",
+                "name": "Marker",
+                "translatedDescription": "A standard map marker.",
+                "translatedName": "Marker",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "polyline",
+                "description": "Polyline primitive",
+                "name": "Polyline",
+                "translatedDescription": "Polyline primitive",
+                "translatedName": "Polyline",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "polygon",
+                "description": "Polygon primitive",
+                "name": "Polygon",
+                "translatedDescription": "Polygon primitive",
+                "translatedName": "Polygon",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "rect",
+                "description": "Rectangle primitive",
+                "name": "Rectangle",
+                "translatedDescription": "Rectangle primitive",
+                "translatedName": "Rectangle",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "photooverlay",
+                "description": "An Icon marker that allows you to set a photo that will appear after reaching its location.",
+                "name": "Photo overlay",
+                "translatedDescription": "An Icon marker that allows you to set a photo that will appear after reaching its location.",
+                "translatedName": "Photo overlay",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "ellipsoid",
+                "description": "A 3D ellipsoid",
+                "name": "Sphere",
+                "translatedDescription": "A 3D ellipsoid",
+                "translatedName": "Sphere",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "model",
+                "description": "A 3D model",
+                "name": "3D Model",
+                "translatedDescription": "A 3D model",
+                "translatedName": "3D Model",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "tileset",
+                "description": "3D tiles in \"3D Tiles\" format",
+                "name": "3D Tiles",
+                "translatedDescription": "3D tiles in \"3D Tiles\" format",
+                "translatedName": "3D Tiles",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "resource",
+                "description": "Import your own primitives to be used instead of Re:Earth's built in ones.",
+                "name": "File",
+                "translatedDescription": "Import your own primitives to be used instead of Re:Earth's built in ones.",
+                "translatedName": "File",
+                "icon": "",
+                "singleOnly": false,
+                "type": "PRIMITIVE",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "textblock",
+                "description": "Text block",
+                "name": "Text",
+                "translatedDescription": "Text block",
+                "translatedName": "Text",
+                "icon": "",
+                "singleOnly": false,
+                "type": "BLOCK",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "imageblock",
+                "description": "Image block",
+                "name": "Image",
+                "translatedDescription": "Image block",
+                "translatedName": "Image",
+                "icon": "",
+                "singleOnly": false,
+                "type": "BLOCK",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "videoblock",
+                "description": "Video block",
+                "name": "Video",
+                "translatedDescription": "Video block",
+                "translatedName": "Video",
+                "icon": "",
+                "singleOnly": false,
+                "type": "BLOCK",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "locationblock",
+                "description": "Location block",
+                "name": "Location",
+                "translatedDescription": "Location block",
+                "translatedName": "Location",
+                "icon": "",
+                "singleOnly": false,
+                "type": "BLOCK",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "dlblock",
+                "description": "Table block",
+                "name": "Table",
+                "translatedDescription": "Table block",
+                "translatedName": "Table",
+                "icon": "",
+                "singleOnly": false,
+                "type": "BLOCK",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "htmlblock",
+                "description": "HTML block",
+                "name": "HTML",
+                "translatedDescription": "HTML block",
+                "translatedName": "HTML",
+                "icon": "",
+                "singleOnly": false,
+                "type": "BLOCK",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "menu",
+                "description": "Menu widgets",
+                "name": "Menu (legacy)",
+                "translatedDescription": "Menu widgets",
+                "translatedName": "Menu (legacy)",
+                "icon": "",
+                "singleOnly": true,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": false,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": true,
+                  "defaultLocation": null,
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "button",
+                "description": "Button widget",
+                "name": "Button",
+                "translatedDescription": "Button widget",
+                "translatedName": "Button",
+                "icon": "",
+                "singleOnly": false,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": false,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": false,
+                  "defaultLocation": {
+                    "zone": "OUTER",
+                    "section": "LEFT",
+                    "area": "TOP",
+                    "__typename": "WidgetLocation"
+                  },
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "splashscreen",
+                "description": "A unique start screen that will display on load of your archive(ex. display the archive's title).",
+                "name": "Splash screen",
+                "translatedDescription": "A unique start screen that will display on load of your archive(ex. display the archive's title).",
+                "translatedName": "Splash screen",
+                "icon": "",
+                "singleOnly": true,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": false,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": true,
+                  "defaultLocation": null,
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "storytelling",
+                "description": "SA feature that enables you to create a story. Connect points in a meaningful way so that your information can be consumed and understood easily.",
+                "name": "Storytelling",
+                "translatedDescription": "SA feature that enables you to create a story. Connect points in a meaningful way so that your information can be consumed and understood easily.",
+                "translatedName": "Storytelling",
+                "icon": "",
+                "singleOnly": true,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": true,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": false,
+                  "defaultLocation": {
+                    "zone": "OUTER",
+                    "section": "LEFT",
+                    "area": "BOTTOM",
+                    "__typename": "WidgetLocation"
+                  },
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "cluster",
+                "description": "Defines how layers are clustered together and displayed on earth.",
+                "name": "Cluster",
+                "translatedDescription": "Defines how layers are clustered together and displayed on earth.",
+                "translatedName": "Cluster",
+                "icon": "",
+                "singleOnly": false,
+                "type": "",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "timeline",
+                "description": "A timeline widget that allows for viewing layers and data at specific points in time.",
+                "name": "Timeline",
+                "translatedDescription": "A timeline widget that allows for viewing layers and data at specific points in time.",
+                "translatedName": "Timeline",
+                "icon": "",
+                "singleOnly": true,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": true,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": false,
+                  "defaultLocation": {
+                    "zone": "OUTER",
+                    "section": "CENTER",
+                    "area": "BOTTOM",
+                    "__typename": "WidgetLocation"
+                  },
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "navigator",
+                "description": "A navigator widget that allows for viewing the earth from various angle by operating menu.",
+                "name": "Navigator",
+                "translatedDescription": "A navigator widget that allows for viewing the earth from various angle by operating menu.",
+                "translatedName": "Navigator",
+                "icon": "",
+                "singleOnly": true,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": false,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": false,
+                  "defaultLocation": {
+                    "zone": "OUTER",
+                    "section": "RIGHT",
+                    "area": "TOP",
+                    "__typename": "WidgetLocation"
+                  },
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "dataAttribution",
+                "description": "A data Attribution widget.",
+                "name": "Data Attribution",
+                "translatedDescription": "A data Attribution widget.",
+                "translatedName": "Data Attribution",
+                "icon": "",
+                "singleOnly": true,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": false,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": false,
+                  "defaultLocation": {
+                    "zone": "OUTER",
+                    "section": "LEFT",
+                    "area": "BOTTOM",
+                    "__typename": "WidgetLocation"
+                  },
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "googleMapSearch",
+                "description": "A widget that allows you to search for a location on the map using Google Maps.",
+                "name": "Google Map Search (Experimental)",
+                "translatedDescription": "A widget that allows you to search for a location on the map using Google Maps.",
+                "translatedName": "Google Map Search (Experimental)",
+                "icon": "",
+                "singleOnly": true,
+                "type": "WIDGET",
+                "widgetLayout": {
+                  "extendable": {
+                    "vertically": false,
+                    "horizontally": false,
+                    "__typename": "WidgetExtendable"
+                  },
+                  "extended": false,
+                  "floating": false,
+                  "defaultLocation": {
+                    "zone": "OUTER",
+                    "section": "LEFT",
+                    "area": "TOP",
+                    "__typename": "WidgetLocation"
+                  },
+                  "__typename": "WidgetLayout"
+                },
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "story",
+                "description": "Storytelling story",
+                "name": "Story",
+                "translatedDescription": "Storytelling story",
+                "translatedName": "Story",
+                "icon": "",
+                "singleOnly": false,
+                "type": "Story",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "storyPage",
+                "description": "Storytelling Page",
+                "name": "Page",
+                "translatedDescription": "Storytelling Page",
+                "translatedName": "Page",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryPage",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "textStoryBlock",
+                "description": "Storytelling Text Block",
+                "name": "Text",
+                "translatedDescription": "Storytelling Text Block",
+                "translatedName": "Text",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "mdTextStoryBlock",
+                "description": "Storytelling MD Text Block",
+                "name": "MD Text",
+                "translatedDescription": "Storytelling MD Text Block",
+                "translatedName": "MD Text",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "imageStoryBlock",
+                "description": "Storytelling Image Block",
+                "name": "Image",
+                "translatedDescription": "Storytelling Image Block",
+                "translatedName": "Image",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "videoStoryBlock",
+                "description": "Storytelling Video Block",
+                "name": "Video",
+                "translatedDescription": "Storytelling Video Block",
+                "translatedName": "Video",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "cameraButtonStoryBlock",
+                "description": "Storytelling Camera Button",
+                "name": "Camera Button",
+                "translatedDescription": "Storytelling Camera Button",
+                "translatedName": "Camera Button",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "linkButtonStoryBlock",
+                "description": "Storytelling Link Button",
+                "name": "Link Button",
+                "translatedDescription": "Storytelling Link Button",
+                "translatedName": "Link Button",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "showLayersStoryBlock",
+                "description": "Storytelling Show Layers",
+                "name": "Show Layers Button",
+                "translatedDescription": "Storytelling Show Layers",
+                "translatedName": "Show Layers Button",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "timelineStoryBlock",
+                "description": "Storytelling Timeline Block",
+                "name": "Timeline",
+                "translatedDescription": "Storytelling Timeline Block",
+                "translatedName": "Timeline",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "nextPageStoryBlock",
+                "description": "Down button that will skip to next page.",
+                "name": "Next Page Button",
+                "translatedDescription": "Down button that will skip to next page.",
+                "translatedName": "Next Page Button",
+                "icon": "",
+                "singleOnly": false,
+                "type": "StoryBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "infobox-beta",
+                "description": "Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.",
+                "name": "Infobox Beta",
+                "translatedDescription": "Create an information area that appears when a layer is highlighted. Text, pictures, video, etc can be added to an infobox.",
+                "translatedName": "Infobox Beta",
+                "icon": "",
+                "singleOnly": false,
+                "type": "INFOBOX",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "textInfoboxBetaBlock",
+                "description": "Infobox Text Block",
+                "name": "Text",
+                "translatedDescription": "Infobox Text Block",
+                "translatedName": "Text",
+                "icon": "",
+                "singleOnly": false,
+                "type": "InfoboxBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "imageInfoboxBetaBlock",
+                "description": "Infobox Image Block",
+                "name": "Image",
+                "translatedDescription": "Infobox Image Block",
+                "translatedName": "Image",
+                "icon": "",
+                "singleOnly": false,
+                "type": "InfoboxBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "propertyInfoboxBetaBlock",
+                "description": "Infobox Property List Block",
+                "name": "Property List Block",
+                "translatedDescription": "Infobox Property List Block",
+                "translatedName": "Property List Block",
+                "icon": "",
+                "singleOnly": false,
+                "type": "InfoboxBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "videoInfoboxBetaBlock",
+                "description": "Infobox Video Block",
+                "name": "Video",
+                "translatedDescription": "Infobox Video Block",
+                "translatedName": "Video",
+                "icon": "",
+                "singleOnly": false,
+                "type": "InfoboxBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              },
+              {
+                "extensionId": "markdownInfoboxBetaBlock",
+                "description": "Infobox MD Text Block",
+                "name": "MD Text",
+                "translatedDescription": "Infobox MD Text Block",
+                "translatedName": "MD Text",
+                "icon": "",
+                "singleOnly": false,
+                "type": "InfoboxBlock",
+                "widgetLayout": null,
+                "__typename": "PluginExtension"
+              }
+            ],
+            "__typename": "Plugin"
+          },
+          "__typename": "ScenePlugin"
+        }
+      ],
+      "widgets": [
+        {
+          "id": "01jnhs9dqe00d496xmq64x9yrk",
+          "enabled": true,
+          "extended": false,
+          "pluginId": "reearth",
+          "extensionId": "dataAttribution",
+          "property": {
+            "id": "01jnhs9dqcyt22hs5q7phqqgs9",
+            "items": [],
+            "__typename": "Property",
+            "schema": {
+              "id": "reearth/dataAttribution",
+              "groups": [
+                {
+                  "schemaGroupId": "default",
+                  "title": "Data Attribution",
+                  "collection": null,
+                  "translatedTitle": "Data Attribution",
+                  "isList": true,
+                  "representativeFieldId": "description",
+                  "isAvailableIf": null,
+                  "fields": [
+                    {
+                      "fieldId": "description",
+                      "title": "Credit Description",
+                      "description": "",
+                      "placeholder": "",
+                      "translatedTitle": "Credit Description",
+                      "translatedDescription": "",
+                      "translatedPlaceholder": "",
+                      "prefix": null,
+                      "suffix": null,
+                      "type": "STRING",
+                      "defaultValue": "New Credit",
+                      "ui": null,
+                      "min": null,
+                      "max": null,
+                      "choices": null,
+                      "isAvailableIf": null,
+                      "__typename": "PropertySchemaField"
+                    },
+                    {
+                      "fieldId": "logo",
+                      "title": "Logo",
+                      "description": "",
+                      "placeholder": "",
+                      "translatedTitle": "Logo",
+                      "translatedDescription": "",
+                      "translatedPlaceholder": "",
+                      "prefix": null,
+                      "suffix": null,
+                      "type": "URL",
+                      "defaultValue": null,
+                      "ui": "IMAGE",
+                      "min": null,
+                      "max": null,
+                      "choices": null,
+                      "isAvailableIf": null,
+                      "__typename": "PropertySchemaField"
+                    },
+                    {
+                      "fieldId": "creditUrl",
+                      "title": "Credit Url",
+                      "description": "",
+                      "placeholder": "",
+                      "translatedTitle": "Credit Url",
+                      "translatedDescription": "",
+                      "translatedPlaceholder": "",
+                      "prefix": null,
+                      "suffix": null,
+                      "type": "URL",
+                      "defaultValue": null,
+                      "ui": null,
+                      "min": null,
+                      "max": null,
+                      "choices": null,
+                      "isAvailableIf": null,
+                      "__typename": "PropertySchemaField"
+                    }
+                  ],
+                  "__typename": "PropertySchemaGroup"
+                }
+              ],
+              "__typename": "PropertySchema"
+            }
+          },
+          "__typename": "SceneWidget"
+        }
+      ],
+      "widgetAlignSystem": {
+        "outer": {
+          "left": {
+            "top": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "middle": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "bottom": {
+              "widgetIds": ["01jnhs9dqe00d496xmq64x9yrk"],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "__typename": "WidgetSection"
+          },
+          "center": {
+            "top": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "middle": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "bottom": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "__typename": "WidgetSection"
+          },
+          "right": {
+            "top": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "middle": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "bottom": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "__typename": "WidgetSection"
+          },
+          "__typename": "WidgetZone"
+        },
+        "inner": {
+          "left": {
+            "top": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "middle": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "bottom": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "__typename": "WidgetSection"
+          },
+          "center": {
+            "top": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "middle": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "bottom": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "__typename": "WidgetSection"
+          },
+          "right": {
+            "top": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "middle": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "bottom": {
+              "widgetIds": [],
+              "align": "START",
+              "padding": null,
+              "gap": null,
+              "centered": false,
+              "background": null,
+              "__typename": "WidgetArea"
+            },
+            "__typename": "WidgetSection"
+          },
+          "__typename": "WidgetZone"
+        },
+        "__typename": "WidgetAlignSystem"
+      },
+      "stories": [
+        {
+          "id": "01jnhs9drccsa5cffpd6ec8j9p",
+          "title": "Default",
+          "panelPosition": "LEFT",
+          "bgColor": "",
+          "isBasicAuthActive": false,
+          "basicAuthUsername": "",
+          "basicAuthPassword": "",
+          "alias": "",
+          "publicTitle": "",
+          "publicDescription": "",
+          "publishmentStatus": "",
+          "publicImage": "",
+          "publicNoIndex": false,
+          "enableGa": false,
+          "trackingId": "",
+          "pages": [
+            {
+              "id": "01jnhs9drbsneg5m08p7yqg3hr",
+              "title": "Untitled",
+              "swipeable": false,
+              "propertyId": "01jnhs9dranm9ja82b0683jf0e",
+              "property": {
+                "id": "01jnhs9dranm9ja82b0683jf0e",
+                "items": [],
+                "__typename": "Property",
+                "schema": {
+                  "id": "reearth/storyPage",
+                  "groups": [
+                    {
+                      "schemaGroupId": "panel",
+                      "title": "Panel Setting",
+                      "collection": null,
+                      "translatedTitle": "Panel Setting",
+                      "isList": false,
+                      "representativeFieldId": null,
+                      "isAvailableIf": null,
+                      "fields": [
+                        {
+                          "fieldId": "padding",
+                          "title": "Padding",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Padding",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": null,
+                          "type": "SPACING",
+                          "defaultValue": {
+                            "top": 20,
+                            "bottom": 20,
+                            "left": 20,
+                            "right": 20
+                          },
+                          "ui": "PADDING",
+                          "min": 0,
+                          "max": 100,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        },
+                        {
+                          "fieldId": "gap",
+                          "title": "Gap",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Gap",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": "px",
+                          "type": "NUMBER",
+                          "defaultValue": 20,
+                          "ui": null,
+                          "min": null,
+                          "max": null,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        }
+                      ],
+                      "__typename": "PropertySchemaGroup"
+                    },
+                    {
+                      "schemaGroupId": "title",
+                      "title": "Title Setting",
+                      "collection": null,
+                      "translatedTitle": "Title Setting",
+                      "isList": false,
+                      "representativeFieldId": null,
+                      "isAvailableIf": null,
+                      "fields": [
+                        {
+                          "fieldId": "title",
+                          "title": "Title",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Title",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": null,
+                          "type": "STRING",
+                          "defaultValue": null,
+                          "ui": null,
+                          "min": null,
+                          "max": null,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        },
+                        {
+                          "fieldId": "color",
+                          "title": "Color",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Color",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": null,
+                          "type": "STRING",
+                          "defaultValue": null,
+                          "ui": "COLOR",
+                          "min": null,
+                          "max": null,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        },
+                        {
+                          "fieldId": "padding",
+                          "title": "Padding",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Padding",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": null,
+                          "type": "SPACING",
+                          "defaultValue": null,
+                          "ui": "PADDING",
+                          "min": 0,
+                          "max": 100,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        }
+                      ],
+                      "__typename": "PropertySchemaGroup"
+                    },
+                    {
+                      "schemaGroupId": "cameraAnimation",
+                      "title": "Camera Animation",
+                      "collection": null,
+                      "translatedTitle": "Camera Animation",
+                      "isList": false,
+                      "representativeFieldId": null,
+                      "isAvailableIf": null,
+                      "fields": [
+                        {
+                          "fieldId": "cameraPosition",
+                          "title": "Camera position",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Camera position",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": null,
+                          "type": "CAMERA",
+                          "defaultValue": null,
+                          "ui": null,
+                          "min": null,
+                          "max": null,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        },
+                        {
+                          "fieldId": "cameraDuration",
+                          "title": "Duration",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Duration",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": "s",
+                          "type": "NUMBER",
+                          "defaultValue": 2,
+                          "ui": null,
+                          "min": 0,
+                          "max": null,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        }
+                      ],
+                      "__typename": "PropertySchemaGroup"
+                    },
+                    {
+                      "schemaGroupId": "timePoint",
+                      "title": "Time Point Setting",
+                      "collection": null,
+                      "translatedTitle": "Time Point Setting",
+                      "isList": false,
+                      "representativeFieldId": null,
+                      "isAvailableIf": null,
+                      "fields": [
+                        {
+                          "fieldId": "timePoint",
+                          "title": "Time",
+                          "description": "",
+                          "placeholder": "",
+                          "translatedTitle": "Time",
+                          "translatedDescription": "",
+                          "translatedPlaceholder": "",
+                          "prefix": null,
+                          "suffix": null,
+                          "type": "STRING",
+                          "defaultValue": null,
+                          "ui": "DATETIME",
+                          "min": null,
+                          "max": null,
+                          "choices": null,
+                          "isAvailableIf": null,
+                          "__typename": "PropertySchemaField"
+                        }
+                      ],
+                      "__typename": "PropertySchemaGroup"
+                    }
+                  ],
+                  "__typename": "PropertySchema"
+                }
+              },
+              "layersIds": [],
+              "blocks": [],
+              "__typename": "StoryPage"
+            }
+          ],
+          "__typename": "Story"
+        }
+      ],
+      "newLayers": [
+        {
+          "id": "01jnhs9dqjz55paebxq7dm5sr7",
+          "index": 0,
+          "layerType": "simple",
+          "sceneId": "01jnhs9dpendwyj74yvj5xzzq4",
+          "config": {
+            "data": {
+              "type": "geojson"
+            },
+            "layerStyleId": "01jnhrvjr1xf71hpcf2e1jnq3e",
+            "properties": {
+              "name": "test2"
+            }
+          },
+          "title": "test2",
+          "visible": true,
+          "infobox": null,
+          "isSketch": true,
+          "sketch": {
+            "customPropertySchema": {},
+            "featureCollection": {
+              "type": "FeatureCollection",
+              "features": [],
+              "__typename": "FeatureCollection"
+            },
+            "__typename": "SketchInfo"
+          },
+          "__typename": "NLSLayerSimple"
+        }
+      ],
+      "styles": [
+        {
+          "id": "01jnhs9dqy4e6qcbvtqdzacn08",
+          "name": "Professional.01",
+          "value": {
+            "marker": {
+              "heightReference": "relative",
+              "hideIndicator": true,
+              "pointColor": "#E9373D",
+              "pointOutlineColor": "white",
+              "pointOutlineWidth": 1,
+              "pointSize": 12,
+              "selectedFeatureColor": "#F1AF02",
+              "style": "point"
+            },
+            "polygon": {
+              "extrudedHeight": {
+                "expression": "${extrudedHeight}"
+              },
+              "fillColor": {
+                "expression": "color('#E9373D',0.6)"
+              },
+              "heightReference": "clamp",
+              "hideIndicator": true,
+              "selectedFeatureColor": {
+                "expression": "color('#F1AF02',0.6)"
+              }
+            },
+            "polyline": {
+              "clampToGround": true,
+              "hideIndicator": true,
+              "selectedFeatureColor": "#F1AF02",
+              "strokeColor": "#E9373D",
+              "strokeWidth": 2
+            }
+          },
+          "__typename": "Style"
+        }
+      ],
+      "__typename": "Scene"
+    }
+  }
+}

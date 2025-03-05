@@ -50,6 +50,11 @@ func ToPropertyValue(v *property.Value) *interface{} {
 			StartTime:   v2.StartTime,
 			EndTime:     v2.EndTime,
 		}
+	case property.PhotoOverlay:
+		res = PhotoOverlay{
+			Enabled:        v2.Enabled,
+			CameraDuration: v2.CameraDuration,
+		}
 	default:
 		res = valueInterfaceToGqlValue(v2)
 	}
@@ -113,6 +118,11 @@ func FromPropertyValueAndType(v interface{}, t ValueType) *property.Value {
 			CurrentTime: v2.CurrentTime,
 			StartTime:   v2.StartTime,
 			EndTime:     v2.EndTime,
+		}
+	case *PhotoOverlay:
+		v = property.PhotoOverlay{
+			Enabled:        v2.Enabled,
+			CameraDuration: v2.CameraDuration,
 		}
 	default:
 		v = gqlValueToValueInterface(v2)
