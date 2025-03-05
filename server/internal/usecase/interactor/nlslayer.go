@@ -1148,6 +1148,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 
 		// SketchInfo --------
 		if nlsLayerJSON.SketchInfo != nil {
+
 			features := make([]nlslayer.Feature, 0)
 			for _, featureJSON := range nlsLayerJSON.SketchInfo.FeatureCollection.Features {
 				var geometry nlslayer.Geometry
@@ -1167,6 +1168,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 				if err != nil {
 					return nil, nil, err
 				}
+
 				feature.UpdateProperties(featureJSON.Properties)
 				features = append(features, *feature)
 			}
