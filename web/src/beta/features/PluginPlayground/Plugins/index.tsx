@@ -1,4 +1,4 @@
-import { Collapse, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/styled";
@@ -127,26 +127,14 @@ const Plugins: FC<Props> = ({
   return (
     <Wrapper>
       <IconList>
-        <IconButton
-          appearance="simple"
+        <Button
           icon="addFile"
+          iconButton
           onClick={() => setIsAddingNewFile(true)}
         />
-        <IconButton
-          appearance="simple"
-          icon="import"
-          onClick={handlePluginImport}
-        />
-        <IconButton
-          appearance="simple"
-          icon="export"
-          onClick={handlePluginDownload}
-        />
-        <IconButton
-          appearance="simple"
-          icon="paperPlaneTilt"
-          onClick={handlePluginShare}
-        />
+        <Button icon="import" iconButton onClick={handlePluginImport} />
+        <Button icon="export" iconButton onClick={handlePluginDownload} />
+        <Button icon="paperPlaneTilt" iconButton onClick={handlePluginShare} />
       </IconList>
       <PluginListWrapper>
         <PluginList>
