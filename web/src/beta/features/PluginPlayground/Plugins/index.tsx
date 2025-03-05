@@ -126,7 +126,7 @@ const Plugins: FC<Props> = ({
 
   return (
     <Wrapper>
-      <IconList>
+      <Actions>
         <Button
           icon="addFile"
           iconButton
@@ -155,8 +155,8 @@ const Plugins: FC<Props> = ({
           placement="top"
           onClick={handlePluginShare}
         />
-      </IconList>
-      <PluginListWrapper>
+      </Actions>
+      <PluginBrowser>
         <PluginList>
           {sharedPlugin && (
             <div>
@@ -212,8 +212,8 @@ const Plugins: FC<Props> = ({
             </div>
           ))}
         </PluginList>
-        <FileListWrapper>
-          <FileList>
+        <FileList>
+          <FileSubList>
             {selectedPlugin.files.map((file) => (
               <FileListItem
                 key={file.id}
@@ -235,37 +235,56 @@ const Plugins: FC<Props> = ({
                 isEditing
               />
             )}
-          </FileList>
-        </FileListWrapper>
-      </PluginListWrapper>
+          </FileSubList>
+        </FileList>
+      </PluginBrowser>
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")(() => ({
-  height: "100%",
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   flexGrow: 1,
-  overflow: "hidden"
+  gap: theme.spacing.small,
+  minHeight: 0
+}));
+
+const Actions = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small,
+  flexShrink: 0
+}));
+
+const PluginBrowser = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexGrow: 1,
+  marginLeft: -theme.spacing.smallest,
+  minHeight: 0
 }));
 
 const PluginList = styled("div")(({ theme }) => ({
   width: "50%",
-  paddingRight: theme.spacing.small,
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest,
+  paddingRight: theme.spacing.small,
   overflowY: "auto",
   overflowX: "hidden",
-  maxHeight: "100%"
+  minHeight: 0
 }));
 
-const PluginListWrapper = styled("div")(({ theme }) => ({
+const FileList = styled("div")(({ theme }) => ({
+  width: "50%",
   display: "flex",
-  height: "100%",
-  marginLeft: -theme.spacing.smallest,
-  flexGrow: 1
+  flexDirection: "column",
+  gap: theme.spacing.smallest,
+  paddingLeft: theme.spacing.small,
+  borderLeft: `1px solid ${theme.outline.weaker}`,
+  overflowY: "auto",
+  overflowX: "hidden",
+  minHeight: 0
 }));
 
 const PluginSubList = styled("div")(({ theme }) => ({
@@ -276,35 +295,15 @@ const PluginSubList = styled("div")(({ theme }) => ({
   paddingTop: theme.spacing.smallest
 }));
 
-const EmptyTip = styled("div")(({ theme }) => ({
-  padding: theme.spacing.smallest,
-  paddingLeft: theme.spacing.small
-}));
-
-const FileListWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  paddingLeft: theme.spacing.small,
-  width: "50%",
-  borderLeft: `1px solid ${theme.outline.weaker}`,
-  gap: theme.spacing.small,
-  overflow: "hidden",
-  minHeight: 0,
-  maxHeight: "100%"
-}));
-
-const FileList = styled("div")(({ theme }) => ({
+const FileSubList = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest
 }));
 
-const IconList = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.small,
-  marginBottom: theme.spacing.small,
-  flexShrink: 0
+const EmptyTip = styled("div")(({ theme }) => ({
+  padding: theme.spacing.smallest,
+  paddingLeft: theme.spacing.small
 }));
 
 export default Plugins;
