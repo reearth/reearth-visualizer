@@ -130,11 +130,31 @@ const Plugins: FC<Props> = ({
         <Button
           icon="addFile"
           iconButton
+          tooltipText={t("Add File")}
+          placement="top"
           onClick={() => setIsAddingNewFile(true)}
         />
-        <Button icon="import" iconButton onClick={handlePluginImport} />
-        <Button icon="export" iconButton onClick={handlePluginDownload} />
-        <Button icon="paperPlaneTilt" iconButton onClick={handlePluginShare} />
+        <Button
+          icon="import"
+          iconButton
+          tooltipText={t("Import Plugin")}
+          placement="top"
+          onClick={handlePluginImport}
+        />
+        <Button
+          icon="export"
+          iconButton
+          tooltipText={t("Export Plugin")}
+          placement="top"
+          onClick={handlePluginDownload}
+        />
+        <Button
+          icon="paperPlaneTilt"
+          iconButton
+          tooltipText={t("Share Plugin")}
+          placement="top"
+          onClick={handlePluginShare}
+        />
       </IconList>
       <PluginListWrapper>
         <PluginList>
