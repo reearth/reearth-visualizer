@@ -2,7 +2,8 @@ import type {
   MapRef,
   ComputedFeature,
   ComputedLayer,
-  LayerSimple
+  LayerSimple,
+  Geometry
 } from "@reearth/core";
 import { useLayersFetcher } from "@reearth/services/api";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
@@ -69,6 +70,12 @@ export type SelectedLayer = {
   layer?: NLSLayer;
   computedLayer?: ComputedLayer;
   computedFeature?: ComputedFeature;
+};
+
+export type SelectedFeature = {
+  id: string;
+  geometry: Geometry | undefined;
+  properties: ComputedFeature["properties"];
 };
 
 export default function ({
@@ -198,6 +205,26 @@ export default function ({
     },
     [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer]
   );
+
+   const selectedFeature: SelectedFeature | undefined = useMemo(() => {
+     if (!selectedLayer?.computedFeature?.id) return;
+     const { id, geometry, properties } =
+       selectedLayer.layer?.config?.data?.type === "3dtiles" ||
+       selectedLayer.layer?.config?.data?.type === "osm-buildings" ||
+       selectedLayer.layer?.config?.data?.type === "google-photorealistic" ||
+       selectedLayer.layer?.config?.data?.type === "mvt"
+         ? selectedLayer.computedFeature
+         : (selectedLayer.computedLayer?.features?.find(
+             (f) => f.id === selectedLayer.computedFeature?.id
+           ) ?? {});
+
+     if (!id) return;
+     return {
+       id,
+       geometry,
+       properties
+     };
+   }, [selectedLayer]);
 
   const handleLayerAdd = useCallback(
     async (inp: LayerAddProps) => {
@@ -330,6 +357,7 @@ export default function ({
   return {
     nlsLayers,
     selectedLayer,
+    selectedFeature,
     ignoreCoreLayerUnselect,
     layerId,
     handleLayerSelect,
