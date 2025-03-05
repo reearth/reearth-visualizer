@@ -16,7 +16,8 @@ import {
   PublicBasicAuthSettingsType,
   PublicSettingsType,
   PublicAliasSettingsType,
-  PublicGASettingsType
+  PublicGASettingsType,
+  PublicStorySettingsType
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
@@ -130,8 +131,9 @@ export default ({ projectId }: Props) => {
 
   const handleUpdateProjectAlias = useCallback(
     async (settings: PublicAliasSettingsType) => {
-      if (!projectId) return;
-      await useUpdateProjectAlias({ projectId, ...settings });
+      if (!projectId || settings.alias === undefined) return;
+      const alias = settings.alias;
+      await useUpdateProjectAlias({ projectId, alias });
     },
     [projectId, useUpdateProjectAlias]
   );
@@ -152,30 +154,7 @@ export default ({ projectId }: Props) => {
 
   const { useUpdateStory } = useStorytellingAPI();
   const handleUpdateStory = useCallback(
-    async (settings: PublicSettingsType & StorySettingsType) => {
-      if (!scene?.id || !currentStory?.id) return;
-      await useUpdateStory({
-        storyId: currentStory.id,
-        sceneId: scene.id,
-        ...settings
-      });
-    },
-    [useUpdateStory, currentStory?.id, scene?.id]
-  );
-
-  const handleUpdateStoryBasicAuth = useCallback(
-    async (settings: PublicBasicAuthSettingsType) => {
-      if (!scene?.id || !currentStory?.id) return;
-      await useUpdateStory({
-        storyId: currentStory.id,
-        sceneId: scene.id,
-        ...settings
-      });
-    },
-    [useUpdateStory, currentStory?.id, scene?.id]
-  );
-  const handleUpdateStoryAlias = useCallback(
-    async (settings: PublicAliasSettingsType) => {
+    async (settings: PublicStorySettingsType | StorySettingsType) => {
       if (!scene?.id || !currentStory?.id) return;
       await useUpdateStory({
         storyId: currentStory.id,
@@ -218,8 +197,6 @@ export default ({ projectId }: Props) => {
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
-    handleUpdateStory,
-    handleUpdateStoryBasicAuth,
-    handleUpdateStoryAlias
+    handleUpdateStory
   };
 };

@@ -1,6 +1,6 @@
 import { useWorkspaceFetcher, useProjectFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
-import { useWorkspace } from "@reearth/services/state";
+import {  useProjectId, useWorkspace } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 import { useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -24,6 +24,13 @@ export default ({
   const { workspace } = useWorkspaceQuery(workspaceId);
 
   const { project } = useProjectQuery(projectId);
+  const [, setCurrentProjectId] = useProjectId();
+
+  useEffect(() => {
+    if (project) {
+      setCurrentProjectId(project.id);
+    }
+  }, [project, setCurrentProjectId]);
 
   useEffect(() => {
     if (

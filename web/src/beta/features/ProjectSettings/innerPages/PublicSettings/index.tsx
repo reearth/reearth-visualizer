@@ -31,13 +31,18 @@ export type PublicBasicAuthSettingsType = {
 };
 
 export type PublicAliasSettingsType = {
-  alias: string;
+  alias?: string;
 };
 
 export type PublicGASettingsType = {
   enableGa?: boolean;
   trackingId?: string;
 };
+
+export type PublicStorySettingsType = PublicSettingsType &
+  PublicBasicAuthSettingsType &
+  PublicAliasSettingsType &
+  PublicGASettingsType;
 
 export type SettingsProject = {
   id: string;
@@ -59,9 +64,7 @@ type Props = {
   stories: Story[];
   currentStory?: Story;
   subId?: string;
-  onUpdateStory: (settings: PublicSettingsType) => void;
-  onUpdateStoryBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
-  onUpdateStoryAlias: (settings: PublicAliasSettingsType) => void;
+  onUpdateStory: (settings: PublicStorySettingsType) => void;
   onUpdateProject: (settings: PublicSettingsType) => void;
   onUpdateProjectBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateProjectAlias: (settings: PublicAliasSettingsType) => void;
@@ -74,8 +77,6 @@ const PublicSettings: React.FC<Props> = ({
   currentStory,
   subId,
   onUpdateStory,
-  onUpdateStoryBasicAuth,
-  onUpdateStoryAlias,
   onUpdateProject,
   onUpdateProjectBasicAuth,
   onUpdateProjectAlias,
@@ -134,8 +135,9 @@ const PublicSettings: React.FC<Props> = ({
             key={currentStory.id}
             settingsItem={currentStory}
             onUpdate={onUpdateStory}
-            onUpdateBasicAuth={onUpdateStoryBasicAuth}
-            onUpdateAlias={onUpdateStoryAlias}
+            onUpdateBasicAuth={onUpdateStory}
+            onUpdateAlias={onUpdateStory}
+            onUpdateGA={onUpdateStory}
           />
         ) : (
           <PublicSettingsDetail

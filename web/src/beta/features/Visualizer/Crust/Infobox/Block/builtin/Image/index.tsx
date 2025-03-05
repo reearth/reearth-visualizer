@@ -6,9 +6,11 @@ import { FC, useMemo } from "react";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
+import useSketchCustomPropertyNames from "../useSketchCustomPropertyNames";
 
 const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({
   block,
+  layer,
   isSelected,
   ...props
 }) => {
@@ -19,6 +21,9 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({
 
   const evaluatedSrc = useExpressionEval(src);
 
+  const sketchCustomPropertyNames: string[] | undefined =
+    useSketchCustomPropertyNames(layer);
+
   return (
     <BlockWrapper
       name={block?.name}
@@ -26,6 +31,7 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
+      sketchCustomProperties={sketchCustomPropertyNames}
       {...props}
     >
       {evaluatedSrc !== undefined ? <Image src={evaluatedSrc} /> : null}

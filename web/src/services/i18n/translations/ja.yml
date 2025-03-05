@@ -39,9 +39,31 @@ create: 作成する
 Your workspace Name*: ワークスペース名*
 your workspace name: ワークスペース名
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
-Use Name or Email: 名前またはメールアドレスを使用
-Find Member: メンバーを検索
+Important Changes: 重要な変更点
+Due to functional requirements, we have modified the data structure of the Visualizer. Starting from this version, asset management will no longer be centralized under the workspace but will instead be handled on each project's Asset page. As a result, this page will be removed in the next version. To ensure the security of your project data, please complete the data migration in a timely manner by following the instructions on this page.: >-
+  機能要件により、Visualizer
+  のデータ構造を変更しました。このバージョン以降、アセット管理はワークスペース内で一元管理されるのではなく、各プロジェクトの「アセット」ページで個別に管理されるようになります。その結果、次のバージョンでこのページは削除される予定です。プロジェクトデータの安全性を確保するために、本ページの指示に従って、速やかにデータ移行を完了してください。
+Add a team member: チームメンバーを追加
+Add: 追加
+Search by email address or user name: メールアドレスまたはユーザー名で検索
+Can't find the user: ユーザーが見つかりません
+User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
+Remove: 削除
+'Your are removing member ': '次のメンバーを削除しています '
+' out of this workspace. Are you sure you want to do that?': ' 削除後このワークスペースに存在しない。本当に削除しますか？'
+Search member by name or email: 名前またはEメールでメンバーを検索
+invite user: ユーザーを招待
+User Name: ユーザー名
+Email: メールアドレス
+Role: 役割
 No Member match your search.: 一致するメンバーが見つかりません'
+MAINTAINER: 管理者
+OWNER: 所有者
+READER: 閲覧者
+WRITER: 作成者
+Change Role: 役割を変更
+Update Member Role: メンバーの役割を更新
+Update: 更新する
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -56,6 +78,7 @@ Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
 Rename: 名称変更
 Project Setting: プロジェクト設定
+Project Assets: プロジェクトアセット
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
 Create new project: 新しいプロジェクトを作成
@@ -65,7 +88,6 @@ Text: テキスト
 Description: 説明
 Write down your content: 内容を書き込む
 Cover Image: カバー画像
-Remove: ゴミ箱へ移動
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
 Starred: スター付き
@@ -226,7 +248,6 @@ Extruded polygon: 押し出しポリゴン
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
-Update: 更新する
 Congratulations!: おめでとうございます！
 Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
@@ -271,7 +292,6 @@ Background color: 背景色
 Align System: アラインシステム
 Add Widget: ウィジェットを追加
 Widget Manager: ウィジェット管理
-Project settings: プロジェクト設定
 Plugin: プラグイン
 Dashboard: ダッシュボード
 Editor: エディタ
@@ -409,25 +429,6 @@ aria-label-zoom-out: ズームアウト
 Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
-Add a team member: チームメンバーを追加
-Add: 追加
-Search by email address or user name: メールアドレスまたはユーザー名で検索
-Can't find the user: ユーザーが見つかりません
-User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
-MAINTAINER: 管理者
-OWNER: 所有者
-READER: 閲覧者
-WRITER: 作成者
-New member: 新しいメンバー
-User Name: ユーザー名
-Email: メールアドレス
-Role: 役割
-Change Role: 役割を変更
-Reader: 閲覧者
-Writer: 作成者
-Maintainer: 管理者
-Owner: 所有者
-Update Member Role: メンバーの役割を更新
 Delete workspace: ワークスペースを削除
 I am sure I want to delete this workspace.: このワークスペースを削除することを確認しました
 This action is permanent and cannot be reversed.: この操作は元に戻すことができません。
