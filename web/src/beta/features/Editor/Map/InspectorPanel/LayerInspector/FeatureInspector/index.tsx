@@ -190,7 +190,7 @@ const FeatureData: FC<Props> = ({
 
   return (
     <Wrapper>
-      {!!layer?.isSketch && sketchFeature?.id && (
+      {/* {!!layer?.isSketch && sketchFeature?.id && (
         <SketchFeatureButtons>
           {isEditingGeometry ? (
             <>
@@ -225,7 +225,7 @@ const FeatureData: FC<Props> = ({
             </>
           )}
         </SketchFeatureButtons>
-      )}
+      )} */}
       {!!layer?.isSketch && (
         <Collapse
           title={t("Custom Properties")}

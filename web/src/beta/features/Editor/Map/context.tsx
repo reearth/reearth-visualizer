@@ -16,6 +16,7 @@ import {
   LayerMoveProps,
   LayerNameUpdateProps,
   LayerVisibilityUpdateProps,
+  SelectedFeature,
   SelectedLayer
 } from "../hooks/useLayers";
 import {
@@ -61,6 +62,7 @@ export interface MapPageContextType {
   sceneId?: string;
   selectedLayerStyleId?: string;
   selectedLayer: SelectedLayer | undefined;
+  selectedFeature: SelectedFeature | undefined
   handleLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   handleLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   handleGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
