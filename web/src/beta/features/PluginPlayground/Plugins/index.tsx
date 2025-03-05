@@ -1,4 +1,4 @@
-import { Collapse, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/styled";
@@ -126,29 +126,37 @@ const Plugins: FC<Props> = ({
 
   return (
     <Wrapper>
-      <IconList>
-        <IconButton
-          appearance="simple"
+      <Actions>
+        <Button
           icon="addFile"
+          iconButton
+          tooltipText={t("Add File")}
+          placement="top"
           onClick={() => setIsAddingNewFile(true)}
         />
-        <IconButton
-          appearance="simple"
+        <Button
           icon="import"
+          iconButton
+          tooltipText={t("Import Plugin")}
+          placement="top"
           onClick={handlePluginImport}
         />
-        <IconButton
-          appearance="simple"
+        <Button
           icon="export"
+          iconButton
+          tooltipText={t("Export Plugin")}
+          placement="top"
           onClick={handlePluginDownload}
         />
-        <IconButton
-          appearance="simple"
+        <Button
           icon="paperPlaneTilt"
+          iconButton
+          tooltipText={t("Share Plugin")}
+          placement="top"
           onClick={handlePluginShare}
         />
-      </IconList>
-      <PluginListWrapper>
+      </Actions>
+      <PluginBrowser>
         <PluginList>
           {sharedPlugin && (
             <div>
@@ -204,8 +212,8 @@ const Plugins: FC<Props> = ({
             </div>
           ))}
         </PluginList>
-        <FileListWrapper>
-          <FileList>
+        <FileList>
+          <FileSubList>
             {selectedPlugin.files.map((file) => (
               <FileListItem
                 key={file.id}
@@ -227,32 +235,56 @@ const Plugins: FC<Props> = ({
                 isEditing
               />
             )}
-          </FileList>
-        </FileListWrapper>
-      </PluginListWrapper>
+          </FileSubList>
+        </FileList>
+      </PluginBrowser>
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")(() => ({
-  height: "100%",
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  flexGrow: 1
+  flexGrow: 1,
+  gap: theme.spacing.small,
+  minHeight: 0
+}));
+
+const Actions = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small,
+  flexShrink: 0
+}));
+
+const PluginBrowser = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexGrow: 1,
+  marginLeft: -theme.spacing.smallest,
+  minHeight: 0
 }));
 
 const PluginList = styled("div")(({ theme }) => ({
   width: "50%",
-  paddingRight: theme.spacing.small,
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest
+  gap: theme.spacing.smallest,
+  paddingRight: theme.spacing.small,
+  overflowY: "auto",
+  overflowX: "hidden",
+  minHeight: 0
 }));
 
-const PluginListWrapper = styled("div")(({ theme }) => ({
+const FileList = styled("div")(({ theme }) => ({
+  width: "50%",
   display: "flex",
-  height: "100%",
-  marginLeft: -theme.spacing.smallest
+  flexDirection: "column",
+  gap: theme.spacing.smallest,
+  paddingLeft: theme.spacing.small,
+  borderLeft: `1px solid ${theme.outline.weaker}`,
+  overflowY: "auto",
+  overflowX: "hidden",
+  minHeight: 0
 }));
 
 const PluginSubList = styled("div")(({ theme }) => ({
@@ -263,31 +295,15 @@ const PluginSubList = styled("div")(({ theme }) => ({
   paddingTop: theme.spacing.smallest
 }));
 
-const EmptyTip = styled("div")(({ theme }) => ({
-  padding: theme.spacing.smallest,
-  paddingLeft: theme.spacing.small
-}));
-
-const FileListWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  paddingLeft: theme.spacing.small,
-  width: "50%",
-  borderLeft: `1px solid ${theme.outline.weaker}`,
-  gap: theme.spacing.small
-}));
-
-const FileList = styled("div")(({ theme }) => ({
+const FileSubList = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest
 }));
 
-const IconList = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.small,
-  marginBottom: theme.spacing.small
+const EmptyTip = styled("div")(({ theme }) => ({
+  padding: theme.spacing.smallest,
+  paddingLeft: theme.spacing.small
 }));
 
 export default Plugins;
