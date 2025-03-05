@@ -1,6 +1,6 @@
 import { RefObject, useCallback, useEffect, useRef } from "react";
 
-import type { Ref } from "../IFrame";
+import type { Ref } from "../SafeIFrame";
 
 export function usePostMessage(iFrameRef: RefObject<Ref>, pending?: boolean) {
   const messageQueue = useRef<any[]>([]);

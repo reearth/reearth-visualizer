@@ -49,6 +49,7 @@ const Assets: FC<Props> = ({ workspaceId }) => {
         workspaceId={workspaceId}
         size="large"
         layout={layout}
+        additionalFilter={(a) => !a.projectId}
         enableUpload={false}
         onLayoutChange={handleLayoutChange}
       />
@@ -56,7 +57,7 @@ const Assets: FC<Props> = ({ workspaceId }) => {
   );
 };
 
-const Wrapper = styled("div")(({theme}) => ({
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   height: "100%",

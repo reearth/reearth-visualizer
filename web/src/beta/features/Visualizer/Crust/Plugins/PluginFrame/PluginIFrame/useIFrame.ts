@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import type { Ref as IFrameRef } from "../IFrame";
+import type { Ref as IFrameRef } from "../SafeIFrame";
 
 import { usePostMessage } from "./usePostMessage";
 

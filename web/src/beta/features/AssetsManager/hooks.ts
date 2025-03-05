@@ -30,6 +30,7 @@ export default ({
   allowMultipleSelection,
   assetsTypes,
   layout,
+  additionalFilter,
   onSelectChange,
   onLayoutChange
 }: {
@@ -38,6 +39,7 @@ export default ({
   allowMultipleSelection: boolean;
   assetsTypes?: AcceptedAssetsTypes;
   layout?: ManagerLayout;
+  additionalFilter?: (asset: Asset) => boolean;
   onSelectChange?: (assets: Asset[]) => void;
   onLayoutChange?: (layout: ManagerLayout) => void;
 }) => {
@@ -138,13 +140,16 @@ export default ({
   );
 
   const filteredAssets = useMemo(() => {
-    if (!assetsExts || !assets) return assets;
-    return assets.filter((a) =>
+    const assetsWithAdditionalFilter = additionalFilter
+      ? assets?.filter(additionalFilter)
+      : assets;
+    if (!assetsExts || !assets) return assetsWithAdditionalFilter;
+    return assetsWithAdditionalFilter.filter((a) =>
       assetsExts.includes(
         (a.url.split(".").pop()?.toLowerCase() as FileType) ?? ""
       )
     );
-  }, [assets, assetsExts]);
+  }, [assets, assetsExts, additionalFilter]);
 
   // get more assets
   const isLoadingMoreRef = useRef(false);
