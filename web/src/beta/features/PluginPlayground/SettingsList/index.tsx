@@ -78,7 +78,7 @@ const Row = styled.div(({ theme }) => ({
 }));
 
 const SelectorWrapper = styled.div(() => ({
-  width: "100%"
+  display: "flex"
 }));
 
 export default SettingsList;
