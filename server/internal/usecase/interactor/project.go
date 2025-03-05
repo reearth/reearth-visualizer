@@ -523,7 +523,7 @@ func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID,
 
 	// project image
 	if prj.ImageURL() != nil {
-		err := AddZipAsset(ctx, i.file, zipWriter, prj.ImageURL().Path)
+		err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, prj.ImageURL().Path)
 		if err != nil {
 			return nil, err
 		}
@@ -624,11 +624,13 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 	return nil
 }
 
-func AddZipAsset(ctx context.Context, file gateway.File, zipWriter *zip.Writer, path string) error {
-	fileName := strings.TrimPrefix(path, "/assets/")
+// If the given path is the URL of an Asset, it will be added to the ZIP.
+func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, path string) error {
+	parts := strings.Split(path, "/")
+	fileName := parts[len(parts)-1]
 	stream, err := file.ReadAsset(ctx, fileName)
 	if err != nil {
-		return nil // skip if external URL
+		return nil // skip if not available
 	}
 	defer func() {
 		if cerr := stream.Close(); cerr != nil {
