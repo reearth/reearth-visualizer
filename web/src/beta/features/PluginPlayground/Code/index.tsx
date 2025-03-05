@@ -104,7 +104,13 @@ const Code: FC<Props> = ({
     <>
       <Wrapper>
         <Header>
-          <Button icon="playRight" iconButton onClick={executeCode} />
+          <Button
+            icon="playRight"
+            iconButton
+            tooltipText={t("Run Code")}
+            placement="top"
+            onClick={executeCode}
+          />
           <Button
             icon="pencilSimple"
             title={t("HTML Editor")}
