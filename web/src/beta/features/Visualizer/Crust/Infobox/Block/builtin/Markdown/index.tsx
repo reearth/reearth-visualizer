@@ -81,6 +81,6 @@ const MarkdownWrapper = styled("div")(() => ({
     listStyleType: "initial"
   },
   "& > ol": {
-    listStyleType: "-moz-initial"
+    listStyleType: "decimal"
   }
 }));
