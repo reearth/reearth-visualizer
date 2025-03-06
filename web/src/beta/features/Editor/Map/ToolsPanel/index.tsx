@@ -2,6 +2,7 @@ import { Placement } from "@floating-ui/react";
 import { Button, IconButton, IconName } from "@reearth/beta/lib/reearth-ui";
 import ConfirmModal from "@reearth/beta/ui/components/ConfirmModal";
 import { Panel } from "@reearth/beta/ui/layout";
+import { SketchType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useSetAtom } from "jotai";
@@ -36,6 +37,22 @@ const ToolsPanel: FC = () => {
     useState(false);
 
   const setSketchLayerTooltip = useSetAtom(SketchFeatureTooltipAtom);
+
+  const handleDrawSketchFeature = useCallback(
+    (sketchType?: SketchType) => {
+      handleSketchTypeChange(sketchType);
+      setSketchLayerTooltip?.({
+        description: [
+          t("Click to place the point"),
+          t("Double click to finish drawing"),
+          t("Right click to cancel drawing"),
+          t("Press ESC to undo the last step")
+        ].join("\n")
+      });
+    },
+    [handleSketchTypeChange, setSketchLayerTooltip, t]
+  );
+  
   const sketchTools: SketchTool[] = useMemo(
     () => [
       {
@@ -43,86 +60,59 @@ const ToolsPanel: FC = () => {
         selected: sketchEnabled && sketchType === "marker",
         tooltipText: t("Marker"),
         placement: "top",
-        onClick: () => {
-          handleSketchTypeChange("marker");
-          setSketchLayerTooltip({
-            description: t(
-              "Click to place the point  Right click to cancel drawing"
-            )
-          });
-        }
+        onClick: () => handleDrawSketchFeature("marker")
       },
       {
         icon: "polyline",
         selected: sketchEnabled && sketchType === "polyline",
         tooltipText: t("Polyline"),
         placement: "top",
-        onClick: () => {
-          handleSketchTypeChange("polyline");
-          setSketchLayerTooltip({
-            description: t(
-              "Click to draw the line Right click to cancel drawing"
-            )
-          });
-        }
+        onClick: () => handleDrawSketchFeature("polyline")
       },
       {
         icon: "circle",
         selected: sketchEnabled && sketchType === "circle",
         tooltipText: t("Circle"),
         placement: "top",
-        onClick: () => {
-          handleSketchTypeChange("circle");
-          setSketchLayerTooltip({
-            description: t(
-              "Click to draw the circle Right click to cancel drawing"
-            )
-          });
-        }
+        onClick: () => handleDrawSketchFeature("circle")
       },
       {
         icon: "square",
         selected: sketchEnabled && sketchType === "rectangle",
         tooltipText: t("Rectangle"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("rectangle")
+        onClick: () => handleDrawSketchFeature("rectangle")
       },
       {
         icon: "polygon",
         selected: sketchEnabled && sketchType === "polygon",
         tooltipText: t("Polygon"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("polygon")
+        onClick: () => handleDrawSketchFeature("polygon")
       },
       {
         icon: "cylinder",
         selected: sketchEnabled && sketchType === "extrudedCircle",
         tooltipText: t("Extruded circle"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("extrudedCircle")
+        onClick: () => handleDrawSketchFeature("extrudedCircle")
       },
       {
         icon: "cube",
         selected: sketchEnabled && sketchType === "extrudedRectangle",
         tooltipText: t("Extruded rectangle"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("extrudedRectangle")
+        onClick: () => handleDrawSketchFeature("extrudedRectangle")
       },
       {
         icon: "extrude",
         selected: sketchEnabled && sketchType === "extrudedPolygon",
         tooltipText: t("Extruded polygon"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("extrudedPolygon")
+        onClick: () => handleDrawSketchFeature("extrudedPolygon")
       }
     ],
-    [
-      sketchEnabled,
-      sketchType,
-      t,
-      handleSketchTypeChange,
-      setSketchLayerTooltip
-    ]
+    [sketchEnabled, sketchType, t, handleDrawSketchFeature]
   );
 
   const isEditingGeometry = useMemo(
@@ -146,11 +136,14 @@ const ToolsPanel: FC = () => {
   const handleEditSketchFeature = useCallback(() => {
     handleSketchGeometryEditStart();
     handleSketchTypeChange(undefined);
-    setSketchLayerTooltip?.({
-      description: t(
-        "Drag to adjust the position Select a point and press Delete to remove it Double click to save the edits Right click to cancel editing"
-      )
-    });
+      setSketchLayerTooltip?.({
+        description: [
+          t("Drag and Drop to adjust the point position"),
+          t("Left click a point and press Delete key to remove it"),
+          t("Double click to save the edits"),
+          t("Right click to cancel editing")
+        ].join("\n")
+      });
   }, [
     handleSketchGeometryEditStart,
     handleSketchTypeChange,

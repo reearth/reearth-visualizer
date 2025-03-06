@@ -237,18 +237,22 @@ Title: タイトル
 Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
+Click to place the point: ''
+Double click to finish drawing: ''
+Right click to cancel drawing: ''
+Press ESC to undo the last step: ''
 Marker: マーカー
-Click to place the point  Right click to cancel drawing: ''
 Polyline: ポリライン
-Click to draw the line Right click to cancel drawing: ''
 Circle: 丸
-Click to draw the circle Right click to cancel drawing: ''
 Rectangle: 長方形
 Polygon: ポリゴン
 Extruded circle: 円柱
 Extruded rectangle: 立方体
 Extruded polygon: 押し出しポリゴン
-Drag to adjust the position Select a point and press Delete to remove it Double click to save the edits Right click to cancel editing: ''
+Drag and Drop to adjust the point position: ''
+Left click a point and press Delete key to remove it: ''
+Double click to save the edits: ''
+Right click to cancel editing: ''
 Edit Geometry: ''
 Delete Feature: ''
 Delete this feature?: ''
@@ -315,7 +319,7 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 HTML Editor: HTML エディター
-Run Code: 'コードを実行'
+Run Code: コードを実行
 This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
 No valid schema defined.: 有効なスキーマが定義されていません。
 Chiyoda 3D Tiles: 千代田区 3D Tiles
