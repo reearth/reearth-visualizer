@@ -689,6 +689,28 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	if err != nil {
 		return nil, nil, errors.New("Fail BuildResult :" + err.Error())
 	}
+	// plugin property
+	for _, v := range sceneJSON.Widgets {
+		for _, propInterface := range v.Property {
+			propSlice, ok := propInterface.([]interface{})
+			if !ok {
+				continue
+			}
+			for _, prop := range propSlice {
+				propMap, ok := prop.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				if propType, exists := propMap["type"]; exists && propType == "url" {
+					if value, ok := propMap["value"].(string); ok {
+						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, value); err != nil {
+							log.Infofc(ctx, "Fail nLayer config addZipAsset :", err.Error())
+						}
+					}
+				}
+			}
+		}
+	}
 
 	// nlsLayer file resources
 	for _, nLayer := range nlsLayers {
@@ -701,9 +723,8 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 			actualConfig := *c
 			if data, ok := actualConfig["data"].(map[string]any); ok {
 				if urlStr, ok := data["url"].(string); ok {
-					u, _ := url.Parse(urlStr)
-					if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, u.Path); err != nil {
-						log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
+					if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, urlStr); err != nil {
+						log.Infofc(ctx, "Fail nLayer config addZipAsset :", err.Error())
 					}
 				}
 			}
@@ -716,14 +737,13 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		}
 
 		for _, vFeature := range actualLayer.Sketch().FeatureCollection().Features() {
-			for key, value := range *vFeature.Properties() {
-				if key == "threed_model_url" {
-					if threed_model_url, ok := value.(string); ok {
-						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, threed_model_url); err != nil {
-							log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
-						}
+			for _, value := range *vFeature.Properties() {
+				if v, ok := value.(string); ok {
+					if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, v); err != nil {
+						log.Infofc(ctx, "Fail Sketch feature addZipAsset :", err.Error())
 					}
 				}
+
 			}
 		}
 	}
@@ -735,7 +755,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 		if marker, ok := v["marker"].(map[string]any); ok {
 			if image, ok := marker["image"].(string); ok {
 				if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, image); err != nil {
-					log.Infofc(ctx, "Fail nLayer addZipAsset :", err.Error())
+					log.Infofc(ctx, "Fail nLayer style addZipAsset :", err.Error())
 				}
 			}
 		}
