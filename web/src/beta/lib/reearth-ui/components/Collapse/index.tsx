@@ -14,8 +14,8 @@ export type CollapseProps = {
   weight?: "medium" | "regular" | "bold";
   collapsed?: boolean;
   noPadding?: boolean;
+  noShrink?: boolean;
   disabled?: boolean;
-
   actions?: ReactNode;
   children: ReactNode;
   onCollapse?: (collapsed: boolean) => void;
@@ -32,6 +32,7 @@ export const Collapse: FC<CollapseProps> = ({
   collapsed,
   disabled,
   noPadding,
+  noShrink,
   actions,
   children,
   onCollapse
@@ -49,7 +50,7 @@ export const Collapse: FC<CollapseProps> = ({
   }, [disabled, isCollapsed, onCollapse]);
 
   return (
-    <StyledWrapper>
+    <StyledWrapper isCollapsed={isCollapsed} noShrink={noShrink}>
       <StyledHeader
         onClick={handleCollapse}
         isCollapsed={isCollapsed}
@@ -90,11 +91,13 @@ export const Collapse: FC<CollapseProps> = ({
 
 const StyledWrapper = styled("div")<{
   background?: string;
-}>(({ theme }) => ({
+  isCollapsed?: boolean;
+  noShrink?: boolean;
+}>(({ theme, isCollapsed, noShrink }) => ({
   position: "relative",
   borderRadius: `${theme.radius.small}px`,
-  flexGrow: 1,
-  flexShrink: 1,
+  flexGrow: isCollapsed ? 0 : 1,
+  flexShrink: noShrink ? 0 : 1,
   display: "flex",
   flexDirection: "column",
   minHeight: 0

@@ -1,10 +1,15 @@
 package interactor
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
+	"fmt"
+	"io"
 	"net/url"
+	"strings"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -235,5 +240,57 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 		return err
 	}
 
+	return nil
+}
+
+func IsCurrentHostAssets(ctx context.Context, u string) bool {
+	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets") {
+		return true
+	}
+	return strings.HasPrefix(u, adapter.CurrentHost(ctx))
+}
+
+func ReplaceToCurrentHost(ctx context.Context, urlString string) string {
+	u, err := url.Parse(urlString)
+	if err != nil {
+		return urlString
+	}
+	u2, err := url.Parse(adapter.CurrentHost(ctx))
+	if err != nil {
+		return urlString
+	}
+	u.Scheme = u2.Scheme
+	u.Host = u2.Host
+	return u.String()
+}
+
+// If the given path is the URL of an Asset, it will be added to the ZIP.
+func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, urlString string) error {
+
+	if !IsCurrentHostAssets(ctx, urlString) {
+		return nil
+	}
+
+	parts := strings.Split(urlString, "/")
+	fileName := parts[len(parts)-1]
+	stream, err := file.ReadAsset(ctx, fileName)
+	if err != nil {
+		return nil // skip if not available
+	}
+	defer func() {
+		if cerr := stream.Close(); cerr != nil {
+			fmt.Printf("Error closing file: %v\n", cerr)
+		}
+	}()
+	zipEntryPath := fmt.Sprintf("assets/%s", fileName)
+	zipEntry, err := zipWriter.Create(zipEntryPath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(zipEntry, stream)
+	if err != nil {
+		_ = stream.Close()
+		return err
+	}
 	return nil
 }

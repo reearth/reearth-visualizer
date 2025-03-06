@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"strings"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -619,32 +618,6 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 	}
 	err = updateProjectUpdatedAtByID(ctx, scene.Project(), r)
 	if err != nil {
-		return err
-	}
-	return nil
-}
-
-// If the given path is the URL of an Asset, it will be added to the ZIP.
-func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, path string) error {
-	parts := strings.Split(path, "/")
-	fileName := parts[len(parts)-1]
-	stream, err := file.ReadAsset(ctx, fileName)
-	if err != nil {
-		return nil // skip if not available
-	}
-	defer func() {
-		if cerr := stream.Close(); cerr != nil {
-			fmt.Printf("Error closing file: %v\n", cerr)
-		}
-	}()
-	zipEntryPath := fmt.Sprintf("assets/%s", fileName)
-	zipEntry, err := zipWriter.Create(zipEntryPath)
-	if err != nil {
-		return err
-	}
-	_, err = io.Copy(zipEntry, stream)
-	if err != nil {
-		_ = stream.Close()
 		return err
 	}
 	return nil
