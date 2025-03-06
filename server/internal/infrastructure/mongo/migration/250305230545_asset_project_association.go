@@ -2,6 +2,7 @@ package migration
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"strings"
@@ -89,13 +90,23 @@ func processCollection(ctx context.Context, c DBClient, collectionName string) e
 	return nil
 }
 
+func normalize(data any) map[string]any {
+	if b, err := json.Marshal(data); err == nil {
+		var result map[string]any
+		if err := json.Unmarshal(b, &result); err == nil {
+			return result
+		}
+	}
+	return nil
+}
+
 func processBatch(ctx context.Context, c DBClient, collectionName string, batch []map[string]any) error {
 	for _, rawData := range batch {
 		project := findProjectID(ctx, c, collectionName, rawData)
 		if project == "" {
 			continue
 		}
-		if err := searchAssetURL(ctx, c, project, rawData); err != nil {
+		if err := searchAssetURL(ctx, c, project, normalize(rawData)); err != nil {
 			return err
 		}
 	}
