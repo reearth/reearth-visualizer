@@ -10,13 +10,10 @@ import (
 	"time"
 
 	"net/http"
-	"net/url"
 	"path"
-	"strings"
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
-	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -30,7 +27,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
@@ -1056,22 +1052,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID idx.ID[id.Scene]
 			config := *nlsLayerJSON.Config
 			if data, ok := config["data"].(map[string]interface{}); ok {
 				if u, ok := data["url"].(string); ok {
-					urlVal, err := url.Parse(u)
-					if err != nil {
-						log.Infofc(ctx, "invalid url: %v\n", err.Error())
-						return nil, nil, err
-					}
-					if urlVal.Host == "localhost:8080" || strings.HasSuffix(urlVal.Host, ".reearth.dev") || strings.HasSuffix(urlVal.Host, ".reearth.io") {
-						currentHost := adapter.CurrentHost(ctx)
-						currentHost = strings.TrimPrefix(currentHost, "https://")
-						currentHost = strings.TrimPrefix(currentHost, "http://")
-						urlVal.Host = currentHost
-						if currentHost == "localhost:8080" {
-							urlVal.Scheme = "http"
-						} else {
-							urlVal.Scheme = "https"
-						}
-						data["url"] = urlVal.String()
+					if !IsCurrentHostAssets(ctx, u) {
+						data["url"] = ReplaceToCurrentHost(ctx, u)
 					}
 				}
 			}

@@ -169,23 +169,8 @@ func parsePropertyValue(ctx context.Context, value interface{}) (*property.Value
 		if fieldType, ok := fieldObj["type"].(string); ok {
 			if fieldVal, ok := fieldObj["value"]; ok {
 				if fieldType == "url" {
-					urlVal, err := url.Parse(fieldVal.(string))
-					if err != nil {
-						log.Infofc(ctx, "invalid url: %v\n", err.Error())
-						return nil, false
-					}
-					if urlVal.Host == "localhost:8080" || strings.HasSuffix(urlVal.Host, ".reearth.dev") || strings.HasSuffix(urlVal.Host, ".reearth.io") {
-						currentHost := adapter.CurrentHost(ctx)
-						currentHost = strings.TrimPrefix(currentHost, "https://")
-						currentHost = strings.TrimPrefix(currentHost, "http://")
-						urlVal.Host = currentHost
-						if currentHost == "localhost:8080" {
-							urlVal.Scheme = "http"
-						} else {
-							urlVal.Scheme = "https"
-						}
-						fieldVal = urlVal.String()
-
+					if !IsCurrentHostAssets(ctx, fieldVal.(string)) {
+						fieldVal = ReplaceToCurrentHost(ctx, fieldVal.(string))
 					}
 				}
 				return property.ValueType(fieldType).ValueFrom(fieldVal), ok
@@ -203,4 +188,25 @@ func parsePropertyOptionalValue(ctx context.Context, value interface{}) (*proper
 		return ov, true
 	}
 	return nil, false
+}
+
+func IsCurrentHostAssets(ctx context.Context, u string) bool {
+	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets") {
+		return true
+	}
+	return strings.HasPrefix(u, adapter.CurrentHost(ctx))
+}
+
+func ReplaceToCurrentHost(ctx context.Context, urlString string) string {
+	u, err := url.Parse(urlString)
+	if err != nil {
+		return urlString
+	}
+	u2, err := url.Parse(adapter.CurrentHost(ctx))
+	if err != nil {
+		return urlString
+	}
+	u.Scheme = u2.Scheme
+	u.Host = u2.Host
+	return u.String()
 }
