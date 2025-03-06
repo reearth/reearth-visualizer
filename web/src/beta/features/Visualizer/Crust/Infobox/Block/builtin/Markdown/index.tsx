@@ -77,6 +77,9 @@ const Wrapper = styled("div")(() => ({
 }));
 
 const MarkdownWrapper = styled("div")(() => ({
+  "@media (prefers-color-scheme: dark)": {
+    all: "unset"
+  },
   "& > ul": {
     listStyleType: "initial"
   },
