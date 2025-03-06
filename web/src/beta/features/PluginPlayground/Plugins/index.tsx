@@ -1,7 +1,7 @@
 import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/styled";
+import { styled } from "@reearth/services/theme";
 import { FC, useMemo, useState } from "react";
 
 import FileListItem from "./FileListItem";
