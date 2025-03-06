@@ -689,6 +689,28 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	if err != nil {
 		return nil, nil, errors.New("Fail BuildResult :" + err.Error())
 	}
+	// plugin property
+	for _, v := range sceneJSON.Widgets {
+		for _, propInterface := range v.Property {
+			propSlice, ok := propInterface.([]interface{})
+			if !ok {
+				continue
+			}
+			for _, prop := range propSlice {
+				propMap, ok := prop.(map[string]interface{})
+				if !ok {
+					continue
+				}
+				if propType, exists := propMap["type"]; exists && propType == "url" {
+					if value, ok := propMap["value"].(string); ok {
+						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, value); err != nil {
+							log.Infofc(ctx, "Fail nLayer config addZipAsset :", err.Error())
+						}
+					}
+				}
+			}
+		}
+	}
 
 	// nlsLayer file resources
 	for _, nLayer := range nlsLayers {
