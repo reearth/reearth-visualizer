@@ -18,6 +18,7 @@ type AssetFilter struct {
 type Asset interface {
 	Filtered(WorkspaceFilter) Asset
 	FindByWorkspaceProject(context.Context, accountdomain.WorkspaceID, *id.ProjectID, AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error)
+	FindByURL(context.Context, string) (*asset.Asset, error)
 	FindByID(context.Context, id.AssetID) (*asset.Asset, error)
 	FindByIDs(context.Context, id.AssetIDList) ([]*asset.Asset, error)
 	TotalSizeByWorkspace(context.Context, accountdomain.WorkspaceID) (int64, error)
