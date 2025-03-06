@@ -1,8 +1,8 @@
 import { CheckBox, Typography } from "@reearth/beta/lib/reearth-ui";
 import { SelectField } from "@reearth/beta/ui/fields";
-import { useT, getLanguageOptions } from "@reearth/services/i18n";
+import { useT, SUPPORTED_LANGUAGES } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 type Props = {
   changeLanguage: (lang: string) => void;
@@ -22,7 +22,14 @@ const SettingsList: FC<Props> = ({
 }) => {
   const t = useT();
 
-  const options = getLanguageOptions(t);
+  const options = useMemo(
+    () => [
+      ...Object.entries(SUPPORTED_LANGUAGES)
+        .filter(([key]) => key !== "default")
+        .map(([_, lang]) => ({ label: lang.label, value: lang.value }))
+    ],
+    []
+  );
 
   return (
     <Wrapper>
@@ -36,24 +43,24 @@ const SettingsList: FC<Props> = ({
         </Typography>
       </Row>
       <Row>
-        <CheckBox
-          value={showStoryPanel}
-          onChange={(value) => setShowStoryPanel(value)}
-        />
+        <div>
+          <CheckBox
+            value={showStoryPanel}
+            onChange={(value) => setShowStoryPanel(value)}
+          />
+        </div>
         <Typography size="body" otherProperties={{ paddingLeft: 4 }}>
           {t("Show Story Panel")}
         </Typography>
       </Row>
-      <Row>
-        <SelectorWrapper>
-          <SelectField
-            title={t("UI Language")}
-            value={lang}
-            options={options}
-            onChange={(value) => changeLanguage(value as string)}
-          />
-        </SelectorWrapper>
-      </Row>
+      <SelectorWrapper>
+        <SelectField
+          title={t("UI Language")}
+          value={lang}
+          options={options}
+          onChange={(value) => changeLanguage(value as string)}
+        />
+      </SelectorWrapper>
     </Wrapper>
   );
 };
@@ -77,8 +84,9 @@ const Row = styled.div(({ theme }) => ({
   minHeight: 28
 }));
 
-const SelectorWrapper = styled.div(() => ({
-  display: "flex"
+const SelectorWrapper = styled.div(({ theme }) => ({
+  display: "flex",
+  padding: theme.spacing.smallest
 }));
 
 export default SettingsList;

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 
-export { getLanguageOptions } from "./i18n";
+export { SUPPORTED_LANGUAGES } from "./i18n";
 export { useTranslation } from "react-i18next";
 export { default as Provider } from "./provider";
 export { default as PublishedProvider } from "./publishedProvider";
