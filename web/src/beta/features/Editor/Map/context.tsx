@@ -1,6 +1,6 @@
 import { AreaSize } from "@reearth/beta/ui/layout";
 import { FlyTo, MapRef, SketchEditingFeature, SketchType } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 import { Scene } from "@reearth/services/api/sceneApi";
@@ -51,6 +51,7 @@ export interface MapPageContextType {
   handleLayerVisibilityUpdate: (inp: LayerVisibilityUpdateProps) => void;
   handleFlyTo?: FlyTo;
   sketchEnabled: boolean;
+  selectedSketchFeature?: SketchFeature;
   sketchType: SketchType | undefined;
   handleSketchTypeChange: (type: SketchType | undefined) => void;
   sketchEditingFeature?: SketchEditingFeature;
@@ -62,7 +63,7 @@ export interface MapPageContextType {
   sceneId?: string;
   selectedLayerStyleId?: string;
   selectedLayer: SelectedLayer | undefined;
-  selectedFeature: SelectedFeature | undefined
+  selectedFeature: SelectedFeature | undefined;
   handleLayerStyleValueUpdate?: (inp: LayerStyleValueUpdateProps) => void;
   handleLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   handleGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;

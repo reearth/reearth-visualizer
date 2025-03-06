@@ -238,13 +238,21 @@ Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
 Marker: マーカー
+"Click to place the point Double click\_to finish drawing Right click to cancel drawing Press ESC to undo the last step": ''
 Polyline: ポリライン
+"Click to place the line Double click\_to finish drawing Right click to cancel drawing Press ESC to undo the last step": ''
 Circle: 丸
+"Click to draw the circle Double click\_to finish drawing Right click to cancel drawing Press ESC to undo the last step": ''
 Rectangle: 長方形
 Polygon: ポリゴン
 Extruded circle: 円柱
 Extruded rectangle: 立方体
 Extruded polygon: 押し出しポリゴン
+Drag to adjust the position Select a point and press Delete to remove it Double click to save the edits Right click to cancel editing: ''
+Edit Geometry: ''
+Delete Feature: ''
+Delete this feature?: ''
+Are you sure you want to delete this feature? If deleted, you can not recover it again.: ''
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする

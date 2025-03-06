@@ -4,9 +4,12 @@ import ConfirmModal from "@reearth/beta/ui/components/ConfirmModal";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { useSetAtom } from "jotai";
+import { RESET } from "jotai/utils";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
+import { SketchLayerTooltipAtom } from "../state";
 
 type SketchTool = {
   icon: IconName;
@@ -21,8 +24,7 @@ const ToolsPanel: FC = () => {
     sketchEnabled,
     sketchType,
     selectedLayerId,
-    selectedLayer,
-    selectedFeature,
+    selectedSketchFeature,
     sketchEditingFeature,
     handleSketchTypeChange,
     handleSketchGeometryEditStart,
@@ -32,6 +34,8 @@ const ToolsPanel: FC = () => {
   const t = useT();
   const [showDeleteFeatureConfirmModal, setShowDeleteFeatureConfirmModal] =
     useState(false);
+
+  const setSketchLayerTooltip = useSetAtom(SketchLayerTooltipAtom);
   const sketchTools: SketchTool[] = useMemo(
     () => [
       {
@@ -39,21 +43,42 @@ const ToolsPanel: FC = () => {
         selected: sketchEnabled && sketchType === "marker",
         tooltipText: t("Marker"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("marker")
+        onClick: () => {
+          handleSketchTypeChange("marker");
+          setSketchLayerTooltip({
+            description: t(
+              "Click to place the point Double click to finish drawing Right click to cancel drawing Press ESC to undo the last step"
+            )
+          });
+        }
       },
       {
         icon: "polyline",
         selected: sketchEnabled && sketchType === "polyline",
         tooltipText: t("Polyline"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("polyline")
+        onClick: () => {
+          handleSketchTypeChange("polyline");
+          setSketchLayerTooltip({
+            description: t(
+              "Click to place the line Double click to finish drawing Right click to cancel drawing Press ESC to undo the last step"
+            )
+          });
+        }
       },
       {
         icon: "circle",
         selected: sketchEnabled && sketchType === "circle",
         tooltipText: t("Circle"),
         placement: "top",
-        onClick: () => handleSketchTypeChange("circle")
+        onClick: () => {
+          handleSketchTypeChange("circle");
+           setSketchLayerTooltip({
+             description: t(
+               "Click to draw the circle Double click to finish drawing Right click to cancel drawing Press ESC to undo the last step"
+             )
+           });
+        }
       },
       {
         icon: "square",
@@ -91,23 +116,14 @@ const ToolsPanel: FC = () => {
         onClick: () => handleSketchTypeChange("extrudedPolygon")
       }
     ],
-    [sketchEnabled, sketchType, t, handleSketchTypeChange]
+    [
+      sketchEnabled,
+      sketchType,
+      t,
+      handleSketchTypeChange,
+      setSketchLayerTooltip
+    ]
   );
-
-  const selectedSketchFeature = useMemo(() => {
-    if (!selectedLayer?.layer?.sketch) return;
-
-    const { sketch } = selectedLayer.layer;
-    const features = sketch?.featureCollection?.features;
-
-    if (!selectedFeature?.properties?.id) return;
-
-    const selectedFeatureId = selectedFeature.properties.id;
-
-    return features?.find(
-      (feature) => feature.properties.id === selectedFeatureId
-    );
-  }, [selectedLayer, selectedFeature]);
 
   const isEditingGeometry = useMemo(
     () =>
@@ -116,14 +132,26 @@ const ToolsPanel: FC = () => {
     [selectedSketchFeature?.properties?.id, sketchEditingFeature?.feature?.id]
   );
 
+  console.log("sketchEnabled", sketchEnabled);
   useEffect(() => {
     if (!sketchEnabled) handleSketchTypeChange(undefined);
-  }, [sketchEnabled, handleSketchTypeChange]);
+    setSketchLayerTooltip(RESET);
+  }, [sketchEnabled, handleSketchTypeChange, setSketchLayerTooltip]);
 
   const handleEditSketchFeature = useCallback(() => {
     handleSketchGeometryEditStart();
     handleSketchTypeChange(undefined);
-  }, [handleSketchGeometryEditStart, handleSketchTypeChange]);
+    setSketchLayerTooltip?.({
+      description: t(
+        "Drag to adjust the position Select a point and press Delete to remove it Double click to save the edits Right click to cancel editing"
+      )
+    });
+  }, [
+    handleSketchGeometryEditStart,
+    handleSketchTypeChange,
+    setSketchLayerTooltip,
+    t
+  ]);
 
   const handleDeleteSketchFeature = useCallback(() => {
     if (!selectedLayerId || !selectedSketchFeature?.id) return;
@@ -163,6 +191,7 @@ const ToolsPanel: FC = () => {
               disabled={!selectedSketchFeature}
               appearance={"simple"}
               active={isEditingGeometry}
+              placement="top"
               onClick={handleEditSketchFeature}
               tooltipText={t("Edit Geometry")}
             />

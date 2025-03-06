@@ -69,3 +69,7 @@ export function generateNewPropertiesWithPhotoOverlay(
     }
   };
 }
+
+export type SketchLayerTooltipInfo = {
+  description?: string;
+};

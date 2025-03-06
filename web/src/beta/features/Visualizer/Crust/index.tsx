@@ -1,4 +1,7 @@
-import { PhotoOverlayPreview } from "@reearth/beta/utils/sketch";
+import {
+  PhotoOverlayPreview,
+  SketchLayerTooltipInfo
+} from "@reearth/beta/utils/sketch";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
   coreContext,
@@ -21,6 +24,7 @@ import Plugins, {
   ModalContainer,
   PopupContainer
 } from "./Plugins";
+import SketchLayerTooltip from "./SketchLayerTooltip";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Story } from "./StoryPanel/types";
 import { WidgetThemeOptions, usePublishTheme } from "./theme";
@@ -159,6 +163,8 @@ export type Props = {
   photoOverlayPreview?: PhotoOverlayPreview;
   nlsLayers?: NLSLayer[];
   currentCameraRef?: RefObject<Camera | undefined>;
+  //sketchLayer
+  sketchLayerTooltipInfo?: SketchLayerTooltipInfo;
 };
 
 export default function Crust({
@@ -209,7 +215,9 @@ export default function Crust({
   // photoOverlay
   photoOverlayPreview,
   nlsLayers,
-  currentCameraRef
+  currentCameraRef,
+  //sketchLayer
+  sketchLayerTooltipInfo
 }: Props): JSX.Element | null {
   const {
     interactionMode,
@@ -380,6 +388,9 @@ export default function Crust({
         mapRef={mapRef}
         nlsLayers={nlsLayers}
         currentCameraRef={currentCameraRef}
+      />
+      <SketchLayerTooltip
+        sketchLayerTooltipInfo={sketchLayerTooltipInfo}
       />
     </Plugins>
   );

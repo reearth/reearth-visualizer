@@ -60,6 +60,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
   });
 
   const {
+    selectedSketchFeature,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
     handleSketchFeatureUpdate,
@@ -75,6 +76,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     tab,
     nlsLayers,
     selectedLayer,
+    selectedFeature,
     ignoreCoreLayerUnselect,
     visualizerRef
   });
@@ -169,6 +171,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerVisibilityUpdate,
       handleFlyTo,
       sketchEnabled: !!selectedLayer?.layer?.isSketch,
+      selectedSketchFeature,
       sketchType,
       handleSketchTypeChange,
       sketchEditingFeature,
@@ -211,6 +214,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       openSketchLayerCreator,
       handleLayerVisibilityUpdate,
       handleFlyTo,
+      selectedSketchFeature,
       sketchType,
       handleSketchTypeChange,
       sketchEditingFeature,
