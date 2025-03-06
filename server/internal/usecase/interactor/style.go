@@ -200,32 +200,34 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	return duplicatedStyle, nil
 }
 
-func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (scene.StyleList, error) {
+func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (scene.StyleList, map[string]id.StyleID, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	if sceneJSON.LayerStyles == nil {
-		return nil, nil
+		return nil, nil, nil
 	}
 
 	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
 	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
 
-	styleIDs := idx.List[id.Style]{}
+	styleIDs := id.StyleIDList{}
 	styles := []*scene.Style{}
+	replaceStyleIDs := make(map[string]id.StyleID)
 	for _, layerStyleJson := range sceneJSON.LayerStyles {
-		styleID := id.NewStyleID()
-		styleIDs = append(styleIDs, styleID)
+		newStyleID := id.NewStyleID()
+		styleIDs = append(styleIDs, newStyleID)
+		replaceStyleIDs[layerStyleJson.ID] = newStyleID
 		style, err := scene.NewStyle().
-			ID(styleID).
+			ID(newStyleID).
 			Name(layerStyleJson.Name).
 			Value((*scene.StyleValue)(layerStyleJson.Value)).
 			Scene(sceneID).
 			Build()
 		if err != nil {
-			return nil, err
+			return nil, nil, err
 		}
 		styles = append(styles, style)
 	}
@@ -233,14 +235,14 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], scen
 	// Save style
 	styleList := scene.StyleList(styles)
 	if err := i.styleRepo.Filtered(writableFilter).SaveAll(ctx, styleList); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if len(styleIDs) == 0 {
-		return nil, nil
+		return nil, nil, nil
 	}
 	styles2, err := i.styleRepo.Filtered(readableFilter).FindByIDs(ctx, styleIDs)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	return *styles2, nil
+	return *styles2, replaceStyleIDs, nil
 }
