@@ -80,10 +80,10 @@ const MarkdownWrapper = styled("div")(() => ({
   "@media (prefers-color-scheme: dark)": {
     all: "unset"
   },
-  "& > ul": {
+  "& ul": {
     listStyleType: "initial"
   },
-  "& > ol": {
+  "& ol": {
     listStyleType: "decimal"
   }
 }));
