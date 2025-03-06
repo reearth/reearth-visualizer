@@ -24,9 +24,10 @@ const SettingsList: FC<Props> = ({
 
   const options = useMemo(
     () => [
-      ...Object.entries(SUPPORTED_LANGUAGES)
-        .filter(([key]) => key !== "default")
-        .map(([_, lang]) => ({ label: lang.label, value: lang.value }))
+      ...Object.entries(SUPPORTED_LANGUAGES).map(([_, lang]) => ({
+        label: lang.label,
+        value: lang.value
+      }))
     ],
     []
   );
