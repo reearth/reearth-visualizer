@@ -163,10 +163,10 @@ func searchAssetURL(ctx context.Context, c DBClient, project string, data any) e
 				return err
 			}
 		} else {
-			// fmt.Println("------ skip value: ", v)
+			fmt.Println("------ skip value: ", v)
 		}
 	default:
-		// fmt.Printf("------ skip type: %T\n", data)
+		fmt.Printf("------ skip type: %T\n", data)
 	}
 	return nil
 }
@@ -181,9 +181,11 @@ func updateAssetProject(ctx context.Context, c DBClient, project string, assetUR
 	return result, err
 }
 
+// The code below uses transactions. You must specify a replica.
+//--------------------------------------------------------------
+
 // func AssetProjectAssociation(ctx context.Context, c DBClient) error {
-// 	// collections := []string{"project", "scene", "nlsLayer", "storytelling", "style", "property", "propertySchema", "plugin"}
-// 	collections := []string{"project"}
+// 	collections := []string{"project", "scene", "nlsLayer", "storytelling", "style", "property", "propertySchema", "plugin"}
 // 	session, err := c.WithCollection("asset").Client().Database().Client().StartSession()
 // 	if err != nil {
 // 		return err
