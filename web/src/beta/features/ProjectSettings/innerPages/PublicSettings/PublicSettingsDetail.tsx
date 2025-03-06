@@ -262,7 +262,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         </SettingsFields>
       </Collapse>
       {extensions && extensions.length > 0 && accessToken && (
-        <Collapse title={t("Custom Domain")} size="large">
+        <Collapse title={t("Custom Domain")} size="large" noShrink>
           <ExtensionComponent
             typename={settingsItem.__typename || ""}
             {...(settingsItem.__typename === "Project"
