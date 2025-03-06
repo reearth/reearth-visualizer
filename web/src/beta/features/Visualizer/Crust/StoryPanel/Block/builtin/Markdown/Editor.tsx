@@ -12,7 +12,10 @@ import {
   FC
 } from "react";
 import ReactMarkdown from "react-markdown";
+import gfm from "remark-gfm";
 import "github-markdown-css";
+
+const plugins = [gfm];
 
 export type Props = {
   text: string;
@@ -55,7 +58,9 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
     />
   ) : (
     <MarkdownWrapper className="markdown-body">
-      <ReactMarkdown>{value || t("Add markdown text here")}</ReactMarkdown>
+      <ReactMarkdown remarkPlugins={plugins}>
+        {value || t("Add markdown text here")}
+      </ReactMarkdown>
     </MarkdownWrapper>
   );
 };
