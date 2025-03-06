@@ -9,7 +9,7 @@ import { RESET } from "jotai/utils";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
-import { SketchLayerTooltipAtom } from "../state";
+import { SketchFeatureTooltipAtom } from "../state";
 
 type SketchTool = {
   icon: IconName;
@@ -35,7 +35,7 @@ const ToolsPanel: FC = () => {
   const [showDeleteFeatureConfirmModal, setShowDeleteFeatureConfirmModal] =
     useState(false);
 
-  const setSketchLayerTooltip = useSetAtom(SketchLayerTooltipAtom);
+  const setSketchLayerTooltip = useSetAtom(SketchFeatureTooltipAtom);
   const sketchTools: SketchTool[] = useMemo(
     () => [
       {
@@ -47,7 +47,7 @@ const ToolsPanel: FC = () => {
           handleSketchTypeChange("marker");
           setSketchLayerTooltip({
             description: t(
-              "Click to place the point Double click to finish drawing Right click to cancel drawing Press ESC to undo the last step"
+              "Click to place the point  Right click to cancel drawing"
             )
           });
         }
@@ -61,7 +61,7 @@ const ToolsPanel: FC = () => {
           handleSketchTypeChange("polyline");
           setSketchLayerTooltip({
             description: t(
-              "Click to place the line Double click to finish drawing Right click to cancel drawing Press ESC to undo the last step"
+              "Click to draw the line Right click to cancel drawing"
             )
           });
         }
@@ -73,11 +73,11 @@ const ToolsPanel: FC = () => {
         placement: "top",
         onClick: () => {
           handleSketchTypeChange("circle");
-           setSketchLayerTooltip({
-             description: t(
-               "Click to draw the circle Double click to finish drawing Right click to cancel drawing Press ESC to undo the last step"
-             )
-           });
+          setSketchLayerTooltip({
+            description: t(
+              "Click to draw the circle Right click to cancel drawing"
+            )
+          });
         }
       },
       {
@@ -132,11 +132,16 @@ const ToolsPanel: FC = () => {
     [selectedSketchFeature?.properties?.id, sketchEditingFeature?.feature?.id]
   );
 
-  console.log("sketchEnabled", sketchEnabled);
   useEffect(() => {
-    if (!sketchEnabled) handleSketchTypeChange(undefined);
-    setSketchLayerTooltip(RESET);
+    if (!sketchEnabled) {
+      handleSketchTypeChange(undefined);
+      setSketchLayerTooltip(RESET);
+    }
   }, [sketchEnabled, handleSketchTypeChange, setSketchLayerTooltip]);
+
+  useEffect(() => {
+    if (!sketchType) setSketchLayerTooltip(RESET);
+  }, [setSketchLayerTooltip, sketchType]);
 
   const handleEditSketchFeature = useCallback(() => {
     handleSketchGeometryEditStart();

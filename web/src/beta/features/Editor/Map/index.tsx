@@ -12,7 +12,7 @@ import ScenePanel from "./ScenePanel";
 import {
   photoOverlayEditingFeatureAtom,
   PhotoOverlayPreviewAtom,
-  SketchLayerTooltipAtom
+  SketchFeatureTooltipAtom
 } from "./state";
 import ToolsPanel from "./ToolsPanel";
 
@@ -27,7 +27,7 @@ const Map: FC = () => {
     photoOverlayEditingFeatureAtom
   );
   const setPhotoOverlayPreview = useSetAtom(PhotoOverlayPreviewAtom);
-  const setSketchLayerTooltip = useSetAtom(SketchLayerTooltipAtom);
+  const setSketchLayerTooltip = useSetAtom(SketchFeatureTooltipAtom);
 
   const hideNormalPanels = !!photoOverlayEditingFeature;
 

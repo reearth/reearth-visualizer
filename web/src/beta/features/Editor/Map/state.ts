@@ -1,7 +1,7 @@
 import {
   PhotoOverlayEditingFeature,
   PhotoOverlayPreview,
-  SketchLayerTooltipInfo
+  SketchFeatureTooltip
 } from "@reearth/beta/utils/sketch";
 import { atomWithReset } from "jotai/utils";
 
@@ -13,6 +13,6 @@ export const PhotoOverlayPreviewAtom = atomWithReset<
   PhotoOverlayPreview | undefined
 >(undefined);
 
-export const SketchLayerTooltipAtom = atomWithReset<
-  SketchLayerTooltipInfo | undefined
+export const SketchFeatureTooltipAtom = atomWithReset<
+  SketchFeatureTooltip | undefined
 >(undefined);

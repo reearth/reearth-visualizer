@@ -238,11 +238,11 @@ Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
 Marker: マーカー
-"Click to place the point Double click\_to finish drawing Right click to cancel drawing Press ESC to undo the last step": ''
+Click to place the point  Right click to cancel drawing: ''
 Polyline: ポリライン
-"Click to place the line Double click\_to finish drawing Right click to cancel drawing Press ESC to undo the last step": ''
+Click to draw the line Right click to cancel drawing: ''
 Circle: 丸
-"Click to draw the circle Double click\_to finish drawing Right click to cancel drawing Press ESC to undo the last step": ''
+Click to draw the circle Right click to cancel drawing: ''
 Rectangle: 長方形
 Polygon: ポリゴン
 Extruded circle: 円柱

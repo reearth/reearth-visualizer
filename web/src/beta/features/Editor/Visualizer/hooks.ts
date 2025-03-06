@@ -35,7 +35,7 @@ import {
 
 import { useCurrentCamera } from "../atoms";
 import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
-import { PhotoOverlayPreviewAtom, SketchLayerTooltipAtom } from "../Map/state";
+import { PhotoOverlayPreviewAtom, SketchFeatureTooltipAtom } from "../Map/state";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
@@ -413,8 +413,8 @@ export default ({
   // photoOverlay
   const photoOverlayPreview = useAtomValue(PhotoOverlayPreviewAtom);
 
-  // sketchLayer
-  const sketchLayerTooltipInfo = useAtomValue(SketchLayerTooltipAtom);
+  // sketch
+  const sketchFeatureTooltip = useAtomValue(SketchFeatureTooltipAtom);
 
   return {
     viewerProperty,
@@ -429,7 +429,7 @@ export default ({
     currentCamera,
     initialCamera,
     photoOverlayPreview,
-    sketchLayerTooltipInfo,
+    sketchFeatureTooltip,
     handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,
