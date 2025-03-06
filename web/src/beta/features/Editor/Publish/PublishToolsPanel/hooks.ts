@@ -56,7 +56,7 @@ export default ({
         projectId: project.id,
         storyId: s.id,
         type: "story" as const,
-        buttonTitle: s.title !== "Default" && s.title ? s.title : t("Story"),
+        buttonTitle: `${t("Story")} ${s.title}`,
         alias: s.alias && s.alias !== project.alias ? s.alias : undefined, // correct existing alias, needs republish
         publishmentStatus: s.publishmentStatus,
         isPublished: isPublished(s.publishmentStatus)

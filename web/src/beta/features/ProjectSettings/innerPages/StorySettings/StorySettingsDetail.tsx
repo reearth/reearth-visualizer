@@ -49,7 +49,7 @@ const StorySettingsDetail: React.FC<Props> = ({
   ];
 
   return (
-    <Collapse title={t("Story Panel")} size="large">
+    <Collapse title={t("Story Panel")} size="large" noShrink>
       <SettingsFields>
         <SettingsRow>
           <SettingsRowItem>

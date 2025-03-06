@@ -74,7 +74,7 @@ const GeneralSettings: FC<Props> = ({
         {project.isArchived ? (
           <ArchivedSettingNotice />
         ) : (
-          <Collapse size="large" title={t("Project Info")}>
+          <Collapse size="large" title={t("Project Info")} noShrink>
             <SettingsFields>
               <InputField
                 title={t("Project Name")}
@@ -113,7 +113,7 @@ const GeneralSettings: FC<Props> = ({
             </SettingsFields>
           </Collapse>
         )}
-        <Collapse size="large" title={t("Danger Zone")}>
+        <Collapse size="large" title={t("Danger Zone")} noShrink>
           <SettingsFields>
             <DangerItem>
               <Typography size="body" weight="bold">

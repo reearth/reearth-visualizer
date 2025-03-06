@@ -11,7 +11,8 @@ export const InnerPage = styled("div")<{
   width: "100%",
   maxWidth: wide ? 950 : 750,
   backgroundColor: transparent ? "none" : theme.bg[1],
-  borderRadius: theme.radius.normal
+  borderRadius: theme.radius.normal,
+  maxHeight: "100%"
 }));
 
 export const InnerSidebar = styled("div")(({ theme }) => ({
@@ -29,7 +30,8 @@ export const SettingsWrapper = styled("div")(({ theme }) => ({
   flex: 1,
   ["> div:not(:last-child)"]: {
     borderBottom: `1px solid ${theme.outline.weaker}`
-  }
+  },
+  overflowY: "auto"
 }));
 
 export const SettingsFields = styled("div")(({ theme }) => ({
