@@ -183,7 +183,7 @@ export default () => {
         return;
       }
 
-      if (file.type !== "application/zip") {
+      if (!file.name.toLowerCase().endsWith(".zip")) {
         setNotification({
           type: "error",
           text: t("Only zip files are supported")
