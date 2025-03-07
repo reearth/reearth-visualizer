@@ -1,10 +1,8 @@
 package interactor
 
 import (
-	"archive/zip"
 	"context"
 	"errors"
-	"net/url"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -21,7 +19,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -647,7 +644,7 @@ func (i *Scene) RemoveCluster(ctx context.Context, sceneID id.SceneID, clusterID
 	return s, nil
 }
 
-func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter *zip.Writer) (*scene.Scene, map[string]interface{}, error) {
+func (i *Scene) ExportScene(ctx context.Context, prj *project.Project) (*scene.Scene, map[string]any, error) {
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
 	if err != nil {
@@ -689,140 +686,14 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project, zipWriter
 	if err != nil {
 		return nil, nil, errors.New("Fail BuildResult :" + err.Error())
 	}
-	// plugin property
-	for _, v := range sceneJSON.Widgets {
-		for _, propInterface := range v.Property {
-			propSlice, ok := propInterface.([]interface{})
-			if !ok {
-				continue
-			}
-			for _, prop := range propSlice {
-				propMap, ok := prop.(map[string]interface{})
-				if !ok {
-					continue
-				}
-				if propType, exists := propMap["type"]; exists && propType == "url" {
-					if value, ok := propMap["value"].(string); ok {
-						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, value); err != nil {
-							log.Infofc(ctx, "Fail nLayer config addZipAsset :", err.Error())
-						}
-					}
-				}
-			}
-		}
-	}
 
-	// nlsLayer file resources
-	for _, nLayer := range nlsLayers {
-		if nLayer == nil {
-			continue
-		}
-		actualLayer := *nLayer
-		c := actualLayer.Config()
-		if c != nil {
-			actualConfig := *c
-			if data, ok := actualConfig["data"].(map[string]any); ok {
-				if urlStr, ok := data["url"].(string); ok {
-					if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, urlStr); err != nil {
-						log.Infofc(ctx, "Fail nLayer config addZipAsset :", err.Error())
-					}
-				}
-			}
-		}
-
-		if actualLayer.Sketch() == nil ||
-			actualLayer.Sketch().FeatureCollection() == nil ||
-			actualLayer.Sketch().FeatureCollection().Features() == nil {
-			continue
-		}
-
-		for _, vFeature := range actualLayer.Sketch().FeatureCollection().Features() {
-			for _, value := range *vFeature.Properties() {
-				if v, ok := value.(string); ok {
-					if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, v); err != nil {
-						log.Infofc(ctx, "Fail Sketch feature addZipAsset :", err.Error())
-					}
-				}
-
-			}
-		}
-	}
-	for _, lStyle := range *layerStyles {
-		if lStyle.Value() == nil {
-			continue
-		}
-		v := *lStyle.Value()
-		if marker, ok := v["marker"].(map[string]any); ok {
-			if image, ok := marker["image"].(string); ok {
-				if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, image); err != nil {
-					log.Infofc(ctx, "Fail nLayer style addZipAsset :", err.Error())
-				}
-			}
-		}
-	}
-
-	var widgetPropertyIDs []idx.ID[id.Property]
-	for _, widget := range sce.Widgets().Widgets() {
-		widgetPropertyIDs = append(widgetPropertyIDs, widget.Property())
-	}
-	widgetProperties, err := i.propertyRepo.FindByIDs(ctx, widgetPropertyIDs)
-	if err != nil {
-		return nil, nil, errors.New("Fail widgetProperties :" + err.Error())
-	}
-
-	// widget button icon
-	for _, property := range widgetProperties {
-		for _, item := range property.Items() {
-			if item == nil {
-				continue
-			}
-			for _, field := range item.Fields(nil) {
-				if field == nil || field.Value() == nil || field.Value().Value() == nil {
-					continue
-				}
-				if field.GuessSchema().ID().String() == "buttonIcon" {
-					if u, ok := field.Value().Value().(*url.URL); ok {
-						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, u.Path); err != nil {
-							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
-						}
-					}
-				}
-			}
-		}
-	}
-
-	var pagePropertyIDs []idx.ID[id.Property]
-	for _, page := range story.Pages().Pages() {
-		for _, block := range page.Blocks() {
-			pagePropertyIDs = append(pagePropertyIDs, block.Property())
-		}
-	}
-	pageProperties, err := i.propertyRepo.FindByIDs(ctx, pagePropertyIDs)
-	if err != nil {
-		return nil, nil, errors.New("Fail property :" + err.Error())
-	}
-	// page block src
-	for _, property := range pageProperties {
-		for _, item := range property.Items() {
-			for _, field := range item.Fields(nil) {
-				if field.GuessSchema().ID().String() == "src" {
-					if u, ok := field.Value().Value().(*url.URL); ok {
-						if err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, u.Path); err != nil {
-							log.Infofc(ctx, "Fail widget addZipAsset :", err.Error())
-						}
-					}
-				}
-			}
-		}
-	}
-
-	res := make(map[string]interface{})
+	res := make(map[string]any)
 	res["scene"] = sceneJSON
 
 	return sce, res, nil
 }
 
-func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]interface{}) (*scene.Scene, error) {
+func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]any) (*scene.Scene, error) {
 	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
 	if err != nil {
 		return nil, err
