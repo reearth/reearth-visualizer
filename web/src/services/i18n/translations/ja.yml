@@ -307,7 +307,7 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 HTML Editor: HTML エディター
-Run Code: 'コードを実行'
+Run Code: コードを実行
 This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
 No valid schema defined.: 有効なスキーマが定義されていません。
 Chiyoda 3D Tiles: 千代田区 3D Tiles
@@ -366,6 +366,7 @@ Add File: ファイルを追加
 Import Plugin: プラグインをインポート
 Export Plugin: プラグインをエクスポート
 Share Plugin: プラグインを共有
+Shared Plugin: 共有プラグイン
 No plugins: プラグインがありません
 Invalid shared plugin URL: 共有プラグインのURLが無効です
 File not found: ファイルが見つかりません

@@ -164,7 +164,7 @@ const Plugins: FC<Props> = ({
                 key={"shared"}
                 iconPosition="left"
                 size="small"
-                title={"Shared"}
+                title={t("Shared Plugin")}
                 noPadding
               >
                 <PluginSubList>

@@ -32,7 +32,7 @@ export default () => {
           const decoded = decodePluginURL(sharedPluginUrl);
           return {
             ...decoded,
-            id: `shared-${decoded.id}`
+            id: decoded.id
           };
         } catch (_error) {
           setNotification({
@@ -266,7 +266,7 @@ export default () => {
       const sharedPlugin = plugins.find((plugin) => plugin.id === pluginId);
 
       // Note: We can't use the same id for a shared plugin
-      const selectedPluginCopy = { ...sharedPlugin, id: uuidv4() };
+      const selectedPluginCopy = { ...sharedPlugin, id: pluginId };
 
       // First compress the code
       try {
