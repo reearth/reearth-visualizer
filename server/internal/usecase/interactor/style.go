@@ -1,6 +1,7 @@
 package interactor
 
 import (
+	"bytes"
 	"context"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -200,26 +201,28 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	return duplicatedStyle, nil
 }
 
-func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], sceneData map[string]interface{}) (scene.StyleList, map[string]id.StyleID, error) {
-	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
+func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data *[]byte) (scene.StyleList, error) {
+
+	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
 	if sceneJSON.LayerStyles == nil {
-		return nil, nil, nil
+		return nil, nil
 	}
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sceneID}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sceneID}}
+	filter := Filter(sceneID)
 
 	styleIDs := id.StyleIDList{}
 	styles := []*scene.Style{}
-	replaceStyleIDs := make(map[string]id.StyleID)
+
 	for _, layerStyleJson := range sceneJSON.LayerStyles {
 		newStyleID := id.NewStyleID()
 		styleIDs = append(styleIDs, newStyleID)
-		replaceStyleIDs[layerStyleJson.ID] = newStyleID
+
+		*data = bytes.Replace(*data, []byte(layerStyleJson.ID), []byte(newStyleID.String()), -1)
+
 		style, err := scene.NewStyle().
 			ID(newStyleID).
 			Name(layerStyleJson.Name).
@@ -227,22 +230,24 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], scen
 			Scene(sceneID).
 			Build()
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 		styles = append(styles, style)
 	}
 
 	// Save style
 	styleList := scene.StyleList(styles)
-	if err := i.styleRepo.Filtered(writableFilter).SaveAll(ctx, styleList); err != nil {
-		return nil, nil, err
+	if err := i.styleRepo.Filtered(filter).SaveAll(ctx, styleList); err != nil {
+		return nil, err
 	}
+
 	if len(styleIDs) == 0 {
-		return nil, nil, nil
+		return nil, nil
 	}
-	styles2, err := i.styleRepo.Filtered(readableFilter).FindByIDs(ctx, styleIDs)
+
+	results, err := i.styleRepo.Filtered(filter).FindByIDs(ctx, styleIDs)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
-	return *styles2, replaceStyleIDs, nil
+	return *results, nil
 }

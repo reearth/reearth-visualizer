@@ -70,6 +70,13 @@ func (s *Scene) Plugins() *Plugins {
 	return s.plugins
 }
 
+func (s *Scene) AddPlugin(plugin *Plugin) bool {
+	if s == nil {
+		return false
+	}
+	return s.plugins.Add(plugin)
+}
+
 func (s *Scene) PluginIds() []id.PluginID {
 	if s == nil {
 		return nil

@@ -1,8 +1,10 @@
 package interactor
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -18,7 +20,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -96,7 +97,7 @@ func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *us
 	return s, nil
 }
 
-func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (_ *scene.Scene, err error) {
+func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWidget bool, operator *usecase.Operator) (_ *scene.Scene, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -117,42 +118,32 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 		return nil, err
 	}
 
-	viz := visualizer.VisualizerCesium
-	if prj.CoreSupport() {
-		viz = visualizer.VisualizerCesiumBeta
-	}
-	schema := builtin.GetPropertySchemaByVisualizer(viz)
-
 	sceneID := id.NewSceneID()
-	ps := scene.NewPlugins([]*scene.Plugin{
-		scene.NewPlugin(id.OfficialPluginID, nil),
-	})
 
-	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
+	prop, err := i.addDefaultVisualizerTilesProperty(ctx, sceneID, prj.CoreSupport())
 	if err != nil {
 		return nil, err
 	}
 
-	addDefaultTiles(prop, schema)
+	officialPlugins := scene.NewPlugins([]*scene.Plugin{
+		scene.NewPlugin(id.OfficialPluginID, nil),
+	})
 
 	res, err := scene.New().
 		ID(sceneID).
 		Project(pid).
 		Workspace(ws).
 		Property(prop.ID()).
-		Plugins(ps).
+		Plugins(officialPlugins).
 		Build()
 	if err != nil {
 		return nil, err
 	}
 
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{res.ID()}}
-	if err := i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
-		return nil, err
-	}
-
-	if err = i.addDefaultExtensionWidget(ctx, sceneID, res); err != nil {
-		return nil, err
+	if defaultExtensionWidget {
+		if err = i.addDefaultExtensionWidget(ctx, sceneID, res); err != nil {
+			return nil, err
+		}
 	}
 
 	if err = i.sceneRepo.Save(ctx, res); err != nil {
@@ -168,24 +159,41 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, operator *usecase.
 	return res, nil
 }
 
-func addDefaultTiles(prop *property.Property, schema *property.Schema) {
+func (i *Scene) addDefaultVisualizerTilesProperty(ctx context.Context, sceneID id.SceneID, coreSupport bool) (*property.Property, error) {
+
+	viz := visualizer.VisualizerCesium
+	if coreSupport {
+		viz = visualizer.VisualizerCesiumBeta
+	}
+
+	visualizerSchema := builtin.GetPropertySchemaByVisualizer(viz)
+
+	prop, err := property.New().NewID().Schema(visualizerSchema.ID()).Scene(sceneID).Build()
+	if err != nil {
+		return nil, err
+	}
+
 	tiles := id.PropertySchemaGroupID("tiles")
-	g := prop.GetOrCreateGroupList(schema, property.PointItemBySchema(tiles))
+	g := prop.GetOrCreateGroupList(visualizerSchema, property.PointItemBySchema(tiles))
 	g.Add(property.NewGroup().NewID().SchemaGroup(tiles).MustBuild(), -1)
+
+	filter := Filter(sceneID)
+	if err = i.propertyRepo.Filtered(filter).Save(ctx, prop); err != nil {
+		return nil, err
+	}
+
+	return prop, nil
 }
 
 func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
-	eid := id.PluginExtensionID("dataAttribution")
-	pluginID, err := id.PluginIDFrom("reearth")
-	if err != nil {
-		return err
-	}
-	extension, err := i.getWidgePlugin(ctx, pluginID, eid, nil)
+	filter := Filter(sceneID)
+
+	pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, "reearth", "dataAttribution", &filter)
 	if err != nil {
 		return err
 	}
 
-	prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sceneID).Build()
+	prop, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 	if err != nil {
 		return err
 	}
@@ -201,8 +209,8 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 
 	widget, err := scene.NewWidget(
 		id.NewWidgetID(),
-		pluginID,
-		eid,
+		*pluginID,
+		*extensionID,
 		prop.ID(),
 		true,
 		extended,
@@ -228,10 +236,6 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 			}
 		}
 		res.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
-	}
-
-	if err := i.propertyRepo.Filtered(repo.SceneFilter{Writable: scene.IDList{sceneID}}).Save(ctx, prop); err != nil {
-		return err
 	}
 
 	return nil
@@ -263,7 +267,7 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 		return nil, nil, err
 	}
 
-	property, err := property.New().NewID().Schema(extension.Schema()).Scene(sid).Build()
+	property, err := i.addNewProperty(ctx, extension.Schema(), sid, nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -307,11 +311,6 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 			}
 		}
 		s.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
-	}
-
-	err = i.propertyRepo.Save(ctx, property)
-	if err != nil {
-		return nil, nil, err
 	}
 
 	err = i.sceneRepo.Save(ctx, s)
@@ -693,104 +692,81 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project) (*scene.S
 	return sce, res, nil
 }
 
-func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, prj *project.Project, plgs []*plugin.Plugin, sceneData map[string]any) (*scene.Scene, error) {
-	sceneJSON, err := builder.ParseSceneJSON(ctx, sceneData)
+func Filter(s id.SceneID) repo.SceneFilter {
+	return repo.SceneFilter{Readable: scene.IDList{s}, Writable: scene.IDList{s}}
+}
+
+func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {
+
+	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
 		return nil, err
 	}
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sce.ID()}}
-	writableFilter := repo.SceneFilter{Writable: scene.IDList{sce.ID()}}
+	filter := Filter(sce.ID())
 
-	widgets := []*scene.Widget{}
-	replaceWidgetIDs := make(map[string]idx.ID[id.Widget])
+	if p, err := i.propertyRepo.Filtered(filter).FindByID(ctx, sce.Property()); err == nil {
+		builder.PropertyUpdate(ctx, p, i.propertyRepo, i.propertySchemaRepo, sceneJSON.Property)
+		for k, v := range sceneJSON.Plugins {
+			fmt.Println("Unsupported sceneJSON.Plugins ", k, v)
+		}
+	}
+
 	for _, widgetJSON := range sceneJSON.Widgets {
-		pluginID, err := id.PluginIDFrom(widgetJSON.PluginID)
+
+		pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, widgetJSON.PluginID, widgetJSON.ExtensionID, &filter)
 		if err != nil {
 			return nil, err
 		}
-		extensionID := id.PluginExtensionID(widgetJSON.ExtensionID)
-		extension, err := i.getWidgePlugin(ctx, pluginID, extensionID, &readableFilter)
+
+		// exclude official plugin
+		if pluginID.String() != "reearth" {
+			sce.AddPlugin(scene.NewPlugin(*pluginID, nil))
+		}
+
+		propW, err := i.addNewProperty(ctx, extension.Schema(), sce.ID(), &filter)
 		if err != nil {
 			return nil, err
 		}
-		prop, err := property.New().NewID().Schema(extension.Schema()).Scene(sce.ID()).Build()
-		if err != nil {
-			return nil, err
-		}
-		ps, err := i.propertySchemaRepo.Filtered(readableFilter).FindByID(ctx, extension.Schema())
-		if err != nil {
-			return nil, err
-		}
-		prop, err = builder.AddItemFromPropertyJSON(ctx, prop, ps, widgetJSON.Property)
-		if err != nil {
-			return nil, err
-		}
-		// Save property
-		if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
-			return nil, err
-		}
+		builder.PropertyUpdate(ctx, propW, i.propertyRepo, i.propertySchemaRepo, widgetJSON.Property)
 
 		newWidgetID := id.NewWidgetID()
-		replaceWidgetIDs[widgetJSON.ID] = newWidgetID
-		widget, err := scene.NewWidget(newWidgetID, pluginID, extensionID, prop.ID(), widgetJSON.Enabled, widgetJSON.Extended)
+
+		// Replace new WidgetID
+		*data = bytes.Replace(*data, []byte(widgetJSON.ID), []byte(newWidgetID.String()), -1)
+
+		widget, err := scene.NewWidget(
+			newWidgetID,
+			*pluginID,
+			*extensionID,
+			propW.ID(),
+			widgetJSON.Enabled,
+			widgetJSON.Extended,
+		)
 		if err != nil {
 			return nil, err
 		}
-		widgets = append(widgets, widget)
+
+		sce.Widgets().Add(widget)
 	}
 
-	var viz = visualizer.VisualizerCesium
-	if prj.CoreSupport() {
-		viz = visualizer.VisualizerCesiumBeta
-	}
-	schema := builtin.GetPropertySchemaByVisualizer(viz)
-	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sce.ID()).Build()
+	alignSystem, err := builder.ParserWidgetAlignSystem(data)
 	if err != nil {
 		return nil, err
 	}
-	prop, err = builder.AddItemFromPropertyJSON(ctx, prop, schema, sceneJSON.Property)
-	if err != nil {
-		return nil, err
-	}
-	// Save property
-	if err = i.propertyRepo.Filtered(writableFilter).Save(ctx, prop); err != nil {
+	sce.Widgets().SetAlignment(alignSystem)
+
+	sce.SetUpdatedAt(time.Now())
+
+	if err := i.sceneRepo.Save(ctx, sce); err != nil {
 		return nil, err
 	}
 
-	plugins := sce.Plugins()
-	for _, plg := range plgs {
-		if plg.ID().String() != "reearth" {
-			plugins.Add(scene.NewPlugin(plg.ID(), nil))
-		}
-	}
-
-	alignSystem := builder.ParserWidgetAlignSystem(sceneJSON.WidgetAlignSystem, replaceWidgetIDs)
-	s2, err := scene.New().
-		ID(sce.ID()).
-		Project(prj.ID()).
-		Workspace(prj.Workspace()).
-		Widgets(scene.NewWidgets(widgets, alignSystem)).
-		UpdatedAt(time.Now()).
-		Property(prop.ID()).
-		Plugins(plugins).
-		Build()
+	result, err := i.sceneRepo.FindByID(ctx, sce.ID())
 	if err != nil {
 		return nil, err
 	}
-
-	// Save scene (update)
-	if err := i.sceneRepo.Save(ctx, s2); err != nil {
-		return nil, err
-	}
-	if err := updateProjectUpdatedAt(ctx, prj, i.projectRepo); err != nil {
-		return nil, err
-	}
-	s3, err := i.sceneRepo.FindByID(ctx, sce.ID())
-	if err != nil {
-		return nil, err
-	}
-	return s3, nil
+	return result, nil
 }
 
 func injectExtensionsToScene(s *scene.Scene, ext []plugin.ID) {
@@ -821,4 +797,34 @@ func (i *Scene) getWidgePlugin(ctx context.Context, pid id.PluginID, eid id.Plug
 		return nil, interfaces.ErrExtensionTypeMustBeWidget
 	}
 	return extension, nil
+}
+
+func (i *Scene) getWidgePluginWithID(ctx context.Context, pid string, eid string, readableFilter *repo.SceneFilter) (*id.PluginID, *id.PluginExtensionID, *plugin.Extension, error) {
+	pluginID, err := id.PluginIDFrom(pid)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	extensionID := id.PluginExtensionID(eid)
+	extension, err := i.getWidgePlugin(ctx, pluginID, extensionID, readableFilter)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	return &pluginID, &extensionID, extension, nil
+}
+
+func (i *Scene) addNewProperty(ctx context.Context, schemaID id.PropertySchemaID, sceneID id.SceneID, filter *repo.SceneFilter) (*property.Property, error) {
+	prop, err := property.New().NewID().Schema(schemaID).Scene(sceneID).Build()
+	if err != nil {
+		return nil, err
+	}
+	if filter == nil {
+		if err = i.propertyRepo.Save(ctx, prop); err != nil {
+			return nil, err
+		}
+	} else {
+		if err = i.propertyRepo.Filtered(*filter).Save(ctx, prop); err != nil {
+			return nil, err
+		}
+	}
+	return prop, nil
 }
