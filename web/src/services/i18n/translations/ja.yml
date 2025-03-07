@@ -237,10 +237,10 @@ Title: タイトル
 Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
-Click to place the point: ''
-Double click to finish drawing: ''
-Right click to cancel drawing: ''
-Press ESC to undo the last step: ''
+Click to place the point: クリックでポイントを追加する
+Double click to finish drawing: ダブルクリックで描画を終了する
+Right click to cancel drawing: 右クリックで描画をキャンセルする
+Press ESC to undo the last step: ESCキーで最後のステップを取り消す
 Marker: マーカー
 Polyline: ポリライン
 Circle: 丸
@@ -249,14 +249,14 @@ Polygon: ポリゴン
 Extruded circle: 円柱
 Extruded rectangle: 立方体
 Extruded polygon: 押し出しポリゴン
-Drag and Drop to adjust the point position: ''
-Left click a point and press Delete key to remove it: ''
-Double click to save the edits: ''
-Right click to cancel editing: ''
-Edit Geometry: ''
-Delete Feature: ''
-Delete this feature?: ''
-Are you sure you want to delete this feature? If deleted, you can not recover it again.: ''
+Drag and Drop to adjust the point position: ドラッグ&ドロップでポイントの位置を調整する
+Left click a point and press Delete key to remove it: ポイントを左クリックし、Deleteキーを押してポイントを削除する
+Double click to save the edits: ダブルクリックで編集を保存する
+Right click to cancel editing: 右クリックで編集をキャンセルする
+Edit Geometry: ジオメトリを編集 
+Delete Feature: 地物を削除
+Delete this feature?: 地物を削除しますか?
+Are you sure you want to delete this feature? If deleted, you can not recover it again.: 本当にこの地物を削除しますか？削除すると二度と復元できません。
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
