@@ -23,7 +23,11 @@ jobs:
       - name: Install go-licenses
         run: go install github.com/google/go-licenses@latest
       - name: Check for License Compliance
-        run: go-licenses check ./... --stderrthreshold=10 --disallowed_types=forbidden,restricted,unknown --ignore github.com/eukarya-inc --logtostderr=false
+        run: |
+          go-licenses check ./... --stderrthreshold=10 \
+            --disallowed_types=forbidden,restricted,unknown \
+            --ignore github.com/eukarya-inc --ignore github.com/reearth \
+            --logtostderr=false
 
   web-dependency-review:
     name: Web Dependency Review
@@ -38,9 +42,13 @@ jobs:
           node-version: lts/*
           cache: 'yarn'
           cache-dependency-path: web/yarn.lock
+      - name: Install Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.3.1 --activate
       - run: yarn install
       - run: npm install -g license-checker-rseidelsohn
       - run: |
-            license-checker-rseidelsohn \
+          license-checker-rseidelsohn \
             --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;ISC;BSD-3-Clause;Python-2.0;CC-BY-4.0;BlueOak-1.0.0;Public Domain;CC0-1.0;Unlicense;CC-BY-3.0;0BSD' \
             --excludePackagesStartingWith '@reearth;turf-jsts' --clarificationsFile=clarification.json
