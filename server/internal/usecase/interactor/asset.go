@@ -168,6 +168,9 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 	}
 
 	for beforeName, zipFile := range assets {
+		if zipFile.UncompressedSize64 == 0 {
+			continue
+		}
 		realName := assetNames[beforeName]
 		readCloser, err := zipFile.Open()
 		if err != nil {
