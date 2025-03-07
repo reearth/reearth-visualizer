@@ -31,6 +31,18 @@ jobs:
           docker pull $IMAGE
           docker tag $IMAGE $IMAGE_GCP
           docker push $IMAGE_GCP
+      # after creating the infrastructure, please uncomment the following steps
+      # - name: Update Cloud Run Job
+      #   run: |
+      #     gcloud run jobs update reearth-visualizer-migration \
+      #       --image $IMAGE_GCP \
+      #       --region $GCP_REGION
+      #       --quiet
+      # - name: Execute Cloud Run Job
+      #   run: |
+      #     gcloud run jobs execute reearth-visualizer-migration \
+      #       --region $GCP_REGION \
+      #       --quiet
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy reearth-visualizer-api \
