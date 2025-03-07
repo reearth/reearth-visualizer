@@ -1,6 +1,8 @@
 package property
 
 import (
+	"sort"
+
 	"github.com/reearth/reearth/server/pkg/i18n"
 )
 
@@ -35,7 +37,11 @@ func (s *SchemaGroup) Fields() []*SchemaField {
 	if s == nil {
 		return nil
 	}
-	return append([]*SchemaField{}, s.fields...)
+	sortedFields := append([]*SchemaField{}, s.fields...)
+	sort.Slice(sortedFields, func(i, j int) bool {
+		return sortedFields[i].id.String() < sortedFields[j].id.String()
+	})
+	return sortedFields
 }
 
 // Field returns a field whose id is specified

@@ -1,6 +1,7 @@
 package gqlmodel
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/reearth/reearth/server/pkg/id"
@@ -244,7 +245,11 @@ func ToPropertySchema(propertySchema *property.Schema) *PropertySchema {
 }
 
 func ToPropertySchemas(ps []*property.Schema) []*PropertySchema {
-	return lo.Map(ps, func(s *property.Schema, _ int) *PropertySchema {
+	sortedPs := append([]*property.Schema{}, ps...)
+	sort.Slice(sortedPs, func(i, j int) bool {
+		return sortedPs[i].ID().String() < sortedPs[j].ID().String()
+	})
+	return lo.Map(sortedPs, func(s *property.Schema, _ int) *PropertySchema {
 		return ToPropertySchema(s)
 	})
 }

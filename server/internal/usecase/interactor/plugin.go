@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -181,7 +182,7 @@ func parsePropertySchemaField(fieldMap map[string]interface{}) *property.SchemaF
 	return fiBuilder.MustBuild()
 }
 
-func parseIsAvailableIf(conditionMap map[string]interface{}) *property.Condition {
+func parseIsAvailableIf(conditionMap map[string]any) *property.Condition {
 	fid := string(conditionMap["fieldId"].(string))
 	f := id.PropertyFieldIDFromRef(&fid)
 	t := gqlmodel.ToPropertyValueType(conditionMap["type"].(string))
@@ -192,7 +193,7 @@ func parseIsAvailableIf(conditionMap map[string]interface{}) *property.Condition
 	}
 }
 
-func parseSchemaFieldPointer(linkableFieldsMap map[string]interface{}) *property.SchemaFieldPointer {
+func parseSchemaFieldPointer(linkableFieldsMap map[string]any) *property.SchemaFieldPointer {
 	sg := linkableFieldsMap["schemaGroupId"].(string)
 	f := linkableFieldsMap["fieldId"].(string)
 	return &property.SchemaFieldPointer{
@@ -201,20 +202,20 @@ func parseSchemaFieldPointer(linkableFieldsMap map[string]interface{}) *property
 	}
 }
 
-func parsePropertySchema(psid id.PropertySchemaID, schemaMap map[string]interface{}) (*property.Schema, error) {
+func parsePropertySchema(psid id.PropertySchemaID, schemaMap map[string]any) (*property.Schema, error) {
 
-	groups := schemaMap["groups"].([]interface{})
+	groups := schemaMap["groups"].([]any)
 
 	// SchemaGroup -------------
 	sgl := make([]*property.SchemaGroup, 0)
 	for _, group := range groups {
-		groupMap := group.(map[string]interface{})
+		groupMap := group.(map[string]any)
 
 		// SchemaField -------------
 		fil := make([]*property.SchemaField, 0)
-		if fields, ok := groupMap["fields"].([]interface{}); ok {
+		if fields, ok := groupMap["fields"].([]any); ok {
 			for _, field := range fields {
-				fieldMap := field.(map[string]interface{})
+				fieldMap := field.(map[string]any)
 				fi := parsePropertySchemaField(fieldMap)
 				fil = append(fil, fi)
 			}
@@ -229,7 +230,7 @@ func parsePropertySchema(psid id.PropertySchemaID, schemaMap map[string]interfac
 		if v, ok := groupMap["isList"].(bool); ok {
 			sgBuilder = sgBuilder.IsList(v)
 		}
-		if v, ok := groupMap["isAvailableIf"].(map[string]interface{}); ok {
+		if v, ok := groupMap["isAvailableIf"].(map[string]any); ok {
 			sgBuilder = sgBuilder.IsAvailableIf(parseIsAvailableIf(v))
 		}
 		if v, ok := groupMap["title"].(string); ok {
@@ -249,13 +250,13 @@ func parsePropertySchema(psid id.PropertySchemaID, schemaMap map[string]interfac
 	}
 
 	// LinkableFields -------------
-	linkableFields := schemaMap["linkableFields"].(map[string]interface{})
+	linkableFields := schemaMap["linkableFields"].(map[string]any)
 
 	linkableBuilder := property.NewLinkableFields()
-	if v, ok := linkableFields["LatLng"].(map[string]interface{}); ok {
+	if v, ok := linkableFields["LatLng"].(map[string]any); ok {
 		linkableBuilder = linkableBuilder.LatLng(parseSchemaFieldPointer(v))
 	}
-	if v, ok := linkableFields["URL"].(map[string]interface{}); ok {
+	if v, ok := linkableFields["URL"].(map[string]any); ok {
 		linkableBuilder = linkableBuilder.URL(parseSchemaFieldPointer(v))
 	}
 	lf := linkableBuilder.MustBuild()
@@ -289,7 +290,7 @@ func parseWidgetLayout(model *jsonmodel.WidgetLayout) *plugin.WidgetLayout {
 	return &wl
 }
 
-func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsData []interface{}, schemasData []interface{}) ([]*plugin.Plugin, property.SchemaList, error) {
+func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsData []any, schemasData []any) ([]*plugin.Plugin, property.SchemaList, error) {
 	var pluginsJSON = jsonmodel.ToPluginsFromJSON(pluginsData)
 
 	readableFilter := repo.SceneFilter{Readable: scene.IDList{sce.ID()}}
@@ -327,16 +328,19 @@ func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsDat
 
 			// Save propertySchema
 			for _, schema := range schemasData {
-				schemaMap, _ := schema.(map[string]interface{})
-				if schemaMap["id"].(string) == psid.String() {
-					ps, err := parsePropertySchema(psid, schemaMap)
-					if err != nil {
-						return nil, nil, err
+				if schemaMap, ok := schema.(map[string]any); ok {
+					if id, ok := schemaMap["id"].(string); ok {
+						if id == psid.String() {
+							ps, err := parsePropertySchema(psid, schemaMap)
+							if err != nil {
+								return nil, nil, err
+							}
+							if err := i.propertySchemaRepo.Filtered(writableFilter).Save(ctx, ps); err != nil {
+								return nil, nil, errors.New("Save propertySchema :" + err.Error())
+							}
+							propertySchemaIDs = append(propertySchemaIDs, ps.ID())
+						}
 					}
-					if err := i.propertySchemaRepo.Filtered(writableFilter).Save(ctx, ps); err != nil {
-						return nil, nil, errors.New("Save propertySchema :" + err.Error())
-					}
-					propertySchemaIDs = append(propertySchemaIDs, ps.ID())
 				}
 			}
 		}
@@ -360,6 +364,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsDat
 		}
 	}
 
+	// check result
 	plgs, err := i.pluginRepo.Filtered(readableFilter).FindByIDs(ctx, pluginIDs)
 	if err != nil {
 		return nil, nil, err
@@ -372,34 +377,41 @@ func (i *Plugin) ImportPlugins(ctx context.Context, sce *scene.Scene, pluginsDat
 	return plgs, pss, nil
 }
 
-func (i *Plugin) ImporPluginFile(ctx context.Context, newPluginId string, name string, zipFile *zip.File) error {
+func (i *Plugin) ImporPluginFile(ctx context.Context, plugins map[string]*zip.File, oldSceneID string, newSceneID string) error {
 
-	pid, err := id.PluginIDFrom(newPluginId)
-	if err != nil {
-		return err
-	}
+	for fileName, zipFile := range plugins {
 
-	readCloser, err := zipFile.Open()
-	if err != nil {
-		return fmt.Errorf("error opening zip file entry: %w", err)
-	}
-	defer func() {
-		if cerr := readCloser.Close(); cerr != nil {
-			fmt.Printf("Error closing file: %v\n", cerr)
+		parts := strings.Split(fileName, "/")
+		oldPID := parts[0]
+		fileName := parts[1]
+
+		newPluginId := strings.Replace(oldPID, oldSceneID, newSceneID, 1)
+		pid, err := id.PluginIDFrom(newPluginId)
+		if err != nil {
+			return err
 		}
-	}()
 
-	contentType := http.DetectContentType([]byte(zipFile.Name))
+		readCloser, err := zipFile.Open()
+		if err != nil {
+			return fmt.Errorf("error opening zip file entry: %w", err)
+		}
+		defer func() {
+			if cerr := readCloser.Close(); cerr != nil {
+				fmt.Printf("Error closing file: %v\n", cerr)
+			}
+		}()
 
-	file := &file.File{
-		Content:     readCloser,
-		Path:        name,
-		Size:        int64(zipFile.UncompressedSize64),
-		ContentType: contentType,
-	}
+		file := &file.File{
+			Content:     readCloser,
+			Path:        fileName,
+			Size:        int64(zipFile.UncompressedSize64),
+			ContentType: http.DetectContentType([]byte(zipFile.Name)),
+		}
 
-	if err := i.file.UploadPluginFile(ctx, pid, file); err != nil {
-		return fmt.Errorf("error uploading plugin file: %w", err)
+		if err := i.file.UploadPluginFile(ctx, pid, file); err != nil {
+			return fmt.Errorf("error uploading plugin file: %w", err)
+		}
+
 	}
 
 	return nil
