@@ -88,6 +88,7 @@ func (b *Builder) WithStory(s *storytelling.Story) *Builder {
 	return b
 }
 
+// Build this is used to publish projects and stories
 func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) error {
 	if b == nil || b.scene == nil {
 		return nil
@@ -125,6 +126,7 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time,
 	return json.NewEncoder(w).Encode(res)
 }
 
+// BuildResult this will be used to export the project
 func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	if b == nil || b.scene == nil {
 		return nil, errors.New("invalid builder state")
