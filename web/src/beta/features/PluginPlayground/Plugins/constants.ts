@@ -1,7 +1,6 @@
 export type PluginType = {
   id: string;
   files: FileType[];
-  title: string;
 };
 
 export type FileType = {

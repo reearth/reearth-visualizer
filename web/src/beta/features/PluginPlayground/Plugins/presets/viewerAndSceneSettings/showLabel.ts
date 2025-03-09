@@ -53,6 +53,5 @@ reearth.camera.flyTo(
 
 export const showLabel: PluginType = {
   id: "show-label",
-  files: [widgetFile, yamlFile],
-  title: "Show Label"
+  files: [widgetFile, yamlFile]
 };

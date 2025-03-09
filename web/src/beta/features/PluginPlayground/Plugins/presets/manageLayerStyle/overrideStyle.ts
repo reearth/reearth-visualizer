@@ -192,6 +192,5 @@ reearth.timeline.setTime({
 
 export const overrideStyle: PluginType = {
   id: "override-style",
-  files: [widgetFile, yamlFile],
-  title: "Override Style"
+  files: [widgetFile, yamlFile]
 };

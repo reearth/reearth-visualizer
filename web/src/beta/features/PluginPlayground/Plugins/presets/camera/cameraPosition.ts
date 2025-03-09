@@ -319,6 +319,5 @@ reearth.extension.on('message', (msg) => {
 
 export const cameraPosition: PluginType = {
   id: "camera-position",
-  files: [widgetFile, yamlFile],
-  title: "Camera Position"
+  files: [widgetFile, yamlFile]
 };

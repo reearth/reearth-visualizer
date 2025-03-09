@@ -125,6 +125,5 @@ reearth.extension.on("message", (msg) => {
 
 export const enableTerrain: PluginType = {
   id: "enable-terrain",
-  files: [widgetFile, yamlFile],
-  title: "Enable Terrain"
+  files: [widgetFile, yamlFile]
 };

@@ -64,6 +64,5 @@ reearth.camera.flyTo(
 
 export const add3dTiles: PluginType = {
   id: "add-3d-tiles",
-  files: [widgetFile, yamlFile],
-  title: "Add 3D Tiles"
+  files: [widgetFile, yamlFile]
 };

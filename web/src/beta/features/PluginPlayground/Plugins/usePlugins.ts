@@ -32,7 +32,7 @@ export default () => {
           const decoded = decodePluginURL(sharedPluginUrl);
           return {
             ...decoded,
-            id: `shared-${decoded.id}`
+            id: decoded.id
           };
         } catch (_error) {
           setNotification({
@@ -210,11 +210,9 @@ export default () => {
               sourceCode: content
             }));
 
-            // NOTE: Imported plugin becomes "my-plugin"
             const newPlugin = {
               id: "my-plugin", // NOTE: id of the custom plugin
-              files: pluginFiles,
-              title: "My Plugin"
+              files: pluginFiles
             };
 
             setPlugins((plugins) => [
@@ -265,17 +263,10 @@ export default () => {
     (pluginId: string): string | undefined => {
       selectPlugin(pluginId);
       // Need to do a find here as the selectedPlugin does not get updated immediately
-      const sharedPlugin = plugins.find(
-        (plugin) => plugin.id === pluginId
-      ) as PluginType;
+      const sharedPlugin = plugins.find((plugin) => plugin.id === pluginId);
 
       // Note: We can't use the same id for a shared plugin
-
-      const selectedPluginCopy = {
-        ...sharedPlugin,
-        id: pluginId,
-        title: sharedPlugin.title
-      };
+      const selectedPluginCopy = { ...sharedPlugin, id: pluginId };
 
       // First compress the code
       try {
