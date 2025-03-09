@@ -68,7 +68,7 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 	pluginIDs := sce.PluginIds()
 	var filteredPluginIDs []id.PluginID
 	for _, pluginID := range pluginIDs {
-		// exclude official plugin
+		//  The exported plugin data includes only the added plugins.
 		if pluginID.String() != "reearth" {
 			filteredPluginIDs = append(filteredPluginIDs, pluginID)
 		}
@@ -88,7 +88,7 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 			if err != nil {
 				return nil, nil, err
 			}
-			// get plugin file
+
 			stream, err := i.file.ReadPluginFile(ctx, p.ID(), extensionFileName)
 			if err != nil {
 				if stream != nil {
@@ -106,7 +106,6 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				return nil, nil, err
 			}
 
-			// get property schem
 			schema, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
 			if err != nil {
 				return nil, nil, err
@@ -173,7 +172,6 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 			}
 			extensions = append(extensions, extension)
 
-			// Save propertySchema
 			for _, schema := range schemasData {
 				if schemaMap, ok := schema.(map[string]any); ok {
 					if id, ok := schemaMap["id"].(string); ok {
@@ -204,14 +202,12 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 			return nil, nil, err
 		}
 		if !p.ID().System() {
-			// Save plugin
 			if err := i.pluginRepo.Filtered(filter).Save(ctx, p); err != nil {
 				return nil, nil, errors.New("Save plugin :" + err.Error())
 			}
 		}
 	}
 
-	// check result
 	plgs, err := i.pluginRepo.Filtered(filter).FindByIDs(ctx, pluginIDs)
 	if err != nil {
 		return nil, nil, err
@@ -226,12 +222,13 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 
 func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.File, oldSceneID string, newSceneID string) error {
 
-	for fileName, zipFile := range plugins {
+	for filePathInZip, zipFile := range plugins {
 
-		parts := strings.Split(fileName, "/")
+		parts := strings.Split(filePathInZip, "/")
 		oldPluginId := parts[0]
 		realFileName := parts[1]
 
+		// The file paths inside the ZIP remain unchanged, so they need to be updated.
 		newPluginId := strings.Replace(oldPluginId, oldSceneID, newSceneID, 1)
 		pid, err := id.PluginIDFrom(newPluginId)
 		if err != nil {

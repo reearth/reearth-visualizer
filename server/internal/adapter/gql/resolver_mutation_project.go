@@ -144,7 +144,6 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		}
 	}()
 
-	// export project
 	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
 	if err != nil {
 		return nil, err
@@ -203,17 +202,17 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 	// First, create the project. A project associated with the asset is required.
 	newProject, err := usecases(ctx).Project.ImportProjectData(ctx, string(input.TeamID), importData, getOperator(ctx))
 	if err != nil {
-		return nil, errors.New("Fail ImportProjectData :" + err.Error())
+		return nil, errors.New("Fail Import ProjectData :" + err.Error())
 	}
 
 	importData, err = usecases(ctx).Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject)
 	if err != nil {
-		return nil, errors.New("Fail ImportAssetFiles :" + err.Error())
+		return nil, errors.New("Fail Import AssetFiles :" + err.Error())
 	}
 
 	newScene, err := usecases(ctx).Scene.Create(ctx, newProject.ID(), false, getOperator(ctx))
 	if err != nil {
-		return nil, errors.New("Fail Scene Create :" + err.Error())
+		return nil, errors.New("Fail Create Scene :" + err.Error())
 	}
 
 	oldSceneID, err := replaceOldSceneID(importData, newScene)
@@ -273,6 +272,7 @@ func replaceOldSceneID(data *[]byte, newScene *scene.Scene) (string, error) {
 	}
 	if s, ok := d["scene"].(map[string]any); ok {
 		if oldSceneID, ok := s["id"].(string); ok {
+
 			// Replace new scene id
 			*data = bytes.Replace(*data, []byte(oldSceneID), []byte(newScene.ID().String()), -1)
 			return oldSceneID, nil

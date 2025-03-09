@@ -1082,6 +1082,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 
 		newNLSLayerID := id.NewNLSLayerID()
 		nlayerIDs = append(nlayerIDs, newNLSLayerID)
+
+		// Replace new layer id
 		*data = bytes.Replace(*data, []byte(nlsLayerJSON.ID), []byte(newNLSLayerID.String()), -1)
 
 		nlBuilder := nlslayer.New().

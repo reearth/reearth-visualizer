@@ -140,6 +140,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 		return nil, err
 	}
 
+	// For ProjectImport, it is included in the import data, so it is not necessary.
 	if defaultExtensionWidget {
 		if err = i.addDefaultExtensionWidget(ctx, sceneID, res); err != nil {
 			return nil, err
@@ -732,7 +733,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 
 		newWidgetID := id.NewWidgetID()
 
-		// Replace new WidgetID
+		// Replace new widget id
 		*data = bytes.Replace(*data, []byte(widgetJSON.ID), []byte(newWidgetID.String()), -1)
 
 		widget, err := scene.NewWidget(

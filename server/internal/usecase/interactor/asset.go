@@ -195,6 +195,7 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 			return nil, err
 		}
 
+		// Project logo update will be at this time
 		if newProject.ImageURL() != nil {
 			if path.Base(newProject.ImageURL().Path) == beforeName {
 				newProject.SetImageURL(url)
