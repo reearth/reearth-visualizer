@@ -29,11 +29,11 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const handleNameUpdate = useCallback(() => {
-    if (id && localName !== name) {
+    if (id && localName) {
       onLayerStyleNameUpdate({ styleId: id, name: localName });
-    }
+    } else setLocalName(name);
     setIsEditing(false);
-  }, [id, name, localName, onLayerStyleNameUpdate]);
+  }, [localName, name, onLayerStyleNameUpdate, id]);
 
   const handleClick = useCallback(
     (e: MouseEvent) => {
