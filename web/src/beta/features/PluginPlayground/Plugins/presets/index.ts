@@ -22,7 +22,7 @@ import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
 import { layerStylingExamples } from "./layerStyles/layerStylingExamples";
 import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
 import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
-import { filterFeatureWithStyle } from "./manageLayerStyle/filterFeaturebyStyle";
+import { filterFeatureByStyle } from "./manageLayerStyle/filterFeaturebyStyle";
 import { overrideStyle } from "./manageLayerStyle/overrideStyle";
 import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
 import { playbackControl } from "./timeline/playbackControl";
@@ -92,7 +92,7 @@ export const presetPlugins: PresetPlugins = [
       featureStyle3dModel,
       overrideStyle,
       styleWithCondition,
-      filterFeatureWithStyle
+      filterFeatureByStyle
     ]
   },
   {

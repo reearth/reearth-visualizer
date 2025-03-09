@@ -39,5 +39,6 @@ reearth.layers.add(layerWmsUrl);
 
 export const addWms: PluginType = {
   id: "add-wms",
-  files: [widgetFile, yamlFile]
+  files: [widgetFile, yamlFile],
+  title: "Add WMS"
 };

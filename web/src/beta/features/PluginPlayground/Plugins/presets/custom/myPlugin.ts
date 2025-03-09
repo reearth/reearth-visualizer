@@ -83,5 +83,6 @@ export const myPlugin: PluginType = {
     demoInfoboxBlock2File,
     demoStoryFile,
     yamlFile
-  ]
+  ],
+  title: "My Plugin"
 };

@@ -242,5 +242,6 @@ const extension2File: FileType = {
 // Plugin Definition
 export const extensionExtensionMessenger: PluginType = {
   id: "extension-to-extension-messenger",
-  files: [yamlFile, extension1File, extension2File]
+  files: [yamlFile, extension1File, extension2File],
+  title: "Extension to Extension Messenger"
 };

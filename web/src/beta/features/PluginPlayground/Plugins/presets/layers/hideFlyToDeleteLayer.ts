@@ -217,5 +217,6 @@ reearth.extension.on("message", (msg) => {
 
 export const hideFlyToDeleteLayer: PluginType = {
   id: "hide-fly-to-delete-layer",
-  files: [widgetFile, yamlFile]
+  files: [widgetFile, yamlFile],
+  title: "Hide Fly To Delete Layer"
 };

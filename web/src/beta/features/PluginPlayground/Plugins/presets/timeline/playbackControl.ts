@@ -390,5 +390,6 @@ const widgetFile: FileType = {
 
 export const playbackControl: PluginType = {
   id: "playback-control",
-  files: [widgetFile, yamlFile]
+  files: [widgetFile, yamlFile],
+  title: "Playback Control"
 };

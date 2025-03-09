@@ -76,5 +76,6 @@ reearth.layers.add(layerKmlUrl);`
 
 export const addKml: PluginType = {
   id: "add-kml",
-  files: [widgetFile, yamlFile]
+  files: [widgetFile, yamlFile],
+  title: "Add KML"
 };

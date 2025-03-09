@@ -159,7 +159,8 @@ reearth.extension.on("message", (msg) => {
 })`
 };
 
-export const filterFeatureWithStyle: PluginType = {
-  id: "filter-features-with-style",
-  files: [widgetFile, yamlFile]
+export const filterFeatureByStyle: PluginType = {
+  id: "filter-features-by-style",
+  files: [widgetFile, yamlFile],
+  title: "Filter Features by Style"
 };

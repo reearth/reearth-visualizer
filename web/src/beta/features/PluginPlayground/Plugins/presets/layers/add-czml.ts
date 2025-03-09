@@ -96,5 +96,6 @@ reearth.camera.flyTo(
 
 export const addCzml: PluginType = {
   id: "add-czml",
-  files: [widgetFile, yamlFile]
+  files: [widgetFile, yamlFile],
+  title: "Add CZML"
 };
