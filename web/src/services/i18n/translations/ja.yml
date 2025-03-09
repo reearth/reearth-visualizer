@@ -87,7 +87,6 @@ Project Name *: プロジェクト名 *
 Text: テキスト
 Description: 説明
 Write down your content: 内容を書き込む
-Cover Image: カバー画像
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
 Starred: スター付き
@@ -307,7 +306,7 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 HTML Editor: HTML エディター
-Run Code: 'コードを実行'
+Run Code: コードを実行
 This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
 No valid schema defined.: 有効なスキーマが定義されていません。
 Chiyoda 3D Tiles: 千代田区 3D Tiles
