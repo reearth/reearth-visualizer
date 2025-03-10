@@ -374,10 +374,12 @@ Extension Property: 拡張プロパティ
 Zoom In Out: ズームイン/アウト
 Camera Rotation: カメラ回転
 Camera Position: カメラ位置
+Shared Plugin: 共有プラグイン
 Add File: ファイルを追加
 Import Plugin: プラグインをインポート
 Export Plugin: プラグインをエクスポート
 Share Plugin: プラグインを共有
+Shared: 共有
 No plugins: プラグインがありません
 Invalid shared plugin URL: 共有プラグインのURLが無効です
 File not found: ファイルが見つかりません
