@@ -10,27 +10,3 @@ jobs:
     uses: reearth/actions/.github/workflows/go-dependency-check.yml@go-dependency-check
     with:
       subdirectory: server
-
-  # web-dependency-review:
-  #   name: Web Dependency Review
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: web
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Install Yarn
-  #       run: |
-  #         corepack enable
-  #         corepack prepare yarn@4.3.1 --activate
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: lts/*
-  #         cache: 'yarn'
-  #         cache-dependency-path: web/yarn.lock
-  #     - run: yarn install
-  #     - run: npm install -g license-checker-rseidelsohn
-  #     - run: |
-  #         license-checker-rseidelsohn \
-  #           --onlyAllow 'MIT;Apache-2.0;BSD-2-Clause;ISC;BSD-3-Clause;Python-2.0;CC-BY-4.0;BlueOak-1.0.0;Public Domain;CC0-1.0;Unlicense;CC-BY-3.0;0BSD' \
-  #           --excludePackagesStartingWith '@reearth;turf-jsts' --clarificationsFile=clarification.json
