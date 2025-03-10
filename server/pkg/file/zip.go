@@ -3,6 +3,7 @@ package file
 import (
 	"archive/zip"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strings"
@@ -87,7 +88,7 @@ func ZipBasePath(zr *zip.Reader) (b string) {
 	return
 }
 
-func UncompressExportZip(file io.ReadSeeker) ([]byte, map[string]*zip.File, map[string]*zip.File, error) {
+func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[string]*zip.File, map[string]*zip.File, error) {
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		return nil, nil, nil, err
@@ -114,6 +115,16 @@ func UncompressExportZip(file io.ReadSeeker) ([]byte, map[string]*zip.File, map[
 			if err != nil {
 				return nil, nil, nil, err
 			}
+			var d map[string]any
+			if err := json.Unmarshal(data, &d); err == nil {
+				if e, ok := d["exportedInfo"].(map[string]any); ok {
+					if host, ok := e["host"].(string); ok {
+
+						// Replace to current host
+						data = bytes.Replace(data, []byte(host), []byte(currentHost), -1)
+					}
+				}
+			}
 		} else if strings.HasPrefix(file.Name, "assets/") {
 			trimmedName := strings.TrimPrefix(file.Name, "assets/")
 			assets[trimmedName] = file
@@ -127,5 +138,5 @@ func UncompressExportZip(file io.ReadSeeker) ([]byte, map[string]*zip.File, map[
 	if len(data) == 0 {
 		return nil, nil, nil, fmt.Errorf("project.json not found in the zip file")
 	}
-	return data, assets, plugins, nil
+	return &data, assets, plugins, nil
 }
