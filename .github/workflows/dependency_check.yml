@@ -22,6 +22,8 @@ jobs:
             server/go.sum
       - name: Install go-licenses
         run: go install github.com/google/go-licenses@latest
+      - name: Run go vendor
+        run: go mod vendor
       - name: Check for License Compliance
         run: |
           go-licenses check ./... --stderrthreshold=10 \
