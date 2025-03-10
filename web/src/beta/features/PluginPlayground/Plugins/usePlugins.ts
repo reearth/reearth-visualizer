@@ -32,7 +32,7 @@ export default () => {
           const decoded = decodePluginURL(sharedPluginUrl);
           return {
             ...decoded,
-            id: decoded.id
+            id: "shared-plugin-id" // NOTE: hardcoded id as ids are used are used for the plugin title logic
           };
         } catch (_error) {
           setNotification({

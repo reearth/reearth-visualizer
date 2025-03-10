@@ -103,7 +103,8 @@ const Plugins: FC<Props> = ({
       "extension-property": t("Extension Property"),
       "zoom-in-out": t("Zoom In Out"),
       "camera-rotation": t("Camera Rotation"),
-      "camera-position": t("Camera Position")
+      "camera-position": t("Camera Position"),
+      "shared-plugin-id": t("Shared Plugin")
     };
   }, [t]);
 
@@ -164,7 +165,7 @@ const Plugins: FC<Props> = ({
                 key={"shared"}
                 iconPosition="left"
                 size="small"
-                title={t("Shared Plugin")}
+                title={t("Shared")}
                 noPadding
               >
                 <PluginSubList>
