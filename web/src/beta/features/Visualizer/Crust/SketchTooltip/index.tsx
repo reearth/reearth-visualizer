@@ -7,23 +7,29 @@ type SketchTooltipProp = {
   sketchFeatureTooltip?: SketchFeatureTooltip;
 };
 
-const BOLD_WORDS = [
+const boldWords = [
   "Drag",
   "Drop",
   "Click",
-  "Left click",
   "Right click",
   "Double click",
   "Select",
   "Delete",
-  "ESC"
+  "Enter",
+  "ESC",
+  "ドラッグ",
+  "ドロップ",
+  "クリック",
+  "右クリック",
+  "ダブルクリック",
+  "選択",
 ];
 
 const formatText = (text: string) =>
   text
-    .split(new RegExp(`(${BOLD_WORDS.join("|")})`, "g"))
+    .split(new RegExp(`(${boldWords.join("|")})`, "g"))
     .map((word, i) =>
-      BOLD_WORDS.includes(word) ? <strong key={i}>{word}</strong> : word
+      boldWords.includes(word) ? <strong key={i}>{word}</strong> : word
     );
 
 const SketchTooltip: FC<SketchTooltipProp> = ({ sketchFeatureTooltip }) => {
@@ -51,5 +57,6 @@ const Wrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.smallest,
   color: theme.content.main,
   padding: theme.spacing.normal,
+  zIndex: theme.zIndexes.visualizer.sketchLayerTooltip,
   boxSizing: "border-box"
 }));

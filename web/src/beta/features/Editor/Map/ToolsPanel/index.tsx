@@ -29,6 +29,7 @@ const ToolsPanel: FC = () => {
     sketchEditingFeature,
     handleSketchTypeChange,
     handleSketchGeometryEditStart,
+    handleSketchGeometryEditCancel,
     handleGeoJsonFeatureDelete
   } = useMapPage();
 
@@ -44,7 +45,7 @@ const ToolsPanel: FC = () => {
       setSketchLayerTooltip?.({
         description: [
           t("Click to place the point"),
-          t("Double click to finish drawing"),
+          t("Double click or press Enter key to finish drawing"),
           t("Right click to cancel drawing"),
           t("Press ESC to undo the last step")
         ].join("\n")
@@ -52,7 +53,7 @@ const ToolsPanel: FC = () => {
     },
     [handleSketchTypeChange, setSketchLayerTooltip, t]
   );
-  
+
   const sketchTools: SketchTool[] = useMemo(
     () => [
       {
@@ -136,14 +137,14 @@ const ToolsPanel: FC = () => {
   const handleEditSketchFeature = useCallback(() => {
     handleSketchGeometryEditStart();
     handleSketchTypeChange(undefined);
-      setSketchLayerTooltip?.({
-        description: [
-          t("Drag and Drop to adjust the point position"),
-          t("Left click a point and press Delete key to remove it"),
-          t("Double click to save the edits"),
-          t("Right click to cancel editing")
-        ].join("\n")
-      });
+    setSketchLayerTooltip?.({
+      description: [
+        t("Drag and Drop to adjust the point position"),
+        t("Select a point and press Delete key to remove it"),
+        t("Double click or press Enter to save the edits"),
+        t("Right click to cancel editing")
+      ].join("\n")
+    });
   }, [
     handleSketchGeometryEditStart,
     handleSketchTypeChange,
@@ -165,43 +166,57 @@ const ToolsPanel: FC = () => {
     handleGeoJsonFeatureDelete,
     handleSketchTypeChange
   ]);
+
+  const handleShowDeleteFeatureConfirmModal = useCallback(() => {
+    setShowDeleteFeatureConfirmModal(true);
+    handleSketchTypeChange(undefined);
+    if (isEditingGeometry) {
+      handleSketchGeometryEditCancel();
+    }
+  }, [
+    handleSketchGeometryEditCancel,
+    handleSketchTypeChange,
+    isEditingGeometry
+  ]);
+
   return (
     <Panel storageId="editor-map-tools-panel" extend>
       <SketchToolsWrapper>
-        {sketchTools.map(
-          ({ icon, selected, tooltipText, placement, onClick }) => (
-            <IconButton
-              key={icon}
-              icon={icon}
-              disabled={!sketchEnabled}
-              appearance={"simple"}
-              active={selected}
-              tooltipText={tooltipText}
-              placement={placement}
-              onClick={onClick}
-            />
-          )
-        )}
         <SketchFeatureButtons>
-          <>
-            <IconButton
-              icon="pencilLine"
-              disabled={!selectedSketchFeature}
-              appearance={"simple"}
-              active={isEditingGeometry}
-              placement="top"
-              onClick={handleEditSketchFeature}
-              tooltipText={t("Edit Geometry")}
-            />
-            <IconButton
-              icon="trash"
-              disabled={!selectedSketchFeature}
-              appearance={"simple"}
-              tooltipText={t("Delete Feature")}
-              placement="top"
-              onClick={() => setShowDeleteFeatureConfirmModal(true)}
-            />
-          </>
+          {sketchTools.map(
+            ({ icon, selected, tooltipText, placement, onClick }) => (
+              <IconButton
+                key={icon}
+                icon={icon}
+                disabled={!sketchEnabled}
+                appearance={"simple"}
+                active={selected}
+                tooltipText={tooltipText}
+                placement={placement}
+                onClick={onClick}
+              />
+            )
+          )}
+        </SketchFeatureButtons>
+        <Divider />
+        <SketchFeatureButtons>
+          <IconButton
+            icon="pencilLine"
+            disabled={!selectedSketchFeature}
+            appearance={"simple"}
+            active={isEditingGeometry}
+            placement="top"
+            onClick={handleEditSketchFeature}
+            tooltipText={t("Edit Geometry")}
+          />
+          <IconButton
+            icon="trash"
+            disabled={!selectedSketchFeature}
+            appearance={"simple"}
+            tooltipText={t("Delete Feature")}
+            placement="top"
+            onClick={handleShowDeleteFeatureConfirmModal}
+          />
         </SketchFeatureButtons>
       </SketchToolsWrapper>
       {showDeleteFeatureConfirmModal && (
@@ -238,13 +253,16 @@ const SketchToolsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-start",
   alignItems: "center",
-  gap: theme.spacing.smallest,
-  padding: theme.spacing.smallest
+  gap: theme.spacing.smallest
+}));
+
+const Divider = styled("div")(({ theme }) => ({
+  borderLeft: `1px solid ${theme.outline.weak}`,
+  height: "24px"
 }));
 
 const SketchFeatureButtons = styled("div")(({ theme }) => ({
   display: "flex",
-  borderLeft: `0.5px solid ${theme.outline.weak}`,
   padding: theme.spacing.smallest,
   gap: theme.spacing.small
 }));

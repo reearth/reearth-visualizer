@@ -17,7 +17,8 @@ import {
 import ToolsPanel from "./ToolsPanel";
 
 const Map: FC = () => {
-  const { handleVisualizerResize } = useMapPage();
+  const { handleVisualizerResize, handleSketchGeometryEditCancel } =
+    useMapPage();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const secRightAreaRef = useRef<AreaRef>(null);
@@ -36,8 +37,9 @@ const Map: FC = () => {
       setPhotoOverlayEditingFeature(RESET);
       setPhotoOverlayPreview(RESET);
       setSketchLayerTooltip(RESET)
+      handleSketchGeometryEditCancel()
     };
-  }, [setPhotoOverlayEditingFeature, setPhotoOverlayPreview, setSketchLayerTooltip]);
+  }, [handleSketchGeometryEditCancel, setPhotoOverlayEditingFeature, setPhotoOverlayPreview, setSketchLayerTooltip]);
 
   return (
     <Window ref={windowRef}>
