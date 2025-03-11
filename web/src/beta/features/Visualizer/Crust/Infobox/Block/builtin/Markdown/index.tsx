@@ -17,7 +17,7 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   block,
   layer,
   isSelected,
-  selectedFuture,
+  selectedFeature,
   ...props
 }) => {
   const src = useMemo(
@@ -27,12 +27,12 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
 
   const evaluatedSrc = useExpressionEval(src);
   const propertyNames = useMemo(() => {
-    if (!selectedFuture?.properties) return [];
+    if (!selectedFeature?.properties) return [];
     const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
-    return Object.keys(selectedFuture.properties).filter(
+    return Object.keys(selectedFeature.properties).filter(
       (key) => !defaultProperty.includes(key)
     );
-  }, [selectedFuture]);
+  }, [selectedFeature]);
 
   const LinkRenderer = ({
     href,

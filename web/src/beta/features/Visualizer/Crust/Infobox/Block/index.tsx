@@ -15,7 +15,7 @@ export type Props = {
   renderBlock?: (block: BlockProps<InfoboxBlock>) => ReactNode;
   layer?: Layer;
   pageId?: string;
-  selectedFuture?: ComputedFeature;
+  selectedFeature?: ComputedFeature;
 } & CommonBlockProps<InfoboxBlock>;
 
 export type Component = ComponentType<CommonBlockProps<InfoboxBlock>>;
@@ -23,7 +23,7 @@ export type Component = ComponentType<CommonBlockProps<InfoboxBlock>>;
 const InfoboxBlockComponent = ({
   renderBlock,
   onRemove,
-  selectedFuture,
+  selectedFeature,
   ...props
 }: Props): JSX.Element | null => {
   const builtinBlockId = `${props.block?.pluginId}/${props.block?.extensionId}`;
@@ -40,7 +40,7 @@ const InfoboxBlockComponent = ({
       {...props}
       minHeight={120}
       onRemove={onRemove ? handleRemove : undefined}
-      selectedFuture={selectedFuture}
+      selectedFeature={selectedFeature}
     />
   ) : props.block ? (
     <BlockWrapper

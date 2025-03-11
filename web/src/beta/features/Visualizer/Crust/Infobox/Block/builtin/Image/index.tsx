@@ -11,7 +11,7 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({
   block,
   layer,
   isSelected,
-  selectedFuture,
+  selectedFeature,
   ...props
 }) => {
   const src = useMemo(
@@ -21,7 +21,7 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({
 
   const evaluatedSrc = useExpressionEval(src);
 
-  const propertyNames = Object.keys(selectedFuture?.properties).filter(
+  const propertyNames = Object.keys(selectedFeature?.properties).filter(
     (key) => {
       const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
       return !defaultProperty.includes(key);

@@ -11,13 +11,13 @@ const TextBlock: FC<BlockProps<InfoboxBlock>> = ({
   block,
   layer,
   isSelected,
-  selectedFuture,
+  selectedFeature,
   ...props
 }) => {
   const src = block?.property?.default?.text?.value as ValueTypes["string"];
 
   const evaluatedSrc = useExpressionEval(src);
-  const propertyNames = Object.keys(selectedFuture?.properties).filter(
+  const propertyNames = Object.keys(selectedFeature?.properties).filter(
     (key) => {
       const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
       return !defaultProperty.includes(key);

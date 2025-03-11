@@ -24,7 +24,7 @@ export type CommonBlockProps<T = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
-  selectedFuture?: ComputedFeature;
+  selectedFeature?: ComputedFeature;
   dragHandleClassName?: string;
   block?: T;
   layer?: Layer;

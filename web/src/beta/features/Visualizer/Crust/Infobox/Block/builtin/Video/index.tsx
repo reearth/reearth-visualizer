@@ -13,7 +13,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   block,
   layer,
   isSelected,
-  selectedFuture,
+  selectedFeature,
   ...props
 }) => {
   const [aspectRatio, setAspectRatio] = useState(56.25);
@@ -24,7 +24,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
-  const propertyNames = Object.keys(selectedFuture?.properties).filter(
+  const propertyNames = Object.keys(selectedFeature?.properties).filter(
     (key) => {
       const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
       return !defaultProperty.includes(key);
