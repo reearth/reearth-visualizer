@@ -32,7 +32,7 @@ export default () => {
           const decoded = decodePluginURL(sharedPluginUrl);
           return {
             ...decoded,
-            id: `shared-${decoded.id}`
+            id: "shared-plugin-id" // NOTE: hardcoded id as ids are used for the plugin title logic
           };
         } catch (_error) {
           setNotification({
@@ -183,7 +183,7 @@ export default () => {
         return;
       }
 
-      if (file.type !== "application/zip") {
+      if (!file.name.toLowerCase().endsWith(".zip")) {
         setNotification({
           type: "error",
           text: t("Only zip files are supported")
@@ -262,11 +262,11 @@ export default () => {
   const encodeAndSharePlugin = useCallback(
     (pluginId: string): string | undefined => {
       selectPlugin(pluginId);
-      // Need to do a find here as the selectedPlugin does not get updated immediately
+      // Need to "find" the selectedPlugin as it does not get updated immediately
       const sharedPlugin = plugins.find((plugin) => plugin.id === pluginId);
 
       // Note: We can't use the same id for a shared plugin
-      const selectedPluginCopy = { ...sharedPlugin, id: uuidv4() };
+      const selectedPluginCopy = { ...sharedPlugin };
 
       // First compress the code
       try {

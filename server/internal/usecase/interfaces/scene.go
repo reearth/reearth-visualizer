@@ -1,13 +1,11 @@
 package interfaces
 
 import (
-	"archive/zip"
 	"context"
 	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 )
@@ -22,7 +20,7 @@ var (
 type Scene interface {
 	Fetch(context.Context, []id.SceneID, *usecase.Operator) ([]*scene.Scene, error)
 	FindByProject(context.Context, id.ProjectID, *usecase.Operator) (*scene.Scene, error)
-	Create(context.Context, id.ProjectID, *usecase.Operator) (*scene.Scene, error)
+	Create(context.Context, id.ProjectID, bool, *usecase.Operator) (*scene.Scene, error)
 	AddWidget(context.Context, id.SceneID, id.PluginID, id.PluginExtensionID, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
 	UpdateWidget(context.Context, UpdateWidgetParam, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
 	UpdateWidgetAlignSystem(context.Context, UpdateWidgetAlignSystemParam, *usecase.Operator) (*scene.Scene, error)
@@ -33,8 +31,8 @@ type Scene interface {
 	AddCluster(context.Context, id.SceneID, string, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	UpdateCluster(context.Context, UpdateClusterParam, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
 	RemoveCluster(context.Context, id.SceneID, id.ClusterID, *usecase.Operator) (*scene.Scene, error)
-	ExportScene(context.Context, *project.Project, *zip.Writer) (*scene.Scene, map[string]interface{}, error)
-	ImportScene(context.Context, *scene.Scene, *project.Project, []*plugin.Plugin, map[string]interface{}) (*scene.Scene, error)
+	ExportScene(context.Context, *project.Project) (*scene.Scene, map[string]any, error)
+	ImportScene(context.Context, *scene.Scene, *[]byte) (*scene.Scene, error)
 }
 
 type UpdateWidgetParam struct {

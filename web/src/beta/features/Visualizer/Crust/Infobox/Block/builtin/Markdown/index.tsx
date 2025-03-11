@@ -9,6 +9,8 @@ import gfm from "remark-gfm";
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
 
+import "github-markdown-css";
+
 const plugins = [gfm];
 
 const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
@@ -53,12 +55,14 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
     >
       {evaluatedSrc !== undefined ? (
         <Wrapper>
-          <ReactMarkdown
-            remarkPlugins={plugins}
-            components={{ a: LinkRenderer }}
-          >
-            {evaluatedSrc || ""}
-          </ReactMarkdown>
+          <MarkdownWrapper className="markdown-body">
+            <ReactMarkdown
+              remarkPlugins={plugins}
+              components={{ a: LinkRenderer }}
+            >
+              {evaluatedSrc || ""}
+            </ReactMarkdown>
+          </MarkdownWrapper>
         </Wrapper>
       ) : null}
     </BlockWrapper>
@@ -73,5 +77,17 @@ const Wrapper = styled("div")(() => ({
   ["*"]: {
     maxWidth: "100%",
     height: "auto"
+  }
+}));
+
+const MarkdownWrapper = styled("div")(() => ({
+  "@media (prefers-color-scheme: dark)": {
+    all: "unset"
+  },
+  "& ul": {
+    listStyleType: "initial"
+  },
+  "& ol": {
+    listStyleType: "decimal"
   }
 }));

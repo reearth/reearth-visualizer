@@ -53,6 +53,13 @@ func (w *Widgets) Alignment() *WidgetAlignSystem {
 	return w.align
 }
 
+func (w *Widgets) SetAlignment(align *WidgetAlignSystem) {
+	if w == nil {
+		return
+	}
+	w.align = align
+}
+
 func (w *Widgets) Widget(wid WidgetID) *Widget {
 	if w == nil {
 		return nil

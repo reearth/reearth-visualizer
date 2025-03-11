@@ -7,9 +7,13 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -22,7 +26,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
@@ -520,23 +523,97 @@ func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID,
 		return nil, errors.New("This project is deleted")
 	}
 
-	// project image
-	if prj.ImageURL() != nil {
-		err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, prj.ImageURL().Path)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	return prj, nil
 }
 
+func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
+	switch v := data.(type) {
+	case map[string]any:
+		for _, value := range v {
+			if err := SearchAssetURL(ctx, value, assetRepo, file, zipWriter, assetNames); err != nil {
+				return err
+			}
+		}
+	case []any:
+		for _, item := range v {
+			if err := SearchAssetURL(ctx, item, assetRepo, file, zipWriter, assetNames); err != nil {
+				return err
+			}
+		}
+	case string:
+		if strings.HasPrefix(v, adapter.CurrentHost(ctx)) {
+			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, v, assetNames); err != nil {
+				return err
+			}
+		}
+	default:
+
+	}
+	return nil
+}
+
+// If the given path is the URL of an Asset, it will be added to the ZIP.
+func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, urlString string, assetNames map[string]string) error {
+
+	if !IsCurrentHostAssets(ctx, urlString) {
+		return nil
+	}
+
+	parts := strings.Split(urlString, "/")
+	beforeUniversaName := parts[len(parts)-1]
+	stream, err := file.ReadAsset(ctx, beforeUniversaName)
+	if err != nil {
+		return nil // skip if not available
+	}
+	defer func() {
+		if cerr := stream.Close(); cerr != nil {
+			fmt.Printf("Error closing file: %v\n", cerr)
+		}
+	}()
+
+	zipEntryPath := fmt.Sprintf("assets/%s", beforeUniversaName)
+	zipEntry, err := zipWriter.Create(zipEntryPath)
+	if err != nil {
+		return err
+	}
+	_, err = io.Copy(zipEntry, stream)
+	if err != nil {
+		_ = stream.Close()
+		return err
+	}
+	if a, err := assetRepo.FindByURL(ctx, urlString); a != nil && err == nil {
+		if parsedURL, err := url.Parse(urlString); err == nil {
+			assetNames[path.Base(parsedURL.Path)] = a.Name()
+		}
+	}
+
+	return nil
+}
+
 func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
+
+	assetNames := make(map[string]string)
+	if project, ok := data["project"].(map[string]interface{}); ok {
+		if imageUrl, ok := project["imageUrl"].(map[string]interface{}); ok {
+			if path, ok := imageUrl["Path"].(string); ok {
+				err := AddZipAsset(ctx, i.assetRepo, i.file, zipWriter, adapter.CurrentHost(ctx)+path, assetNames)
+				if err != nil {
+					fmt.Printf("not notfound asset file: %v\n", err)
+				}
+			}
+		}
+	}
+	err := SearchAssetURL(ctx, data, i.assetRepo, i.file, zipWriter, assetNames)
+	if err != nil {
+		fmt.Printf("not notfound asset file: %v\n", err)
+	}
+	data["assets"] = assetNames
+
 	fileWriter, err := zipWriter.Create("project.json")
 	if err != nil {
 		return err
 	}
-	jsonData, err := json.Marshal(data)
+	jsonData, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -562,11 +639,16 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProjectData(ctx context.Context, workspace idx.ID[accountdomain.Workspace], projectData map[string]interface{}, op *usecase.Operator) (*project.Project, usecasex.Tx, error) {
+func (i *Project) ImportProjectData(ctx context.Context, workspace string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
 
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
+	var d map[string]any
+	if err := json.Unmarshal(*data, &d); err != nil {
+		return nil, err
+	}
+
+	projectData, ok := d["project"].(map[string]any)
+	if !ok {
+		return nil, errors.New("project parse error")
 	}
 
 	var input = jsonmodel.ToProjectExportFromJSON(projectData)
@@ -575,8 +657,13 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace idx.ID[accoun
 	archived := false
 	coreSupport := true
 
-	prj, err := i.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: workspace,
+	workspaceId, err := accountdomain.WorkspaceIDFrom(workspace)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := i.Create(ctx, interfaces.CreateProjectParam{
+		WorkspaceID: workspaceId,
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        &input.Name,
 		Description: &input.Description,
@@ -586,11 +673,10 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace idx.ID[accoun
 		CoreSupport: &coreSupport,
 	}, op)
 	if err != nil {
-		fmt.Printf("err:%v\n", err)
-		return nil, tx, err
+		return nil, err
 	}
 
-	return prj, tx, nil
+	return result, nil
 }
 
 func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {
