@@ -153,7 +153,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, data, err := usecases(ctx).Scene.ExportScene(ctx, prj)
+	sce, data, err := usecases(ctx).Scene.ExportScene(ctx, prj, zipWriter)
 	if err != nil {
 		return nil, errors.New("Fail ExportScene :" + err.Error())
 	}
