@@ -4,6 +4,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useMemo, useState } from "react";
 
+import { SHARED_PLUGIN_ID } from "./constants";
 import FileListItem from "./FileListItem";
 import usePlugins from "./usePlugins";
 
@@ -107,7 +108,7 @@ const Plugins: FC<Props> = ({
       "zoom-in-out": t("Zoom In Out"),
       "camera-rotation": t("Camera Rotation"),
       "camera-position": t("Camera Position"),
-      "shared-plugin-id": t("Shared Plugin")
+      "e99982f9-143a-44db-9869-b2bd90578190": t("Shared Plugin") // NOTE: needed to hardcode this part to help translation
     };
   }, [t]);
 
@@ -171,7 +172,7 @@ const Plugins: FC<Props> = ({
       </Actions>
       <PluginBrowser>
         <PluginList>
-          {pluginFromURL && pluginFromURL.id === "shared-plugin-id" && (
+          {pluginFromURL && pluginFromURL.id === SHARED_PLUGIN_ID && (
             <div>
               <Collapse
                 key={"shared"}

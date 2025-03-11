@@ -7,7 +7,7 @@ import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 
-import { PluginType } from "./constants";
+import { PluginType, SHARED_PLUGIN_ID } from "./constants";
 import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
@@ -292,7 +292,7 @@ export default () => {
     (pluginId: string) => {
       try {
         const pluginToShare = plugins.find((plugin) => plugin.id === pluginId);
-        const selectedPluginCopy = { ...pluginToShare, id: "shared-plugin-id" };
+        const selectedPluginCopy = { ...pluginToShare, id: SHARED_PLUGIN_ID };
 
         const compressed = LZString.compressToBase64(
           JSON.stringify(selectedPluginCopy)
