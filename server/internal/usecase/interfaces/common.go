@@ -23,8 +23,6 @@ var (
 
 type Container struct {
 	Asset        Asset
-	Dataset      Dataset
-	Layer        Layer
 	NLSLayer     NLSLayer
 	Plugin       Plugin
 	Policy       Policy
@@ -32,7 +30,6 @@ type Container struct {
 	Property     Property
 	Published    Published
 	Scene        Scene
-	Tag          Tag
 	StoryTelling Storytelling
 	Style        Style
 	User         accountinterfaces.User

@@ -170,7 +170,6 @@ func TestImportStory(t *testing.T) {
         { "extensionId": "mdTextStoryBlock", "pluginId": "reearth" },
         { "extensionId": "imageStoryBlock", "pluginId": "reearth" }
       ],
-      "layers": null,
       "layersIds": null,
       "swipeable": false,
       "title": "Untitled"

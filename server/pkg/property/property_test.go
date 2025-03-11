@@ -4,7 +4,6 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
@@ -27,9 +26,6 @@ func TestProperty_MigrateSchema(t *testing.T) {
 	schemaField7ID := FieldID("g")
 	schemaField8ID := FieldID("h")
 	schemaGroupID := SchemaGroupID("i")
-	datasetID := NewDatasetID()
-	datasetSchemaID := NewDatasetSchemaID()
-	datasetFieldID := NewDatasetFieldID()
 
 	schemaField1, _ := NewSchemaField().ID(schemaField1ID).Type(ValueTypeString).Build()
 	schemaField2, _ := NewSchemaField().ID(schemaField2ID).Type(ValueTypeNumber).Min(0).Max(100).Build()
@@ -71,20 +67,6 @@ func TestProperty_MigrateSchema(t *testing.T) {
 		NewField(schemaField4ID).
 			Value(OptionalValueFrom(ValueTypeString.ValueFrom("z"))).
 			MustBuild(),
-		// should remain
-		NewField(schemaField5ID).
-			Type(ValueTypeString).
-			Links(NewLinks([]*Link{
-				NewLink(datasetID, datasetSchemaID, datasetFieldID),
-			})).
-			MustBuild(),
-		// should be removed because of linked dataset field value type
-		NewField(schemaField6ID).
-			Type(ValueTypeString).
-			Links(NewLinks([]*Link{
-				NewLink(datasetID, datasetSchemaID, datasetFieldID),
-			})).
-			MustBuild(),
 		// should be removed because of type
 		NewField(schemaField7ID).
 			Value(OptionalValueFrom(ValueTypeString.ValueFrom("hogehoge"))).
@@ -98,25 +80,20 @@ func TestProperty_MigrateSchema(t *testing.T) {
 		NewGroup().NewID().SchemaGroup(schemaGroupID).Fields(fields).MustBuild(),
 	}
 
-	datasetFields := []*dataset.Field{
-		dataset.NewField(datasetFieldID, dataset.ValueTypeString.ValueFrom("a"), ""),
-	}
-
 	schema, _ := NewSchema().ID(newSchema).Groups(schemaGroups).Build()
 	property, _ := New().NewID().Scene(sceneID).Schema(oldSchema).Items(items).Build()
-	ds, _ := dataset.New().ID(datasetID).Schema(datasetSchemaID).Scene(sceneID).Fields(datasetFields).Build()
 
-	property.MigrateSchema(context.Background(), schema, dataset.LoaderFrom([]*dataset.Dataset{ds}))
+	property.MigrateSchema(context.Background(), schema)
 
 	newGroup := ToGroup(property.ItemBySchema(schemaGroupID))
 	newFields := newGroup.Fields(nil)
 
 	assert.Equal(t, schema.ID(), property.Schema())
 	assert.Equal(t, 1, len(property.Items()))
-	assert.Equal(t, 3, len(newFields))
+	assert.Equal(t, 2, len(newFields))
 	assert.NotNil(t, newGroup.Field(schemaField1ID))
 	assert.NotNil(t, newGroup.Field(schemaField3ID))
-	assert.NotNil(t, newGroup.Field(schemaField5ID))
+	assert.Nil(t, newGroup.Field(schemaField5ID))
 }
 
 func TestGetOrCreateItem(t *testing.T) {

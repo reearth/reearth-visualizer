@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
-	"github.com/reearth/reearth/server/pkg/layer"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -15,14 +13,11 @@ import (
 type PluginMigrator struct {
 	Property       property.Loader
 	PropertySchema property.SchemaLoader
-	Dataset        dataset.Loader
-	Layer          layer.LoaderByScene
 	Plugin         plugin.Loader
 }
 
 type MigratePluginsResult struct {
 	Scene             *scene.Scene
-	Layers            layer.List
 	Properties        []*property.Property
 	RemovedProperties property.IDList
 }
@@ -56,13 +51,6 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	oldPlugin := plugins[0]
 	newPlugin := plugins[1]
 
-	// Get all layers
-	layers, err := s.Layer(ctx, sc.ID())
-	if err != nil {
-		return MigratePluginsResult{}, err
-	}
-
-	modifiedLayers := layer.List{}
 	propertyIDs := property.IDList{}
 	removedPropertyIDs := property.IDList{}
 
@@ -92,62 +80,21 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 		}
 	}
 
-	// layers
-	for _, l := range layers {
-		if l == nil {
-			continue
-		}
-		ll := *l
-
-		if p := ll.Property(); p != nil {
-			propertyIDs = append(propertyIDs, *p)
-		}
-
-		if ll.Infobox() == nil {
-			continue
-		}
-
-		// Remove invalid Infobox Fields
-		for _, f := range ll.Infobox().Fields() {
-			if !f.Plugin().Equal(oldPlugin.ID()) {
-				continue
-			}
-
-			modifiedLayers = modifiedLayers.AddUnique(l)
-			if newPlugin.Extension(f.Extension()) == nil {
-				ll.Infobox().Remove(f.ID())
-				removedPropertyIDs = append(removedPropertyIDs, f.Property())
-			} else {
-				f.UpgradePlugin(newPluginID)
-				propertyIDs = append(propertyIDs, f.Property())
-			}
-		}
-	}
-
 	// Get all Properties
 	properties, err := s.Property(ctx, propertyIDs...)
 	if err != nil {
 		return MigratePluginsResult{}, err
 	}
 
-	// Get all Datasets
-	datasetIDs := collectDatasetIDs(properties)
-	datasets, err := s.Dataset(ctx, datasetIDs...)
-	if err != nil {
-		return MigratePluginsResult{}, err
-	}
-	datasetLoader := datasets.Map().Loader()
-
 	// Migrate Properties
 	for _, p := range properties {
 		if schema := schemaMap[p.Schema()]; schema != nil {
-			p.MigrateSchema(ctx, schema, datasetLoader)
+			p.MigrateSchema(ctx, schema)
 		}
 	}
 
 	return MigratePluginsResult{
 		Scene:             sc,
-		Layers:            modifiedLayers,
 		Properties:        properties,
 		RemovedProperties: removedPropertyIDs,
 	}, nil
@@ -179,12 +126,4 @@ func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plug
 		}
 	}
 	return schemaMap, nil
-}
-
-func collectDatasetIDs(properties []*property.Property) []property.DatasetID {
-	res := []property.DatasetID{}
-	for _, p := range properties {
-		res = append(res, p.Datasets()...)
-	}
-	return res
 }

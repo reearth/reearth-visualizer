@@ -31,6 +31,24 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 )
 
+var (
+	ErrParentLayerNotFound                  error = errors.New("parent layer not found")
+	ErrPluginNotFound                       error = errors.New("plugin not found")
+	ErrExtensionNotFound                    error = errors.New("extension not found")
+	ErrInfoboxNotFound                      error = errors.New("infobox not found")
+	ErrInfoboxAlreadyExists                 error = errors.New("infobox already exists")
+	ErrCannotAddLayerToLinkedLayerGroup     error = errors.New("cannot add layer to linked layer group")
+	ErrCannotRemoveLayerToLinkedLayerGroup  error = errors.New("cannot remove layer to linked layer group")
+	ErrLinkedLayerItemCannotBeMoved         error = errors.New("linked layer item cannot be moved")
+	ErrLayerCannotBeMovedToLinkedLayerGroup error = errors.New("layer cannot be moved to linked layer group")
+	ErrCannotMoveLayerToOtherScene          error = errors.New("layer cannot layer to other scene")
+	ErrExtensionTypeMustBePrimitive         error = errors.New("extension type must be primitive")
+	ErrExtensionTypeMustBeBlock             error = errors.New("extension type must be block")
+	ErrInvalidExtensionType                 error = errors.New("invalid extension type")
+	ErrSketchNotFound                       error = errors.New("sketch not found")
+	ErrFeatureCollectionNotFound            error = errors.New("featureCollection not found")
+)
+
 type NLSLayer struct {
 	common
 	commonSceneLock
@@ -254,12 +272,6 @@ func (i *NLSLayer) Remove(ctx context.Context, lid id.NLSLayerID, operator *usec
 		if l.Scene() != parentLayer.Scene() {
 			return lid, nil, errors.New("invalid layer")
 		}
-	}
-
-	if parentLayer != nil {
-		return lid, nil, interfaces.ErrCannotRemoveLayerToLinkedLayerGroup
-	}
-	if parentLayer != nil {
 		parentLayer.Children().RemoveLayer(lid)
 		err = i.nlslayerRepo.Save(ctx, parentLayer)
 		if err != nil {
@@ -369,7 +381,7 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 
 	infobox := l.Infobox()
 	if infobox != nil {
-		return nil, interfaces.ErrInfoboxAlreadyExists
+		return nil, ErrInfoboxAlreadyExists
 	}
 
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
@@ -427,7 +439,7 @@ func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, 
 
 	infobox := layer.Infobox()
 	if infobox == nil {
-		return nil, interfaces.ErrInfoboxNotFound
+		return nil, ErrInfoboxNotFound
 	}
 
 	layer.SetInfobox(nil)
@@ -459,7 +471,7 @@ func (i *NLSLayer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID
 	plugin, err := i.pluginRepo.FindByID(ctx, *p)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			return nil, nil, interfaces.ErrPluginNotFound
+			return nil, nil, ErrPluginNotFound
 		}
 		return nil, nil, err
 	}
@@ -470,7 +482,7 @@ func (i *NLSLayer) getPlugin(ctx context.Context, sid id.SceneID, p *id.PluginID
 
 	extension := plugin.Extension(*e)
 	if extension == nil {
-		return nil, nil, interfaces.ErrExtensionNotFound
+		return nil, nil, ErrExtensionNotFound
 	}
 
 	return plugin, extension, nil
@@ -504,7 +516,7 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 
 	infobox := l.Infobox()
 	if infobox == nil {
-		return nil, nil, interfaces.ErrInfoboxNotFound
+		return nil, nil, ErrInfoboxNotFound
 	}
 
 	_, extension, err := i.getPlugin(ctx, l.Scene(), &inp.PluginID, &inp.ExtensionID)
@@ -512,7 +524,7 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 		return nil, nil, err
 	}
 	if extension.Type() != plugin.ExtensionTypeInfoboxBlock {
-		return nil, nil, interfaces.ErrExtensionTypeMustBeBlock
+		return nil, nil, ErrExtensionTypeMustBeBlock
 	}
 	property, err := property.New().NewID().Schema(extension.Schema()).Scene(l.Scene()).Build()
 	if err != nil {
@@ -582,7 +594,7 @@ func (i *NLSLayer) MoveNLSInfoboxBlock(ctx context.Context, inp interfaces.MoveN
 
 	infobox := layer.Infobox()
 	if infobox == nil {
-		return inp.InfoboxBlockID, nil, -1, interfaces.ErrInfoboxNotFound
+		return inp.InfoboxBlockID, nil, -1, ErrInfoboxNotFound
 	}
 
 	infobox.Move(inp.InfoboxBlockID, inp.Index)
@@ -629,7 +641,7 @@ func (i *NLSLayer) RemoveNLSInfoboxBlock(ctx context.Context, inp interfaces.Rem
 
 	infobox := layer.Infobox()
 	if infobox == nil {
-		return inp.InfoboxBlockID, nil, interfaces.ErrInfoboxNotFound
+		return inp.InfoboxBlockID, nil, ErrInfoboxNotFound
 	}
 
 	infobox.Remove(inp.InfoboxBlockID)
@@ -755,7 +767,7 @@ func (i *NLSLayer) ChangeCustomPropertyTitle(ctx context.Context, inp interfaces
 	}
 
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
-		return nil, interfaces.ErrSketchNotFound
+		return nil, ErrSketchNotFound
 	}
 	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
 		return nil, interfaces.ErrOperationDenied
@@ -821,7 +833,7 @@ func (i *NLSLayer) RemoveCustomProperty(ctx context.Context, inp interfaces.AddO
 		return nil, err
 	}
 	if layer.Sketch() == nil || layer.Sketch().FeatureCollection() == nil {
-		return nil, interfaces.ErrSketchNotFound
+		return nil, ErrSketchNotFound
 	}
 
 	// Check if removedTitle exists

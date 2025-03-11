@@ -40,8 +40,6 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 
 	return interfaces.Container{
 		Asset:        NewAsset(r, g),
-		Dataset:      NewDataset(r, g),
-		Layer:        NewLayer(r),
 		NLSLayer:     NewNLSLayer(r, g),
 		Style:        NewStyle(r),
 		Plugin:       NewPlugin(r, g),
@@ -50,7 +48,6 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 		Property:     NewProperty(r, g),
 		Published:    published,
 		Scene:        NewScene(r, g),
-		Tag:          NewTag(r),
 		StoryTelling: NewStorytelling(r, g),
 		Workspace:    accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
 		User:         accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
@@ -146,12 +143,9 @@ func (i commonSceneLock) ReleaseSceneLock(ctx context.Context, s id.SceneID) {
 }
 
 type SceneDeleter struct {
-	Scene         repo.Scene
-	SceneLock     repo.SceneLock
-	Layer         repo.Layer
-	Property      repo.Property
-	Dataset       repo.Dataset
-	DatasetSchema repo.DatasetSchema
+	Scene     repo.Scene
+	SceneLock repo.SceneLock
+	Property  repo.Property
 }
 
 func (d SceneDeleter) Delete(ctx context.Context, s *scene.Scene, force bool) error {
@@ -170,23 +164,8 @@ func (d SceneDeleter) Delete(ctx context.Context, s *scene.Scene, force bool) er
 		}
 	}
 
-	// Delete layer
-	if err := d.Layer.RemoveByScene(ctx, s.ID()); err != nil {
-		return err
-	}
-
 	// Delete property
 	if err := d.Property.RemoveByScene(ctx, s.ID()); err != nil {
-		return err
-	}
-
-	// Delete dataset
-	if err := d.Dataset.RemoveByScene(ctx, s.ID()); err != nil {
-		return err
-	}
-
-	// Delete dataset schema
-	if err := d.DatasetSchema.RemoveByScene(ctx, s.ID()); err != nil {
 		return err
 	}
 

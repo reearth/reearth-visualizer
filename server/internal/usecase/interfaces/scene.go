@@ -1,6 +1,7 @@
 package interfaces
 
 import (
+	"archive/zip"
 	"context"
 	"errors"
 
@@ -29,11 +30,8 @@ type Scene interface {
 	InstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, *id.PropertyID, error)
 	UninstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
 	UpgradePlugin(context.Context, id.SceneID, id.PluginID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
-	AddCluster(context.Context, id.SceneID, string, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
-	UpdateCluster(context.Context, UpdateClusterParam, *usecase.Operator) (*scene.Scene, *scene.Cluster, error)
-	RemoveCluster(context.Context, id.SceneID, id.ClusterID, *usecase.Operator) (*scene.Scene, error)
-	ExportScene(context.Context, *project.Project) (*scene.Scene, map[string]any, error)
-	ImportScene(context.Context, *scene.Scene, *project.Project, []*plugin.Plugin, map[string]any) (*scene.Scene, error)
+	ExportScene(context.Context, *project.Project, *zip.Writer) (*scene.Scene, map[string]interface{}, error)
+	ImportScene(context.Context, *scene.Scene, *project.Project, []*plugin.Plugin, map[string]interface{}) (*scene.Scene, error)
 }
 
 type UpdateWidgetParam struct {
@@ -53,11 +51,4 @@ type UpdateWidgetAlignSystemParam struct {
 	Gap        *int
 	Centered   *bool
 	Background *string
-}
-
-type UpdateClusterParam struct {
-	ClusterID  id.ClusterID
-	SceneID    id.SceneID
-	Name       *string
-	PropertyID *id.PropertyID
 }

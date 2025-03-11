@@ -401,21 +401,11 @@ func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
     __typename
   }
 }
-fragment PropertyFieldLink on PropertyFieldLink {
-  datasetId
-  datasetSchemaId
-  datasetSchemaFieldId
-  __typename
-}
 fragment PropertyFieldFragment on PropertyField {
   id
   fieldId
   type
   value
-  links {
-    ...PropertyFieldLink
-    __typename
-  }
   __typename
 }
 fragment PropertyGroupFragment on PropertyGroup {
