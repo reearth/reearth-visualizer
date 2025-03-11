@@ -116,6 +116,7 @@ const Infobox: FC<Props> = ({
                 key={b.id}
                 block={b}
                 layer={layer}
+                selectedFeature={infobox?.feature}
                 isEditable={isEditable}
                 renderBlock={renderBlock}
                 isSelected={b.id === selectedBlockId}
@@ -145,8 +146,9 @@ const Infobox: FC<Props> = ({
         )
       })),
     [
-      layer,
       infoboxBlocks,
+      layer,
+      infobox?.feature,
       isEditable,
       renderBlock,
       selectedBlockId,
