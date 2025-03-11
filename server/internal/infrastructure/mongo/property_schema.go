@@ -137,10 +137,7 @@ func (r *PropertySchema) findOne(ctx context.Context, filter any) (*property.Sch
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
-	if len(c.Result) > 0 {
-		return c.Result[0], nil
-	}
-	return nil, nil
+	return c.Result[0], nil
 }
 
 // func (r *PropertySchema) readFilter(filter any) any {

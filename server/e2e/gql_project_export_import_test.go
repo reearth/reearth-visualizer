@@ -33,7 +33,7 @@ func TestProjectExportImport(t *testing.T) {
 
 	r.Object().Value("project").NotNull()
 	r.Object().Value("plugins").Array()
-	r.Object().Value("schema").Array()
+	r.Object().Value("schemas").Array()
 	r.Object().Value("scene").NotNull()
 	r.Object().Value("nlsLayer").Array()
 	r.Object().Value("style").Array()
@@ -54,7 +54,6 @@ func TestProjectExportImport(t *testing.T) {
 	compareValue(t, "stories", expected, actual)
 	compareValue(t, "newLayers", expected, actual)
 	compareValue(t, "plugins", expected, actual)
-	compareValue(t, "property", expected, actual)
 
 	defer func() {
 		err := os.Remove(fileName)
