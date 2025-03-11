@@ -22,7 +22,7 @@ export const FieldComponent = ({
   fieldId,
   field,
   onPropertyUpdate,
-  sketchCustomProperties
+  propertyNames
 }: {
   propertyId: string;
   groupId: string;
@@ -51,7 +51,7 @@ export const FieldComponent = ({
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
-  sketchCustomProperties?: string[] | undefined;
+  propertyNames?: string[] | undefined;
 }) => {
   const t = useT();
   const handlePropertyValueUpdate = useCallback(
@@ -86,12 +86,10 @@ export const FieldComponent = ({
     [field.ui]
   );
 
-  const sketchCustomPropertiesOption = sketchCustomProperties?.map(
-    (property) => ({
-      value: property,
-      label: property
-    })
-  );
+  const propertyOption = propertyNames?.map((property) => ({
+    value: property,
+    label: property
+  }));
 
   return field?.type === "spacing" ? (
     <SpacingField
@@ -233,7 +231,7 @@ export const FieldComponent = ({
         value={field?.value}
         description={field?.description}
         placeholder={field?.placeholder}
-        options={sketchCustomPropertiesOption}
+        options={propertyOption}
         displayLabel="{}"
         displayWidth={38}
         menuWidth={107}

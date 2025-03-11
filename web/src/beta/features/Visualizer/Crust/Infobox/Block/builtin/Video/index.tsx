@@ -8,12 +8,12 @@ import Player from "react-player";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
-import useSketchCustomPropertyNames from "../useSketchCustomPropertyNames";
 
 const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   block,
   layer,
   isSelected,
+  selectedFuture,
   ...props
 }) => {
   const [aspectRatio, setAspectRatio] = useState(56.25);
@@ -24,8 +24,12 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
-  const sketchCustomPropertyNames: string[] | undefined =
-    useSketchCustomPropertyNames(layer);
+  const propertyNames = Object.keys(selectedFuture?.properties).filter(
+    (key) => {
+      const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
+      return !defaultProperty.includes(key);
+    }
+  );
 
   const handleVideoReady = useCallback((player: ReactPlayer) => {
     const height = player.getInternalPlayer().videoHeight;
@@ -41,7 +45,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
-      sketchCustomProperties={sketchCustomPropertyNames}
+      propertyNames={propertyNames}
       {...props}
     >
       {evaluatedSrc !== undefined ? (

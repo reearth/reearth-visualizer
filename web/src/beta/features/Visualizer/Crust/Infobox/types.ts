@@ -1,10 +1,11 @@
-import type { Layer, Spacing } from "@reearth/core";
+import type { ComputedFeature, Layer, Spacing } from "@reearth/core";
 import { Item } from "@reearth/services/api/propertyApi/utils";
 
 export type Infobox<BP = any> = {
   featureId?: string;
   property?: InfoboxProperty;
   blocks?: InfoboxBlock<BP>[];
+  feature?: ComputedFeature;
 };
 
 export type InfoboxProperty = {
