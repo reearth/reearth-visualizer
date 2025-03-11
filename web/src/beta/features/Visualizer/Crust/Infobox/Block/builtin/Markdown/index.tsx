@@ -26,12 +26,14 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
-  const propertyNames = Object.keys(selectedFuture?.properties).filter(
-    (key) => {
-      const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
-      return !defaultProperty.includes(key);
-    }
-  );
+  const propertyNames = useMemo(() => {
+    if (!selectedFuture?.properties) return [];
+    const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
+    return Object.keys(selectedFuture.properties).filter(
+      (key) => !defaultProperty.includes(key)
+    );
+  }, [selectedFuture]);
+
   const LinkRenderer = ({
     href,
     children
