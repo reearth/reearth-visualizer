@@ -2,7 +2,7 @@ import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import LZString from "lz-string";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
@@ -12,11 +12,13 @@ import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
 export default () => {
-  const [searchParams] = useSearchParams();
   const [, setNotification] = useNotification();
-
+  const [searchParams] = useSearchParams();
   const t = useT();
-  const sharedPluginUrl = searchParams.get("plugin");
+  const pluginURLParam = searchParams.get("plugin");
+  const presetPluginsArray = presetPlugins
+    .map((category) => category.plugins)
+    .flat();
 
   const decodePluginURL = useCallback((encoded: string) => {
     const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
@@ -26,14 +28,10 @@ export default () => {
     return JSON.parse(decompressed);
   }, []);
 
-  const sharedPlugin = sharedPluginUrl
+  const pluginFromURL: PluginType = pluginURLParam
     ? (() => {
         try {
-          const decoded = decodePluginURL(sharedPluginUrl);
-          return {
-            ...decoded,
-            id: "shared-plugin-id" // NOTE: hardcoded id as ids are used for the plugin title logic
-          };
+          return decodePluginURL(pluginURLParam);
         } catch (_error) {
           setNotification({
             type: "error",
@@ -44,15 +42,15 @@ export default () => {
       })()
     : null;
 
-  const presetPluginsArray = presetPlugins
-    .map((category) => category.plugins)
-    .flat();
-
   const [plugins, setPlugins] = useState<PluginType[]>(
-    sharedPlugin ? [sharedPlugin, ...presetPluginsArray] : presetPluginsArray
+    pluginFromURL && pluginFromURL.id === "shared-plugin-id"
+      ? [pluginFromURL, ...presetPluginsArray]
+      : presetPluginsArray
+  );
+  const [selectedPluginId, setSelectedPluginId] = useState(
+    pluginFromURL ? pluginFromURL.id : plugins[0].id
   );
 
-  const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
   const [selectedFileId, setSelectedFileId] = useState<string>(
     plugins[0]?.files[0]?.id ?? ""
   );
@@ -69,6 +67,37 @@ export default () => {
       selectedPlugin.files[0],
     [selectedPlugin, selectedFileId]
   );
+
+  const getCompressedPlugin = useCallback(
+    (pluginId: string): string | undefined => {
+      const pluginToCompress = plugins.find((plugin) => plugin.id === pluginId);
+
+      try {
+        const compressedPlugin = LZString.compressToBase64(
+          JSON.stringify(pluginToCompress)
+        )
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=/g, "");
+
+        return compressedPlugin;
+      } catch (error) {
+        if (error instanceof Error) {
+          setNotification({ type: "error", text: error.message });
+        }
+        return;
+      }
+    },
+    [plugins, setNotification]
+  );
+
+  useEffect(() => {
+    const compressedPlugin = getCompressedPlugin(selectedPluginId);
+    if (!compressedPlugin) {
+      return;
+    }
+    window.history.replaceState({}, "", `?plugin=${compressedPlugin}`);
+  }, [selectedPluginId, getCompressedPlugin]);
 
   const selectPlugin = useCallback((pluginId: string) => {
     setSelectedPluginId(pluginId);
@@ -260,22 +289,17 @@ export default () => {
   }, [selectedPlugin, setNotification]);
 
   const encodeAndSharePlugin = useCallback(
-    (pluginId: string): string | undefined => {
-      selectPlugin(pluginId);
-      // Need to "find" the selectedPlugin as it does not get updated immediately
-      const sharedPlugin = plugins.find((plugin) => plugin.id === pluginId);
-
-      // Note: We can't use the same id for a shared plugin
-      const selectedPluginCopy = { ...sharedPlugin };
-
-      // First compress the code
+    (pluginId: string) => {
       try {
+        const pluginToShare = plugins.find((plugin) => plugin.id === pluginId);
+        const selectedPluginCopy = { ...pluginToShare, id: "shared-plugin-id" };
+
         const compressed = LZString.compressToBase64(
           JSON.stringify(selectedPluginCopy)
         )
-          .replace(/\+/g, "-") // Convert + to -
-          .replace(/\//g, "_") // Convert / to _
-          .replace(/=/g, ""); // Remove padding =
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=/g, "");
 
         const shareUrl = `${window.location.origin}${window.location.pathname}?plugin=${compressed}`;
         navigator.clipboard.writeText(shareUrl);
@@ -284,7 +308,6 @@ export default () => {
           type: "success",
           text: t("Plugin link copied to clipboard")
         });
-        return compressed;
       } catch (error) {
         if (error instanceof Error) {
           setNotification({ type: "error", text: error.message });
@@ -292,7 +315,7 @@ export default () => {
         return;
       }
     },
-    [plugins, selectPlugin, setNotification, t]
+    [setNotification, t, plugins]
   );
 
   return {
@@ -308,6 +331,6 @@ export default () => {
     deleteFile,
     handlePluginImport,
     handlePluginDownload,
-    sharedPlugin
+    pluginFromURL
   };
 };

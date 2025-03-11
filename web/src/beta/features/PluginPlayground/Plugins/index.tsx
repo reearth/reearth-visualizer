@@ -2,7 +2,7 @@ import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 
 import FileListItem from "./FileListItem";
 import usePlugins from "./usePlugins";
@@ -19,7 +19,7 @@ type UsePluginsReturn = Pick<
   | "updateFileTitle"
   | "deleteFile"
   | "handlePluginImport"
-  | "sharedPlugin"
+  | "pluginFromURL"
   | "handlePluginDownload"
 >;
 
@@ -36,11 +36,14 @@ const Plugins: FC<Props> = ({
   updateFileTitle,
   deleteFile,
   handlePluginImport,
-  sharedPlugin,
+  pluginFromURL,
   handlePluginDownload
 }) => {
   const t = useT();
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<
+    string | undefined
+  >();
 
   const handlePluginShare = (): void => {
     if (!selectedPlugin) return;
@@ -108,16 +111,25 @@ const Plugins: FC<Props> = ({
     };
   }, [t]);
 
+  useEffect(() => {
+    const selectedCategory = presetPlugins.find((category) =>
+      category.plugins.find((plugin) => plugin.id === selectedPlugin.id)
+    );
+    if (selectedCategory) {
+      setSelectedCategoryId(selectedCategory.id);
+    }
+  }, [presetPlugins, selectedPlugin]);
+
   const PluginEntryItem: FC<{
-    pluginId: string;
-    selectedPluginId: string;
-    title: string;
+    highlighted: boolean;
     onSelect: (id: string) => void;
-  }> = ({ pluginId, selectedPluginId, onSelect, title }) => {
+    pluginId: string;
+    title: string;
+  }> = ({ highlighted, pluginId, onSelect, title }) => {
     return (
       <EntryItem
         key={pluginId}
-        highlighted={selectedPluginId === pluginId}
+        highlighted={highlighted}
         onClick={() => onSelect(pluginId)}
         title={title}
         optionsMenuWidth={100}
@@ -159,7 +171,7 @@ const Plugins: FC<Props> = ({
       </Actions>
       <PluginBrowser>
         <PluginList>
-          {sharedPlugin && (
+          {pluginFromURL && pluginFromURL.id === "shared-plugin-id" && (
             <div>
               <Collapse
                 key={"shared"}
@@ -170,11 +182,11 @@ const Plugins: FC<Props> = ({
               >
                 <PluginSubList>
                   <PluginEntryItem
-                    pluginId={sharedPlugin.id}
-                    key={sharedPlugin.id}
-                    title={pluginTitles[sharedPlugin.id]}
-                    selectedPluginId={selectedPlugin.id}
+                    highlighted={selectedPlugin.id === pluginFromURL.id}
+                    key={pluginFromURL.id}
                     onSelect={selectPlugin}
+                    pluginId={pluginFromURL.id}
+                    title={pluginTitles[pluginFromURL.id]}
                   />
                 </PluginSubList>
               </Collapse>
@@ -184,7 +196,9 @@ const Plugins: FC<Props> = ({
             <div key={category.id}>
               <Collapse
                 key={category.id}
-                collapsed={category.id !== "custom"}
+                collapsed={
+                  category.id !== "custom" && category.id !== selectedCategoryId
+                }
                 iconPosition="left"
                 size="small"
                 title={categoryTitles[category.id]}
@@ -192,15 +206,17 @@ const Plugins: FC<Props> = ({
               >
                 <PluginSubList>
                   {category.plugins.length > 0 ? (
-                    category.plugins.map((plugin) => (
-                      <PluginEntryItem
-                        pluginId={plugin.id}
-                        key={plugin.id}
-                        title={pluginTitles[plugin.id]}
-                        selectedPluginId={selectedPlugin.id}
-                        onSelect={selectPlugin}
-                      />
-                    ))
+                    category.plugins.map((plugin) => {
+                      return (
+                        <PluginEntryItem
+                          highlighted={selectedPlugin.id === plugin.id}
+                          key={plugin.id}
+                          onSelect={selectPlugin}
+                          pluginId={plugin.id}
+                          title={pluginTitles[plugin.id]}
+                        />
+                      );
+                    })
                   ) : (
                     <EmptyTip>
                       <Typography size="body" color="weak" trait="italic">
