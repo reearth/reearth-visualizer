@@ -266,7 +266,8 @@ export default function Crust({
       return {
         property: selectedDataLayer?.infobox?.property,
         blocks: [...(selectedDataLayer?.infobox?.blocks ?? [])],
-        featureId: selectedLayerId.featureId
+        featureId: selectedLayerId.featureId,
+        feature: selectedComputedFeature
       };
     }
     const selected = mapRef?.current?.layers?.find(
@@ -277,11 +278,18 @@ export default function Crust({
         property: selected?.infobox?.property,
         blocks: [...(selected?.infobox?.blocks ?? [])],
         featureId: selectedLayerId.featureId,
-        readOnly: true
+        readOnly: true,
+        feature: selectedComputedFeature
       };
     }
     return undefined;
-  }, [mapRef, layers, selectedLayer, selectedLayerId?.featureId]);
+  }, [
+    selectedLayerId.featureId,
+    layers,
+    mapRef,
+    selectedLayer?.layerId,
+    selectedComputedFeature
+  ]);
 
   return (
     <Plugins
