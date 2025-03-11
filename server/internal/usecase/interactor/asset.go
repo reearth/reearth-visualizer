@@ -153,10 +153,10 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	)
 }
 
-func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data []byte, newProject *project.Project) ([]byte, error) {
+func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data *[]byte, newProject *project.Project) (*[]byte, error) {
 
 	var d map[string]any
-	if err := json.Unmarshal(data, &d); err != nil {
+	if err := json.Unmarshal(*data, &d); err != nil {
 		return nil, err
 	}
 
@@ -195,6 +195,7 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 			return nil, err
 		}
 
+		// Project logo update will be at this time
 		if newProject.ImageURL() != nil {
 			if path.Base(newProject.ImageURL().Path) == beforeName {
 				newProject.SetImageURL(url)
@@ -222,7 +223,9 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 			return nil, err
 		}
 		afterName := path.Base(url.Path)
-		data = bytes.Replace(data, []byte(beforeName), []byte(afterName), -1)
+
+		// Replace new asset file name
+		*data = bytes.Replace(*data, []byte(beforeName), []byte(afterName), -1)
 	}
 
 	return data, nil
