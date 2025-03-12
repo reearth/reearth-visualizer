@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
-	"github.com/reearth/reearth/server/internal/infrastructure/mongo/migration"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
@@ -61,11 +60,6 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 
 	// init
 	if err := Init(c); err != nil {
-		return nil, err
-	}
-
-	// migration
-	if err := migration.Do(ctx, client, c.Config); err != nil {
 		return nil, err
 	}
 
