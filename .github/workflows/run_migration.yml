@@ -15,6 +15,7 @@ jobs:
       id-token: write
     env:
       GCP_REGION: us-central1
+      GCP_REGION_MIGRATE: asia-northeast1
       IMAGE: reearth/reearth-visualizer-api:nightly
       IMAGE_GCP: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/reearth/reearth-visualizer-api:nightly
     steps:
@@ -28,12 +29,12 @@ jobs:
         run: |
           gcloud run jobs update reearth-visualizer-migration \
             --image $IMAGE_GCP \
-            --region $GCP_REGION \
+            --region $GCP_REGION_MIGRATE \
             --quiet
 
       - name: Execute Migration Job
         run: |
           gcloud run jobs execute reearth-visualizer-migration \
-            --region $GCP_REGION \
+            --region $GCP_REGION_MIGRATE \
             --wait \
             --quiet
