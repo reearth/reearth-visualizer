@@ -1,7 +1,7 @@
 import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/styled";
+import { styled } from "@reearth/services/theme";
 import { FC, useMemo, useState } from "react";
 
 import FileListItem from "./FileListItem";
@@ -103,7 +103,8 @@ const Plugins: FC<Props> = ({
       "extension-property": t("Extension Property"),
       "zoom-in-out": t("Zoom In Out"),
       "camera-rotation": t("Camera Rotation"),
-      "camera-position": t("Camera Position")
+      "camera-position": t("Camera Position"),
+      "shared-plugin-id": t("Shared Plugin")
     };
   }, [t]);
 
@@ -164,7 +165,7 @@ const Plugins: FC<Props> = ({
                 key={"shared"}
                 iconPosition="left"
                 size="small"
-                title={"Shared"}
+                title={t("Shared")}
                 noPadding
               >
                 <PluginSubList>

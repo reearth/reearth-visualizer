@@ -2,7 +2,9 @@ package interactor
 
 import (
 	"archive/zip"
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -15,8 +17,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -151,45 +153,80 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	)
 }
 
-func (i *Asset) ImportAssetFiles(ctx context.Context, realName string, zipFile *zip.File, workspace idx.ID[accountdomain.Workspace], project *id.ProjectID) (*url.URL, int64, error) {
+func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data *[]byte, newProject *project.Project) (*[]byte, error) {
 
-	readCloser, err := zipFile.Open()
-	if err != nil {
-		return nil, 0, fmt.Errorf("error opening zip file entry: %w", err)
+	var d map[string]any
+	if err := json.Unmarshal(*data, &d); err != nil {
+		return nil, err
 	}
-	defer func() {
-		if cerr := readCloser.Close(); cerr != nil {
-			fmt.Printf("Error closing file: %v\n", cerr)
+
+	assetNames := make(map[string]string)
+	for beforeName, realName := range d["assets"].(map[string]any) {
+		if realName, ok := realName.(string); ok {
+			assetNames[beforeName] = realName
 		}
-	}()
-
-	contentType := http.DetectContentType([]byte(zipFile.Name))
-	file := &file.File{
-		Content:     readCloser,
-		Path:        realName,
-		Size:        int64(zipFile.UncompressedSize64),
-		ContentType: contentType,
-	}
-	url, size, err := i.gateways.File.UploadAsset(ctx, file)
-	if err != nil {
-		return nil, 0, err
 	}
 
-	a, err := asset.New().
-		NewID().
-		Workspace(workspace).
-		Project(project).
-		Name(path.Base(realName)).
-		Size(size).
-		URL(url.String()).
-		CoreSupport(true).
-		Build()
-	if err != nil {
-		return nil, 0, err
-	}
-	if err := i.repos.Asset.Save(ctx, a); err != nil {
-		return nil, 0, err
+	for beforeName, zipFile := range assets {
+		if zipFile.UncompressedSize64 == 0 {
+			continue
+		}
+		realName := assetNames[beforeName]
+		readCloser, err := zipFile.Open()
+		if err != nil {
+			return nil, err
+		}
+
+		defer func() {
+			if cerr := readCloser.Close(); cerr != nil {
+				fmt.Printf("Error closing file: %v\n", cerr)
+			}
+		}()
+
+		file := &file.File{
+			Content:     readCloser,
+			Path:        realName,
+			Size:        int64(zipFile.UncompressedSize64),
+			ContentType: http.DetectContentType([]byte(zipFile.Name)),
+		}
+
+		url, size, err := i.gateways.File.UploadAsset(ctx, file)
+		if err != nil {
+			return nil, err
+		}
+
+		// Project logo update will be at this time
+		if newProject.ImageURL() != nil {
+			if path.Base(newProject.ImageURL().Path) == beforeName {
+				newProject.SetImageURL(url)
+				err := i.repos.Project.Save(ctx, newProject)
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
+
+		a, err := asset.New().
+			NewID().
+			Workspace(newProject.Workspace()).
+			Project(newProject.ID().Ref()).
+			Name(path.Base(realName)).
+			Size(size).
+			URL(url.String()).
+			CoreSupport(true).
+			Build()
+		if err != nil {
+			return nil, err
+		}
+
+		if err := i.repos.Asset.Save(ctx, a); err != nil {
+			return nil, err
+		}
+		afterName := path.Base(url.Path)
+
+		// Replace new asset file name
+		*data = bytes.Replace(*data, []byte(beforeName), []byte(afterName), -1)
 	}
 
-	return url, size, err
+	return data, nil
 }

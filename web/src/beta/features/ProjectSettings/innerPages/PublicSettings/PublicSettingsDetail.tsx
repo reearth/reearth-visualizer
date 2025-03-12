@@ -134,7 +134,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
 
   return (
     <>
-      <Collapse title={t("Public Info")} size="large">
+      <Collapse title={t("Public Info")} size="large" noShrink>
         <SettingsFields>
           <InputField
             title={t("Title")}
@@ -181,7 +181,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Basic Authorization")} size="large">
+      <Collapse title={t("Basic Authorization")} size="large" noShrink>
         <SettingsFields>
           <SwitchField
             title={t("Enable Basic Authorization")}
@@ -215,7 +215,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Site Setting")} size="large">
+      <Collapse title={t("Site Setting")} size="large" noShrink>
         <SettingsFields>
           <InputField
             title={t("Site name")}
@@ -236,7 +236,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <Collapse title={t("Google Analytics")} size="large">
+      <Collapse title={t("Google Analytics")} size="large" noShrink>
         <SettingsFields>
           <SwitchField
             title={t("Enable Google Analytics")}
@@ -262,7 +262,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         </SettingsFields>
       </Collapse>
       {extensions && extensions.length > 0 && accessToken && (
-        <Collapse title={t("Custom Domain")} size="large">
+        <Collapse title={t("Custom Domain")} size="large" noShrink>
           <ExtensionComponent
             typename={settingsItem.__typename || ""}
             {...(settingsItem.__typename === "Project"
