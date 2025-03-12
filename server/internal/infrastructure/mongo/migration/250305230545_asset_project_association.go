@@ -200,8 +200,7 @@ func searchAssetURL(ctx context.Context, c DBClient, project string, data any, a
 			if _, err := updateAssetProject(ctx, c, project, v); err != nil {
 				return err
 			}
-		} else {
-			// fmt.Println("------ skip value: ", v)
+			// else fmt.Println("------ skip value: ", v)
 		}
 	default:
 		// fmt.Printf("------ skip type: %T\n", data)
