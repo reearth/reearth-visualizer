@@ -29,7 +29,7 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
 
   const handleNameUpdate = useCallback(() => {
-    if (id && localName) {
+    if (id && localName && localName !== name) {
       onLayerStyleNameUpdate({ styleId: id, name: localName });
     } else setLocalName(name);
     setIsEditing(false);
@@ -64,6 +64,12 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
       highlighted={selected}
       onClick={handleClick}
       optionsMenu={[
+        {
+          id: "rename",
+          title: t("Rename"),
+          icon: "pencilSimple" as const,
+          onClick: () => setIsEditing(true)
+        },
         {
           id: "delete",
           title: t("Delete"),
