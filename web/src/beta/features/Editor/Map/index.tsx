@@ -11,12 +11,14 @@ import PhotoOverlayEditor from "./PhotoOverlayEditor";
 import ScenePanel from "./ScenePanel";
 import {
   photoOverlayEditingFeatureAtom,
-  PhotoOverlayPreviewAtom
+  PhotoOverlayPreviewAtom,
+  SketchFeatureTooltipAtom
 } from "./state";
 import ToolsPanel from "./ToolsPanel";
 
 const Map: FC = () => {
-  const { handleVisualizerResize } = useMapPage();
+  const { handleVisualizerResize, handleSketchGeometryEditCancel } =
+    useMapPage();
 
   const windowRef = useRef<HTMLDivElement>(null);
   const secRightAreaRef = useRef<AreaRef>(null);
@@ -26,6 +28,7 @@ const Map: FC = () => {
     photoOverlayEditingFeatureAtom
   );
   const setPhotoOverlayPreview = useSetAtom(PhotoOverlayPreviewAtom);
+  const setSketchLayerTooltip = useSetAtom(SketchFeatureTooltipAtom);
 
   const hideNormalPanels = !!photoOverlayEditingFeature;
 
@@ -33,8 +36,10 @@ const Map: FC = () => {
     return () => {
       setPhotoOverlayEditingFeature(RESET);
       setPhotoOverlayPreview(RESET);
+      setSketchLayerTooltip(RESET)
+      handleSketchGeometryEditCancel()
     };
-  }, [setPhotoOverlayEditingFeature, setPhotoOverlayPreview]);
+  }, [handleSketchGeometryEditCancel, setPhotoOverlayEditingFeature, setPhotoOverlayPreview, setSketchLayerTooltip]);
 
   return (
     <Window ref={windowRef}>
