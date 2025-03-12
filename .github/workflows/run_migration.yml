@@ -27,7 +27,7 @@ jobs:
       - name: Update Migration Job
         run: |
           gcloud run jobs update reearth-visualizer-migration \
-            --image $IMAGE_NAME_GAR \
+            --image $IMAGE_GCP \
             --region $GCP_REGION \
             --quiet
 
