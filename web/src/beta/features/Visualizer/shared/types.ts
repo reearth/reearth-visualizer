@@ -1,6 +1,6 @@
 import { Theme } from "@reearth/beta/features/Visualizer/Crust/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import type { FlyTo, Layer } from "@reearth/core";
+import type { ComputedFeature, FlyTo, Layer } from "@reearth/core";
 
 export type InstallableBlock = {
   name: string;
@@ -24,6 +24,7 @@ export type CommonBlockProps<T = any> = {
   isEditable?: boolean;
   isBuilt?: boolean;
   isSelected?: boolean;
+  selectedFeature?: ComputedFeature;
   dragHandleClassName?: string;
   block?: T;
   layer?: Layer;

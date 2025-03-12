@@ -639,21 +639,16 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProjectData(ctx context.Context, workspace accountdomain.WorkspaceID, data []byte, op *usecase.Operator) (*project.Project, usecasex.Tx, error) {
-
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, nil, err
-	}
+func (i *Project) ImportProjectData(ctx context.Context, workspace string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
 
 	var d map[string]any
-	if err := json.Unmarshal(data, &d); err != nil {
-		return nil, nil, err
+	if err := json.Unmarshal(*data, &d); err != nil {
+		return nil, err
 	}
 
 	projectData, ok := d["project"].(map[string]any)
 	if !ok {
-		return nil, nil, errors.New("project parse error")
+		return nil, errors.New("project parse error")
 	}
 
 	var input = jsonmodel.ToProjectExportFromJSON(projectData)
@@ -662,8 +657,13 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace accountdomain
 	archived := false
 	coreSupport := true
 
-	prj, err := i.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: workspace,
+	workspaceId, err := accountdomain.WorkspaceIDFrom(workspace)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := i.Create(ctx, interfaces.CreateProjectParam{
+		WorkspaceID: workspaceId,
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        &input.Name,
 		Description: &input.Description,
@@ -673,11 +673,10 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace accountdomain
 		CoreSupport: &coreSupport,
 	}, op)
 	if err != nil {
-		fmt.Printf("err:%v\n", err)
-		return nil, tx, err
+		return nil, err
 	}
 
-	return prj, tx, nil
+	return result, nil
 }
 
 func updateProjectUpdatedAt(ctx context.Context, prj *project.Project, r repo.Project) error {
