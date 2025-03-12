@@ -16,36 +16,38 @@ import (
 // go test -v -run TestAssetProjectAssociation ./internal/infrastructure/mongo/migration/...
 
 func TestAssetProjectAssociation(t *testing.T) {
+	assetURLPrefix, err := loadAssetURLPrefix()
+	assert.Nil(t, err)
 
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
 	ctx := context.Background()
 
-	_, err := setupAssetDB(db, ctx)
+	_, err = setupAssetDB(db, ctx, assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupProjectDB(db, ctx)
+	_, err = setupProjectDB(db, ctx, assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupSceneDB(db, ctx)
+	_, err = setupSceneDB(db, ctx, assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupXxxxxDB(db, ctx, "nlsLayer")
+	_, err = setupXxxxxDB(db, ctx, "nlsLayer", assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupXxxxxDB(db, ctx, "storytelling")
+	_, err = setupXxxxxDB(db, ctx, "storytelling", assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupXxxxxDB(db, ctx, "style")
+	_, err = setupXxxxxDB(db, ctx, "style", assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupXxxxxDB(db, ctx, "property")
+	_, err = setupXxxxxDB(db, ctx, "property", assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupXxxxxDB(db, ctx, "propertySchema")
+	_, err = setupXxxxxDB(db, ctx, "propertySchema", assetURLPrefix)
 	assert.NoError(t, err)
 
-	_, err = setupXxxxxDB(db, ctx, "plugin")
+	_, err = setupXxxxxDB(db, ctx, "plugin", assetURLPrefix)
 	assert.NoError(t, err)
 
 	assert.NoError(t, AssetProjectAssociation(ctx, client))
@@ -62,60 +64,60 @@ func TestAssetProjectAssociation(t *testing.T) {
 	}
 
 	expected := []bson.M{
-		{"project": "project1", "url": "http://localhost:8080/assets/project1-1"},
-		{"project": "project1", "url": "http://localhost:8080/assets/project1-2"},
-		{"project": "project1", "url": "http://localhost:8080/assets/project1-3"},
-		{"project": "project2", "url": "http://localhost:8080/assets/project2-1"},
-		{"project": "project2", "url": "http://localhost:8080/assets/project2-2"},
-		{"project": "project2", "url": "http://localhost:8080/assets/project2-3"},
-		{"project": "scene1", "url": "http://localhost:8080/assets/scene1-1"},
-		{"project": "scene1", "url": "http://localhost:8080/assets/scene1-2"},
-		{"project": "scene1", "url": "http://localhost:8080/assets/scene1-3"},
-		{"project": "scene2", "url": "http://localhost:8080/assets/scene2-1"},
-		{"project": "scene2", "url": "http://localhost:8080/assets/scene2-2"},
-		{"project": "scene2", "url": "http://localhost:8080/assets/scene2-3"},
-		{"project": "nlsLayer1", "url": "http://localhost:8080/assets/nlsLayer1-1"},
-		{"project": "nlsLayer1", "url": "http://localhost:8080/assets/nlsLayer1-2"},
-		{"project": "nlsLayer1", "url": "http://localhost:8080/assets/nlsLayer1-3"},
-		{"project": "nlsLayer2", "url": "http://localhost:8080/assets/nlsLayer2-1"},
-		{"project": "nlsLayer2", "url": "http://localhost:8080/assets/nlsLayer2-2"},
-		{"project": "nlsLayer2", "url": "http://localhost:8080/assets/nlsLayer2-3"},
-		{"project": "storytelling1", "url": "http://localhost:8080/assets/storytelling1-1"},
-		{"project": "storytelling1", "url": "http://localhost:8080/assets/storytelling1-2"},
-		{"project": "storytelling1", "url": "http://localhost:8080/assets/storytelling1-3"},
-		{"project": "storytelling2", "url": "http://localhost:8080/assets/storytelling2-1"},
-		{"project": "storytelling2", "url": "http://localhost:8080/assets/storytelling2-2"},
-		{"project": "storytelling2", "url": "http://localhost:8080/assets/storytelling2-3"},
-		{"project": "style1", "url": "http://localhost:8080/assets/style1-1"},
-		{"project": "style1", "url": "http://localhost:8080/assets/style1-2"},
-		{"project": "style1", "url": "http://localhost:8080/assets/style1-3"},
-		{"project": "style2", "url": "http://localhost:8080/assets/style2-1"},
-		{"project": "style2", "url": "http://localhost:8080/assets/style2-2"},
-		{"project": "style2", "url": "http://localhost:8080/assets/style2-3"},
-		{"project": "property1", "url": "http://localhost:8080/assets/property1-1"},
-		{"project": "property1", "url": "http://localhost:8080/assets/property1-2"},
-		{"project": "property1", "url": "http://localhost:8080/assets/property1-3"},
-		{"project": "property2", "url": "http://localhost:8080/assets/property2-1"},
-		{"project": "property2", "url": "http://localhost:8080/assets/property2-2"},
-		{"project": "property2", "url": "http://localhost:8080/assets/property2-3"},
-		{"project": "propertySchema1", "url": "http://localhost:8080/assets/propertySchema1-1"},
-		{"project": "propertySchema1", "url": "http://localhost:8080/assets/propertySchema1-2"},
-		{"project": "propertySchema1", "url": "http://localhost:8080/assets/propertySchema1-3"},
-		{"project": "propertySchema2", "url": "http://localhost:8080/assets/propertySchema2-1"},
-		{"project": "propertySchema2", "url": "http://localhost:8080/assets/propertySchema2-2"},
-		{"project": "propertySchema2", "url": "http://localhost:8080/assets/propertySchema2-3"},
-		{"project": "plugin1", "url": "http://localhost:8080/assets/plugin1-1"},
-		{"project": "plugin1", "url": "http://localhost:8080/assets/plugin1-2"},
-		{"project": "plugin1", "url": "http://localhost:8080/assets/plugin1-3"},
-		{"project": "plugin2", "url": "http://localhost:8080/assets/plugin2-1"},
-		{"project": "plugin2", "url": "http://localhost:8080/assets/plugin2-2"},
-		{"project": "plugin2", "url": "http://localhost:8080/assets/plugin2-3"},
+		{"project": "project1", "url": fmt.Sprintf("%sproject1-1", assetURLPrefix)},
+		{"project": "project1", "url": fmt.Sprintf("%sproject1-2", assetURLPrefix)},
+		{"project": "project1", "url": fmt.Sprintf("%sproject1-3", assetURLPrefix)},
+		{"project": "project2", "url": fmt.Sprintf("%sproject2-1", assetURLPrefix)},
+		{"project": "project2", "url": fmt.Sprintf("%sproject2-2", assetURLPrefix)},
+		{"project": "project2", "url": fmt.Sprintf("%sproject2-3", assetURLPrefix)},
+		{"project": "scene1", "url": fmt.Sprintf("%sscene1-1", assetURLPrefix)},
+		{"project": "scene1", "url": fmt.Sprintf("%sscene1-2", assetURLPrefix)},
+		{"project": "scene1", "url": fmt.Sprintf("%sscene1-3", assetURLPrefix)},
+		{"project": "scene2", "url": fmt.Sprintf("%sscene2-1", assetURLPrefix)},
+		{"project": "scene2", "url": fmt.Sprintf("%sscene2-2", assetURLPrefix)},
+		{"project": "scene2", "url": fmt.Sprintf("%sscene2-3", assetURLPrefix)},
+		{"project": "nlsLayer1", "url": fmt.Sprintf("%snlsLayer1-1", assetURLPrefix)},
+		{"project": "nlsLayer1", "url": fmt.Sprintf("%snlsLayer1-2", assetURLPrefix)},
+		{"project": "nlsLayer1", "url": fmt.Sprintf("%snlsLayer1-3", assetURLPrefix)},
+		{"project": "nlsLayer2", "url": fmt.Sprintf("%snlsLayer2-1", assetURLPrefix)},
+		{"project": "nlsLayer2", "url": fmt.Sprintf("%snlsLayer2-2", assetURLPrefix)},
+		{"project": "nlsLayer2", "url": fmt.Sprintf("%snlsLayer2-3", assetURLPrefix)},
+		{"project": "storytelling1", "url": fmt.Sprintf("%sstorytelling1-1", assetURLPrefix)},
+		{"project": "storytelling1", "url": fmt.Sprintf("%sstorytelling1-2", assetURLPrefix)},
+		{"project": "storytelling1", "url": fmt.Sprintf("%sstorytelling1-3", assetURLPrefix)},
+		{"project": "storytelling2", "url": fmt.Sprintf("%sstorytelling2-1", assetURLPrefix)},
+		{"project": "storytelling2", "url": fmt.Sprintf("%sstorytelling2-2", assetURLPrefix)},
+		{"project": "storytelling2", "url": fmt.Sprintf("%sstorytelling2-3", assetURLPrefix)},
+		{"project": "style1", "url": fmt.Sprintf("%sstyle1-1", assetURLPrefix)},
+		{"project": "style1", "url": fmt.Sprintf("%sstyle1-2", assetURLPrefix)},
+		{"project": "style1", "url": fmt.Sprintf("%sstyle1-3", assetURLPrefix)},
+		{"project": "style2", "url": fmt.Sprintf("%sstyle2-1", assetURLPrefix)},
+		{"project": "style2", "url": fmt.Sprintf("%sstyle2-2", assetURLPrefix)},
+		{"project": "style2", "url": fmt.Sprintf("%sstyle2-3", assetURLPrefix)},
+		{"project": "property1", "url": fmt.Sprintf("%sproperty1-1", assetURLPrefix)},
+		{"project": "property1", "url": fmt.Sprintf("%sproperty1-2", assetURLPrefix)},
+		{"project": "property1", "url": fmt.Sprintf("%sproperty1-3", assetURLPrefix)},
+		{"project": "property2", "url": fmt.Sprintf("%sproperty2-1", assetURLPrefix)},
+		{"project": "property2", "url": fmt.Sprintf("%sproperty2-2", assetURLPrefix)},
+		{"project": "property2", "url": fmt.Sprintf("%sproperty2-3", assetURLPrefix)},
+		{"project": "propertySchema1", "url": fmt.Sprintf("%spropertySchema1-1", assetURLPrefix)},
+		{"project": "propertySchema1", "url": fmt.Sprintf("%spropertySchema1-2", assetURLPrefix)},
+		{"project": "propertySchema1", "url": fmt.Sprintf("%spropertySchema1-3", assetURLPrefix)},
+		{"project": "propertySchema2", "url": fmt.Sprintf("%spropertySchema2-1", assetURLPrefix)},
+		{"project": "propertySchema2", "url": fmt.Sprintf("%spropertySchema2-2", assetURLPrefix)},
+		{"project": "propertySchema2", "url": fmt.Sprintf("%spropertySchema2-3", assetURLPrefix)},
+		{"project": "plugin1", "url": fmt.Sprintf("%splugin1-1", assetURLPrefix)},
+		{"project": "plugin1", "url": fmt.Sprintf("%splugin1-2", assetURLPrefix)},
+		{"project": "plugin1", "url": fmt.Sprintf("%splugin1-3", assetURLPrefix)},
+		{"project": "plugin2", "url": fmt.Sprintf("%splugin2-1", assetURLPrefix)},
+		{"project": "plugin2", "url": fmt.Sprintf("%splugin2-2", assetURLPrefix)},
+		{"project": "plugin2", "url": fmt.Sprintf("%splugin2-3", assetURLPrefix)},
 	}
 
 	assert.Equal(t, expected, results, "Database content does not match expected values")
 }
 
-func setupXxxxxDB(db *mongo.Database, ctx context.Context, collectionName string) (*mongo.InsertManyResult, error) {
+func setupXxxxxDB(db *mongo.Database, ctx context.Context, collectionName string, assetURLPrefix string) (*mongo.InsertManyResult, error) {
 	return db.Collection(collectionName).InsertMany(ctx, []interface{}{
 		bson.M{
 			"_id":   primitive.NewObjectID(),
@@ -123,19 +125,19 @@ func setupXxxxxDB(db *mongo.Database, ctx context.Context, collectionName string
 			"scene": collectionName + "1",
 			"obj": bson.M{
 				"xxx": nil,
-				"yyy": fmt.Sprintf("http://localhost:8080/assets/%v1-1", collectionName),
+				"yyy": fmt.Sprintf("%s%v1-1", assetURLPrefix, collectionName),
 				"zzz": 1,
 			},
 			"arr": bson.A{
 				"test",
 				nil,
-				fmt.Sprintf("http://localhost:8080/assets/%v1-2", collectionName),
+				fmt.Sprintf("%s%v1-2", assetURLPrefix, collectionName),
 				1,
 				1.1,
 				true,
 				bson.M{
 					"xxx": nil,
-					"yyy": fmt.Sprintf("http://localhost:8080/assets/%v1-3", collectionName),
+					"yyy": fmt.Sprintf("%s%v1-3", assetURLPrefix, collectionName),
 					"zzz": "test",
 				},
 			},
@@ -146,19 +148,19 @@ func setupXxxxxDB(db *mongo.Database, ctx context.Context, collectionName string
 			"scene": collectionName + "2",
 			"obj": map[string]any{
 				"xxx": nil,
-				"yyy": fmt.Sprintf("http://localhost:8080/assets/%v2-1", collectionName),
+				"yyy": fmt.Sprintf("%s%v2-1", assetURLPrefix, collectionName),
 				"zzz": 1,
 			},
 			"arr": []any{
 				"test",
 				nil,
-				fmt.Sprintf("http://localhost:8080/assets/%v2-2", collectionName),
+				fmt.Sprintf("%s%v2-2", assetURLPrefix, collectionName),
 				1,
 				1.1,
 				true,
 				map[string]any{
 					"xxx": nil,
-					"yyy": fmt.Sprintf("http://localhost:8080/assets/%v2-3", collectionName),
+					"yyy": fmt.Sprintf("%s%v2-3", assetURLPrefix, collectionName),
 					"zzz": "test",
 				},
 			},
@@ -166,7 +168,7 @@ func setupXxxxxDB(db *mongo.Database, ctx context.Context, collectionName string
 	})
 }
 
-func setupSceneDB(db *mongo.Database, ctx context.Context) (*mongo.InsertManyResult, error) {
+func setupSceneDB(db *mongo.Database, ctx context.Context, assetURLPrefix string) (*mongo.InsertManyResult, error) {
 	return db.Collection("scene").InsertMany(ctx, []interface{}{
 		bson.M{"_id": primitive.NewObjectID(), "id": "nlsLayer1", "project": "nlsLayer1"},
 		bson.M{"_id": primitive.NewObjectID(), "id": "nlsLayer2", "project": "nlsLayer2"},
@@ -186,19 +188,19 @@ func setupSceneDB(db *mongo.Database, ctx context.Context) (*mongo.InsertManyRes
 			"project": "scene1",
 			"obj": bson.M{
 				"xxx": nil,
-				"yyy": "http://localhost:8080/assets/scene1-1",
+				"yyy": fmt.Sprintf("%sscene1-1", assetURLPrefix),
 				"zzz": 1,
 			},
 			"arr": bson.A{
 				"test",
 				nil,
-				"http://localhost:8080/assets/scene1-2",
+				fmt.Sprintf("%sscene1-2", assetURLPrefix),
 				1,
 				1.1,
 				true,
 				bson.M{
 					"xxx": nil,
-					"yyy": "http://localhost:8080/assets/scene1-3",
+					"yyy": fmt.Sprintf("%sscene1-3", assetURLPrefix),
 					"zzz": "test",
 				},
 			},
@@ -209,19 +211,19 @@ func setupSceneDB(db *mongo.Database, ctx context.Context) (*mongo.InsertManyRes
 			"project": "scene2",
 			"obj": map[string]any{
 				"xxx": nil,
-				"yyy": "http://localhost:8080/assets/scene2-1",
+				"yyy": fmt.Sprintf("%sscene2-1", assetURLPrefix),
 				"zzz": 1,
 			},
 			"arr": []any{
 				"test",
 				nil,
-				"http://localhost:8080/assets/scene2-2",
+				fmt.Sprintf("%sscene2-2", assetURLPrefix),
 				1,
 				1.1,
 				true,
 				map[string]any{
 					"xxx": nil,
-					"yyy": "http://localhost:8080/assets/scene2-3",
+					"yyy": fmt.Sprintf("%sscene2-3", assetURLPrefix),
 					"zzz": "test",
 				},
 			},
@@ -229,79 +231,79 @@ func setupSceneDB(db *mongo.Database, ctx context.Context) (*mongo.InsertManyRes
 	})
 }
 
-func setupAssetDB(db *mongo.Database, ctx context.Context) (*mongo.InsertManyResult, error) {
+func setupAssetDB(db *mongo.Database, ctx context.Context, assetURLPrefix string) (*mongo.InsertManyResult, error) {
 	return db.Collection("asset").InsertMany(ctx, []interface{}{
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/project1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/project1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/project1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/project2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/project2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/project2-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/scene1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/scene1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/scene1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/scene2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/scene2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/scene2-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/nlsLayer1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/nlsLayer1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/nlsLayer1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/nlsLayer2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/nlsLayer2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/nlsLayer2-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/storytelling1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/storytelling1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/storytelling1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/storytelling2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/storytelling2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/storytelling2-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/style1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/style1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/style1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/style2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/style2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/style2-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/property1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/property1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/property1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/property2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/property2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/property2-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/propertySchema1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/propertySchema1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/propertySchema1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/propertySchema2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/propertySchema2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/propertySchema2-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/plugin1-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/plugin1-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/plugin1-3"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/plugin2-1"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/plugin2-2"},
-		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": "http://localhost:8080/assets/plugin2-3"},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproject1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproject1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproject1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproject2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproject2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproject2-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sscene1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sscene1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sscene1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sscene2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sscene2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sscene2-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%snlsLayer1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%snlsLayer1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%snlsLayer1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%snlsLayer2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%snlsLayer2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%snlsLayer2-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstorytelling1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstorytelling1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstorytelling1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstorytelling2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstorytelling2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstorytelling2-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstyle1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstyle1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstyle1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstyle2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstyle2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sstyle2-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproperty1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproperty1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproperty1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproperty2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproperty2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%sproperty2-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%spropertySchema1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%spropertySchema1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%spropertySchema1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%spropertySchema2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%spropertySchema2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%spropertySchema2-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%splugin1-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%splugin1-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%splugin1-3", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%splugin2-1", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%splugin2-2", assetURLPrefix)},
+		bson.M{"_id": primitive.NewObjectID(), "project": nil, "url": fmt.Sprintf("%splugin2-3", assetURLPrefix)},
 	})
 }
 
-func setupProjectDB(db *mongo.Database, ctx context.Context) (*mongo.InsertManyResult, error) {
+func setupProjectDB(db *mongo.Database, ctx context.Context, assetURLPrefix string) (*mongo.InsertManyResult, error) {
 	return db.Collection("project").InsertMany(ctx, []interface{}{
 		bson.M{
 			"_id": primitive.NewObjectID(),
 			"id":  "project1",
 			"obj": bson.M{
 				"xxx": nil,
-				"yyy": "http://localhost:8080/assets/project1-1",
+				"yyy": fmt.Sprintf("%sproject1-1", assetURLPrefix),
 				"zzz": 1,
 			},
 			"arr": bson.A{
 				"test",
 				nil,
-				"http://localhost:8080/assets/project1-2",
+				fmt.Sprintf("%sproject1-2", assetURLPrefix),
 				1,
 				1.1,
 				true,
 				bson.M{
 					"xxx": nil,
-					"yyy": "http://localhost:8080/assets/project1-3",
+					"yyy": fmt.Sprintf("%sproject1-3", assetURLPrefix),
 					"zzz": "test",
 				},
 			},
@@ -311,19 +313,19 @@ func setupProjectDB(db *mongo.Database, ctx context.Context) (*mongo.InsertManyR
 			"id":  "project2",
 			"obj": map[string]any{
 				"xxx": nil,
-				"yyy": "http://localhost:8080/assets/project2-1",
+				"yyy": fmt.Sprintf("%sproject2-1", assetURLPrefix),
 				"zzz": 1,
 			},
 			"arr": []any{
 				"test",
 				nil,
-				"http://localhost:8080/assets/project2-2",
+				fmt.Sprintf("%sproject2-2", assetURLPrefix),
 				1,
 				1.1,
 				true,
 				map[string]any{
 					"xxx": nil,
-					"yyy": "http://localhost:8080/assets/project2-3",
+					"yyy": fmt.Sprintf("%sproject2-3", assetURLPrefix),
 					"zzz": "test",
 				},
 			},

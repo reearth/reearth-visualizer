@@ -3,11 +3,16 @@ package migration
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"sync"
 
+	"github.com/joho/godotenv"
+	"github.com/kelseyhightower/envconfig"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,12 +20,20 @@ import (
 )
 
 const (
-	batchSize      = 100
-	assetURLPrefix = "http://localhost:8080/assets/"
+	batchSize    = 100
+	configPrefix = "reearth"
 )
 
 // If the same asset is used by multiple sources, it will be assigned to the last one.
 func AssetProjectAssociation(ctx context.Context, c DBClient) error {
+	assetURLPrefix, err := loadAssetURLPrefix()
+	if err != nil {
+		return err
+	}
+	fmt.Println("****************************************************************************************")
+	fmt.Println("Target asset URL Prefix :", assetURLPrefix)
+	fmt.Println("****************************************************************************************")
+
 	collections := []string{"project", "scene", "nlsLayer", "storytelling", "style", "property", "propertySchema", "plugin"}
 
 	var wg sync.WaitGroup
@@ -30,7 +43,7 @@ func AssetProjectAssociation(ctx context.Context, c DBClient) error {
 		wg.Add(1)
 		go func(name string) {
 			defer wg.Done()
-			if err := processCollection(ctx, c, name); err != nil {
+			if err := processCollection(ctx, c, name, assetURLPrefix); err != nil {
 				errCh <- err
 			}
 		}(collectionName)
@@ -48,7 +61,7 @@ func AssetProjectAssociation(ctx context.Context, c DBClient) error {
 	return nil
 }
 
-func processCollection(ctx context.Context, c DBClient, collectionName string) error {
+func processCollection(ctx context.Context, c DBClient, collectionName string, assetURLPrefix string) error {
 	opts := options.Find().SetBatchSize(batchSize)
 	cursor, err := c.WithCollection(collectionName).Client().Find(ctx, bson.M{}, opts)
 	if err != nil {
@@ -70,7 +83,7 @@ func processCollection(ctx context.Context, c DBClient, collectionName string) e
 
 		batch = append(batch, rawData)
 		if len(batch) >= batchSize {
-			if err := processBatch(ctx, c, collectionName, batch); err != nil {
+			if err := processBatch(ctx, c, collectionName, batch, assetURLPrefix); err != nil {
 				return err
 			}
 			batch = batch[:0]
@@ -78,7 +91,7 @@ func processCollection(ctx context.Context, c DBClient, collectionName string) e
 	}
 
 	if len(batch) > 0 {
-		if err := processBatch(ctx, c, collectionName, batch); err != nil {
+		if err := processBatch(ctx, c, collectionName, batch, assetURLPrefix); err != nil {
 			return err
 		}
 	}
@@ -88,6 +101,20 @@ func processCollection(ctx context.Context, c DBClient, collectionName string) e
 	}
 
 	return nil
+}
+
+func loadAssetURLPrefix() (string, error) {
+	if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
+		return "", err
+	}
+	var conf config.Config
+	if err := envconfig.Process(configPrefix, &conf); err != nil {
+		return "", err
+	}
+	if conf.Host == "" {
+		return "", errors.New("Failed to load env 'host'")
+	}
+	return fmt.Sprintf("%s/assets/", conf.Host), nil
 }
 
 func normalize(data any) map[string]any {
@@ -100,13 +127,13 @@ func normalize(data any) map[string]any {
 	return nil
 }
 
-func processBatch(ctx context.Context, c DBClient, collectionName string, batch []map[string]any) error {
+func processBatch(ctx context.Context, c DBClient, collectionName string, batch []map[string]any, assetURLPrefix string) error {
 	for _, rawData := range batch {
 		project := findProjectID(ctx, c, collectionName, rawData)
 		if project == "" {
 			continue
 		}
-		if err := searchAssetURL(ctx, c, project, normalize(rawData)); err != nil {
+		if err := searchAssetURL(ctx, c, project, normalize(rawData), assetURLPrefix); err != nil {
 			return err
 		}
 	}
@@ -146,24 +173,24 @@ func findProjectID(ctx context.Context, c DBClient, collectionName string, rawDa
 	return ""
 }
 
-func searchAssetURL(ctx context.Context, c DBClient, project string, data any) error {
+func searchAssetURL(ctx context.Context, c DBClient, project string, data any, assetURLPrefix string) error {
 	switch v := data.(type) {
 	case map[string]any:
 		for _, value := range v {
-			if err := searchAssetURL(ctx, c, project, value); err != nil {
+			if err := searchAssetURL(ctx, c, project, value, assetURLPrefix); err != nil {
 				return err
 			}
 		}
 	case []any:
 		for _, item := range v {
-			if err := searchAssetURL(ctx, c, project, item); err != nil {
+			if err := searchAssetURL(ctx, c, project, item, assetURLPrefix); err != nil {
 				return err
 			}
 		}
 	case primitive.A:
 		if vArr, ok := any(v).(primitive.A); ok {
 			for _, item := range vArr {
-				if err := searchAssetURL(ctx, c, project, item); err != nil {
+				if err := searchAssetURL(ctx, c, project, item, assetURLPrefix); err != nil {
 					return err
 				}
 			}
@@ -174,10 +201,10 @@ func searchAssetURL(ctx context.Context, c DBClient, project string, data any) e
 				return err
 			}
 		} else {
-			fmt.Println("------ skip value: ", v)
+			// fmt.Println("------ skip value: ", v)
 		}
 	default:
-		fmt.Printf("------ skip type: %T\n", data)
+		// fmt.Printf("------ skip type: %T\n", data)
 	}
 	return nil
 }
