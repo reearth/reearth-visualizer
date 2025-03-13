@@ -48,7 +48,7 @@ export default () => {
   );
 
   const {
-    pluginFromURL,
+    sharedPlugin,
     presetPlugins,
     selectPlugin,
     selectedPlugin,
@@ -155,7 +155,7 @@ export default () => {
         children: (
           <Plugins
             encodeAndSharePlugin={encodeAndSharePlugin}
-            pluginFromURL={pluginFromURL}
+            sharedPlugin={sharedPlugin}
             presetPlugins={presetPlugins}
             selectedPlugin={selectedPlugin}
             selectPlugin={selectPlugin}
@@ -180,7 +180,7 @@ export default () => {
       selectedPlugin,
       selectFile,
       selectPlugin,
-      pluginFromURL,
+      sharedPlugin,
       t,
       handlePluginImport,
       updateFileTitle

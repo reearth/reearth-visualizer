@@ -20,7 +20,7 @@ type UsePluginsReturn = Pick<
   | "updateFileTitle"
   | "deleteFile"
   | "handlePluginImport"
-  | "pluginFromURL"
+  | "sharedPlugin"
   | "handlePluginDownload"
 >;
 
@@ -37,7 +37,7 @@ const Plugins: FC<Props> = ({
   updateFileTitle,
   deleteFile,
   handlePluginImport,
-  pluginFromURL,
+  sharedPlugin,
   handlePluginDownload
 }) => {
   const t = useT();
@@ -172,7 +172,7 @@ const Plugins: FC<Props> = ({
       </Actions>
       <PluginBrowser>
         <PluginList>
-          {pluginFromURL && pluginFromURL.id === SHARED_PLUGIN_ID && (
+          {sharedPlugin && sharedPlugin.id === SHARED_PLUGIN_ID && (
             <div>
               <Collapse
                 key={"shared"}
@@ -183,11 +183,11 @@ const Plugins: FC<Props> = ({
               >
                 <PluginSubList>
                   <PluginEntryItem
-                    highlighted={selectedPlugin.id === pluginFromURL.id}
-                    key={pluginFromURL.id}
+                    highlighted={selectedPlugin.id === sharedPlugin.id}
+                    key={sharedPlugin.id}
                     onSelect={selectPlugin}
-                    pluginId={pluginFromURL.id}
-                    title={pluginTitles[pluginFromURL.id]}
+                    pluginId={sharedPlugin.id}
+                    title={pluginTitles[sharedPlugin.id]}
                   />
                 </PluginSubList>
               </Collapse>

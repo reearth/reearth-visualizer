@@ -15,7 +15,8 @@ export default () => {
   const [, setNotification] = useNotification();
   const [searchParams] = useSearchParams();
   const t = useT();
-  const pluginURLParam = searchParams.get("plugin");
+  const pluginIdParam = searchParams.get("plugin-id");
+  const sharedPluginURLParam = searchParams.get("shared-plugin-url");
   const presetPluginsArray = presetPlugins
     .map((category) => category.plugins)
     .flat();
@@ -28,10 +29,10 @@ export default () => {
     return JSON.parse(decompressed);
   }, []);
 
-  const pluginFromURL: PluginType = pluginURLParam
+  const sharedPlugin: PluginType = sharedPluginURLParam
     ? (() => {
         try {
-          return decodePluginURL(pluginURLParam);
+          return decodePluginURL(sharedPluginURLParam);
         } catch (_error) {
           setNotification({
             type: "error",
@@ -43,12 +44,16 @@ export default () => {
     : null;
 
   const [plugins, setPlugins] = useState<PluginType[]>(
-    pluginFromURL && pluginFromURL.id === "shared-plugin-id"
-      ? [pluginFromURL, ...presetPluginsArray]
+    sharedPlugin && sharedPlugin.id === SHARED_PLUGIN_ID
+      ? [sharedPlugin, ...presetPluginsArray]
       : presetPluginsArray
   );
   const [selectedPluginId, setSelectedPluginId] = useState(
-    pluginFromURL ? pluginFromURL.id : plugins[0].id
+    sharedPlugin
+      ? sharedPlugin.id
+      : pluginIdParam
+        ? pluginIdParam
+        : plugins[0].id
   );
 
   const [selectedFileId, setSelectedFileId] = useState<string>(
@@ -68,36 +73,11 @@ export default () => {
     [selectedPlugin, selectedFileId]
   );
 
-  const getCompressedPlugin = useCallback(
-    (pluginId: string): string | undefined => {
-      const pluginToCompress = plugins.find((plugin) => plugin.id === pluginId);
-
-      try {
-        const compressedPlugin = LZString.compressToBase64(
-          JSON.stringify(pluginToCompress)
-        )
-          .replace(/\+/g, "-")
-          .replace(/\//g, "_")
-          .replace(/=/g, "");
-
-        return compressedPlugin;
-      } catch (error) {
-        if (error instanceof Error) {
-          setNotification({ type: "error", text: error.message });
-        }
-        return;
-      }
-    },
-    [plugins, setNotification]
-  );
-
   useEffect(() => {
-    const compressedPlugin = getCompressedPlugin(selectedPluginId);
-    if (!compressedPlugin) {
-      return;
+    if (!sharedPlugin) {
+      window.history.replaceState({}, "", `?plugin=${selectedPluginId}`);
     }
-    window.history.replaceState({}, "", `?plugin=${compressedPlugin}`);
-  }, [selectedPluginId, getCompressedPlugin]);
+  }, [selectedPluginId, sharedPlugin]);
 
   const selectPlugin = useCallback((pluginId: string) => {
     setSelectedPluginId(pluginId);
@@ -301,7 +281,7 @@ export default () => {
           .replace(/\//g, "_")
           .replace(/=/g, "");
 
-        const shareUrl = `${window.location.origin}${window.location.pathname}?plugin=${compressed}`;
+        const shareUrl = `${window.location.origin}${window.location.pathname}?shared-plugin-url=${compressed}`;
         navigator.clipboard.writeText(shareUrl);
 
         setNotification({
@@ -331,6 +311,6 @@ export default () => {
     deleteFile,
     handlePluginImport,
     handlePluginDownload,
-    pluginFromURL
+    sharedPlugin
   };
 };
