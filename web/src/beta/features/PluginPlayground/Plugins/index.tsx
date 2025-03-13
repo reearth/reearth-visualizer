@@ -43,7 +43,6 @@ const Plugins: FC<Props> = ({
 }) => {
   const t = useT();
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
-
   const [collapsedCatergoryIds, setCollapsedCategoryIds] = useState<string[]>(
     presetPlugins
       .map((category) => category.id)
