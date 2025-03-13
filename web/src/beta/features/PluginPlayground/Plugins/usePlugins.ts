@@ -74,10 +74,8 @@ export default () => {
   );
 
   useEffect(() => {
-    if (!sharedPlugin) {
-      window.history.replaceState({}, "", `?plugin-id=${selectedPluginId}`);
-    }
-  }, [selectedPluginId, sharedPlugin]);
+    window.history.replaceState({}, "", `?plugin-id=${selectedPluginId}`);
+  }, [selectedPluginId]);
 
   const selectPlugin = useCallback((pluginId: string) => {
     setSelectedPluginId(pluginId);
