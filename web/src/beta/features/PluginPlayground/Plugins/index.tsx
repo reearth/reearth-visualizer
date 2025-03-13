@@ -55,6 +55,7 @@ const Plugins: FC<Props> = ({
   const { categoryTitles, pluginTitles } = useTitles();
 
   useEffect(() => {
+    if (!selectedPlugin) return;
     const selectedCategory = presetPlugins.find((category) =>
       category.plugins.find((plugin) => plugin.id === selectedPlugin.id)
     );
