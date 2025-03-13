@@ -43,9 +43,14 @@ const Plugins: FC<Props> = ({
 }) => {
   const t = useT();
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<
-    string | undefined
-  >();
+
+  const [collapsedCatergoryIds, setCollapsedCategoryIds] = useState<string[]>(
+    presetPlugins
+      .map((category) => category.id)
+      .filter((id) => {
+        return id !== "custom";
+      })
+  );
 
   const handlePluginShare = (): void => {
     if (!selectedPlugin) return;
@@ -60,7 +65,9 @@ const Plugins: FC<Props> = ({
       category.plugins.find((plugin) => plugin.id === selectedPlugin.id)
     );
     if (selectedCategory) {
-      setSelectedCategoryId(selectedCategory.id);
+      setCollapsedCategoryIds((prev) =>
+        prev.filter((id) => id !== selectedCategory.id)
+      );
     }
   }, [presetPlugins, selectedPlugin]);
 
@@ -140,9 +147,7 @@ const Plugins: FC<Props> = ({
             <div key={category.id}>
               <Collapse
                 key={category.id}
-                collapsed={
-                  category.id !== "custom" && category.id !== selectedCategoryId
-                }
+                collapsed={collapsedCatergoryIds.includes(category.id)}
                 iconPosition="left"
                 size="small"
                 title={categoryTitles[category.id]}
