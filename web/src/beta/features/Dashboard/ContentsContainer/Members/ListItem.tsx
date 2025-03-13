@@ -11,12 +11,14 @@ const ListItem: FC<{
   setSelectedMember: (member: TeamMember) => void;
   setDeleteMemerModalVisible: (visible: boolean) => void;
   meRole: string | undefined;
+  meId: string | undefined;
 }> = ({
   member,
   setUpdateRoleModalVisible,
   setSelectedMember,
   setDeleteMemerModalVisible,
-  meRole
+  meRole,
+  meId
 }) => {
   const t = useT();
   const memerRoleTranslation = {
@@ -77,26 +79,14 @@ const ListItem: FC<{
                 icon: "arrowLeftRight",
                 id: "changeRole",
                 title: t("Change Role"),
-                disabled:
-                  meRole === Role.Reader ||
-                  meRole === Role.Writer ||
-                  member.role === Role.Owner ||
-                  // (meRole === Role.Maintainer && member.role === Role.Owner),
-                  //maintainer can't change member role for now
-                  meRole === Role.Maintainer,
+                disabled: meRole !== Role.Owner || meId === member.userId,
                 onClick: () => handleUpdateRole(member)
               },
               {
                 icon: "close",
                 id: "remove",
                 title: t("Remove"),
-                disabled:
-                  meRole === Role.Reader ||
-                  meRole === Role.Writer ||
-                  member.role === Role.Owner ||
-                  // (meRole === Role.Maintainer && member.role === Role.Owner),
-                  //maintainer can't remove member for now
-                  meRole === Role.Maintainer,
+                disabled: meRole !== Role.Owner || meId === member.userId,
                 onClick: () => handleDeleteRole(member)
               }
             ]}
