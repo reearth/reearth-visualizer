@@ -79,6 +79,7 @@ const EditorVisualizer: React.FC<Props> = ({
     currentCamera,
     initialCamera,
     photoOverlayPreview,
+    sketchFeatureTooltip,
     handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,
@@ -162,6 +163,8 @@ const EditorVisualizer: React.FC<Props> = ({
       handleInfoboxBlockRemove={handleInfoboxBlockRemove}
       // photoOverlay
       photoOverlayPreview={photoOverlayPreview}
+      //sketchLayer
+      sketchFeatureTooltip={sketchFeatureTooltip}
     />
   );
 };

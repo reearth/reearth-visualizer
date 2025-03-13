@@ -44,7 +44,7 @@ export type SchemaFieldType<T extends ValueType = ValueType> = {
   defaultValue?: ValueTypes[T];
   prefix?: string;
   suffix?: string;
-  name?: string;
+  title?: string;
   description?: string;
   placeholder?: string;
   isLinkable?: boolean;
@@ -178,7 +178,7 @@ const toItem = (
           type: t,
           defaultValue: f.defaultValue,
           suffix: f.suffix ?? undefined,
-          name: f.translatedTitle,
+          title: f.translatedTitle,
           description: f.translatedDescription,
           placeholder: f.translatedPlaceholder,
           only: toCond(f.isAvailableIf),

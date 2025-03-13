@@ -19,10 +19,10 @@ extensions:
         fields:
           - id: text 
             type: string
-            name: Text
+            title: Text
           - id: color
             type: string
-            name: Color
+            title: Color
             ui: color
   - id: infobox-block
     type: infoboxBlock
@@ -34,10 +34,10 @@ extensions:
         fields:
           - id: text 
             type: string
-            name: Text
+            title: Text
           - id: color
             type: string
-            name: Color
+            title: Color
             ui: color
   - id: story-block
     type: storyBlock
@@ -49,10 +49,10 @@ extensions:
         fields:
           - id: text 
             type: string
-            name: Text
+            title: Text
           - id: color
             type: string
-            name: Color
+            title: Color
             ui: color
   `,
   disableEdit: true,
@@ -147,5 +147,5 @@ reearth.ui.postMessage({
 
 export const extensionProperty: PluginType = {
   id: "extension-property",
-  files: [infoboxBlockFile, storyBlockFile, widgetFile, yamlFile]
+  files: [yamlFile, widgetFile, infoboxBlockFile, storyBlockFile]
 };

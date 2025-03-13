@@ -1,15 +1,15 @@
 import {
   LayerConfigUpdateProps,
   LayerNameUpdateProps,
+  SelectedFeature,
   SelectedLayer
 } from "@reearth/beta/features/Editor/hooks/useLayers";
 import {
-  GeoJsonFeatureDeleteProps,
   GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
-import { ComputedFeature, Geometry, SketchEditingFeature } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { ComputedFeature, Geometry } from "@reearth/core";
+import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -27,13 +27,10 @@ type Props = {
   layers?: NLSLayer[];
   selectedLayer?: SelectedLayer;
   sceneId?: string;
+  selectedFeature?: SelectedFeature;
+  selectedSketchFeature?: SketchFeature;
   onLayerConfigUpdate?: (inp: LayerConfigUpdateProps) => void;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
-  onGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
-  sketchEditingFeature?: SketchEditingFeature;
-  onSketchGeometryEditStart?: () => void;
-  onSketchGeometryEditCancel?: () => void;
-  onSketchGeometryEditApply?: () => void;
   onLayerNameUpdate?: (inp: LayerNameUpdateProps) => void;
 };
 
@@ -48,50 +45,13 @@ const InspectorTabs: FC<Props> = ({
   layerStyles,
   selectedLayer,
   sceneId,
+  selectedFeature,
+  selectedSketchFeature,
   onLayerConfigUpdate,
   onGeoJsonFeatureUpdate,
-  onGeoJsonFeatureDelete,
-  sketchEditingFeature,
-  onSketchGeometryEditStart,
-  onSketchGeometryEditCancel,
-  onSketchGeometryEditApply,
   onLayerNameUpdate
 }) => {
   const t = useT();
-  const selectedFeature: InspectorFeature | undefined = useMemo(() => {
-    if (!selectedLayer?.computedFeature?.id) return;
-    const { id, geometry, properties } =
-      selectedLayer.layer?.config?.data?.type === "3dtiles" ||
-      selectedLayer.layer?.config?.data?.type === "osm-buildings" ||
-      selectedLayer.layer?.config?.data?.type === "google-photorealistic" ||
-      selectedLayer.layer?.config?.data?.type === "mvt"
-        ? selectedLayer.computedFeature
-        : (selectedLayer.computedLayer?.features?.find(
-            (f) => f.id === selectedLayer.computedFeature?.id
-          ) ?? {});
-
-    if (!id) return;
-    return {
-      id,
-      geometry,
-      properties
-    };
-  }, [selectedLayer]);
-
-  const selectedSketchFeature = useMemo(() => {
-    if (!selectedLayer?.layer?.sketch) return;
-
-    const { sketch } = selectedLayer.layer;
-    const features = sketch?.featureCollection?.features;
-
-    if (!selectedFeature?.properties?.id) return;
-
-    const selectedFeatureId = selectedFeature.properties.id;
-
-    return features?.find(
-      (feature) => feature.properties.id === selectedFeatureId
-    );
-  }, [selectedLayer, selectedFeature]);
 
   const tabItems: TabItem[] = useMemo(
     () => [
@@ -118,15 +78,7 @@ const InspectorTabs: FC<Props> = ({
             selectedFeature={selectedFeature}
             layer={selectedLayer?.layer}
             sketchFeature={selectedSketchFeature}
-            isEditingGeometry={
-              selectedSketchFeature?.properties?.id ===
-              sketchEditingFeature?.feature?.id
-            }
             onGeoJsonFeatureUpdate={onGeoJsonFeatureUpdate}
-            onGeoJsonFeatureDelete={onGeoJsonFeatureDelete}
-            onSketchGeometryEditStart={onSketchGeometryEditStart}
-            onSketchGeometryEditApply={onSketchGeometryEditApply}
-            onSketchGeometryEditCancel={onSketchGeometryEditCancel}
           />
         )
       },
@@ -165,12 +117,7 @@ const InspectorTabs: FC<Props> = ({
       onLayerConfigUpdate,
       selectedFeature,
       selectedSketchFeature,
-      sketchEditingFeature?.feature?.id,
       onGeoJsonFeatureUpdate,
-      onGeoJsonFeatureDelete,
-      onSketchGeometryEditStart,
-      onSketchGeometryEditApply,
-      onSketchGeometryEditCancel,
       layerStyles,
       layers,
       sceneId

@@ -12,7 +12,7 @@ type Props = {
   setShowStoryPanel: (showStoryPanel: boolean) => void;
   showStoryPanel: boolean;
 };
-const SettingsList: FC<Props> = ({
+const Settings: FC<Props> = ({
   changeLanguage,
   infoboxEnabled,
   lang,
@@ -90,4 +90,4 @@ const SelectorWrapper = styled.div(({ theme }) => ({
   padding: theme.spacing.smallest
 }));
 
-export default SettingsList;
+export default Settings;
