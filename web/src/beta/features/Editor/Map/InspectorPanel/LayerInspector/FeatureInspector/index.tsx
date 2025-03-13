@@ -2,24 +2,24 @@ import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
 import { SelectedFeature } from "@reearth/beta/features/Editor/hooks/useLayers";
+import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
 import {
-  GeoJsonFeatureUpdateProps
-} from "@reearth/beta/features/Editor/hooks/useSketch";
-import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
-import {
-  generateNewPropertiesWithPhotoOverlay,
-  getPhotoOverlayValue
-} from "@reearth/beta/utils/sketch";
+  Button,
+  CodeInput,
+  Collapse,
+  Typography
+} from "@reearth/beta/lib/reearth-ui";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC } from "react";
 import JsonView from "react18-json-view";
 
 import { FieldComponent } from "./CustomPropertField";
+import useHooks from "./hooks";
 import PhotoOverlayCollapse from "./PhotoOverlayCollapse";
 
-type Props = {
+export type FeatureDataProps = {
   selectedFeature?: SelectedFeature;
   layer?: NLSLayer;
   sketchFeature?: SketchFeature;
@@ -34,139 +34,37 @@ export type FieldProp = {
   value?: ValueProp;
 };
 
-const FeatureData: FC<Props> = ({
+const FeatureData: FC<FeatureDataProps> = ({
   selectedFeature,
   layer,
   sketchFeature,
-  onGeoJsonFeatureUpdate,
+  onGeoJsonFeatureUpdate
 }) => {
   const t = useT();
   const theme = useTheme();
-  const [fields, setFields] = useState<FieldProp[]>([]);
-  const [initialFields, setInitialFields] = useState<FieldProp[]>([]);
-  const [editMode, setEditMode] = useState(false);
-
-  // Initialize collapsed state from localStorage
-  const initialCollapsedStates = useMemo(() => {
-    const storedStates: Record<string, boolean> = {};
-    ["customProperties", "photoOverlay", "geometry", "properties"].forEach(
-      (id) => {
-        storedStates[id] =
-          localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) ===
-          "true";
-      }
-    );
-    return storedStates;
-  }, []);
-
-  const [collapsedStates, setCollapsedStates] = useState<
-    Record<string, boolean>
-  >(initialCollapsedStates);
-
-  const saveCollapseState = useCallback((storageId: string, state: boolean) => {
-    localStorage.setItem(
-      `reearth-visualizer-feature-${storageId}-collapsed`,
-      JSON.stringify(state)
-    );
-  }, []);
-
-  const handleCollapse = useCallback(
-    (storageId: string, state: boolean) => {
-      saveCollapseState(storageId, state);
-      setCollapsedStates((prevState) => ({
-        ...prevState,
-        [storageId]: state
-      }));
-    },
-    [saveCollapseState]
-  );
-
-  useEffect(() => {
-    if (!layer?.sketch?.customPropertySchema) return;
-    const entries = Object.entries<string>(layer.sketch.customPropertySchema);
-    const sortedValues = entries
-      .map(([key, value]) => ({ key, value }))
-      .sort((a, b) => {
-        // Note: value is a combine of type and index
-        // in format of fieldType_index
-        // eg. Text_0, Text_1, Number_2, Number_3
-        const aIndex = parseInt(a.value.split("_")[1]);
-        const bIndex = parseInt(b.value.split("_")[1]);
-        return aIndex - bIndex;
-      });
-    const fieldArray = sortedValues.map(({ key, value }) => ({
-      id: key,
-      type: value.replace(/_\d+$/, ""),
-      title: key,
-      value: selectedFeature?.properties?.[key]
-    }));
-
-    setFields(fieldArray);
-    setInitialFields(fieldArray);
-  }, [layer?.sketch?.customPropertySchema, selectedFeature?.properties]);
-
-  const handleSubmit = useCallback(() => {
-    if (!selectedFeature || !sketchFeature?.id || !layer?.id) return;
-    const newProperties = { ...selectedFeature.properties };
-    Object.assign(
-      newProperties,
-      ...fields.map((f) => ({ [f.title]: f.value }))
-    );
-
-    onGeoJsonFeatureUpdate?.({
-      layerId: layer.id,
-      featureId: sketchFeature.id,
-      geometry: selectedFeature.geometry,
-      properties: newProperties
-    });
-    setEditMode(false);
-  }, [
-    layer?.id,
+  const {
     fields,
-    onGeoJsonFeatureUpdate,
+    editMode,
+    collapsedStates,
+    jsonStyle,
+    geometryValue,
+    editGeometry,
+    setEditGeometry,
+    setFields,
+    setGeometryValue,
+    handleCollapse,
+    handleSubmit,
+    handleDeletePhotoOverlay,
+    handleEditCustomProperties,
+    handleCancelEditCustomProperties,
+    handleUpdateGeometry,
+    handleCancelEditGeometry
+  } = useHooks({
+    layer,
+    sketchFeature,
     selectedFeature,
-    sketchFeature?.id
-  ]);
-
-  const jsonStyle = useMemo(
-    () => ({
-      wordWrap: "break-word" as const,
-      minWidth: 0,
-      lineHeight: "1.5em",
-      fontSize: theme.fonts.sizes.body
-    }),
-    [theme.fonts.sizes.body]
-  );
-
-  const handleDeletePhotoOverlay = useCallback(() => {
-    if (
-      !selectedFeature ||
-      !getPhotoOverlayValue(selectedFeature?.properties) ||
-      !sketchFeature?.id ||
-      !layer?.id
-    )
-      return;
-
-    const newProperties = generateNewPropertiesWithPhotoOverlay(
-      selectedFeature?.properties,
-      undefined
-    );
-    onGeoJsonFeatureUpdate?.({
-      layerId: layer?.id,
-      featureId: sketchFeature?.id,
-      geometry: selectedFeature.geometry,
-      properties: newProperties
-    });
-  }, [selectedFeature, sketchFeature?.id, layer?.id, onGeoJsonFeatureUpdate]);
-
-  const handleEditCustomProperties = useCallback(() => {
-    setEditMode(true);
-  }, []);
-
-  const handleCancelEditCustomProperties = useCallback(() => {
-    setEditMode(false);
-    setFields(initialFields);
-  }, [initialFields]);
+    onGeoJsonFeatureUpdate
+  });
 
   return (
     <Wrapper>
@@ -243,14 +141,53 @@ const FeatureData: FC<Props> = ({
         collapsed={collapsedStates.geometry}
         onCollapse={(state) => handleCollapse("geometry", state)}
       >
-        <ValueWrapper>
-          <JsonView
-            src={selectedFeature?.geometry}
-            theme="vscode"
-            dark
-            style={jsonStyle}
-          />
-        </ValueWrapper>
+        {!!layer?.isSketch && selectedFeature && sketchFeature ? (
+          <GeometryWrapper>
+            <CodeWrapper>
+              <CodeInput
+                value={geometryValue}
+                onChange={setGeometryValue}
+                language="json"
+                showLines={false}
+                disabled={!editGeometry}
+              />
+            </CodeWrapper>
+            {editGeometry ? (
+              <SketchFeatureButtons>
+                <Button
+                  onClick={handleCancelEditGeometry}
+                  size="small"
+                  icon="close"
+                  extendWidth
+                />
+                <Button
+                  extendWidth
+                  icon="check"
+                  size="small"
+                  appearance="primary"
+                  onClick={handleUpdateGeometry}
+                />
+              </SketchFeatureButtons>
+            ) : (
+              <Button
+                onClick={() => setEditGeometry(true)}
+                size="small"
+                icon="bracketsCurly"
+                title={t("Update JSON")}
+                extendWidth
+              />
+            )}
+          </GeometryWrapper>
+        ) : (
+          <ValueWrapper>
+            <JsonView
+              src={selectedFeature?.geometry}
+              theme="vscode"
+              dark
+              style={jsonStyle}
+            />
+          </ValueWrapper>
+        )}
       </Collapse>
       <Collapse
         title={t("Properties")}
@@ -299,6 +236,15 @@ const ValueWrapper = styled("div")(({ theme }) => ({
 
 const SketchFeatureButtons = styled("div")(({ theme }) => ({
   display: "flex",
-  flexDirection: "row",
   gap: theme.spacing.small
+}));
+
+const GeometryWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small
+}));
+
+const CodeWrapper = styled("div")(() => ({
+  minHeight: "200px"
 }));
