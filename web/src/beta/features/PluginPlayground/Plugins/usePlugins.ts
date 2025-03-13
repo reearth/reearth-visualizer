@@ -16,7 +16,7 @@ export default () => {
   const [searchParams] = useSearchParams();
   const t = useT();
   const pluginIdParam = searchParams.get("plugin-id");
-  const sharedPluginURLParam = searchParams.get("shared-plugin-url");
+  const sharedPluginURLParam = searchParams.get("shared-plugin");
   const presetPluginsArray = presetPlugins
     .map((category) => category.plugins)
     .flat();
@@ -279,7 +279,7 @@ export default () => {
           .replace(/\//g, "_")
           .replace(/=/g, "");
 
-        const shareUrl = `${window.location.origin}${window.location.pathname}?shared-plugin-url=${compressed}`;
+        const shareUrl = `${window.location.origin}${window.location.pathname}?shared-plugin=${compressed}`;
         navigator.clipboard.writeText(shareUrl);
 
         setNotification({
