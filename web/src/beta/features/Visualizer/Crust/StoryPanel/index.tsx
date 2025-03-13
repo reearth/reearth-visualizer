@@ -5,6 +5,7 @@ import {
   InstallableBlock
 } from "@reearth/beta/features/Visualizer/shared/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { styled } from "@reearth/services/theme";
 import { forwardRef, memo, ReactNode, Ref, RefObject, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -63,6 +64,7 @@ export type StoryPanelProps = {
     itemId?: string
   ) => Promise<void>;
   renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
+  nlsLayers?: NLSLayer[];
 };
 
 export const StoryPanel = memo(
@@ -81,7 +83,8 @@ export const StoryPanel = memo(
         onPropertyItemAdd,
         onPropertyItemMove,
         onPropertyItemDelete,
-        renderBlock
+        renderBlock,
+        nlsLayers
       },
       ref: Ref<StoryPanelRef>
     ) => {
@@ -182,6 +185,7 @@ export const StoryPanel = memo(
                       onPropertyItemMove={onPropertyItemMove}
                       onPropertyItemDelete={onPropertyItemDelete}
                       renderBlock={renderBlock}
+                      nlsLayers={nlsLayers}
                     />
                   </PanelWrapper>
                 </BlockProvider>

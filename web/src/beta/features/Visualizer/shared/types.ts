@@ -1,6 +1,7 @@
 import { Theme } from "@reearth/beta/features/Visualizer/Crust/types";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import type { ComputedFeature, FlyTo, Layer } from "@reearth/core";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 
 export type InstallableBlock = {
   name: string;
@@ -17,6 +18,7 @@ export type BlockProps<T = any> = {
   layer?: Layer;
   onClick?: () => void;
   onBlockDoubleClick?: () => void;
+  nlsLayers?: NLSLayer[];
 };
 
 export type CommonBlockProps<T = any> = {
@@ -64,4 +66,5 @@ export type CommonBlockProps<T = any> = {
     itemId?: string
   ) => Promise<void>;
   onFlyTo?: FlyTo;
+  nlsLayers?: NLSLayer[];
 };

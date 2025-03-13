@@ -136,7 +136,7 @@ func PropertyUpdate(
 	data propertyJSON) {
 
 	ps, err := propertySchemaRepo.Filtered(Filter(p.Scene())).FindByID(ctx, p.Schema())
-	if err != nil {
+	if ps == nil || err != nil {
 		return
 	}
 

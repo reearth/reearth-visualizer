@@ -387,6 +387,7 @@ export default function Crust({
           onPropertyItemMove={onPropertyItemMove}
           onPropertyItemDelete={onPropertyItemDelete}
           renderBlock={renderBlock}
+          nlsLayers={nlsLayers}
         />
       )}
       <PhotoOverlay

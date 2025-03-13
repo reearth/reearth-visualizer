@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -181,6 +182,9 @@ func (r *Asset) findOne(ctx context.Context, filter any) (*asset.Asset, error) {
 	c := mongodoc.NewAssetConsumer(r.f.Readable)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
+	}
+	if len(c.Result) < 1 {
+		return nil, errors.New("asset not found")
 	}
 	return c.Result[0], nil
 }

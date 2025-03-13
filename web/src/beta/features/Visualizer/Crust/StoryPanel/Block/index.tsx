@@ -3,6 +3,7 @@ import type {
   BlockProps
 } from "@reearth/beta/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useCallback, type ComponentType, type ReactNode } from "react";
 
 import BlockWrapper from "../../../shared/components/BlockWrapper";
@@ -14,6 +15,7 @@ export type Props = {
   renderBlock?: (block: BlockProps<StoryBlock>) => ReactNode;
   layer?: Layer;
   pageId?: string;
+  nlsLayers?: NLSLayer[];
 } & CommonBlockProps<StoryBlock>;
 
 export type Component = ComponentType<CommonBlockProps<StoryBlock>>;
@@ -51,7 +53,8 @@ export default function StoryBlockComponent({
       {renderBlock?.({
         block: props.block,
         layer: props.layer,
-        onClick: props.onClick
+        onClick: props.onClick,
+        nlsLayers: props.nlsLayers
       })}
     </BlockWrapper>
   ) : null;
