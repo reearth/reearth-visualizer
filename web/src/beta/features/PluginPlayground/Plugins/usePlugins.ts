@@ -75,7 +75,7 @@ export default () => {
 
   useEffect(() => {
     if (!sharedPlugin) {
-      window.history.replaceState({}, "", `?plugin=${selectedPluginId}`);
+      window.history.replaceState({}, "", `?plugin-id=${selectedPluginId}`);
     }
   }, [selectedPluginId, sharedPlugin]);
 
