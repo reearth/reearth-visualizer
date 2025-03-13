@@ -59,7 +59,7 @@ export default () => {
       "zoom-in-out": t("Zoom In Out"),
       "camera-rotation": t("Camera Rotation"),
       "camera-position": t("Camera Position"),
-      "shared-plugin-id": t("Shared Plugin")
+      "shared-plugin-id": t("Shared Plugin") // NOTE: needed to hardcode this part to help translation
     };
   }, [t]);
 
