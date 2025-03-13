@@ -252,7 +252,7 @@ reearth.extension.on("message", async msg => {
   `
 };
 
-export const themeSelector: PluginType = {
-  id: "theme-selector",
-  files: [widgetFile, yamlFile]
+export const clientStorageThemeSelector: PluginType = {
+  id: "client-storage-theme-selector",
+  files: [yamlFile, widgetFile]
 };

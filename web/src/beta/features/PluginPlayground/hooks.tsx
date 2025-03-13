@@ -10,7 +10,7 @@ import LayerList from "./LayerList";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
-import SettingsList from "./SettingsList";
+import Settings from "./Settings";
 import { FieldValue } from "./types";
 import Viewer from "./Viewer";
 
@@ -211,7 +211,7 @@ export default () => {
   );
 
   const SettingsPanel: FC = () => (
-    <SettingsList
+    <Settings
       changeLanguage={changeLanguage}
       lang={lang}
       infoboxEnabled={infoboxEnabled}

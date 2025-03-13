@@ -326,15 +326,19 @@ Japanese Heritage Sites: 日本の遺産
 Viewer: ビューアー
 Plugins: プラグイン
 Extension Settings: 拡張機能の設定
+Add File: ファイルを追加
+Import Plugin: プラグインをインポート
+Export Plugin: プラグインをエクスポート
+Share Plugin: プラグインを共有
+Shared: 共有
+No plugins: プラグインがありません
 Custom: カスタム
 User Interface: ユーザーインターフェース
-Communication: コミュニケーション
+Data: データ
 Viewer & Scene Settings: ビューアとシーン設定
 Manage Layer: レイヤーの管理
 Manage Layer Style: レイヤースタイルの管理
 Timeline: タイムライン
-Data Storage: データストレージ
-Extension: 拡張
 My Plugin: マイプラグイン
 Responsive Panel: レスポンシブ パネル
 Sidebar: サイドバー
@@ -368,18 +372,12 @@ Style With Condition: 条件付きスタイル
 Playback Control: 再生コントロール
 Time Driven Features: 時系列による地物変化
 Time Driven Path: 時系列による線形移動
-Theme Selector: テーマセレクター
+Client Storage: クライアントストレージ
 Extension Property: 拡張プロパティ
 Zoom In Out: ズームイン/アウト
 Camera Rotation: カメラ回転
 Camera Position: カメラ位置
 Shared Plugin: 共有プラグイン
-Add File: ファイルを追加
-Import Plugin: プラグインをインポート
-Export Plugin: プラグインをエクスポート
-Share Plugin: プラグインを共有
-Shared: 共有
-No plugins: プラグインがありません
 Invalid shared plugin URL: 共有プラグインのURLが無効です
 File not found: ファイルが見つかりません
 Only zip files are supported: zipファイルのみサポートされています

@@ -110,5 +110,5 @@ const widgetFile: FileType = {
 
 export const responsivePanel: PluginType = {
   id: "responsive-panel",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };
