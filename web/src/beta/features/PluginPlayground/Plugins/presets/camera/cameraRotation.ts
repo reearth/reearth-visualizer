@@ -146,5 +146,5 @@ reearth.extension.on("message", (msg) => {
 
 export const cameraRotation: PluginType = {
   id: "camera-rotation",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

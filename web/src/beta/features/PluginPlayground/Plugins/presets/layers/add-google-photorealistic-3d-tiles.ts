@@ -58,5 +58,5 @@ reearth.camera.flyTo(
 
 export const addGooglePhotorealistic3dTiles: PluginType = {
   id: "add-google-photorealistic-3d-tiles",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };
