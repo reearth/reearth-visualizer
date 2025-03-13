@@ -14,6 +14,7 @@ export const zIndex = {
     pluginPopup: 300,
     pluginModal: 305,
     infobox: 400,
+    sketchLayerTooltip: 420,
     photoOverlay: 500,
     overlay: 600
   },

@@ -121,5 +121,5 @@ reearth.extension.on("message", async (msg) => {
 
 export const takeScreenshot: PluginType = {
   id: "take-screenshot",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

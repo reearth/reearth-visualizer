@@ -1,4 +1,7 @@
-import { PhotoOverlayPreview } from "@reearth/beta/utils/sketch";
+import {
+  PhotoOverlayPreview,
+  SketchFeatureTooltip
+} from "@reearth/beta/utils/sketch";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
   coreContext,
@@ -21,6 +24,7 @@ import Plugins, {
   ModalContainer,
   PopupContainer
 } from "./Plugins";
+import SketchTooltip from "./SketchTooltip";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Story } from "./StoryPanel/types";
 import { WidgetThemeOptions, usePublishTheme } from "./theme";
@@ -159,6 +163,8 @@ export type Props = {
   photoOverlayPreview?: PhotoOverlayPreview;
   nlsLayers?: NLSLayer[];
   currentCameraRef?: RefObject<Camera | undefined>;
+  //sketchLayer
+  sketchFeatureTooltip?: SketchFeatureTooltip;
 };
 
 export default function Crust({
@@ -209,7 +215,9 @@ export default function Crust({
   // photoOverlay
   photoOverlayPreview,
   nlsLayers,
-  currentCameraRef
+  currentCameraRef,
+  //sketchLayer
+  sketchFeatureTooltip
 }: Props): JSX.Element | null {
   const {
     interactionMode,
@@ -266,7 +274,8 @@ export default function Crust({
       return {
         property: selectedDataLayer?.infobox?.property,
         blocks: [...(selectedDataLayer?.infobox?.blocks ?? [])],
-        featureId: selectedLayerId.featureId
+        featureId: selectedLayerId.featureId,
+        feature: selectedComputedFeature
       };
     }
     const selected = mapRef?.current?.layers?.find(
@@ -277,11 +286,18 @@ export default function Crust({
         property: selected?.infobox?.property,
         blocks: [...(selected?.infobox?.blocks ?? [])],
         featureId: selectedLayerId.featureId,
-        readOnly: true
+        readOnly: true,
+        feature: selectedComputedFeature
       };
     }
     return undefined;
-  }, [mapRef, layers, selectedLayer, selectedLayerId?.featureId]);
+  }, [
+    selectedLayerId.featureId,
+    layers,
+    mapRef,
+    selectedLayer?.layerId,
+    selectedComputedFeature
+  ]);
 
   return (
     <Plugins
@@ -371,6 +387,7 @@ export default function Crust({
           onPropertyItemMove={onPropertyItemMove}
           onPropertyItemDelete={onPropertyItemDelete}
           renderBlock={renderBlock}
+          nlsLayers={nlsLayers}
         />
       )}
       <PhotoOverlay
@@ -381,6 +398,7 @@ export default function Crust({
         nlsLayers={nlsLayers}
         currentCameraRef={currentCameraRef}
       />
+      <SketchTooltip sketchFeatureTooltip={sketchFeatureTooltip} />
     </Plugins>
   );
 }

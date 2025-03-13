@@ -60,5 +60,5 @@ reearth.camera.flyTo(
 
 export const addOsm3dTiles: PluginType = {
   id: "add-osm-3d-tiles",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

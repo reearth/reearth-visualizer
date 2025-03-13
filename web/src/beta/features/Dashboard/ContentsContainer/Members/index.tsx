@@ -107,6 +107,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
               setSelectedMember={setSelectedMember}
               setDeleteMemerModalVisible={setDeleteMemerModalVisible}
               meRole={meRole}
+              meId={meId}
             />
           ))
         ) : (

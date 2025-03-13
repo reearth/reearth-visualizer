@@ -10,7 +10,7 @@ import LayerList from "./LayerList";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
-import SettingsList from "./SettingsList";
+import Settings from "./Settings";
 import { FieldValue } from "./types";
 import Viewer from "./Viewer";
 
@@ -48,6 +48,7 @@ export default () => {
   );
 
   const {
+    sharedPlugin,
     presetPlugins,
     selectPlugin,
     selectedPlugin,
@@ -59,8 +60,7 @@ export default () => {
     deleteFile,
     handlePluginImport,
     handlePluginDownload,
-    encodeAndSharePlugin,
-    sharedPlugin
+    encodeAndSharePlugin
   } = usePlugins();
 
   const { executeCode, infoboxBlocks, story, widgets } = useCode({
@@ -155,6 +155,7 @@ export default () => {
         children: (
           <Plugins
             encodeAndSharePlugin={encodeAndSharePlugin}
+            sharedPlugin={sharedPlugin}
             presetPlugins={presetPlugins}
             selectedPlugin={selectedPlugin}
             selectPlugin={selectPlugin}
@@ -164,7 +165,6 @@ export default () => {
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
             handlePluginImport={handlePluginImport}
-            sharedPlugin={sharedPlugin}
             handlePluginDownload={handlePluginDownload}
           />
         )
@@ -180,9 +180,9 @@ export default () => {
       selectedPlugin,
       selectFile,
       selectPlugin,
+      sharedPlugin,
       t,
       handlePluginImport,
-      sharedPlugin,
       updateFileTitle
     ]
   );
@@ -211,7 +211,7 @@ export default () => {
   );
 
   const SettingsPanel: FC = () => (
-    <SettingsList
+    <Settings
       changeLanguage={changeLanguage}
       lang={lang}
       infoboxEnabled={infoboxEnabled}

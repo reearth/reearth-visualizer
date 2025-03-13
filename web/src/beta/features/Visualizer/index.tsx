@@ -1,5 +1,8 @@
 import styled from "@emotion/styled";
-import { PhotoOverlayPreview } from "@reearth/beta/utils/sketch";
+import {
+  PhotoOverlayPreview,
+  SketchFeatureTooltip
+} from "@reearth/beta/utils/sketch";
 import {
   Camera,
   LatLng,
@@ -64,6 +67,7 @@ type VisualizerProps = {
   initialCamera?: Camera;
   interactionMode?: InteractionModeType;
   photoOverlayPreview?: PhotoOverlayPreview;
+  sketchFeatureTooltip?: SketchFeatureTooltip;
   onCameraChange?: (camera: Camera) => void;
   onCoreLayerSelect?: (
     layerId: string | undefined,
@@ -209,7 +213,9 @@ const Visualizer: FC<VisualizerProps> = ({
   handlePropertyItemMove,
   handlePropertyItemDelete,
   // photoOverlay
-  photoOverlayPreview
+  photoOverlayPreview,
+  //sketchLayer
+  sketchFeatureTooltip
 }) => {
   const {
     shouldRender,
@@ -308,6 +314,8 @@ const Visualizer: FC<VisualizerProps> = ({
             photoOverlayPreview={photoOverlayPreview}
             nlsLayers={nlsLayers}
             currentCameraRef={currentCameraRef}
+            //sketchLayer
+            sketchFeatureTooltip={sketchFeatureTooltip}
           />
         </CoreVisualizer>
       </CoreWrapper>

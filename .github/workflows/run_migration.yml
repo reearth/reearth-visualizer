@@ -1,0 +1,39 @@
+name: run-migration
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  migrate:
+    name: Run migration (Nightly)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      GCP_REGION: us-central1
+      IMAGE: reearth/reearth-visualizer-api:nightly
+      IMAGE_GCP: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/reearth/reearth-visualizer-api:nightly
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Update Migration Job
+        run: |
+          gcloud run jobs update reearth-visualizer-migration \
+            --image $IMAGE_GCP \
+            --region $GCP_REGION \
+            --quiet
+
+      - name: Execute Migration Job
+        run: |
+          gcloud run jobs execute reearth-visualizer-migration \
+            --region $GCP_REGION \
+            --wait \
+            --quiet
