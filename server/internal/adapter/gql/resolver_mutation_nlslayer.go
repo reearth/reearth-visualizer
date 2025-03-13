@@ -149,6 +149,38 @@ func (r *mutationResolver) RemoveNLSInfobox(ctx context.Context, input gqlmodel.
 	}, nil
 }
 
+func (r *mutationResolver) CreateNLSPhotoOverlay(ctx context.Context, input gqlmodel.CreateNLSPhotoOverlayInput) (*gqlmodel.CreateNLSPhotoOverlayPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.CreateNLSPhotoOverlay(ctx, lid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.CreateNLSPhotoOverlayPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
+func (r *mutationResolver) RemoveNLSPhotoOverlay(ctx context.Context, input gqlmodel.RemoveNLSPhotoOverlayInput) (*gqlmodel.RemoveNLSPhotoOverlayPayload, error) {
+	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
+	if err != nil {
+		return nil, err
+	}
+
+	layer, err := usecases(ctx).NLSLayer.RemoveNLSPhotoOverlay(ctx, lid, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.RemoveNLSPhotoOverlayPayload{
+		Layer: gqlmodel.ToNLSLayer(layer, nil),
+	}, nil
+}
+
 func (r *mutationResolver) AddNLSInfoboxBlock(ctx context.Context, input gqlmodel.AddNLSInfoboxBlockInput) (*gqlmodel.AddNLSInfoboxBlockPayload, error) {
 	lid, err := gqlmodel.ToID[id.NLSLayer](input.LayerID)
 	if err != nil {

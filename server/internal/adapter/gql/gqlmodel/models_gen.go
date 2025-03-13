@@ -200,6 +200,14 @@ type CreateNLSInfoboxPayload struct {
 	Layer NLSLayer `json:"layer"`
 }
 
+type CreateNLSPhotoOverlayInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type CreateNLSPhotoOverlayPayload struct {
+	Layer NLSLayer `json:"layer"`
+}
+
 type CreateProjectInput struct {
 	TeamID      ID         `json:"teamId"`
 	Visualizer  Visualizer `json:"visualizer"`
@@ -1096,6 +1104,14 @@ type RemoveNLSLayerInput struct {
 
 type RemoveNLSLayerPayload struct {
 	LayerID ID `json:"layerId"`
+}
+
+type RemoveNLSPhotoOverlayInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type RemoveNLSPhotoOverlayPayload struct {
+	Layer NLSLayer `json:"layer"`
 }
 
 type RemovePropertyFieldInput struct {
