@@ -159,5 +159,5 @@ reearth.extension.on("message", msg => {
 
 export const uiExtensionMessenger: PluginType = {
   id: "ui-extension-messenger",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };
