@@ -412,6 +412,63 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 	return l, nil
 }
 
+func (i *NLSLayer) CreateNLSPhotoOverlay(ctx context.Context, lid id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	l, err := i.nlslayerRepo.FindByID(ctx, lid)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
+		return nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, l.Scene()); err != nil {
+		return nil, err
+	}
+
+	photooverlay := l.PhotoOverlay()
+	if photooverlay != nil {
+		return nil, interfaces.ErrPhotoOverlayAlreadyExists
+	}
+
+	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDPhotoOverlay)
+	property, err := property.New().NewID().Schema(schema.ID()).Scene(l.Scene()).Build()
+	if err != nil {
+		return nil, err
+	}
+	photooverlay = nlslayer.NewPhotoOverlay(property.ID())
+	l.SetPhotoOverlay(photooverlay)
+
+	err = i.propertyRepo.Save(ctx, property)
+	if err != nil {
+		return nil, err
+	}
+	err = i.nlslayerRepo.Save(ctx, l)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return l, nil
+}
+
 func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
 
 	tx, err := i.transaction.Begin(ctx)
@@ -447,6 +504,59 @@ func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, 
 	layer.SetInfobox(nil)
 
 	err = i.propertyRepo.Remove(ctx, infobox.Property())
+	if err != nil {
+		return nil, err
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *NLSLayer) RemoveNLSPhotoOverlay(ctx context.Context, layerID id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, layerID)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, layer.Scene()); err != nil {
+		return nil, err
+	}
+
+	photooverlay := layer.PhotoOverlay()
+	if photooverlay == nil {
+		return nil, interfaces.ErrPhotoOverlayNotFound
+	}
+
+	layer.SetPhotoOverlay(nil)
+
+	err = i.propertyRepo.Remove(ctx, photooverlay.Property())
 	if err != nil {
 		return nil, err
 	}
@@ -1153,6 +1263,23 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			}
 
 			nlBuilder = nlBuilder.Infobox(nlslayer.NewInfobox(blocks, propI.ID()))
+		}
+
+		// PhotoOverlay --------
+		if nlsLayerJSON.PhotoOverlay != nil {
+
+			nlsPhotoOverlayJSON := nlsLayerJSON.PhotoOverlay
+			betaPhotoOverlaySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDPhotoOverlay)
+			propI, err := i.addNewProperty(ctx, betaPhotoOverlaySchema.ID(), sceneID, &filter)
+			if err != nil {
+				return nil, err
+			}
+			builder.PropertyUpdate(ctx, propI, i.propertyRepo, i.propertySchemaRepo, nlsPhotoOverlayJSON.Property)
+
+			photooverlay := nlslayer.NewPhotoOverlay(propI.ID())
+			nlBuilder.PhotoOverlay(photooverlay)
+
+			nlBuilder = nlBuilder.PhotoOverlay(nlslayer.NewPhotoOverlay(propI.ID()))
 		}
 
 		// SketchInfo --------

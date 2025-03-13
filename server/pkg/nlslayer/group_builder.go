@@ -104,6 +104,11 @@ func (b *NLSLayerGroupBuilder) Infobox(infobox *Infobox) *NLSLayerGroupBuilder {
 	return b
 }
 
+func (b *NLSLayerGroupBuilder) PhotoOverlay(photoOverlay *PhotoOverlay) *NLSLayerGroupBuilder {
+	b.l.photoOverlay = photoOverlay
+	return b
+}
+
 func (b *NLSLayerGroupBuilder) IsSketch(i bool) *NLSLayerGroupBuilder {
 	b.l.isSketch = i
 	return b

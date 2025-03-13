@@ -28,6 +28,7 @@ type NLSLayer interface {
 	GetTitle() string
 	GetVisible() bool
 	GetInfobox() *NLSInfobox
+	GetPhotoOverlay() *NLSPhotoOverlay
 	GetIsSketch() bool
 	GetSketch() *SketchInfo
 }
@@ -179,6 +180,14 @@ type CreateNLSInfoboxInput struct {
 }
 
 type CreateNLSInfoboxPayload struct {
+	Layer NLSLayer `json:"layer"`
+}
+
+type CreateNLSPhotoOverlayInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type CreateNLSPhotoOverlayPayload struct {
 	Layer NLSLayer `json:"layer"`
 }
 
@@ -518,58 +527,71 @@ type NLSInfobox struct {
 }
 
 type NLSLayerGroup struct {
-	ID          ID          `json:"id"`
-	Index       *int        `json:"index,omitempty"`
-	LayerType   string      `json:"layerType"`
-	SceneID     ID          `json:"sceneId"`
-	Children    []NLSLayer  `json:"children"`
-	ChildrenIds []ID        `json:"childrenIds"`
-	Config      JSON        `json:"config,omitempty"`
-	Title       string      `json:"title"`
-	Visible     bool        `json:"visible"`
-	Infobox     *NLSInfobox `json:"infobox,omitempty"`
-	Scene       *Scene      `json:"scene,omitempty"`
-	IsSketch    bool        `json:"isSketch"`
-	Sketch      *SketchInfo `json:"sketch,omitempty"`
+	ID           ID               `json:"id"`
+	Index        *int             `json:"index,omitempty"`
+	LayerType    string           `json:"layerType"`
+	SceneID      ID               `json:"sceneId"`
+	Children     []NLSLayer       `json:"children"`
+	ChildrenIds  []ID             `json:"childrenIds"`
+	Config       JSON             `json:"config,omitempty"`
+	Title        string           `json:"title"`
+	Visible      bool             `json:"visible"`
+	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene        *Scene           `json:"scene,omitempty"`
+	IsSketch     bool             `json:"isSketch"`
+	Sketch       *SketchInfo      `json:"sketch,omitempty"`
 }
 
-func (NLSLayerGroup) IsNLSLayer()                  {}
-func (this NLSLayerGroup) GetID() ID               { return this.ID }
-func (this NLSLayerGroup) GetIndex() *int          { return this.Index }
-func (this NLSLayerGroup) GetLayerType() string    { return this.LayerType }
-func (this NLSLayerGroup) GetSceneID() ID          { return this.SceneID }
-func (this NLSLayerGroup) GetConfig() JSON         { return this.Config }
-func (this NLSLayerGroup) GetTitle() string        { return this.Title }
-func (this NLSLayerGroup) GetVisible() bool        { return this.Visible }
-func (this NLSLayerGroup) GetInfobox() *NLSInfobox { return this.Infobox }
-func (this NLSLayerGroup) GetIsSketch() bool       { return this.IsSketch }
-func (this NLSLayerGroup) GetSketch() *SketchInfo  { return this.Sketch }
+func (NLSLayerGroup) IsNLSLayer()                            {}
+func (this NLSLayerGroup) GetID() ID                         { return this.ID }
+func (this NLSLayerGroup) GetIndex() *int                    { return this.Index }
+func (this NLSLayerGroup) GetLayerType() string              { return this.LayerType }
+func (this NLSLayerGroup) GetSceneID() ID                    { return this.SceneID }
+func (this NLSLayerGroup) GetConfig() JSON                   { return this.Config }
+func (this NLSLayerGroup) GetTitle() string                  { return this.Title }
+func (this NLSLayerGroup) GetVisible() bool                  { return this.Visible }
+func (this NLSLayerGroup) GetInfobox() *NLSInfobox           { return this.Infobox }
+func (this NLSLayerGroup) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
+func (this NLSLayerGroup) GetIsSketch() bool                 { return this.IsSketch }
+func (this NLSLayerGroup) GetSketch() *SketchInfo            { return this.Sketch }
 
 type NLSLayerSimple struct {
-	ID        ID          `json:"id"`
-	Index     *int        `json:"index,omitempty"`
-	LayerType string      `json:"layerType"`
-	SceneID   ID          `json:"sceneId"`
-	Config    JSON        `json:"config,omitempty"`
-	Title     string      `json:"title"`
-	Visible   bool        `json:"visible"`
-	Infobox   *NLSInfobox `json:"infobox,omitempty"`
-	Scene     *Scene      `json:"scene,omitempty"`
-	IsSketch  bool        `json:"isSketch"`
-	Sketch    *SketchInfo `json:"sketch,omitempty"`
+	ID           ID               `json:"id"`
+	Index        *int             `json:"index,omitempty"`
+	LayerType    string           `json:"layerType"`
+	SceneID      ID               `json:"sceneId"`
+	Config       JSON             `json:"config,omitempty"`
+	Title        string           `json:"title"`
+	Visible      bool             `json:"visible"`
+	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene        *Scene           `json:"scene,omitempty"`
+	IsSketch     bool             `json:"isSketch"`
+	Sketch       *SketchInfo      `json:"sketch,omitempty"`
 }
 
-func (NLSLayerSimple) IsNLSLayer()                  {}
-func (this NLSLayerSimple) GetID() ID               { return this.ID }
-func (this NLSLayerSimple) GetIndex() *int          { return this.Index }
-func (this NLSLayerSimple) GetLayerType() string    { return this.LayerType }
-func (this NLSLayerSimple) GetSceneID() ID          { return this.SceneID }
-func (this NLSLayerSimple) GetConfig() JSON         { return this.Config }
-func (this NLSLayerSimple) GetTitle() string        { return this.Title }
-func (this NLSLayerSimple) GetVisible() bool        { return this.Visible }
-func (this NLSLayerSimple) GetInfobox() *NLSInfobox { return this.Infobox }
-func (this NLSLayerSimple) GetIsSketch() bool       { return this.IsSketch }
-func (this NLSLayerSimple) GetSketch() *SketchInfo  { return this.Sketch }
+func (NLSLayerSimple) IsNLSLayer()                            {}
+func (this NLSLayerSimple) GetID() ID                         { return this.ID }
+func (this NLSLayerSimple) GetIndex() *int                    { return this.Index }
+func (this NLSLayerSimple) GetLayerType() string              { return this.LayerType }
+func (this NLSLayerSimple) GetSceneID() ID                    { return this.SceneID }
+func (this NLSLayerSimple) GetConfig() JSON                   { return this.Config }
+func (this NLSLayerSimple) GetTitle() string                  { return this.Title }
+func (this NLSLayerSimple) GetVisible() bool                  { return this.Visible }
+func (this NLSLayerSimple) GetInfobox() *NLSInfobox           { return this.Infobox }
+func (this NLSLayerSimple) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
+func (this NLSLayerSimple) GetIsSketch() bool                 { return this.IsSketch }
+func (this NLSLayerSimple) GetSketch() *SketchInfo            { return this.Sketch }
+
+type NLSPhotoOverlay struct {
+	ID         ID        `json:"id"`
+	SceneID    ID        `json:"sceneId"`
+	LayerID    ID        `json:"layerId"`
+	PropertyID ID        `json:"propertyId"`
+	Property   *Property `json:"property,omitempty"`
+	Scene      *Scene    `json:"scene,omitempty"`
+}
 
 type PageInfo struct {
 	StartCursor     *usecasex.Cursor `json:"startCursor,omitempty"`
@@ -911,6 +933,14 @@ type RemoveNLSLayerInput struct {
 
 type RemoveNLSLayerPayload struct {
 	LayerID ID `json:"layerId"`
+}
+
+type RemoveNLSPhotoOverlayInput struct {
+	LayerID ID `json:"layerId"`
+}
+
+type RemoveNLSPhotoOverlayPayload struct {
+	Layer NLSLayer `json:"layer"`
 }
 
 type RemovePropertyFieldInput struct {
@@ -1596,6 +1626,7 @@ const (
 	PluginExtensionTypeBlock        PluginExtensionType = "BLOCK"
 	PluginExtensionTypeVisualizer   PluginExtensionType = "VISUALIZER"
 	PluginExtensionTypeInfobox      PluginExtensionType = "INFOBOX"
+	PluginExtensionTypePhotooverlay PluginExtensionType = "PHOTOOVERLAY"
 	PluginExtensionTypeStory        PluginExtensionType = "Story"
 	PluginExtensionTypeStoryPage    PluginExtensionType = "StoryPage"
 	PluginExtensionTypeStoryBlock   PluginExtensionType = "StoryBlock"
@@ -1608,6 +1639,7 @@ var AllPluginExtensionType = []PluginExtensionType{
 	PluginExtensionTypeBlock,
 	PluginExtensionTypeVisualizer,
 	PluginExtensionTypeInfobox,
+	PluginExtensionTypePhotooverlay,
 	PluginExtensionTypeStory,
 	PluginExtensionTypeStoryPage,
 	PluginExtensionTypeStoryBlock,
@@ -1616,7 +1648,7 @@ var AllPluginExtensionType = []PluginExtensionType{
 
 func (e PluginExtensionType) IsValid() bool {
 	switch e {
-	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock, PluginExtensionTypeInfoboxBlock:
+	case PluginExtensionTypePrimitive, PluginExtensionTypeWidget, PluginExtensionTypeBlock, PluginExtensionTypeVisualizer, PluginExtensionTypeInfobox, PluginExtensionTypePhotooverlay, PluginExtensionTypeStory, PluginExtensionTypeStoryPage, PluginExtensionTypeStoryBlock, PluginExtensionTypeInfoboxBlock:
 		return true
 	}
 	return false

@@ -1,6 +1,8 @@
 package gqlmodel
 
 import (
+	"fmt"
+
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearthx/util"
@@ -13,16 +15,17 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 	}
 
 	return &NLSLayerSimple{
-		ID:        IDFrom(l.ID()),
-		Index:     l.Index(),
-		SceneID:   IDFrom(l.Scene()),
-		Title:     l.Title(),
-		Visible:   l.IsVisible(),
-		Infobox:   ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
-		LayerType: string(l.LayerType()),
-		Config:    JSON(*l.Config()),
-		IsSketch:  l.IsSketch(),
-		Sketch:    ToNLSLayerSketchInfo(l.Sketch()),
+		ID:           IDFrom(l.ID()),
+		Index:        l.Index(),
+		SceneID:      IDFrom(l.Scene()),
+		Title:        l.Title(),
+		Visible:      l.IsVisible(),
+		Infobox:      ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
+		PhotoOverlay: ToNLSPhotoOverlay(l.PhotoOverlay(), l.ID(), l.Scene()),
+		LayerType:    string(l.LayerType()),
+		Config:       JSON(*l.Config()),
+		IsSketch:     l.IsSketch(),
+		Sketch:       ToNLSLayerSketchInfo(l.Sketch()),
 	}
 }
 
@@ -47,19 +50,21 @@ func ToNLSLayerType(p string) nlslayer.LayerType {
 }
 
 func ToNLSLayerGroup(l *nlslayer.NLSLayerGroup, parent *id.NLSLayerID) *NLSLayerGroup {
+	fmt.Println("-------------- ToNLSLayerGroup()")
 	if l == nil {
 		return nil
 	}
 
 	return &NLSLayerGroup{
-		ID:          IDFrom(l.ID()),
-		Index:       l.Index(),
-		SceneID:     IDFrom(l.Scene()),
-		Title:       l.Title(),
-		Visible:     l.IsVisible(),
-		Config:      JSON(*l.Config()),
-		Infobox:     ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
-		ChildrenIds: util.Map(l.Children().Layers(), IDFrom[id.NLSLayer]),
+		ID:           IDFrom(l.ID()),
+		Index:        l.Index(),
+		SceneID:      IDFrom(l.Scene()),
+		Title:        l.Title(),
+		Visible:      l.IsVisible(),
+		Config:       JSON(*l.Config()),
+		Infobox:      ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
+		PhotoOverlay: ToNLSPhotoOverlay(l.PhotoOverlay(), l.ID(), l.Scene()),
+		ChildrenIds:  util.Map(l.Children().Layers(), IDFrom[id.NLSLayer]),
 	}
 }
 
@@ -118,6 +123,17 @@ func ToNLSInfobox(ib *nlslayer.Infobox, parent id.NLSLayerID, parentSceneID id.S
 		SceneID:    IDFrom(parentSceneID),
 		PropertyID: IDFrom(ib.Property()),
 		Blocks:     ToInfoboxBlocks(ib.Blocks(), parentSceneID),
+		LayerID:    IDFrom(parent),
+	}
+}
+
+func ToNLSPhotoOverlay(ib *nlslayer.PhotoOverlay, parent id.NLSLayerID, parentSceneID id.SceneID) *NLSPhotoOverlay {
+	if ib == nil {
+		return nil
+	}
+	return &NLSPhotoOverlay{
+		SceneID:    IDFrom(parentSceneID),
+		PropertyID: IDFrom(ib.Property()),
 		LayerID:    IDFrom(parent),
 	}
 }

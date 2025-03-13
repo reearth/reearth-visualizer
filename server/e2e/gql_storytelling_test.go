@@ -163,8 +163,8 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 		blockID1,
 	})
 
-	_, _, blockIDa := createBlock(e, sceneID, storyID1, pageID1, "reearth", "textStoryBlock", lo.ToPtr(1))
-	_, _, blockIDb := createBlock(e, sceneID, storyID1, pageID1, "reearth", "textStoryBlock", lo.ToPtr(2))
+	_, _, blockIDa, _ := createBlock(e, sceneID, storyID1, pageID1, "reearth", "textStoryBlock", lo.ToPtr(1))
+	_, _, blockIDb, _ := createBlock(e, sceneID, storyID1, pageID1, "reearth", "textStoryBlock", lo.ToPtr(2))
 
 	_, res = fetchSceneForStories(e, sceneID)
 	res.Object().
@@ -184,7 +184,7 @@ func TestStoryPageBlocksCRUD(t *testing.T) {
 		blockIDa,
 	})
 
-	_, _, blockID3 := createBlock(e, sceneID, storyID1, pageID1, "reearth", "textStoryBlock", lo.ToPtr(3))
+	_, _, blockID3, _ := createBlock(e, sceneID, storyID1, pageID1, "reearth", "textStoryBlock", lo.ToPtr(3))
 
 	_, res = fetchSceneForStories(e, sceneID)
 	res.Object().
@@ -815,30 +815,47 @@ func duplicatePage(e *httpexpect.Expect, sID, storyID, pageID string) (GraphQLRe
 	return requestBody, res, pID.(string)
 }
 
-func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
+func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateStoryBlock",
-		Query: `mutation CreateStoryBlock($storyId: ID!, $pageId: ID!, $pluginId: ID!, $extensionId: ID!, $index: Int) {
-			createStoryBlock( input: {storyId: $storyId, pageId: $pageId, pluginId: $pluginId, extensionId: $extensionId, index: $index} ) { 
-				story {
-					id
-					pages {
-						id
-					}
-				}
-				page {
-					id
-					title
-					swipeable
-					blocks {
-						id
-					}
-				}
-				block {
-					id
-				}
-			}
-		}`,
+		Query: `mutation CreateStoryBlock(
+  $storyId: ID!
+  $pageId: ID!
+  $pluginId: ID!
+  $extensionId: ID!
+  $index: Int
+) {
+  createStoryBlock(
+    input: {
+      storyId: $storyId
+      pageId: $pageId
+      pluginId: $pluginId
+      extensionId: $extensionId
+      index: $index
+    }
+  ) {
+    story {
+      id
+      pages {
+        id
+      }
+    }
+    page {
+      id
+      title
+      swipeable
+      blocks {
+        id
+      }
+    }
+    block {
+      id
+      property {
+        id
+      }
+    }
+  }
+}`,
 		Variables: map[string]any{
 			"sceneId":     sID,
 			"storyId":     storyID,
@@ -857,7 +874,10 @@ func createBlock(e *httpexpect.Expect, sID, storyID, pageID, pluginId, extension
 		Value("page").Object().
 		Value("blocks").Array().NotEmpty()
 
-	return requestBody, res, res.Path("$.data.createStoryBlock.block.id").Raw().(string)
+	blockId := res.Path("$.data.createStoryBlock.block.id").Raw().(string)
+	blockPropertyId := res.Path("$.data.createStoryBlock.block.property.id").Raw().(string)
+
+	return requestBody, res, blockId, blockPropertyId
 }
 
 func removeBlock(e *httpexpect.Expect, storyID, pageID, blockID string) (GraphQLRequest, *httpexpect.Value, string) {
