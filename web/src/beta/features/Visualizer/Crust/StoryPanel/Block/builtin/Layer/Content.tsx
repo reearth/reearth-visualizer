@@ -1,6 +1,7 @@
 import { BlockContext } from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import { useBlockContext } from "@reearth/beta/features/Visualizer/shared/contexts/blockContext";
 import Button from "@reearth/beta/ui/widgetui/Button";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useContext, useState } from "react";
@@ -34,6 +35,7 @@ type Props = {
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
+  nlsLayers?: NLSLayer[];
 };
 
 const Content: FC<Props> = ({
@@ -43,7 +45,8 @@ const Content: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove
+  onPropertyItemMove,
+  nlsLayers
 }) => {
   const t = useT();
   const [selected, setSelected] = useState<string>(layerButtons[0]?.id);
@@ -99,6 +102,7 @@ const Content: FC<Props> = ({
           onPropertyItemAdd={onPropertyItemAdd}
           onPropertyItemMove={onPropertyItemMove}
           onPropertyItemDelete={onPropertyItemDelete}
+          nlsLayers={nlsLayers}
         />
       )}
     </Wrapper>
