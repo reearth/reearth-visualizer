@@ -4,6 +4,7 @@ import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
+import { Trans } from "react-i18next";
 
 const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-dashboard-assets-layout`;
 
@@ -38,21 +39,35 @@ const Assets: FC<Props> = ({ workspaceId }) => {
             {t("Important Changes")}
           </Typography>
         </WarningTitle>
-
-        <Typography size="h5" color={theme.warning.main}>
-          {t(
-            "Due to functional requirements, we have modified the data structure of the Visualizer. Starting from this version, asset management will no longer be centralized under the workspace but will instead be handled on each project's Asset page. As a result, this page will be removed in the next version. To ensure the security of your project data, please complete the data migration in a timely manner by following the instructions on this page."
-          )}
-        </Typography>
+        <WarningContent size="h5" color={theme.warning.main}>
+          <Trans i18nKey={"dashboard.assets.migration.warning"}>
+            Based on functional requirements, we have decided to adjust the
+            project structure. The asset management page, which was originally
+            part of the workspace, will be moved to individual project pages. In
+            other words, assets will now be managed under each project, making
+            it more convenient for users to import and export them. As a result,
+            the current page will no longer exist and will be removed in the
+            next version. For more details, please refer to
+            <a
+              href="https://help.reearth.io/Assets-UI-Project-Setting-1b616e0fb1658099af90fb1ecc495a80"
+              target="_blank"
+            >
+              this page
+            </a>
+            .
+          </Trans>
+        </WarningContent>
       </Warning>
-      <AssetsManager
-        workspaceId={workspaceId}
-        size="large"
-        layout={layout}
-        additionalFilter={(a) => !a.projectId}
-        enableUpload={false}
-        onLayoutChange={handleLayoutChange}
-      />
+      <ContentWrapper>
+        <AssetsManager
+          workspaceId={workspaceId}
+          size="large"
+          layout={layout}
+          additionalFilter={(a) => !a.projectId}
+          enableUpload={false}
+          onLayoutChange={handleLayoutChange}
+        />
+      </ContentWrapper>
     </Wrapper>
   );
 };
@@ -85,6 +100,16 @@ const WarningTitle = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: theme.spacing.small
+}));
+
+const WarningContent = styled(Typography)(() => ({
+  "& a": {
+    textDecoration: "underline"
+  }
+}));
+
+const ContentWrapper = styled("div")(() => ({
+  minHeight: 0
 }));
 
 export default Assets;
