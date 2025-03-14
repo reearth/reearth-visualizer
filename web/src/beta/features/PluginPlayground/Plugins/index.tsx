@@ -1,9 +1,12 @@
-import { Collapse, IconButton, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
-import { styled } from "@reearth/services/styled";
-import { FC, useState } from "react";
+import { useT } from "@reearth/services/i18n";
+import { styled } from "@reearth/services/theme";
+import { FC, useState, useEffect } from "react";
 
+import { SHARED_PLUGIN_ID } from "./constants";
 import FileListItem from "./FileListItem";
+import useTitles from "./presets/useTitles";
 import usePlugins from "./usePlugins";
 
 type UsePluginsReturn = Pick<
@@ -38,68 +41,102 @@ const Plugins: FC<Props> = ({
   sharedPlugin,
   handlePluginDownload
 }) => {
+  const t = useT();
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
+  const [collapsedCatergoryIds, setCollapsedCategoryIds] = useState<string[]>(
+    presetPlugins
+      .map((category) => category.id)
+      .filter((id) => {
+        return id !== "custom";
+      })
+  );
 
   const handlePluginShare = (): void => {
     if (!selectedPlugin) return;
     encodeAndSharePlugin(selectedPlugin.id);
   };
 
+  const { categoryTitles, pluginTitles } = useTitles();
+
+  useEffect(() => {
+    if (!selectedPlugin) return;
+    const selectedCategory = presetPlugins.find((category) =>
+      category.plugins.find((plugin) => plugin.id === selectedPlugin.id)
+    );
+    if (selectedCategory) {
+      setCollapsedCategoryIds((prev) =>
+        prev.filter((id) => id !== selectedCategory.id)
+      );
+    }
+  }, [presetPlugins, selectedPlugin]);
+
   const PluginEntryItem: FC<{
-    plugin: { id: string; title: string };
-    selectedPluginId: string;
+    highlighted: boolean;
     onSelect: (id: string) => void;
-  }> = ({ plugin, selectedPluginId, onSelect }) => (
-    <EntryItem
-      key={plugin.id}
-      highlighted={selectedPluginId === plugin.id}
-      onClick={() => onSelect(plugin.id)}
-      title={plugin.title}
-      optionsMenuWidth={100}
-    />
-  );
+    pluginId: string;
+    title: string;
+  }> = ({ highlighted, pluginId, onSelect, title }) => {
+    return (
+      <EntryItem
+        key={pluginId}
+        highlighted={highlighted}
+        onClick={() => onSelect(pluginId)}
+        title={title}
+        optionsMenuWidth={100}
+      />
+    );
+  };
 
   return (
     <Wrapper>
-      <IconList>
-        <IconButton
-          appearance="simple"
+      <Actions>
+        <Button
           icon="addFile"
+          iconButton
+          tooltipText={t("Add File")}
+          placement="top"
           onClick={() => setIsAddingNewFile(true)}
         />
-        <IconButton
-          appearance="simple"
+        <Button
           icon="import"
+          iconButton
+          tooltipText={t("Import Plugin")}
+          placement="top"
           onClick={handlePluginImport}
         />
-        <IconButton
-          appearance="simple"
+        <Button
           icon="export"
+          iconButton
+          tooltipText={t("Export Plugin")}
+          placement="top"
           onClick={handlePluginDownload}
         />
-        <IconButton
-          appearance="simple"
+        <Button
           icon="paperPlaneTilt"
+          iconButton
+          tooltipText={t("Share Plugin")}
+          placement="top"
           onClick={handlePluginShare}
         />
-      </IconList>
-      <PluginListWrapper>
+      </Actions>
+      <PluginBrowser>
         <PluginList>
-          {sharedPlugin && (
+          {sharedPlugin && sharedPlugin.id === SHARED_PLUGIN_ID && (
             <div>
               <Collapse
                 key={"shared"}
                 iconPosition="left"
                 size="small"
-                title={"Shared"}
+                title={t("Shared")}
                 noPadding
               >
                 <PluginSubList>
                   <PluginEntryItem
-                    plugin={sharedPlugin}
+                    highlighted={selectedPlugin.id === sharedPlugin.id}
                     key={sharedPlugin.id}
-                    selectedPluginId={selectedPlugin.id}
                     onSelect={selectPlugin}
+                    pluginId={sharedPlugin.id}
+                    title={pluginTitles[sharedPlugin.id]}
                   />
                 </PluginSubList>
               </Collapse>
@@ -109,26 +146,29 @@ const Plugins: FC<Props> = ({
             <div key={category.id}>
               <Collapse
                 key={category.id}
-                collapsed={category.id !== "custom"}
+                collapsed={collapsedCatergoryIds.includes(category.id)}
                 iconPosition="left"
                 size="small"
-                title={category.title}
+                title={categoryTitles[category.id]}
                 noPadding
               >
                 <PluginSubList>
                   {category.plugins.length > 0 ? (
-                    category.plugins.map((plugin) => (
-                      <PluginEntryItem
-                        plugin={plugin}
-                        key={plugin.id}
-                        selectedPluginId={selectedPlugin.id}
-                        onSelect={selectPlugin}
-                      />
-                    ))
+                    category.plugins.map((plugin) => {
+                      return (
+                        <PluginEntryItem
+                          highlighted={selectedPlugin.id === plugin.id}
+                          key={plugin.id}
+                          onSelect={selectPlugin}
+                          pluginId={plugin.id}
+                          title={pluginTitles[plugin.id]}
+                        />
+                      );
+                    })
                   ) : (
                     <EmptyTip>
                       <Typography size="body" color="weak" trait="italic">
-                        No plugins
+                        {t("No plugins")}
                       </Typography>
                     </EmptyTip>
                   )}
@@ -137,8 +177,8 @@ const Plugins: FC<Props> = ({
             </div>
           ))}
         </PluginList>
-        <FileListWrapper>
-          <FileList>
+        <FileList>
+          <FileSubList>
             {selectedPlugin.files.map((file) => (
               <FileListItem
                 key={file.id}
@@ -160,32 +200,56 @@ const Plugins: FC<Props> = ({
                 isEditing
               />
             )}
-          </FileList>
-        </FileListWrapper>
-      </PluginListWrapper>
+          </FileSubList>
+        </FileList>
+      </PluginBrowser>
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")(() => ({
-  height: "100%",
+const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  flexGrow: 1
+  flexGrow: 1,
+  gap: theme.spacing.small,
+  minHeight: 0
+}));
+
+const Actions = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small,
+  flexShrink: 0
+}));
+
+const PluginBrowser = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexGrow: 1,
+  marginLeft: -theme.spacing.smallest,
+  minHeight: 0
 }));
 
 const PluginList = styled("div")(({ theme }) => ({
   width: "50%",
-  paddingRight: theme.spacing.small,
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.smallest
+  gap: theme.spacing.smallest,
+  paddingRight: theme.spacing.small,
+  overflowY: "auto",
+  overflowX: "hidden",
+  minHeight: 0
 }));
 
-const PluginListWrapper = styled("div")(({ theme }) => ({
+const FileList = styled("div")(({ theme }) => ({
+  width: "50%",
   display: "flex",
-  height: "100%",
-  marginLeft: -theme.spacing.smallest
+  flexDirection: "column",
+  gap: theme.spacing.smallest,
+  paddingLeft: theme.spacing.small,
+  borderLeft: `1px solid ${theme.outline.weaker}`,
+  overflowY: "auto",
+  overflowX: "hidden",
+  minHeight: 0
 }));
 
 const PluginSubList = styled("div")(({ theme }) => ({
@@ -196,31 +260,15 @@ const PluginSubList = styled("div")(({ theme }) => ({
   paddingTop: theme.spacing.smallest
 }));
 
-const EmptyTip = styled("div")(({ theme }) => ({
-  padding: theme.spacing.smallest,
-  paddingLeft: theme.spacing.small
-}));
-
-const FileListWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  paddingLeft: theme.spacing.small,
-  width: "50%",
-  borderLeft: `1px solid ${theme.outline.weaker}`,
-  gap: theme.spacing.small
-}));
-
-const FileList = styled("div")(({ theme }) => ({
+const FileSubList = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.smallest
 }));
 
-const IconList = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.small,
-  marginBottom: theme.spacing.small
+const EmptyTip = styled("div")(({ theme }) => ({
+  padding: theme.spacing.smallest,
+  paddingLeft: theme.spacing.small
 }));
 
 export default Plugins;

@@ -3,7 +3,7 @@ import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/conte
 import { InstallableBlock } from "@reearth/beta/features/Visualizer/shared/types";
 import { DragAndDropList } from "@reearth/beta/lib/reearth-ui";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
-import { Spacing } from "@reearth/core";
+import { Layer, Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 import { FC, Fragment, ReactNode, memo, useMemo } from "react";
 
@@ -28,6 +28,7 @@ const INFOBOX_DRAG_HANDLE_CLASS_NAME =
 
 export type Props = {
   infobox?: Infobox;
+  layer?: Layer;
   isEditable?: boolean;
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   renderBlock?: (block: InfoboxBlockProps) => ReactNode;
@@ -69,6 +70,7 @@ export type Props = {
 
 const Infobox: FC<Props> = ({
   infobox,
+  layer,
   isEditable,
   installableInfoboxBlocks,
   renderBlock,
@@ -113,6 +115,8 @@ const Infobox: FC<Props> = ({
               <InfoboxBlockComponent
                 key={b.id}
                 block={b}
+                layer={layer}
+                selectedFeature={infobox?.feature}
                 isEditable={isEditable}
                 renderBlock={renderBlock}
                 isSelected={b.id === selectedBlockId}
@@ -143,6 +147,8 @@ const Infobox: FC<Props> = ({
       })),
     [
       infoboxBlocks,
+      layer,
+      infobox?.feature,
       isEditable,
       renderBlock,
       selectedBlockId,

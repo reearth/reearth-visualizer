@@ -22,16 +22,18 @@ export const PopupPanel: FC<PopupPanelProps> = ({
   return (
     <ClickAway onClickAway={onCancel}>
       <Wrapper width={width}>
-        <HeaderWrapper>
-          <Title>{title}</Title>
-          <Button
-            iconButton
-            icon="close"
-            size="small"
-            onClick={onCancel}
-            appearance="simple"
-          />
-        </HeaderWrapper>
+        {title && (
+          <HeaderWrapper>
+            <Title>{title}</Title>
+            <Button
+              iconButton
+              icon="close"
+              size="small"
+              onClick={onCancel}
+              appearance="simple"
+            />
+          </HeaderWrapper>
+        )}
         <Content>{children}</Content>
         {actions && <ActionWrapper>{actions}</ActionWrapper>}
       </Wrapper>

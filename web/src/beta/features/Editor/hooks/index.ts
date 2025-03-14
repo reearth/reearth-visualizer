@@ -37,6 +37,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
   const {
     nlsLayers,
     selectedLayer,
+    selectedFeature,
     ignoreCoreLayerUnselect,
     layerId,
     handleCoreLayerSelect,
@@ -59,6 +60,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
   });
 
   const {
+    selectedSketchFeature,
     handleSketchTypeChange,
     handleSketchFeatureCreate,
     handleSketchFeatureUpdate,
@@ -74,6 +76,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     tab,
     nlsLayers,
     selectedLayer,
+    selectedFeature,
     ignoreCoreLayerUnselect,
     visualizerRef
   });
@@ -152,6 +155,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
 
   const mapPageValue: MapPageContextType = useMemo(
     () => ({
+      visualizerRef,
       handleVisualizerResize,
       scene,
       selectedSceneSetting,
@@ -167,6 +171,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerVisibilityUpdate,
       handleFlyTo,
       sketchEnabled: !!selectedLayer?.layer?.isSketch,
+      selectedSketchFeature,
       sketchType,
       handleSketchTypeChange,
       sketchEditingFeature,
@@ -178,6 +183,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       sceneId,
       selectedLayerStyleId: selectedLayerStyle?.id,
       selectedLayer,
+      selectedFeature,
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
       handleGeoJsonFeatureUpdate,
@@ -193,6 +199,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleRemoveCustomProperty
     }),
     [
+      visualizerRef,
       handleVisualizerResize,
       scene,
       selectedSceneSetting,
@@ -207,6 +214,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       openSketchLayerCreator,
       handleLayerVisibilityUpdate,
       handleFlyTo,
+      selectedSketchFeature,
       sketchType,
       handleSketchTypeChange,
       sketchEditingFeature,
@@ -217,6 +225,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
       layerStyles,
       sceneId,
       selectedLayerStyle?.id,
+      selectedFeature,
       handleLayerStyleValueUpdate,
       handleLayerConfigUpdate,
       handleGeoJsonFeatureUpdate,
@@ -320,6 +329,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     visualizerSize,
     isVisualizerResizing,
     selectedLayer,
+    selectedFeature,
     visualizerRef,
     storyPanelRef,
     activeSubProject,

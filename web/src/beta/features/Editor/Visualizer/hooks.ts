@@ -23,6 +23,7 @@ import {
   useInfoboxFetcher
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
+import { useAtomValue } from "jotai";
 import {
   useMemo,
   useEffect,
@@ -34,6 +35,7 @@ import {
 
 import { useCurrentCamera } from "../atoms";
 import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
+import { PhotoOverlayPreviewAtom, SketchFeatureTooltipAtom } from "../Map/state";
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
@@ -408,10 +410,17 @@ export default ({
     [onVisualizerReady]
   );
 
+  // photoOverlay
+  const photoOverlayPreview = useAtomValue(PhotoOverlayPreviewAtom);
+
+  // sketch
+  const sketchFeatureTooltip = useAtomValue(SketchFeatureTooltipAtom);
+
   return {
     viewerProperty,
     pluginProperty,
     layers,
+    nlsLayers,
     widgets,
     story,
     engineMeta,
@@ -419,6 +428,8 @@ export default ({
     installableInfoboxBlocks,
     currentCamera,
     initialCamera,
+    photoOverlayPreview,
+    sketchFeatureTooltip,
     handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,

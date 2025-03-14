@@ -42,6 +42,5 @@ reearth.layers.add(layerCsv);
 
 export const addCsv: PluginType = {
   id: "add-csv",
-  title: "Add CSV",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

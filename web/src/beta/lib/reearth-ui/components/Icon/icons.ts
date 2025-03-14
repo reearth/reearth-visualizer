@@ -59,8 +59,12 @@ import Extrude from "./Icons/Extrude.svg?react";
 import Eye from "./Icons/Eye.svg?react";
 import EyeSlash from "./Icons/EyeSlash.svg?react";
 import File from "./Icons/File.svg?react";
+import FileCSV from "./Icons/FileCSV.svg?react";
+import FileCzml from "./Icons/FileCzml.svg?react";
 import FileFilled from "./Icons/FileFilled.svg?react";
+import FileGeoJSON from "./Icons/FileGeoJSON.svg?react";
 import FileHtml from "./Icons/FileHtml.svg?react";
+import FileKml from "./Icons/FileKml.svg?react";
 import FileMD from "./Icons/FileMD.svg?react";
 import FileMDFilled from "./Icons/FileMDFilled.svg?react";
 import Flask from "./Icons/Flask.svg?react";
@@ -163,6 +167,7 @@ import UploadZipPlugin from "./Icons/UploadZipPlugin.svg?react";
 import User from "./Icons/User.svg?react";
 import Users from "./Icons/Users.svg?react";
 import UsersFour from "./Icons/UsersFour.svg?react";
+import VideoCamers from "./Icons/Video_Camera.svg?react";
 import VideoFilled from "./Icons/VideoFilled.svg?react";
 import Warning from "./Icons/Warning.svg?react";
 import ZToA from "./Icons/ZToA.svg?react";
@@ -227,8 +232,12 @@ export default {
   eye: Eye,
   eyeSlash: EyeSlash,
   file: File,
+  fileCSV: FileCSV,
+  fileCzml: FileCzml,
   fileFilled: FileFilled,
+  fileGeoJSON: FileGeoJSON,
   fileHtml: FileHtml,
+  fileKml: FileKml,
   fileMD: FileMD,
   fileMDFilled: FileMDFilled,
   flask: Flask,
@@ -332,6 +341,7 @@ export default {
   users: Users,
   usersFour: UsersFour,
   videoFilled: VideoFilled,
+  videoCamera: VideoCamers,
   warning: Warning,
   zToA: ZToA
 };

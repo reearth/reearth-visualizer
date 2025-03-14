@@ -64,6 +64,8 @@ enum PropertySchemaFieldUI {
   DATETIME
   MARGIN
   PADDING
+  ZOOMLEVEL
+  PROPERTY_SELECTOR
 }
 
 type PropertySchemaFieldChoice {
@@ -120,17 +122,12 @@ type PropertyField {
   parent: Property
   schema: PropertySchema
   field: PropertySchemaField
-  actualValue: Any
 }
 
 type PropertyFieldLink {
   datasetId: ID
   datasetSchemaId: ID!
   datasetSchemaFieldId: ID!
-  dataset: Dataset
-  datasetField: DatasetField
-  datasetSchema: DatasetSchema
-  datasetSchemaField: DatasetSchemaField
 }
 
 type MergedProperty {
@@ -142,7 +139,6 @@ type MergedProperty {
   original: Property
   parent: Property
   schema: PropertySchema
-  linkedDataset: Dataset
   groups: [MergedPropertyGroup!]!
 }
 
@@ -162,7 +158,6 @@ type MergedPropertyGroup {
   original: PropertyGroup
   parent: PropertyGroup
   schema: PropertySchema
-  linkedDataset: Dataset
 }
 
 type MergedPropertyField {
@@ -174,7 +169,6 @@ type MergedPropertyField {
   overridden: Boolean!
   schema: PropertySchema
   field: PropertySchemaField
-  actualValue: Any
 }
 
 enum ListOperation {

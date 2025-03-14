@@ -1,6 +1,7 @@
 package gqlmodel
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/reearth/reearth/server/pkg/id"
@@ -244,7 +245,11 @@ func ToPropertySchema(propertySchema *property.Schema) *PropertySchema {
 }
 
 func ToPropertySchemas(ps []*property.Schema) []*PropertySchema {
-	return lo.Map(ps, func(s *property.Schema, _ int) *PropertySchema {
+	sortedPs := append([]*property.Schema{}, ps...)
+	sort.Slice(sortedPs, func(i, j int) bool {
+		return sortedPs[i].ID().String() < sortedPs[j].ID().String()
+	})
+	return lo.Map(sortedPs, func(s *property.Schema, _ int) *PropertySchema {
 		return ToPropertySchema(s)
 	})
 }
@@ -329,6 +334,10 @@ func ToPropertySchemaFieldUI(ui *property.SchemaFieldUI) *PropertySchemaFieldUI 
 		ui2 = PropertySchemaFieldUIMargin
 	case property.SchemaFieldUIDateTime:
 		ui2 = PropertySchemaFieldUIDatetime
+	case property.SchemaFieldUIzoomLevel:
+		ui2 = PropertySchemaFieldUIZoomlevel
+	case property.SchemaFieldUIPropertySelector:
+		ui2 = PropertySchemaFieldUIPropertySelector
 	}
 	if ui2 != PropertySchemaFieldUI("") {
 		return &ui2
@@ -369,6 +378,10 @@ func FromPropertySchemaFieldUI(ui *string) *property.SchemaFieldUI {
 		ui2 = property.SchemaFieldUIMargin
 	case PropertySchemaFieldUIDatetime.String():
 		ui2 = property.SchemaFieldUIDateTime
+	case PropertySchemaFieldUIZoomlevel.String():
+		ui2 = property.SchemaFieldUIzoomLevel
+	case PropertySchemaFieldUIPropertySelector.String():
+		ui2 = property.SchemaFieldUIPropertySelector
 	}
 
 	if ui2 != "" {

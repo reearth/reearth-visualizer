@@ -28,7 +28,6 @@ type Builder struct {
 	tloader   tag.SceneLoader
 	nlsloader nlslayer.Loader
 	exporter  *encoding.Exporter
-	encoder   *encoder
 
 	scene       *scene.Scene
 	nlsLayer    *nlslayer.NLSLayerList
@@ -39,12 +38,10 @@ type Builder struct {
 }
 
 func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader, exp bool) *Builder {
-	e := &encoder{}
 	return &Builder{
 		ploader:    pl,
 		tloader:    tsl,
 		nlsloader:  nlsl,
-		encoder:    e,
 		exportType: exp,
 		exporter: &encoding.Exporter{
 			Merger: &merging.Merger{
@@ -55,7 +52,6 @@ func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loa
 				DatasetGraphLoader: dl,
 				TagLoader:          tl,
 			},
-			Encoder: e,
 		},
 	}
 }
@@ -92,6 +88,7 @@ func (b *Builder) WithStory(s *storytelling.Story) *Builder {
 	return b
 }
 
+// Build this is used to publish projects and stories
 func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) error {
 	if b == nil || b.scene == nil {
 		return nil
@@ -129,6 +126,7 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time,
 	return json.NewEncoder(w).Encode(res)
 }
 
+// BuildResult this will be used to export the project. The difference from the above is that the property value is assigned a type.
 func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	if b == nil || b.scene == nil {
 		return nil, errors.New("invalid builder state")
@@ -177,13 +175,7 @@ func (b *Builder) buildScene(ctx context.Context, publishedAt time.Time, coreSup
 		return nil, err
 	}
 
-	// layers
-	if err := b.exporter.ExportLayerByID(ctx, b.scene.RootLayer()); err != nil {
-		return nil, err
-	}
-	layers := b.encoder.Result()
-
-	return b.sceneJSON(ctx, publishedAt, layers, p, coreSupport, enableGa, trackingId)
+	return b.sceneJSON(ctx, publishedAt, p, coreSupport, enableGa, trackingId)
 }
 
 func (b *Builder) buildStory(ctx context.Context) (*storyJSON, error) {

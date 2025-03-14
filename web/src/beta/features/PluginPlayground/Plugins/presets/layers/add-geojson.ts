@@ -103,6 +103,5 @@ reearth.layers.add(layerGeojsonFromUrl);
 
 export const addGeojson: PluginType = {
   id: "add-geojson",
-  title: "Add GeoJSON",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

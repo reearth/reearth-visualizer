@@ -70,6 +70,7 @@ const EditorVisualizer: React.FC<Props> = ({
     viewerProperty,
     pluginProperty,
     layers,
+    nlsLayers,
     widgets,
     story,
     engineMeta,
@@ -77,6 +78,8 @@ const EditorVisualizer: React.FC<Props> = ({
     installableInfoboxBlocks,
     currentCamera,
     initialCamera,
+    photoOverlayPreview,
+    sketchFeatureTooltip,
     handleCameraUpdate,
     handleCoreLayerSelect,
     handleLayerDrop,
@@ -114,6 +117,7 @@ const EditorVisualizer: React.FC<Props> = ({
       inEditor={inEditor}
       ready={isBuilt || (!!layers && !!widgets)}
       layers={layers}
+      nlsLayers={nlsLayers}
       widgets={widgets}
       story={story}
       viewerProperty={viewerProperty}
@@ -157,6 +161,10 @@ const EditorVisualizer: React.FC<Props> = ({
       handleInfoboxBlockCreate={handleInfoboxBlockCreate}
       handleInfoboxBlockMove={handleInfoboxBlockMove}
       handleInfoboxBlockRemove={handleInfoboxBlockRemove}
+      // photoOverlay
+      photoOverlayPreview={photoOverlayPreview}
+      //sketchLayer
+      sketchFeatureTooltip={sketchFeatureTooltip}
     />
   );
 };

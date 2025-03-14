@@ -1,4 +1,4 @@
-$schema: ../../schemas/plugin_manifest.json
+version: ../../schemas/plugin_manifest.json
 id: reearth
 system: true
 name: Re:Earth Official Plugin
@@ -75,13 +75,13 @@ extensions:
               placeholder: please enter tile url
             - id: tile_zoomLevel
               type: array
-              title: zoom level
-              description: "Change the zoom level of the selected tile map. Min:0, Max:30"
-              defaultValue: [0,30]
-              ui: range
+              title: Zoom level
+              description: "Change the zoom level of the selected tile map. Min:0, Max:25"
+              defaultValue: [0,25]
+              ui: zoomLevel
               min: 0
-              max: 30
-              placeholder: please enter tile zoomLevel
+              max: 25
+              placeholder: please enter tile zoom level
             - id: tile_opacity
               type: number
               title: Opacity
@@ -2731,7 +2731,7 @@ extensions:
               type: string
               title: Content
               placeholder: ${your property key}
-              ui: multiline
+              ui: property_selector
   - id: imageInfoboxBetaBlock
     name: Image
     type: infoboxBlock
@@ -2754,6 +2754,7 @@ extensions:
               type: string
               title: Image
               placeholder: ${your property key}
+              ui: property_selector
   - id: propertyInfoboxBetaBlock
     type: infoboxBlock
     name: Property List Block
@@ -2813,6 +2814,7 @@ extensions:
               type: string
               title: Video
               placeholder: ${your property key}
+              ui: property_selector
   - id: markdownInfoboxBetaBlock
     name: MD Text
     type: infoboxBlock
@@ -2835,3 +2837,4 @@ extensions:
               type: string
               title: Content
               placeholder: ${your property key}
+              ui: property_selector

@@ -78,6 +78,9 @@ export const RangeSlider: FC<RangeSliderProps> = ({
 const SliderStyled = styled("div")<{ disabled: boolean }>(
   ({ disabled, theme }) => ({
     width: "100%",
+    ".rc-slider": {
+      padding: "3px 0"
+    },
     ".rc-slider-disabled": {
       backgroundColor: "transparent",
       opacity: disabled ? 0.6 : 1,

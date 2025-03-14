@@ -81,6 +81,5 @@ const widgetFile: FileType = {
 
 export const header: PluginType = {
   id: "header",
-  title: "Header",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

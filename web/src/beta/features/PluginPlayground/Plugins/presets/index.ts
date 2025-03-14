@@ -3,11 +3,11 @@ import { PluginType } from "../constants";
 import { cameraPosition } from "./camera/cameraPosition";
 import { cameraRotation } from "./camera/cameraRotation";
 import { zoomInOut } from "./camera/zoomInOut";
-import { extensionExtensionMessenger } from "./communication/extensionExtensionMessenger";
-import { uiExtensionMessenger } from "./communication/uiExtensionMessenger";
 import { myPlugin } from "./custom/myPlugin";
-import { themeSelector } from "./dataStorage/themeSelector";
-import { extensionProperty } from "./extension/extensionProperty";
+import { clientStorageThemeSelector } from "./data/clientStorageThemeSelector";
+import { extensionExtensionMessenger } from "./data/extensionExtensionMessenger";
+import { extensionProperty } from "./data/extensionProperty";
+import { uiExtensionMessenger } from "./data/uiExtensionMessenger";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
 import { addCzml } from "./layers/add-czml";
@@ -19,55 +19,62 @@ import { addWms } from "./layers/add-wms";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { overrideLayerData } from "./layers/overrideLayerData";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
+import { featureStyle3dModel } from "./layerStyles/featureStyle3dmodel";
+import { featureStyle3dTiles } from "./layerStyles/featureStyle3dTiles";
+import { filterFeatureWithStyle } from "./layerStyles/filterFeaturebyStyle";
 import { layerStylingExamples } from "./layerStyles/layerStylingExamples";
-import { featureStyle3dModel } from "./manageLayerStyle/featureStyle3dmodel";
-import { featureStyle3dTiles } from "./manageLayerStyle/featureStyle3dTiles";
-import { filterFeatureWithStyle } from "./manageLayerStyle/filterFeaturebyStyle";
-import { overrideStyle } from "./manageLayerStyle/overrideStyle";
-import { styleWithCondition } from "./manageLayerStyle/styleWithCondition";
+import { overrideStyle } from "./layerStyles/overrideStyle";
+import { styleWithCondition } from "./layerStyles/styleWithCondition";
 import { playbackControl } from "./timeline/playbackControl";
 import { timeDrivenFeatures } from "./timeline/timeDrivenFeatures";
 import { timeDrivenPath } from "./timeline/timeDrivenPath";
-import { enableShadowStyle } from "./viewerAndSceneSettings/enableShadowStyle";
-import { enableTerrain } from "./viewerAndSceneSettings/enableTerrain";
-import { showLabel } from "./viewerAndSceneSettings/showLabel";
-import { takeScreenshot } from "./viewerAndSceneSettings/takeScreenshot";
 import { header } from "./ui/header";
+import { modalWindow } from "./ui/modalWindow";
+import { popupPlugin } from "./ui/popup";
 import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
+import { enableShadowStyle } from "./viewer/enableShadowStyle";
+import { enableTerrain } from "./viewer/enableTerrain";
+import { mouseEvents } from "./viewer/mouseEvent";
+import { showLabel } from "./viewer/showLabel";
+import { takeScreenshot } from "./viewer/takeScreenshot";
 
 type PresetPluginCategory = {
   id: string;
-  title: string;
   plugins: PluginType[];
 };
 
 export type PresetPlugins = PresetPluginCategory[];
-
 export const presetPlugins: PresetPlugins = [
   {
     id: "custom",
-    title: "Custom",
     plugins: [myPlugin]
   },
   {
     id: "ui",
-    title: "User Interface",
-    plugins: [responsivePanel, sidebar, header]
+    plugins: [responsivePanel, sidebar, header, modalWindow, popupPlugin]
   },
   {
-    id: "communication",
-    title: "Communication",
-    plugins: [uiExtensionMessenger, extensionExtensionMessenger]
+    id: "data",
+    plugins: [
+      uiExtensionMessenger,
+      extensionExtensionMessenger,
+      extensionProperty,
+      clientStorageThemeSelector
+    ]
   },
   {
     id: "viewerScene",
-    title: "Viewer & Scene Settings",
-    plugins: [enableShadowStyle,enableTerrain,showLabel,takeScreenshot]
+    plugins: [
+      enableShadowStyle,
+      enableTerrain,
+      showLabel,
+      takeScreenshot,
+      mouseEvents
+    ]
   },
   {
     id: "layers",
-    title: "Manage Layer",
     plugins: [
       addGeojson,
       addCzml,
@@ -84,7 +91,6 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "layerStyles",
-    title: "Manage Layer Style",
     plugins: [
       layerStylingExamples,
       featureStyle3dTiles,
@@ -96,22 +102,10 @@ export const presetPlugins: PresetPlugins = [
   },
   {
     id: "camera",
-    title: "Camera",
     plugins: [zoomInOut, cameraRotation, cameraPosition]
   },
   {
     id: "timeline",
-    title: "Timeline",
     plugins: [playbackControl, timeDrivenFeatures, timeDrivenPath]
-  },
-  {
-    id: "dataStorage",
-    title: "Data Storage",
-    plugins: [themeSelector]
-  },
-  {
-    id: "extension",
-    title: "Extension",
-    plugins: [extensionProperty]
   }
 ];

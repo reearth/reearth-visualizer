@@ -1,5 +1,6 @@
 import { TabItem } from "@reearth/beta/lib/reearth-ui";
 import { MapRef } from "@reearth/core";
+import { useT, useLang, useChangeLanguage } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";
@@ -9,7 +10,7 @@ import LayerList from "./LayerList";
 import { DEFAULT_LAYERS_PLUGIN_PLAYGROUND } from "./LayerList/constants";
 import Plugins from "./Plugins";
 import usePlugins from "./Plugins/usePlugins";
-import SettingsList from "./SettingsList";
+import Settings from "./Settings";
 import { FieldValue } from "./types";
 import Viewer from "./Viewer";
 
@@ -17,6 +18,10 @@ export default () => {
   const visualizerRef = useRef<MapRef | null>(null);
   const [enabledVisualizer, setEnabledVisualizer] = useState(true);
   const [showStoryPanel, setShowStoryPanel] = useState(false);
+
+  const t = useT();
+  const lang = useLang();
+  const changeLanguage = useChangeLanguage();
 
   // NOTE: This to reset the Visualizer component when selecting a new plugin and triggered when `executeCode` is called.
   const resetVisualizer = useCallback(() => {
@@ -43,6 +48,7 @@ export default () => {
   );
 
   const {
+    sharedPlugin,
     presetPlugins,
     selectPlugin,
     selectedPlugin,
@@ -54,8 +60,7 @@ export default () => {
     deleteFile,
     handlePluginImport,
     handlePluginDownload,
-    encodeAndSharePlugin,
-    sharedPlugin
+    encodeAndSharePlugin
   } = usePlugins();
 
   const { executeCode, infoboxBlocks, story, widgets } = useCode({
@@ -69,6 +74,13 @@ export default () => {
   const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
     DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
   );
+
+  const layerTitles: Record<string, string> = useMemo(() => {
+    return {
+      "chiyoda-3d-tiles": t("Chiyoda 3D Tiles"),
+      "japanese-heritage-sites": t("Japanese Heritage Sites")
+    };
+  }, [t]);
 
   const layers = useMemo(() => {
     return DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((layer) => {
@@ -89,10 +101,11 @@ export default () => {
               }
             }
           : {}),
-        visible: visibleLayerIds.includes(layer.id)
+        visible: visibleLayerIds.includes(layer.id),
+        title: layerTitles[layer.id]
       };
     });
-  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks]);
+  }, [infoboxEnabled, visibleLayerIds, infoboxBlocks, layerTitles]);
 
   const handleLayerVisibilityUpdate = (layerId: string) => {
     setVisibleLayerIds((prev) =>
@@ -108,7 +121,7 @@ export default () => {
     () => [
       {
         id: "viewer",
-        name: "Viewer",
+        name: t("Viewer"),
         children: (
           <Viewer
             enabledVisualizer={enabledVisualizer}
@@ -121,7 +134,7 @@ export default () => {
         )
       }
     ],
-    [enabledVisualizer, layers, showStoryPanel, story, widgets]
+    [enabledVisualizer, layers, showStoryPanel, story, t, widgets]
   );
 
   const LayersPanel: FC = () => (
@@ -138,10 +151,11 @@ export default () => {
     () => [
       {
         id: "plugins",
-        name: "Plugins",
+        name: t("Plugins"),
         children: (
           <Plugins
             encodeAndSharePlugin={encodeAndSharePlugin}
+            sharedPlugin={sharedPlugin}
             presetPlugins={presetPlugins}
             selectedPlugin={selectedPlugin}
             selectPlugin={selectPlugin}
@@ -151,25 +165,25 @@ export default () => {
             updateFileTitle={updateFileTitle}
             deleteFile={deleteFile}
             handlePluginImport={handlePluginImport}
-            sharedPlugin={sharedPlugin}
             handlePluginDownload={handlePluginDownload}
           />
         )
       }
     ],
     [
-      encodeAndSharePlugin,
-      presetPlugins,
-      selectedPlugin,
-      selectPlugin,
-      selectedFile,
-      selectFile,
       addFile,
-      updateFileTitle,
       deleteFile,
-      handlePluginImport,
+      encodeAndSharePlugin,
+      handlePluginDownload,
+      presetPlugins,
+      selectedFile,
+      selectedPlugin,
+      selectFile,
+      selectPlugin,
       sharedPlugin,
-      handlePluginDownload
+      t,
+      handlePluginImport,
+      updateFileTitle
     ]
   );
 
@@ -177,7 +191,7 @@ export default () => {
     () => [
       {
         id: "code",
-        name: "Code",
+        name: t("Code"),
         children: (
           <Code
             fileTitle={selectedFile.title}
@@ -193,11 +207,13 @@ export default () => {
         )
       }
     ],
-    [selectedFile, executeCode, updateFileSourceCode]
+    [executeCode, selectedFile, t, updateFileSourceCode]
   );
 
   const SettingsPanel: FC = () => (
-    <SettingsList
+    <Settings
+      changeLanguage={changeLanguage}
+      lang={lang}
       infoboxEnabled={infoboxEnabled}
       setInfoboxEnabled={setInfoboxEnabled}
       setShowStoryPanel={setShowStoryPanel}

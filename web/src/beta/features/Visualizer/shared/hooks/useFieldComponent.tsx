@@ -10,7 +10,8 @@ import {
   SwitchField,
   TimePeriodField,
   TimePointField,
-  TwinInputField
+  TwinInputField,
+  PropertySelectorField
 } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
@@ -20,7 +21,8 @@ export const FieldComponent = ({
   groupId,
   fieldId,
   field,
-  onPropertyUpdate
+  onPropertyUpdate,
+  propertyNames
 }: {
   propertyId: string;
   groupId: string;
@@ -49,6 +51,7 @@ export const FieldComponent = ({
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
+  propertyNames?: string[] | undefined;
 }) => {
   const t = useT();
   const handlePropertyValueUpdate = useCallback(
@@ -82,6 +85,11 @@ export const FieldComponent = ({
           : undefined,
     [field.ui]
   );
+
+  const propertyOption = propertyNames?.map((property) => ({
+    value: property,
+    label: property
+  }));
 
   return field?.type === "spacing" ? (
     <SpacingField
@@ -210,6 +218,24 @@ export const FieldComponent = ({
           ) || []
         }
         onChange={handlePropertyValueUpdate(
+          groupId,
+          propertyId,
+          fieldId,
+          field?.type
+        )}
+      />
+    ) : field?.ui === "propertySelector" ? (
+      <PropertySelectorField
+        key={field.id}
+        title={field?.title}
+        value={field?.value}
+        description={field?.description}
+        placeholder={field?.placeholder}
+        options={propertyOption}
+        displayLabel="{}"
+        displayWidth={38}
+        menuWidth={107}
+        onBlur={handlePropertyValueUpdate(
           groupId,
           propertyId,
           fieldId,

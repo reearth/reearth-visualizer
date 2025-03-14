@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -44,6 +45,12 @@ func (r *Asset) Filtered(f repo.WorkspaceFilter) repo.Asset {
 	}
 }
 
+func (r *Asset) FindByURL(ctx context.Context, path string) (*asset.Asset, error) {
+	return r.findOne(ctx, bson.M{
+		"url": path,
+	})
+}
+
 func (r *Asset) FindByID(ctx context.Context, id id.AssetID) (*asset.Asset, error) {
 	return r.findOne(ctx, bson.M{
 		"id": id.String(),
@@ -64,21 +71,24 @@ func (r *Asset) FindByIDs(ctx context.Context, ids id.AssetIDList) ([]*asset.Ass
 	return filterAssets(ids, res), nil
 }
 
-func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (r *Asset) FindByWorkspaceProject(ctx context.Context, id accountdomain.WorkspaceID, projectId *id.ProjectID, uFilter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
 
-	var filter any = bson.M{
-		"team":        id.String(),
+	filter := bson.M{
 		"coresupport": true,
+	}
+
+	if projectId != nil {
+		filter["project"] = projectId.String()
+	} else {
+		filter["team"] = id.String()
 	}
 
 	if uFilter.Keyword != nil {
 		keyword := fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*uFilter.Keyword))
-		filter = mongox.And(filter, "name", bson.M{
-			"$regex": primitive.Regex{Pattern: keyword, Options: "i"},
-		})
+		filter["name"] = bson.M{"$regex": primitive.Regex{Pattern: keyword, Options: "i"}}
 	}
 
 	bucketPattern := adapter.CurrentHost(ctx)
@@ -90,9 +100,11 @@ func (r *Asset) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceI
 		bucketPattern = "visualizer"
 	}
 
-	filter = mongox.And(filter, "url", bson.M{
+	if andFilter, ok := mongox.And(filter, "url", bson.M{
 		"$regex": primitive.Regex{Pattern: bucketPattern, Options: "i"},
-	})
+	}).(bson.M); ok {
+		filter = andFilter
+	}
 
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
@@ -149,7 +161,6 @@ func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, 
 			Reverted: sort.Desc,
 		}
 	}
-
 	c := mongodoc.NewAssetConsumer(r.f.Readable)
 	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c)
 	if err != nil {
@@ -171,6 +182,9 @@ func (r *Asset) findOne(ctx context.Context, filter any) (*asset.Asset, error) {
 	c := mongodoc.NewAssetConsumer(r.f.Readable)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
+	}
+	if len(c.Result) < 1 {
+		return nil, errors.New("asset not found")
 	}
 	return c.Result[0], nil
 }

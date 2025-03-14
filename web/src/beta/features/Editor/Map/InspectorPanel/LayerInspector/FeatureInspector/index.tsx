@@ -1,12 +1,15 @@
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
 
+import { SelectedFeature } from "@reearth/beta/features/Editor/hooks/useLayers";
 import {
-  GeoJsonFeatureDeleteProps,
   GeoJsonFeatureUpdateProps
 } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
-import { Geometry } from "@reearth/core";
+import {
+  generateNewPropertiesWithPhotoOverlay,
+  getPhotoOverlayValue
+} from "@reearth/beta/utils/sketch";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -14,21 +17,13 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import JsonView from "react18-json-view";
 
 import { FieldComponent } from "./CustomPropertField";
+import PhotoOverlayCollapse from "./PhotoOverlayCollapse";
 
 type Props = {
-  selectedFeature?: {
-    id: string;
-    geometry: Geometry | undefined;
-    properties: Record<string, ValueProp>;
-  };
+  selectedFeature?: SelectedFeature;
   layer?: NLSLayer;
   sketchFeature?: SketchFeature;
   onGeoJsonFeatureUpdate?: (inp: GeoJsonFeatureUpdateProps) => void;
-  onGeoJsonFeatureDelete?: (inp: GeoJsonFeatureDeleteProps) => void;
-  isEditingGeometry?: boolean;
-  onSketchGeometryEditStart?: () => void;
-  onSketchGeometryEditApply?: () => void;
-  onSketchGeometryEditCancel?: () => void;
 };
 
 export type ValueProp = string | number | boolean | undefined;
@@ -44,11 +39,6 @@ const FeatureData: FC<Props> = ({
   layer,
   sketchFeature,
   onGeoJsonFeatureUpdate,
-  onGeoJsonFeatureDelete,
-  isEditingGeometry,
-  onSketchGeometryEditStart,
-  onSketchGeometryEditApply,
-  onSketchGeometryEditCancel
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -59,11 +49,13 @@ const FeatureData: FC<Props> = ({
   // Initialize collapsed state from localStorage
   const initialCollapsedStates = useMemo(() => {
     const storedStates: Record<string, boolean> = {};
-    ["customProperties", "geometry", "properties"].forEach((id) => {
-      storedStates[id] =
-        localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) ===
-        "true";
-    });
+    ["customProperties", "photoOverlay", "geometry", "properties"].forEach(
+      (id) => {
+        storedStates[id] =
+          localStorage.getItem(`reearth-visualizer-feature-${id}-collapsed`) ===
+          "true";
+      }
+    );
     return storedStates;
   }, []);
 
@@ -146,13 +138,26 @@ const FeatureData: FC<Props> = ({
     [theme.fonts.sizes.body]
   );
 
-  const handleDeleteSketchFeature = useCallback(() => {
-    if (!layer?.id || !sketchFeature?.id) return;
-    onGeoJsonFeatureDelete?.({
-      layerId: layer.id,
-      featureId: sketchFeature.id
+  const handleDeletePhotoOverlay = useCallback(() => {
+    if (
+      !selectedFeature ||
+      !getPhotoOverlayValue(selectedFeature?.properties) ||
+      !sketchFeature?.id ||
+      !layer?.id
+    )
+      return;
+
+    const newProperties = generateNewPropertiesWithPhotoOverlay(
+      selectedFeature?.properties,
+      undefined
+    );
+    onGeoJsonFeatureUpdate?.({
+      layerId: layer?.id,
+      featureId: sketchFeature?.id,
+      geometry: selectedFeature.geometry,
+      properties: newProperties
     });
-  }, [layer?.id, sketchFeature?.id, onGeoJsonFeatureDelete]);
+  }, [selectedFeature, sketchFeature?.id, layer?.id, onGeoJsonFeatureUpdate]);
 
   const handleEditCustomProperties = useCallback(() => {
     setEditMode(true);
@@ -165,42 +170,6 @@ const FeatureData: FC<Props> = ({
 
   return (
     <Wrapper>
-      {!!layer?.isSketch && sketchFeature?.id && (
-        <SketchFeatureButtons>
-          {isEditingGeometry ? (
-            <>
-              <Button
-                onClick={onSketchGeometryEditApply}
-                size="small"
-                icon="check"
-                appearance="primary"
-                extendWidth
-              />
-              <Button
-                onClick={onSketchGeometryEditCancel}
-                size="small"
-                icon="close"
-                extendWidth
-              />
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={onSketchGeometryEditStart}
-                size="small"
-                icon="pencilLine"
-                extendWidth
-              />
-              <Button
-                onClick={handleDeleteSketchFeature}
-                size="small"
-                icon="trash"
-                extendWidth
-              />
-            </>
-          )}
-        </SketchFeatureButtons>
-      )}
       {!!layer?.isSketch && (
         <Collapse
           title={t("Custom Properties")}
@@ -254,6 +223,17 @@ const FeatureData: FC<Props> = ({
             </Typography>
           )}
         </Collapse>
+      )}
+      {!!layer?.isSketch && selectedFeature && sketchFeature && (
+        <PhotoOverlayCollapse
+          layerId={layer.id}
+          dataFeatureId={sketchFeature.id}
+          feature={selectedFeature}
+          value={selectedFeature?.properties?.["_reearth"]?.["photoOverlay"]}
+          collapsedStates={collapsedStates}
+          onCollapse={handleCollapse}
+          onDelete={handleDeletePhotoOverlay}
+        />
       )}
       <Collapse
         title={t("Geometry")}

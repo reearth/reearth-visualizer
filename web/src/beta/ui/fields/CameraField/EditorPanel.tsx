@@ -8,6 +8,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
+import SliderField from "../SliderField";
 import TripletInputField from "../TripletInputField";
 import TwinInputField from "../TwinInputField";
 
@@ -15,7 +16,13 @@ import useHooks from "./hooks";
 
 import { PanelProps } from ".";
 
-const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
+const EditPanel: FC<PanelProps> = ({
+  camera,
+  withFOV,
+  onSave,
+  onFlyTo,
+  onClose
+}) => {
   const t = useT();
 
   const {
@@ -24,6 +31,7 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
     handleTwinFieldBlur,
     handleTwinFieldChange,
     handleTrippleFieldChange,
+    handleFOVChange,
     handleFieldBlur,
     handleFieldChange,
     handleSave
@@ -82,6 +90,16 @@ const EditPanel: FC<PanelProps> = ({ camera, onSave, onFlyTo, onClose }) => {
           onChange={handleTrippleFieldChange}
           onBlur={handleTrippleFieldBlur}
         />
+        {withFOV && (
+          <SliderField
+            title={t("FOV")}
+            value={camera?.fov ?? 1.0}
+            min={0.1}
+            max={2.0}
+            step={0.01}
+            onChange={handleFOVChange}
+          />
+        )}
       </GroupWrapper>
     </PopupPanel>
   );

@@ -1,3 +1,7 @@
+import {
+  PhotoOverlayPreview,
+  SketchFeatureTooltip
+} from "@reearth/beta/utils/sketch";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
   coreContext,
@@ -7,17 +11,20 @@ import {
   type Camera,
   type MapRef
 } from "@reearth/core";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useMemo, type RefObject, useContext } from "react";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { InstallableInfoboxBlock } from "./Infobox";
 import { Infobox as InfoboxType } from "./Infobox/types";
+import PhotoOverlay from "./PhotoOverlay";
 import Plugins, {
   type ExternalPluginProps,
   ModalContainer,
   PopupContainer
 } from "./Plugins";
+import SketchTooltip from "./SketchTooltip";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Story } from "./StoryPanel/types";
 import { WidgetThemeOptions, usePublishTheme } from "./theme";
@@ -152,6 +159,12 @@ export type Props = {
     vt?: ValueType,
     v?: ValueTypes[ValueType]
   ) => Promise<void>;
+  // photoOverlay
+  photoOverlayPreview?: PhotoOverlayPreview;
+  nlsLayers?: NLSLayer[];
+  currentCameraRef?: RefObject<Camera | undefined>;
+  //sketchLayer
+  sketchFeatureTooltip?: SketchFeatureTooltip;
 };
 
 export default function Crust({
@@ -198,7 +211,13 @@ export default function Crust({
   onStoryBlockCreate,
   onStoryBlockMove,
   onStoryBlockDelete,
-  onPropertyValueUpdate
+  onPropertyValueUpdate,
+  // photoOverlay
+  photoOverlayPreview,
+  nlsLayers,
+  currentCameraRef,
+  //sketchLayer
+  sketchFeatureTooltip
 }: Props): JSX.Element | null {
   const {
     interactionMode,
@@ -251,11 +270,20 @@ export default function Crust({
     const selectedDataLayer = layers?.find(
       (l) => l.id === selectedLayer?.layerId
     );
+    const selectedFeature =
+      (selectedDataLayer?.type === "simple" &&
+      selectedDataLayer?.data?.isSketchLayer
+        ? selectedLayer?.layer?.features?.find(
+            (f) => f.id === selectedLayerId.featureId
+          )
+        : selectedComputedFeature) ?? selectedComputedFeature;
+
     if (selectedDataLayer?.infobox) {
       return {
         property: selectedDataLayer?.infobox?.property,
         blocks: [...(selectedDataLayer?.infobox?.blocks ?? [])],
-        featureId: selectedLayerId.featureId
+        featureId: selectedLayerId.featureId,
+        feature: selectedFeature
       };
     }
     const selected = mapRef?.current?.layers?.find(
@@ -266,11 +294,18 @@ export default function Crust({
         property: selected?.infobox?.property,
         blocks: [...(selected?.infobox?.blocks ?? [])],
         featureId: selectedLayerId.featureId,
-        readOnly: true
+        readOnly: true,
+        feature: selectedFeature
       };
     }
     return undefined;
-  }, [mapRef, layers, selectedLayer, selectedLayerId?.featureId]);
+  }, [
+    selectedLayerId.featureId,
+    layers,
+    mapRef,
+    selectedLayer,
+    selectedComputedFeature
+  ]);
 
   return (
     <Plugins
@@ -332,6 +367,7 @@ export default function Crust({
       <Infobox
         key={featuredInfobox?.featureId}
         infobox={featuredInfobox}
+        layer={selectedLayer?.layer?.layer}
         installableInfoboxBlocks={installableInfoboxBlocks}
         isEditable={!!inEditor && !featuredInfobox?.readOnly}
         renderBlock={renderBlock}
@@ -359,8 +395,18 @@ export default function Crust({
           onPropertyItemMove={onPropertyItemMove}
           onPropertyItemDelete={onPropertyItemDelete}
           renderBlock={renderBlock}
+          nlsLayers={nlsLayers}
         />
       )}
+      <PhotoOverlay
+        preview={photoOverlayPreview}
+        selectedLayer={selectedLayer?.layer}
+        selectedFeature={selectedComputedFeature}
+        mapRef={mapRef}
+        nlsLayers={nlsLayers}
+        currentCameraRef={currentCameraRef}
+      />
+      <SketchTooltip sketchFeatureTooltip={sketchFeatureTooltip} />
     </Plugins>
   );
 }

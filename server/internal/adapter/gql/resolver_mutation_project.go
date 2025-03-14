@@ -11,19 +11,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/oklog/ulid"
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/usecasex"
-	"github.com/samber/lo"
 	"github.com/spf13/afero"
-	"golang.org/x/exp/rand"
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
@@ -128,10 +124,7 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, input gqlmodel.Del
 func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error) {
 	fs := afero.NewOsFs()
 
-	t := time.Now().UTC()
-	entropy := ulid.Monotonic(rand.New(rand.NewSource(uint64(t.UnixNano()))), 0)
-	name := ulid.MustNew(ulid.Timestamp(t), entropy)
-	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", strings.ToLower(name.String())))
+	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", strings.ToLower(string(input.ProjectID))))
 	if err != nil {
 		return nil, errors.New("Fail Zip Create :" + err.Error())
 	}
@@ -151,47 +144,35 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		}
 	}()
 
-	// export project
 	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
 	if err != nil {
 		return nil, err
 	}
-	prj, err := usecases(ctx).Project.ExportProject(ctx, pid, zipWriter, getOperator(ctx))
+	prj, err := usecases(ctx).Project.ExportProjectData(ctx, pid, zipWriter, getOperator(ctx))
 	if err != nil {
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, data, err := usecases(ctx).Scene.ExportScene(ctx, prj, zipWriter)
+	sce, exportData, err := usecases(ctx).Scene.ExportScene(ctx, prj)
 	if err != nil {
 		return nil, errors.New("Fail ExportScene :" + err.Error())
 	}
-	data["project"] = gqlmodel.ToProject(prj)
 
-	plgs, schemas, err := usecases(ctx).Plugin.ExportPlugins(ctx, sce, zipWriter)
+	plugins, schemas, err := usecases(ctx).Plugin.ExportPlugins(ctx, sce, zipWriter)
 	if err != nil {
 		return nil, errors.New("Fail ExportPlugins :" + err.Error())
 	}
-	data["plugins"] = gqlmodel.ToPlugins(plgs)
-	data["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 
-	page := usecasex.CursorPagination{
-		First: lo.ToPtr(int64(-1)),
-	}.Wrap()
-	sort := &asset.SortType{
-		Key:  "id",
-		Desc: true,
+	exportData["project"] = gqlmodel.ToProjectExport(prj)
+	exportData["plugins"] = gqlmodel.ToPlugins(plugins)
+	exportData["schemas"] = gqlmodel.ToPropertySchemas(schemas)
+	exportData["exportedInfo"] = map[string]string{
+		"host":      adapter.CurrentHost(ctx),
+		"project":   prj.ID().String(),
+		"timestamp": time.Now().Format(time.RFC3339),
 	}
-	assets, _, err := usecases(ctx).Asset.FindByWorkspace(ctx, prj.Workspace(), nil, sort, page, getOperator(ctx))
-	if err != nil {
-		return nil, errors.New("Fail ExportAsset :" + err.Error())
-	}
-	assetNames := make(map[string]string)
-	for _, a := range gqlmodel.ToAssets(assets) {
-		assetNames[a.URL] = a.Name
-	}
-	data["assets"] = assetNames
 
-	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
+	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
 	if err != nil {
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}
@@ -201,159 +182,101 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	}, nil
 }
 
-func replaceOldSceneID(data []byte, sce *scene.Scene) (string, []byte, error) {
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal(data, &jsonData); err != nil {
-		return "", nil, err
+func Normalize(data any) map[string]any {
+	if b, err := json.Marshal(data); err == nil {
+		var result map[string]any
+		if err := json.Unmarshal(b, &result); err == nil {
+			return result
+		}
 	}
-
-	oldSceneData, _ := jsonData["scene"].(map[string]interface{})
-	oldSceneID := oldSceneData["id"].(string)
-	return oldSceneID, bytes.Replace(data, []byte(oldSceneID), []byte(sce.ID().String()), -1), nil
-}
-
-func unmarshalProject(data []byte) (map[string]interface{}, error) {
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal(data, &jsonData); err != nil {
-		return nil, err
-	}
-
-	projectData, _ := jsonData["project"].(map[string]interface{})
-	return projectData, nil
-}
-
-func unmarshalAssets(data []byte) (map[string]string, error) {
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal(data, &jsonData); err != nil {
-		return nil, err
-	}
-
-	assets, _ := jsonData["assets"].(map[string]interface{})
-	assetNames := make(map[string]string)
-	for k, v := range assets {
-		strValue, _ := v.(string)
-		assetNames[k] = strValue
-	}
-
-	return assetNames, nil
-}
-
-func unmarshalPluginsScene(data []byte) ([]interface{}, map[string]interface{}, []interface{}, error) {
-	var jsonData map[string]interface{}
-	if err := json.Unmarshal(data, &jsonData); err != nil {
-		return nil, nil, nil, err
-	}
-
-	pluginsData, _ := jsonData["plugins"].([]interface{})
-	sceneData, _ := jsonData["scene"].(map[string]interface{})
-	schemaData, _ := jsonData["schemas"].([]interface{})
-	return pluginsData, sceneData, schemaData, nil
+	return nil
 }
 
 func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
 
-	workspace, _ := accountdomain.WorkspaceIDFrom(string(input.TeamID))
-
-	tempData, assets, plugins, err := file.UncompressExportZip(input.File.File)
+	importData, assetsZip, pluginsZip, err := file.UncompressExportZip(adapter.CurrentHost(ctx), input.File.File)
 	if err != nil {
 		return nil, errors.New("Fail UncompressExportZip :" + err.Error())
 	}
 
-	// Assets file import
-	assetNames, _ := unmarshalAssets(tempData)
-	for fileName, file := range assets {
-		parts1 := strings.Split(fileName, "/")
-		beforeName := parts1[0]
-
-		realName := beforeName
-		for urlPath, name := range assetNames {
-			if strings.HasSuffix(urlPath, beforeName) {
-				realName = name
-				break
-			}
-		}
-
-		url, _, err := usecases(ctx).Asset.UploadAssetFile(ctx, realName, file, workspace)
-		if err != nil {
-			return nil, errors.New("Fail UploadAssetFile :" + err.Error())
-		}
-		parts2 := strings.Split(url.Path, "/")
-		afterName := parts2[len(parts2)-1]
-
-		tempData = bytes.Replace(tempData, []byte(beforeName), []byte(afterName), -1)
-	}
-
-	projectData, _ := unmarshalProject(tempData)
-	prj, tx, err := usecases(ctx).Project.ImportProject(ctx, workspace.String(), projectData)
+	// First, create the project. A project associated with the asset is required.
+	newProject, err := usecases(ctx).Project.ImportProjectData(ctx, string(input.TeamID), importData, getOperator(ctx))
 	if err != nil {
-		return nil, errors.New("Fail ImportProject :" + err.Error())
-	}
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	// need to create a Scene firstｓ
-	sce, err := usecases(ctx).Scene.Create(ctx, prj.ID(), getOperator(ctx))
-	oldSceneID, tempData, _ := replaceOldSceneID(tempData, sce)
-
-	// Plugin file import
-	for fileName, file := range plugins {
-
-		parts := strings.Split(fileName, "/")
-		oldPID := parts[0]
-		fileName := parts[1]
-
-		newPID := strings.Replace(oldPID, oldSceneID, sce.ID().String(), 1)
-		pid, err := id.PluginIDFrom(newPID)
-		if err != nil {
-			return nil, err
-		}
-		if err := usecases(ctx).Plugin.ImporPluginFile(ctx, pid, fileName, file); err != nil {
-			return nil, errors.New("Fail ImporPluginFile :" + err.Error())
-		}
+		return nil, errors.New("Fail Import ProjectData :" + err.Error())
 	}
 
-	pluginsData, sceneData, schemaData, _ := unmarshalPluginsScene(tempData)
+	importData, err = usecases(ctx).Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject)
+	if err != nil {
+		return nil, errors.New("Fail Import AssetFiles :" + err.Error())
+	}
 
-	plgs, pss, err := usecases(ctx).Plugin.ImportPlugins(ctx, sce, pluginsData, schemaData)
+	newScene, err := usecases(ctx).Scene.Create(ctx, newProject.ID(), false, getOperator(ctx))
+	if err != nil {
+		return nil, errors.New("Fail Create Scene :" + err.Error())
+	}
+
+	oldSceneID, err := replaceOldSceneID(importData, newScene)
+	if err != nil {
+		return nil, errors.New("Fail Get OldSceneID :" + err.Error())
+	}
+
+	plugins, pss, err := usecases(ctx).Plugin.ImportPlugins(ctx, pluginsZip, oldSceneID, newScene, importData)
 	if err != nil {
 		return nil, errors.New("Fail ImportPlugins :" + err.Error())
 	}
 
-	sce, err = usecases(ctx).Scene.ImportScene(ctx, sce, prj, plgs, sceneData)
+	//　The following is the saving of sceneJSON. -----------------------
+
+	// Scene data save
+	newScene, err = usecases(ctx).Scene.ImportScene(ctx, newScene, importData)
 	if err != nil {
-		return nil, errors.New("Fail ImportScene :" + err.Error())
+		return nil, errors.New("Fail sceneJSON ImportScene :" + err.Error())
 	}
 
-	nlayers, replaceNLSLayerIDs, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, sce.ID(), sceneData)
+	// Styles data save
+	styleList, err := usecases(ctx).Style.ImportStyles(ctx, newScene.ID(), importData)
 	if err != nil {
-		return nil, errors.New("Fail ImportNLSLayers :" + err.Error())
+		return nil, errors.New("Fail sceneJSON ImportStyles :" + err.Error())
 	}
 
-	styleList, err := usecases(ctx).Style.ImportStyles(ctx, sce.ID(), sceneData)
+	// NLSLayers data save
+	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, newScene.ID(), importData)
 	if err != nil {
-		return nil, errors.New("Fail ImportStyles :" + err.Error())
+		return nil, errors.New("Fail sceneJSON ImportNLSLayers :" + err.Error())
 	}
 
-	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, sce.ID(), sceneData, replaceNLSLayerIDs)
+	// Story data save
+	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, newScene.ID(), importData)
 	if err != nil {
-		return nil, errors.New("Fail ImportStory :" + err.Error())
+		return nil, errors.New("Fail sceneJSON ImportStory :" + err.Error())
 	}
-
-	tx.Commit()
 
 	return &gqlmodel.ImportProjectPayload{
 		ProjectData: map[string]any{
-			"project":  gqlmodel.ToProject(prj),
-			"plugins":  gqlmodel.ToPlugins(plgs),
-			"schema":   gqlmodel.ToPropertySchemas(pss),
-			"scene":    gqlmodel.ToScene(sce),
+			"project":  gqlmodel.ToProject(newProject),
+			"plugins":  gqlmodel.ToPlugins(plugins),
+			"schemas":  gqlmodel.ToPropertySchemas(pss),
+			"scene":    gqlmodel.ToScene(newScene),
 			"nlsLayer": gqlmodel.ToNLSLayers(nlayers, nil),
 			"style":    gqlmodel.ToStyles(styleList),
 			"story":    gqlmodel.ToStory(st),
 		},
 	}, nil
 
+}
+
+func replaceOldSceneID(data *[]byte, newScene *scene.Scene) (string, error) {
+	var d map[string]any
+	if err := json.Unmarshal(*data, &d); err != nil {
+		return "", err
+	}
+	if s, ok := d["scene"].(map[string]any); ok {
+		if oldSceneID, ok := s["id"].(string); ok {
+
+			// Replace new scene id
+			*data = bytes.Replace(*data, []byte(oldSceneID), []byte(newScene.ID().String()), -1)
+			return oldSceneID, nil
+		}
+	}
+	return "", errors.New("scene id not found")
 }

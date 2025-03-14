@@ -1,6 +1,6 @@
 import useDoubleClick from "@reearth/beta/hooks/useDoubleClick";
 import { PopupMenuItem } from "@reearth/beta/lib/reearth-ui";
-import Tooltip from "@reearth/beta/ui/components/Tooltip";
+import Tooltip from "@reearth/beta/lib/reearth-ui/components/Tooltip";
 import {
   useStorytellingFetcher,
   useProjectFetcher
@@ -90,6 +90,12 @@ export default ({
       title: t("Project Setting"),
       path: `/settings/projects/${project.id}`,
       icon: "setting"
+    },
+    {
+      id: "assets",
+      title: t("Project Assets"),
+      path: `/settings/projects/${project.id}/assets`,
+      icon: "file"
     },
     {
       id: "export",

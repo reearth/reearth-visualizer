@@ -70,7 +70,7 @@ type Project interface {
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
 	CheckAlias(context.Context, string) (bool, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
-	ExportProject(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
-	ImportProject(context.Context, string, map[string]interface{}) (*project.Project, usecasex.Tx, error)
-	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]interface{}, *project.Project) error
+	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
+	ImportProjectData(context.Context, string, *[]byte, *usecase.Operator) (*project.Project, error)
+	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }

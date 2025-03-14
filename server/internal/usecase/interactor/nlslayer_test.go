@@ -2,12 +2,8 @@ package interactor
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"testing"
 
-	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -15,11 +11,9 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
-	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +25,7 @@ func TestAddOrUpdateCustomProperties(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -82,7 +76,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -139,7 +133,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -218,7 +212,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -272,87 +266,4 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	featureCollection := sketchInfo.FeatureCollection()
 	assert.NotNil(t, featureCollection)
 	assert.Equal(t, 0, len(featureCollection.Features()))
-}
-
-// go test -v -run TestImportNLSLayers ./internal/usecase/interactor/...
-func TestImportNLSLayers(t *testing.T) {
-	ctx := context.Background()
-	ctx = adapter.AttachCurrentHost(ctx, "https://xxxx.reearth.dev")
-
-	db := memory.New()
-	ifl := NewNLSLayer(db, &gateway.Container{
-		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	})
-	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
-	prj, _ := project.New().NewID().Workspace(ws.ID()).Build()
-	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).RootLayer(id.NewLayerID()).Build()
-	_ = db.Scene.Save(ctx, scene)
-
-	var sceneData map[string]interface{}
-	err := json.Unmarshal([]byte(fmt.Sprintf(`{
-    "schemaVersion": 1,
-    "id": "%s",
-    "nlsLayers": [
-      {
-        "id": "01j7g9gwj6qbv286pcwwmwq5ds",
-        "title": "japan_architecture (2).csv",
-        "layerType": "simple",
-        "config": {
-          "data": {
-            "csv": {
-              "latColumn": "lat",
-              "lngColumn": "lng"
-            },
-            "type": "csv",
-            "url": "http://localhost:8080/assets/01j7g9gpba44e0nxwc727nax0q.csv"
-          }
-        },
-        "isVisible": true,
-        "isSketch": false
-      }
-    ]
-  }`, scene.ID())), &sceneData)
-	assert.NoError(t, err)
-
-	// invoke the target function
-	result, _, err := ifl.ImportNLSLayers(ctx, scene.ID(), sceneData)
-	assert.NoError(t, err)
-	assert.NotNil(t, result)
-
-	// actual
-	temp := gqlmodel.ToNLSLayers(result, nil)
-	resultJSON, err := json.Marshal(temp)
-	assert.NoError(t, err)
-	actual := string(resultJSON)
-
-	// expected
-	exp := fmt.Sprintf(`[{
-        "id": "%s",
-        "layerType": "simple",
-        "sceneId": "%s",
-        "config": {
-            "data": {
-                "csv": {
-                    "latColumn": "lat",
-                    "lngColumn": "lng"
-                },
-                "type": "csv",
-                "url": "https://xxxx.reearth.dev/assets/01j7g9gpba44e0nxwc727nax0q.csv"
-            }
-        },
-        "title": "japan_architecture (2).csv",
-        "visible": true,
-     "isSketch": false
-    }]`, result.IDs().LayerAt(0), scene.ID())
-	var expectedMap []map[string]interface{}
-	err = json.Unmarshal([]byte(exp), &expectedMap)
-	assert.NoError(t, err)
-	expectedJSON, err := json.Marshal(expectedMap)
-	assert.NoError(t, err)
-	expected := string(expectedJSON)
-
-	// comparison check
-	assert.JSONEq(t, expected, actual)
-
 }

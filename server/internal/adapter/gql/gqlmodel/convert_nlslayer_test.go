@@ -8,7 +8,8 @@ import (
 )
 
 func TestToNLSLayerSketchInfo(t *testing.T) {
-	feature1, err := nlslayer.NewFeatureWithNewId(
+	feature1, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		"Feature",
 		nlslayer.NewPoint("Point", []float64{1, 2}),
 	)
@@ -17,7 +18,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 	}
 	feature1.UpdateProperties(&map[string]any{"key1": "value1"})
 
-	feature2, err := nlslayer.NewFeatureWithNewId(
+	feature2, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		"Feature",
 		nlslayer.NewLineString("LineString", [][]float64{{1, 2}, {3, 4}}),
 	)
@@ -26,7 +28,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 	}
 	feature2.UpdateProperties(&map[string]any{"key2": "value2"})
 
-	feature3, err := nlslayer.NewFeatureWithNewId(
+	feature3, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		"Feature",
 		nlslayer.NewPolygon("Polygon", [][][]float64{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}),
 	)
@@ -35,7 +38,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 	}
 	feature3.UpdateProperties(&map[string]any{"key3": "value3"})
 
-	feature4, err := nlslayer.NewFeatureWithNewId(
+	feature4, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		"Feature",
 		nlslayer.NewMultiPolygon("MultiPolygon", [][][][]float64{{{{1, 2}, {3, 4}, {5, 6}, {1, 2}}}}),
 	)
@@ -44,7 +48,8 @@ func TestToNLSLayerSketchInfo(t *testing.T) {
 	}
 	feature4.UpdateProperties(&map[string]any{"key4": "value4"})
 
-	feature5, err := nlslayer.NewFeatureWithNewId(
+	feature5, err := nlslayer.NewFeature(
+		nlslayer.NewFeatureID(),
 		"Feature",
 		nlslayer.NewGeometryCollection(
 			"GeometryCollection",

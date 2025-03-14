@@ -1,5 +1,6 @@
 import { OnMount } from "@monaco-editor/react";
 import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
@@ -33,6 +34,8 @@ const Code: FC<Props> = ({
   const [currentMatch, setCurrentMatch] = useState<RegExpExecArray | null>(
     null
   );
+
+  const t = useT();
 
   const getMatchAtCursor = useCallback(
     (value: string, offset: number): RegExpExecArray | null => {
@@ -101,10 +104,16 @@ const Code: FC<Props> = ({
     <>
       <Wrapper>
         <Header>
-          <Button icon="playRight" iconButton onClick={executeCode} />
+          <Button
+            icon="playRight"
+            iconButton
+            tooltipText={t("Run Code")}
+            placement="top"
+            onClick={executeCode}
+          />
           <Button
             icon="pencilSimple"
-            title="HTML Editor"
+            title={t("HTML Editor")}
             disabled={!editableHtmlSourceCode}
             onClick={() => setIsOpenedHtmlEditor(true)}
           />

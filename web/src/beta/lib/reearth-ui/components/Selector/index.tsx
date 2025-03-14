@@ -24,7 +24,9 @@ export type SelectorProps = {
   maxHeight?: number;
   size?: "normal" | "small";
   appearance?: "readonly";
+  displayLabel?: string;
   onChange?: (value: string | string[]) => void;
+  menuWidth?: number;
 };
 
 export const Selector: FC<SelectorProps> = ({
@@ -36,22 +38,29 @@ export const Selector: FC<SelectorProps> = ({
   placeholder,
   disabled,
   maxHeight,
-  onChange
+  displayLabel,
+  onChange,
+  menuWidth
 }) => {
   const theme = useTheme();
   const t = useT();
   const selectorRef = useRef<HTMLDivElement>(null);
   const [selectedValue, setSelectedValue] = useState<
     string | string[] | undefined
-  >(value ?? (multiple ? [] : undefined));
+  >(displayLabel ?? value ?? (multiple ? [] : undefined));
+
+  useEffect(() => {
+    if (displayLabel) {
+      setSelectedValue(displayLabel);
+    } else {
+      setSelectedValue(value ?? (multiple ? [] : undefined));
+    }
+  }, [value, multiple, displayLabel]);
+
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [selectorWidth, setSelectorWidth] = useState<number>();
 
   const optionValues = useMemo(() => options, [options]);
-
-  useEffect(() => {
-    setSelectedValue(value ?? (multiple ? [] : undefined));
-  }, [value, multiple]);
 
   useEffect(() => {
     const selectorElement = selectorRef.current;
@@ -110,14 +119,17 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange]
   );
 
-  const selectedLabels = useMemo(() => {
+  const selectedItems: { value: string; label?: string }[] = useMemo(() => {
+    if (displayLabel) return [{ value: "__fixedLabel__", label: displayLabel }];
     if (Array.isArray(selectedValue)) {
-      return selectedValue.map(
-        (val) => optionValues.find((item) => item.value === val)?.label
-      );
+      return selectedValue
+        .map((val) => optionValues.find((item) => item.value === val))
+        .filter((item): item is { value: string; label: string } => !!item);
     }
-    return [optionValues.find((item) => item.value === selectedValue)?.label];
-  }, [optionValues, selectedValue]);
+    return [optionValues.find((item) => item.value === selectedValue)].filter(
+      (item): item is { value: string; label: string } => !!item
+    );
+  }, [optionValues, selectedValue, displayLabel]);
 
   const renderTrigger = () => {
     return (
@@ -134,13 +146,13 @@ export const Selector: FC<SelectorProps> = ({
           </Typography>
         ) : multiple ? (
           <SelectedItems>
-            {selectedLabels.map((val) => (
-              <SelectedItem key={val}>
+            {selectedItems.map((item) => (
+              <SelectedItem key={item.value}>
                 <Typography
                   size="body"
                   color={disabled ? theme.content.weaker : theme.content.main}
                 >
-                  {val}
+                  {item.label}
                 </Typography>
                 {!disabled && (
                   <Button
@@ -149,7 +161,7 @@ export const Selector: FC<SelectorProps> = ({
                     appearance="simple"
                     size="small"
                     onClick={(e: MouseEvent<HTMLElement>) =>
-                      handleUnselect(e, val)
+                      handleUnselect(e, item.value)
                     }
                   />
                 )}
@@ -165,7 +177,7 @@ export const Selector: FC<SelectorProps> = ({
                 : theme.content.main
             }
           >
-            {selectedLabels[0]}
+            {selectedItems[0].label}
           </Typography>
         )}
         <Icon
@@ -185,7 +197,10 @@ export const Selector: FC<SelectorProps> = ({
         disabled={disabled}
         placement="bottom-start"
       >
-        <DropDownWrapper maxHeight={maxHeight} width={selectorWidth}>
+        <DropDownWrapper
+          maxHeight={maxHeight}
+          width={menuWidth ?? selectorWidth}
+        >
           {optionValues.length === 0 ? (
             <DropDownItem>
               <Typography size="body" color={theme.content.weaker}>

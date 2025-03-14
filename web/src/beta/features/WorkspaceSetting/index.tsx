@@ -4,7 +4,6 @@ import SettingBase from "@reearth/beta/ui/components/SettingBase";
 import { useWorkspaceFetcher } from "@reearth/services/api";
 import { FC } from "react";
 
-import Members from "./innerPages/Members";
 import Workspace from "./innerPages/Workspaces";
 
 type Props = {
@@ -13,8 +12,7 @@ type Props = {
 };
 
 enum TABS {
-  WORKSPACE = "workspace",
-  MEMBERS = "members"
+  WORKSPACE = "workspace"
 }
 
 const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
@@ -27,7 +25,6 @@ const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
     <>
       <SettingBase tabs={tabs} tab={tab} workspaceId={workspaceId}>
         {tab === TABS.WORKSPACE && <Workspace workspace={workspace} />}
-        {tab === TABS.MEMBERS && <Members workspace={workspace} />}
       </SettingBase>
       <CursorStatus />
     </>
