@@ -36,7 +36,7 @@ import { sidebar } from "./ui/sidebar";
 import { enableShadowStyle } from "./viewer/enableShadowStyle";
 import { enableTerrain } from "./viewer/enableTerrain";
 import { mouseEvents } from "./viewer/mouseEvent";
-import { showLabel } from "./viewer/showLabel";
+// import { showLabel } from "./viewer/showLabel";
 import { takeScreenshot } from "./viewer/takeScreenshot";
 
 type PresetPluginCategory = {
@@ -68,7 +68,7 @@ export const presetPlugins: PresetPlugins = [
     plugins: [
       enableShadowStyle,
       enableTerrain,
-      showLabel,
+      // showLabel, NOTE: ommitting this plugin as could cause issue with client requesting for the feature in another plugin
       takeScreenshot,
       mouseEvents
     ]
