@@ -2,11 +2,11 @@ import AssetsManager from "@reearth/beta/features/AssetsManager";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
 import { FC, useCallback, useState } from "react";
 
-const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-dashboard-assets-layout`;
+const ASSETS_LAYOUT_STORAGE_KEY = `reearth-visualizer-project-assets-layout`;
 
 type Props = {
   workspaceId?: string;
-  projectId?: string
+  projectId?: string;
 };
 
 const Assets: FC<Props> = ({ workspaceId, projectId }) => {
