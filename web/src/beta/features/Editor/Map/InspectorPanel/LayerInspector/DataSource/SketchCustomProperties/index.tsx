@@ -79,16 +79,17 @@ const CustomPropertiesSchema: FC<Props> = ({
           onClick={openCustomPropertySchema}
         />
       </ButtonWrapper>
-      <CustomPropertyFieldModal
-        selectedField={selectedField}
-        schemaJSON={schemaJSON}
-        isEditField={isEditField}
-        customPropertySchemaShown={customPropertySchemaShown}
-        onClose={closeCustomPropertySchema}
-        onSubmit={handleSubmit}
-        onSchemaJSONUpdate={setSchemaJSON}
-        onCustomPropertySchemaState={handleCustomPropertySchemaState}
-      />
+      {customPropertySchemaShown && (
+        <CustomPropertyFieldModal
+          selectedField={selectedField}
+          schemaJSON={schemaJSON}
+          isEditField={isEditField}
+          onClose={closeCustomPropertySchema}
+          onSubmit={handleSubmit}
+          onSchemaJSONUpdate={setSchemaJSON}
+          onCustomPropertySchemaState={handleCustomPropertySchemaState}
+        />
+      )}
       {showDeleteFieldConfirmModal && (
         <ConfirmModal
           visible={true}
