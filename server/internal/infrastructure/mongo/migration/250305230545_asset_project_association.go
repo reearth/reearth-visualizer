@@ -173,8 +173,9 @@ func searchAssetURL(ctx context.Context, c DBClient, project string, data any, a
 	case map[string]any:
 		for key, value := range v {
 			if str, ok := value.(string); ok {
-				if strings.HasPrefix(str, assetURLPrefix) {
-					if _, err := updateAssetProject(ctx, c, project, str, collectionName, key); err != nil {
+				cleanedStr := strings.Trim(str, "'")
+				if strings.HasPrefix(cleanedStr, assetURLPrefix) {
+					if _, err := updateAssetProject(ctx, c, project, cleanedStr, collectionName, key); err != nil {
 						return err
 					}
 				}
@@ -187,8 +188,9 @@ func searchAssetURL(ctx context.Context, c DBClient, project string, data any, a
 	case []any:
 		for _, item := range v {
 			if str, ok := item.(string); ok {
-				if strings.HasPrefix(str, assetURLPrefix) {
-					if _, err := updateAssetProject(ctx, c, project, str, collectionName, ""); err != nil {
+				cleanedStr := strings.Trim(str, "'")
+				if strings.HasPrefix(cleanedStr, assetURLPrefix) {
+					if _, err := updateAssetProject(ctx, c, project, cleanedStr, collectionName, ""); err != nil {
 						return err
 					}
 				}
