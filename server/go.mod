@@ -2,17 +2,17 @@ module github.com/reearth/reearth/server
 
 require (
 	cloud.google.com/go/profiler v0.4.2
-	cloud.google.com/go/storage v1.49.0
-	github.com/99designs/gqlgen v0.17.64
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.26.0
-	github.com/avast/retry-go/v4 v4.6.0
-	github.com/aws/aws-sdk-go-v2 v1.34.0
-	github.com/aws/aws-sdk-go-v2/config v1.29.2
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.74.1
+	cloud.google.com/go/storage v1.51.0
+	github.com/99designs/gqlgen v0.17.68
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.27.0
+	github.com/avast/retry-go/v4 v4.6.1
+	github.com/aws/aws-sdk-go-v2 v1.36.3
+	github.com/aws/aws-sdk-go-v2/config v1.29.9
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.78.2
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/gavv/httpexpect/v2 v2.16.0
+	github.com/gavv/httpexpect/v2 v2.17.0
 	github.com/globusdigital/deep-copy v0.5.4
-	github.com/goccy/go-yaml v1.15.15
+	github.com/goccy/go-yaml v1.15.23
 	github.com/google/uuid v1.6.0
 	github.com/iancoleman/strcase v0.3.0
 	github.com/idubinskiy/schematyper v0.0.0-20190118213059-f71b40dac30d
@@ -29,26 +29,26 @@ require (
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
 	github.com/reearth/reearthx v0.0.0-20250227072024-4d11b59413a1
 	github.com/samber/lo v1.49.1
-	github.com/spf13/afero v1.12.0
+	github.com/spf13/afero v1.14.0
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
 	github.com/stretchr/testify v1.10.0
-	github.com/twpayne/go-kml v1.5.2
+	github.com/twpayne/go-kml/v3 v3.3.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	github.com/vektah/dataloaden v0.3.0
-	github.com/vektah/gqlparser/v2 v2.5.22
-	github.com/zitadel/oidc v1.13.5
-	go.mongodb.org/mongo-driver v1.17.2
-	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.59.0
-	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.59.0
-	go.opentelemetry.io/otel v1.34.0
-	go.opentelemetry.io/otel/sdk v1.34.0
+	github.com/vektah/gqlparser/v2 v2.5.23
+	github.com/zitadel/oidc/v3 v3.36.1
+	go.mongodb.org/mongo-driver/v2 v2.1.0
+	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.60.0
+	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.60.0
+	go.opentelemetry.io/otel v1.35.0
+	go.opentelemetry.io/otel/sdk v1.35.0
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a
-	golang.org/x/net v0.34.0
-	golang.org/x/oauth2 v0.25.0
-	golang.org/x/text v0.21.0
-	golang.org/x/tools v0.29.0
-	google.golang.org/api v0.219.0
+	golang.org/x/net v0.37.0
+	golang.org/x/oauth2 v0.28.0
+	golang.org/x/text v0.23.0
+	golang.org/x/tools v0.31.0
+	google.golang.org/api v0.226.0
 	gopkg.in/go-playground/colors.v1 v1.2.0
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gopkg.in/square/go-jose.v2 v2.6.0
@@ -189,4 +189,4 @@ require (
 	moul.io/http2curl/v2 v2.3.0 // indirect
 )
 
-go 1.23.5
+go 1.24.1
