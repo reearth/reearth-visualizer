@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-responsive-panel-reearth-yml",
@@ -26,8 +25,9 @@ const widgetFile: FileType = {
   id: "ui-responsive-panel-widget",
   title: "responsive-panel.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+    @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
     ul {
       padding: 0;
       margin: 0;
