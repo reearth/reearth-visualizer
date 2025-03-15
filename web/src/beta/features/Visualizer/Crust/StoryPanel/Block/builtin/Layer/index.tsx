@@ -1,5 +1,6 @@
 import BlockWrapper from "@reearth/beta/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/beta/features/Visualizer/shared/types";
+import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useMemo, useEffect } from "react";
 
 import { StoryBlock } from "../../../types";
@@ -46,7 +47,7 @@ const LayerBlock: React.FC<Props> = ({
         onPropertyUpdate={props.onPropertyUpdate}
         onPropertyItemAdd={onPropertyItemAdd}
         onPropertyItemMove={props.onPropertyItemMove}
-        onPropertyItemDelete={props.onPropertyItemDelete}
+        nlsLayers={props.nlsLayers as NLSLayer[] | undefined}
       />
     </BlockWrapper>
   );

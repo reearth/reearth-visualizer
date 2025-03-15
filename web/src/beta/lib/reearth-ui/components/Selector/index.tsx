@@ -119,14 +119,16 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange]
   );
 
-  const selectedLabels = useMemo(() => {
-    if (displayLabel) return [displayLabel];
+  const selectedItems: { value: string; label?: string }[] = useMemo(() => {
+    if (displayLabel) return [{ value: "__fixedLabel__", label: displayLabel }];
     if (Array.isArray(selectedValue)) {
-      return selectedValue.map(
-        (val) => optionValues.find((item) => item.value === val)?.label
-      );
+      return selectedValue
+        .map((val) => optionValues.find((item) => item.value === val))
+        .filter((item): item is { value: string; label: string } => !!item);
     }
-    return [optionValues.find((item) => item.value === selectedValue)?.label];
+    return [optionValues.find((item) => item.value === selectedValue)].filter(
+      (item): item is { value: string; label: string } => !!item
+    );
   }, [optionValues, selectedValue, displayLabel]);
 
   const renderTrigger = () => {
@@ -144,13 +146,13 @@ export const Selector: FC<SelectorProps> = ({
           </Typography>
         ) : multiple ? (
           <SelectedItems>
-            {selectedLabels.map((val) => (
-              <SelectedItem key={val}>
+            {selectedItems.map((item) => (
+              <SelectedItem key={item.value}>
                 <Typography
                   size="body"
                   color={disabled ? theme.content.weaker : theme.content.main}
                 >
-                  {val}
+                  {item.label}
                 </Typography>
                 {!disabled && (
                   <Button
@@ -159,7 +161,7 @@ export const Selector: FC<SelectorProps> = ({
                     appearance="simple"
                     size="small"
                     onClick={(e: MouseEvent<HTMLElement>) =>
-                      handleUnselect(e, val)
+                      handleUnselect(e, item.value)
                     }
                   />
                 )}
@@ -175,7 +177,7 @@ export const Selector: FC<SelectorProps> = ({
                 : theme.content.main
             }
           >
-            {selectedLabels[0]}
+            {selectedItems[0].label}
           </Typography>
         )}
         <Icon

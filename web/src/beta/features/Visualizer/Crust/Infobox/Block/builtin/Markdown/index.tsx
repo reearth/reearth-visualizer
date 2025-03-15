@@ -8,7 +8,6 @@ import gfm from "remark-gfm";
 
 import { InfoboxBlock } from "../../../types";
 import useExpressionEval from "../useExpressionEval";
-import useSketchCustomPropertyNames from "../useSketchCustomPropertyNames";
 
 import "github-markdown-css";
 
@@ -18,6 +17,7 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   block,
   layer,
   isSelected,
+  selectedFeature,
   ...props
 }) => {
   const src = useMemo(
@@ -26,8 +26,14 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   );
 
   const evaluatedSrc = useExpressionEval(src);
-  const sketchCustomPropertyNames: string[] | undefined =
-    useSketchCustomPropertyNames(layer);
+  const propertyNames = useMemo(() => {
+    if (!selectedFeature?.properties) return [];
+    const defaultProperty = ["extrudedHeight", "id", "positions", "type"];
+    return Object.keys(selectedFeature.properties).filter(
+      (key) => !defaultProperty.includes(key)
+    );
+  }, [selectedFeature]);
+
   const LinkRenderer = ({
     href,
     children
@@ -46,7 +52,7 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
       isSelected={isSelected}
       propertyId={block?.propertyId}
       property={block?.property}
-      sketchCustomProperties={sketchCustomPropertyNames}
+      propertyNames={propertyNames}
       {...props}
     >
       {evaluatedSrc !== undefined ? (

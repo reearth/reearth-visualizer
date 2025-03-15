@@ -2,21 +2,24 @@ import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import LZString from "lz-string";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 
-import { PluginType } from "./constants";
+import { PluginType, SHARED_PLUGIN_ID } from "./constants";
 import { presetPlugins } from "./presets";
 import { validateFileTitle } from "./utils";
 
 export default () => {
-  const [searchParams] = useSearchParams();
   const [, setNotification] = useNotification();
-
+  const [searchParams] = useSearchParams();
   const t = useT();
-  const sharedPluginUrl = searchParams.get("plugin");
+  const pluginIdParam = searchParams.get("plugin-id");
+  const sharedPluginURLParam = searchParams.get("shared-plugin");
+  const presetPluginsArray = presetPlugins
+    .map((category) => category.plugins)
+    .flat();
 
   const decodePluginURL = useCallback((encoded: string) => {
     const base64 = encoded.replace(/-/g, "+").replace(/_/g, "/");
@@ -26,14 +29,10 @@ export default () => {
     return JSON.parse(decompressed);
   }, []);
 
-  const sharedPlugin = sharedPluginUrl
+  const sharedPlugin: PluginType = sharedPluginURLParam
     ? (() => {
         try {
-          const decoded = decodePluginURL(sharedPluginUrl);
-          return {
-            ...decoded,
-            id: `shared-${decoded.id}`
-          };
+          return decodePluginURL(sharedPluginURLParam);
         } catch (_error) {
           setNotification({
             type: "error",
@@ -44,15 +43,19 @@ export default () => {
       })()
     : null;
 
-  const presetPluginsArray = presetPlugins
-    .map((category) => category.plugins)
-    .flat();
-
   const [plugins, setPlugins] = useState<PluginType[]>(
-    sharedPlugin ? [sharedPlugin, ...presetPluginsArray] : presetPluginsArray
+    sharedPlugin && sharedPlugin.id === SHARED_PLUGIN_ID
+      ? [sharedPlugin, ...presetPluginsArray]
+      : presetPluginsArray
+  );
+  const [selectedPluginId, setSelectedPluginId] = useState(
+    sharedPlugin
+      ? sharedPlugin.id
+      : pluginIdParam
+        ? pluginIdParam
+        : plugins[0].id
   );
 
-  const [selectedPluginId, setSelectedPluginId] = useState(plugins[0].id);
   const [selectedFileId, setSelectedFileId] = useState<string>(
     plugins[0]?.files[0]?.id ?? ""
   );
@@ -69,6 +72,10 @@ export default () => {
       selectedPlugin.files[0],
     [selectedPlugin, selectedFileId]
   );
+
+  useEffect(() => {
+    window.history.replaceState({}, "", `?plugin-id=${selectedPluginId}`);
+  }, [selectedPluginId]);
 
   const selectPlugin = useCallback((pluginId: string) => {
     setSelectedPluginId(pluginId);
@@ -260,31 +267,25 @@ export default () => {
   }, [selectedPlugin, setNotification]);
 
   const encodeAndSharePlugin = useCallback(
-    (pluginId: string): string | undefined => {
-      selectPlugin(pluginId);
-      // Need to do a find here as the selectedPlugin does not get updated immediately
-      const sharedPlugin = plugins.find((plugin) => plugin.id === pluginId);
-
-      // Note: We can't use the same id for a shared plugin
-      const selectedPluginCopy = { ...sharedPlugin, id: uuidv4() };
-
-      // First compress the code
+    (pluginId: string) => {
       try {
+        const pluginToShare = plugins.find((plugin) => plugin.id === pluginId);
+        const selectedPluginCopy = { ...pluginToShare, id: SHARED_PLUGIN_ID };
+
         const compressed = LZString.compressToBase64(
           JSON.stringify(selectedPluginCopy)
         )
-          .replace(/\+/g, "-") // Convert + to -
-          .replace(/\//g, "_") // Convert / to _
-          .replace(/=/g, ""); // Remove padding =
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=/g, "");
 
-        const shareUrl = `${window.location.origin}${window.location.pathname}?plugin=${compressed}`;
+        const shareUrl = `${window.location.origin}${window.location.pathname}?shared-plugin=${compressed}`;
         navigator.clipboard.writeText(shareUrl);
 
         setNotification({
           type: "success",
           text: t("Plugin link copied to clipboard")
         });
-        return compressed;
       } catch (error) {
         if (error instanceof Error) {
           setNotification({ type: "error", text: error.message });
@@ -292,7 +293,7 @@ export default () => {
         return;
       }
     },
-    [plugins, selectPlugin, setNotification, t]
+    [setNotification, t, plugins]
   );
 
   return {

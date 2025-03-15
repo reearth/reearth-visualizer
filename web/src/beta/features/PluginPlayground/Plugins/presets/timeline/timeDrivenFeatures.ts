@@ -144,5 +144,5 @@ reearth.camera.flyTo(
 
 export const timeDrivenFeatures: PluginType = {
   id: "time-driven-features",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

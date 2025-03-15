@@ -40,9 +40,7 @@ Your workspace Name*: ワークスペース名*
 your workspace name: ワークスペース名
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
 Important Changes: 重要な変更点
-Due to functional requirements, we have modified the data structure of the Visualizer. Starting from this version, asset management will no longer be centralized under the workspace but will instead be handled on each project's Asset page. As a result, this page will be removed in the next version. To ensure the security of your project data, please complete the data migration in a timely manner by following the instructions on this page.: >-
-  機能要件により、Visualizer
-  のデータ構造を変更しました。このバージョン以降、アセット管理はワークスペース内で一元管理されるのではなく、各プロジェクトの「アセット」ページで個別に管理されるようになります。その結果、次のバージョンでこのページは削除される予定です。プロジェクトデータの安全性を確保するために、本ページの指示に従って、速やかにデータ移行を完了してください。
+dashboard.assets.migration.warning: '機能要件に基づき、プロジェクトの構造を変更することを決定しました。これまでワークスペース内で管理されていたアセット管理ページを、各プロジェクトごとのページに移動します。つまり、アセットはプロジェクト単位で管理されるようになり、ユーザーがインポートやエクスポートをより便利に行えるようになります。<br/>そのため、このページは今後利用できなくなり、次のバージョンで削除される予定です。詳細については、<1>こちらのページ</1>をご参照ください。'
 Add a team member: チームメンバーを追加
 Add: 追加
 Search by email address or user name: メールアドレスまたはユーザー名で検索
@@ -87,7 +85,6 @@ Project Name *: プロジェクト名 *
 Text: テキスト
 Description: 説明
 Write down your content: 内容を書き込む
-Cover Image: カバー画像
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
 Starred: スター付き
@@ -237,6 +234,10 @@ Title: タイトル
 Type: タイプ
 The keyword you want to use as the custom property title has been used in the system, please choose any other keyword: カスタムプロパティのタイトルとして使用するキーワードが既にシステムで使用されています。他のキーワードを選択してください
 New Property: 新しいプロパティ
+Click to place the point: クリックでポイントを追加する
+Double click or press Enter key to finish drawing: ダブルクリックするか、Enter キーを押して描画を終了します
+Right click to cancel drawing: 右クリックで描画をキャンセルする
+Press ESC to undo the last step: ESCキーで最後のステップを取り消す
 Marker: マーカー
 Polyline: ポリライン
 Circle: 丸
@@ -245,6 +246,14 @@ Polygon: ポリゴン
 Extruded circle: 円柱
 Extruded rectangle: 立方体
 Extruded polygon: 押し出しポリゴン
+Drag and Drop to adjust the point position: ドラッグ&ドロップでポイントの位置を調整する
+Select a point and press Delete key to remove it: ポイントを選択して Delete キーを押すと削除されます
+Double click or press Enter to save the edits: 編集内容を保存するにはダブルクリックするか、Enter キーを押します
+Right click to cancel editing: 右クリックで編集をキャンセルする
+Edit Geometry: ジオメトリを編集
+Delete Feature: 地物を削除
+Delete this feature?: 地物を削除しますか?
+Are you sure you want to delete this feature? If deleted, you can not recover it again.: 本当にこの地物を削除しますか？削除すると二度と復元できません。
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
@@ -307,7 +316,7 @@ Warning: 注意
 Notice: 通知
 You have reached a policy limit. Please contact an administrator of your Re:Earth system.: 現在のポリシーの上限に達しました。システム管理者にお問い合わせください。
 HTML Editor: HTML エディター
-Run Code: 'コードを実行'
+Run Code: コードを実行
 This plugin does not have a valid reearth.yml file.: このプラグインには有効な reearth.yml ファイルがありません。
 No valid schema defined.: 有効なスキーマが定義されていません。
 Chiyoda 3D Tiles: 千代田区 3D Tiles
@@ -315,15 +324,19 @@ Japanese Heritage Sites: 日本の遺産
 Viewer: ビューアー
 Plugins: プラグイン
 Extension Settings: 拡張機能の設定
+Add File: ファイルを追加
+Import Plugin: プラグインをインポート
+Export Plugin: プラグインをエクスポート
+Share Plugin: プラグインを共有
+Shared: 共有
+No plugins: プラグインがありません
 Custom: カスタム
 User Interface: ユーザーインターフェース
-Communication: コミュニケーション
+Data: データ
 Viewer & Scene Settings: ビューアとシーン設定
 Manage Layer: レイヤーの管理
 Manage Layer Style: レイヤースタイルの管理
 Timeline: タイムライン
-Data Storage: データストレージ
-Extension: 拡張
 My Plugin: マイプラグイン
 Responsive Panel: レスポンシブ パネル
 Sidebar: サイドバー
@@ -357,16 +370,12 @@ Style With Condition: 条件付きスタイル
 Playback Control: 再生コントロール
 Time Driven Features: 時系列による地物変化
 Time Driven Path: 時系列による線形移動
-Theme Selector: テーマセレクター
+Client Storage: クライアントストレージ
 Extension Property: 拡張プロパティ
 Zoom In Out: ズームイン/アウト
 Camera Rotation: カメラ回転
 Camera Position: カメラ位置
-Add File: ファイルを追加
-Import Plugin: プラグインをインポート
-Export Plugin: プラグインをエクスポート
-Share Plugin: プラグインを共有
-No plugins: プラグインがありません
+Shared Plugin: 共有プラグイン
 Invalid shared plugin URL: 共有プラグインのURLが無効です
 File not found: ファイルが見つかりません
 Only zip files are supported: zipファイルのみサポートされています

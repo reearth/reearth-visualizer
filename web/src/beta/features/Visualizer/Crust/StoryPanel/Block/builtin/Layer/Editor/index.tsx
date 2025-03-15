@@ -4,6 +4,7 @@ import {
   ListField,
   SelectField
 } from "@reearth/beta/ui/fields";
+import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
@@ -40,6 +41,7 @@ export type Props = {
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
+  nlsLayers?: NLSLayer[];
 };
 
 const CameraBlockEditor: FC<Props> = ({
@@ -50,7 +52,8 @@ const CameraBlockEditor: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemDelete,
-  onPropertyItemMove
+  onPropertyItemMove,
+  nlsLayers
 }) => {
   const t = useT();
   const {
@@ -68,7 +71,8 @@ const CameraBlockEditor: FC<Props> = ({
     onPropertyUpdate,
     onPropertyItemAdd,
     onPropertyItemDelete,
-    onPropertyItemMove
+    onPropertyItemMove,
+    nlsLayers
   });
 
   return (
@@ -122,6 +126,7 @@ const CameraBlockEditor: FC<Props> = ({
           onChange={(value) =>
             debounceOnUpdate(selected, "showLayers", "array", value)
           }
+          maxHeight={300}
           multiple
         />
       </FieldGroup>

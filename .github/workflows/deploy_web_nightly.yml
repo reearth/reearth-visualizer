@@ -5,10 +5,6 @@ on:
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
-env:
-  GCP_REGION: us-central1
-  IMAGE: reearth/reearth-visualizer-web:nightly
-  IMAGE_GCP: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/reearth/reearth-visualizer-web:nightly
 jobs:
   deploy_test:
     runs-on: ubuntu-latest
@@ -20,21 +16,21 @@ jobs:
       - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v2
         with:
-          service_account: ${{ secrets.GCP_SA_EMAIL }}
-          workload_identity_provider: ${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
       - name: Configure docker
         run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - name: docker push
         run: |
-          docker pull $IMAGE
-          docker tag $IMAGE $IMAGE_GCP
-          docker push $IMAGE_GCP
+          docker pull ${{ secrets.WEB_IMAGE }}
+          docker tag ${{ secrets.WEB_IMAGE }} ${{ secrets.WEB_IMAGE_GC }}
+          docker push ${{ secrets.WEB_IMAGE_GC }}
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy reearth-visualizer-web \
-            --image $IMAGE_GCP \
-            --region $GCP_REGION \
+            --image ${{ secrets.WEB_IMAGE_GC }} \
+            --region ${{ secrets.GC_REGION }} \
             --platform managed \
             --quiet

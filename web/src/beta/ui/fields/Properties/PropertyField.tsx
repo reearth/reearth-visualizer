@@ -67,7 +67,7 @@ const PropertyField: FC<Props> = ({
         schema.ui === "datetime" ? (
           <TimePointField
             key={schema.id}
-            title={schema.name}
+            title={schema.title}
             value={(value as string) ?? ""}
             description={schema.description}
             onChange={handleChange}
@@ -75,7 +75,7 @@ const PropertyField: FC<Props> = ({
         ) : schema.ui === "color" ? (
           <ColorField
             key={schema.id}
-            title={schema.name}
+            title={schema.title}
             value={(value as string) ?? ""}
             description={schema.description}
             onChange={handleChange}
@@ -83,7 +83,7 @@ const PropertyField: FC<Props> = ({
         ) : schema.ui === "selection" || schema.choices ? (
           <SelectField
             key={schema.id}
-            title={schema.name}
+            title={schema.title}
             value={(value as string) ?? ""}
             description={schema.description}
             options={
@@ -99,7 +99,7 @@ const PropertyField: FC<Props> = ({
         ) : schema.ui === "multiline" ? (
           <TextareaField
             key={schema.id}
-            title={schema.name}
+            title={schema.title}
             resizable="height"
             value={(value as string) ?? ""}
             description={schema.description}
@@ -108,7 +108,7 @@ const PropertyField: FC<Props> = ({
         ) : (
           <InputField
             key={schema.id}
-            title={schema.name}
+            title={schema.title}
             value={(value as string) ?? ""}
             description={schema.description}
             placeholder={schema.placeholder}
@@ -118,7 +118,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "url" ? (
         <AssetField
           key={schema.id}
-          title={schema.name}
+          title={schema.title}
           assetsTypes={assetTypes}
           inputMethod={
             schema.ui === "video" || schema.ui === undefined ? "URL" : "asset"
@@ -130,7 +130,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "spacing" ? (
         <SpacingField
           key={schema.id}
-          title={schema.name}
+          title={schema.title}
           value={(value as SpacingValues) ?? ""}
           description={schema.description}
           min={schema.min}
@@ -140,7 +140,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "bool" ? (
         <SwitchField
           key={schema.id}
-          title={schema.name}
+          title={schema.title}
           value={!!value}
           description={schema.description}
           onChange={handleChange}
@@ -149,7 +149,7 @@ const PropertyField: FC<Props> = ({
         schema.ui === "slider" ? (
           <SliderField
             key={schema.id}
-            title={schema.name}
+            title={schema.title}
             value={value as number}
             min={schema.min}
             max={schema.max}
@@ -159,7 +159,7 @@ const PropertyField: FC<Props> = ({
         ) : (
           <NumberField
             key={schema.id}
-            title={schema.name}
+            title={schema.title}
             value={(value as number) ?? ""}
             unit={schema.suffix}
             min={schema.min}
@@ -171,7 +171,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "latlng" ? (
         <TwinInputField
           key={schema.id}
-          title={schema.name}
+          title={schema.title}
           values={[(value as LatLng)?.lat, (value as LatLng)?.lng]}
           description={schema.description}
           onBlur={handleChange}
@@ -179,7 +179,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "camera" ? (
         <CameraField
           key={schema.id}
-          title={schema.name}
+          title={schema.title}
           value={value as Camera}
           description={schema.description}
           onSave={handleChange}
@@ -188,7 +188,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "array" && schema.ui === "zoomLevel" ? (
         <ZoomLevelField
           key={schema.id}
-          title={schema.name}
+          title={schema.title}
           value={value as number[]}
           min={schema.min}
           max={schema.max}
@@ -198,7 +198,7 @@ const PropertyField: FC<Props> = ({
       ) : schema.type === "array" && schema.ui === "range" ? (
         <RangeField
           key={schema.id}
-          title={schema.name}
+          title={schema.title}
           values={value as number[]}
           unit={schema.suffix}
           min={schema.min}
@@ -208,7 +208,7 @@ const PropertyField: FC<Props> = ({
           onBlur={handleChange}
         />
       ) : (
-        <p key={schema.id}>{schema.name} field</p>
+        <p key={schema.id}>{schema.title} field</p>
       )}
     </>
   );
