@@ -23,8 +23,8 @@ extensions:
 };
 
 const widgetFile: FileType = {
-  id: "ui-extension-messenger-widget",
-  title: "ui-extension-messenger.js",
+  id: "messenger-between-extension-and-visualizer-widget",
+  title: "messenger-between-extension-and-visualizer.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
     <style>
@@ -158,6 +158,6 @@ reearth.extension.on("message", msg => {
 };
 
 export const uiExtensionMessenger: PluginType = {
-  id: "ui-extension-messenger",
+  id: "messenger-between-extension-and-visualizer",
   files: [yamlFile, widgetFile]
 };
