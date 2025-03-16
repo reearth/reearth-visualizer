@@ -343,7 +343,7 @@ Sidebar: サイドバー
 Header: ヘッダー
 Popup: ポップアップ
 Modal Window: モーダルウィンドウ
-Messenger between Extension and Visualizer: エクステンションとコアとの通信
+Messenger between Extension and Visualizer: エクステンションとVisualizerの通信
 Extension To Extension Messenger: エクステンション間での通信
 Enable Shadow Style: 影の表示を有効にする
 Enable Terrain: 3D地形を有効にする
