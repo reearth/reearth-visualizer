@@ -25,7 +25,9 @@ export default () => {
       header: t("Header"),
       "popup-plugin": t("Popup"),
       "modal-window": t("Modal Window"),
-      "ui-extension-messenger": t("UI Extension Messenger"),
+      "messenger-between-extension-and-visualizer": t(
+        "Messenger between Extension and Visualizer"
+      ),
       "extension-to-extension-messenger": t("Extension To Extension Messenger"),
       "enable-shadow-style": t("Enable Shadow Style"),
       "enable-terrain": t("Enable Terrain"),
