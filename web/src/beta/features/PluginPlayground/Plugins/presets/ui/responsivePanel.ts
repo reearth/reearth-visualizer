@@ -24,62 +24,22 @@ extensions:
 const widgetFile: FileType = {
   id: "ui-responsive-panel-widget",
   title: "responsive-panel.js",
-  sourceCode: `reearth.ui.show(\`
+  sourceCode: `// A simple interactive panel that allows users to dynamically add and remove items.
+
+  reearth.ui.show(\`
   <style>
+    /* Generic styling system that provides consistent UI components and styling across all plugins */
+
     @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
-
-    ul {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-    }
-
-    li {
-      margin: 8px 0;
-      padding: 12px 16px;
-      color: #36454F;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      background: #007bff;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    button:active {
-      background: #0056b3;
-    }
-
-    .delete {
-      background: #d32f2f;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 16px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .delete:active {
-      background: #6b0000;
-    }
   </style>
   <div id="wrapper">
     <h2>Responsive Panel</h2>
     <h3 id="itemCount">Total Items: 0</h3>
     <div class="flex-center">
-    <button id="addBtn" onclick="addListItem()">Add Item</button>
+      <button id="addBtn" class="btn btn-primary" onclick="addListItem()">Add Item</button>
     </div>
-    <ul></ul>
+    <ul>
+    </ul>
   </div>
   <script>
     let itemCount = 0;
@@ -89,7 +49,7 @@ const widgetFile: FileType = {
       const li = document.createElement('li');
       li.innerHTML = \\\`
       <span>Item \\\${itemCount}</span>
-      <button class="delete" onclick="deleteListItem(this)">Delete</button>
+      <button class="btn btn-danger" onclick="deleteListItem(this)">Delete</button>
       \\\`;
       ul.appendChild(li);
       updateItemCount()

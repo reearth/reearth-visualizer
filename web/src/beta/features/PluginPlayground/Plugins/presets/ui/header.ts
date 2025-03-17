@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-header-reearth-yml",
@@ -26,56 +25,57 @@ extensions:
 const widgetFile: FileType = {
   id: "ui-header-widget",
   title: "header.js",
-  sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
-    <style>
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px 16px;
-        position: sticky;
-        top: 0;
-      }
+  sourceCode: `// A header navigation bar with logo and menu items
 
-      .header-logo img {
-        height: 40px;
-        cursor: pointer;
-      }
+  reearth.ui.show(\`
+  <style>
+    /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-      .header-menu {
-        list-style: none;
-        display: flex;
-        gap: 15px;
-        margin: 0;
-        padding: 0;
-      }
+    @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
 
-      .header-menu li {
-        font-size: 14px;
-        color: #555;
-        cursor: pointer;
-        transition: color 0.3s ease;
-      }
+    /* Plugin-specific styling */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+    }
 
-      .header-menu li:active {
-        color: #000;
-      }
-    </style>
-    <div id="wrapper">
-      <div class="header">
-        <div class="header-logo">
+    .header-menu {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header-menu li {
+      background: none;
+      border: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header-menu li:active {
+      color: #000;
+    }
+  </style>
+  <div id="wrapper">
+    <div class="header">
+      <div class="header-logo">
         <p>Re:Earth</p>
-        </div>
-        <ul class="header-menu">
-          <li>Home</li>
-          <li>About</li>
-          <li>Services</li>
-          <li>Contact</li>
-          <li>FAQ</li>
-        </ul>
       </div>
+      <ul class="header-menu">
+        <li>Home</li>
+        <li>About</li>
+        <li>Services</li>
+        <li>Contact</li>
+        <li>FAQ</li>
+      </ul>
     </div>
+  </div>
   \`); `
 };
 
