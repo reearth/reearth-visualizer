@@ -5,8 +5,8 @@ import { cameraRotation } from "./camera/cameraRotation";
 import { zoomInOut } from "./camera/zoomInOut";
 import { myPlugin } from "./custom/myPlugin";
 import { clientStorageThemeSelector } from "./data/clientStorageThemeSelector";
-import { extensionExtensionMessenger } from "./data/extensionExtensionMessenger";
 import { extensionProperty } from "./data/extensionProperty";
+import { messengerBetweenExtensions } from "./data/messengerBetweenExtensions";
 import { uiExtensionMessenger } from "./data/uiExtensionMessenger";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
@@ -36,7 +36,7 @@ import { sidebar } from "./ui/sidebar";
 import { enableShadowStyle } from "./viewer/enableShadowStyle";
 import { enableTerrain } from "./viewer/enableTerrain";
 import { mouseEvents } from "./viewer/mouseEvent";
-import { showLabel } from "./viewer/showLabel";
+// import { showLabel } from "./viewer/showLabel";
 import { takeScreenshot } from "./viewer/takeScreenshot";
 
 type PresetPluginCategory = {
@@ -58,7 +58,7 @@ export const presetPlugins: PresetPlugins = [
     id: "data",
     plugins: [
       uiExtensionMessenger,
-      extensionExtensionMessenger,
+      messengerBetweenExtensions,
       extensionProperty,
       clientStorageThemeSelector
     ]
@@ -68,7 +68,7 @@ export const presetPlugins: PresetPlugins = [
     plugins: [
       enableShadowStyle,
       enableTerrain,
-      showLabel,
+      // showLabel, NOTE: ommitting this plugin as could cause issue with client requesting for the feature in another plugin
       takeScreenshot,
       mouseEvents
     ]
