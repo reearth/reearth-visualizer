@@ -5,8 +5,8 @@ import { cameraRotation } from "./camera/cameraRotation";
 import { zoomInOut } from "./camera/zoomInOut";
 import { myPlugin } from "./custom/myPlugin";
 import { clientStorageThemeSelector } from "./data/clientStorageThemeSelector";
-import { extensionExtensionMessenger } from "./data/extensionExtensionMessenger";
 import { extensionProperty } from "./data/extensionProperty";
+import { messengerBetweenExtensions } from "./data/messengerBetweenExtensions";
 import { uiExtensionMessenger } from "./data/uiExtensionMessenger";
 import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
@@ -58,7 +58,7 @@ export const presetPlugins: PresetPlugins = [
     id: "data",
     plugins: [
       uiExtensionMessenger,
-      extensionExtensionMessenger,
+      messengerBetweenExtensions,
       extensionProperty,
       clientStorageThemeSelector
     ]

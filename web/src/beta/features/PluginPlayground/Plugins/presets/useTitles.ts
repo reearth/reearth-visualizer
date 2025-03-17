@@ -28,7 +28,7 @@ export default () => {
       "messenger-between-extension-and-visualizer": t(
         "Messenger between Extension and Visualizer"
       ),
-      "extension-to-extension-messenger": t("Extension To Extension Messenger"),
+      "messenger-between-extensions": t("Messenger between Extensions"),
       "enable-shadow-style": t("Enable Shadow Style"),
       "enable-terrain": t("Enable Terrain"),
       "show-label": t("Show Label"),

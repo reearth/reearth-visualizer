@@ -3,9 +3,9 @@ import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 // YAML File Definition
 const yamlFile: FileType = {
-  id: "extension-to-extension-messenger-reearth-yml",
+  id: "messenger-between-extensions-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: extension-to-extension-messenger-plugin
+  sourceCode: `id: messenger-between-extensions-plugin
 name: Extension To Extension Messenger
 version: 1.0.0
 extensions:
@@ -228,19 +228,19 @@ reearth.extension.on("extensionMessage", msg => {
 
 // Widget File Definitions
 const extension1File: FileType = {
-  id: "extension-to-extension-messenger-extension1",
+  id: "messenger-between-extensions-extension1",
   title: "extension-1.js",
   sourceCode: extension1SourceCode
 };
 
 const extension2File: FileType = {
-  id: "extension-to-extension-messenger-extension2",
+  id: "messenger-between-extensions-extension2",
   title: "extension-2.js",
   sourceCode: extension2SourceCode
 };
 
 // Plugin Definition
-export const extensionExtensionMessenger: PluginType = {
-  id: "extension-to-extension-messenger",
+export const messengerBetweenExtensions: PluginType = {
+  id: "messenger-between-extensions",
   files: [yamlFile, extension1File, extension2File]
 };
