@@ -55,7 +55,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
         field.ui === "datetime" ? (
           <TimePointField
             key={field.id}
-            title={field.name}
+            title={field.title}
             value={value as string}
             description={field.description}
             onChange={handleChange}
@@ -63,7 +63,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
         ) : field.ui === "selection" ? (
           <SelectField
             key={field.id}
-            title={field.name}
+            title={field.title}
             value={(value as string) ?? ""}
             description={field.description}
             options={
@@ -79,7 +79,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
         ) : field.ui === "color" ? (
           <ColorField
             key={field.id}
-            title={field.name}
+            title={field.title}
             value={value as string}
             description={field.description}
             onChange={handleChange}
@@ -87,7 +87,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
         ) : field.ui === "multiline" ? (
           <TextareaField
             key={field.id}
-            title={field.name}
+            title={field.title}
             resizable="height"
             description={field.description}
             value={(value as string) ?? ""}
@@ -96,7 +96,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
         ) : (
           <InputField
             key={field.id}
-            title={field.name}
+            title={field.title}
             value={value as string}
             description={field.description}
             onBlur={handleChange}
@@ -105,7 +105,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
       ) : field.type === "url" ? (
         <AssetField
           key={field.id}
-          title={field.name}
+          title={field.title}
           assetsTypes={assetTypes}
           description={field.description}
           inputMethod={
@@ -117,7 +117,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
       ) : field.type === "spacing" ? (
         <SpacingField
           key={field.id}
-          title={field.name}
+          title={field.title}
           value={(value as SpacingValues) ?? ""}
           description={field.description}
           min={field.min}
@@ -127,7 +127,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
       ) : field.type === "bool" ? (
         <SwitchField
           key={field.id}
-          title={field.name}
+          title={field.title}
           description={field.description}
           value={!!value}
           onChange={handleChange}
@@ -136,7 +136,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
         field.ui === "slider" ? (
           <SliderField
             key={field.id}
-            title={field.name}
+            title={field.title}
             value={value as number}
             description={field.description}
             min={field.min}
@@ -146,7 +146,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
         ) : (
           <NumberField
             key={field.id}
-            title={field.name}
+            title={field.title}
             value={(value as number) ?? ""}
             unit={field.suffix}
             description={field.description}
@@ -158,7 +158,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
       ) : field.type === "latlng" ? (
         <TwinInputField
           key={field.id}
-          title={field.name}
+          title={field.title}
           values={[(value as LatLng)?.lat, (value as LatLng)?.lng]}
           description={field.description}
           onBlur={handleChange}
@@ -166,7 +166,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
       ) : field.type === "camera" ? (
         <CameraField
           key={field.id}
-          title={field.name}
+          title={field.title}
           value={value as Camera}
           description={field.description}
           onSave={handleChange}
@@ -174,7 +174,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
       ) : field.type === "array" && field.ui === "range" ? (
         <RangeField
           key={field.id}
-          title={field.name}
+          title={field.title}
           values={value as number[]}
           unit={field.suffix}
           min={field.min}
@@ -186,7 +186,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
           }
         />
       ) : (
-        <p key={field.id}>{field.name} field</p>
+        <p key={field.id}>{field.title} field</p>
       )}
     </>
   );

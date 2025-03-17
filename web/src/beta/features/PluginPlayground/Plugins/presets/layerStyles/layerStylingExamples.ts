@@ -158,5 +158,5 @@ const widgetFile: FileType = {
 
 export const layerStylingExamples: PluginType = {
   id: "layer-styling-examples",
-  files: [widgetFile, yamlFile]
+  files: [yamlFile, widgetFile]
 };

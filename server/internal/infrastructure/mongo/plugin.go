@@ -115,6 +115,9 @@ func (r *Plugin) findOne(ctx context.Context, filter any) (*plugin.Plugin, error
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
 	}
+	if len(c.Result) < 1 {
+		return nil, errors.New("plugin not found")
+	}
 	return c.Result[0], nil
 }
 

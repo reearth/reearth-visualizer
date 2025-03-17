@@ -2,9 +2,11 @@ import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo, useState } from "react";
+import { FC, useState, useEffect } from "react";
 
+import { SHARED_PLUGIN_ID } from "./constants";
 import FileListItem from "./FileListItem";
+import useTitles from "./presets/useTitles";
 import usePlugins from "./usePlugins";
 
 type UsePluginsReturn = Pick<
@@ -41,83 +43,43 @@ const Plugins: FC<Props> = ({
 }) => {
   const t = useT();
   const [isAddingNewFile, setIsAddingNewFile] = useState(false);
+  const [collapsedCatergoryIds, setCollapsedCategoryIds] = useState<string[]>(
+    presetPlugins
+      .map((category) => category.id)
+      .filter((id) => {
+        return id !== "custom";
+      })
+  );
 
   const handlePluginShare = (): void => {
     if (!selectedPlugin) return;
     encodeAndSharePlugin(selectedPlugin.id);
   };
 
-  const categoryTitles: Record<string, string> = useMemo(() => {
-    return {
-      custom: t("Custom"),
-      ui: t("User Interface"),
-      communication: t("Communication"),
-      viewerScene: t("Viewer & Scene Settings"),
-      layers: t("Manage Layer"),
-      layerStyles: t("Manage Layer Style"),
-      camera: t("Camera"),
-      timeline: t("Timeline"),
-      dataStorage: t("Data Storage"),
-      extension: t("Extension")
-    };
-  }, [t]);
+  const { categoryTitles, pluginTitles } = useTitles();
 
-  const pluginTitles: Record<string, string> = useMemo(() => {
-    return {
-      "my-plugin": t("My Plugin"),
-      "responsive-panel": t("Responsive Panel"),
-      sidebar: t("Sidebar"),
-      header: t("Header"),
-      "popup-plugin": t("Popup"),
-      "modal-window": t("Modal Window"),
-      "ui-extension-messenger": t("UI Extension Messenger"),
-      "extension-to-extension-messenger": t("Extension To Extension Messenger"),
-      "enable-shadow-style": t("Enable Shadow Style"),
-      "enable-terrain": t("Enable Terrain"),
-      "show-label": t("Show Label"),
-      "take-screenshot": t("Take Screenshot"),
-      "mouse-events": t("Mouse Events"),
-      "add-geojson": t("Add Geojson"),
-      "add-csv": t("Add CSV"),
-      "add-kml": t("Add KML"),
-      "add-wms": t("Add WMS"),
-      "add-czml": t("Add CZML"),
-      "add-3d-tiles": t("Add 3D Tiles"),
-      "add-google-photorealistic-3d-tiles": t(
-        "Add Google Photorealistic 3D Tiles"
-      ),
-      "add-osm-3d-tiles": t("Add OSM 3D Tiles"),
-      "hide-fly-to-delete-layer": t("Hide Fly To Delete Layer"),
-      "override-layer-data": t("Override Layer Data"),
-      "show-selected-features-info": t("Show Selected Features Information"),
-      "layer-styling-examples": t("Layer Styling Examples"),
-      "feature-style-3d-model": t("Feature Style 3D Model"),
-      "feature-style-3d-tiles": t("Feature Style 3D Tiles"),
-      "filter-features-with-style": t("Filter Features by Style"),
-      "override-style": t("Override Style"),
-      "style-with-condition": t("Style With Condition"),
-      "playback-control": t("Playback Control"),
-      "time-driven-features": t("Time Driven Features"),
-      "time-driven-path": t("Time Driven Path"),
-      "theme-selector": t("Theme Selector"),
-      "extension-property": t("Extension Property"),
-      "zoom-in-out": t("Zoom In Out"),
-      "camera-rotation": t("Camera Rotation"),
-      "camera-position": t("Camera Position"),
-      "shared-plugin-id": t("Shared Plugin")
-    };
-  }, [t]);
+  useEffect(() => {
+    if (!selectedPlugin) return;
+    const selectedCategory = presetPlugins.find((category) =>
+      category.plugins.find((plugin) => plugin.id === selectedPlugin.id)
+    );
+    if (selectedCategory) {
+      setCollapsedCategoryIds((prev) =>
+        prev.filter((id) => id !== selectedCategory.id)
+      );
+    }
+  }, [presetPlugins, selectedPlugin]);
 
   const PluginEntryItem: FC<{
-    pluginId: string;
-    selectedPluginId: string;
-    title: string;
+    highlighted: boolean;
     onSelect: (id: string) => void;
-  }> = ({ pluginId, selectedPluginId, onSelect, title }) => {
+    pluginId: string;
+    title: string;
+  }> = ({ highlighted, pluginId, onSelect, title }) => {
     return (
       <EntryItem
         key={pluginId}
-        highlighted={selectedPluginId === pluginId}
+        highlighted={highlighted}
         onClick={() => onSelect(pluginId)}
         title={title}
         optionsMenuWidth={100}
@@ -159,7 +121,7 @@ const Plugins: FC<Props> = ({
       </Actions>
       <PluginBrowser>
         <PluginList>
-          {sharedPlugin && (
+          {sharedPlugin && sharedPlugin.id === SHARED_PLUGIN_ID && (
             <div>
               <Collapse
                 key={"shared"}
@@ -170,11 +132,11 @@ const Plugins: FC<Props> = ({
               >
                 <PluginSubList>
                   <PluginEntryItem
-                    pluginId={sharedPlugin.id}
+                    highlighted={selectedPlugin.id === sharedPlugin.id}
                     key={sharedPlugin.id}
-                    title={pluginTitles[sharedPlugin.id]}
-                    selectedPluginId={selectedPlugin.id}
                     onSelect={selectPlugin}
+                    pluginId={sharedPlugin.id}
+                    title={pluginTitles[sharedPlugin.id]}
                   />
                 </PluginSubList>
               </Collapse>
@@ -184,7 +146,7 @@ const Plugins: FC<Props> = ({
             <div key={category.id}>
               <Collapse
                 key={category.id}
-                collapsed={category.id !== "custom"}
+                collapsed={collapsedCatergoryIds.includes(category.id)}
                 iconPosition="left"
                 size="small"
                 title={categoryTitles[category.id]}
@@ -192,15 +154,17 @@ const Plugins: FC<Props> = ({
               >
                 <PluginSubList>
                   {category.plugins.length > 0 ? (
-                    category.plugins.map((plugin) => (
-                      <PluginEntryItem
-                        pluginId={plugin.id}
-                        key={plugin.id}
-                        title={pluginTitles[plugin.id]}
-                        selectedPluginId={selectedPlugin.id}
-                        onSelect={selectPlugin}
-                      />
-                    ))
+                    category.plugins.map((plugin) => {
+                      return (
+                        <PluginEntryItem
+                          highlighted={selectedPlugin.id === plugin.id}
+                          key={plugin.id}
+                          onSelect={selectPlugin}
+                          pluginId={plugin.id}
+                          title={pluginTitles[plugin.id]}
+                        />
+                      );
+                    })
                   ) : (
                     <EmptyTip>
                       <Typography size="body" color="weak" trait="italic">

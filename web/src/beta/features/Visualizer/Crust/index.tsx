@@ -1,4 +1,7 @@
-import { PhotoOverlayPreview } from "@reearth/beta/utils/sketch";
+import {
+  PhotoOverlayPreview,
+  SketchFeatureTooltip
+} from "@reearth/beta/utils/sketch";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
   coreContext,
@@ -21,6 +24,7 @@ import Plugins, {
   ModalContainer,
   PopupContainer
 } from "./Plugins";
+import SketchTooltip from "./SketchTooltip";
 import StoryPanel, { InstallableStoryBlock, StoryPanelRef } from "./StoryPanel";
 import { Story } from "./StoryPanel/types";
 import { WidgetThemeOptions, usePublishTheme } from "./theme";
@@ -159,6 +163,8 @@ export type Props = {
   photoOverlayPreview?: PhotoOverlayPreview;
   nlsLayers?: NLSLayer[];
   currentCameraRef?: RefObject<Camera | undefined>;
+  //sketchLayer
+  sketchFeatureTooltip?: SketchFeatureTooltip;
 };
 
 export default function Crust({
@@ -209,7 +215,9 @@ export default function Crust({
   // photoOverlay
   photoOverlayPreview,
   nlsLayers,
-  currentCameraRef
+  currentCameraRef,
+  //sketchLayer
+  sketchFeatureTooltip
 }: Props): JSX.Element | null {
   const {
     interactionMode,
@@ -262,12 +270,20 @@ export default function Crust({
     const selectedDataLayer = layers?.find(
       (l) => l.id === selectedLayer?.layerId
     );
+    const selectedFeature =
+      (selectedDataLayer?.type === "simple" &&
+      selectedDataLayer?.data?.isSketchLayer
+        ? selectedLayer?.layer?.features?.find(
+            (f) => f.id === selectedLayerId.featureId
+          )
+        : selectedComputedFeature) ?? selectedComputedFeature;
+
     if (selectedDataLayer?.infobox) {
       return {
         property: selectedDataLayer?.infobox?.property,
         blocks: [...(selectedDataLayer?.infobox?.blocks ?? [])],
         featureId: selectedLayerId.featureId,
-        feature: selectedComputedFeature
+        feature: selectedFeature
       };
     }
     const selected = mapRef?.current?.layers?.find(
@@ -279,7 +295,7 @@ export default function Crust({
         blocks: [...(selected?.infobox?.blocks ?? [])],
         featureId: selectedLayerId.featureId,
         readOnly: true,
-        feature: selectedComputedFeature
+        feature: selectedFeature
       };
     }
     return undefined;
@@ -287,7 +303,7 @@ export default function Crust({
     selectedLayerId.featureId,
     layers,
     mapRef,
-    selectedLayer?.layerId,
+    selectedLayer,
     selectedComputedFeature
   ]);
 
@@ -379,6 +395,7 @@ export default function Crust({
           onPropertyItemMove={onPropertyItemMove}
           onPropertyItemDelete={onPropertyItemDelete}
           renderBlock={renderBlock}
+          nlsLayers={nlsLayers}
         />
       )}
       <PhotoOverlay
@@ -389,6 +406,7 @@ export default function Crust({
         nlsLayers={nlsLayers}
         currentCameraRef={currentCameraRef}
       />
+      <SketchTooltip sketchFeatureTooltip={sketchFeatureTooltip} />
     </Plugins>
   );
 }

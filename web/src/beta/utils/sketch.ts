@@ -69,3 +69,7 @@ export function generateNewPropertiesWithPhotoOverlay(
     }
   };
 }
+
+export type SketchFeatureTooltip = {
+  description?: string;
+};
