@@ -119,7 +119,7 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange]
   );
 
-  const selectedItems = useMemo(() => {
+  const selectedItems: { value: string; label?: string }[] = useMemo(() => {
     if (displayLabel) return [{ value: "__fixedLabel__", label: displayLabel }];
     if (Array.isArray(selectedValue)) {
       return selectedValue
