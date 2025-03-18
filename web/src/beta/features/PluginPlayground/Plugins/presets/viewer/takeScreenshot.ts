@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "take-screenshot-reearth-yml",
@@ -20,101 +19,155 @@ extensions:
 const widgetFile: FileType = {
   id: "take-screenshot",
   title: "take-screenshot.js",
-  sourceCode: `// This example shows how to take a screenshot //
-// Adjust the view angle, then click "Screenshot," and finally click "Download" to save the image locally //
+  sourceCode: `// / This plugin allows users to capture the current view in Re:earth, preview the screenshot, and download it as a PNG file.
+  reearth.ui.show(\`
+  <style>
+    /* Generic styling system that provides consistent UI components and styling across all plugins */
+    @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
 
-// ================================
-// Define Plug-in UI side (iframe)
-// ================================
-  
-reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
-<style>
-  .btn {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #808080;
-    background: #ffffff;
-    color: #000000;
-    cursor: pointer;
-    width: 150px;
-    height: 30px;
-    font-size: 11px 
-  }
-  .btn:active {
-    background: #dcdcdc;
-  }
+    /* Plugin-specific styling */
 
-  #button-container {
-  display: flex;
-  gap: 8px;           
-  }
-</style>
-<div id = "wrapper">
-  <h3 id="message">Adjust the screen angle</h3>
-  <div id="button-container">
-    <button class="btn" id="screenshot">Screenshot</button>
-    <button class="btn" id="download">Download</button>
+    #capturedImage {
+      max-width: 100%;
+      border: 1px solid #ccc;
+      margin: 10px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .instructions {
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+      font-style: italic;
+    }
+  </style>
+  <div id="wrapper">
+    <h2>Image Capture</h2>
+    <p class="instructions">Adjust your view as needed, then capture the screenshot</p>
+    <div class="flex-center">
+      <button class="btn-primary" id="captureButton">Capture View</button>
+    </div>
+    <div id="imageContainer" style="display: none">
+      <!-- Preview will appear here -->
+    </div>
   </div>
-</div>
 
-<script>
-const screenshotBtn = document.getElementById("screenshot");
-const downloadBtn = document.getElementById("download");
-const message = document.getElementById("message");
+  <script>
+    // Get UI elements
+    const captureButton = document.getElementById('captureButton');
+    const imageContainer = document.getElementById('imageContainer');
 
-let screenshotDataUri = null;
+    /**
+     * Displays the captured image and creates download/retry buttons
+     * @param {string} imageData - Base64 encoded image data
+     */
+    function displayImage(imageData) {
+      // Clear any existing content in the container
+      imageContainer.innerHTML = '';
 
-// Add an EventListener for the Screenshot button
-screenshotBtn.addEventListener("click", () => {
-  parent.postMessage({ action: "takeScreenshot" }, "*");
-});
+      // Create and configure the image element
+      const img = document.createElement('img');
+      img.id = 'capturedImage';
+      img.src = imageData;
 
-// Receive messages from extension side
-window.addEventListener("message", e => {
-  const { action, data } = e.data || {};
-  if (action === "screenshotCaptured" && data) {
-    screenshotDataUri = data;
-    message.textContent = "Capture complete!";
-  }
-});
+      // Create a container for the buttons that uses the preset styles
+      const buttonContainer = document.createElement('div');
+      buttonContainer.className = 'button-container';
+      buttonContainer.style.marginTop = '10px';
 
-// Define a function to download images
-function downloadImage(uri, filename) {
-  if (!uri) {
-    return;
-  }
-  const a = document.createElement("a");
-  a.href = uri; 
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
+      // Create the download button with preset styles
+      const downloadBtn = document.createElement('button');
+      downloadBtn.className = 'btn-primary';
+      downloadBtn.textContent = 'Download Image';
 
-// Add an event listener for the Download butto
-downloadBtn.addEventListener("click", () => {
-  downloadImage(screenshotDataUri, "screenshot.png");
-  message.textContent = "Adjust the screen angle"
-});
+      // Add download functionality
+      downloadBtn.addEventListener('click', () => {
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.href = imageData;
 
-</script>
+        // Generate filename with timestamp for uniqueness
+        const date = new Date();
+        const timestamp = date.toISOString().replace(/[:.]/g, '-');
+        link.download = "reearth-capture-" + timestamp + ".png";
+
+        // Trigger download and clean up
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // Create the "Take Another" button with preset styles
+      const anotherBtn = document.createElement('button');
+      anotherBtn.className = 'btn-secondary';
+      anotherBtn.textContent = 'Take Another';
+
+      // Add functionality to hide preview and allow taking a new screenshot
+      anotherBtn.addEventListener('click', () => {
+        imageContainer.style.display = 'none';
+      });
+
+      // Add buttons to container
+      buttonContainer.appendChild(downloadBtn);
+      buttonContainer.appendChild(anotherBtn);
+
+      // Add elements to the main container and show it
+      imageContainer.appendChild(img);
+      imageContainer.appendChild(buttonContainer);
+      imageContainer.style.display = 'block';
+    }
+
+    // Add capture button click handler
+    captureButton.addEventListener('click', () => {
+      // Send capture request to parent window (Re:earth)
+      parent.postMessage({
+        type: 'capture-request'
+      }, '*');
+    });
+
+    // Set up message event listener to receive responses from Re:earth
+    window.addEventListener('message', e => {
+      const msg = e.data;
+      // Process the capture response
+      if (msg.type === 'capture-response') {
+        if (msg.error) {
+          // Show error if capture failed
+          alert('Failed to capture image: ' + msg.error);
+        } else {
+          // Display the captured image
+          displayImage(msg.imageData);
+        }
+      }
+    });
+
+  </script>
 \`);
 
-// ================================
-// Define Re:Earth(Web Assembly) side
-// ================================
+// Set up the extension to handle messages from the UI
+reearth.extension.on('message', msg => {
+  // Handle the capture request from the UI
+  if (msg.type === 'capture-request') {
+    try {
+      // Capture the current view as a PNG image
+      const imageData = reearth.viewer.capture('image/png');
 
-reearth.extension.on("message", async (msg) => {
-  const { action } = msg;
-  if (action === "takeScreenshot") {
-    // Execute a screenshot using "reearth.viewer.capture"
-    const screenShot = reearth.viewer.capture("image/png");
-    // Send image data to the plugin UI
-    reearth.ui.postMessage({
-      action: "screenshotCaptured",
-      data: screenShot,
-    });
+      // Check if capture was successful
+      if (!imageData) {
+        throw new Error('Failed to capture image');
+      }
+
+      // Send the image data back to the UI
+      reearth.ui.postMessage({
+        type: 'capture-response',
+        imageData: imageData
+      });
+    } catch (error) {
+      // Handle any errors during capture
+      reearth.ui.postMessage({
+        type: 'capture-response',
+        error: error.message
+      });
+    }
   }
 });`
 };
