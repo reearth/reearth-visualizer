@@ -49,7 +49,7 @@ const Settings: FC<Props> = ({
       <SelectorWrapper>
         <SelectField
           title={t("UI Language")}
-          value={lang}
+          value={lang ?? "en"}
           options={options}
           onChange={(value) => changeLanguage(value as string)}
         />
