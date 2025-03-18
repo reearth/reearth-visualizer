@@ -2,16 +2,16 @@ import { FileType, PluginType } from "../../constants";
 import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
-  id: "ui-extension-messenger-reearth-yml",
+  id: "messenger-between-extension-and-visualizer-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: ui-extension-messenger-plugin
-name: UI Extension Messenger
+  sourceCode: `id: messenger-between-extension-and-visualizer-plugin
+name: Messenger between Extension and Visualizer
 version: 1.0.0
 extensions:
-  - id: ui-extension-messenger
+  - id: messenger-between-extension-and-visualizer
     type: widget
-    name: UI Extension Messenger Widget
-    description: UI Extension Messenger Widget
+    name: Messenger between Extension and Visualizer Widget
+    description: Messenger between Extension and Visualizer Widget
     widgetLayout:
       defaultLocation:
         zone: outer
@@ -23,8 +23,8 @@ extensions:
 };
 
 const widgetFile: FileType = {
-  id: "ui-extension-messenger-widget",
-  title: "ui-extension-messenger.js",
+  id: "messenger-between-extension-and-visualizer-widget",
+  title: "messenger-between-extension-and-visualizer.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
     <style>
@@ -158,6 +158,6 @@ reearth.extension.on("message", msg => {
 };
 
 export const uiExtensionMessenger: PluginType = {
-  id: "ui-extension-messenger",
+  id: "messenger-between-extension-and-visualizer",
   files: [yamlFile, widgetFile]
 };

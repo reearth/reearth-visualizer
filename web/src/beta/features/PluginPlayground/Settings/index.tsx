@@ -22,15 +22,7 @@ const Settings: FC<Props> = ({
 }) => {
   const t = useT();
 
-  const options = useMemo(
-    () => [
-      ...Object.entries(SUPPORTED_LANGUAGES).map(([_, lang]) => ({
-        label: lang.label,
-        value: lang.value
-      }))
-    ],
-    []
-  );
+  const options = useMemo(() => Object.values(SUPPORTED_LANGUAGES), []);
 
   return (
     <Wrapper>
