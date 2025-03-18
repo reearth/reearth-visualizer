@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.4.1 - 2025-03-18
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Fix selector undefined of label ([#1510](https://github.com/reearth/reearth-visualizer/pull/1510)) [`d7add7`](https://github.com/reearth/reearth-visualizer/commit/d7add7)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.4.1 ([#1511](https://github.com/reearth/reearth-visualizer/pull/1511)) [`9f5c49`](https://github.com/reearth/reearth-visualizer/commit/9f5c49)
+
 ## 1.0.0-beta.4.0 - 2025-03-18
 
 ### Web
