@@ -115,6 +115,11 @@ export type ValueTypes = {
   spacing: Spacing;
   array: unknown[];
   timeline: Timeline;
+  dataCamera: DataCamera
+};
+
+export type DataCamera = Omit<Camera, "height" | "aspectRatio"> & {
+  altitude: number;
 };
 
 const valueTypeMapper: Record<GQLValueType, ValueType> = {
@@ -175,13 +180,13 @@ export function valueToGQL<T extends ValueType>(
   type: T
 ) {
   if (type === "camera" && val && typeof val === "object" && "height" in val) {
-    return {
-      ...(val as Camera),
-      altitude: (val as Camera).height
-    };
+    const { height, aspectRatio, ...rest } = val as Camera;
+    const v: DataCamera = { ...rest, altitude: height }; 
+    return v;
   }
   return val ?? null;
 }
+
 
 export const valueTypeFromGQL = (t: GQLValueType): ValueType => {
   return valueTypeMapper[t];
