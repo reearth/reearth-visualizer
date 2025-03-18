@@ -47,7 +47,7 @@ const widgetFile: FileType = {
     <div class="flex-center">
       <button class="btn-primary" id="captureButton">Capture View</button>
     </div>
-    <div id="imageContainer" style="display: none">
+    <div id="imageContainer" style="display: none;">
       <!-- Preview will appear here -->
     </div>
   </div>
@@ -58,7 +58,7 @@ const widgetFile: FileType = {
     const imageContainer = document.getElementById('imageContainer');
 
     /**
-     * Displays the captured image and creates download/retry buttons
+     * Displays the captured image and adds download functionality
      * @param {string} imageData - Base64 encoded image data
      */
     function displayImage(imageData) {
@@ -70,15 +70,12 @@ const widgetFile: FileType = {
       img.id = 'capturedImage';
       img.src = imageData;
 
-      // Create a container for the buttons that uses the preset styles
-      const buttonContainer = document.createElement('div');
-      buttonContainer.className = 'button-container';
-      buttonContainer.style.marginTop = '10px';
-
-      // Create the download button with preset styles
+      // Create download button below the image
       const downloadBtn = document.createElement('button');
       downloadBtn.className = 'btn-primary';
       downloadBtn.textContent = 'Download Image';
+      downloadBtn.style.display = 'block';
+      downloadBtn.style.margin = '10px auto';
 
       // Add download functionality
       downloadBtn.addEventListener('click', () => {
@@ -86,80 +83,53 @@ const widgetFile: FileType = {
         const link = document.createElement('a');
         link.href = imageData;
 
-        // Generate filename with timestamp for uniqueness
-        const date = new Date();
-        const timestamp = date.toISOString().replace(/[:.]/g, '-');
+        // Generate filename with timestamp
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         link.download = "reearth-capture-" + timestamp + ".png";
 
-        // Trigger download and clean up
+        // Trigger download
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       });
 
-      // Create the "Take Another" button with preset styles
-      const anotherBtn = document.createElement('button');
-      anotherBtn.className = 'btn-secondary';
-      anotherBtn.textContent = 'Take Another';
-
-      // Add functionality to hide preview and allow taking a new screenshot
-      anotherBtn.addEventListener('click', () => {
-        imageContainer.style.display = 'none';
-      });
-
-      // Add buttons to container
-      buttonContainer.appendChild(downloadBtn);
-      buttonContainer.appendChild(anotherBtn);
-
-      // Add elements to the main container and show it
+      // Add elements to the container and show it
       imageContainer.appendChild(img);
-      imageContainer.appendChild(buttonContainer);
+      imageContainer.appendChild(downloadBtn);
       imageContainer.style.display = 'block';
     }
 
     // Add capture button click handler
     captureButton.addEventListener('click', () => {
-      // Send capture request to parent window (Re:earth)
-      parent.postMessage({
-        type: 'capture-request'
-      }, '*');
+      parent.postMessage({ type: 'capture-request' }, '*');
     });
 
-    // Set up message event listener to receive responses from Re:earth
+    // Listen for messages from Re:earth
     window.addEventListener('message', e => {
       const msg = e.data;
-      // Process the capture response
       if (msg.type === 'capture-response') {
         if (msg.error) {
-          // Show error if capture failed
           alert('Failed to capture image: ' + msg.error);
         } else {
-          // Display the captured image
           displayImage(msg.imageData);
         }
       }
     });
-
   </script>
 \`);
 
 // Set up the extension to handle messages from the UI
 reearth.extension.on('message', msg => {
-  // Handle the capture request from the UI
   if (msg.type === 'capture-request') {
     try {
       // Capture the current view as a PNG image
       const imageData = reearth.viewer.capture('image/png');
 
-      // Check if capture was successful
-      if (!imageData) {
-        throw new Error('Failed to capture image');
-      }
-
-      // Send the image data back to the UI
+      // Check if capture was successful and send response
       reearth.ui.postMessage({
         type: 'capture-response',
-        imageData: imageData
+        imageData: imageData || null,
+        error: !imageData ? 'Failed to capture image' : null
       });
     } catch (error) {
       // Handle any errors during capture
