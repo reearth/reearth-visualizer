@@ -119,7 +119,7 @@ export const Selector: FC<SelectorProps> = ({
     [selectedValue, onChange]
   );
 
-  const selectedItems: { value: string; label?: string }[] = useMemo(() => {
+  const selectedItems = useMemo(() => {
     if (displayLabel) return [{ value: "__fixedLabel__", label: displayLabel }];
     if (Array.isArray(selectedValue)) {
       return selectedValue
@@ -177,7 +177,7 @@ export const Selector: FC<SelectorProps> = ({
                 : theme.content.main
             }
           >
-            {selectedItems[0].label}
+            {selectedItems[0]?.label}
           </Typography>
         )}
         <Icon
