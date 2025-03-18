@@ -53,7 +53,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
 <div id = "wrapper">
   <h3 id="message">Adjust the screen angle</h3>
   <div id="button-container">
-    <button class="btn" id="screenshot">ScreenShot</button>
+    <button class="btn" id="screenshot">Screenshot</button>
     <button class="btn" id="download">Download</button>
   </div>
 </div>
