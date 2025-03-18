@@ -35,11 +35,11 @@ const layer3dTiles = {
 };
 
 // Add the 3D Tiles layer from the URL to Re:Earth
-NOTE: Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layer3dTiles);
 
 // Enable Terrain
-NOTE: Documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
+// Documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   terrain: {
     enabled: true,
@@ -47,7 +47,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the position where the CZML data is displayed.
-NOTE: Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
