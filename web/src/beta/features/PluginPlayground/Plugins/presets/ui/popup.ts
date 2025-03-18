@@ -342,28 +342,28 @@ const widgetFile: FileType = {
 \`;
 
 // Handle messages from the UI
-// NOTE: Link to developer documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   if (msg.type === "showPopup") {
-  // NOTE: Link to developer documentation for Popup "show" method https://visualizer.developer.reearth.io/plugin-api/popup/#show
+  // Documentation for Popup "show" method https://visualizer.developer.reearth.io/plugin-api/popup/#show
     reearth.popup.show(popupHTML, { position: "bottom-start" });
   }
   else if (msg.type === "closePopup") {
-  // NOTE: Link to developer documentation for Popup "close" method https://visualizer.developer.reearth.io/plugin-api/popup/#close
+  // Documentation for Popup "close" method https://visualizer.developer.reearth.io/plugin-api/popup/#close
     reearth.popup.close();
     // Notify UI that popup is closed
-    NOTE: Link to developer documentation for Extension "postMessage" method https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+    Documentation for Extension "postMessage" method https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
     reearth.ui.postMessage({ type: "popupClosed" });
   }
   else if (msg.type === "updatePopup") {
-  // NOTE: Link to developer documentation for Popup "update" method https://visualizer.developer.reearth.io/plugin-api/popup/#update
+  // Documentation for Popup "update" method https://visualizer.developer.reearth.io/plugin-api/popup/#update
     reearth.popup.update({
       position: msg.position,
       offset: msg.offset
     });
   }
   else if (msg.type === "postMessageToPopup") {
-  // NOTE: Link to developer documentation for Popup "postMessage" method https://visualizer.developer.reearth.io/plugin-api/popup/#postmessage
+  // Documentation for Popup "postMessage" method https://visualizer.developer.reearth.io/plugin-api/popup/#postmessage
     reearth.popup.postMessage({ message: msg.message });
   }
   else if (msg.type === "messageToUI") {

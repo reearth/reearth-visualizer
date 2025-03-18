@@ -134,9 +134,9 @@ const widgetFile: FileType = {
 \`);
 
 // Send message to UI when globe is clicked
-// NOTE: Link to developer documentation on Viewer "on" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#mouse-events
+// Documentation on Viewer "on" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#mouse-events
 reearth.viewer.on("click", (event) => {
-// NOTE: Link to developer documentation on UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+// Documentation on UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
   reearth.ui.postMessage({
     type: "position",
     lat: event.lat,
@@ -145,10 +145,10 @@ reearth.viewer.on("click", (event) => {
 });
 
 // Handle messages from UI to move camera
-// NOTE: Link to developer documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+// Documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", msg => {
   if (msg.type === "fly") {
-  // NOTE: Link to developer documentation on Camera "flyTo" method: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+  // Documentation on Camera "flyTo" method: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
     reearth.camera.flyTo(
       {
         lat: msg.lat,

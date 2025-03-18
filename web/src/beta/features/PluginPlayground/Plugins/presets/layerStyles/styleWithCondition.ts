@@ -54,7 +54,7 @@ const sample3dTiles = {
 };
 
 // Add the 3D Tiles layer to Re:Earth
-// NOTE: Link to developer documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(sample3dTiles);
 
 reearth.viewer.overrideProperty({
@@ -69,7 +69,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the specified position
-// NOTE: Link to developer documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
+// Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     // Define the camera's target position
@@ -87,7 +87,7 @@ reearth.camera.flyTo(
 );
 
 // Set the timeline to a morning hour so that building colors are easy to see
-// NOTE: Link to developer documentation for Timeline "setTime" method https://visualizer.developer.reearth.io/plugin-api/timeline/#settime
+// Documentation for Timeline "setTime" method https://visualizer.developer.reearth.io/plugin-api/timeline/#settime
 reearth.timeline.setTime({
     start: new Date("2023-01-01T00:00:00Z"),
     stop: new Date("2023-01-01T10:00:00Z"),

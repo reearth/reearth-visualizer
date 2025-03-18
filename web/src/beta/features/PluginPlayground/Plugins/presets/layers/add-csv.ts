@@ -36,7 +36,7 @@ const layerCsv = {
 };
 
 // Add the CSV layer from the URL to Re:Earth
-// NOTE: Link to developer documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// NOTE: Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layerCsv);
 `
 };

@@ -68,7 +68,7 @@ const layerKmlUrl = {
 };
 
 // Add the encoded KML layer to Re:Earth
-// NOTE: Link to developer documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
+// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layerKmlEncoded);
 
 // Add the KML layer from the URL to Re:Earth

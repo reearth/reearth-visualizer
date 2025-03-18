@@ -202,9 +202,9 @@ logOperation(\\\`Storage updated: Theme preference is \\\${storedTheme ? \\\`set
 const THEME_KEY = "user_theme_preference";
 
 async function updateStorageDisplay() {
-// NOTE: Link to developer documentation on Client Storage "getAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#getasync
+// Documentation on Client Storage "getAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#getasync
   const theme = await reearth.data.clientStorage.getAsync(THEME_KEY);
-  // NOTE: Link to developer documentation on UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+  // Documentation on UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
   reearth.ui.postMessage({
     type: "storageUpdate",
     data: { [THEME_KEY]: theme }
@@ -224,7 +224,7 @@ reearth.extension.on("message", async msg => {
         break;
 
       case "setTheme":
-        // NOTE: Link to developer documentation on Client Storage "setAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#setasync
+        // Documentation on Client Storage "setAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#setasync
         await reearth.data.clientStorage.setAsync(THEME_KEY, msg.theme);
         reearth.ui.postMessage({
           type: "themeUpdate",
@@ -234,7 +234,7 @@ reearth.extension.on("message", async msg => {
         break;
 
       case "viewKeys":
-        // NOTE: Link to developer documentation on Client Storage "keysAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#keysasync
+        // Documentation on Client Storage "keysAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#keysasync
         const keys = await reearth.data.clientStorage.keysAsync();
         reearth.ui.postMessage({
           type: "keysUpdate",
@@ -243,7 +243,7 @@ reearth.extension.on("message", async msg => {
         break;
 
       case "clearStorage":
-        // NOTE: Link to developer documentation on Client Storage "dropStoreAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#dropstoreasync
+        // Documentation on Client Storage "dropStoreAsync" method: https://visualizer.developer.reearth.io/plugin-api/data/#dropstoreasync
         await reearth.data.clientStorage.dropStoreAsync();
         reearth.ui.postMessage({
           type: "storageCleared"
