@@ -36,17 +36,16 @@ const widgetFile: FileType = {
   /* Plugin-specific styling */
 
     .content-wrapper {
-      overflow: hidden;
-      height: calc(100vh - 20px);
       display: flex;
       flex-direction: column;
+      max-height: 580px;
+      overflow: hidden;
     }
 
     .upside {
       position: sticky;
       top: 0;
       left: 0;
-      z-index: 10;
       padding: 10px 0;
     }
 
@@ -55,11 +54,10 @@ const widgetFile: FileType = {
       border: none;
       cursor: pointer;
       font-size: 24px;
-      color: #555;
     }
 
     .menu-container {
-      flex-grow: 1;
+      flex: 1;
       overflow-y: auto;
       margin-top: 10px;
     }
@@ -75,11 +73,6 @@ const widgetFile: FileType = {
     .menu li .menu-dots {
       font-size: 18px;
       color: #999;
-    }
-
-    .hidden {
-      visibility: hidden;
-      opacity: 0;
     }
   </style>
 
@@ -146,27 +139,27 @@ const widgetFile: FileType = {
       </div>
     </div>
   </div>
-    <script>
-      const toggleBtn = document.getElementById("toggleBtn");
-        const sidebarTitle = document.getElementById("sidebarTitle");
+  <script>
+    const toggleBtn = document.getElementById("toggleBtn");
+    const sidebarTitle = document.getElementById("sidebarTitle");
 
-        toggleBtn.addEventListener("click", () => {
-        const sidebar = document.querySelector("#wrapper");
-        const isCollapsed = sidebar.style.width === "60px";
+    toggleBtn.addEventListener("click", () => {
+      const sidebar = document.querySelector("#wrapper");
+      const isCollapsed = sidebar.style.width === "60px";
 
-        // Collapse or expand the sidebar
-        sidebar.style.width = isCollapsed ? "250px" : "60px";
+      // Collapse or expand the sidebar
+      sidebar.style.width = isCollapsed ? "250px" : "60px";
 
-        // Toggle visibility instead of display for title
-        sidebarTitle.classList.toggle("hidden", !isCollapsed);
+      // Toggle visibility instead of display for title
+      sidebarTitle.classList.toggle("invisible", !isCollapsed);
 
-        // Hide or show menu titles
-        const titles = document.querySelectorAll(".menu-title");
-        titles.forEach((title) => {
-            title.style.display = isCollapsed ? "inline" : "none";
-          });
-        });
-    </script>
+      // Hide or show menu titles
+      const titles = document.querySelectorAll(".menu-title");
+      titles.forEach((title) => {
+        title.style.display = isCollapsed ? "inline" : "none";
+      });
+    });
+  </script>
   \`); `
 };
 

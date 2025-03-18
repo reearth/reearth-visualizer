@@ -39,27 +39,12 @@ const widgetFile: FileType = {
       justify-content: space-between;
       align-items: center;
       padding: 0 16px;
-      position: sticky;
-      top: 0;
     }
 
     .header-menu {
       list-style: none;
       display: flex;
       gap: 15px;
-      margin: 0;
-      padding: 0;
-    }
-
-    .header-menu li {
-      background: none;
-      border: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .header-menu li:active {
-      color: #000;
     }
   </style>
   <div id="wrapper">
