@@ -95,7 +95,7 @@ reearth.extension.on("message", (msg) => {
     // Documentation on Camera "zoomIn" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomin
     reearth.camera.zoomIn(2);   
   } else if (action === "zoomOut") {
-  //  Documentation on Camera "zoomOut" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomout 
+  // Documentation on Camera "zoomOut" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomout 
     reearth.camera.zoomOut(2);
   }
 });`

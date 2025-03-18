@@ -132,7 +132,7 @@ reearth.extension.on("message", (msg) => {
       },
     });
   } else if (action === "showFeaturesBelow20000") {
-  //  Documentation for Layers "override" method https://visualizer.developer.reearth.io/plugin-api/layers/#override
+  // Documentation for Layers "override" method https://visualizer.developer.reearth.io/plugin-api/layers/#override
     reearth.layers.override(layerId, {
       marker: {
         show: {

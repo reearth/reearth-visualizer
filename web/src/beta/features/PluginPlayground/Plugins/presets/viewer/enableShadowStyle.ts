@@ -194,7 +194,7 @@ reearth.extension.on("message", (msg) => {
       },
     });
   } else if (action === "deactivateShadow") {
-  //  Documentation for Viewer "overrideProperty" method https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
+  // Documentation for Viewer "overrideProperty" method https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
     reearth.viewer.overrideProperty({
       scene: {
         shadow: {

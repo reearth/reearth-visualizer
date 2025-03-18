@@ -139,7 +139,7 @@ const storyBlockFile: FileType = {
 
 // Get block property values and send to UI.
 // Property schema is defined in reearth.yml.
-//  Documentation on UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+// Documentation on UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
 reearth.ui.postMessage({
   type: "getBlockProperty",
   // Documentation on Extension Block https://visualizer.developer.reearth.io/plugin-api/extension/#block
