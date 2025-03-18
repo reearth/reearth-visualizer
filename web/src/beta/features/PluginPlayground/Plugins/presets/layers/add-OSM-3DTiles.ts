@@ -1,13 +1,13 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layers-add-osm3dTiles-reearth-yml",
+  id: "layers-add-osm3d-tiles-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: layers-add-osm3dTiles-plugin
+  sourceCode: `id: layers-add-osm-3d-tiles-plugin
 name: Add OSM 3D Tiles
 version: 1.0.0
 extensions:
-  - id: layers-add-osm3dTiles
+  - id: layers-add-osm-3d-tiles
     type: widget
     name: Add OSM 3D Tiles
     description: Add OSM 3D Tiles
@@ -17,8 +17,8 @@ extensions:
 };
 
 const widgetFile: FileType = {
-  id: "layers-add-osm3dTiles",
-  title: "layers-add-osm3dTiles.js",
+  id: "layers-add-osm-3d-tiles",
+  title: "layers-add-osm-3d-tiles.js",
   sourceCode: `// Example of adding a layer with OSM 3D Tiles data
 
 // Define OSM 3D Tiles
@@ -30,9 +30,11 @@ const layerOsm3dTiles = {
 };
 
 // Add the OSM 3D Tiles layer from the URL to Re:Earth
+// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layerOsm3dTiles);
 
 // Enable Terrain
+// Documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   terrain: {
     enabled: true,
@@ -40,6 +42,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the position where the OSM 3D Tiles data is displayed.
+// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {

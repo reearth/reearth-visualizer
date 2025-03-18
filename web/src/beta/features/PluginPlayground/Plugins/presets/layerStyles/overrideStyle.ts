@@ -112,8 +112,10 @@ const sample3dTiles = {
 };
 
 // Add the 3D Tiles layer to Re:Earth
+// Documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
 const layerId = reearth.layers.add(sample3dTiles);
 
+// Documentation for Layers "override" method https://visualizer.developer.reearth.io/plugin-api/layers/#override
 reearth.viewer.overrideProperty({
   // Enable Cesium World Terrain
   terrain: {
@@ -126,6 +128,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the specified position
+// Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     // Define the camera's target position
@@ -143,6 +146,7 @@ reearth.camera.flyTo(
 );
 
 // Listen for messages from the UI and override the style for "Cool Style or "Warm Style"
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "updateStyleCool") {
