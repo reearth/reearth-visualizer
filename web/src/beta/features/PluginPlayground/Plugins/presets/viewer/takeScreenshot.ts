@@ -105,6 +105,7 @@ downloadBtn.addEventListener("click", () => {
 // Define Re:Earth(Web Assembly) side
 // ================================
 
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", async (msg) => {
   const { action } = msg;
   if (action === "takeScreenshot") {
