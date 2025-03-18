@@ -1,13 +1,13 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layers-add-3dTiles-reearth-yml",
+  id: "layers-add-3d-tiles-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: layers-add-3dTiles-plugin
+  sourceCode: `id: layers-add-3d-tiles-plugin
 name: Add 3D Tiles
 version: 1.0.0
 extensions:
-  - id: layers-add-3dTiles
+  - id: layers-add-3d-tiles
     type: widget
     name: Add 3D Tiles
     description: Add 3D Tiles
@@ -17,8 +17,8 @@ extensions:
 };
 
 const widgetFile: FileType = {
-  id: "layers-add-3dTiles",
-  title: "layers-add-3dTiles.js",
+  id: "layers-add-3d-tiles",
+  title: "layers-add-3d-tiles.js",
   sourceCode: `// Example of adding a layer with 3D Tiles data
 
 // Define 3D Tiles
@@ -35,9 +35,11 @@ const layer3dTiles = {
 };
 
 // Add the 3D Tiles layer from the URL to Re:Earth
+NOTE: Link to developer documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layer3dTiles);
 
 // Enable Terrain
+NOTE: Link to developer documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   terrain: {
     enabled: true,
@@ -45,6 +47,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the position where the CZML data is displayed.
+NOTE: Link to developer documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {

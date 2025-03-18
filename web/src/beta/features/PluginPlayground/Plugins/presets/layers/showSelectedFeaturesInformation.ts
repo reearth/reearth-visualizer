@@ -92,9 +92,11 @@ const layer3dTiles = {
 };
 
 // Add the 3D Tiles layer from the URL to Re:Earth
+// Link to developer documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layer3dTiles);
 
 // Enable Terrain
+// Link to developer documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   terrain: {
     enabled: true,
@@ -102,6 +104,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Define the camera position to be moved to
+// Link to developer documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     heading: 4.022965234428543,
@@ -134,12 +137,14 @@ function handleLayerSelect(layerId, featureId) {
   const building_height = feature?.properties?.["bldg:measuredHeight"] || "";
 
   // Send selected feature id and height to plugin UI
+  // NOTE: Link to developer documentation on UI "postMessage" event: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
   reearth.ui.postMessage({
     action: "buildingClick",
     payload: { gmlId: gml_id ,buildingHeight : building_height},
   });
 }
 // Set "handleLayerSelect" to work when a feature is selected
+// Link to developer documentation on Layers "on" event: https://visualizer.developer.reearth.io/plugin-api/layers/#select-1
 reearth.layers.on("select", handleLayerSelect);`
 };
 

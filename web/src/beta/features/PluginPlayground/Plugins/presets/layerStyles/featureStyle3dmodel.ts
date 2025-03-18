@@ -71,11 +71,13 @@ const model3D02 = {
 };
 
 // Add 3D models to the layer
+// NOTE: Link to developer documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(model3D01);
 reearth.layers.add(model3D02);
 
 // In this example, the time width is set to set the time for the shadow to appear
 // Set the time range on the timeline
+// NOTE: Link to developer documentation on Timeline "setTime" event: https://visualizer.developer.reearth.io/plugin-api/timeline/#settime
 reearth.timeline.setTime({
   // Start time
   start: new Date("2023-12-01T09:00:00-06:00"),
@@ -86,12 +88,15 @@ reearth.timeline.setTime({
 });
 
 // To animate the 3D model, you need to play the timeline
+// NOTE: Link to developer documentation on Timeline "play" event: https://visualizer.developer.reearth.io/plugin-api/timeline/#play  
 reearth.timeline.play();
 
 // Set the playback speed of the timeline (1 = normal speed)
+// NOTE: Link to developer documentation on Timeline "setSpeed" event: https://visualizer.developer.reearth.io/plugin-api/timeline/#setspeed
 reearth.timeline.setSpeed(1);
 
 // Enable shadow settings in the Re:Earth viewer
+// NOTE: Link to developer documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   scene: {
     shadow: {
@@ -101,6 +106,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to a specified position
+// NOTE: Link to developer documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     // Defines the target camera position

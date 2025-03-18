@@ -104,8 +104,10 @@ const sample3dTiles = {
 };
 
 // Add the 3D Tiles layer to Re:Earth
+// NOTE: Link to developer documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(sample3dTiles);
 
+// NOTE: Link to developer documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   // Enable Cesium World Terrain
   terrain: {
@@ -118,6 +120,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the specified position
+// NOTE: Link to developer documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     // Define the camera's target position
@@ -135,6 +138,7 @@ reearth.camera.flyTo(
 );
 
 // Listen for messages from the UI to trigger camera rotation
+// NOTE: Link to developer documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "rotateCamera"){

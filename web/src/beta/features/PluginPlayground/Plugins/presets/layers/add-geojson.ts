@@ -94,6 +94,7 @@ const layerGeojsonFromUrl = {
 };
 
 // Add the inline GeoJSON layer to Re:Earth
+// NOTE: Link to developer documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layerGeojsonInline);
 
 // Add the GeoJSON layer from the URL to Re:Earth

@@ -151,9 +151,11 @@ const model3D = {
 };
 
 // Add 3D models to the layer
+// NOTE: Link to developer documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(model3D);
   
 // Move the camera to a specified position
+// NOTE: Link to developer documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     // Defines the target camera position
@@ -172,6 +174,7 @@ reearth.camera.flyTo(
 
 // In this example, the time width is set to set the time for the shadow to appear
 // Set the time range on the timeline
+// NOTE: Link to developer documentation for Timeline "setTime" method https://visualizer.developer.reearth.io/plugin-api/timeline/#settime
 reearth.timeline.setTime({
 start: new Date("2023-12-01T09:00:00+01:00"),
 stop: new Date("2023-12-01T10:00:00+01:00"),
@@ -179,6 +182,7 @@ current: new Date("2023-12-01T09:00:00+01:00"),
 });
   
 // Listen for messages from the UI to trigger shadow
+// NOTE: Link to developer documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "activateShadow") {
@@ -190,6 +194,7 @@ reearth.extension.on("message", (msg) => {
       },
     });
   } else if (action === "deactivateShadow") {
+  //  NOTE: Link to developer documentation for Viewer "overrideProperty" method https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
     reearth.viewer.overrideProperty({
       scene: {
         shadow: {

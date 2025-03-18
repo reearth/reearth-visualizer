@@ -147,6 +147,7 @@ const LayerManager = {
     };
 
     // Geometry update with override
+    // NOTE: Link to developer documentation on Layers "override" event: https://visualizer.developer.reearth.io/plugin-api/layers/#override
     reearth.layers.override(this._layerId, {
       data: {
         type: "geojson",
@@ -160,6 +161,7 @@ const LayerManager = {
 };
 
 // Call "LayerManager" in the event handler
+// NOTE: Link to developer documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", msg => {
   if (msg.action === "updatePolygon") {
     const corners = msg.payload?.corners;

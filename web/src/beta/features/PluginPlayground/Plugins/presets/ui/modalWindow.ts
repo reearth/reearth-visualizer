@@ -74,6 +74,7 @@ const modalContent= \`<style>
 </div>\`
 
 // Set a modal window
+// NOTE: Link to developer documentation for Modal "show" method https://visualizer.developer.reearth.io/plugin-api/modal/#show
 reearth.modal.show(modalContent, {
   width: 400, // Define window width
   height: 300, // Define window height
@@ -82,9 +83,11 @@ reearth.modal.show(modalContent, {
 });
 
 // Listen for a message from the modal window and close it
+// NOTE: Link to developer documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", msg => {
   if (msg.action === "closeModal") {
     // Close a modal window
+    // NOTE: Link to developer documentation for Modal "close" method https://visualizer.developer.reearth.io/plugin-api/modal/#close
     reearth.modal.close();
   }
 });`
