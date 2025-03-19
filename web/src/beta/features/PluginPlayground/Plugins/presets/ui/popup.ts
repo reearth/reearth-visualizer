@@ -352,7 +352,7 @@ reearth.extension.on("message", (msg) => {
   // Documentation for Popup "close" method https://visualizer.developer.reearth.io/plugin-api/popup/#close
     reearth.popup.close();
     // Notify UI that popup is closed
-    Documentation for Extension "postMessage" method https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+    // Documentation for Extension "postMessage" method https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
     reearth.ui.postMessage({ type: "popupClosed" });
   }
   else if (msg.type === "updatePopup") {
