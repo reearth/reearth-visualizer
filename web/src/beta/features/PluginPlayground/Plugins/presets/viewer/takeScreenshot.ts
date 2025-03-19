@@ -122,6 +122,7 @@ const widgetFile: FileType = {
 \`);
 
 // Set up the extension to handle messages from the UI
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on('message', msg => {
   if (msg.type === 'capture-request') {
     try {
