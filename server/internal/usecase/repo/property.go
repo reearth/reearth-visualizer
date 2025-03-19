@@ -12,7 +12,6 @@ type Property interface {
 	FindByID(context.Context, id.PropertyID) (*property.Property, error)
 	FindByIDs(context.Context, id.PropertyIDList) (property.List, error)
 	FindLinkedAll(context.Context, id.SceneID) (property.List, error)
-	FindByDataset(context.Context, id.DatasetSchemaID, id.DatasetID) (property.List, error)
 	FindBySchema(context.Context, []id.PropertySchemaID, id.SceneID) (property.List, error)
 	FindByPlugin(context.Context, id.PluginID, id.SceneID) (property.List, error)
 	Save(context.Context, *property.Property) error

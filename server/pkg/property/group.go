@@ -4,8 +4,6 @@ import (
 	"context"
 	"errors"
 	"sort"
-
-	"github.com/reearth/reearth/server/pkg/dataset"
 )
 
 // Group represents a group of property
@@ -39,56 +37,6 @@ func (g *Group) SchemaGroupRef() *SchemaGroupID {
 	return g.itemBase.SchemaGroup.Ref()
 }
 
-func (g *Group) HasLinkedField() bool {
-	if g == nil {
-		return false
-	}
-	for _, f := range g.fields {
-		if f.Links().IsLinked() {
-			return true
-		}
-	}
-	return false
-}
-
-func (g *Group) Datasets() []DatasetID {
-	if g == nil {
-		return nil
-	}
-	res := []DatasetID{}
-
-	for _, f := range g.fields {
-		res = append(res, f.Datasets()...)
-	}
-
-	return res
-}
-
-func (g *Group) FieldsByLinkedDataset(s DatasetSchemaID, i DatasetID) []*Field {
-	if g == nil {
-		return nil
-	}
-	res := []*Field{}
-	for _, f := range g.fields {
-		if f.Links().HasSchemaAndDataset(s, i) {
-			res = append(res, f)
-		}
-	}
-	return res
-}
-
-func (g *Group) IsDatasetLinked(s DatasetSchemaID, i DatasetID) bool {
-	if g == nil {
-		return false
-	}
-	for _, f := range g.fields {
-		if f.IsDatasetLinked(s, i) {
-			return true
-		}
-	}
-	return false
-}
-
 func (g *Group) IsEmpty() bool {
 	if g != nil {
 		for _, f := range g.fields {
@@ -115,13 +63,13 @@ func (g *Group) Prune() (res bool) {
 }
 
 // TODO: group migration
-func (g *Group) MigrateSchema(ctx context.Context, newSchema *Schema, dl dataset.Loader) {
-	if g == nil || dl == nil {
+func (g *Group) MigrateSchema(ctx context.Context, newSchema *Schema) {
+	if g == nil {
 		return
 	}
 
 	for _, f := range g.fields {
-		if !f.MigrateSchema(ctx, newSchema, dl) {
+		if !f.MigrateSchema(ctx, newSchema) {
 			g.RemoveField(f.Field())
 		}
 	}
@@ -204,15 +152,6 @@ func (g *Group) Field(fid FieldID) *Field {
 		}
 	}
 	return nil
-}
-
-func (g *Group) MigrateDataset(q DatasetMigrationParam) {
-	if g == nil {
-		return
-	}
-	for _, f := range g.fields {
-		f.MigrateDataset(q)
-	}
 }
 
 func (g *Group) RepresentativeField(schema *Schema) *Field {
