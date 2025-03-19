@@ -61,7 +61,7 @@ export const IconButton: FC<IconButtonProps> = ({
       type="custom"
       text={tooltipText}
       placement={placement}
-      offset={8}
+      offset={5}
       triggerComponent={iconButtonComponent}
     />
   ) : (
