@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"fmt"
 	"sort"
 	"strings"
 
@@ -127,7 +126,6 @@ func (r *Asset) Save(_ context.Context, a *asset.Asset) error {
 	if !r.f.CanWrite(a.Workspace()) {
 		return repo.ErrOperationDenied
 	}
-	fmt.Println("Save------------------", a.ID().String())
 	r.data.Store(a.ID(), a)
 	return nil
 }
