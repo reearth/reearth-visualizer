@@ -16,7 +16,7 @@ func TestPluginMigrator_MigratePlugins(t *testing.T) {
 	assert := assert.New(t)
 	ctx := context.Background()
 
-	sid := scene.NewID()
+	sid := id.NewSceneID()
 	pid1 := plugin.MustID("plugin~1.0.0")
 	pid2 := plugin.MustID("plugin~1.0.1")
 

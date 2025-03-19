@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -168,7 +169,7 @@ func TestSealProperty(t *testing.T) {
 		},
 		{
 			Name:  "seal property",
-			Input: New().ID(pid).Scene(NewSceneID()).Schema(ps).MustBuild(),
+			Input: New().ID(pid).Scene(id.NewSceneID()).Schema(ps).MustBuild(),
 			Expected: &Sealed{
 				Original: pid.Ref(),
 				Parent:   nil,

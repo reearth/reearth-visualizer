@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +26,7 @@ func TestInitializer_Clone(t *testing.T) {
 }
 
 func TestInitializer_Property(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	initializer := &Initializer{
 		ID:     NewID().Ref(),
 		Schema: MustSchemaID("reearth/marker"),
@@ -51,7 +52,7 @@ func TestInitializer_Property(t *testing.T) {
 }
 
 func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	psid := MustSchemaID("reearth/hoge")
 	psid2 := MustSchemaID("reearth/marker")
 

@@ -2,6 +2,8 @@ package storytelling
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type StoryBuilder struct {
@@ -49,7 +51,7 @@ func (b *StoryBuilder) Property(property PropertyID) *StoryBuilder {
 	return b
 }
 
-func (b *StoryBuilder) Scene(scene SceneID) *StoryBuilder {
+func (b *StoryBuilder) Scene(scene id.SceneID) *StoryBuilder {
 	b.s.scene = scene
 	return b
 }

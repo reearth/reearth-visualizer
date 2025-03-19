@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,7 +61,7 @@ func TestToGroup(t *testing.T) {
 					MustBuild(),
 			}).MustBuild(),
 	}
-	p := New().NewID().Scene(NewSceneID()).Items(il).Schema(propertySchemaID).MustBuild()
+	p := New().NewID().Scene(id.NewSceneID()).Items(il).Schema(propertySchemaID).MustBuild()
 	g := ToGroup(p.ItemBySchema(propertySchemaGroup1ID))
 	assert.Equal(t, propertySchemaGroup1ID, g.SchemaGroup())
 	assert.Equal(t, iid, g.ID())
@@ -73,7 +74,7 @@ func TestToGroupList(t *testing.T) {
 	il := []Item{
 		NewGroupList().ID(iid).SchemaGroup(propertySchemaGroup1ID).MustBuild(),
 	}
-	p := New().NewID().Scene(NewSceneID()).Items(il).Schema(propertySchemaID).MustBuild()
+	p := New().NewID().Scene(id.NewSceneID()).Items(il).Schema(propertySchemaID).MustBuild()
 	g := ToGroupList(p.ItemBySchema(propertySchemaGroup1ID))
 	assert.Equal(t, propertySchemaGroup1ID, g.SchemaGroup())
 	assert.Equal(t, iid, g.ID())

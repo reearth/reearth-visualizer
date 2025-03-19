@@ -7,7 +7,7 @@ type NLSLayer interface {
 	ID() id.NLSLayerID
 	Index() *int
 	LayerType() LayerType
-	Scene() SceneID
+	Scene() id.SceneID
 	Config() *Config
 	Title() string
 	IsVisible() bool
@@ -66,7 +66,7 @@ type layerBase struct {
 	id        id.NLSLayerID
 	index     *int
 	layerType LayerType
-	scene     SceneID
+	scene     id.SceneID
 	title     string
 	visible   bool
 	infobox   *Infobox
@@ -100,7 +100,7 @@ func (l *layerBase) LayerType() LayerType {
 	return l.layerType
 }
 
-func (l *layerBase) Scene() SceneID {
+func (l *layerBase) Scene() id.SceneID {
 	return l.scene
 }
 

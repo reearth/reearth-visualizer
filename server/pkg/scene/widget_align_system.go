@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type WidgetLocation struct {
 	Zone    WidgetZoneType
 	Section WidgetSectionType
@@ -53,7 +55,7 @@ func (was *WidgetAlignSystem) Zone(zone WidgetZoneType) *WidgetZone {
 }
 
 // Remove a widget from the align system.
-func (was *WidgetAlignSystem) Remove(wid WidgetID) {
+func (was *WidgetAlignSystem) Remove(wid id.WidgetID) {
 	if was == nil {
 		return
 	}
@@ -66,7 +68,7 @@ func (was *WidgetAlignSystem) Area(loc WidgetLocation) *WidgetArea {
 	return was.Zone(loc.Zone).Section(loc.Section).Area(loc.Area)
 }
 
-func (was *WidgetAlignSystem) Find(wid WidgetID) (int, WidgetLocation) {
+func (was *WidgetAlignSystem) Find(wid id.WidgetID) (int, WidgetLocation) {
 	if was == nil {
 		return -1, WidgetLocation{}
 	}
@@ -89,7 +91,7 @@ func (was *WidgetAlignSystem) Find(wid WidgetID) (int, WidgetLocation) {
 	return -1, WidgetLocation{}
 }
 
-func (was *WidgetAlignSystem) Move(wid WidgetID, location WidgetLocation, index int) {
+func (was *WidgetAlignSystem) Move(wid id.WidgetID, location WidgetLocation, index int) {
 	if was == nil {
 		return
 	}

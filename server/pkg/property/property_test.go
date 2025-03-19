@@ -14,7 +14,7 @@ var (
 )
 
 func TestProperty_MigrateSchema(t *testing.T) {
-	sceneID := NewSceneID()
+	sceneID := id.NewSceneID()
 	oldSchema := MustSchemaID("hoge~1.0.0/test")
 	newSchema := MustSchemaID("hoge~1.0.0/test2")
 	schemaField1ID := FieldID("a")
@@ -97,7 +97,7 @@ func TestProperty_MigrateSchema(t *testing.T) {
 }
 
 func TestGetOrCreateItem(t *testing.T) {
-	sceneID := NewSceneID()
+	sceneID := id.NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sf1id := FieldID("a")
 	sf2id := FieldID("b")
@@ -149,7 +149,7 @@ func TestGetOrCreateItem(t *testing.T) {
 }
 
 func TestGetOrCreateField(t *testing.T) {
-	sceneID := NewSceneID()
+	sceneID := id.NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sf1id := FieldID("a")
 	sf2id := FieldID("b")
@@ -200,7 +200,7 @@ func TestGetOrCreateField(t *testing.T) {
 }
 
 func TestAddListItem(t *testing.T) {
-	sceneID := NewSceneID()
+	sceneID := id.NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sfid := FieldID("a")
 	sgid := SchemaGroupID("b")
@@ -222,7 +222,7 @@ func TestAddListItem(t *testing.T) {
 }
 
 func TestMoveListItem(t *testing.T) {
-	sceneID := NewSceneID()
+	sceneID := id.NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sgid := SchemaGroupID("b")
 	g1 := NewGroup().NewID().SchemaGroup(sgid).MustBuild()
@@ -237,7 +237,7 @@ func TestMoveListItem(t *testing.T) {
 }
 
 func TestRemoveListItem(t *testing.T) {
-	sceneID := NewSceneID()
+	sceneID := id.NewSceneID()
 	sid, _ := SchemaIDFrom("hoge~1.0.0/test")
 	sgid := SchemaGroupID("b")
 	g1 := NewGroup().NewID().SchemaGroup(sgid).MustBuild()

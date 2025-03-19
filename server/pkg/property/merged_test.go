@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -74,7 +75,7 @@ func TestMerge(t *testing.T) {
 		NewGroup().ID(i6id).SchemaGroup(psgid4).Fields(fields2).MustBuild(),
 	}
 
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	op := New().ID(opid).Scene(sid).Schema(psid).Items(items1).MustBuild()
 	pp := New().NewID().Scene(sid).Schema(psid2).MustBuild()
 	pp2 := New().ID(ppid).Scene(sid).Schema(psid).Items(items2).MustBuild()
