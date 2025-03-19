@@ -51,9 +51,11 @@ const sample3dTiles02 = {
 };
 
 // Add the 3D Tiles layers to Re:Earth
+// Documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(sample3dTiles01);
 reearth.layers.add(sample3dTiles02);
 
+// Documentation for Viewer "overrideProperty" method https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   // Enable Cesium World Terrain
   terrain: {
@@ -72,6 +74,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the specified position
+// Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     // Define the camera target position

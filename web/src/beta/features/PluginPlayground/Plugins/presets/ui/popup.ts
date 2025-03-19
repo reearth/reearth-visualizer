@@ -342,22 +342,28 @@ const widgetFile: FileType = {
 \`;
 
 // Handle messages from the UI
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   if (msg.type === "showPopup") {
+  // Documentation for Popup "show" method https://visualizer.developer.reearth.io/plugin-api/popup/#show
     reearth.popup.show(popupHTML, { position: "bottom-start" });
   }
   else if (msg.type === "closePopup") {
+  // Documentation for Popup "close" method https://visualizer.developer.reearth.io/plugin-api/popup/#close
     reearth.popup.close();
     // Notify UI that popup is closed
+    // Documentation for Extension "postMessage" method https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
     reearth.ui.postMessage({ type: "popupClosed" });
   }
   else if (msg.type === "updatePopup") {
+  // Documentation for Popup "update" method https://visualizer.developer.reearth.io/plugin-api/popup/#update
     reearth.popup.update({
       position: msg.position,
       offset: msg.offset
     });
   }
   else if (msg.type === "postMessageToPopup") {
+  // Documentation for Popup "postMessage" method https://visualizer.developer.reearth.io/plugin-api/popup/#postmessage
     reearth.popup.postMessage({ message: msg.message });
   }
   else if (msg.type === "messageToUI") {

@@ -106,11 +106,14 @@ reearth.ui.show(\`
 \`);
 
 // Handle messages from UI to send to other extension
+// Documentation on Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", msg => {
   if (msg.type === "send") {
+  // Documentation on Extension List https://visualizer.developer.reearth.io/plugin-api/extension/#list
     const extensions = reearth.extension.list;
     const target = extensions.find(ext => ext.extensionId === "extension-2");
     if (target) {
+    // Documentation on Extension "postMessage" method https://visualizer.developer.reearth.io/plugin-api/extension/#postmessage
       reearth.extension.postMessage(target.id, msg.message);
     }
   }
