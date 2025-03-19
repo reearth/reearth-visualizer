@@ -59,7 +59,7 @@ const KML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               inputMethod="asset"
               title={t("Asset")}
               value={value}
-              assetsTypes={["kml"]}
+              assetsTypes={["kml", "kmz"]}
               onChange={handleValueChange}
             />
           </InputsWrapper>
