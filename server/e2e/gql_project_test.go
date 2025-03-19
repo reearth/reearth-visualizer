@@ -8,6 +8,7 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
@@ -523,7 +524,7 @@ func testData(e *httpexpect.Expect) {
 func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, wID idx.ID[accountdomain.Workspace], name string, alias string, coreSupport bool) {
 	for i := range make([]int, count) {
 		p := project.New().
-			ID(project.NewID()).
+			ID(id.NewProjectID()).
 			Name(fmt.Sprintf(name+" name%d", i+1)).
 			Description(fmt.Sprintf(name+" description%d", i+1)).
 			ImageURL(lo.Must(url.Parse("https://test.com"))).
@@ -541,7 +542,7 @@ func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, w
 func projectsOldData(t *testing.T, ctx context.Context, r *repo.Container, count int, wID idx.ID[accountdomain.Workspace], name string, alias string) {
 	for i := range make([]int, count) {
 		p := project.New().
-			ID(project.NewID()).
+			ID(id.NewProjectID()).
 			Name(fmt.Sprintf(name+" name%d", i+1)).
 			Description(fmt.Sprintf(name+" description%d", i+1)).
 			ImageURL(lo.Must(url.Parse("https://test.com"))).

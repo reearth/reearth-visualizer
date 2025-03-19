@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -38,8 +39,7 @@ func TestProject_Create(t *testing.T) {
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	wsid2 := workspace.NewID()
 	_ = uc.workspaceRepo.Save(ctx, ws)
-	pId1, pId2 := project.NewID(), project.NewID()
-	defer project.MockNewID(pId1)()
+	pId1, pId2 := id.NewProjectID(), id.NewProjectID()
 
 	// normal
 	got, err := uc.Create(ctx, interfaces.CreateProjectParam{
@@ -71,7 +71,6 @@ func TestProject_Create(t *testing.T) {
 	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pId1)))
 
 	// Experimental
-	defer project.MockNewID(pId2)()
 	got, err = uc.Create(ctx, interfaces.CreateProjectParam{
 		WorkspaceID: ws.ID(),
 		Visualizer:  visualizer.VisualizerCesium,

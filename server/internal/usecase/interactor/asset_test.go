@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
@@ -24,8 +25,7 @@ import (
 
 func TestAsset_Create(t *testing.T) {
 	ctx := context.Background()
-	aid := asset.NewID()
-	defer asset.MockNewID(aid)()
+	aid := id.NewAssetID()
 
 	ws := workspace.New().NewID().MustBuild()
 

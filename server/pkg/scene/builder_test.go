@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -39,7 +40,7 @@ func TestBuilder_Plugins(t *testing.T) {
 }
 
 func TestBuilder_Project(t *testing.T) {
-	pid := NewProjectID()
+	pid := id.NewProjectID()
 	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(pid).MustBuild()
 	assert.Equal(t, pid, b.Project())
 }
@@ -55,7 +56,7 @@ func TestBuilder_Widgets(t *testing.T) {
 func TestBuilder_Build(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
 	sid := NewID()
-	pid := NewProjectID()
+	pid := id.NewProjectID()
 	ppid := NewPropertyID()
 	ws := NewWidgets([]*Widget{
 		MustWidget(NewWidgetID(), OfficialPluginID, "xxx", ppid, true, false),
@@ -66,8 +67,8 @@ func TestBuilder_Build(t *testing.T) {
 
 	type args struct {
 		ID        ID
-		Project   ProjectID
-		Workspace WorkspaceID
+		Project   id.ProjectID
+		Workspace accountdomain.WorkspaceID
 		Widgets   *Widgets
 		Plugins   *Plugins
 		UpdatedAt time.Time
@@ -98,7 +99,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Workspace: WorkspaceID{},
+				Workspace: accountdomain.WorkspaceID{},
 				Widgets:   ws,
 				Plugins:   ps,
 				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
@@ -155,7 +156,7 @@ func TestBuilder_Build(t *testing.T) {
 func TestBuilder_MustBuild(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
 	sid := NewID()
-	pid := NewProjectID()
+	pid := id.NewProjectID()
 	ppid := NewPropertyID()
 	ws := NewWidgets([]*Widget{
 		MustWidget(NewWidgetID(), OfficialPluginID, "xxx", ppid, true, false),
@@ -167,8 +168,8 @@ func TestBuilder_MustBuild(t *testing.T) {
 
 	type args struct {
 		ID                ID
-		Project           ProjectID
-		Workspace         WorkspaceID
+		Project           id.ProjectID
+		Workspace         accountdomain.WorkspaceID
 		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
 		Plugins           *Plugins
@@ -201,7 +202,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Workspace:         WorkspaceID{},
+				Workspace:         accountdomain.WorkspaceID{},
 				Widgets:           ws,
 				WidgetAlignSystem: was,
 				Plugins:           ps,

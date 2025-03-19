@@ -4,7 +4,9 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type Builder struct {
@@ -17,7 +19,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Project, error) {
 	if b.p.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	if b.p.alias != "" && !CheckAliasPattern(b.p.alias) {
 		return nil, ErrInvalidAlias
@@ -36,13 +38,13 @@ func (b *Builder) MustBuild() *Project {
 	return r
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.ProjectID) *Builder {
 	b.p.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.p.id = NewID()
+	b.p.id = id.NewProjectID()
 	return b
 }
 
@@ -127,7 +129,7 @@ func (b *Builder) CoreSupport(coreSupport bool) *Builder {
 	return b
 }
 
-func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+func (b *Builder) Workspace(workspace accountdomain.WorkspaceID) *Builder {
 	b.p.workspace = workspace
 	return b
 }
@@ -152,7 +154,7 @@ func (b *Builder) TrackingID(trackingId string) *Builder {
 	return b
 }
 
-func (b *Builder) Scene(sceneId SceneID) *Builder {
+func (b *Builder) Scene(sceneId id.SceneID) *Builder {
 	b.p.sceneId = sceneId
 	return b
 }
