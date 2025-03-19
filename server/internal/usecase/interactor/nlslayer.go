@@ -35,6 +35,8 @@ var (
 	ErrExtensionNotFound                    error = errors.New("extension not found")
 	ErrInfoboxNotFound                      error = errors.New("infobox not found")
 	ErrInfoboxAlreadyExists                 error = errors.New("infobox already exists")
+	ErrPhotoOverlayNotFound                 error = errors.New("photoOverlay not found")
+	ErrPhotoOverlayAlreadyExists            error = errors.New("photoOverlay already exists")
 	ErrCannotAddLayerToLinkedLayerGroup     error = errors.New("cannot add layer to linked layer group")
 	ErrCannotRemoveLayerToLinkedLayerGroup  error = errors.New("cannot remove layer to linked layer group")
 	ErrLinkedLayerItemCannotBeMoved         error = errors.New("linked layer item cannot be moved")
@@ -440,7 +442,7 @@ func (i *NLSLayer) CreateNLSPhotoOverlay(ctx context.Context, lid id.NLSLayerID,
 
 	photooverlay := l.PhotoOverlay()
 	if photooverlay != nil {
-		return nil, interfaces.ErrPhotoOverlayAlreadyExists
+		return nil, ErrPhotoOverlayAlreadyExists
 	}
 
 	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDPhotoOverlay)
@@ -551,7 +553,7 @@ func (i *NLSLayer) RemoveNLSPhotoOverlay(ctx context.Context, layerID id.NLSLaye
 
 	photooverlay := layer.PhotoOverlay()
 	if photooverlay == nil {
-		return nil, interfaces.ErrPhotoOverlayNotFound
+		return nil, ErrPhotoOverlayNotFound
 	}
 
 	layer.SetPhotoOverlay(nil)
