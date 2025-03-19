@@ -52,8 +52,6 @@ func (r *Asset) FindByURL(_ context.Context, path string) (*asset.Asset, error) 
 
 func (r *Asset) FindByID(_ context.Context, id id.AssetID) (*asset.Asset, error) {
 	d, ok := r.data.Load(id)
-	d2 := *d
-	fmt.Println(d2.URL())
 	if ok && r.f.CanRead(d.Workspace()) {
 		return d, nil
 	}
