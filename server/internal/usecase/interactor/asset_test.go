@@ -25,27 +25,30 @@ import (
 
 func TestAsset_Create(t *testing.T) {
 	ctx := context.Background()
-	aid := id.NewAssetID()
 
 	ws := workspace.New().NewID().MustBuild()
+	pid := id.NewProjectID()
 
-	mfs := afero.NewMemMapFs()
-	f, _ := fs.NewFile(mfs, "")
-	uc := &Asset{
+	gFile, err := fs.NewFile(afero.NewMemMapFs(), "")
+	assert.NoError(t, err)
+
+	uContainer := &Asset{
 		repos: &repo.Container{
 			Asset:     memory.NewAsset(),
 			Workspace: accountmemory.NewWorkspaceWith(ws),
 		},
 		gateways: &gateway.Container{
-			File: f,
+			File: gFile,
 		},
 	}
 
 	buf := bytes.NewBufferString("Hello")
 	buflen := int64(buf.Len())
-	res, err := uc.Create(ctx, interfaces.CreateAssetParam{
+
+	res, err := uContainer.Create(ctx, interfaces.CreateAssetParam{
 		WorkspaceID: ws.ID(),
 		CoreSupport: true,
+		ProjectID:   &pid,
 		File: &file.File{
 			Content:     io.NopCloser(buf),
 			Path:        "hoge.txt",
@@ -60,10 +63,11 @@ func TestAsset_Create(t *testing.T) {
 	assert.NoError(t, err)
 
 	want := asset.New().
-		ID(aid).
+		ID(res.ID()).
 		Workspace(ws.ID()).
+		Project(&pid).
 		URL(res.URL()).
-		CreatedAt(aid.Timestamp()).
+		CreatedAt(res.ID().Timestamp()).
 		Name("hoge.txt").
 		Size(buflen).
 		ContentType("").
@@ -72,6 +76,7 @@ func TestAsset_Create(t *testing.T) {
 
 	assert.NoError(t, err)
 	assert.Equal(t, want, res)
-	a, _ := uc.repos.Asset.FindByID(ctx, aid)
-	assert.Equal(t, want, a)
+	_, err = uContainer.repos.Asset.FindByID(ctx, res.ID())
+	assert.Nil(t, err)
+	assert.Equal(t, want, res)
 }
