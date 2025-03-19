@@ -18,8 +18,6 @@ type Property struct {
 	commonSceneLock
 	propertyRepo       repo.Property
 	propertySchemaRepo repo.PropertySchema
-	datasetRepo        repo.Dataset
-	datasetSchemaRepo  repo.DatasetSchema
 	sceneRepo          repo.Scene
 	assetRepo          repo.Asset
 	file               gateway.File
@@ -31,8 +29,6 @@ func NewProperty(r *repo.Container, gr *gateway.Container) interfaces.Property {
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		propertyRepo:       r.Property,
 		propertySchemaRepo: r.PropertySchema,
-		datasetRepo:        r.Dataset,
-		datasetSchemaRepo:  r.DatasetSchema,
 		sceneRepo:          r.Scene,
 		assetRepo:          r.Asset,
 		transaction:        r.Transaction,
@@ -46,33 +42,6 @@ func (i *Property) Fetch(ctx context.Context, ids []id.PropertyID, operator *use
 
 func (i *Property) FetchSchema(ctx context.Context, ids []id.PropertySchemaID, operator *usecase.Operator) ([]*property.Schema, error) {
 	return i.propertySchemaRepo.FindByIDs(ctx, ids)
-}
-
-func (i *Property) FetchMerged(ctx context.Context, org, parent *id.PropertyID, linked *id.DatasetID, operator *usecase.Operator) (*property.Merged, error) {
-	ids := []id.PropertyID{}
-	if org != nil {
-		ids = append(ids, *org)
-	}
-	if parent != nil {
-		ids = append(ids, *parent)
-	}
-	props, err := i.propertyRepo.FindByIDs(ctx, ids)
-	if err != nil {
-		return nil, err
-	}
-
-	var orgp, parentp *property.Property
-	if org != nil && parent != nil && len(props) == 2 {
-		orgp = props[0]
-		parentp = props[1]
-	} else if org != nil && parent == nil && len(props) == 1 {
-		orgp = props[0]
-	} else if org == nil && parent != nil && len(props) == 1 {
-		parentp = props[0]
-	}
-
-	res := property.Merge(orgp, parentp, linked)
-	return res, nil
 }
 
 func (i *Property) UpdateValue(ctx context.Context, inp interfaces.UpdatePropertyValueParam, operator *usecase.Operator) (p *property.Property, _ *property.GroupList, _ *property.Group, _ *property.Field, err error) {
@@ -188,24 +157,6 @@ func (i *Property) LinkValue(ctx context.Context, inp interfaces.LinkPropertyVal
 
 	field, pgl, pg, _ = p.GetOrCreateField(ps, inp.Pointer)
 
-	if inp.Links != nil {
-		dsids := inp.Links.DatasetSchemaIDs()
-		dids := inp.Links.DatasetIDs()
-		dss, err := i.datasetSchemaRepo.FindByIDs(ctx, dsids)
-		if err != nil {
-			return nil, nil, nil, nil, err
-		}
-		ds, err := i.datasetRepo.FindByIDs(ctx, dids)
-		if err != nil {
-			return nil, nil, nil, nil, err
-		}
-		if !inp.Links.Validate(dss.Map(), ds.Map()) {
-			return nil, nil, nil, nil, interfaces.ErrInvalidPropertyLinks
-		}
-	}
-
-	field.Link(inp.Links)
-
 	err = i.propertyRepo.Save(ctx, p)
 	if err != nil {
 		return nil, nil, nil, nil, err
@@ -246,8 +197,6 @@ func (i *Property) UnlinkValue(ctx context.Context, inp interfaces.UnlinkPropert
 	}
 
 	field, pgl, pg, _ = p.GetOrCreateField(ps, inp.Pointer)
-
-	field.Unlink()
 
 	if field.IsEmpty() {
 		field = nil

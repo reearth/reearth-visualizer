@@ -94,11 +94,6 @@ func TestInitializerItem_Clone(t *testing.T) {
 				Field: FieldID("name"),
 				Type:  ValueTypeString,
 				Value: ValueTypeString.ValueFrom("aaa"),
-				Links: []*InitializerLink{{
-					Dataset: NewDatasetID().Ref(),
-					Schema:  NewDatasetSchemaID(),
-					Field:   NewDatasetFieldID(),
-				}},
 			}},
 		}},
 	}
@@ -182,11 +177,6 @@ func TestInitializerGroup_Clone(t *testing.T) {
 			Field: FieldID("name"),
 			Type:  ValueTypeString,
 			Value: ValueTypeString.ValueFrom("aaa"),
-			Links: []*InitializerLink{{
-				Dataset: NewDatasetID().Ref(),
-				Schema:  NewDatasetSchemaID(),
-				Field:   NewDatasetFieldID(),
-			}},
 		}},
 	}
 
@@ -231,16 +221,10 @@ func TestInitializerField_Clone(t *testing.T) {
 		Field: FieldID("name"),
 		Type:  ValueTypeString,
 		Value: ValueTypeString.ValueFrom("aaa"),
-		Links: []*InitializerLink{{
-			Dataset: NewDatasetID().Ref(),
-			Schema:  NewDatasetSchemaID(),
-			Field:   NewDatasetFieldID(),
-		}},
 	}
 	cloned := field.Clone()
 
 	assert.NotSame(t, cloned, field)
-	assert.NotSame(t, &cloned.Links, &field.Links)
 	assert.Equal(t, cloned, field)
 }
 
@@ -249,41 +233,11 @@ func TestInitializerField_PropertyField(t *testing.T) {
 		Field: FieldID("name"),
 		Type:  ValueTypeString,
 		Value: ValueTypeString.ValueFrom("aaa"),
-		Links: []*InitializerLink{{
-			Dataset: NewDatasetID().Ref(),
-			Schema:  NewDatasetSchemaID(),
-			Field:   NewDatasetFieldID(),
-		}},
 	}
 
 	expected := NewField(field.Field).
 		Value(NewOptionalValue(field.Type, field.Value)).
-		Links(NewLinks([]*Link{NewLink(*field.Links[0].Dataset.CloneRef(), field.Links[0].Schema, field.Links[0].Field)})).
 		MustBuild()
 
 	assert.Equal(t, expected, field.PropertyField())
-}
-
-func TestInitializerLink_Clone(t *testing.T) {
-	link := &InitializerLink{
-		Dataset: NewDatasetID().Ref(),
-		Schema:  NewDatasetSchemaID(),
-		Field:   NewDatasetFieldID(),
-	}
-	cloned := link.Clone()
-
-	assert.NotSame(t, cloned, link)
-	assert.Equal(t, cloned, link)
-}
-
-func TestInitializerLink_PropertyLink(t *testing.T) {
-	link := &InitializerLink{
-		Dataset: NewDatasetID().Ref(),
-		Schema:  NewDatasetSchemaID(),
-		Field:   NewDatasetFieldID(),
-	}
-
-	expected := NewLink(*link.Dataset.CloneRef(), link.Schema, link.Field)
-
-	assert.Equal(t, expected, link.PropertyLink())
 }
