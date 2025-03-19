@@ -105,7 +105,6 @@ export type ValueTypes = {
   latlng: LatLng;
   latlngheight: LatLngHeight;
   url: string;
-  camera: Camera;
   typography: Typography;
   coordinates: Coordinates;
   polygon: Polygon;
@@ -115,7 +114,7 @@ export type ValueTypes = {
   spacing: Spacing;
   array: unknown[];
   timeline: Timeline;
-  dataCamera: DataCamera;
+  camera: DataCamera;
 };
 
 export type DataCamera = {
