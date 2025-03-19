@@ -49,7 +49,7 @@ const widgetFile: FileType = {
     <div class="flex-center">
       <button class="btn-primary" id="captureButton">Capture View</button>
     </div>
-    <div id="imageContainer" style="display: none;">
+    <div id="imageContainer">
       <!-- Preview will appear here -->
     </div>
   </div>
@@ -96,7 +96,6 @@ const widgetFile: FileType = {
       // Add elements to the container and show it
       imageContainer.appendChild(img);
       imageContainer.appendChild(downloadBtn);
-      imageContainer.style.display = 'block';
     }
 
     // Add capture button click handler
@@ -127,9 +126,11 @@ reearth.extension.on('message', msg => {
   if (msg.type === 'capture-request') {
     try {
       // Capture the current view as a PNG image
+      // Documentation for Viewer "capture" method: https://visualizer.developer.reearth.io/plugin-api/viewer/#capture
       const imageData = reearth.viewer.capture('image/png');
 
       // Check if capture was successful and send response
+      // Documentation for UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
       reearth.ui.postMessage({
         type: 'capture-response',
         imageData: imageData || null,
