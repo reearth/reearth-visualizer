@@ -38,8 +38,6 @@ func TestProject_Create(t *testing.T) {
 	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
 	wsid2 := workspace.NewID()
 	_ = uc.workspaceRepo.Save(ctx, ws)
-	pId1, pId2 := project.NewID(), project.NewID()
-	defer project.MockNewID(pId1)()
 
 	// normal
 	got, err := uc.Create(ctx, interfaces.CreateProjectParam{
@@ -57,7 +55,7 @@ func TestProject_Create(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	want := project.New().
-		ID(pId1).
+		ID(got.ID()).
 		Workspace(ws.ID()).
 		Name("aaa").
 		Description("bbb").
@@ -68,10 +66,9 @@ func TestProject_Create(t *testing.T) {
 		CoreSupport(false).
 		MustBuild()
 	assert.Equal(t, want, got)
-	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pId1)))
+	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, got.ID())))
 
 	// Experimental
-	defer project.MockNewID(pId2)()
 	got, err = uc.Create(ctx, interfaces.CreateProjectParam{
 		WorkspaceID: ws.ID(),
 		Visualizer:  visualizer.VisualizerCesium,
@@ -88,7 +85,7 @@ func TestProject_Create(t *testing.T) {
 	})
 	assert.NoError(t, err)
 	want = project.New().
-		ID(pId2).
+		ID(got.ID()).
 		Workspace(ws.ID()).
 		Name("aaa").
 		Description("bbb").
@@ -99,7 +96,7 @@ func TestProject_Create(t *testing.T) {
 		CoreSupport(true).
 		MustBuild()
 	assert.Equal(t, want, got)
-	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, pId2)))
+	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, got.ID())))
 
 	// nonexistent workspace
 	got, err = uc.Create(ctx, interfaces.CreateProjectParam{

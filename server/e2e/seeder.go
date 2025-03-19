@@ -146,7 +146,7 @@ func addAsset(path string, ctx context.Context, r *repo.Container, gf gateway.Fi
 		return nil, err
 	}
 
-	aid := asset.NewID()
+	aid := id.NewAssetID()
 	a := asset.New().
 		ID(aid).
 		Workspace(wID).
