@@ -246,21 +246,11 @@ query GetScene($sceneId: ID!, $lang: Lang) {
     __typename
   }
 }
-fragment PropertyFieldLink on PropertyFieldLink {
-  datasetId
-  datasetSchemaId
-  datasetSchemaFieldId
-  __typename
-}
 fragment PropertyFieldFragment on PropertyField {
   id
   fieldId
   type
   value
-  links {
-    ...PropertyFieldLink
-    __typename
-  }
   __typename
 }
 fragment PropertyGroupFragment on PropertyGroup {
