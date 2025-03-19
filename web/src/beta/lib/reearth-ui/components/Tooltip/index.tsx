@@ -96,7 +96,7 @@ const TipPanel = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
-  padding: `${theme.spacing.small}px`,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   background: theme.bg[2],
   color: theme.content.main,
   boxShadow: theme.shadow.card,
