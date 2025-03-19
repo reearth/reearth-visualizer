@@ -187,7 +187,7 @@ export function valueToGQL<T extends ValueType>(
 ) {
   if (type === "camera" && val && typeof val === "object") {
     const { aspectRatio, height, ...rest } = val as Camera;
-    const v: DataCamera = { ...rest, altitude: height ?? 0 }; 
+    const v: DataCamera = { ...rest, altitude: height}; 
     return v;
   }
   return val ?? null;
