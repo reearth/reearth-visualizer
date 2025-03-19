@@ -140,12 +140,14 @@ const widgetFile: FileType = {
   };
 
   // Add all layers
+  // Documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
   reearth.layers.add(geojsonLayer);
   reearth.layers.add(czmlLayer);
   reearth.layers.add(kmlLayer);
   reearth.layers.add(csvLayer);
 
   // Position camera to view all features
+  // Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
   reearth.camera.flyTo({
     lng: 139.750,  // Center position to align all features
     lat: 35.7609591,   // Adjusted for better view of all features
