@@ -26,9 +26,9 @@ export default () => {
       "popup-plugin": t("Popup"),
       "modal-window": t("Modal Window"),
       "messenger-between-extension-and-visualizer": t(
-        "Messenger between Extension and Visualizer"
+        "Messenger Between Extension and Visualizer"
       ),
-      "messenger-between-extensions": t("Messenger between Extensions"),
+      "messenger-between-extensions": t("Messenger Between Extensions"),
       "enable-shadow-style": t("Enable Shadow Style"),
       "enable-terrain": t("Enable Terrain"),
       "show-label": t("Show Label"),

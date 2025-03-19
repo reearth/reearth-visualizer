@@ -10,7 +10,7 @@ version: 1.0.0
 extensions:
   - id: messenger-between-extension-and-visualizer
     type: widget
-    name: Messenger between Extension and Visualizer Widget
+    name: Messenger Between Extension and Visualizer Widget
     description: Messenger between Extension and Visualizer Widget
     widgetLayout:
       defaultLocation:
@@ -134,7 +134,9 @@ const widgetFile: FileType = {
 \`);
 
 // Send message to UI when globe is clicked
+// Documentation on Viewer "on" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#mouse-events
 reearth.viewer.on("click", (event) => {
+// Documentation on UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
   reearth.ui.postMessage({
     type: "position",
     lat: event.lat,
@@ -143,8 +145,10 @@ reearth.viewer.on("click", (event) => {
 });
 
 // Handle messages from UI to move camera
+// Documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", msg => {
   if (msg.type === "fly") {
+  // Documentation on Camera "flyTo" method: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
     reearth.camera.flyTo(
       {
         lat: msg.lat,

@@ -177,7 +177,7 @@ export const Selector: FC<SelectorProps> = ({
                 : theme.content.main
             }
           >
-            {selectedItems[0].label}
+            {selectedItems[0]?.label}
           </Typography>
         )}
         <Icon

@@ -21,7 +21,7 @@ const widgetFile: FileType = {
   id: "camera-position-widget",
   title: "camera-position.js",
   sourceCode: `
-  // This plugin provides a simple interface for camera position management in ReEarth.
+  // This plugin provides a simple interface for camera position management in Re:Earth.
   // It allows users to:
   // 1. Retrieve the current camera position
   // 2. Manually input and apply a new camera position
@@ -271,6 +271,7 @@ const widgetFile: FileType = {
 </script>
 \`);
 
+// Documentation on Camera "on" event: https://visualizer.developer.reearth.io/plugin-api/camera/#move-1
 reearth.camera.on("move", (camera) => {
   reearth.ui.postMessage({
     type: 'currentPosition',
@@ -285,6 +286,7 @@ reearth.camera.on("move", (camera) => {
   });
 });
 
+// Documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on('message', (msg) => {
   // Apply camera position
   if (msg.type === 'applyCameraPosition') {
@@ -309,6 +311,7 @@ reearth.extension.on('message', (msg) => {
       );
 
       // Send confirmation message
+      // Documentation on UI "postMessage" event: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
       reearth.ui.postMessage({
         type: 'positionApplied'
       });
