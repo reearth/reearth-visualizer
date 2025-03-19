@@ -9,13 +9,11 @@ import {
   PropertySchemaGroupFragmentFragment
 } from "@reearth/services/gql";
 
-import { DatasetMap, P, datasetValue } from "./convert";
+import { P } from "./convert";
 
 export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
-  orig?: PropertyFragmentFragment | null | undefined,
-  linkedDatasetId?: string | null | undefined,
-  datasets?: DatasetMap | null | undefined
+  orig?: PropertyFragmentFragment | null | undefined
 ): P | undefined => {
   const schema = orig?.schema || parent?.schema;
   if (!schema) return;
@@ -46,16 +44,7 @@ export const processProperty = (
           if (schema.isList) {
             return [key, undefined];
           }
-          return [
-            key,
-            processPropertyGroups(
-              schema,
-              undefined,
-              undefined,
-              linkedDatasetId,
-              datasets
-            )
-          ];
+          return [key, processPropertyGroups(schema, undefined, undefined)];
         }
 
         if (
@@ -66,13 +55,7 @@ export const processProperty = (
           return [
             key,
             used?.groups.map((g) => ({
-              ...processPropertyGroups(
-                schema,
-                g,
-                undefined,
-                linkedDatasetId,
-                datasets
-              ),
+              ...processPropertyGroups(schema, g, undefined),
               id: g.id
             }))
           ];
@@ -82,16 +65,7 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroup") &&
           (!parent || parent.__typename === "PropertyGroup")
         ) {
-          return [
-            key,
-            processPropertyGroups(
-              schema,
-              parent,
-              orig,
-              linkedDatasetId,
-              datasets
-            )
-          ];
+          return [key, processPropertyGroups(schema, parent, orig)];
         }
         return [key, null];
       })
@@ -104,9 +78,7 @@ export const processProperty = (
 const processPropertyGroups = (
   schema: PropertySchemaGroupFragmentFragment,
   parent: PropertyGroupFragmentFragment | null | undefined,
-  original: PropertyGroupFragmentFragment | null | undefined,
-  linkedDatasetId: string | null | undefined,
-  datasets: DatasetMap | null | undefined
+  original: PropertyGroupFragmentFragment | null | undefined
 ): any => {
   const allFields: Record<
     string,
@@ -150,23 +122,6 @@ const processPropertyGroups = (
             value: schema.defaultValue
               ? valueFromGQL(schema.defaultValue, schema.type)?.value
               : undefined
-          }
-        ];
-      }
-
-      const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
-      const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
-      if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
-        return [
-          key,
-          {
-            ...fieldMeta,
-            value: datasetValue(
-              datasets,
-              datasetSchemaId,
-              linkedDatasetId,
-              datasetFieldId
-            )
           }
         ];
       }

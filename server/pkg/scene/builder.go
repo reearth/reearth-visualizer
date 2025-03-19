@@ -79,11 +79,6 @@ func (b *Builder) Property(p PropertyID) *Builder {
 	return b
 }
 
-func (b *Builder) Clusters(cl *ClusterList) *Builder {
-	b.scene.clusters = cl
-	return b
-}
-
 func (b *Builder) Styles(sl *StyleList) *Builder {
 	b.scene.styles = sl
 	return b

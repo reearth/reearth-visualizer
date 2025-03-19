@@ -65,19 +65,6 @@ func (r *Property) FindByIDs(ctx context.Context, ids id.PropertyIDList) (proper
 	return result, nil
 }
 
-func (r *Property) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, did id.DatasetID) (property.List, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	result := property.List{}
-	for _, p := range r.data {
-		if p.IsDatasetLinked(sid, did) && r.f.CanRead(p.Scene()) {
-			result = append(result, p)
-		}
-	}
-	return result, nil
-}
-
 func (r *Property) FindLinkedAll(ctx context.Context, s id.SceneID) (property.List, error) {
 	if !r.f.CanRead(s) {
 		return nil, nil
@@ -88,7 +75,7 @@ func (r *Property) FindLinkedAll(ctx context.Context, s id.SceneID) (property.Li
 
 	result := property.List{}
 	for _, p := range r.data {
-		if p.Scene() == s && p.HasLinkedField() {
+		if p.Scene() == s {
 			result = append(result, p)
 		}
 	}
