@@ -27,18 +27,20 @@ const widgetFile: FileType = {
 
     /* Plugin-specific styling */
 
-    #capturedImage {
-      max-width: 100%;
-      border: 1px solid #ccc;
-      margin: 10px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-
     .instructions {
       font-size: 13px;
       color: #666;
       text-align: center;
       font-style: italic;
+    }
+
+    #imageContainer {
+      text-align: center;
+    }
+
+    #capturedImage, .image-download-btn {
+      max-width: 100%;
+      margin: 10px auto;
     }
   </style>
   <div id="wrapper">
@@ -70,12 +72,10 @@ const widgetFile: FileType = {
       img.id = 'capturedImage';
       img.src = imageData;
 
-      // Create download button below the image
+      // Create download button with appropriate class for styling
       const downloadBtn = document.createElement('button');
-      downloadBtn.className = 'btn-primary';
+      downloadBtn.className = 'btn-primary image-download-btn';
       downloadBtn.textContent = 'Download Image';
-      downloadBtn.style.display = 'block';
-      downloadBtn.style.margin = '10px auto';
 
       // Add download functionality
       downloadBtn.addEventListener('click', () => {
@@ -101,6 +101,7 @@ const widgetFile: FileType = {
 
     // Add capture button click handler
     captureButton.addEventListener('click', () => {
+      // Send a message to the extension to request a capture
       parent.postMessage({ type: 'capture-request' }, '*');
     });
 
@@ -109,8 +110,10 @@ const widgetFile: FileType = {
       const msg = e.data;
       if (msg.type === 'capture-response') {
         if (msg.error) {
+          // Show error if capture failed
           alert('Failed to capture image: ' + msg.error);
         } else {
+          // Display the captured image
           displayImage(msg.imageData);
         }
       }
