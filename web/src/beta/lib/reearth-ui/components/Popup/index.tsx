@@ -93,7 +93,7 @@ const Content = forwardRef<
               ref={context.arrowRef}
               context={floatingContext}
               style={{
-                fill: theme.bg[1]
+                fill: theme.bg[2]
               }}
               width={8}
               height={6}

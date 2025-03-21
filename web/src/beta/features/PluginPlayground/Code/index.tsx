@@ -1,5 +1,5 @@
 import { OnMount } from "@monaco-editor/react";
-import { Button, CodeInput } from "@reearth/beta/lib/reearth-ui";
+import { Button, CodeInput, IconButton } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
@@ -104,11 +104,12 @@ const Code: FC<Props> = ({
     <>
       <Wrapper>
         <Header>
-          <Button
+          <IconButton
             icon="playRight"
-            iconButton
             tooltipText={t("Run Code")}
             placement="top"
+            size="large"
+            hasBorder
             onClick={executeCode}
           />
           <Button
