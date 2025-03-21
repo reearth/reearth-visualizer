@@ -9,7 +9,7 @@ type PhotoOverlay struct {
 	property id.PropertyID
 }
 
-func NewPhotoOverlay(p PropertyID) *PhotoOverlay {
+func NewPhotoOverlay(p id.PropertyID) *PhotoOverlay {
 	photooverlay := PhotoOverlay{
 		id:       id.NewPhotoOverlayID(),
 		property: p,
@@ -21,11 +21,11 @@ func (i *PhotoOverlay) Id() id.PhotoOverlayID {
 	return i.id
 }
 
-func (i *PhotoOverlay) Property() PropertyID {
+func (i *PhotoOverlay) Property() id.PropertyID {
 	return i.property
 }
 
-func (i *PhotoOverlay) PropertyRef() *PropertyID {
+func (i *PhotoOverlay) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}
