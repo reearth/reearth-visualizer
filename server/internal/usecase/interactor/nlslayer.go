@@ -931,7 +931,7 @@ func (i *NLSLayer) AddGeoJSONFeature(ctx context.Context, inp interfaces.AddNLSL
 	}
 
 	feature, err := nlslayer.NewFeature(
-		nlslayer.NewFeatureID(),
+		id.NewFeatureID(),
 		inp.Type,
 		geometry,
 	)
@@ -1175,7 +1175,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 				}
 
 				feature, err := nlslayer.NewFeature(
-					nlslayer.NewFeatureID(),
+					id.NewFeatureID(),
 					featureJSON.Type,
 					geometry,
 				)

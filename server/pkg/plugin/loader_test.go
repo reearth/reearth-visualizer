@@ -9,8 +9,8 @@ import (
 )
 
 func TestLoaderFrom(t *testing.T) {
-	pid1 := MustID("plugin~1.1.1")
-	pid2 := MustID("plugin~1.1.2")
+	pid1 := id.MustPluginID("plugin~1.1.1")
+	pid2 := id.MustPluginID("plugin~1.1.2")
 	p1 := New().ID(pid1).MustBuild()
 	p2 := New().ID(pid2).MustBuild()
 

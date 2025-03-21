@@ -1,7 +1,9 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Condition struct {
-	Field FieldID
+	Field id.PropertyFieldID
 	Value *Value
 }
 

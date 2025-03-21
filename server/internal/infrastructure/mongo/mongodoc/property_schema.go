@@ -293,8 +293,8 @@ func toModelPropertyPointer(p *PropertySchemaFieldPointerDocument) *property.Sch
 		return nil
 	}
 	return &property.SchemaFieldPointer{
-		SchemaGroup: property.SchemaGroupID(p.SchemaGroupID),
-		Field:       property.FieldID(p.FieldID),
+		SchemaGroup: id.PropertySchemaGroupID(p.SchemaGroupID),
+		Field:       id.PropertyFieldID(p.FieldID),
 	}
 }
 

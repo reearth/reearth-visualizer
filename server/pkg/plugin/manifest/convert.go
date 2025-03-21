@@ -17,10 +17,10 @@ var errInvalidManifestWith = rerror.With(ErrInvalidManifest)
 func (i *Root) manifest(sid *id.SceneID, tl *TranslatedRoot) (*Manifest, error) {
 	var pid id.PluginID
 	var err error
-	if i.System && string(i.ID) == plugin.OfficialPluginID.Name() {
-		pid = plugin.OfficialPluginID
+	if i.System && string(i.ID) == id.OfficialPluginID.Name() {
+		pid = id.OfficialPluginID
 	} else {
-		pid, err = plugin.NewID(string(i.ID), i.Version, sid)
+		pid, err = id.NewPluginID(string(i.ID), i.Version, sid)
 		if err != nil {
 			return nil, errInvalidManifestWith(fmt.Errorf("invalid plugin id: %s %s %s", i.ID, i.Version, sid))
 		}
@@ -167,7 +167,7 @@ func (i Extension) extension(pluginID id.PluginID, sys bool, te *TranslatedExten
 	desc = desc.WithDefaultRef(i.Description)
 
 	ext, err := plugin.NewExtension().
-		ID(plugin.ExtensionID(eid)).
+		ID(id.PluginExtensionID(eid)).
 		Name(name).
 		Description(desc).
 		Visualizer(viz).
@@ -217,7 +217,7 @@ func (l *WidgetLayout) layout() *plugin.WidgetLayout {
 }
 
 func (i *PropertySchema) schema(pluginID id.PluginID, idstr string, ts *TranslatedPropertySchema) (*property.Schema, error) {
-	psid, err := property.SchemaIDFrom(pluginID.String() + "/" + idstr)
+	psid, err := id.PropertySchemaIDFrom(pluginID.String() + "/" + idstr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid id: %s", pluginID.String()+"/"+idstr)
 	}
@@ -275,8 +275,8 @@ func (p *PropertyPointer) pointer() *property.SchemaFieldPointer {
 		return nil
 	}
 	return &property.SchemaFieldPointer{
-		SchemaGroup: property.SchemaGroupID(p.SchemaGroupID),
-		Field:       property.FieldID(p.FieldID),
+		SchemaGroup: id.PropertySchemaGroupID(p.SchemaGroupID),
+		Field:       id.PropertyFieldID(p.FieldID),
 	}
 }
 
@@ -295,9 +295,9 @@ func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*pr
 		collection = collection.WithDefault(*i.Collection)
 	}
 
-	var representativeField *property.FieldID
+	var representativeField *id.PropertyFieldID
 	if i.RepresentativeField != nil {
-		representativeField = property.FieldID(*i.RepresentativeField).Ref()
+		representativeField = id.PropertyFieldID(*i.RepresentativeField).Ref()
 	}
 
 	// fields
@@ -319,7 +319,7 @@ func (i PropertySchemaGroup) schemaGroup(tg *TranslatedPropertySchemaGroup) (*pr
 	}
 
 	return property.NewSchemaGroup().
-		ID(property.SchemaGroupID(i.ID)).
+		ID(id.PropertySchemaGroupID(i.ID)).
 		IsList(i.List).
 		Fields(fields).
 		Title(title).
@@ -334,7 +334,7 @@ func (o *PropertyCondition) condition() *property.Condition {
 		return nil
 	}
 	return &property.Condition{
-		Field: property.FieldID(o.Field),
+		Field: id.PropertyFieldID(o.Field),
 		Value: toValue(o.Value, o.Type),
 	}
 }
@@ -380,7 +380,7 @@ func (i PropertySchemaField) schemaField(tf *TranslatedPropertySchemaField) (*pr
 	}
 
 	f, err := property.NewSchemaField().
-		ID(property.FieldID(i.ID)).
+		ID(id.PropertyFieldID(i.ID)).
 		Name(title).
 		Description(desc).
 		Placeholder(plac).

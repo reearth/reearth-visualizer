@@ -19,8 +19,8 @@ var (
 )
 
 type Story struct {
-	id            StoryID
-	property      PropertyID
+	id            id.StoryID
+	property      id.PropertyID
 	scene         id.SceneID
 	title         string
 	pages         *PageList
@@ -43,11 +43,11 @@ type Story struct {
 	trackingID        string
 }
 
-func (s *Story) Id() StoryID {
+func (s *Story) Id() id.StoryID {
 	return s.id
 }
 
-func (s *Story) Property() PropertyID {
+func (s *Story) Property() id.PropertyID {
 	return s.property
 }
 
@@ -218,11 +218,11 @@ func (s *Story) ValidateProperties(pm property.Map) error {
 	return nil
 }
 
-func (s *Story) Properties() property.IDList {
+func (s *Story) Properties() id.PropertyIDList {
 	if s == nil {
 		return nil
 	}
-	ids := []PropertyID{s.property}
+	ids := []id.PropertyID{s.property}
 	ids = append(ids, s.Property())
 	ids = append(ids, s.pages.Properties()...)
 	return ids

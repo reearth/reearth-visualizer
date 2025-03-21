@@ -3,6 +3,8 @@ package property
 import (
 	"context"
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -13,7 +15,7 @@ var (
 )
 
 type Field struct {
-	field FieldID
+	field id.PropertyFieldID
 	v     *OptionalValue
 }
 
@@ -27,11 +29,11 @@ func (p *Field) Clone() *Field {
 	}
 }
 
-func (p *Field) Field() FieldID {
+func (p *Field) Field() id.PropertyFieldID {
 	return p.field
 }
 
-func (p *Field) FieldRef() *FieldID {
+func (p *Field) FieldRef() *id.PropertyFieldID {
 	if p == nil {
 		return nil
 	}
@@ -86,7 +88,7 @@ func (p *Field) Cast(t ValueType) bool {
 	return true
 }
 
-func (p *Field) UpdateField(field FieldID) {
+func (p *Field) UpdateField(field id.PropertyFieldID) {
 	if p == nil {
 		return
 	}

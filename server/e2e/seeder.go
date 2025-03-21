@@ -45,9 +45,9 @@ var (
 	sID    = id.NewSceneID()
 	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
-	storyID = storytelling.NewStoryID()
-	pageID  = storytelling.NewPageID()
-	blockID = storytelling.NewBlockID()
+	storyID = id.NewStoryID()
+	pageID  = id.NewPageID()
+	blockID = id.NewBlockID()
 )
 
 func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
@@ -455,7 +455,7 @@ func addGeoJson(layerID nlslayer.ID, ctx context.Context, r *repo.Container) err
 	}
 
 	feature, err := nlslayer.NewFeature(
-		nlslayer.NewFeatureID(),
+		id.NewFeatureID(),
 		"Feature",
 		geometry,
 	)

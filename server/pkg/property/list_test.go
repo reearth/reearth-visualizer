@@ -10,23 +10,23 @@ import (
 var (
 	sf = NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg = NewSchemaGroup().ID("aa").Fields([]*SchemaField{sf}).MustBuild()
-	p  = New().NewID().Scene(id.NewSceneID()).Schema(MustSchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
-	p2 = New().NewID().Scene(id.NewSceneID()).Schema(MustSchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
+	p  = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
+	p2 = New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xx~1.0.0/aa")).Items([]Item{InitItemFrom(sg)}).MustBuild()
 )
 
 func TestList_IDs(t *testing.T) {
-	p1 := NewID()
-	p2 := NewID()
+	p1 := id.NewPropertyID()
+	p2 := id.NewPropertyID()
 
 	tests := []struct {
 		name   string
 		target List
-		want   []ID
+		want   []id.PropertyID
 	}{
 		{
 			name:   "ok",
 			target: List{&Property{id: p1}, &Property{id: p2}, &Property{id: p1}},
-			want:   []ID{p1, p2},
+			want:   []id.PropertyID{p1, p2},
 		},
 	}
 
@@ -40,18 +40,18 @@ func TestList_IDs(t *testing.T) {
 }
 
 func TestList_Schemas(t *testing.T) {
-	ps1 := MustSchemaID("x~1.0.0/a")
-	ps2 := MustSchemaID("x~1.0.0/b")
+	ps1 := id.MustPropertySchemaID("x~1.0.0/a")
+	ps2 := id.MustPropertySchemaID("x~1.0.0/b")
 
 	tests := []struct {
 		name   string
 		target List
-		want   []SchemaID
+		want   []id.PropertySchemaID
 	}{
 		{
 			name:   "ok",
 			target: List{&Property{schema: ps1}, &Property{schema: ps2}, &Property{schema: ps1}},
-			want:   []SchemaID{ps1, ps2},
+			want:   []id.PropertySchemaID{ps1, ps2},
 		},
 	}
 
@@ -65,8 +65,8 @@ func TestList_Schemas(t *testing.T) {
 }
 
 func TestList_Map(t *testing.T) {
-	p1 := NewID()
-	p2 := NewID()
+	p1 := id.NewPropertyID()
+	p2 := id.NewPropertyID()
 
 	tests := []struct {
 		name   string

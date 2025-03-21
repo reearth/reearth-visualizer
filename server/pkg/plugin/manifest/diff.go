@@ -16,15 +16,15 @@ type Diff struct {
 }
 
 type DiffExtensionUpdated struct {
-	ExtensionID        plugin.ExtensionID
+	ExtensionID        id.PluginExtensionID
 	OldType            plugin.ExtensionType
 	NewType            plugin.ExtensionType
 	PropertySchemaDiff property.SchemaDiff
 }
 
 type DiffExtensionDeleted struct {
-	ExtensionID      plugin.ExtensionID
-	PropertySchemaID property.SchemaID
+	ExtensionID      id.PluginExtensionID
+	PropertySchemaID id.PropertySchemaID
 }
 
 func DiffFrom(old, new Manifest) (d Diff) {

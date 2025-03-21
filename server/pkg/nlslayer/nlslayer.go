@@ -222,7 +222,7 @@ func (l *layerBase) Duplicate() NLSLayer {
 	}
 
 	duplicated := &layerBase{
-		id:        NewID(),
+		id:        id.NewNLSLayerID(),
 		index:     l.index,
 		layerType: l.layerType,
 		scene:     l.scene,

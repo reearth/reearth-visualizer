@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"sort"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 // Group represents a group of property
@@ -15,22 +17,22 @@ type Group struct {
 // Group implements Item interface
 var _ Item = &Group{}
 
-func (g *Group) ID() ItemID {
+func (g *Group) ID() id.PropertyItemID {
 	return g.itemBase.ID
 }
 
-func (g *Group) IDRef() *ItemID {
+func (g *Group) IDRef() *id.PropertyItemID {
 	if g == nil {
 		return nil
 	}
 	return g.itemBase.ID.Ref()
 }
 
-func (g *Group) SchemaGroup() SchemaGroupID {
+func (g *Group) SchemaGroup() id.PropertySchemaGroupID {
 	return g.itemBase.SchemaGroup
 }
 
-func (g *Group) SchemaGroupRef() *SchemaGroupID {
+func (g *Group) SchemaGroupRef() *id.PropertySchemaGroupID {
 	if g == nil {
 		return nil
 	}
@@ -77,7 +79,7 @@ func (g *Group) MigrateSchema(ctx context.Context, newSchema *Schema) {
 	g.Prune()
 }
 
-func (g *Group) GetOrCreateField(ps *Schema, fid FieldID) (*Field, bool) {
+func (g *Group) GetOrCreateField(ps *Schema, fid id.PropertyFieldID) (*Field, bool) {
 	if g == nil || ps == nil {
 		return nil, false
 	}
@@ -117,7 +119,7 @@ func (g *Group) AddFields(fields ...*Field) {
 	}
 }
 
-func (g *Group) RemoveField(fid FieldID) (res bool) {
+func (g *Group) RemoveField(fid id.PropertyFieldID) (res bool) {
 	if g == nil {
 		return false
 	}
@@ -130,11 +132,11 @@ func (g *Group) RemoveField(fid FieldID) (res bool) {
 	return false
 }
 
-func (g *Group) FieldIDs() []FieldID {
+func (g *Group) FieldIDs() []id.PropertyFieldID {
 	if g == nil {
 		return nil
 	}
-	fields := make([]FieldID, 0, len(g.fields))
+	fields := make([]id.PropertyFieldID, 0, len(g.fields))
 	for _, f := range g.fields {
 		fields = append(fields, f.Field())
 	}
@@ -142,7 +144,7 @@ func (g *Group) FieldIDs() []FieldID {
 }
 
 // Field returns a field whose id is specified
-func (g *Group) Field(fid FieldID) *Field {
+func (g *Group) Field(fid id.PropertyFieldID) *Field {
 	if g == nil {
 		return nil
 	}

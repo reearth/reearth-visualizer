@@ -3,7 +3,7 @@ package property
 import "github.com/reearth/reearth/server/pkg/id"
 
 type Schema struct {
-	id       SchemaID
+	id       id.PropertySchemaID
 	version  int
 	groups   *SchemaGroupList
 	linkable LinkableFields
@@ -14,11 +14,11 @@ type LinkableFields struct {
 	URL    *SchemaFieldPointer
 }
 
-func (p *Schema) ID() SchemaID {
+func (p *Schema) ID() id.PropertySchemaID {
 	return p.id
 }
 
-func (p *Schema) IDRef() *SchemaID {
+func (p *Schema) IDRef() *id.PropertySchemaID {
 	if p == nil {
 		return nil
 	}
@@ -81,7 +81,7 @@ func (l LinkableFields) PointerByType(ty ValueType) *SchemaFieldPointer {
 	return nil
 }
 
-func (l LinkableFields) FieldByType(ty ValueType) *FieldID {
+func (l LinkableFields) FieldByType(ty ValueType) *id.PropertyFieldID {
 	p := l.PointerByType(ty)
 	if p == nil {
 		return nil
