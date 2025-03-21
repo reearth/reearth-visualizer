@@ -10,7 +10,7 @@ const ListItem: FC<{
   setUpdateRoleModalVisible: (visible: boolean) => void;
   setSelectedMember: (member: TeamMember) => void;
   setDeleteMemerModalVisible: (visible: boolean) => void;
-  meRole: string | undefined;
+  meRole: Role | undefined;
   meId: string | undefined;
 }> = ({
   member,
