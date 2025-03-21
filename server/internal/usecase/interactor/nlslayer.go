@@ -577,12 +577,18 @@ func (i *NLSLayer) RemoveNLSPhotoOverlay(ctx context.Context, layerID id.NLSLaye
 	return layer, nil
 }
 
-func (i *NLSLayer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
+func (i *NLSLayer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginExtensionID, filter *repo.SceneFilter) (*plugin.Plugin, *plugin.Extension, error) {
 	if p == nil {
 		return nil, nil, nil
 	}
+	var plugin *plugin.Plugin
+	var err error
 
-	plugin, err := i.pluginRepo.FindByID(ctx, *p)
+	if filter == nil {
+		plugin, err = i.pluginRepo.FindByID(ctx, *p)
+	} else {
+		plugin, err = i.pluginRepo.Filtered(*filter).FindByID(ctx, *p)
+	}
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, ErrPluginNotFound
@@ -602,7 +608,7 @@ func (i *NLSLayer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginEx
 	return plugin, extension, nil
 }
 
-func (i *NLSLayer) getInfoboxBlockPlugin(ctx context.Context, pid string, eid string) (*id.PluginID, *id.PluginExtensionID, *plugin.Extension, error) {
+func (i *NLSLayer) getInfoboxBlockPlugin(ctx context.Context, pid string, eid string, filter *repo.SceneFilter) (*id.PluginID, *id.PluginExtensionID, *plugin.Extension, error) {
 
 	pluginID, err := id.PluginIDFrom(pid)
 	if err != nil {
@@ -610,7 +616,7 @@ func (i *NLSLayer) getInfoboxBlockPlugin(ctx context.Context, pid string, eid st
 	}
 
 	extensionID := id.PluginExtensionID(eid)
-	_, extension, err := i.getPlugin(ctx, &pluginID, &extensionID)
+	_, extension, err := i.getPlugin(ctx, &pluginID, &extensionID, filter)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -670,7 +676,7 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 		return nil, nil, ErrInfoboxNotFound
 	}
 
-	_, _, extension, err := i.getInfoboxBlockPlugin(ctx, inp.PluginID.String(), inp.ExtensionID.String())
+	_, _, extension, err := i.getInfoboxBlockPlugin(ctx, inp.PluginID.String(), inp.ExtensionID.String(), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -1237,7 +1243,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			blocks := make([]*nlslayer.InfoboxBlock, 0)
 			for _, nlsInfoboxBlockJSON := range nlsLayerJSON.Infobox.Blocks {
 
-				pluginId, extensionId, extension, err := i.getInfoboxBlockPlugin(ctx, nlsInfoboxBlockJSON.PluginId, nlsInfoboxBlockJSON.ExtensionId)
+				pluginId, extensionId, extension, err := i.getInfoboxBlockPlugin(ctx, nlsInfoboxBlockJSON.PluginId, nlsInfoboxBlockJSON.ExtensionId, &filter)
 				if err != nil {
 					return nil, err
 				}
