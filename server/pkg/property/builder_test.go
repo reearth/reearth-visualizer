@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,22 +14,22 @@ func TestBuilder_New(t *testing.T) {
 
 func TestBuilder_ID(t *testing.T) {
 	pid := NewID()
-	p := New().ID(pid).Scene(NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
+	p := New().ID(pid).Scene(id.NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.Equal(t, pid, p.ID())
 }
 
 func TestBuilder_NewID(t *testing.T) {
-	p := New().NewID().Scene(NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
+	p := New().NewID().Scene(id.NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.False(t, p.ID().IsEmpty())
 }
 
 func TestBuilder_Schema(t *testing.T) {
-	p := New().NewID().Scene(NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
+	p := New().NewID().Scene(id.NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.Equal(t, MustSchemaID("xxx~1.1.1/aa"), p.Schema())
 }
 
 func TestBuilder_Scene(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	p := New().NewID().Scene(sid).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.Equal(t, sid, p.Scene())
 }
@@ -77,7 +78,7 @@ func TestBuilder_Items(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
 			res := New().NewID().
-				Scene(NewSceneID()).
+				Scene(id.NewSceneID()).
 				Schema(MustSchemaID("xxx~1.1.1/aa")).
 				Items(tt.Input).
 				MustBuild()
@@ -88,7 +89,7 @@ func TestBuilder_Items(t *testing.T) {
 
 func TestBuilder_Build(t *testing.T) {
 	pid := NewID()
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	scid := MustSchemaID("xxx~1.1.1/aa")
 	iid := NewItemID()
 	propertySchemaField1ID := FieldID("a")
@@ -96,7 +97,7 @@ func TestBuilder_Build(t *testing.T) {
 
 	type args struct {
 		ID     ID
-		Scene  SceneID
+		Scene  id.SceneID
 		Schema SchemaID
 		Items  []Item
 	}

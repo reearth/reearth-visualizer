@@ -552,7 +552,7 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project) (*scene.S
 }
 
 func Filter(s id.SceneID) repo.SceneFilter {
-	return repo.SceneFilter{Readable: scene.IDList{s}, Writable: scene.IDList{s}}
+	return repo.SceneFilter{Readable: id.SceneIDList{s}, Writable: id.SceneIDList{s}}
 }
 
 func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {

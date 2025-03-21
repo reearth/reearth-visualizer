@@ -3,6 +3,7 @@ package builder
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/stretchr/testify/assert"
@@ -10,7 +11,7 @@ import (
 
 func TestScene_FindProperty(t *testing.T) {
 	p1 := property.NewID()
-	sid := scene.NewID()
+	sid := id.NewSceneID()
 	scid := property.MustSchemaID("xx~1.0.0/aa")
 	pl := []*property.Property{
 		property.New().NewID().Scene(sid).Schema(scid).MustBuild(),
@@ -48,18 +49,18 @@ func TestScene_FindProperty(t *testing.T) {
 }
 
 func TestScene_ToString(t *testing.T) {
-	wid := scene.NewWidgetID()
+	wid := id.NewWidgetID()
 	widS := wid.String()
-	wid2 := scene.NewWidgetID()
+	wid2 := id.NewWidgetID()
 	wid2S := wid2.String()
-	wid3 := scene.NewWidgetID()
+	wid3 := id.NewWidgetID()
 	wid3S := wid3.String()
-	wids := []scene.WidgetID{wid, wid2, wid3}
+	wids := []id.WidgetID{wid, wid2, wid3}
 	widsString := []string{widS, wid2S, wid3S}
 
 	tests := []struct {
 		Name     string
-		Input    []scene.WidgetID
+		Input    []id.WidgetID
 		Expected []string
 	}{
 		{
@@ -85,7 +86,7 @@ func TestScene_ToString(t *testing.T) {
 }
 
 func TestBuildWidgetAlignSystem(t *testing.T) {
-	wid := scene.NewWidgetID()
+	wid := id.NewWidgetID()
 	was := scene.NewWidgetAlignSystem()
 	was.Area(scene.WidgetLocation{
 		Zone:    scene.WidgetZoneInner,

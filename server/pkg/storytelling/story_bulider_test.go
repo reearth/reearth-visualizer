@@ -3,6 +3,7 @@ package storytelling
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,7 +25,7 @@ func TestStoryBuilder(t *testing.T) {
 
 	storyID := NewStoryID()
 	propertyID := NewPropertyID()
-	sceneID := NewSceneID()
+	sceneID := id.NewSceneID()
 
 	b = b.ID(storyID).
 		Scene(sceneID).

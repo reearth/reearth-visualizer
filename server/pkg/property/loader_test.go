@@ -4,11 +4,12 @@ import (
 	"context"
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLoaderFrom(t *testing.T) {
-	scene := NewSceneID()
+	scene := id.NewSceneID()
 	ps := MustSchemaID("xxx~1.1.1/aa")
 	pid1 := NewID()
 	pid2 := NewID()
@@ -26,7 +27,7 @@ func TestLoaderFrom(t *testing.T) {
 }
 
 func TestLoaderFromMap(t *testing.T) {
-	scene := NewSceneID()
+	scene := id.NewSceneID()
 	ps := MustSchemaID("xxx~1.1.1/aa")
 	pid1 := NewID()
 	pid2 := NewID()

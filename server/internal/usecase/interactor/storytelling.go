@@ -15,7 +15,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/scene"
 	scene2 "github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
@@ -1090,7 +1089,7 @@ func (i *Storytelling) getPlugin(ctx context.Context, sId id.SceneID, pId *id.Pl
 		return nil, nil, nil
 	}
 
-	readableFilter := repo.SceneFilter{Readable: scene.IDList{sId}}
+	readableFilter := repo.SceneFilter{Readable: id.SceneIDList{sId}}
 	plg, err := i.pluginRepo.Filtered(readableFilter).FindByID(ctx, *pId)
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {

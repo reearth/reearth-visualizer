@@ -1,5 +1,7 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Schema struct {
 	id       SchemaID
 	version  int
@@ -23,7 +25,7 @@ func (p *Schema) IDRef() *SchemaID {
 	return p.id.Ref()
 }
 
-func (p *Schema) Scene() *SceneID {
+func (p *Schema) Scene() *id.SceneID {
 	return p.id.Plugin().Scene()
 }
 

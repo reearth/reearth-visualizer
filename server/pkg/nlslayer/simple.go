@@ -25,7 +25,7 @@ func (l *NLSLayerSimple) LayerType() LayerType {
 	return l.layerBase.LayerType()
 }
 
-func (l *NLSLayerSimple) Scene() SceneID {
+func (l *NLSLayerSimple) Scene() id.SceneID {
 	return l.layerBase.scene
 }
 
