@@ -39,12 +39,12 @@ func (r *sceneResolver) NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]g
 		return nil, err
 	}
 
-	nlslayer, err := usecases(ctx).NLSLayer.FetchByScene(ctx, sid, getOperator(ctx))
+	nlslayers, err := usecases(ctx).NLSLayer.FetchByScene(ctx, sid, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
-	res := gqlmodel.ToNLSLayers(nlslayer, nil)
+	res := gqlmodel.ToNLSLayers(nlslayers, nil)
 	return res, nil
 }
 

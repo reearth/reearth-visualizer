@@ -89,6 +89,11 @@ func (b *NLSLayerSimpleBuilder) Infobox(infobox *Infobox) *NLSLayerSimpleBuilder
 	return b
 }
 
+func (b *NLSLayerSimpleBuilder) PhotoOverlay(photoOverlay *PhotoOverlay) *NLSLayerSimpleBuilder {
+	b.l.photoOverlay = photoOverlay
+	return b
+}
+
 func (b *NLSLayerSimpleBuilder) Config(c *Config) *NLSLayerSimpleBuilder {
 	b.l.config = c
 	return b

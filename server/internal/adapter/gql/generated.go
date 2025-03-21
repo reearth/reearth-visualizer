@@ -52,6 +52,7 @@ type ResolverRoot interface {
 	NLSInfobox() NLSInfoboxResolver
 	NLSLayerGroup() NLSLayerGroupResolver
 	NLSLayerSimple() NLSLayerSimpleResolver
+	NLSPhotoOverlay() NLSPhotoOverlayResolver
 	Plugin() PluginResolver
 	PluginExtension() PluginExtensionResolver
 	Project() ProjectResolver
@@ -141,6 +142,10 @@ type ComplexityRoot struct {
 	}
 
 	CreateNLSInfoboxPayload struct {
+		Layer func(childComplexity int) int
+	}
+
+	CreateNLSPhotoOverlayPayload struct {
 		Layer func(childComplexity int) int
 	}
 
@@ -341,6 +346,7 @@ type ComplexityRoot struct {
 		ChangeCustomPropertyTitle func(childComplexity int, input gqlmodel.ChangeCustomPropertyTitleInput) int
 		CreateAsset               func(childComplexity int, input gqlmodel.CreateAssetInput) int
 		CreateNLSInfobox          func(childComplexity int, input gqlmodel.CreateNLSInfoboxInput) int
+		CreateNLSPhotoOverlay     func(childComplexity int, input gqlmodel.CreateNLSPhotoOverlayInput) int
 		CreateProject             func(childComplexity int, input gqlmodel.CreateProjectInput) int
 		CreateScene               func(childComplexity int, input gqlmodel.CreateSceneInput) int
 		CreateStory               func(childComplexity int, input gqlmodel.CreateStoryInput) int
@@ -372,6 +378,7 @@ type ComplexityRoot struct {
 		RemoveNLSInfobox          func(childComplexity int, input gqlmodel.RemoveNLSInfoboxInput) int
 		RemoveNLSInfoboxBlock     func(childComplexity int, input gqlmodel.RemoveNLSInfoboxBlockInput) int
 		RemoveNLSLayer            func(childComplexity int, input gqlmodel.RemoveNLSLayerInput) int
+		RemoveNLSPhotoOverlay     func(childComplexity int, input gqlmodel.RemoveNLSPhotoOverlayInput) int
 		RemovePageLayer           func(childComplexity int, input gqlmodel.PageLayerInput) int
 		RemovePropertyField       func(childComplexity int, input gqlmodel.RemovePropertyFieldInput) int
 		RemovePropertyItem        func(childComplexity int, input gqlmodel.RemovePropertyItemInput) int
@@ -414,33 +421,44 @@ type ComplexityRoot struct {
 	}
 
 	NLSLayerGroup struct {
-		Children    func(childComplexity int) int
-		ChildrenIds func(childComplexity int) int
-		Config      func(childComplexity int) int
-		ID          func(childComplexity int) int
-		Index       func(childComplexity int) int
-		Infobox     func(childComplexity int) int
-		IsSketch    func(childComplexity int) int
-		LayerType   func(childComplexity int) int
-		Scene       func(childComplexity int) int
-		SceneID     func(childComplexity int) int
-		Sketch      func(childComplexity int) int
-		Title       func(childComplexity int) int
-		Visible     func(childComplexity int) int
+		Children     func(childComplexity int) int
+		ChildrenIds  func(childComplexity int) int
+		Config       func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Index        func(childComplexity int) int
+		Infobox      func(childComplexity int) int
+		IsSketch     func(childComplexity int) int
+		LayerType    func(childComplexity int) int
+		PhotoOverlay func(childComplexity int) int
+		Scene        func(childComplexity int) int
+		SceneID      func(childComplexity int) int
+		Sketch       func(childComplexity int) int
+		Title        func(childComplexity int) int
+		Visible      func(childComplexity int) int
 	}
 
 	NLSLayerSimple struct {
-		Config    func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Index     func(childComplexity int) int
-		Infobox   func(childComplexity int) int
-		IsSketch  func(childComplexity int) int
-		LayerType func(childComplexity int) int
-		Scene     func(childComplexity int) int
-		SceneID   func(childComplexity int) int
-		Sketch    func(childComplexity int) int
-		Title     func(childComplexity int) int
-		Visible   func(childComplexity int) int
+		Config       func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Index        func(childComplexity int) int
+		Infobox      func(childComplexity int) int
+		IsSketch     func(childComplexity int) int
+		LayerType    func(childComplexity int) int
+		PhotoOverlay func(childComplexity int) int
+		Scene        func(childComplexity int) int
+		SceneID      func(childComplexity int) int
+		Sketch       func(childComplexity int) int
+		Title        func(childComplexity int) int
+		Visible      func(childComplexity int) int
+	}
+
+	NLSPhotoOverlay struct {
+		ID         func(childComplexity int) int
+		LayerID    func(childComplexity int) int
+		Property   func(childComplexity int) int
+		PropertyID func(childComplexity int) int
+		Scene      func(childComplexity int) int
+		SceneID    func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -719,6 +737,10 @@ type ComplexityRoot struct {
 
 	RemoveNLSLayerPayload struct {
 		LayerID func(childComplexity int) int
+	}
+
+	RemoveNLSPhotoOverlayPayload struct {
+		Layer func(childComplexity int) int
 	}
 
 	RemoveStoryBlockPayload struct {
@@ -1049,6 +1071,8 @@ type MutationResolver interface {
 	CreateNLSInfobox(ctx context.Context, input gqlmodel.CreateNLSInfoboxInput) (*gqlmodel.CreateNLSInfoboxPayload, error)
 	RemoveNLSInfobox(ctx context.Context, input gqlmodel.RemoveNLSInfoboxInput) (*gqlmodel.RemoveNLSInfoboxPayload, error)
 	AddNLSInfoboxBlock(ctx context.Context, input gqlmodel.AddNLSInfoboxBlockInput) (*gqlmodel.AddNLSInfoboxBlockPayload, error)
+	CreateNLSPhotoOverlay(ctx context.Context, input gqlmodel.CreateNLSPhotoOverlayInput) (*gqlmodel.CreateNLSPhotoOverlayPayload, error)
+	RemoveNLSPhotoOverlay(ctx context.Context, input gqlmodel.RemoveNLSPhotoOverlayInput) (*gqlmodel.RemoveNLSPhotoOverlayPayload, error)
 	MoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.MoveNLSInfoboxBlockInput) (*gqlmodel.MoveNLSInfoboxBlockPayload, error)
 	RemoveNLSInfoboxBlock(ctx context.Context, input gqlmodel.RemoveNLSInfoboxBlockInput) (*gqlmodel.RemoveNLSInfoboxBlockPayload, error)
 	DuplicateNLSLayer(ctx context.Context, input gqlmodel.DuplicateNLSLayerInput) (*gqlmodel.DuplicateNLSLayerPayload, error)
@@ -1117,6 +1141,10 @@ type NLSLayerGroupResolver interface {
 }
 type NLSLayerSimpleResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.NLSLayerSimple) (*gqlmodel.Scene, error)
+}
+type NLSPhotoOverlayResolver interface {
+	Property(ctx context.Context, obj *gqlmodel.NLSPhotoOverlay) (*gqlmodel.Property, error)
+	Scene(ctx context.Context, obj *gqlmodel.NLSPhotoOverlay) (*gqlmodel.Scene, error)
 }
 type PluginResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.Plugin) (*gqlmodel.Scene, error)
@@ -1471,6 +1499,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.CreateNLSInfoboxPayload.Layer(childComplexity), true
+
+	case "CreateNLSPhotoOverlayPayload.layer":
+		if e.complexity.CreateNLSPhotoOverlayPayload.Layer == nil {
+			break
+		}
+
+		return e.complexity.CreateNLSPhotoOverlayPayload.Layer(childComplexity), true
 
 	case "CreateScenePayload.scene":
 		if e.complexity.CreateScenePayload.Scene == nil {
@@ -2269,6 +2304,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateNLSInfobox(childComplexity, args["input"].(gqlmodel.CreateNLSInfoboxInput)), true
 
+	case "Mutation.createNLSPhotoOverlay":
+		if e.complexity.Mutation.CreateNLSPhotoOverlay == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createNLSPhotoOverlay_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateNLSPhotoOverlay(childComplexity, args["input"].(gqlmodel.CreateNLSPhotoOverlayInput)), true
+
 	case "Mutation.createProject":
 		if e.complexity.Mutation.CreateProject == nil {
 			break
@@ -2640,6 +2687,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.RemoveNLSLayer(childComplexity, args["input"].(gqlmodel.RemoveNLSLayerInput)), true
+
+	case "Mutation.removeNLSPhotoOverlay":
+		if e.complexity.Mutation.RemoveNLSPhotoOverlay == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_removeNLSPhotoOverlay_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RemoveNLSPhotoOverlay(childComplexity, args["input"].(gqlmodel.RemoveNLSPhotoOverlayInput)), true
 
 	case "Mutation.removePageLayer":
 		if e.complexity.Mutation.RemovePageLayer == nil {
@@ -3094,6 +3153,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerGroup.LayerType(childComplexity), true
 
+	case "NLSLayerGroup.photoOverlay":
+		if e.complexity.NLSLayerGroup.PhotoOverlay == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerGroup.PhotoOverlay(childComplexity), true
+
 	case "NLSLayerGroup.scene":
 		if e.complexity.NLSLayerGroup.Scene == nil {
 			break
@@ -3171,6 +3237,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NLSLayerSimple.LayerType(childComplexity), true
 
+	case "NLSLayerSimple.photoOverlay":
+		if e.complexity.NLSLayerSimple.PhotoOverlay == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerSimple.PhotoOverlay(childComplexity), true
+
 	case "NLSLayerSimple.scene":
 		if e.complexity.NLSLayerSimple.Scene == nil {
 			break
@@ -3205,6 +3278,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NLSLayerSimple.Visible(childComplexity), true
+
+	case "NLSPhotoOverlay.id":
+		if e.complexity.NLSPhotoOverlay.ID == nil {
+			break
+		}
+
+		return e.complexity.NLSPhotoOverlay.ID(childComplexity), true
+
+	case "NLSPhotoOverlay.layerId":
+		if e.complexity.NLSPhotoOverlay.LayerID == nil {
+			break
+		}
+
+		return e.complexity.NLSPhotoOverlay.LayerID(childComplexity), true
+
+	case "NLSPhotoOverlay.property":
+		if e.complexity.NLSPhotoOverlay.Property == nil {
+			break
+		}
+
+		return e.complexity.NLSPhotoOverlay.Property(childComplexity), true
+
+	case "NLSPhotoOverlay.propertyId":
+		if e.complexity.NLSPhotoOverlay.PropertyID == nil {
+			break
+		}
+
+		return e.complexity.NLSPhotoOverlay.PropertyID(childComplexity), true
+
+	case "NLSPhotoOverlay.scene":
+		if e.complexity.NLSPhotoOverlay.Scene == nil {
+			break
+		}
+
+		return e.complexity.NLSPhotoOverlay.Scene(childComplexity), true
+
+	case "NLSPhotoOverlay.sceneId":
+		if e.complexity.NLSPhotoOverlay.SceneID == nil {
+			break
+		}
+
+		return e.complexity.NLSPhotoOverlay.SceneID(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -4642,6 +4757,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RemoveNLSLayerPayload.LayerID(childComplexity), true
 
+	case "RemoveNLSPhotoOverlayPayload.layer":
+		if e.complexity.RemoveNLSPhotoOverlayPayload.Layer == nil {
+			break
+		}
+
+		return e.complexity.RemoveNLSPhotoOverlayPayload.Layer(childComplexity), true
+
 	case "RemoveStoryBlockPayload.blockId":
 		if e.complexity.RemoveStoryBlockPayload.BlockID == nil {
 			break
@@ -5805,6 +5927,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputChangeCustomPropertyTitleInput,
 		ec.unmarshalInputCreateAssetInput,
 		ec.unmarshalInputCreateNLSInfoboxInput,
+		ec.unmarshalInputCreateNLSPhotoOverlayInput,
 		ec.unmarshalInputCreateProjectInput,
 		ec.unmarshalInputCreateSceneInput,
 		ec.unmarshalInputCreateStoryBlockInput,
@@ -5840,6 +5963,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputRemoveNLSInfoboxBlockInput,
 		ec.unmarshalInputRemoveNLSInfoboxInput,
 		ec.unmarshalInputRemoveNLSLayerInput,
+		ec.unmarshalInputRemoveNLSPhotoOverlayInput,
 		ec.unmarshalInputRemovePropertyFieldInput,
 		ec.unmarshalInputRemovePropertyItemInput,
 		ec.unmarshalInputRemoveStoryBlockInput,
@@ -6258,6 +6382,7 @@ interface NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  photoOverlay: NLSPhotoOverlay
   isSketch: Boolean!
   sketch: SketchInfo
 }
@@ -6271,6 +6396,7 @@ type NLSLayerSimple implements NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  photoOverlay: NLSPhotoOverlay
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
@@ -6287,6 +6413,7 @@ type NLSLayerGroup implements NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  photoOverlay: NLSPhotoOverlay
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
@@ -6298,6 +6425,15 @@ type NLSInfobox {
   layerId: ID!
   propertyId: ID!
   blocks: [InfoboxBlock!]!
+  property: Property
+  scene: Scene
+}
+
+type NLSPhotoOverlay {
+  id: ID!
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
   property: Property
   scene: Scene
 }
@@ -6353,6 +6489,14 @@ input CreateNLSInfoboxInput {
 }
 
 input RemoveNLSInfoboxInput {
+  layerId: ID!
+}
+
+input CreateNLSPhotoOverlayInput {
+  layerId: ID!
+}
+
+input RemoveNLSPhotoOverlayInput {
   layerId: ID!
 }
 
@@ -6422,6 +6566,14 @@ type RemoveNLSInfoboxPayload {
   layer: NLSLayer!
 }
 
+type CreateNLSPhotoOverlayPayload {
+  layer: NLSLayer!
+}
+
+type RemoveNLSPhotoOverlayPayload {
+  layer: NLSLayer!
+}
+
 type AddNLSInfoboxBlockPayload {
   infoboxBlock: InfoboxBlock!
   layer: NLSLayer!
@@ -6450,6 +6602,12 @@ extend type Mutation {
   createNLSInfobox(input: CreateNLSInfoboxInput!): CreateNLSInfoboxPayload
   removeNLSInfobox(input: RemoveNLSInfoboxInput!): RemoveNLSInfoboxPayload
   addNLSInfoboxBlock(input: AddNLSInfoboxBlockInput!): AddNLSInfoboxBlockPayload
+  createNLSPhotoOverlay(
+    input: CreateNLSPhotoOverlayInput!
+  ): CreateNLSPhotoOverlayPayload
+  removeNLSPhotoOverlay(
+    input: RemoveNLSPhotoOverlayInput!
+  ): RemoveNLSPhotoOverlayPayload
   moveNLSInfoboxBlock(
     input: MoveNLSInfoboxBlockInput!
   ): MoveNLSInfoboxBlockPayload
@@ -6493,6 +6651,7 @@ enum PluginExtensionType {
   BLOCK
   VISUALIZER
   INFOBOX
+  PHOTOOVERLAY
   Story
   StoryPage
   StoryBlock
@@ -8048,6 +8207,34 @@ func (ec *executionContext) field_Mutation_createNLSInfobox_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_createNLSPhotoOverlay_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_createNLSPhotoOverlay_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createNLSPhotoOverlay_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.CreateNLSPhotoOverlayInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal gqlmodel.CreateNLSPhotoOverlayInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateNLSPhotoOverlayInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateNLSPhotoOverlayInput(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.CreateNLSPhotoOverlayInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_createProject_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -8913,6 +9100,34 @@ func (ec *executionContext) field_Mutation_removeNLSLayer_argsInput(
 	}
 
 	var zeroVal gqlmodel.RemoveNLSLayerInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_removeNLSPhotoOverlay_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_removeNLSPhotoOverlay_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_removeNLSPhotoOverlay_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.RemoveNLSPhotoOverlayInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal gqlmodel.RemoveNLSPhotoOverlayInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNRemoveNLSPhotoOverlayInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSPhotoOverlayInput(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.RemoveNLSPhotoOverlayInput
 	return zeroVal, nil
 }
 
@@ -11222,6 +11437,8 @@ func (ec *executionContext) fieldContext_AddNLSLayerSimplePayload_layers(_ conte
 				return ec.fieldContext_NLSLayerSimple_visible(ctx, field)
 			case "infobox":
 				return ec.fieldContext_NLSLayerSimple_infobox(ctx, field)
+			case "photoOverlay":
+				return ec.fieldContext_NLSLayerSimple_photoOverlay(ctx, field)
 			case "scene":
 				return ec.fieldContext_NLSLayerSimple_scene(ctx, field)
 			case "isSketch":
@@ -12612,6 +12829,50 @@ func (ec *executionContext) _CreateNLSInfoboxPayload_layer(ctx context.Context, 
 func (ec *executionContext) fieldContext_CreateNLSInfoboxPayload_layer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CreateNLSInfoboxPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateNLSPhotoOverlayPayload_layer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CreateNLSPhotoOverlayPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateNLSPhotoOverlayPayload_layer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Layer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.NLSLayer)
+	fc.Result = res
+	return ec.marshalNNLSLayer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNLSLayer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateNLSPhotoOverlayPayload_layer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateNLSPhotoOverlayPayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -18296,6 +18557,118 @@ func (ec *executionContext) fieldContext_Mutation_addNLSInfoboxBlock(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createNLSPhotoOverlay(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createNLSPhotoOverlay(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateNLSPhotoOverlay(rctx, fc.Args["input"].(gqlmodel.CreateNLSPhotoOverlayInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.CreateNLSPhotoOverlayPayload)
+	fc.Result = res
+	return ec.marshalOCreateNLSPhotoOverlayPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateNLSPhotoOverlayPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createNLSPhotoOverlay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "layer":
+				return ec.fieldContext_CreateNLSPhotoOverlayPayload_layer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type CreateNLSPhotoOverlayPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createNLSPhotoOverlay_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_removeNLSPhotoOverlay(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeNLSPhotoOverlay(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RemoveNLSPhotoOverlay(rctx, fc.Args["input"].(gqlmodel.RemoveNLSPhotoOverlayInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.RemoveNLSPhotoOverlayPayload)
+	fc.Result = res
+	return ec.marshalORemoveNLSPhotoOverlayPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSPhotoOverlayPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_removeNLSPhotoOverlay(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "layer":
+				return ec.fieldContext_RemoveNLSPhotoOverlayPayload_layer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type RemoveNLSPhotoOverlayPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_removeNLSPhotoOverlay_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_moveNLSInfoboxBlock(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_moveNLSInfoboxBlock(ctx, field)
 	if err != nil {
@@ -22492,6 +22865,61 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_infobox(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _NLSLayerGroup_photoOverlay(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerGroup_photoOverlay(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhotoOverlay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.NLSPhotoOverlay)
+	fc.Result = res
+	return ec.marshalONLSPhotoOverlay2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNLSPhotoOverlay(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerGroup_photoOverlay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_NLSPhotoOverlay_id(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_NLSPhotoOverlay_sceneId(ctx, field)
+			case "layerId":
+				return ec.fieldContext_NLSPhotoOverlay_layerId(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_NLSPhotoOverlay_propertyId(ctx, field)
+			case "property":
+				return ec.fieldContext_NLSPhotoOverlay_property(ctx, field)
+			case "scene":
+				return ec.fieldContext_NLSPhotoOverlay_scene(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type NLSPhotoOverlay", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NLSLayerGroup_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NLSLayerGroup_scene(ctx, field)
 	if err != nil {
@@ -23015,6 +23443,61 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_infobox(_ context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _NLSLayerSimple_photoOverlay(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSLayerSimple_photoOverlay(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhotoOverlay, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.NLSPhotoOverlay)
+	fc.Result = res
+	return ec.marshalONLSPhotoOverlay2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNLSPhotoOverlay(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerSimple_photoOverlay(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerSimple",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_NLSPhotoOverlay_id(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_NLSPhotoOverlay_sceneId(ctx, field)
+			case "layerId":
+				return ec.fieldContext_NLSPhotoOverlay_layerId(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_NLSPhotoOverlay_propertyId(ctx, field)
+			case "property":
+				return ec.fieldContext_NLSPhotoOverlay_property(ctx, field)
+			case "scene":
+				return ec.fieldContext_NLSPhotoOverlay_scene(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type NLSPhotoOverlay", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NLSLayerSimple_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_NLSLayerSimple_scene(ctx, field)
 	if err != nil {
@@ -23174,6 +23657,308 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_sketch(_ context.Context
 				return ec.fieldContext_SketchInfo_featureCollection(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SketchInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSPhotoOverlay_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSPhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSPhotoOverlay_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSPhotoOverlay_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSPhotoOverlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSPhotoOverlay_sceneId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSPhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSPhotoOverlay_sceneId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SceneID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSPhotoOverlay_sceneId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSPhotoOverlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSPhotoOverlay_layerId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSPhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSPhotoOverlay_layerId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LayerID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSPhotoOverlay_layerId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSPhotoOverlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSPhotoOverlay_propertyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSPhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSPhotoOverlay_propertyId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PropertyID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSPhotoOverlay_propertyId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSPhotoOverlay",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSPhotoOverlay_property(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSPhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSPhotoOverlay_property(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.NLSPhotoOverlay().Property(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Property)
+	fc.Result = res
+	return ec.marshalOProperty2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProperty(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSPhotoOverlay_property(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSPhotoOverlay",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Property_id(ctx, field)
+			case "schemaId":
+				return ec.fieldContext_Property_schemaId(ctx, field)
+			case "items":
+				return ec.fieldContext_Property_items(ctx, field)
+			case "schema":
+				return ec.fieldContext_Property_schema(ctx, field)
+			case "merged":
+				return ec.fieldContext_Property_merged(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Property", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSPhotoOverlay_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSPhotoOverlay) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NLSPhotoOverlay_scene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.NLSPhotoOverlay().Scene(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Scene)
+	fc.Result = res
+	return ec.marshalOScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSPhotoOverlay",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Scene_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Scene_projectId(ctx, field)
+			case "teamId":
+				return ec.fieldContext_Scene_teamId(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_Scene_propertyId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Scene_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Scene_updatedAt(ctx, field)
+			case "widgets":
+				return ec.fieldContext_Scene_widgets(ctx, field)
+			case "plugins":
+				return ec.fieldContext_Scene_plugins(ctx, field)
+			case "widgetAlignSystem":
+				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "project":
+				return ec.fieldContext_Scene_project(ctx, field)
+			case "team":
+				return ec.fieldContext_Scene_team(ctx, field)
+			case "property":
+				return ec.fieldContext_Scene_property(ctx, field)
+			case "newLayers":
+				return ec.fieldContext_Scene_newLayers(ctx, field)
+			case "stories":
+				return ec.fieldContext_Scene_stories(ctx, field)
+			case "styles":
+				return ec.fieldContext_Scene_styles(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
 	}
 	return fc, nil
@@ -32689,6 +33474,50 @@ func (ec *executionContext) fieldContext_RemoveNLSLayerPayload_layerId(_ context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _RemoveNLSPhotoOverlayPayload_layer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveNLSPhotoOverlayPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RemoveNLSPhotoOverlayPayload_layer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Layer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.NLSLayer)
+	fc.Result = res
+	return ec.marshalNNLSLayer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNLSLayer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_RemoveNLSPhotoOverlayPayload_layer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "RemoveNLSPhotoOverlayPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("FieldContext.Child cannot be called on type INTERFACE")
 		},
 	}
 	return fc, nil
@@ -43418,6 +44247,33 @@ func (ec *executionContext) unmarshalInputCreateNLSInfoboxInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputCreateNLSPhotoOverlayInput(ctx context.Context, obj any) (gqlmodel.CreateNLSPhotoOverlayInput, error) {
+	var it gqlmodel.CreateNLSPhotoOverlayInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"layerId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context, obj any) (gqlmodel.CreateProjectInput, error) {
 	var it gqlmodel.CreateProjectInput
 	asMap := map[string]any{}
@@ -44723,6 +45579,33 @@ func (ec *executionContext) unmarshalInputRemoveNLSInfoboxInput(ctx context.Cont
 
 func (ec *executionContext) unmarshalInputRemoveNLSLayerInput(ctx context.Context, obj any) (gqlmodel.RemoveNLSLayerInput, error) {
 	var it gqlmodel.RemoveNLSLayerInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"layerId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "layerId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("layerId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.LayerID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputRemoveNLSPhotoOverlayInput(ctx context.Context, obj any) (gqlmodel.RemoveNLSPhotoOverlayInput, error) {
+	var it gqlmodel.RemoveNLSPhotoOverlayInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -47068,6 +47951,45 @@ func (ec *executionContext) _CreateNLSInfoboxPayload(ctx context.Context, sel as
 	return out
 }
 
+var createNLSPhotoOverlayPayloadImplementors = []string{"CreateNLSPhotoOverlayPayload"}
+
+func (ec *executionContext) _CreateNLSPhotoOverlayPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CreateNLSPhotoOverlayPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createNLSPhotoOverlayPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("CreateNLSPhotoOverlayPayload")
+		case "layer":
+			out.Values[i] = ec._CreateNLSPhotoOverlayPayload_layer(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var createScenePayloadImplementors = []string{"CreateScenePayload"}
 
 func (ec *executionContext) _CreateScenePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CreateScenePayload) graphql.Marshaler {
@@ -49076,6 +49998,14 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_addNLSInfoboxBlock(ctx, field)
 			})
+		case "createNLSPhotoOverlay":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createNLSPhotoOverlay(ctx, field)
+			})
+		case "removeNLSPhotoOverlay":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_removeNLSPhotoOverlay(ctx, field)
+			})
 		case "moveNLSInfoboxBlock":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_moveNLSInfoboxBlock(ctx, field)
@@ -49565,6 +50495,8 @@ func (ec *executionContext) _NLSLayerGroup(ctx context.Context, sel ast.Selectio
 			}
 		case "infobox":
 			out.Values[i] = ec._NLSLayerGroup_infobox(ctx, field, obj)
+		case "photoOverlay":
+			out.Values[i] = ec._NLSLayerGroup_photoOverlay(ctx, field, obj)
 		case "scene":
 			field := field
 
@@ -49670,6 +50602,8 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 			}
 		case "infobox":
 			out.Values[i] = ec._NLSLayerSimple_infobox(ctx, field, obj)
+		case "photoOverlay":
+			out.Values[i] = ec._NLSLayerSimple_photoOverlay(ctx, field, obj)
 		case "scene":
 			field := field
 
@@ -49710,6 +50644,126 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 			}
 		case "sketch":
 			out.Values[i] = ec._NLSLayerSimple_sketch(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var nLSPhotoOverlayImplementors = []string{"NLSPhotoOverlay"}
+
+func (ec *executionContext) _NLSPhotoOverlay(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.NLSPhotoOverlay) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, nLSPhotoOverlayImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("NLSPhotoOverlay")
+		case "id":
+			out.Values[i] = ec._NLSPhotoOverlay_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "sceneId":
+			out.Values[i] = ec._NLSPhotoOverlay_sceneId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "layerId":
+			out.Values[i] = ec._NLSPhotoOverlay_layerId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "propertyId":
+			out.Values[i] = ec._NLSPhotoOverlay_propertyId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "property":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._NLSPhotoOverlay_property(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "scene":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._NLSPhotoOverlay_scene(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -52598,6 +53652,45 @@ func (ec *executionContext) _RemoveNLSLayerPayload(ctx context.Context, sel ast.
 			out.Values[i] = graphql.MarshalString("RemoveNLSLayerPayload")
 		case "layerId":
 			out.Values[i] = ec._RemoveNLSLayerPayload_layerId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var removeNLSPhotoOverlayPayloadImplementors = []string{"RemoveNLSPhotoOverlayPayload"}
+
+func (ec *executionContext) _RemoveNLSPhotoOverlayPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.RemoveNLSPhotoOverlayPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, removeNLSPhotoOverlayPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("RemoveNLSPhotoOverlayPayload")
+		case "layer":
+			out.Values[i] = ec._RemoveNLSPhotoOverlayPayload_layer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -55863,6 +56956,11 @@ func (ec *executionContext) unmarshalNCreateNLSInfoboxInput2githubᚗcomᚋreear
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreateNLSPhotoOverlayInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateNLSPhotoOverlayInput(ctx context.Context, v any) (gqlmodel.CreateNLSPhotoOverlayInput, error) {
+	res, err := ec.unmarshalInputCreateNLSPhotoOverlayInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreateProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateProjectInput(ctx context.Context, v any) (gqlmodel.CreateProjectInput, error) {
 	res, err := ec.unmarshalInputCreateProjectInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -57527,6 +58625,11 @@ func (ec *executionContext) marshalNRemoveNLSLayerPayload2ᚖgithubᚗcomᚋreea
 	return ec._RemoveNLSLayerPayload(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNRemoveNLSPhotoOverlayInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSPhotoOverlayInput(ctx context.Context, v any) (gqlmodel.RemoveNLSPhotoOverlayInput, error) {
+	res, err := ec.unmarshalInputRemoveNLSPhotoOverlayInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNRemovePropertyFieldInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemovePropertyFieldInput(ctx context.Context, v any) (gqlmodel.RemovePropertyFieldInput, error) {
 	res, err := ec.unmarshalInputRemovePropertyFieldInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -58747,6 +59850,13 @@ func (ec *executionContext) marshalOCreateNLSInfoboxPayload2ᚖgithubᚗcomᚋre
 	return ec._CreateNLSInfoboxPayload(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOCreateNLSPhotoOverlayPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateNLSPhotoOverlayPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CreateNLSPhotoOverlayPayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CreateNLSPhotoOverlayPayload(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalOCreateScenePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateScenePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CreateScenePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -59019,6 +60129,13 @@ func (ec *executionContext) marshalONLSLayer2githubᚗcomᚋreearthᚋreearthᚋ
 	return ec._NLSLayer(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalONLSPhotoOverlay2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNLSPhotoOverlay(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.NLSPhotoOverlay) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._NLSPhotoOverlay(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalONode2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐNode(ctx context.Context, sel ast.SelectionSet, v gqlmodel.Node) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -59252,6 +60369,13 @@ func (ec *executionContext) marshalORemoveNLSInfoboxPayload2ᚖgithubᚗcomᚋre
 		return graphql.Null
 	}
 	return ec._RemoveNLSInfoboxPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalORemoveNLSPhotoOverlayPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSPhotoOverlayPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveNLSPhotoOverlayPayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._RemoveNLSPhotoOverlayPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalORemoveStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveStylePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveStylePayload) graphql.Marshaler {

@@ -53,6 +53,7 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 
 	if useMongo {
 		db := mongotest.Connect(t)(t)
+		fmt.Println("db.Name():", db.Name())
 		accountRepos := lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, false, nil))
 		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
 	} else {
@@ -189,6 +190,7 @@ type GraphQLRequest struct {
 }
 
 func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {
+	// RequestDump(requestBody)
 	return e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
@@ -273,6 +275,12 @@ func aligningJSON(t *testing.T, str string) string {
 	strBytes, err := json.Marshal(obj)
 	assert.Nil(t, err)
 	return string(strBytes)
+}
+
+func RequestDump(requestBody GraphQLRequest) {
+	if jsonData, err := json.MarshalIndent(requestBody, "", "  "); err == nil {
+		fmt.Println(string(jsonData))
+	}
 }
 
 func ValueDump(val *httpexpect.Value) {

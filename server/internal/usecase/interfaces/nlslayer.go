@@ -80,6 +80,8 @@ type NLSLayer interface {
 	Update(context.Context, UpdateNLSLayerInput, *usecase.Operator) (nlslayer.NLSLayer, error)
 	CreateNLSInfobox(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
 	RemoveNLSInfobox(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
+	CreateNLSPhotoOverlay(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
+	RemoveNLSPhotoOverlay(context.Context, id.NLSLayerID, *usecase.Operator) (nlslayer.NLSLayer, error)
 	AddNLSInfoboxBlock(context.Context, AddNLSInfoboxBlockParam, *usecase.Operator) (*nlslayer.InfoboxBlock, nlslayer.NLSLayer, error)
 	MoveNLSInfoboxBlock(context.Context, MoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, int, error)
 	RemoveNLSInfoboxBlock(context.Context, RemoveNLSInfoboxBlockParam, *usecase.Operator) (id.InfoboxBlockID, nlslayer.NLSLayer, error)

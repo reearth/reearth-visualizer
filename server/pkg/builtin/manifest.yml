@@ -2838,3 +2838,25 @@ extensions:
               title: Content
               placeholder: ${your property key}
               ui: property_selector
+
+  - id: photo-overlay
+    name: Photo overlay
+    type: photoOverlay
+    description: Photo overlay
+    schema:
+      groups:
+        - id: default
+          title: Photo overlay
+          fields:
+            - id: enabled
+              type: bool
+              title: Enabled PhotoOverlay
+              # defaultValue: false
+              # description: xxxxxx
+            - id: cameraDuration
+              type: number
+              title: PhotoOverlay Camera Duration
+              # suffix: s
+              # min: 0
+              # defaultValue: 2
+              # description: xxxxxx

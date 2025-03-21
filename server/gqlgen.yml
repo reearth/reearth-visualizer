@@ -323,6 +323,12 @@ models:
         resolver: true
       scene:
         resolver: true
+  NLSPhotoOverlay:
+    fields:
+      property:
+        resolver: true
+      scene:
+        resolver: true
   InfoboxBlock:
     fields:
       property:

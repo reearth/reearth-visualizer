@@ -35,6 +35,8 @@ var (
 	ErrExtensionNotFound                    error = errors.New("extension not found")
 	ErrInfoboxNotFound                      error = errors.New("infobox not found")
 	ErrInfoboxAlreadyExists                 error = errors.New("infobox already exists")
+	ErrPhotoOverlayNotFound                 error = errors.New("photoOverlay not found")
+	ErrPhotoOverlayAlreadyExists            error = errors.New("photoOverlay already exists")
 	ErrCannotAddLayerToLinkedLayerGroup     error = errors.New("cannot add layer to linked layer group")
 	ErrCannotRemoveLayerToLinkedLayerGroup  error = errors.New("cannot remove layer to linked layer group")
 	ErrLinkedLayerItemCannotBeMoved         error = errors.New("linked layer item cannot be moved")
@@ -412,6 +414,63 @@ func (i *NLSLayer) CreateNLSInfobox(ctx context.Context, lid id.NLSLayerID, oper
 	return l, nil
 }
 
+func (i *NLSLayer) CreateNLSPhotoOverlay(ctx context.Context, lid id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	l, err := i.nlslayerRepo.FindByID(ctx, lid)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(l.Scene(), operator); err != nil {
+		return nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, l.Scene()); err != nil {
+		return nil, err
+	}
+
+	photooverlay := l.PhotoOverlay()
+	if photooverlay != nil {
+		return nil, ErrPhotoOverlayAlreadyExists
+	}
+
+	schema := builtin.GetPropertySchema(builtin.PropertySchemaIDPhotoOverlay)
+	property, err := property.New().NewID().Schema(schema.ID()).Scene(l.Scene()).Build()
+	if err != nil {
+		return nil, err
+	}
+	photooverlay = nlslayer.NewPhotoOverlay(property.ID())
+	l.SetPhotoOverlay(photooverlay)
+
+	err = i.propertyRepo.Save(ctx, property)
+	if err != nil {
+		return nil, err
+	}
+	err = i.nlslayerRepo.Save(ctx, l)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, l.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return l, nil
+}
+
 func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
 
 	tx, err := i.transaction.Begin(ctx)
@@ -465,12 +524,71 @@ func (i *NLSLayer) RemoveNLSInfobox(ctx context.Context, layerID id.NLSLayerID, 
 	return layer, nil
 }
 
-func (i *NLSLayer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginExtensionID) (*plugin.Plugin, *plugin.Extension, error) {
+func (i *NLSLayer) RemoveNLSPhotoOverlay(ctx context.Context, layerID id.NLSLayerID, operator *usecase.Operator) (_ nlslayer.NLSLayer, err error) {
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	layer, err := i.nlslayerRepo.FindByID(ctx, layerID)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteScene(layer.Scene(), operator); err != nil {
+		return nil, err
+	}
+
+	// check scene lock
+	if err := i.CheckSceneLock(ctx, layer.Scene()); err != nil {
+		return nil, err
+	}
+
+	photooverlay := layer.PhotoOverlay()
+	if photooverlay == nil {
+		return nil, ErrPhotoOverlayNotFound
+	}
+
+	layer.SetPhotoOverlay(nil)
+
+	err = i.propertyRepo.Remove(ctx, photooverlay.Property())
+	if err != nil {
+		return nil, err
+	}
+
+	err = i.nlslayerRepo.Save(ctx, layer)
+	if err != nil {
+		return nil, err
+	}
+
+	err = updateProjectUpdatedAtByScene(ctx, layer.Scene(), i.projectRepo, i.sceneRepo)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+	return layer, nil
+}
+
+func (i *NLSLayer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginExtensionID, filter *repo.SceneFilter) (*plugin.Plugin, *plugin.Extension, error) {
 	if p == nil {
 		return nil, nil, nil
 	}
+	var plugin *plugin.Plugin
+	var err error
 
-	plugin, err := i.pluginRepo.FindByID(ctx, *p)
+	if filter == nil {
+		plugin, err = i.pluginRepo.FindByID(ctx, *p)
+	} else {
+		plugin, err = i.pluginRepo.Filtered(*filter).FindByID(ctx, *p)
+	}
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
 			return nil, nil, ErrPluginNotFound
@@ -490,7 +608,7 @@ func (i *NLSLayer) getPlugin(ctx context.Context, p *id.PluginID, e *id.PluginEx
 	return plugin, extension, nil
 }
 
-func (i *NLSLayer) getInfoboxBlockPlugin(ctx context.Context, pid string, eid string) (*id.PluginID, *id.PluginExtensionID, *plugin.Extension, error) {
+func (i *NLSLayer) getInfoboxBlockPlugin(ctx context.Context, pid string, eid string, filter *repo.SceneFilter) (*id.PluginID, *id.PluginExtensionID, *plugin.Extension, error) {
 
 	pluginID, err := id.PluginIDFrom(pid)
 	if err != nil {
@@ -498,7 +616,7 @@ func (i *NLSLayer) getInfoboxBlockPlugin(ctx context.Context, pid string, eid st
 	}
 
 	extensionID := id.PluginExtensionID(eid)
-	_, extension, err := i.getPlugin(ctx, &pluginID, &extensionID)
+	_, extension, err := i.getPlugin(ctx, &pluginID, &extensionID, filter)
 	if err != nil {
 		return nil, nil, nil, err
 	}
@@ -558,7 +676,7 @@ func (i *NLSLayer) AddNLSInfoboxBlock(ctx context.Context, inp interfaces.AddNLS
 		return nil, nil, ErrInfoboxNotFound
 	}
 
-	_, _, extension, err := i.getInfoboxBlockPlugin(ctx, inp.PluginID.String(), inp.ExtensionID.String())
+	_, _, extension, err := i.getInfoboxBlockPlugin(ctx, inp.PluginID.String(), inp.ExtensionID.String(), nil)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -1125,7 +1243,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			blocks := make([]*nlslayer.InfoboxBlock, 0)
 			for _, nlsInfoboxBlockJSON := range nlsLayerJSON.Infobox.Blocks {
 
-				pluginId, extensionId, extension, err := i.getInfoboxBlockPlugin(ctx, nlsInfoboxBlockJSON.PluginId, nlsInfoboxBlockJSON.ExtensionId)
+				pluginId, extensionId, extension, err := i.getInfoboxBlockPlugin(ctx, nlsInfoboxBlockJSON.PluginId, nlsInfoboxBlockJSON.ExtensionId, &filter)
 				if err != nil {
 					return nil, err
 				}
@@ -1153,6 +1271,23 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			}
 
 			nlBuilder = nlBuilder.Infobox(nlslayer.NewInfobox(blocks, propI.ID()))
+		}
+
+		// PhotoOverlay --------
+		if nlsLayerJSON.PhotoOverlay != nil {
+
+			nlsPhotoOverlayJSON := nlsLayerJSON.PhotoOverlay
+			betaPhotoOverlaySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDPhotoOverlay)
+			propI, err := i.addNewProperty(ctx, betaPhotoOverlaySchema.ID(), sceneID, &filter)
+			if err != nil {
+				return nil, err
+			}
+			builder.PropertyUpdate(ctx, propI, i.propertyRepo, i.propertySchemaRepo, nlsPhotoOverlayJSON.Property)
+
+			photooverlay := nlslayer.NewPhotoOverlay(propI.ID())
+			nlBuilder.PhotoOverlay(photooverlay)
+
+			nlBuilder = nlBuilder.PhotoOverlay(nlslayer.NewPhotoOverlay(propI.ID()))
 		}
 
 		// SketchInfo --------

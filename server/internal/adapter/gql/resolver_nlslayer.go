@@ -14,6 +14,10 @@ func (r *Resolver) NLSInfobox() NLSInfoboxResolver {
 	return &nlsInfoboxResolver{r}
 }
 
+func (r *Resolver) NLSPhotoOverlay() NLSPhotoOverlayResolver {
+	return &nlsPhotoOverlayResolver{r}
+}
+
 func (r *Resolver) InfoboxBlock() InfoboxBlockResolver {
 	return &infoboxBlockResolver{r}
 }
@@ -41,6 +45,16 @@ func (r *nlsInfoboxResolver) Scene(ctx context.Context, obj *gqlmodel.NLSInfobox
 }
 
 func (r *nlsInfoboxResolver) Property(ctx context.Context, obj *gqlmodel.NLSInfobox) (*gqlmodel.Property, error) {
+	return dataloaders(ctx).Property.Load(obj.PropertyID)
+}
+
+type nlsPhotoOverlayResolver struct{ *Resolver }
+
+func (r *nlsPhotoOverlayResolver) Scene(ctx context.Context, obj *gqlmodel.NLSPhotoOverlay) (*gqlmodel.Scene, error) {
+	return dataloaders(ctx).Scene.Load(obj.SceneID)
+}
+
+func (r *nlsPhotoOverlayResolver) Property(ctx context.Context, obj *gqlmodel.NLSPhotoOverlay) (*gqlmodel.Property, error) {
 	return dataloaders(ctx).Property.Load(obj.PropertyID)
 }
 

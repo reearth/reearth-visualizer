@@ -259,7 +259,8 @@
             "story",
             "storyPage",
             "storyBlock",
-            "infoboxBlock"
+            "infoboxBlock",
+            "photoOverlay"
           ]
         },
         "singleOnly": {

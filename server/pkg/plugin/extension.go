@@ -23,6 +23,8 @@ var (
 	ExtensionTypeStory      ExtensionType = "story"
 	ExtensionTypeStoryPage  ExtensionType = "storyPage"
 	ExtensionTypeStoryBlock ExtensionType = "storyBlock"
+
+	ExtensionTypePhotoOverlay ExtensionType = "photoOverlay"
 )
 
 type Extension struct {
