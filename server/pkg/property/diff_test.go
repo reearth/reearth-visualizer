@@ -235,7 +235,6 @@ func TestSchemaDiffFromProperty(t *testing.T) {
 }
 
 func TestSchemaDiff_Migrate(t *testing.T) {
-	itemID := id.NewPropertyItemID()
 	newSchemaID := id.MustPropertySchemaID("x~1.0.0/ax")
 
 	tests := []struct {
@@ -317,13 +316,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 						fields: []*Field{}, // deleted
 					},
 					testGroupList1,
-					&Group{
-						itemBase: itemBase{
-							ID:          itemID,
-							SchemaGroup: "x",
-						},
-						fields: []*Field{testField1},
-					},
 				},
 			},
 		},
@@ -356,15 +348,6 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 						fields: []*Field{}, // deleted
 					},
 					testGroupList1,
-					&Group{
-						itemBase: itemBase{
-							ID:          itemID,
-							SchemaGroup: "x",
-						},
-						fields: []*Field{
-							{field: testField1.Field(), v: NewOptionalValue(ValueTypeNumber, nil)},
-						},
-					},
 				},
 			},
 		},
@@ -507,6 +490,29 @@ func TestSchemaDiff_Migrate(t *testing.T) {
 			}
 			// defer mockNewItemID(itemID)()
 			assert.Equal(t, tt.want, tt.target.Migrate(tt.args))
+
+			if tt.name == "moved" {
+				tt.wantProperty.AddItem(&Group{
+					itemBase: itemBase{
+						ID:          tt.args.items[2].ID(),
+						SchemaGroup: "x",
+					},
+					fields: []*Field{testField1},
+				})
+			}
+
+			if tt.name == "moved and type changed" {
+				tt.wantProperty.AddItem(&Group{
+					itemBase: itemBase{
+						ID:          tt.args.items[2].ID(),
+						SchemaGroup: "x",
+					},
+					fields: []*Field{
+						{field: testField1.Field(), v: NewOptionalValue(ValueTypeNumber, nil)},
+					},
+				})
+			}
+
 			assert.Equal(t, tt.wantProperty, tt.args)
 		})
 	}
