@@ -1,8 +1,6 @@
 package gqlmodel
 
 import (
-	"fmt"
-
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearthx/util"
@@ -50,7 +48,6 @@ func ToNLSLayerType(p string) nlslayer.LayerType {
 }
 
 func ToNLSLayerGroup(l *nlslayer.NLSLayerGroup, parent *id.NLSLayerID) *NLSLayerGroup {
-	fmt.Println("-------------- ToNLSLayerGroup()")
 	if l == nil {
 		return nil
 	}
