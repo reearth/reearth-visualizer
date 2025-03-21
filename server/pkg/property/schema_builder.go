@@ -2,6 +2,8 @@ package property
 
 import (
 	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 var (
@@ -22,7 +24,7 @@ func NewSchema() *SchemaBuilder {
 
 func (b *SchemaBuilder) Build() (*Schema, error) {
 	if b.p.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	if !b.p.linkable.Validate(b.p) {
 		return nil, ErrInvalidPropertyLinkableField
@@ -38,7 +40,7 @@ func (b *SchemaBuilder) MustBuild() *Schema {
 	return p
 }
 
-func (b *SchemaBuilder) ID(id SchemaID) *SchemaBuilder {
+func (b *SchemaBuilder) ID(id id.PropertySchemaID) *SchemaBuilder {
 	b.p.id = id
 	return b
 }

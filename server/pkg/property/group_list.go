@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -17,15 +18,15 @@ type GroupList struct {
 var _ Item = &GroupList{}
 
 // ID returns id
-func (g *GroupList) ID() ItemID {
+func (g *GroupList) ID() id.PropertyItemID {
 	if g == nil {
-		return ItemID{}
+		return id.PropertyItemID{}
 	}
 	return g.itemBase.ID
 }
 
 // IDRef returns a reference of id
-func (g *GroupList) IDRef() *ItemID {
+func (g *GroupList) IDRef() *id.PropertyItemID {
 	if g == nil {
 		return nil
 	}
@@ -33,14 +34,14 @@ func (g *GroupList) IDRef() *ItemID {
 }
 
 // SchemaGroup returns id of schema group
-func (g *GroupList) SchemaGroup() SchemaGroupID {
+func (g *GroupList) SchemaGroup() id.PropertySchemaGroupID {
 	if g == nil {
-		return SchemaGroupID("")
+		return id.PropertySchemaGroupID("")
 	}
 	return g.itemBase.SchemaGroup
 }
 
-func (g *GroupList) SchemaGroupRef() *SchemaGroupID {
+func (g *GroupList) SchemaGroupRef() *id.PropertySchemaGroupID {
 	if g == nil {
 		return nil
 	}
@@ -84,7 +85,7 @@ func (g *GroupList) Groups() []*Group {
 }
 
 // Group returns a group whose id is specified
-func (g *GroupList) Group(gid ItemID) *Group {
+func (g *GroupList) Group(gid id.PropertyItemID) *Group {
 	if g == nil {
 		return nil
 	}
@@ -195,7 +196,7 @@ func (g *GroupList) GuessSchema() *SchemaGroup {
 		return nil
 	}
 
-	fieldm := map[FieldID]struct{}{}
+	fieldm := map[id.PropertyFieldID]struct{}{}
 	fields := []*SchemaField{}
 
 	for _, g := range g.groups {
@@ -223,11 +224,11 @@ func (g *GroupList) GroupAt(i int) *Group {
 	return g.groups[i]
 }
 
-func (g *GroupList) Has(i ItemID) bool {
+func (g *GroupList) Has(i id.PropertyItemID) bool {
 	if g == nil {
 		return false
 	}
-	return util.ListHas[ItemID, Group](g.groups, (*Group).ID, i)
+	return util.ListHas[id.PropertyItemID, Group](g.groups, (*Group).ID, i)
 }
 
 func (g *GroupList) Count() int {
@@ -268,7 +269,7 @@ func (g *GroupList) AddOrMove(gg *Group, index int) {
 	g.groups = append(g.groups[:index], append([]*Group{gg}, g.groups[index:]...)...)
 }
 
-func (g *GroupList) Move(id ItemID, toIndex int) {
+func (g *GroupList) Move(id id.PropertyItemID, toIndex int) {
 	if g == nil {
 		return
 	}
@@ -305,7 +306,7 @@ func (g *GroupList) MoveAt(fromIndex int, toIndex int) {
 	g.groups = append(newSlice, g.groups[toIndex:]...)
 }
 
-func (g *GroupList) Remove(id ItemID) bool {
+func (g *GroupList) Remove(id id.PropertyItemID) bool {
 	if g == nil {
 		return false
 	}

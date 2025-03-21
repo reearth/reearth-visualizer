@@ -14,17 +14,17 @@ func TestStoryBuilder(t *testing.T) {
 
 	s, err := b.Build()
 	assert.Nil(t, s)
-	assert.ErrorIs(t, ErrInvalidID, err)
+	assert.ErrorIs(t, id.ErrInvalidID, err)
 
-	assert.PanicsWithError(t, ErrInvalidID.Error(), func() {
+	assert.PanicsWithError(t, id.ErrInvalidID.Error(), func() {
 		b.MustBuild()
 	})
 
 	b = b.NewID()
 	assert.False(t, b.s.id.IsEmpty())
 
-	storyID := NewStoryID()
-	propertyID := NewPropertyID()
+	storyID := id.NewStoryID()
+	propertyID := id.NewPropertyID()
 	sceneID := id.NewSceneID()
 
 	b = b.ID(storyID).

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -19,7 +20,7 @@ type PluginMigrator struct {
 type MigratePluginsResult struct {
 	Scene             *scene.Scene
 	Properties        []*property.Property
-	RemovedProperties property.IDList
+	RemovedProperties id.PropertyIDList
 }
 
 var (
@@ -27,7 +28,7 @@ var (
 	ErrInvalidPlugins     = errors.New("invalid plugins")
 )
 
-func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID plugin.ID) (MigratePluginsResult, error) {
+func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, oldPluginID, newPluginID id.PluginID) (MigratePluginsResult, error) {
 	if s == nil {
 		return MigratePluginsResult{}, rerror.ErrInternalByWithContext(ctx, errors.New("scene is nil"))
 	}
@@ -43,7 +44,7 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}
 
 	// Get plugins
-	plugins, err := s.Plugin(ctx, []plugin.ID{oldPluginID, newPluginID})
+	plugins, err := s.Plugin(ctx, []id.PluginID{oldPluginID, newPluginID})
 	if err != nil || len(plugins) < 2 {
 		return MigratePluginsResult{}, ErrInvalidPlugins
 	}
@@ -51,8 +52,8 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	oldPlugin := plugins[0]
 	newPlugin := plugins[1]
 
-	propertyIDs := property.IDList{}
-	removedPropertyIDs := property.IDList{}
+	propertyIDs := id.PropertyIDList{}
+	removedPropertyIDs := id.PropertyIDList{}
 
 	// Obtain property schema and map old schema to new schema
 	schemaMap, err := s.loadSchemas(ctx, oldPlugin, newPlugin)
@@ -100,13 +101,13 @@ func (s *PluginMigrator) MigratePlugins(ctx context.Context, sc *scene.Scene, ol
 	}, nil
 }
 
-func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[property.SchemaID]*property.Schema, error) {
+func (s *PluginMigrator) loadSchemas(ctx context.Context, oldPlugin *plugin.Plugin, newPlugin *plugin.Plugin) (map[id.PropertySchemaID]*property.Schema, error) {
 	schemasIDs := newPlugin.PropertySchemas().MergeUnique(oldPlugin.PropertySchemas())
 	schemas, err := s.PropertySchema(ctx, schemasIDs...)
 	if err != nil {
 		return nil, err
 	}
-	schemaMap := map[property.SchemaID]*property.Schema{}
+	schemaMap := map[id.PropertySchemaID]*property.Schema{}
 	if opsId := oldPlugin.Schema(); opsId != nil {
 		if npsId := newPlugin.Schema(); npsId != nil {
 			for _, s := range schemas {

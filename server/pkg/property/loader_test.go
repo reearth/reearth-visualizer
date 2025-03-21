@@ -10,9 +10,9 @@ import (
 
 func TestLoaderFrom(t *testing.T) {
 	scene := id.NewSceneID()
-	ps := MustSchemaID("xxx~1.1.1/aa")
-	pid1 := NewID()
-	pid2 := NewID()
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
+	pid1 := id.NewPropertyID()
+	pid2 := id.NewPropertyID()
 	p1 := New().ID(pid1).Scene(scene).Schema(ps).MustBuild()
 	p2 := New().ID(pid2).Scene(scene).Schema(ps).MustBuild()
 	pl := LoaderFrom([]*Property{
@@ -28,14 +28,14 @@ func TestLoaderFrom(t *testing.T) {
 
 func TestLoaderFromMap(t *testing.T) {
 	scene := id.NewSceneID()
-	ps := MustSchemaID("xxx~1.1.1/aa")
-	pid1 := NewID()
-	pid2 := NewID()
-	pid3 := NewID()
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
+	pid1 := id.NewPropertyID()
+	pid2 := id.NewPropertyID()
+	pid3 := id.NewPropertyID()
 	p1 := New().ID(pid1).Scene(scene).Schema(ps).MustBuild()
 	p2 := New().ID(pid2).Scene(scene).Schema(ps).MustBuild()
 
-	pl := LoaderFromMap(map[ID]*Property{
+	pl := LoaderFromMap(map[id.PropertyID]*Property{
 		pid1: p1,
 		pid2: p2,
 	})
@@ -45,8 +45,8 @@ func TestLoaderFromMap(t *testing.T) {
 }
 
 func TestSchemaLoaderFrom(t *testing.T) {
-	pid1 := MustSchemaID("xxx~1.1.1/aa")
-	pid2 := MustSchemaID("xxx~1.1.1/bb")
+	pid1 := id.MustPropertySchemaID("xxx~1.1.1/aa")
+	pid2 := id.MustPropertySchemaID("xxx~1.1.1/bb")
 	p1 := NewSchema().ID(pid1).MustBuild()
 	p2 := NewSchema().ID(pid2).MustBuild()
 	pl := SchemaLoaderFrom(p1, p2)
@@ -57,13 +57,13 @@ func TestSchemaLoaderFrom(t *testing.T) {
 }
 
 func TestSchemaLoaderFromMap(t *testing.T) {
-	psid1 := MustSchemaID("xxx~1.1.1/aa")
-	psid2 := MustSchemaID("xxx~1.1.1/bb")
-	psid3 := MustSchemaID("xxx~1.1.1/cc")
+	psid1 := id.MustPropertySchemaID("xxx~1.1.1/aa")
+	psid2 := id.MustPropertySchemaID("xxx~1.1.1/bb")
+	psid3 := id.MustPropertySchemaID("xxx~1.1.1/cc")
 	ps1 := NewSchema().ID(psid1).MustBuild()
 	ps2 := NewSchema().ID(psid2).MustBuild()
 
-	pl := SchemaLoaderFromMap(map[SchemaID]*Schema{
+	pl := SchemaLoaderFromMap(map[id.PropertySchemaID]*Schema{
 		psid1: ps1,
 		psid2: ps2,
 	})

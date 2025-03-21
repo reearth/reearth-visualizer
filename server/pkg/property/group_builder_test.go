@@ -3,18 +3,19 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGroupBuilder_Build(t *testing.T) {
-	iid := NewItemID()
+	iid := id.NewPropertyItemID()
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
 	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
 
 	type args struct {
-		ID          ItemID
-		SchemaGroup SchemaGroupID
+		ID          id.PropertyItemID
+		SchemaGroup id.PropertySchemaGroupID
 		Fields      []*Field
 	}
 
@@ -26,7 +27,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "fail invalid id",
-			Err:  ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 		{
 			Name: "success",
@@ -64,14 +65,14 @@ func TestGroupBuilder_Build(t *testing.T) {
 }
 
 func TestGroupBuilder_MustBuild(t *testing.T) {
-	iid := NewItemID()
+	iid := id.NewPropertyItemID()
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
 	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
 
 	type args struct {
-		ID          ItemID
-		SchemaGroup SchemaGroupID
+		ID          id.PropertyItemID
+		SchemaGroup id.PropertySchemaGroupID
 		Fields      []*Field
 	}
 
@@ -83,7 +84,7 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 	}{
 		{
 			Name: "fail invalid id",
-			Err:  ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 		{
 			Name: "success",

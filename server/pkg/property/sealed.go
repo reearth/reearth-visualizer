@@ -2,25 +2,27 @@ package property
 
 import (
 	"context"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Sealed struct {
-	Original *ID
-	Parent   *ID
-	Schema   SchemaID
+	Original *id.PropertyID
+	Parent   *id.PropertyID
+	Schema   id.PropertySchemaID
 	Items    []*SealedItem
 }
 
 type SealedItem struct {
-	Original    *ItemID
-	Parent      *ItemID
-	SchemaGroup SchemaGroupID
+	Original    *id.PropertyItemID
+	Parent      *id.PropertyItemID
+	SchemaGroup id.PropertySchemaGroupID
 	Fields      []*SealedField
 	Groups      []*SealedItem
 }
 
 type SealedField struct {
-	ID  FieldID
+	ID  id.PropertyFieldID
 	Val *ValueAndDatasetValue
 }
 
@@ -156,7 +158,7 @@ func sealedFieldsInterface(fields []*SealedField, exportType bool) map[string]in
 	return item
 }
 
-func (s *Sealed) Item(i ItemID) *SealedItem {
+func (s *Sealed) Item(i id.PropertyItemID) *SealedItem {
 	if s == nil {
 		return nil
 	}
@@ -184,7 +186,7 @@ func (s *Sealed) ItemBy(ptr *Pointer) *SealedItem {
 	return nil
 }
 
-func (s *Sealed) ItemBySchemaGroup(i SchemaGroupID) *SealedItem {
+func (s *Sealed) ItemBySchemaGroup(i id.PropertySchemaGroupID) *SealedItem {
 	if s == nil {
 		return nil
 	}
@@ -196,7 +198,7 @@ func (s *Sealed) ItemBySchemaGroup(i SchemaGroupID) *SealedItem {
 	return nil
 }
 
-func (s *Sealed) Field(id FieldID) *SealedField {
+func (s *Sealed) Field(id id.PropertyFieldID) *SealedField {
 	if s == nil {
 		return nil
 	}
@@ -224,14 +226,14 @@ func (s *Sealed) FieldBy(ptr *Pointer) *SealedField {
 	return nil
 }
 
-func (s *SealedItem) Match(id ItemID) bool {
+func (s *SealedItem) Match(id id.PropertyItemID) bool {
 	if s == nil {
 		return false
 	}
 	return s.Original != nil && *s.Original == id || s.Parent != nil && *s.Parent == id
 }
 
-func (s *SealedItem) Group(id ItemID) *SealedItem {
+func (s *SealedItem) Group(id id.PropertyItemID) *SealedItem {
 	if s == nil {
 		return nil
 	}
@@ -243,7 +245,7 @@ func (s *SealedItem) Group(id ItemID) *SealedItem {
 	return nil
 }
 
-func (s *SealedItem) Field(id FieldID) *SealedField {
+func (s *SealedItem) Field(id id.PropertyFieldID) *SealedField {
 	if s == nil {
 		return nil
 	}

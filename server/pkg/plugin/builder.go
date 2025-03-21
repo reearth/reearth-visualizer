@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Builder struct {
@@ -14,7 +15,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Plugin, error) {
 	if b.p.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.p, nil
 }
@@ -27,7 +28,7 @@ func (b *Builder) MustBuild() *Plugin {
 	return p
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.PluginID) *Builder {
 	b.p.id = id
 	return b
 }
@@ -59,8 +60,8 @@ func (b *Builder) Extensions(extensions []*Extension) *Builder {
 		return b
 	}
 
-	b.p.extensions = make(map[ExtensionID]*Extension, len(extensions))
-	b.p.extensionOrder = make([]ExtensionID, 0, len(extensions))
+	b.p.extensions = make(map[id.PluginExtensionID]*Extension, len(extensions))
+	b.p.extensionOrder = make([]id.PluginExtensionID, 0, len(extensions))
 	for _, e := range extensions {
 		b.p.extensions[e.ID()] = e
 		b.p.extensionOrder = append(b.p.extensionOrder, e.ID())
@@ -68,7 +69,7 @@ func (b *Builder) Extensions(extensions []*Extension) *Builder {
 	return b
 }
 
-func (b *Builder) Schema(schema *PropertySchemaID) *Builder {
+func (b *Builder) Schema(schema *id.PropertySchemaID) *Builder {
 	b.p.schema = schema.CopyRef()
 	return b
 }

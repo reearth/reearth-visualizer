@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -105,24 +106,24 @@ func TestField_Cast(t *testing.T) {
 		{
 			name: "ok",
 			target: &Field{
-				field: FieldID("foobar"),
+				field: id.PropertyFieldID("foobar"),
 				v:     OptionalValueFrom(ValueTypeString.ValueFrom("-123")),
 			},
 			args: args{t: ValueTypeNumber},
 			want: &Field{
-				field: FieldID("foobar"),
+				field: id.PropertyFieldID("foobar"),
 				v:     OptionalValueFrom(ValueTypeNumber.ValueFrom(-123)),
 			},
 		},
 		{
 			name: "failed",
 			target: &Field{
-				field: FieldID("foobar"),
+				field: id.PropertyFieldID("foobar"),
 				v:     OptionalValueFrom(ValueTypeString.ValueFrom("foo")),
 			},
 			args: args{t: ValueTypeLatLng},
 			want: &Field{
-				field: FieldID("foobar"),
+				field: id.PropertyFieldID("foobar"),
 				v:     NewOptionalValue(ValueTypeLatLng, nil),
 			},
 		},
