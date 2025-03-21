@@ -120,16 +120,15 @@ export const Selector: FC<SelectorProps> = ({
   );
 
   const selectedItems: { value: string; label?: string }[] = useMemo(() => {
-    // if (displayLabel) return [{ value: "__fixedLabel__", label: displayLabel }];
-    // if (Array.isArray(selectedValue)) {
-    //   return selectedValue
-    //     .map((val) => optionValues.find((item) => item.value === val))
-    //     .filter((item): item is { value: string; label: string } => !!item);
-    // }
-    // return [optionValues.find((item) => item.value === selectedValue)].filter(
-    //   (item): item is { value: string; label: string } => !!item
-    // );
-    return undefined;
+    if (displayLabel) return [{ value: "__fixedLabel__", label: displayLabel }];
+    if (Array.isArray(selectedValue)) {
+      return selectedValue
+        .map((val) => optionValues.find((item) => item.value === val))
+        .filter((item): item is { value: string; label: string } => !!item);
+    }
+    return [optionValues.find((item) => item.value === selectedValue)].filter(
+      (item): item is { value: string; label: string } => !!item
+    );
   }, [optionValues, selectedValue, displayLabel]);
 
   const renderTrigger = () => {
