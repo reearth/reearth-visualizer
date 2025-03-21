@@ -1,6 +1,10 @@
 package property
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
+)
 
 var ErrInvalidGroupInGroupList = errors.New("cannot contain an invalid property group in the property group list")
 
@@ -24,10 +28,10 @@ func InitGroupListFrom(g *SchemaGroup) *GroupList {
 
 func (b *GroupListBuilder) Build() (*GroupList, error) {
 	if b.p.itemBase.ID.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	if b.p.itemBase.SchemaGroup == "" {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	for _, g := range b.p.groups {
 		if g.SchemaGroup() != b.p.SchemaGroup() {
@@ -50,24 +54,24 @@ func (b *GroupListBuilder) base(base itemBase) *GroupListBuilder {
 	return b
 }
 
-func (b *GroupListBuilder) ID(id ItemID) *GroupListBuilder {
+func (b *GroupListBuilder) ID(id id.PropertyItemID) *GroupListBuilder {
 	b.p.itemBase.ID = id
 	return b
 }
 
 func (b *GroupListBuilder) NewID() *GroupListBuilder {
-	b.p.itemBase.ID = NewItemID()
+	b.p.itemBase.ID = id.NewPropertyItemID()
 	return b
 }
 
-func (b *GroupListBuilder) SchemaGroup(g SchemaGroupID) *GroupListBuilder {
+func (b *GroupListBuilder) SchemaGroup(g id.PropertySchemaGroupID) *GroupListBuilder {
 	b.p.itemBase.SchemaGroup = g
 	return b
 }
 
 func (b *GroupListBuilder) Groups(groups []*Group) *GroupListBuilder {
 	newGroups := []*Group{}
-	ids := map[ItemID]struct{}{}
+	ids := map[id.PropertyItemID]struct{}{}
 	for _, g := range groups {
 		if g == nil {
 			continue

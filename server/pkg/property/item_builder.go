@@ -1,5 +1,7 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type ItemBuilder struct {
 	base itemBase
 }
@@ -16,17 +18,17 @@ func (b *ItemBuilder) GroupList() *GroupListBuilder {
 	return NewGroupList().base(b.base)
 }
 
-func (b *ItemBuilder) ID(id ItemID) *ItemBuilder {
+func (b *ItemBuilder) ID(id id.PropertyItemID) *ItemBuilder {
 	b.base.ID = id
 	return b
 }
 
 func (b *ItemBuilder) NewID() *ItemBuilder {
-	b.base.ID = NewItemID()
+	b.base.ID = id.NewPropertyItemID()
 	return b
 }
 
-func (b *ItemBuilder) SchemaGroup(g SchemaGroupID) *ItemBuilder {
+func (b *ItemBuilder) SchemaGroup(g id.PropertySchemaGroupID) *ItemBuilder {
 	b.base.SchemaGroup = g
 	return b
 }

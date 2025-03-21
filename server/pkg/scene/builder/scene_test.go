@@ -10,9 +10,9 @@ import (
 )
 
 func TestScene_FindProperty(t *testing.T) {
-	p1 := property.NewID()
+	p1 := id.NewPropertyID()
 	sid := id.NewSceneID()
-	scid := property.MustSchemaID("xx~1.0.0/aa")
+	scid := id.MustPropertySchemaID("xx~1.0.0/aa")
 	pl := []*property.Property{
 		property.New().NewID().Scene(sid).Schema(scid).MustBuild(),
 		property.New().ID(p1).Scene(sid).Schema(scid).MustBuild(),
@@ -21,7 +21,7 @@ func TestScene_FindProperty(t *testing.T) {
 	tests := []struct {
 		Name     string
 		PL       []*property.Property
-		Input    property.ID
+		Input    id.PropertyID
 		Expected *property.Property
 	}{
 		{
@@ -33,7 +33,7 @@ func TestScene_FindProperty(t *testing.T) {
 		{
 			Name:     " NotFound",
 			PL:       pl,
-			Input:    property.NewID(),
+			Input:    id.NewPropertyID(),
 			Expected: nil,
 		},
 	}

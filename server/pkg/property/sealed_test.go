@@ -9,16 +9,16 @@ import (
 )
 
 var (
-	opid   = NewID()
-	ppid   = NewID()
-	psid   = MustSchemaID("hoge~0.1.0/fff")
-	psiid1 = SchemaGroupID("x")
-	psiid2 = SchemaGroupID("y")
-	i1id   = NewItemID()
-	i2id   = NewItemID()
-	i3id   = NewItemID()
-	i4id   = NewItemID()
-	i5id   = NewItemID()
+	opid   = id.NewPropertyID()
+	ppid   = id.NewPropertyID()
+	psid   = id.MustPropertySchemaID("hoge~0.1.0/fff")
+	psiid1 = id.PropertySchemaGroupID("x")
+	psiid2 = id.PropertySchemaGroupID("y")
+	i1id   = id.NewPropertyItemID()
+	i2id   = id.NewPropertyItemID()
+	i3id   = id.NewPropertyItemID()
+	i4id   = id.NewPropertyItemID()
+	i5id   = id.NewPropertyItemID()
 )
 
 func TestSeal(t *testing.T) {
@@ -48,12 +48,12 @@ func TestSeal(t *testing.T) {
 								Original:    &i5id,
 								Fields: []*MergedField{
 									{
-										ID:    FieldID("a"),
+										ID:    id.PropertyFieldID("a"),
 										Value: ValueTypeString.ValueFrom("a"),
 										Type:  ValueTypeString,
 									},
 									{
-										ID:    FieldID("b"),
+										ID:    id.PropertyFieldID("b"),
 										Value: ValueTypeString.ValueFrom("b"),
 										Type:  ValueTypeString,
 									},
@@ -68,12 +68,12 @@ func TestSeal(t *testing.T) {
 
 						Fields: []*MergedField{
 							{
-								ID:    FieldID("a"),
+								ID:    id.PropertyFieldID("a"),
 								Value: ValueTypeString.ValueFrom("aaa"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    FieldID("b"),
+								ID:    id.PropertyFieldID("b"),
 								Value: ValueTypeString.ValueFrom("aaa"),
 								Type:  ValueTypeString,
 							},
@@ -156,8 +156,8 @@ func TestSeal(t *testing.T) {
 }
 
 func TestSealProperty(t *testing.T) {
-	pid := NewID()
-	ps := MustSchemaID("xxx~1.1.1/aa")
+	pid := id.NewPropertyID()
+	ps := id.MustPropertySchemaID("xxx~1.1.1/aa")
 
 	tests := []struct {
 		Name     string
@@ -214,12 +214,12 @@ func TestSealedItemFrom(t *testing.T) {
 
 						Fields: []*MergedField{
 							{
-								ID:    FieldID("a"),
+								ID:    id.PropertyFieldID("a"),
 								Value: ValueTypeString.ValueFrom("a"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    FieldID("b"),
+								ID:    id.PropertyFieldID("b"),
 								Value: ValueTypeString.ValueFrom("b"),
 								Type:  ValueTypeString,
 							},
@@ -269,12 +269,12 @@ func TestSealedItemFrom(t *testing.T) {
 						Parent:      &i4id,
 						Fields: []*MergedField{
 							{
-								ID:    FieldID("a"),
+								ID:    id.PropertyFieldID("a"),
 								Value: ValueTypeString.ValueFrom("aaa"),
 								Type:  ValueTypeString,
 							},
 							{
-								ID:    FieldID("b"),
+								ID:    id.PropertyFieldID("b"),
 								Value: ValueTypeString.ValueFrom("aaa"),
 								Type:  ValueTypeString,
 							},
@@ -423,7 +423,7 @@ func TestSealedItem_Match(t *testing.T) {
 	tests := []struct {
 		Name     string
 		SI       *SealedItem
-		Input    ItemID
+		Input    id.PropertyItemID
 		Expected bool
 	}{
 		{
@@ -541,7 +541,7 @@ func TestSealed_ItemBy(t *testing.T) {
 					},
 				},
 			},
-			Input: NewPointer(psiid1.Ref(), i1id.Ref(), FieldID("a").Ref()),
+			Input: NewPointer(psiid1.Ref(), i1id.Ref(), id.PropertyFieldID("a").Ref()),
 			Expected: &SealedItem{
 				SchemaGroup: psiid1,
 				Original:    &i1id,
@@ -627,7 +627,7 @@ func TestSealed_ItemBy(t *testing.T) {
 					},
 				},
 			},
-			Input: NewPointer(nil, i1id.Ref(), FieldID("a").Ref()),
+			Input: NewPointer(nil, i1id.Ref(), id.PropertyFieldID("a").Ref()),
 			Expected: &SealedItem{
 				SchemaGroup: psiid1,
 				Original:    &i1id,
@@ -713,7 +713,7 @@ func TestSealed_ItemBy(t *testing.T) {
 					},
 				},
 			},
-			Input:    NewPointer(nil, nil, FieldID("a").Ref()),
+			Input:    NewPointer(nil, nil, id.PropertyFieldID("a").Ref()),
 			Expected: nil,
 		},
 	}
@@ -796,7 +796,7 @@ func TestSealed_FieldBy(t *testing.T) {
 					},
 				},
 			},
-			Input: NewPointer(psiid1.Ref(), i1id.Ref(), FieldID("a").Ref()),
+			Input: NewPointer(psiid1.Ref(), i1id.Ref(), id.PropertyFieldID("a").Ref()),
 			Expected: &SealedField{
 				ID: "a",
 				Val: NewValueAndDatasetValue(
@@ -862,7 +862,7 @@ func TestSealed_FieldBy(t *testing.T) {
 					},
 				},
 			},
-			Input: NewPointer(nil, i3id.Ref(), FieldID("a").Ref()),
+			Input: NewPointer(nil, i3id.Ref(), id.PropertyFieldID("a").Ref()),
 			Expected: &SealedField{
 				ID: "a",
 				Val: NewValueAndDatasetValue(
@@ -928,7 +928,7 @@ func TestSealed_FieldBy(t *testing.T) {
 					},
 				},
 			},
-			Input: NewPointer(nil, nil, FieldID("a").Ref()),
+			Input: NewPointer(nil, nil, id.PropertyFieldID("a").Ref()),
 			Expected: &SealedField{
 				ID: "a",
 				Val: NewValueAndDatasetValue(

@@ -31,7 +31,7 @@ func NewNLSLayerSimple() *NLSLayerSimpleBuilder {
 
 func (b *NLSLayerSimpleBuilder) Build() (*NLSLayerSimple, error) {
 	if b.l.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.l, nil
 }
@@ -55,7 +55,7 @@ func (b *NLSLayerSimpleBuilder) ID(id id.NLSLayerID) *NLSLayerSimpleBuilder {
 }
 
 func (b *NLSLayerSimpleBuilder) NewID() *NLSLayerSimpleBuilder {
-	b.l.id = NewID()
+	b.l.id = id.NewNLSLayerID()
 	return b
 }
 

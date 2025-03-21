@@ -2,13 +2,15 @@ package property
 
 import (
 	"context"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Item interface {
-	ID() ItemID
-	IDRef() *ItemID
-	SchemaGroup() SchemaGroupID
-	SchemaGroupRef() *SchemaGroupID
+	ID() id.PropertyItemID
+	IDRef() *id.PropertyItemID
+	SchemaGroup() id.PropertySchemaGroupID
+	SchemaGroupRef() *id.PropertySchemaGroupID
 	IsEmpty() bool
 	Prune() bool
 	MigrateSchema(context.Context, *Schema)
@@ -21,8 +23,8 @@ type Item interface {
 }
 
 type itemBase struct {
-	ID          ItemID
-	SchemaGroup SchemaGroupID
+	ID          id.PropertyItemID
+	SchemaGroup id.PropertySchemaGroupID
 }
 
 func ToGroup(i Item) *Group {

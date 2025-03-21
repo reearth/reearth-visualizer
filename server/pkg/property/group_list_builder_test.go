@@ -3,16 +3,17 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGroupListBuilder_Build(t *testing.T) {
-	pid := NewItemID()
+	pid := id.NewPropertyItemID()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("x").MustBuild()}
 
 	type args struct {
-		ID          ItemID
-		SchemaGroup SchemaGroupID
+		ID          id.PropertyItemID
+		SchemaGroup id.PropertySchemaGroupID
 		Groups      []*Group
 	}
 
@@ -48,7 +49,7 @@ func TestGroupListBuilder_Build(t *testing.T) {
 		},
 		{
 			Name: "fail invalid id",
-			Err:  ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 	}
 
@@ -76,12 +77,12 @@ func TestGroupListBuilder_NewID(t *testing.T) {
 }
 
 func TestGroupListBuilder_MustBuild(t *testing.T) {
-	pid := NewItemID()
+	pid := id.NewPropertyItemID()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("x").MustBuild()}
 
 	type args struct {
-		ID          ItemID
-		SchemaGroup SchemaGroupID
+		ID          id.PropertyItemID
+		SchemaGroup id.PropertySchemaGroupID
 		Groups      []*Group
 	}
 
@@ -117,7 +118,7 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 		},
 		{
 			Name: "fail invalid id",
-			Err:  ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 	}
 
@@ -148,7 +149,7 @@ func TestInitGroupListFrom(t *testing.T) {
 	tests := []struct {
 		Name        string
 		SchemaGroup *SchemaGroup
-		Expected    SchemaGroupID
+		Expected    id.PropertySchemaGroupID
 	}{
 		{
 			Name: "nil schema group",
