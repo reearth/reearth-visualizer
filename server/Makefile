@@ -12,7 +12,7 @@ help:
 	@echo "Targets:"
 	@echo "  lint              Run golangci-lint with auto-fix"
 	@echo "  test              Run unit tests with race detector in short mode"
-	@echo "  failcheck         Run unit tests with fail-fast and no parallel execution"
+	@echo "  test-debug        Run unit tests with outpt log"
 	@echo "  e2e               Run end-to-end tests"
 	@echo "  build             Build the project"
 	@echo "  dev-install       Install tools for make dev - behavior not confirmed in windows."
@@ -34,8 +34,8 @@ REEARTH_DB := mongodb://localhost
 test:
 	REEARTH_DB=${REEARTH_DB} go test ./... -run ${TARGET_TEST}
 
-failcheck:
-	go test -race -short -failfast -p 1 $(TEST_DIR)
+test-debug:
+	go test -v -timeout 10s ./... | tee test.log 
 
 e2e:
 	go test -v ./e2e/...
@@ -109,4 +109,4 @@ schematyper:
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 	go run $(SCHEMATYPER) -o $(MANIFEST_DIR)/schema_gen.go --package manifest ./schemas/plugin_manifest.json
 
-.PHONY: lint test failcheck e2e build dev-install dev run-app run-db run-reset gql up-gcs down-gcs mockuser schematyper
+.PHONY: lint test test-debug e2e build dev-install dev run-app run-db run-reset gql up-gcs down-gcs mockuser schematyper

@@ -2,11 +2,15 @@
 
 package property
 
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+)
+
 // DeepCopy generates a deep copy of *Initializer
 func (o *Initializer) DeepCopy() *Initializer {
 	var cp Initializer = *o
 	if o.ID != nil {
-		cp.ID = new(ID)
+		cp.ID = new(id.PropertyID)
 		*cp.ID = *o.ID
 	}
 	if o.Items != nil {
@@ -17,7 +21,7 @@ func (o *Initializer) DeepCopy() *Initializer {
 				cp.Items[i2] = new(InitializerItem)
 				*cp.Items[i2] = *o.Items[i2]
 				if o.Items[i2].ID != nil {
-					cp.Items[i2].ID = new(ItemID)
+					cp.Items[i2].ID = new(id.PropertyItemID)
 					*cp.Items[i2].ID = *o.Items[i2].ID
 				}
 				if o.Items[i2].Groups != nil {
@@ -28,7 +32,7 @@ func (o *Initializer) DeepCopy() *Initializer {
 							cp.Items[i2].Groups[i5] = new(InitializerGroup)
 							*cp.Items[i2].Groups[i5] = *o.Items[i2].Groups[i5]
 							if o.Items[i2].Groups[i5].ID != nil {
-								cp.Items[i2].Groups[i5].ID = new(ItemID)
+								cp.Items[i2].Groups[i5].ID = new(id.PropertyItemID)
 								*cp.Items[i2].Groups[i5].ID = *o.Items[i2].Groups[i5].ID
 							}
 							if o.Items[i2].Groups[i5].Fields != nil {

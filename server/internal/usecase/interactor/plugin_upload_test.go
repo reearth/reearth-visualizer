@@ -157,8 +157,8 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
 
-	ps := property.NewSchema().ID(property.NewSchemaID(pid, eid1.String())).MustBuild()
-	ps2 := property.NewSchema().ID(property.NewSchemaID(pid, eid2.String())).MustBuild()
+	ps := property.NewSchema().ID(id.NewPropertySchemaID(pid, eid1.String())).MustBuild()
+	ps2 := property.NewSchema().ID(id.NewPropertySchemaID(pid, eid2.String())).MustBuild()
 	pl := plugin.New().ID(pid).Extensions([]*plugin.Extension{
 		plugin.NewExtension().ID(eid1).Type(plugin.ExtensionTypePrimitive).Schema(ps.ID()).MustBuild(),
 		plugin.NewExtension().ID(eid2).Type(plugin.ExtensionTypeWidget).Schema(ps2.ID()).MustBuild(),
@@ -256,10 +256,10 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 
 	oldpsf := property.NewSchemaField().ID("field").Type(property.ValueTypeNumber).MustBuild()
 	oldpsg := property.NewSchemaGroup().ID("default").Fields([]*property.SchemaField{oldpsf}).MustBuild()
-	oldps := property.NewSchema().ID(property.NewSchemaID(oldpid, eid1.String())).Groups(property.NewSchemaGroupList(
+	oldps := property.NewSchema().ID(id.NewPropertySchemaID(oldpid, eid1.String())).Groups(property.NewSchemaGroupList(
 		[]*property.SchemaGroup{oldpsg},
 	)).MustBuild()
-	oldps2 := property.NewSchema().ID(property.NewSchemaID(oldpid, eid2.String())).MustBuild()
+	oldps2 := property.NewSchema().ID(id.NewPropertySchemaID(oldpid, eid2.String())).MustBuild()
 	oldpl := plugin.New().ID(oldpid).Extensions([]*plugin.Extension{
 		plugin.NewExtension().ID(eid1).Type(plugin.ExtensionTypeBlock).Schema(oldps.ID()).MustBuild(),
 		plugin.NewExtension().ID(eid2).Type(plugin.ExtensionTypeWidget).Schema(oldps2.ID()).MustBuild(),

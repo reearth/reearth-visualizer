@@ -12,8 +12,8 @@ import (
 
 func TestStory_SettersGetters(t *testing.T) {
 
-	sId := NewStoryID()
-	pId := NewPropertyID()
+	sId := id.NewStoryID()
+	pId := id.NewPropertyID()
 	sceneID := id.NewSceneID()
 	now := time.Now()
 

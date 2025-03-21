@@ -171,7 +171,7 @@ func toModelPropertyField(f *PropertyFieldDocument) *property.Field {
 	}
 
 	vt := property.ValueType(f.Type)
-	field := property.NewField(property.FieldID(f.Field)).
+	field := property.NewField(id.PropertyFieldID(f.Field)).
 		Value(property.NewOptionalValue(vt, toModelPropertyValue(f.Value, f.Type))).
 		Build()
 

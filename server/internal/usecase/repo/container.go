@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
@@ -37,7 +36,7 @@ type Container struct {
 	Policy         Policy
 	Storytelling   Storytelling
 	Transaction    usecasex.Transaction
-	Extensions     []plugin.ID
+	Extensions     []id.PluginID
 }
 
 func (c *Container) AccountRepos() *accountrepo.Container {

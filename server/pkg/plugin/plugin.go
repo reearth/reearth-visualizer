@@ -7,19 +7,19 @@ import (
 )
 
 type Plugin struct {
-	id             ID
+	id             id.PluginID
 	name           i18n.String
 	author         string
 	description    i18n.String
 	repositoryURL  string
-	extensions     map[ExtensionID]*Extension
-	extensionOrder []ExtensionID
-	schema         *PropertySchemaID
+	extensions     map[id.PluginExtensionID]*Extension
+	extensionOrder []id.PluginExtensionID
+	schema         *id.PropertySchemaID
 }
 
-func (p *Plugin) ID() ID {
+func (p *Plugin) ID() id.PluginID {
 	if p == nil {
-		return ID{}
+		return id.PluginID{}
 	}
 	return p.id
 }
@@ -78,7 +78,7 @@ func (p *Plugin) Extensions() []*Extension {
 	return list
 }
 
-func (p *Plugin) Extension(id ExtensionID) *Extension {
+func (p *Plugin) Extension(id id.PluginExtensionID) *Extension {
 	if p == nil {
 		return nil
 	}
@@ -90,19 +90,19 @@ func (p *Plugin) Extension(id ExtensionID) *Extension {
 	return nil
 }
 
-func (p *Plugin) Schema() *PropertySchemaID {
+func (p *Plugin) Schema() *id.PropertySchemaID {
 	if p == nil {
 		return nil
 	}
 	return p.schema
 }
 
-func (p *Plugin) PropertySchemas() PropertySchemaIDList {
+func (p *Plugin) PropertySchemas() id.PropertySchemaIDList {
 	if p == nil {
 		return nil
 	}
 
-	ps := make([]PropertySchemaID, 0, len(p.extensions)+1)
+	ps := make([]id.PropertySchemaID, 0, len(p.extensions)+1)
 	if p.schema != nil {
 		ps = append(ps, *p.schema)
 	}
@@ -117,17 +117,17 @@ func (p *Plugin) Clone() *Plugin {
 		return nil
 	}
 
-	var extensions map[ExtensionID]*Extension
+	var extensions map[id.PluginExtensionID]*Extension
 	if p.extensions != nil {
-		extensions = make(map[ExtensionID]*Extension, len(p.extensions))
+		extensions = make(map[id.PluginExtensionID]*Extension, len(p.extensions))
 		for _, e := range p.extensions {
 			extensions[e.ID()] = e.Clone()
 		}
 	}
 
-	var extensionOrder []ExtensionID
+	var extensionOrder []id.PluginExtensionID
 	if p.extensionOrder != nil {
-		extensionOrder = append([]ExtensionID{}, p.extensionOrder...)
+		extensionOrder = append([]id.PluginExtensionID{}, p.extensionOrder...)
 	}
 
 	return &Plugin{

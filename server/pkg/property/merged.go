@@ -1,37 +1,39 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 // Merged represents a merged property from two properties
 type Merged struct {
-	Original *ID
-	Parent   *ID
-	Schema   SchemaID
+	Original *id.PropertyID
+	Parent   *id.PropertyID
+	Schema   id.PropertySchemaID
 	Groups   []*MergedGroup
 }
 
 // MergedGroup represents a group of Merged
 type MergedGroup struct {
-	Original    *ItemID
-	Parent      *ItemID
-	SchemaGroup SchemaGroupID
+	Original    *id.PropertyItemID
+	Parent      *id.PropertyItemID
+	SchemaGroup id.PropertySchemaGroupID
 	Groups      []*MergedGroup
 	Fields      []*MergedField
 }
 
 // MergedField represents a field of Merged
 type MergedField struct {
-	ID         FieldID
+	ID         id.PropertyFieldID
 	Type       ValueType
 	Value      *Value
 	Overridden bool
 }
 
 type MergedMetadata struct {
-	Original *ID
-	Parent   *ID
+	Original *id.PropertyID
+	Parent   *id.PropertyID
 }
 
 // MergedMetadataFrom generates MergedMetadata from single property
-func MergedMetadataFrom(p ID) MergedMetadata {
+func MergedMetadataFrom(p id.PropertyID) MergedMetadata {
 	p2 := p
 	return MergedMetadata{
 		Original: &p2,
@@ -39,8 +41,8 @@ func MergedMetadataFrom(p ID) MergedMetadata {
 }
 
 // Properties returns associated property IDs
-func (m MergedMetadata) Properties() []ID {
-	ids := make([]ID, 0, 2)
+func (m MergedMetadata) Properties() []id.PropertyID {
+	ids := make([]id.PropertyID, 0, 2)
 	if m.Original != nil {
 		ids = append(ids, *m.Original)
 	}
@@ -67,7 +69,7 @@ func Merge(o *Property, p *Property) *Merged {
 		return nil
 	}
 
-	var schema SchemaID
+	var schema id.PropertySchemaID
 	if p != nil {
 		schema = p.Schema()
 	} else if o != nil {
@@ -87,7 +89,7 @@ func mergeItems(i1, i2 []Item) []*MergedGroup {
 		return nil
 	}
 
-	consumed := map[ItemID]struct{}{}
+	consumed := map[id.PropertyItemID]struct{}{}
 	groups := []*MergedGroup{}
 
 	for _, item := range i1 {
@@ -168,8 +170,8 @@ func mergeItem(o, p Item) *MergedGroup {
 		}
 	}
 
-	var oid, pid *ItemID
-	var sg SchemaGroupID
+	var oid, pid *id.PropertyItemID
+	var sg id.PropertySchemaGroupID
 	if o != nil {
 		oid = o.IDRef()
 		sg = o.SchemaGroup()
@@ -200,7 +202,7 @@ func mergeField(original, parent *Field) *MergedField {
 		t = parent.Type()
 	}
 
-	var fid FieldID
+	var fid id.PropertyFieldID
 	if original != nil {
 		fid = original.Field()
 	} else if parent != nil {
@@ -227,9 +229,9 @@ func mergeField(original, parent *Field) *MergedField {
 	}
 }
 
-func allFields(args ...[]FieldID) []FieldID {
-	consumedKeys := map[FieldID]struct{}{}
-	result := []FieldID{}
+func allFields(args ...[]id.PropertyFieldID) []id.PropertyFieldID {
+	consumedKeys := map[id.PropertyFieldID]struct{}{}
+	result := []id.PropertyFieldID{}
 	for _, fields := range args {
 		for _, f := range fields {
 			if _, ok := consumedKeys[f]; ok {

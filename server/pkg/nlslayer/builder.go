@@ -29,7 +29,7 @@ func (b *Builder) Index(index *int) *Builder {
 }
 
 func (b *Builder) NewID() *Builder {
-	b.base.id = NewID()
+	b.base.id = id.NewNLSLayerID()
 	return b
 }
 

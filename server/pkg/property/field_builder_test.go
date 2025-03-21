@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +17,7 @@ func TestFieldBuilder_Value(t *testing.T) {
 func TestFieldBuilder_Build(t *testing.T) {
 
 	type args struct {
-		Field FieldID
+		Field id.PropertyFieldID
 		Value *OptionalValue
 	}
 
@@ -56,7 +57,7 @@ func TestFieldBuilder_Build(t *testing.T) {
 func TestFieldBuilder_MustBuild(t *testing.T) {
 
 	type args struct {
-		Field FieldID
+		Field id.PropertyFieldID
 		Value *OptionalValue
 	}
 
