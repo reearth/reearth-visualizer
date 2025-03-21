@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Builder struct {
@@ -27,7 +28,7 @@ func (b *Builder) MustBuild() *Plugin {
 	return p
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.PluginID) *Builder {
 	b.p.id = id
 	return b
 }

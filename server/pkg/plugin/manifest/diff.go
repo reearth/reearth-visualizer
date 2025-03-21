@@ -7,8 +7,8 @@ import (
 )
 
 type Diff struct {
-	From                  plugin.ID
-	To                    plugin.ID
+	From                  id.PluginID
+	To                    id.PluginID
 	PropertySchemaDiff    property.SchemaDiff
 	PropertySchemaDeleted bool
 	DeletedExtensions     []DiffExtensionDeleted

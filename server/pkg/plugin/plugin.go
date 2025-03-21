@@ -7,7 +7,7 @@ import (
 )
 
 type Plugin struct {
-	id             ID
+	id             id.PluginID
 	name           i18n.String
 	author         string
 	description    i18n.String
@@ -17,9 +17,9 @@ type Plugin struct {
 	schema         *PropertySchemaID
 }
 
-func (p *Plugin) ID() ID {
+func (p *Plugin) ID() id.PluginID {
 	if p == nil {
-		return ID{}
+		return id.PluginID{}
 	}
 	return p.id
 }

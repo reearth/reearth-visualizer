@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -76,7 +77,7 @@ func TestBuilder_RepositoryURL(t *testing.T) {
 
 func TestBuilder_Build(t *testing.T) {
 	type args struct {
-		id                    ID
+		id                    id.PluginID
 		author, repositoryURL string
 		pname, description    i18n.String
 		ext                   []*Extension
@@ -144,7 +145,7 @@ func TestBuilder_Build(t *testing.T) {
 func TestBuilder_MustBuild(t *testing.T) {
 	type args struct {
 		author, repositoryURL string
-		id                    ID
+		id                    id.PluginID
 		pname, description    i18n.String
 		ext                   []*Extension
 		schema                *PropertySchemaID

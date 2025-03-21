@@ -3,6 +3,7 @@ package builtin
 import (
 	_ "embed"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -62,7 +63,7 @@ func Plugin() *plugin.Plugin {
 	return pluginManifest.Plugin
 }
 
-func GetPlugin(id plugin.ID) *plugin.Plugin {
+func GetPlugin(id id.PluginID) *plugin.Plugin {
 	if id.Equal(pluginManifest.Plugin.ID()) {
 		return pluginManifest.Plugin
 	}

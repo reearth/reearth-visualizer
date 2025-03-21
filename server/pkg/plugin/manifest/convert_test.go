@@ -217,7 +217,7 @@ func TestExtension(t *testing.T) {
 		ext        Extension
 		sys        bool
 		tl         *TranslatedExtension
-		pid        plugin.ID
+		pid        id.PluginID
 		expectedPE *plugin.Extension
 		expectedPS *property.Schema
 		err        string
@@ -659,7 +659,7 @@ func TestSchema(t *testing.T) {
 	tests := []struct {
 		name, psid string
 		ps         *PropertySchema
-		pid        plugin.ID
+		pid        id.PluginID
 		tl         *TranslatedPropertySchema
 		expected   *property.Schema
 		err        string

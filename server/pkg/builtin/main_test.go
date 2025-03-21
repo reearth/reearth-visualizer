@@ -3,6 +3,7 @@ package builtin
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -48,7 +49,7 @@ func TestPlugin(t *testing.T) {
 func TestGetPlugin(t *testing.T) {
 	tests := []struct {
 		name        string
-		pluginID    plugin.ID
+		pluginID    id.PluginID
 		expectedNil bool
 	}{
 		{
