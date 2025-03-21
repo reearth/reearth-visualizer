@@ -31,7 +31,6 @@ export const useWidgetContext = ({
 export function widgetContextFromMapRef({
   mapRef,
   selectedLayerId,
-  viewerProperty,
   initialCamera,
   timelineManagerRef
 }: {
@@ -53,7 +52,6 @@ export function widgetContextFromMapRef({
     },
     timelineManagerRef,
     initialCamera,
-    is2d: viewerProperty?.scene?.mode === "2d",
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {
       const l = layers()?.findById(id);

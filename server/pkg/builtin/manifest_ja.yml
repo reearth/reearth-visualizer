@@ -8,9 +8,6 @@ extensions:
       default:
         title: メイン
         fields:
-          sceneMode:
-            title: シーンモード
-            description: 地球儀の表示を2D、2.5D、3Dから選択します。
           ion:
             title: Cesium Ion アクセストークン
             description: ご自身の Cesium Ion アカウントからアクセストークンを発行し、ここに設定します。Cesium Ion のアセット（タイルデータ・3Dデータなど）の使用が可能になります。
@@ -148,9 +145,6 @@ extensions:
           camera:
             title: カメラ初期位置
             description: ページロード後最初に表示するカメラの位置を設定します。
-          sceneMode:
-            title: シーンモード
-            description: 地球儀の表示を2D、2.5D、3Dから選択します。
           allowEnterGround:
             title: 地下へ入る
             description: Onにすることでカメラが地表面へ潜り込むようになります。

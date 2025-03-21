@@ -1,4 +1,9 @@
-import { ViewerProperty, ComputedFeature } from "@reearth/core";
+import { SceneMode } from "@reearth/beta/types";
+import {
+  ViewerProperty as CoreViewerProperty,
+  ComputedFeature,
+  SceneProperty as CoreSceneProperty
+} from "@reearth/core";
 
 import { LatLngHeight } from "./common";
 
@@ -40,6 +45,14 @@ export declare type InteractionModeType =
   | "selection"
   | "sketch"
   | "spatialId";
+
+export declare type SceneProperty = {
+  mode?: SceneMode;
+} & Omit<CoreSceneProperty, "mode">;;
+
+export declare type ViewerProperty = {
+  scene?: SceneProperty;
+} & Omit<CoreViewerProperty, "scene">;
 
 export declare type Viewer = {
   readonly property: ViewerProperty | undefined;

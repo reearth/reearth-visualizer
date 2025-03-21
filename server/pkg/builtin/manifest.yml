@@ -16,18 +16,6 @@ extensions:
           collection: main
           title: Main
           fields:
-            - id: sceneMode
-              type: string
-              title: Scene mode
-              description: Specify scene mode.
-              defaultValue: 3d
-              choices:
-                - key: 3d
-                  label: 3D
-                - key: 2d
-                  label: 2D
-                - key: columbus
-                  label: 2.5D (Columbus View)
             - id: ion
               type: string
               title: Cesium Ion API access token
@@ -293,18 +281,6 @@ extensions:
               title: Enter the ground
               defaultValue: false
               description: Set to true to allow the camera to enter the surface of the earth.
-            - id: sceneMode
-              type: string
-              title: Scene mode
-              description: Specify scene mode.
-              defaultValue: 3d
-              choices:
-                - key: 3d
-                  label: Scene 3D
-                - key: 2d
-                  label: Scene 2D
-                - key: columbus
-                  label: Columbus View
             - id: skybox
               type: bool
               title: Sky
