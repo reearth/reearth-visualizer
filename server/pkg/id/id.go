@@ -18,6 +18,7 @@ type User struct{}
 type Widget struct{}
 type Style struct{}
 type Infobox struct{}
+type PhotoOverlay struct{}
 type InfoboxBlock struct{}
 type Feature struct{}
 
@@ -37,6 +38,7 @@ func (User) Type() string                { return "user" }
 func (Widget) Type() string              { return "widget" }
 func (Style) Type() string               { return "style" }
 func (Infobox) Type() string             { return "infobox" }
+func (PhotoOverlay) Type() string        { return "photoOverlay" }
 func (InfoboxBlock) Type() string        { return "infoboxBlock" }
 func (Feature) Type() string             { return "feature" }
 
@@ -52,6 +54,7 @@ type UserID = idx.ID[User]
 type WidgetID = idx.ID[Widget]
 type StyleID = idx.ID[Style]
 type InfoboxID = idx.ID[Infobox]
+type PhotoOverlayID = idx.ID[PhotoOverlay]
 type InfoboxBlockID = idx.ID[InfoboxBlock]
 type FeatureID = idx.ID[Feature]
 
@@ -70,6 +73,7 @@ var NewSceneID = idx.New[Scene]
 var NewWidgetID = idx.New[Widget]
 var NewStyleID = idx.New[Style]
 var NewInfoboxID = idx.New[Infobox]
+var NewPhotoOverlayID = idx.New[PhotoOverlay]
 var NewInfoboxBlockID = idx.New[InfoboxBlock]
 var NewFeatureID = idx.New[Feature]
 
@@ -85,6 +89,7 @@ var MustUserID = idx.Must[User]
 var MustWidgetID = idx.Must[Widget]
 var MustStyleID = idx.Must[Style]
 var MustInfoboxID = idx.Must[Infobox]
+var MustPhotoOverlayID = idx.Must[PhotoOverlay]
 var MustInfoboxBlockID = idx.Must[InfoboxBlock]
 var MustFeatureID = idx.Must[Feature]
 
@@ -100,6 +105,7 @@ var UserIDFrom = idx.From[User]
 var WidgetIDFrom = idx.From[Widget]
 var StyleIDFrom = idx.From[Style]
 var InfoboxIDFrom = idx.From[Infobox]
+var PhotoOverlayIDFrom = idx.From[PhotoOverlay]
 var InfoboxBlockIDFrom = idx.From[InfoboxBlock]
 var FeatureIDFrom = idx.From[Feature]
 
@@ -115,6 +121,7 @@ var UserIDFromRef = idx.FromRef[User]
 var WidgetIDFromRef = idx.FromRef[Widget]
 var StyleIDFromRef = idx.FromRef[Style]
 var InfoboxIDFromRef = idx.FromRef[Infobox]
+var PhotoOverlayIDFromRef = idx.FromRef[PhotoOverlay]
 var InfoboxBlockIDFromRef = idx.FromRef[InfoboxBlock]
 var FeatureIDFromRef = idx.FromRef[Feature]
 
@@ -134,6 +141,7 @@ type UserIDList = idx.List[User]
 type WidgetIDList = idx.List[Widget]
 type StyleIDList = idx.List[Style]
 type InfoboxIDList = idx.List[Infobox]
+type PhotoOverlayIDList = idx.List[PhotoOverlay]
 type InfoboxBlockIDList = idx.List[InfoboxBlock]
 type FeatureIDList = idx.List[Feature]
 
@@ -149,6 +157,7 @@ var UserIDListFrom = idx.ListFrom[User]
 var WidgetIDListFrom = idx.ListFrom[Widget]
 var StyleIDListFrom = idx.ListFrom[Style]
 var InfoboxIDListFrom = idx.ListFrom[Infobox]
+var PhotoOverlayIDListFrom = idx.ListFrom[PhotoOverlay]
 var InfoboxBlockIDListFrom = idx.ListFrom[InfoboxBlock]
 var FeatureIDListFrom = idx.ListFrom[Feature]
 
@@ -164,6 +173,7 @@ type UserIDSet = idx.Set[User]
 type WidgetIDSet = idx.Set[Widget]
 type StyleIDSet = idx.Set[Style]
 type InfoboxIDSet = idx.Set[Infobox]
+type PhotoOverlayIDSet = idx.Set[PhotoOverlay]
 type InfoboxBlockIDSet = idx.Set[InfoboxBlock]
 type FeatureIDSet = idx.Set[Feature]
 
@@ -178,6 +188,7 @@ var NewSceneIDSet = idx.NewSet[Scene]
 var NewUserIDSet = idx.NewSet[User]
 var NewWidgetIDSet = idx.NewSet[Widget]
 var NewStyleIDSet = idx.NewSet[Style]
+var NewPhotoOverlayIDSet = idx.NewSet[PhotoOverlay]
 var NewInfoboxIDSet = idx.NewSet[InfoboxBlock]
 var NewInfoboxBlockIDSet = idx.NewSet[InfoboxBlock]
 var NewFeatureIDSet = idx.NewSet[Feature]

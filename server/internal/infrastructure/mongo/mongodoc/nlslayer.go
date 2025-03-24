@@ -10,17 +10,18 @@ import (
 )
 
 type NLSLayerDocument struct {
-	ID        string
-	Index     *int
-	Title     string
-	Visible   bool
-	Scene     string
-	LayerType string
-	Infobox   *NLSLayerInfoboxDocument
-	Simple    *NLSLayerSimpleDocument
-	Group     *NLSLayerGroupDocument
-	IsSketch  bool
-	Sketch    *NLSLayerSketchInfoDocument
+	ID           string
+	Index        *int
+	Title        string
+	Visible      bool
+	Scene        string
+	LayerType    string
+	Infobox      *NLSLayerInfoboxDocument
+	PhotoOverlay *NLSLayerPhotoOverlayDocument
+	Simple       *NLSLayerSimpleDocument
+	Group        *NLSLayerGroupDocument
+	IsSketch     bool
+	Sketch       *NLSLayerSketchInfoDocument
 }
 
 type NLSLayerSimpleDocument struct {
@@ -45,6 +46,10 @@ type NLSLayerInfoboxBlockDocument struct {
 type NLSLayerInfoboxDocument struct {
 	Property string
 	Blocks   []NLSLayerInfoboxBlockDocument
+}
+
+type NLSLayerPhotoOverlayDocument struct {
+	Property string
 }
 
 type NLSLayerSketchInfoDocument struct {
@@ -117,17 +122,18 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 
 	id := l.ID().String()
 	return &NLSLayerDocument{
-		ID:        id,
-		Index:     l.Index(),
-		Title:     l.Title(),
-		Visible:   l.IsVisible(),
-		Scene:     l.Scene().String(),
-		Infobox:   NewNLSInfobox(l.Infobox()),
-		LayerType: string(l.LayerType()),
-		Group:     group,
-		Simple:    simple,
-		IsSketch:  l.IsSketch(),
-		Sketch:    NewNLSLayerSketchInfo(l.Sketch()),
+		ID:           id,
+		Index:        l.Index(),
+		Title:        l.Title(),
+		Visible:      l.IsVisible(),
+		Scene:        l.Scene().String(),
+		Infobox:      NewNLSInfobox(l.Infobox()),
+		PhotoOverlay: NewNLSPhotoOverlay(l.PhotoOverlay()),
+		LayerType:    string(l.LayerType()),
+		Group:        group,
+		Simple:       simple,
+		IsSketch:     l.IsSketch(),
+		Sketch:       NewNLSLayerSketchInfo(l.Sketch()),
 	}, id
 }
 
@@ -180,6 +186,10 @@ func (d *NLSLayerDocument) ModelSimple() (*nlslayer.NLSLayerSimple, error) {
 	if err2 != nil {
 		return nil, err
 	}
+	po, err4 := ToModelNLSPhotoOverlay(d.PhotoOverlay)
+	if err4 != nil {
+		return nil, err
+	}
 	sketchInfo, err3 := ToModelNLSLayerSketchInfo(d.Sketch)
 	if err3 != nil {
 		return nil, err
@@ -192,6 +202,7 @@ func (d *NLSLayerDocument) ModelSimple() (*nlslayer.NLSLayerSimple, error) {
 		LayerType(NewNLSLayerType(d.LayerType)).
 		IsVisible(d.Visible).
 		Infobox(ib).
+		PhotoOverlay(po).
 		Scene(sid).
 		// Simple
 		Config(NewNLSLayerConfig(d.Simple.Config)).
@@ -212,6 +223,10 @@ func (d *NLSLayerDocument) ModelGroup() (*nlslayer.NLSLayerGroup, error) {
 	ib, err2 := ToModelNLSInfobox(d.Infobox)
 	if err2 != nil {
 		return nil, err2
+	}
+	po, err4 := ToModelNLSPhotoOverlay(d.PhotoOverlay)
+	if err4 != nil {
+		return nil, err4
 	}
 	sketchInfo, err3 := ToModelNLSLayerSketchInfo(d.Sketch)
 	if err3 != nil {
@@ -234,6 +249,7 @@ func (d *NLSLayerDocument) ModelGroup() (*nlslayer.NLSLayerGroup, error) {
 		LayerType(NewNLSLayerType(d.LayerType)).
 		IsVisible(d.Visible).
 		Infobox(ib).
+		PhotoOverlay(po).
 		Scene(sid).
 		// group
 		Root(d.Group != nil && d.Group.Root).
@@ -291,6 +307,17 @@ func ToModelNLSInfobox(ib *NLSLayerInfoboxDocument) (*nlslayer.Infobox, error) {
 		blocks = append(blocks, ibf)
 	}
 	return nlslayer.NewInfobox(blocks, pid), nil
+}
+
+func ToModelNLSPhotoOverlay(po *NLSLayerPhotoOverlayDocument) (*nlslayer.PhotoOverlay, error) {
+	if po == nil {
+		return nil, nil
+	}
+	pid, err := id.PropertyIDFrom(po.Property)
+	if err != nil {
+		return nil, err
+	}
+	return nlslayer.NewPhotoOverlay(pid), nil
 }
 
 func ToModelNLSLayerSketchInfo(si *NLSLayerSketchInfoDocument) (*nlslayer.SketchInfo, error) {
@@ -502,6 +529,15 @@ func NewNLSInfobox(ib *nlslayer.Infobox) *NLSLayerInfoboxDocument {
 	return &NLSLayerInfoboxDocument{
 		Property: ib.Property().String(),
 		Blocks:   blocks,
+	}
+}
+
+func NewNLSPhotoOverlay(ib *nlslayer.PhotoOverlay) *NLSLayerPhotoOverlayDocument {
+	if ib == nil {
+		return nil
+	}
+	return &NLSLayerPhotoOverlayDocument{
+		Property: ib.Property().String(),
 	}
 }
 

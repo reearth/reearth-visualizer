@@ -8,6 +8,7 @@ interface NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  photoOverlay: NLSPhotoOverlay
   isSketch: Boolean!
   sketch: SketchInfo
 }
@@ -21,6 +22,7 @@ type NLSLayerSimple implements NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  photoOverlay: NLSPhotoOverlay
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
@@ -37,6 +39,7 @@ type NLSLayerGroup implements NLSLayer {
   title: String!
   visible: Boolean!
   infobox: NLSInfobox
+  photoOverlay: NLSPhotoOverlay
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
@@ -48,6 +51,15 @@ type NLSInfobox {
   layerId: ID!
   propertyId: ID!
   blocks: [InfoboxBlock!]!
+  property: Property
+  scene: Scene
+}
+
+type NLSPhotoOverlay {
+  id: ID!
+  sceneId: ID!
+  layerId: ID!
+  propertyId: ID!
   property: Property
   scene: Scene
 }
@@ -103,6 +115,14 @@ input CreateNLSInfoboxInput {
 }
 
 input RemoveNLSInfoboxInput {
+  layerId: ID!
+}
+
+input CreateNLSPhotoOverlayInput {
+  layerId: ID!
+}
+
+input RemoveNLSPhotoOverlayInput {
   layerId: ID!
 }
 
@@ -172,6 +192,14 @@ type RemoveNLSInfoboxPayload {
   layer: NLSLayer!
 }
 
+type CreateNLSPhotoOverlayPayload {
+  layer: NLSLayer!
+}
+
+type RemoveNLSPhotoOverlayPayload {
+  layer: NLSLayer!
+}
+
 type AddNLSInfoboxBlockPayload {
   infoboxBlock: InfoboxBlock!
   layer: NLSLayer!
@@ -200,6 +228,12 @@ extend type Mutation {
   createNLSInfobox(input: CreateNLSInfoboxInput!): CreateNLSInfoboxPayload
   removeNLSInfobox(input: RemoveNLSInfoboxInput!): RemoveNLSInfoboxPayload
   addNLSInfoboxBlock(input: AddNLSInfoboxBlockInput!): AddNLSInfoboxBlockPayload
+  createNLSPhotoOverlay(
+    input: CreateNLSPhotoOverlayInput!
+  ): CreateNLSPhotoOverlayPayload
+  removeNLSPhotoOverlay(
+    input: RemoveNLSPhotoOverlayInput!
+  ): RemoveNLSPhotoOverlayPayload
   moveNLSInfoboxBlock(
     input: MoveNLSInfoboxBlockInput!
   ): MoveNLSInfoboxBlockPayload

@@ -52,6 +52,13 @@ func (l *NLSLayerGroup) Infobox() *Infobox {
 	return l.layerBase.infobox
 }
 
+func (l *NLSLayerGroup) PhotoOverlay() *PhotoOverlay {
+	if l == nil {
+		return nil
+	}
+	return l.layerBase.photoOverlay
+}
+
 func (l *NLSLayerGroup) SetVisible(visible bool) {
 	if l == nil {
 		return
@@ -64,6 +71,13 @@ func (l *NLSLayerGroup) SetInfobox(infobox *Infobox) {
 		return
 	}
 	l.layerBase.infobox = infobox
+}
+
+func (l *NLSLayerGroup) SetPhotoOverlay(photooverlay *PhotoOverlay) {
+	if l == nil {
+		return
+	}
+	l.layerBase.photoOverlay = photooverlay
 }
 
 func (l *NLSLayerGroup) Children() *IDList {

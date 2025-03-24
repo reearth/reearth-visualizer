@@ -23,6 +23,7 @@ enum PluginExtensionType {
   BLOCK
   VISUALIZER
   INFOBOX
+  PHOTOOVERLAY
   Story
   StoryPage
   StoryBlock

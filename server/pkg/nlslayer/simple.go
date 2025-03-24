@@ -54,6 +54,13 @@ func (l *NLSLayerSimple) Infobox() *Infobox {
 	return l.layerBase.infobox
 }
 
+func (l *NLSLayerSimple) PhotoOverlay() *PhotoOverlay {
+	if l == nil {
+		return nil
+	}
+	return l.layerBase.photoOverlay
+}
+
 func (l *NLSLayerSimple) SetVisible(visible bool) {
 	if l == nil {
 		return
@@ -66,6 +73,13 @@ func (l *NLSLayerSimple) SetInfobox(infobox *Infobox) {
 		return
 	}
 	l.layerBase.infobox = infobox
+}
+
+func (l *NLSLayerSimple) SetPhotoOverlay(photooverlay *PhotoOverlay) {
+	if l == nil {
+		return
+	}
+	l.layerBase.photoOverlay = photooverlay
 }
 
 func (l *NLSLayerSimple) LayerRef() *NLSLayer {
