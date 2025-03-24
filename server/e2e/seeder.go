@@ -45,9 +45,10 @@ var (
 	sID    = id.NewSceneID()
 	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
-	storyID = storytelling.NewStoryID()
-	pageID  = storytelling.NewPageID()
-	blockID = storytelling.NewBlockID()
+	nlsLayerId = id.NewNLSLayerID()
+	storyID    = id.NewStoryID()
+	pageID     = id.NewPageID()
+	blockID    = id.NewBlockID()
 )
 
 func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
@@ -146,7 +147,7 @@ func addAsset(path string, ctx context.Context, r *repo.Container, gf gateway.Fi
 		return nil, err
 	}
 
-	aid := asset.NewID()
+	aid := id.NewAssetID()
 	a := asset.New().
 		ID(aid).
 		Workspace(wID).
@@ -351,7 +352,7 @@ func _createBlock(ctx context.Context, r *repo.Container) (*storytelling.Block, 
 		Build()
 }
 
-func addLayerStyle(SceneID scene.ID, ctx context.Context, r *repo.Container) error {
+func addLayerStyle(SceneID id.SceneID, ctx context.Context, r *repo.Container) error {
 	var s gqlmodel.JSON
 	err := json.Unmarshal([]byte(`{
       "marker": {
@@ -395,7 +396,7 @@ func addLayerSimple(ctx context.Context, r *repo.Container) error {
 	}
 
 	layerSimple, err := nlslayer.NewNLSLayerSimple().
-		NewID().
+		ID(nlsLayerId).
 		Scene(sID).
 		Config(gqlmodel.ToNLSConfig(config)).
 		LayerType(gqlmodel.ToNLSLayerType("simple")).
@@ -455,7 +456,7 @@ func addGeoJson(layerID nlslayer.ID, ctx context.Context, r *repo.Container) err
 	}
 
 	feature, err := nlslayer.NewFeature(
-		nlslayer.NewFeatureID(),
+		id.NewFeatureID(),
 		"Feature",
 		geometry,
 	)

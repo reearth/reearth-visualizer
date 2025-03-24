@@ -24,7 +24,7 @@ import (
 
 func TestScene_InstallPlugin(t *testing.T) {
 	type args struct {
-		pluginID plugin.ID
+		pluginID id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -35,11 +35,11 @@ func TestScene_InstallPlugin(t *testing.T) {
 		wantErr               error
 	}
 
-	sid := scene.NewID()
-	pid := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
-	pid3 := plugin.MustID("plugin~1.0.1").WithScene(&sid)
-	pid4 := plugin.MustID("plugin~1.0.1").WithScene(scene.NewID().Ref())
+	sid := id.NewSceneID()
+	pid := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
+	pid3 := id.MustPluginID("plugin~1.0.1").WithScene(&sid)
+	pid4 := id.MustPluginID("plugin~1.0.1").WithScene(id.NewSceneID().Ref())
 
 	tests := []test{
 		{
@@ -149,7 +149,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 
 func TestScene_UninstallPlugin(t *testing.T) {
 	type args struct {
-		pluginID plugin.ID
+		pluginID id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -159,11 +159,11 @@ func TestScene_UninstallPlugin(t *testing.T) {
 		wantErr error
 	}
 
-	sid := scene.NewID()
-	pid := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
-	pid3 := plugin.MustID("plugin~1.0.2")
-	pid4 := plugin.MustID("plugin2~1.0.3").WithScene(&sid)
+	sid := id.NewSceneID()
+	pid := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
+	pid3 := id.MustPluginID("plugin~1.0.2")
+	pid4 := id.MustPluginID("plugin2~1.0.3").WithScene(&sid)
 
 	tests := []test{
 		{
@@ -226,7 +226,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
 			sc.Plugins().Add(scene.NewPlugin(pid4, ppr.ID().Ref()))
-			sw, _ := scene.NewWidget(scene.NewWidgetID(), pid, "a", ppr2.ID(), true, false)
+			sw, _ := scene.NewWidget(id.NewWidgetID(), pid, "a", ppr2.ID(), true, false)
 			sc.Widgets().Add(sw)
 			sr := memory.NewSceneWith(sc)
 
@@ -286,8 +286,8 @@ func TestScene_UninstallPlugin(t *testing.T) {
 
 func TestScene_UpgradePlugin(t *testing.T) {
 	type args struct {
-		old      plugin.ID
-		new      plugin.ID
+		old      id.PluginID
+		new      id.PluginID
 		operator *usecase.Operator
 	}
 
@@ -297,11 +297,11 @@ func TestScene_UpgradePlugin(t *testing.T) {
 		wantErr error
 	}
 
-	sid := scene.NewID()
-	pid1 := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
-	pid3 := plugin.MustID("plugin~1.0.2")
-	pid4 := plugin.MustID("pluginx~1.0.2")
+	sid := id.NewSceneID()
+	pid1 := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
+	pid3 := id.MustPluginID("plugin~1.0.2")
+	pid4 := id.MustPluginID("pluginx~1.0.2")
 
 	tests := []test{
 		{

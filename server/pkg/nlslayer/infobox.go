@@ -5,25 +5,26 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 )
 
 type BlockList []*InfoboxBlock
 
 type Infobox struct {
-	id       InfoboxID
-	property PropertyID
+	id       id.InfoboxID
+	property id.PropertyID
 	blocks   BlockList
 	// for checking duplication
-	ids map[InfoboxBlockID]struct{}
+	ids map[id.InfoboxBlockID]struct{}
 }
 
-func NewInfobox(Blocks []*InfoboxBlock, p PropertyID) *Infobox {
+func NewInfobox(Blocks []*InfoboxBlock, p id.PropertyID) *Infobox {
 	infobox := Infobox{
-		id:       NewInfoboxID(),
+		id:       id.NewInfoboxID(),
 		property: p,
 		blocks:   make([]*InfoboxBlock, len(Blocks)),
-		ids:      make(map[InfoboxBlockID]struct{}, len(Blocks)),
+		ids:      make(map[id.InfoboxBlockID]struct{}, len(Blocks)),
 	}
 	for i, f := range Blocks {
 		if f == nil {
@@ -35,15 +36,15 @@ func NewInfobox(Blocks []*InfoboxBlock, p PropertyID) *Infobox {
 	return &infobox
 }
 
-func (i *Infobox) Id() InfoboxID {
+func (i *Infobox) Id() id.InfoboxID {
 	return i.id
 }
 
-func (i *Infobox) Property() PropertyID {
+func (i *Infobox) Property() id.PropertyID {
 	return i.property
 }
 
-func (i *Infobox) PropertyRef() *PropertyID {
+func (i *Infobox) PropertyRef() *id.PropertyID {
 	if i == nil {
 		return nil
 	}
@@ -58,7 +59,7 @@ func (i *Infobox) Blocks() BlockList {
 	return append(BlockList{}, i.blocks...)
 }
 
-func (i *Infobox) Block(Block InfoboxBlockID) *InfoboxBlock {
+func (i *Infobox) Block(Block id.InfoboxBlockID) *InfoboxBlock {
 	if i == nil {
 		return nil
 	}
@@ -77,7 +78,7 @@ func (i *Infobox) BlockAt(index int) *InfoboxBlock {
 	return i.blocks[index]
 }
 
-func (i *Infobox) Has(id InfoboxBlockID) bool {
+func (i *Infobox) Has(id id.InfoboxBlockID) bool {
 	_, ok := i.ids[id]
 	return ok
 }
@@ -100,7 +101,7 @@ func (i *Infobox) Add(Block *InfoboxBlock, index int) {
 	i.ids[id] = struct{}{}
 }
 
-func (i *Infobox) Move(Block InfoboxBlockID, toIndex int) {
+func (i *Infobox) Move(Block id.InfoboxBlockID, toIndex int) {
 	for fromIndex, f := range i.blocks {
 		if f.ID() == Block {
 			i.MoveAt(fromIndex, toIndex)
@@ -126,7 +127,7 @@ func (i *Infobox) MoveAt(fromIndex int, toIndex int) {
 	i.blocks = append(newSlice, i.blocks[toIndex:]...)
 }
 
-func (i *Infobox) Remove(Block InfoboxBlockID) {
+func (i *Infobox) Remove(Block id.InfoboxBlockID) {
 	for index, f := range i.blocks {
 		if f.ID() == Block {
 			i.RemoveAt(index)
@@ -184,7 +185,7 @@ func (i *Infobox) Clone() *Infobox {
 		}
 	}
 
-	clonedIDs := make(map[InfoboxBlockID]struct{})
+	clonedIDs := make(map[id.InfoboxBlockID]struct{})
 	for id, val := range i.ids {
 		clonedIDs[id] = val
 	}

@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/value"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +14,7 @@ var (
 )
 
 func TestGroup_IDRef(t *testing.T) {
-	id := NewItemID()
+	id := id.NewPropertyItemID()
 	assert.Nil(t, (*Group)(nil).IDRef())
 	assert.Equal(t, &id, (&Group{
 		itemBase: itemBase{
@@ -26,7 +27,7 @@ func TestGroup_SchemaGroup(t *testing.T) {
 	var g *Group
 	assert.Nil(t, g.SchemaGroupRef())
 
-	pfid := SchemaGroupID("aa")
+	pfid := id.PropertySchemaGroupID("aa")
 	g = NewGroup().NewID().SchemaGroup(pfid).MustBuild()
 	assert.Equal(t, pfid, g.SchemaGroup())
 	assert.Equal(t, pfid.Ref(), g.SchemaGroupRef())
@@ -107,7 +108,7 @@ func TestGroup_GetOrCreateField(t *testing.T) {
 		Name     string
 		Group    *Group
 		PS       *Schema
-		FID      FieldID
+		FID      id.PropertyFieldID
 		Expected struct {
 			Field *Field
 			Bool  bool
@@ -123,12 +124,12 @@ func TestGroup_GetOrCreateField(t *testing.T) {
 		{
 			Name:  "group schema doesn't equal to ps",
 			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
-			PS:    NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
+			PS:    NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 		},
 		{
 			Name:  "create field",
 			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
-			PS:    NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
+			PS:    NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 			FID:   "aa",
 			Expected: struct {
 				Field *Field
@@ -141,7 +142,7 @@ func TestGroup_GetOrCreateField(t *testing.T) {
 		{
 			Name:  "get field",
 			Group: NewGroup().NewID().SchemaGroup("aa").Fields([]*Field{f}).MustBuild(),
-			PS:    NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
+			PS:    NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 			FID:   "aa",
 			Expected: struct {
 				Field *Field
@@ -174,7 +175,7 @@ func TestGroup_RemoveField(t *testing.T) {
 	tests := []struct {
 		Name     string
 		Group    *Group
-		Input    FieldID
+		Input    id.PropertyFieldID
 		Expected []*Field
 	}{
 		{
@@ -208,7 +209,7 @@ func TestGroup_FieldIDs(t *testing.T) {
 	tests := []struct {
 		Name     string
 		Group    *Group
-		Expected []FieldID
+		Expected []id.PropertyFieldID
 	}{
 		{
 			Name: "nil group",
@@ -216,7 +217,7 @@ func TestGroup_FieldIDs(t *testing.T) {
 		{
 			Name:     "normal case",
 			Group:    NewGroup().NewID().SchemaGroup("x").Fields([]*Field{f, f2}).MustBuild(),
-			Expected: []FieldID{"a", "b"},
+			Expected: []id.PropertyFieldID{"a", "b"},
 		},
 	}
 
@@ -240,7 +241,7 @@ func TestGroup_Field(t *testing.T) {
 	tests := []struct {
 		Name     string
 		Group    *Group
-		Input    FieldID
+		Input    id.PropertyFieldID
 		Expected *Field
 	}{
 		{
@@ -274,7 +275,7 @@ func TestGroup_RepresentativeFieldValue(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").
 		Fields([]*SchemaField{sf}).
-		RepresentativeField(FieldID("aa").Ref()).
+		RepresentativeField(id.PropertyFieldID("aa").Ref()).
 		MustBuild()
 	sg2 := NewSchemaGroup().
 		ID("bb").
@@ -290,7 +291,7 @@ func TestGroup_RepresentativeFieldValue(t *testing.T) {
 		Name     string
 		Args     args
 		Group    *Group
-		FieldID  FieldID
+		FieldID  id.PropertyFieldID
 		Expected *Field
 	}{
 		{
@@ -304,7 +305,7 @@ func TestGroup_RepresentativeFieldValue(t *testing.T) {
 			Name:  "invalid property field",
 			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 			Args: args{
-				Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/bb")).Groups(NewSchemaGroupList([]*SchemaGroup{sg2})).MustBuild(),
+				Schema: NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/bb")).Groups(NewSchemaGroupList([]*SchemaGroup{sg2})).MustBuild(),
 				Value:  ValueTypeString.ValueFrom("abc"),
 			},
 		},
@@ -312,7 +313,7 @@ func TestGroup_RepresentativeFieldValue(t *testing.T) {
 			Name:  "ok",
 			Group: NewGroup().NewID().SchemaGroup("aa").MustBuild(),
 			Args: args{
-				Schema: NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
+				Schema: NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 				Value:  ValueTypeString.ValueFrom("abc"),
 			},
 			Expected: &Field{field: "aa", v: &OptionalValue{ov: *value.NewOptional(value.TypeString, nil)}},

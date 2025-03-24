@@ -5,8 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
-	"github.com/reearth/reearth/server/pkg/plugin"
-	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
@@ -37,7 +36,7 @@ type Container struct {
 	Policy         Policy
 	Storytelling   Storytelling
 	Transaction    usecasex.Transaction
-	Extensions     []plugin.ID
+	Extensions     []id.PluginID
 }
 
 func (c *Container) AccountRepos() *accountrepo.Container {
@@ -127,8 +126,8 @@ func (f WorkspaceFilter) CanWrite(id accountdomain.WorkspaceID) bool {
 }
 
 type SceneFilter struct {
-	Readable scene.IDList
-	Writable scene.IDList
+	Readable id.SceneIDList
+	Writable id.SceneIDList
 }
 
 func SceneFilterFromOperator(o *usecase.Operator) SceneFilter {
@@ -139,7 +138,7 @@ func SceneFilterFromOperator(o *usecase.Operator) SceneFilter {
 }
 
 func (f SceneFilter) Merge(g SceneFilter) SceneFilter {
-	var r, w scene.IDList
+	var r, w id.SceneIDList
 
 	if f.Readable != nil || g.Readable != nil {
 		if f.Readable == nil {
@@ -170,10 +169,10 @@ func (f SceneFilter) Clone() SceneFilter {
 	}
 }
 
-func (f SceneFilter) CanRead(id scene.ID) bool {
+func (f SceneFilter) CanRead(id id.SceneID) bool {
 	return f.Readable == nil || f.Readable.Has(id)
 }
 
-func (f SceneFilter) CanWrite(id scene.ID) bool {
+func (f SceneFilter) CanWrite(id id.SceneID) bool {
 	return f.Writable == nil || f.Writable.Has(id)
 }

@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestSchemaBuilder_Build(t *testing.T) {
 	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
 
 	type args struct {
-		ID       SchemaID
+		ID       id.PropertySchemaID
 		Version  int
 		Groups   *SchemaGroupList
 		Linkable LinkableFields
@@ -25,25 +26,25 @@ func TestSchemaBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "fail: invalid id",
-			Err:  ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 		{
 			Name: "fail: invalid linkable field",
 			Args: args{
-				ID:       MustSchemaID("xx~1.0.0/aa"),
-				Linkable: LinkableFields{LatLng: &SchemaFieldPointer{Field: FieldID("xx")}},
+				ID:       id.MustPropertySchemaID("xx~1.0.0/aa"),
+				Linkable: LinkableFields{LatLng: &SchemaFieldPointer{Field: id.PropertyFieldID("xx")}},
 			},
 			Err: ErrInvalidPropertyLinkableField,
 		},
 		{
 			Name: "success",
 			Args: args{
-				ID:      MustSchemaID("xx~1.0.0/aa"),
+				ID:      id.MustPropertySchemaID("xx~1.0.0/aa"),
 				Groups:  NewSchemaGroupList([]*SchemaGroup{sg}),
 				Version: 1,
 			},
 			Expected: &Schema{
-				id:      MustSchemaID("xx~1.0.0/aa"),
+				id:      id.MustPropertySchemaID("xx~1.0.0/aa"),
 				version: 1,
 				groups:  NewSchemaGroupList([]*SchemaGroup{sg}),
 			},
@@ -75,7 +76,7 @@ func TestSchemaBuilder_MustBuild(t *testing.T) {
 	sg := NewSchemaGroup().ID("aaa").Fields([]*SchemaField{sf}).MustBuild()
 
 	type args struct {
-		ID       SchemaID
+		ID       id.PropertySchemaID
 		Version  int
 		Groups   *SchemaGroupList
 		Linkable LinkableFields
@@ -89,25 +90,25 @@ func TestSchemaBuilder_MustBuild(t *testing.T) {
 	}{
 		{
 			Name: "fail: invalid id",
-			Err:  ErrInvalidID.Error(),
+			Err:  id.ErrInvalidID.Error(),
 		},
 		{
 			Name: "fail: invalid linkable field",
 			Args: args{
-				ID:       MustSchemaID("xx~1.0.0/aa"),
-				Linkable: LinkableFields{LatLng: &SchemaFieldPointer{Field: FieldID("xx")}},
+				ID:       id.MustPropertySchemaID("xx~1.0.0/aa"),
+				Linkable: LinkableFields{LatLng: &SchemaFieldPointer{Field: id.PropertyFieldID("xx")}},
 			},
 			Err: ErrInvalidPropertyLinkableField.Error(),
 		},
 		{
 			Name: "success",
 			Args: args{
-				ID:      MustSchemaID("xx~1.0.0/aa"),
+				ID:      id.MustPropertySchemaID("xx~1.0.0/aa"),
 				Groups:  NewSchemaGroupList([]*SchemaGroup{sg}),
 				Version: 1,
 			},
 			Expected: &Schema{
-				id:      MustSchemaID("xx~1.0.0/aa"),
+				id:      id.MustPropertySchemaID("xx~1.0.0/aa"),
 				version: 1,
 				groups:  NewSchemaGroupList([]*SchemaGroup{sg}),
 			},

@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -18,20 +19,20 @@ func TestScene_SetUpdatedAt(t *testing.T) {
 }
 
 func TestScene_Properties(t *testing.T) {
-	pid1 := NewPropertyID()
-	pid2 := NewPropertyID()
+	pid1 := id.NewPropertyID()
+	pid2 := id.NewPropertyID()
 	s := New().
 		NewID().
 		Workspace(accountdomain.NewWorkspaceID()).
 		Property(pid1).
 		Widgets(
 			NewWidgets([]*Widget{
-				MustWidget(NewWidgetID(), MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
+				MustWidget(id.NewWidgetID(), id.MustPluginID("xxx~1.1.1"), "eee", pid2, true, false),
 			}, nil),
 		).
 		MustBuild()
 
-	assert.Equal(t, []PropertyID{pid1, pid2}, s.Properties())
+	assert.Equal(t, []id.PropertyID{pid1, pid2}, s.Properties())
 }
 
 func TestSceneNil(t *testing.T) {

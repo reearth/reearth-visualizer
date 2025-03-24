@@ -31,7 +31,7 @@ func NewNLSLayerSimple() *NLSLayerSimpleBuilder {
 
 func (b *NLSLayerSimpleBuilder) Build() (*NLSLayerSimple, error) {
 	if b.l.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.l, nil
 }
@@ -55,7 +55,7 @@ func (b *NLSLayerSimpleBuilder) ID(id id.NLSLayerID) *NLSLayerSimpleBuilder {
 }
 
 func (b *NLSLayerSimpleBuilder) NewID() *NLSLayerSimpleBuilder {
-	b.l.id = NewID()
+	b.l.id = id.NewNLSLayerID()
 	return b
 }
 
@@ -69,7 +69,7 @@ func (b *NLSLayerSimpleBuilder) LayerType(t LayerType) *NLSLayerSimpleBuilder {
 	return b
 }
 
-func (b *NLSLayerSimpleBuilder) Scene(s SceneID) *NLSLayerSimpleBuilder {
+func (b *NLSLayerSimpleBuilder) Scene(s id.SceneID) *NLSLayerSimpleBuilder {
 	b.l.scene = s
 	return b
 }
@@ -86,6 +86,11 @@ func (b *NLSLayerSimpleBuilder) IsVisible(i bool) *NLSLayerSimpleBuilder {
 
 func (b *NLSLayerSimpleBuilder) Infobox(infobox *Infobox) *NLSLayerSimpleBuilder {
 	b.l.infobox = infobox
+	return b
+}
+
+func (b *NLSLayerSimpleBuilder) PhotoOverlay(photoOverlay *PhotoOverlay) *NLSLayerSimpleBuilder {
+	b.l.photoOverlay = photoOverlay
 	return b
 }
 

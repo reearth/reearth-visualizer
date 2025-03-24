@@ -127,7 +127,7 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return result, nil
 }
 
-func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []project.ID, _ error) {
+func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []id.ProjectID, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

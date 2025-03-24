@@ -16,9 +16,9 @@ func TestPluginMigrator_MigratePlugins(t *testing.T) {
 	assert := assert.New(t)
 	ctx := context.Background()
 
-	sid := scene.NewID()
-	pid1 := plugin.MustID("plugin~1.0.0")
-	pid2 := plugin.MustID("plugin~1.0.1")
+	sid := id.NewSceneID()
+	pid1 := id.MustPluginID("plugin~1.0.0")
+	pid2 := id.MustPluginID("plugin~1.0.1")
 
 	pl1ps := property.NewSchema().ID(id.NewPropertySchemaID(pid1, "@")).MustBuild()
 	pl2ps := property.NewSchema().ID(id.NewPropertySchemaID(pid2, "@")).MustBuild()

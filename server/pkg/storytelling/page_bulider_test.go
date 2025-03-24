@@ -12,18 +12,18 @@ func TestPageBuilder(t *testing.T) {
 	b := NewPage()
 	assert.Equal(t, &PageBuilder{page: &Page{}}, b)
 
-	assert.PanicsWithError(t, ErrInvalidID.Error(), func() {
+	assert.PanicsWithError(t, id.ErrInvalidID.Error(), func() {
 		b.MustBuild()
 	})
 
 	b = b.NewID()
 	assert.False(t, b.page.id.IsEmpty())
 
-	pageID := NewPageID()
+	pageID := id.NewPageID()
 	b = b.ID(pageID)
 	assert.Equal(t, pageID, b.page.id)
 
-	propertyID := NewPropertyID()
+	propertyID := id.NewPropertyID()
 	b = b.Property(propertyID)
 	assert.Equal(t, propertyID, b.page.property)
 
@@ -33,7 +33,7 @@ func TestPageBuilder(t *testing.T) {
 	b = b.Swipeable(true)
 	assert.Equal(t, true, b.page.swipeable)
 
-	layerID := NewLayerID()
+	layerID := id.NewNLSLayerID()
 	b = b.Layers(id.NLSLayerIDList{layerID})
 	assert.Equal(t, id.NLSLayerIDList{layerID}, b.page.layers)
 

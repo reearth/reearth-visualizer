@@ -4,31 +4,33 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type Property struct {
-	id     ID
-	scene  SceneID
-	schema SchemaID
+	id     id.PropertyID
+	scene  id.SceneID
+	schema id.PropertySchemaID
 	items  []Item
 }
 
-func (p *Property) ID() ID {
+func (p *Property) ID() id.PropertyID {
 	return p.id
 }
 
-func (p *Property) IDRef() *ID {
+func (p *Property) IDRef() *id.PropertyID {
 	if p == nil {
 		return nil
 	}
 	return p.id.Ref()
 }
 
-func (p *Property) Scene() SceneID {
+func (p *Property) Scene() id.SceneID {
 	return p.scene
 }
 
-func (p *Property) Schema() SchemaID {
+func (p *Property) Schema() id.PropertySchemaID {
 	return p.schema
 }
 
@@ -86,7 +88,7 @@ func (p *Property) GroupAndList(ptr *Pointer) (*Group, *GroupList) {
 }
 
 // ItemBySchema returns a root item by a schema group ID.
-func (p *Property) ItemBySchema(id SchemaGroupID) Item {
+func (p *Property) ItemBySchema(id id.PropertySchemaGroupID) Item {
 	if p == nil {
 		return nil
 	}
@@ -98,7 +100,7 @@ func (p *Property) ItemBySchema(id SchemaGroupID) Item {
 	return nil
 }
 
-func (p *Property) GroupBySchema(id SchemaGroupID) *Group {
+func (p *Property) GroupBySchema(id id.PropertySchemaGroupID) *Group {
 	i := p.ItemBySchema(id)
 	if i == nil {
 		return nil
@@ -109,7 +111,7 @@ func (p *Property) GroupBySchema(id SchemaGroupID) *Group {
 	return nil
 }
 
-func (p *Property) GroupListBySchema(id SchemaGroupID) *GroupList {
+func (p *Property) GroupListBySchema(id id.PropertySchemaGroupID) *GroupList {
 	i := p.ItemBySchema(id)
 	if i == nil {
 		return nil
@@ -556,7 +558,7 @@ func (p *Property) GuessSchema() *Schema {
 	return nil
 }
 
-func (p *Property) updateSchema(s SchemaID) bool {
+func (p *Property) updateSchema(s id.PropertySchemaID) bool {
 	if p == nil || s.IsNil() || p.schema.Equal(s) {
 		return false
 	}
@@ -564,6 +566,6 @@ func (p *Property) updateSchema(s SchemaID) bool {
 	return true
 }
 
-func (p *Property) SetSchema(schema SchemaID) {
+func (p *Property) SetSchema(schema id.PropertySchemaID) {
 	p.schema = schema.Clone()
 }

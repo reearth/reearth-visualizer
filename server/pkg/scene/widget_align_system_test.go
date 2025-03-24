@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -28,15 +29,15 @@ func TestWidgetAlignSystem_Area(t *testing.T) {
 }
 
 func TestWidgetAlignSystem_Find(t *testing.T) {
-	wid1 := NewWidgetID()
-	wid2 := NewWidgetID()
-	wid3 := NewWidgetID()
-	wid4 := NewWidgetID()
-	wid5 := NewWidgetID()
+	wid1 := id.NewWidgetID()
+	wid2 := id.NewWidgetID()
+	wid3 := id.NewWidgetID()
+	wid4 := id.NewWidgetID()
+	wid5 := id.NewWidgetID()
 
 	tests := []struct {
 		Name      string
-		Input     WidgetID
+		Input     id.WidgetID
 		Expected1 int
 		Expected2 WidgetLocation
 		Nil       bool
@@ -55,7 +56,7 @@ func TestWidgetAlignSystem_Find(t *testing.T) {
 		},
 		{
 			Name:      "invalid id",
-			Input:     NewWidgetID(),
+			Input:     id.NewWidgetID(),
 			Expected1: -1,
 			Expected2: WidgetLocation{},
 		},
@@ -81,8 +82,8 @@ func TestWidgetAlignSystem_Find(t *testing.T) {
 			}
 
 			was := NewWidgetAlignSystem()
-			was.Zone(WidgetZoneInner).Section(WidgetSectionLeft).Area(WidgetAreaTop).AddAll(WidgetIDList{wid1, wid2, wid3})
-			was.Zone(WidgetZoneOuter).Section(WidgetSectionLeft).Area(WidgetAreaTop).AddAll(WidgetIDList{wid4, wid5})
+			was.Zone(WidgetZoneInner).Section(WidgetSectionLeft).Area(WidgetAreaTop).AddAll(id.WidgetIDList{wid1, wid2, wid3})
+			was.Zone(WidgetZoneOuter).Section(WidgetSectionLeft).Area(WidgetAreaTop).AddAll(id.WidgetIDList{wid4, wid5})
 
 			index, location := was.Find(tc.Input)
 			assert.Equal(t, tc.Expected1, index)
@@ -92,38 +93,38 @@ func TestWidgetAlignSystem_Find(t *testing.T) {
 }
 
 func TestWidgetAlignSystem_Remove(t *testing.T) {
-	wid := NewWidgetID()
+	wid := id.NewWidgetID()
 
 	tests := []struct {
 		Name     string
 		Zone     WidgetZoneType
-		Input    WidgetID
-		Expected WidgetIDList
+		Input    id.WidgetID
+		Expected id.WidgetIDList
 		Nil      bool
 	}{
 		{
 			Name:     "inner: remove a widget from widget section",
 			Zone:     WidgetZoneInner,
 			Input:    wid,
-			Expected: WidgetIDList{},
+			Expected: id.WidgetIDList{},
 		},
 		{
 			Name:     "inner: couldn't find widgetId",
 			Zone:     WidgetZoneInner,
-			Input:    NewWidgetID(),
-			Expected: WidgetIDList{wid},
+			Input:    id.NewWidgetID(),
+			Expected: id.WidgetIDList{wid},
 		},
 		{
 			Name:     "outer: remove a widget from widget section",
 			Zone:     WidgetZoneOuter,
 			Input:    wid,
-			Expected: WidgetIDList{},
+			Expected: id.WidgetIDList{},
 		},
 		{
 			Name:     "outer: couldn't find widgetId",
 			Zone:     WidgetZoneOuter,
-			Input:    NewWidgetID(),
-			Expected: WidgetIDList{wid},
+			Input:    id.NewWidgetID(),
+			Expected: id.WidgetIDList{wid},
 		},
 		{
 			Name:  "nil",
@@ -152,20 +153,20 @@ func TestWidgetAlignSystem_Remove(t *testing.T) {
 }
 
 func TestWidgetAlignSystem_Move(t *testing.T) {
-	wid1 := NewWidgetID()
-	wid2 := NewWidgetID()
-	wid3 := NewWidgetID()
-	wid4 := NewWidgetID()
-	wid5 := NewWidgetID()
+	wid1 := id.NewWidgetID()
+	wid2 := id.NewWidgetID()
+	wid3 := id.NewWidgetID()
+	wid4 := id.NewWidgetID()
+	wid5 := id.NewWidgetID()
 
 	tests := []struct {
 		Name           string
-		Input1         WidgetID
+		Input1         id.WidgetID
 		Input2         WidgetLocation
 		Input3         int
 		Source         WidgetLocation
-		ExpectedSource WidgetIDList
-		ExpectedDest   WidgetIDList
+		ExpectedSource id.WidgetIDList
+		ExpectedDest   id.WidgetIDList
 		Nil            bool
 	}{
 		{
@@ -182,8 +183,8 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 				Section: WidgetSectionLeft,
 				Area:    WidgetAreaTop,
 			},
-			ExpectedSource: WidgetIDList{wid2, wid1, wid3},
-			ExpectedDest:   WidgetIDList{wid2, wid1, wid3},
+			ExpectedSource: id.WidgetIDList{wid2, wid1, wid3},
+			ExpectedDest:   id.WidgetIDList{wid2, wid1, wid3},
 		},
 		{
 			Name:   "move a widget in the same area with negative index",
@@ -199,8 +200,8 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 				Section: WidgetSectionLeft,
 				Area:    WidgetAreaTop,
 			},
-			ExpectedSource: WidgetIDList{wid2, wid3, wid1},
-			ExpectedDest:   WidgetIDList{wid2, wid3, wid1},
+			ExpectedSource: id.WidgetIDList{wid2, wid3, wid1},
+			ExpectedDest:   id.WidgetIDList{wid2, wid3, wid1},
 		},
 		{
 			Name:   "move a widget to a different area with positive index",
@@ -216,8 +217,8 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 				Section: WidgetSectionRight,
 				Area:    WidgetAreaTop,
 			},
-			ExpectedSource: WidgetIDList{wid2, wid3},
-			ExpectedDest:   WidgetIDList{wid4, wid1, wid5},
+			ExpectedSource: id.WidgetIDList{wid2, wid3},
+			ExpectedDest:   id.WidgetIDList{wid4, wid1, wid5},
 		},
 		{
 			Name:   "move a widget to a different area with negative index",
@@ -233,8 +234,8 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 				Section: WidgetSectionCenter,
 				Area:    WidgetAreaMiddle,
 			},
-			ExpectedSource: WidgetIDList{wid2, wid3},
-			ExpectedDest:   WidgetIDList{wid4, wid5, wid1},
+			ExpectedSource: id.WidgetIDList{wid2, wid3},
+			ExpectedDest:   id.WidgetIDList{wid4, wid5, wid1},
 		},
 		{
 			Name: "nil",
@@ -253,9 +254,9 @@ func TestWidgetAlignSystem_Move(t *testing.T) {
 			}
 
 			ws := NewWidgetAlignSystem()
-			ws.Area(tc.Source).AddAll(WidgetIDList{wid1, wid2, wid3})
+			ws.Area(tc.Source).AddAll(id.WidgetIDList{wid1, wid2, wid3})
 			if tc.Source != tc.Input2 {
-				ws.Area(tc.Input2).AddAll(WidgetIDList{wid4, wid5})
+				ws.Area(tc.Input2).AddAll(id.WidgetIDList{wid4, wid5})
 			}
 
 			ws.Move(tc.Input1, tc.Input2, tc.Input3)

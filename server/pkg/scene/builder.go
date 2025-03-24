@@ -2,6 +2,9 @@ package scene
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type Builder struct {
@@ -14,10 +17,10 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Scene, error) {
 	if b.scene.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	if b.scene.workspace.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	if b.scene.widgets == nil {
 		b.scene.widgets = NewWidgets(nil, nil)
@@ -39,22 +42,22 @@ func (b *Builder) MustBuild() *Scene {
 	return r
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.SceneID) *Builder {
 	b.scene.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.scene.id = NewID()
+	b.scene.id = id.NewSceneID()
 	return b
 }
 
-func (b *Builder) Project(prj ProjectID) *Builder {
+func (b *Builder) Project(prj id.ProjectID) *Builder {
 	b.scene.project = prj
 	return b
 }
 
-func (b *Builder) Workspace(workspace WorkspaceID) *Builder {
+func (b *Builder) Workspace(workspace accountdomain.WorkspaceID) *Builder {
 	b.scene.workspace = workspace
 	return b
 }
@@ -74,7 +77,7 @@ func (b *Builder) Plugins(plugins *Plugins) *Builder {
 	return b
 }
 
-func (b *Builder) Property(p PropertyID) *Builder {
+func (b *Builder) Property(p id.PropertyID) *Builder {
 	b.scene.property = p
 	return b
 }
