@@ -148,6 +148,9 @@ extensions:
           allowEnterGround:
             title: 地下へ入る
             description: Onにすることでカメラが地表面へ潜り込むようになります。
+          sceneMode:
+            title: シーンモード
+            description: 地球儀の表示を2D、2.5D、3Dから選択します。
           skybox:
             title: 宇宙の表示
             description: 宇宙空間の表示を切り替えます。

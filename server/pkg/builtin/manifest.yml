@@ -281,6 +281,18 @@ extensions:
               title: Enter the ground
               defaultValue: false
               description: Set to true to allow the camera to enter the surface of the earth.
+            - id: sceneMode
+              type: string
+              title: Scene mode
+              description: Specify scene mode.
+              defaultValue: 3d
+              choices:
+                - key: 3d
+                  label: Scene 3D
+                - key: 2d
+                  label: Scene 2D
+                - key: columbus
+                  label: Columbus View
             - id: skybox
               type: bool
               title: Sky

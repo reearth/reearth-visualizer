@@ -259,7 +259,6 @@ export default function Crust({
 
   const widgetContext = useWidgetContext({
     mapRef,
-    viewerProperty,
     initialCamera,
     selectedLayerId,
     timelineManagerRef: mapRef?.current?.timeline
