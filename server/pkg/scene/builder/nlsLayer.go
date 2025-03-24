@@ -8,16 +8,17 @@ import (
 )
 
 type nlsLayerJSON struct {
-	ID         string          `json:"id"`
-	Index      *int            `json:"index,omitempty"`
-	Title      string          `json:"title,omitempty"`
-	LayerType  string          `json:"layerType,omitempty"`
-	Config     *configJSON     `json:"config,omitempty"`
-	IsVisible  bool            `json:"isVisible"`
-	Infobox    *nlsInfoboxJSON `json:"nlsInfobox,omitempty"`
-	IsSketch   bool            `json:"isSketch"`
-	SketchInfo *sketchInfoJSON `json:"sketchInfo,omitempty"`
-	Children   []*nlsLayerJSON `json:"children,omitempty"`
+	ID           string               `json:"id"`
+	Index        *int                 `json:"index,omitempty"`
+	Title        string               `json:"title,omitempty"`
+	LayerType    string               `json:"layerType,omitempty"`
+	Config       *configJSON          `json:"config,omitempty"`
+	IsVisible    bool                 `json:"isVisible"`
+	Infobox      *nlsInfoboxJSON      `json:"nlsInfobox,omitempty"`
+	PhotoOverlay *nlsPhotoOverlayJSON `json:"nlsPhotoOverlay,omitempty"`
+	IsSketch     bool                 `json:"isSketch"`
+	SketchInfo   *sketchInfoJSON      `json:"sketchInfo,omitempty"`
+	Children     []*nlsLayerJSON      `json:"children,omitempty"`
 }
 
 type configJSON map[string]any
@@ -26,6 +27,11 @@ type nlsInfoboxJSON struct {
 	ID       string                `json:"id"`
 	Property propertyJSON          `json:"property"`
 	Blocks   []nlsInfoboxBlockJSON `json:"blocks"`
+}
+
+type nlsPhotoOverlayJSON struct {
+	ID       string       `json:"id"`
+	Property propertyJSON `json:"property"`
 }
 
 type nlsInfoboxBlockJSON struct {
@@ -113,16 +119,17 @@ func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer) 
 	}
 
 	return &nlsLayerJSON{
-		ID:         layer.ID().String(),
-		Index:      layer.Index(),
-		Title:      layer.Title(),
-		LayerType:  string(layer.LayerType()),
-		Config:     (*configJSON)(layer.Config()),
-		IsVisible:  layer.IsVisible(),
-		Infobox:    b.nlsInfoboxJSON(ctx, layer.Infobox()),
-		IsSketch:   layer.IsSketch(),
-		SketchInfo: b.sketchInfoJSON(ctx, layer.Sketch()),
-		Children:   children,
+		ID:           layer.ID().String(),
+		Index:        layer.Index(),
+		Title:        layer.Title(),
+		LayerType:    string(layer.LayerType()),
+		Config:       (*configJSON)(layer.Config()),
+		IsVisible:    layer.IsVisible(),
+		Infobox:      b.nlsInfoboxJSON(ctx, layer.Infobox()),
+		PhotoOverlay: b.nlsPhotoOverlayJSON(ctx, layer.PhotoOverlay()),
+		IsSketch:     layer.IsSketch(),
+		SketchInfo:   b.sketchInfoJSON(ctx, layer.Sketch()),
+		Children:     children,
 	}, nil
 }
 
@@ -142,6 +149,19 @@ func (b *Builder) nlsInfoboxJSON(ctx context.Context, infobox *nlslayer.Infobox)
 			}
 			return b.nlsInfoboxBlockJSON(ctx, *block), true
 		}),
+	}
+}
+
+func (b *Builder) nlsPhotoOverlayJSON(ctx context.Context, photooverlay *nlslayer.PhotoOverlay) *nlsPhotoOverlayJSON {
+	if photooverlay == nil {
+		return nil
+	}
+
+	p, _ := b.ploader(ctx, photooverlay.Property())
+
+	return &nlsPhotoOverlayJSON{
+		ID:       photooverlay.Id().String(),
+		Property: b.property(ctx, findProperty(p, photooverlay.Property())),
 	}
 }
 

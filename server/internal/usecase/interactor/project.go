@@ -525,8 +525,9 @@ func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file ga
 			}
 		}
 	case string:
-		if strings.HasPrefix(v, adapter.CurrentHost(ctx)) {
-			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, v, assetNames); err != nil {
+		cleanedStr := strings.Trim(v, "'")
+		if strings.HasPrefix(cleanedStr, adapter.CurrentHost(ctx)) {
+			if err := AddZipAsset(ctx, assetRepo, file, zipWriter, cleanedStr, assetNames); err != nil {
 				return err
 			}
 		}

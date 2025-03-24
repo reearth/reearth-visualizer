@@ -45,9 +45,10 @@ var (
 	sID    = id.NewSceneID()
 	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
-	storyID = id.NewStoryID()
-	pageID  = id.NewPageID()
-	blockID = id.NewBlockID()
+	nlsLayerId = id.NewNLSLayerID()
+	storyID    = id.NewStoryID()
+	pageID     = id.NewPageID()
+	blockID    = id.NewBlockID()
 )
 
 func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
@@ -395,7 +396,7 @@ func addLayerSimple(ctx context.Context, r *repo.Container) error {
 	}
 
 	layerSimple, err := nlslayer.NewNLSLayerSimple().
-		NewID().
+		ID(nlsLayerId).
 		Scene(sID).
 		Config(gqlmodel.ToNLSConfig(config)).
 		LayerType(gqlmodel.ToNLSLayerType("simple")).

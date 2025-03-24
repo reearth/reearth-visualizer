@@ -1455,4 +1455,14 @@ extensions:
               ja: 日本語
               cn: 中国語
 
-  
+  photo-overlay:
+    name: フォトオーバーレイ
+    description: フォトオーバーレイ
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          enabled:
+            title: 有効
+          cameraDuration:
+            title: カメラ移動時間

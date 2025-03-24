@@ -174,7 +174,7 @@ func importProject(t *testing.T, e *httpexpect.Expect, filePath string) *httpexp
 func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "GetScene",
-		Query:         GetSceneGuery,
+		Query:         GetSceneQuery,
 		Variables: map[string]any{
 			"sceneId": s,
 			"lang":    l,
@@ -188,7 +188,7 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Value {
 	return v
 }
 
-const GetSceneGuery = `
+const GetSceneQuery = `
 query GetScene($sceneId: ID!, $lang: Lang) {
   node(id: $sceneId, type: SCENE) {
     id
