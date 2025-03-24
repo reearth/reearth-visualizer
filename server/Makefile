@@ -79,6 +79,12 @@ dev: dev-install
 run-app:
 	go run ./cmd/reearth
 
+run-clean-start:
+	go clean -modcache
+	go clean -cache
+	go clean -testcache
+	go run ./cmd/reearth
+
 run-db:
 	docker compose -f ../docker-compose.yml up -d reearth-mongo
 

@@ -133,6 +133,8 @@ func (i Extension) extension(pluginID id.PluginID, sys bool, te *TranslatedExten
 		typ = plugin.ExtensionTypeVisualizer
 	case "infobox":
 		typ = plugin.ExtensionTypeInfobox
+	case "photoOverlay":
+		typ = plugin.ExtensionTypePhotoOverlay
 	case "infoboxBlock":
 		typ = plugin.ExtensionTypeInfoboxBlock
 	case "cluster":
