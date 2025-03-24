@@ -1,11 +1,5 @@
-import { SceneMode } from "@reearth/beta/types";
-import {
-  ViewerProperty as CoreViewerProperty,
-  ComputedFeature,
-  LightProperty,
-  ShadowProperty,
-  ImageBasedLighting
-} from "@reearth/core";
+import { ViewerProperty } from "@reearth/beta/features/Editor/Visualizer/type";
+import { ComputedFeature } from "@reearth/core";
 
 import { LatLngHeight } from "./common";
 
@@ -47,19 +41,6 @@ export declare type InteractionModeType =
   | "selection"
   | "sketch"
   | "spatialId";
-
-export declare type ViewerProperty = {
-  scene?: {
-    backgroundColor?: string;
-    mode?: SceneMode;
-    verticalExaggeration?: number;
-    verticalExaggerationRelativeHeight?: number;
-    vr?: boolean;
-    light?: LightProperty;
-    shadow?: ShadowProperty;
-    imageBasedLighting?: ImageBasedLighting;
-  };
-} & Omit<CoreViewerProperty, "scene">;
 
 export declare type Viewer = {
   readonly property: ViewerProperty | undefined;

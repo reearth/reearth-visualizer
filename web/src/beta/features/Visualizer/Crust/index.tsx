@@ -1,3 +1,4 @@
+import { ViewerProperty } from "@reearth/beta/features/Editor/Visualizer/type";
 import {
   PhotoOverlayPreview,
   SketchFeatureTooltip
@@ -5,7 +6,6 @@ import {
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import {
   coreContext,
-  type ViewerProperty,
   type Layer,
   type SelectedFeatureInfo,
   type Camera,
