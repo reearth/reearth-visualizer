@@ -48,7 +48,7 @@ export declare type InteractionModeType =
 
 export declare type SceneProperty = {
   mode?: SceneMode;
-} & Omit<CoreSceneProperty, "mode">;;
+} & Omit<CoreSceneProperty, "mode">;
 
 export declare type ViewerProperty = {
   scene?: SceneProperty;
