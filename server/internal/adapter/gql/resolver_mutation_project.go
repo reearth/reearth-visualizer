@@ -205,7 +205,7 @@ func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.Imp
 		return nil, errors.New("Fail Import ProjectData :" + err.Error())
 	}
 
-	importData, err = usecases(ctx).Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject)
+	importData, err = usecases(ctx).Asset.ImportAssetFiles(ctx, adapter.CurrentHost(ctx), assetsZip, importData, newProject)
 	if err != nil {
 		return nil, errors.New("Fail Import AssetFiles :" + err.Error())
 	}
