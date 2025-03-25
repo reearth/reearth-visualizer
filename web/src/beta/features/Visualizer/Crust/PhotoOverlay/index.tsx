@@ -35,6 +35,7 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
   selectedLayer,
   selectedFeature,
   mapRef,
+  nlsLayers,
   currentCameraRef
 }) => {
   const [show, setShow] = useState(true);
@@ -48,9 +49,8 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
     const featureId = selectedFeature?.id;
     if (selectedLayer?.layer.type !== "simple") return;
 
-    // TODO: Connect layer's photoOverlay settings
-    // const nlsLayer = nlsLayers?.find((l) => l.id === selectedLayer?.layer.id);
-    // if (!nlsLayer?.photoOverlay?.enabled) return;
+    const nlsLayer = nlsLayers?.find((l) => l.id === selectedLayer?.layer.id);
+    if (!nlsLayer?.photoOverlay?.processedProperty?.enabled) return;
 
     const dataFeatureProperties =
       selectedLayer?.layer?.data?.value?.features?.find(
@@ -60,11 +60,12 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
 
     if (!dataFeatureProperties) return;
 
-    // TODO: Connect layer's photoOverlay settings
-    cameraDurationRef.current = DEFAULT_CAMERA_DURATION;
+    cameraDurationRef.current =
+      nlsLayer?.photoOverlay?.processedProperty?.cameraDuration ??
+      DEFAULT_CAMERA_DURATION;
 
     return getPhotoOverlayValue(dataFeatureProperties);
-  }, [preview, selectedLayer, selectedFeature]);
+  }, [preview, selectedLayer, selectedFeature, nlsLayers]);
 
   const handleShow = useCallback(() => {
     setShow(true);

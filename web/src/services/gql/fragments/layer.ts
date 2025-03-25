@@ -28,6 +28,14 @@ export const nlsLayerSimpleFragment = gql`
         }
       }
     }
+    photoOverlay {
+      layerId
+      propertyId
+      property {
+        id
+        ...PropertyFragment
+      }
+    }
     isSketch
     sketch {
       customPropertySchema

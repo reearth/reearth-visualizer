@@ -12,6 +12,7 @@ export default function Published({ alias }: Props) {
     viewerProperty,
     pluginProperty,
     layers,
+    nlsLayers,
     widgets,
     widgetThemeOptions,
     story,
@@ -34,6 +35,7 @@ export default function Published({ alias }: Props) {
       isBuilt
       ready={ready}
       layers={layers}
+      nlsLayers={nlsLayers}
       widgets={widgets}
       widgetThemeOptions={widgetThemeOptions}
       story={story}

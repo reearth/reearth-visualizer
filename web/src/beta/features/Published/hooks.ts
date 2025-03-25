@@ -20,6 +20,7 @@ import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
 import { processProperty } from "./convert";
 import { processLayers, processNewProperty } from "./convert-new-property";
+import { convertNLSLayers } from "./convert-nls-layers";
 import { useGA } from "./googleAnalytics/useGA";
 import type {
   PublishedData,
@@ -256,6 +257,11 @@ export default (alias?: string) => {
     }));
   }, [data?.nlsLayers, data?.layerStyles, story]);
 
+  const nlsLayers = useMemo(
+    () => convertNLSLayers(data?.nlsLayers),
+    [data?.nlsLayers]
+  );
+
   useEffect(() => {
     const url = dataUrl(actualAlias);
     (async () => {
@@ -308,6 +314,7 @@ export default (alias?: string) => {
     viewerProperty,
     pluginProperty,
     layers,
+    nlsLayers,
     widgets,
     widgetThemeOptions,
     story,
