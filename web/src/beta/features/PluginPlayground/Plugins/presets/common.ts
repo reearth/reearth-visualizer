@@ -19,11 +19,13 @@ html {
 
 /* Buttons */
 button {
-  padding: 6px 16px;
   border: none;
   border-radius: 4px;
-  background-color: #FFFFFF;
   cursor: pointer;
+}
+
+button:active {
+  background: #DCDCDC;
 }
 
 .btn-primary {
@@ -174,11 +176,11 @@ li {
 
 /* Background Colors */
 .primary-background {
-  background: #FFFFFF;
+  background: #F5F5F5;
 }
 
 .secondary-background {
-  background: #F5F5F5;
+  background: #FFFFFF;
 }
 
 /* Utility Classes */
@@ -314,19 +316,10 @@ li {
   height: 40px;
 }
 
-.zoom-button:active {
-  background: #DCDCDC;
-}
-
 .zoom-button img {
   display: block;
   width: 22px;
   height: 22px;
-}
-
-.rotate-btn {
-  width: 200px;
-  height: 40px;   
 }
 
 .rotate-btn:active {
