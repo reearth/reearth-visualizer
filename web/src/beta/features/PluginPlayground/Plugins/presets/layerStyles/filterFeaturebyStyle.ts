@@ -27,50 +27,24 @@ const widgetFile: FileType = {
 // Define the plug-in UI //
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
-  <style>
-    html {
-    width: 500px;
-  }
-    #wrapper{
-     width: 350px;
-    }
-    button {
-      padding: 4px 8px;
-      border: 1px solid black;
-      border-radius: 4px;
-      cursor: pointer;
-      background-color: white;
-      transition: background-color 0.3s ease;
-    }
-    .active {
-      background: #4CAF50;
-      color: white;;
-      border: none;
-      color: white;
-    }
-    .button-container {
-      display: flex;
-      gap: 10px;
-    }
-  </style>
-  <div id="wrapper">
-    <h2>Filter Cities based on Population:</h2>
-    <div class="button-container">
-      <button id="allBtn">Show all</button>
-      <button id="belowBtn">Population below 20000</button>
-      <button id="aboveBtn">Population above 20000</button>
+  <div class="primary-background p-16 rounded-sm">
+    <p class="text-lg font-bold">Filter Cities based on Population:</p>
+    <div class="flex-column justify-center gap-8">
+      <button class="btn-secondary p-8" id="allBtn">Show all</button>
+      <button class="btn-secondary p-8" id="belowBtn">Population below 20000</button>
+      <button class="btn-secondary p-8" id="aboveBtn">Population above 20000</button>
     </div>
   </div>
 
   <script>
-    const buttons = document.querySelectorAll(".button-container button");
+    const buttons = document.querySelectorAll("button");
 
     function setActiveButton(activeId) {
       buttons.forEach(btn => {
         if (btn.id === activeId) {
-          btn.classList.add("active");
+          btn.classList.add("btn-success");
         } else {
-          btn.classList.remove("active");
+          btn.classList.remove("btn-success");
         }
       });
     }

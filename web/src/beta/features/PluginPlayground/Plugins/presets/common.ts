@@ -85,13 +85,6 @@ button:disabled {
   cursor: pointer;
 }
 
-/* Button layout */
-.button-container {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
 /* Form Elements */
 input {
   width: 100%;
@@ -127,25 +120,6 @@ li {
   border: 1px solid #cccccc;
 }
 
-/* Info Sections */
-.info-toggle {
-  padding: 6px 12px;
-  background: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-.info-content {
-  background: #f9f9f9;
-  padding: 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
 /* Layout */
 .display-flex {
   display: flex;
@@ -153,10 +127,6 @@ li {
 
 .display-grid {
   display: grid;
-}
-
-.display-none {
-  display: none;
 }
 
 .flex-center {
@@ -251,6 +221,11 @@ li {
   padding: 16px;
 }
 
+.py-4 {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
 .px-8 {
   padding-left: 8px;
   padding-right: 8px;
@@ -331,6 +306,10 @@ li {
 
 .w-14 {
   width: 112px;
+}
+
+.w-16 {
+  width: 128px;
 }
 
 /* Height */

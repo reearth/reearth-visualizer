@@ -34,7 +34,7 @@ const widgetFile: FileType = {
         <div>
           <button id="info-toggle" class="btn-success w-10 h-4">Show Info</button>
         </div>
-        <div class="tertiary-background display-none rounded-sm text-sm p-8" id="info-content">
+        <div class="tertiary-background hidden rounded-sm text-sm p-8" id="info-content">
           <strong>How to Use the Plugin</strong><br><br>
           1. <strong>Automatic Tracking</strong><br>
           • Move the camera around the globe<br>
