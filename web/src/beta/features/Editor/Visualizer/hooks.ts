@@ -11,7 +11,6 @@ import type {
   LatLng,
   ComputedLayer,
   ComputedFeature,
-  ViewerProperty
 } from "@reearth/core";
 import {
   useLayersFetcher,
@@ -39,6 +38,7 @@ import { PhotoOverlayPreviewAtom, SketchFeatureTooltipAtom } from "../Map/state"
 
 import { convertWidgets, processLayers, processProperty } from "./convert";
 import { convertStory } from "./convert-story";
+import { ViewerProperty } from "./type";
 
 export default ({
   sceneId,

@@ -1,5 +1,7 @@
 package property
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Builder struct {
 	p *Property
 }
@@ -10,7 +12,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Property, error) {
 	if b.p.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	if b.p.scene.IsNil() {
 		return nil, ErrInvalidSceneID
@@ -29,22 +31,22 @@ func (b *Builder) MustBuild() *Property {
 	return p
 }
 
-func (b *Builder) ID(id ID) *Builder {
+func (b *Builder) ID(id id.PropertyID) *Builder {
 	b.p.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.p.id = NewID()
+	b.p.id = id.NewPropertyID()
 	return b
 }
 
-func (b *Builder) Scene(s SceneID) *Builder {
+func (b *Builder) Scene(s id.SceneID) *Builder {
 	b.p.scene = s
 	return b
 }
 
-func (b *Builder) Schema(schema SchemaID) *Builder {
+func (b *Builder) Schema(schema id.PropertySchemaID) *Builder {
 	b.p.schema = schema
 	return b
 }
@@ -56,7 +58,7 @@ func (b *Builder) Items(items []Item) *Builder {
 	}
 
 	newItems := make([]Item, 0, len(items))
-	ids := map[ItemID]struct{}{}
+	ids := map[id.PropertyItemID]struct{}{}
 	for _, f := range items {
 		if f == nil {
 			continue

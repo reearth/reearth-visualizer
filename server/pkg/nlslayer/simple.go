@@ -1,9 +1,6 @@
 package nlslayer
 
-import (
-	"github.com/reearth/reearth/server/pkg/id"
-	pl "github.com/reearth/reearth/server/pkg/layer"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type NLSLayerSimple struct {
 	layerBase
@@ -28,12 +25,8 @@ func (l *NLSLayerSimple) LayerType() LayerType {
 	return l.layerBase.LayerType()
 }
 
-func (l *NLSLayerSimple) Scene() SceneID {
+func (l *NLSLayerSimple) Scene() id.SceneID {
 	return l.layerBase.scene
-}
-
-func (l *NLSLayerSimple) LinkedDataset() *pl.DatasetID {
-	return nil
 }
 
 func (l *NLSLayerSimple) Title() string {
@@ -61,6 +54,13 @@ func (l *NLSLayerSimple) Infobox() *Infobox {
 	return l.layerBase.infobox
 }
 
+func (l *NLSLayerSimple) PhotoOverlay() *PhotoOverlay {
+	if l == nil {
+		return nil
+	}
+	return l.layerBase.photoOverlay
+}
+
 func (l *NLSLayerSimple) SetVisible(visible bool) {
 	if l == nil {
 		return
@@ -73,6 +73,13 @@ func (l *NLSLayerSimple) SetInfobox(infobox *Infobox) {
 		return
 	}
 	l.layerBase.infobox = infobox
+}
+
+func (l *NLSLayerSimple) SetPhotoOverlay(photooverlay *PhotoOverlay) {
+	if l == nil {
+		return
+	}
+	l.layerBase.photoOverlay = photooverlay
 }
 
 func (l *NLSLayerSimple) LayerRef() *NLSLayer {

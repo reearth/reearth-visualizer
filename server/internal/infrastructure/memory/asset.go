@@ -126,7 +126,6 @@ func (r *Asset) Save(_ context.Context, a *asset.Asset) error {
 	if !r.f.CanWrite(a.Workspace()) {
 		return repo.ErrOperationDenied
 	}
-
 	r.data.Store(a.ID(), a)
 	return nil
 }

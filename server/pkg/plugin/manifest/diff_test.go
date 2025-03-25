@@ -3,21 +3,22 @@ package manifest
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestDiffFrom(t *testing.T) {
-	oldp := plugin.MustID("aaaaaa~1.0.0")
-	newp := plugin.MustID("aaaaaa~1.1.0")
-	oldps := property.MustSchemaID("aaaaaa~1.0.0/@")
-	olde1ps := property.MustSchemaID("aaaaaa~1.0.0/a")
-	olde2ps := property.MustSchemaID("aaaaaa~1.0.0/b")
-	olde3ps := property.MustSchemaID("aaaaaa~1.0.0/c")
-	olde4ps := property.MustSchemaID("aaaaaa~1.0.0/d")
-	olde5ps := property.MustSchemaID("aaaaaa~1.0.0/e")
-	newe1ps := property.MustSchemaID("aaaaaa~1.1.0/a")
+	oldp := id.MustPluginID("aaaaaa~1.0.0")
+	newp := id.MustPluginID("aaaaaa~1.1.0")
+	oldps := id.MustPropertySchemaID("aaaaaa~1.0.0/@")
+	olde1ps := id.MustPropertySchemaID("aaaaaa~1.0.0/a")
+	olde2ps := id.MustPropertySchemaID("aaaaaa~1.0.0/b")
+	olde3ps := id.MustPropertySchemaID("aaaaaa~1.0.0/c")
+	olde4ps := id.MustPropertySchemaID("aaaaaa~1.0.0/d")
+	olde5ps := id.MustPropertySchemaID("aaaaaa~1.0.0/e")
+	newe1ps := id.MustPropertySchemaID("aaaaaa~1.1.0/a")
 	old := Manifest{
 		Plugin: plugin.New().ID(oldp).Schema(&oldps).Extensions([]*plugin.Extension{
 			plugin.NewExtension().ID("a").Schema(olde1ps).Type(plugin.ExtensionTypeBlock).MustBuild(),
@@ -147,7 +148,7 @@ func TestDiff_IsEmpty(t *testing.T) {
 		{
 			name: "empty2",
 			target: &Diff{
-				From: plugin.MustID("a~1.0.0"),
+				From: id.MustPluginID("a~1.0.0"),
 			},
 			want: true,
 		},
@@ -166,12 +167,12 @@ func TestDiff_IsEmpty(t *testing.T) {
 }
 
 func TestDiff_DeletedPropertySchemas(t *testing.T) {
-	ps1 := property.MustSchemaID("a~1.0.0/a")
-	ps2 := property.MustSchemaID("a~1.0.0/b")
+	ps1 := id.MustPropertySchemaID("a~1.0.0/a")
+	ps2 := id.MustPropertySchemaID("a~1.0.0/b")
 	tests := []struct {
 		name   string
 		target Diff
-		want   []property.SchemaID
+		want   []id.PropertySchemaID
 	}{
 		{
 			name: "ok",
@@ -185,7 +186,7 @@ func TestDiff_DeletedPropertySchemas(t *testing.T) {
 					{PropertySchemaID: ps2},
 				},
 			},
-			want: []property.SchemaID{
+			want: []id.PropertySchemaID{
 				ps1,
 				ps2,
 			},
@@ -193,7 +194,7 @@ func TestDiff_DeletedPropertySchemas(t *testing.T) {
 		{
 			name:   "empty",
 			target: Diff{},
-			want:   []property.SchemaID{},
+			want:   []id.PropertySchemaID{},
 		},
 	}
 
@@ -205,8 +206,8 @@ func TestDiff_DeletedPropertySchemas(t *testing.T) {
 }
 
 func TestDiff_PropertySchmaDiffs(t *testing.T) {
-	ps1 := property.MustSchemaID("a~1.0.0/a")
-	ps2 := property.MustSchemaID("a~1.0.0/b")
+	ps1 := id.MustPropertySchemaID("a~1.0.0/a")
+	ps2 := id.MustPropertySchemaID("a~1.0.0/b")
 	tests := []struct {
 		name   string
 		target Diff

@@ -3,6 +3,7 @@ package scene
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func TestStyle_Duplicate(t *testing.T) {
 		"key1": "value1",
 		"key2": "value2",
 	}
-	sid := NewID()
+	sid := id.NewSceneID()
 
 	original := NewStyle().NewID().Name(name).Value(value).Scene(sid).MustBuild()
 

@@ -256,11 +256,6 @@ func (i *Plugin) migrateScenePlugin(ctx context.Context, oldm manifest.Manifest,
 		return err
 	}
 
-	// migrate layers
-	if err := i.layerRepo.UpdatePlugin(ctx, diff.From, diff.To); err != nil {
-		return err
-	}
-
 	// migrate properties
 	updatedPropertySchemas := diff.PropertySchmaDiffs()
 	updatedPropertySchemaIDs := updatedPropertySchemas.FromSchemas()
@@ -294,47 +289,11 @@ func (i *Plugin) migrateScenePlugin(ctx context.Context, oldm manifest.Manifest,
 }
 
 func (i *Plugin) deleteLayersByPluginExtension(ctx context.Context, p id.PluginID, e *id.PluginExtensionID) ([]id.PropertyID, error) {
-	// delete layers
-	deletedLayers := []id.LayerID{}
-	layers, err := i.layerRepo.FindByPluginAndExtension(ctx, p, e)
-	if err != nil {
-		return nil, err
-	}
-	deletedLayers = append(deletedLayers, layers.IDs().Layers()...)
-
-	parentLayers, err := i.layerRepo.FindParentsByIDs(ctx, deletedLayers)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, p := range parentLayers {
-		p.Layers().RemoveLayer(deletedLayers...)
-	}
-	if err := i.layerRepo.SaveAll(ctx, parentLayers.ToLayerList()); err != nil {
-		return nil, err
-	}
-	if err := i.layerRepo.RemoveAll(ctx, deletedLayers); err != nil {
-		return nil, err
-	}
-
-	return layers.Properties(), nil
+	return []id.PropertyID{}, nil
 }
 
 func (i *Plugin) deleteBlocksByPluginExtension(ctx context.Context, p id.PluginID, e *id.PluginExtensionID) ([]id.PropertyID, error) {
-	layers, err := i.layerRepo.FindByPluginAndExtensionOfBlocks(ctx, p, e)
-	if err != nil {
-		return nil, err
-	}
-
-	var deletedProperties []id.PropertyID
-	for _, l := range layers.Deref() {
-		deletedProperties = append(deletedProperties, l.Infobox().RemoveAllByPlugin(p, e)...)
-	}
-
-	if err := i.layerRepo.SaveAll(ctx, layers); err != nil {
-		return nil, err
-	}
-	return deletedProperties, nil
+	return []id.PropertyID{}, nil
 }
 
 func (i *Plugin) pluginManifestFromPlugin(ctx context.Context, p *plugin.Plugin) (manifest.Manifest, error) {

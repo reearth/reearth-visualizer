@@ -1,3 +1,4 @@
+import { ViewerProperty } from "@reearth/beta/features/Editor/Visualizer/type";
 import type {
   ComputedFeature,
   SelectedFeatureInfo,
@@ -10,7 +11,6 @@ import type {
   LayerSelectWithRectMove,
   LayerSelectWithRectStart,
   LayerVisibilityEvent,
-  ViewerProperty,
   SketchEventCallback,
   SketchType,
   TimelineManagerRef

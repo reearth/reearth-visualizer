@@ -3,13 +3,14 @@ package mongodoc
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func TestToModelNLSLayerSketchInfo(t *testing.T) {
-	fid := nlslayer.NewFeatureID()
+	fid := id.NewFeatureID()
 	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
@@ -233,7 +234,7 @@ func TestToModelNLSLayerGeometry(t *testing.T) {
 }
 
 func TestNewNLSLayerSketchInfo(t *testing.T) {
-	fid := nlslayer.NewFeatureID()
+	fid := id.NewFeatureID()
 	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
@@ -273,7 +274,7 @@ func TestNewNLSLayerSketchInfo(t *testing.T) {
 }
 
 func TestNewNLSLayerFeatureCollection(t *testing.T) {
-	fid := nlslayer.NewFeatureID()
+	fid := id.NewFeatureID()
 	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
@@ -305,7 +306,7 @@ func TestNewNLSLayerFeatureCollection(t *testing.T) {
 }
 
 func TestNewNLSLayerFeature(t *testing.T) {
-	fid := nlslayer.NewFeatureID()
+	fid := id.NewFeatureID()
 	property := map[string]any{"key1": "value1"}
 	f, err := nlslayer.NewFeature(
 		fid,
