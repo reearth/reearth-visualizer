@@ -13,7 +13,7 @@ type TerrainProperty = {
   depthTestAgainstTerrain?: boolean;
 };
 
-type SceneMode = "3d" | "2d" | "columbus"; // default: scene3d
+export type SceneMode = "3d"
 type IndicatorTypes = "default" | "crosshair" | "custom";
 
 type Camera = {
@@ -86,7 +86,7 @@ type LegacySceneProperty = {
     skybox?: boolean;
     bgcolor?: string;
     ion?: string;
-    sceneMode?: "3d" | "2d" | "columbus"; // default: scene3d
+    sceneMode?: "3d"
     vr?: boolean;
   } & TerrainProperty; // compat
   cameraLimiter?: {

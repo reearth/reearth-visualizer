@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { ViewerProperty } from "@reearth/beta/features/Editor/Visualizer/type";
 import {
   PhotoOverlayPreview,
   SketchFeatureTooltip
@@ -16,7 +17,6 @@ import {
   type ComputedLayer,
   type Layer,
   type EngineType,
-  type ViewerProperty,
   CoreVisualizer
 } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
