@@ -39,7 +39,6 @@ button:active {
 
 .btn-secondary {
   background-color: #FFFFFF;
-  color: #007BFF;
 }
 
 .btn-secondary:active {
@@ -307,6 +306,10 @@ li {
   width: 80px;
 }
 
+.w-14 {
+  width: 112px;
+}
+
 /* Height */
 .h-full {
   height: 100%;
@@ -316,25 +319,14 @@ li {
   height: 40px;
 }
 
+.h-4 {
+  height: 32px;
+}
+
 /* Custom */
 .radio-option {
   grid-template-columns: auto 80px 1fr;
   align-items: baseline;
-}
-
-.zoom-button {
-  width: 90px;
-  height: 40px;
-}
-
-.zoom-button img {
-  display: block;
-  width: 22px;
-  height: 22px;
-}
-
-.rotate-btn:active {
-  background: #DCDCDC;
 }
   </style>
 `;

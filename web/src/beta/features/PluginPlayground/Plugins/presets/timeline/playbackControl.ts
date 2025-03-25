@@ -32,7 +32,7 @@ const widgetFile: FileType = {
       </div>
 
       <div class="display-flex gap-8">
-        <button id="playPauseBtn" class="btn-primary">Play</button>
+        <button id="playPauseBtn" class="btn-primary w-8 h-4">Play</button>
         <div class="display-flex">
           <select class="p-4" id="speedSelect">
             <option value="1">1x</option>
