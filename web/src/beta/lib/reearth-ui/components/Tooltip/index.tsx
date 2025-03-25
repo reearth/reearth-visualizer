@@ -99,6 +99,6 @@ const TipPanel = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   background: theme.bg[2],
   color: theme.content.main,
-  boxShadow: theme.shadow.card,
+  boxShadow: theme.shadow.tooltip,
   borderRadius: theme.radius.normal
 }));
