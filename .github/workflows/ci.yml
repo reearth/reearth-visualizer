@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
       - name: changed files for web
         id: web
-        uses: reearth/changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
+        uses: step-security/changed-files@v45
         with:
           files: |
             web/
@@ -27,7 +27,7 @@ jobs:
 
       - name: changed files for server
         id: server
-        uses: reearth/changed-files@9200e69727eb73eb060652b19946b8a2fdfb654b
+        uses: step-security/changed-files@v45
         with:
           files: |
             server/
