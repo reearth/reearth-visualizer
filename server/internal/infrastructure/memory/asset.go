@@ -5,6 +5,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -141,5 +142,17 @@ func (r *Asset) Remove(_ context.Context, id id.AssetID) error {
 	}
 
 	r.data.Delete(id)
+	return nil
+}
+
+func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f gateway.File) error {
+	r.data.FindAll(func(id id.AssetID, a *asset.Asset) bool {
+		if r.f.CanWrite(a.Workspace()) {
+			if a.Project() != nil && *a.Project() == pid {
+				r.data.Delete(id)
+			}
+		}
+		return true
+	})
 	return nil
 }
