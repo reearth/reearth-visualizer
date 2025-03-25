@@ -290,13 +290,18 @@ li {
   color: #007bff;
 }
 
-.text-subtitle {
+.text-secondary {
   color: #666666;
 }
 
 /* Text Weight */
 .font-bold {
   font-weight: bold;
+}
+
+/* Width */
+w-4 {
+  width: 64px;
 }
 
 /* Height */
