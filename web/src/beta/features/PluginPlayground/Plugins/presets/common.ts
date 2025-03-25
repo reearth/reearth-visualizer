@@ -25,20 +25,20 @@ button {
 }
 
 button:active {
-  background: #DCDCDC;
+  background: #dcdcdc;
 }
 
 .btn-primary {
-  background-color: #007BFF;
-  color: #FFFFFF;
+  background-color: #007bff;
+  color: #ffffff;
 }
 
 .btn-primary:active {
-  background-color: #0056B3;
+  background-color: #0056b3;
 }
 
 .btn-secondary {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .btn-secondary:active {
@@ -62,6 +62,15 @@ button:active {
 
 .btn-neutral:active {
   background-color: #e6e6e6;
+}
+
+.btn-success {
+  background-color: #4caf50;
+  color: #ffffff;
+}
+
+.btn-success:active {
+  background-color: #388e3c;
 }
 
 button:disabled {
@@ -146,6 +155,10 @@ li {
   display: grid;
 }
 
+.display-none {
+  display: none;
+}
+
 .flex-center {
   display: flex;
   justify-content: center;
@@ -174,11 +187,15 @@ li {
 
 /* Background Colors */
 .primary-background {
-  background: #EEEEEE;
+  background: #eeeeee;
 }
 
 .secondary-background {
-  background: #FFFFFF;
+  background: #ffffff;
+}
+
+.tertiary-background {
+  background: #f9f9f9;
 }
 
 /* Utility Classes */
@@ -216,10 +233,12 @@ li {
   margin-top: 8px;
   margin-bottom: 8px;
 }
+
 .mx-8 {
   margin-left: 8px;
   margin-right: 8px;
 }
+
 .p-4 {
   padding: 4px;
 }
@@ -313,6 +332,10 @@ li {
 /* Height */
 .h-full {
   height: 100%;
+}
+
+.h-4 {
+  height: 32px;
 }
 
 .h-5 {
