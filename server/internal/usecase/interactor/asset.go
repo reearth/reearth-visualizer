@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"path"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -153,7 +154,8 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	)
 }
 
-func (i *Asset) ImportAssetFiles(ctx context.Context, currentHost string, assets map[string]*zip.File, data *[]byte, newProject *project.Project) (*[]byte, error) {
+func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data *[]byte, newProject *project.Project) (*[]byte, error) {
+	currentHost := adapter.CurrentHost(ctx)
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
