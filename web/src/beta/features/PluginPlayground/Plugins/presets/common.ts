@@ -1,10 +1,9 @@
 export const PRESET_PLUGIN_COMMON_STYLE = `<style>
-
-  /* Plugin Playground Presets Generic Styling */
+/* Plugin Playground Presets Generic Styling */
 
 /* Base & Typography */
 
-* {
+ * {
   box-sizing: border-box;
 }
 
@@ -18,33 +17,13 @@ html {
   padding: 0;
 }
 
-h2,
-h3 {
-  text-align: center;
-  margin: 0 0 12px 0;
-}
-
-h2 {
-  font-size: 24px;
-}
-
-h3 {
-  font-size: 20px;
-}
-
-/* Background Colors */
-.primary-background {
-  background-color: #ffffff;
-}
-
 /* Buttons */
 button {
-  display: inline-block;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  text-align: center;
+  padding: 6px 16px;
   border: none;
+  border-radius: 4px;
+  background-color: #FFFFFF;
+  cursor: pointer;
 }
 
 .btn-primary {
@@ -139,12 +118,6 @@ li {
   border: 1px solid #cccccc;
 }
 
-/* Small Text Utility */
-.small-text {
-  font-size: 12px;
-  color: #666666;
-}
-
 /* Info Sections */
 .info-toggle {
   padding: 6px 12px;
@@ -165,18 +138,18 @@ li {
 }
 
 /* Layout */
-#wrapper {
-  background: #f5f5f5;
-  border-radius: 4px;
-  padding: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.display-flex {
+  display: flex;
+}
+
+.display-grid {
+  display: grid;
 }
 
 .flex-center {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
 }
 
 .flex-between {
@@ -189,7 +162,23 @@ li {
 .flex-column {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+/* Background Colors */
+.primary-background {
+  background: #FFFFFF;
+}
+
+.secondary-background {
+  background: #F5F5F5;
 }
 
 /* Utility Classes */
@@ -210,15 +199,19 @@ li {
 .mt-8 {
   margin-top: 8px;
 }
+
 .mt-16 {
   margin-top: 16px;
 }
+
 .mb-8 {
   margin-bottom: 8px;
 }
+
 .mb-16 {
   margin-bottom: 16px;
 }
+
 .my-8 {
   margin-top: 8px;
   margin-bottom: 8px;
@@ -227,19 +220,117 @@ li {
   margin-left: 8px;
   margin-right: 8px;
 }
+.p-4 {
+  padding: 4px;
+}
+
 .p-8 {
   padding: 8px;
 }
+
 .p-16 {
   padding: 16px;
 }
+
 .px-8 {
   padding-left: 8px;
   padding-right: 8px;
 }
+
 .py-8 {
   padding-top: 8px;
   padding-bottom: 8px;
+}
+
+/* Gap */
+.gap-4 {
+  gap: 4px;
+}
+
+.gap-8 {
+  gap: 8px;
+}
+
+.gap-16 {
+  gap: 16px;
+}
+
+/* Box Shadow */
+.primary-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Border Radius */
+.rounded-sm {
+  border-radius: 4px;
+}
+
+/* Font Family */
+.font-monospace {
+  font-family: monospace;
+}
+
+/* Font Size */
+.text-sm {
+  font-size: 12px;
+}
+
+.text-md {
+  font-size: 14px;
+}
+
+.text-lg {
+  font-size: 16px;
+}
+
+/* Text Color */
+.text-primary {
+  color: #007bff;
+}
+
+.text-subtitle {
+  color: #666666;
+}
+
+/* Text Weight */
+.font-bold {
+  font-weight: bold;
+}
+
+/* Height */
+.h-full {
+  height: 100%;
+}
+
+/* Custom */
+.radio-option {
+  grid-template-columns: auto 80px 1fr;
+  align-items: baseline;
+}
+
+.zoom-button {
+  background: #FFFFFF;
+  width: 90px;
+  height: 40px;
+}
+
+.zoom-button:active {
+  background: #DCDCDC;
+}
+
+.zoom-button img {
+  display: block;
+  width: 22px;
+  height: 22px;
+}
+
+.rotate-btn {
+  width: 200px;
+  height: 40px;   
+}
+
+.rotate-btn:active {
+  background: #DCDCDC;
 }
   </style>
 `;
