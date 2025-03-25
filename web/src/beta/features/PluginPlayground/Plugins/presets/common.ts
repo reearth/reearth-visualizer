@@ -183,6 +183,10 @@ li {
 }
 
 /* Spacing Utilities */
+.m-0 {
+  margin: 0;
+}
+  
 .mt-8 {
   margin-top: 8px;
 }
@@ -300,6 +304,10 @@ li {
 }
 
 /* Width */
+.w-full {
+  width: 100%;
+}
+
 .w-8 {
   width: 64px;
 }

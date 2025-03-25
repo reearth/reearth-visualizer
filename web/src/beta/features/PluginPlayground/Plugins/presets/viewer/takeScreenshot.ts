@@ -1,4 +1,5 @@
 import { FileType, PluginType } from "../../constants";
+import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "take-screenshot-reearth-yml",
@@ -21,36 +22,19 @@ const widgetFile: FileType = {
   title: "take-screenshot.js",
   sourceCode: `// / This plugin allows users to capture the current view in Re:earth, preview the screenshot, and download it as a PNG file.
   reearth.ui.show(\`
-  <style>
-    /* Generic styling system that provides consistent UI components and styling across all plugins */
-    @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
-
-    /* Plugin-specific styling */
-
-    .instructions {
-      font-size: 13px;
-      color: #666;
-      text-align: center;
-      font-style: italic;
-    }
-
-    #imageContainer {
-      text-align: center;
-    }
-
-    #capturedImage, .image-download-btn {
-      max-width: 100%;
-      margin: 10px auto;
-    }
-  </style>
-  <div id="wrapper">
-    <h2>Image Capture</h2>
-    <p class="instructions">Adjust your view as needed, then capture the screenshot</p>
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
+    <p class="text-lg font-bold m-0">Image Capture</p>
+    <p class="text-sm text-secondary m-0">Adjust your view as needed, then capture the screenshot</p>
     <div class="flex-center">
-      <button class="btn-primary" id="captureButton">Capture View</button>
+      <button class="btn-primary p-8" id="captureButton">Capture View</button>
     </div>
-    <div id="imageContainer">
+    <div id="imageContainer" class="gap-16 hidden">
       <!-- Preview will appear here -->
+      <img id="capturedImage" class="w-full" />
+      <div class="display-flex justify-center">
+        <button class="btn-primary p-8" id="downloadBtn">Download Image</button>
+      </div>
     </div>
   </div>
 
@@ -64,20 +48,12 @@ const widgetFile: FileType = {
      * @param {string} imageData - Base64 encoded image data
      */
     function displayImage(imageData) {
-      // Clear any existing content in the container
-      imageContainer.innerHTML = '';
-
-      // Create and configure the image element
-      const img = document.createElement('img');
-      img.id = 'capturedImage';
+      // Find the image tag and pass the captured image data
+      const img = document.getElementById('capturedImage');
       img.src = imageData;
-
-      // Create download button with appropriate class for styling
-      const downloadBtn = document.createElement('button');
-      downloadBtn.className = 'btn-primary image-download-btn';
-      downloadBtn.textContent = 'Download Image';
-
+      
       // Add download functionality
+      const downloadBtn = document.getElementById('downloadBtn');
       downloadBtn.addEventListener('click', () => {
         // Create a temporary link element
         const link = document.createElement('a');
@@ -92,15 +68,12 @@ const widgetFile: FileType = {
         link.click();
         document.body.removeChild(link);
       });
-
-      // Add elements to the container and show it
-      imageContainer.appendChild(img);
-      imageContainer.appendChild(downloadBtn);
     }
 
     // Add capture button click handler
     captureButton.addEventListener('click', () => {
       // Send a message to the extension to request a capture
+      imageContainer.style.display = 'block';
       parent.postMessage({ type: 'capture-request' }, '*');
     });
 
