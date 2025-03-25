@@ -34,7 +34,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       <button class="display-flex align-center justify-center btn btn-secondary w-10 h-5" id="zoomIn">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/plus.svg" alt="Zoom In" />
       </button>
-      <button class="display-flex align-center justify-center btn btn-secondary zoom-button" id="zoomOut">
+      <button class="display-flex align-center justify-center btn btn-secondary w-10 h-5" id="zoomOut">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/minus.svg" alt="Zoom Out" />
       </button>
     </div>
