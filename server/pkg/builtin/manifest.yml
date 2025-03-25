@@ -99,8 +99,6 @@ extensions:
               choices:
                 - key: cesium
                   label: Cesium World Terrain
-                - key: arcgis
-                  label: ArcGIS Terrain
                 - key: cesiumion
                   label: Cesium Ion
             - id: terrainCesiumIonAsset
