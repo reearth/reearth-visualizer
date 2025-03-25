@@ -302,6 +302,10 @@ li {
   font-size: 16px;
 }
 
+.text-3xl {
+  font-size: 24px;
+}
+
 /* Text Color */
 .text-primary {
   color: #007bff;
