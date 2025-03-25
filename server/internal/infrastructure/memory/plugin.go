@@ -5,6 +5,7 @@ import (
 	"errors"
 	"sync"
 
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -115,5 +116,23 @@ func (r *Plugin) Remove(ctx context.Context, id id.PluginID) error {
 		}
 	}
 
+	return nil
+}
+
+func (r *Plugin) RemoveBySceneWithFile(cts context.Context, sid id.SceneID, f gateway.File) error {
+	if !r.f.CanWrite(sid) {
+		return nil
+	}
+
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	newData := make([]*plugin.Plugin, 0, len(r.data))
+	for _, p := range r.data {
+		if s := p.Scene(); s == nil || *s != sid {
+			newData = append(newData, p)
+		}
+	}
+	r.data = newData
 	return nil
 }

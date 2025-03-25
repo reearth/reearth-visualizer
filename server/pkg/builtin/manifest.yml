@@ -16,18 +16,6 @@ extensions:
           collection: main
           title: Main
           fields:
-            - id: sceneMode
-              type: string
-              title: Scene mode
-              description: Specify scene mode.
-              defaultValue: 3d
-              choices:
-                - key: 3d
-                  label: 3D
-                - key: 2d
-                  label: 2D
-                - key: columbus
-                  label: 2.5D (Columbus View)
             - id: ion
               type: string
               title: Cesium Ion API access token
@@ -111,8 +99,6 @@ extensions:
               choices:
                 - key: cesium
                   label: Cesium World Terrain
-                - key: arcgis
-                  label: ArcGIS Terrain
                 - key: cesiumion
                   label: Cesium Ion
             - id: terrainCesiumIonAsset

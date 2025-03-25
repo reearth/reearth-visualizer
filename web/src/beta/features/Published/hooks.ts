@@ -1,3 +1,4 @@
+import { ViewerProperty } from "@reearth/beta/features/Editor/Visualizer/type";
 import {
   InternalWidget,
   WidgetAlignSystem,
@@ -11,7 +12,7 @@ import {
   sceneProperty2ViewerPropertyMapping
 } from "@reearth/beta/utils/convert-object";
 import type { Camera } from "@reearth/beta/utils/value";
-import { ViewerProperty, MapRef } from "@reearth/core";
+import { MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { useState, useMemo, useEffect, useRef } from "react";
 
