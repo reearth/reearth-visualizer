@@ -5,28 +5,24 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback } from "react";
 
+import { PermissionService } from "./PermissionService";
+
 const ListItem: FC<{
   member: TeamMember;
   setUpdateRoleModalVisible: (visible: boolean) => void;
   setSelectedMember: (member: TeamMember) => void;
   setDeleteMemerModalVisible: (visible: boolean) => void;
   meRole: Role | undefined;
-  meId: string | undefined;
+  isLast: boolean;
 }> = ({
   member,
   setUpdateRoleModalVisible,
   setSelectedMember,
   setDeleteMemerModalVisible,
   meRole,
-  meId
+  isLast
 }) => {
   const t = useT();
-  const memerRoleTranslation = {
-    MAINTAINER: t("MAINTAINER"),
-    OWNER: t("OWNER"),
-    READER: t("READER"),
-    WRITER: t("WRITER")
-  };
 
   const handleUpdateRole = useCallback(
     (member: TeamMember) => {
@@ -61,15 +57,12 @@ const ListItem: FC<{
       </TypographyWrapper>
       <TypographyWrapper>
         <TypographyOfMember size="body">
-          {member.role === Role.Maintainer
-            ? //maintainer backend mutation work in progress for now
-              memerRoleTranslation[member.role].toLowerCase() + "(WIP)"
-            : memerRoleTranslation[member.role].toLowerCase()}
+          {PermissionService.getRoleLabel(t, member.role)}
         </TypographyOfMember>
       </TypographyWrapper>
 
       <TypographyWrapper>
-        {!config()?.disableWorkspaceManagement && (
+        {!config()?.disableWorkspaceManagement && meRole && (
           <PopupMenu
             label={
               <Button icon="dotsThreeVertical" iconButton appearance="simple" />
@@ -79,14 +72,22 @@ const ListItem: FC<{
                 icon: "arrowLeftRight",
                 id: "changeRole",
                 title: t("Change Role"),
-                disabled: meRole !== Role.Owner || meId === member.userId,
+                disabled: PermissionService.canModify(
+                  meRole,
+                  member.role,
+                  isLast
+                ),
                 onClick: () => handleUpdateRole(member)
               },
               {
                 icon: "close",
                 id: "remove",
                 title: t("Remove"),
-                disabled: meRole !== Role.Owner || meId === member.userId,
+                disabled: PermissionService.canRemove(
+                  meRole,
+                  member.role,
+                  isLast
+                ),
                 onClick: () => handleDeleteRole(member)
               }
             ]}

@@ -26,9 +26,9 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
   const t = useT();
 
   const roleOptions = useMemo(() => {
-    const permissionService = new PermissionService(meRole, member.role);
-    return permissionService.getRoleOptions(t);
-  }, [meRole, member.role, t]);
+    if (!meRole || !t) return [];
+    return PermissionService.getRoleOptions(t, meRole);
+  }, [meRole, t]);
 
   const [localRole, setLocalRole] = useState(member.role);
 
