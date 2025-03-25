@@ -29,18 +29,17 @@ button:active {
 }
 
 .btn-primary {
-  background-color: #007bff;
-  color: white;
+  background-color: #007BFF;
+  color: #FFFFFF;
 }
 
 .btn-primary:active {
-  background-color: #0056b3;
+  background-color: #0056B3;
 }
 
 .btn-secondary {
-  background-color: transparent;
-  color: #007bff;
-  border: 1px solid #007bff;
+  background-color: #FFFFFF;
+  color: #007BFF;
 }
 
 .btn-secondary:active {
@@ -176,7 +175,7 @@ li {
 
 /* Background Colors */
 .primary-background {
-  background: #F5F5F5;
+  background: #EEEEEE;
 }
 
 .secondary-background {
@@ -300,13 +299,21 @@ li {
 }
 
 /* Width */
-w-4 {
+.w-8 {
   width: 64px;
+}
+
+.w-10 {
+  width: 80px;
 }
 
 /* Height */
 .h-full {
   height: 100%;
+}
+
+.h-5 {
+  height: 40px;
 }
 
 /* Custom */
@@ -316,7 +323,6 @@ w-4 {
 }
 
 .zoom-button {
-  background: #FFFFFF;
   width: 90px;
   height: 40px;
 }
