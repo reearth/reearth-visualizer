@@ -1,4 +1,5 @@
 import { FileType, PluginType } from "../../constants";
+import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-header-reearth-yml",
@@ -28,31 +29,13 @@ const widgetFile: FileType = {
   sourceCode: `// A header navigation bar with logo and menu items
 
   reearth.ui.show(\`
-  <style>
-    /* Generic styling system that provides consistent UI components and styling across all plugins */
-
-    @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
-
-    /* Plugin-specific styling */
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 16px;
-    }
-
-    .header-menu {
-      list-style: none;
-      display: flex;
-      gap: 15px;
-    }
-  </style>
+  ${PRESET_PLUGIN_COMMON_STYLE}
   <div id="wrapper">
-    <div class="header">
+    <div class="flex-between px-8">
       <div class="header-logo">
         <p>Re:Earth</p>
       </div>
-      <ul class="header-menu">
+      <ul class="flex-center">
         <li>Home</li>
         <li>About</li>
         <li>Services</li>

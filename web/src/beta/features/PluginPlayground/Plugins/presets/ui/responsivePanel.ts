@@ -1,4 +1,5 @@
 import { FileType, PluginType } from "../../constants";
+import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-responsive-panel-reearth-yml",
@@ -27,16 +28,12 @@ const widgetFile: FileType = {
   sourceCode: `// A simple interactive panel that allows users to dynamically add and remove items.
 
   reearth.ui.show(\`
-  <style>
-    /* Generic styling system that provides consistent UI components and styling across all plugins */
-
-    @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
-  </style>
+  ${PRESET_PLUGIN_COMMON_STYLE}
   <div id="wrapper">
     <h2>Responsive Panel</h2>
     <h3 id="itemCount">Total Items: 0</h3>
     <div class="flex-center">
-      <button id="addBtn" class="btn btn-primary" onclick="addListItem()">Add Item</button>
+      <button id="addBtn" class="btn-primary mb-8" onclick="addListItem()">Add Item</button>
     </div>
     <ul>
     </ul>
@@ -47,9 +44,10 @@ const widgetFile: FileType = {
       itemCount++;
       const ul = document.querySelector("ul");
       const li = document.createElement('li');
+      li.className = "styled-list-item flex-between";
       li.innerHTML = \\\`
       <span>Item \\\${itemCount}</span>
-      <button class="btn btn-danger" onclick="deleteListItem(this)">Delete</button>
+      <button class="btn-danger" onclick="deleteListItem(this)">Delete</button>
       \\\`;
       ul.appendChild(li);
       updateItemCount()
