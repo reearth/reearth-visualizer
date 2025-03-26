@@ -27,52 +27,12 @@ const widgetFile: FileType = {
 // Define the plug-in UI //
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
-  <style>
-    .coolBtn {
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-      background: #f0ffff;
-      color: #000000;
-      cursor: pointer;
-      width: 200px;
-      height: 40px;
-      font-size: 16px 
-    }
-    .scaleBtn:active {
-      background: #dcdcdc;
-    }
-    .warmBtn {
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-      background:#ffe4e1;
-      color: #000000;
-      cursor: pointer;
-      width: 200px;
-      height: 40px;
-      font-size: 16px 
-    }
-    .scaleBtn:active {
-      background: #dcdcdc;
-    }
-
-    .button-container {
-    display: flex;        
-    gap: 8px;           
-    }
-
-    p {
-      text-align: center; 
-    }
-
-  </style>
-  <div id="wrapper">
-    <h2>Color by Height</h2>
-    <p>Choose your preferred color scheme<p>
-    <div class="button-container">
-      <button class = "coolBtn" id="cool">Cool Style</button>
-      <button class = "warmBtn" id="warm">Warm Style</button>
+  <div class="primary-background p-16">
+    <p class="text-3xl font-bold text-center">Color by Height</p>
+    <p class="text-lg text-center">Choose your preferred color scheme<p>
+    <div class="display-flex justify-center gap-8">
+      <button class="btn-primary w-14 h-5" id="cool">Cool Style</button>
+      <button class="btn-secondary w-14 h-5" id="warm">Warm Style</button>
     </div>
   </div>
   

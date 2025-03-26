@@ -1,4 +1,5 @@
 import { FileType, PluginType } from "../../constants";
+import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "override-layer-data-reearth-yml",
@@ -23,25 +24,11 @@ const widgetFile: FileType = {
 
 // The following describes the style and functionality of the UI //
 reearth.ui.show(\`
-<style>
-  #scaleBtn {
-    padding: 8px;
-    border-radius: 4px;
-    border: none;
-    background: #fffafa;
-    color: #000000;
-    cursor: pointer;
-    width: 200px;
-    height: 60px;
-    font-size: 16px 
-  }
-  #scaleBtn:active {
-  background: #dcdcdc;
-  }
-  
-</style>
-<button id="scaleBtn">Scale Polygon</button>
-
+ ${PRESET_PLUGIN_COMMON_STYLE}
+  <div class="primary-background flex-column align-center p-16 rounded-sm">
+    <p class="text-lg font-bold text-center">Click the button below to enlarge the polygon.</p>
+    <button class="btn-secondary w-10 h-4" id="scaleBtn">Enlarge</button>
+  </div>
 <script>
   // define initial polygon geometory
   let corners = [

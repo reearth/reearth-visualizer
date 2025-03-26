@@ -23,38 +23,16 @@ const widgetFile: FileType = {
   sourceCode: `// Configure the UI side of the Plug-in
   reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <style>
-  .displayId {
-      display: block;             
-      width: 100%;               
-      min-height: 52px;          
-      background-color: #FAFAFA;
-      border-radius: 4px;
-      padding: 8px;
-      word-wrap: break-word;      
-      box-sizing: border-box;  
-    }
-  .displayHeight {
-    display: flex;              
-    align-items: center;         
-    width: 100%;
-    min-height: 40px;
-    background-color: #FAFAFA;
-    border-radius: 4px;
-    padding: 8px;
-    word-wrap: break-word;
-    box-sizing: border-box; 
-  }
-  .title{
-      margin-bottom: 8px;     
-    }
-  </style>
-    <div id="wrapper">
-      <h3>Click to show building property</h3>
-      <p class = "title"> Building ID </p>
-      <span id="gml_id" class="displayId"></span>
-      <p class = "title"> Building Height </p>
-      <span id="building_height" class="displayHeight"</span>
+    <div class="primary-background flex-column p-16 rounded-sm">
+      <p class="text-lg font-bold text-center">Click a building to view it's properties</p>
+    <div>
+      <p class="text-sm">Building ID</p>
+      <span id="gml_id" class="secondary-background h-5 p-8 rounded-sm text-sm display-flex align-center"></span>
+    </div>
+    <div>
+        <p class="text-sm">Building Height</p>
+        <span id="building_height" class="secondary-background h-5 p-8 rounded-sm text-sm display-flex align-center"</span>
+     </div>
     </div>
   <script>
   // Receive messages and display the building id and height

@@ -22,109 +22,19 @@ const widgetFile: FileType = {
   title: "playback-control.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <style>
-    .timeline-controls {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      width: 100%;
-      box-sizing: border-box;
-      padding: 16px;
-    }
-
-    .control-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn {
-      padding: 6px 16px;
-      border: none;
-      border-radius: 4px;
-      background: #2196F3;
-      color: white;
-      cursor: pointer;
-    }
-
-    .time-display-container {
-      background: #fff;
-      border-radius: 4px;
-      padding: 8px;
-      text-align: center;
-    }
-
-    .time-display {
-      font-family: monospace;
-      font-size: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .date-display {
-      color: #666;
-      font-size: 12px;
-    }
-
-    .time-value {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-    }
-
-    .speed-control {
-      display: flex;
-      align-items: center;
-    }
-
-    select {
-      padding: 4px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      background: white;
-      font-size: 12px;
-    }
-
-    .radio-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: 12px;
-      padding-top: 8px;
-    }
-
-    .radio-option {
-      display: grid;
-      grid-template-columns: auto 80px 1fr;
-      align-items: baseline;
-      gap: 4px;
-    }
-
-    .radio-description {
-      color: #666;
-      font-size: 11px;
-    }
-
-    .control-label {
-      font-size: 12px;
-      font-weight: bold;
-    }
-  </style>
-
-  <div id="wrapper">
-    <div class="timeline-controls">
-      <div class="time-display-container">
-        <div class="time-display">
-          <div class="date-display" id="currentDate"></div>
-          <div class="time-value" id="currentTime"></div>
+  <div class="secondary-background primary-shadow p-16 rounded-sm">
+    <div class="flex-column gap-8">
+      <div class="primary-background p-8 rounded-sm">
+        <div class="flex-column font-monospace">
+          <div class="text-sm text-secondary" id="currentDate"></div>
+          <div class="font-bold" id="currentTime"></div>
         </div>
       </div>
 
-      <div class="control-row">
-        <button id="playPauseBtn" class="btn">Play</button>
-        <div class="speed-control">
-          <select id="speedSelect">
+      <div class="display-flex gap-8">
+        <button id="playPauseBtn" class="btn-primary w-8 h-4">Play</button>
+        <div class="display-flex">
+          <select class="p-4" id="speedSelect">
             <option value="1">1x</option>
             <option value="2">2x</option>
             <option value="5">5x</option>
@@ -138,30 +48,28 @@ const widgetFile: FileType = {
           </select>
         </div>
       </div>
-
-      <div class="control-group">
-        <div class="control-label">Range Type</div>
-        <div class="radio-group">
-          <div class="radio-option">
+      <div>
+        <div class="text-sm font-bold">Range Type</div>
+        <div class="flex-column text-sm">
+          <div class="display-grid radio-option gap-4">
             <input type="radio" id="unbounded" name="rangeType" value="unbounded" checked>
             <label for="unbounded">Unbounded</label>
-            <span class="radio-description"> - Time continues indefinitely in both directions.</span>
+            <span class="text-sm text-secondary"> - Time continues indefinitely in both directions.</span>
           </div>
-          <div class="radio-option">
+          <div class="display-grid radio-option gap-4">
             <input type="radio" id="clamped" name="rangeType" value="clamped">
             <label for="clamped">Clamped</label>
-            <span class="radio-description"> - Stops at the start/end of the time range.</span>
+            <span class="text-sm text-secondary"> - Stops at the start/end of the time range.</span>
           </div>
-          <div class="radio-option">
+          <div class="display-grid radio-option gap-4">
             <input type="radio" id="bounced" name="rangeType" value="bounced">
             <label for="bounced">Bounced</label>
-            <span class="radio-description"> - Reverses direction at the start/end of time range.</span>
+            <span class="text-sm text-secondary"> - Reverses direction at the start/end of time range.</span>
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <script>
     let isPlaying = false;
 

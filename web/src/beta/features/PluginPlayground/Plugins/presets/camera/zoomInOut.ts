@@ -28,36 +28,13 @@ const widgetFile: FileType = {
 // ================================
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
-  <style>
-    .zoomBtn {
-      display: flex;  
-      align-items: center;    
-      justify-content: center;
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-      background: #ffffff;
-      color: #000000;
-      cursor: pointer;
-      width: 90px;
-      height: 40px;
-    }
-    .zoomBtn:active {
-      background: #dcdcdc;
-    }
-    .zoomBtn img {
-    display: block;
-    width: 22px;
-    height: 22px;
-    }
-  </style>
-  <div id="wrapper">
-    <h3>Zoom Level</h3>
-    <div class="flex-center">
-      <button class="zoomBtn" id="zoomIn">
+  <div class="primary-background text-center justify-center p-16 rounded-sm">
+    <p class="text-lg font-bold">Zoom Level</p>
+    <div class="flex-center gap-8">
+      <button class="display-flex align-center justify-center btn btn-secondary w-10 h-5" id="zoomIn">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/plus.svg" alt="Zoom In" />
       </button>
-      <button class="zoomBtn" id="zoomOut">
+      <button class="display-flex align-center justify-center btn btn-secondary w-10 h-5" id="zoomOut">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/minus.svg" alt="Zoom Out" />
       </button>
     </div>
