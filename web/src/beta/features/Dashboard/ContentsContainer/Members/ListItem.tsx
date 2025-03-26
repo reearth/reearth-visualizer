@@ -13,14 +13,15 @@ const ListItem: FC<{
   setSelectedMember: (member: TeamMember) => void;
   setDeleteMemerModalVisible: (visible: boolean) => void;
   meRole: Role | undefined;
-  isLast: boolean;
+  //when the item is the last owner, it can't be removed or modified
+  isLastOwner: boolean;
 }> = ({
   member,
   setUpdateRoleModalVisible,
   setSelectedMember,
   setDeleteMemerModalVisible,
   meRole,
-  isLast
+  isLastOwner
 }) => {
   const t = useT();
 
@@ -75,7 +76,7 @@ const ListItem: FC<{
                 disabled: PermissionService.canModify(
                   meRole,
                   member.role,
-                  isLast
+                  isLastOwner
                 ),
                 onClick: () => handleUpdateRole(member)
               },
@@ -86,7 +87,7 @@ const ListItem: FC<{
                 disabled: PermissionService.canRemove(
                   meRole,
                   member.role,
-                  isLast
+                  isLastOwner
                 ),
                 onClick: () => handleDeleteRole(member)
               }

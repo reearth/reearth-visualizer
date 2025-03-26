@@ -108,7 +108,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
               setSelectedMember={setSelectedMember}
               setDeleteMemerModalVisible={setDeleteMemerModalVisible}
               meRole={meRole}
-              isLast={sortedMembers.length === 1}
+              isLastOwner={sortedMembers.length === 1}
             />
           ))
         ) : (
