@@ -4,9 +4,7 @@ import {
   SelectedFeature,
   SelectedLayer
 } from "@reearth/beta/features/Editor/hooks/useLayers";
-import {
-  GeoJsonFeatureUpdateProps
-} from "@reearth/beta/features/Editor/hooks/useSketch";
+import { GeoJsonFeatureUpdateProps } from "@reearth/beta/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/beta/lib/reearth-ui";
 import { ComputedFeature, Geometry } from "@reearth/core";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
@@ -18,6 +16,7 @@ import DataSource from "./DataSource";
 import FeatureInspector from "./FeatureInspector";
 import InfoboxSettings from "./InfoboxSettings";
 import LayerStyle from "./LayerStyle";
+import PhotoOverlaySettings from "./PhotoOverlaySettings";
 
 const LAYER_INSPECTOR_TAB_STORAGE_KEY =
   "reearth-visualizer-map-layer-inspector-tab";
@@ -53,8 +52,8 @@ const InspectorTabs: FC<Props> = ({
 }) => {
   const t = useT();
 
-  const tabItems: TabItem[] = useMemo(
-    () => [
+  const tabItems: TabItem[] = useMemo(() => {
+    const tabs: TabItem[] = [
       {
         id: "dataSource",
         icon: "data",
@@ -109,20 +108,36 @@ const InspectorTabs: FC<Props> = ({
           />
         )
       }
-    ],
-    [
-      t,
-      selectedLayer?.layer,
-      onLayerNameUpdate,
-      onLayerConfigUpdate,
-      selectedFeature,
-      selectedSketchFeature,
-      onGeoJsonFeatureUpdate,
-      layerStyles,
-      layers,
-      sceneId
-    ]
-  );
+    ];
+
+    if (selectedLayer?.layer?.isSketch) {
+      tabs.push({
+        id: "photoOverlaySettings",
+        icon: "image",
+        placement: "left",
+        tooltipText: t("Photo Overlay"),
+        children: (
+          <PhotoOverlaySettings
+            selectedLayerId={selectedLayer.layer.id}
+            photoOverlay={selectedLayer.layer?.photoOverlay}
+          />
+        )
+      });
+    }
+
+    return tabs;
+  }, [
+    t,
+    selectedLayer?.layer,
+    onLayerNameUpdate,
+    onLayerConfigUpdate,
+    selectedFeature,
+    selectedSketchFeature,
+    onGeoJsonFeatureUpdate,
+    layerStyles,
+    layers,
+    sceneId
+  ]);
 
   const [currentTab, setCurrentTab] = useState(
     localStorage.getItem(LAYER_INSPECTOR_TAB_STORAGE_KEY) ?? "dataSource"

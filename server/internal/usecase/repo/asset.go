@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -24,4 +25,5 @@ type Asset interface {
 	TotalSizeByWorkspace(context.Context, accountdomain.WorkspaceID) (int64, error)
 	Save(context.Context, *asset.Asset) error
 	Remove(context.Context, id.AssetID) error
+	RemoveByProjectWithFile(context.Context, id.ProjectID, gateway.File) error
 }

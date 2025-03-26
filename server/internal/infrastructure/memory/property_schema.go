@@ -146,3 +146,19 @@ func (r *PropertySchema) RemoveAll(ctx context.Context, ids []id.PropertySchemaI
 	}
 	return nil
 }
+
+func (r *PropertySchema) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+	if !r.f.CanWrite(sceneID) {
+		return nil
+	}
+
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for lid, p := range r.data {
+		if s := p.Scene(); s != nil && *s == sceneID {
+			delete(r.data, lid)
+		}
+	}
+	return nil
+}
