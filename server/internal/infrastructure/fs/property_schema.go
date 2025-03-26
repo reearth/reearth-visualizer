@@ -80,3 +80,7 @@ func (r *propertySchema) Remove(ctx context.Context, pid id.PropertySchemaID) er
 func (r *propertySchema) RemoveAll(ctx context.Context, pid []id.PropertySchemaID) error {
 	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
 }
+
+func (r *propertySchema) RemoveByScene(ctx context.Context, sceneID id.SceneID) error {
+	return rerror.ErrInternalByWithContext(ctx, errors.New("read only"))
+}

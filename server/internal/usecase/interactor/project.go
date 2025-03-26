@@ -34,37 +34,39 @@ import (
 type Project struct {
 	common
 	commonSceneLock
-	assetRepo        repo.Asset
-	projectRepo      repo.Project
-	storytellingRepo repo.Storytelling
-	userRepo         accountrepo.User
-	workspaceRepo    accountrepo.Workspace
-	sceneRepo        repo.Scene
-	propertyRepo     repo.Property
-	transaction      usecasex.Transaction
-	policyRepo       repo.Policy
-	file             gateway.File
-	nlsLayerRepo     repo.NLSLayer
-	layerStyles      repo.Style
-	pluginRepo       repo.Plugin
+	assetRepo          repo.Asset
+	projectRepo        repo.Project
+	storytellingRepo   repo.Storytelling
+	userRepo           accountrepo.User
+	workspaceRepo      accountrepo.Workspace
+	sceneRepo          repo.Scene
+	propertyRepo       repo.Property
+	propertySchemaRepo repo.PropertySchema
+	transaction        usecasex.Transaction
+	policyRepo         repo.Policy
+	file               gateway.File
+	nlsLayerRepo       repo.NLSLayer
+	layerStyles        repo.Style
+	pluginRepo         repo.Plugin
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
-		commonSceneLock:  commonSceneLock{sceneLockRepo: r.SceneLock},
-		assetRepo:        r.Asset,
-		projectRepo:      r.Project,
-		storytellingRepo: r.Storytelling,
-		userRepo:         r.User,
-		workspaceRepo:    r.Workspace,
-		sceneRepo:        r.Scene,
-		propertyRepo:     r.Property,
-		transaction:      r.Transaction,
-		policyRepo:       r.Policy,
-		file:             gr.File,
-		nlsLayerRepo:     r.NLSLayer,
-		layerStyles:      r.Style,
-		pluginRepo:       r.Plugin,
+		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
+		assetRepo:          r.Asset,
+		projectRepo:        r.Project,
+		storytellingRepo:   r.Storytelling,
+		userRepo:           r.User,
+		workspaceRepo:      r.Workspace,
+		sceneRepo:          r.Scene,
+		propertyRepo:       r.Property,
+		transaction:        r.Transaction,
+		policyRepo:         r.Policy,
+		file:               gr.File,
+		nlsLayerRepo:       r.NLSLayer,
+		layerStyles:        r.Style,
+		pluginRepo:         r.Plugin,
+		propertySchemaRepo: r.PropertySchema,
 	}
 }
 
@@ -481,12 +483,19 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 
 	deleter := ProjectDeleter{
 		SceneDeleter: SceneDeleter{
-			Scene:     i.sceneRepo,
-			SceneLock: i.sceneLockRepo,
-			Property:  i.propertyRepo,
+			Scene:          i.sceneRepo,
+			SceneLock:      i.sceneLockRepo,
+			Property:       i.propertyRepo,
+			NLSLayer:       i.nlsLayerRepo,
+			Plugin:         i.pluginRepo,
+			Storytelling:   i.storytellingRepo,
+			Style:          i.layerStyles,
+			PropertySchema: i.propertySchemaRepo,
+			File:           i.file,
 		},
 		File:    i.file,
 		Project: i.projectRepo,
+		Asset:   i.assetRepo,
 	}
 	if err := deleter.Delete(ctx, prj, true, operator); err != nil {
 		return err
