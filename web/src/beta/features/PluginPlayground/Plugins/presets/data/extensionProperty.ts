@@ -65,9 +65,9 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background p-16 rounded-sm">
-    <p class="text-lg font-bold">Extension Property</p>
-    <h3 class="text-md text-center">Input on Extension Settings and execute code again.</h3>
-    <h3 class="text-md text-center" id="text"></h3>
+    <p class="text-lg font-bold text-center">Extension Property</p>
+    <p class="text-md text-secondary text-center">Input on Extension Settings and execute code again.</p>
+    <p class="text-md text-center" id="text"></p>
   </div>
 
   <script>

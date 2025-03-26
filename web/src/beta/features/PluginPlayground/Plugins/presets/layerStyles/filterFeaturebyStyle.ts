@@ -30,7 +30,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background p-16 rounded-sm">
     <p class="text-lg font-bold">Filter Cities based on Population:</p>
     <div class="flex-column justify-center gap-8">
-      <button class="btn-neutral p-8" id="allBtn">Show all</button>
+      <button class="btn-neutral btn-success p-8" id="allBtn">Show all</button>
       <button class="btn-neutral p-8" id="belowBtn">Population below 20000</button>
       <button class="btn-neutral p-8" id="aboveBtn">Population above 20000</button>
     </div>

@@ -32,7 +32,8 @@ const widgetFile: FileType = {
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background flex-column rounded-sm gap-8 p-8">
         <div>
-          <button id="info-toggle" class="btn-success w-10 h-4">Show Info</button>
+          <p class="text-lg font-bold text-center">Camera Position</p>
+          <button id="info-toggle" class="btn-neutral w-10 h-4">Show Info</button>
         </div>
         <div class="tertiary-background hidden rounded-sm text-sm p-8" id="info-content">
           <strong>How to Use the Plugin</strong><br><br>
@@ -113,7 +114,7 @@ const widgetFile: FileType = {
   document.getElementById('info-toggle').addEventListener('click', () => {
     const infoContent = document.getElementById('info-content');
     const wrapper = document.getElementById('wrapper');
-    const isHidden = infoContent.style.display === 'none';
+    const isHidden = infoContent.style.display === 'none' || !infoContent.style.display;
 
     infoContent.style.display = isHidden ? 'block' : 'none';
     wrapper.classList.toggle('info-expanded', isHidden);
