@@ -1,7 +1,7 @@
 import { Button, TextInput, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
-import { Role, TeamMember } from "@reearth/services/gql";
+import { TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -11,6 +11,7 @@ import { Workspace } from "../../type";
 import AddMemberModal from "./AddMemberModal";
 import DeleteMemberWarningModal from "./DeleteMemberWarningModal";
 import ListItem from "./ListItem";
+import { PermissionService } from "./PermissionService";
 import UpdateRoleModal from "./UpdateRoleModal";
 
 const ROLE_PRIORITY = { OWNER: 1, MAINTAINER: 2, WRITER: 3, READER: 4 };
@@ -78,16 +79,16 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           />
         </Search>
         <div>
-          {meRole === Role.Owner && !config()?.disableWorkspaceManagement && (
-            //maintainer can't add new member for now
-            // || meRole === Role.Maintainer
-            <Button
-              title={t("invite user")}
-              appearance="primary"
-              icon="memberAdd"
-              onClick={() => setAddMemberModalVisible(true)}
-            />
-          )}
+          {meRole &&
+            PermissionService.canInvite(meRole) &&
+            !config()?.disableWorkspaceManagement && (
+              <Button
+                title={t("invite user")}
+                appearance="primary"
+                icon="memberAdd"
+                onClick={() => setAddMemberModalVisible(true)}
+              />
+            )}
         </div>
       </HeaderWrapper>
       <Table>
@@ -107,7 +108,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
               setSelectedMember={setSelectedMember}
               setDeleteMemerModalVisible={setDeleteMemerModalVisible}
               meRole={meRole}
-              meId={meId}
+              isLastOwner={sortedMembers.length === 1}
             />
           ))
         ) : (
