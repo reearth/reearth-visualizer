@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 )
@@ -13,6 +14,7 @@ type Plugin interface {
 	FindByIDs(context.Context, []id.PluginID) ([]*plugin.Plugin, error)
 	Save(context.Context, *plugin.Plugin) error
 	Remove(context.Context, id.PluginID) error
+	RemoveBySceneWithFile(context.Context, id.SceneID, gateway.File) error
 }
 
 func PluginLoaderFrom(r Plugin) plugin.Loader {
