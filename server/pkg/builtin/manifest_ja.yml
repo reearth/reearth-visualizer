@@ -1462,3 +1462,4 @@ extensions:
             title: 有効
           cameraDuration:
             title: カメラ移動時間
+            description: カメラがキャプチャされた位置へ移動するのにかかる時間（秒）
