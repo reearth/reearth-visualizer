@@ -85,3 +85,11 @@ func TestDeleteJunkDataJob_processBatch(t *testing.T) {
 		assert.Equal(t, int64(1), count) // scene1 only
 	})
 }
+
+func TestNewDeleteJunkDataJob(t *testing.T) {
+	job := NewDeleteJunkDataJob()
+	assert.NotNil(t, job)
+	assert.NotEmpty(t, job.collections)
+	assert.Contains(t, job.collections, "nlsLayer")
+	assert.Contains(t, job.collections, "plugin")
+}

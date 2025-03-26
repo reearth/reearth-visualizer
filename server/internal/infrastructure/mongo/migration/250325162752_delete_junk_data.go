@@ -99,7 +99,7 @@ func (j *DeleteJunkDataJob) processBatch(ctx context.Context, c DBClient, collec
 
 		sceneID, ok := rawData["scene"].(string)
 		if !ok {
-			log.Printf("Scene ID not found or invalid in collection %s id %s. Deleting...\n", collectionName, id)
+			fmt.Println("[NG] Scene ID not found collectionName:", collectionName, "id", id, "Deleting...")
 			_, err := c.WithCollection(collectionName).Client().DeleteOne(ctx, bson.M{"id": id})
 			if err != nil {
 				log.Printf("Failed to delete junk data (no scene field): %v\n", err)
@@ -114,12 +114,15 @@ func (j *DeleteJunkDataJob) processBatch(ctx context.Context, c DBClient, collec
 		}
 
 		if count == 0 {
-			log.Printf("Parent Scene %s not found for %s id %s. Deleting...\n", sceneID, collectionName, id)
+			fmt.Println("[NG] Parent Scene ", sceneID, "not found collectionName:", collectionName, "id", id, "Deleting...")
 			_, err := c.WithCollection(collectionName).Client().DeleteOne(ctx, bson.M{"id": id})
 			if err != nil {
 				log.Printf("Failed to delete junk data (missing scene): %v\n", err)
 			}
+			continue
 		}
+
+		fmt.Println("[OK] No problem collectionName:", collectionName, "id", id)
 	}
 	return nil
 }
