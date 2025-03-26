@@ -206,25 +206,25 @@ export default function ({
     [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer]
   );
 
-   const selectedFeature: SelectedFeature | undefined = useMemo(() => {
-     if (!selectedLayer?.computedFeature?.id) return;
-     const { id, geometry, properties } =
-       selectedLayer.layer?.config?.data?.type === "3dtiles" ||
-       selectedLayer.layer?.config?.data?.type === "osm-buildings" ||
-       selectedLayer.layer?.config?.data?.type === "google-photorealistic" ||
-       selectedLayer.layer?.config?.data?.type === "mvt"
-         ? selectedLayer.computedFeature
-         : (selectedLayer.computedLayer?.features?.find(
-             (f) => f.id === selectedLayer.computedFeature?.id
-           ) ?? {});
+  const selectedFeature: SelectedFeature | undefined = useMemo(() => {
+    if (!selectedLayer?.computedFeature?.id) return;
+    const { id, geometry, properties } =
+      selectedLayer.layer?.config?.data?.type === "3dtiles" ||
+      selectedLayer.layer?.config?.data?.type === "osm-buildings" ||
+      selectedLayer.layer?.config?.data?.type === "google-photorealistic" ||
+      selectedLayer.layer?.config?.data?.type === "mvt"
+        ? selectedLayer.computedFeature
+        : (selectedLayer.computedLayer?.features?.find(
+            (f) => f.id === selectedLayer.computedFeature?.id
+          ) ?? {});
 
-     if (!id) return;
-     return {
-       id,
-       geometry,
-       properties
-     };
-   }, [selectedLayer]);
+    if (!id) return;
+    return {
+      id,
+      geometry,
+      properties
+    };
+  }, [selectedLayer]);
 
   const handleLayerAdd = useCallback(
     async (inp: LayerAddProps) => {
