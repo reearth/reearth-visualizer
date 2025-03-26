@@ -6,6 +6,8 @@ import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
 import { FC, useCallback, useMemo, useState } from "react";
 
+import { PermissionService } from "./PermissionService";
+
 type UpdateRoleModalProps = {
   workspace: Workspace | undefined;
   member: TeamMember;
@@ -24,20 +26,8 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
   const t = useT();
 
   const roleOptions = useMemo(() => {
-    if (meRole === "OWNER") {
-      return [
-        { value: "READER", label: t("READER") },
-        { value: "WRITER", label: t("WRITER") },
-        { value: "MAINTAINER", label: t("MAINTAINER") + " (WIP)" },
-        { value: "OWNER", label: t("OWNER") }
-      ];
-    } else if (meRole === "MAINTAINER") {
-      return [
-        { value: "READER", label: t("READER") },
-        { value: "WRITER", label: t("WRITER") },
-        { value: "MAINTAINER", label: t("MAINTAINER") + " (WIP)" }
-      ];
-    } else return [];
+    if (!meRole || !t) return [];
+    return PermissionService.getRoleOptions(t, meRole);
   }, [meRole, t]);
 
   const [localRole, setLocalRole] = useState(member.role);
