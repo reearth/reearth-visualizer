@@ -108,7 +108,7 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
     rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
 
   return scene?.newLayers?.map((l): NLSLayer => {
-    const layer = {
+    const layer: NLSLayer = {
       id: l.id,
       index: l.index,
       title: l.title,
@@ -131,17 +131,6 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
             propertyId: l.infobox.propertyId,
             property: l.infobox.property,
             blocks: l.infobox.blocks
-          }
-        : undefined,
-      photoOverlay: l.photoOverlay
-        ? {
-            layerId: l.photoOverlay.layerId,
-            propertyId: l.photoOverlay.propertyId,
-            property: l.photoOverlay.property,
-            processedProperty: processNewProperty(
-              undefined,
-              l.photoOverlay.property
-            )
           }
         : undefined
     };
