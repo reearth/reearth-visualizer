@@ -28,7 +28,7 @@ reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
 <div class="primary-background text-center p-16 rounded-sm">
   <p class="text-lg font-bold">Rotate Camera Angle</p>
-      <button class="btn-secondary w-14 h-4" id="rotateBtn">Click here</button>
+      <button class="btn-neutral w-14 h-4" id="rotateBtn">Click here</button>
 </div>
 <script>
 let rotating = false;

@@ -23,10 +23,6 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-  html{
-    width: 300px;
-  }
-  
   .theme-content {
     transition: all 0.3s ease;
     border-radius: 4px;
@@ -43,13 +39,12 @@ const widgetFile: FileType = {
   }
 
   .theme-toggle {
-    background: #4CAF50;
-    color: white;
+    background: #4caf50;
+    color: #ffffff;
     border: none;
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
-    margin-top: 16px;
   }
 
   .theme-toggle:hover {
@@ -60,64 +55,45 @@ const widgetFile: FileType = {
     background: rgba(255, 255, 255, 0.1);
     padding: 12px;
     border-radius: 4px;
-    margin-top: 16px;
-    font-family: monospace;
-  }
-
-  .storage-display h4 {
-    margin: 0 0 8px 0;
-    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
   }
 
   .storage-op {
-    margin: 8px 0;
     padding: 8px;
     background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
     font-size: 13px;
   }
 
   #storageOps {
     max-height: 200px;
     overflow-y: auto;
-    margin-bottom: 16px;
-  }
-
-  .divider {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    margin: 16px 0;
   }
 
   #currentStorage {
     background: rgba(0, 0, 0, 0.05);
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 16px;
-  }
-
-  .storage-actions {
-    margin-top: 16px;
   }
   </style>
 
-  <div id="wrapper">
-    <h3>Theme Selector - Client Storage Demo</h3>
+  <div class="primary-background p-16 rounded-sm">
+    <p class="text-lg font-bold text-center m-0">Theme Selector - Client Storage Demo</p>
 
     <div class="theme-content light">
-      <div class="flex-center">
+      <div class="flex-center p-16">
         <button id="themeToggle" class="theme-toggle">Switch to Dark Theme</button>
       </div>
 
       <div class="divider"></div>
 
       <div class="storage-display" id="storageDisplay">
-        <h4>Current Storage State:</h4>
-        <div id="currentStorage">Loading...</div>
+        <p class="text-md font-bold font-monospace">Current Storage State:</p>
+        <div id="currentStorage" class="text-sm p-8 rounded-sm">Loading...</div>
 
-        <h4>Storage Operations Log:</h4>
+        <p class="text-md font-bold font-monospace">Storage Operations Log:</p>
         <div id="storageOps"></div>
 
-        <div class="flex-center storage-actions">
+        <div>
           <button id="viewKeys" class="theme-toggle">View All Keys</button>
           <button id="clearStorage" class="theme-toggle">Clear Storage</button>
         </div>
