@@ -179,6 +179,8 @@ Infobox: インフォボックス
 Enable Infobox: インフォボックスを有効化
 Show infobox when the user clicks on a layer: レイヤーをクリックした際にインフォボックスを表示
 NO STYLE: スタイルなし
+Enable PhotoOverlay: フォトオーバーレイを有効化
+Show photo overlay when the user clicks on a layer: レイヤーをクリックした際にフォトオーバーレイを表示
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
@@ -559,6 +561,7 @@ Failed to delete user.: ユーザーの削除に失敗しました。
 Successfully delete user!: ユーザーの削除に成功しました！
 Failed to change language.: 言語の変更に失敗しました。
 Successfully updated user language!: ユーザーの言語が更新されました！
+Successfully enabled photo overlay: フォトオーバーレイが有効になりました
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
 Failed to upgrade plugin.: プラグインのアップグレードに失敗しました。

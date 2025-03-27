@@ -99,8 +99,6 @@ extensions:
               choices:
                 - key: cesium
                   label: Cesium World Terrain
-                - key: arcgis
-                  label: ArcGIS Terrain
                 - key: cesiumion
                   label: Cesium Ion
             - id: terrainCesiumIonAsset
@@ -2839,12 +2837,9 @@ extensions:
             - id: enabled
               type: bool
               title: Enabled PhotoOverlay
-              # defaultValue: false
-              # description: xxxxxx
+              defaultValue: true
             - id: cameraDuration
               type: number
-              title: PhotoOverlay Camera Duration
-              # suffix: s
-              # min: 0
-              # defaultValue: 2
-              # description: xxxxxx
+              title: Camera Duration
+              defaultValue: 1
+              description: The duration (in seconds) it takes for the camera to fly to the captured position.

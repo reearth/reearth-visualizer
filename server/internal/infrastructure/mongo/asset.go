@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
+	"net/url"
 	"regexp"
 	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -151,6 +154,42 @@ func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{
 		"id": id.String(),
 	}))
+}
+
+func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f gateway.File) error {
+
+	projectAssets, err := r.find(ctx, bson.M{
+		"coresupport": true,
+		"project":     pid.String(),
+	})
+	if err != nil {
+		return err
+	}
+
+	for _, a := range projectAssets {
+
+		if !r.f.CanWrite(a.Workspace()) {
+			return repo.ErrOperationDenied
+		}
+
+		aPath, err := url.Parse(a.URL())
+		if err != nil {
+			continue
+		}
+
+		err = f.RemoveAsset(ctx, aPath)
+		if err != nil {
+			log.Print(err.Error())
+		}
+
+		err = r.Remove(ctx, a.ID())
+		if err != nil {
+			log.Print(err.Error())
+		}
+
+	}
+
+	return nil
 }
 
 func (r *Asset) paginate(ctx context.Context, filter any, sort *asset.SortType, pagination *usecasex.Pagination) ([]*asset.Asset, *usecasex.PageInfo, error) {
