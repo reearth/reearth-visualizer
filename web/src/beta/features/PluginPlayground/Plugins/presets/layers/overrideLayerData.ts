@@ -27,7 +27,7 @@ reearth.ui.show(\`
  ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background flex-column align-center p-16 rounded-sm">
     <p class="text-lg font-bold text-center">Click the button below to enlarge the polygon.</p>
-    <button class="btn-secondary w-10 h-4" id="scaleBtn">Enlarge</button>
+    <button class="btn-neutral w-10 h-4" id="scaleBtn">Enlarge</button>
   </div>
 <script>
   // define initial polygon geometory

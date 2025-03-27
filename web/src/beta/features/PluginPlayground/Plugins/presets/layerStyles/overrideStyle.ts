@@ -27,12 +27,12 @@ const widgetFile: FileType = {
 // Define the plug-in UI //
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
-  <div class="primary-background p-16">
-    <p class="text-3xl font-bold text-center">Color by Height</p>
-    <p class="text-lg text-center">Choose your preferred color scheme<p>
+  <div class="primary-background p-16 rounded-sm">
+    <p class="text-lg font-bold text-center">Color by Height</p>
+    <p class="text-md text-secondary text-center">Choose your preferred color scheme<p>
     <div class="display-flex justify-center gap-8">
       <button class="btn-primary w-14 h-5" id="cool">Cool Style</button>
-      <button class="btn-secondary w-14 h-5" id="warm">Warm Style</button>
+      <button class="btn-neutral w-14 h-5" id="warm">Warm Style</button>
     </div>
   </div>
   

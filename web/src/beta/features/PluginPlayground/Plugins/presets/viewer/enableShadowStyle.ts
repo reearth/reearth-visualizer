@@ -33,7 +33,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       <input type="checkbox" id="toggleSwitch">
       <span class="slider"></span>
       </label>
-      <div class="text-xl" id="status">Shadow: OFF</div>
+      <div class="text-lg" id="status">Shadow: OFF</div>
    </div>
    <script>
       document.addEventListener('DOMContentLoaded', function() {

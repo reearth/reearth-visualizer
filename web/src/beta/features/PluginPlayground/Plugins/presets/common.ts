@@ -1,8 +1,6 @@
 export const PRESET_PLUGIN_COMMON_STYLE = `<style>
 /* Plugin Playground Presets Generic Styling */
 
-/* Base & Typography */
-
  * {
   box-sizing: border-box;
 }
@@ -35,14 +33,6 @@ button:active {
 
 .btn-primary:active {
   background-color: #0056b3;
-}
-
-.btn-secondary {
-  background-color: #ffffff;
-}
-
-.btn-secondary:active {
-  background-color: #e6f0ff;
 }
 
 .btn-danger {
@@ -78,6 +68,7 @@ button:disabled {
   cursor: not-allowed;
 }
 
+<<<<<<< HEAD
 .button-padding {
   padding: 8px 16px;
 }
@@ -89,6 +80,8 @@ button:disabled {
   cursor: pointer;
 }
 
+=======
+>>>>>>> 5f7712ab3b00ce8fb582a58c9975e5f20b9fb230
 /* Form Elements */
 input {
   width: 100%;
@@ -178,6 +171,10 @@ li {
   background: #f9f9f9;
 }
 
+.quaternary-background {
+  background: #0000000d;
+}
+
 /* Utility Classes */
 .text-center {
   text-align: center;
@@ -187,6 +184,7 @@ li {
   display: none;
 }
 
+<<<<<<< HEAD
 .invisible {
   visibility: hidden;
   opacity: 0;
@@ -205,10 +203,13 @@ li {
   border-bottom: 1px solid #ccc;
 }
 
+=======
+>>>>>>> 5f7712ab3b00ce8fb582a58c9975e5f20b9fb230
 /* Spacing Utilities */
 .m-0 {
   margin: 0;
 }
+<<<<<<< HEAD
 
 .mt-8 {
   margin-top: 8px;
@@ -217,23 +218,11 @@ li {
 .mt-16 {
   margin-top: 16px;
 }
+=======
+>>>>>>> 5f7712ab3b00ce8fb582a58c9975e5f20b9fb230
 
 .mb-8 {
   margin-bottom: 8px;
-}
-
-.mb-16 {
-  margin-bottom: 16px;
-}
-
-.my-8 {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
-.mx-8 {
-  margin-left: 8px;
-  margin-right: 8px;
 }
 
 .p-4 {
@@ -248,19 +237,9 @@ li {
   padding: 16px;
 }
 
-.py-4 {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
 .px-8 {
   padding-left: 8px;
   padding-right: 8px;
-}
-
-.py-8 {
-  padding-top: 8px;
-  padding-bottom: 8px;
 }
 
 /* Gap */
@@ -302,14 +281,6 @@ li {
 
 .text-lg {
   font-size: 16px;
-}
-
-.text-xl {
-  font-size: 18px;
-}
-
-.text-3xl {
-  font-size: 24px;
 }
 
 /* Text Color */
@@ -360,8 +331,8 @@ li {
   height: 40px;
 }
 
-.h-4 {
-  height: 32px;
+.h-6 {
+  height: 48px;
 }
 
 /* Custom */
@@ -413,5 +384,47 @@ li {
    input:checked + .slider:before {
    transform: translateX(26px);
    }
+
+  .divider {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 16px 0;
+  }
+
+  /* Theme Selector */
+    .theme-content {
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .theme-content.light {
+    color: #333333;
+  }
+
+  .theme-content.dark {
+    color: #ffffff;
+    background: #333333;
+  }
+  
+  /* Storage Display */ 
+   .storage-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 12px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .storage-op {
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+  }
+
+  #storageOps {
+    max-height: 200px;
+    overflow-y: auto;
+  }
   </style>
 `;
