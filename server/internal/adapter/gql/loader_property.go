@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 )
@@ -32,8 +33,24 @@ func (c *PropertyLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmo
 	}
 
 	properties := make([]*gqlmodel.Property, 0, len(res))
-	for _, property := range res {
-		properties = append(properties, gqlmodel.ToProperty(property))
+	for _, prop := range res {
+		if ps := builtin.GetPropertySchema(prop.Schema()); ps != nil {
+			for _, psg := range ps.Groups().Groups() {
+				for _, pi := range prop.Items() {
+					if psg.ID() == pi.SchemaGroup() {
+						for _, psf := range psg.Fields() {
+							for _, pf := range pi.Fields(nil) {
+								if psf.ID() == pf.Field() {
+									properties = append(properties, gqlmodel.ToProperty(prop))
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			properties = append(properties, gqlmodel.ToProperty(prop))
+		}
 	}
 
 	return properties, nil
