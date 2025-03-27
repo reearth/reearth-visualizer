@@ -29,7 +29,7 @@ const widgetFile: FileType = {
   ${PRESET_PLUGIN_COMMON_STYLE}
     <div class="primary-background p-16 rounded-sm flex-column gap-8">
         <div>
-           <p class="text-lg font-bold text-center">Coordinate Viewer</p>
+           <p class="text-3xl font-bold text-center">Coordinate Viewer</p>
            <button id="info-toggle" class="btn-neutral p-8">Show Info</button>
         </div>
         <div id="info-content" class="tertiary-background hidden p-8 rounded-sm">

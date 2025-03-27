@@ -36,8 +36,8 @@ const widgetFile: FileType = {
   title: "demo-widget.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper">
-    <h2 style="text-align: center;">Hello World</h2>
+  <div class="primary-background text-center p-16 rounded-sm">
+    <p class="text-3xl font-bold">Hello World</p>
   </div>
 \`); `
 };
@@ -47,8 +47,8 @@ const demoInfoboxBlock1File: FileType = {
   title: "demo-infobox-block-1.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper">
-    <h2 style="text-align: center;">Infobox Block 1</h2>
+  <div class="primary-background text-center p-16 rounded-sm">
+    <p class="text-3xl font-bold">Infobox Block 1</p>
   </div>  
 \`); `
 };
@@ -58,8 +58,8 @@ const demoInfoboxBlock2File: FileType = {
   title: "demo-infobox-block-2.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper">
-    <h2 style="text-align: center;">Infobox Block 2</h2>
+  <div class="primary-background text-center p-16 rounded-sm">
+    <p class="text-3xl font-bold">Infobox Block 2</p>
   </div>  
 \`); `
 };
@@ -69,8 +69,8 @@ const demoStoryBlockFile: FileType = {
   title: "demo-story-block.js",
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper">
-    <h2 style="text-align: center;">Demo Story</h2>
+  <div class="primary-background text-center p-16 rounded-sm">
+    <p class="text-3xl font-bold">Demo Story</p>
   </div>  
 \`); `
 };

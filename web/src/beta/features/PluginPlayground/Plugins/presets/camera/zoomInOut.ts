@@ -29,7 +29,7 @@ const widgetFile: FileType = {
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background text-center justify-center p-16 rounded-sm">
-    <p class="text-lg font-bold">Zoom Level</p>
+    <p class="text-3xl font-bold">Zoom Level</p>
     <div class="flex-center gap-8">
       <button class="display-flex align-center justify-center btn btn-neutral w-10 h-5" id="zoomIn">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/plus.svg" alt="Zoom In" />
