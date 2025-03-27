@@ -26,16 +26,11 @@ const widgetFile: FileType = {
     html {
       width: 280px;
     }
-
-    .empty {
-      color: #999;
-      font-style: italic;
-    }
   </style>
 
   <div class="primary-background p-16 rounded-sm primary-shadow">
       <h3 class="text-center text-xl mb-8 border-bottom pb-8">Popup API Demo</h3>
-      <h4 class="text-primary my-8">Controls</h4>
+      <h4 class="text-primary mb-8">Controls</h4>
       <div class="mb-8">
         <button id="showPopup" class="btn-primary p-8">Show Popup</button>
         <button id="closePopup" class="btn-neutral p-8">Close Popup</button>
@@ -43,7 +38,7 @@ const widgetFile: FileType = {
       <div class="mb-8">
         <button id="sendMessageToPopup" class="btn-primary p-8">Send Message To Popup</button>
       </div>
-      <h4 class="text-primary my-8">Received Message</h4>
+      <h4 class="text-primary mb-8">Received Message</h4>
       <div id="messageFromPopup" class="message-display text-sm empty">No messages yet</div>
   </div>
 

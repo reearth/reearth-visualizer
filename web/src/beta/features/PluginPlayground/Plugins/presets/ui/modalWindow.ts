@@ -24,9 +24,9 @@ const widgetFile: FileType = {
   const modalContent= \`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background p-16 rounded-sm primary-shadow">
-    <h3 class="text-center text-xl mb-16">🌎 Hello World 🌎</h3>
+    <h3 class="text-center text-xl">🌎 Hello World 🌎</h3>
     <p class="text-center">Re:Earth Visualizer allows you to set up a modal window. Click the button below to close the modal window.</p>
-    <div class="flex-center mt-16">
+    <div class="flex-center">
       <button class="btn-neutral button-padding"
       onclick="window.parent.postMessage({ action: 'closeModal' }, '*')"
       >

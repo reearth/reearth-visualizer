@@ -29,11 +29,11 @@ const widgetFile: FileType = {
 
   reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper" class="primary-background p-16 rounded-sm primary-shadow">
-    <h2 class="text-3xl text-center m-0 mb-8">Responsive Panel</h2>
-    <h3 id="itemCount" class="text-xl text-center m-0 mb-16">Total Items: 0</h3>
-    <div class="flex-center gap-8">
-      <button id="addBtn" class="btn-primary button-padding mb-8" onclick="addListItem()">Add Item</button>
+  <div id="wrapper" class="primary-background p-16 rounded-sm primary-shadow flex-column gap-16">
+    <h2 class="text-3xl text-center m-0">Responsive Panel</h2>
+    <h3 id="itemCount" class="text-xl text-center m-0">Total Items: 0</h3>
+    <div class="flex-center">
+      <button id="addBtn" class="btn-primary button-padding" onclick="addListItem()">Add Item</button>
     </div>
     <ul>
     </ul>
