@@ -32,7 +32,7 @@ const widgetFile: FileType = {
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background flex-column rounded-sm gap-8 p-8">
         <div>
-          <p class="text-lg font-bold text-center">Camera Position</p>
+          <p class="text-3xl font-bold text-center">Camera Position</p>
           <button id="info-toggle" class="btn-neutral w-10 h-4">Show Info</button>
         </div>
         <div class="tertiary-background hidden rounded-sm text-sm p-8" id="info-content">

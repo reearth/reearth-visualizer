@@ -24,7 +24,7 @@ const widgetFile: FileType = {
   reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
-    <p class="text-lg font-bold m-0">Image Capture</p>
+    <p class="text-3xl font-bold m-0">Image Capture</p>
     <p class="text-md text-secondary m-0">Adjust your view as needed, then capture the screenshot</p>
     <div class="flex-center">
       <button class="btn-primary p-8" id="captureButton">Capture View</button>

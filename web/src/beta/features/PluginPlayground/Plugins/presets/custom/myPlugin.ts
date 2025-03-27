@@ -37,7 +37,7 @@ const widgetFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background text-center p-16 rounded-sm">
-    <p class="text-lg font-bold">Hello World</p>
+    <p class="text-3xl font-bold">Hello World</p>
   </div>
 \`); `
 };
@@ -48,7 +48,7 @@ const demoInfoboxBlock1File: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background text-center p-16 rounded-sm">
-    <p class="text-lg font-bold">Infobox Block 1</p>
+    <p class="text-3xl font-bold">Infobox Block 1</p>
   </div>  
 \`); `
 };
@@ -59,7 +59,7 @@ const demoInfoboxBlock2File: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background text-center p-16 rounded-sm">
-    <p class="text-lg font-bold">Infobox Block 2</p>
+    <p class="text-3xl font-bold">Infobox Block 2</p>
   </div>  
 \`); `
 };
@@ -70,7 +70,7 @@ const demoStoryBlockFile: FileType = {
   sourceCode: `reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background text-center p-16 rounded-sm">
-    <p class="text-lg font-bold">Demo Story</p>
+    <p class="text-3xl font-bold">Demo Story</p>
   </div>  
 \`); `
 };
