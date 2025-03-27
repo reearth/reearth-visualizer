@@ -3,8 +3,7 @@ import {
   SubmitWrapper,
   Wrapper,
   InputsWrapper,
-  ContentWrapper,
-  LinkWrapper
+  ContentWrapper
 } from "@reearth/beta/features/Editor/Map/shared/SharedComponent";
 import { Button, RadioGroup, TextInput } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
@@ -26,37 +25,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const [value, setValue] = useState("");
   const [sourceType, setSourceType] = useState<SourceType>("osm-buildings");
-  const [googleMapsApiKey, setGoogleMapsApiKey] = useState("");
   const googlePhotorealistic = sourceType === "google-photorealistic";
-
-  const renderGooglePhotorealisticInput = useMemo(() => {
-    if (googlePhotorealistic) {
-      return (
-        <InputGroup
-          label={
-            <>
-              {t("Google Maps API Key ")} ( {t("You can apply a key ")}
-              <LinkWrapper
-                to="https://developers.google.com/maps/documentation/javascript/get-api-key"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t("here")}
-              </LinkWrapper>
-              )
-            </>
-          }
-        >
-          <InputsWrapper>
-            <TextInput
-              value={googleMapsApiKey}
-              onChange={(value) => setGoogleMapsApiKey(value)}
-            />
-          </InputsWrapper>
-        </InputGroup>
-      );
-    } else return undefined;
-  }, [googleMapsApiKey, googlePhotorealistic, t]);
 
   const renderUrlInput = useMemo(() => {
     if (sourceType === "url") {
@@ -79,8 +48,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       { label: t("Cesium OSM 3D Tiles"), value: "osm-buildings" },
       {
         label: t("Google Photorealistic 3D Tiles"),
-        value: "google-photorealistic",
-        children: renderGooglePhotorealisticInput
+        value: "google-photorealistic"
       },
       {
         label: t("URL"),
@@ -88,13 +56,12 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
         children: renderUrlInput
       }
     ],
-    [renderGooglePhotorealisticInput, renderUrlInput, t]
+    [renderUrlInput, t]
   );
 
   const handleDataSourceTypeChange = useCallback((newValue: string) => {
     setSourceType(newValue as SourceType);
     setValue("");
-    setGoogleMapsApiKey("");
   }, []);
 
   const title = useMemo(() => {
@@ -116,13 +83,6 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
       config: {
         data: {
           url: value !== "" ? value : undefined,
-          ...(googlePhotorealistic
-            ? {
-                serviceTokens: {
-                  googleMapApiKey: googleMapsApiKey || undefined
-                }
-              }
-            : {}),
           type:
             sourceType === "osm-buildings"
               ? "osm-buildings"
@@ -150,10 +110,7 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
-          disabled={
-            (!value && sourceType === "url") ||
-            (!googleMapsApiKey && googlePhotorealistic)
-          }
+          disabled={!value && sourceType === "url"}
         />
       </SubmitWrapper>
     </Wrapper>
