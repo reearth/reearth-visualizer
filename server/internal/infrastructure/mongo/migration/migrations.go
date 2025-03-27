@@ -18,4 +18,5 @@ var migrations = migration.Migrations[DBClient]{
   220309174648: AddSceneFieldToPropertySchema,
   221028204300: MoveTerrainProperties,
   250305230545: AssetProjectAssociation,
+  250317115957: AddIndex,
 }
