@@ -25,7 +25,7 @@ const widgetFile: FileType = {
 // ================================
 // Define Plug-in UI side (iframe)
 // ================================
-  
+
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
    <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
@@ -33,18 +33,18 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       <input type="checkbox" id="toggleSwitch">
       <span class="slider"></span>
       </label>
-      <div class="text-lg" id="status">Shadow: OFF</div>
+      <div class="text-md" id="status">Shadow: OFF</div>
    </div>
    <script>
       document.addEventListener('DOMContentLoaded', function() {
           const toggleSwitch = document.getElementById('toggleSwitch');
           const status = document.getElementById('status');
-      
+
           if (!toggleSwitch || !status) {
               console.error('Required elements not found');
               return;
           }
-      
+
           toggleSwitch.addEventListener('change', function() {
               if (this.checked) {
                   status.textContent = 'Shadow: ON';
@@ -61,7 +61,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       });
    </script>
 \`);
-  
+
 // ================================
 // Define Re:Earth(Web Assembly) side
 // ================================
@@ -91,7 +91,7 @@ const model3D = {
 // Add 3D models to the layer
 // Documentation for Layers "add" method https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(model3D);
-  
+
 // Move the camera to a specified position
 // Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
@@ -118,7 +118,7 @@ start: new Date("2023-12-01T09:00:00+01:00"),
 stop: new Date("2023-12-01T10:00:00+01:00"),
 current: new Date("2023-12-01T09:00:00+01:00"),
 });
-  
+
 // Listen for messages from the UI to trigger shadow
 // Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {

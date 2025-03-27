@@ -345,7 +345,7 @@ li {
   position: relative;
   display: inline-block;
   width: 40px;
-  height: 24px;
+  height: 22px;
   }
   .toggle input {
   opacity: 0;
@@ -357,7 +357,7 @@ li {
   cursor: pointer;
   top: 0;
   left: 0;
-  right: -8px;
+  right: 0;
   bottom: 0;
   background-color: #ccc;
   transition: .4s;
@@ -368,8 +368,8 @@ li {
   content: "";
   height: 16px;
   width: 16px;
-  left: 4px;
-  bottom: 4px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   transition: .4s;
   border-radius: 50%;
@@ -381,7 +381,7 @@ li {
   box-shadow: 0 0 1px #2196F3;
   }
   input:checked + .slider:before {
-  transform: translateX(26px);
+  transform: translateX(18px);
   }
 
   .divider {

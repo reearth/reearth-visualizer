@@ -33,18 +33,18 @@ ${PRESET_PLUGIN_COMMON_STYLE}
         <input type="checkbox" id="toggleSwitch">
         <span class="slider"></span>
       </label>
-      <div class="text-lg" id="status">Terrain: OFF</div>
+      <div class="text-md" id="status">Terrain: OFF</div>
    </div>
    <script>
       document.addEventListener('DOMContentLoaded', function() {
           const toggleSwitch = document.getElementById('toggleSwitch');
           const status = document.getElementById('status');
-      
+
           if (!toggleSwitch || !status) {
               console.error('Required elements not found');
               return;
           }
-      
+
           toggleSwitch.addEventListener('change', function() {
               if (this.checked) {
                   status.textContent = 'Terrain: ON';
