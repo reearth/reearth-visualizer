@@ -27,7 +27,7 @@ const extension1SourceCode = `
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background p-16 rounded-sm">
-    <p class="text-lg font-bold">Extension 1</p>
+    <p class="text-3xl font-bold">Extension 1</p>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>
       <button id="sendButton" class="btn-primary p-8">Send</button>
@@ -91,7 +91,7 @@ const extension2SourceCode = `
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
   <div class="primary-background p-16 rounded-sm">
-    <p class="text-lg font-bold">Extension 2</p>
+    <p class="text-3xl font-bold">Extension 2</p>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>
       <button id="sendButton" class="btn-primary p-8">Send</button>

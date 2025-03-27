@@ -24,7 +24,7 @@ const widgetFile: FileType = {
   reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
     <div class="primary-background flex-column p-16 rounded-sm">
-      <p class="text-lg font-bold text-center">Click a building to view it's properties</p>
+      <p class="text-3xl font-bold text-center">Click a building to view it's properties</p>
     <div>
       <p class="text-sm">Building ID</p>
       <span id="gml_id" class="secondary-background h-5 p-8 rounded-sm text-sm display-flex align-center"></span>
