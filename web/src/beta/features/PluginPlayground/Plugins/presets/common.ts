@@ -68,7 +68,6 @@ button:disabled {
   cursor: not-allowed;
 }
 
-<<<<<<< HEAD
 .button-padding {
   padding: 8px 16px;
 }
@@ -80,8 +79,6 @@ button:disabled {
   cursor: pointer;
 }
 
-=======
->>>>>>> 5f7712ab3b00ce8fb582a58c9975e5f20b9fb230
 /* Form Elements */
 input {
   width: 100%;
@@ -184,7 +181,6 @@ li {
   display: none;
 }
 
-<<<<<<< HEAD
 .invisible {
   visibility: hidden;
   opacity: 0;
@@ -203,13 +199,10 @@ li {
   border-bottom: 1px solid #ccc;
 }
 
-=======
->>>>>>> 5f7712ab3b00ce8fb582a58c9975e5f20b9fb230
 /* Spacing Utilities */
 .m-0 {
   margin: 0;
 }
-<<<<<<< HEAD
 
 .mt-8 {
   margin-top: 8px;
@@ -218,8 +211,6 @@ li {
 .mt-16 {
   margin-top: 16px;
 }
-=======
->>>>>>> 5f7712ab3b00ce8fb582a58c9975e5f20b9fb230
 
 .mb-8 {
   margin-bottom: 8px;
@@ -281,6 +272,10 @@ li {
 
 .text-lg {
   font-size: 16px;
+}
+
+.text-3xl {
+  font-size: 20px;
 }
 
 /* Text Color */
@@ -405,8 +400,8 @@ li {
     color: #ffffff;
     background: #333333;
   }
-  
-  /* Storage Display */ 
+
+  /* Storage Display */
    .storage-display {
     background: rgba(255, 255, 255, 0.1);
     padding: 12px;

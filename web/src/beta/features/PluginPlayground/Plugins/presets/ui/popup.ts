@@ -37,11 +37,11 @@ const widgetFile: FileType = {
       <h3 class="text-center text-xl mb-8 border-bottom pb-8">Popup API Demo</h3>
       <h4 class="text-primary my-8">Controls</h4>
       <div class="mb-8">
-        <button id="showPopup" class="btn-primary px-8 py-8">Show Popup</button>
-        <button id="closePopup" class="btn-neutral px-8 py-8">Close Popup</button>
+        <button id="showPopup" class="btn-primary p-8">Show Popup</button>
+        <button id="closePopup" class="btn-neutral p-8">Close Popup</button>
       </div>
       <div class="mb-8">
-        <button id="sendMessageToPopup" class="btn-primary px-8 py-8">Send Message To Popup</button>
+        <button id="sendMessageToPopup" class="btn-primary p-8">Send Message To Popup</button>
       </div>
       <h4 class="text-primary my-8">Received Message</h4>
       <div id="messageFromPopup" class="message-display text-sm empty">No messages yet</div>
