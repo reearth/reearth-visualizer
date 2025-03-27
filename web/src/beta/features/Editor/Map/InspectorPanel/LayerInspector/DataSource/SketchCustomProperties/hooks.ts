@@ -192,6 +192,5 @@ export default function useHooks(
     handleEditField,
     handleSubmit,
     setSchemaJSON,
-    handleCustomPropertySchemaState
   };
 }
