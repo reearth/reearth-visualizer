@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -35,25 +36,29 @@ func (c *PropertyLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmo
 	properties := make([]*gqlmodel.Property, 0, len(res))
 	for _, prop := range res {
 		if ps := builtin.GetPropertySchema(prop.Schema()); ps != nil {
-			for _, psg := range ps.Groups().Groups() {
-				for _, pi := range prop.Items() {
-					if psg.ID() == pi.SchemaGroup() {
-						for _, psf := range psg.Fields() {
-							for _, pf := range pi.Fields(nil) {
-								if psf.ID() == pf.Field() {
-									properties = append(properties, gqlmodel.ToProperty(prop))
-								}
-							}
-						}
-					}
-				}
-			}
+			c.manifestOrder(&properties, prop, ps)
 		} else {
 			properties = append(properties, gqlmodel.ToProperty(prop))
 		}
 	}
 
 	return properties, nil
+}
+
+func (c *PropertyLoader) manifestOrder(properties *[]*gqlmodel.Property, prop *property.Property, ps *property.Schema) {
+	for _, psg := range ps.Groups().Groups() {
+		for _, pi := range prop.Items() {
+			if psg.ID() == pi.SchemaGroup() {
+				for _, psf := range psg.Fields() {
+					for _, pf := range pi.Fields(nil) {
+						if psf.ID() == pf.Field() {
+							*properties = append(*properties, gqlmodel.ToProperty(prop))
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 func (c *PropertyLoader) FetchSchema(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.PropertySchema, []error) {
