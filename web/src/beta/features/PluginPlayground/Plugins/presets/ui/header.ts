@@ -30,12 +30,12 @@ const widgetFile: FileType = {
 
   reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper">
-    <div class="flex-between px-8">
-      <div class="header-logo">
+  <div class="primary-background p-16 primary-shadow rounded-sm">
+    <div class="flex-between">
+      <div>
         <p>Re:Earth</p>
       </div>
-      <ul class="flex-center">
+      <ul class="display-flex gap-16">
         <li>Home</li>
         <li>About</li>
         <li>Services</li>

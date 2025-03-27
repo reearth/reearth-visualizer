@@ -24,68 +24,27 @@ const widgetFile: FileType = {
   ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
     html {
-    width: 280px;
-    font-size: 14px;
-  }
+      width: 280px;
+    }
 
-    h3 {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 8px;
-  }
-
-  h4 {
-    margin: 12px 0 6px;
-    color: #0078D7;
-    font-weight: 500;
-  }
-
-  .buttons {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  button {
-    background-color: #0078D7;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-
-  .secondary {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ddd;
-  }
-
-  #messageFromPopup {
-    background-color: #f8f8f8;
-    border-left: 3px solid #0078D7;
-    padding: 8px;
-    font-size: 13px;
-    min-height: 18px;
-  }
-
-  .empty {
-    color: #999;
-    font-style: italic;
-
+    .empty {
+      color: #999;
+      font-style: italic;
+    }
   </style>
 
-  <div id="wrapper">
-      <h3>Popup API Demo</h3>
-      <h4>Controls</h4>
-      <div class="buttons">
-        <button id="showPopup">Show Popup</button>
-        <button id="closePopup" class="secondary">Close Popup</button>
+  <div class="primary-background p-16 rounded-sm primary-shadow">
+      <h3 class="text-center text-xl mb-8 border-bottom pb-8">Popup API Demo</h3>
+      <h4 class="text-primary my-8">Controls</h4>
+      <div class="mb-8">
+        <button id="showPopup" class="btn-primary px-8 py-8">Show Popup</button>
+        <button id="closePopup" class="btn-neutral px-8 py-8">Close Popup</button>
       </div>
-      <div class="buttons">
-        <button id="sendMessageToPopup">Send Message To Popup</button>
+      <div class="mb-8">
+        <button id="sendMessageToPopup" class="btn-primary px-8 py-8">Send Message To Popup</button>
       </div>
-      <h4>Received Message</h4>
-      <div id="messageFromPopup" class="empty">No messages yet</div>
+      <h4 class="text-primary my-8">Received Message</h4>
+      <div id="messageFromPopup" class="message-display text-sm empty">No messages yet</div>
   </div>
 
   <script>
@@ -97,17 +56,6 @@ const widgetFile: FileType = {
       document.getElementById("showPopup").disabled = popupIsVisible;
       document.getElementById("closePopup").disabled = !popupIsVisible;
       document.getElementById("sendMessageToPopup").disabled = !popupIsVisible;
-
-      // Update button styles
-      if (popupIsVisible) {
-        document.getElementById("showPopup").style.opacity = "0.5";
-        document.getElementById("closePopup").style.opacity = "1";
-        document.getElementById("sendMessageToPopup").style.opacity = "1";
-      } else {
-        document.getElementById("showPopup").style.opacity = "1";
-        document.getElementById("closePopup").style.opacity = "0.5";
-        document.getElementById("sendMessageToPopup").style.opacity = "0.5";
-      }
     }
 
     // Initial button states

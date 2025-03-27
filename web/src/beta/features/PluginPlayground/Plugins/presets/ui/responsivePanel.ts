@@ -29,11 +29,11 @@ const widgetFile: FileType = {
 
   reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper">
-    <h2>Responsive Panel</h2>
-    <h3 id="itemCount">Total Items: 0</h3>
-    <div class="flex-center">
-      <button id="addBtn" class="btn-primary mb-8" onclick="addListItem()">Add Item</button>
+  <div id="wrapper" class="primary-background p-16 rounded-sm primary-shadow">
+    <h2 class="text-3xl text-center m-0 mb-8">Responsive Panel</h2>
+    <h3 id="itemCount" class="text-xl text-center m-0 mb-16">Total Items: 0</h3>
+    <div class="flex-center gap-8">
+      <button id="addBtn" class="btn-primary button-padding mb-8" onclick="addListItem()">Add Item</button>
     </div>
     <ul>
     </ul>
@@ -44,10 +44,10 @@ const widgetFile: FileType = {
       itemCount++;
       const ul = document.querySelector("ul");
       const li = document.createElement('li');
-      li.className = "styled-list-item flex-between";
+      li.className = "styled-list-item flex-between my-8";
       li.innerHTML = \\\`
       <span>Item \\\${itemCount}</span>
-      <button class="btn-danger" onclick="deleteListItem(this)">Delete</button>
+      <button class="btn-danger button-padding " onclick="deleteListItem(this)">Delete</button>
       \\\`;
       ul.appendChild(li);
       updateItemCount()

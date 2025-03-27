@@ -1,4 +1,5 @@
 import { FileType, PluginType } from "../../constants";
+import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "modal-window-reearth-yml",
@@ -20,58 +21,19 @@ const widgetFile: FileType = {
   id: "modal-window",
   title: "modal-window.js",
   sourceCode: `// This example shows how to set a modal window //
-
-// Define UI for modal window
-const modalContent= \`<style>
-  h2,
-  h3 {
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  h2,
-  h3 {
-    text-align: center;
-    margin: 20px;
-  }
-  #wrapper {
-    background: #eee;
-    color: #222;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  #wrapper p {
-    text-align: center;
-  }
-  .flex-center {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .close-btn {
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    background: #ffffff;
-    border: 1px solid #808080;
-  }
-  .close-btn:active {
-    background: #dcdcdc;
-  }
-  </style>
-
-<div id="wrapper">
-  <h3>🌎 Hello World 🌎</h3>
-  <p>Re:Earth Visualizer allows you to set up a modal window. Click the button below to close the modal window.</p>
-  <div class="flex-center">
-    <button class="close-btn"
-    onclick="window.parent.postMessage({ action: 'closeModal' }, '*')"
-    >
-      Let's go to Visualizer
-    </button>
-  </div>
-</div>\`
+  const modalContent= \`
+  ${PRESET_PLUGIN_COMMON_STYLE}
+  <div class="primary-background p-16 rounded-sm primary-shadow">
+    <h3 class="text-center text-xl mb-16">🌎 Hello World 🌎</h3>
+    <p class="text-center">Re:Earth Visualizer allows you to set up a modal window. Click the button below to close the modal window.</p>
+    <div class="flex-center mt-16">
+      <button class="btn-neutral button-padding"
+      onclick="window.parent.postMessage({ action: 'closeModal' }, '*')"
+      >
+        Let's go to Visualizer
+      </button>
+    </div>
+  </div>\`
 
 // Set a modal window
 // Documentation for Modal "show" method https://visualizer.developer.reearth.io/plugin-api/modal/#show

@@ -78,6 +78,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.button-padding {
+  padding: 8px 16px;
+}
+
 /* Icon */
 .icon-btn {
   background-color: transparent;
@@ -100,6 +104,12 @@ input:focus {
 
 input::placeholder {
   color: #999999;
+  font-style: italic;
+}
+
+.empty {
+  color: #999;
+  font-style: italic;
 }
 
 /* Lists */
@@ -182,11 +192,24 @@ li {
   opacity: 0;
 }
 
+/* Message display styling */
+.message-display {
+  background-color: #f8f8f8;
+  border-left: 3px solid #0078D7;
+  padding: 8px;
+  min-height: 18px;
+}
+
+/* Horizontal divider for headings and sections */
+.border-bottom {
+  border-bottom: 1px solid #ccc;
+}
+
 /* Spacing Utilities */
 .m-0 {
   margin: 0;
 }
-  
+
 .mt-8 {
   margin-top: 8px;
 }

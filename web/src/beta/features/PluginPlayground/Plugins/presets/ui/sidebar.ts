@@ -36,140 +36,125 @@ const widgetFile: FileType = {
   /* The <html>element is positioned absolutely with a height of 100% and a default width of 300px. This ensures the sidebar occupies the full vertical space of its container.  */
 
   html {
-    position: absolute;
-    height: 100%;
-    width: 300px;
-  }
-
-  html.collapsed {
-    width: 65px;
-  }
-
-  body,
-  #wrapper {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-  }
-
-  #wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .upside {
-    position: relative;
-    min-height: 120px;
-  }
-
-  #toggleBtn {
-    font-size: 24px;
-  }
-
-  #searchBar {
-    position: absolute;
-    top: 90px;
-    left: 8px;
-    width: 95%;
-  }
-
-  .collapsed #sidebarTitle {
-    display: none;
-  }
-
-  .collapsed .menu-title {
-    display: none;
-  }
-
-  .menu-container {
-    overflow-y: auto;
-  }
-
-  .menu li .menu-title {
-    flex-grow: 1;
-  }
-
-  .menu li .menu-dots {
-    font-size: 18px;
-    color: #999;
-  }
-</style>
-
-<div id="wrapper">
-  <div class="upside">
-    <button id="toggleBtn" class="icon-btn">☰</button>
-    <h2 id="sidebarTitle">Sidebar</h2>
-    <input type="text" id="searchBar" class="input" placeholder="Search..." />
-  </div>
-  <div class="menu-container">
-    <ul class="menu">
-      <li class="flex-between">
-        <span>🏠</span>
-        <span class="menu-title">Home</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>ℹ️</span>
-        <span class="menu-title">About</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>📞</span>
-        <span class="menu-title">Contact</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>❓</span>
-        <span class="menu-title">FAQ</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>💡</span>
-        <span class="menu-title">Help</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>⚙️</span>
-        <span class="menu-title">Settings</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>👤</span>
-        <span class="menu-title">Profile</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>📊</span>
-        <span class="menu-title">Dashboard</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>🔔</span>
-        <span class="menu-title">Notifications</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-      <li class="flex-between">
-        <span>📄</span>
-        <span class="menu-title">Reports</span>
-        <span class="menu-dots">⋮</span>
-      </li>
-    </ul>
-  </div>
-</div>
-<script>
-  const toggleBtn = document.getElementById("toggleBtn");
-  let isCollapsed = false;
-
-  toggleBtn.addEventListener("click", () => {
-    isCollapsed = !isCollapsed
-    if(isCollapsed){
-      document.documentElement.classList.add('collapsed')
-    }else{
-      document.documentElement.classList.remove('collapsed')
+      position: absolute;
+      height: 100%;
+      width: 300px;
     }
-  });
-</script>
+
+    html.collapsed {
+      width: 65px;
+    }
+
+    body,
+    #wrapper {
+      position: absolute;
+      height: 100%;
+      width: 100%;
+    }
+
+    .upside {
+      position: relative;
+      min-height: 120px;
+    }
+
+    #searchBar {
+      position: absolute;
+      top: 90px;
+      left: 8px;
+      width: 95%;
+    }
+
+    .collapsed #sidebarTitle {
+      display: none;
+    }
+
+    .collapsed .menu-title {
+      display: none;
+    }
+
+    .menu-container {
+      overflow-y: auto;
+    }
+
+    .menu-title {
+      flex-grow: 1;
+      }
+  </style>
+
+  <div id="wrapper" class="primary-background p-16 primary-shadow flex-column gap-16 rounded-sm">
+    <div class="upside">
+      <button id="toggleBtn" class="icon-btn text-3xl">☰</button>
+      <h2 id="sidebarTitle" class="text-center text-3xl m-0">Sidebar</h2>
+      <input type="text" id="searchBar" placeholder="Search..." />
+    </div>
+    <div class="menu-container mt-8">
+      <ul class="menu">
+        <li class="flex-between secondary-background">
+          <span>🏠</span>
+          <span class="menu-title">Home</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>ℹ️</span>
+          <span class="menu-title">About</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>📞</span>
+          <span class="menu-title">Contact</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>❓</span>
+          <span class="menu-title">FAQ</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>💡</span>
+          <span class="menu-title">Help</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>⚙️</span>
+          <span class="menu-title">Settings</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>👤</span>
+          <span class="menu-title">Profile</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>📊</span>
+          <span class="menu-title">Dashboard</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>🔔</span>
+          <span class="menu-title">Notifications</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+        <li class="flex-between secondary-background">
+          <span>📄</span>
+          <span class="menu-title">Reports</span>
+          <span class="menu-dots text-xl text-secondary">⋮</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    const toggleBtn = document.getElementById("toggleBtn");
+    let isCollapsed = false;
+
+    toggleBtn.addEventListener("click", () => {
+      isCollapsed = !isCollapsed
+      if(isCollapsed){
+        document.documentElement.classList.add('collapsed')
+      }else{
+        document.documentElement.classList.remove('collapsed')
+      }
+    });
+  </script>
   \`); `
 };
 
