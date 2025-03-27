@@ -47,7 +47,7 @@ const layer3dTiles = {
     url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json"
   },
   "3dtiles": {
-    pbr: false, 
+    pbr: false,
     selectedFeatureColor: "red"
   }
 };
@@ -66,15 +66,15 @@ const generateLayerItem = (layer, isPreset) => {
     <li>
       <span id="layer-name">\${layer.title}</span>
       <div class="actions">
-        <input 
-          type="checkbox" 
-          id="show-hide-layer" 
+        <input
+          type="checkbox"
+          id="show-hide-layer"
           data-layer-id="\${layer.id}"
-          $\{layer.visible ? "checked" : ""} 
+          $\{layer.visible ? "checked" : ""}
         />
-        <button class="fly-to-layer" data-layer-id="\${layer.id}">Flyto</button>
+        <button class="btn-primary p-8" data-layer-id="\${layer.id}">Flyto</button>
         $\{!isPreset
-            ? \`<button class="delete-layer"  data-layer-id="\${layer.id}">Delete</button>\`
+            ? \`<button class="btn-danger p-8"  data-layer-id="\${layer.id}">Delete</button>\`
             : "" }
       </div>
     </li>
@@ -114,25 +114,9 @@ reearth.ui.show(\`
     align-items: center;
     }
 
-  button {
-    padding: 2px 4px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background: #45a049;
-  }
-
-  .fly-to-layer, #show-hide-layer{
-    cursor: pointer;
-  }
 </style>
 
-<div id="wrapper">
+<div class="primary-background p-16 rounded-sm">
   <h2>Layers</h2>
 
   <h3>Preset Layers</h3>
@@ -148,7 +132,7 @@ reearth.ui.show(\`
 
 <script>
   // Add event listener for 'Delete' button
-  document.querySelectorAll(".delete-layer").forEach(button => {
+  document.querySelectorAll(".btn-danger").forEach(button => {
     button.addEventListener("click", event => {
       const layerId = event.target.getAttribute("data-layer-id");
       if (layerId) {
@@ -163,7 +147,7 @@ reearth.ui.show(\`
     });
   });
 
-  // Add event listener for 'Show/Hide' 
+  // Add event listener for 'Show/Hide'
   document.querySelectorAll("#show-hide-layer").forEach(checkbox => {
     checkbox.addEventListener("change", event => {
       const layerId = event.target.getAttribute("data-layer-id");
@@ -180,7 +164,7 @@ reearth.ui.show(\`
   });
 
     // Add event listener for 'FlyTo' button
-  document.querySelectorAll(".fly-to-layer").forEach(button => {
+  document.querySelectorAll(".btn-primary").forEach(button => {
     button.addEventListener("click", event => {
       const layerId = event.target.getAttribute("data-layer-id");
       if (layerId) {
