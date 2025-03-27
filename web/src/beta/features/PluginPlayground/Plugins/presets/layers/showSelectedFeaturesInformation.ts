@@ -23,8 +23,9 @@ const widgetFile: FileType = {
   sourceCode: `// Configure the UI side of the Plug-in
   reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-    <div class="primary-background flex-column p-16 rounded-sm">
-      <p class="text-3xl font-bold text-center">Click a building to view it's properties</p>
+    <div class="primary-background flex-column gap-8 p-16 rounded-sm">
+      <p class="text-3xl font-bold text-center">Show Selected Features Information</p>
+      <p class="text-md text-secondary text-center">Click a building to view it's properties</p>
     <div>
       <p class="text-sm">Building ID</p>
       <span id="gml_id" class="secondary-background h-5 p-8 rounded-sm text-sm display-flex align-center"></span>

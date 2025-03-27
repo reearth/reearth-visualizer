@@ -26,9 +26,10 @@ const widgetFile: FileType = {
 
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
-<div class="primary-background text-center p-16 rounded-sm">
+<div class="primary-background flex-column gap-8 text-center align-center p-16 rounded-sm">
   <p class="text-3xl font-bold">Rotate Camera Angle</p>
-      <button class="btn-neutral w-14 h-4" id="rotateBtn">Click here</button>
+  <p class="text-md text-secondary">Click the button to rotate the camera angle</p>
+  <button class="btn-neutral w-14 h-4" id="rotateBtn">Click here</button>
 </div>
 <script>
 let rotating = false;

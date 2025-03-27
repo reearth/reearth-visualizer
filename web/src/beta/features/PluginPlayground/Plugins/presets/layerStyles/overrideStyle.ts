@@ -27,7 +27,7 @@ const widgetFile: FileType = {
 // Define the plug-in UI //
 reearth.ui.show(\`
 ${PRESET_PLUGIN_COMMON_STYLE}
-  <div class="primary-background p-16 rounded-sm">
+  <div class="primary-background flex-column gap-8 p-16 rounded-sm">
     <p class="text-3xl font-bold text-center">Color by Height</p>
     <p class="text-md text-secondary text-center">Choose your preferred color scheme<p>
     <div class="display-flex justify-center gap-8">

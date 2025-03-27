@@ -26,7 +26,7 @@ extensions:
 const extension1SourceCode = `
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div class="primary-background p-16 rounded-sm">
+  <div class="primary-background p-16 rounded-sm flex-column gap-8">
     <p class="text-3xl font-bold">Extension 1</p>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>
@@ -90,7 +90,7 @@ reearth.extension.on("extensionMessage", msg => {
 const extension2SourceCode = `
 reearth.ui.show(\`
   ${PRESET_PLUGIN_COMMON_STYLE}
-  <div class="primary-background p-16 rounded-sm">
+  <div class="primary-background p-16 rounded-sm flex-column gap-8">
     <p class="text-3xl font-bold">Extension 2</p>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>

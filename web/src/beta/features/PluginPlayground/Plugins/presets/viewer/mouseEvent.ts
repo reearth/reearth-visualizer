@@ -49,7 +49,7 @@ const widgetFile: FileType = {
     }
   </style>
 
-  <div class="primary-background rounded-sm p-16">
+  <div class="primary-background flex-column gap-8 rounded-sm p-16">
     <p class="text-3xl font-bold text-center">Click Coordinates</p>
     <div class="secondary-background p-16 gap-4">
       <div>

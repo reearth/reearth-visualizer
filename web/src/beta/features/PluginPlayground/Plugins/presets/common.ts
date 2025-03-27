@@ -15,6 +15,10 @@ html {
   padding: 0;
 }
 
+ p {
+  margin: 0;
+ }
+
 /* Buttons */
 button {
   border: none;
