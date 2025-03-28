@@ -75,5 +75,6 @@ func E2ETestChange(e2ePluginManifestJSON []byte) {
 	var pluginTranslationList = manifest.TranslationMap{
 		"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja),
 	}
-	pluginManifest = manifest.MustParseSystemFromBytes(e2ePluginManifestJSON, nil, pluginTranslationList.TranslatedRef())
+	p := manifest.MustParseSystemFromBytes(e2ePluginManifestJSON, nil, pluginTranslationList.TranslatedRef()).Plugin
+	pluginManifest.Plugin = p
 }
