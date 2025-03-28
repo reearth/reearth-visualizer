@@ -17,13 +17,13 @@ func TestPropertySchemaOrder(t *testing.T) {
 	groupID := res.Path("$.property.items[0].groups[0].id").Raw().(string)
 
 	_, r := updatePropertyValue(e, propID, "tiles", groupID, "tile_type", "open_street_map", "STRING")
-	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("open_street_map") // OK
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("open_street_map")
 
 	_, r = updatePropertyValue(e, propID, "tiles", groupID, "tile_zoomLevel", []int{10, 20}, "ARRAY")
-	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual([]*int{nil, nil}) // bug?
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual([]*int{nil, nil})
 
 	_, r = updatePropertyValue(e, propID, "tiles", groupID, "tile_opacity", 0.5, "NUMBER")
-	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(0.5) // OK
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(0.5)
 
 	// 1. tile_type
 	// 2. tile_zoomLevel
