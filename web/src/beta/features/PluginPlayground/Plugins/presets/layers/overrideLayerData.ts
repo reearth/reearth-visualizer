@@ -25,8 +25,9 @@ const widgetFile: FileType = {
 // The following describes the style and functionality of the UI //
 reearth.ui.show(\`
  ${PRESET_PLUGIN_COMMON_STYLE}
-  <div class="primary-background flex-column align-center p-16 rounded-sm">
-    <p class="text-3xl font-bold text-center">Click the button below to enlarge the polygon.</p>
+  <div class="primary-background flex-column gap-8 align-center p-16 rounded-sm">
+    <p class="text-3xl font-bold text-center">Override Layer Data</p>
+    <p class="text-md text-secondary text-center">Click the button below to enlarge the polygon.</p>
     <button class="btn-neutral w-10 h-4" id="scaleBtn">Enlarge</button>
   </div>
 <script>
