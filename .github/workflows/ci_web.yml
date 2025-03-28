@@ -2,6 +2,12 @@ name: ci-web
 on:
   workflow_call:
 jobs:
+  validate-nginx-config:
+    uses: reearth/actions/.github/workflows/validate-nginx-config.yml@dd85721d9bf22ec466ec9446e7b939eb22de900a
+    with:
+      template_directory: docker
+      template_values: '{"PORT": 8080, "REAL_IP_HEADER": "X-Forwarded-For"}'
+      working_directory: web
   ci:
     name: ci
     runs-on: ubuntu-latest
