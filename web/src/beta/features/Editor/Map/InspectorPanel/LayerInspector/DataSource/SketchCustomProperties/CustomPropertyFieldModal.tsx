@@ -35,7 +35,6 @@ type CustomPropertyFieldProps = {
   showEditFieldConfirmModal?: boolean;
   onSubmit?: (schema: CustomPropertyProp, newTitle?: string) => void;
   onClose?: () => void;
-  onCustomPropertySchemaState?: () => void;
   onSchemaJSONUpdate?: Dispatch<SetStateAction<Record<string, string>>>;
 };
 
@@ -52,7 +51,6 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
   onClose,
   onSubmit,
   onSchemaJSONUpdate,
-  onCustomPropertySchemaState
 }) => {
   const t = useT();
   const [customPropertyTitle, setCustomPropertyTitle] = useState(
@@ -66,8 +64,7 @@ const CustomPropertyFieldModal: FC<CustomPropertyFieldProps> = ({
 
   const openEditFieldConfirmModal = useCallback(() => {
     setShowEditFieldConfirmModal(true);
-    onCustomPropertySchemaState?.();
-  }, [onCustomPropertySchemaState]);
+  }, []);
 
   const closeEditFieldConfirmModal = useCallback(() => {
     setShowEditFieldConfirmModal(false);
