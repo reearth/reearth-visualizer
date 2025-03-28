@@ -70,3 +70,10 @@ func GetPlugin(id id.PluginID) *plugin.Plugin {
 	}
 	return nil
 }
+
+func E2ETestChange(e2ePluginManifestJSON []byte) {
+	var pluginTranslationList = manifest.TranslationMap{
+		"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja),
+	}
+	pluginManifest = manifest.MustParseSystemFromBytes(e2ePluginManifestJSON, nil, pluginTranslationList.TranslatedRef())
+}
