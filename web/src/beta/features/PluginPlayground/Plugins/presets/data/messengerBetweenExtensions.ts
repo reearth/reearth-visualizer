@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 // YAML File Definition
 const yamlFile: FileType = {
@@ -25,7 +24,11 @@ extensions:
 // Extension 1 Widget Source Code
 const extension1SourceCode = `
 reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background p-16 rounded-sm flex-column gap-8">
     <p class="text-3xl font-bold">Extension 1</p>
     <div class="flex-center">
@@ -38,7 +41,7 @@ reearth.ui.show(\`
     </div>
   </div>
 
-   <script>
+  <script>
    // Listen for UI button clicks and send message to extension
     document.getElementById("sendButton").addEventListener("click", () => {
       const input = document.getElementById("messageInput");
@@ -89,7 +92,11 @@ reearth.extension.on("extensionMessage", msg => {
 // Extension 2 Widget Source Code
 const extension2SourceCode = `
 reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background p-16 rounded-sm flex-column gap-8">
     <p class="text-3xl font-bold">Extension 2</p>
     <div class="flex-center">

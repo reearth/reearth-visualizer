@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "camera-rotation-reearth-yml",
@@ -25,7 +24,11 @@ const widgetFile: FileType = {
 // ================================
 
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
+<style>
+/* Generic styling system that provides consistent UI components and styling across all plugins */
+
+@import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+</style>
 <div class="primary-background flex-column gap-8 text-center align-center p-16 rounded-sm">
   <p class="text-3xl font-bold">Rotate Camera Angle</p>
   <p class="text-md text-secondary">Click the button to rotate the camera angle</p>
@@ -56,7 +59,7 @@ rotateBtn.addEventListener("click", () => {
 // To prevent memory leaks, stop "setInterval" when the page is closed or navigated away from
 window.addEventListener("unload", () => {
   if (intervalId) {
-    clearInterval(intervalId); 
+    clearInterval(intervalId);
   }
 });
 </script>

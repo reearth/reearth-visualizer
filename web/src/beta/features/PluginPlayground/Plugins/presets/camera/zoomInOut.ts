@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "zoom-in-out-reearth-yml",
@@ -27,7 +26,11 @@ const widgetFile: FileType = {
 // Define Plug-in UI side (iframe)
 // ================================
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
+<style>
+/* Generic styling system that provides consistent UI components and styling across all plugins */
+
+@import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+</style>
   <div class="primary-background flex-column gap-8 text-center justify-center p-16 rounded-sm">
     <p class="text-3xl font-bold">Zoom Level</p>
     <p class="text-md text-secondary text-center">Click the buttons to change zoom level</p>
@@ -40,7 +43,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       </button>
     </div>
   </div>
-  
+
   <script>
   const zoomIn = document.getElementById("zoomIn");
   const zoomOut  = document.getElementById("zoomOut");
@@ -51,7 +54,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       action: "zoomIn",
     }, "*");
     })
-  
+
   zoomOut.addEventListener("click",() =>{
     parent.postMessage({
       action: "zoomOut",
@@ -71,9 +74,9 @@ reearth.extension.on("message", (msg) => {
   if (action === "zoomIn") {
     // Increasing the value increases the change to zoom
     // Documentation on Camera "zoomIn" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomin
-    reearth.camera.zoomIn(2);   
+    reearth.camera.zoomIn(2);
   } else if (action === "zoomOut") {
-  // Documentation on Camera "zoomOut" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomout 
+  // Documentation on Camera "zoomOut" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomout
     reearth.camera.zoomOut(2);
   }
 });`

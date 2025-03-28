@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "mouse-events-reearth-yml",
@@ -21,8 +20,13 @@ const widgetFile: FileType = {
   id: "mouse-events",
   title: "mouse-events.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
+
     .coord-container {
       background: #fff;
       padding: 15px;

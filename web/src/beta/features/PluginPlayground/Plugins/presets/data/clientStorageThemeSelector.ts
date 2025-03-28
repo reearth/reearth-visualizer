@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "theme-selector-reearth-yml",
@@ -21,7 +20,11 @@ const widgetFile: FileType = {
   id: "theme-selector",
   title: "theme-selector.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background p-16 rounded-sm">
     <p class="text-lg font-bold text-center m-0">Theme Selector - Client Storage Demo</p>
 
@@ -76,7 +79,7 @@ const widgetFile: FileType = {
         storageDisplay.classList.add("light");
         toggleBtn.textContent = "Switch to Dark Theme";
       }
-        
+
       const ops = document.querySelectorAll('.storage-op');
       ops.forEach(op => op.className = 'storage-op ' + (isDark ? "dark" : "light"));
     }

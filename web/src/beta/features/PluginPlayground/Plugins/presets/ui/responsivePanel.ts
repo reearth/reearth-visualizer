@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-responsive-panel-reearth-yml",
@@ -28,7 +27,11 @@ const widgetFile: FileType = {
   sourceCode: `// A simple interactive panel that allows users to dynamically add and remove items.
 
   reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div id="wrapper" class="primary-background p-16 rounded-sm primary-shadow flex-column gap-16">
     <h2 class="text-3xl text-center m-0">Responsive Panel</h2>
     <h3 id="itemCount" class="text-xl text-center m-0">Total Items: 0</h3>

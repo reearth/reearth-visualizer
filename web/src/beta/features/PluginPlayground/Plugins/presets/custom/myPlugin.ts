@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "custom-my-plugin-reearth-yml",
@@ -35,7 +34,11 @@ const widgetFile: FileType = {
   id: "custom-my-plugin-demo-widget",
   title: "demo-widget.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background text-center p-16 rounded-sm">
     <p class="text-3xl font-bold">Hello World</p>
   </div>
@@ -46,10 +49,14 @@ const demoInfoboxBlock1File: FileType = {
   id: "custom-my-plugin-demo-infobox-block-1",
   title: "demo-infobox-block-1.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+    <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background text-center p-16 rounded-sm">
     <p class="text-3xl font-bold">Infobox Block 1</p>
-  </div>  
+  </div>
 \`); `
 };
 
@@ -57,10 +64,14 @@ const demoInfoboxBlock2File: FileType = {
   id: "custom-my-plugin-demo-infobox-block-2",
   title: "demo-infobox-block-2.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background text-center p-16 rounded-sm">
     <p class="text-3xl font-bold">Infobox Block 2</p>
-  </div>  
+  </div>
 \`); `
 };
 
@@ -68,10 +79,14 @@ const demoStoryBlockFile: FileType = {
   id: "custom-my-plugin-demo-story",
   title: "demo-story-block.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background text-center p-16 rounded-sm">
     <p class="text-3xl font-bold">Demo Story</p>
-  </div>  
+  </div>
 \`); `
 };
 

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "override-style-reearth-yml",
@@ -26,7 +25,11 @@ const widgetFile: FileType = {
 
 // Define the plug-in UI //
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background flex-column gap-8 p-16 rounded-sm">
     <p class="text-3xl font-bold text-center">Color by Height</p>
     <p class="text-md text-secondary text-center">Choose your preferred color scheme<p>
@@ -35,7 +38,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       <button class="btn-neutral w-14 h-5" id="warm">Warm Style</button>
     </div>
   </div>
-  
+
   <script>
   const coolStyle = document.getElementById("cool");
   const warmStyle  = document.getElementById("warm");
@@ -46,7 +49,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       action: "updateStyleCool",
     }, "*");
     })
-  
+
   warmStyle.addEventListener("click",() =>{
     parent.postMessage({
       action: "updateStyleWarm",

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-hide-flyto-delete-layer-reearth-yml",
@@ -85,8 +84,12 @@ const presetLayerItems = presetLayers.map(layer => generateLayerItem(layer, true
 const pluginLayerItems = pluginLayers.map(layer => generateLayerItem(layer, false)).join('');
 
 reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
 <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
   .layers-list {
     list-style: none;
     padding: 0;
@@ -117,7 +120,7 @@ reearth.ui.show(\`
 </style>
 
 <div class="primary-background p-16 rounded-sm">
-  <h2>Layers</h2>
+  <h2 class="m-0">Layers</h2>
 
   <h3>Preset Layers</h3>
   <ul class="layers-list">

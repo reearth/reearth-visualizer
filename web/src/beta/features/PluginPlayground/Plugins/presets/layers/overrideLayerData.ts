@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "override-layer-data-reearth-yml",
@@ -24,7 +23,11 @@ const widgetFile: FileType = {
 
 // The following describes the style and functionality of the UI //
 reearth.ui.show(\`
- ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background flex-column gap-8 align-center p-16 rounded-sm">
     <p class="text-3xl font-bold text-center">Override Layer Data</p>
     <p class="text-md text-secondary text-center">Click the button below to enlarge the polygon.</p>
@@ -45,7 +48,7 @@ reearth.ui.show(\`
     action: "updatePolygon",
     payload: { corners },
   }, "*");
-  
+
   // Press the button to enlarge the four corners of the polygon
   const btn = document.getElementById("scaleBtn");
   btn.addEventListener("click", () => {
@@ -73,7 +76,7 @@ reearth.ui.show(\`
     }, "*");
   });
 
-  // The function to calculate the center of gravity of a polygon 
+  // The function to calculate the center of gravity of a polygon
   function getCenter(coords) {
     let sumLng = 0;
     let sumLat = 0;
@@ -129,7 +132,7 @@ const LayerManager = {
       type: "Feature",
       geometry: {
         type: "Polygon",
-        coordinates: [corners], 
+        coordinates: [corners],
       },
       properties: {},
     };
@@ -160,7 +163,7 @@ reearth.extension.on("message", msg => {
   }
 });
 
-// Creating the initial polygon layer 
+// Creating the initial polygon layer
 LayerManager.createInitialLayer();
 `
 };

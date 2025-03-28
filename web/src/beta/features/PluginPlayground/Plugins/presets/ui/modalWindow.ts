@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "modal-window-reearth-yml",
@@ -22,9 +21,13 @@ const widgetFile: FileType = {
   title: "modal-window.js",
   sourceCode: `// This example shows how to set a modal window //
   const modalContent= \`
-  ${PRESET_PLUGIN_COMMON_STYLE}
-  <div class="primary-background p-16 rounded-sm primary-shadow">
-    <h3 class="text-center text-xl">🌎 Hello World 🌎</h3>
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
+  <div class="primary-background p-16 rounded-sm primary-shadow flex-column gap-16">
+    <h3 class="text-center text-xl m-0">🌎 Hello World 🌎</h3>
     <p class="text-center">Re:Earth Visualizer allows you to set up a modal window. Click the button below to close the modal window.</p>
     <div class="flex-center">
       <button class="btn-neutral button-padding"

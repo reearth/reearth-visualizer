@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "filter-features-with-style-reearth-yml",
@@ -22,11 +21,15 @@ const widgetFile: FileType = {
   title: "filter-features-with-style.js",
   sourceCode: `// This example demonstrates how to filter features with style
 
-// Click the buttons to filter cities based on the population 
+// Click the buttons to filter cities based on the population
 
 // Define the plug-in UI //
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background flex-column gap-8 p-16 rounded-sm">
     <p class="text-lg font-bold">Filter Cities based on Population:</p>
     <div class="flex-column justify-center gap-8">
@@ -68,7 +71,7 @@ const samplePointData = {
     type: "geojson",
     // URL of GeoJSON file
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_population_marker.geojson"
-    
+
   },
   marker: {},
 };
@@ -95,7 +98,7 @@ reearth.camera.flyTo(
   }
 );
 
-// Listen for messages from the UI and override the style 
+// Listen for messages from the UI and override the style
 // Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   const { action } = msg;

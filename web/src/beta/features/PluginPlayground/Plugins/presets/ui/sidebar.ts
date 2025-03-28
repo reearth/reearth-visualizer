@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-sidebar-reearth-yml",
@@ -29,8 +28,11 @@ const widgetFile: FileType = {
   sourceCode: `// A collapsible sidebar navigation panel with menu items.
 
   reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+   /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
   /* Plugin-specific styling */
 
   /* The <html>element is positioned absolutely with a height of 100% and a default width of 300px. This ensures the sidebar occupies the full vertical space of its container.  */

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "take-screenshot-reearth-yml",
@@ -22,7 +21,11 @@ const widgetFile: FileType = {
   title: "take-screenshot.js",
   sourceCode: `// / This plugin allows users to capture the current view in Re:earth, preview the screenshot, and download it as a PNG file.
   reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
     <p class="text-3xl font-bold m-0">Image Capture</p>
     <p class="text-md text-secondary text-center m-0">Adjust your view as needed, then capture the screenshot</p>
@@ -51,7 +54,7 @@ const widgetFile: FileType = {
       // Find the image tag and pass the captured image data
       const img = document.getElementById('capturedImage');
       img.src = imageData;
-      
+
       // Add download functionality
       const downloadBtn = document.getElementById('downloadBtn');
       downloadBtn.addEventListener('click', () => {

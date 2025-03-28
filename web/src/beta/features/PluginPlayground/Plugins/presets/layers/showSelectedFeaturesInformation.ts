@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "layers-show-features-info-reearth-yml",
@@ -22,7 +21,11 @@ const widgetFile: FileType = {
   title: "show-features-info.js",
   sourceCode: `// Configure the UI side of the Plug-in
   reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
     <div class="primary-background flex-column gap-8 p-16 rounded-sm">
       <p class="text-3xl font-bold text-center">Show Selected Features Information</p>
       <p class="text-md text-secondary text-center">Click a building to view it's properties</p>

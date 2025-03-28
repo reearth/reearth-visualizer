@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "camera-position-yml",
@@ -29,10 +28,14 @@ const widgetFile: FileType = {
 
 
   reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div class="primary-background flex-column rounded-sm gap-8 p-8">
         <div>
-          <p class="text-3xl font-bold text-center">Camera Position</p>
+          <p class="text-3xl font-bold text-center mb-8">Camera Position</p>
           <button id="info-toggle" class="btn-neutral w-10 h-4">Show Info</button>
         </div>
         <div class="tertiary-background hidden rounded-sm text-sm p-8" id="info-content">

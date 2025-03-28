@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "enable-shadow-style-reearth-yml",
@@ -27,15 +26,19 @@ const widgetFile: FileType = {
 // ================================
 
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
-   <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
+  <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
       <label class="toggle">
       <input type="checkbox" id="toggleSwitch">
       <span class="slider"></span>
       </label>
       <div class="text-md" id="status">Shadow: OFF</div>
-   </div>
-   <script>
+  </div>
+  <script>
       document.addEventListener('DOMContentLoaded', function() {
           const toggleSwitch = document.getElementById('toggleSwitch');
           const status = document.getElementById('status');
@@ -59,7 +62,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
               }
           });
       });
-   </script>
+  </script>
 \`);
 
 // ================================

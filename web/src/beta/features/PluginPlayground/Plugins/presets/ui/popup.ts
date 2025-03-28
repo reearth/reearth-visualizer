@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "popup-reearth-yml",
@@ -21,15 +20,19 @@ const widgetFile: FileType = {
   id: "popup",
   title: "popup.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
     html {
       width: 280px;
     }
   </style>
 
   <div class="primary-background p-16 rounded-sm primary-shadow">
-      <h3 class="text-center text-xl mb-8 border-bottom pb-8">Popup API Demo</h3>
+      <h3 class="text-center text-xl border-bottom pb-8 m-0">Popup API Demo</h3>
       <h4 class="text-primary mb-8">Controls</h4>
       <div class="mb-8">
         <button id="showPopup" class="btn-primary p-8">Show Popup</button>
@@ -103,6 +106,11 @@ const widgetFile: FileType = {
 // Popup window
   const popupHTML = \`
   <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
     html, body {
       margin: 0;
       width: 250px;

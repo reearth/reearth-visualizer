@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "messenger-between-extension-and-visualizer-reearth-yml",
@@ -26,60 +25,64 @@ const widgetFile: FileType = {
   id: "messenger-between-extension-and-visualizer-widget",
   title: "messenger-between-extension-and-visualizer.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
-    <div class="primary-background p-16 rounded-sm flex-column gap-8">
-        <div>
-           <p class="text-3xl font-bold text-center">Coordinate Viewer</p>
-           <button id="info-toggle" class="btn-neutral p-8">Show Info</button>
-        </div>
-        <div id="info-content" class="tertiary-background hidden p-8 rounded-sm">
-          <strong>How to use this plugin:</strong><br>
-          1. Click anywhere on the map to see its coordinates<br>
-          2. Click the "Fly to Position" button to move the camera to that location<br>
-          3. Coordinates update dynamically when you click anywhere on the map<br><br>
-        </div>
-        <div class="secondary-background p-16 rounded-sm">
-          <p>Latitude: <span id="lat" class="font-monospace text-md">-</span>°</p>
-          <p>Longitude: <span id="lng" class="font-monospace text-md">-</span>°</p>
-        </div>
-        <div class="flex-center">
-          <button id="flyToButton" class="btn-primary p-8">Fly to Position</button>
-        </div>
-    </div>
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-    <script>
-      let currentLat, currentLng;
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
+  <div class="primary-background p-16 rounded-sm flex-column gap-8">
+      <div>
+        <p class="text-3xl font-bold text-center">Coordinate Viewer</p>
+        <button id="info-toggle" class="btn-neutral p-8">Show Info</button>
+      </div>
+      <div id="info-content" class="tertiary-background hidden p-8 rounded-sm">
+        <strong>How to use this plugin:</strong><br>
+        1. Click anywhere on the map to see its coordinates<br>
+        2. Click the "Fly to Position" button to move the camera to that location<br>
+        3. Coordinates update dynamically when you click anywhere on the map<br><br>
+      </div>
+      <div class="secondary-background p-16 rounded-sm">
+        <p>Latitude: <span id="lat" class="font-monospace text-md">-</span>°</p>
+        <p>Longitude: <span id="lng" class="font-monospace text-md">-</span>°</p>
+      </div>
+      <div class="flex-center">
+        <button id="flyToButton" class="btn-primary p-8">Fly to Position</button>
+      </div>
+  </div>
 
-      // Handle messages from extension
-      window.addEventListener("message", e => {
-        const msg = e.data;
-        if (msg.type === "position") {
-          currentLat = msg.lat;
-          currentLng = msg.lng;
+  <script>
+    let currentLat, currentLng;
 
-          document.getElementById("lat").textContent = msg.lat?.toFixed(6) || "-";
-          document.getElementById("lng").textContent = msg.lng?.toFixed(6) || "-";
-        }
-      });
+    // Handle messages from extension
+    window.addEventListener("message", e => {
+      const msg = e.data;
+      if (msg.type === "position") {
+        currentLat = msg.lat;
+        currentLng = msg.lng;
 
-      // Send message to extension when button is clicked
-      document.getElementById("flyToButton").addEventListener("click", () => {
-        parent.postMessage({
-          type: "fly",
-          lat: currentLat,
-          lng: currentLng,
-          alt: 1000 // Fixed camera height for better viewing
-        }, "*");
-      });
+        document.getElementById("lat").textContent = msg.lat?.toFixed(6) || "-";
+        document.getElementById("lng").textContent = msg.lng?.toFixed(6) || "-";
+      }
+    });
 
-      // Toggle info section
-      document.getElementById("info-toggle").addEventListener("click", () => {
-        const infoContent = document.getElementById("info-content");
-        const isHidden = infoContent.style.display === "none" || !infoContent.style.display;
-        infoContent.style.display = isHidden ? "block" : "none";
-        document.getElementById("info-toggle").textContent = isHidden ? "Hide Info" : "Show Info";
-      });
-    </script>
+    // Send message to extension when button is clicked
+    document.getElementById("flyToButton").addEventListener("click", () => {
+      parent.postMessage({
+        type: "fly",
+        lat: currentLat,
+        lng: currentLng,
+        alt: 1000 // Fixed camera height for better viewing
+      }, "*");
+    });
+
+    // Toggle info section
+    document.getElementById("info-toggle").addEventListener("click", () => {
+      const infoContent = document.getElementById("info-content");
+      const isHidden = infoContent.style.display === "none" || !infoContent.style.display;
+      infoContent.style.display = isHidden ? "block" : "none";
+      document.getElementById("info-toggle").textContent = isHidden ? "Hide Info" : "Show Info";
+    });
+  </script>
 \`);
 
 // Send message to UI when globe is clicked
