@@ -536,7 +536,7 @@ func TestProperty_MoveFields(t *testing.T) {
 			},
 			wantRes:        true,
 			wantFieldsFrom: []*Field{},
-			wantFieldsTo:   []*Field{testField1, testField2},
+			wantFieldsTo:   []*Field{testField2, testField1},
 		},
 		{
 			name: "group -> group (new)",
