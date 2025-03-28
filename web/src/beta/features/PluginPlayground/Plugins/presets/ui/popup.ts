@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "popup-reearth-yml",
@@ -21,71 +20,29 @@ const widgetFile: FileType = {
   id: "popup",
   title: "popup.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
     html {
-    width: 280px;
-    font-size: 14px;
-  }
-
-    h3 {
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 8px;
-  }
-
-  h4 {
-    margin: 12px 0 6px;
-    color: #0078D7;
-    font-weight: 500;
-  }
-
-  .buttons {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  button {
-    background-color: #0078D7;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    padding: 6px 10px;
-    cursor: pointer;
-  }
-
-  .secondary {
-    background-color: #f0f0f0;
-    color: #333;
-    border: 1px solid #ddd;
-  }
-
-  #messageFromPopup {
-    background-color: #f8f8f8;
-    border-left: 3px solid #0078D7;
-    padding: 8px;
-    font-size: 13px;
-    min-height: 18px;
-  }
-
-  .empty {
-    color: #999;
-    font-style: italic;
-
+      width: 280px;
+    }
   </style>
 
-  <div id="wrapper">
-      <h3>Popup API Demo</h3>
-      <h4>Controls</h4>
-      <div class="buttons">
-        <button id="showPopup">Show Popup</button>
-        <button id="closePopup" class="secondary">Close Popup</button>
+  <div class="primary-background p-16 rounded-sm primary-shadow">
+      <h3 class="text-center text-xl border-bottom pb-8 m-0">Popup API Demo</h3>
+      <h4 class="text-primary mb-8">Controls</h4>
+      <div class="mb-8">
+        <button id="showPopup" class="btn-primary p-8">Show Popup</button>
+        <button id="closePopup" class="btn-neutral p-8">Close Popup</button>
       </div>
-      <div class="buttons">
-        <button id="sendMessageToPopup">Send Message To Popup</button>
+      <div class="mb-8">
+        <button id="sendMessageToPopup" class="btn-primary p-8">Send Message To Popup</button>
       </div>
-      <h4>Received Message</h4>
-      <div id="messageFromPopup" class="empty">No messages yet</div>
+      <h4 class="text-primary mb-8">Received Message</h4>
+      <div id="messageFromPopup" class="message-display text-sm empty">No messages yet</div>
   </div>
 
   <script>
@@ -97,17 +54,6 @@ const widgetFile: FileType = {
       document.getElementById("showPopup").disabled = popupIsVisible;
       document.getElementById("closePopup").disabled = !popupIsVisible;
       document.getElementById("sendMessageToPopup").disabled = !popupIsVisible;
-
-      // Update button styles
-      if (popupIsVisible) {
-        document.getElementById("showPopup").style.opacity = "0.5";
-        document.getElementById("closePopup").style.opacity = "1";
-        document.getElementById("sendMessageToPopup").style.opacity = "1";
-      } else {
-        document.getElementById("showPopup").style.opacity = "1";
-        document.getElementById("closePopup").style.opacity = "0.5";
-        document.getElementById("sendMessageToPopup").style.opacity = "0.5";
-      }
     }
 
     // Initial button states
@@ -160,6 +106,11 @@ const widgetFile: FileType = {
 // Popup window
   const popupHTML = \`
   <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
     html, body {
       margin: 0;
       width: 250px;

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "extension-property-reearth-yml",
@@ -17,7 +16,7 @@ extensions:
       - id: default
         title: Default
         fields:
-          - id: text 
+          - id: text
             type: string
             title: Text
           - id: color
@@ -32,7 +31,7 @@ extensions:
       - id: default
         title: Default
         fields:
-          - id: text 
+          - id: text
             type: string
             title: Text
           - id: color
@@ -47,7 +46,7 @@ extensions:
       - id: default
         title: Default
         fields:
-          - id: text 
+          - id: text
             type: string
             title: Text
           - id: color
@@ -63,11 +62,15 @@ const widgetFile: FileType = {
   id: "extension-property-widget",
   title: "extension-property-widget.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
-  <div id="wrapper">
-    <h2>Extension Property</h2>
-    <h3 style="text-align:center">Input on Extension Settings and execute code again.</h3>
-    <h3 style="text-align:center" id="text"></h3>
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
+  <div class="primary-background p-16 rounded-sm flex-column gap-8">
+    <p class="text-3xl font-bold text-center">Extension Property</p>
+    <p class="text-md text-secondary text-center">Input on Extension Settings and execute code again.</p>
+    <p class="text-md text-center" id="text"></p>
   </div>
 
   <script>
@@ -93,11 +96,15 @@ const infoboxBlockFile: FileType = {
   id: "infobox-block",
   title: "infobox-block.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div id="wrapper">
     <h2 id="text" style="text-align: center;"></h2>
-  </div> 
-  
+  </div>
+
   <script>
     window.addEventListener("message", e => {
       const msg = e.data;
@@ -121,11 +128,15 @@ const storyBlockFile: FileType = {
   id: "story-block",
   title: "story-block.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
   <div id="wrapper">
     <h2 id="text" style="text-align: center;"></h2>
-  </div> 
-  
+  </div>
+
   <script>
     window.addEventListener("message", e => {
       const msg = e.data;

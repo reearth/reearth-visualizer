@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-responsive-panel-reearth-yml",
@@ -25,61 +24,22 @@ extensions:
 const widgetFile: FileType = {
   id: "ui-responsive-panel-widget",
   title: "responsive-panel.js",
-  sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
+  sourceCode: `// A simple interactive panel that allows users to dynamically add and remove items.
+
+  reearth.ui.show(\`
   <style>
-    ul {
-      padding: 0;
-      margin: 0;
-      list-style: none;
-    }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-    li {
-      margin: 8px 0;
-      padding: 12px 16px;
-      color: #36454F;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    button {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      background: #007bff;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    button:active {
-      background: #0056b3;
-    }
-
-    .delete {
-      background: #d32f2f;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 16px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-
-    .delete:active {
-      background: #6b0000;
-    }
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-  <div id="wrapper">
-    <h2>Responsive Panel</h2>
-    <h3 id="itemCount">Total Items: 0</h3>
+  <div id="wrapper" class="primary-background p-16 rounded-sm primary-shadow flex-column gap-16">
+    <h2 class="text-3xl text-center m-0">Responsive Panel</h2>
+    <h3 id="itemCount" class="text-xl text-center m-0">Total Items: 0</h3>
     <div class="flex-center">
-    <button id="addBtn" onclick="addListItem()">Add Item</button>
+      <button id="addBtn" class="btn-primary button-padding" onclick="addListItem()">Add Item</button>
     </div>
-    <ul></ul>
+    <ul>
+    </ul>
   </div>
   <script>
     let itemCount = 0;
@@ -87,9 +47,10 @@ const widgetFile: FileType = {
       itemCount++;
       const ul = document.querySelector("ul");
       const li = document.createElement('li');
+      li.className = "styled-list-item flex-between my-8";
       li.innerHTML = \\\`
       <span>Item \\\${itemCount}</span>
-      <button class="delete" onclick="deleteListItem(this)">Delete</button>
+      <button class="btn-danger button-padding " onclick="deleteListItem(this)">Delete</button>
       \\\`;
       ul.appendChild(li);
       updateItemCount()
