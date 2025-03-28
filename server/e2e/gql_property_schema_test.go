@@ -7,9 +7,6 @@ import (
 	"golang.org/x/text/language"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestPropertySchemaOrder ./e2e/...
-
 func TestPropertySchemaOrder(t *testing.T) {
 	e := Server(t, baseSeeder)
 	pId := createProject(e, "test")
