@@ -71,10 +71,15 @@ func GetPlugin(id id.PluginID) *plugin.Plugin {
 	return nil
 }
 
-func E2ETestChange(e2ePluginManifestJSON []byte) {
-	var pluginTranslationList = manifest.TranslationMap{
-		"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja),
+func E2ETestChange() {
+	for _, e := range pluginManifest.ExtensionSchema {
+		if e.ID().String() == "reearth/cesium-beta" {
+			for _, g := range e.Groups().Groups() {
+				if g.ID().String() == "tiles" {
+					// "tile_zoomLevel" <=> "tile_opacity"
+					g.Move(2, 3)
+				}
+			}
+		}
 	}
-	p := manifest.MustParseSystemFromBytes(e2ePluginManifestJSON, nil, pluginTranslationList.TranslatedRef()).Plugin
-	pluginManifest.Plugin = p
 }

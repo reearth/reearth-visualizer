@@ -118,3 +118,29 @@ func (s *SchemaGroup) RepresentativeField() *SchemaField {
 func (s *SchemaGroup) SetTitle(t i18n.String) {
 	s.title = t.Clone()
 }
+
+// Move moves a field from one index to another within the fields slice
+func (s *SchemaGroup) Move(from int, to int) {
+	if s == nil {
+		return
+	}
+	if from < 0 || from >= len(s.fields) {
+		return
+	}
+	if to < 0 || to >= len(s.fields) {
+		return
+	}
+
+	// Extract the field to move
+	field := s.fields[from]
+
+	// Remove the field from the original position
+	s.fields = append(s.fields[:from], s.fields[from+1:]...)
+
+	// Insert the field into the new position
+	if to >= len(s.fields) {
+		s.fields = append(s.fields, field)
+	} else {
+		s.fields = append(s.fields[:to], append([]*SchemaField{field}, s.fields[to:]...)...)
+	}
+}
