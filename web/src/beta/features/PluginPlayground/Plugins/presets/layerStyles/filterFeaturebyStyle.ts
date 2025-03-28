@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "filter-features-with-style-reearth-yml",
@@ -22,55 +21,33 @@ const widgetFile: FileType = {
   title: "filter-features-with-style.js",
   sourceCode: `// This example demonstrates how to filter features with style
 
-// Click the buttons to filter cities based on the population 
+// Click the buttons to filter cities based on the population
 
 // Define the plug-in UI //
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    html {
-    width: 500px;
-  }
-    #wrapper{
-     width: 350px;
-    }
-    button {
-      padding: 4px 8px;
-      border: 1px solid black;
-      border-radius: 4px;
-      cursor: pointer;
-      background-color: white;
-      transition: background-color 0.3s ease;
-    }
-    .active {
-      background: #4CAF50;
-      color: white;;
-      border: none;
-      color: white;
-    }
-    .button-container {
-      display: flex;
-      gap: 10px;
-    }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-  <div id="wrapper">
-    <h2>Filter Cities based on Population:</h2>
-    <div class="button-container">
-      <button id="allBtn">Show all</button>
-      <button id="belowBtn">Population below 20000</button>
-      <button id="aboveBtn">Population above 20000</button>
+  <div class="primary-background flex-column gap-8 p-16 rounded-sm">
+    <p class="text-lg font-bold">Filter Cities based on Population:</p>
+    <div class="flex-column justify-center gap-8">
+      <button class="btn-neutral btn-success p-8" id="allBtn">Show all</button>
+      <button class="btn-neutral p-8" id="belowBtn">Population below 20000</button>
+      <button class="btn-neutral p-8" id="aboveBtn">Population above 20000</button>
     </div>
   </div>
 
   <script>
-    const buttons = document.querySelectorAll(".button-container button");
+    const buttons = document.querySelectorAll("button");
 
     function setActiveButton(activeId) {
       buttons.forEach(btn => {
         if (btn.id === activeId) {
-          btn.classList.add("active");
+          btn.classList.add("btn-success");
         } else {
-          btn.classList.remove("active");
+          btn.classList.remove("btn-success");
         }
       });
     }
@@ -94,7 +71,7 @@ const samplePointData = {
     type: "geojson",
     // URL of GeoJSON file
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_population_marker.geojson"
-    
+
   },
   marker: {},
 };
@@ -121,7 +98,7 @@ reearth.camera.flyTo(
   }
 );
 
-// Listen for messages from the UI and override the style 
+// Listen for messages from the UI and override the style
 // Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   const { action } = msg;

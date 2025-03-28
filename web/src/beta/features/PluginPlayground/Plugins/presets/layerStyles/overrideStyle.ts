@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "override-style-reearth-yml",
@@ -26,56 +25,20 @@ const widgetFile: FileType = {
 
 // Define the plug-in UI //
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    .coolBtn {
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-      background: #f0ffff;
-      color: #000000;
-      cursor: pointer;
-      width: 200px;
-      height: 40px;
-      font-size: 16px 
-    }
-    .scaleBtn:active {
-      background: #dcdcdc;
-    }
-    .warmBtn {
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-      background:#ffe4e1;
-      color: #000000;
-      cursor: pointer;
-      width: 200px;
-      height: 40px;
-      font-size: 16px 
-    }
-    .scaleBtn:active {
-      background: #dcdcdc;
-    }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-    .button-container {
-    display: flex;        
-    gap: 8px;           
-    }
-
-    p {
-      text-align: center; 
-    }
-
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-  <div id="wrapper">
-    <h2>Color by Height</h2>
-    <p>Choose your preferred color scheme<p>
-    <div class="button-container">
-      <button class = "coolBtn" id="cool">Cool Style</button>
-      <button class = "warmBtn" id="warm">Warm Style</button>
+  <div class="primary-background flex-column gap-8 p-16 rounded-sm">
+    <p class="text-3xl font-bold text-center">Color by Height</p>
+    <p class="text-md text-secondary text-center">Choose your preferred color scheme<p>
+    <div class="display-flex justify-center gap-8">
+      <button class="btn-primary w-14 h-5" id="cool">Cool Style</button>
+      <button class="btn-neutral w-14 h-5" id="warm">Warm Style</button>
     </div>
   </div>
-  
+
   <script>
   const coolStyle = document.getElementById("cool");
   const warmStyle  = document.getElementById("warm");
@@ -86,7 +49,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       action: "updateStyleCool",
     }, "*");
     })
-  
+
   warmStyle.addEventListener("click",() =>{
     parent.postMessage({
       action: "updateStyleWarm",

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "camera-position-yml",
@@ -29,111 +28,17 @@ const widgetFile: FileType = {
 
 
   reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    #info-section {
-      position: sticky;
-      top: 0;
-      background: #eee;
-      text-align: left;
-    }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-    .camera-controls {
-      background-color: white;
-      border-radius: 5px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .input-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    .info-expanded .camera-controls {
-      max-height: 250px;
-      overflow-y: auto;
-    }
-
-    .input-group input {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
-
-    .button-group {
-      display: flex;
-      justify-content: center;
-      padding-top: 12px;
-      margin: 0;
-    }
-
-    button {
-      padding: 12px;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    #apply-btn {
-      background-color: #2196F3;
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    #apply-btn:not(:disabled) {
-      opacity: 1;
-      cursor: pointer;
-    }
-
-    #apply-btn:not(:disabled):active {
-      background-color: #1976D2;
-    }
-
-    .status-message {
-      text-align: center;
-      color: #666;
-      height: 4px;
-      padding: 4px;
-    }
-
-    #info-section {
-      margin: 8px 0;
-      text-align: left;
-    }
-
-    #info-toggle {
-      padding: 6px 8px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    #info-content {
-      background: #f9f9f9;
-      padding: 10px;
-      border-radius: 5px;
-      margin-top: 8px;
-      font-size: 12px;
-      line-height: 1.3;
-    }
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-
-  <div id="wrapper">
-    <div class="scrollable-content">
-      <div id="info-section">
-        <button id="info-toggle">Show Info</button>
-        <div id="info-content" style="display: none;">
+  <div class="primary-background flex-column rounded-sm gap-8 p-8">
+        <div>
+          <p class="text-3xl font-bold text-center mb-8">Camera Position</p>
+          <button id="info-toggle" class="btn-neutral w-10 h-4">Show Info</button>
+        </div>
+        <div class="tertiary-background hidden rounded-sm text-sm p-8" id="info-content">
           <strong>How to Use the Plugin</strong><br><br>
           1. <strong>Automatic Tracking</strong><br>
           • Move the camera around the globe<br>
@@ -143,40 +48,38 @@ const widgetFile: FileType = {
           • Click "Apply Position"<br>
           • Camera will instantly move to the specified location.
         </div>
-      </div>
 
-      <div class="camera-controls">
-        <div class="input-group">
-          <label for="lat">Latitude</label>
+      <div class="secondary-background flex-column rounded-sm p-16 gap-8">
+        <div class="flex-column gap-4">
+          <label class="font-bold" for="lat">Latitude</label>
           <input type="number" id="lat" step="0.0001">
         </div>
-        <div class="input-group">
-          <label for="lng">Longitude</label>
+        <div class="flex-column gap-4">
+          <label class="font-bold" for="lng">Longitude</label>
           <input type="number" id="lng" step="0.0001">
         </div>
-        <div class="input-group">
-          <label for="height">Height (meters)</label>
+        <div class="flex-column gap-4">
+          <label class="font-bold" for="height">Height (meters)</label>
           <input type="number" id="height" step="1">
         </div>
-        <div class="input-group">
-          <label for="heading">Heading (radians)</label>
+        <div class="flex-column gap-4">
+          <label class="font-bold" for="heading">Heading (radians)</label>
           <input type="number" id="heading" step="0.1">
         </div>
-        <div class="input-group">
-          <label for="pitch">Pitch (radians)</label>
+        <div class="flex-column gap-4">
+          <label class="font-bold" for="pitch">Pitch (radians)</label>
           <input type="number" id="pitch" step="0.1">
         </div>
-        <div class="input-group">
-          <label for="roll">Roll (radians)</label>
+        <div class="flex-column gap-4">
+          <label class="font-bold" for="roll">Roll (radians)</label>
           <input type="number" id="roll" step="0.1">
         </div>
 
-        <div class="button-group">
-          <button id="apply-btn" disabled>Apply Position</button>
+        <div class="display-flex justify-center">
+          <button class="btn-primary w-14 h-5" id="apply-btn" disabled>Apply Position</button>
         </div>
-        <div id="status-message" class="status-message"></div>
+        <div id="status-message" class="text-secondary"></div>
       </div>
-    </div>
   </div>
 
   <script>
@@ -214,7 +117,7 @@ const widgetFile: FileType = {
   document.getElementById('info-toggle').addEventListener('click', () => {
     const infoContent = document.getElementById('info-content');
     const wrapper = document.getElementById('wrapper');
-    const isHidden = infoContent.style.display === 'none';
+    const isHidden = infoContent.style.display === 'none' || !infoContent.style.display;
 
     infoContent.style.display = isHidden ? 'block' : 'none';
     wrapper.classList.toggle('info-expanded', isHidden);

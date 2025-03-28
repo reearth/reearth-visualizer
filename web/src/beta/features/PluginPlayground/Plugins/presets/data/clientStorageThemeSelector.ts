@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "theme-selector-reearth-yml",
@@ -21,105 +20,31 @@ const widgetFile: FileType = {
   id: "theme-selector",
   title: "theme-selector.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-  html{
-    width: 300px;
-  }
-  
-  .theme-content {
-    transition: all 0.3s ease;
-    border-radius: 4px;
-    overflow: hidden;
-  }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-  .theme-content.light {
-    color: #333333;
-  }
-
-  .theme-content.dark {
-    color: #ffffff;
-    background: #333333;
-  }
-
-  .theme-toggle {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 16px;
-  }
-
-  .theme-toggle:hover {
-    background: #45a049;
-  }
-
-  .storage-display {
-    background: rgba(255, 255, 255, 0.1);
-    padding: 12px;
-    border-radius: 4px;
-    margin-top: 16px;
-    font-family: monospace;
-  }
-
-  .storage-display h4 {
-    margin: 0 0 8px 0;
-    font-size: 14px;
-  }
-
-  .storage-op {
-    margin: 8px 0;
-    padding: 8px;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    font-size: 13px;
-  }
-
-  #storageOps {
-    max-height: 200px;
-    overflow-y: auto;
-    margin-bottom: 16px;
-  }
-
-  .divider {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    margin: 16px 0;
-  }
-
-  #currentStorage {
-    background: rgba(0, 0, 0, 0.05);
-    padding: 8px;
-    border-radius: 4px;
-    margin-bottom: 16px;
-  }
-
-  .storage-actions {
-    margin-top: 16px;
-  }
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-
-  <div id="wrapper">
-    <h3>Theme Selector - Client Storage Demo</h3>
+  <div class="primary-background p-16 rounded-sm">
+    <p class="text-lg font-bold text-center m-0">Theme Selector - Client Storage Demo</p>
 
     <div class="theme-content light">
-      <div class="flex-center">
-        <button id="themeToggle" class="theme-toggle">Switch to Dark Theme</button>
+      <div class="flex-center p-16">
+        <button id="themeToggle" class="btn-neutral p-8">Switch to Dark Theme</button>
       </div>
 
       <div class="divider"></div>
 
       <div class="storage-display" id="storageDisplay">
-        <h4>Current Storage State:</h4>
-        <div id="currentStorage">Loading...</div>
+        <p class="text-md font-bold font-monospace">Current Storage State:</p>
+        <div id="currentStorage" class="quaternary-background text-sm p-8 rounded-sm">Loading...</div>
 
-        <h4>Storage Operations Log:</h4>
+        <p class="text-md font-bold font-monospace">Storage Operations Log:</p>
         <div id="storageOps"></div>
 
-        <div class="flex-center storage-actions">
-          <button id="viewKeys" class="theme-toggle">View All Keys</button>
-          <button id="clearStorage" class="theme-toggle">Clear Storage</button>
+        <div class="flex-center gap-8">
+          <button id="viewKeys" class="btn-neutral p-8">View All Keys</button>
+          <button id="clearStorage" class="btn-primary p-8">Clear Storage</button>
         </div>
       </div>
     </div>
@@ -141,11 +66,22 @@ const widgetFile: FileType = {
     }
 
     function updateThemeUI(isDark) {
-      themeContent.className = 'theme-content ' + (isDark ? "dark" : "light");
-      storageDisplay.className = "storage-display " + (isDark ? "dark" : "light");
+      if (isDark) {
+        themeContent.classList.remove("light");
+        themeContent.classList.add("dark");
+        storageDisplay.classList.remove("light");
+        storageDisplay.classList.add("dark");
+        toggleBtn.textContent = "Switch to Light Theme";
+      } else {
+        themeContent.classList.remove("dark");
+        themeContent.classList.add("light");
+        storageDisplay.classList.remove("dark");
+        storageDisplay.classList.add("light");
+        toggleBtn.textContent = "Switch to Dark Theme";
+      }
+
       const ops = document.querySelectorAll('.storage-op');
       ops.forEach(op => op.className = 'storage-op ' + (isDark ? "dark" : "light"));
-      toggleBtn.textContent = isDark ? "Switch to Light Theme" : "Switch to Dark Theme";
     }
 
     // Initialize theme from storage
