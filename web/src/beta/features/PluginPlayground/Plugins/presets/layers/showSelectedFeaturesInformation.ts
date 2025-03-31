@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "layers-show-features-info-reearth-yml",
@@ -22,39 +21,22 @@ const widgetFile: FileType = {
   title: "show-features-info.js",
   sourceCode: `// Configure the UI side of the Plug-in
   reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-  .displayId {
-      display: block;             
-      width: 100%;               
-      min-height: 52px;          
-      background-color: #FAFAFA;
-      border-radius: 4px;
-      padding: 8px;
-      word-wrap: break-word;      
-      box-sizing: border-box;  
-    }
-  .displayHeight {
-    display: flex;              
-    align-items: center;         
-    width: 100%;
-    min-height: 40px;
-    background-color: #FAFAFA;
-    border-radius: 4px;
-    padding: 8px;
-    word-wrap: break-word;
-    box-sizing: border-box; 
-  }
-  .title{
-      margin-bottom: 8px;     
-    }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-    <div id="wrapper">
-      <h3>Click to show building property</h3>
-      <p class = "title"> Building ID </p>
-      <span id="gml_id" class="displayId"></span>
-      <p class = "title"> Building Height </p>
-      <span id="building_height" class="displayHeight"</span>
+    <div class="primary-background flex-column gap-8 p-16 rounded-sm">
+      <p class="text-3xl font-bold text-center">Show Selected Features Information</p>
+      <p class="text-md text-secondary text-center">Click a building to view it's properties</p>
+    <div>
+      <p class="text-sm">Building ID</p>
+      <span id="gml_id" class="secondary-background h-5 p-8 rounded-sm text-sm display-flex align-center"></span>
+    </div>
+    <div>
+        <p class="text-sm">Building Height</p>
+        <span id="building_height" class="secondary-background h-5 p-8 rounded-sm text-sm display-flex align-center"</span>
+     </div>
     </div>
   <script>
   // Receive messages and display the building id and height

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "ui-hide-flyto-delete-layer-reearth-yml",
@@ -47,7 +46,7 @@ const layer3dTiles = {
     url: "https://assets.cms.plateau.reearth.io/assets/8b/cce097-2d4a-46eb-a98b-a78e7178dc30/13103_minato-ku_pref_2023_citygml_1_op_bldg_3dtiles_13103_minato-ku_lod2_no_texture/tileset.json"
   },
   "3dtiles": {
-    pbr: false, 
+    pbr: false,
     selectedFeatureColor: "red"
   }
 };
@@ -66,15 +65,15 @@ const generateLayerItem = (layer, isPreset) => {
     <li>
       <span id="layer-name">\${layer.title}</span>
       <div class="actions">
-        <input 
-          type="checkbox" 
-          id="show-hide-layer" 
+        <input
+          type="checkbox"
+          id="show-hide-layer"
           data-layer-id="\${layer.id}"
-          $\{layer.visible ? "checked" : ""} 
+          $\{layer.visible ? "checked" : ""}
         />
-        <button class="fly-to-layer" data-layer-id="\${layer.id}">Flyto</button>
+        <button class="btn-primary p-8" data-layer-id="\${layer.id}">Flyto</button>
         $\{!isPreset
-            ? \`<button class="delete-layer"  data-layer-id="\${layer.id}">Delete</button>\`
+            ? \`<button class="btn-danger p-8"  data-layer-id="\${layer.id}">Delete</button>\`
             : "" }
       </div>
     </li>
@@ -85,8 +84,12 @@ const presetLayerItems = presetLayers.map(layer => generateLayerItem(layer, true
 const pluginLayerItems = pluginLayers.map(layer => generateLayerItem(layer, false)).join('');
 
 reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
 <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
   .layers-list {
     list-style: none;
     padding: 0;
@@ -114,26 +117,10 @@ reearth.ui.show(\`
     align-items: center;
     }
 
-  button {
-    padding: 2px 4px;
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  button:hover {
-    background: #45a049;
-  }
-
-  .fly-to-layer, #show-hide-layer{
-    cursor: pointer;
-  }
 </style>
 
-<div id="wrapper">
-  <h2>Layers</h2>
+<div class="primary-background p-16 rounded-sm">
+  <h2 class="m-0">Layers</h2>
 
   <h3>Preset Layers</h3>
   <ul class="layers-list">
@@ -148,7 +135,7 @@ reearth.ui.show(\`
 
 <script>
   // Add event listener for 'Delete' button
-  document.querySelectorAll(".delete-layer").forEach(button => {
+  document.querySelectorAll(".btn-danger").forEach(button => {
     button.addEventListener("click", event => {
       const layerId = event.target.getAttribute("data-layer-id");
       if (layerId) {
@@ -163,7 +150,7 @@ reearth.ui.show(\`
     });
   });
 
-  // Add event listener for 'Show/Hide' 
+  // Add event listener for 'Show/Hide'
   document.querySelectorAll("#show-hide-layer").forEach(checkbox => {
     checkbox.addEventListener("change", event => {
       const layerId = event.target.getAttribute("data-layer-id");
@@ -180,7 +167,7 @@ reearth.ui.show(\`
   });
 
     // Add event listener for 'FlyTo' button
-  document.querySelectorAll(".fly-to-layer").forEach(button => {
+  document.querySelectorAll(".btn-primary").forEach(button => {
     button.addEventListener("click", event => {
       const layerId = event.target.getAttribute("data-layer-id");
       if (layerId) {

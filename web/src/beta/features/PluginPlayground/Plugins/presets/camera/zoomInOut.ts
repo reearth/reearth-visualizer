@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "zoom-in-out-reearth-yml",
@@ -27,42 +26,24 @@ const widgetFile: FileType = {
 // Define Plug-in UI side (iframe)
 // ================================
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
-  <style>
-    .zoomBtn {
-      display: flex;  
-      align-items: center;    
-      justify-content: center;
-      padding: 8px;
-      border-radius: 4px;
-      border: none;
-      background: #ffffff;
-      color: #000000;
-      cursor: pointer;
-      width: 90px;
-      height: 40px;
-    }
-    .zoomBtn:active {
-      background: #dcdcdc;
-    }
-    .zoomBtn img {
-    display: block;
-    width: 22px;
-    height: 22px;
-    }
-  </style>
-  <div id="wrapper">
-    <h3>Zoom Level</h3>
-    <div class="flex-center">
-      <button class="zoomBtn" id="zoomIn">
+<style>
+/* Generic styling system that provides consistent UI components and styling across all plugins */
+
+@import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+</style>
+  <div class="primary-background flex-column gap-8 text-center justify-center p-16 rounded-sm">
+    <p class="text-3xl font-bold">Zoom Level</p>
+    <p class="text-md text-secondary text-center">Click the buttons to change zoom level</p>
+    <div class="flex-center gap-8">
+      <button class="display-flex align-center justify-center btn btn-neutral w-10 h-5" id="zoomIn">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/plus.svg" alt="Zoom In" />
       </button>
-      <button class="zoomBtn" id="zoomOut">
+      <button class="display-flex align-center justify-center btn btn-neutral w-10 h-5" id="zoomOut">
         <img src="https://reearth.github.io/visualizer-plugin-sample-data/public/image/minus.svg" alt="Zoom Out" />
       </button>
     </div>
   </div>
-  
+
   <script>
   const zoomIn = document.getElementById("zoomIn");
   const zoomOut  = document.getElementById("zoomOut");
@@ -73,7 +54,7 @@ ${PRESET_PLUGIN_COMMON_STYLE}
       action: "zoomIn",
     }, "*");
     })
-  
+
   zoomOut.addEventListener("click",() =>{
     parent.postMessage({
       action: "zoomOut",
@@ -93,9 +74,9 @@ reearth.extension.on("message", (msg) => {
   if (action === "zoomIn") {
     // Increasing the value increases the change to zoom
     // Documentation on Camera "zoomIn" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomin
-    reearth.camera.zoomIn(2);   
+    reearth.camera.zoomIn(2);
   } else if (action === "zoomOut") {
-  // Documentation on Camera "zoomOut" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomout 
+  // Documentation on Camera "zoomOut" method: https://visualizer.developer.reearth.io/plugin-api/camera/#zoomout
     reearth.camera.zoomOut(2);
   }
 });`

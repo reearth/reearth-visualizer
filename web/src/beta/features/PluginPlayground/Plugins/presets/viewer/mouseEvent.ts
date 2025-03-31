@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "mouse-events-reearth-yml",
@@ -21,8 +20,13 @@ const widgetFile: FileType = {
   id: "mouse-events",
   title: "mouse-events.js",
   sourceCode: `reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
+
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+
+  /* Plugin-specific styling */
+
     .coord-container {
       background: #fff;
       padding: 15px;
@@ -49,14 +53,16 @@ const widgetFile: FileType = {
     }
   </style>
 
-  <div id="wrapper">
-    <h2>Click Coordinates</h2>
-    <div class="coord-container">
-      <div class="coords-title">Click anywhere to see coordinates:</div>
-      <div class="coordinates">
-        <div>Latitude: <span id="lat" class="coordinate-value">-</span>°</div>
-        <div>Longitude: <span id="lng" class="coordinate-value">-</span>°</div>
-        <div>Height: <span id="height" class="coordinate-value">-</span> m</div>
+  <div class="primary-background flex-column gap-8 rounded-sm p-16">
+    <p class="text-3xl font-bold text-center">Click Coordinates</p>
+    <div class="secondary-background p-16 gap-4">
+      <div>
+        <p class="text-md text-secondary">Click on the map to view the coordinates:</p>
+      </div>
+      <div>
+        <div>Latitude: <span id="lat" class="font-bold">-</span>°</div>
+        <div>Longitude: <span id="lng" class="font-bold">-</span>°</div>
+        <div>Height: <span id="height" class="font-bold">-</span> m</div>
       </div>
     </div>
   </div>

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 // YAML File Definition
 const yamlFile: FileType = {
@@ -25,61 +24,24 @@ extensions:
 // Extension 1 Widget Source Code
 const extension1SourceCode = `
 reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    input {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      flex-grow: 1;
-    }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-    button {
-      padding: 8px 16px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #45a049;
-    }
-
-    .received {
-      background: white;
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
-
-    .messages-container {
-      min-height: 50px;
-      margin-top: 10px;
-    }
-
-    .message {
-      padding: 8px;
-      margin: 4px 0;
-      background: #f8f9fa;
-      border-radius: 4px;
-    }
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-
-   <div id="wrapper">
-    <h2>Extension 1</h2>
+  <div class="primary-background p-16 rounded-sm flex-column gap-8">
+    <p class="text-3xl font-bold">Extension 1</p>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>
-      <button id="sendButton">Send</button>
+      <button id="sendButton" class="btn-primary p-8">Send</button>
     </div>
-    <h3>Received Messages</h3>
-    <div class="received">
-      <div id="messagesContainer" class="messages-container"></div>
+    <p class="text-lg font-bold">Received Messages</p>
+    <div class="secondary-background p-4 rounded-sm">
+      <div id="messagesContainer" class="h-6"></div>
     </div>
   </div>
 
-   <script>
+  <script>
    // Listen for UI button clicks and send message to extension
     document.getElementById("sendButton").addEventListener("click", () => {
       const input = document.getElementById("messageInput");
@@ -130,57 +92,20 @@ reearth.extension.on("extensionMessage", msg => {
 // Extension 2 Widget Source Code
 const extension2SourceCode = `
 reearth.ui.show(\`
-  ${PRESET_PLUGIN_COMMON_STYLE}
   <style>
-    input {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      flex-grow: 1;
-    }
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-    button {
-      padding: 8px 16px;
-      background: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #45a049;
-    }
-
-    .received {
-      background: white;
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: 10px;
-    }
-
-    .messages-container {
-      min-height: 50px;
-      margin-top: 10px;
-    }
-
-    .message {
-      padding: 8px;
-      margin: 4px 0;
-      background: #f8f9fa;
-      border-radius: 4px;
-    }
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-
-    <div id="wrapper">
-    <h2>Extension 2</h2>
+  <div class="primary-background p-16 rounded-sm flex-column gap-8">
+    <p class="text-3xl font-bold">Extension 2</p>
     <div class="flex-center">
       <input id="messageInput" type="text" placeholder="Enter message"/>
-      <button id="sendButton">Send</button>
+      <button id="sendButton" class="btn-primary p-8">Send</button>
     </div>
-    <h3>Received Messages</h3>
-    <div class="received">
-      <div id="messagesContainer" class="messages-container"></div>
+    <p class="text-lg font-bold">Received Messages</p>
+    <div class="secondary-background p-4 rounded-sm">
+      <div id="messagesContainer" class="secondary-background rounded-sm h-6"></div>
     </div>
   </div>
 
