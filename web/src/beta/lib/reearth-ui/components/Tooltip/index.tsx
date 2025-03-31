@@ -7,7 +7,7 @@ import {
 } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC, ReactNode, useMemo } from "react";
 
 type TooltipProps = {
   type: "experimental" | "custom";
@@ -16,6 +16,7 @@ type TooltipProps = {
   offset?: number;
   iconColor?: string;
   placement?: Placement;
+  triggerComponent?: ReactNode; 
 };
 
 const Tooltip: FC<TooltipProps> = ({
@@ -24,7 +25,8 @@ const Tooltip: FC<TooltipProps> = ({
   text,
   offset = 6,
   iconColor,
-  placement
+  placement,
+  triggerComponent
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -44,22 +46,26 @@ const Tooltip: FC<TooltipProps> = ({
     [type, text, t]
   );
 
+  const trigger = useMemo(() => {
+    if (triggerComponent) return triggerComponent;
+    if (tooltipIcon) {
+      return (
+        <IconWrapper>
+          <Icon
+            icon={tooltipIcon}
+            color={type === "experimental" ? theme.warning.weak : iconColor}
+          />
+        </IconWrapper>
+      );
+    }
+    return <Typography size="footnote">TIPS</Typography>; // TODO: support tigger as text
+  }, [triggerComponent, tooltipIcon, type, theme.warning.weak, iconColor]);
+
   return (
     <Popup
       offset={offset}
       placement={placement}
-      trigger={
-        tooltipIcon ? (
-          <IconWrapper>
-            <Icon
-              icon={tooltipIcon}
-              color={type === "experimental" ? theme.warning.weak : iconColor}
-            />
-          </IconWrapper>
-        ) : (
-          "TIPS" // TODO: support tigger as text
-        )
-      }
+      trigger={trigger}
       triggerOnHover
       tooltip
     >
@@ -90,9 +96,9 @@ const TipPanel = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
-  padding: `${theme.spacing.small}px`,
-  background: theme.bg[1],
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  background: theme.bg[2],
   color: theme.content.main,
-  boxShadow: theme.shadow.card,
+  boxShadow: theme.shadow.tooltip,
   borderRadius: theme.radius.normal
 }));

@@ -7,15 +7,10 @@ import (
 	"io"
 	"time"
 
-	"github.com/reearth/reearth/server/pkg/dataset"
-	"github.com/reearth/reearth/server/pkg/layer"
-	"github.com/reearth/reearth/server/pkg/layer/encoding"
-	"github.com/reearth/reearth/server/pkg/layer/merging"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
-	"github.com/reearth/reearth/server/pkg/tag"
 )
 
 const (
@@ -24,11 +19,8 @@ const (
 )
 
 type Builder struct {
-	ploader   property.Loader
-	tloader   tag.SceneLoader
-	nlsloader nlslayer.Loader
-	exporter  *encoding.Exporter
-
+	ploader     property.Loader
+	nlsloader   nlslayer.Loader
 	scene       *scene.Scene
 	nlsLayer    *nlslayer.NLSLayerList
 	layerStyles *scene.StyleList
@@ -37,22 +29,11 @@ type Builder struct {
 	exportType bool
 }
 
-func New(ll layer.Loader, pl property.Loader, dl dataset.GraphLoader, tl tag.Loader, tsl tag.SceneLoader, nlsl nlslayer.Loader, exp bool) *Builder {
+func New(pl property.Loader, nlsl nlslayer.Loader, exp bool) *Builder {
 	return &Builder{
 		ploader:    pl,
-		tloader:    tsl,
 		nlsloader:  nlsl,
 		exportType: exp,
-		exporter: &encoding.Exporter{
-			Merger: &merging.Merger{
-				LayerLoader:    ll,
-				PropertyLoader: pl,
-			},
-			Sealer: &merging.Sealer{
-				DatasetGraphLoader: dl,
-				TagLoader:          tl,
-			},
-		},
 	}
 }
 

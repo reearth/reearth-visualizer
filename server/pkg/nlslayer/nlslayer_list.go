@@ -1,6 +1,8 @@
 package nlslayer
 
 import (
+	"sort"
+
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
@@ -160,4 +162,10 @@ func (m Map) Keys() []ID {
 
 func (m Map) Len() int {
 	return len(m)
+}
+
+func sortIDs(a []id.NLSLayerID) {
+	sort.SliceStable(a, func(i, j int) bool {
+		return a[i].Compare(a[j]) < 0
+	})
 }

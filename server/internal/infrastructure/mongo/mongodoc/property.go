@@ -6,7 +6,6 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/mongox"
 )
 
@@ -27,14 +26,7 @@ type PropertyDocument struct {
 type PropertyFieldDocument struct {
 	Field string
 	Type  string
-	Links []*PropertyLinkDocument
 	Value interface{}
-}
-
-type PropertyLinkDocument struct {
-	Schema  *string
-	Dataset *string
-	Field   *string
 }
 
 type PropertyItemDocument struct {
@@ -98,17 +90,6 @@ func newPropertyField(f *property.Field) *PropertyFieldDocument {
 		Value: f.Value().Interface(),
 	}
 
-	if links := f.Links().Links(); links != nil {
-		field.Links = make([]*PropertyLinkDocument, 0, len(links))
-		for _, l := range links {
-			field.Links = append(field.Links, &PropertyLinkDocument{
-				Schema:  l.DatasetSchema().StringRef(),
-				Dataset: l.Dataset().StringRef(),
-				Field:   l.DatasetSchemaField().StringRef(),
-			})
-		}
-	}
-
 	return field
 }
 
@@ -166,7 +147,7 @@ func NewProperty(property *property.Property) (*PropertyDocument, string) {
 	return &doc, pid
 }
 
-func NewProperties(properties []*property.Property, f scene.IDList) ([]interface{}, []string) {
+func NewProperties(properties []*property.Property, f id.SceneIDList) ([]interface{}, []string) {
 	if properties == nil {
 		return nil, nil
 	}
@@ -189,30 +170,9 @@ func toModelPropertyField(f *PropertyFieldDocument) *property.Field {
 		return nil
 	}
 
-	var flinks *property.Links
-	if f.Links != nil {
-		links := make([]*property.Link, 0, len(f.Links))
-		for _, l := range f.Links {
-			var link *property.Link
-			d := id.DatasetIDFromRef(l.Dataset)
-			ds := id.DatasetSchemaIDFromRef(l.Schema)
-			df := id.DatasetFieldIDFromRef(l.Field)
-			if d != nil && ds != nil && df != nil {
-				link = property.NewLink(*d, *ds, *df)
-			} else if ds != nil && df != nil {
-				link = property.NewLinkFieldOnly(*ds, *df)
-			} else {
-				continue
-			}
-			links = append(links, link)
-		}
-		flinks = property.NewLinks(links)
-	}
-
 	vt := property.ValueType(f.Type)
-	field := property.NewField(property.FieldID(f.Field)).
+	field := property.NewField(id.PropertyFieldID(f.Field)).
 		Value(property.NewOptionalValue(vt, toModelPropertyValue(f.Value, f.Type))).
-		Links(flinks).
 		Build()
 
 	return field

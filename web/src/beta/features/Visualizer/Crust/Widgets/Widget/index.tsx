@@ -47,7 +47,6 @@ export type Context = {
     layerId?: string;
     featureId?: string;
   };
-  is2d?: boolean;
   onFlyTo?: (
     target: string | FlyToDestination,
     options?: { duration?: number }

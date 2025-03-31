@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,31 +13,31 @@ func TestBuilder_New(t *testing.T) {
 }
 
 func TestBuilder_ID(t *testing.T) {
-	pid := NewID()
-	p := New().ID(pid).Scene(NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
+	pid := id.NewPropertyID()
+	p := New().ID(pid).Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.Equal(t, pid, p.ID())
 }
 
 func TestBuilder_NewID(t *testing.T) {
-	p := New().NewID().Scene(NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
+	p := New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.False(t, p.ID().IsEmpty())
 }
 
 func TestBuilder_Schema(t *testing.T) {
-	p := New().NewID().Scene(NewSceneID()).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
-	assert.Equal(t, MustSchemaID("xxx~1.1.1/aa"), p.Schema())
+	p := New().NewID().Scene(id.NewSceneID()).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
+	assert.Equal(t, id.MustPropertySchemaID("xxx~1.1.1/aa"), p.Schema())
 }
 
 func TestBuilder_Scene(t *testing.T) {
-	sid := NewSceneID()
-	p := New().NewID().Scene(sid).Schema(MustSchemaID("xxx~1.1.1/aa")).MustBuild()
+	sid := id.NewSceneID()
+	p := New().NewID().Scene(sid).Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).MustBuild()
 	assert.Equal(t, sid, p.Scene())
 }
 
 func TestBuilder_Items(t *testing.T) {
-	iid := NewItemID()
-	propertySchemaField1ID := FieldID("a")
-	propertySchemaGroup1ID := SchemaGroupID("A")
+	iid := id.NewPropertyItemID()
+	propertySchemaField1ID := id.PropertyFieldID("a")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
 
 	tests := []struct {
 		Name            string
@@ -77,8 +78,8 @@ func TestBuilder_Items(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			t.Parallel()
 			res := New().NewID().
-				Scene(NewSceneID()).
-				Schema(MustSchemaID("xxx~1.1.1/aa")).
+				Scene(id.NewSceneID()).
+				Schema(id.MustPropertySchemaID("xxx~1.1.1/aa")).
 				Items(tt.Input).
 				MustBuild()
 			assert.Equal(t, tt.Expected, res.Items())
@@ -87,17 +88,17 @@ func TestBuilder_Items(t *testing.T) {
 }
 
 func TestBuilder_Build(t *testing.T) {
-	pid := NewID()
-	sid := NewSceneID()
-	scid := MustSchemaID("xxx~1.1.1/aa")
-	iid := NewItemID()
-	propertySchemaField1ID := FieldID("a")
-	propertySchemaGroup1ID := SchemaGroupID("A")
+	pid := id.NewPropertyID()
+	sid := id.NewSceneID()
+	scid := id.MustPropertySchemaID("xxx~1.1.1/aa")
+	iid := id.NewPropertyItemID()
+	propertySchemaField1ID := id.PropertyFieldID("a")
+	propertySchemaGroup1ID := id.PropertySchemaGroupID("A")
 
 	type args struct {
-		ID     ID
-		Scene  SceneID
-		Schema SchemaID
+		ID     id.PropertyID
+		Scene  id.SceneID
+		Schema id.PropertySchemaID
 		Items  []Item
 	}
 
@@ -151,9 +152,9 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			Name: "fail invalid id",
 			Args: args{
-				ID: ID{},
+				ID: id.PropertyID{},
 			},
-			Err: ErrInvalidID,
+			Err: id.ErrInvalidID,
 		},
 		{
 			Name: "fail invalid scene",

@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "enable-terrain-reearth-yml",
@@ -27,50 +26,43 @@ const widgetFile: FileType = {
 // ================================
 
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
-<style>
-  #btn {
-    padding: 8px;
-    border-radius: 4px;
-    border: 2px solid #808080;
-    background: #ffffff;
-    color: #000000;
-    cursor: pointer;
-    width: 180px;
-    height: 70px;
-    font-size: 18px 
-  }
-  #btn:active {
-    background: #dcdcdc;
-  }
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-  #button-container {
-  display: flex;
-  gap: 8px;           
-  }
-</style>
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
+  <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
+      <label class="toggle">
+        <input type="checkbox" id="toggleSwitch">
+        <span class="slider"></span>
+      </label>
+      <div class="text-md" id="status">Terrain: OFF</div>
+  </div>
+  <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const toggleSwitch = document.getElementById('toggleSwitch');
+          const status = document.getElementById('status');
 
-<div id= "button-container">
-  <button id="btn">Terrain ON</button>
-</div>
+          if (!toggleSwitch || !status) {
+              console.error('Required elements not found');
+              return;
+          }
 
-<script>
-let terrain = false;
-const terrainBtn = document.getElementById("btn");
-
-// Set up an event listener
-terrainBtn.addEventListener("click", () => {
-  // Toggle the terrain state
-  terrain = !terrain;
-  if (terrain) {
-    terrainBtn.textContent = "Terrain OFF";
-      parent.postMessage({ action: "activateTerrain" }, "*");
-  } else {
-    terrainBtn.textContent = "Terrain ON";
-    parent.postMessage({ action: "deactivateTerrain" }, "*");
-  }
-});
-</script>
+          toggleSwitch.addEventListener('change', function() {
+              if (this.checked) {
+                  status.textContent = 'Terrain: ON';
+                  if (window.parent) {
+                      window.parent.postMessage({ action: "activateTerrain" }, "*");
+                  }
+              } else {
+                  status.textContent = 'Terrain: OFF';
+                  if (window.parent) {
+                      window.parent.postMessage({ action: "deactivateTerrain" }, "*");
+                  }
+              }
+          });
+      });
+  </script>
 \`);
 
 // ================================
@@ -78,6 +70,7 @@ terrainBtn.addEventListener("click", () => {
 // ================================
 
 // Move the camera to a specified position
+// Documentation for Camera "flyTo" method https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
@@ -95,9 +88,11 @@ reearth.camera.flyTo(
 );
 
 // Listen for messages from the UI to trigger terrain
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "activateTerrain") {
+  // Documentation for Viewer "overrideProperty" method https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
     reearth.viewer.overrideProperty({
       // Enable Cesium World Terrain
       terrain: {

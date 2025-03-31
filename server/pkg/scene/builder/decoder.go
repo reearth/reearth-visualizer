@@ -125,7 +125,7 @@ func parseWidgetAreaPadding(paddingJSON *widgetAreaPaddingJSON) *scene.WidgetAre
 }
 
 func Filter(s id.SceneID) repo.SceneFilter {
-	return repo.SceneFilter{Readable: scene.IDList{s}, Writable: scene.IDList{s}}
+	return repo.SceneFilter{Readable: id.SceneIDList{s}, Writable: id.SceneIDList{s}}
 }
 
 func PropertyUpdate(

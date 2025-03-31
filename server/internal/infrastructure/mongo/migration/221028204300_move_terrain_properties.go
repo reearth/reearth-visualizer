@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
@@ -13,7 +14,7 @@ import (
 
 func MoveTerrainProperties(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("property")
-	fields := []property.FieldID{
+	fields := []id.PropertyFieldID{
 		"terrain",
 		"terrainType",
 		"terrainExaggeration",
@@ -22,7 +23,7 @@ func MoveTerrainProperties(ctx context.Context, c DBClient) error {
 	}
 
 	diff := property.SchemaDiff{
-		Moved: lo.Map(fields, func(f property.FieldID, _ int) property.SchemaDiffMoved {
+		Moved: lo.Map(fields, func(f id.PropertyFieldID, _ int) property.SchemaDiffMoved {
 			return property.SchemaDiffMoved{
 				From: property.SchemaFieldPointer{
 					SchemaGroup: "default",
