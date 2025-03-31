@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.5.1 - 2025-03-31
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Member page permissions for modify role and remove member ([#1537](https://github.com/reearth/reearth-visualizer/pull/1537)) [`348a52`](https://github.com/reearth/reearth-visualizer/commit/348a52)
+
+#### Miscellaneous Tasks
+
+- Update package version to v1.0.0-beta.5.1 ([#1538](https://github.com/reearth/reearth-visualizer/pull/1538)) [`372e5e`](https://github.com/reearth/reearth-visualizer/commit/372e5e)
+
 ## 1.0.0-beta.5.0 - 2025-03-31
 
 ### Web
