@@ -12,7 +12,7 @@ import (
 )
 
 // To add a new migration, do the following command:
-// go run github.com/reearth/reearthx/tools migrategen -d internal/infrastructure/mongo/migration -t DBClient -n "foobar"
+// go run github.com/reearth/reearthx/tools migrategen -d internal/infrastructure/mongo/migration -t DBClient -n "FooBar"
 
 type DBClient = *mongox.Client
 
