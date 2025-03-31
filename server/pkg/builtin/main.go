@@ -19,6 +19,7 @@ var pluginManifestJSON_ja []byte
 var pluginTranslationList = manifest.TranslationMap{
 	"ja": manifest.MustParseTranslationFromBytes(pluginManifestJSON_ja),
 }
+
 var pluginManifest = manifest.MustParseSystemFromBytes(pluginManifestJSON, nil, pluginTranslationList.TranslatedRef())
 
 // MUST NOT CHANGE
@@ -33,6 +34,14 @@ var (
 	PropertySchemaIDStoryPage            = id.MustPropertySchemaID("reearth/storyPage")
 	PropertySchemaIDStoryBlock           = id.MustPropertySchemaID("reearth/storyBlock")
 )
+
+// Overrides the plugin manifest.
+// Ideally, we’d like to avoid defining this function here,
+// but it was implemented as a necessary workaround for testing pluginManifest in the internal package.
+// In practice, the manifest is not expected to be overridden under normal circumstances.
+func OverridePluginManifest(pluginTestManifestJSON []byte) {
+	pluginManifest = manifest.MustParseSystemFromBytes(pluginTestManifestJSON, nil, pluginTranslationList.TranslatedRef())
+}
 
 func GetPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
 	for _, p := range pluginManifest.ExtensionSchema {
@@ -69,17 +78,4 @@ func GetPlugin(id id.PluginID) *plugin.Plugin {
 		return pluginManifest.Plugin
 	}
 	return nil
-}
-
-func E2ETestChange() {
-	for _, e := range pluginManifest.ExtensionSchema {
-		if e.ID().String() == "reearth/cesium-beta" {
-			for _, g := range e.Groups().Groups() {
-				if g.ID().String() == "tiles" {
-					// "tile_zoomLevel" <=> "tile_opacity"
-					g.Move(2, 3)
-				}
-			}
-		}
-	}
 }

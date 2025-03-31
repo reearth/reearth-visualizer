@@ -3,9 +3,14 @@ package e2e
 import (
 	"testing"
 
+	_ "embed"
+
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"golang.org/x/text/language"
 )
+
+//go:embed test_data/manifest.yml
+var pluginTestManifestJSON []byte
 
 func TestPropertySchemaOrder(t *testing.T) {
 	e := Server(t, baseSeeder)
@@ -28,7 +33,6 @@ func TestPropertySchemaOrder(t *testing.T) {
 	// 1. tile_type
 	// 2. tile_zoomLevel
 	// 3. tile_opacity
-
 	res = getScene(e, sId, language.Und.String())
 	fields := res.Path("$.property.items[0].groups[0].fields").Array()
 	fields.Value(0).Object().Value("fieldId").IsEqual("tile_type")
@@ -36,7 +40,7 @@ func TestPropertySchemaOrder(t *testing.T) {
 	fields.Value(2).Object().Value("fieldId").IsEqual("tile_opacity")
 
 	// tile_opacity <=> tile_zoomLevel
-	builtin.E2ETestChange()
+	builtin.OverridePluginManifest(pluginTestManifestJSON)
 
 	// 1. tile_type
 	// 2. tile_opacity
