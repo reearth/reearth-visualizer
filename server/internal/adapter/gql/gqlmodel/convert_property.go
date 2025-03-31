@@ -446,34 +446,41 @@ func ToPropertyGroup(g *property.Group, p *property.Property, gl *property.Group
 		return nil
 	}
 
-	var fields []*property.Field
-
-	// Sort if there is a schema.
-	if ps != nil {
-		fields = make([]*property.Field, 0, len(g.Fields(nil)))
-		for _, psg := range ps.Groups().Groups() {
-			if psg.ID() == g.SchemaGroup() {
-				for _, psf := range psg.Fields() {
-					for _, gf := range g.Fields(nil) {
-						if psf.ID() == gf.Field() {
-							fields = append(fields, gf)
-						}
-					}
-				}
-			}
-		}
-	} else {
-		fields = g.Fields(nil)
-	}
+	fields := getSortedFields(g, ps)
 
 	return &PropertyGroup{
 		ID:            IDFrom(g.ID()),
 		SchemaID:      IDFromPropertySchemaID(p.Schema()),
 		SchemaGroupID: ID(g.SchemaGroup()),
-		Fields: util.Map(fields, func(f *property.Field) *PropertyField {
-			return ToPropertyField(f, p, gl, g)
-		}),
+		Fields:        util.Map(fields, func(f *property.Field) *PropertyField { return ToPropertyField(f, p, gl, g) }),
 	}
+}
+
+func getSortedFields(g *property.Group, ps *property.Schema) []*property.Field {
+	if ps == nil {
+		return g.Fields(nil)
+	}
+
+	fields := []*property.Field{}
+
+	for _, psg := range ps.Groups().Groups() {
+		if psg.ID() != g.SchemaGroup() {
+			continue
+		}
+
+		fieldMap := make(map[id.PropertyFieldID]*property.Field)
+		for _, gf := range g.Fields(nil) {
+			fieldMap[gf.Field()] = gf
+		}
+
+		for _, psf := range psg.Fields() {
+			if gf, exists := fieldMap[psf.ID()]; exists {
+				fields = append(fields, gf)
+			}
+		}
+	}
+
+	return fields
 }
 
 func ToPropertyGroupList(gl *property.GroupList, p *property.Property, ps *property.Schema) *PropertyGroupList {
