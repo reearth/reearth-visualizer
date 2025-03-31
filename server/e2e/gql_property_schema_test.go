@@ -41,6 +41,7 @@ func TestPropertySchemaOrder(t *testing.T) {
 
 	// tile_opacity <=> tile_zoomLevel
 	builtin.OverridePluginManifest(pluginTestManifestJSON)
+	defer builtin.RestorePluginManifest()
 
 	// 1. tile_type
 	// 2. tile_opacity

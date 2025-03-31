@@ -35,12 +35,19 @@ var (
 	PropertySchemaIDStoryBlock           = id.MustPropertySchemaID("reearth/storyBlock")
 )
 
-// Overrides the plugin manifest.
+// Override　and Restores the plugin manifest.
 // Ideally, we’d like to avoid defining this function here,
 // but it was implemented as a necessary workaround for testing pluginManifest in the internal package.
+// When tests are executed in parallel, there is still a possibility of being overwritten during loading.
+// To prevent this, it is necessary to initialize pluginManifest without using a global variable.
 // In practice, the manifest is not expected to be overridden under normal circumstances.
 func OverridePluginManifest(pluginTestManifestJSON []byte) {
 	pluginManifest = manifest.MustParseSystemFromBytes(pluginTestManifestJSON, nil, pluginTranslationList.TranslatedRef())
+}
+
+// Restores the plugin manifest to the original manifest
+func RestorePluginManifest() {
+	pluginManifest = manifest.MustParseSystemFromBytes(pluginManifestJSON, nil, pluginTranslationList.TranslatedRef())
 }
 
 func GetPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
