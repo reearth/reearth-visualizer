@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 )
@@ -77,7 +78,7 @@ func (b *Builder) property(ctx context.Context, p *property.Property) propertyJS
 	return property.SealProperty(ctx, p).Interface(b.exportType)
 }
 
-func findProperty(pp []*property.Property, i property.ID) *property.Property {
+func findProperty(pp []*property.Property, i id.PropertyID) *property.Property {
 	for _, p := range pp {
 		if p != nil && p.ID() == i {
 			return p
@@ -86,7 +87,7 @@ func findProperty(pp []*property.Property, i property.ID) *property.Property {
 	return nil
 }
 
-func toString(wids []scene.WidgetID) []string {
+func toString(wids []id.WidgetID) []string {
 	if wids == nil {
 		return nil
 	}

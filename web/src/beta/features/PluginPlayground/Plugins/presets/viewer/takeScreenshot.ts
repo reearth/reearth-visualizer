@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "take-screenshot-reearth-yml",
@@ -20,101 +19,106 @@ extensions:
 const widgetFile: FileType = {
   id: "take-screenshot",
   title: "take-screenshot.js",
-  sourceCode: `// This example shows how to take a screenshot //
-// Adjust the view angle, then click "Screenshot," and finally click "Download" to save the image locally //
+  sourceCode: `// / This plugin allows users to capture the current view in Re:earth, preview the screenshot, and download it as a PNG file.
+  reearth.ui.show(\`
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-// ================================
-// Define Plug-in UI side (iframe)
-// ================================
-  
-reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
-<style>
-  .btn {
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #808080;
-    background: #ffffff;
-    color: #000000;
-    cursor: pointer;
-    width: 150px;
-    height: 30px;
-    font-size: 11px 
-  }
-  .btn:active {
-    background: #dcdcdc;
-  }
-
-  #button-container {
-  display: flex;
-  gap: 8px;           
-  }
-</style>
-<div id = "wrapper">
-  <h3 id="message">Adjust the screen angle</h3>
-  <div id="button-container">
-    <button class="btn" id="screenshot">Screenshot</button>
-    <button class="btn" id="download">Download</button>
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
+  </style>
+  <div class="primary-background flex-column align-center p-16 rounded-sm gap-16">
+    <p class="text-3xl font-bold m-0">Image Capture</p>
+    <p class="text-md text-secondary text-center m-0">Adjust your view as needed, then capture the screenshot</p>
+    <div class="flex-center">
+      <button class="btn-primary p-8" id="captureButton">Capture View</button>
+    </div>
+    <div id="imageContainer" class="gap-16 hidden">
+      <!-- Preview will appear here -->
+      <img id="capturedImage" class="w-full" />
+      <div class="display-flex justify-center">
+        <button class="btn-primary p-8" id="downloadBtn">Download Image</button>
+      </div>
+    </div>
   </div>
-</div>
 
-<script>
-const screenshotBtn = document.getElementById("screenshot");
-const downloadBtn = document.getElementById("download");
-const message = document.getElementById("message");
+  <script>
+    // Get UI elements
+    const captureButton = document.getElementById('captureButton');
+    const imageContainer = document.getElementById('imageContainer');
 
-let screenshotDataUri = null;
+    /**
+     * Displays the captured image and adds download functionality
+     * @param {string} imageData - Base64 encoded image data
+     */
+    function displayImage(imageData) {
+      // Find the image tag and pass the captured image data
+      const img = document.getElementById('capturedImage');
+      img.src = imageData;
 
-// Add an EventListener for the Screenshot button
-screenshotBtn.addEventListener("click", () => {
-  parent.postMessage({ action: "takeScreenshot" }, "*");
-});
+      // Add download functionality
+      const downloadBtn = document.getElementById('downloadBtn');
+      downloadBtn.addEventListener('click', () => {
+        // Create a temporary link element
+        const link = document.createElement('a');
+        link.href = imageData;
 
-// Receive messages from extension side
-window.addEventListener("message", e => {
-  const { action, data } = e.data || {};
-  if (action === "screenshotCaptured" && data) {
-    screenshotDataUri = data;
-    message.textContent = "Capture complete!";
-  }
-});
+        // Generate filename with timestamp
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        link.download = "reearth-capture-" + timestamp + ".png";
 
-// Define a function to download images
-function downloadImage(uri, filename) {
-  if (!uri) {
-    return;
-  }
-  const a = document.createElement("a");
-  a.href = uri; 
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-}
+        // Trigger download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    }
 
-// Add an event listener for the Download butto
-downloadBtn.addEventListener("click", () => {
-  downloadImage(screenshotDataUri, "screenshot.png");
-  message.textContent = "Adjust the screen angle"
-});
+    // Add capture button click handler
+    captureButton.addEventListener('click', () => {
+      // Send a message to the extension to request a capture
+      imageContainer.style.display = 'block';
+      parent.postMessage({ type: 'capture-request' }, '*');
+    });
 
-</script>
+    // Listen for messages from Re:earth
+    window.addEventListener('message', e => {
+      const msg = e.data;
+      if (msg.type === 'capture-response') {
+        if (msg.error) {
+          // Show error if capture failed
+          alert('Failed to capture image: ' + msg.error);
+        } else {
+          // Display the captured image
+          displayImage(msg.imageData);
+        }
+      }
+    });
+  </script>
 \`);
 
-// ================================
-// Define Re:Earth(Web Assembly) side
-// ================================
+// Set up the extension to handle messages from the UI
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
+reearth.extension.on('message', msg => {
+  if (msg.type === 'capture-request') {
+    try {
+      // Capture the current view as a PNG image
+      // Documentation for Viewer "capture" method: https://visualizer.developer.reearth.io/plugin-api/viewer/#capture
+      const imageData = reearth.viewer.capture('image/png');
 
-reearth.extension.on("message", async (msg) => {
-  const { action } = msg;
-  if (action === "takeScreenshot") {
-    // Execute a screenshot using "reearth.viewer.capture"
-    const screenShot = reearth.viewer.capture("image/png");
-    // Send image data to the plugin UI
-    reearth.ui.postMessage({
-      action: "screenshotCaptured",
-      data: screenShot,
-    });
+      // Check if capture was successful and send response
+      // Documentation for UI "postMessage" method: https://visualizer.developer.reearth.io/plugin-api/ui/#postmessage
+      reearth.ui.postMessage({
+        type: 'capture-response',
+        imageData: imageData || null,
+        error: !imageData ? 'Failed to capture image' : null
+      });
+    } catch (error) {
+      // Handle any errors during capture
+      reearth.ui.postMessage({
+        type: 'capture-response',
+        error: error.message
+      });
+    }
   }
 });`
 };

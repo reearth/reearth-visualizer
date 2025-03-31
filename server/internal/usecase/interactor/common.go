@@ -40,8 +40,6 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 
 	return interfaces.Container{
 		Asset:        NewAsset(r, g),
-		Dataset:      NewDataset(r, g),
-		Layer:        NewLayer(r),
 		NLSLayer:     NewNLSLayer(r, g),
 		Style:        NewStyle(r),
 		Plugin:       NewPlugin(r, g),
@@ -50,7 +48,6 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 		Property:     NewProperty(r, g),
 		Published:    published,
 		Scene:        NewScene(r, g),
-		Tag:          NewTag(r),
 		StoryTelling: NewStorytelling(r, g),
 		Workspace:    accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
 		User:         accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
@@ -146,12 +143,15 @@ func (i commonSceneLock) ReleaseSceneLock(ctx context.Context, s id.SceneID) {
 }
 
 type SceneDeleter struct {
-	Scene         repo.Scene
-	SceneLock     repo.SceneLock
-	Layer         repo.Layer
-	Property      repo.Property
-	Dataset       repo.Dataset
-	DatasetSchema repo.DatasetSchema
+	Scene          repo.Scene
+	SceneLock      repo.SceneLock
+	Property       repo.Property
+	PropertySchema repo.PropertySchema
+	NLSLayer       repo.NLSLayer
+	Plugin         repo.Plugin
+	Storytelling   repo.Storytelling
+	Style          repo.Style
+	File           gateway.File
 }
 
 func (d SceneDeleter) Delete(ctx context.Context, s *scene.Scene, force bool) error {
@@ -170,8 +170,13 @@ func (d SceneDeleter) Delete(ctx context.Context, s *scene.Scene, force bool) er
 		}
 	}
 
-	// Delete layer
-	if err := d.Layer.RemoveByScene(ctx, s.ID()); err != nil {
+	// Delete nlsLayer
+	if err := d.NLSLayer.RemoveByScene(ctx, s.ID()); err != nil {
+		return err
+	}
+
+	// Delete plugin
+	if err := d.Plugin.RemoveBySceneWithFile(ctx, s.ID(), d.File); err != nil {
 		return err
 	}
 
@@ -180,13 +185,18 @@ func (d SceneDeleter) Delete(ctx context.Context, s *scene.Scene, force bool) er
 		return err
 	}
 
-	// Delete dataset
-	if err := d.Dataset.RemoveByScene(ctx, s.ID()); err != nil {
+	// Delete propertyschema
+	if err := d.PropertySchema.RemoveByScene(ctx, s.ID()); err != nil {
 		return err
 	}
 
-	// Delete dataset schema
-	if err := d.DatasetSchema.RemoveByScene(ctx, s.ID()); err != nil {
+	// Delete storytelling
+	if err := d.Storytelling.RemoveByScene(ctx, s.ID()); err != nil {
+		return err
+	}
+
+	// Delete style
+	if err := d.Style.RemoveByScene(ctx, s.ID()); err != nil {
 		return err
 	}
 
@@ -207,6 +217,7 @@ type ProjectDeleter struct {
 	SceneDeleter
 	File    gateway.File
 	Project repo.Project
+	Asset   repo.Asset
 }
 
 func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force bool, operator *usecase.Operator) error {
@@ -217,6 +228,11 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 	// Fetch scene
 	s, err := d.Scene.FindByProject(ctx, prj.ID())
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return err
+	}
+
+	// Delete assets
+	if err := d.Asset.RemoveByProjectWithFile(ctx, prj.ID(), d.File); err != nil {
 		return err
 	}
 

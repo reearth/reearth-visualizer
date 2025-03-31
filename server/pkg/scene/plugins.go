@@ -1,5 +1,7 @@
 package scene
 
+import "github.com/reearth/reearth/server/pkg/id"
+
 type Plugins struct {
 	plugins []*Plugin
 }
@@ -31,7 +33,7 @@ func (p *Plugins) Plugins() []*Plugin {
 	return append([]*Plugin{}, p.plugins...)
 }
 
-func (p *Plugins) Property(id PluginID) *PropertyID {
+func (p *Plugins) Property(id id.PluginID) *id.PropertyID {
 	for _, p := range p.plugins {
 		if p.plugin.Equal(id) {
 			return p.property.CloneRef()
@@ -40,7 +42,7 @@ func (p *Plugins) Property(id PluginID) *PropertyID {
 	return nil
 }
 
-func (p *Plugins) Has(id PluginID) bool {
+func (p *Plugins) Has(id id.PluginID) bool {
 	for _, p2 := range p.plugins {
 		if p2.plugin.Equal(id) {
 			return true
@@ -49,7 +51,7 @@ func (p *Plugins) Has(id PluginID) bool {
 	return false
 }
 
-func (p *Plugins) HasPlugin(id PluginID) bool {
+func (p *Plugins) HasPlugin(id id.PluginID) bool {
 	for _, p2 := range p.plugins {
 		if p2.plugin.Equal(id) {
 			return true
@@ -68,15 +70,15 @@ func (p *Plugins) HasPluginByName(name string) bool {
 }
 
 func (p *Plugins) Add(sp *Plugin) bool {
-	if sp == nil || p.HasPluginByName(sp.plugin.Name()) || sp.plugin.Equal(OfficialPluginID) {
+	if sp == nil || p.HasPluginByName(sp.plugin.Name()) || sp.plugin.Equal(id.OfficialPluginID) {
 		return false
 	}
 	p.plugins = append(p.plugins, sp)
 	return true
 }
 
-func (p *Plugins) Remove(pid PluginID) {
-	if pid.Equal(OfficialPluginID) {
+func (p *Plugins) Remove(pid id.PluginID) {
+	if pid.Equal(id.OfficialPluginID) {
 		return
 	}
 	for i, p2 := range p.plugins {
@@ -87,8 +89,8 @@ func (p *Plugins) Remove(pid PluginID) {
 	}
 }
 
-func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool) {
-	if p == nil || from.IsNil() || to.IsNil() || from.Equal(to) || from.Equal(OfficialPluginID) {
+func (p *Plugins) Upgrade(from, to id.PluginID, pr *id.PropertyID, deleteProperty bool) {
+	if p == nil || from.IsNil() || to.IsNil() || from.Equal(to) || from.Equal(id.OfficialPluginID) {
 		return
 	}
 
@@ -96,7 +98,7 @@ func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool
 		if !p2.plugin.Equal(from) {
 			continue
 		}
-		var newpr *PropertyID
+		var newpr *id.PropertyID
 		if !deleteProperty {
 			newpr = pr.CloneRef()
 			if newpr == nil {
@@ -108,11 +110,11 @@ func (p *Plugins) Upgrade(from, to PluginID, pr *PropertyID, deleteProperty bool
 	}
 }
 
-func (p *Plugins) Properties() []PropertyID {
+func (p *Plugins) Properties() []id.PropertyID {
 	if p == nil {
 		return nil
 	}
-	res := make([]PropertyID, 0, len(p.plugins))
+	res := make([]id.PropertyID, 0, len(p.plugins))
 	for _, pp := range p.plugins {
 		if pp.property != nil {
 			res = append(res, *pp.property)
@@ -121,7 +123,7 @@ func (p *Plugins) Properties() []PropertyID {
 	return res
 }
 
-func (p *Plugins) Plugin(pluginID PluginID) *Plugin {
+func (p *Plugins) Plugin(pluginID id.PluginID) *Plugin {
 	for _, pp := range p.plugins {
 		if pp.plugin.Equal(pluginID) {
 			return pp

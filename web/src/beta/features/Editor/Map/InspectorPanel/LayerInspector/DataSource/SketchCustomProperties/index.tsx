@@ -51,7 +51,6 @@ const CustomPropertiesSchema: FC<Props> = ({
     handleEditField,
     handleSubmit,
     setSchemaJSON,
-    handleCustomPropertySchemaState
   } = useHooks(layerId, customPropertySchema);
 
   return (
@@ -87,7 +86,6 @@ const CustomPropertiesSchema: FC<Props> = ({
           onClose={closeCustomPropertySchema}
           onSubmit={handleSubmit}
           onSchemaJSONUpdate={setSchemaJSON}
-          onCustomPropertySchemaState={handleCustomPropertySchemaState}
         />
       )}
       {showDeleteFieldConfirmModal && (

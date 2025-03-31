@@ -5,6 +5,8 @@ import (
 	"github.com/reearth/reearthx/util"
 )
 
+type PageID = id.PageID
+
 type PageList struct {
 	pages []*Page
 }
@@ -31,14 +33,14 @@ func (l *PageList) AddAt(p *Page, index *int) {
 	l.pages = append(l.pages[:*index], append([]*Page{p}, l.pages[*index:]...)...)
 }
 
-func (l *PageList) Page(id PageID) *Page {
+func (l *PageList) Page(id id.PageID) *Page {
 	if l == nil || l.pages == nil {
 		return nil
 	}
 	return util.Get[PageID, Page](l.pages, (*Page).Id, id)
 }
 
-func (l *PageList) Move(id PageID, i int) {
+func (l *PageList) Move(id id.PageID, i int) {
 	if l == nil || l.pages == nil {
 		return
 	}
@@ -58,14 +60,14 @@ func (l *PageList) Move(id PageID, i int) {
 	}
 }
 
-func (l *PageList) Remove(id PageID) {
+func (l *PageList) Remove(id id.PageID) {
 	if l == nil || l.pages == nil {
 		return
 	}
 	l.pages = util.RemoveById[PageID, Page](l.pages, (*Page).Id, id)
 }
 
-func (l *PageList) IndexOf(id PageID) int {
+func (l *PageList) IndexOf(id id.PageID) int {
 	if l == nil || l.pages == nil {
 		return -1
 	}

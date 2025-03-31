@@ -101,19 +101,6 @@ func (r *Property) FindLinkedAll(ctx context.Context, id id.SceneID) (property.L
 	})
 }
 
-func (r *Property) FindByDataset(ctx context.Context, sid id.DatasetSchemaID, did id.DatasetID) (property.List, error) {
-	return r.find(ctx, bson.M{
-		"$or": []bson.M{
-			{"fields.links.dataset": did.String()}, // for compatibility
-			{"items.fields.links.dataset": did.String()},
-			{"items.groups.fields.links.dataset": did.String()},
-			{"fields.links.schema": sid.String()}, // for compatibility
-			{"items.fields.links.schema": sid.String()},
-			{"items.groups.fields.links.schema": sid.String()},
-		},
-	})
-}
-
 func (r *Property) FindBySchema(ctx context.Context, psids []id.PropertySchemaID, sid id.SceneID) (property.List, error) {
 	if len(psids) == 0 || !r.f.CanRead(sid) {
 		return nil, nil

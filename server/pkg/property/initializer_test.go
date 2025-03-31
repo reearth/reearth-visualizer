@@ -3,16 +3,17 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestInitializer_Clone(t *testing.T) {
 	initializer := &Initializer{
-		ID:     NewID().Ref(),
-		Schema: MustSchemaID("reearth/marker"),
+		ID:     id.NewPropertyID().Ref(),
+		Schema: id.MustPropertySchemaID("reearth/marker"),
 		Items: []*InitializerItem{{
-			ID:         NewItemID().Ref(),
-			SchemaItem: SchemaGroupID("hoge"),
+			ID:         id.NewPropertyItemID().Ref(),
+			SchemaItem: id.PropertySchemaGroupID("hoge"),
 		}},
 	}
 
@@ -25,13 +26,13 @@ func TestInitializer_Clone(t *testing.T) {
 }
 
 func TestInitializer_Property(t *testing.T) {
-	sid := NewSceneID()
+	sid := id.NewSceneID()
 	initializer := &Initializer{
-		ID:     NewID().Ref(),
-		Schema: MustSchemaID("reearth/marker"),
+		ID:     id.NewPropertyID().Ref(),
+		Schema: id.MustPropertySchemaID("reearth/marker"),
 		Items: []*InitializerItem{{
-			ID:         NewItemID().Ref(),
-			SchemaItem: SchemaGroupID("hoge"),
+			ID:         id.NewPropertyItemID().Ref(),
+			SchemaItem: id.PropertySchemaGroupID("hoge"),
 		}},
 	}
 
@@ -51,9 +52,9 @@ func TestInitializer_Property(t *testing.T) {
 }
 
 func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
-	sid := NewSceneID()
-	psid := MustSchemaID("reearth/hoge")
-	psid2 := MustSchemaID("reearth/marker")
+	sid := id.NewSceneID()
+	psid := id.MustPropertySchemaID("reearth/hoge")
+	psid2 := id.MustPropertySchemaID("reearth/marker")
 
 	// test case 1: should generate an empty property
 	var initializer *Initializer
@@ -64,11 +65,11 @@ func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
 
 	// test case 2: should returns an error when schema does not match
 	initializer = &Initializer{
-		ID:     NewID().Ref(),
+		ID:     id.NewPropertyID().Ref(),
 		Schema: psid2,
 		Items: []*InitializerItem{{
-			ID:         NewItemID().Ref(),
-			SchemaItem: SchemaGroupID("hoge"),
+			ID:         id.NewPropertyItemID().Ref(),
+			SchemaItem: id.PropertySchemaGroupID("hoge"),
 		}},
 	}
 
@@ -86,19 +87,14 @@ func TestInitializer_PropertyIncludingEmpty(t *testing.T) {
 
 func TestInitializerItem_Clone(t *testing.T) {
 	item := &InitializerItem{
-		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		ID:         id.NewPropertyItemID().Ref(),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 		Groups: []*InitializerGroup{{
-			ID: NewItemID().Ref(),
+			ID: id.NewPropertyItemID().Ref(),
 			Fields: []*InitializerField{{
-				Field: FieldID("name"),
+				Field: id.PropertyFieldID("name"),
 				Type:  ValueTypeString,
 				Value: ValueTypeString.ValueFrom("aaa"),
-				Links: []*InitializerLink{{
-					Dataset: NewDatasetID().Ref(),
-					Schema:  NewDatasetSchemaID(),
-					Field:   NewDatasetFieldID(),
-				}},
 			}},
 		}},
 	}
@@ -115,8 +111,8 @@ func TestInitializerItem_Clone(t *testing.T) {
 
 func TestInitializerItem_PropertyItem(t *testing.T) {
 	item := &InitializerItem{
-		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		ID:         id.NewPropertyItemID().Ref(),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 	}
 
 	expected := NewItem().ID(*item.ID).SchemaGroup(item.SchemaItem).Group().MustBuild()
@@ -133,10 +129,10 @@ func TestInitializerItem_PropertyItem(t *testing.T) {
 
 func TestInitializerItem_PropertyGroup(t *testing.T) {
 	item := &InitializerItem{
-		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		ID:         id.NewPropertyItemID().Ref(),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 		Fields: []*InitializerField{{
-			Field: FieldID("name"),
+			Field: id.PropertyFieldID("name"),
 			Type:  ValueTypeString,
 			Value: ValueTypeString.ValueFrom("aaa"),
 		}},
@@ -157,10 +153,10 @@ func TestInitializerItem_PropertyGroup(t *testing.T) {
 
 func TestInitializerItem_PropertyGroupList(t *testing.T) {
 	item := &InitializerItem{
-		ID:         NewItemID().Ref(),
-		SchemaItem: SchemaGroupID("hoge"),
+		ID:         id.NewPropertyItemID().Ref(),
+		SchemaItem: id.PropertySchemaGroupID("hoge"),
 		Groups: []*InitializerGroup{{
-			ID: NewItemID().Ref(),
+			ID: id.NewPropertyItemID().Ref(),
 		}},
 	}
 
@@ -177,16 +173,11 @@ func TestInitializerItem_PropertyGroupList(t *testing.T) {
 
 func TestInitializerGroup_Clone(t *testing.T) {
 	item := &InitializerGroup{
-		ID: NewItemID().Ref(),
+		ID: id.NewPropertyItemID().Ref(),
 		Fields: []*InitializerField{{
-			Field: FieldID("name"),
+			Field: id.PropertyFieldID("name"),
 			Type:  ValueTypeString,
 			Value: ValueTypeString.ValueFrom("aaa"),
-			Links: []*InitializerLink{{
-				Dataset: NewDatasetID().Ref(),
-				Schema:  NewDatasetSchemaID(),
-				Field:   NewDatasetFieldID(),
-			}},
 		}},
 	}
 
@@ -199,11 +190,11 @@ func TestInitializerGroup_Clone(t *testing.T) {
 }
 
 func TestInitializerGroup_PropertyGroup(t *testing.T) {
-	parentItem := SchemaGroupID("hoge")
+	parentItem := id.PropertySchemaGroupID("hoge")
 	item := &InitializerGroup{
-		ID: NewItemID().Ref(),
+		ID: id.NewPropertyItemID().Ref(),
 		Fields: []*InitializerField{{
-			Field: FieldID("name"),
+			Field: id.PropertyFieldID("name"),
 			Type:  ValueTypeString,
 			Value: ValueTypeString.ValueFrom("aaa"),
 		}},
@@ -228,62 +219,26 @@ func TestInitializerGroup_PropertyGroup(t *testing.T) {
 
 func TestInitializerField_Clone(t *testing.T) {
 	field := &InitializerField{
-		Field: FieldID("name"),
+		Field: id.PropertyFieldID("name"),
 		Type:  ValueTypeString,
 		Value: ValueTypeString.ValueFrom("aaa"),
-		Links: []*InitializerLink{{
-			Dataset: NewDatasetID().Ref(),
-			Schema:  NewDatasetSchemaID(),
-			Field:   NewDatasetFieldID(),
-		}},
 	}
 	cloned := field.Clone()
 
 	assert.NotSame(t, cloned, field)
-	assert.NotSame(t, &cloned.Links, &field.Links)
 	assert.Equal(t, cloned, field)
 }
 
 func TestInitializerField_PropertyField(t *testing.T) {
 	field := &InitializerField{
-		Field: FieldID("name"),
+		Field: id.PropertyFieldID("name"),
 		Type:  ValueTypeString,
 		Value: ValueTypeString.ValueFrom("aaa"),
-		Links: []*InitializerLink{{
-			Dataset: NewDatasetID().Ref(),
-			Schema:  NewDatasetSchemaID(),
-			Field:   NewDatasetFieldID(),
-		}},
 	}
 
 	expected := NewField(field.Field).
 		Value(NewOptionalValue(field.Type, field.Value)).
-		Links(NewLinks([]*Link{NewLink(*field.Links[0].Dataset.CloneRef(), field.Links[0].Schema, field.Links[0].Field)})).
 		MustBuild()
 
 	assert.Equal(t, expected, field.PropertyField())
-}
-
-func TestInitializerLink_Clone(t *testing.T) {
-	link := &InitializerLink{
-		Dataset: NewDatasetID().Ref(),
-		Schema:  NewDatasetSchemaID(),
-		Field:   NewDatasetFieldID(),
-	}
-	cloned := link.Clone()
-
-	assert.NotSame(t, cloned, link)
-	assert.Equal(t, cloned, link)
-}
-
-func TestInitializerLink_PropertyLink(t *testing.T) {
-	link := &InitializerLink{
-		Dataset: NewDatasetID().Ref(),
-		Schema:  NewDatasetSchemaID(),
-		Field:   NewDatasetFieldID(),
-	}
-
-	expected := NewLink(*link.Dataset.CloneRef(), link.Schema, link.Field)
-
-	assert.Equal(t, expected, link.PropertyLink())
 }

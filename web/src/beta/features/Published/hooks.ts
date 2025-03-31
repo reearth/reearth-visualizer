@@ -1,3 +1,4 @@
+import { ViewerProperty } from "@reearth/beta/features/Editor/Visualizer/type";
 import {
   InternalWidget,
   WidgetAlignSystem,
@@ -11,7 +12,7 @@ import {
   sceneProperty2ViewerPropertyMapping
 } from "@reearth/beta/utils/convert-object";
 import type { Camera } from "@reearth/beta/utils/value";
-import { ViewerProperty, MapRef } from "@reearth/core";
+import { MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
 import { useState, useMemo, useEffect, useRef } from "react";
 
@@ -19,6 +20,7 @@ import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
 import { processProperty } from "./convert";
 import { processLayers, processNewProperty } from "./convert-new-property";
+import { convertNLSLayers } from "./convert-nls-layers";
 import { useGA } from "./googleAnalytics/useGA";
 import type {
   PublishedData,
@@ -255,6 +257,11 @@ export default (alias?: string) => {
     }));
   }, [data?.nlsLayers, data?.layerStyles, story]);
 
+  const nlsLayers = useMemo(
+    () => convertNLSLayers(data?.nlsLayers),
+    [data?.nlsLayers]
+  );
+
   useEffect(() => {
     const url = dataUrl(actualAlias);
     (async () => {
@@ -307,6 +314,7 @@ export default (alias?: string) => {
     viewerProperty,
     pluginProperty,
     layers,
+    nlsLayers,
     widgets,
     widgetThemeOptions,
     story,

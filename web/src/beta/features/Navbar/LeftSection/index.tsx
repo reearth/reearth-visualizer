@@ -4,6 +4,7 @@ import {
   PopupMenu,
   PopupMenuItem
 } from "@reearth/beta/lib/reearth-ui";
+import Tooltip from "@reearth/beta/lib/reearth-ui/components/Tooltip";
 import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -73,6 +74,7 @@ const LeftSection: React.FC<Props> = ({
         icon: "downloadSimple",
         id: "export",
         title: t("Export"),
+        tileComponent: <Tooltip type="experimental" />,
         onClick: handleExportProject
       }
     ],

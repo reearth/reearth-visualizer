@@ -3,6 +3,7 @@ package property
 import (
 	"testing"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ var (
 )
 
 func TestGroupList_IDRef(t *testing.T) {
-	id := NewItemID()
+	id := id.NewPropertyItemID()
 	assert.Nil(t, (*GroupList)(nil).IDRef())
 	assert.Equal(t, &id, (&GroupList{
 		itemBase: itemBase{ID: id},
@@ -22,17 +23,17 @@ func TestGroupList_SchemaRef(t *testing.T) {
 	tests := []struct {
 		Name           string
 		GL             *GroupList
-		ExpectedSG     *SchemaGroupID
-		ExpectedSchema *SchemaID
+		ExpectedSG     *id.PropertySchemaGroupID
+		ExpectedSchema *id.PropertySchemaID
 	}{
 		{
 			Name: "nil group list",
 		},
 		{
 			Name:           "success",
-			GL:             NewGroupList().NewID().SchemaGroup(SchemaGroupID("xx")).MustBuild(),
-			ExpectedSG:     SchemaGroupID("xx").Ref(),
-			ExpectedSchema: MustSchemaID("xx~1.0.0/aa").Ref(),
+			GL:             NewGroupList().NewID().SchemaGroup(id.PropertySchemaGroupID("xx")).MustBuild(),
+			ExpectedSG:     id.PropertySchemaGroupID("xx").Ref(),
+			ExpectedSchema: id.MustPropertySchemaID("xx~1.0.0/aa").Ref(),
 		},
 	}
 
@@ -45,142 +46,12 @@ func TestGroupList_SchemaRef(t *testing.T) {
 	}
 }
 
-func TestGroupList_HasLinkedField(t *testing.T) {
-	pid := NewItemID()
-	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFrom("vvv")
-	dsid := NewDatasetID()
-	dssid := NewDatasetSchemaID()
-	f := FieldFrom(sf).
-		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
-		MustBuild()
-	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
-	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
-
-	tests := []struct {
-		Name     string
-		GL       *GroupList
-		Expected bool
-	}{
-		{
-			Name: "nil group list",
-		},
-		{
-			Name:     "has linked field",
-			GL:       NewGroupList().NewID().SchemaGroup("xx").Groups(groups).MustBuild(),
-			Expected: true,
-		},
-		{
-			Name:     "no linked field",
-			GL:       NewGroupList().NewID().SchemaGroup("xx").Groups(groups2).MustBuild(),
-			Expected: false,
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, tc.Expected, tc.GL.HasLinkedField())
-			assert.Equal(t, tc.Expected, tc.GL.IsDatasetLinked(dssid, dsid))
-		})
-	}
-}
-
-func TestGroupList_Datasets(t *testing.T) {
-	pid := NewItemID()
-	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFrom("vvv")
-	dsid := NewDatasetID()
-	dssid := NewDatasetSchemaID()
-	f := FieldFrom(sf).
-		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
-		MustBuild()
-	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
-	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
-
-	tests := []struct {
-		Name     string
-		GL       *GroupList
-		Expected []DatasetID
-	}{
-		{
-			Name: "nil group list",
-		},
-		{
-			Name:     "one dataset",
-			GL:       NewGroupList().NewID().SchemaGroup("xx").Groups(groups).MustBuild(),
-			Expected: []DatasetID{dsid},
-		},
-		{
-			Name:     "empty list",
-			GL:       NewGroupList().NewID().SchemaGroup("xx").Groups(groups2).MustBuild(),
-			Expected: []DatasetID{},
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, tc.Expected, tc.GL.Datasets())
-		})
-	}
-}
-
-func TestGroupList_FieldsByLinkedDataset(t *testing.T) {
-	pid := NewItemID()
-	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
-	v := ValueTypeString.ValueFrom("vvv")
-	dsid := NewDatasetID()
-	dssid := NewDatasetSchemaID()
-	f := FieldFrom(sf).
-		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
-		MustBuild()
-	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
-	groups2 := []*Group{NewGroup().ID(pid).SchemaGroup("xx").MustBuild()}
-
-	tests := []struct {
-		Name     string
-		GL       *GroupList
-		Expected []*Field
-	}{
-		{
-			Name: "nil group list",
-		},
-		{
-			Name:     "one field list",
-			GL:       NewGroupList().NewID().SchemaGroup("xx").Groups(groups).MustBuild(),
-			Expected: []*Field{f},
-		},
-		{
-			Name:     "empty list",
-			GL:       NewGroupList().NewID().SchemaGroup("xx").Groups(groups2).MustBuild(),
-			Expected: []*Field{},
-		},
-	}
-
-	for _, tc := range tests {
-		tc := tc
-		t.Run(tc.Name, func(t *testing.T) {
-			t.Parallel()
-			assert.Equal(t, tc.Expected, tc.GL.FieldsByLinkedDataset(dssid, dsid))
-		})
-	}
-}
-
 func TestGroupList_IsEmpty(t *testing.T) {
-	pid := NewItemID()
+	pid := id.NewPropertyItemID()
 	sf := NewSchemaField().ID("a").Type(ValueTypeString).MustBuild()
 	v := ValueTypeString.ValueFrom("vvv")
-	dsid := NewDatasetID()
-	dssid := NewDatasetSchemaID()
 	f := FieldFrom(sf).
 		Value(OptionalValueFrom(v)).
-		Links(&Links{links: []*Link{NewLink(dsid, dssid, NewDatasetFieldID())}}).
 		MustBuild()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 
@@ -218,7 +89,7 @@ func TestGroupList_Prune(t *testing.T) {
 	v := ValueTypeString.ValueFrom("vvv")
 	f := FieldFrom(sf).Value(OptionalValueFrom(v)).MustBuild()
 	f2 := FieldFrom(sf).MustBuild()
-	pid := NewItemID()
+	pid := id.NewPropertyItemID()
 	groups := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f, f2}).MustBuild()}
 	pruned := []*Group{NewGroup().ID(pid).SchemaGroup("xx").Fields([]*Field{f}).MustBuild()}
 
@@ -248,12 +119,12 @@ func TestGroupList_Prune(t *testing.T) {
 }
 
 func TestGroupList_Group(t *testing.T) {
-	pid := NewItemID()
+	pid := id.NewPropertyItemID()
 	g := NewGroup().ID(pid).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
-		Input    ItemID
+		Input    id.PropertyItemID
 		GL       *GroupList
 		Expected *Group
 	}{
@@ -268,7 +139,7 @@ func TestGroupList_Group(t *testing.T) {
 		},
 		{
 			Name:     "not found",
-			Input:    NewItemID(),
+			Input:    id.NewPropertyItemID(),
 			GL:       NewGroupList().NewID().SchemaGroup("xx").Groups([]*Group{g}).MustBuild(),
 			Expected: nil,
 		},
@@ -284,10 +155,10 @@ func TestGroupList_Group(t *testing.T) {
 }
 
 func TestGroupList_GroupAt(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -324,14 +195,14 @@ func TestGroupList_GroupAt(t *testing.T) {
 }
 
 func TestGroupList_Has(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
-		Input    ItemID
+		Input    id.PropertyItemID
 		GL       *GroupList
 		Expected bool
 	}{
@@ -362,10 +233,10 @@ func TestGroupList_Has(t *testing.T) {
 }
 
 func TestGroupList_Count(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -392,10 +263,10 @@ func TestGroupList_Count(t *testing.T) {
 }
 
 func TestGroupList_Add(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -449,10 +320,10 @@ func TestGroupList_Add(t *testing.T) {
 }
 
 func TestGroupList_AddOrMove(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -519,17 +390,17 @@ func TestGroupList_AddOrMove(t *testing.T) {
 }
 
 func TestGroupList_Move(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name          string
 		GL            *GroupList
-		ID            ItemID
+		ID            id.PropertyItemID
 		ToIndex       int
-		ExpectedID    ItemID
+		ExpectedID    id.PropertyItemID
 		ExpectedIndex int
 	}{
 		{
@@ -559,10 +430,10 @@ func TestGroupList_Move(t *testing.T) {
 }
 
 func TestGroupList_MoveAt(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name               string
@@ -607,10 +478,10 @@ func TestGroupList_MoveAt(t *testing.T) {
 }
 
 func TestGroupList_RemoveAt(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -651,15 +522,15 @@ func TestGroupList_RemoveAt(t *testing.T) {
 	}
 }
 func TestGroupList_Remove(t *testing.T) {
-	g1 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g2 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g3 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
-	g4 := NewGroup().ID(NewItemID()).SchemaGroup("xx").MustBuild()
+	g1 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g2 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g3 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
+	g4 := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup("xx").MustBuild()
 
 	tests := []struct {
 		Name     string
 		GL       *GroupList
-		Input    ItemID
+		Input    id.PropertyItemID
 		Expected bool
 	}{
 		{
@@ -692,8 +563,8 @@ func TestGroupList_Remove(t *testing.T) {
 func TestGroupList_GetOrCreateField(t *testing.T) {
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").Fields([]*SchemaField{sf}).MustBuild()
-	g := NewGroup().ID(NewItemID()).SchemaGroup(sg.ID()).MustBuild()
-	s := NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild()
+	g := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup(sg.ID()).MustBuild()
+	s := NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild()
 
 	tests := []struct {
 		Name       string
@@ -746,7 +617,7 @@ func TestGroupList_CreateAndAddListItem(t *testing.T) {
 	getIntRef := func(i int) *int { return &i }
 	sf := NewSchemaField().ID("aa").Type(ValueTypeString).MustBuild()
 	sg := NewSchemaGroup().ID("aa").Fields([]*SchemaField{sf}).MustBuild()
-	g := NewGroup().ID(NewItemID()).SchemaGroup(sg.ID()).MustBuild()
+	g := NewGroup().ID(id.NewPropertyItemID()).SchemaGroup(sg.ID()).MustBuild()
 
 	tests := []struct {
 		Name     string
@@ -759,7 +630,7 @@ func TestGroupList_CreateAndAddListItem(t *testing.T) {
 			Name:     "success",
 			Index:    getIntRef(0),
 			GL:       NewGroupList().NewID().SchemaGroup("aa").MustBuild(),
-			Schema:   NewSchema().ID(MustSchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
+			Schema:   NewSchema().ID(id.MustPropertySchemaID("xx~1.0.0/aa")).Groups(NewSchemaGroupList([]*SchemaGroup{sg})).MustBuild(),
 			Expected: g,
 		},
 	}

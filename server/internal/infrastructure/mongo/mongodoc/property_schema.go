@@ -3,7 +3,6 @@ package mongodoc
 import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"golang.org/x/exp/slices"
 )
 
@@ -122,7 +121,7 @@ func NewPropertySchema(m *property.Schema) (*PropertySchemaDocument, string) {
 	}, id
 }
 
-func NewPropertySchemas(ps []*property.Schema, f scene.IDList) ([]interface{}, []string) {
+func NewPropertySchemas(ps []*property.Schema, f id.SceneIDList) ([]interface{}, []string) {
 	if ps == nil {
 		return nil, nil
 	}
@@ -294,8 +293,8 @@ func toModelPropertyPointer(p *PropertySchemaFieldPointerDocument) *property.Sch
 		return nil
 	}
 	return &property.SchemaFieldPointer{
-		SchemaGroup: property.SchemaGroupID(p.SchemaGroupID),
-		Field:       property.FieldID(p.FieldID),
+		SchemaGroup: id.PropertySchemaGroupID(p.SchemaGroupID),
+		Field:       id.PropertyFieldID(p.FieldID),
 	}
 }
 

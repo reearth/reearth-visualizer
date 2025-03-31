@@ -37,23 +37,6 @@ import convertInfobox from "./convert-infobox";
 
 export type P = { [key in string]: any };
 
-export type DatasetMap = Record<string, Datasets>;
-
-export type Datasets = {
-  // JSON schema
-  schema: {
-    $schema: string;
-    $id: string;
-    properties: Record<
-      string,
-      {
-        $id: string;
-      }
-    >;
-  };
-  datasets: Record<string, any>[];
-};
-
 export type Widget = Omit<RawWidget, "layout" | "extended"> & {
   extended?: boolean;
 };
@@ -103,7 +86,7 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: processProperty(w.property, undefined, undefined, undefined)
+        property: processProperty(w.property, undefined)
       })
     );
 
@@ -119,7 +102,7 @@ export const convertWidgets = (
         extended: !!w.extended,
         pluginId: w.pluginId,
         extensionId: w.extensionId,
-        property: processProperty(w.property, undefined, undefined, undefined)
+        property: processProperty(w.property, undefined)
       })
     );
 
@@ -191,9 +174,7 @@ export const convertWidgets = (
 
 export const processProperty = (
   parent: PropertyFragmentFragment | null | undefined,
-  orig?: PropertyFragmentFragment | null | undefined,
-  linkedDatasetId?: string | null | undefined,
-  datasets?: DatasetMap | null | undefined
+  orig?: PropertyFragmentFragment | null | undefined
 ): P | undefined => {
   const schema = orig?.schema || parent?.schema;
   if (!schema) return;
@@ -224,16 +205,7 @@ export const processProperty = (
           if (schema.isList) {
             return [key, undefined];
           }
-          return [
-            key,
-            processPropertyGroups(
-              schema,
-              undefined,
-              undefined,
-              linkedDatasetId,
-              datasets
-            )
-          ];
+          return [key, processPropertyGroups(schema, undefined, undefined)];
         }
 
         if (
@@ -244,13 +216,7 @@ export const processProperty = (
           return [
             key,
             used?.groups.map((g) => ({
-              ...processPropertyGroups(
-                schema,
-                g,
-                undefined,
-                linkedDatasetId,
-                datasets
-              ),
+              ...processPropertyGroups(schema, g, undefined),
               id: g.id
             }))
           ];
@@ -260,16 +226,7 @@ export const processProperty = (
           (!orig || orig.__typename === "PropertyGroup") &&
           (!parent || parent.__typename === "PropertyGroup")
         ) {
-          return [
-            key,
-            processPropertyGroups(
-              schema,
-              parent,
-              orig,
-              linkedDatasetId,
-              datasets
-            )
-          ];
+          return [key, processPropertyGroups(schema, parent, orig)];
         }
         return [key, null];
       })
@@ -282,9 +239,7 @@ export const processProperty = (
 const processPropertyGroups = (
   schema: PropertySchemaGroupFragmentFragment,
   parent: PropertyGroupFragmentFragment | null | undefined,
-  original: PropertyGroupFragmentFragment | null | undefined,
-  linkedDatasetId: string | null | undefined,
-  datasets: DatasetMap | null | undefined
+  original: PropertyGroupFragmentFragment | null | undefined
 ): any => {
   const allFields: Record<
     string,
@@ -310,43 +265,10 @@ const processPropertyGroups = (
       .map(([key, { parent, orig }]) => {
         const used = orig || parent;
         if (!used) return [key, null];
-
-        const datasetSchemaId = used?.links?.[0]?.datasetSchemaId;
-        const datasetFieldId = used?.links?.[0]?.datasetSchemaFieldId;
-        if (datasetSchemaId && linkedDatasetId && datasetFieldId) {
-          return [
-            key,
-            datasetValue(
-              datasets,
-              datasetSchemaId,
-              linkedDatasetId,
-              datasetFieldId
-            )
-          ];
-        }
-
         return [key, valueFromGQL(used.value, used.type)?.value];
       })
       .filter(([, value]) => typeof value !== "undefined" && value !== null)
   );
-};
-
-export const datasetValue = (
-  datasets: DatasetMap | null | undefined,
-  datasetSchemaId: string,
-  datasetId: string,
-  fieldId: string
-) => {
-  const dataset = datasets?.[datasetSchemaId];
-  if (!dataset?.schema) return;
-
-  const fieldName = Object.entries(dataset.schema.properties).find(([, v]) => {
-    const id = v["$id"].split("/").slice(-1)[0];
-    return id === fieldId;
-  })?.[0];
-
-  if (!fieldName) return;
-  return dataset.datasets.find((d) => d[""] === datasetId)?.[fieldName];
 };
 
 export const valueFromGQL = (val: any, type: GQLValueType) => {

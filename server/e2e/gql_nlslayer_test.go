@@ -259,91 +259,118 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 	fetchSceneRequestBody := GraphQLRequest{
 		OperationName: "GetScene",
 		Query: `query GetScene($sceneId: ID!) {
-		  node(id: $sceneId, type: SCENE) {
-			id
-			... on Scene {
-			  newLayers {
-				id
-				index
-				title
-				layerType
-				config
-				infobox {
-					id
-					blocks {
-						id
-						propertyId
-						property {
-						  id
-						  items {
-							  ... on PropertyGroup {
-								fields {
-								  id	
-								  value
-								  type
-								}
-							  }
-							}
-						}
-					}
-				}
-				isSketch
-				sketch {
-					customPropertySchema
-					featureCollection {
-						type
-						features {
-							id
-							type
-							properties
-							geometry {
-								... on Point {
-									type
-									pointCoordinates
-								}
-								... on LineString {
-									type
-									lineStringCoordinates
-								}
-								... on Polygon {
-									type
-									polygonCoordinates
-								}
-								... on MultiPolygon {
-									type
-									multiPolygonCoordinates
-								}
-								... on GeometryCollection {
-									type
-									geometries {
-										... on Point {
-											type
-											pointCoordinates
-										}
-										... on LineString {
-											type
-											lineStringCoordinates
-										}
-										... on Polygon {
-											type
-											polygonCoordinates
-										}
-										... on MultiPolygon {
-											type
-											multiPolygonCoordinates
-										}
-									}
-								}
-							}
-						}
-					}
-		 	  }
-		 	  }
-			  __typename
-			}
-			__typename
-		  }
-		}`,
+  node(id: $sceneId, type: SCENE) {
+    id
+    ... on Scene {
+      newLayers {
+        id
+        index
+        title
+        layerType
+        config
+        infobox {
+          id
+          property {
+            id
+            items {
+              ... on PropertyGroup {
+                fields {
+                  id
+                  value
+                  type
+                }
+              }
+            }
+          }
+          blocks {
+            id
+            propertyId
+            property {
+              id
+              items {
+                ... on PropertyGroup {
+                  fields {
+                    id
+                    value
+                    type
+                  }
+                }
+              }
+            }
+          }
+        }
+        photoOverlay {
+          id
+          property {
+            id
+            items {
+              ... on PropertyGroup {
+                fields {
+                  id
+                  value
+                  type
+                }
+              }
+            }
+          }
+        }
+        isSketch
+        sketch {
+          customPropertySchema
+          featureCollection {
+            type
+            features {
+              id
+              type
+              properties
+              geometry {
+                ... on Point {
+                  type
+                  pointCoordinates
+                }
+                ... on LineString {
+                  type
+                  lineStringCoordinates
+                }
+                ... on Polygon {
+                  type
+                  polygonCoordinates
+                }
+                ... on MultiPolygon {
+                  type
+                  multiPolygonCoordinates
+                }
+                ... on GeometryCollection {
+                  type
+                  geometries {
+                    ... on Point {
+                      type
+                      pointCoordinates
+                    }
+                    ... on LineString {
+                      type
+                      lineStringCoordinates
+                    }
+                    ... on Polygon {
+                      type
+                      polygonCoordinates
+                    }
+                    ... on MultiPolygon {
+                      type
+                      multiPolygonCoordinates
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      __typename
+    }
+    __typename
+  }
+}`,
 		Variables: map[string]any{
 			"sceneId": sID,
 		},
@@ -499,7 +526,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }
 
-func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string) {
+func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateNLSInfobox",
 		Query: `mutation CreateNLSInfobox($layerId: ID!) {
@@ -509,6 +536,7 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 					infobox {
 						id
 						layerId
+						propertyId
 					}
 				}
 			}
@@ -527,7 +555,45 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 		Value("infobox").Object().
 		HasValue("layerId", layerId)
 
-	return requestBody, res, res.Path("$.data.createNLSInfobox.layer.infobox.id").Raw().(string)
+	infobox := res.Path("$.data.createNLSInfobox.layer.infobox")
+	lId := infobox.Object().Value("layerId").Raw().(string)
+	pId := infobox.Object().Value("propertyId").Raw().(string)
+	return requestBody, res, lId, pId
+}
+
+func createPhotoOverlay(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateNLSPhotoOverlay",
+		Query: `mutation CreateNLSPhotoOverlay($layerId: ID!) {
+			createNLSPhotoOverlay( input: {layerId: $layerId} ) { 
+				layer {
+					id
+					photoOverlay {
+						id
+						layerId
+						propertyId
+					}
+				}
+			}
+		}`,
+		Variables: map[string]any{
+			"layerId": layerId,
+		},
+	}
+
+	res := Request(e, uID.String(), requestBody)
+
+	res.Object().
+		Value("data").Object().
+		Value("createNLSPhotoOverlay").Object().
+		Value("layer").Object().
+		Value("photoOverlay").Object().
+		HasValue("layerId", layerId)
+
+	photooverlay := res.Path("$.data.createNLSPhotoOverlay.layer.photoOverlay")
+	lId := photooverlay.Object().Value("layerId").Raw().(string)
+	pId := photooverlay.Object().Value("propertyId").Raw().(string)
+	return requestBody, res, lId, pId
 }
 
 // func removeNLSInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
@@ -734,7 +800,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("newLayers").Array().
 		Length().IsEqual(1)
 
-	_, _, _ = createInfobox(e, layerId)
+	_, _, _, _ = createInfobox(e, layerId)
 
 	_, res = fetchSceneForNewLayers(e, sId)
 	res.Object().
@@ -772,6 +838,96 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("data").Object().
 		Value("node").Object().
 		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
+}
+
+func TestInfoboxProperty(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	pId := createProject(e, "test")
+	_, _, sId := createScene(e, pId)
+
+	// fetch scene
+	_, res := fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().IsEqual(0)
+
+	// Add NLSLayer
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().IsEqual(1)
+
+	_, _, _, propertyId := createInfobox(e, layerId)
+
+	// --- position Property
+	_, r := updatePropertyValue(e, propertyId, "default", "", "position", "left", "STRING")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("left")
+
+	// --- padding Property
+	_, r = updatePropertyValue(e, propertyId, "default", "", "padding", map[string]any{
+		"top":    11,
+		"bottom": 12,
+		"left":   13,
+		"right":  14,
+	}, "SPACING")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(map[string]any{
+		"top":    11,
+		"bottom": 12,
+		"left":   13,
+		"right":  14,
+	})
+
+	// --- gap Property
+	_, r = updatePropertyValue(e, propertyId, "default", "", "gap", 10, "NUMBER")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(10)
+
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Path("$.data.node.newLayers[0].infobox.property.items[0].fields").
+		Array().Length().IsEqual(3)
+}
+
+func TestPhotoOverlayProperty(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	pId := createProject(e, "test")
+	_, _, sId := createScene(e, pId)
+
+	// fetch scene
+	_, res := fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().IsEqual(0)
+
+	// Add NLSLayer
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Object().
+		Value("data").Object().
+		Value("node").Object().
+		Value("newLayers").Array().
+		Length().IsEqual(1)
+
+	_, _, _, propertyId := createPhotoOverlay(e, layerId)
+
+	// --- enabled Property
+	_, r := updatePropertyValue(e, propertyId, "default", "", "enabled", true, "BOOL")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(true)
+
+	// --- cameraDuration Property
+	_, r = updatePropertyValue(e, propertyId, "default", "", "cameraDuration", 3, "NUMBER")
+	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(3)
+
+	_, res = fetchSceneForNewLayers(e, sId)
+	res.Path("$.data.node.newLayers[0].photoOverlay.property.items[0].fields").
+		Array().Length().IsEqual(2)
 }
 
 func updateCustomProperties(

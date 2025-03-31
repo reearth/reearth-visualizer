@@ -2,6 +2,7 @@ package property
 
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type SchemaFieldChoiceBuilder struct {
@@ -14,7 +15,7 @@ func NewSchemaFieldChoice() *SchemaFieldChoiceBuilder {
 
 func (b *SchemaFieldChoiceBuilder) Build() (*SchemaFieldChoice, error) {
 	if b.p.Key == "" {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	return b.p, nil
 }
