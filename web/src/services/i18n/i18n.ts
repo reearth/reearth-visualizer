@@ -23,6 +23,7 @@ export const SUPPORTED_LANGUAGES = {
 } as const;
 
 i18n.use(LanguageDetector).use(initReactI18next).init({
+  supportedLngs: availableLanguages,
   resources,
   fallbackLng: "en",
   // allow keys to be phrases having `:`, `.`
