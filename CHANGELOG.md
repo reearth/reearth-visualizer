@@ -2,6 +2,125 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.5.0 - 2025-03-31
+
+### Web
+
+#### 🚀 Features
+
+- Support set photo overlay on layer inspector [VIZ-1349] ([#1522](https://github.com/reearth/reearth-visualizer/pull/1522)) [`801620`](https://github.com/reearth/reearth-visualizer/commit/801620)
+
+#### 🔧 Bug Fixes
+
+- Add supportedLangs to i18n initializer [VIZ-1412] ([#1536](https://github.com/reearth/reearth-visualizer/pull/1536)) [`405405`](https://github.com/reearth/reearth-visualizer/commit/405405)
+- Edit sketch custom properties [VIZ-1429] ([#1531](https://github.com/reearth/reearth-visualizer/pull/1531)) [`2003af`](https://github.com/reearth/reearth-visualizer/commit/2003af)
+
+#### ✨ Refactor
+
+- Add experimental icon to project settings dropdown export button ([#1534](https://github.com/reearth/reearth-visualizer/pull/1534)) [`7c4923`](https://github.com/reearth/reearth-visualizer/commit/7c4923)
+- Plugin playground presets - refactor presets styling [VIZ-1384] ([#1495](https://github.com/reearth/reearth-visualizer/pull/1495)) [`2586d9`](https://github.com/reearth/reearth-visualizer/commit/2586d9)
+- Remove api key input for google map photorealistics [VIZ-1411] ([#1524](https://github.com/reearth/reearth-visualizer/pull/1524)) [`dca0d7`](https://github.com/reearth/reearth-visualizer/commit/dca0d7)
+- Support  tooltip on icon button [VIZ-1401] ([#1514](https://github.com/reearth/reearth-visualizer/pull/1514)) [`92d9b8`](https://github.com/reearth/reearth-visualizer/commit/92d9b8)
+- Implement a permission table on FE[VIZ-1400] ([#1518](https://github.com/reearth/reearth-visualizer/pull/1518)) [`040e53`](https://github.com/reearth/reearth-visualizer/commit/040e53)
+- Plugin playground presets - refactor screenshot example [VIZ-1414] ([#1507](https://github.com/reearth/reearth-visualizer/pull/1507)) [`06134e`](https://github.com/reearth/reearth-visualizer/commit/06134e)
+- Add reference to developer documentation links in plugin playground [VIZ-1410] ([#1506](https://github.com/reearth/reearth-visualizer/pull/1506)) [`1a88f5`](https://github.com/reearth/reearth-visualizer/commit/1a88f5)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.5.0 ([#1535](https://github.com/reearth/reearth-visualizer/pull/1535)) [`928ba0`](https://github.com/reearth/reearth-visualizer/commit/928ba0)
+- Remove support for 2D&#x2F;2.5D mode ([#1519](https://github.com/reearth/reearth-visualizer/pull/1519)) [`3e423e`](https://github.com/reearth/reearth-visualizer/commit/3e423e)
+- Camera type correction [VIZ-1355] ([#1509](https://github.com/reearth/reearth-visualizer/pull/1509)) [`b06d0e`](https://github.com/reearth/reearth-visualizer/commit/b06d0e)
+- Support kmz file in kml format [VIZ-1402] ([#1513](https://github.com/reearth/reearth-visualizer/pull/1513)) [`ca9cce`](https://github.com/reearth/reearth-visualizer/commit/ca9cce)
+
+### Server
+
+#### 🚀 Features
+
+- Add db index [VIZ-1406] ([#1505](https://github.com/reearth/reearth-visualizer/pull/1505)) [`68d14b`](https://github.com/reearth/reearth-visualizer/commit/68d14b)
+- Add data deletion process [VIZ-1419] ([#1520](https://github.com/reearth/reearth-visualizer/pull/1520)) [`46a083`](https://github.com/reearth/reearth-visualizer/commit/46a083)
+- Add photoOverlay property  [VIZ-1340]  ([#1508](https://github.com/reearth/reearth-visualizer/pull/1508)) [`4f8f0f`](https://github.com/reearth/reearth-visualizer/commit/4f8f0f)
+- Remove unnecessary code [VIZ-BE-582] ([#1458](https://github.com/reearth/reearth-visualizer/pull/1458)) [`55cd40`](https://github.com/reearth/reearth-visualizer/commit/55cd40)
+
+#### Miscellaneous Tasks
+
+- Remaining ID refactoring [VIZ-574] ([#1517](https://github.com/reearth/reearth-visualizer/pull/1517)) [`1bb86b`](https://github.com/reearth/reearth-visualizer/commit/1bb86b)
+- Refactoring id scene [VIZ-BE-574] ([#1516](https://github.com/reearth/reearth-visualizer/pull/1516)) [`e8a438`](https://github.com/reearth/reearth-visualizer/commit/e8a438)
+- Refactoring id project and workspace [VIZ-BE-574] ([#1515](https://github.com/reearth/reearth-visualizer/pull/1515)) [`26615f`](https://github.com/reearth/reearth-visualizer/commit/26615f)
+
+### Misc
+
+#### 
+
+- Vv1.0.0 [`d34bca`](https://github.com/reearth/reearth-visualizer/commit/d34bca)
+
+### server, web
+
+#### Miscellaneous Tasks
+
+- Remove ArcGIS terrain [VIZ-1424] ([#1525](https://github.com/reearth/reearth-visualizer/pull/1525)) [`837aa0`](https://github.com/reearth/reearth-visualizer/commit/837aa0)
+
+### 
+
+#### 
+
+- Vv1.0.0 [`d34bca`](https://github.com/reearth/reearth-visualizer/commit/d34bca)
+
+## 1.0.0 - 2025-03-31
+
+### Web
+
+#### 🚀 Features
+
+- Support set photo overlay on layer inspector [VIZ-1349] ([#1522](https://github.com/reearth/reearth-visualizer/pull/1522)) [`801620`](https://github.com/reearth/reearth-visualizer/commit/801620)
+
+#### 🔧 Bug Fixes
+
+- Add supportedLangs to i18n initializer [VIZ-1412] ([#1536](https://github.com/reearth/reearth-visualizer/pull/1536)) [`405405`](https://github.com/reearth/reearth-visualizer/commit/405405)
+- Edit sketch custom properties [VIZ-1429] ([#1531](https://github.com/reearth/reearth-visualizer/pull/1531)) [`2003af`](https://github.com/reearth/reearth-visualizer/commit/2003af)
+
+#### ✨ Refactor
+
+- Add experimental icon to project settings dropdown export button ([#1534](https://github.com/reearth/reearth-visualizer/pull/1534)) [`7c4923`](https://github.com/reearth/reearth-visualizer/commit/7c4923)
+- Plugin playground presets - refactor presets styling [VIZ-1384] ([#1495](https://github.com/reearth/reearth-visualizer/pull/1495)) [`2586d9`](https://github.com/reearth/reearth-visualizer/commit/2586d9)
+- Remove api key input for google map photorealistics [VIZ-1411] ([#1524](https://github.com/reearth/reearth-visualizer/pull/1524)) [`dca0d7`](https://github.com/reearth/reearth-visualizer/commit/dca0d7)
+- Support  tooltip on icon button [VIZ-1401] ([#1514](https://github.com/reearth/reearth-visualizer/pull/1514)) [`92d9b8`](https://github.com/reearth/reearth-visualizer/commit/92d9b8)
+- Implement a permission table on FE[VIZ-1400] ([#1518](https://github.com/reearth/reearth-visualizer/pull/1518)) [`040e53`](https://github.com/reearth/reearth-visualizer/commit/040e53)
+- Plugin playground presets - refactor screenshot example [VIZ-1414] ([#1507](https://github.com/reearth/reearth-visualizer/pull/1507)) [`06134e`](https://github.com/reearth/reearth-visualizer/commit/06134e)
+- Add reference to developer documentation links in plugin playground [VIZ-1410] ([#1506](https://github.com/reearth/reearth-visualizer/pull/1506)) [`1a88f5`](https://github.com/reearth/reearth-visualizer/commit/1a88f5)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.5.0 ([#1535](https://github.com/reearth/reearth-visualizer/pull/1535)) [`928ba0`](https://github.com/reearth/reearth-visualizer/commit/928ba0)
+- Remove support for 2D&#x2F;2.5D mode ([#1519](https://github.com/reearth/reearth-visualizer/pull/1519)) [`3e423e`](https://github.com/reearth/reearth-visualizer/commit/3e423e)
+- Camera type correction [VIZ-1355] ([#1509](https://github.com/reearth/reearth-visualizer/pull/1509)) [`b06d0e`](https://github.com/reearth/reearth-visualizer/commit/b06d0e)
+- Support kmz file in kml format [VIZ-1402] ([#1513](https://github.com/reearth/reearth-visualizer/pull/1513)) [`ca9cce`](https://github.com/reearth/reearth-visualizer/commit/ca9cce)
+
+### Server
+
+#### 🚀 Features
+
+- Add db index [VIZ-1406] ([#1505](https://github.com/reearth/reearth-visualizer/pull/1505)) [`68d14b`](https://github.com/reearth/reearth-visualizer/commit/68d14b)
+- Add data deletion process [VIZ-1419] ([#1520](https://github.com/reearth/reearth-visualizer/pull/1520)) [`46a083`](https://github.com/reearth/reearth-visualizer/commit/46a083)
+- Add photoOverlay property  [VIZ-1340]  ([#1508](https://github.com/reearth/reearth-visualizer/pull/1508)) [`4f8f0f`](https://github.com/reearth/reearth-visualizer/commit/4f8f0f)
+- Remove unnecessary code [VIZ-BE-582] ([#1458](https://github.com/reearth/reearth-visualizer/pull/1458)) [`55cd40`](https://github.com/reearth/reearth-visualizer/commit/55cd40)
+
+#### Miscellaneous Tasks
+
+- Remaining ID refactoring [VIZ-574] ([#1517](https://github.com/reearth/reearth-visualizer/pull/1517)) [`1bb86b`](https://github.com/reearth/reearth-visualizer/commit/1bb86b)
+- Refactoring id scene [VIZ-BE-574] ([#1516](https://github.com/reearth/reearth-visualizer/pull/1516)) [`e8a438`](https://github.com/reearth/reearth-visualizer/commit/e8a438)
+- Refactoring id project and workspace [VIZ-BE-574] ([#1515](https://github.com/reearth/reearth-visualizer/pull/1515)) [`26615f`](https://github.com/reearth/reearth-visualizer/commit/26615f)
+
+### Misc
+
+
+### server, web
+
+#### Miscellaneous Tasks
+
+- Remove ArcGIS terrain [VIZ-1424] ([#1525](https://github.com/reearth/reearth-visualizer/pull/1525)) [`837aa0`](https://github.com/reearth/reearth-visualizer/commit/837aa0)
+
+###
+
 ## 1.0.0-beta.4.1 - 2025-03-18
 
 ### Web
