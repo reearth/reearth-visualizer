@@ -7,21 +7,11 @@ import (
 )
 
 const (
-	ErrKeyRepoResourceNotFound message.ErrKey = "repo.resource_not_found"
 	ErrKeyUnknown message.ErrKey = "unknown"
+	ErrKeyUsecaseRepoResourceNotFound message.ErrKey = "usecase.repo.resource_not_found"
 )
 
 var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
-	ErrKeyRepoResourceNotFound: {
-		language.English: {
-			Message:     "Resource not found.",
-			Description: "The resource does not exist or you do not have access.",
-		},
-		language.Japanese: {
-			Message:     "リソースが見つかりません。",
-			Description: "リソースが存在しないか、アクセス権限がありません。",
-		},
-	},
 	ErrKeyUnknown: {
 		language.English: {
 			Message:     "An unknown error occurred.",
@@ -30,6 +20,16 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "不明なエラーが発生しました。",
 			Description: "エラーが発生した原因を特定できません。",
+		},
+	},
+	ErrKeyUsecaseRepoResourceNotFound: {
+		language.English: {
+			Message:     "Resource not found.",
+			Description: "The resource does not exist or you do not have access.",
+		},
+		language.Japanese: {
+			Message:     "リソースが見つかりません。",
+			Description: "リソースが存在しないか、アクセス権限がありません。",
 		},
 	},
 }
