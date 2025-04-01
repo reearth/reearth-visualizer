@@ -29,11 +29,11 @@ func (b *Builder) Index(index *int) *Builder {
 }
 
 func (b *Builder) NewID() *Builder {
-	b.base.id = NewID()
+	b.base.id = id.NewNLSLayerID()
 	return b
 }
 
-func (b *Builder) Scene(s SceneID) *Builder {
+func (b *Builder) Scene(s id.SceneID) *Builder {
 	b.base.scene = s
 	return b
 }

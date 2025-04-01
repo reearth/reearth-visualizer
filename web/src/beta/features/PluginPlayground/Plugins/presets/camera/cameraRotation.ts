@@ -1,5 +1,4 @@
 import { FileType, PluginType } from "../../constants";
-import { PRESET_PLUGIN_COMMON_STYLE } from "../common";
 
 const yamlFile: FileType = {
   id: "camera-rotation-reearth-yml",
@@ -25,35 +24,16 @@ const widgetFile: FileType = {
 // ================================
 
 reearth.ui.show(\`
-${PRESET_PLUGIN_COMMON_STYLE}
 <style>
-#rotateBtn {
-  border: 1.5px solid #dcdcdc;
-  padding: 0;           
-  border-radius: 5px;
-  background: #ffffff;
-  color: #000000;
-  cursor: pointer;
-  width: 200px;
-  height: 40px;           
-  font-size: 16px;      
-}
-#rotateBtn:active {
-  background: #dcdcdc;
-}
-#button-container {
-  display: flex;  
-  justify-content: center;                
-}
+/* Generic styling system that provides consistent UI components and styling across all plugins */
+
+@import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
 </style>
-
-<div id="wrapper">
-  <h3>Rotate Camera Angle</h3>
-    <div id= "button-container">
-      <button id="rotateBtn">Click here</button>
-    </div>
+<div class="primary-background flex-column gap-8 text-center align-center p-16 rounded-sm">
+  <p class="text-3xl font-bold">Rotate Camera Angle</p>
+  <p class="text-md text-secondary">Click the button to rotate the camera angle</p>
+  <button class="btn-neutral w-14 h-4" id="rotateBtn">Click here</button>
 </div>
-
 <script>
 let rotating = false;
 let intervalId;
@@ -79,7 +59,7 @@ rotateBtn.addEventListener("click", () => {
 // To prevent memory leaks, stop "setInterval" when the page is closed or navigated away from
 window.addEventListener("unload", () => {
   if (intervalId) {
-    clearInterval(intervalId); 
+    clearInterval(intervalId);
   }
 });
 </script>
@@ -104,8 +84,10 @@ const sample3dTiles = {
 };
 
 // Add the 3D Tiles layer to Re:Earth
+// Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(sample3dTiles);
 
+// Documentation on Viewer "overrideProperty" event: https://visualizer.developer.reearth.io/plugin-api/viewer/#overrideproperty
 reearth.viewer.overrideProperty({
   // Enable Cesium World Terrain
   terrain: {
@@ -118,6 +100,7 @@ reearth.viewer.overrideProperty({
 });
 
 // Move the camera to the specified position
+// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   {
     // Define the camera's target position
@@ -135,6 +118,7 @@ reearth.camera.flyTo(
 );
 
 // Listen for messages from the UI to trigger camera rotation
+// Documentation on Extension "on" event: https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", (msg) => {
   const { action } = msg;
   if (action === "rotateCamera"){

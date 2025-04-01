@@ -20,60 +20,26 @@ const widgetFile: FileType = {
   id: "modal-window",
   title: "modal-window.js",
   sourceCode: `// This example shows how to set a modal window //
+  const modalContent= \`
+  <style>
+  /* Generic styling system that provides consistent UI components and styling across all plugins */
 
-// Define UI for modal window
-const modalContent= \`<style>
-  h2,
-  h3 {
-    margin: 0;
-    font-family: Arial, sans-serif;
-  }
-  h2,
-  h3 {
-    text-align: center;
-    margin: 20px;
-  }
-  #wrapper {
-    background: #eee;
-    color: #222;
-    border-radius: 5px;
-    padding: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  #wrapper p {
-    text-align: center;
-  }
-  .flex-center {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-  .close-btn {
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
-    background: #ffffff;
-    border: 1px solid #808080;
-  }
-  .close-btn:active {
-    background: #dcdcdc;
-  }
+  @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
-
-<div id="wrapper">
-  <h3>🌎 Hello World 🌎</h3>
-  <p>Re:Earth Visualizer allows you to set up a modal window. Click the button below to close the modal window.</p>
-  <div class="flex-center">
-    <button class="close-btn"
-    onclick="window.parent.postMessage({ action: 'closeModal' }, '*')"
-    >
-      Let's go to Visualizer
-    </button>
-  </div>
-</div>\`
+  <div class="primary-background p-16 rounded-sm primary-shadow flex-column gap-16">
+    <h3 class="text-center text-xl m-0">🌎 Hello World 🌎</h3>
+    <p class="text-center">Re:Earth Visualizer allows you to set up a modal window. Click the button below to close the modal window.</p>
+    <div class="flex-center">
+      <button class="btn-neutral button-padding"
+      onclick="window.parent.postMessage({ action: 'closeModal' }, '*')"
+      >
+        Let's go to Visualizer
+      </button>
+    </div>
+  </div>\`
 
 // Set a modal window
+// Documentation for Modal "show" method https://visualizer.developer.reearth.io/plugin-api/modal/#show
 reearth.modal.show(modalContent, {
   width: 400, // Define window width
   height: 300, // Define window height
@@ -82,9 +48,11 @@ reearth.modal.show(modalContent, {
 });
 
 // Listen for a message from the modal window and close it
+// Documentation for Extension "on" event https://visualizer.developer.reearth.io/plugin-api/extension/#message-1
 reearth.extension.on("message", msg => {
   if (msg.action === "closeModal") {
     // Close a modal window
+    // Documentation for Modal "close" method https://visualizer.developer.reearth.io/plugin-api/modal/#close
     reearth.modal.close();
   }
 });`

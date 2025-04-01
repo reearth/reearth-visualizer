@@ -2,7 +2,6 @@ import { Camera } from "@reearth/beta/utils/value";
 import {
   TimelineManagerRef,
   TimelineCommitter,
-  ViewerProperty
 } from "@reearth/core";
 import { RefObject, useMemo } from "react";
 
@@ -12,7 +11,6 @@ import { Context as WidgetContext } from "./Widgets";
 export const useWidgetContext = ({
   mapRef,
   selectedLayerId,
-  viewerProperty,
   initialCamera,
   timelineManagerRef
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
@@ -21,17 +19,15 @@ export const useWidgetContext = ({
       widgetContextFromMapRef({
         mapRef,
         selectedLayerId,
-        viewerProperty,
         initialCamera,
         timelineManagerRef
       }),
-    [mapRef, selectedLayerId, viewerProperty, initialCamera, timelineManagerRef]
+    [mapRef, selectedLayerId, initialCamera, timelineManagerRef]
   );
 
 export function widgetContextFromMapRef({
   mapRef,
   selectedLayerId,
-  viewerProperty,
   initialCamera,
   timelineManagerRef
 }: {
@@ -40,7 +36,6 @@ export function widgetContextFromMapRef({
     layerId?: string;
     featureId?: string;
   };
-  viewerProperty?: ViewerProperty;
   initialCamera?: Camera;
   timelineManagerRef?: TimelineManagerRef;
 }): WidgetContext {
@@ -53,7 +48,6 @@ export function widgetContextFromMapRef({
     },
     timelineManagerRef,
     initialCamera,
-    is2d: viewerProperty?.scene?.mode === "2d",
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {
       const l = layers()?.findById(id);

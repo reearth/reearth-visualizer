@@ -2,6 +2,8 @@ package storytelling
 
 import (
 	"time"
+
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 type StoryBuilder struct {
@@ -14,7 +16,7 @@ func NewStory() *StoryBuilder {
 
 func (b *StoryBuilder) Build() (*Story, error) {
 	if b.s.id.IsNil() {
-		return nil, ErrInvalidID
+		return nil, id.ErrInvalidID
 	}
 	if b.s.updatedAt.IsZero() {
 		b.s.updatedAt = b.s.CreatedAt()
@@ -34,22 +36,22 @@ func (b *StoryBuilder) MustBuild() *Story {
 	return s
 }
 
-func (b *StoryBuilder) ID(id StoryID) *StoryBuilder {
+func (b *StoryBuilder) ID(id id.StoryID) *StoryBuilder {
 	b.s.id = id
 	return b
 }
 
 func (b *StoryBuilder) NewID() *StoryBuilder {
-	b.s.id = NewStoryID()
+	b.s.id = id.NewStoryID()
 	return b
 }
 
-func (b *StoryBuilder) Property(property PropertyID) *StoryBuilder {
+func (b *StoryBuilder) Property(property id.PropertyID) *StoryBuilder {
 	b.s.property = property
 	return b
 }
 
-func (b *StoryBuilder) Scene(scene SceneID) *StoryBuilder {
+func (b *StoryBuilder) Scene(scene id.SceneID) *StoryBuilder {
 	b.s.scene = scene
 	return b
 }

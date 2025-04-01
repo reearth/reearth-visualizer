@@ -4,21 +4,22 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestAsset(t *testing.T) {
-	aid := NewID()
+	aid := id.NewAssetID()
 	tid := accountdomain.NewWorkspaceID()
 	d := aid.Timestamp()
 
 	tests := []struct {
 		Name     string
 		Expected struct {
-			ID          ID
+			ID          id.AssetID
 			CreatedAt   time.Time
-			Workspace   WorkspaceID
+			Workspace   accountdomain.WorkspaceID
 			Name        string
 			Size        int64
 			URL         string
@@ -29,9 +30,9 @@ func TestAsset(t *testing.T) {
 	}{
 		{
 			Expected: struct {
-				ID          ID
+				ID          id.AssetID
 				CreatedAt   time.Time
-				Workspace   WorkspaceID
+				Workspace   accountdomain.WorkspaceID
 				Name        string
 				Size        int64
 				URL         string

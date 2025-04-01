@@ -3,6 +3,7 @@ package builtin
 import (
 	_ "embed"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
@@ -22,14 +23,15 @@ var pluginManifest = manifest.MustParseSystemFromBytes(pluginManifestJSON, nil, 
 
 // MUST NOT CHANGE
 var (
-	PropertySchemaIDVisualizerCesium     = property.MustSchemaID("reearth/cesium")
-	PropertySchemaIDVisualizerBetaCesium = property.MustSchemaID("reearth/cesium-beta")
-	PropertySchemaIDInfobox              = property.MustSchemaID("reearth/infobox")
-	PropertySchemaIDBetaInfobox          = property.MustSchemaID("reearth/infobox-beta")
-	PropertySchemaIDInfoboxBlock         = property.MustSchemaID("reearth/infoboxBlock")
-	PropertySchemaIDStory                = property.MustSchemaID("reearth/story")
-	PropertySchemaIDStoryPage            = property.MustSchemaID("reearth/storyPage")
-	PropertySchemaIDStoryBlock           = property.MustSchemaID("reearth/storyBlock")
+	PropertySchemaIDVisualizerCesium     = id.MustPropertySchemaID("reearth/cesium")
+	PropertySchemaIDVisualizerBetaCesium = id.MustPropertySchemaID("reearth/cesium-beta")
+	PropertySchemaIDInfobox              = id.MustPropertySchemaID("reearth/infobox")
+	PropertySchemaIDBetaInfobox          = id.MustPropertySchemaID("reearth/infobox-beta")
+	PropertySchemaIDPhotoOverlay         = id.MustPropertySchemaID("reearth/photo-overlay")
+	PropertySchemaIDInfoboxBlock         = id.MustPropertySchemaID("reearth/infoboxBlock")
+	PropertySchemaIDStory                = id.MustPropertySchemaID("reearth/story")
+	PropertySchemaIDStoryPage            = id.MustPropertySchemaID("reearth/storyPage")
+	PropertySchemaIDStoryBlock           = id.MustPropertySchemaID("reearth/storyBlock")
 )
 
 func GetPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
@@ -49,7 +51,7 @@ func MustPropertySchemaByVisualizer(v visualizer.Visualizer) *property.Schema {
 	return ps
 }
 
-func GetPropertySchema(id property.SchemaID) *property.Schema {
+func GetPropertySchema(id id.PropertySchemaID) *property.Schema {
 	for _, p := range pluginManifest.ExtensionSchema {
 		if id == p.ID() {
 			return p
@@ -62,7 +64,7 @@ func Plugin() *plugin.Plugin {
 	return pluginManifest.Plugin
 }
 
-func GetPlugin(id plugin.ID) *plugin.Plugin {
+func GetPlugin(id id.PluginID) *plugin.Plugin {
 	if id.Equal(pluginManifest.Plugin.ID()) {
 		return pluginManifest.Plugin
 	}

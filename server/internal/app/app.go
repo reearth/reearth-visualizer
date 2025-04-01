@@ -12,7 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-	http2 "github.com/reearth/reearth/server/internal/adapter/http"
 
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
@@ -66,13 +65,14 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		log.Infof("Using mock auth for local development")
 		wrapHandler = func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
 				ctx := r.Context()
+				// Set the flag for Mock authentication, Mock user will be obtained with attachOpMiddlewar()
 				ctx = adapter.AttachMockAuth(ctx, true)
 				next.ServeHTTP(w, r.WithContext(ctx))
 			})
 		}
 	} else {
+		// Set AuthInfo to context key => adapter.ContextAuthInfo
 		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
 	}
 
@@ -130,8 +130,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	apiPrivate := api.Group("", privateCache)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
-	apiPrivate.GET("/layers/:param", ExportLayer(), AuthRequiredMiddleware())
-	apiPrivate.GET("/datasets/:datasetSchemaId", http2.ExportDataset(), AuthRequiredMiddleware())
 	apiPrivate.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {

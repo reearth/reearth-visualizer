@@ -105,7 +105,6 @@ export type ValueTypes = {
   latlng: LatLng;
   latlngheight: LatLngHeight;
   url: string;
-  camera: Camera;
   typography: Typography;
   coordinates: Coordinates;
   polygon: Polygon;
@@ -115,6 +114,17 @@ export type ValueTypes = {
   spacing: Spacing;
   array: unknown[];
   timeline: Timeline;
+  camera: DataCamera;
+};
+
+export type DataCamera = {
+  lat: number;
+  lng: number;
+  altitude: number;
+  heading: number;
+  pitch: number;
+  roll: number;
+  fov: number;
 };
 
 const valueTypeMapper: Record<GQLValueType, ValueType> = {
@@ -174,11 +184,10 @@ export function valueToGQL<T extends ValueType>(
   val: ValueTypes[T] | null | undefined,
   type: T
 ) {
-  if (type === "camera" && val && typeof val === "object" && "height" in val) {
-    return {
-      ...(val as Camera),
-      altitude: (val as Camera).height
-    };
+  if (type === "camera" && val && typeof val === "object") {
+    const { aspectRatio, height, ...rest } = val as Camera;
+    const v: DataCamera = { ...rest, altitude: height}; 
+    return v;
   }
   return val ?? null;
 }

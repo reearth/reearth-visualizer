@@ -4,28 +4,29 @@ import (
 	"sort"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
+	"github.com/reearth/reearth/server/pkg/id"
 )
 
 // SchemaGroup represents a group of property that has some fields
 type SchemaGroup struct {
-	id                  SchemaGroupID
+	id                  id.PropertySchemaGroupID
 	fields              []*SchemaField
 	list                bool
 	isAvailableIf       *Condition
 	title               i18n.String
-	representativeField *FieldID
+	representativeField *id.PropertyFieldID
 	collection          i18n.String
 }
 
 // ID returns id
-func (s *SchemaGroup) ID() SchemaGroupID {
+func (s *SchemaGroup) ID() id.PropertySchemaGroupID {
 	if s == nil {
-		return SchemaGroupID("")
+		return id.PropertySchemaGroupID("")
 	}
 	return s.id
 }
 
-func (s *SchemaGroup) IDRef() *SchemaGroupID {
+func (s *SchemaGroup) IDRef() *id.PropertySchemaGroupID {
 	if s == nil {
 		return nil
 	}
@@ -45,7 +46,7 @@ func (s *SchemaGroup) Fields() []*SchemaField {
 }
 
 // Field returns a field whose id is specified
-func (s *SchemaGroup) Field(fid FieldID) *SchemaField {
+func (s *SchemaGroup) Field(fid id.PropertyFieldID) *SchemaField {
 	if s == nil {
 		return nil
 	}
@@ -69,7 +70,7 @@ func (s *SchemaGroup) FieldByPointer(ptr *Pointer) *SchemaField {
 	return s.Field(fid)
 }
 
-func (s *SchemaGroup) HasField(i FieldID) bool {
+func (s *SchemaGroup) HasField(i id.PropertyFieldID) bool {
 	return s.Field(i) != nil
 }
 
@@ -105,7 +106,7 @@ func (s *SchemaGroup) Collection() i18n.String {
 }
 
 // RepresentativeFieldID returns the representative field ID of the group
-func (s *SchemaGroup) RepresentativeFieldID() *FieldID {
+func (s *SchemaGroup) RepresentativeFieldID() *id.PropertyFieldID {
 	if s == nil {
 		return nil
 	}

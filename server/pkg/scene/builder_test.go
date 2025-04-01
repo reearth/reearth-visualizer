@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +14,7 @@ func TestBuilder_IDs(t *testing.T) {
 	b := New().NewID().Workspace(tid).MustBuild()
 	assert.NotNil(t, b.ID())
 	assert.Equal(t, tid, b.Workspace())
-	sid := NewID()
+	sid := id.NewSceneID()
 	b2 := New().ID(sid).Workspace(tid).MustBuild()
 	assert.Equal(t, sid, b2.ID())
 }
@@ -25,28 +26,28 @@ func TestBuilder_UpdatedAt(t *testing.T) {
 }
 
 func TestBuilder_Property(t *testing.T) {
-	pid := NewPropertyID()
+	pid := id.NewPropertyID()
 	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Property(pid).MustBuild()
 	assert.Equal(t, pid, b.Property())
 }
 
 func TestBuilder_Plugins(t *testing.T) {
 	ps := NewPlugins([]*Plugin{
-		NewPlugin(OfficialPluginID, NewPropertyID().Ref()),
+		NewPlugin(id.OfficialPluginID, id.NewPropertyID().Ref()),
 	})
 	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Plugins(ps).MustBuild()
 	assert.Equal(t, ps, b.Plugins())
 }
 
 func TestBuilder_Project(t *testing.T) {
-	pid := NewProjectID()
+	pid := id.NewProjectID()
 	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(pid).MustBuild()
 	assert.Equal(t, pid, b.Project())
 }
 
 func TestBuilder_Widgets(t *testing.T) {
 	ws := NewWidgets([]*Widget{
-		MustWidget(NewWidgetID(), OfficialPluginID, "xxx", NewPropertyID(), true, false),
+		MustWidget(id.NewWidgetID(), id.OfficialPluginID, "xxx", id.NewPropertyID(), true, false),
 	}, nil)
 	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Widgets(ws).MustBuild()
 	assert.Equal(t, ws, b.Widgets())
@@ -54,24 +55,24 @@ func TestBuilder_Widgets(t *testing.T) {
 
 func TestBuilder_Build(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
-	sid := NewID()
-	pid := NewProjectID()
-	ppid := NewPropertyID()
+	sid := id.NewSceneID()
+	pid := id.NewProjectID()
+	ppid := id.NewPropertyID()
 	ws := NewWidgets([]*Widget{
-		MustWidget(NewWidgetID(), OfficialPluginID, "xxx", ppid, true, false),
+		MustWidget(id.NewWidgetID(), id.OfficialPluginID, "xxx", ppid, true, false),
 	}, nil)
 	ps := NewPlugins([]*Plugin{
-		NewPlugin(OfficialPluginID, ppid.Ref()),
+		NewPlugin(id.OfficialPluginID, ppid.Ref()),
 	})
 
 	type args struct {
-		ID        ID
-		Project   ProjectID
-		Workspace WorkspaceID
+		ID        id.SceneID
+		Project   id.ProjectID
+		Workspace accountdomain.WorkspaceID
 		Widgets   *Widgets
 		Plugins   *Plugins
 		UpdatedAt time.Time
-		Property  PropertyID
+		Property  id.PropertyID
 	}
 
 	tests := []struct {
@@ -83,7 +84,7 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			Name: "fail nil scene id",
 			Args: args{
-				ID:        ID{},
+				ID:        id.SceneID{},
 				Project:   pid,
 				Workspace: tid,
 				Widgets:   ws,
@@ -91,20 +92,20 @@ func TestBuilder_Build(t *testing.T) {
 				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:  ppid,
 			},
-			Err: ErrInvalidID,
+			Err: id.ErrInvalidID,
 		},
 		{
 			Name: "fail nil workspace id",
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Workspace: WorkspaceID{},
+				Workspace: accountdomain.WorkspaceID{},
 				Widgets:   ws,
 				Plugins:   ps,
 				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:  ppid,
 			},
-			Err: ErrInvalidID,
+			Err: id.ErrInvalidID,
 		},
 		{
 			Name: "success build new scene",
@@ -154,26 +155,26 @@ func TestBuilder_Build(t *testing.T) {
 
 func TestBuilder_MustBuild(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
-	sid := NewID()
-	pid := NewProjectID()
-	ppid := NewPropertyID()
+	sid := id.NewSceneID()
+	pid := id.NewProjectID()
+	ppid := id.NewPropertyID()
 	ws := NewWidgets([]*Widget{
-		MustWidget(NewWidgetID(), OfficialPluginID, "xxx", ppid, true, false),
+		MustWidget(id.NewWidgetID(), id.OfficialPluginID, "xxx", ppid, true, false),
 	}, nil)
 	was := NewWidgetAlignSystem()
 	ps := NewPlugins([]*Plugin{
-		NewPlugin(OfficialPluginID, ppid.Ref()),
+		NewPlugin(id.OfficialPluginID, ppid.Ref()),
 	})
 
 	type args struct {
-		ID                ID
-		Project           ProjectID
-		Workspace         WorkspaceID
+		ID                id.SceneID
+		Project           id.ProjectID
+		Workspace         accountdomain.WorkspaceID
 		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
 		Plugins           *Plugins
 		UpdatedAt         time.Time
-		Property          PropertyID
+		Property          id.PropertyID
 	}
 
 	tests := []struct {
@@ -185,7 +186,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			Name: "fail nil scene id",
 			Args: args{
-				ID:                ID{},
+				ID:                id.SceneID{},
 				Project:           pid,
 				Workspace:         tid,
 				Widgets:           ws,
@@ -194,21 +195,21 @@ func TestBuilder_MustBuild(t *testing.T) {
 				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:          ppid,
 			},
-			Err: ErrInvalidID,
+			Err: id.ErrInvalidID,
 		},
 		{
 			Name: "fail nil workspace id",
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Workspace:         WorkspaceID{},
+				Workspace:         accountdomain.WorkspaceID{},
 				Widgets:           ws,
 				WidgetAlignSystem: was,
 				Plugins:           ps,
 				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:          ppid,
 			},
-			Err: ErrInvalidID,
+			Err: id.ErrInvalidID,
 		},
 		{
 			Name: "success build new scene",

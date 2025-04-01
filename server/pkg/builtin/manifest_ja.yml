@@ -8,9 +8,6 @@ extensions:
       default:
         title: メイン
         fields:
-          sceneMode:
-            title: シーンモード
-            description: 地球儀の表示を2D、2.5D、3Dから選択します。
           ion:
             title: Cesium Ion アクセストークン
             description: ご自身の Cesium Ion アカウントからアクセストークンを発行し、ここに設定します。Cesium Ion のアセット（タイルデータ・3Dデータなど）の使用が可能になります。
@@ -55,7 +52,6 @@ extensions:
             description: 地形の種類を指定します。
             choices:
               cesium: Cesium World Terrain
-              arcgis: ArcGIS Terrain
               cesiumion: Cesium Ion
           terrainCesiumIonAsset:
             title: Cesium Ion アセットID
@@ -148,12 +144,12 @@ extensions:
           camera:
             title: カメラ初期位置
             description: ページロード後最初に表示するカメラの位置を設定します。
-          sceneMode:
-            title: シーンモード
-            description: 地球儀の表示を2D、2.5D、3Dから選択します。
           allowEnterGround:
             title: 地下へ入る
             description: Onにすることでカメラが地表面へ潜り込むようになります。
+          sceneMode:
+            title: シーンモード
+            description: 地球儀の表示を2D、2.5D、3Dから選択します。
           skybox:
             title: 宇宙の表示
             description: 宇宙空間の表示を切り替えます。
@@ -1455,4 +1451,15 @@ extensions:
               ja: 日本語
               cn: 中国語
 
-  
+  photo-overlay:
+    name: フォトオーバーレイ
+    description: フォトオーバーレイ
+    propertySchema:
+      default:
+        title: デフォルト
+        fields:
+          enabled:
+            title: 有効
+          cameraDuration:
+            title: カメラ移動時間
+            description: カメラがキャプチャされた位置へ移動するのにかかる時間（秒）
