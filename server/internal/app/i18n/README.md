@@ -1,4 +1,3 @@
-```markdown
 # 🌐 Error Message Localization Guide
 
 This document explains how error messages are defined, edited, and displayed in the system with localization support.
@@ -125,4 +124,3 @@ graph TD
 | **Multi-locale Required** | Define messages in both English and Japanese |
 
 ---
-```
