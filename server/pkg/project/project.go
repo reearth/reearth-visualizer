@@ -211,13 +211,8 @@ func (p *Project) UpdateDescription(description string) {
 	p.description = description
 }
 
-func (p *Project) UpdateAlias(alias string) error {
-	if CheckAliasPattern(alias) {
-		p.alias = alias
-	} else {
-		return ErrInvalidAlias.AddTemplateData("aliasName", alias)
-	}
-	return nil
+func (p *Project) UpdateAlias(alias string) {
+	p.alias = alias
 }
 
 func (p *Project) UpdatePublicTitle(publicTitle string) {

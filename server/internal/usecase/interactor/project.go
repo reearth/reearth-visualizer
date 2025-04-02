@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/url"
 	"path"
 	"strings"
@@ -199,7 +200,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.Alias != nil {
-		if err := prj.UpdateAlias(*p.Alias); err != nil {
+		if _, err := i.checkAlias(ctx, *p.Alias); err != nil {
 			graphql.AddError(ctx, err)
 		}
 	}
@@ -293,16 +294,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 }
 
 func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
-	if !project.CheckAliasPattern(alias) {
-		return false, project.ErrInvalidAlias
-	}
-
-	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
-	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
-		return true, nil
-	}
-
-	return false, err
+	return i.checkAlias(ctx, alias)
 }
 
 func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -381,14 +373,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newAlias := prevAlias
 	if params.Alias != nil {
-		if prj2, err := i.projectRepo.FindByPublicName(ctx, *params.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return nil, err
-		} else if prj2 != nil && prj.ID() != prj2.ID() {
-			return nil, interfaces.ErrProjectAliasAlreadyUsed
-		}
-
-		if err := prj.UpdateAlias(*params.Alias); err != nil {
-			return nil, err
+		if _, err := i.checkAlias(ctx, *params.Alias); err != nil {
+			graphql.AddError(ctx, err)
 		}
 		newAlias = *params.Alias
 	}
@@ -707,4 +693,19 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 		return err
 	}
 	return nil
+}
+
+func (i *Project) checkAlias(ctx context.Context, alias string) (bool, error) {
+	if !project.CheckAliasPattern(alias) {
+		return false, project.ErrInvalidAlias
+	}
+	log.Println("alias:", alias)
+
+	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
+	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
+		return true, nil
+	}
+
+	log.Println("aaa:", prj)
+	return false, interfaces.ErrProjectAliasAlreadyUsed
 }

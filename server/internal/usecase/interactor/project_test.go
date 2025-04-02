@@ -2,10 +2,15 @@ package interactor
 
 import (
 	"context"
+	"log"
 	"net/url"
+	"strings"
 	"testing"
 
+	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
+	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
+	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/policy"
@@ -13,13 +18,39 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
+	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase"
+	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
 
+func init() {
+	mongotest.Env = "REEARTH_DB"
+}
+
+func createNewProjectUC(ctx context.Context, client *mongox.Client) *Project {
+	gw, _ := gcs.NewFile(true, "test-bucket", "/assets", "public, max-age=3600")
+	return &Project{
+		assetRepo:          mongo.NewAsset(client),
+		projectRepo:        mongo.NewProject(client),
+		storytellingRepo:   mongo.NewStorytelling(client),
+		userRepo:           accountmongo.NewUser(client),
+		workspaceRepo:      accountmongo.NewWorkspace(client),
+		sceneRepo:          mongo.NewScene(client),
+		propertyRepo:       mongo.NewProperty(client),
+		propertySchemaRepo: mongo.NewPropertySchema(client),
+		transaction:        client.Transaction(),
+		policyRepo:         mongo.NewPolicy(client),
+		nlsLayerRepo:       mongo.NewNLSLayer(client),
+		layerStyles:        mongo.NewStyle(client),
+		pluginRepo:         mongo.NewPlugin(client),
+		file:               gw,
+	}
+}
 func TestProject_Create(t *testing.T) {
 	ctx := context.Background()
 
@@ -133,4 +164,51 @@ func TestProject_Create(t *testing.T) {
 	})
 	assert.Same(t, policy.ErrPolicyViolation, err)
 	assert.Nil(t, got)
+
+}
+
+func TestProject_CheckAlias(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(ctx, client)
+
+	testAlias := "alias"
+	pj := factory.NewProject(func(p *project.Project) {
+		p.UpdateAlias(testAlias)
+	})
+	_ = uc.projectRepo.Save(ctx, pj)
+
+	t.Run("when alias is valid", func(t *testing.T) {
+		ok, err := uc.checkAlias(ctx, strings.Repeat("a", 31))
+		assert.NoError(t, err)
+		assert.True(t, ok)
+	})
+
+	t.Run("when alias is invalid", func(t *testing.T) {
+		t.Run("when alias is already used", func(t *testing.T) {
+			ok, err := uc.checkAlias(ctx, testAlias)
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+		t.Run("when alias include not allowed characters", func(t *testing.T) {
+			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
+				log.Println("c:", "alias2"+c)
+				ok, err := uc.checkAlias(ctx, "alias2"+c)
+				assert.EqualError(t, err, project.ErrInvalidAlias.Error())
+				assert.False(t, ok)
+			}
+		})
+		t.Run("when alias is too short", func(t *testing.T) {
+			ok, err := uc.checkAlias(ctx, "aaaa")
+			assert.EqualError(t, err, project.ErrInvalidAlias.Error())
+			assert.False(t, ok)
+		})
+		t.Run("when alias is too long", func(t *testing.T) {
+			ok, err := uc.checkAlias(ctx, strings.Repeat("a", 33))
+			assert.EqualError(t, err, project.ErrInvalidAlias.Error())
+			assert.False(t, ok)
+		})
+	})
 }
