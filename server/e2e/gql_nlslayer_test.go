@@ -305,6 +305,7 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
             id
             items {
               ... on PropertyGroup {
+			  schemaGroupId
                 fields {
                   id
                   value

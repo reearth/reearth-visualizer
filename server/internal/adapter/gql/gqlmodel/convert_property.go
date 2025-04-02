@@ -1,9 +1,9 @@
 package gqlmodel
 
 import (
-	"sort"
 	"strings"
 
+	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/value"
@@ -165,8 +165,20 @@ func ToProperty(property *property.Property) *Property {
 
 	pitems := property.Items()
 	items := make([]PropertyItem, 0, len(pitems))
-	for _, i := range pitems {
-		items = append(items, ToPropertyItem(i, property, nil))
+
+	// Sort if there is a schema.
+	if ps := builtin.GetPropertySchema(property.Schema()); ps != nil {
+		for _, psg := range ps.Groups().Groups() {
+			for _, i := range pitems {
+				if psg.ID() == i.SchemaGroup() {
+					items = append(items, ToPropertyItem(i, property, nil, ps))
+				}
+			}
+		}
+	} else {
+		for _, i := range pitems {
+			items = append(items, ToPropertyItem(i, property, nil, nil))
+		}
 	}
 
 	return &Property{
@@ -192,11 +204,8 @@ func ToPropertySchema(propertySchema *property.Schema) *PropertySchema {
 }
 
 func ToPropertySchemas(ps []*property.Schema) []*PropertySchema {
-	sortedPs := append([]*property.Schema{}, ps...)
-	sort.Slice(sortedPs, func(i, j int) bool {
-		return sortedPs[i].ID().String() < sortedPs[j].ID().String()
-	})
-	return lo.Map(sortedPs, func(s *property.Schema, _ int) *PropertySchema {
+	pslist := append([]*property.Schema{}, ps...)
+	return lo.Map(pslist, func(s *property.Schema, _ int) *PropertySchema {
 		return ToPropertySchema(s)
 	})
 }
@@ -432,22 +441,49 @@ func ToPropertySchemaGroup(g *property.SchemaGroup, s id.PropertySchemaID) *Prop
 	}
 }
 
-func ToPropertyGroup(g *property.Group, p *property.Property, gl *property.GroupList) *PropertyGroup {
+func ToPropertyGroup(g *property.Group, p *property.Property, gl *property.GroupList, ps *property.Schema) *PropertyGroup {
 	if g == nil {
 		return nil
 	}
+
+	fields := getSortedFields(g, ps)
 
 	return &PropertyGroup{
 		ID:            IDFrom(g.ID()),
 		SchemaID:      IDFromPropertySchemaID(p.Schema()),
 		SchemaGroupID: ID(g.SchemaGroup()),
-		Fields: util.Map(g.Fields(nil), func(f *property.Field) *PropertyField {
-			return ToPropertyField(f, p, gl, g)
-		}),
+		Fields:        util.Map(fields, func(f *property.Field) *PropertyField { return ToPropertyField(f, p, gl, g) }),
 	}
 }
 
-func ToPropertyGroupList(gl *property.GroupList, p *property.Property) *PropertyGroupList {
+func getSortedFields(g *property.Group, ps *property.Schema) []*property.Field {
+	if ps == nil {
+		return g.Fields(nil)
+	}
+
+	fields := []*property.Field{}
+
+	for _, psg := range ps.Groups().Groups() {
+		if psg.ID() != g.SchemaGroup() {
+			continue
+		}
+
+		fieldMap := make(map[id.PropertyFieldID]*property.Field)
+		for _, gf := range g.Fields(nil) {
+			fieldMap[gf.Field()] = gf
+		}
+
+		for _, psf := range psg.Fields() {
+			if gf, exists := fieldMap[psf.ID()]; exists {
+				fields = append(fields, gf)
+			}
+		}
+	}
+
+	return fields
+}
+
+func ToPropertyGroupList(gl *property.GroupList, p *property.Property, ps *property.Schema) *PropertyGroupList {
 	if gl == nil {
 		return nil
 	}
@@ -457,20 +493,20 @@ func ToPropertyGroupList(gl *property.GroupList, p *property.Property) *Property
 		SchemaID:      IDFromPropertySchemaID(p.Schema()),
 		SchemaGroupID: ID(gl.SchemaGroup()),
 		Groups: util.Map(gl.Groups(), func(g *property.Group) *PropertyGroup {
-			return ToPropertyGroup(g, p, gl)
+			return ToPropertyGroup(g, p, gl, ps)
 		}),
 	}
 }
 
-func ToPropertyItem(i property.Item, p *property.Property, pgl *property.GroupList) PropertyItem {
+func ToPropertyItem(i property.Item, p *property.Property, pgl *property.GroupList, ps *property.Schema) PropertyItem {
 	if i == nil {
 		return nil
 	}
 
 	if g := property.ToGroup(i); g != nil {
-		return ToPropertyGroup(g, p, pgl)
+		return ToPropertyGroup(g, p, pgl, ps)
 	} else if gl := property.ToGroupList(i); gl != nil {
-		return ToPropertyGroupList(gl, p)
+		return ToPropertyGroupList(gl, p, ps)
 	}
 	return nil
 }

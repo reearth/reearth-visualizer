@@ -3,7 +3,6 @@ package property
 import (
 	"context"
 	"errors"
-	"sort"
 
 	"github.com/reearth/reearth/server/pkg/id"
 )
@@ -220,11 +219,8 @@ func (g *Group) Fields(p *Pointer) []*Field {
 		}
 		return nil
 	}
-	sortedPs := append(g.fields[:0:0], g.fields...)
-	sort.Slice(sortedPs, func(i, j int) bool {
-		return sortedPs[i].field.String() < sortedPs[j].field.String()
-	})
-	return sortedPs
+
+	return append(g.fields[:0:0], g.fields...)
 }
 
 func (g *Group) RemoveFields(ptr *Pointer) (res bool) {
