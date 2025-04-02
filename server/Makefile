@@ -116,18 +116,19 @@ deep-copy:
 # =======================
 
 dev-install:
-	@$(foreach bin, air stringer schematyper deep-copy, \
-		if ! which $(bin) >/dev/null 2>&1; then \
-			echo "$(bin) is not installed. Installing..."; \
-			case $(bin) in \
+	@for bin in air stringer schematyper deep-copy; do \
+		if ! which $$bin >/dev/null 2>&1; then \
+			echo "$$bin is not installed. Installing..."; \
+			case $$bin in \
 				air) go install github.com/air-verse/air@v1.61.5 ;; \
 				stringer) go install golang.org/x/tools/cmd/stringer@v0.29.0 ;; \
 				schematyper) go install github.com/idubinskiy/schematyper ;; \
 				deep-copy) go install github.com/globusdigital/deep-copy@dc4a8d91ed65656858cd53e6e83bbf7b83d5b7cb ;; \
 			esac; \
 		else \
-			echo "$(bin) is already installed."; \
-		fi;)
+			echo "$$bin is already installed."; \
+		fi; \
+	done
 
 # =======================
 # Others
