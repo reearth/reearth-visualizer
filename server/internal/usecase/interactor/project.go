@@ -199,6 +199,11 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.Alias != nil {
+		if prj2, err := i.projectRepo.FindByPublicName(ctx, *p.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
+			return nil, err
+		} else if prj2 != nil && prj.ID() != prj2.ID() {
+			return nil, interfaces.ErrProjectAliasAlreadyUsed
+		}
 		if err := prj.UpdateAlias(*p.Alias); err != nil {
 			graphql.AddError(ctx, err)
 		}
