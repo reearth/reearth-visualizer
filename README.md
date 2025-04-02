@@ -43,6 +43,8 @@ Visualizer is a powerful tool for visualizing GIS data, offering a range of feat
 
 Make sure Docker is properly installed and running on your machine.
 
+### 🖥️ macOS / Linux
+
 1. From your cloned directory, navigate to the server folder and set up the database:
 
    ```bash
@@ -69,9 +71,50 @@ Make sure Docker is properly installed and running on your machine.
    make mockuser
    ```
 
+### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
+
+1. Open PowerShell and navigate to the server directory:
+
+   ```powershell
+   cd server
+   ```
+
+2. Set an alias so you can use `dv` like `make`:
+
+   ```powershell
+   Set-Alias dv .\dev.bat
+   ```
+
+3. Start the MongoDB database:
+
+   ```powershell
+   dv run-db
+   ```
+
+4. Create and configure the `.env` file to use mock authentication:
+
+   ```powershell
+   New-Item .env -ItemType File
+   Add-Content .env "REEARTH_MOCKAUTH=true"
+   ```
+
+5. Start the backend server:
+
+   ```powershell
+   dv run-app
+   ```
+
+6. Register a new mock user:
+
+   ```powershell
+   dv mockuser
+   ```
+
 ### Setup Web
 
-1. Navigate to the web directory of your visualizer project and set up local .env file.
+### 🖥️ macOS / Linux
+
+1. Navigate to the `web` directory of your visualizer project and set up local `.env` file.
 
    ```bash
    cd web
@@ -81,7 +124,7 @@ Make sure Docker is properly installed and running on your machine.
 2. Add the following environment variables to the `.env` file:
 
    ```plaintext
-   // .env
+   # .env
    REEARTH_WEB_API=http://localhost:8080/api
    REEARTH_WEB_PLUGINS=http://localhost:8080/plugins
    REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN=your_cesium_ion_access_token_here
@@ -94,6 +137,36 @@ Make sure Docker is properly installed and running on your machine.
 
    ```bash
    yarn && yarn start
+   ```
+
+### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
+
+1. Open PowerShell and navigate to the `web` directory:
+
+   ```powershell
+   cd web
+   ```
+
+2. Create a new .env file:
+
+   ```powershell
+   New-Item .env -ItemType File
+   ```
+
+3. Add the following environment variables to the `.env` file:
+
+   ```powershell
+   Add-Content .env "REEARTH_WEB_API=http://localhost:8080/api"
+   Add-Content .env "REEARTH_WEB_PLUGINS=http://localhost:8080/plugins"
+   Add-Content .env "REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN=your_cesium_ion_access_token_here"
+   Add-Content .env "REEARTH_WEB_AUTH_PROVIDER=mock"
+   ```
+
+4. Install dependencies and start the frontend server:
+
+   ```powershell
+   yarn
+   yarn start
    ```
 
 ### Done!
