@@ -79,7 +79,7 @@ func (w *WebServer) Run() {
 	log.Infof("server started%s at http://%s\n", debugLog, w.address)
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt, syscall.SIGTERM, os.Kill)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		if err := w.appServer.StartH2CServer(w.address, &http2.Server{}); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatalf("failed to run server: %v", err)
