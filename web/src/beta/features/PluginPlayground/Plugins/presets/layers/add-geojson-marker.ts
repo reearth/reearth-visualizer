@@ -22,7 +22,7 @@ const widgetFile: FileType = {
   sourceCode: `// This example shows how to visualize a GeoJSON file with styles described.
 
 // Define the GeoJSON inline
-// The marker-symbol can be set by specifying the icon name in Maki icon https://labs.mapbox.com/maki-icons.
+// The marker-symbol can be set by specifying the icon name in Cesium defenition https://sandcastle.cesium.com/?src=GeoJSON%20simplestyle.html.
 
 const geojson = {
   type: "FeatureCollection",
