@@ -35,6 +35,7 @@ export default () => {
       "take-screenshot": t("Take Screenshot"),
       "mouse-events": t("Mouse Events"),
       "add-geojson": t("Add Geojson"),
+      "add-geojson-marker": t("Add Geojson(marker)"),
       "add-csv": t("Add CSV"),
       "add-kml": t("Add KML"),
       "add-wms": t("Add WMS"),
