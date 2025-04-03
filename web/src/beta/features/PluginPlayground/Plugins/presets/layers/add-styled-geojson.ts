@@ -1,28 +1,28 @@
 import { FileType, PluginType } from "../../constants";
 
 const yamlFile: FileType = {
-  id: "layers-add-geojson-marker-reearth-yml",
+  id: "layers-add-styled-geojson-reearth-yml",
   title: "reearth.yml",
-  sourceCode: `id: layers-add-geojson-marker-plugin
-name: Add Geojson Marker
+  sourceCode: `id: layers-add-styled-geojson-plugin
+name: Add Styled Geojson
 version: 1.0.0
 extensions:
-  - id: layers-add-geojson-marker
+  - id: layers-add-styled-geojson
     type: widget
-    name: Add Geojson Marker
-    description: Add Geojson Marker
+    name: Add Styled Geojson
+    description: Add Styled Geojson
   `,
   disableEdit: true,
   disableDelete: true
 };
 
 const widgetFile: FileType = {
-  id: "layers-add-geojson-marker",
-  title: "layers-add-geojson-marker.js",
+  id: "layers-add-styled-geojson",
+  title: "layers-add-styled-geojson.js",
   sourceCode: `// This example shows how to visualize a GeoJSON file with styles described.
 
 // Define the GeoJSON inline
-// The marker-symbol can be set by specifying the icon name in Cesium defenition https://sandcastle.cesium.com/?src=GeoJSON%20simplestyle.html.
+// The marker-symbol can be set by specifying the icon name in Cesium definition https://sandcastle.cesium.com/?src=GeoJSON%20simplestyle.html.
 
 const geojson = {
   type: "FeatureCollection",
@@ -264,7 +264,7 @@ reearth.camera.flyTo(
 `
 };
 
-export const addGeojsonMarker: PluginType = {
-  id: "add-geojson-marker",
+export const addStyledGeojson: PluginType = {
+  id: "add-styled-geojson",
   files: [yamlFile, widgetFile]
 };
