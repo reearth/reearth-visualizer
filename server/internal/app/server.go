@@ -2,10 +2,13 @@ package app
 
 import (
 	"context"
+	"errors"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/app/config"
@@ -69,22 +72,29 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 }
 
 func (w *WebServer) Run() {
-	defer log.Infof("Server shutdown")
-
 	debugLog := ""
 	if w.appServer.Debug {
 		debugLog += " with debug mode"
 	}
 	log.Infof("server started%s at http://%s\n", debugLog, w.address)
 
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM, os.Kill)
 	go func() {
-		err := w.appServer.StartH2CServer(w.address, &http2.Server{})
-		log.Fatalf("failed to run server: %v", err)
+		if err := w.appServer.StartH2CServer(w.address, &http2.Server{}); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("failed to run server: %v", err)
+		}
 	}()
 
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, os.Interrupt)
-	<-quit
+	<-c
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if err := w.appServer.Shutdown(ctx); err != nil {
+		log.Panicf("Server forced to shutdown: %v", err)
+	}
+
+	log.Info("Server shut down gracefully...")
 }
 
 func (w *WebServer) Serve(l net.Listener) error {
