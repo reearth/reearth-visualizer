@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"time"
 
 	"net/http"
@@ -1521,12 +1522,14 @@ func validateGeoJSONFeature(feature *geojson.Feature) []error {
 	return validationErrors
 }
 
+const epsilon = 1e-9
+
 func pointsEqual(a, b orb.Point) bool {
 	if len(a) != len(b) {
 		return false
 	}
 	for i := range a {
-		if a[i] != b[i] {
+		if math.Abs(a[i]-b[i]) > epsilon {
 			return false
 		}
 	}
@@ -1538,5 +1541,5 @@ func isValidLatLon(coords orb.Point) bool {
 		return false
 	}
 	lat, lon := coords[1], coords[0]
-	return lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180
+	return lat >= -90-epsilon && lat <= 90+epsilon && lon >= -180-epsilon && lon <= 180+epsilon
 }
