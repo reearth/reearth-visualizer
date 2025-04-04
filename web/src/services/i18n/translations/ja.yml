@@ -56,11 +56,11 @@ User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 No Member match your search.: 一致するメンバーが見つかりません'
-MAINTAINER: 管理者
-OWNER: 所有者
+Change Role: 役割を変更
 READER: 閲覧者
 WRITER: 作成者
-Change Role: 役割を変更
+MAINTAINER: 管理者
+OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
 Last Created: 最終作成日
@@ -350,7 +350,8 @@ Enable Terrain: 3D地形を有効にする
 Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
 Mouse Events: マウスイベント
-Add Geojson: Geojsonを追加
+Add GeoJSON: ''
+Add Styled GeoJSON: ''
 Add CSV: CSVを追加
 Add KML: KMLを追加
 Add WMS: WMSを追加

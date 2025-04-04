@@ -12,6 +12,7 @@ import { add3dTiles } from "./layers/add-3Dtiles";
 import { addCsv } from "./layers/add-csv";
 import { addCzml } from "./layers/add-czml";
 import { addGeojson } from "./layers/add-geojson";
+import { addStyledGeojson } from "./layers/add-styled-geojson";
 import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
@@ -77,6 +78,7 @@ export const presetPlugins: PresetPlugins = [
     id: "layers",
     plugins: [
       addGeojson,
+      addStyledGeojson,
       addCzml,
       addKml,
       addCsv,
