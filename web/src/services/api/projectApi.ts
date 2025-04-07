@@ -378,7 +378,12 @@ export default () => {
     async (input: DeleteProjectInput) => {
       if (!input.projectId) return { status: "error" };
       const { data, errors } = await deleteProjectMutation({
-        variables: { ...input }
+        variables: { ...input },
+        context: {
+          fetchOptions: {
+            __timeout: 1000 * 60 * 30 // 30 minutes
+          }
+        }
       });
 
       if (errors || !data?.deleteProject) {
@@ -536,7 +541,12 @@ export default () => {
 
       try {
         const { data, errors } = await importProjectMutation({
-          variables: { ...input }
+          variables: { ...input },
+          context: {
+            fetchOptions: {
+              __timeout: 1000 * 60 * 30 // 30 minutes
+            }
+          }
         });
 
         if (errors || !data?.importProject) {
