@@ -1,6 +1,5 @@
 import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
-import { Color } from "cesium";
 
 export type LatLng = {
   lat: number;
@@ -152,7 +151,7 @@ export type Credit = {
 
 export type ValueType = keyof ValueTypes;
 
-export const valueFromGQL = (val: any, type: GQLValueType) => {
+export const valueFromGQL = (val: unknown, type: GQLValueType) => {
   const t = valueTypeFromGQL(type);
   if (typeof val === "undefined" || val === null || !t) {
     return undefined;
@@ -186,7 +185,7 @@ export function valueToGQL<T extends ValueType>(
 ) {
   if (type === "camera" && val && typeof val === "object") {
     const { aspectRatio, height, ...rest } = val as Camera;
-    const v: DataCamera = { ...rest, altitude: height}; 
+    const v: DataCamera = { ...rest, altitude: height };
     return v;
   }
   return val ?? null;
@@ -200,16 +199,6 @@ export const valueTypeToGQL = (t: ValueType): GQLValueType | undefined => {
   return (Object.keys(valueTypeMapper) as GQLValueType[]).find(
     (k) => valueTypeMapper[k] === t
   );
-};
-
-export const toGQLSimpleValue = (
-  v: unknown
-): string | number | boolean | undefined => {
-  return typeof v === "string" ||
-    typeof v === "number" ||
-    typeof v === "boolean"
-    ? v
-    : undefined;
 };
 
 export const getCSSFontFamily = (f?: string) => {
@@ -235,19 +224,6 @@ export const toCSSFont = (t?: Typography, d?: Typography) => {
 
 export const toTextDecoration = (t?: Typography) =>
   t?.underline ? "underline" : "none";
-
-export const toColor = (c?: string) => {
-  if (!c || typeof c !== "string") return undefined;
-
-  // support alpha
-  const m = c.match(
-    /^#([A-Fa-f0-9]{6})([A-Fa-f0-9]{2})$|^#([A-Fa-f0-9]{3})([A-Fa-f0-9])$/
-  );
-  if (!m) return Color.fromCssColorString(c);
-
-  const alpha = parseInt(m[4] ? m[4].repeat(2) : m[2], 16) / 255;
-  return Color.fromCssColorString(`#${m[1] ?? m[3]}`).withAlpha(alpha);
-};
 
 export const typographyStyles = (t?: Typography) => {
   if (!t) return null;
