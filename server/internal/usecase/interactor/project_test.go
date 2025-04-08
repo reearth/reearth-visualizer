@@ -208,9 +208,16 @@ func TestProject_CheckAlias(t *testing.T) {
 
 	// test
 	t.Run("when alias is valid", func(t *testing.T) {
-		ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 31))
-		assert.NoError(t, err)
-		assert.True(t, ok)
+		t.Run("when alias length is valid max length", func(t *testing.T) {
+			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 32))
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
+		t.Run("when alias length is valid min length", func(t *testing.T) {
+			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 5))
+			assert.NoError(t, err)
+			assert.True(t, ok)
+		})
 	})
 
 	t.Run("when alias update to same alias", func(t *testing.T) {
