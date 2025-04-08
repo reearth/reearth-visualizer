@@ -20,17 +20,27 @@ jobs:
           node-version: "18"
 
       - name: Install dependencies
-        run: cd server/e2e/playwright-tests && npm install
+        working-directory: server/e2e/playwright-tests
+        run: npm install
 
       - name: Install Playwright Browsers
+        working-directory: server/e2e/playwright-tests
         run: npx playwright install --with-deps
 
+      - name: Debug env vars (no password)
+        run: |
+          echo "userEmail: $userEmail"
+          echo "baseURL: $baseURL"
+        env:
+          userEmail: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
+          baseURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
+
       - name: Run Playwright tests
+        working-directory: server/e2e/playwright-tests
         env:
           userEmail: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
           userPassword: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
           baseURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
-        working-directory: server/e2e/playwright-tests  
         run: npx playwright test
 
       - name: Upload test results
