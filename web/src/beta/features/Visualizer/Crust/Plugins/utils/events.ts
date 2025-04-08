@@ -53,6 +53,7 @@ export function events<
   };
   const deleteEventCallback = (type: keyof E, cb: EventCallback): void => {
     const ecbs = callbacks.get(type);
+
     if (ecbs) {
       ecbs.delete(cb);
       if (ecbs.size === 0) {
@@ -68,7 +69,7 @@ export function events<
   const off = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
     const ecb = getEventCallback(type, callback);
     e.removeEventListener(String(type), ecb);
-    deleteEventCallback(type, ecb);
+    deleteEventCallback(type, callback);
   };
   const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
     const ecb = getEventCallback(type, callback);
@@ -119,13 +120,14 @@ export function useEmit<T extends { [K in string]: any[] }>(
   values: { [K in keyof T]?: T[K] | undefined },
   emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined
 ) {
-  for (const k of Object.keys(values)) {
-    const args = values[k];
-    // TODO: fix this
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useEffect(() => {
-      if (!args) return;
-      emit?.(k, ...args);
-    }, [emit, k, args]);
-  }
+  useEffect(() => {
+    if (!emit) return;
+
+    for (const k in values) {
+      const args = values[k];
+      if (args) {
+        emit(k, ...args);
+      }
+    }
+  }, [emit, values]);
 }
