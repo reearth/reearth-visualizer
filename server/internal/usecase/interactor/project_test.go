@@ -77,9 +77,6 @@ func TestProject_Create(t *testing.T) {
 		Visualizer:  visualizer.VisualizerCesium,
 		Name:        lo.ToPtr("aaa"),
 		Description: lo.ToPtr("bbb"),
-		ImageURL:    lo.Must(url.Parse("https://example.com/hoge.gif")),
-		Alias:       lo.ToPtr("aliasalias"),
-		Archived:    lo.ToPtr(false),
 	}, &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
 			WritableWorkspaces: workspace.IDList{ws.ID()},
@@ -106,10 +103,6 @@ func TestProject_Create(t *testing.T) {
 		Visualizer:  visualizer.VisualizerCesium,
 		Name:        lo.ToPtr("aaa"),
 		Description: lo.ToPtr("bbb"),
-		ImageURL:    lo.Must(url.Parse("https://example.com/hoge.gif")),
-		Alias:       lo.ToPtr("aliasalias"),
-		Archived:    lo.ToPtr(false),
-		CoreSupport: lo.ToPtr(true),
 	}, &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
 			WritableWorkspaces: workspace.IDList{ws.ID()},
