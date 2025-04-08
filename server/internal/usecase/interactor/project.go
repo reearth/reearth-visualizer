@@ -201,6 +201,8 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	if p.Alias != nil {
 		if _, err := i.checkAlias(ctx, prj.ID(), *p.Alias); err != nil {
 			graphql.AddError(ctx, err)
+		} else {
+			prj.UpdateAlias(*p.Alias)
 		}
 	}
 
