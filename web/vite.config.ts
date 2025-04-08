@@ -98,12 +98,12 @@ export default defineConfig({
         "src/**/*.test.{ts,tsx}"
       ],
       reporter: ["text", "json", "lcov"]
-    }
-  },
-  alias: [
-    { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
-    { find: "csv-parse", replacement: "csv-parse" }
-  ]
+    },
+    alias: [
+      { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
+      { find: "csv-parse", replacement: "csv-parse" }
+    ]
+  }
 });
 
 function serverHeaders(): Plugin {
