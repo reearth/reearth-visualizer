@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/url"
 	"path"
 	"strings"
@@ -699,13 +698,12 @@ func (i *Project) checkAlias(ctx context.Context, alias string) (bool, error) {
 	if !project.CheckAliasPattern(alias) {
 		return false, project.ErrInvalidAlias
 	}
-	log.Println("alias:", alias)
 
 	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
+
 	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
 		return true, nil
 	}
 
-	log.Println("aaa:", prj)
 	return false, interfaces.ErrProjectAliasAlreadyUsed
 }

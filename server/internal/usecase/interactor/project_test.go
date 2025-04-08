@@ -189,7 +189,8 @@ func TestProject_CheckAlias(t *testing.T) {
 	t.Run("when alias is invalid", func(t *testing.T) {
 		t.Run("when alias is already used", func(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, testAlias)
-			assert.NoError(t, err)
+			assert.EqualError(t, err, interfaces.ErrProjectAliasAlreadyUsed.Error())
+			assert.False(t, ok)
 			assert.True(t, ok)
 		})
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
