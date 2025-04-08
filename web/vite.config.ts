@@ -88,19 +88,20 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, "e2e/*"],
     coverage: {
       provider: "v8",
-      include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+      include: ["src/**/*.{ts,tsx}"],
       exclude: [
         "src/**/*.d.ts",
         "src/**/*.cy.tsx",
         "src/**/*.stories.tsx",
         "src/beta/services/gql/__gen__/**/*",
-        "src/test/**/*"
+        "src/test/**/*",
+        "src/**/*.test.{ts,tsx}"
       ],
       reporter: ["text", "json", "lcov"]
     }
   },
   alias: [
-    { find: "crypto", replacement: "crypto" },
+    { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
     { find: "csv-parse", replacement: "csv-parse" }
   ]
 });
