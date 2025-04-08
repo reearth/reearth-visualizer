@@ -2,7 +2,6 @@ package interactor
 
 import (
 	"context"
-	"log"
 	"net/url"
 	"strings"
 	"testing"
@@ -16,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
@@ -32,7 +32,7 @@ func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func createNewProjectUC(ctx context.Context, client *mongox.Client) *Project {
+func createNewProjectUC(client *mongox.Client) *Project {
 	gw, _ := gcs.NewFile(true, "test-bucket", "/assets", "public, max-age=3600")
 	return &Project{
 		assetRepo:          mongo.NewAsset(client),
@@ -172,14 +172,29 @@ func TestProject_CheckAlias(t *testing.T) {
 
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClient(db.Name(), db.Client())
-	uc := createNewProjectUC(ctx, client)
+	uc := createNewProjectUC(client)
+
+	// setup for test
+	us := factory.NewUser()
+	ws := factory.NewWorkspace(func(w *workspace.Builder) {
+		w.Members(map[accountdomain.UserID]workspace.Member{
+			accountdomain.NewUserID(): {
+				Role:      workspace.RoleOwner,
+				Disabled:  false,
+				InvitedBy: workspace.UserID(us.ID()),
+				Host:      "",
+			},
+		})
+	})
 
 	testAlias := "alias"
-	pj := factory.NewProject(func(p *project.Project) {
-		p.UpdateAlias(testAlias)
+	pj := factory.NewProject(func(p *project.Builder) {
+		p.Workspace(ws.ID()).
+			Alias(testAlias)
 	})
 	_ = uc.projectRepo.Save(ctx, pj)
 
+	// test
 	t.Run("when alias is valid", func(t *testing.T) {
 		ok, err := uc.checkAlias(ctx, strings.Repeat("a", 31))
 		assert.NoError(t, err)
@@ -191,11 +206,9 @@ func TestProject_CheckAlias(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, testAlias)
 			assert.EqualError(t, err, interfaces.ErrProjectAliasAlreadyUsed.Error())
 			assert.False(t, ok)
-			assert.True(t, ok)
 		})
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
-				log.Println("c:", "alias2"+c)
 				ok, err := uc.checkAlias(ctx, "alias2"+c)
 				assert.EqualError(t, err, project.ErrInvalidAlias.Error())
 				assert.False(t, ok)
