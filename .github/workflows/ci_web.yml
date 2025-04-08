@@ -40,7 +40,7 @@ jobs:
       - name: eslint
         run: yarn run lint
       - name: Check
-        run: yarn run coverage
+        run: yarn run test:unit:coverage
       - name: Send coverage report
         uses: codecov/codecov-action@v5
         with:
