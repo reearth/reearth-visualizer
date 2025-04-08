@@ -3,9 +3,9 @@ import { faker } from "@faker-js/faker";
 import { LoginPage } from "../pages/loginPage";
 import { DashBoardPage } from "../pages/dashBoardPage";
 
-const userEmail = process.env.userEmail as string;
-const userPassword = process.env.userPassword as string;
-const baseURL = process.env.baseURL as string;
+const userEmail = process.env.REEARTH_WEB_E2E_EMAIL as string;
+const userPassword = process.env.REEARTH_WEB_E2E_PASSWORD as string;
+const baseURL = process.env.REEARTH_WEB_E2E_BASEURL as string;
 
 if (!userEmail || !userPassword || !baseURL) {
   throw new Error("Missing required variables.");
