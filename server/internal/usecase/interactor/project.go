@@ -704,7 +704,7 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 
 func (i *Project) checkAlias(ctx context.Context, updatedProjectID id.ProjectID, newAlias string) (bool, error) {
 	if !project.CheckAliasPattern(newAlias) {
-		return false, project.ErrInvalidAlias.AddTemplateData("aliasName", newAlias)
+		return false, project.ErrInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
 	}
 
 	prj, err := i.projectRepo.FindByPublicName(ctx, newAlias)

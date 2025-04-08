@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	ErrInvalidAlias = verror.NewVError(
+	ErrInvalidProjectAlias = verror.NewVError(
 		errmsg.ErrKeyPkgProjectInvalidAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias],
 		message.MultiLocaleTemplateData(map[string]interface{}{

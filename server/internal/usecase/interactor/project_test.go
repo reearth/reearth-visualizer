@@ -228,18 +228,18 @@ func TestProject_CheckAlias(t *testing.T) {
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
 				ok, err := uc.checkAlias(ctx, pj.ID(), "alias2"+c)
-				assert.EqualError(t, err, project.ErrInvalidAlias.Error())
+				assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
 				assert.False(t, ok)
 			}
 		})
 		t.Run("when alias is too short", func(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, pj.ID(), "aaaa")
-			assert.EqualError(t, err, project.ErrInvalidAlias.Error())
+			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 		t.Run("when alias is too long", func(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 33))
-			assert.EqualError(t, err, project.ErrInvalidAlias.Error())
+			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 	})
