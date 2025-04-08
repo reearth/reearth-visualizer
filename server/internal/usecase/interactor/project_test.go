@@ -168,6 +168,14 @@ func TestProject_Create(t *testing.T) {
 
 }
 
+// func TestProject_CheckAlias1(t *testing.T) {
+// 	ctx := context.Background()
+// 	db := mongotest.Connect(t)(t)
+// 	client := mongox.NewClient(db.Name(), db.Client())
+// 	uc := createNewProjectUC(client)
+
+// }
+
 func TestProject_CheckAlias(t *testing.T) {
 	ctx := context.Background()
 
@@ -177,6 +185,8 @@ func TestProject_CheckAlias(t *testing.T) {
 
 	// setup for test
 	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
 	ws := factory.NewWorkspace(func(w *workspace.Builder) {
 		w.Members(map[accountdomain.UserID]workspace.Member{
 			accountdomain.NewUserID(): {
@@ -187,6 +197,7 @@ func TestProject_CheckAlias(t *testing.T) {
 			},
 		})
 	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
 
 	testAlias := "alias"
 	pj := factory.NewProject(func(p *project.Builder) {
