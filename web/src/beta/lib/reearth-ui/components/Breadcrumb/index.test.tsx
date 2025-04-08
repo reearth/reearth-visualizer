@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@reearth/test/utils";
-import { expect, test, describe } from "vitest";
+import { expect, test, describe, vi } from "vitest";
 
 import { BreadcrumbItem, Breadcrumb } from ".";
 
@@ -21,8 +21,10 @@ describe("Breadcrumb Component", () => {
       { title: "Home", id: "home" },
       { title: "About", id: "about" }
     ];
-    render(<Breadcrumb items={items} onClick={() => {}} />);
+    const handleClick = vi.fn();
+    render(<Breadcrumb items={items} onClick={handleClick} />);
     fireEvent.click(screen.getByText("About"));
+    expect(handleClick).toHaveBeenCalledWith("about");
   });
 
   test("renders custom separator", () => {

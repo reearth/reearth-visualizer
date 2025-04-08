@@ -16,4 +16,18 @@ describe("CheckBox", () => {
     }
     expect(container.querySelector("svg")).toBeInTheDocument();
   });
+
+  it("does not show check icon when clicked if disabled", () => {
+    const { container } = render(<CheckBox value={false} disabled />);
+    expect(container.querySelector("svg")).not.toBeInTheDocument();
+
+    const boxField = container.querySelector("div");
+    expect(boxField).toBeInTheDocument();
+
+    if (boxField) {
+      fireEvent.click(boxField);
+    }
+
+    expect(container.querySelector("svg")).not.toBeInTheDocument();
+  });
 });
