@@ -27,54 +27,65 @@ export function events<
   E extends { [P in string]: any[] } = { [P in string]: any[] }
 >(): [Events<E>, EventEmitter<E>] {
   const e = new EventTarget();
-  const callbacks = new Map<
-    keyof E,
-    Map<EventCallback<E[keyof E]>, (e: Event) => void>
-  >();
+  // Map to store event listeners by type and ID
+  const callbacks = new Map<string, Map<number, EventCallback>>();
+
+  let callbackId = 0;
+
+  // Get a unique ID for each callback
   const getEventCallback = <T extends keyof E>(
     type: T,
-    cb: EventCallback<E[T]>
-  ): ((e: Event) => void) => {
-    let ecbs = callbacks.get(type);
+    callback: EventCallback<E[T]>
+  ): number => {
+    let ecbs = callbacks.get(String(type));
     if (!ecbs) {
       ecbs = new Map();
-      callbacks.set(type, ecbs);
+      callbacks.set(String(type), ecbs);
     }
 
-    let ecb = ecbs.get(cb as EventCallback);
-    if (!ecb) {
-      ecb = (e: Event): void => {
-        cb(...(e as CustomEvent).detail);
-      };
-      ecbs.set(cb as EventCallback, ecb);
-    }
-
-    return ecb;
+    const id = callbackId++; // Generate a unique ID
+    ecbs.set(id, callback);
+    return id;
   };
-  const deleteEventCallback = (type: keyof E, cb: EventCallback): void => {
+
+  // Remove an event listener by its ID
+  const deleteEventCallback = (type: string, id: number): void => {
     const ecbs = callbacks.get(type);
 
     if (ecbs) {
-      ecbs.delete(cb);
-      if (ecbs.size === 0) {
-        callbacks.delete(type);
+      const callback = ecbs.get(id);
+      if (callback) {
+        e.removeEventListener(type, callback);
+        ecbs.delete(id);
       }
     }
   };
-
   const on = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback);
+    const id = getEventCallback(type, callback);
+
+    const ecb = (e: Event) => {
+      callback(...(e as CustomEvent).detail);
+    };
+
     e.addEventListener(String(type), ecb);
+    return id;
   };
-  const off = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback);
-    e.removeEventListener(String(type), ecb);
-    deleteEventCallback(type, callback);
+
+  const off = <T extends keyof E>(type: T, id: number) => {
+    deleteEventCallback(String(type), id);
   };
-  const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback);
-    e.addEventListener(String(type), ecb, { once: true });
-  };
+
+   const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
+     const id = getEventCallback(type, callback);
+
+     const ecb = (e: Event) => {
+       callback(...(e as CustomEvent).detail);
+     };
+
+     e.addEventListener(String(type), ecb, { once: true });
+     return id;
+   };
+
 
   const events = {
     get on() {
