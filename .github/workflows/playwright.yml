@@ -27,9 +27,9 @@ jobs:
 
       - name: Run Playwright tests
         env:
-          userEmail: ${{ secrets.userEmail }}
-          userPassword: ${{ secrets.userPassword }}
-          baseURL: ${{ secrets.baseURL }}
+          userEmail: ${{ secrets.REEARTH_WEB_E2E_EMAIL }}
+          userPassword: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
+          baseURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
         working-directory: server/e2e/playwright-tests  
         run: npx playwright test
 
