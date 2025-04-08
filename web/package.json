@@ -8,9 +8,9 @@
   "private": true,
   "scripts": {
     "start": "yarn && vite",
-    "test:unit": "vitest run",
-    "test:unit:watch": "vitest",
-    "test:unit:coverage": "vitest run --coverage",
+    "test": "vitest",
+    "coverage": "vitest --coverage",
+    "e2e": "playwright test",
     "test:e2e": "playwright test",
     "prepare": "cd .. && husky install web/.husky",
     "build": "vite build",

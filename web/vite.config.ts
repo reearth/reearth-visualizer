@@ -82,25 +82,25 @@ export default defineConfig({
     ]
   },
   test: {
-    environment: "jsdom", // Sets test environment to simulate DOM for browser-like testing
-    setupFiles: "src/test/setup.ts", // Specifies setup file to run before tests
-    include: ["src/**/*.test.ts", "src/**/*.test.tsx"], // Check only test files in src folder
-    exclude: [...configDefaults.exclude, "e2e/*"], // Excludes default files and e2e tests
+    environment: "jsdom",
+    setupFiles: "src/test/setup.ts",
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+    exclude: [...configDefaults.exclude, "e2e/*"],
     coverage: {
-      provider: "v8", // Uses V8 engine for code coverage
-      include: ["src/**/*.test.ts", "src/**/*.test.tsx"], // Includes TypeScript and TSX files for coverage in src folder
+      provider: "v8",
+      include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
       exclude: [
-        "src/**/*.d.ts", // Excludes TypeScript declaration files
-        "src/**/*.cy.tsx", // Excludes Cypress test files
-        "src/**/*.stories.tsx", // Excludes Storybook files
-        "src/beta/services/gql/__gen__/**/*", // Excludes generated GraphQL files
-        "src/test/**/*" // Excludes test utility files
+        "src/**/*.d.ts",
+        "src/**/*.cy.tsx",
+        "src/**/*.stories.tsx",
+        "src/beta/services/gql/__gen__/**/*",
+        "src/test/**/*"
       ],
-      reporter: ["text", "json", "lcov"] // Outputs coverage reports in text, JSON, and LCOV formats
+      reporter: ["text", "json", "lcov"]
     }
   },
   alias: [
-    { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
+    { find: "crypto", replacement: "crypto" },
     { find: "csv-parse", replacement: "csv-parse" }
   ]
 });
