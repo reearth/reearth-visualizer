@@ -199,7 +199,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.Alias != nil {
-		if _, err := i.checkAlias(ctx, *p.Alias); err != nil {
+		if _, err := i.checkAlias(ctx, prj.ID(), *p.Alias); err != nil {
 			graphql.AddError(ctx, err)
 		}
 	}
@@ -292,8 +292,14 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	return prj, nil
 }
 
+// NOTE: This function is currently incomplete.
+// It should receive the caller's project ID as an argument,
+// because if the calling project checks its own alias value,
+// this method may incorrectly return an error (as if the alias is already used).
+// However, since this behavior has existed for some time,
+// we'll leave it as-is until all related refactoring is completed.
 func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
-	return i.checkAlias(ctx, alias)
+	return i.checkAlias(ctx, id.NewProjectID(), alias)
 }
 
 func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -372,7 +378,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newAlias := prevAlias
 	if params.Alias != nil {
-		if _, err := i.checkAlias(ctx, *params.Alias); err != nil {
+		if _, err := i.checkAlias(ctx, prj.ID(), *params.Alias); err != nil {
 			graphql.AddError(ctx, err)
 		}
 		newAlias = *params.Alias
@@ -694,14 +700,18 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 	return nil
 }
 
-func (i *Project) checkAlias(ctx context.Context, alias string) (bool, error) {
-	if !project.CheckAliasPattern(alias) {
+func (i *Project) checkAlias(ctx context.Context, updatedProjectID id.ProjectID, newAlias string) (bool, error) {
+	if !project.CheckAliasPattern(newAlias) {
 		return false, project.ErrInvalidAlias
 	}
 
-	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
+	prj, err := i.projectRepo.FindByPublicName(ctx, newAlias)
 
 	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
+		return true, nil
+	}
+
+	if prj.ID() == updatedProjectID {
 		return true, nil
 	}
 

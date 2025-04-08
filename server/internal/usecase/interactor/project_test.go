@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -196,31 +197,37 @@ func TestProject_CheckAlias(t *testing.T) {
 
 	// test
 	t.Run("when alias is valid", func(t *testing.T) {
-		ok, err := uc.checkAlias(ctx, strings.Repeat("a", 31))
+		ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 31))
+		assert.NoError(t, err)
+		assert.True(t, ok)
+	})
+
+	t.Run("when alias update to same alias", func(t *testing.T) {
+		ok, err := uc.checkAlias(ctx, pj.ID(), testAlias)
 		assert.NoError(t, err)
 		assert.True(t, ok)
 	})
 
 	t.Run("when alias is invalid", func(t *testing.T) {
-		t.Run("when alias is already used", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, testAlias)
+		t.Run("when alias is already used by other project", func(t *testing.T) {
+			ok, err := uc.checkAlias(ctx, id.NewProjectID(), testAlias)
 			assert.EqualError(t, err, interfaces.ErrProjectAliasAlreadyUsed.Error())
 			assert.False(t, ok)
 		})
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
-				ok, err := uc.checkAlias(ctx, "alias2"+c)
+				ok, err := uc.checkAlias(ctx, pj.ID(), "alias2"+c)
 				assert.EqualError(t, err, project.ErrInvalidAlias.Error())
 				assert.False(t, ok)
 			}
 		})
 		t.Run("when alias is too short", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, "aaaa")
+			ok, err := uc.checkAlias(ctx, pj.ID(), "aaaa")
 			assert.EqualError(t, err, project.ErrInvalidAlias.Error())
 			assert.False(t, ok)
 		})
 		t.Run("when alias is too long", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, strings.Repeat("a", 33))
+			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 33))
 			assert.EqualError(t, err, project.ErrInvalidAlias.Error())
 			assert.False(t, ok)
 		})
