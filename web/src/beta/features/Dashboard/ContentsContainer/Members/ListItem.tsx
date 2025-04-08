@@ -73,7 +73,7 @@ const ListItem: FC<{
                 icon: "arrowLeftRight",
                 id: "changeRole",
                 title: t("Change Role"),
-                disabled: PermissionService.canModify(
+                disabled: !PermissionService.canModify(
                   meRole,
                   member.role,
                   isLastOwner
@@ -84,7 +84,7 @@ const ListItem: FC<{
                 icon: "close",
                 id: "remove",
                 title: t("Remove"),
-                disabled: PermissionService.canRemove(
+                disabled: !PermissionService.canRemove(
                   meRole,
                   member.role,
                   isLastOwner

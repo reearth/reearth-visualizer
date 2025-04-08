@@ -19,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -622,6 +623,11 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	if _, err := zipFile.Seek(0, 0); err != nil {
 		return err
 	}
+	// 500MB
+	if err := file.FileSizeCheck(500, zipFile); err != nil {
+		return err
+	}
+
 	defer func() {
 		if err := zipFile.Close(); err != nil {
 			fmt.Println("Failed to close zip file:", err)
