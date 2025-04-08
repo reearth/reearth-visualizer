@@ -27,7 +27,7 @@ jobs:
 
       - name: Run Playwright tests
         env:
-          userEmail: ${{ secrets.REEARTH_WEB_E2E_EMAIL }}
+          userEmail: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
           userPassword: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
           baseURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
         working-directory: server/e2e/playwright-tests  
