@@ -138,7 +138,7 @@ export default () => {
       visualizer: Visualizer,
       name: string,
       coreSupport: boolean,
-      description?: string,
+      description?: string
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
@@ -378,7 +378,12 @@ export default () => {
     async (input: DeleteProjectInput) => {
       if (!input.projectId) return { status: "error" };
       const { data, errors } = await deleteProjectMutation({
-        variables: { ...input }
+        variables: { ...input },
+        context: {
+          fetchOptions: {
+            __timeout: 1000 * 60 * 30 // 30 minutes
+          }
+        }
       });
 
       if (errors || !data?.deleteProject) {
@@ -472,7 +477,12 @@ export default () => {
 
       try {
         const { data, errors } = await exportProjectMutation({
-          variables: { projectId }
+          variables: { projectId },
+          context: {
+            fetchOptions: {
+              __timeout: 1000 * 60 * 30 // 30 minutes
+            }
+          }
         });
 
         if (errors || !data?.exportProject?.projectDataPath) {
@@ -531,7 +541,12 @@ export default () => {
 
       try {
         const { data, errors } = await importProjectMutation({
-          variables: { ...input }
+          variables: { ...input },
+          context: {
+            fetchOptions: {
+              __timeout: 1000 * 60 * 30 // 30 minutes
+            }
+          }
         });
 
         if (errors || !data?.importProject) {
