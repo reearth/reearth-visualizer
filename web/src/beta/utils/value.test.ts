@@ -1,4 +1,4 @@
-import { ValueType as GQLValueType } from "@reearth/services/gql"; // Mock this if needed
+import { ValueType as GQLValueType } from "@reearth/services/gql";
 import { describe, it, expect } from "vitest";
 
 import {
