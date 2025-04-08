@@ -82,26 +82,27 @@ export default defineConfig({
     ]
   },
   test: {
-    environment: "jsdom",
-    setupFiles: ["src/test/setup.ts"],
-    exclude: [...configDefaults.exclude, "e2e/*"],
+    environment: "jsdom", // Sets test environment to simulate DOM for browser-like testing
+    setupFiles: "src/test/setup.ts", // Specifies setup file to run before tests
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"], // Check only test files in src folder
+    exclude: [...configDefaults.exclude, "e2e/*"], // Excludes default files and e2e tests
     coverage: {
-      all: true,
-      include: ["src/**/*.ts", "src/**/*.tsx"],
+      provider: "v8", // Uses V8 engine for code coverage
+      include: ["src/**/*.test.ts", "src/**/*.test.tsx"], // Includes TypeScript and TSX files for coverage in src folder
       exclude: [
-        "src/**/*.d.ts",
-        "src/**/*.cy.tsx",
-        "src/**/*.stories.tsx",
-        "src/beta/services/gql/__gen__/**/*",
-        "src/test/**/*"
+        "src/**/*.d.ts", // Excludes TypeScript declaration files
+        "src/**/*.cy.tsx", // Excludes Cypress test files
+        "src/**/*.stories.tsx", // Excludes Storybook files
+        "src/beta/services/gql/__gen__/**/*", // Excludes generated GraphQL files
+        "src/test/**/*" // Excludes test utility files
       ],
-      reporter: ["text", "json", "lcov"]
-    },
-    alias: [
-      { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
-      { find: "csv-parse", replacement: "csv-parse" }
-    ]
-  }
+      reporter: ["text", "json", "lcov"] // Outputs coverage reports in text, JSON, and LCOV formats
+    }
+  },
+  alias: [
+    { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
+    { find: "csv-parse", replacement: "csv-parse" }
+  ]
 });
 
 function serverHeaders(): Plugin {
