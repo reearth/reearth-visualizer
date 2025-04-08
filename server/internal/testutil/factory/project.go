@@ -16,7 +16,7 @@ func NewProject(opts ...ProjectOption) *project.Project {
 		Alias(pid.String()).
 		PublishmentStatus(project.PublishmentStatusPublic).
 		Visualizer(visualizer.VisualizerCesium).
-		Description(faker.Word()).
+		Description(faker.Word())
 	for _, opt := range opts {
 		opt(p)
 	}
