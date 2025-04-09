@@ -105,6 +105,11 @@ func serveUploadFiles(
 			if err != nil {
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to get file chunk")
 			}
+			defer func() {
+				if cerr := f.Close(); cerr != nil && err == nil {
+					err = cerr
+				}
+			}()
 
 			return uploadManager.handleChunkedUpload(ctx, usecases, op, teamID, fileID, chunkNum, totalChunks, f)
 		}),
@@ -113,7 +118,6 @@ func serveUploadFiles(
 }
 
 func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, teamId, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
-	defer file.Close()
 
 	// chunkPath, err := m.SaveChunk(fileID, chunkNum, file)
 	_, err := m.SaveChunk(fileID, chunkNum, file)
