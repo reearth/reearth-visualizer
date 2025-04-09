@@ -54,7 +54,6 @@ func TestProject_createProject(t *testing.T) {
 	client := mongox.NewClient(db.Name(), db.Client())
 	uc := createNewProjectUC(client)
 
-	// setup for test
 	us := factory.NewUser()
 	_ = uc.userRepo.Save(ctx, us)
 
