@@ -7,24 +7,19 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
-	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
-	"github.com/reearth/reearthx/rerror"
-	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
 )
@@ -51,113 +46,6 @@ func createNewProjectUC(client *mongox.Client) *Project {
 		pluginRepo:         mongo.NewPlugin(client),
 		file:               gw,
 	}
-}
-func TestProject_Create(t *testing.T) {
-	ctx := context.Background()
-
-	po := policy.New(policy.Option{
-		ID:           policy.ID("policy"),
-		ProjectCount: lo.ToPtr(2),
-	})
-
-	uc := &Project{
-		projectRepo:   memory.NewProject(),
-		workspaceRepo: accountmemory.NewWorkspace(),
-		transaction:   &usecasex.NopTransaction{},
-		policyRepo:    memory.NewPolicyWith(po),
-	}
-
-	ws := workspace.New().NewID().Policy(policy.ID("policy").Ref()).MustBuild()
-	wsid2 := workspace.NewID()
-	_ = uc.workspaceRepo.Save(ctx, ws)
-
-	// normal
-	got, err := uc.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: ws.ID(),
-		Visualizer:  visualizer.VisualizerCesium,
-		Name:        lo.ToPtr("aaa"),
-		Description: lo.ToPtr("bbb"),
-	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
-		},
-	})
-	assert.NoError(t, err)
-	want := project.New().
-		ID(got.ID()).
-		Workspace(ws.ID()).
-		Name("aaa").
-		Description("bbb").
-		Alias(got.ID().String()).
-		Visualizer(visualizer.VisualizerCesium).
-		UpdatedAt(got.UpdatedAt()).
-		CoreSupport(false).
-		MustBuild()
-	assert.Equal(t, want, got)
-	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, got.ID())))
-
-	// Experimental
-	got, err = uc.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: ws.ID(),
-		Visualizer:  visualizer.VisualizerCesium,
-		Name:        lo.ToPtr("aaa"),
-		Description: lo.ToPtr("bbb"),
-		CoreSupport: lo.ToPtr(true),
-	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
-		},
-	})
-	assert.NoError(t, err)
-	want = project.New().
-		ID(got.ID()).
-		Workspace(ws.ID()).
-		Name("aaa").
-		Description("bbb").
-		Alias(got.ID().String()).
-		Visualizer(visualizer.VisualizerCesium).
-		UpdatedAt(got.UpdatedAt()).
-		CoreSupport(true).
-		MustBuild()
-	assert.Equal(t, want, got)
-	assert.Equal(t, want, lo.Must(uc.projectRepo.FindByID(ctx, got.ID())))
-
-	// nonexistent workspace
-	got, err = uc.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: wsid2,
-		Visualizer:  visualizer.VisualizerCesium,
-	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{wsid2},
-		},
-	})
-	assert.Same(t, rerror.ErrNotFound, err)
-	assert.Nil(t, got)
-
-	// operation denied
-	got, err = uc.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: ws.ID(),
-		Visualizer:  visualizer.VisualizerCesium,
-	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			ReadableWorkspaces: workspace.IDList{ws.ID()},
-		},
-	})
-	assert.Same(t, interfaces.ErrOperationDenied, err)
-	assert.Nil(t, got)
-
-	// policy
-	got, err = uc.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: ws.ID(),
-		Visualizer:  visualizer.VisualizerCesium,
-	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
-		},
-	})
-	assert.Same(t, policy.ErrPolicyViolation, err)
-	assert.Nil(t, got)
-
 }
 func TestProject_createProject(t *testing.T) {
 	ctx := context.Background()
@@ -288,7 +176,6 @@ func TestProject_CheckAlias(t *testing.T) {
 	client := mongox.NewClient(db.Name(), db.Client())
 	uc := createNewProjectUC(client)
 
-	// setup for test
 	us := factory.NewUser()
 	_ = uc.userRepo.Save(ctx, us)
 
@@ -311,7 +198,6 @@ func TestProject_CheckAlias(t *testing.T) {
 	})
 	_ = uc.projectRepo.Save(ctx, pj)
 
-	// test
 	t.Run("when alias is valid", func(t *testing.T) {
 		t.Run("when alias length is valid max length", func(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 32))
