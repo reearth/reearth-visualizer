@@ -113,9 +113,10 @@ const PluginListItem: FC<PluginListItemProps> = ({
         <>
           {bodyMarkdown ? (
             <Markdown
-              backgroundColor={theme.bg.base}
+              className="plugin-description-md"
               styles={{
-                color: theme.content.main
+                color: theme.content.main,
+                fontSize: theme.fonts.sizes.body
               }}
             >
               {bodyMarkdown}
