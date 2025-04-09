@@ -71,7 +71,7 @@ test.describe("Login Page Tests", () => {
 
   test("should login to the system and verify dashboard, logout and verify login page again", async () => {
     await loginPage.login(REEARTH_WEB_E2E_USERNAME, REEARTH_WEB_E2E_PASSWORD);
-    await page.waitForNavigation({ url: /\/dashboard\/.+/, timeout: 30000 });
+    await page.waitForURL(/\/dashboard\/.+/, { timeout: 30000 });
     const currentURL = page.url();
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.assets).toBeVisible();
