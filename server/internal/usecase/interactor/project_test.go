@@ -168,14 +168,6 @@ func TestProject_Create(t *testing.T) {
 
 }
 
-// func TestProject_CheckAlias1(t *testing.T) {
-// 	ctx := context.Background()
-// 	db := mongotest.Connect(t)(t)
-// 	client := mongox.NewClient(db.Name(), db.Client())
-// 	uc := createNewProjectUC(client)
-
-// }
-
 func TestProject_CheckAlias(t *testing.T) {
 	ctx := context.Background()
 
