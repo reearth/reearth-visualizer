@@ -11,3 +11,5 @@ test-results/
 test-report
 .last-run.json
 index.html
+test-report 
+test-report/index.html

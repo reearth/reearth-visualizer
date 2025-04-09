@@ -1,4 +1,7 @@
-name: Run Playwright Tests
+name: E2E Test on Dev
+
+description: |
+  This workflow runs E2E tests on the dev environment when code is pushed to the main branch.
 
 on:
   push:
@@ -10,6 +13,14 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18, 20]
+
+    defaults:
+      run:
+        working-directory: server/e2e/playwright-tests
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -17,26 +28,29 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: ${{ matrix.node-version }}
 
-      - name: Install dependencies
-        working-directory: server/e2e/playwright-tests
-        run: npm install
-
-      - name: Install Playwright Browsers
-        working-directory: server/e2e/playwright-tests
-        run: npx playwright install --with-deps
-
-      - name: Debug env vars (no password)
+      - name: Install dependencies and Playwright browsers
         run: |
-          echo "userEmail: $userEmail"
-          echo "baseURL: $baseURL"
-        env:
-          userEmail: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
-          baseURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
+          npm ci
+          npx playwright install --with-deps
+
+      - name: Validate secrets
+        run: |
+          if [ -z "${{ secrets.REEARTH_WEB_E2E_USERNAME }}" ]; then
+            echo "Error: REEARTH_WEB_E2E_USERNAME secret is not set."
+            exit 1
+          fi
+          if [ -z "${{ secrets.REEARTH_WEB_E2E_PASSWORD }}" ]; then
+            echo "Error: REEARTH_WEB_E2E_PASSWORD secret is not set."
+            exit 1
+          fi
+          if [ -z "${{ secrets.REEARTH_WEB_E2E_BASEURL }}" ]; then
+            echo "Error: REEARTH_WEB_E2E_BASEURL secret is not set."
+            exit 1
+          fi
 
       - name: Run Playwright tests
-        working-directory: server/e2e/playwright-tests
         env:
           userEmail: ${{ secrets.REEARTH_WEB_E2E_USERNAME }}
           userPassword: ${{ secrets.REEARTH_WEB_E2E_PASSWORD }}
