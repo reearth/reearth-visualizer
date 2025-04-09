@@ -3,11 +3,15 @@ import { faker } from "@faker-js/faker";
 import { LoginPage } from "../pages/loginPage";
 import { DashBoardPage } from "../pages/dashBoardPage";
 
-const userEmail = process.env.REEARTH_WEB_E2E_USERNAME;
-const userPassword = process.env.REEARTH_WEB_E2E_PASSWORD;
-const baseURL = process.env.REEARTH_WEB_E2E_BASEURL;
+const REEARTH_WEB_E2E_USERNAME = process.env.REEARTH_WEB_E2E_USERNAME;
+const REEARTH_WEB_E2E_PASSWORD = process.env.REEARTH_WEB_E2E_PASSWORD;
+const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 
-if (!userEmail || !userPassword || !baseURL) {
+if (
+  !REEARTH_WEB_E2E_USERNAME ||
+  !REEARTH_WEB_E2E_PASSWORD ||
+  !REEARTH_WEB_E2E_BASEURL
+) {
   throw new Error("Missing required variables.");
 }
 
@@ -22,7 +26,7 @@ test.describe("Login Page Tests", () => {
     page = await context.newPage();
     loginPage = new LoginPage(page);
     dashBoardPage = new DashBoardPage(page);
-    await page.goto(baseURL, { waitUntil: "networkidle" });
+    await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
   });
 
   test.afterAll(async () => {
@@ -42,7 +46,7 @@ test.describe("Login Page Tests", () => {
   });
 
   test("should show error message for empty username", async () => {
-    await loginPage.login("", userPassword);
+    await loginPage.login("", REEARTH_WEB_E2E_PASSWORD);
     await expect(loginPage.errorMessagePassword).toBeVisible();
     await expect(loginPage.errorMessagePassword).toHaveText(
       "Username can't be blank"
@@ -50,7 +54,7 @@ test.describe("Login Page Tests", () => {
   });
 
   test("should show error message for empty password", async () => {
-    await loginPage.login(userEmail, "");
+    await loginPage.login(REEARTH_WEB_E2E_USERNAME, "");
     await expect(loginPage.forgotPasswordError).toBeVisible();
     await expect(loginPage.forgotPasswordError).toHaveText(
       "Password can't be blank"
@@ -66,7 +70,7 @@ test.describe("Login Page Tests", () => {
   });
 
   test("should login to the system and verify dashboard, logout and verify login page again", async () => {
-    await loginPage.login(userEmail, userPassword);
+    await loginPage.login(REEARTH_WEB_E2E_USERNAME, REEARTH_WEB_E2E_PASSWORD);
     await page.waitForNavigation({ url: /\/dashboard\/.+/, timeout: 30000 });
     const currentURL = page.url();
     await expect(dashBoardPage.projects).toBeVisible();

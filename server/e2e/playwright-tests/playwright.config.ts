@@ -48,7 +48,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         screenshot: "only-on-failure",
-        headless: false,
+        headless: true,
         launchOptions: {
           slowMo: 100,
         },

@@ -8,8 +8,6 @@ node_modules/
 .env
 test-results.json
 test-results/
-test-report
 .last-run.json
-index.html
-test-report 
-test-report/index.html
+/test-report/
+/index.html
