@@ -62,7 +62,7 @@ func (e *VError) Error() string {
 	if e.Err != nil {
 		return e.Err.Error()
 	}
-	return ""
+	return e.ErrMsg[language.English].Message
 }
 
 func (e *VError) Unwrap() error {
