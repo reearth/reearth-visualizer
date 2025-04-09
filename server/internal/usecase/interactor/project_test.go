@@ -175,7 +175,6 @@ func TestProject_CheckAlias(t *testing.T) {
 	client := mongox.NewClient(db.Name(), db.Client())
 	uc := createNewProjectUC(client)
 
-	// setup for test
 	us := factory.NewUser()
 	_ = uc.userRepo.Save(ctx, us)
 
@@ -198,7 +197,6 @@ func TestProject_CheckAlias(t *testing.T) {
 	})
 	_ = uc.projectRepo.Save(ctx, pj)
 
-	// test
 	t.Run("when alias is valid", func(t *testing.T) {
 		t.Run("when alias length is valid max length", func(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 32))
