@@ -35,8 +35,9 @@ export const UrlWrapper = styled("div")<{ justify?: string }>(
     alignItems: "center",
     border: `1px solid ${theme.outline.weak}`,
     borderRadius: "4px",
-    padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
-    cursor: "pointer"
+    padding: theme.spacing.small,
+    cursor: "pointer",
+    width: "100%"
   })
 );
 
@@ -62,3 +63,18 @@ export const UrlAction = styled("div")(() => ({
   minHeight: 18,
   flexShrink: 0
 }));
+
+export const PublicUrlWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  alignItems: "center"
+}));
+
+export const PublishStatus = styled("div")<{ isPublished?: boolean }>(
+  ({ theme, isPublished }) => ({
+    width: "8px",
+    height: "8px",
+    backgroundColor: isPublished ? theme.publish.main : theme.content.weaker,
+    borderRadius: "50%"
+  })
+);

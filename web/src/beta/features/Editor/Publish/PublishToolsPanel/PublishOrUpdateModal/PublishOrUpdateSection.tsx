@@ -1,10 +1,17 @@
-import { useSettingsNavigation } from "@reearth/beta/hooks";
-import { Button, Typography } from "@reearth/beta/lib/reearth-ui";
-import { CommonField, SwitchField } from "@reearth/beta/ui/fields";
+import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
+import { SwitchField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
-import { FC, useMemo } from "react";
+import { useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import { Section, UrlText, UrlWrapper } from "../common";
+import {
+  PublicUrlWrapper,
+  PublishStatus,
+  Section,
+  UrlAction,
+  UrlText,
+  UrlWrapper
+} from "../common";
 import { PublishItem } from "../hooks";
 
 type Props = {
@@ -21,10 +28,14 @@ const PublishOrUpdateSection: FC<Props> = ({
   handleSearchIndexEnableChange
 }) => {
   const t = useT();
+  const theme = useTheme();
 
-  const handleNavigationToSettings = useSettingsNavigation({
-    projectId: publishItem.projectId
-  });
+  const [urlCopied, setUrlCopied] = useState(false);
+
+  const handleCopyToClipBoard = useCallback((value: string | undefined) => {
+    if (!value) return;
+    navigator.clipboard.writeText(value);
+  }, []);
 
   const updateDescriptionText = useMemo(() => {
     return publishItem.isPublished
@@ -37,35 +48,43 @@ const PublishOrUpdateSection: FC<Props> = ({
           )
       : publishItem.type === "story"
         ? t(
-            `Your story will be published. This means anybody with the below URL will be able to view this story.`
+            `Your story will be published. This means anybody can view this story by default url.`
           )
         : t(
-            `Your scene will be published. This means anybody with the below URL will be able to view this scene.`
+            `Your scene will be published. This means anybody can view this project by default url.`
           );
   }, [t, publishItem]);
 
   return (
     <Section>
       <Typography size="body">{updateDescriptionText}</Typography>
-      <CommonField title={t("Publish domain")}>
-        {publicUrl && (
-          <UrlWrapper onClick={() => window.open(publicUrl, "_blank")}>
-            <UrlText hasPublicUrl>{publicUrl}</UrlText>
+      {publishItem.isPublished && (
+        <PublicUrlWrapper>
+          <PublishStatus isPublished />
+          <UrlWrapper justify="space-between">
+            <UrlText
+              hasPublicUrl
+              onClick={() => window.open(publicUrl, "_blank")}
+            >
+              {publicUrl}
+            </UrlText>
+            <UrlAction
+              onClick={() => {
+                handleCopyToClipBoard(publicUrl);
+                setUrlCopied(true);
+              }}
+              onMouseLeave={() => setUrlCopied(false)}
+            >
+              {urlCopied ? (
+                <Icon icon="check" color={theme.primary.main} />
+              ) : (
+                <Icon icon="copy" />
+              )}
+            </UrlAction>
           </UrlWrapper>
-        )}
-      </CommonField>
-      <CommonField title={t("Need to change domain related settings?")}>
-        <Button
-          size="small"
-          onClick={() =>
-            handleNavigationToSettings?.(
-              "public",
-              publishItem.type === "story" ? publishItem.storyId : ""
-            )
-          }
-          title={t("Go to settings")}
-        />
-      </CommonField>
+        </PublicUrlWrapper>
+      )}
+
       <SwitchField
         title={t("Search engine indexing")}
         description={t("Page will be available as result on search engines")}
