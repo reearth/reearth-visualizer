@@ -687,7 +687,6 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return nil, err
 	}
 
-	// enforce policy
 	if policyID := operator.Policy(ws.Policy()); policyID != nil {
 		p, err := i.policyRepo.FindByID(txCtx, *policyID)
 		if err != nil {
@@ -710,7 +709,6 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		Workspace(input.WorkspaceID).
 		Visualizer(input.Visualizer)
 
-	// default alias is project id
 	if input.Alias != nil {
 		prj = prj.Alias(*input.Alias)
 	} else {
