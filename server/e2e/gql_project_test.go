@@ -438,11 +438,10 @@ func deleteProject(e *httpexpect.Expect, projectID string) {
 func createGraphQLRequest(name string, coreSupport bool) GraphQLRequest {
 	return GraphQLRequest{
 		OperationName: "CreateProject",
-		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
+		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $coreSupport: Boolean) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, coreSupport: $coreSupport}\n ) {\n project {\n id\n name\n description\n coreSupport\n __typename\n }\n __typename\n }\n}",
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": coreSupport,
@@ -461,11 +460,10 @@ func testData(e *httpexpect.Expect) {
 	// create coreSupport default(=false) project
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
-		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
+		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $coreSupport: Boolean) {\n  createProject(\n    input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, coreSupport: $coreSupport}\n  ) {\n    project {\n      id\n      name\n      description\n      coreSupport\n      __typename\n    }\n    __typename\n  }\n}",
 		Variables: map[string]any{
 			"name":        "test1-1",
 			"description": "abc",
-			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 		},
@@ -477,11 +475,10 @@ func testData(e *httpexpect.Expect) {
 	// create coreSupport default(=false) `delete` project
 	requestBody = GraphQLRequest{
 		OperationName: "CreateProject",
-		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
+		Query:         "mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!) {\n createProject(\n input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description}\n ) {\n project {\n id\n name\n description\n imageUrl\n coreSupport\n __typename\n }\n __typename\n }\n}",
 		Variables: map[string]any{
 			"name":        "test1-2",
 			"description": "abc",
-			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 		},

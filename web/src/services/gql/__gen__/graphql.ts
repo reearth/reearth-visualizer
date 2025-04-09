@@ -191,11 +191,8 @@ export type CreateNlsPhotoOverlayPayload = {
 };
 
 export type CreateProjectInput = {
-  alias?: InputMaybe<Scalars['String']['input']>;
-  archived?: InputMaybe<Scalars['Boolean']['input']>;
   coreSupport?: InputMaybe<Scalars['Boolean']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
-  imageUrl?: InputMaybe<Scalars['URL']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   teamId: Scalars['ID']['input'];
   visualizer: Visualizer;

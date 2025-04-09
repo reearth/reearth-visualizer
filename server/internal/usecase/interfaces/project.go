@@ -23,9 +23,6 @@ type CreateProjectParam struct {
 	Visualizer  visualizer.Visualizer
 	Name        *string
 	Description *string
-	ImageURL    *url.URL
-	Alias       *string
-	Archived    *bool
 	CoreSupport *bool
 }
 
