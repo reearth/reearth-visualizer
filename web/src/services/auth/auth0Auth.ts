@@ -29,8 +29,9 @@ export const useAuth0Auth = (): AuthHook => {
           // Clear Auth0 cached authentication state
           localStorage.removeItem("auth0.is.authenticated");
 
-          // Redirect to login page
-          window.location.href = window.location.origin;
+          // Force a clean reload rather than trying to redirect
+          // This avoids potential issues with the Auth0 library state
+          window.location.reload();
         }
       }
     };
