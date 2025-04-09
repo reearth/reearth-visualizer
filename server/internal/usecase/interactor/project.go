@@ -92,10 +92,6 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
-		return nil, err
-	}
-
 	return i.createProject(ctx, createProjectInput{
 		WorkspaceID: input.WorkspaceID,
 		Visualizer:  input.Visualizer,
@@ -670,6 +666,9 @@ type createProjectInput struct {
 }
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
+	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
+		return nil, err
+	}
 
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -705,24 +704,37 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		}
 	}
 
+	prjID := id.NewProjectID()
 	prj := project.New().
-		NewID().
+		ID(prjID).
 		Workspace(input.WorkspaceID).
 		Visualizer(input.Visualizer)
-	if input.Name != nil {
-		prj = prj.Name(*input.Name)
+
+	// default alias is project id
+	if input.Alias != nil {
+		prj = prj.Alias(*input.Alias)
+	} else {
+		prj = prj.Alias(prjID.String())
 	}
-	if input.Description != nil {
-		prj = prj.Description(*input.Description)
+
+	if input.Archived != nil {
+		prj = prj.IsArchived(*input.Archived)
 	}
+
 	if input.CoreSupport != nil {
 		prj = prj.CoreSupport(*input.CoreSupport)
 	}
+
+	if input.Description != nil {
+		prj = prj.Description(*input.Description)
+	}
+
 	if input.ImageURL != nil {
 		prj = prj.ImageURL(input.ImageURL)
 	}
-	if input.Alias != nil {
-		prj = prj.Alias(*input.Alias)
+
+	if input.Name != nil {
+		prj = prj.Name(*input.Name)
 	}
 
 	proj, err := prj.Build()
@@ -730,7 +742,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return nil, err
 	}
 
-	err = i.projectRepo.Save(ctx, proj)
+	err = i.projectRepo.Save(txCtx, proj)
 	if err != nil {
 		return nil, err
 	}

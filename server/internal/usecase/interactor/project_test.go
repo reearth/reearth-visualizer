@@ -88,8 +88,7 @@ func TestProject_Create(t *testing.T) {
 		Workspace(ws.ID()).
 		Name("aaa").
 		Description("bbb").
-		ImageURL(lo.Must(url.Parse("https://example.com/hoge.gif"))).
-		Alias("aliasalias").
+		Alias(got.ID().String()).
 		Visualizer(visualizer.VisualizerCesium).
 		UpdatedAt(got.UpdatedAt()).
 		CoreSupport(false).
@@ -103,6 +102,7 @@ func TestProject_Create(t *testing.T) {
 		Visualizer:  visualizer.VisualizerCesium,
 		Name:        lo.ToPtr("aaa"),
 		Description: lo.ToPtr("bbb"),
+		CoreSupport: lo.ToPtr(true),
 	}, &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
 			WritableWorkspaces: workspace.IDList{ws.ID()},
@@ -114,8 +114,7 @@ func TestProject_Create(t *testing.T) {
 		Workspace(ws.ID()).
 		Name("aaa").
 		Description("bbb").
-		ImageURL(lo.Must(url.Parse("https://example.com/hoge.gif"))).
-		Alias("aliasalias").
+		Alias(got.ID().String()).
 		Visualizer(visualizer.VisualizerCesium).
 		UpdatedAt(got.UpdatedAt()).
 		CoreSupport(true).
@@ -160,14 +159,127 @@ func TestProject_Create(t *testing.T) {
 	assert.Nil(t, got)
 
 }
+func TestProject_createProject(t *testing.T) {
+	ctx := context.Background()
 
-// func TestProject_CheckAlias1(t *testing.T) {
-// 	ctx := context.Background()
-// 	db := mongotest.Connect(t)(t)
-// 	client := mongox.NewClient(db.Name(), db.Client())
-// 	uc := createNewProjectUC(client)
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
 
-// }
+	// setup for test
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace(func(w *workspace.Builder) {
+		w.Members(map[accountdomain.UserID]workspace.Member{
+			accountdomain.NewUserID(): {
+				Role:      workspace.RoleOwner,
+				Disabled:  false,
+				InvitedBy: workspace.UserID(us.ID()),
+				Host:      "",
+			},
+		})
+	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	t.Run("valid input", func(t *testing.T) {
+		t.Run("when all fields in createProjectInput are correctly set, the project is created by same values", func(t *testing.T) {
+			input := createProjectInput{
+				WorkspaceID: ws.ID(),
+				Visualizer:  visualizer.VisualizerCesium,
+				Name:        lo.ToPtr("aaa"),
+				Description: lo.ToPtr("bbb"),
+				Alias:       lo.ToPtr("alias"),
+				ImageURL:    lo.Must(url.Parse("https://example.com/hoge")),
+				CoreSupport: lo.ToPtr(true),
+				Archived:    lo.ToPtr(true),
+			}
+			got, err := uc.createProject(ctx, input, &usecase.Operator{
+				AcOperator: &accountusecase.Operator{
+					WritableWorkspaces: workspace.IDList{ws.ID()},
+				},
+			})
+
+			assert.NoError(t, err)
+			assert.Equal(t, ws.ID().String(), got.Workspace().String())
+			assert.Equal(t, input.Visualizer, got.Visualizer())
+			assert.Equal(t, *input.Name, got.Name())
+			assert.Equal(t, *input.Description, got.Description())
+			assert.Equal(t, *input.Alias, got.Alias())
+			assert.Equal(t, input.ImageURL, got.ImageURL())
+			assert.Equal(t, *input.CoreSupport, got.CoreSupport())
+			assert.Equal(t, *input.Archived, got.IsArchived())
+		})
+
+		t.Run("When optional fields are not set (except those allowing nil), default values are assigned and the project is created accordingly", func(t *testing.T) {
+			input := createProjectInput{
+				WorkspaceID: ws.ID(),
+			}
+			got, err := uc.createProject(ctx, input, &usecase.Operator{
+				AcOperator: &accountusecase.Operator{
+					WritableWorkspaces: workspace.IDList{ws.ID()},
+				},
+			})
+
+			assert.NoError(t, err)
+			assert.Equal(t, ws.ID().String(), got.Workspace().String())
+			assert.Equal(t, visualizer.Visualizer(""), got.Visualizer())
+			assert.Equal(t, "", got.Name())                  // name default value is empty string
+			assert.Equal(t, "", got.Description())           // description default value is empty string
+			assert.Equal(t, got.ID().String(), got.Alias())  // alias default value is project-{projectID}
+			assert.Equal(t, (*url.URL)(nil), got.ImageURL()) // image url default value is nil
+			assert.Equal(t, false, got.CoreSupport())        // core support default value is false
+			assert.Equal(t, false, got.IsArchived())         // archived default value is false
+		})
+	})
+
+	t.Run("invalid input", func(t *testing.T) {
+		t.Run("when workspace id is not set", func(t *testing.T) {
+			input := createProjectInput{
+				Visualizer:  visualizer.VisualizerCesium,
+				Name:        lo.ToPtr("aaa"),
+				Description: lo.ToPtr("bbb"),
+				Alias:       lo.ToPtr("alias"),
+				ImageURL:    lo.Must(url.Parse("https://example.com/hoge")),
+				CoreSupport: lo.ToPtr(true),
+				Archived:    lo.ToPtr(true),
+			}
+
+			got, err := uc.createProject(ctx, input, &usecase.Operator{
+				AcOperator: &accountusecase.Operator{
+					WritableWorkspaces: workspace.IDList{ws.ID()},
+				},
+			})
+
+			assert.EqualError(t, err, interfaces.ErrOperationDenied.Error())
+			assert.Nil(t, got)
+		})
+		t.Run("when workspace id value is invalid", func(t *testing.T) {
+			invalidWs := factory.NewWorkspace()
+			_ = uc.workspaceRepo.Save(ctx, invalidWs)
+
+			input := createProjectInput{
+				WorkspaceID: invalidWs.ID(),
+				Visualizer:  visualizer.VisualizerCesium,
+				Name:        lo.ToPtr("aaa"),
+				Description: lo.ToPtr("bbb"),
+				Alias:       lo.ToPtr("alias"),
+				ImageURL:    lo.Must(url.Parse("https://example.com/hoge")),
+				CoreSupport: lo.ToPtr(true),
+				Archived:    lo.ToPtr(true),
+			}
+
+			got, err := uc.createProject(ctx, input, &usecase.Operator{
+				AcOperator: &accountusecase.Operator{
+					WritableWorkspaces: workspace.IDList{ws.ID()},
+				},
+			})
+
+			assert.EqualError(t, err, interfaces.ErrOperationDenied.Error())
+			assert.Nil(t, got)
+		})
+	})
+}
 
 func TestProject_CheckAlias(t *testing.T) {
 	ctx := context.Background()
