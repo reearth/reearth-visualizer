@@ -1,5 +1,5 @@
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
-import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
@@ -181,13 +181,6 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ButtonWrapper>
         </SettingsFields>
       </Collapse>
-      <AliasSetting>
-        <SettingsFields>
-          <SettingsTitle size="body" weight="bold">
-            {t("Alias Settings")}
-          </SettingsTitle>
-        </SettingsFields>
-      </AliasSetting>
       <Collapse title={t("Basic Authorization")} size="large" noShrink>
         <SettingsFields>
           <SwitchField
@@ -304,19 +297,6 @@ const StyledImage = styled("img")(({ theme }) => ({
   width: "100%",
   borderRadius: theme.radius.normal,
   backgroundColor: theme.relative.dark
-}));
-
-const AliasSetting = styled("div")(({ theme }) => ({
-  padding: theme.spacing.large
-}));
-
-const SettingsTitle = styled(Typography)(({ theme }) => ({
-  color: theme.content.main
-}));
-
-const AliasSettingDescription = styled(Typography)(() => ({
-  display: "flex",
-
 }));
 
 export default PublicSettingsDetail;
