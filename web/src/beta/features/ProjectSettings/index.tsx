@@ -9,7 +9,7 @@ import {
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import CursorStatus from "../CursorStatus";
 
@@ -30,13 +30,17 @@ export const projectSettingsTabs = [
 
 export type ProjectSettingsTab = (typeof projectSettingsTabs)[number];
 
-type Props = {
+export type ProjectSettingsProps = {
   projectId: string;
   tab?: ProjectSettingsTab;
   subId?: string;
 };
 
-const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
+const ProjectSettings: FC<ProjectSettingsProps> = ({
+  projectId,
+  tab,
+  subId
+}) => {
   const t = useT();
   const {
     sceneId,
@@ -48,6 +52,8 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     accessToken,
     extensions,
     disabled,
+    selectedTab,
+    handleTabChange,
     handleUpdateProject,
     handleProjectRemove,
     handleUpdateProjectBasicAuth,
@@ -56,7 +62,8 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     handleUpdateStory
   } = useHooks({
     projectId,
-    subId
+    subId,
+    tab
   });
 
   const tabs = useMemo(
@@ -77,7 +84,23 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         id: "public",
         text: t("Public"),
         icon: "paperPlaneTilt" as const,
-        path: `/settings/projects/${projectId}/public`
+        path: `/settings/projects/${projectId}/public`,
+        subItem: [
+          {
+            id: "map",
+            text: t("Map"),
+            path: `/settings/projects/${projectId}/public`,
+            active: selectedTab === "map",
+            onClick: () => handleTabChange("map")
+          },
+          ...stories.map((s) => ({
+            id: s.id,
+            text: `${t("Story")} ${s.title}`,
+            path: `/settings/projects/${projectId}/public/${s.id}`,
+            active: selectedTab === s.id,
+            onClick: () => handleTabChange(s.id)
+          }))
+        ]
       },
       {
         id: "assets",
@@ -92,7 +115,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         path: `/settings/projects/${projectId}/plugins`
       }
     ],
-    [projectId, t]
+    [handleTabChange, projectId, selectedTab, stories, t]
   );
 
   return (
@@ -115,6 +138,7 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
                     text={t.text}
                     active={t.id === tab}
                     icon={t.icon}
+                    subItem={t.subItem}
                   />
                 ))}
               </SidebarButtonsWrapper>
@@ -141,9 +165,8 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
           {tab === "public" && project && (
             <PublicSettings
               project={project}
-              stories={stories}
               currentStory={currentStory}
-              subId={subId}
+              selectedTab={selectedTab}
               onUpdateStory={handleUpdateStory}
               onUpdateProject={handleUpdateProject}
               onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}

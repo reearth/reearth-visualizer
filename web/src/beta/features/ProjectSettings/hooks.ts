@@ -21,12 +21,9 @@ import {
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
-type Props = {
-  projectId: string;
-  subId?: string;
-};
+import { ProjectSettingsProps } from ".";
 
-export default ({ projectId }: Props) => {
+export default ({ projectId, subId, tab }: ProjectSettingsProps) => {
   const navigate = useNavigate();
 
   const {
@@ -182,6 +179,22 @@ export default ({ projectId }: Props) => {
     []
   );
 
+  const [selectedTab, setSelectTab] = useState(subId ? subId : "map");
+
+  const handleTabChange = useCallback(
+    (tab: string) => {
+      if (selectedTab === tab) return;
+      setSelectTab(tab);
+    },
+    [selectedTab]
+  );
+
+  useEffect(() => {
+    if (tab === "public" && !subId) {
+      handleTabChange("map");
+    }
+  }, [subId, handleTabChange, tab]);
+
   return {
     sceneId: scene?.id,
     workspaceId,
@@ -192,6 +205,8 @@ export default ({ projectId }: Props) => {
     accessToken,
     extensions,
     disabled,
+    selectedTab,
+    handleTabChange,
     handleUpdateProject,
     handleProjectRemove,
     handleUpdateProjectBasicAuth,

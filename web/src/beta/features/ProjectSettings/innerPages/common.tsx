@@ -11,8 +11,7 @@ export const InnerPage = styled("div")<{
   width: "100%",
   maxWidth: wide ? 950 : 750,
   backgroundColor: transparent ? "none" : theme.bg[1],
-  borderRadius: theme.radius.normal,
-  maxHeight: "100%"
+  borderRadius: theme.radius.normal
 }));
 
 export const InnerSidebar = styled("div")(({ theme }) => ({
@@ -26,18 +25,19 @@ export const InnerSidebar = styled("div")(({ theme }) => ({
 export const SettingsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
+  gap: theme.spacing.largest,
   width: "100%",
   flex: 1,
   ["> div:not(:last-child)"]: {
     borderBottom: `1px solid ${theme.outline.weaker}`
   },
-  overflowY: "auto"
 }));
 
 export const SettingsFields = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.largest
+  gap: theme.spacing.largest,
+  padding: `${theme.spacing.normal}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));
 
 export const SettingsRow = styled("div")(({ theme }) => ({
@@ -64,6 +64,10 @@ export const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   justifyContent: "flex-end",
   gap: theme.spacing.small
+}));
+
+export const TitleWrapper = styled(Typography)(({ theme }) => ({
+  color: theme.content.main
 }));
 
 export const ArchivedSettingNotice: React.FC = () => {

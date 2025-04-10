@@ -56,11 +56,11 @@ User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 No Member match your search.: 一致するメンバーが見つかりません'
-MAINTAINER: 管理者
-OWNER: 所有者
+Change Role: 役割を変更
 READER: 閲覧者
 WRITER: 作成者
-Change Role: 役割を変更
+MAINTAINER: 管理者
+OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
 Last Created: 最終作成日
@@ -386,7 +386,7 @@ UI Language: UI言語
 General: 一般
 Public: 公開
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
-Project Info: プロジェクト情報
+Basic settings: ''
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Remove this project: このプロジェクトを削除
@@ -406,20 +406,40 @@ No description.: 説明なし
 Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
 'Repository url:': 'リポジトリURL:'
+Unsuccessfully to update published project alias.: ''
+Edit alias: ''
+You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ''
+You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: ''
+https://: ''
+The name is already token by other users. Please choose a different name.: ''
+Your Alias: ''
+clean: ''
+Edit Alias: ''
 Public Info: 公開情報
+Published page settings: ''
+This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: ''
+The Title setting will be applied to the <title> tag and og:title.: ''
+Write down your text: ''
+The Description setting will be applied to og:description.: ''
+Image url: ''
+Alias Setting: ''
+Please publish your story before setting up your alias.: ''
+Please publish your map project before setting up your alias.: ''
+Custom Domain: カスタムドメイン
+Custom domains allow you to access your site via one or more non-Re:Earth domain names. Please publish your story with a default domain before trying to connect to a custom domain.: ''
+Custom domains allow you to access your site via one or more non-Re:Earth domain names. Please publish your project with a default domain before trying to connect to a custom domain.: ''
+Add custom domain: ''
+Please publish your map story before setting up your custom domain.: ''
+Please publish your map project before setting up your custom domain.: ''
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効にする
 Username: ユーザー名
-Site Setting: サイト設定
-Site name: サイト名
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのサイト名を変更します。英数字とハイフンのみ入力可能です。
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
-Custom Domain: カスタムドメイン
 Left: 左
 Right: 右
-Story Panel: ストーリーパネル
+Story Panel settings: ''
 Panel Position: パネル位置
 Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。

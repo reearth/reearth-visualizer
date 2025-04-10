@@ -21,7 +21,7 @@ const StorySettings: React.FC<Props> = ({
   onUpdateStory
 }) => {
   return (
-    <InnerPage>
+    <InnerPage wide>
       <SettingsWrapper>
         {isArchived ? (
           <ArchivedSettingNotice />
