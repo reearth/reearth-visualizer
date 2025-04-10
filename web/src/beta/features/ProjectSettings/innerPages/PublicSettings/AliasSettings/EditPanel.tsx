@@ -18,20 +18,13 @@ const EditPanel: FC<AliasSettingProps> = ({
   alias,
   isStory,
   onClose,
-  onUpdateAlias
+  onSubmit
 }) => {
   const t = useT();
   const theme = useTheme();
   const [localAlias, setLocalAlias] = useState("");
   const [warning, setWaring] = useState(false);
   const [, setNotification] = useNotification();
-
-  const handleSubmitAlias = useCallback(() => {
-    onUpdateAlias({
-      alias: localAlias
-    });
-    onClose?.();
-  }, [localAlias, onClose, onUpdateAlias]);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -49,6 +42,11 @@ const EditPanel: FC<AliasSettingProps> = ({
     [alias, isStory, setNotification, t]
   );
 
+  const handleSubmit = useCallback(() => {
+    onSubmit?.(localAlias);
+    onClose?.();
+  }, [localAlias, onClose, onSubmit]);
+
   return (
     <Modal visible size="small">
       <ModalPanel
@@ -62,7 +60,7 @@ const EditPanel: FC<AliasSettingProps> = ({
               title={t("Apply")}
               appearance="primary"
               disabled={warning || !localAlias}
-              onClick={handleSubmitAlias}
+              onClick={handleSubmit}
             />
           </ButtonWrapper>
         }

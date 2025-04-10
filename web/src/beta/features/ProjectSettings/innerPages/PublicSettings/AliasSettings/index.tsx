@@ -18,12 +18,15 @@ import EditPanel from "./EditPanel";
 export type AliasSettingProps = {
   alias: string;
   isStory?: boolean;
-  onUpdateAlias: (settings: PublicAliasSettingsType) => void;
+  defaultAlias?: string;
+  onUpdateAlias?: (settings: PublicAliasSettingsType) => void;
   onClose?: () => void;
+  onSubmit?: (alias?: string) => void;
 };
 const AliasSetting: FC<AliasSettingProps> = ({
   alias,
   isStory,
+  defaultAlias,
   onUpdateAlias
 }) => {
   const theme = useTheme();
@@ -53,6 +56,15 @@ const AliasSetting: FC<AliasSettingProps> = ({
     });
   }, [alias, publicUrl, setNotification, t]);
 
+  const handleSubmitAlias = useCallback(
+    (alias?: string) => {
+      onUpdateAlias?.({
+        alias
+      });
+    },
+    [onUpdateAlias]
+  );
+
   return (
     <CommonField title={t("Your Alias")}>
       <Wrapper>
@@ -67,9 +79,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
           title={t("clean")}
           icon="pencilLine"
           size="small"
-          disabled
+          disabled={defaultAlias === alias}
           iconColor={theme.content.weak}
-          onClick={handleOpen}
+          onClick={() => handleSubmitAlias(defaultAlias)}
         />
 
         <Button
@@ -85,7 +97,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
             alias={alias}
             isStory={isStory}
             onClose={handleClose}
-            onUpdateAlias={onUpdateAlias}
+            onSubmit={handleSubmitAlias}
           />
         )}
       </Wrapper>

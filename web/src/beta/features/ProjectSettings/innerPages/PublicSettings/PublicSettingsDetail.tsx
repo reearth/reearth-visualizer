@@ -1,5 +1,5 @@
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
-import { Button, Collapse, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Typography } from "@reearth/beta/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
@@ -19,12 +19,7 @@ import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import {
-  SettingsFields,
-  ButtonWrapper,
-  SettingsWrapper,
-  TitleWrapper
-} from "../common";
+import { SettingsFields, SettingsWrapper, TitleWrapper } from "../common";
 
 import AliasSetting from "./AliasSettings";
 
@@ -217,6 +212,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         {isPublished ? (
           <AliasSetting
             isStory={isStory}
+            defaultAlias={settingsItem.id}
             alias={settingsItem.alias}
             onUpdateAlias={onUpdateAlias}
           />
@@ -236,26 +232,29 @@ const PublicSettingsDetail: React.FC<Props> = ({
         <TitleWrapper size="body" weight="bold">
           {t("Custom Domain")}
         </TitleWrapper>
-        {isPublished ? (
-          <>
-            <Typography size="body">
-              {isStory
-                ? t(
-                    "Custom domains allow you to access your site via one or more non-Re:Earth domain names. Please publish your story with a default domain before trying to connect to a custom domain."
-                  )
-                : t(
-                    "Custom domains allow you to access your site via one or more non-Re:Earth domain names. Please publish your project with a default domain before trying to connect to a custom domain."
-                  )}
-            </Typography>
-            <ButtonWrapper>
-              <Button
-                title={t("Add custom domain")}
-                appearance="primary"
-                size="small"
-              />
-            </ButtonWrapper>
-          </>
-        ) : (
+        { isPublished &&
+          extensions &&
+          extensions.length > 0 &&
+          accessToken ? (
+            <ExtensionComponent
+              typename={settingsItem.__typename || ""}
+              {...(settingsItem.__typename === "Project"
+                ? {
+                    projectId: settingsItem.id,
+                    projectAlias: settingsItem.alias
+                  }
+                : {
+                    storyId: settingsItem.id,
+                    storyAlias: settingsItem.alias
+                  })}
+              lang={currentLang}
+              theme={currentTheme}
+              accessToken={accessToken}
+              onNotificationChange={onNotificationChange}
+              version="visualizer"
+            />
+          )
+           : (
           <ContentDescription>
             <Typography size="body" color={theme.content.weak}>
               {isStory
@@ -280,29 +279,28 @@ const PublicSettingsDetail: React.FC<Props> = ({
             setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
           }}
         />
-        <InputField
-          title={t("Username")}
-          value={settingsItem.basicAuthUsername}
-          onChange={(basicAuthUsername: string) => {
-            setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
-          }}
-          disabled={!localBasicAuthorization.isBasicAuthActive}
-        />
-        <InputField
-          title={t("Password")}
-          value={settingsItem.basicAuthPassword}
-          onChange={(basicAuthPassword: string) => {
-            setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
-          }}
-          disabled={!localBasicAuthorization.isBasicAuthActive}
-        />
-        <ButtonWrapper>
-          <Button
-            title={t("Submit")}
-            appearance="primary"
-            onClick={handleSubmitBasicAuthorization}
-          />
-        </ButtonWrapper>
+        {localBasicAuthorization.isBasicAuthActive && (
+          <>
+            <InputField
+              title={t("Username")}
+              value={settingsItem.basicAuthUsername}
+              onChange={(basicAuthUsername: string) => {
+                setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
+              }}
+              disabled={!localBasicAuthorization.isBasicAuthActive}
+              onBlur={handleSubmitBasicAuthorization}
+            />
+            <InputField
+              title={t("Password")}
+              value={settingsItem.basicAuthPassword}
+              onChange={(basicAuthPassword: string) => {
+                setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
+              }}
+              disabled={!localBasicAuthorization.isBasicAuthActive}
+              onBlur={handleSubmitBasicAuthorization}
+            />
+          </>
+        )}
       </SettingsFields>
       <SettingsFields>
         <TitleWrapper size="body" weight="bold">
@@ -315,42 +313,17 @@ const PublicSettingsDetail: React.FC<Props> = ({
             setLocalGA((s) => ({ ...s, enableGa }));
           }}
         />
-        <InputField
-          title={t("Tracking ID")}
-          value={settingsItem.trackingId}
-          onChange={(trackingId: string) => {
-            setLocalGA((s) => ({ ...s, trackingId }));
-          }}
-        />
-        <ButtonWrapper>
-          <Button
-            title={t("Submit")}
-            appearance="primary"
-            onClick={handleSubmitGA}
+        {localGA.enableGa && (
+          <InputField
+            title={t("Tracking ID")}
+            value={settingsItem.trackingId}
+            onChange={(trackingId: string) => {
+              setLocalGA((s) => ({ ...s, trackingId }));
+            }}
+            onBlur={handleSubmitGA}
           />
-        </ButtonWrapper>
+        )}
       </SettingsFields>
-      {extensions && extensions.length > 0 && accessToken && (
-        <Collapse title={t("Custom Domain")} size="large" noShrink>
-          <ExtensionComponent
-            typename={settingsItem.__typename || ""}
-            {...(settingsItem.__typename === "Project"
-              ? {
-                  projectId: settingsItem.id,
-                  projectAlias: settingsItem.alias
-                }
-              : {
-                  storyId: settingsItem.id,
-                  storyAlias: settingsItem.alias
-                })}
-            lang={currentLang}
-            theme={currentTheme}
-            accessToken={accessToken}
-            onNotificationChange={onNotificationChange}
-            version="visualizer"
-          />
-        </Collapse>
-      )}
     </SettingsWrapper>
   );
 };
