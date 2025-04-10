@@ -26,6 +26,9 @@ jobs:
       - name: Install dependencies and Playwright browsers
         run: |
           npm ci
+          
+      - name: Install Playwright browsers
+        run: npx playwright install
 
       - name: Validate secrets
         run: |
