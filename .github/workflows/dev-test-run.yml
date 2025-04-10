@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies and Playwright browsers
         run: |
           npm ci
-          
+
       - name: Install Playwright browsers
         run: npx playwright install
 
@@ -57,5 +57,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
-          path: server/e2e/playwright-tests/playwright-report/
+          path: web/e2e/playwright-tests/test-report/
           retention-days: 30
