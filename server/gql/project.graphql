@@ -25,6 +25,7 @@ type Project implements Node {
   trackingId: String!
   starred: Boolean!
   isDeleted: Boolean!
+  visibility: String!
 }
 
 type ProjectAliasAvailability {
@@ -56,6 +57,7 @@ input CreateProjectInput {
   name: String
   description: String
   coreSupport: Boolean
+  visibility: String
 }
 
 input UpdateProjectInput {
@@ -79,6 +81,7 @@ input UpdateProjectInput {
   sceneId: ID
   starred: Boolean
   deleted: Boolean
+  visibility: String
 }
 
 input PublishProjectInput {
@@ -147,6 +150,7 @@ extend type Query {
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
+  visibilityProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {

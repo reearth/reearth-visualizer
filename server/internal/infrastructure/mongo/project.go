@@ -149,6 +149,20 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return r.find(ctx, filter)
 }
 
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	if !r.f.CanRead(id) {
+		return nil, repo.ErrOperationDenied
+	}
+
+	filter := bson.M{
+		"team":       id.String(),
+		"deleted":    false,
+		"visibility": "public",
+	}
+
+	return r.find(ctx, filter)
+}
+
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound

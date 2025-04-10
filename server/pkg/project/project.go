@@ -54,6 +54,7 @@ type Project struct {
 	sceneId           id.SceneID
 	starred           bool
 	isDeleted         bool
+	visibility        string
 }
 
 func (p *Project) ID() id.ProjectID {
@@ -86,6 +87,10 @@ func (p *Project) PublishedAt() time.Time {
 
 func (p *Project) Name() string {
 	return p.name
+}
+
+func (p *Project) Visibility() string {
+	return p.visibility
 }
 
 func (p *Project) Description() string {
@@ -205,6 +210,10 @@ func (p *Project) SetDeleted(isDeleted bool) {
 
 func (p *Project) UpdateName(name string) {
 	p.name = name
+}
+
+func (p *Project) UpdateVisibility(visibility string) {
+	p.visibility = visibility
 }
 
 func (p *Project) UpdateDescription(description string) {

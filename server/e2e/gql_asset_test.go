@@ -126,11 +126,23 @@ func TestAssociateProjectGetAssets(t *testing.T) {
 	teamId := wID.String()
 
 	// Create projectA >>> test.png
-	pidA := createProject(e, "projectA")
+	pidA := createProject(e, uID, map[string]any{
+		"name":        "projectA",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	createAsset(t, e, "test.png", true, teamId, &pidA)
 
 	// Create projectB >>> test.csv
-	pidB := createProject(e, "projectB")
+	pidB := createProject(e, uID, map[string]any{
+		"name":        "projectB",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	createAsset(t, e, "test.csv", true, teamId, &pidB)
 
 	// Get projectA >>> test.png

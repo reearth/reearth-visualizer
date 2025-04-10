@@ -384,7 +384,13 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 func TestNLSLayerCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 
 	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
@@ -771,7 +777,13 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 func TestInfoboxBlocksCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 
 	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
@@ -843,7 +855,13 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 func TestInfoboxProperty(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 
 	// fetch scene
@@ -895,7 +913,13 @@ func TestInfoboxProperty(t *testing.T) {
 func TestPhotoOverlayProperty(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 
 	// fetch scene
@@ -963,7 +987,13 @@ func updateCustomProperties(
 func TestCustomProperties(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 
 	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
