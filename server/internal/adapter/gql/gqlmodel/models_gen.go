@@ -197,6 +197,7 @@ type CreateProjectInput struct {
 	Name        *string    `json:"name,omitempty"`
 	Description *string    `json:"description,omitempty"`
 	CoreSupport *bool      `json:"coreSupport,omitempty"`
+	Visibility  *string    `json:"visibility,omitempty"`
 }
 
 type CreateSceneInput struct {
@@ -705,6 +706,7 @@ type Project struct {
 	TrackingID        string            `json:"trackingId"`
 	Starred           bool              `json:"starred"`
 	IsDeleted         bool              `json:"isDeleted"`
+	Visibility        string            `json:"visibility"`
 }
 
 func (Project) IsNode()        {}
@@ -1264,6 +1266,7 @@ type UpdateProjectInput struct {
 	SceneID           *ID      `json:"sceneId,omitempty"`
 	Starred           *bool    `json:"starred,omitempty"`
 	Deleted           *bool    `json:"deleted,omitempty"`
+	Visibility        *string  `json:"visibility,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {

@@ -33,9 +33,9 @@ type ProjectDocument struct {
 	CoreSupport       bool
 	EnableGA          bool
 	TrackingID        string
-	// Scene             string
-	Starred bool
-	Deleted bool
+	Starred           bool
+	Deleted           bool
+	Visibility        string
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -76,9 +76,9 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		CoreSupport:       project.CoreSupport(),
 		EnableGA:          project.EnableGA(),
 		TrackingID:        project.TrackingID(),
-		// Scene:             project.Scene().String(),
-		Starred: project.Starred(),
-		Deleted: project.IsDeleted(),
+		Starred:           project.Starred(),
+		Deleted:           project.IsDeleted(),
+		Visibility:        project.Visibility(),
 	}, pid
 }
 
@@ -126,8 +126,8 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		CoreSupport(d.CoreSupport).
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
-		// Scene(scene).
 		Starred(d.Starred).
 		Deleted(d.Deleted).
+		Visibility(d.Visibility).
 		Build()
 }

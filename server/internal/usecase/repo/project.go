@@ -24,6 +24,7 @@ type Project interface {
 	FindByWorkspace(context.Context, accountdomain.WorkspaceID, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
+	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)

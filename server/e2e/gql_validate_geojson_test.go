@@ -8,7 +8,13 @@ func TestValidateGeoJsonOfAssets(t *testing.T) {
 	e := Server(t, baseSeeder)
 
 	teamId := wID.String()
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 
 	tests := []struct {
@@ -223,7 +229,14 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := Server(t, baseSeeder)
-			pId := createProject(e, "test")
+			pId := createProject(e, uID, map[string]any{
+				"name":        "test",
+				"description": "abc",
+				"teamId":      wID.String(),
+				"visualizer":  "CESIUM",
+				"coreSupport": true,
+			})
+
 			_, _, sId := createScene(e, pId)
 			res := addNLSLayerSimpleByGeojson(e, sId, tt.url, "test", 0)
 			if tt.hasError {
@@ -238,7 +251,13 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 func TestValidateGeoFormData(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 	tests := []struct {
 		name     string
