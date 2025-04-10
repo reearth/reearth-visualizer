@@ -4,6 +4,7 @@ description: |
   This workflow runs E2E tests on the dev environment when code is pushed to the main branch.
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
