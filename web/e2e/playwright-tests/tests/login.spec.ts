@@ -3,13 +3,13 @@ import { faker } from "@faker-js/faker";
 import { LoginPage } from "../pages/loginPage";
 import { DashBoardPage } from "../pages/dashBoardPage";
 
-const REEARTH_WEB_E2E_USERNAME = process.env.REEARTH_WEB_E2E_USERNAME;
-const REEARTH_WEB_E2E_PASSWORD = process.env.REEARTH_WEB_E2E_PASSWORD;
+const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
+const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
 const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 
 if (
-  !REEARTH_WEB_E2E_USERNAME ||
-  !REEARTH_WEB_E2E_PASSWORD ||
+  !REEARTH_E2E_EMAIL ||
+  !REEARTH_E2E_PASSWORD ||
   !REEARTH_WEB_E2E_BASEURL
 ) {
   throw new Error("Missing required variables.");
@@ -46,7 +46,7 @@ test.describe("Login Page Tests", () => {
   });
 
   test("should show error message for empty username", async () => {
-    await loginPage.login("", REEARTH_WEB_E2E_PASSWORD);
+    await loginPage.login("", REEARTH_E2E_PASSWORD);
     await expect(loginPage.errorMessagePassword).toBeVisible();
     await expect(loginPage.errorMessagePassword).toHaveText(
       "Username can't be blank"
@@ -54,7 +54,7 @@ test.describe("Login Page Tests", () => {
   });
 
   test("should show error message for empty password", async () => {
-    await loginPage.login(REEARTH_WEB_E2E_USERNAME, "");
+    await loginPage.login(REEARTH_E2E_EMAIL, "");
     await expect(loginPage.forgotPasswordError).toBeVisible();
     await expect(loginPage.forgotPasswordError).toHaveText(
       "Password can't be blank"
@@ -70,7 +70,7 @@ test.describe("Login Page Tests", () => {
   });
 
   test("should login to the system and verify dashboard, logout and verify login page again", async () => {
-    await loginPage.login(REEARTH_WEB_E2E_USERNAME, REEARTH_WEB_E2E_PASSWORD);
+    await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
     await page.waitForURL(/\/dashboard\/.+/, { timeout: 30000 });
     const currentURL = page.url();
     await expect(dashBoardPage.projects).toBeVisible();
