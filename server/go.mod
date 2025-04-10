@@ -12,6 +12,7 @@ require (
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/globusdigital/deep-copy v0.5.4
+	github.com/go-faker/faker/v4 v4.6.0
 	github.com/goccy/go-yaml v1.15.15
 	github.com/google/uuid v1.6.0
 	github.com/iancoleman/strcase v0.3.0

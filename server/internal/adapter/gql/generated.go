@@ -6794,9 +6794,6 @@ input CreateProjectInput {
   visualizer: Visualizer!
   name: String
   description: String
-  imageUrl: URL
-  alias: String
-  archived: Boolean
   coreSupport: Boolean
 }
 
@@ -44281,7 +44278,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "imageUrl", "alias", "archived", "coreSupport"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44316,27 +44313,6 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Description = data
-		case "imageUrl":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUrl"))
-			data, err := ec.unmarshalOURL2ᚖnetᚋurlᚐURL(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ImageURL = data
-		case "alias":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Alias = data
-		case "archived":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("archived"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Archived = data
 		case "coreSupport":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("coreSupport"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)

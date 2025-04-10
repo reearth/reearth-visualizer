@@ -22,7 +22,7 @@ func (b *Builder) Build() (*Project, error) {
 		return nil, id.ErrInvalidID
 	}
 	if b.p.alias != "" && !CheckAliasPattern(b.p.alias) {
-		return nil, ErrInvalidAlias
+		return nil, ErrInvalidProjectAlias
 	}
 	if b.p.updatedAt.IsZero() {
 		b.p.updatedAt = b.p.CreatedAt()
