@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package reearth.visualizer.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/v1";
+
+service ReEarthVisualizer {
+  // Main operations
+  rpc GetProjectList(GetProjectListRequest) returns (GetProjectListResponse) {}
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
+}
+
+// Implementation note:
+// Authentication should be implemented using gRPC interceptors
+// M2M tokens should be passed in metadata with key "authorization"
+// Format: "Bearer <token>"
+// UserId should be passed in metadata with key "user-id"
+
+// Core messages
+message Project {
+  string id = 1;
+  bool is_archived = 2;
+  bool is_basic_auth_active = 3;
+  string basic_auth_username = 4;
+  string basic_auth_password = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  optional google.protobuf.Timestamp published_at = 8;
+  string name = 9;
+  string description = 10;
+  string alias = 11;
+  string public_title = 12;
+  string public_description = 13;
+  string public_image = 14;
+  bool public_no_index = 15;
+  optional string image_url = 16;
+  string team_id = 17;
+  Visualizer visualizer = 18;
+  PublishmentStatus publishment_status = 19;
+  bool core_support = 20;
+  bool enable_ga = 21;
+  string tracking_id = 22;
+  bool starred = 23;
+  bool is_deleted = 24;
+  string visibility = 25;
+}
+
+enum Visualizer {
+  VISUALIZER_UNSPECIFIED = 0;
+  VISUALIZER_CESIUM = 1;
+  VISUALIZER_CESIUM_BETA = 2;
+}
+
+enum PublishmentStatus {
+  PUBLISHMENT_STATUS_UNSPECIFIED = 0;
+  PUBLISHMENT_STATUS_PUBLIC = 1;
+  PUBLISHMENT_STATUS_LIMITED = 2;
+  PUBLISHMENT_STATUS_PRIVATE = 3;
+}
+
+// Request messages
+message GetProjectListRequest { string team_id = 1; }
+
+message GetProjectRequest { string project_id = 1; }
+
+message CreateProjectRequest {
+  string team_id = 1;
+  Visualizer visualizer = 2;
+  optional string name = 3;
+  optional string description = 4;
+  optional bool core_support = 5;
+  optional string visibility = 6;
+}
+
+message DeleteProjectRequest { string project_id = 1; }
+
+// Response messages
+message GetProjectResponse { Project project = 1; }
+
+message GetProjectListResponse { repeated Project projects = 1; }
+
+message CreateProjectResponse { Project project = 1; }
+
+message DeleteProjectResponse { string project_id = 1; }

@@ -73,6 +73,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	if err != nil {
 		log.Fatalf("mongo error: %+v\n", err)
 	}
+
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
 	accountRepos := initAccountDatabase(client, txAvailable, ctx, conf)
 	visRepos := initVisDatabase(client, txAvailable, accountRepos, ctx, conf)
@@ -92,6 +93,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	mailer := mailer.New(ctx, &conf.Config)
 	gateways.Mailer = mailer
 	acGateways.Mailer = mailer
+
 	// Marketplace
 	if conf.Marketplace.Endpoint != "" {
 		gateways.PluginRegistry = marketplace.New(conf.Marketplace.Endpoint, conf.Marketplace.Secret, conf.Marketplace.OAuth.Config())

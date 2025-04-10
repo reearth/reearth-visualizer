@@ -35,7 +35,7 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, filter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, filter repo.ProjectFindFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -116,6 +116,37 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	var result []*project.Project
 	for _, p := range r.data {
 		if p.Workspace() == id && p.IsDeleted() && p.CoreSupport() {
+			result = append(result, p)
+		}
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].UpdatedAt().After(result[j].UpdatedAt())
+	})
+
+	return result, nil
+}
+
+func (r *Project) FindVisibilityById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+	for _, p := range r.data {
+		if p.ID() == id && !p.IsDeleted() && p.Visibility() == "public" {
+			return p, nil
+		}
+	}
+	return nil, nil
+}
+
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if !r.f.CanRead(id) {
+		return nil, nil
+	}
+
+	var result []*project.Project
+	for _, p := range r.data {
+		if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
 			result = append(result, p)
 		}
 	}

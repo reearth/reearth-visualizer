@@ -63,7 +63,13 @@ func TestGetScenePlaceholderJapanese(t *testing.T) {
 
 func TestGetSceneNLSLayer(t *testing.T) {
 	e := Server(t, baseSeeder)
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99)
 
@@ -77,15 +83,7 @@ func TestGetSceneNLSLayer(t *testing.T) {
 func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
-		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $coreSupport: Boolean) {
-			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, coreSupport: $coreSupport} ) { 
-				project { 
-					id
-					__typename 
-				} 
-				__typename 
-			}
-		}`,
+		Query:         CreateProjectMutation,
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",

@@ -10,7 +10,13 @@ import (
 
 func TestUpdateCustomProperties(t *testing.T) {
 	e := Server(t, baseSeeder)
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 	lId := addTestNLSLayerSimple(e, sId)
 
@@ -101,7 +107,13 @@ func TestUpdateCustomProperties(t *testing.T) {
 func TestChangeCustomPropertyTitle(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 	lId := addTestNLSLayerSimple(e, sId)
 
@@ -222,7 +234,13 @@ func TestChangeCustomPropertyTitle(t *testing.T) {
 
 func TestRemoveCustomProperty(t *testing.T) {
 	e := Server(t, baseSeeder)
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 	_, _, sId := createScene(e, pId)
 	lId := addTestNLSLayerSimple(e, sId)
 

@@ -556,6 +556,7 @@ type ComplexityRoot struct {
 		TeamID            func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
+		Visibility        func(childComplexity int) int
 		Visualizer        func(childComplexity int) int
 	}
 
@@ -695,20 +696,21 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Assets            func(childComplexity int, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
-		CheckProjectAlias func(childComplexity int, alias string) int
-		DeletedProjects   func(childComplexity int, teamID gqlmodel.ID) int
-		Me                func(childComplexity int) int
-		Node              func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
-		Nodes             func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
-		Plugin            func(childComplexity int, id gqlmodel.ID) int
-		Plugins           func(childComplexity int, id []gqlmodel.ID) int
-		Projects          func(childComplexity int, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
-		PropertySchema    func(childComplexity int, id gqlmodel.ID) int
-		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
-		Scene             func(childComplexity int, projectID gqlmodel.ID) int
-		SearchUser        func(childComplexity int, nameOrEmail string) int
-		StarredProjects   func(childComplexity int, teamID gqlmodel.ID) int
+		Assets             func(childComplexity int, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
+		CheckProjectAlias  func(childComplexity int, alias string) int
+		DeletedProjects    func(childComplexity int, teamID gqlmodel.ID) int
+		Me                 func(childComplexity int) int
+		Node               func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
+		Nodes              func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
+		Plugin             func(childComplexity int, id gqlmodel.ID) int
+		Plugins            func(childComplexity int, id []gqlmodel.ID) int
+		Projects           func(childComplexity int, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
+		PropertySchema     func(childComplexity int, id gqlmodel.ID) int
+		PropertySchemas    func(childComplexity int, id []gqlmodel.ID) int
+		Scene              func(childComplexity int, projectID gqlmodel.ID) int
+		SearchUser         func(childComplexity int, nameOrEmail string) int
+		StarredProjects    func(childComplexity int, teamID gqlmodel.ID) int
+		VisibilityProjects func(childComplexity int, teamID gqlmodel.ID) int
 	}
 
 	Rect struct {
@@ -1207,6 +1209,7 @@ type QueryResolver interface {
 	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
 	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	DeletedProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	VisibilityProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -3883,6 +3886,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.UpdatedAt(childComplexity), true
 
+	case "Project.visibility":
+		if e.complexity.Project.Visibility == nil {
+			break
+		}
+
+		return e.complexity.Project.Visibility(childComplexity), true
+
 	case "Project.visualizer":
 		if e.complexity.Project.Visualizer == nil {
 			break
@@ -4686,6 +4696,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.StarredProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
+
+	case "Query.visibilityProjects":
+		if e.complexity.Query.VisibilityProjects == nil {
+			break
+		}
+
+		args, err := ec.field_Query_visibilityProjects_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.VisibilityProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
 
 	case "Rect.east":
 		if e.complexity.Rect.East == nil {
@@ -6764,6 +6786,7 @@ extend type Mutation {
   trackingId: String!
   starred: Boolean!
   isDeleted: Boolean!
+  visibility: String!
 }
 
 type ProjectAliasAvailability {
@@ -6795,6 +6818,7 @@ input CreateProjectInput {
   name: String
   description: String
   coreSupport: Boolean
+  visibility: String
 }
 
 input UpdateProjectInput {
@@ -6818,6 +6842,7 @@ input UpdateProjectInput {
   sceneId: ID
   starred: Boolean
   deleted: Boolean
+  visibility: String
 }
 
 input PublishProjectInput {
@@ -6886,6 +6911,7 @@ extend type Query {
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
+  visibilityProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -10830,6 +10856,34 @@ func (ec *executionContext) field_Query_starredProjects_args(ctx context.Context
 	return args, nil
 }
 func (ec *executionContext) field_Query_starredProjects_argsTeamID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.ID, error) {
+	if _, ok := rawArgs["teamId"]; !ok {
+		var zeroVal gqlmodel.ID
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+	if tmp, ok := rawArgs["teamId"]; ok {
+		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.ID
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_visibilityProjects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_visibilityProjects_argsTeamID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["teamId"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_visibilityProjects_argsTeamID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
@@ -27536,6 +27590,50 @@ func (ec *executionContext) fieldContext_Project_isDeleted(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_visibility(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_visibility(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectAliasAvailability) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
 	if err != nil {
@@ -27765,6 +27863,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -28002,6 +28102,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -28100,6 +28202,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -32557,6 +32661,71 @@ func (ec *executionContext) fieldContext_Query_deletedProjects(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_visibilityProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_visibilityProjects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().VisibilityProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectConnection)
+	fc.Result = res
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_visibilityProjects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ProjectConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_visibilityProjects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_propertySchema(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_propertySchema(ctx, field)
 	if err != nil {
@@ -34405,6 +34574,8 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -44278,7 +44449,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44320,6 +44491,13 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.CoreSupport = data
+		case "visibility":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Visibility = data
 		}
 	}
 
@@ -46243,7 +46421,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46390,6 +46568,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Deleted = data
+		case "visibility":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Visibility = data
 		}
 	}
 
@@ -51617,6 +51802,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "visibility":
+			out.Values[i] = ec._Project_visibility(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -53259,6 +53449,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_deletedProjects(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "visibilityProjects":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_visibilityProjects(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

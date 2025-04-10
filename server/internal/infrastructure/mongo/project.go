@@ -88,7 +88,7 @@ func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*proje
 	return filterProjects(ids, res), nil
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.ProjectFindFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
@@ -144,6 +144,37 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 		"team":        id.String(),
 		"deleted":     true,
 		"coresupport": true,
+	}
+
+	return r.find(ctx, filter)
+}
+
+func (r *Project) FindVisibilityById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+	prj, err := r.findOne(ctx, bson.M{
+		"id":         id.String(),
+		"deleted":    false,
+		"visibility": "public",
+	}, true)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
+}
+
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	if !r.f.CanRead(id) {
+		return nil, repo.ErrOperationDenied
+	}
+
+	filter := bson.M{
+		"team":       id.String(),
+		"deleted":    false,
+		"visibility": "public",
 	}
 
 	return r.find(ctx, filter)

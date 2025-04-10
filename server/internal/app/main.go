@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strconv"
 
@@ -26,7 +27,8 @@ func Start(debug bool, version string) {
 	if cerr != nil {
 		log.Fatalf("failed to load config: %v", cerr)
 	}
-	log.Infof("config: %s", conf.Print())
+	// log.Infof("config: %s", conf.Print())
+	fmt.Printf("config: %s", conf.Print())
 
 	// Init profiler
 	initProfiler(conf.Profiler, version)
