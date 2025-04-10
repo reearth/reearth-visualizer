@@ -33,9 +33,6 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        input.Name,
 		Description: input.Description,
-		ImageURL:    input.ImageURL,
-		Alias:       input.Alias,
-		Archived:    input.Archived,
 		CoreSupport: input.CoreSupport,
 	}, getOperator(ctx))
 	if err != nil {
