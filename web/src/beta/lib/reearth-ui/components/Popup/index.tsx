@@ -55,7 +55,7 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
     return (
       <TriggerWrapper
         disabled={disabled}
-        extendWidth={extendWidth}
+        extendwidth={extendWidth}
         ref={ref}
         {...context.getReferenceProps(props)}
       >
@@ -198,9 +198,9 @@ export const Popup = ({
 
 const TriggerWrapper = styled("div")<{
   disabled?: boolean;
-  extendWidth?: boolean;
-}>(({ disabled, extendWidth }) => ({
-  width: extendWidth ? "100%" : "fit-content",
+  extendwidth?: boolean;
+}>(({ disabled, extendwidth }) => ({
+  width: extendwidth ? "100%" : "fit-content",
   pointerEvents: disabled ? "none" : "auto"
 }));
 

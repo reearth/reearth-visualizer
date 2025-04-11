@@ -45,9 +45,9 @@ export const Button: FC<ButtonProps> = ({
       disabled={disabled}
       appearance={appearance}
       size={size}
-      iconButton={iconButton}
-      extendWidth={extendWidth}
-      minWidth={minWidth}
+      iconbutton={iconButton ? "true" : "false"}
+      extendwidth={extendWidth ? "true" : "false"}
+      minwidth={minWidth}
       background={background}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
@@ -71,17 +71,17 @@ export const Button: FC<ButtonProps> = ({
 const StyledButton = styled("button")<{
   size: "normal" | "small";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
-  iconButton?: boolean;
-  extendWidth?: boolean;
-  minWidth?: number;
+  iconbutton?: "true" | "false";
+  extendwidth?: "true" | "false";
+  minwidth?: number;
   background?: string;
 }>(
   ({
     appearance,
     size,
-    iconButton,
-    extendWidth,
-    minWidth,
+    iconbutton,
+    extendwidth,
+    minwidth,
     background,
     theme
   }) => ({
@@ -103,10 +103,10 @@ const StyledButton = styled("button")<{
     fontSize: `${theme.fonts.sizes.body}px`,
     padding:
       size === "small"
-        ? iconButton
+        ? iconbutton === "true"
           ? `${theme.spacing.micro}px`
           : `${theme.spacing.smallest}px ${theme.spacing.small}px`
-        : iconButton
+        : iconbutton
           ? `${theme.spacing.small}px`
           : `${theme.spacing.small}px ${theme.spacing.large}px`,
     borderRadius:
@@ -118,16 +118,16 @@ const StyledButton = styled("button")<{
           ? `${theme.dangerous.main}`
           : `${theme.content.main}`,
     backgroundColor:
-      background && appearance !== "simple" && iconButton
+      background && appearance !== "simple" && iconbutton === "true"
         ? background
         : appearance === "simple"
           ? "transparent"
           : `${theme.bg[1]}`,
-    width: !extendWidth ? "fit-content" : "100%",
-    minWidth: minWidth ? `${minWidth}px` : "",
+    width: extendwidth === "false" ? "fit-content" : "100%",
+    minWidth: minwidth ? `${minwidth}px` : "",
     boxShadow: appearance === "simple" ? "none" : theme.shadow.button,
     ["&:hover"]:
-      background && appearance !== "simple" && iconButton
+      background && appearance !== "simple" && iconbutton === "true"
         ? {}
         : {
             borderColor: "transparent",
@@ -141,7 +141,7 @@ const StyledButton = styled("button")<{
       borderColor: "transparent",
       color: `${theme.content.withBackground}`,
       backgroundColor:
-        background && appearance !== "simple" && iconButton
+        background && appearance !== "simple" && iconbutton === "true"
           ? background
           : appearance === "simple"
             ? "transparent"
@@ -161,8 +161,8 @@ const StyledButton = styled("button")<{
       boxShadow: "none"
     },
     ["& svg"]: {
-      width: iconButton && size === "small" ? "12px" : "16px",
-      height: iconButton && size === "small" ? "12px" : "16px"
+      width: iconbutton === "true" && size === "small" ? "12px" : "16px",
+      height: iconbutton === "true" && size === "small" ? "12px" : "16px"
     }
   })
 );

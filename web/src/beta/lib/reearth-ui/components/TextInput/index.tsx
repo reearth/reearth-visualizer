@@ -91,7 +91,7 @@ export const TextInput: FC<TextInputProps> = ({
     <Wrapper
       size={size}
       appearance={appearance}
-      extendWidth={extendWidth}
+      extendwidth={extendWidth}
       status={isFocused || autoFocus ? "active" : "default"}
     >
       {leftAction && (
@@ -125,8 +125,8 @@ const Wrapper = styled("div")<{
   size: "normal" | "small";
   appearance?: "readonly" | "present";
   status: "default" | "active";
-  extendWidth?: boolean;
-}>(({ size, theme, appearance, status, extendWidth }) => {
+  extendwidth?: boolean;
+}>(({ size, theme, appearance, status, extendwidth }) => {
   const borderStyle =
     appearance === "present"
       ? status === "default"
@@ -149,7 +149,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: appearance === "present" ? "none" : theme.shadow.input,
-    width: !extendWidth ? "" : "100%"
+    width: !extendwidth ? "" : "100%"
   };
 });
 
