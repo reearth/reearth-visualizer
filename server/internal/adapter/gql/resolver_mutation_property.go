@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearthx/rerror"
@@ -175,9 +176,11 @@ func (r *mutationResolver) AddPropertyItem(ctx context.Context, input gqlmodel.A
 		return nil, err
 	}
 
+	ps := builtin.GetPropertySchema(p.Schema())
+
 	return &gqlmodel.PropertyItemPayload{
 		Property:     gqlmodel.ToProperty(p),
-		PropertyItem: gqlmodel.ToPropertyItem(pi, p, pgl),
+		PropertyItem: gqlmodel.ToPropertyItem(pi, p, pgl, ps),
 	}, nil
 }
 
@@ -200,9 +203,11 @@ func (r *mutationResolver) MovePropertyItem(ctx context.Context, input gqlmodel.
 		return nil, err
 	}
 
+	ps := builtin.GetPropertySchema(p.Schema())
+
 	return &gqlmodel.PropertyItemPayload{
 		Property:     gqlmodel.ToProperty(p),
-		PropertyItem: gqlmodel.ToPropertyItem(pi, p, pgl),
+		PropertyItem: gqlmodel.ToPropertyItem(pi, p, pgl, ps),
 	}, nil
 }
 

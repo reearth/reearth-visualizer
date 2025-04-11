@@ -196,9 +196,6 @@ type CreateProjectInput struct {
 	Visualizer  Visualizer `json:"visualizer"`
 	Name        *string    `json:"name,omitempty"`
 	Description *string    `json:"description,omitempty"`
-	ImageURL    *url.URL   `json:"imageUrl,omitempty"`
-	Alias       *string    `json:"alias,omitempty"`
-	Archived    *bool      `json:"archived,omitempty"`
 	CoreSupport *bool      `json:"coreSupport,omitempty"`
 }
 
