@@ -33,8 +33,8 @@ const EditPanel: FC<AliasSettingProps> = ({
         setNotification({
           type: "error",
           text: isStory
-            ? "Unsuccessfully to update published story alias."
-            : t("Unsuccessfully to update published project alias.")
+            ? t("Unable to update published story alias.")
+            : t("Unable to update published project alias.")
         });
       } else setWaring(false);
       setLocalAlias(value);
@@ -93,7 +93,7 @@ const EditPanel: FC<AliasSettingProps> = ({
                 <Icon icon="close" />
                 <Typography size="footnote" color={theme.dangerous.main}>
                   {t(
-                    "The name is already token by other users. Please choose a different name."
+                    "The name is already taken by other users. Please choose a different name."
                   )}
                 </Typography>
               </>

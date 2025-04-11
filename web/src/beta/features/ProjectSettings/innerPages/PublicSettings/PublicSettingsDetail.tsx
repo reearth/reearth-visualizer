@@ -184,7 +184,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <AssetField
             title={t("Thumbnail")}
             placeholder={t("Image url")}
-            description={"The Thumbnail setting will be applied to og:image."}
+            description={t("The Thumbnail setting will be applied to og:image.")}
             inputMethod="asset"
             assetsTypes={IMAGE_TYPES}
             value={localPublicInfo.publicImage}

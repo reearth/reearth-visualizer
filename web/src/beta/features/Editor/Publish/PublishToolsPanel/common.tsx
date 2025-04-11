@@ -54,7 +54,7 @@ export const UrlText = styled("div")<{ hasPublicUrl?: boolean }>(
     color: hasPublicUrl ? theme.primary.main : "inherit",
     fontWeight: hasPublicUrl ? "bold" : "normal",
     cursor: hasPublicUrl ? "pointer" : "default",
-    textDecoration: "underline"
+    textDecoration: hasPublicUrl ? "underline" : "none"
   })
 );
 
