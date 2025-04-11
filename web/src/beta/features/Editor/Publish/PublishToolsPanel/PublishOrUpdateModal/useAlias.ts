@@ -21,10 +21,6 @@ export default ({ publishItem }: { publishItem: PublishItem }) => {
     const newAlias = publishItem.alias ?? publishItem.id;
     setAlias(newAlias);
     currentValidatingAlias.current = newAlias;
-
-    checkProjectAlias({
-      variables: { alias: newAlias }
-    });
   }, [publishItem.alias, publishItem.id, checkProjectAlias]);
 
  useEffect(() => {
