@@ -410,32 +410,6 @@ func TestStoryPublishing(t *testing.T) {
 
 }
 
-func createProject(e *httpexpect.Expect, name string) string {
-	requestBody := GraphQLRequest{
-		OperationName: "CreateProject",
-		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $coreSupport: Boolean) {
-			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, coreSupport: $coreSupport} ) { 
-				project { 
-					id
-					__typename 
-				} 
-				__typename 
-			}
-		}`,
-		Variables: map[string]any{
-			"name":        name,
-			"description": "abc",
-			"teamId":      wID.String(),
-			"visualizer":  "CESIUM",
-			"coreSupport": true,
-		},
-	}
-
-	res := Request(e, uID.String(), requestBody)
-
-	return res.Path("$.data.createProject.project.id").Raw().(string)
-}
-
 func createScene(e *httpexpect.Expect, pID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateScene",
