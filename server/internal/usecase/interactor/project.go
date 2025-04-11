@@ -19,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -90,80 +91,14 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
 }
 
-func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-	if err := i.CanWriteWorkspace(p.WorkspaceID, operator); err != nil {
-		return nil, err
-	}
-
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	ws, err := i.workspaceRepo.FindByID(ctx, p.WorkspaceID)
-	if err != nil {
-		return nil, err
-	}
-
-	// enforce policy
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-
-		projectCount, err := i.projectRepo.CountByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-
-		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
-			return nil, err
-		}
-	}
-
-	pb := project.New().
-		NewID().
-		Workspace(p.WorkspaceID).
-		Visualizer(p.Visualizer)
-	if p.Name != nil {
-		pb = pb.Name(*p.Name)
-	}
-	if p.Description != nil {
-		pb = pb.Description(*p.Description)
-	}
-	if p.ImageURL != nil {
-		pb = pb.ImageURL(p.ImageURL)
-	}
-	if p.Alias != nil {
-		pb = pb.Alias(*p.Alias)
-	}
-	if p.Archived != nil {
-		pb = pb.IsArchived(*p.Archived)
-	}
-	if p.CoreSupport != nil {
-		pb = pb.CoreSupport(*p.CoreSupport)
-	}
-
-	proj, err := pb.Build()
-	if err != nil {
-		return nil, err
-	}
-
-	err = i.projectRepo.Save(ctx, proj)
-	if err != nil {
-		return nil, err
-	}
-
-	tx.Commit()
-	return proj, nil
+func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+	return i.createProject(ctx, createProjectInput{
+		WorkspaceID: input.WorkspaceID,
+		Visualizer:  input.Visualizer,
+		Name:        input.Name,
+		Description: input.Description,
+		CoreSupport: input.CoreSupport,
+	}, operator)
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -198,8 +133,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.Alias != nil {
-		if err := prj.UpdateAlias(*p.Alias); err != nil {
+		if _, err := i.checkAlias(ctx, prj.ID(), *p.Alias); err != nil {
 			graphql.AddError(ctx, err)
+		} else {
+			prj.UpdateAlias(*p.Alias)
 		}
 	}
 
@@ -291,17 +228,14 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	return prj, nil
 }
 
+// NOTE: This function is currently incomplete.
+// It should receive the caller's project ID as an argument,
+// because if the calling project checks its own alias value,
+// this method may incorrectly return an error (as if the alias is already used).
+// However, since this behavior has existed for some time,
+// we'll leave it as-is until all related refactoring is completed.
 func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
-	if !project.CheckAliasPattern(alias) {
-		return false, project.ErrInvalidAlias
-	}
-
-	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
-	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
-		return true, nil
-	}
-
-	return false, err
+	return i.checkAlias(ctx, id.NewProjectID(), alias)
 }
 
 func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -380,14 +314,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newAlias := prevAlias
 	if params.Alias != nil {
-		if prj2, err := i.projectRepo.FindByPublicName(ctx, *params.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return nil, err
-		} else if prj2 != nil && prj.ID() != prj2.ID() {
-			return nil, interfaces.ErrProjectAliasAlreadyUsed
-		}
-
-		if err := prj.UpdateAlias(*params.Alias); err != nil {
-			return nil, err
+		if _, err := i.checkAlias(ctx, prj.ID(), *params.Alias); err != nil {
+			graphql.AddError(ctx, err)
 		}
 		newAlias = *params.Alias
 	}
@@ -622,6 +550,11 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	if _, err := zipFile.Seek(0, 0); err != nil {
 		return err
 	}
+	// 500MB
+	if err := file.FileSizeCheck(500, zipFile); err != nil {
+		return err
+	}
+
 	defer func() {
 		if err := zipFile.Close(); err != nil {
 			fmt.Println("Failed to close zip file:", err)
@@ -656,7 +589,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, data 
 		return nil, err
 	}
 
-	result, err := i.Create(ctx, interfaces.CreateProjectParam{
+	result, err := i.createProject(ctx, createProjectInput{
 		WorkspaceID: workspaceId,
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        &input.Name,
@@ -701,4 +634,118 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 		return err
 	}
 	return nil
+}
+
+func (i *Project) checkAlias(ctx context.Context, updatedProjectID id.ProjectID, newAlias string) (bool, error) {
+	if !project.CheckAliasPattern(newAlias) {
+		return false, project.ErrInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
+	}
+
+	prj, err := i.projectRepo.FindByPublicName(ctx, newAlias)
+
+	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
+		return true, nil
+	}
+
+	if prj.ID() == updatedProjectID {
+		return true, nil
+	}
+
+	return false, interfaces.ErrProjectAliasAlreadyUsed
+}
+
+type createProjectInput struct {
+	WorkspaceID accountdomain.WorkspaceID
+	Visualizer  visualizer.Visualizer
+	Name        *string
+	Description *string
+	ImageURL    *url.URL
+	Alias       *string
+	Archived    *bool
+	CoreSupport *bool
+}
+
+func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
+	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
+		return nil, err
+	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	txCtx := tx.Context()
+	defer func() {
+		if err2 := tx.End(txCtx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	ws, err := i.workspaceRepo.FindByID(txCtx, input.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(txCtx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+
+		projectCount, err := i.projectRepo.CountByWorkspace(txCtx, ws.ID())
+		if err != nil {
+			return nil, err
+		}
+
+		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
+			return nil, err
+		}
+	}
+
+	prjID := id.NewProjectID()
+	prj := project.New().
+		ID(prjID).
+		Workspace(input.WorkspaceID).
+		Visualizer(input.Visualizer)
+
+	if input.Alias != nil {
+		prj = prj.Alias(*input.Alias)
+	} else {
+		prj = prj.Alias(prjID.String())
+	}
+
+	if input.Archived != nil {
+		prj = prj.IsArchived(*input.Archived)
+	}
+
+	if input.CoreSupport != nil {
+		prj = prj.CoreSupport(*input.CoreSupport)
+	}
+
+	if input.Description != nil {
+		prj = prj.Description(*input.Description)
+	}
+
+	if input.ImageURL != nil {
+		prj = prj.ImageURL(input.ImageURL)
+	}
+
+	if input.Name != nil {
+		prj = prj.Name(*input.Name)
+	}
+
+	proj, err := prj.Build()
+	if err != nil {
+		return nil, err
+	}
+
+	err = i.projectRepo.Save(txCtx, proj)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+
+	return proj, nil
 }

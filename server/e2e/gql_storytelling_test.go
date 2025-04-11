@@ -413,8 +413,8 @@ func TestStoryPublishing(t *testing.T) {
 func createProject(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
-		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
-			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport} ) { 
+		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $coreSupport: Boolean) {
+			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, coreSupport: $coreSupport} ) { 
 				project { 
 					id
 					__typename 
@@ -425,7 +425,6 @@ func createProject(e *httpexpect.Expect, name string) string {
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": true,

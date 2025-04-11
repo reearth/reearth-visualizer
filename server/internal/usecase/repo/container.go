@@ -15,7 +15,7 @@ import (
 
 var (
 	ErrOperationDenied  = errors.New("operation denied")
-	ErrResourceNotFound = verror.NewVError(errmsg.ErrKeyRepoResourceNotFound, errmsg.ErrorMessages[errmsg.ErrKeyRepoResourceNotFound], nil, nil)
+	ErrResourceNotFound = verror.NewVError(errmsg.ErrKeyUsecaseRepoResourceNotFound, errmsg.ErrorMessages[errmsg.ErrKeyUsecaseRepoResourceNotFound], nil, nil)
 )
 
 type Container struct {
