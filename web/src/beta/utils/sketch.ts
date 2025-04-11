@@ -5,6 +5,21 @@ import { Camera } from "./value";
 export const BUILT_IN_REEARTH_PROPERTIES_NAME = "_reearth";
 export const BUILT_IN_PHOTO_OVERLAY_PROPERTY_NAME = "photoOverlay";
 
+// PhotoOverlay
+export type PhotoOverlayValue = {
+  camera?: Camera;
+  url?: string;
+  fill?: "contain" | "fixed";
+  widthPct?: number;
+  description?: string;
+};
+
+type BuiltinReearthPropertyValue = {
+  [key in typeof BUILT_IN_PHOTO_OVERLAY_PROPERTY_NAME]?:
+    | PhotoOverlayValue
+    | undefined;
+};
+
 type Value =
   | string
   | number
@@ -16,23 +31,8 @@ type BuiltinReearthProperties = {
   [key in typeof BUILT_IN_REEARTH_PROPERTIES_NAME]: BuiltinReearthPropertyValue;
 };
 
-type BuiltinReearthPropertyValue = {
-  [key in typeof BUILT_IN_PHOTO_OVERLAY_PROPERTY_NAME]?:
-    | PhotoOverlayValue
-    | undefined;
-};
-
 export type SketchFeatureProperties = Record<string, Value> &
   BuiltinReearthProperties;
-
-// PhotoOverlay
-export type PhotoOverlayValue = {
-  camera?: Camera;
-  url?: string;
-  fill?: "contain" | "fixed";
-  widthPct?: number;
-  description?: string;
-};
 
 export type PhotoOverlayPreview = {
   value?: PhotoOverlayValue;

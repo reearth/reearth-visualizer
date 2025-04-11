@@ -1,82 +1,111 @@
-import { expect, test, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 
-import { delayedObject, merge, objectFromGetter } from "./object";
+import { clone, merge } from "./object";
 
-test("delayedObject", () => {
-  const obj = { a: [], b: { a: 1 }, c: "a" };
-  const obj2 = delayedObject(obj, ["c"]);
+describe("clone function", () => {
+  it("should create a shallow copy of an object", () => {
+    const original = { a: 1, b: 2 };
+    const cloned = clone(original);
 
-  expect(obj2).toStrictEqual(obj);
+    expect(cloned).toEqual(original);
+    expect(cloned).not.toBe(original);
+  });
 
-  const a = Object.getOwnPropertyDescriptor(obj2, "a");
-  const b = Object.getOwnPropertyDescriptor(obj2, "b");
-  const c = Object.getOwnPropertyDescriptor(obj2, "c");
+  it("should copy property descriptors correctly", () => {
+    const original = {};
+    Object.defineProperty(original, "readOnlyProp", {
+      value: "test",
+      writable: false,
+      enumerable: true
+    });
 
-  expect(a?.get).toBeInstanceOf(Function);
-  expect(b?.get).toBeInstanceOf(Function);
-  expect(c?.value).toBe("a");
+    const cloned = clone(original);
 
-  expect(() => {
-    (obj2 as any).a = [];
-  }).toThrowError("Cannot set property");
-  expect(() => {
-    (obj2 as any).b = { a: 2 };
-  }).toThrowError("Cannot set property");
-  expect(() => {
-    (obj2 as any).c = "b";
-  }).toThrowError("Cannot assign to read only property");
-  expect(obj2).toStrictEqual(obj);
+    const descriptor = Object.getOwnPropertyDescriptor(cloned, "readOnlyProp");
+    expect(descriptor?.writable).toBe(false);
+    expect(descriptor?.value).toBe("test");
+  });
+
+  it("should handle objects with nested properties", () => {
+    const nested = { inner: { value: 42 } };
+    const cloned = clone(nested);
+
+    expect(cloned.inner).toBe(nested.inner); // Same reference (shallow copy)
+    cloned.inner.value = 100;
+    expect(nested.inner.value).toBe(100); // Original is affected (shallow copy)
+  });
 });
 
-test("objectFromGetter", () => {
-  const fn = vi.fn((k: "a" | "b"): "a!" | "b!" => (k === "a" ? "a!" : "b!"));
-  const obj = objectFromGetter<{ a: "a!"; b: "b!" }>(["a", "b"], fn);
+describe("merge function", () => {
+  it("should merge properties from multiple objects", () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { c: 3 };
+    const obj3 = { d: 4, e: 5 };
 
-  expect(obj.a).toBe("a!");
-  expect(fn).toBeCalledWith("a");
-  expect(fn).toBeCalledTimes(1);
-  expect(obj.b).toBe("b!");
-  expect(fn).toBeCalledWith("b");
-  expect(fn).toBeCalledTimes(2);
-  expect(obj).toEqual({ a: "a!", b: "b!" });
-  expect(Object.keys(obj)).toEqual(["a", "b"]);
+    const result = merge(obj1, obj2, obj3);
 
-  const a = Object.getOwnPropertyDescriptor(obj, "a");
-  const b = Object.getOwnPropertyDescriptor(obj, "b");
-  expect(a?.get).toBeInstanceOf(Function);
-  expect(b?.get).toBeInstanceOf(Function);
+    expect(result).toEqual({ a: 1, b: 2, c: 3, d: 4, e: 5 });
+  });
 
-  expect(() => {
-    (obj as any).a = "";
-  }).toThrowError("Cannot set property");
-  expect(() => {
-    (obj as any).b = "";
-  }).toThrowError("Cannot set property");
-});
+  it("should override properties from left to right", () => {
+    const obj1 = { a: 1, b: 2 };
+    const obj2 = { b: 3, c: 4 };
 
-test("merge", () => {
-  const o = merge(
-    {
-      get a() {
-        return 1;
-      },
-      b: 2
-    },
-    {
-      get c() {
-        return 3;
-      }
-    }
-  );
-  expect(o).toEqual({ a: 1, b: 2, c: 3 });
-  expect(Object.getOwnPropertyDescriptor(o, "a")?.get).toBeInstanceOf(Function);
-  expect(Object.getOwnPropertyDescriptor(o, "b")?.get).toBeUndefined();
-  expect(Object.getOwnPropertyDescriptor(o, "c")?.get).toBeInstanceOf(Function);
+    const result = merge(obj1, obj2);
 
-  expect(() => {
-    (o as any).a = "";
-  }).toThrowError("Cannot set property");
-  expect(() => {
-    (o as any).c = "";
-  }).toThrowError("Cannot set property");
+    expect(result).toEqual({ a: 1, b: 3, c: 4 });
+  });
+
+  it("should preserve property descriptors", () => {
+    const obj1 = {};
+    Object.defineProperty(obj1, "prop1", {
+      value: "test1",
+      writable: false,
+      enumerable: true
+    });
+
+    const obj2 = {};
+    Object.defineProperty(obj2, "prop2", {
+      value: "test2",
+      writable: false,
+      enumerable: true
+    });
+
+    const result = merge(obj1, obj2);
+
+    const descriptor1 = Object.getOwnPropertyDescriptor(result, "prop1");
+    const descriptor2 = Object.getOwnPropertyDescriptor(result, "prop2");
+
+    expect(descriptor1?.writable).toBe(false);
+    expect(descriptor1?.value).toBe("test1");
+    expect(descriptor2?.writable).toBe(false);
+    expect(descriptor2?.value).toBe("test2");
+  });
+
+  it("should not modify original objects", () => {
+    const obj1 = { a: 1 };
+    const obj2 = { b: 2 };
+
+    const result = merge(obj1, obj2);
+    result.a = 3;
+    result.b = 4;
+
+    expect(obj1.a).toBe(1);
+    expect(obj2.b).toBe(2);
+  });
+
+  it("should handle nested objects (shallow merge)", () => {
+    const obj1 = { a: { value: 1 } };
+    const obj2 = { b: { value: 2 } };
+
+    const result = merge(obj1, obj2);
+
+    // References to nested objects are preserved (shallow merge)
+    expect(result.a).toBe(obj1.a);
+    expect(result.b).toBe(obj2.b);
+
+    // Modifying nested object in result affects original
+    result.a.value = 3;
+    expect(obj1.a.value).toBe(3);
+  });
 });

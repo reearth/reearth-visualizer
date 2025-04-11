@@ -1,78 +1,36 @@
-export function delayedObject<T extends object>(
-  obj: T,
-  excludedKeys?: string[]
-): Readonly<T> {
-  const res: any = {};
-  const descs = Object.keys(obj).reduce<PropertyDescriptorMap>(
-    (a, b) => ({
-      ...a,
-      [b]: excludedKeys?.includes(b)
-        ? {
-            value: (obj as any)[b],
-            configurable: false,
-            enumerable: true,
-            writable: false
-          }
-        : {
-            get() {
-              return (obj as any)[b];
-            },
-            configurable: false,
-            enumerable: true
-          }
-    }),
-    {}
-  );
-  Object.defineProperties(res, descs);
-  return res;
-}
-
-export function objectFromGetter<T extends { [K in keyof T]: any }>(
-  keys: (keyof T)[],
-  fn: (this: T, key: keyof T) => T[keyof T]
-): Readonly<T> {
-  const res: any = {};
-  const descs = keys.reduce<PropertyDescriptorMap>(
-    (a, b) => ({
-      ...a,
-      [b]: {
-        get(this: any): any {
-          return fn.call(this, b);
-        },
-        configurable: false,
-        enumerable: true
-      }
-    }),
-    {}
-  );
-  Object.defineProperties(res, descs);
-  return res;
-}
-
-export function clone<T>(obj: T): T {
-  const obj2: any = {};
+/**
+ * Creates a shallow clone of an object by copying all property descriptors
+ */
+export function clone<T extends object>(obj: T): T {
+  const obj2 = {} as Record<string, unknown>;
   Object.defineProperties(obj2, Object.getOwnPropertyDescriptors(obj));
-  return obj2;
+  return obj2 as T;
 }
 
-type BoxedTupleTypes<T extends any[]> = { [P in keyof T]: [T[P]] }[Exclude<
+// Type definitions for merge function
+type BoxedTupleTypes<T extends unknown[]> = { [P in keyof T]: [T[P]] }[Exclude<
   keyof T,
-  keyof any[]
+  keyof unknown[]
 >];
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-  k: infer I
-) => void
+
+type UnionToIntersection<U> = (
+  U extends unknown ? (k: U) => void : never
+) extends (k: infer I) => void
   ? I
   : never;
+
 type UnboxIntersection<T> = T extends { 0: infer U } ? U : never;
 
-export function merge<O, P extends any[]>(
+/**
+ * Merges multiple objects into a single object
+ */
+export function merge<O extends object, P extends object[]>(
   o1: O,
   ...o2: P
 ): O & UnboxIntersection<UnionToIntersection<BoxedTupleTypes<P>>> {
-  const obj: any = clone(o1);
+  const obj = clone(o1);
   for (const o of o2) {
     Object.defineProperties(obj, Object.getOwnPropertyDescriptors(o));
   }
-  return obj;
+  return obj as O & UnboxIntersection<UnionToIntersection<BoxedTupleTypes<P>>>;
 }

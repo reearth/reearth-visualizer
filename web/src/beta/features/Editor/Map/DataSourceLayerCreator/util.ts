@@ -1,4 +1,4 @@
-import generateRandomString from "@reearth/beta/utils/string";
+import { generateRandomString } from "@reearth/beta/utils/string";
 
 const isValidUrl = (string: string): boolean => {
   try {

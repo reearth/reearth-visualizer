@@ -1,18 +1,3 @@
-export const convertTime = (
-  time: string | Date | undefined
-): Date | undefined => {
-  if (!time) return;
-  if (time instanceof Date) {
-    return !isNaN(time.getTime()) ? time : undefined;
-  }
-  try {
-    const dateTime = new Date(time);
-    return !isNaN(dateTime.getTime()) ? dateTime : undefined;
-  } catch {
-    return undefined;
-  }
-};
-
 export const truncMinutes = (d: Date) => {
   d.setMinutes(0);
   d.setSeconds(0, 0);
@@ -110,10 +95,78 @@ export const getTimeZone = (time: string): TimeZoneOffset | undefined => {
       : undefined;
 };
 
+function isLeapYear(year: number): boolean {
+  return (year % 4 === 0 && year % 100 !== 0) || year % 400 === 0;
+}
+
 export const isValidDateTimeFormat = (time: string): boolean => {
-  return /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?)(Z|([+-]\d{2}:\d{2}))?$/.test(
-    time
-  );
+  const pattern =
+    /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,3}))?)?(Z|([+-]\d{2}:\d{2}))?$/;
+  const match = time.match(pattern);
+
+  if (!match) {
+    return false;
+  }
+
+  const year = parseInt(match[1], 10);
+  const month = parseInt(match[2], 10);
+  const day = parseInt(match[3], 10);
+  const hour = parseInt(match[4], 10);
+  const minute = parseInt(match[5], 10);
+  const second = match[6] ? parseInt(match[6], 10) : 0;
+
+  if (month < 1 || month > 12) {
+    return false;
+  }
+
+  const daysInMonth = [
+    31,
+    isLeapYear(year) ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31
+  ];
+
+  if (day < 1 || day > daysInMonth[month - 1]) {
+    return false;
+  }
+
+  if (
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59 ||
+    second < 0 ||
+    second > 59
+  ) {
+    return false;
+  }
+
+  if (match[9]) {
+    const tzOffset = match[9];
+    const tzPattern = /^([+-])(\d{2}):(\d{2})$/;
+    const tzMatch = tzOffset.match(tzPattern);
+
+    if (!tzMatch) {
+      return false;
+    }
+
+    const tzHour = parseInt(tzMatch[2], 10);
+    const tzMinute = parseInt(tzMatch[3], 10);
+
+    if (tzHour > 14 || tzMinute > 59) {
+      return false;
+    }
+  }
+
+  return true;
 };
 
 export type ParsedDateTime = {
