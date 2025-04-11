@@ -1,19 +1,33 @@
-import { Icon, Typography } from "@reearth/beta/lib/reearth-ui";
+import { useSettingsNavigation } from "@reearth/beta/hooks";
+import { Button, Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
-import { useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useMemo, useState } from "react";
+import { styled, useTheme } from "@reearth/services/theme";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
-import { Section, Subtitle, UrlAction, UrlText, UrlWrapper } from "../common";
+import {
+  PublicUrlWrapper,
+  PublishStatus,
+  Section,
+  Subtitle,
+  UrlAction,
+  UrlText,
+  UrlWrapper
+} from "../common";
+import { PublishItem } from "../hooks";
 
 type Props = {
-  isStory?: boolean;
+  publishItem: PublishItem;
   publicUrl: string;
 };
 
-const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
+const PublishedOrUpdatedSection: FC<Props> = ({ publishItem, publicUrl }) => {
   const t = useT();
   const theme = useTheme();
+
+  const handleNavigationToSettings = useSettingsNavigation({
+    projectId: publishItem.projectId
+  });
 
   const embedCode = useMemo(
     () =>
@@ -29,21 +43,30 @@ const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
     navigator.clipboard.writeText(value);
   }, []);
 
+  const initialWasPublishedRef = useRef(publishItem.isPublished);
+
+  const title = useMemo(() => {
+    const isStory = publishItem.type === "story";
+    if (!initialWasPublishedRef.current) {
+      return isStory
+        ? t("Congratulations! 🎊 Your story has been published")
+        : t("Congratulations! 🎊 Your scene has been published");
+    }
+    return isStory
+      ? t("Congratulations! 🎊 Your story has been updated")
+      : t("Congratulations! 🎊 Your scene has been updated");
+  }, [t, publishItem.type]);
+  
   return (
     <Section>
       <Subtitle size="body">
-        {isStory
-          ? t(`Your story has been published!`)
-          : t(`Your scene has been published!`)}
+        <>
+          {title} <br />
+          {t("Please visit your project by URL below !")}
+        </>
       </Subtitle>
-      <CommonField
-        title={t("Public URL")}
-        description={
-          isStory
-            ? t(`* Anyone can see your story with this URL`)
-            : t(`* Anyone can see your scene with this URL`)
-        }
-      >
+      <PublicUrlWrapper>
+        <PublishStatus isPublished />
         <UrlWrapper justify="space-between">
           <UrlText
             hasPublicUrl
@@ -61,17 +84,16 @@ const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
             {urlCopied ? (
               <Icon icon="check" color={theme.primary.main} />
             ) : (
-              <Typography size="body" color={theme.primary.main}>
-                {t("Copy")}
-              </Typography>
+              <Icon icon="copy" />
             )}
           </UrlAction>
         </UrlWrapper>
-      </CommonField>
+      </PublicUrlWrapper>
+
       <CommonField
         title={t("Embed Code")}
         description={
-          isStory
+          publishItem.type === "story"
             ? t(
                 `* Please use this code if you want to embed your story into a webpage`
               )
@@ -92,15 +114,34 @@ const PublishedOrUpdatedSection: FC<Props> = ({ isStory, publicUrl }) => {
             {codeCopied ? (
               <Icon icon="check" color={theme.primary.main} />
             ) : (
-              <Typography size="body" color={theme.primary.main}>
-                {t("Copy")}
-              </Typography>
+              <Icon icon="copy" />
             )}
           </UrlAction>
         </UrlWrapper>
       </CommonField>
+      <SettingWrapper>
+        <Typography size="body">
+          {t("Want to change public settings?")}
+        </Typography>
+        <Button
+          size="small"
+          onClick={() =>
+            handleNavigationToSettings?.(
+              "public",
+              publishItem.type === "story" ? publishItem.storyId : ""
+            )
+          }
+          title={t("Go to settings")}
+        />
+      </SettingWrapper>
     </Section>
   );
 };
 
 export default PublishedOrUpdatedSection;
+
+const SettingWrapper = styled("div")(() => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center"
+}));

@@ -5,7 +5,7 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import { PublishItem } from "../hooks";
 
@@ -61,17 +61,16 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     publishStory
   ]);
 
-  const title = useMemo(() => {
-    return publishDone
-      ? t("Congratulations!")
-      : !publishItem.isPublished
-        ? publishItem.type === "story"
-          ? t(`Publish your story`)
-          : t(`Publish your scene`)
-        : publishItem.type === "story"
-          ? t(`Update your story`)
-          : t(`Update your scene`);
-  }, [t, publishDone, publishItem]);
+const initialWasPublishedRef = useRef(publishItem.isPublished);
+
+ const title = useMemo(() => {
+   const isStory = publishItem.type === "story";
+   if (!initialWasPublishedRef.current) {
+     return isStory ? t("Publish your story") : t("Publish your scene");
+   }
+   return isStory ? t("Update your story") : t("Update your scene");
+ }, [t, publishItem.type]);
+
 
   const primaryButtonText = useMemo(() => {
     return !publishItem.isPublished ? t("Publish") : t("Update");
@@ -131,7 +130,7 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
       >
         {publishDone ? (
           <PublishedOrUpdatedSection
-            isStory={publishItem.type === "story"}
+            publishItem={publishItem}
             publicUrl={publicUrl}
           />
         ) : (

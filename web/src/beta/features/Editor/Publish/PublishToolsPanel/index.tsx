@@ -7,6 +7,7 @@ import { FC } from "react";
 
 import { usePublishPage } from "../context";
 
+import { PublishStatus } from "./common";
 import useHooks from "./hooks";
 import PublishOrUpdateModal from "./PublishOrUpdateModal";
 import UnpublishModal from "./UnpublishModal";
@@ -131,15 +132,6 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
   minWidth: "116px"
 }));
-
-const PublishStatus = styled("div")<{ isPublished: boolean }>(
-  ({ theme, isPublished }) => ({
-    width: "8px",
-    height: "8px",
-    backgroundColor: isPublished ? "#24A148" : theme.content.weaker,
-    borderRadius: "50%"
-  })
-);
 
 const StatusWrapper = styled("div")({
   width: "8px"

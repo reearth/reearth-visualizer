@@ -56,11 +56,11 @@ User Name: ユーザー名
 Email: メールアドレス
 Role: 役割
 No Member match your search.: 一致するメンバーが見つかりません'
-MAINTAINER: 管理者
-OWNER: 所有者
+Change Role: 役割を変更
 READER: 閲覧者
 WRITER: 作成者
-Change Role: 役割を変更
+MAINTAINER: 管理者
+OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
 Last Created: 最終作成日
@@ -257,28 +257,25 @@ Are you sure you want to delete this feature? If deleted, you can not recover it
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
-Congratulations!: おめでとうございます！
 Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
-Your story has been published!: ストーリーが公開されました。
-Your scene has been published!: シーンが公開されました。
-Public URL: 公開URL
-'* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
-'* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
-Copy: コピー
+Congratulations! 🎊 Your story has been published: ''
+Congratulations! 🎊 Your scene has been published: ''
+Congratulations! 🎊 Your story has been updated: ''
+Congratulations! 🎊 Your scene has been updated: ''
+Please visit your project by URL below !: ''
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 '* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
+Want to change public settings?: ''
+Go to settings: 設定へ
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
-Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
-Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
-Publish domain: 公開ドメイン
-Need to change domain related settings?: ドメイン設定を変更しますか？
-Go to settings: 設定へ
+Your story will be published. This means anybody can view this story by default url.: ''
+Your scene will be published. This means anybody can view this project by default url.: ''
 Search engine indexing: 検索可能にする
 Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
 Your story will be unpublished.: ストーリーを非公開にする
