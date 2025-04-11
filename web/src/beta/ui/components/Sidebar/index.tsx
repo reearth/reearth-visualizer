@@ -1,16 +1,18 @@
 import { IconName, Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 export type SidebarMenuItemProps = {
+  id?: string;
   text?: string | ReactNode;
   icon?: IconName;
   path?: string;
   active?: boolean;
   disabled?: boolean;
   tileComponent?: ReactNode;
+  subItem?: SidebarMenuItemProps[];
   onClick?: () => void;
 };
 
@@ -23,12 +25,25 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   disabled,
   path,
   tileComponent,
+  subItem,
   onClick
 }) => {
   const theme = useTheme();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  
+  useEffect(() => {
+    if (!active) {
+      setIsOpen(false);
+    }
+  }, [active]);
+
   return (
     <StyledLinkButton to={path || ""} disabled={disabled}>
-      <MenuWrapper active={active} disabled={disabled} onClick={onClick}>
+      <MenuWrapper
+        active={subItem ? false : active}
+        disabled={disabled}
+        onClick={subItem ? () => setIsOpen(!isOpen) : onClick}
+      >
         <Info>
           {icon && (
             <Icon
@@ -44,8 +59,29 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
             {text}
           </Typography>
         </Info>
+        {subItem && (
+          <Icon
+            icon={isOpen ? "caretUp" : "caretDown"}
+            color={disabled ? theme.content.weaker : theme.content.main}
+          />
+        )}
         {tileComponent && <Tile>{tileComponent}</Tile>}
       </MenuWrapper>
+      <SubMenu>
+        {subItem &&
+          isOpen &&
+          subItem?.map((t) => (
+            <SidebarMenuItem
+              key={t.id}
+              path={t.path}
+              text={t.text}
+              active={t.active}
+              icon={t.icon}
+              subItem={t.subItem}
+              onClick={t.onClick}
+            />
+          ))}
+      </SubMenu>
     </StyledLinkButton>
   );
 };
@@ -140,4 +176,8 @@ export const SidebarVersion: FC = () => {
 
 const Version = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.normal}px ${theme.spacing.small}px`
+}));
+
+const SubMenu = styled("div")(({ theme }) => ({
+  padding: `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.super}px`
 }));

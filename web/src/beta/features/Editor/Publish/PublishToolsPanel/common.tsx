@@ -27,30 +27,34 @@ export const WarningIcon = styled(Icon)({
   height: "24px"
 });
 
-export const UrlWrapper = styled("div")<{ justify?: string }>(
-  ({ justify, theme }) => ({
-    display: "flex",
-    justifyContent: justify ?? "center",
-    gap: theme.spacing.small,
-    alignItems: "center",
-    border: `1px solid ${theme.outline.weak}`,
-    borderRadius: "4px",
-    padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
-    cursor: "pointer"
-  })
-);
+export const UrlWrapper = styled("div")<{
+  justify?: string;
+  noPadding?: boolean;
+}>(({ justify, noPadding, theme }) => ({
+  display: "flex",
+  justifyContent: justify ?? "center",
+  gap: theme.spacing.small,
+  alignItems: "center",
+  border: `1px solid ${theme.outline.weak}`,
+  borderRadius: "4px",
+  flex: 1,
+  padding: noPadding
+    ? `0 ${theme.spacing.small}px`
+    : `${theme.spacing.small}px ${theme.spacing.large}px`,
+  cursor: "pointer"
+}));
 
 export const UrlText = styled("div")<{ hasPublicUrl?: boolean }>(
   ({ hasPublicUrl, theme }) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-
     fontSize: theme.fonts.sizes.body,
     whiteSpace: "break-spaces",
     color: hasPublicUrl ? theme.primary.main : "inherit",
     fontWeight: hasPublicUrl ? "bold" : "normal",
-    cursor: hasPublicUrl ? "pointer" : "default"
+    cursor: hasPublicUrl ? "pointer" : "default",
+    textDecoration: hasPublicUrl ? "underline" : "none"
   })
 );
 
@@ -58,7 +62,6 @@ export const UrlAction = styled("div")(() => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  width: 35,
   minHeight: 18,
   flexShrink: 0
 }));

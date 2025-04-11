@@ -1,5 +1,5 @@
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
-import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
+import { Typography } from "@reearth/beta/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { AssetField, InputField, SwitchField } from "@reearth/beta/ui/fields";
 import TextAreaField from "@reearth/beta/ui/fields/TextareaField";
@@ -15,10 +15,13 @@ import {
   useCurrentTheme,
   useNotification
 } from "@reearth/services/state";
+import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { SettingsFields, ButtonWrapper } from "../common";
+import { SettingsFields, SettingsWrapper, TitleWrapper } from "../common";
+
+import AliasSetting from "./AliasSettings";
 
 import {
   PublicAliasSettingsType,
@@ -37,6 +40,7 @@ type StoryWithTypename = Story & WithTypename;
 
 type Props = {
   settingsItem: SettingsProjectWithTypename | StoryWithTypename;
+  isStory?: boolean;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateAlias: (settings: PublicAliasSettingsType) => void;
@@ -52,23 +56,29 @@ type ExtensionComponentProps = (
 
 const PublicSettingsDetail: React.FC<Props> = ({
   settingsItem,
+  isStory,
   onUpdate,
   onUpdateBasicAuth,
   onUpdateAlias,
   onUpdateGA
 }) => {
   const t = useT();
+  const theme = useTheme();
 
   const [localPublicInfo, setLocalPublicInfo] = useState({
     publicTitle: settingsItem.publicTitle,
     publicDescription: settingsItem.publicDescription,
     publicImage: settingsItem.publicImage
   });
-  const handleSubmitPublicInfo = useCallback(() => {
-    onUpdate({
-      ...localPublicInfo
-    });
-  }, [localPublicInfo, onUpdate]);
+  const handleSubmitPublicInfo = useCallback(
+    (publicImage?: string) => {
+      onUpdate({
+        ...localPublicInfo,
+        publicImage
+      });
+    },
+    [localPublicInfo, onUpdate]
+  );
 
   const [localBasicAuthorization, setBasicAuthorization] = useState({
     isBasicAuthActive: !!settingsItem.isBasicAuthActive,
@@ -80,13 +90,6 @@ const PublicSettingsDetail: React.FC<Props> = ({
       ...localBasicAuthorization
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
-
-  const [localAlias, setLocalAlias] = useState(settingsItem.alias);
-  const handleSubmitAlias = useCallback(() => {
-    onUpdateAlias({
-      alias: localAlias
-    });
-  }, [localAlias, onUpdateAlias]);
 
   const [localGA, setLocalGA] = useState<PublicGASettingsType>({
     enableGa: settingsItem.enableGa,
@@ -132,157 +135,196 @@ const PublicSettingsDetail: React.FC<Props> = ({
     return <Component {...props} />;
   };
 
+  const isPublished = useMemo(
+    () =>
+      settingsItem.publishmentStatus === "PUBLIC" ||
+      settingsItem.publishmentStatus === "LIMITED",
+    [settingsItem.publishmentStatus]
+  );
+
   return (
-    <>
-      <Collapse title={t("Public Info")} size="large" noShrink>
-        <SettingsFields>
-          <InputField
-            title={t("Title")}
-            value={settingsItem.publicTitle}
-            onChange={(publicTitle: string) => {
-              setLocalPublicInfo((s) => ({ ...s, publicTitle }));
-            }}
-          />
-          <TextAreaField
-            title={t("Description")}
-            value={localPublicInfo.publicDescription ?? ""}
-            resizable="height"
-            onChange={(publicDescription: string) => {
-              setLocalPublicInfo((s) => ({ ...s, publicDescription }));
-            }}
-          />
-          <ThumbnailField>
-            <AssetField
-              title={t("Thumbnail")}
-              inputMethod="asset"
-              assetsTypes={IMAGE_TYPES}
-              value={localPublicInfo.publicImage}
-              onChange={(publicImage) => {
-                setLocalPublicInfo((s) => ({
-                  ...s,
-                  publicImage: publicImage ?? ""
-                }));
-              }}
-            />
-            <StyledImage
-              src={
-                !localPublicInfo.publicImage
-                  ? defaultProjectBackgroundImage
-                  : localPublicInfo.publicImage
-              }
-            />
-          </ThumbnailField>
-          <ButtonWrapper>
-            <Button
-              title={t("Submit")}
-              appearance="primary"
-              onClick={handleSubmitPublicInfo}
-            />
-          </ButtonWrapper>
-        </SettingsFields>
-      </Collapse>
-      <Collapse title={t("Basic Authorization")} size="large" noShrink>
-        <SettingsFields>
-          <SwitchField
-            title={t("Enable Basic Authorization")}
-            value={localBasicAuthorization.isBasicAuthActive}
-            onChange={(isBasicAuthActive) => {
-              setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
-            }}
-          />
-          <InputField
-            title={t("Username")}
-            value={settingsItem.basicAuthUsername}
-            onChange={(basicAuthUsername: string) => {
-              setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
-            }}
-            disabled={!localBasicAuthorization.isBasicAuthActive}
-          />
-          <InputField
-            title={t("Password")}
-            value={settingsItem.basicAuthPassword}
-            onChange={(basicAuthPassword: string) => {
-              setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
-            }}
-            disabled={!localBasicAuthorization.isBasicAuthActive}
-          />
-          <ButtonWrapper>
-            <Button
-              title={t("Submit")}
-              appearance="primary"
-              onClick={handleSubmitBasicAuthorization}
-            />
-          </ButtonWrapper>
-        </SettingsFields>
-      </Collapse>
-      <Collapse title={t("Site Setting")} size="large" noShrink>
-        <SettingsFields>
-          <InputField
-            title={t("Site name")}
-            value={settingsItem.alias}
-            onChange={(alias: string) => {
-              setLocalAlias(alias);
-            }}
-            description={t(
-              "You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows."
+    <SettingsWrapper>
+      <SettingsFields>
+        <HeadingWraper>
+          <TitleWrapper size="body" weight="bold">
+            {isPublished ? t("Public Info") : t("Published page settings")}
+          </TitleWrapper>
+          <Typography size="footnote" color={theme.content.weak}>
+            {t(
+              "This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page."
             )}
-          />
-          <ButtonWrapper>
-            <Button
-              title={t("Submit")}
-              appearance="primary"
-              onClick={handleSubmitAlias}
-            />
-          </ButtonWrapper>
-        </SettingsFields>
-      </Collapse>
-      <Collapse title={t("Google Analytics")} size="large" noShrink>
-        <SettingsFields>
-          <SwitchField
-            title={t("Enable Google Analytics")}
-            value={localGA.enableGa ?? false}
-            onChange={(enableGa: boolean) => {
-              setLocalGA((s) => ({ ...s, enableGa }));
+          </Typography>
+        </HeadingWraper>
+
+        <InputField
+          title={t("Title")}
+          description={t(
+            "The Title setting will be applied to the <title> tag and og:title."
+          )}
+          value={settingsItem.publicTitle}
+          onChange={(publicTitle: string) => {
+            setLocalPublicInfo((s) => ({ ...s, publicTitle }));
+          }}
+          onBlur={handleSubmitPublicInfo}
+        />
+        <TextAreaField
+          title={t("Description")}
+          value={localPublicInfo.publicDescription ?? ""}
+          placeholder={t("Write down your text")}
+          description={t(
+            "The Description setting will be applied to og:description."
+          )}
+          resizable="height"
+          onChange={(publicDescription: string) => {
+            setLocalPublicInfo((s) => ({ ...s, publicDescription }));
+          }}
+          onBlur={handleSubmitPublicInfo}
+        />
+        <ThumbnailField>
+          <AssetField
+            title={t("Thumbnail")}
+            placeholder={t("Image url")}
+            description={t("The Thumbnail setting will be applied to og:image.")}
+            inputMethod="asset"
+            assetsTypes={IMAGE_TYPES}
+            value={localPublicInfo.publicImage}
+            onChange={(publicImage) => {
+              setLocalPublicInfo((s) => ({
+                ...s,
+                publicImage: publicImage ?? ""
+              }));
+              handleSubmitPublicInfo(publicImage);
             }}
           />
+          <StyledImage
+            src={
+              !localPublicInfo.publicImage
+                ? defaultProjectBackgroundImage
+                : localPublicInfo.publicImage
+            }
+          />
+        </ThumbnailField>
+      </SettingsFields>
+      <SettingsFields>
+        <TitleWrapper size="body" weight="bold">
+          {t("Alias Setting")}
+        </TitleWrapper>
+        {isPublished ? (
+          <AliasSetting
+            isStory={isStory}
+            defaultAlias={settingsItem.id}
+            alias={settingsItem.alias}
+            onUpdateAlias={onUpdateAlias}
+          />
+        ) : (
+          <ContentDescription>
+            <Typography size="body" color={theme.content.weak}>
+              {isStory
+                ? t("Please publish your story before setting up your alias.")
+                : t(
+                    "Please publish your map project before setting up your alias."
+                  )}
+            </Typography>
+          </ContentDescription>
+        )}
+      </SettingsFields>
+      <SettingsFields>
+        <TitleWrapper size="body" weight="bold">
+          {t("Custom Domain")}
+        </TitleWrapper>
+        { isPublished &&
+          extensions &&
+          extensions.length > 0 &&
+          accessToken ? (
+            <ExtensionComponent
+              typename={settingsItem.__typename || ""}
+              {...(settingsItem.__typename === "Project"
+                ? {
+                    projectId: settingsItem.id,
+                    projectAlias: settingsItem.alias
+                  }
+                : {
+                    storyId: settingsItem.id,
+                    storyAlias: settingsItem.alias
+                  })}
+              lang={currentLang}
+              theme={currentTheme}
+              accessToken={accessToken}
+              onNotificationChange={onNotificationChange}
+              version="visualizer"
+            />
+          )
+           : (
+          <ContentDescription>
+            <Typography size="body" color={theme.content.weak}>
+              {isStory
+                ? t(
+                    "Please publish your map story before setting up your custom domain."
+                  )
+                : t(
+                    "Please publish your map project before setting up your custom domain."
+                  )}
+            </Typography>
+          </ContentDescription>
+        )}
+      </SettingsFields>
+      <SettingsFields>
+        <TitleWrapper size="body" weight="bold">
+          {t("Basic Authorization")}
+        </TitleWrapper>
+        <SwitchField
+          title={t("Enable Basic Authorization")}
+          value={localBasicAuthorization.isBasicAuthActive}
+          onChange={(isBasicAuthActive) => {
+            setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
+          }}
+        />
+        {localBasicAuthorization.isBasicAuthActive && (
+          <>
+            <InputField
+              title={t("Username")}
+              value={settingsItem.basicAuthUsername}
+              onChange={(basicAuthUsername: string) => {
+                setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
+              }}
+              disabled={!localBasicAuthorization.isBasicAuthActive}
+              onBlur={handleSubmitBasicAuthorization}
+            />
+            <InputField
+              title={t("Password")}
+              value={settingsItem.basicAuthPassword}
+              onChange={(basicAuthPassword: string) => {
+                setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
+              }}
+              disabled={!localBasicAuthorization.isBasicAuthActive}
+              onBlur={handleSubmitBasicAuthorization}
+            />
+          </>
+        )}
+      </SettingsFields>
+      <SettingsFields>
+        <TitleWrapper size="body" weight="bold">
+          {t("Google Analytics")}
+        </TitleWrapper>
+        <SwitchField
+          title={t("Enable Google Analytics")}
+          value={localGA.enableGa ?? false}
+          onChange={(enableGa: boolean) => {
+            setLocalGA((s) => ({ ...s, enableGa }));
+          }}
+        />
+        {localGA.enableGa && (
           <InputField
             title={t("Tracking ID")}
             value={settingsItem.trackingId}
             onChange={(trackingId: string) => {
               setLocalGA((s) => ({ ...s, trackingId }));
             }}
+            onBlur={handleSubmitGA}
           />
-          <ButtonWrapper>
-            <Button
-              title={t("Submit")}
-              appearance="primary"
-              onClick={handleSubmitGA}
-            />
-          </ButtonWrapper>
-        </SettingsFields>
-      </Collapse>
-      {extensions && extensions.length > 0 && accessToken && (
-        <Collapse title={t("Custom Domain")} size="large" noShrink>
-          <ExtensionComponent
-            typename={settingsItem.__typename || ""}
-            {...(settingsItem.__typename === "Project"
-              ? {
-                  projectId: settingsItem.id,
-                  projectAlias: settingsItem.alias
-                }
-              : {
-                  storyId: settingsItem.id,
-                  storyAlias: settingsItem.alias
-                })}
-            lang={currentLang}
-            theme={currentTheme}
-            accessToken={accessToken}
-            onNotificationChange={onNotificationChange}
-            version="visualizer"
-          />
-        </Collapse>
-      )}
-    </>
+        )}
+      </SettingsFields>
+    </SettingsWrapper>
   );
 };
 
@@ -297,6 +339,21 @@ const StyledImage = styled("img")(({ theme }) => ({
   width: "100%",
   borderRadius: theme.radius.normal,
   backgroundColor: theme.relative.dark
+}));
+
+const HeadingWraper = styled("div")(({ theme }) => ({
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small
+}));
+
+const ContentDescription = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  width: "100%",
+  padding: `${theme.spacing.super}px 0`
 }));
 
 export default PublicSettingsDetail;
