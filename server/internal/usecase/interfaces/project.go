@@ -6,9 +6,12 @@ import (
 	"errors"
 	"net/url"
 
+	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearth/server/pkg/i18n/message"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
@@ -20,9 +23,6 @@ type CreateProjectParam struct {
 	Visualizer  visualizer.Visualizer
 	Name        *string
 	Description *string
-	ImageURL    *url.URL
-	Alias       *string
-	Archived    *bool
 	CoreSupport *bool
 }
 
@@ -57,7 +57,12 @@ type PublishProjectParam struct {
 
 var (
 	ErrProjectAliasIsNotSet    error = errors.New("project alias is not set")
-	ErrProjectAliasAlreadyUsed error = errors.New("project alias is already used by another project")
+	ErrProjectAliasAlreadyUsed       = verror.NewVError(
+		errmsg.ErrKeyUsecaseInterfaceProjectAliasAlreadyUsed,
+		errmsg.ErrorMessages[errmsg.ErrKeyUsecaseInterfaceProjectAliasAlreadyUsed],
+		message.MultiLocaleTemplateData(map[string]any{}),
+		nil,
+	)
 )
 
 type Project interface {

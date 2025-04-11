@@ -215,17 +215,15 @@ func TestStoryPageBlocksProperties(t *testing.T) {
 	_, res = updatePropertyValue(e, propID, "default", "", "text", "test value", "STRING")
 	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("test value")
 
-	_, res = fetchSceneForStories(e, sceneID)
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].type").IsEqual("STRING")
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].value").IsEqual("test value")
-
 	p := map[string]any{"left": 0, "right": 1, "top": 2, "bottom": 3}
 	_, res = updatePropertyValue(e, propID, "panel", "", "padding", p, "SPACING")
 	res.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(p)
 
 	_, res = fetchSceneForStories(e, sceneID)
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].type").IsEqual("SPACING")
-	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].value").IsEqual(p)
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].type").IsEqual("SPACING")
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[0].fields[0].value").IsEqual(p)
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].type").IsEqual("STRING")
+	res.Object().Path("$.data.node.stories[0].pages[0].blocks[0].property.items[1].fields[0].value").IsEqual("test value")
 }
 
 // go test -v -run TestStoryPublishing ./e2e/...
@@ -415,8 +413,8 @@ func TestStoryPublishing(t *testing.T) {
 func createProject(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
-		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
-			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport} ) { 
+		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $coreSupport: Boolean) {
+			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, coreSupport: $coreSupport} ) { 
 				project { 
 					id
 					__typename 
@@ -427,7 +425,6 @@ func createProject(e *httpexpect.Expect, name string) string {
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"imageUrl":    "",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": true,

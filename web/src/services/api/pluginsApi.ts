@@ -34,8 +34,12 @@ export type Extension = {
 export type Plugin = {
   id: string;
   name: string;
+  translatedName?: string;
+  description?: string;
+  translatedDescription?: string;
   extensions: Extension[];
   property?: unknown;
+  author?: string;
 };
 
 export type MarketplacePlugin = {
@@ -67,6 +71,11 @@ export default () => {
                   return {
                     id: p.plugin.id,
                     name: p.plugin.name,
+                    translatedName: p.plugin.translatedName,
+                    description: p.plugin.description,
+                    translatedDescription: p.plugin.translatedDescription,
+                    version: p.plugin.version,
+                    author: p.plugin.author,
                     extensions: p.plugin.extensions.map((e) => {
                       return {
                         pluginId: p.plugin?.id,
