@@ -2,7 +2,7 @@ import Tooltip from "@reearth/beta/lib/reearth-ui/components/Tooltip";
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useMemo } from "react";
+import { FC,  useMemo } from "react";
 
 import AddWorkspaceModal from "../CreateWorkspaceModal";
 import CursorStatus from "../CursorStatus";
@@ -69,7 +69,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
     onSignOut,
     handleWorkspaceChange
   } = useHooks({ workspaceId, topTabItems, bottomTabsItems });
-
+  
   return (
     <>
       <Wrapper>

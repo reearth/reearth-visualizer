@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+import { v4 as uuidv4 } from "uuid";
 
 export async function fetchFile(url: string) {
   const response = await fetch(url);
@@ -37,3 +38,41 @@ export async function fetchAndZipFiles(urls: string[], zipFileName: string) {
 
   return file;
 }
+
+const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
+
+ export const uploadFile = 
+   async (file: File, teamId: string, axios: any) => {
+     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+     const fileId = uuidv4();
+     let uploadedBytes = 0;
+
+     for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
+       const start = chunkNum * CHUNK_SIZE;
+       const end = Math.min(file.size, start + CHUNK_SIZE);
+       const chunk = file.slice(start, end);
+
+       const formData = new FormData();
+       formData.append("file", chunk, `${file.name}.part${chunkNum}`);
+       formData.append("file_id", fileId);
+       formData.append("team_id", teamId);
+       formData.append("chunk_num", chunkNum.toString());
+       formData.append("total_chunks", totalChunks.toString());
+
+       try {
+         await axios.post("/split-import", formData);
+
+         uploadedBytes = (chunkNum + 1) * CHUNK_SIZE;
+         if (uploadedBytes > file.size) {
+           uploadedBytes = file.size;
+         }
+
+         const progress = (uploadedBytes / file.size) * 100;
+         console.log(
+           `Uploaded ${uploadedBytes} / ${file.size} bytes (${progress.toFixed(2)}%)`
+         );
+       } catch (err: any) {
+         throw new Error(`Chunk ${chunkNum + 1} upload failed: ${err.message}`);
+       }
+     }
+   }

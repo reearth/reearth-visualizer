@@ -1,6 +1,7 @@
 import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
+import { uploadFile } from "@reearth/beta/utils/file";
 import { useProjectFetcher } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import {
@@ -8,6 +9,7 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
+import { useRestful } from "@reearth/services/restful";
 import {
   useCallback,
   useMemo,
@@ -24,6 +26,7 @@ const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-pro
 
 const PROJECTS_PER_PAGE = 16;
 
+
 export type SortType =
   | "date"
   | "date-reversed"
@@ -37,12 +40,12 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useStarredProjectsQuery,
-    useImportProject,
     useUpdateProjectRemove,
     usePublishProject
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
+  const { axios } = useRestful(); 
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -56,7 +59,6 @@ export default (workspaceId?: string) => {
     hasMoreProjects,
     endCursor,
     fetchMore,
-    refetch
   } = useProjectsQuery({
     teamId: workspaceId || "",
     pagination: {
@@ -241,22 +243,16 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
+  
   const handleImportProject = useCallback(
     async (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-      if (file) {
-        const result = await useImportProject({
-          teamId: workspaceId || "",
-          file
-        });
-        if (result.status === "success") {
-          await refetch();
-        }
+      if (file && workspaceId) {
+        uploadFile(file, workspaceId, axios);
       }
     },
-    [useImportProject, workspaceId, refetch]
+    [axios, workspaceId]
   );
-
   // project remove
   const handleProjectRemove = useCallback(
     async (project: Project) => {
