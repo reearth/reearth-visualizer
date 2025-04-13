@@ -46,17 +46,14 @@ type TriggerProps = {
 const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
   function PopoverTrigger(
     { children, disabled, extendWidth, ...props },
-    propRef
+    _propRef
   ) {
     const context = usePopoverContext();
-    const childrenRef = (children as any)?.ref;
-    const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
     return (
       <TriggerWrapper
         disabled={disabled}
-        extendwidth={extendWidth}
-        ref={ref}
+        extendwidth={extendWidth ? "true" : "false"}
         {...context.getReferenceProps(props)}
       >
         {typeof children === "string" ? <Button title={children} /> : children}
@@ -198,9 +195,9 @@ export const Popup = ({
 
 const TriggerWrapper = styled("div")<{
   disabled?: boolean;
-  extendwidth?: boolean;
+  extendwidth?: string;
 }>(({ disabled, extendwidth }) => ({
-  width: extendwidth ? "100%" : "fit-content",
+  width: extendwidth === "true" ? "100%" : "fit-content",
   pointerEvents: disabled ? "none" : "auto"
 }));
 

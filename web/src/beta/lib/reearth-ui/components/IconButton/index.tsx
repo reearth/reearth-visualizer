@@ -48,9 +48,9 @@ export const IconButton: FC<IconButtonProps> = ({
       appearance={appearance}
       size={size}
       active={active}
-      iconRotate={iconRotate}
+      iconrotate={iconRotate}
       onClick={handleClick}
-      hasBorder={hasBorder}
+      hasborder={hasBorder ? "true" : "false"}
     >
       <Icon icon={icon} color={iconColor} />
     </StyledButton>
@@ -73,14 +73,14 @@ const StyledButton = styled("button")<{
   size: "normal" | "small" | "smallest" | "medium" | "large";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
   active?: boolean;
-  iconRotate?: string;
-  hasBorder?: boolean;
-}>(({ appearance, size, active, iconRotate, theme, hasBorder }) => ({
+  iconrotate?: string;
+  hasborder?: string;
+}>(({ appearance, size, active, iconrotate, theme, hasborder }) => ({
   display: "flex",
   flexDirection: "row",
   alignItems: "center",
   justifyContent: "center",
-  border: hasBorder ? `1px solid ${theme.outline.weak}` : "none",
+  border: hasborder === "true" ? `1px solid ${theme.outline.weak}` : "none",
   flexShrink: 0,
   width:
     size === "smallest"
@@ -130,7 +130,7 @@ const StyledButton = styled("button")<{
         : size === "large"
           ? "20px"
           : "16px",
-    transform: iconRotate ? `rotate(${iconRotate})` : "none",
+    transform: iconrotate ? `rotate(${iconrotate})` : "none",
     transition: "transform 0.1s"
   },
   ["&:hover"]: {

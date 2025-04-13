@@ -71,13 +71,13 @@ export const EntryItem: FC<EntryItemProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      hovered={hovered}
-      highlight={highlighted}
-      smallPaddingRight={!!optionsMenu}
+      hovered={hovered ? "true" : "false"}
+      highlight={highlighted ? "true" : "false"}
+      smallpaddingright={optionsMenu ? "true" : "false"}
     >
       <MainContent
         className={dragHandleClassName}
-        asDragHandle={!!dragHandleClassName}
+        asdraghandle={dragHandleClassName ? "true" : "false"}
       >
         {icon && (
           <IconWrapper>
@@ -114,48 +114,50 @@ export const EntryItem: FC<EntryItemProps> = ({
 };
 
 const Wrapper = styled("div")<{
-  hovered?: boolean;
-  highlight?: boolean;
-  smallPaddingRight?: boolean;
-}>(({ theme, hovered, highlight, smallPaddingRight }) => ({
+  hovered?: string;
+  highlight?: string;
+  smallpaddingright?: string;
+}>(({ theme, hovered, highlight, smallpaddingright }) => ({
   position: "relative",
   boxSizing: "border-box",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: smallPaddingRight
-    ? `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.small}px`
-    : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  padding:
+    smallpaddingright === "true"
+      ? `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.small}px`
+      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: theme.radius.small,
   backgroundColor: "transparent",
   minHeight: 28,
   flex: 1,
   minWidth: 0,
   cursor: "pointer",
-  ...(hovered && {
+  ...(hovered === "true" && {
     backgroundColor: theme.bg[1]
   }),
-  ...(highlight && {
+  ...(highlight === "true" && {
     backgroundColor: theme.select.main
   }),
   ["&:active"]: {
-    backgroundColor: highlight
-      ? theme.select.strong
-      : hovered
-        ? theme.relative.light
-        : "transparent"
+    backgroundColor:
+      highlight === "true"
+        ? theme.select.strong
+        : hovered === "true"
+          ? theme.relative.light
+          : "transparent"
   }
 }));
 
-const MainContent = styled("div")<{ asDragHandle?: boolean }>(
-  ({ theme, asDragHandle }) => ({
+const MainContent = styled("div")<{ asdraghandle?: "true" | "false" }>(
+  ({ theme, asdraghandle }) => ({
     flex: 1,
     display: "flex",
     alignItems: "center",
     gap: theme.spacing.smallest,
     overflow: "hidden",
     textOverflow: "ellipsis",
-    ...(asDragHandle && {
+    ...(asdraghandle === "true" && {
       cursor: "pointer"
     })
   })
