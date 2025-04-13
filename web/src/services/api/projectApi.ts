@@ -1,7 +1,6 @@
 import {
   Reference,
   StoreObject,
-  useLazyQuery,
   useMutation,
   useQuery
 } from "@apollo/client";
@@ -122,9 +121,18 @@ export default () => {
     return { deletedProjects, ...rest };
   }, []);
 
-  const useProjectAliasCheckLazyQuery = useCallback(() => {
-    return useLazyQuery(CHECK_PROJECT_ALIAS);
-  }, []);
+   const useProjectAliasCheckQuery = useCallback((alias?: string) => {
+     const { data, ...rest } = useQuery(CHECK_PROJECT_ALIAS, {
+       variables: { alias: alias ?? "" },
+     });
+
+     const checkProjectAlias = useMemo(
+       () => data?.checkProjectAlias,
+       [data?.checkProjectAlias]
+     );
+
+     return { checkProjectAlias, ...rest };
+   }, []);
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
   const [createScene] = useMutation(CREATE_SCENE, {
@@ -579,7 +587,7 @@ export default () => {
     publishProjectLoading,
     useProjectQuery,
     useProjectsQuery,
-    useProjectAliasCheckLazyQuery,
+    useProjectAliasCheckQuery,
     useCreateProject,
     usePublishProject,
     useUpdateProject,
