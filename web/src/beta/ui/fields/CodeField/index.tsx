@@ -2,7 +2,7 @@ import { CodeInput, CodeInputProps } from "@reearth/beta/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
+import CommonField, { CommonFieldProps } from "../CommonField";
 
 export type CodeFieldProps = CommonFieldProps &
   CodeInputProps & { height?: number; width?: number };
@@ -16,7 +16,11 @@ const CodeField: FC<CodeFieldProps> = ({
 }) => {
   return (
     <CommonField title={title} description={description}>
-      <CodeInputWrapper height={height} width={width}>
+      <CodeInputWrapper
+        height={height}
+        width={width}
+        data-testid="code-input-wrapper"
+      >
         <CodeInput {...props} />
       </CodeInputWrapper>
     </CommonField>
