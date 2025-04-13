@@ -50,7 +50,7 @@ const EditPanel: FC<AliasSettingProps> = ({
   return (
     <Modal visible size="small">
       <ModalPanel
-        title={t("Edit alias")}
+        title={t("Edit Alias")}
         onCancel={onClose}
         actions={
           <ButtonWrapper>
@@ -78,7 +78,7 @@ const EditPanel: FC<AliasSettingProps> = ({
           <CommonField title={"Alias"}>
             <InputWrapper>
               <Typography size="body" color={theme.content.weak}>
-                {t("https://")}
+                {"https://"}
               </Typography>
               <TextInput value={localAlias} onChange={handleChange} />
               <Typography size="body" color={theme.content.weak}>

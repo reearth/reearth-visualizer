@@ -1,7 +1,7 @@
 import { IconName, Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, ReactNode, useEffect, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { Link } from "react-router-dom";
 
 export type SidebarMenuItemProps = {
@@ -13,6 +13,7 @@ export type SidebarMenuItemProps = {
   disabled?: boolean;
   tileComponent?: ReactNode;
   subItem?: SidebarMenuItemProps[];
+  openSubItem?: boolean;
   onClick?: () => void;
 };
 
@@ -26,62 +27,69 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   path,
   tileComponent,
   subItem,
+  openSubItem = false,
   onClick
 }) => {
   const theme = useTheme();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  
-  useEffect(() => {
-    if (!active) {
-      setIsOpen(false);
-    }
-  }, [active]);
+  const [isOpen, setIsOpen] = useState<boolean>(openSubItem);
+
+  const Content = (
+    <MenuWrapper
+      active={subItem ? false : active}
+      disabled={disabled}
+      onClick={subItem ? () => setIsOpen(!isOpen) : onClick}
+    >
+      <Info>
+        {icon && (
+          <Icon
+            icon={icon}
+            size="normal"
+            color={active ? theme.content.main : theme.content.weak}
+          />
+        )}
+        <Typography
+          size="body"
+          color={disabled ? theme.content.weak : theme.content.main}
+        >
+          {text}
+        </Typography>
+      </Info>
+      {subItem && (
+        <Icon
+          icon={isOpen ? "caretUp" : "caretDown"}
+          color={disabled ? theme.content.weaker : theme.content.main}
+        />
+      )}
+      {tileComponent && <Tile>{tileComponent}</Tile>}
+    </MenuWrapper>
+  );
+
+  if (subItem) {
+    return (
+      <>
+        {Content}
+        {isOpen && (
+          <SubMenu>
+            {subItem.map((t) => (
+              <SidebarMenuItem
+                key={t.id}
+                path={t.path}
+                text={t.text}
+                active={t.active}
+                icon={t.icon}
+                subItem={t.subItem}
+                onClick={t.onClick}
+              />
+            ))}
+          </SubMenu>
+        )}
+      </>
+    );
+  }
 
   return (
     <StyledLinkButton to={path || ""} disabled={disabled}>
-      <MenuWrapper
-        active={subItem ? false : active}
-        disabled={disabled}
-        onClick={subItem ? () => setIsOpen(!isOpen) : onClick}
-      >
-        <Info>
-          {icon && (
-            <Icon
-              icon={icon}
-              size="normal"
-              color={active ? theme.content.main : theme.content.weak}
-            />
-          )}
-          <Typography
-            size="body"
-            color={disabled ? theme.content.weak : theme.content.main}
-          >
-            {text}
-          </Typography>
-        </Info>
-        {subItem && (
-          <Icon
-            icon={isOpen ? "caretUp" : "caretDown"}
-            color={disabled ? theme.content.weaker : theme.content.main}
-          />
-        )}
-        {tileComponent && <Tile>{tileComponent}</Tile>}
-      </MenuWrapper>
-      <SubMenu>
-        {subItem &&
-          isOpen &&
-          subItem?.map((t) => (
-            <SidebarMenuItem
-              key={t.id}
-              path={t.path}
-              text={t.text}
-              active={t.active}
-              icon={t.icon}
-              subItem={t.subItem}
-              onClick={t.onClick}
-            />
-          ))}
-      </SubMenu>
+      {Content}
     </StyledLinkButton>
   );
 };
@@ -89,7 +97,7 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
 const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(
   ({ disabled }) => ({
     pointerEvents: disabled ? "none" : "auto",
-    textDecoration: "none"
+    textDecoration: "none",
   })
 );
 
@@ -104,7 +112,7 @@ const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
     borderRadius: active ? theme.radius.small : "",
     padding: theme.spacing.small,
     cursor: disabled ? "default" : "pointer",
-    ["&:hover"]: {
+    "&:hover": {
       background: active ? theme.select.main : theme.bg[2],
       borderRadius: theme.radius.small
     }
@@ -122,6 +130,13 @@ const Tile = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.small,
   flexShrink: 0
+}));
+
+const SubMenu = styled("div")(({ theme }) => ({
+  padding: `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.super}px`,
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest
 }));
 
 export const SidebarWrapper = styled("div")(() => ({
@@ -176,8 +191,4 @@ export const SidebarVersion: FC = () => {
 
 const Version = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.normal}px ${theme.spacing.small}px`
-}));
-
-const SubMenu = styled("div")(({ theme }) => ({
-  padding: `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.super}px`
 }));

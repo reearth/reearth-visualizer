@@ -87,11 +87,11 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
         path: `/settings/projects/${projectId}/public`,
         subItem: [
           {
-            id: "map",
-            text: t("Map"),
+            id: "scene",
+            text: t("Scene"),
             path: `/settings/projects/${projectId}/public`,
-            active: selectedTab === "map",
-            onClick: () => handleTabChange("map")
+            active: selectedTab === "scene",
+            onClick: () => handleTabChange("scene")
           },
           ...stories.map((s) => ({
             id: s.id,
@@ -139,6 +139,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
                     active={t.id === tab}
                     icon={t.icon}
                     subItem={t.subItem}
+                    openSubItem={true}
                   />
                 ))}
               </SidebarButtonsWrapper>
