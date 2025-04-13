@@ -262,20 +262,20 @@ Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
-Congratulations! 🎊 Your story has been published: ''
-Congratulations! 🎊 Your scene has been published: ''
-Congratulations! 🎊 Your story has been updated: ''
-Congratulations! 🎊 Your scene has been updated: ''
-Please visit your project by URL below !: ''
+Congratulations! 🎊 Your story has been published: 🎊おめでとうございます！あなたのストーリーが公開されました。
+Congratulations! 🎊 Your scene has been published: 🎊おめでとうございます！あなたのシーンが公開されました。
+Congratulations! 🎊 Your story has been updated: 🎊おめでとうございます！あなたのストーリーが更新されました。
+Congratulations! 🎊 Your scene has been updated: 🎊おめでとうございます！あなたのシーンが更新されました。
+Please visit your project by URL below !: 以下のURLからあなたのプロジェクトをご確認ください。
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 '* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
-Want to change public settings?: ''
+Want to change public settings?: 公開設定を変更しますか？
 Go to settings: 設定へ
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
-Your story will be published. This means anybody can view this story by default url.: ''
-Your scene will be published. This means anybody can view this project by default url.: ''
+Your story will be published. This means anybody can view this story by default url.: ストーリーが公開されます。デフォルトのURLを知っている人は誰でもこのストーリーを閲覧できるようになります。
+Your scene will be published. This means anybody can view this project by default url.: シーンが公開されます。デフォルトのURLを知っている人は誰でもこのプロジェクトを閲覧できるようになります。
 Search engine indexing: 検索可能にする
 Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
 Your story will be unpublished.: ストーリーを非公開にする

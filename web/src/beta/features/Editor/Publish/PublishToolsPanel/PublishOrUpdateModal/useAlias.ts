@@ -17,6 +17,7 @@ export default ({ publishItem }: { publishItem: PublishItem }) => {
   const [alias, setAlias] = useState<string | undefined>(publishItem.alias);
   const currentValidatingAlias = useRef<string>();
 
+  console.log("publishItem.alias", publishItem);
   useEffect(() => {
     const newAlias = publishItem.alias ?? publishItem.id;
     setAlias(newAlias);
