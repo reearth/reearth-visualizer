@@ -33,7 +33,7 @@ const ZoomLevelField: FC<ZoomLevelFieldProps> = ({
   }, [onChange]);
 
   return (
-    <CommonField title={title} >
+    <CommonField title={title}>
       <InputWrapper>
         <TextInput
           value={
