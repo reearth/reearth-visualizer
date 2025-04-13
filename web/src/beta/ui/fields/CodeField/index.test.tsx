@@ -1,11 +1,18 @@
 import { render, screen } from "@reearth/test/utils";
-import React from "react";
 import { describe, expect, it, vi } from "vitest";
 
 import CodeField from "./index";
 
 vi.mock("@monaco-editor/react", () => ({
-  default: ({ value, onChange, height }: any) => (
+  default: ({
+    value,
+    onChange,
+    height
+  }: {
+    value: string;
+    onChange?: (value: string) => void;
+    height: number;
+  }) => (
     <div data-testid="monaco-editor" style={{ height }}>
       <textarea
         value={value}
