@@ -1,5 +1,4 @@
 import {
-  useMergeRefs,
   FloatingPortal,
   FloatingFocusManager,
   Placement,
@@ -65,10 +64,8 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
 const Content = forwardRef<
   HTMLDivElement,
   HTMLProps<HTMLDivElement> & { tooltip?: boolean }
->(function Content({ style, tooltip, ...props }, propRef) {
+>(function Content({ style, tooltip, ...props }, _propRef) {
   const { context: floatingContext, ...context } = usePopoverContext();
-
-  const ref = useMergeRefs([context.refs.setFloating, propRef]);
 
   const theme = useTheme();
 
@@ -78,7 +75,6 @@ const Content = forwardRef<
     <FloatingPortal>
       <FloatingFocusManager context={floatingContext}>
         <ContentWrapper
-          ref={ref}
           style={{
             ...context.floatingStyles,
             ...style

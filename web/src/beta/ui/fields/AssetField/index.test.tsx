@@ -75,13 +75,15 @@ vi.mock("@reearth/beta/lib/reearth-ui", () => ({
 }));
 
 vi.mock("@reearth/services/i18n", () => ({
-  useT: () => (key: string) => key
+  useT: () => (key: string) => key,
+  Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>
 }));
 
 vi.mock("@reearth/services/state", () => ({
   useNotification: () => [null, vi.fn()],
   useProjectId: () => ["project-id"],
-  useWorkspace: () => [{ id: "workspace-id" }]
+  useWorkspace: () => [{ id: "workspace-id" }],
+  useCurrentTheme: () => [undefined, vi.fn()]
 }));
 
 vi.mock("../CommonField", () => ({
@@ -125,7 +127,8 @@ describe("AssetField", () => {
     render(<AssetField />);
     expect(screen.getByTestId("common-field")).toBeDefined();
     expect(screen.getByTestId("text-input")).toBeDefined();
-    expect(screen.queryByTestId("button")).toBeNull();
+    expect(screen.queryByTestId("button-image")).toBeNull();
+    expect(screen.queryByTestId("button-uploadSimple")).toBeNull();
   });
 
   it("renders with default props", () => {
