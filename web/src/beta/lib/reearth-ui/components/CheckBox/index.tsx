@@ -25,7 +25,12 @@ export const CheckBox: FC<CheckBoxProps> = ({ value, disabled, onChange }) => {
   }, [value]);
 
   return (
-    <BoxField onClick={handleClick} disabled={disabled}>
+    <BoxField
+      onClick={handleClick}
+      disabled={disabled}
+      role="checkbox"
+      aria-checked={isChecked}
+    >
       {isChecked && (
         <Icon
           icon="check"
@@ -37,16 +42,17 @@ export const CheckBox: FC<CheckBoxProps> = ({ value, disabled, onChange }) => {
   );
 };
 
-const BoxField = styled("div")<{ disabled?: boolean }>(
-  ({ disabled, theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxSizing: "border-box",
-    width: "16px",
-    height: "16px",
-    border: `1px solid ${theme.outline.weak}`,
-    borderRadius: "4px",
-    cursor: disabled ? "not-allowed" : "pointer"
-  })
-);
+const BoxField = styled("div")<{
+  disabled?: boolean;
+  "aria-checked"?: boolean;
+}>(({ disabled, theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  boxSizing: "border-box",
+  width: "16px",
+  height: "16px",
+  border: `1px solid ${theme.outline.weak}`,
+  borderRadius: "4px",
+  cursor: disabled ? "not-allowed" : "pointer"
+}));

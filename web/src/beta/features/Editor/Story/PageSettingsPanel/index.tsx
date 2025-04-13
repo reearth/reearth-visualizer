@@ -1,6 +1,6 @@
 import { Collapse } from "@reearth/beta/lib/reearth-ui";
 import { EntryItem } from "@reearth/beta/ui/components";
-import CheckBoxField from "@reearth/beta/ui/fields/CheckboxField";
+import CheckBoxField from "@reearth/beta/ui/fields/CheckBoxField";
 import PropertyItem from "@reearth/beta/ui/fields/Properties";
 import { Panel, PanelProps } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
