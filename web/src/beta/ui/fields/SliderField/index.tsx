@@ -1,7 +1,7 @@
 import { Slider, SliderProps } from "@reearth/beta/lib/reearth-ui";
 import { FC } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
+import CommonField, { CommonFieldProps } from "../CommonField";
 
 export type SliderFieldProps = CommonFieldProps & SliderProps;
 const SliderField: FC<SliderFieldProps> = ({
