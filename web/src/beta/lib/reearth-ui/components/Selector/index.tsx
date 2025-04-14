@@ -144,8 +144,8 @@ export const Selector: FC<SelectorProps> = forwardRef<
       return (
         <SelectInput
           size={size}
-          isMultiple={multiple}
-          isOpen={isOpen}
+          ismultiple={multiple ? "true" : "false"}
+          isopen={isOpen ? "true" : "false"}
           disabled={disabled}
           width={selectorWidth}
           data-testid="select-input"
@@ -208,7 +208,7 @@ export const Selector: FC<SelectorProps> = forwardRef<
           placement="bottom-start"
         >
           <DropDownWrapper
-            maxHeight={maxHeight}
+            maxheight={maxHeight?.toString()}
             width={menuWidth ?? selectorWidth}
           >
             {optionValues.length === 0 ? (
@@ -221,7 +221,7 @@ export const Selector: FC<SelectorProps> = forwardRef<
               optionValues.map((item: { value: string; label?: string }) => (
                 <DropDownItem
                   key={item.value ?? ""}
-                  isSelected={isSelected(item.value)}
+                  isselected={isSelected(item.value) ? "true" : "false"}
                   onClick={() => handleChange(item.value)}
                   role="option"
                   aria-selected={isSelected(item.value)}
@@ -253,12 +253,12 @@ const SelectorWrapper = styled("div")(() => ({
 }));
 
 const SelectInput = styled("div")<{
-  isMultiple?: boolean;
-  isOpen?: boolean;
+  ismultiple?: string;
+  isopen?: "true" | "false";
   disabled?: boolean;
   width?: number;
   size: "normal" | "small";
-}>(({ isMultiple, isOpen, disabled, width, size, theme }) => ({
+}>(({ ismultiple, isopen, disabled, width, size, theme }) => ({
   boxSizing: "border-box",
   backgroundColor: `${theme.bg[1]}`,
   display: "flex",
@@ -266,13 +266,13 @@ const SelectInput = styled("div")<{
   alignItems: "center",
   gap: `${theme.spacing.small}px`,
   borderRadius: `${theme.radius.small}px`,
-  border: `1px solid ${!disabled && isOpen ? theme.select.strong : theme.outline.weak}`,
+  border: `1px solid ${!disabled && isopen === "true" ? theme.select.strong : theme.outline.weak}`,
   boxShadow: `${theme.shadow.input}`,
   padding:
     size === "small"
       ? `0 ${theme.spacing.smallest}px`
       : `${theme.spacing.smallest}px ${
-          isMultiple ? theme.spacing.smallest : theme.spacing.small
+          ismultiple === "true" ? theme.spacing.smallest : theme.spacing.small
         }px`,
   cursor: disabled ? "not-allowed" : "pointer",
 
@@ -299,8 +299,8 @@ const SelectedItem = styled("div")(({ theme }) => ({
 
 const DropDownWrapper = styled("div")<{
   width?: number;
-  maxHeight?: number;
-}>(({ width, maxHeight, theme }) => ({
+  maxheight?: string;
+}>(({ width, maxheight, theme }) => ({
   boxSizing: "border-box",
   display: "flex",
   flexDirection: "column",
@@ -311,21 +311,22 @@ const DropDownWrapper = styled("div")<{
   borderRadius: `${theme.radius.small}px`,
   width: width ? `${width}px` : "",
   border: `1px solid ${theme.outline.weaker}`,
-  maxHeight: maxHeight ? `${maxHeight}px` : "",
-  overflowY: maxHeight ? "auto" : "hidden",
+  maxHeight: maxheight ? `${maxheight}px` : "",
+  overflowY: maxheight ? "auto" : "hidden",
   ...theme.scrollBar
 }));
 
 const DropDownItem = styled("div")<{
-  isSelected?: boolean;
-}>(({ isSelected, theme }) => ({
+  isselected?: "true" | "false";
+}>(({ isselected, theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   gap: `${theme.spacing.small}px`,
-  backgroundColor: !isSelected
-    ? `${theme.bg[1]}`
-    : `${theme.select.weak} !important`,
+  backgroundColor:
+    isselected === "true"
+      ? `${theme.bg[1]}`
+      : `${theme.select.weak} !important`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   borderRadius: `${theme.radius.smallest}px`,
   cursor: "pointer",

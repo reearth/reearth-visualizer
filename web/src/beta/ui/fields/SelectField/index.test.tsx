@@ -146,7 +146,7 @@ vi.mock("@reearth/services/theme", async (importOriginal) => {
   };
 });
 
-describe("SelectorField", () => {
+describe("SelectField", () => {
   const defaultProps: SelectorFieldProps = {
     title: "Test Title",
     description: "Test Description",
