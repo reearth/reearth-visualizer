@@ -3,14 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import TimePointField from ".";
 
-class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-global.ResizeObserver = ResizeObserver;
-
 vi.mock("@reearth/services/theme", async (importOriginal) => {
   const actual = await importOriginal();
 

@@ -3,14 +3,6 @@ import { describe, it, expect, vi } from "vitest";
 
 import EditPanel from "./index";
 
-class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-}
-
-global.ResizeObserver = ResizeObserver;
-
 describe("EditPanel", () => {
   const defaultProps = {
     value: "2025-04-14T12:00:00Z",

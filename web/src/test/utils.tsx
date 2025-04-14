@@ -29,6 +29,14 @@ vitest.mock("react-inlinesvg", () => {
   };
 });
 
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = ResizeObserver;
+
 const render = (
   ui: React.ReactElement,
   queryMocks?: readonly MockedResponse<Record<string, unknown>>[],

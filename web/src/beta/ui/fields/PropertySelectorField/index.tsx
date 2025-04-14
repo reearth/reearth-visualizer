@@ -7,7 +7,7 @@ import {
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
+import CommonField, { CommonFieldProps } from "../CommonField";
 
 export type PropertySelectorProps = CommonFieldProps &
   Pick<

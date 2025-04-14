@@ -1,5 +1,10 @@
-import { render, screen, fireEvent, renderHook } from "@reearth/test/utils";
-import { act } from "react";
+import {
+  render,
+  screen,
+  fireEvent,
+  renderHook,
+  act
+} from "@reearth/test/utils";
 import { describe, it, expect, vi } from "vitest";
 
 import useTimePeriodField from "./hooks";
