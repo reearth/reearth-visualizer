@@ -6,7 +6,7 @@ import {
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
+import CommonField, { CommonFieldProps } from "../CommonField";
 
 type CommonTuple = [number, number, number, number];
 
