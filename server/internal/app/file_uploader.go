@@ -80,7 +80,7 @@ func serveUploadFiles(
 		}
 	}
 
-	ec.POST("/split-import",
+	ec.POST("/api/split-import",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
 			if err := c.Request().ParseMultipartForm(uploadManager.chunkSize); err != nil {
