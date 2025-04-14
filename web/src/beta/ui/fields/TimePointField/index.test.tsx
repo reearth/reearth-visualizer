@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import TimePointField from ".";
 
-// Mock ResizeObserver
 class ResizeObserver {
   observe() {}
   unobserve() {}
