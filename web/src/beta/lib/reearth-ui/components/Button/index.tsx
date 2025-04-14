@@ -19,6 +19,7 @@ export type ButtonProps = {
   onClick?: (e: MouseEvent<HTMLElement>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLElement>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement>) => void;
+  "data-testid"?: string;
 } & Pick<IconProps, "placement" | "tooltipText">;
 
 export const Button: FC<ButtonProps> = ({
@@ -38,7 +39,8 @@ export const Button: FC<ButtonProps> = ({
   placement,
   onClick,
   onMouseEnter,
-  onMouseLeave
+  onMouseLeave,
+  "data-testid": dataTestId
 }) => {
   return (
     <StyledButton
@@ -52,6 +54,7 @@ export const Button: FC<ButtonProps> = ({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      data-testid={dataTestId}
     >
       {icon && (
         <Icon
@@ -75,6 +78,7 @@ const StyledButton = styled("button")<{
   extendwidth?: "true" | "false";
   minwidth?: number;
   background?: string;
+  "data-testid"?: string;
 }>(
   ({
     appearance,

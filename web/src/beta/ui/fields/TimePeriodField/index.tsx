@@ -95,6 +95,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
             onClick={handleTimePeriodSettingDelete}
             disabled={!timePeriodValues}
             appearance="simple"
+            data-testid="delete-button"
           />
         </TimePeriodWrapper>
         <ButtonWrapper>
@@ -104,6 +105,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
             icon="clock"
             size="small"
             onClick={handleEditorModalOpen}
+            data-testid="set-button"
           />
         </ButtonWrapper>
       </Wrapper>
