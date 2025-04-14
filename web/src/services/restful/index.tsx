@@ -18,7 +18,6 @@ export const RestfulProvider: FC<{ children?: ReactNode }> = ({ children }) => {
       baseURL: endpoint
     });
 
-    // Add Authorization header before every request
     instance.interceptors.request.use(async (config) => {
       const token = e2eAccessToken() || (await getAccessToken());
       if (token && config.headers) {
