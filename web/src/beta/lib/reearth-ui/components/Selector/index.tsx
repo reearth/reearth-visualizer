@@ -7,7 +7,8 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
+  forwardRef
 } from "react";
 
 import { Button } from "../Button";
@@ -29,205 +30,223 @@ export type SelectorProps = {
   menuWidth?: number;
 };
 
-export const Selector: FC<SelectorProps> = ({
-  multiple,
-  value,
-  options,
-  size = "normal",
-  appearance,
-  placeholder,
-  disabled,
-  maxHeight,
-  displayLabel,
-  onChange,
-  menuWidth
-}) => {
-  const theme = useTheme();
-  const t = useT();
-  const selectorRef = useRef<HTMLDivElement>(null);
-  const [selectedValue, setSelectedValue] = useState<
-    string | string[] | undefined
-  >(displayLabel ?? value ?? (multiple ? [] : undefined));
-
-  useEffect(() => {
-    if (displayLabel) {
-      setSelectedValue(displayLabel);
-    } else {
-      setSelectedValue(value ?? (multiple ? [] : undefined));
-    }
-  }, [value, multiple, displayLabel]);
-
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [selectorWidth, setSelectorWidth] = useState<number>();
-
-  const optionValues = useMemo(() => options, [options]);
-
-  useEffect(() => {
-    const selectorElement = selectorRef.current;
-    if (!selectorElement) return;
-    const resizeObserver = new ResizeObserver((entries) => {
-      if (!entries || entries.length === 0) return;
-      const { width } = entries[0].contentRect;
-      setSelectorWidth(width);
-    });
-    resizeObserver.observe(selectorElement);
-    return () => {
-      resizeObserver.unobserve(selectorElement);
-      resizeObserver.disconnect();
-    };
-  }, []);
-
-  const isSelected = useCallback(
-    (value: string) => {
-      if (multiple) {
-        return Array.isArray(selectedValue) && selectedValue.includes(value);
-      }
-      return selectedValue === value;
+export const Selector: FC<SelectorProps> = forwardRef<
+  HTMLDivElement,
+  SelectorProps
+>(
+  (
+    {
+      multiple,
+      value,
+      options,
+      size = "normal",
+      appearance,
+      placeholder,
+      disabled,
+      maxHeight,
+      displayLabel,
+      onChange,
+      menuWidth
     },
-    [multiple, selectedValue]
-  );
+    ref
+  ) => {
+    const theme = useTheme();
+    const t = useT();
+    const selectorRef = useRef<HTMLDivElement>(null);
+    const [selectedValue, setSelectedValue] = useState<
+      string | string[] | undefined
+    >(displayLabel ?? value ?? (multiple ? [] : undefined));
 
-  const handleChange = (value: string) => {
-    if (multiple && Array.isArray(selectedValue)) {
-      if (selectedValue.includes(value)) {
-        const newSelectedArr = selectedValue.filter((val) => val !== value);
-        setSelectedValue(newSelectedArr);
-        onChange?.(newSelectedArr);
+    useEffect(() => {
+      if (displayLabel) {
+        setSelectedValue(displayLabel);
       } else {
-        const newSelectedArr = [...selectedValue, value];
-        setSelectedValue(newSelectedArr);
-        onChange?.(newSelectedArr);
+        setSelectedValue(value ?? (multiple ? [] : undefined));
       }
-    } else {
-      setIsOpen(!isOpen);
-      if (value === selectedValue) return;
-      setSelectedValue(value);
-      onChange?.(value);
-    }
-  };
+    }, [value, multiple, displayLabel]);
 
-  const handleUnselect = useCallback(
-    (e: MouseEvent<HTMLElement>, value: string | undefined) => {
-      e.stopPropagation();
-      if (value === undefined) return;
-      if (Array.isArray(selectedValue) && selectedValue.length) {
-        const newSelectedArr = selectedValue.filter((val) => val !== value);
-        setSelectedValue(newSelectedArr);
-        onChange?.(newSelectedArr);
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [selectorWidth, setSelectorWidth] = useState<number>();
+
+    const optionValues = useMemo(() => options, [options]);
+
+    useEffect(() => {
+      const selectorElement = selectorRef.current;
+      if (!selectorElement) return;
+      const resizeObserver = new ResizeObserver((entries) => {
+        if (!entries || entries.length === 0) return;
+        const { width } = entries[0].contentRect;
+        setSelectorWidth(width);
+      });
+      resizeObserver.observe(selectorElement);
+      return () => {
+        resizeObserver.unobserve(selectorElement);
+        resizeObserver.disconnect();
+      };
+    }, []);
+
+    const isSelected = useCallback(
+      (value: string) => {
+        if (multiple) {
+          return Array.isArray(selectedValue) && selectedValue.includes(value);
+        }
+        return selectedValue === value;
+      },
+      [multiple, selectedValue]
+    );
+
+    const handleChange = (value: string) => {
+      if (multiple && Array.isArray(selectedValue)) {
+        if (selectedValue.includes(value)) {
+          const newSelectedArr = selectedValue.filter((val) => val !== value);
+          setSelectedValue(newSelectedArr);
+          onChange?.(newSelectedArr);
+        } else {
+          const newSelectedArr = [...selectedValue, value];
+          setSelectedValue(newSelectedArr);
+          onChange?.(newSelectedArr);
+        }
+      } else {
+        setIsOpen(!isOpen);
+        if (value === selectedValue) return;
+        setSelectedValue(value);
+        onChange?.(value);
       }
-    },
-    [selectedValue, onChange]
-  );
+    };
 
-  const selectedItems: { value: string; label?: string }[] = useMemo(() => {
-    if (displayLabel) return [{ value: "__fixedLabel__", label: displayLabel }];
-    if (Array.isArray(selectedValue)) {
-      return selectedValue
-        .map((val) => optionValues.find((item) => item.value === val))
-        .filter((item): item is { value: string; label: string } => !!item);
-    }
-    return [optionValues.find((item) => item.value === selectedValue)].filter(
-      (item): item is { value: string; label: string } => !!item
+    const handleUnselect = useCallback(
+      (e: MouseEvent<HTMLElement>, value: string | undefined) => {
+        e.stopPropagation();
+        if (value === undefined) return;
+        if (Array.isArray(selectedValue) && selectedValue.length) {
+          const newSelectedArr = selectedValue.filter((val) => val !== value);
+          setSelectedValue(newSelectedArr);
+          onChange?.(newSelectedArr);
+        }
+      },
+      [selectedValue, onChange]
     );
-  }, [optionValues, selectedValue, displayLabel]);
 
-  const renderTrigger = () => {
-    return (
-      <SelectInput
-        size={size}
-        isMultiple={multiple}
-        isOpen={isOpen}
-        disabled={disabled}
-        width={selectorWidth}
-      >
-        {!selectedValue?.length ? (
-          <Typography size="body" color={theme.content.weaker}>
-            {placeholder ? placeholder : t("Please select")}
-          </Typography>
-        ) : multiple ? (
-          <SelectedItems>
-            {selectedItems.map((item) => (
-              <SelectedItem key={item.value}>
-                <Typography
-                  size="body"
-                  color={disabled ? theme.content.weaker : theme.content.main}
-                >
-                  {item.label}
-                </Typography>
-                {!disabled && (
-                  <Button
-                    iconButton
-                    icon="close"
-                    appearance="simple"
-                    size="small"
-                    onClick={(e: MouseEvent<HTMLElement>) =>
-                      handleUnselect(e, item.value)
-                    }
-                  />
-                )}
-              </SelectedItem>
-            ))}
-          </SelectedItems>
-        ) : (
-          <Typography
-            size="body"
-            color={
-              disabled && appearance !== "readonly"
-                ? theme.content.weaker
-                : theme.content.main
-            }
-          >
-            {selectedItems[0]?.label}
-          </Typography>
-        )}
-        <Icon
-          icon={isOpen ? "caretUp" : "caretDown"}
-          color={disabled ? theme.content.weaker : theme.content.main}
-        />
-      </SelectInput>
-    );
-  };
+    const selectedItems: { value: string; label?: string }[] = useMemo(() => {
+      if (displayLabel)
+        return [{ value: "__fixedLabel__", label: displayLabel }];
+      if (Array.isArray(selectedValue)) {
+        return selectedValue
+          .map((val) => optionValues.find((item) => item.value === val))
+          .filter((item): item is { value: string; label: string } => !!item);
+      }
+      return [optionValues.find((item) => item.value === selectedValue)].filter(
+        (item): item is { value: string; label: string } => !!item
+      );
+    }, [optionValues, selectedValue, displayLabel]);
 
-  return (
-    <SelectorWrapper ref={selectorRef}>
-      <Popup
-        trigger={renderTrigger()}
-        open={isOpen}
-        onOpenChange={setIsOpen}
-        disabled={disabled}
-        placement="bottom-start"
-      >
-        <DropDownWrapper
-          maxHeight={maxHeight}
-          width={menuWidth ?? selectorWidth}
+    const renderTrigger = () => {
+      return (
+        <SelectInput
+          size={size}
+          isMultiple={multiple}
+          isOpen={isOpen}
+          disabled={disabled}
+          width={selectorWidth}
+          data-testid="select-input"
         >
-          {optionValues.length === 0 ? (
-            <DropDownItem>
-              <Typography size="body" color={theme.content.weaker}>
-                No Options yet
-              </Typography>
-            </DropDownItem>
+          {!selectedValue?.length ? (
+            <Typography size="body" color={theme.content.weaker}>
+              {placeholder ? placeholder : t("Please select")}
+            </Typography>
+          ) : multiple ? (
+            <SelectedItems>
+              {selectedItems.map((item) => (
+                <SelectedItem key={item.value}>
+                  <Typography
+                    size="body"
+                    color={disabled ? theme.content.weaker : theme.content.main}
+                  >
+                    {item.label}
+                  </Typography>
+                  {!disabled && (
+                    <Button
+                      iconButton
+                      icon="close"
+                      appearance="simple"
+                      size="small"
+                      onClick={(e: MouseEvent<HTMLElement>) =>
+                        handleUnselect(e, item.value)
+                      }
+                    />
+                  )}
+                </SelectedItem>
+              ))}
+            </SelectedItems>
           ) : (
-            optionValues.map((item: { value: string; label?: string }) => (
-              <DropDownItem
-                key={item.value ?? ""}
-                isSelected={isSelected(item.value)}
-                onClick={() => handleChange(item.value)}
-              >
-                <Typography size="body" color={theme.content.main}>
-                  {item.label ?? item.value}
-                </Typography>
-                {isSelected(item.value) && multiple && (
-                  <Icon icon="check" size="small" color={theme.content.main} />
-                )}
-              </DropDownItem>
-            ))
+            <Typography
+              size="body"
+              color={
+                disabled && appearance !== "readonly"
+                  ? theme.content.weaker
+                  : theme.content.main
+              }
+            >
+              {selectedItems[0]?.label}
+            </Typography>
           )}
-        </DropDownWrapper>
-      </Popup>
-    </SelectorWrapper>
-  );
-};
+          <Icon
+            icon={isOpen ? "caretUp" : "caretDown"}
+            color={disabled ? theme.content.weaker : theme.content.main}
+          />
+        </SelectInput>
+      );
+    };
+
+    return (
+      <SelectorWrapper ref={ref}>
+        <Popup
+          trigger={renderTrigger()}
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          disabled={disabled}
+          placement="bottom-start"
+        >
+          <DropDownWrapper
+            maxHeight={maxHeight}
+            width={menuWidth ?? selectorWidth}
+          >
+            {optionValues.length === 0 ? (
+              <DropDownItem>
+                <Typography size="body" color={theme.content.weaker}>
+                  No Options yet
+                </Typography>
+              </DropDownItem>
+            ) : (
+              optionValues.map((item: { value: string; label?: string }) => (
+                <DropDownItem
+                  key={item.value ?? ""}
+                  isSelected={isSelected(item.value)}
+                  onClick={() => handleChange(item.value)}
+                  role="option"
+                  aria-selected={isSelected(item.value)}
+                >
+                  <Typography size="body" color={theme.content.main}>
+                    {item.label ?? item.value}
+                  </Typography>
+                  {isSelected(item.value) && multiple && (
+                    <Icon
+                      icon="check"
+                      size="small"
+                      color={theme.content.main}
+                    />
+                  )}
+                </DropDownItem>
+              ))
+            )}
+          </DropDownWrapper>
+        </Popup>
+      </SelectorWrapper>
+    );
+  }
+);
+
+Selector.displayName = "Selector";
 
 const SelectorWrapper = styled("div")(() => ({
   width: "100%"

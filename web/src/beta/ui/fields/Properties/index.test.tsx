@@ -1,8 +1,7 @@
 import { Item } from "@reearth/services/api/propertyApi/utils";
+import { render, screen } from "@reearth/test/utils";
 import React from "react";
 import { describe, expect, test, vi, beforeEach } from "vitest";
-
-import { render, screen } from "../../../../test/utils";
 
 import PropertyItem from "./index";
 
