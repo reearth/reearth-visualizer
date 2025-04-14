@@ -37,7 +37,7 @@ describe("QuartetInputField", () => {
   it("calls onChange when input values change", () => {
     render(<QuartetInputField {...defaultProps} />);
 
-    const inputs = screen.getAllByRole("spinbutton");
+    const inputs = screen.getAllByRole("textbox");
     fireEvent.change(inputs[0], { target: { value: "10" } });
 
     expect(defaultProps.onChange).toHaveBeenCalledWith([10, 2, 3, 4]);

@@ -1,7 +1,7 @@
 import { RadioGroup, RadioGroupProps } from "@reearth/beta/lib/reearth-ui";
 import { FC } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
+import CommonField, { CommonFieldProps } from "../CommonField";
 
 export type RadioGroupFieldProps = CommonFieldProps & RadioGroupProps;
 
