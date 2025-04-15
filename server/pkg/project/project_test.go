@@ -189,38 +189,9 @@ func TestProject_UpdateVisualizer(t *testing.T) {
 }
 
 func TestProject_UpdateAlias(t *testing.T) {
-	tests := []struct {
-		name, a  string
-		expected string
-		err      error
-	}{
-		{
-			name:     "accepted alias",
-			a:        "xxxxx",
-			expected: "xxxxx",
-			err:      nil,
-		},
-		{
-			name:     "fail: invalid alias",
-			a:        "xxx",
-			expected: "",
-			err:      ErrInvalidAlias,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			p := &Project{}
-			err := p.UpdateAlias(tt.a)
-			if tt.err == nil {
-				assert.Equal(t, tt.expected, p.Alias())
-			} else {
-				assert.Equal(t, tt.err, err)
-			}
-		})
-	}
+	p := &Project{}
+	p.UpdateAlias("xxxxx")
+	assert.Equal(t, "xxxxx", p.Alias())
 }
 
 func TestProject_UpdateGAConfig(t *testing.T) {

@@ -246,7 +246,7 @@ func TestBuilder_Build(t *testing.T) {
 				alias: "xxx.aaa",
 			},
 			expected: nil,
-			err:      ErrInvalidAlias,
+			err:      ErrInvalidProjectAlias,
 		},
 	}
 
@@ -375,7 +375,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				id:    id.NewProjectID(),
 				alias: "xxx.aaa",
 			},
-			err: ErrInvalidAlias,
+			err: ErrInvalidProjectAlias,
 		},
 	}
 

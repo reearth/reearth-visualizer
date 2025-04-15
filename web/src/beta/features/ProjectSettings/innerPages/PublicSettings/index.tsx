@@ -1,19 +1,7 @@
-import {
-  SidebarMenuItem,
-  SidebarMainSection,
-  SidebarWrapper,
-  SidebarButtonsWrapper
-} from "@reearth/beta/ui/components/Sidebar";
 import { Story } from "@reearth/services/api/storytellingApi/utils";
-import { useT } from "@reearth/services/i18n";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { FC } from "react";
 
-import {
-  InnerPage,
-  SettingsWrapper,
-  ArchivedSettingNotice,
-  InnerSidebar
-} from "../common";
+import { InnerPage, SettingsWrapper, ArchivedSettingNotice } from "../common";
 
 import PublicSettingsDetail from "./PublicSettingsDetail";
 
@@ -61,9 +49,8 @@ export type SettingsProject = {
 
 type Props = {
   project: SettingsProject;
-  stories: Story[];
+  isStory: boolean;
   currentStory?: Story;
-  subId?: string;
   onUpdateStory: (settings: PublicStorySettingsType) => void;
   onUpdateProject: (settings: PublicSettingsType) => void;
   onUpdateProjectBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
@@ -71,86 +58,32 @@ type Props = {
   onUpdateProjectGA: (settings: PublicGASettingsType) => void;
 };
 
-const PublicSettings: React.FC<Props> = ({
+const PublicSettings: FC<Props> = ({
   project,
-  stories,
+  isStory,
   currentStory,
-  subId,
   onUpdateStory,
   onUpdateProject,
   onUpdateProjectBasicAuth,
   onUpdateProjectAlias,
   onUpdateProjectGA
 }) => {
-  const t = useT();
-  const [selectedTab, selectTab] = useState(subId ? subId : "map");
-
-  const menu = useMemo(
-    () => [
-      {
-        id: "map",
-        title: t("Map"),
-        icon: "globeSimple" as const,
-        path: `/settings/projects/${project.id}/public/`,
-        active: selectedTab === "map"
-      },
-      ...stories.map((s) => ({
-        id: s.id,
-        title: `${t("Story")} ${s.title}`,
-        icon: "sidebar" as const,
-        path: `/settings/projects/${project.id}/public/${s.id}`,
-        active: selectedTab === s.id
-      }))
-    ],
-    [stories, selectedTab, project.id, t]
-  );
-
-  const settingsWrapperRef = useRef<HTMLDivElement>(null);
-
-  const handleTabChange = useCallback(
-    (tab: string) => {
-      if (settingsWrapperRef.current) {
-        settingsWrapperRef.current.scrollTo(0, 0);
-      }
-      if (selectedTab === tab) return;
-      selectTab(tab);
-    },
-    [selectedTab]
-  );
-
   return (
     <InnerPage wide>
-      <InnerSidebar>
-        <SidebarWrapper>
-          <SidebarMainSection>
-            <SidebarButtonsWrapper>
-              {menu?.map((s) => (
-                <SidebarMenuItem
-                  key={s.id}
-                  text={s.title}
-                  icon={s.icon}
-                  active={s.active}
-                  path={s.path}
-                  onClick={() => handleTabChange(s.id)}
-                />
-              ))}
-            </SidebarButtonsWrapper>
-          </SidebarMainSection>
-        </SidebarWrapper>
-      </InnerSidebar>
-      <SettingsWrapper ref={settingsWrapperRef}>
+      <SettingsWrapper>
         {project.isArchived ? (
           <ArchivedSettingNotice />
-        ) : selectedTab === currentStory?.id ? (
+        ) : isStory && currentStory ? (
           <PublicSettingsDetail
-            key={currentStory.id}
-            settingsItem={currentStory}
+            key={currentStory?.id}
+            isStory
+            settingsItem={currentStory as Story}
             onUpdate={onUpdateStory}
             onUpdateBasicAuth={onUpdateStory}
             onUpdateAlias={onUpdateStory}
             onUpdateGA={onUpdateStory}
           />
-        ) : (
+        ) : project ? (
           <PublicSettingsDetail
             key="map"
             settingsItem={project}
@@ -159,7 +92,7 @@ const PublicSettings: React.FC<Props> = ({
             onUpdateAlias={onUpdateProjectAlias}
             onUpdateGA={onUpdateProjectGA}
           />
-        )}
+        ) : null}
       </SettingsWrapper>
     </InnerPage>
   );

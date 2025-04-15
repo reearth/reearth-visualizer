@@ -55,9 +55,6 @@ input CreateProjectInput {
   visualizer: Visualizer!
   name: String
   description: String
-  imageUrl: URL
-  alias: String
-  archived: Boolean
   coreSupport: Boolean
 }
 
