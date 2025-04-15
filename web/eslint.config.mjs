@@ -11,8 +11,7 @@ const themeConfig = [
         {
           allowInterfaces: "with-single-extends"
         }
-      ],
-      "object-curly-spacing": "off"
+      ]
     }
   }
 ];
