@@ -9,7 +9,7 @@ import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { GeneralSettingsType } from "./innerPages/GeneralSettings";
 import {
@@ -189,17 +189,11 @@ export default ({ projectId, subId, tab }: ProjectSettingsProps) => {
     [selectedTab]
   );
 
-  const location = useLocation();
-
   useEffect(() => {
-    const currentPath = location.pathname;
-    const publicPath = `/settings/projects/${projectId}/public`;
-
-    if (currentPath === publicPath && tab === "public") {
-      handleTabChange("scene");
+    if (tab !== "public") {
+      handleTabChange("");
     }
-    if (tab !== "public") handleTabChange("");
-  }, [location.pathname, projectId, tab, subId, handleTabChange]);
+  }, [projectId, tab, subId, handleTabChange]);
 
   return {
     sceneId: scene?.id,
