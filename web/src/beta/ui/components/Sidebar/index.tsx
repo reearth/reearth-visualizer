@@ -78,7 +78,6 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
                 active={t.active}
                 icon={t.icon}
                 subItem={t.subItem}
-                onClick={t.onClick}
               />
             ))}
           </SubMenu>
@@ -97,7 +96,7 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
 const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(
   ({ disabled }) => ({
     pointerEvents: disabled ? "none" : "auto",
-    textDecoration: "none",
+    textDecoration: "none"
   })
 );
 

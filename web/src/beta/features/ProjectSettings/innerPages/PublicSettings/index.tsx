@@ -49,8 +49,8 @@ export type SettingsProject = {
 
 type Props = {
   project: SettingsProject;
+  isStory: boolean;
   currentStory?: Story;
-  selectedTab?: string;
   onUpdateStory: (settings: PublicStorySettingsType) => void;
   onUpdateProject: (settings: PublicSettingsType) => void;
   onUpdateProjectBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
@@ -60,31 +60,30 @@ type Props = {
 
 const PublicSettings: FC<Props> = ({
   project,
+  isStory,
   currentStory,
-  selectedTab,
   onUpdateStory,
   onUpdateProject,
   onUpdateProjectBasicAuth,
   onUpdateProjectAlias,
   onUpdateProjectGA
 }) => {
-
   return (
     <InnerPage wide>
       <SettingsWrapper>
         {project.isArchived ? (
           <ArchivedSettingNotice />
-        ) : selectedTab === currentStory?.id ? (
+        ) : isStory && currentStory ? (
           <PublicSettingsDetail
             key={currentStory?.id}
-            isStory={selectedTab === currentStory?.id}
+            isStory
             settingsItem={currentStory as Story}
             onUpdate={onUpdateStory}
             onUpdateBasicAuth={onUpdateStory}
             onUpdateAlias={onUpdateStory}
             onUpdateGA={onUpdateStory}
           />
-        ) : (
+        ) : project ? (
           <PublicSettingsDetail
             key="map"
             settingsItem={project}
@@ -93,7 +92,7 @@ const PublicSettings: FC<Props> = ({
             onUpdateAlias={onUpdateProjectAlias}
             onUpdateGA={onUpdateProjectGA}
           />
-        )}
+        ) : null}
       </SettingsWrapper>
     </InnerPage>
   );

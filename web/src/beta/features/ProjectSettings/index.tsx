@@ -52,8 +52,6 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
     accessToken,
     extensions,
     disabled,
-    selectedTab,
-    handleTabChange,
     handleUpdateProject,
     handleProjectRemove,
     handleUpdateProjectBasicAuth,
@@ -72,13 +70,15 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
         id: "general",
         text: t("General"),
         icon: "setting" as const,
-        path: `/settings/projects/${projectId}/`
+        path: `/settings/projects/${projectId}/`,
+        active: tab === "general"
       },
       {
         id: "story",
         text: t("Story"),
         icon: "sidebar" as const,
-        path: `/settings/projects/${projectId}/story`
+        path: `/settings/projects/${projectId}/story`,
+        active: tab === "story"
       },
       {
         id: "public",
@@ -90,15 +90,13 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
             id: "scene",
             text: t("Scene"),
             path: `/settings/projects/${projectId}/public`,
-            active: selectedTab === "scene",
-            onClick: () => handleTabChange("scene")
+            active: tab === "public" && !subId
           },
           ...stories.map((s) => ({
             id: s.id,
             text: `${t("Story")} ${s.title}`,
             path: `/settings/projects/${projectId}/public/${s.id}`,
-            active: selectedTab === s.id,
-            onClick: () => handleTabChange(s.id)
+            active: tab === "public" && subId === s.id
           }))
         ]
       },
@@ -106,16 +104,18 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
         id: "assets",
         text: t("Assets"),
         icon: "file" as const,
-        path: `/settings/projects/${projectId}/assets`
+        path: `/settings/projects/${projectId}/assets`,
+        active: tab === "assets"
       },
       {
         id: "plugins",
         text: t("Plugin"),
         icon: "puzzlePiece" as const,
-        path: `/settings/projects/${projectId}/plugins`
+        path: `/settings/projects/${projectId}/plugins`,
+        active: tab === "plugins"
       }
     ],
-    [handleTabChange, projectId, selectedTab, stories, t]
+    [projectId, stories, tab, subId, t]
   );
 
   return (
@@ -136,7 +136,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
                     key={t.id}
                     path={t.path}
                     text={t.text}
-                    active={t.id === tab}
+                    active={t.active}
                     icon={t.icon}
                     subItem={t.subItem}
                     openSubItem={true}
@@ -166,8 +166,8 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
           {tab === "public" && project && (
             <PublicSettings
               project={project}
+              isStory={!!subId}
               currentStory={currentStory}
-              selectedTab={selectedTab}
               onUpdateStory={handleUpdateStory}
               onUpdateProject={handleUpdateProject}
               onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}
