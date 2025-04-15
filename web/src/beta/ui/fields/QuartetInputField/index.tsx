@@ -9,10 +9,9 @@ import CommonField, {
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-
 type CommonTuple = [number, number, number, number];
 
-export type TripletInputFieldProps = CommonFieldProps &
+export type QuartetInputFieldProps = CommonFieldProps &
   Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
     values: CommonTuple;
     placeholders?: [string, string, string, string];
@@ -21,7 +20,7 @@ export type TripletInputFieldProps = CommonFieldProps &
     onBlur?: (values: CommonTuple) => void;
   };
 
-const TripletInputField: FC<TripletInputFieldProps> = ({
+const QuartetInputField: FC<QuartetInputFieldProps> = ({
   title,
   description,
   values,
@@ -78,7 +77,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   );
 };
 
-export default TripletInputField;
+export default QuartetInputField;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",

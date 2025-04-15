@@ -1,10 +1,10 @@
 import { render, screen, fireEvent } from "@reearth/test/utils";
 import { describe, it, expect, vi } from "vitest";
 
-import QuartetInputField, { TripletInputFieldProps } from "./index";
+import QuartetInputField, { QuartetInputFieldProps } from "./index";
 
 describe("QuartetInputField", () => {
-  const defaultProps: TripletInputFieldProps = {
+  const defaultProps: QuartetInputFieldProps = {
     title: "Test Title",
     description: "Test Description",
     values: [1, 2, 3, 4],
