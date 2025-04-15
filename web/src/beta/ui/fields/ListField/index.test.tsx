@@ -163,20 +163,16 @@ describe("ListField", () => {
       />
     );
 
-    // Check if the title and description are rendered
     expect(screen.getByText("Test List")).toBeInTheDocument();
     expect(screen.getByText("Test Description")).toBeInTheDocument();
 
-    // Check if the items are rendered
     expect(screen.getByText("Item 1")).toBeInTheDocument();
     expect(screen.getByText("Item 2")).toBeInTheDocument();
 
-    // Simulate adding a new item
     const addButton = screen.getByText("New Item");
     expect(addButton).toBeInTheDocument();
     fireEvent.click(addButton);
 
-    // Verify the callback is called
     expect(mockOnItemAdd).toHaveBeenCalled();
   });
 
@@ -199,16 +195,13 @@ describe("ListField", () => {
       />
     );
 
-    // Double click the item title to trigger rename
     const itemTitle = screen.getByText("Item 1");
     fireEvent.doubleClick(itemTitle);
 
-    // Find the input field and change its value
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "Updated Item 1" } });
     fireEvent.blur(input);
 
-    // Verify the callback was called with correct parameters
     expect(mockOnItemNameUpdate).toHaveBeenCalledWith("1", "Updated Item 1");
   });
 });
