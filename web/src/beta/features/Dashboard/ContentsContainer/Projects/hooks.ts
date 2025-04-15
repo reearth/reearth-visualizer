@@ -9,14 +9,17 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
 import { useRestful } from "@reearth/services/restful";
+import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
   useState,
   MouseEvent,
   useEffect,
-  useRef
+  useRef,
+  ChangeEvent
 } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -25,7 +28,6 @@ import { Project } from "../../type";
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
 const PROJECTS_PER_PAGE = 16;
-
 
 export type SortType =
   | "date"
@@ -45,7 +47,9 @@ export default (workspaceId?: string) => {
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
-  const { axios } = useRestful(); 
+  const { axios } = useRestful();
+  const t = useT();
+  const [, setNotification] = useNotification();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -59,6 +63,7 @@ export default (workspaceId?: string) => {
     hasMoreProjects,
     endCursor,
     fetchMore,
+    refetch
   } = useProjectsQuery({
     teamId: workspaceId || "",
     pagination: {
@@ -156,7 +161,7 @@ export default (workspaceId?: string) => {
         Visualizer.Cesium,
         data.name,
         true,
-        data.description,
+        data.description
       );
     },
     [useCreateProject, workspaceId]
@@ -243,16 +248,27 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
-  
   const handleImportProject = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
+    async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file && workspaceId) {
-        uploadFile(file, workspaceId, axios);
+        const result = await uploadFile(file, workspaceId, axios);
+        if (result.status === "chunk_received") {
+          setNotification({
+            type: "success",
+            text: t("Successfully imported project!")
+          });
+          await refetch();
+        } else
+          setNotification({
+            type: "error",
+            text: t("Failed to import project.")
+          });
       }
     },
-    [axios, workspaceId]
+    [axios, refetch, setNotification, t, workspaceId]
   );
+
   // project remove
   const handleProjectRemove = useCallback(
     async (project: Project) => {

@@ -44,38 +44,27 @@ export async function fetchAndZipFiles(
 
 const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
 
- export const uploadFile = 
-   async (file: File, teamId: string, axios: any) => {
-     const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-     const fileId = uuidv4();
-     let uploadedBytes = 0;
+export const uploadFile = async (file: File, teamId: string, axios: any) => {
+  const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+  const fileId = uuidv4();
 
-     for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
-       const start = chunkNum * CHUNK_SIZE;
-       const end = Math.min(file.size, start + CHUNK_SIZE);
-       const chunk = file.slice(start, end);
+  for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
+    const start = chunkNum * CHUNK_SIZE;
+    const end = Math.min(file.size, start + CHUNK_SIZE);
+    const chunk = file.slice(start, end);
 
-       const formData = new FormData();
-       formData.append("file", chunk, `${file.name}.part${chunkNum}`);
-       formData.append("file_id", fileId);
-       formData.append("team_id", teamId);
-       formData.append("chunk_num", chunkNum.toString());
-       formData.append("total_chunks", totalChunks.toString());
+    const formData = new FormData();
+    formData.append("file", chunk, `${file.name}.part${chunkNum}`);
+    formData.append("file_id", fileId);
+    formData.append("team_id", teamId);
+    formData.append("chunk_num", chunkNum.toString());
+    formData.append("total_chunks", totalChunks.toString());
 
-       try {
-         await axios.post("/split-import", formData);
-
-         uploadedBytes = (chunkNum + 1) * CHUNK_SIZE;
-         if (uploadedBytes > file.size) {
-           uploadedBytes = file.size;
-         }
-
-         const progress = (uploadedBytes / file.size) * 100;
-         console.log(
-           `Uploaded ${uploadedBytes} / ${file.size} bytes (${progress.toFixed(2)}%)`
-         );
-       } catch (err: any) {
-         throw new Error(`Chunk ${chunkNum + 1} upload failed: ${err.message}`);
-       }
-     }
-   }
+    try {
+      const response = await axios.post("/split-import", formData);
+      return response.data;
+    } catch (err: any) {
+      return err.message;
+    }
+  }
+};
