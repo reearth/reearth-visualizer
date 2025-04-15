@@ -7,6 +7,7 @@ import {
   Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
+import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -22,9 +23,17 @@ const EditPanel: FC<AliasSettingProps> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
+  const { useProjectAliasCheckQuery } = useProjectFetcher();
+
   const [localAlias, setLocalAlias] = useState("");
   const [warning, setWaring] = useState(false);
   const [, setNotification] = useNotification();
+
+  const { checkProjectAlias, loading: validatingAlias } =
+    useProjectAliasCheckQuery(alias);
+
+  console.log("checkProjectAlias", checkProjectAlias);
+  console.log("validatingAlias", validatingAlias);
 
   const handleChange = useCallback(
     (value: string) => {

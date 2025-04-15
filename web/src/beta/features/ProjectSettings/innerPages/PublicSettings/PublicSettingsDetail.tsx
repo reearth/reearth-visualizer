@@ -35,8 +35,8 @@ interface WithTypename {
   __typename?: string;
 }
 
-type SettingsProjectWithTypename = SettingsProject & WithTypename;
-type StoryWithTypename = Story & WithTypename;
+export type SettingsProjectWithTypename = SettingsProject & WithTypename;
+export type StoryWithTypename = Story & WithTypename;
 
 type Props = {
   settingsItem: SettingsProjectWithTypename | StoryWithTypename;
@@ -184,7 +184,9 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <AssetField
             title={t("Thumbnail")}
             placeholder={t("Image url")}
-            description={t("The Thumbnail setting will be applied to og:image.")}
+            description={t(
+              "The Thumbnail setting will be applied to og:image."
+            )}
             inputMethod="asset"
             assetsTypes={IMAGE_TYPES}
             value={localPublicInfo.publicImage}
@@ -212,8 +214,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         {isPublished ? (
           <AliasSetting
             isStory={isStory}
-            defaultAlias={settingsItem.id}
-            alias={settingsItem.alias}
+            settingsItem={settingsItem}
             onUpdateAlias={onUpdateAlias}
           />
         ) : (
@@ -232,29 +233,25 @@ const PublicSettingsDetail: React.FC<Props> = ({
         <TitleWrapper size="body" weight="bold">
           {t("Custom Domain")}
         </TitleWrapper>
-        { isPublished &&
-          extensions &&
-          extensions.length > 0 &&
-          accessToken ? (
-            <ExtensionComponent
-              typename={settingsItem.__typename || ""}
-              {...(settingsItem.__typename === "Project"
-                ? {
-                    projectId: settingsItem.id,
-                    projectAlias: settingsItem.alias
-                  }
-                : {
-                    storyId: settingsItem.id,
-                    storyAlias: settingsItem.alias
-                  })}
-              lang={currentLang}
-              theme={currentTheme}
-              accessToken={accessToken}
-              onNotificationChange={onNotificationChange}
-              version="visualizer"
-            />
-          )
-           : (
+        {isPublished && extensions && extensions.length > 0 && accessToken ? (
+          <ExtensionComponent
+            typename={settingsItem.__typename || ""}
+            {...(settingsItem.__typename === "Project"
+              ? {
+                  projectId: settingsItem.id,
+                  projectAlias: settingsItem.alias
+                }
+              : {
+                  storyId: settingsItem.id,
+                  storyAlias: settingsItem.alias
+                })}
+            lang={currentLang}
+            theme={currentTheme}
+            accessToken={accessToken}
+            onNotificationChange={onNotificationChange}
+            version="visualizer"
+          />
+        ) : (
           <ContentDescription>
             <Typography size="body" color={theme.content.weak}>
               {isStory

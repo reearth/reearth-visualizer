@@ -5,13 +5,12 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
-import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { PublishItem } from "../hooks";
 
 import PublishedOrUpdatedSection from "./PublishedOrUpdatedSection";
 import PublishOrUpdateSection from "./PublishOrUpdateSection";
-import useAlias from "./useAlias";
 
 type Props = {
   publishItem: PublishItem;
@@ -31,7 +30,14 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     publishItem.publishmentStatus === "PUBLIC"
   );
 
-  const { alias, aliasValid } = useAlias({ publishItem });
+  const [alias, setAlias] = useState<string | undefined>(
+    publishItem.alias ? publishItem.alias : publishItem.id
+  );
+
+  useEffect(() => {
+    const newAlias = publishItem.alias ? publishItem.alias : publishItem.id;
+    setAlias(newAlias);
+  }, [publishItem.alias, publishItem.id]);
 
   const [isPublishing, setIsPublishing] = useState(false);
   const handleProjectPublish = useCallback(async () => {
@@ -61,16 +67,15 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     publishStory
   ]);
 
-const initialWasPublishedRef = useRef(publishItem.isPublished);
+  const initialWasPublishedRef = useRef(publishItem.isPublished);
 
- const title = useMemo(() => {
-   const isStory = publishItem.type === "story";
-   if (!initialWasPublishedRef.current) {
-     return isStory ? t("Publish your story") : t("Publish your scene");
-   }
-   return isStory ? t("Update your story") : t("Update your scene");
- }, [t, publishItem.type]);
-
+  const title = useMemo(() => {
+    const isStory = publishItem.type === "story";
+    if (!initialWasPublishedRef.current) {
+      return isStory ? t("Publish your story") : t("Publish your scene");
+    }
+    return isStory ? t("Update your story") : t("Update your scene");
+  }, [t, publishItem.type]);
 
   const primaryButtonText = useMemo(() => {
     return !publishItem.isPublished ? t("Publish") : t("Update");
@@ -93,7 +98,7 @@ const initialWasPublishedRef = useRef(publishItem.isPublished);
           <Button
             title={primaryButtonText}
             appearance="primary"
-            disabled={!aliasValid || isPublishing}
+            disabled={isPublishing}
             onClick={handleProjectPublish}
           />
         )}
@@ -102,7 +107,6 @@ const initialWasPublishedRef = useRef(publishItem.isPublished);
     [
       onClose,
       handleProjectPublish,
-      aliasValid,
       primaryButtonText,
       secondaryButtonText,
       publishDone,

@@ -27,21 +27,6 @@ export const WarningIcon = styled(Icon)({
   height: "24px"
 });
 
-<<<<<<< HEAD
-export const UrlWrapper = styled("div")<{ justify?: string }>(
-  ({ justify, theme }) => ({
-    display: "flex",
-    justifyContent: justify ?? "center",
-    gap: theme.spacing.small,
-    alignItems: "center",
-    border: `1px solid ${theme.outline.weak}`,
-    borderRadius: "4px",
-    padding: theme.spacing.small,
-    cursor: "pointer",
-    width: "100%"
-  })
-);
-=======
 export const UrlWrapper = styled("div")<{
   justify?: string;
   noPadding?: boolean;
@@ -58,7 +43,6 @@ export const UrlWrapper = styled("div")<{
     : `${theme.spacing.small}px ${theme.spacing.large}px`,
   cursor: "pointer"
 }));
->>>>>>> 14908441121cf949d1fc1ea4cae10e66217f9891
 
 export const UrlText = styled("div")<{ hasPublicUrl?: boolean }>(
   ({ hasPublicUrl, theme }) => ({

@@ -12,21 +12,24 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublicAliasSettingsType } from "..";
+import {
+  SettingsProjectWithTypename,
+  StoryWithTypename
+} from "../PublicSettingsDetail";
 
 import EditPanel from "./EditPanel";
 
 export type AliasSettingProps = {
-  alias: string;
   isStory?: boolean;
-  defaultAlias?: string;
+  alias?: string;
+  settingsItem?: SettingsProjectWithTypename | StoryWithTypename;
   onUpdateAlias?: (settings: PublicAliasSettingsType) => void;
   onClose?: () => void;
   onSubmit?: (alias?: string) => void;
 };
 const AliasSetting: FC<AliasSettingProps> = ({
-  alias,
   isStory,
-  defaultAlias,
+  settingsItem,
   onUpdateAlias
 }) => {
   const theme = useTheme();
@@ -36,6 +39,11 @@ const AliasSetting: FC<AliasSettingProps> = ({
   const [open, setOpen] = useState(false);
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
+
+  const alias = useMemo(
+    () => (settingsItem?.alias ? settingsItem.alias : settingsItem?.id),
+    [settingsItem?.alias, settingsItem?.id]
+  );
 
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
@@ -58,9 +66,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
   const handleSubmitAlias = useCallback(
     (alias?: string) => {
-      onUpdateAlias?.({
-        alias
-      });
+        onUpdateAlias?.({
+          alias
+        });
     },
     [onUpdateAlias]
   );
@@ -79,9 +87,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
           title={t("clean")}
           icon="pencilLine"
           size="small"
-          disabled={defaultAlias === alias}
+          disabled={settingsItem?.id === alias}
           iconColor={theme.content.weak}
-          onClick={() => handleSubmitAlias(defaultAlias)}
+          onClick={() => handleSubmitAlias(alias)}
         />
 
         <Button
