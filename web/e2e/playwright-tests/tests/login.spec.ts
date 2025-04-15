@@ -30,7 +30,7 @@ test.describe("Login Page Tests", () => {
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
   });
 
-  test.afterEach(async ({}, testInfo) => {
+  test.afterEach(async ({ }, testInfo) => {
     const videoPath = await page.video()?.path();
     if (videoPath) {
       await testInfo.attach("video", {
@@ -39,6 +39,7 @@ test.describe("Login Page Tests", () => {
       });
     }
   });
+
   test.afterAll(async () => {
     await context.close();
   });
