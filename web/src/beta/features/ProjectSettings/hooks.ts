@@ -197,7 +197,8 @@ export default ({ projectId, subId, tab }: ProjectSettingsProps) => {
 
     if (currentPath === publicPath && tab === "public") {
       handleTabChange("scene");
-    } else handleTabChange("");
+    }
+    if (tab !== "public") handleTabChange("");
   }, [location.pathname, projectId, tab, subId, handleTabChange]);
 
   return {
