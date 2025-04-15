@@ -1,6 +1,6 @@
 import { IMAGE_TYPES } from "@reearth/beta/features/AssetsManager/constants";
 import ProjectRemoveModal from "@reearth/beta/features/Dashboard/ContentsContainer/Projects/ProjectRemoveModal";
-import { Collapse, Button, Typography } from "@reearth/beta/lib/reearth-ui";
+import { Button, Typography } from "@reearth/beta/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/beta/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
@@ -15,7 +15,8 @@ import {
   ArchivedSettingNotice,
   SettingsRow,
   SettingsRowItem,
-  Thumbnail
+  Thumbnail,
+  TitleWrapper
 } from "../common";
 
 export type GeneralSettingsType = {
@@ -53,13 +54,16 @@ const GeneralSettings: FC<Props> = ({
     project?.imageUrl ?? ""
   );
 
-  const handleSubmit = useCallback(() => {
-    onUpdateProject({
-      name: localName,
-      description: localDescription,
-      imageUrl: localImageUrl
-    });
-  }, [localName, localDescription, localImageUrl, onUpdateProject]);
+  const handleSubmit = useCallback(
+    (imageUrl?: string) => {
+      onUpdateProject({
+        name: localName,
+        description: localDescription,
+        imageUrl
+      });
+    },
+    [localName, localDescription, onUpdateProject]
+  );
 
   const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
     useState(false);
@@ -68,70 +72,76 @@ const GeneralSettings: FC<Props> = ({
     setProjectRemoveModalVisible(value);
   }, []);
 
+  const handleImageChange = useCallback(
+    (value?: string) => {
+      setLocalImageUrl(value);
+      handleSubmit(value);
+    },
+    [handleSubmit]
+  );
+
   return project ? (
-    <InnerPage>
+    <InnerPage wide>
       <SettingsWrapper>
         {project.isArchived ? (
           <ArchivedSettingNotice />
         ) : (
-          <Collapse size="large" title={t("Project Info")} noShrink>
-            <SettingsFields>
-              <InputField
-                title={t("Project Name")}
-                value={project.name}
-                onChange={(name) => setLocalName(name)}
-              />
-              <TextareaField
-                title={t("Description")}
-                value={localDescription}
-                resizable="height"
-                onChange={setLocalDescription}
-              />
-              <SettingsRow>
-                <SettingsRowItem>
-                  <AssetField
-                    title={t("Thumbnail")}
-                    inputMethod="asset"
-                    assetsTypes={IMAGE_TYPES}
-                    value={localImageUrl}
-                    onChange={setLocalImageUrl}
-                  />
-                </SettingsRowItem>
-                <SettingsRowItem>
-                  <Thumbnail
-                    src={localImageUrl || defaultProjectBackgroundImage}
-                  />
-                </SettingsRowItem>
-              </SettingsRow>
-              <ButtonWrapper>
-                <Button
-                  title={t("Submit")}
-                  appearance="primary"
-                  onClick={handleSubmit}
-                />
-              </ButtonWrapper>
-            </SettingsFields>
-          </Collapse>
-        )}
-        <Collapse size="large" title={t("Danger Zone")} noShrink>
           <SettingsFields>
-            <DangerItem>
-              <Typography size="body" weight="bold">
-                {t("Remove this project")}
-              </Typography>
-              <Typography size="body">
-                {t("This process will move this project to Recycle bin.")}
-              </Typography>
-              <ButtonWrapper>
-                <Button
-                  title={t("Move to Recycle Bin")}
-                  appearance="dangerous"
-                  onClick={() => handleProjectRemoveModal(true)}
+            <TitleWrapper size="body" weight="bold">
+              {t("Basic settings")}
+            </TitleWrapper>
+            <InputField
+              title={t("Project Name")}
+              value={project.name}
+              onChange={(name) => setLocalName(name)}
+              onBlur={handleSubmit}
+            />
+            <TextareaField
+              title={t("Description")}
+              value={localDescription}
+              resizable="height"
+              onChange={setLocalDescription}
+              onBlur={handleSubmit}
+            />
+            <SettingsRow>
+              <SettingsRowItem>
+                <AssetField
+                  title={t("Thumbnail")}
+                  inputMethod="asset"
+                  assetsTypes={IMAGE_TYPES}
+                  value={localImageUrl}
+                  onChange={(v) => handleImageChange(v)}
                 />
-              </ButtonWrapper>
-            </DangerItem>
+              </SettingsRowItem>
+              <SettingsRowItem>
+                <Thumbnail
+                  src={localImageUrl || defaultProjectBackgroundImage}
+                />
+              </SettingsRowItem>
+            </SettingsRow>
           </SettingsFields>
-        </Collapse>
+        )}
+        <SettingsFields>
+          <TitleWrapper size="body" weight="bold">
+            {t("Danger Zone")}
+          </TitleWrapper>
+
+          <DangerItem>
+            <Typography size="body" weight="bold">
+              {t("Remove this project")}
+            </Typography>
+            <Typography size="body">
+              {t("This process will move this project to Recycle bin.")}
+            </Typography>
+            <ButtonWrapper>
+              <Button
+                title={t("Move to Recycle Bin")}
+                appearance="dangerous"
+                onClick={() => handleProjectRemoveModal(true)}
+              />
+            </ButtonWrapper>
+          </DangerItem>
+        </SettingsFields>
       </SettingsWrapper>
       {projectRemoveModalVisible && (
         <ProjectRemoveModal
