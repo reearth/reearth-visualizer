@@ -124,6 +124,7 @@ export default () => {
    const useProjectAliasCheckQuery = useCallback((alias?: string) => {
      const { data, ...rest } = useQuery(CHECK_PROJECT_ALIAS, {
        variables: { alias: alias ?? "" },
+       skip: !alias 
      });
 
      const checkProjectAlias = useMemo(

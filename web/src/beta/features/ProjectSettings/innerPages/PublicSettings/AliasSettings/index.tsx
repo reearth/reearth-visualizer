@@ -5,6 +5,7 @@ import {
 } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/common";
 import { Button, Icon } from "@reearth/beta/lib/reearth-ui";
 import CommonField from "@reearth/beta/ui/fields/CommonField";
+import { useProjectFetcher } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
@@ -34,6 +35,8 @@ const AliasSetting: FC<AliasSettingProps> = ({
 }) => {
   const theme = useTheme();
   const t = useT();
+  const { useProjectAliasCheckQuery } = useProjectFetcher();
+
   const [, setNotification] = useNotification();
 
   const [open, setOpen] = useState(false);
@@ -44,6 +47,8 @@ const AliasSetting: FC<AliasSettingProps> = ({
     () => (settingsItem?.alias ? settingsItem.alias : settingsItem?.id),
     [settingsItem?.alias, settingsItem?.id]
   );
+
+  const { checkProjectAlias } = useProjectAliasCheckQuery(settingsItem?.id);
 
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
@@ -66,12 +71,16 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
   const handleSubmitAlias = useCallback(
     (alias?: string) => {
-        onUpdateAlias?.({
-          alias
-        });
+      onUpdateAlias?.({
+        alias
+      });
     },
     [onUpdateAlias]
   );
+
+  const handleCleanAlias = useCallback(() => {
+    if (checkProjectAlias?.available) handleSubmitAlias(settingsItem?.id);
+  }, [checkProjectAlias?.available, handleSubmitAlias, settingsItem?.id]);
 
   return (
     <CommonField title={t("Your Alias")}>
@@ -89,7 +98,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
           size="small"
           disabled={settingsItem?.id === alias}
           iconColor={theme.content.weak}
-          onClick={() => handleSubmitAlias(alias)}
+          onClick={handleCleanAlias}
         />
 
         <Button

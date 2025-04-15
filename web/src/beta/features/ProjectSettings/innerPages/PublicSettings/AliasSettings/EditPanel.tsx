@@ -9,7 +9,6 @@ import {
 import { CommonField } from "@reearth/beta/ui/fields";
 import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
@@ -27,34 +26,25 @@ const EditPanel: FC<AliasSettingProps> = ({
 
   const [localAlias, setLocalAlias] = useState("");
   const [warning, setWaring] = useState(false);
-  const [, setNotification] = useNotification();
 
-  const { checkProjectAlias, loading: validatingAlias } =
-    useProjectAliasCheckQuery(alias);
-
-  console.log("checkProjectAlias", checkProjectAlias);
-  console.log("validatingAlias", validatingAlias);
+  const { checkProjectAlias } = useProjectAliasCheckQuery(localAlias);
 
   const handleChange = useCallback(
     (value: string) => {
       if (value === alias) {
         setWaring(true);
-        setNotification({
-          type: "error",
-          text: isStory
-            ? t("Unable to update published story alias.")
-            : t("Unable to update published project alias.")
-        });
       } else setWaring(false);
       setLocalAlias(value);
     },
-    [alias, isStory, setNotification, t]
+    [alias]
   );
 
   const handleSubmit = useCallback(() => {
-    onSubmit?.(localAlias);
-    onClose?.();
-  }, [localAlias, onClose, onSubmit]);
+    if (checkProjectAlias?.available) {
+      onSubmit?.(localAlias);
+      onClose?.();
+    }
+  }, [checkProjectAlias?.available, localAlias, onClose, onSubmit]);
 
   return (
     <Modal visible size="small">
@@ -89,7 +79,7 @@ const EditPanel: FC<AliasSettingProps> = ({
               <Typography size="body" color={theme.content.weak}>
                 {"https://"}
               </Typography>
-              <TextInput value={localAlias} onChange={handleChange} />
+              <TextInput value={localAlias} onBlur={handleChange} />
               <Typography size="body" color={theme.content.weak}>
                 {".visualizer.reearth.io"}
               </Typography>
