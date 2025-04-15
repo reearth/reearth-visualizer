@@ -14,7 +14,6 @@ import {
   ArchiveProjectMutationVariables,
   UpdateProjectBasicAuthMutationVariables,
   UpdateProjectAliasMutationVariables,
-  ImportProjectInput
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -29,7 +28,6 @@ import {
   UPDATE_PROJECT_ALIAS,
   UPDATE_PROJECT_BASIC_AUTH,
   EXPORT_PROJECT,
-  IMPORT_PROJECT,
   GET_DELETED_PROJECTS
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
@@ -533,47 +531,6 @@ export default () => {
     [exportProjectMutation, t, setNotification, getBackendUrl]
   );
 
-  const [importProjectMutation] = useMutation(IMPORT_PROJECT);
-
-  const useImportProject = useCallback(
-    async (input: ImportProjectInput) => {
-      if (!input) return { status: "error" };
-
-      try {
-        const { data, errors } = await importProjectMutation({
-          variables: { ...input },
-          context: {
-            fetchOptions: {
-              __timeout: 1000 * 60 * 30 // 30 minutes
-            }
-          }
-        });
-
-        if (errors || !data?.importProject) {
-          console.log("GraphQL: Failed to import project", errors);
-          setNotification({
-            type: "error",
-            text: t("Failed to import project.")
-          });
-          return { status: "error" };
-        }
-
-        setNotification({
-          type: "success",
-          text: t("Successfully imported project!")
-        });
-        return { status: "success" };
-      } catch (error) {
-        console.log("GraphQL: Failed to import project", error);
-        setNotification({
-          type: "error",
-          text: t("Failed to import project.")
-        });
-        return { status: "error" };
-      }
-    },
-    [importProjectMutation, t, setNotification]
-  );
 
   return {
     publishProjectLoading,
@@ -589,7 +546,6 @@ export default () => {
     useUpdateProjectAlias,
     useStarredProjectsQuery,
     useExportProject,
-    useImportProject,
     useUpdateProjectRemove,
     useDeletedProjectsQuery
   };

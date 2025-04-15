@@ -1,6 +1,7 @@
 import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
+import { uploadFile } from "@reearth/beta/utils/file";
 import { useProjectFetcher } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import {
@@ -8,13 +9,17 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
+import { useRestful } from "@reearth/services/restful";
+import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
   useState,
   MouseEvent,
   useEffect,
-  useRef
+  useRef,
+  ChangeEvent
 } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -37,12 +42,14 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useStarredProjectsQuery,
-    useImportProject,
     useUpdateProjectRemove,
     usePublishProject
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
+  const { axios } = useRestful();
+  const t = useT();
+  const [, setNotification] = useNotification();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -154,7 +161,7 @@ export default (workspaceId?: string) => {
         Visualizer.Cesium,
         data.name,
         true,
-        data.description,
+        data.description
       );
     },
     [useCreateProject, workspaceId]
@@ -242,19 +249,24 @@ export default (workspaceId?: string) => {
   }, [wrapperRef, contentRef]);
 
   const handleImportProject = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
+    async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-      if (file) {
-        const result = await useImportProject({
-          teamId: workspaceId || "",
-          file
-        });
-        if (result.status === "success") {
+      if (file && workspaceId) {
+        const result = await uploadFile(file, workspaceId, axios);
+        if (result.status === "chunk_received") {
+          setNotification({
+            type: "success",
+            text: t("Successfully imported project!")
+          });
           await refetch();
-        }
+        } else
+          setNotification({
+            type: "error",
+            text: t("Failed to import project.")
+          });
       }
     },
-    [useImportProject, workspaceId, refetch]
+    [axios, refetch, setNotification, t, workspaceId]
   );
 
   // project remove
