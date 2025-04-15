@@ -1,4 +1,4 @@
-import generateRandomString from "@reearth/beta/utils/string";
+import { generateRandomString } from "@reearth/beta/utils/string";
 import { useProjectFetcher } from "@reearth/services/api";
 import { useCallback, useEffect, useRef, useState } from "react";
 
