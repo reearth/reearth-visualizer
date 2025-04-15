@@ -1,7 +1,6 @@
+import { render, screen, fireEvent } from "@reearth/test/utils";
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
-
-import { render, screen, fireEvent } from "../../../../test/utils";
 
 import CameraField, { CameraFieldProps } from "./index";
 
@@ -31,7 +30,10 @@ vi.mock("@reearth/services/theme", async (importOriginal) => {
           if (typeof prop === "string") {
             return target.bind(null, prop);
           }
-          return (target as any)[prop];
+          if (typeof prop === "symbol") {
+            return undefined;
+          }
+          return target[prop];
         }
       }
     ),
@@ -202,14 +204,11 @@ describe("CameraField", () => {
       />
     );
 
-    // Open the edit panel
     fireEvent.click(screen.getByText("Edit"));
     expect(screen.getByText("Camera Position Editor")).toBeInTheDocument();
 
-    // Find and click save button in EditPanel
     fireEvent.click(screen.getByRole("button", { name: /apply/i }));
 
-    // Verify onSave was called and popup closed
     expect(mockOnSave).toHaveBeenCalled();
   });
 

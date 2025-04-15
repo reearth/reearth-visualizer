@@ -143,7 +143,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
-    width: !extendwidth ? "" : "100%",
+    width: extendwidth === "false" ? "" : "100%",
     boxSizing: "border-box"
   };
 });

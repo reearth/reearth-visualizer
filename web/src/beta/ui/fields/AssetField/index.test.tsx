@@ -1,11 +1,9 @@
+import { render, screen } from "@reearth/test/utils";
 import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { render, screen } from "../../../../test/utils";
-
 import AssetField from "./index";
 
-// Mock dependencies
 vi.mock("@reearth/beta/features/AssetsManager/AssetsSelector", () => ({
   default: ({
     opened,
@@ -71,36 +69,6 @@ vi.mock("@reearth/beta/lib/reearth-ui", () => ({
     >
       {title}
     </button>
-  )
-}));
-
-vi.mock("@reearth/services/i18n", () => ({
-  useT: () => (key: string) => key,
-  Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>
-}));
-
-vi.mock("@reearth/services/state", () => ({
-  useNotification: () => [null, vi.fn()],
-  useProjectId: () => ["project-id"],
-  useWorkspace: () => [{ id: "workspace-id" }],
-  useCurrentTheme: () => [undefined, vi.fn()]
-}));
-
-vi.mock("../CommonField", () => ({
-  default: ({
-    children,
-    title,
-    description
-  }: {
-    children?: React.ReactNode;
-    title?: string;
-    description?: string;
-  }) => (
-    <div data-testid="common-field">
-      {title && <div data-testid="field-title">{title}</div>}
-      {description && <div data-testid="field-description">{description}</div>}
-      {children}
-    </div>
   )
 }));
 

@@ -5,13 +5,15 @@ import {
   Popup,
   TextInput
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import type { Camera } from "@reearth/beta/utils/value";
 import type { FlyTo } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { useCallback, useState, FC } from "react";
 
-import CommonField, { CommonFieldProps } from "../CommonField";
 
 import CapturePanel from "./CapturePanel";
 import EditPanel from "./EditorPanel";

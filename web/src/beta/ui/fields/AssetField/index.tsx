@@ -11,6 +11,9 @@ import {
   Button,
   TextInputProps
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { useT } from "@reearth/services/i18n";
 import {
   useNotification,
@@ -19,8 +22,6 @@ import {
 } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
-
-import CommonField, { CommonFieldProps } from "../CommonField";
 
 import useAssetUpload from "./useAssetUpload";
 

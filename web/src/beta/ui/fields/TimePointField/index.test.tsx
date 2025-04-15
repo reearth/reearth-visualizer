@@ -9,12 +9,6 @@ vi.mock("@reearth/services/theme", async (importOriginal) => {
   return actual;
 });
 
-// Mock i18n
-vi.mock("@reearth/services/i18n", () => ({
-  useT: () => (key: string) => key,
-  Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>
-}));
-
 describe("TimePointField", () => {
   const mockOnChange = vi.fn();
 

@@ -1,8 +1,10 @@
 import { CodeInput, CodeInputProps } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-import CommonField, { CommonFieldProps } from "../CommonField";
 
 export type CodeFieldProps = CommonFieldProps &
   CodeInputProps & { height?: number; width?: number };

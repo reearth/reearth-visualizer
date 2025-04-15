@@ -27,7 +27,10 @@ vi.mock("@reearth/services/theme", async (importOriginal) => {
           if (typeof prop === "string") {
             return target.bind(null, prop);
           }
-          return (target as any)[prop];
+          if (typeof prop === "symbol") {
+            return undefined;
+          }
+          return target[prop];
         }
       }
     ),

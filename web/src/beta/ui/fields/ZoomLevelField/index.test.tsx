@@ -1,7 +1,6 @@
+import { render, screen, fireEvent } from "@reearth/test/utils";
 import React from "react";
 import { describe, expect, it, vi } from "vitest";
-
-import { render, screen, fireEvent } from "../../../../test/utils";
 
 import ZoomLevelField from "./index";
 
@@ -28,7 +27,10 @@ vi.mock("@reearth/services/theme", async (importOriginal) => {
           if (typeof prop === "string") {
             return target.bind(null, prop);
           }
-          return (target as any)[prop];
+          if (typeof prop === "symbol") {
+            return undefined;
+          }
+          return target[prop];
         }
       }
     )

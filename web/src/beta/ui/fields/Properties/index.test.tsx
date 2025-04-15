@@ -5,7 +5,6 @@ import { describe, expect, test, vi, beforeEach } from "vitest";
 
 import PropertyItem from "./index";
 
-// Mock hooks
 vi.mock("./hooks", () => ({
   default: () => ({
     handlePropertyItemUpdate: vi.fn(),
@@ -13,18 +12,6 @@ vi.mock("./hooks", () => ({
     handlePropertyItemDelete: vi.fn(),
     handlePropertyItemMove: vi.fn()
   })
-}));
-
-vi.mock("@reearth/services/theme", async (importOriginal) => {
-  const actual = await importOriginal();
-
-  return actual;
-});
-
-// Mock i18n
-vi.mock("@reearth/services/i18n", () => ({
-  useT: () => (key: string) => key,
-  Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>
 }));
 
 describe("PropertyItem", () => {
