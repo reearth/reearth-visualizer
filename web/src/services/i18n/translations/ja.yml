@@ -403,8 +403,6 @@ No description.: 説明なし
 Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
 'Repository url:': 'リポジトリURL:'
-Unable to update published story alias.: 公開されているストーリーのエイリアスは更新できません
-Unable to update published project alias.: 公開されているプロジェクトのエイリアスは更新できません
 Edit Alias: エイリアスを編集
 You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
