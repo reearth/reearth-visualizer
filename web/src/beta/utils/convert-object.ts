@@ -2,7 +2,7 @@ export type Mapping = Record<string, string | [string, Record<string, string>]>;
 type AnyObject = Record<string, any>;
 
 // Helper function to get nested property value
-function getNestedProperty(obj: AnyObject, keys: string[]): any {
+function getNestedProperty(obj: AnyObject, keys: string[]): unknown {
   return keys.reduce(
     (acc, key) => (acc?.[key] !== undefined ? acc[key] : undefined),
     obj
@@ -10,7 +10,11 @@ function getNestedProperty(obj: AnyObject, keys: string[]): any {
 }
 
 // Helper function to set nested properties
-function setNestedProperty(obj: AnyObject, keys: string[], value: any): void {
+function setNestedProperty(
+  obj: AnyObject,
+  keys: string[],
+  value: unknown
+): void {
   const lastKey = keys.pop();
   if (!lastKey) return;
   const lastObj = keys.reduce((acc, key) => (acc[key] = acc[key] || {}), obj);
@@ -18,13 +22,8 @@ function setNestedProperty(obj: AnyObject, keys: string[], value: any): void {
 }
 
 // Function to check if a value is an object
-function isObject(value: any): value is AnyObject {
-  return value && typeof value === "object" && !Array.isArray(value);
-}
-
-// Function to check if a value is an array
-function isArray(value: any): value is any[] {
-  return Array.isArray(value);
+function isObject(value: unknown): boolean {
+  return typeof value === "object" && !Array.isArray(value);
 }
 
 // Conversion function
@@ -36,7 +35,7 @@ export function convertData(source: AnyObject, mapping: Mapping): AnyObject {
     const value = getNestedProperty(source, sourceKeys);
 
     if (value !== undefined) {
-      if (isArray(value) && typeof targetKey === "object") {
+      if (Array.isArray(value) && typeof targetKey === "object") {
         const convertedArray = value.map((item) =>
           isObject(item) ? convertData(item, targetKey[1]) : item
         );

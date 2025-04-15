@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 
-export async function fetchFile(url: string) {
+export async function fetchFile(url: string): Promise<string> {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
@@ -8,7 +8,10 @@ export async function fetchFile(url: string) {
   return response.text();
 }
 
-export async function fetchAndZipFiles(urls: string[], zipFileName: string) {
+export async function fetchAndZipFiles(
+  urls: string[],
+  zipFileName: string
+): Promise<File | undefined> {
   const zip = new JSZip();
 
   for (const url of urls) {

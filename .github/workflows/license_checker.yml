@@ -1,0 +1,13 @@
+name: License Check
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  server-license-check:
+    name: Server License Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: reearth/actions/license-checker/go@9a0086b0f0118f107713b3d2708138ebfe06d5ad
+        with:
+          subdirectory: server
