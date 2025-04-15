@@ -1,4 +1,4 @@
-import { Collapse, Typography, Button } from "@reearth/beta/lib/reearth-ui";
+import { Typography, Button } from "@reearth/beta/lib/reearth-ui";
 import { InputField } from "@reearth/beta/ui/fields";
 import {
   useMeFetcher,
@@ -66,50 +66,45 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
   );
 
   return (
-    <InnerPage>
+    <InnerPage wide>
       <SettingsWrapper>
-        <Collapse size="large" title={t("Workspace")}>
-          <SettingsFields>
-            <InputField
-              title={t("Workspace Name")}
-              value={localWorkspaceName}
-              onChange={setLocalWorkspaceName}
-              appearance={workspace?.personal ? "readonly" : undefined}
-              disabled={!!workspace?.personal || meRole !== Role.Owner}
-            />
-            <ButtonWrapper>
-              <Button
-                title={t("Submit")}
-                appearance="primary"
-                disabled={!!workspace?.personal || meRole !== Role.Owner}
-                onClick={handleSubmitUpdateWorkspaceName}
-              />
-            </ButtonWrapper>
-          </SettingsFields>
-        </Collapse>
+        <SettingsFields>
+          <TitleWrapper size="body" weight="bold">
+            {t("Workspace")}
+          </TitleWrapper>
+          <InputField
+            title={t("Workspace Name")}
+            value={localWorkspaceName}
+            onChange={setLocalWorkspaceName}
+            appearance={workspace?.personal ? "readonly" : undefined}
+            disabled={!!workspace?.personal || meRole !== Role.Owner}
+            onBlur={handleSubmitUpdateWorkspaceName}
+          />
+        </SettingsFields>
         {!workspace?.personal && (
-          <Collapse size="large" title={t("Danger Zone")}>
-            <SettingsFields>
-              <DangerItem>
-                <Typography size="body" weight="bold">
-                  {t("Delete workspace")}
-                </Typography>
-                <Typography size="body">
-                  {t("This process will delete this workspace")}
-                </Typography>
-                <ButtonWrapper>
-                  <Button
-                    title={t("Delete workspace")}
-                    appearance="dangerous"
-                    onClick={() => {
-                      setDeleteWorkspaceModal(true);
-                    }}
-                    disabled={meRole !== Role.Owner}
-                  />
-                </ButtonWrapper>
-              </DangerItem>
-            </SettingsFields>
-          </Collapse>
+          <SettingsFields>
+            <TitleWrapper size="body" weight="bold">
+              {t("Danger Zone")}
+            </TitleWrapper>
+            <DangerItem>
+              <Typography size="body" weight="bold">
+                {t("Delete workspace")}
+              </Typography>
+              <Typography size="body">
+                {t("This process will delete this workspace")}
+              </Typography>
+              <ButtonWrapper>
+                <Button
+                  title={t("Delete workspace")}
+                  appearance="dangerous"
+                  onClick={() => {
+                    setDeleteWorkspaceModal(true);
+                  }}
+                  disabled={meRole !== Role.Owner}
+                />
+              </ButtonWrapper>
+            </DangerItem>
+          </SettingsFields>
         )}
       </SettingsWrapper>
 
@@ -169,7 +164,12 @@ const SettingsWrapper = styled("div")(({ theme }) => ({
 const SettingsFields = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing.largest
+  gap: theme.spacing.largest,
+  padding: `${theme.spacing.normal}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
+}));
+
+const TitleWrapper = styled(Typography)(({ theme }) => ({
+  color: theme.content.main
 }));
 
 export default WorkspaceSetting;
