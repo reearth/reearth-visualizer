@@ -11,7 +11,7 @@ import (
 
 func TestErrInvalidAlias(t *testing.T) {
 	ctx := context.Background()
-	vErr := ErrInvalidAlias.AddTemplateData("aliasName", "test")
+	vErr := ErrInvalidProjectAlias.AddTemplateData("aliasName", "test")
 	for _, locale := range i18n.LocaleTypes() {
 		assert.NotEqual(t, "", message.ApplyTemplate(ctx, vErr.ErrMsg[locale].Message, vErr.TemplateData, locale))
 		assert.NotEqual(t, "", message.ApplyTemplate(ctx, vErr.ErrMsg[locale].Description, vErr.TemplateData, locale))

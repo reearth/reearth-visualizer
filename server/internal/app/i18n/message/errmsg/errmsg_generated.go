@@ -8,6 +8,7 @@ import (
 
 const (
 	ErrKeyUnknown message.ErrKey = "unknown"
+	ErrKeyUsecaseInterfaceProjectAliasAlreadyUsed message.ErrKey = "usecase.interface.project.alias_already_used"
 	ErrKeyUsecaseRepoResourceNotFound message.ErrKey = "usecase.repo.resource_not_found"
 )
 
@@ -20,6 +21,16 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "不明なエラーが発生しました。",
 			Description: "エラーが発生した原因を特定できません。",
+		},
+	},
+	ErrKeyUsecaseInterfaceProjectAliasAlreadyUsed: {
+		language.English: {
+			Message:     "The project alias is already used by another project.",
+			Description: "The name is already token by other users. Please choose a different name.",
+		},
+		language.Japanese: {
+			Message:     "このエイリアスは他のプロジェクトで使用されています。別の名前を選択してください。",
+			Description: "他のユーザーが同じエイリアスを使用しています。別の名前を選択してください。",
 		},
 	},
 	ErrKeyUsecaseRepoResourceNotFound: {
