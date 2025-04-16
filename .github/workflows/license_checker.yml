@@ -11,3 +11,10 @@ jobs:
       - uses: reearth/actions/license-checker/go@9a0086b0f0118f107713b3d2708138ebfe06d5ad
         with:
           subdirectory: server
+  web-license-check:
+    name: Web License Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: reearth/actions/license-checker/npm@f14b459d8877be9bbc3a4066cfbde7f880d88604
+        with:
+          subdirectory: web
