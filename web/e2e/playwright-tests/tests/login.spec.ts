@@ -7,11 +7,7 @@ const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
 const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 
-if (
-  !REEARTH_E2E_EMAIL ||
-  !REEARTH_E2E_PASSWORD ||
-  !REEARTH_WEB_E2E_BASEURL
-) {
+if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
 
@@ -22,11 +18,26 @@ test.describe("Login Page Tests", () => {
   let dashBoardPage: DashBoardPage;
 
   test.beforeAll(async ({ browser }) => {
-    context = await browser.newContext();
+    context = await browser.newContext({
+      recordVideo: {
+        dir: "videos/",
+        size: { width: 1280, height: 720 }
+      }
+    });
     page = await context.newPage();
     loginPage = new LoginPage(page);
     dashBoardPage = new DashBoardPage(page);
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
+  });
+
+  test.afterEach(async ({ }, testInfo) => {
+    const videoPath = await page.video()?.path();
+    if (videoPath) {
+      await testInfo.attach("video", {
+        path: videoPath,
+        contentType: "video/webm"
+      });
+    }
   });
 
   test.afterAll(async () => {
