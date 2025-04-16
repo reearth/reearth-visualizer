@@ -21,12 +21,9 @@ import {
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
-type Props = {
-  projectId: string;
-  subId?: string;
-};
+import { ProjectSettingsProps } from ".";
 
-export default ({ projectId }: Props) => {
+export default ({ projectId }: ProjectSettingsProps) => {
   const navigate = useNavigate();
 
   const {

@@ -151,6 +151,9 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	published.GET("/:name/", PublishedIndex("", true))
 
 	serveFiles(e, cfg.Gateways.File)
+
+	serveUploadFiles(e, cfg.Gateways.File)
+
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,
 		AppDisabled: cfg.Config.Web_App_Disabled,
