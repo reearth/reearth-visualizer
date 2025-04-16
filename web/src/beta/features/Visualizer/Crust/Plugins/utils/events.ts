@@ -1,5 +1,6 @@
 import EventTarget from "@ungap/event-target";
 import { useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 export type EventCallback<T extends any[] = any[]> = (...args: T) => void;
 export type EventEmitter<
@@ -12,80 +13,97 @@ export type Events<
   readonly on: <T extends keyof E>(
     type: T,
     callback: EventCallback<E[T]>
-  ) => void;
+  ) => string;
   readonly off: <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>
+    callback: EventCallback<E[T]> | string
   ) => void;
   readonly once: <T extends keyof E>(
     type: T,
     callback: EventCallback<E[T]>
-  ) => void;
+  ) => string;
 };
 
 export function events<
   E extends { [P in string]: any[] } = { [P in string]: any[] }
 >(): [Events<E>, EventEmitter<E>] {
   const e = new EventTarget();
-  // Map to store event listeners by type and ID
-  const callbacks = new Map<string, Map<number, EventCallback>>();
 
-  let callbackId = 0;
+  const callbacks = new Map<keyof E, Map<string, (e: Event) => void>>();
 
-  // Get a unique ID for each callback
-  const getEventCallback = <T extends keyof E>(
+  const fnToId = new WeakMap<EventCallback, string>();
+
+  const addEvent = <T extends keyof E>(
     type: T,
-    callback: EventCallback<E[T]>
-  ): number => {
-    let ecbs = callbacks.get(String(type));
+    cb: EventCallback<E[T]>,
+    options?: AddEventListenerOptions
+  ): string => {
+    let id = fnToId.get(cb);
+    if (!id) {
+      id = uuidv4();
+      fnToId.set(cb, id);
+    }
+
+    let ecbs = callbacks.get(type);
     if (!ecbs) {
       ecbs = new Map();
-      callbacks.set(String(type), ecbs);
+      callbacks.set(type, ecbs);
     }
 
-    const id = callbackId++; // Generate a unique ID
-    ecbs.set(id, callback);
+    if (!ecbs.has(id)) {
+      const wrapped = (event: Event) => {
+        cb(...(event as CustomEvent).detail);
+      };
+      ecbs.set(id, wrapped);
+      e.addEventListener(String(type), wrapped, options);
+    }
+    console.log("created id", type, id);
     return id;
   };
 
-  // Remove an event listener by its ID
-  const deleteEventCallback = (type: string, id: number): void => {
+  const removeEvent = <T extends keyof E>(
+    type: T,
+    cbOrId: EventCallback<E[T]> | string
+  ) => {
+    let id: string | undefined;
+
+    if (typeof cbOrId === "string") {
+      id = cbOrId;
+    } else {
+      id = fnToId.get(cbOrId);
+    }
+
+    if (!id) return;
+
     const ecbs = callbacks.get(type);
+    const listener = ecbs?.get(id);
+    console.log("ecbs befor", ecbs);
 
-    if (ecbs) {
-      const callback = ecbs.get(id);
-      if (callback) {
-        e.removeEventListener(type, callback);
-        ecbs.delete(id);
-      }
+    if (listener) {
+      e.removeEventListener(String(type), listener);
+      ecbs?.clear();
     }
-  };
-  const on = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const id = getEventCallback(type, callback);
 
-    const ecb = (e: Event) => {
-      callback(...(e as CustomEvent).detail);
-    };
-
-    e.addEventListener(String(type), ecb);
-    return id;
+    if (ecbs?.size === 0) {
+      callbacks.delete(type);
+    }
+    console.log("ecbs after", ecbs);
   };
 
-  const off = <T extends keyof E>(type: T, id: number) => {
-    deleteEventCallback(String(type), id);
-  };
+  const on = <T extends keyof E>(
+    type: T,
+    callback: EventCallback<E[T]>
+  ): string => addEvent(type, callback);
 
-   const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-     const id = getEventCallback(type, callback);
+  const off = <T extends keyof E>(
+    type: T,
+    callback: EventCallback<E[T]> | string
+  ) => removeEvent(type, callback);
 
-     const ecb = (e: Event) => {
-       callback(...(e as CustomEvent).detail);
-     };
-
-     e.addEventListener(String(type), ecb, { once: true });
-     return id;
-   };
-
+  const once = <T extends keyof E>(
+    type: T,
+    callback: EventCallback<E[T]>
+  ): string => addEvent(type, callback, { once: true });
 
   const events = {
     get on() {
@@ -99,11 +117,11 @@ export function events<
     }
   };
 
-  return [
-    events,
-    <T extends keyof E>(type: T, ...args: E[T]) =>
-      e.dispatchEvent(new CustomEvent(String(type), { detail: args }))
-  ];
+  const emit: EventEmitter<E> = <T extends keyof E>(type: T, ...args: E[T]) => {
+    return e.dispatchEvent(new CustomEvent(String(type), { detail: args }));
+  };
+
+  return [events, emit];
 }
 
 export function mergeEvents<
@@ -127,8 +145,8 @@ export function mergeEvents<
   };
 }
 
-export function useEmit<T extends { [K in string]: any[] }>(
-  values: { [K in keyof T]?: T[K] | undefined },
+export function useEmit<T extends Record<string, any[]>>(
+  values: { [K in keyof T]?: T[K] },
   emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined
 ) {
   useEffect(() => {
