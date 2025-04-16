@@ -1,6 +1,7 @@
 import {
   Reference,
   StoreObject,
+  useLazyQuery,
   useMutation,
   useQuery
 } from "@apollo/client";
@@ -121,19 +122,26 @@ export default () => {
     return { deletedProjects, ...rest };
   }, []);
 
-   const useProjectAliasCheckQuery = useCallback((alias?: string) => {
-     const { data, ...rest } = useQuery(CHECK_PROJECT_ALIAS, {
-       variables: { alias: alias ?? "" },
-       skip: !alias 
-     });
+const [fetchCheckAlias] = useLazyQuery(CHECK_PROJECT_ALIAS);
 
-     const checkProjectAlias = useMemo(
-       () => data?.checkProjectAlias,
-       [data?.checkProjectAlias]
-     );
+const checkAlias = useCallback(
+  async (alias?: string) => {
+    if (!alias) return null;
 
-     return { checkProjectAlias, ...rest };
-   }, []);
+    const { data, error } = await fetchCheckAlias({
+      variables: { alias }
+    });
+
+    if (error) {
+      console.error("Failed to check alias:", error);
+      return null;
+    }
+
+    return data?.checkProjectAlias;
+  },
+  [fetchCheckAlias]
+);
+
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
   const [createScene] = useMutation(CREATE_SCENE, {
@@ -588,7 +596,7 @@ export default () => {
     publishProjectLoading,
     useProjectQuery,
     useProjectsQuery,
-    useProjectAliasCheckQuery,
+    checkAlias,
     useCreateProject,
     usePublishProject,
     useUpdateProject,

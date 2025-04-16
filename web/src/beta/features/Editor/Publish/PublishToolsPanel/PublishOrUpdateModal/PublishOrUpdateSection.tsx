@@ -34,7 +34,9 @@ const PublishOrUpdateSection: FC<Props> = ({
 
   const handleCopyToClipBoard = useCallback((value: string | undefined) => {
     if (!value) return;
-    navigator.clipboard.writeText(value);
+    const baseUrl = window.location.origin;
+    const fullUrl = `${baseUrl}${value}`;
+    navigator.clipboard.writeText(fullUrl);
   }, []);
 
   const updateDescriptionText = useMemo(() => {

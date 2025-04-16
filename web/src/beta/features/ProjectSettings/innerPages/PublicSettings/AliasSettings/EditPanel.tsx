@@ -7,44 +7,50 @@ import {
   Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
-import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
-import { AliasSettingProps } from ".";
+type Prop = {
+  isStory?: boolean;
+  alias?: string;
+  aliasValid?: boolean;
+  domain?: string;
+  onClose?: () => void;
+  onSubmit?: (alias?: string) => void;
+  onCheckAlias?: (alias?: string) => Promise<void>;
+};
 
-const EditPanel: FC<AliasSettingProps> = ({
+const EditPanel: FC<Prop> = ({
   alias,
   isStory,
+  aliasValid,
+  domain,
   onClose,
-  onSubmit
+  onSubmit,
+  onCheckAlias
 }) => {
   const t = useT();
   const theme = useTheme();
-  const { useProjectAliasCheckQuery } = useProjectFetcher();
 
   const [localAlias, setLocalAlias] = useState("");
   const [warning, setWaring] = useState(false);
 
-  const { checkProjectAlias } = useProjectAliasCheckQuery(localAlias);
-
   const handleChange = useCallback(
-    (value: string) => {
+    async (value: string) => {
+      onCheckAlias?.(value);
       if (value === alias) {
-        setWaring(true);
+        setWaring(!aliasValid);
       } else setWaring(false);
       setLocalAlias(value);
     },
-    [alias]
+    [alias, aliasValid, onCheckAlias]
   );
 
   const handleSubmit = useCallback(() => {
-    if (checkProjectAlias?.available) {
-      onSubmit?.(localAlias);
-      onClose?.();
-    }
-  }, [checkProjectAlias?.available, localAlias, onClose, onSubmit]);
+    onSubmit?.(localAlias);
+    onClose?.();
+  }, [localAlias, onClose, onSubmit]);
 
   return (
     <Modal visible size="small">
@@ -81,7 +87,7 @@ const EditPanel: FC<AliasSettingProps> = ({
               </Typography>
               <TextInput value={localAlias} onBlur={handleChange} />
               <Typography size="body" color={theme.content.weak}>
-                {".visualizer.reearth.io"}
+                {`.${domain}`}
               </Typography>
             </InputWrapper>
           </CommonField>

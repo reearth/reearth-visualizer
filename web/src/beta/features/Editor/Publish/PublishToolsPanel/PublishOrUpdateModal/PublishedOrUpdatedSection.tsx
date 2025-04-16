@@ -40,7 +40,9 @@ const PublishedOrUpdatedSection: FC<Props> = ({ publishItem, publicUrl }) => {
 
   const handleCopyToClipBoard = useCallback((value: string | undefined) => {
     if (!value) return;
-    navigator.clipboard.writeText(value);
+    const baseUrl = window.location.origin;
+    const fullUrl = `${baseUrl}${value}`;
+    navigator.clipboard.writeText(fullUrl);
   }, []);
 
   const initialWasPublishedRef = useRef(publishItem.isPublished);
@@ -56,7 +58,7 @@ const PublishedOrUpdatedSection: FC<Props> = ({ publishItem, publicUrl }) => {
       ? t("Congratulations! 🎊 Your story has been updated")
       : t("Congratulations! 🎊 Your scene has been updated");
   }, [t, publishItem.type]);
-  
+
   return (
     <Section>
       <Subtitle size="body">

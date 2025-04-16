@@ -25,9 +25,8 @@ export type AliasSettingProps = {
   alias?: string;
   settingsItem?: SettingsProjectWithTypename | StoryWithTypename;
   onUpdateAlias?: (settings: PublicAliasSettingsType) => void;
-  onClose?: () => void;
-  onSubmit?: (alias?: string) => void;
 };
+
 const AliasSetting: FC<AliasSettingProps> = ({
   isStory,
   settingsItem,
@@ -35,25 +34,25 @@ const AliasSetting: FC<AliasSettingProps> = ({
 }) => {
   const theme = useTheme();
   const t = useT();
-  const { useProjectAliasCheckQuery } = useProjectFetcher();
+  const { checkAlias } = useProjectFetcher();
+  const baseUrl = window.location.origin;
+  const domain = new URL(baseUrl).host;
 
   const [, setNotification] = useNotification();
 
   const [open, setOpen] = useState(false);
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
+  const [aliasValid, setAliasValid] = useState(false);
 
   const alias = useMemo(
     () => (settingsItem?.alias ? settingsItem.alias : settingsItem?.id),
     [settingsItem?.alias, settingsItem?.id]
   );
 
-  const { checkProjectAlias } = useProjectAliasCheckQuery(settingsItem?.id);
-
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
     if (!publishedConfig) return "";
-
     const [prefix, suffix] = publishedConfig.split("{}");
     const sanitizedAlias = alias?.replace(/^\/+|\/+$/g, "") ?? "";
 
@@ -62,15 +61,18 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
   const handleIconClick = useCallback(() => {
     if (!alias) return;
-    navigator.clipboard.writeText(publicUrl);
+    const fullUrl = `${baseUrl}${publicUrl}`;
+
+    navigator.clipboard.writeText(fullUrl);
     setNotification({
       type: "success",
       text: t("Resource URL copied to clipboard")
     });
-  }, [alias, publicUrl, setNotification, t]);
+  }, [alias, baseUrl, publicUrl, setNotification, t]);
 
+  
   const handleSubmitAlias = useCallback(
-    (alias?: string) => {
+    async (alias?: string) => {
       onUpdateAlias?.({
         alias
       });
@@ -78,15 +80,29 @@ const AliasSetting: FC<AliasSettingProps> = ({
     [onUpdateAlias]
   );
 
-  const handleCleanAlias = useCallback(() => {
-    if (checkProjectAlias?.available) handleSubmitAlias(settingsItem?.id);
-  }, [checkProjectAlias?.available, handleSubmitAlias, settingsItem?.id]);
+  const handleCheckAlias = useCallback(
+    async (alias?: string) => {
+      const result = await checkAlias(alias);
+      setAliasValid(result?.available as boolean);
+    },
+    [checkAlias]
+  );
+
+  const handleCleanAlias = useCallback(async () => {
+    handleCheckAlias(settingsItem?.id);
+    if (aliasValid) handleSubmitAlias(settingsItem?.id);
+  }, [aliasValid, handleCheckAlias, handleSubmitAlias, settingsItem?.id]);
 
   return (
     <CommonField title={t("Your Alias")}>
       <Wrapper>
         <UrlWrapper justify="space-between" noPadding>
-          <UrlText hasPublicUrl>{publicUrl}</UrlText>
+          <UrlText
+            hasPublicUrl
+            onClick={() => window.open(publicUrl, "_blank")}
+          >
+            {publicUrl}
+          </UrlText>
           <UrlAction onClick={handleIconClick}>
             <Icon icon="copy" />
           </UrlAction>
@@ -113,8 +129,10 @@ const AliasSetting: FC<AliasSettingProps> = ({
           <EditPanel
             alias={alias}
             isStory={isStory}
+            domain={domain}
             onClose={handleClose}
             onSubmit={handleSubmitAlias}
+            onCheckAlias={handleCheckAlias}
           />
         )}
       </Wrapper>
