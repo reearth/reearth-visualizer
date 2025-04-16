@@ -1,6 +1,6 @@
 import { MockedProvider, MockedResponse } from "@apollo/client/testing";
-import { GET_ME } from "@reearth/services/gql/queries/user";
-import { act, renderHook } from "@testing-library/react";
+import { GET_ME, GET_USER_BY_SEARCH } from "@reearth/services/gql/queries/user";
+import { renderHook } from "@testing-library/react";
 import { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -63,6 +63,25 @@ export const GET_ME_RESPONSE = {
   auths: ["password", "google"]
 };
 
+export const UPDATE_ME_RESPONSE = {
+  data: {
+    updateMe: {
+      me: {
+        id: "user123",
+        name: "Sarah Johnson",
+        email: "sarah.johnson@example.com",
+        lang: "en",
+        theme: "dark",
+        myTeam: {
+          id: "team1",
+          name: "Sarah's Workspace"
+        }
+      }
+    }
+  },
+  status: "success"
+};
+
 const wrapper = ({
   children,
   mocks
@@ -86,30 +105,65 @@ describe("useMeApi", () => {
       }
     }
   };
+
   it("should fetch user data with useMeQuery", async () => {
     const { result } = renderHook(() => useMeApi().useMeQuery(), {
       wrapper: ({ children }) => wrapper({ children, mocks: [getMeMock] })
     });
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
+    // Increased timeout to give Apollo cache time to update
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(result.current.me).toEqual(GET_ME_RESPONSE);
   });
 
-  it.skip("should update user password with useUpdatePassword", async () => {
-    const { result } = renderHook(() => useMeApi().useUpdatePassword);
+  it("should handle errors when fetching user data", async () => {
+    const errorMock = {
+      request: {
+        query: GET_ME
+      },
+      error: new Error("Failed to fetch user data")
+    };
 
-    await act(async () => {
-      const response = await result.current({
-        password: "newpassword",
-        passwordConfirmation: "newpassword"
-      });
+    const { result } = renderHook(() => useMeApi().useMeQuery(), {
+      wrapper: ({ children }) => wrapper({ children, mocks: [errorMock] })
+    });
 
-      expect(response.status).toBe("success");
-      expect(mockSetNotification).toHaveBeenCalledWith({
-        type: "success",
-        text: "Successfully updated user password!"
-      });
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(result.current.error?.message).toBe("Failed to fetch user data");
+  });
+
+  it("should search for a user successfully", async () => {
+    const searchMock = {
+      request: {
+        query: GET_USER_BY_SEARCH,
+        variables: { nameOrEmail: "john.doe@example.com" }
+      },
+      result: {
+        data: {
+          searchUser: {
+            id: "user123",
+            name: "John Doe",
+            email: "john.doe@example.com"
+          }
+        }
+      }
+    };
+
+    const { result } = renderHook(
+      () => useMeApi().useSearchUser("john.doe@example.com"),
+      {
+        wrapper: ({ children }) => wrapper({ children, mocks: [searchMock] })
+      }
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+
+    expect(result.current.user).toEqual({
+      id: "user123",
+      name: "John Doe",
+      email: "john.doe@example.com"
     });
   });
 });
