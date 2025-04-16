@@ -1,7 +1,6 @@
 import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/beta/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/beta/ui/components/ManagerBase";
-import { uploadFile } from "@reearth/beta/utils/file";
 import { useProjectFetcher } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
 import {
@@ -9,9 +8,6 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
-import { useRestful } from "@reearth/services/restful";
-import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
@@ -43,13 +39,11 @@ export default (workspaceId?: string) => {
     useCreateProject,
     useStarredProjectsQuery,
     useUpdateProjectRemove,
-    usePublishProject
+    usePublishProject,
+    importProject
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
-  const { axios } = useRestful();
-  const t = useT();
-  const [, setNotification] = useNotification();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -252,21 +246,13 @@ export default (workspaceId?: string) => {
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file && workspaceId) {
-        const result = await uploadFile(file, workspaceId, axios);
+        const result = await importProject(file, workspaceId);
         if (result.status === "chunk_received") {
-          setNotification({
-            type: "success",
-            text: t("Successfully imported project!")
-          });
           await refetch();
-        } else
-          setNotification({
-            type: "error",
-            text: t("Failed to import project.")
-          });
+        }
       }
     },
-    [axios, refetch, setNotification, t, workspaceId]
+    [importProject, refetch, workspaceId]
   );
 
   // project remove

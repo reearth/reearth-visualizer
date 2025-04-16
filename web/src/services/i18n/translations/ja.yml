@@ -63,8 +63,6 @@ MAINTAINER: 管理者
 OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
-Successfully imported project!: プロジェクトのインポートに成功しました！
-Failed to import project.: プロジェクトのインポートに失敗しました。
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -609,6 +607,8 @@ Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Successfully imported project!: プロジェクトのインポートに成功しました！
+Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
 Failed to create story.: ストーリーの作成に失敗しました。

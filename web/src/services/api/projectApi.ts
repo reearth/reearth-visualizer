@@ -13,7 +13,7 @@ import {
   DeleteProjectInput,
   ArchiveProjectMutationVariables,
   UpdateProjectBasicAuthMutationVariables,
-  UpdateProjectAliasMutationVariables,
+  UpdateProjectAliasMutationVariables
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -33,7 +33,9 @@ import {
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
+import { v4 as uuidv4 } from "uuid";
 
+import { useRestful } from "../restful";
 import { useNotification } from "../state";
 
 import { type PublishStatus } from "./publishTypes";
@@ -43,10 +45,12 @@ import { MutationReturn } from "./types";
 import { useStorytellingFetcher } from ".";
 
 export type Project = ProjectPayload["project"];
+const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
 
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+  const { axios } = useRestful();
 
   const useProjectQuery = useCallback((projectId?: string) => {
     const { data, ...rest } = useQuery(GET_PROJECT, {
@@ -531,6 +535,38 @@ export default () => {
     [exportProjectMutation, t, setNotification, getBackendUrl]
   );
 
+  const importProject = async (file: File, teamId: string) => {
+    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+    const fileId = uuidv4();
+
+    for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
+      const start = chunkNum * CHUNK_SIZE;
+      const end = Math.min(file.size, start + CHUNK_SIZE);
+      const chunk = file.slice(start, end);
+
+      const formData = new FormData();
+      formData.append("file", chunk, `${file.name}.part${chunkNum}`);
+      formData.append("file_id", fileId);
+      formData.append("team_id", teamId);
+      formData.append("chunk_num", chunkNum.toString());
+      formData.append("total_chunks", totalChunks.toString());
+
+      try {
+        const response = await axios.post("/split-import", formData);
+        setNotification({
+          type: "success",
+          text: t("Successfully imported project!")
+        });
+        return response.data;
+      } catch (error) {
+        setNotification({
+          type: "error",
+          text: t("Failed to import project.")
+        });
+        console.log("Restful: Failed to import project", error);
+      }
+    }
+  };
 
   return {
     publishProjectLoading,
@@ -547,6 +583,7 @@ export default () => {
     useStarredProjectsQuery,
     useExportProject,
     useUpdateProjectRemove,
-    useDeletedProjectsQuery
+    useDeletedProjectsQuery,
+    importProject
   };
 };
