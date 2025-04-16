@@ -372,6 +372,7 @@ func updateStarProject(e *httpexpect.Expect, projectID string) {
 		HasValue("starred", true)
 }
 
+// go test -v -run TestFindVisibilityProjects ./e2e/...
 func TestFindVisibilityProjects(t *testing.T) {
 	e := Server(t, baseSeeder)
 	project1ID := createProject(e, uID, map[string]any{
@@ -381,73 +382,48 @@ func TestFindVisibilityProjects(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createProject(e, uID, map[string]any{
-		"name":        "Project 2",
-		"description": "abc",
-		"teamId":      wID.String(),
-		"visualizer":  "CESIUM",
-		"coreSupport": true,
-	})
-	project3ID := createProject(e, uID, map[string]any{
-		"name":        "Project 3",
-		"description": "abc",
-		"teamId":      wID.String(),
-		"visualizer":  "CESIUM",
-		"coreSupport": true,
-	})
-	createProject(e, uID, map[string]any{
-		"name":        "Project 4",
-		"description": "abc",
-		"teamId":      wID.String(),
-		"visualizer":  "CESIUM",
-		"coreSupport": true,
-	})
-	project5ID := createProject(e, uID, map[string]any{
-		"name":        "Project 5",
-		"description": "abc",
-		"teamId":      wID.String(),
-		"visualizer":  "CESIUM",
-		"coreSupport": true,
-	})
-	updateVisibilityProject(e, project1ID)
-	updateVisibilityProject(e, project3ID)
-
-	// star and deleted 'Project 5'
-	updateVisibilityProject(e, project5ID)
-	deleteProject(e, project5ID)
 
 	requestBody := GraphQLRequest{
-		OperationName: "GetVisibilityProjects",
-		Query: `
-		query GetVisibilityProjects($teamId: ID!) {
-			visibilityProjects(teamId: $teamId) {
-				nodes {
-					id
-					name
-					visibility
-					isDeleted
-				}
-				totalCount
-			}
-		}`,
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
 		Variables: map[string]any{
-			"teamId": wID,
+			"pagination": map[string]any{
+				"last": 5,
+			},
+			"teamId": wID.String(),
+			"sort": map[string]string{
+				"field":     "NAME",
+				"direction": "ASC",
+			},
 		},
 	}
 
-	visibilityProjects := Request(e, uID.String(), requestBody).
-		Path("$.data.visibilityProjects").Object()
+	// default private
+	edges := Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+	edges.Value(1).Path("$.node.visibility").IsEqual("private")
 
-	totalCount := visibilityProjects.Value("totalCount").Raw()
-	assert.Equal(t, float64(2), totalCount, "Expected 2 starred projects")
+	// update public
+	updateVisibilityProject(e, project1ID)
 
-	nodes := visibilityProjects.Value("nodes").Array()
+	// result public
+	edges = Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+	edges.Value(1).Path("$.node.visibility").IsEqual("public")
 
-	for _, node := range nodes.Iter() {
-		obj := node.Object()
-		obj.Value("visibility").String().IsEqual("public")
-		obj.Value("isDeleted").Boolean().IsEqual(false)
-	}
+	// create public
+	createProject(e, uID, map[string]any{
+		"name":        "Project 1",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+		"visibility":  "public",
+	})
+	edges = Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+	edges.Value(2).Path("$.node.visibility").IsEqual("public")
+
 }
 
 func updateVisibilityProject(e *httpexpect.Expect, projectID string) {

@@ -150,7 +150,6 @@ extend type Query {
   checkProjectAlias(alias: String!): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
-  visibilityProjects(teamId: ID!): ProjectConnection!
 }
 
 extend type Mutation {

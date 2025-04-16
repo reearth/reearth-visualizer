@@ -149,11 +149,10 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return r.find(ctx, filter)
 }
 
-func (r *Project) FindVisibilityById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
 	prj, err := r.findOne(ctx, bson.M{
-		"id":         id.String(),
-		"deleted":    false,
-		"visibility": "public",
+		"id":      id.String(),
+		"deleted": false,
 	}, true)
 
 	if err != nil {
@@ -167,16 +166,19 @@ func (r *Project) FindVisibilityById(ctx context.Context, id id.ProjectID) (*pro
 }
 
 func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
-	if !r.f.CanRead(id) {
-		return nil, repo.ErrOperationDenied
+	if r.f.Readable == nil || !r.f.Readable.Has(id) {
+		filter := bson.M{
+			"team":       id.String(),
+			"deleted":    false,
+			"visibility": "public",
+		}
+		return r.find(ctx, filter)
 	}
 
 	filter := bson.M{
-		"team":       id.String(),
-		"deleted":    false,
-		"visibility": "public",
+		"team":    id.String(),
+		"deleted": false,
 	}
-
 	return r.find(ctx, filter)
 }
 

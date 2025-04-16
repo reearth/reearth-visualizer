@@ -56,7 +56,7 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 		return nil, err
 	}
 
-	p, err := uc.Project.FindVisibilityById(ctx, pId, op)
+	p, err := uc.Project.FindActiveById(ctx, pId, op)
 
 	if err != nil {
 		return nil, err

@@ -127,9 +127,9 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return result, nil
 }
 
-func (r *Project) FindVisibilityById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
 	for _, p := range r.data {
-		if p.ID() == id && !p.IsDeleted() && p.Visibility() == "public" {
+		if p.ID() == id && !p.IsDeleted() {
 			return p, nil
 		}
 	}
@@ -140,13 +140,22 @@ func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomai
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	var result []*project.Project
 	if !r.f.CanRead(id) {
-		return nil, nil
+		for _, p := range r.data {
+			if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
+				result = append(result, p)
+			}
+		}
+
+		sort.Slice(result, func(i, j int) bool {
+			return result[i].UpdatedAt().After(result[j].UpdatedAt())
+		})
+
 	}
 
-	var result []*project.Project
 	for _, p := range r.data {
-		if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
+		if p.Workspace() == id && !p.IsDeleted() {
 			result = append(result, p)
 		}
 	}
