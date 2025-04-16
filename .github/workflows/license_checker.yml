@@ -15,6 +15,6 @@ jobs:
     name: Web License Check
     runs-on: ubuntu-latest
     steps:
-      - uses: reearth/actions/license-checker/npm@ca05937a228ae3627aa027f65c3bb239ae261081
+      - uses: reearth/actions/license-checker/npm@535e803a2ca68a98142d268c130d15a436dc09c3
         with:
           subdirectory: web
