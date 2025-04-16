@@ -19,5 +19,11 @@ const themeConfig = [
 export default [
   ...config("@reearth"),
   ...themeConfig,
-  { ignores: ["bin/pluginDoc.ts"] }
+  {
+    ignores: [
+      "bin/pluginDoc.ts",
+      // e2e playwright-tests is a nested project, eslint will be managed independently
+      "e2e/playwright-tests"
+    ]
+  }
 ];
