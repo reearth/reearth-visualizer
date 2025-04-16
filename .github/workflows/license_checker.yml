@@ -8,6 +8,6 @@ jobs:
     name: Server License Check
     runs-on: ubuntu-latest
     steps:
-      - uses: reearth/actions/license-checker/go@9a0086b0f0118f107713b3d2708138ebfe06d5ad
+      - uses: reearth/actions/license-checker/go@505d04a9f03bf97aadb711148b0e626f47f40fa9
         with:
           subdirectory: server
