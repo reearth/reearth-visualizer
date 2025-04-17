@@ -56,9 +56,10 @@ describe("useProjectApi - useImportProject", () => {
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
-    const res = await act(async () =>
-      result.current.useImportProject(file, teamId)
-    );
+    let res;
+    await act(async () => {
+      res = await result.current.useImportProject(file, teamId);
+    });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(1);
     expect(mockNotification).toHaveBeenCalledWith({
@@ -83,9 +84,10 @@ describe("useProjectApi - useImportProject", () => {
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
-    const res = await act(async () =>
-      result.current.useImportProject(file, teamId)
-    );
+    let res;
+    await act(async () => {
+      res = await result.current.useImportProject(file, teamId);
+    });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(3);
     expect(mockNotification).toHaveBeenCalledWith({
@@ -109,9 +111,10 @@ describe("useProjectApi - useImportProject", () => {
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
-    const res = await act(async () =>
-      result.current.useImportProject(file, teamId)
-    );
+    let res;
+    await act(async () => {
+      res = await result.current.useImportProject(file, teamId);
+    });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(2); // Should stop after 2nd chunk fails
     expect(mockNotification).toHaveBeenCalledWith({
@@ -129,9 +132,10 @@ describe("useProjectApi - useImportProject", () => {
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
-    const res = await act(async () =>
-      result.current.useImportProject(file, teamId)
-    );
+    let res;
+    await act(async () => {
+      res = await result.current.useImportProject(file, teamId);
+    });
 
     expect(mockNotification).toHaveBeenCalledWith({
       type: "error",
@@ -148,9 +152,10 @@ describe("useProjectApi - useImportProject", () => {
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
-    const res = await act(async () =>
-      result.current.useImportProject(file, teamId)
-    );
+    let res;
+    await act(async () => {
+      res = await result.current.useImportProject(file, teamId);
+    });
 
     expect(mockNotification).toHaveBeenCalledWith({
       type: "success",
