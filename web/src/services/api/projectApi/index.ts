@@ -36,13 +36,11 @@ import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
-import { useNotification } from "../state";
-
-import { type PublishStatus } from "./publishTypes";
-import { toGqlStatus } from "./publishTypes";
-import { MutationReturn } from "./types";
-
-import { useStorytellingFetcher } from ".";
+import { useStorytellingFetcher } from "..";
+import { useNotification } from "../../state";
+import { type PublishStatus } from "../publishTypes";
+import { toGqlStatus } from "../publishTypes";
+import { MutationReturn } from "../types";
 
 export type Project = ProjectPayload["project"];
 
