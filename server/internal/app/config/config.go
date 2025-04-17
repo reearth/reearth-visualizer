@@ -72,6 +72,14 @@ type Config struct {
 	Ext_Plugin []string `pp:",omitempty"`
 
 	MockAuth bool `pp:",omitempty"`
+
+	InternalApi InternalApiConfig `pp:",omitempty"`
+}
+
+type InternalApiConfig struct {
+	Active bool   `default:"false" pp:",omitempty"`
+	Port   string `default:"50051" pp:",omitempty"`
+	Token  string `default:"" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {

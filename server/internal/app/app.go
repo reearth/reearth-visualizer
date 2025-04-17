@@ -110,12 +110,20 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		}
 	}
 
-	e.Use(UsecaseMiddleware(cfg.Repos, cfg.Gateways, cfg.AccountRepos, cfg.AccountGateways, interactor.ContainerConfig{
-		SignupSecret:       cfg.Config.SignupSecret,
-		PublishedIndexHTML: publishedIndexHTML,
-		PublishedIndexURL:  cfg.Config.Published.IndexURL,
-		AuthSrvUIDomain:    cfg.Config.Host_Web,
-	}))
+	e.Use(
+		UsecaseMiddleware(
+			cfg.Repos,
+			cfg.Gateways,
+			cfg.AccountRepos,
+			cfg.AccountGateways,
+			interactor.ContainerConfig{
+				SignupSecret:       cfg.Config.SignupSecret,
+				PublishedIndexHTML: publishedIndexHTML,
+				PublishedIndexURL:  cfg.Config.Published.IndexURL,
+				AuthSrvUIDomain:    cfg.Config.Host_Web,
+			},
+		),
+	)
 
 	e.Use(AttachLanguageMiddleware)
 
