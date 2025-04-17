@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -246,7 +247,7 @@ func TestBuilder_Build(t *testing.T) {
 				alias: "xxx.aaa",
 			},
 			expected: nil,
-			err:      ErrInvalidProjectAlias,
+			err:      alias.ErrInvalidProjectAlias,
 		},
 	}
 
@@ -375,7 +376,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				id:    id.NewProjectID(),
 				alias: "xxx.aaa",
 			},
-			err: ErrInvalidProjectAlias,
+			err: alias.ErrInvalidProjectAlias,
 		},
 	}
 

@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -85,6 +86,23 @@ func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*stor
 	return r.findOne(ctx, f, false)
 }
 
+func (r *Storytelling) CheckAliasUnique(ctx context.Context, name string) error {
+	filter := bson.M{
+		"$or": []bson.M{
+			{"id": name},
+			{"alias": name},
+		},
+	}
+	count, err := r.count(ctx, filter)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return alias.ErrExistsStorytellingAlias
+	}
+	return nil
+}
+
 func (r *Storytelling) Save(ctx context.Context, story storytelling.Story) error {
 	if !r.f.CanWrite(story.Scene()) {
 		return repo.ErrOperationDenied
@@ -116,6 +134,10 @@ func (r *Storytelling) RemoveAll(ctx context.Context, ids id.StoryIDList) error 
 
 func (r *Storytelling) RemoveByScene(ctx context.Context, id id.SceneID) error {
 	return r.client.RemoveAll(ctx, r.writeFilter(bson.M{"scene": id.String()}))
+}
+
+func (r *Storytelling) count(ctx context.Context, filter interface{}) (int64, error) {
+	return r.client.Count(ctx, filter)
 }
 
 func (r *Storytelling) find(ctx context.Context, filter interface{}) (*storytelling.StoryList, error) {

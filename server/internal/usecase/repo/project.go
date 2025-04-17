@@ -25,6 +25,7 @@ type Project interface {
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
+	CheckAliasUnique(context.Context, string) error
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error

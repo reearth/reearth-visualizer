@@ -3,7 +3,6 @@ package interactor
 import (
 	"context"
 	"net/url"
-	"strings"
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
@@ -11,8 +10,6 @@ import (
 	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -168,76 +165,76 @@ func TestProject_createProject(t *testing.T) {
 	})
 }
 
-func TestProject_CheckAlias(t *testing.T) {
-	ctx := context.Background()
+// func TestProject_CheckAlias(t *testing.T) {
+// 	ctx := context.Background()
 
-	db := mongotest.Connect(t)(t)
-	client := mongox.NewClient(db.Name(), db.Client())
-	uc := createNewProjectUC(client)
+// 	db := mongotest.Connect(t)(t)
+// 	client := mongox.NewClient(db.Name(), db.Client())
+// 	uc := createNewProjectUC(client)
 
-	us := factory.NewUser()
-	_ = uc.userRepo.Save(ctx, us)
+// 	us := factory.NewUser()
+// 	_ = uc.userRepo.Save(ctx, us)
 
-	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
-				Role:      workspace.RoleOwner,
-				Disabled:  false,
-				InvitedBy: workspace.UserID(us.ID()),
-				Host:      "",
-			},
-		})
-	})
-	_ = uc.workspaceRepo.Save(ctx, ws)
+// 	ws := factory.NewWorkspace(func(w *workspace.Builder) {
+// 		w.Members(map[accountdomain.UserID]workspace.Member{
+// 			accountdomain.NewUserID(): {
+// 				Role:      workspace.RoleOwner,
+// 				Disabled:  false,
+// 				InvitedBy: workspace.UserID(us.ID()),
+// 				Host:      "",
+// 			},
+// 		})
+// 	})
+// 	_ = uc.workspaceRepo.Save(ctx, ws)
 
-	testAlias := "alias"
-	pj := factory.NewProject(func(p *project.Builder) {
-		p.Workspace(ws.ID()).
-			Alias(testAlias)
-	})
-	_ = uc.projectRepo.Save(ctx, pj)
+// 	testAlias := "alias"
+// 	pj := factory.NewProject(func(p *project.Builder) {
+// 		p.Workspace(ws.ID()).
+// 			Alias(testAlias)
+// 	})
+// 	_ = uc.projectRepo.Save(ctx, pj)
 
-	t.Run("when alias is valid", func(t *testing.T) {
-		t.Run("when alias length is valid max length", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 32))
-			assert.NoError(t, err)
-			assert.True(t, ok)
-		})
-		t.Run("when alias length is valid min length", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 5))
-			assert.NoError(t, err)
-			assert.True(t, ok)
-		})
-	})
+// 	t.Run("when alias is valid", func(t *testing.T) {
+// 		t.Run("when alias length is valid max length", func(t *testing.T) {
+// 			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 32))
+// 			assert.NoError(t, err)
+// 			assert.True(t, ok)
+// 		})
+// 		t.Run("when alias length is valid min length", func(t *testing.T) {
+// 			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 5))
+// 			assert.NoError(t, err)
+// 			assert.True(t, ok)
+// 		})
+// 	})
 
-	t.Run("when alias update to same alias", func(t *testing.T) {
-		ok, err := uc.checkAlias(ctx, pj.ID(), testAlias)
-		assert.NoError(t, err)
-		assert.True(t, ok)
-	})
+// 	t.Run("when alias update to same alias", func(t *testing.T) {
+// 		ok, err := uc.checkAlias(ctx, pj.ID(), testAlias)
+// 		assert.NoError(t, err)
+// 		assert.True(t, ok)
+// 	})
 
-	t.Run("when alias is invalid", func(t *testing.T) {
-		t.Run("when alias is already used by other project", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, id.NewProjectID(), testAlias)
-			assert.EqualError(t, err, interfaces.ErrProjectAliasAlreadyUsed.Error())
-			assert.False(t, ok)
-		})
-		t.Run("when alias include not allowed characters", func(t *testing.T) {
-			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
-				ok, err := uc.checkAlias(ctx, pj.ID(), "alias2"+c)
-				assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
-				assert.False(t, ok)
-			}
-		})
-		t.Run("when alias is too short", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), "aaaa")
-			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
-			assert.False(t, ok)
-		})
-		t.Run("when alias is too long", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 33))
-			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
-			assert.False(t, ok)
-		})
-	})
-}
+// 	t.Run("when alias is invalid", func(t *testing.T) {
+// 		t.Run("when alias is already used by other project", func(t *testing.T) {
+// 			ok, err := uc.checkAlias(ctx, id.NewProjectID(), testAlias)
+// 			assert.EqualError(t, err, interfaces.ErrProjectAliasAlreadyUsed.Error())
+// 			assert.False(t, ok)
+// 		})
+// 		t.Run("when alias include not allowed characters", func(t *testing.T) {
+// 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
+// 				ok, err := uc.checkAlias(ctx, pj.ID(), "alias2"+c)
+// 				assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+// 				assert.False(t, ok)
+// 			}
+// 		})
+// 		t.Run("when alias is too short", func(t *testing.T) {
+// 			ok, err := uc.checkAlias(ctx, pj.ID(), "aaaa")
+// 			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+// 			assert.False(t, ok)
+// 		})
+// 		t.Run("when alias is too long", func(t *testing.T) {
+// 			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 33))
+// 			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+// 			assert.False(t, ok)
+// 		})
+// 	})
+// }

@@ -240,13 +240,8 @@ func (s *Story) SetPublishedAt(now time.Time) {
 	s.publishedAt = &now
 }
 
-func (s *Story) UpdateAlias(alias string) error {
-	if CheckAliasPattern(alias) {
-		s.alias = alias
-	} else {
-		return ErrInvalidAlias
-	}
-	return nil
+func (s *Story) UpdateAlias(newAlias string) {
+	s.alias = newAlias
 }
 
 func (s *Story) MatchWithPublicName(name string) bool {
@@ -254,8 +249,4 @@ func (s *Story) MatchWithPublicName(name string) bool {
 		return false
 	}
 	return s.alias == name
-}
-
-func CheckAliasPattern(alias string) bool {
-	return alias != "" && aliasRegexp.Match([]byte(alias))
 }

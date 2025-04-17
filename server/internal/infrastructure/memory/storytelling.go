@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/rerror"
@@ -88,6 +89,19 @@ func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*stor
 		}
 	}
 	return nil, rerror.ErrNotFound
+}
+
+func (r *Storytelling) CheckAliasUnique(ctx context.Context, name string) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, s := range r.data {
+		if s.Id().String() == name || s.Alias() == name {
+			return alias.ErrExistsStorytellingAlias
+		}
+	}
+
+	return nil
 }
 
 func (r *Storytelling) Save(_ context.Context, p storytelling.Story) error {

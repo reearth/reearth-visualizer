@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +32,7 @@ func TestCheckAliasPattern(t *testing.T) {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expexted, CheckAliasPattern(tt.alias))
+			assert.Equal(t, tt.expexted, alias.CheckAliasPattern(tt.alias))
 		})
 	}
 }

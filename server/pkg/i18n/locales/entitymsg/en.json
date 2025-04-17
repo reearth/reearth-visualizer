@@ -2,8 +2,13 @@
   "pkg": {
     "project": {
       "alias": {
-        "allowed_chars": "alphanumeric, underscore, hyphen"
-      }      
+        "allowed_chars": "alphanumeric, hyphen (a-z, 0-9, -)"
+      }
+    },
+    "storytelling": {
+      "alias": {
+        "allowed_chars": "alphanumeric, hyphen (a-z, 0-9, -)"
+      }
     }
   }
 }

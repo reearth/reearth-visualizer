@@ -7,11 +7,44 @@ import (
 )
 
 const (
+	ErrKeyPkgProjectAliasAlreadyExists message.ErrKey = "pkg.project.alias_already_exists"
 	ErrKeyPkgProjectInvalidAlias message.ErrKey = "pkg.project.invalid_alias"
+	ErrKeyPkgStorytellingAliasAlreadyExists message.ErrKey = "pkg.storytelling.alias_already_exists"
+	ErrKeyPkgStorytellingInvalidAlias message.ErrKey = "pkg.storytelling.invalid_alias"
 )
 
 var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
+	ErrKeyPkgProjectAliasAlreadyExists: {
+		language.English: {
+			Message:     "This alias is already in use. Please try another one.",
+			Description: "Each alias must be unique across projects and stories.",
+		},
+		language.Japanese: {
+			Message:     "そのエイリアスは既に使用されています。別の値を試してください",
+			Description: "プロジェクトやストーリーのエイリアスは一意である必要があります。",
+		},
+	},
 	ErrKeyPkgProjectInvalidAlias: {
+		language.English: {
+			Message:     "Invalid alias name: {{.aliasName}}",
+			Description: "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}.",
+		},
+		language.Japanese: {
+			Message:     "不正なエイリアス名です: {{.aliasName}}",
+			Description: "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。",
+		},
+	},
+	ErrKeyPkgStorytellingAliasAlreadyExists: {
+		language.English: {
+			Message:     "This alias is already in use. Please try another one.",
+			Description: "Each alias must be unique across projects and stories.",
+		},
+		language.Japanese: {
+			Message:     "そのエイリアスは既に使用されています。別の値を試してください",
+			Description: "プロジェクトやストーリーのエイリアスは一意である必要があります。",
+		},
+	},
+	ErrKeyPkgStorytellingInvalidAlias: {
 		language.English: {
 			Message:     "Invalid alias name: {{.aliasName}}",
 			Description: "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}.",

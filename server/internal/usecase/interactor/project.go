@@ -19,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -321,8 +322,16 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	newAlias := prevAlias
 	if params.Alias != nil {
-		if _, err := i.checkAlias(ctx, prj.ID(), *params.Alias); err != nil {
-			graphql.AddError(ctx, err)
+		if !alias.CheckAliasPattern(newAlias) {
+			return nil, alias.ErrInvalidStorytellingAlias
+		}
+		err := i.projectRepo.CheckAliasUnique(ctx, *params.Alias)
+		if err != nil {
+			return nil, err
+		}
+		err = i.storytellingRepo.CheckAliasUnique(ctx, *params.Alias)
+		if err != nil {
+			return nil, err
 		}
 		newAlias = *params.Alias
 	}
@@ -644,8 +653,8 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 func (i *Project) checkAlias(ctx context.Context, updatedProjectID id.ProjectID, newAlias string) (bool, error) {
-	if !project.CheckAliasPattern(newAlias) {
-		return false, project.ErrInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
+	if !alias.CheckAliasPattern(newAlias) {
+		return false, alias.ErrInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
 	}
 
 	prj, err := i.projectRepo.FindByPublicName(ctx, newAlias)

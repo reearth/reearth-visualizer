@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -193,6 +194,19 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 		}
 	}
 	return nil, rerror.ErrNotFound
+}
+
+func (r *Project) CheckAliasUnique(ctx context.Context, name string) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, p := range r.data {
+		if p.ID().String() == name || p.Alias() == name {
+			return alias.ErrExistsStorytellingAlias
+		}
+	}
+
+	return nil
 }
 
 func (r *Project) CountByWorkspace(_ context.Context, ws accountdomain.WorkspaceID) (n int, _ error) {

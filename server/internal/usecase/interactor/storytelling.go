@@ -183,9 +183,7 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 
 	oldAlias := story.Alias()
 	if inp.Alias != nil && *inp.Alias != oldAlias {
-		if err := story.UpdateAlias(*inp.Alias); err != nil {
-			return nil, err
-		}
+		story.UpdateAlias(*inp.Alias)
 	}
 
 	// TODO: Handel ordering
@@ -327,9 +325,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 			return nil, interfaces.ErrProjectAliasAlreadyUsed
 		}
 
-		if err := story.UpdateAlias(*inp.Alias); err != nil {
-			return nil, err
-		}
+		story.UpdateAlias(*inp.Alias)
 		newAlias = *inp.Alias
 	}
 

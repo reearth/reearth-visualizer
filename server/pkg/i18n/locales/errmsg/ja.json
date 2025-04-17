@@ -1,10 +1,24 @@
 {
-    "pkg": {
-      "project": {
-        "invalid_alias": {
-          "message": "不正なエイリアス名です: {{.aliasName}}",
-          "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
-        }
+  "pkg": {
+    "project": {
+      "invalid_alias": {
+        "message": "不正なエイリアス名です: {{.aliasName}}",
+        "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
+      },
+      "alias_already_exists": {
+        "message": "そのエイリアスは既に使用されています。別の値を試してください",
+        "description": "プロジェクトやストーリーのエイリアスは一意である必要があります。"
+      }
+    },
+    "storytelling": {
+      "invalid_alias": {
+        "message": "不正なエイリアス名です: {{.aliasName}}",
+        "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
+      },
+      "alias_already_exists": {
+        "message": "そのエイリアスは既に使用されています。別の値を試してください",
+        "description": "プロジェクトやストーリーのエイリアスは一意である必要があります。"
       }
     }
   }
+}

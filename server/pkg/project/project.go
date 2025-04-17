@@ -3,31 +3,11 @@ package project
 import (
 	"errors"
 	"net/url"
-	"regexp"
 	"time"
 
-	"github.com/reearth/reearth/server/pkg/i18n/message"
-	"github.com/reearth/reearth/server/pkg/i18n/message/entitymsg"
-	"github.com/reearth/reearth/server/pkg/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"golang.org/x/text/language"
-)
-
-var (
-	ErrInvalidProjectAlias = verror.NewVError(
-		errmsg.ErrKeyPkgProjectInvalidAlias,
-		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias],
-		message.MultiLocaleTemplateData(map[string]interface{}{
-			"minLength": 5,
-			"maxLength": 32,
-			"allowedChars": func(locale language.Tag) string {
-				return entitymsg.GetLocalizedEntityMessage(entitymsg.EntityKeyPkgProjectAliasAllowedChars, locale)
-			},
-		}), nil)
-	aliasRegexp = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
 type Project struct {
@@ -284,8 +264,4 @@ func (p *Project) MatchWithPublicName(name string) bool {
 		return true
 	}
 	return false
-}
-
-func CheckAliasPattern(alias string) bool {
-	return alias != "" && aliasRegexp.Match([]byte(alias))
 }
