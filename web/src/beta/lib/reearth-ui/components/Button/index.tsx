@@ -49,7 +49,7 @@ export const Button: FC<ButtonProps> = ({
       size={size}
       iconButton={iconButton}
       extendWidth={extendWidth}
-      minwidth={minWidth}
+      minWidth={minWidth}
       background={background}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
@@ -72,13 +72,14 @@ export const Button: FC<ButtonProps> = ({
 };
 
 const StyledButton = styled("button", {
-  shouldForwardProp: (prop) => !["extendWidth", "iconButton"].includes(prop)
+  shouldForwardProp: (prop) =>
+    !["extendWidth", "iconButton", "minWidth"].includes(prop)
 })<{
   size: "normal" | "small";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
   iconButton?: boolean;
   extendWidth?: boolean;
-  minwidth?: number;
+  minWidth?: number;
   background?: string;
   "data-testid"?: string;
 }>(
@@ -87,7 +88,7 @@ const StyledButton = styled("button", {
     size,
     iconButton,
     extendWidth,
-    minwidth,
+    minWidth,
     background,
     theme
   }) => ({
@@ -130,7 +131,7 @@ const StyledButton = styled("button", {
           ? "transparent"
           : `${theme.bg[1]}`,
     width: !extendWidth ? "fit-content" : "100%",
-    minWidth: minwidth ? `${minwidth}px` : "",
+    minWidth: minWidth ? `${minWidth}px` : "",
     boxShadow: appearance === "simple" ? "none" : theme.shadow.button,
     ["&:hover"]:
       background && appearance !== "simple" && iconButton
