@@ -144,7 +144,7 @@ export default () => {
 
       setNotification({
         type: "success",
-        text: t("Successfully checked the alias!")
+        text: t("Successfully checked alias!")
       });
       return {
         available: data?.checkProjectAlias.available,
