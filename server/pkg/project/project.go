@@ -1,6 +1,7 @@
 package project
 
 import (
+	"errors"
 	"net/url"
 	"regexp"
 	"time"
@@ -212,8 +213,12 @@ func (p *Project) UpdateName(name string) {
 	p.name = name
 }
 
-func (p *Project) UpdateVisibility(visibility string) {
+func (p *Project) UpdateVisibility(visibility string) error {
+	if visibility != "public" && visibility != "private" {
+		return errors.New("visibility must be either 'public' or 'private'")
+	}
 	p.visibility = visibility
+	return nil
 }
 
 func (p *Project) UpdateDescription(description string) {
