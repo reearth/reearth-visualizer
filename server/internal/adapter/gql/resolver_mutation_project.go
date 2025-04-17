@@ -34,6 +34,7 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		Name:        input.Name,
 		Description: input.Description,
 		CoreSupport: input.CoreSupport,
+		Visibility:  input.Visibility,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -79,6 +80,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		Starred:           input.Starred,
 		Deleted:           input.Deleted,
 		SceneID:           gqlmodel.ToIDRef[id.Scene](input.SceneID),
+		Visibility:        input.Visibility,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

@@ -98,6 +98,7 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 		Name:        input.Name,
 		Description: input.Description,
 		CoreSupport: input.CoreSupport,
+		Visibility:  input.Visibility,
 	}, operator)
 }
 
@@ -211,6 +212,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 				return nil, err
 			}
 		}
+	}
+
+	if p.Visibility != nil {
+		prj.UpdateVisibility(*p.Visibility)
 	}
 
 	if len(graphql.GetErrors(ctx)) > 0 {
@@ -663,6 +668,7 @@ type createProjectInput struct {
 	Alias       *string
 	Archived    *bool
 	CoreSupport *bool
+	Visibility  *string
 }
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -733,6 +739,12 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	if input.Name != nil {
 		prj = prj.Name(*input.Name)
+	}
+
+	if input.Visibility != nil {
+		prj = prj.Visibility(*input.Visibility)
+	} else {
+		prj = prj.Visibility("private")
 	}
 
 	proj, err := prj.Build()
