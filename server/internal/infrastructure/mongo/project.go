@@ -150,6 +150,39 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return r.find(ctx, filter)
 }
 
+func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+	prj, err := r.findOne(ctx, bson.M{
+		"id":      id.String(),
+		"deleted": false,
+	}, true)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
+}
+
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	if r.f.Readable == nil || !r.f.Readable.Has(id) {
+		filter := bson.M{
+			"team":       id.String(),
+			"deleted":    false,
+			"visibility": "public",
+		}
+		return r.find(ctx, filter)
+	}
+
+	filter := bson.M{
+		"team":    id.String(),
+		"deleted": false,
+	}
+	return r.find(ctx, filter)
+}
+
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound
