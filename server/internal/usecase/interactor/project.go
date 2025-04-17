@@ -215,7 +215,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.Visibility != nil {
-		prj.UpdateVisibility(*p.Visibility)
+		if err := prj.UpdateVisibility(*p.Visibility); err != nil {
+			return nil, err
+		}
 	}
 
 	if len(graphql.GetErrors(ctx)) > 0 {
