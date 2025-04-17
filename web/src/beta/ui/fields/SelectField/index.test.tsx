@@ -172,7 +172,7 @@ describe("SelectField", () => {
 
     const dropdownTrigger = getByTestId("select-input");
     act(() => {
-      dropdownTrigger.click(); // Simulate opening the dropdown
+      dropdownTrigger.click();
     });
 
     const options = await findAllByRole("option");
@@ -188,15 +188,14 @@ describe("SelectField", () => {
 
     const dropdownTrigger = getByTestId("select-input");
     act(() => {
-      dropdownTrigger.click(); // Simulate opening the dropdown
+      dropdownTrigger.click();
     });
 
     const option = await findByRole("option", { name: "Option 2" });
     act(() => {
-      option.click(); // Simulate selecting an option
+      option.click();
     });
 
-    // Ensure the onChange callback is triggered with the correct value
     expect(onChangeMock).toHaveBeenCalledWith("2");
   });
 });
