@@ -71,13 +71,13 @@ export const EntryItem: FC<EntryItemProps> = ({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={onClick}
-      hovered={hovered ? "true" : "false"}
-      highlight={highlighted ? "true" : "false"}
-      smallpaddingright={optionsMenu ? "true" : "false"}
+      hovered={hovered}
+      highlight={highlighted}
+      smallPaddingRight={!!optionsMenu}
     >
       <MainContent
         className={dragHandleClassName}
-        asdraghandle={dragHandleClassName ? "true" : "false"}
+        asDragHandle={!!dragHandleClassName}
       >
         {icon && (
           <IconWrapper>
@@ -113,55 +113,56 @@ export const EntryItem: FC<EntryItemProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{
-  hovered?: string;
-  highlight?: string;
-  smallpaddingright?: string;
-}>(({ theme, hovered, highlight, smallpaddingright }) => ({
+const Wrapper = styled("div", {
+  shouldForwardProp: (prop) =>
+    !["smallPaddingRight", "hovered", "highlight"].includes(prop)
+})<{
+  hovered?: boolean;
+  highlight?: boolean;
+  smallPaddingRight?: boolean;
+}>(({ theme, hovered, highlight, smallPaddingRight }) => ({
   position: "relative",
   boxSizing: "border-box",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding:
-    smallpaddingright === "true"
-      ? `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.small}px`
-      : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  padding: smallPaddingRight
+    ? `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.small}px`
+    : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: theme.radius.small,
   backgroundColor: "transparent",
   minHeight: 28,
   flex: 1,
   minWidth: 0,
   cursor: "pointer",
-  ...(hovered === "true" && {
+  ...(hovered && {
     backgroundColor: theme.bg[1]
   }),
-  ...(highlight === "true" && {
+  ...(highlight && {
     backgroundColor: theme.select.main
   }),
   ["&:active"]: {
-    backgroundColor:
-      highlight === "true"
-        ? theme.select.strong
-        : hovered === "true"
-          ? theme.relative.light
-          : "transparent"
+    backgroundColor: highlight
+      ? theme.select.strong
+      : hovered
+        ? theme.relative.light
+        : "transparent"
   }
 }));
 
-const MainContent = styled("div")<{ asdraghandle?: "true" | "false" }>(
-  ({ theme, asdraghandle }) => ({
-    flex: 1,
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing.smallest,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    ...(asdraghandle === "true" && {
-      cursor: "pointer"
-    })
+const MainContent = styled("div", {
+  shouldForwardProp: (prop) => prop !== "asDragHandle"
+})<{ asDragHandle?: boolean }>(({ theme, asDragHandle }) => ({
+  flex: 1,
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  ...(asDragHandle && {
+    cursor: "pointer"
   })
-);
+}));
 
 const Title = styled("div")(({ theme }) => ({
   width: "100%",
