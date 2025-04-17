@@ -35,14 +35,12 @@ import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import { useRestful } from "../restful";
-import { useNotification } from "../state";
-
-import { type PublishStatus } from "./publishTypes";
-import { toGqlStatus } from "./publishTypes";
-import { MutationReturn } from "./types";
-
-import { useStorytellingFetcher } from ".";
+import { useStorytellingFetcher } from "..";
+import { useRestful } from "../../restful";
+import { useNotification } from "../../state";
+import { type PublishStatus } from "../publishTypes";
+import { toGqlStatus } from "../publishTypes";
+import { MutationReturn } from "../types";
 
 export type Project = ProjectPayload["project"];
 const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
@@ -535,38 +533,45 @@ export default () => {
     [exportProjectMutation, t, setNotification, getBackendUrl]
   );
 
-  const importProject = async (file: File, teamId: string) => {
-    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-    const fileId = uuidv4();
+  const useImportProject = useCallback(
+    async (file: File, teamId: string) => {
+      const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+      const fileId = uuidv4();
+      let lastResponse = null;
 
-    for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
-      const start = chunkNum * CHUNK_SIZE;
-      const end = Math.min(file.size, start + CHUNK_SIZE);
-      const chunk = file.slice(start, end);
+      for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
+        const start = chunkNum * CHUNK_SIZE;
+        const end = Math.min(file.size, start + CHUNK_SIZE);
+        const chunk = file.slice(start, end);
 
-      const formData = new FormData();
-      formData.append("file", chunk, `${file.name}.part${chunkNum}`);
-      formData.append("file_id", fileId);
-      formData.append("team_id", teamId);
-      formData.append("chunk_num", chunkNum.toString());
-      formData.append("total_chunks", totalChunks.toString());
+        const formData = new FormData();
+        formData.append("file", chunk, `${file.name}.part${chunkNum}`);
+        formData.append("file_id", fileId);
+        formData.append("team_id", teamId);
+        formData.append("chunk_num", chunkNum.toString());
+        formData.append("total_chunks", totalChunks.toString());
 
-      try {
-        const response = await axios.post("/split-import", formData);
-        setNotification({
-          type: "success",
-          text: t("Successfully imported project!")
-        });
-        return response.data;
-      } catch (error) {
-        setNotification({
-          type: "error",
-          text: t("Failed to import project.")
-        });
-        console.log("Restful: Failed to import project", error);
+        try {
+          const response = await axios.post("/split-import", formData);
+          lastResponse = response.data;
+        } catch (error) {
+          setNotification({
+            type: "error",
+            text: t("Failed to import project.")
+          });
+          console.log("Restful: Failed to import project", error);
+          return { status: "error" };
+        }
       }
-    }
-  };
+
+      setNotification({
+        type: "success",
+        text: t("Successfully imported project!")
+      });
+      return lastResponse || { status: "chunk_received" };
+    },
+    [axios, setNotification, t]
+  );
 
   return {
     publishProjectLoading,
@@ -584,6 +589,6 @@ export default () => {
     useExportProject,
     useUpdateProjectRemove,
     useDeletedProjectsQuery,
-    importProject
+    useImportProject
   };
 };

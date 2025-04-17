@@ -40,7 +40,7 @@ export default (workspaceId?: string) => {
     useStarredProjectsQuery,
     useUpdateProjectRemove,
     usePublishProject,
-    importProject
+    useImportProject
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
@@ -246,13 +246,13 @@ export default (workspaceId?: string) => {
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file && workspaceId) {
-        const result = await importProject(file, workspaceId);
+        const result = await useImportProject(file, workspaceId);
         if (result.status === "chunk_received") {
           await refetch();
         }
       }
     },
-    [importProject, refetch, workspaceId]
+    [refetch, useImportProject, workspaceId]
   );
 
   // project remove
