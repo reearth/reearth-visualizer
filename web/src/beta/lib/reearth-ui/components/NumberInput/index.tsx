@@ -105,7 +105,7 @@ export const NumberInput: FC<NumberInputProps> = ({
     <Wrapper
       size={size}
       status={isFocused ? "active" : "default"}
-      extendwidth={extendWidth ? "true" : "false"}
+      extendWidth={extendWidth}
     >
       <StyledInput
         value={currentValue}
@@ -122,11 +122,13 @@ export const NumberInput: FC<NumberInputProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{
+const Wrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "extendWidth"
+})<{
   size: "normal" | "small";
   status: "default" | "active";
-  extendwidth?: "true" | "false";
-}>(({ size, theme, status, extendwidth }) => {
+  extendWidth?: boolean;
+}>(({ size, theme, status, extendWidth }) => {
   return {
     border:
       status === "active"
@@ -143,7 +145,7 @@ const Wrapper = styled("div")<{
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
-    width: extendwidth === "false" ? "" : "100%",
+    width: !extendWidth ? "" : "100%",
     boxSizing: "border-box"
   };
 });

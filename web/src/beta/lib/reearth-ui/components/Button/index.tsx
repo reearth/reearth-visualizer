@@ -47,8 +47,8 @@ export const Button: FC<ButtonProps> = ({
       disabled={disabled}
       appearance={appearance}
       size={size}
-      iconbutton={iconButton ? "true" : "false"}
-      extendwidth={extendWidth ? "true" : "false"}
+      iconButton={iconButton}
+      extendWidth={extendWidth}
       minwidth={minWidth}
       background={background}
       onClick={onClick}
@@ -71,11 +71,13 @@ export const Button: FC<ButtonProps> = ({
   );
 };
 
-const StyledButton = styled("button")<{
+const StyledButton = styled("button", {
+  shouldForwardProp: (prop) => !["extendWidth", "iconButton"].includes(prop)
+})<{
   size: "normal" | "small";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
-  iconbutton?: "true" | "false";
-  extendwidth?: "true" | "false";
+  iconButton?: boolean;
+  extendWidth?: boolean;
   minwidth?: number;
   background?: string;
   "data-testid"?: string;
@@ -83,8 +85,8 @@ const StyledButton = styled("button")<{
   ({
     appearance,
     size,
-    iconbutton,
-    extendwidth,
+    iconButton,
+    extendWidth,
     minwidth,
     background,
     theme
@@ -107,10 +109,10 @@ const StyledButton = styled("button")<{
     fontSize: `${theme.fonts.sizes.body}px`,
     padding:
       size === "small"
-        ? iconbutton === "true"
+        ? iconButton
           ? `${theme.spacing.micro}px`
           : `${theme.spacing.smallest}px ${theme.spacing.small}px`
-        : iconbutton
+        : iconButton
           ? `${theme.spacing.small}px`
           : `${theme.spacing.small}px ${theme.spacing.large}px`,
     borderRadius:
@@ -122,16 +124,16 @@ const StyledButton = styled("button")<{
           ? `${theme.dangerous.main}`
           : `${theme.content.main}`,
     backgroundColor:
-      background && appearance !== "simple" && iconbutton === "true"
+      background && appearance !== "simple" && iconButton
         ? background
         : appearance === "simple"
           ? "transparent"
           : `${theme.bg[1]}`,
-    width: extendwidth === "false" ? "fit-content" : "100%",
+    width: !extendWidth ? "fit-content" : "100%",
     minWidth: minwidth ? `${minwidth}px` : "",
     boxShadow: appearance === "simple" ? "none" : theme.shadow.button,
     ["&:hover"]:
-      background && appearance !== "simple" && iconbutton === "true"
+      background && appearance !== "simple" && iconButton
         ? {}
         : {
             borderColor: "transparent",
@@ -145,7 +147,7 @@ const StyledButton = styled("button")<{
       borderColor: "transparent",
       color: `${theme.content.withBackground}`,
       backgroundColor:
-        background && appearance !== "simple" && iconbutton === "true"
+        background && appearance !== "simple" && iconButton
           ? background
           : appearance === "simple"
             ? "transparent"
@@ -165,8 +167,8 @@ const StyledButton = styled("button")<{
       boxShadow: "none"
     },
     ["& svg"]: {
-      width: iconbutton === "true" && size === "small" ? "12px" : "16px",
-      height: iconbutton === "true" && size === "small" ? "12px" : "16px"
+      width: iconButton && size === "small" ? "12px" : "16px",
+      height: iconButton && size === "small" ? "12px" : "16px"
     }
   })
 );
