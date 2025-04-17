@@ -28,9 +28,14 @@ type ContainerConfig struct {
 	PublishedIndexURL  *url.URL
 }
 
-func NewContainer(r *repo.Container, g *gateway.Container,
-	ar *accountrepo.Container, ag *accountgateway.Container,
-	config ContainerConfig) interfaces.Container {
+func NewContainer(
+	r *repo.Container,
+	g *gateway.Container,
+	ar *accountrepo.Container,
+	ag *accountgateway.Container,
+	config ContainerConfig,
+) interfaces.Container {
+
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
 		published = NewPublishedWithURL(r.Project, r.Storytelling, g.File, config.PublishedIndexURL)

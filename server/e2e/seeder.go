@@ -34,16 +34,20 @@ import (
 )
 
 var (
-	uID    = user.NewID()
-	uEmail = "e2e@e2e.com"
-	uName  = "e2e"
-	wID    = accountdomain.NewWorkspaceID()
-	pID    = id.NewProjectID()
-	pName  = "p1"
-	pDesc  = pName + " desc"
-	pAlias = "PROJECT_ALIAS"
-	sID    = id.NewSceneID()
-	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
+	uID     = user.NewID()
+	uID2    = user.NewID()
+	uEmail  = "e2e@e2e.com"
+	uName   = "e2e"
+	wID     = accountdomain.NewWorkspaceID()
+	wID2    = accountdomain.NewWorkspaceID()
+	uEmail2 = "e3e@e3e.com"
+	uName2  = "e3e"
+	pID     = id.NewProjectID()
+	pName   = "p1"
+	pDesc   = pName + " desc"
+	pAlias  = "PROJECT_ALIAS"
+	sID     = id.NewSceneID()
+	now     = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	nlsLayerId = id.NewNLSLayerID()
 	storyID    = id.NewStoryID()
@@ -61,6 +65,15 @@ func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 		Email(uEmail).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
+		return err
+	}
+	u2 := user.New().
+		ID(uID2).
+		Workspace(wID2).
+		Name(uName2).
+		Email(uEmail2).
+		MustBuild()
+	if err := r.User.Save(ctx, u2); err != nil {
 		return err
 	}
 	return baseSetup(ctx, r, u, f)
