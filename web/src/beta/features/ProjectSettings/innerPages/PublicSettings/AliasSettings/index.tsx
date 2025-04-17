@@ -35,15 +35,11 @@ const AliasSetting: FC<AliasSettingProps> = ({
   const theme = useTheme();
   const t = useT();
   const { checkAlias } = useProjectFetcher();
-  const baseUrl = window.location.origin;
-  const domain = new URL(baseUrl).host;
-
   const [, setNotification] = useNotification();
 
   const [open, setOpen] = useState(false);
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
-  const [aliasValid, setAliasValid] = useState(false);
 
   const alias = useMemo(
     () => (settingsItem?.alias ? settingsItem.alias : settingsItem?.id),
@@ -61,16 +57,14 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
   const handleIconClick = useCallback(() => {
     if (!alias) return;
-    const fullUrl = `${baseUrl}${publicUrl}`;
 
-    navigator.clipboard.writeText(fullUrl);
+    navigator.clipboard.writeText(publicUrl);
     setNotification({
       type: "success",
       text: t("Resource URL copied to clipboard")
     });
-  }, [alias, baseUrl, publicUrl, setNotification, t]);
+  }, [alias, publicUrl, setNotification, t]);
 
-  
   const handleSubmitAlias = useCallback(
     async (alias?: string) => {
       onUpdateAlias?.({
@@ -80,18 +74,15 @@ const AliasSetting: FC<AliasSettingProps> = ({
     [onUpdateAlias]
   );
 
-  const handleCheckAlias = useCallback(
+  const handleCleanAlias = useCallback(
     async (alias?: string) => {
-      const result = await checkAlias(alias);
-      setAliasValid(result?.available as boolean);
+      const data = await checkAlias(alias);
+      if (data?.available) {
+        handleSubmitAlias(alias);
+      }
     },
-    [checkAlias]
+    [checkAlias, handleSubmitAlias]
   );
-
-  const handleCleanAlias = useCallback(async () => {
-    handleCheckAlias(settingsItem?.id);
-    if (aliasValid) handleSubmitAlias(settingsItem?.id);
-  }, [aliasValid, handleCheckAlias, handleSubmitAlias, settingsItem?.id]);
 
   return (
     <CommonField title={t("Your Alias")}>
@@ -114,7 +105,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
           size="small"
           disabled={settingsItem?.id === alias}
           iconColor={theme.content.weak}
-          onClick={handleCleanAlias}
+          onClick={() => handleCleanAlias(settingsItem?.id)}
         />
 
         <Button
@@ -129,10 +120,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
           <EditPanel
             alias={alias}
             isStory={isStory}
-            domain={domain}
+            publicUrl={publicUrl}
             onClose={handleClose}
             onSubmit={handleSubmitAlias}
-            onCheckAlias={handleCheckAlias}
           />
         )}
       </Wrapper>

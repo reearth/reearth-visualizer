@@ -7,44 +7,47 @@ import {
   Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
+import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 type Prop = {
+  publicUrl: string;
   isStory?: boolean;
   alias?: string;
-  aliasValid?: boolean;
-  domain?: string;
   onClose?: () => void;
   onSubmit?: (alias?: string) => void;
-  onCheckAlias?: (alias?: string) => Promise<void>;
 };
 
 const EditPanel: FC<Prop> = ({
   alias,
   isStory,
-  aliasValid,
-  domain,
+  publicUrl,
   onClose,
-  onSubmit,
-  onCheckAlias
+  onSubmit
 }) => {
   const t = useT();
   const theme = useTheme();
+  const { checkAlias } = useProjectFetcher();
+
+  const domainUrl = useMemo(() => {
+    const match = publicUrl.match(/^https?:\/\/([^/]+)/);
+    return match?.[1] ?? "";
+  }, [publicUrl]);
 
   const [localAlias, setLocalAlias] = useState("");
   const [warning, setWaring] = useState(false);
 
   const handleChange = useCallback(
     async (value: string) => {
-      onCheckAlias?.(value);
+      const result = await checkAlias?.(value);
       if (value === alias) {
-        setWaring(!aliasValid);
+        setWaring(!result?.available);
       } else setWaring(false);
       setLocalAlias(value);
     },
-    [alias, aliasValid, onCheckAlias]
+    [alias, checkAlias]
   );
 
   const handleSubmit = useCallback(() => {
@@ -87,7 +90,7 @@ const EditPanel: FC<Prop> = ({
               </Typography>
               <TextInput value={localAlias} onBlur={handleChange} />
               <Typography size="body" color={theme.content.weak}>
-                {`.${domain}`}
+                {domainUrl && `.${domainUrl}`}
               </Typography>
             </InputWrapper>
           </CommonField>

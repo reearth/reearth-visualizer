@@ -5,7 +5,7 @@ import {
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublishItem } from "../hooks";
 
@@ -14,10 +14,15 @@ import PublishOrUpdateSection from "./PublishOrUpdateSection";
 
 type Props = {
   publishItem: PublishItem;
+  isPublishMode: boolean;
   onClose: () => void;
 };
 
-const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
+const PublishOrUpdateModal: FC<Props> = ({
+  publishItem,
+  isPublishMode,
+  onClose
+}) => {
   const t = useT();
 
   const [publishDone, setPublishDone] = useState(false);
@@ -30,14 +35,10 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     publishItem.publishmentStatus === "PUBLIC"
   );
 
-  const [alias, setAlias] = useState<string | undefined>(
-    publishItem.alias ? publishItem.alias : publishItem.id
+  const alias = useMemo(
+    () => (publishItem.alias ? publishItem.alias : publishItem.id),
+    [publishItem.alias, publishItem.id]
   );
-
-  useEffect(() => {
-    const newAlias = publishItem.alias ? publishItem.alias : publishItem.id;
-    setAlias(newAlias);
-  }, [publishItem.alias, publishItem.id]);
 
   const [isPublishing, setIsPublishing] = useState(false);
   const handleProjectPublish = useCallback(async () => {
@@ -67,15 +68,13 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     publishStory
   ]);
 
-  const initialWasPublishedRef = useRef(publishItem.isPublished);
-
   const title = useMemo(() => {
     const isStory = publishItem.type === "story";
-    if (!initialWasPublishedRef.current) {
+    if (isPublishMode) {
       return isStory ? t("Publish your story") : t("Publish your scene");
     }
     return isStory ? t("Update your story") : t("Update your scene");
-  }, [t, publishItem.type]);
+  }, [publishItem.type, isPublishMode, t]);
 
   const primaryButtonText = useMemo(() => {
     return !publishItem.isPublished ? t("Publish") : t("Update");
@@ -136,6 +135,7 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
           <PublishedOrUpdatedSection
             publishItem={publishItem}
             publicUrl={publicUrl}
+            isPublishMode={isPublishMode}
           />
         ) : (
           <PublishOrUpdateSection

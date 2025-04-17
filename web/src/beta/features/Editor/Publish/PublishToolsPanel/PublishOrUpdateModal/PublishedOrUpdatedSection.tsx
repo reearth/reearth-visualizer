@@ -3,7 +3,7 @@ import { Button, Icon, Typography } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import {
   PublicUrlWrapper,
@@ -19,9 +19,14 @@ import { PublishItem } from "../hooks";
 type Props = {
   publishItem: PublishItem;
   publicUrl: string;
+  isPublishMode: boolean;
 };
 
-const PublishedOrUpdatedSection: FC<Props> = ({ publishItem, publicUrl }) => {
+const PublishedOrUpdatedSection: FC<Props> = ({
+  publishItem,
+  publicUrl,
+  isPublishMode
+}) => {
   const t = useT();
   const theme = useTheme();
 
@@ -40,16 +45,12 @@ const PublishedOrUpdatedSection: FC<Props> = ({ publishItem, publicUrl }) => {
 
   const handleCopyToClipBoard = useCallback((value: string | undefined) => {
     if (!value) return;
-    const baseUrl = window.location.origin;
-    const fullUrl = `${baseUrl}${value}`;
-    navigator.clipboard.writeText(fullUrl);
+    navigator.clipboard.writeText(value);
   }, []);
-
-  const initialWasPublishedRef = useRef(publishItem.isPublished);
 
   const title = useMemo(() => {
     const isStory = publishItem.type === "story";
-    if (!initialWasPublishedRef.current) {
+    if (isPublishMode) {
       return isStory
         ? t("Congratulations! 🎊 Your story has been published")
         : t("Congratulations! 🎊 Your scene has been published");
@@ -57,7 +58,7 @@ const PublishedOrUpdatedSection: FC<Props> = ({ publishItem, publicUrl }) => {
     return isStory
       ? t("Congratulations! 🎊 Your story has been updated")
       : t("Congratulations! 🎊 Your scene has been updated");
-  }, [t, publishItem.type]);
+  }, [publishItem.type, isPublishMode, t]);
 
   return (
     <Section>

@@ -3,7 +3,7 @@ import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { usePublishPage } from "../context";
 
@@ -33,6 +33,8 @@ const PublishToolsPanel: FC = () => {
     handleActiveSubProjectChange
   });
 
+  const [isPublishMode, setIsPublishMode] = useState(false);
+
   return (
     <Panel extend>
       <StyledSecondaryNav>
@@ -57,7 +59,10 @@ const PublishToolsPanel: FC = () => {
                 title={t("Publish")}
                 icon="paperPlaneTilt"
                 size="small"
-                onClick={() => setPublishModalVisible(true)}
+                onClick={() => {
+                  setIsPublishMode(true);
+                  setPublishModalVisible(true);
+                }}
               />
             ) : (
               <>
@@ -71,7 +76,10 @@ const PublishToolsPanel: FC = () => {
                   title={t("Update")}
                   icon="caretDoubleUp"
                   size="small"
-                  onClick={() => setPublishModalVisible(true)}
+                  onClick={() => {
+                    setIsPublishMode(false);
+                    setPublishModalVisible(true);
+                  }}
                 />
               </>
             )}
@@ -87,6 +95,7 @@ const PublishToolsPanel: FC = () => {
       {publishItem && publishModalVisible && (
         <PublishOrUpdateModal
           publishItem={publishItem}
+          isPublishMode={isPublishMode}
           onClose={() => setPublishModalVisible(false)}
         />
       )}

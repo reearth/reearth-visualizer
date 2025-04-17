@@ -122,26 +122,38 @@ export default () => {
     return { deletedProjects, ...rest };
   }, []);
 
-const [fetchCheckAlias] = useLazyQuery(CHECK_PROJECT_ALIAS);
+  const [fetchCheckAlias] = useLazyQuery(CHECK_PROJECT_ALIAS);
 
-const checkAlias = useCallback(
-  async (alias?: string) => {
-    if (!alias) return null;
+  const checkAlias = useCallback(
+    async (alias?: string) => {
+      if (!alias) return null;
 
-    const { data, error } = await fetchCheckAlias({
-      variables: { alias }
-    });
+      const { data, error } = await fetchCheckAlias({
+        variables: { alias }
+      });
+      
+      if (error || !data?.checkProjectAlias) {
+        console.log("GraphQL: Failed to check alias.", error);
+        setNotification({
+          type: "error",
+          text: t("Failed to check alias.")
+        });
 
-    if (error) {
-      console.error("Failed to check alias:", error);
-      return null;
-    }
+        return { status: "error" };
+      }
 
-    return data?.checkProjectAlias;
-  },
-  [fetchCheckAlias]
-);
-
+      setNotification({
+        type: "success",
+        text: t("Successfully checked the alias!")
+      });
+      return {
+        available: data?.checkProjectAlias.available,
+        alias: data?.checkProjectAlias.alias,
+        status: "success"
+      };
+    },
+    [fetchCheckAlias, setNotification, t]
+  );
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
   const [createScene] = useMutation(CREATE_SCENE, {
