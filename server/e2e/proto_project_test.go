@@ -103,7 +103,7 @@ func TestInternalAPI_public(t *testing.T) {
 		})
 		assert.Nil(t, err)
 
-		// -------- private
+		// -------- public
 		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
 			ProjectId: res.Project.Id,
 		})
