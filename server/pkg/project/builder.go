@@ -83,6 +83,11 @@ func (b *Builder) Name(name string) *Builder {
 	return b
 }
 
+func (b *Builder) Visibility(visibility string) *Builder {
+	b.p.visibility = visibility
+	return b
+}
+
 func (b *Builder) Description(description string) *Builder {
 	b.p.description = description
 	return b

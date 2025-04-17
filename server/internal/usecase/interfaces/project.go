@@ -24,6 +24,7 @@ type CreateProjectParam struct {
 	Name        *string
 	Description *string
 	CoreSupport *bool
+	Visibility  *string
 }
 
 type UpdateProjectParam struct {
@@ -47,6 +48,7 @@ type UpdateProjectParam struct {
 	SceneID           *id.SceneID
 	Starred           *bool
 	Deleted           *bool
+	Visibility        *string
 }
 
 type PublishProjectParam struct {
