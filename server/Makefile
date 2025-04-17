@@ -111,6 +111,9 @@ schematyper:
 deep-copy:
 	(cd pkg/property && deep-copy --type Initializer --pointer-receiver -o initializer_gen.go .)
 
+error-msg:
+	go generate ./pkg/i18n/...
+
 # =======================
 # Tools
 # =======================

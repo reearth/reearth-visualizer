@@ -63,7 +63,6 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		ID:                pid,
 		Name:              input.Name,
 		Description:       input.Description,
-		Alias:             input.Alias,
 		ImageURL:          input.ImageURL,
 		Archived:          input.Archived,
 		IsBasicAuthActive: input.IsBasicAuthActive,

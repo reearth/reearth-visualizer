@@ -31,7 +31,6 @@ type UpdateProjectParam struct {
 	ID                id.ProjectID
 	Name              *string
 	Description       *string
-	Alias             *string
 	Archived          *bool
 	IsBasicAuthActive *bool
 	BasicAuthUsername *string

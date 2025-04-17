@@ -1,10 +1,32 @@
 {
-    "pkg": {
-      "project": {
-        "invalid_alias": {
-          "message": "Invalid alias name: {{.aliasName}}",
-          "description": "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}."
-        }
+  "pkg": {
+    "project": {
+      "invalid_alias": {
+        "message": "Invalid alias name: {{.aliasName}}",
+        "description": "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}."
+      },
+      "alias_already_exists": {
+        "message": "This alias is already in use. Please try another one.",
+        "description": "Each alias must be unique across projects and stories."
+      },
+      "invalid_reserved_alias": {
+        "message": "The alias '{{.aliasName}}' is reserved and cannot be used.",
+        "description": "The following aliases are reserved and cannot be used: administrator,development"
+      }
+    },
+    "storytelling": {
+      "invalid_alias": {
+        "message": "Invalid alias name: {{.aliasName}}",
+        "description": "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}."
+      },
+      "alias_already_exists": {
+        "message": "This alias is already in use. Please try another one.",
+        "description": "Each alias must be unique across projects and stories."
+      },
+      "invalid_reserved_alias": {
+        "message": "The alias '{{.aliasName}}' is reserved and cannot be used.",
+        "description": "The following aliases are reserved and cannot be used: administrator,development"
       }
     }
+  }
 }

@@ -239,15 +239,6 @@ func TestBuilder_Build(t *testing.T) {
 			name: "failed invalid id",
 			err:  id.ErrInvalidID,
 		},
-		{
-			name: "failed invalid alias",
-			args: args{
-				id:    id.NewProjectID(),
-				alias: "xxx.aaa",
-			},
-			expected: nil,
-			err:      ErrInvalidProjectAlias,
-		},
 	}
 
 	for _, tt := range tests {
@@ -368,14 +359,6 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			name: "failed invalid id",
 			err:  id.ErrInvalidID,
-		},
-		{
-			name: "failed invalid alias",
-			args: args{
-				id:    id.NewProjectID(),
-				alias: "xxx.aaa",
-			},
-			err: ErrInvalidProjectAlias,
 		},
 	}
 

@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -225,18 +226,18 @@ func TestProject_CheckAlias(t *testing.T) {
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
 				ok, err := uc.checkAlias(ctx, pj.ID(), "alias2"+c)
-				assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+				assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 				assert.False(t, ok)
 			}
 		})
 		t.Run("when alias is too short", func(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, pj.ID(), "aaaa")
-			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 		t.Run("when alias is too long", func(t *testing.T) {
 			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 33))
-			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 	})
