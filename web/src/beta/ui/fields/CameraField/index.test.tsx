@@ -13,15 +13,23 @@ vi.mock("@reearth/services/theme", async (importOriginal) => {
   return {
     ...(typeof actual === "object" && actual ? actual : {}),
     styled: new Proxy(
-      vi.fn().mockImplementation((Component) => {
+      vi.fn().mockImplementation((Component, options) => {
         const StyledComponent = ({
           children,
           ...props
         }: React.HTMLAttributes<HTMLElement>) => {
+          const filteredProps = options?.shouldForwardProp
+            ? Object.fromEntries(
+                Object.entries(props).filter(([key]) =>
+                  options.shouldForwardProp(key)
+                )
+              )
+            : props;
+
           if (typeof Component === "string") {
-            return React.createElement(Component, props, children);
+            return React.createElement(Component, filteredProps, children);
           }
-          return <Component {...props}>{children}</Component>;
+          return <Component {...filteredProps}>{children}</Component>;
         };
         return () => StyledComponent;
       }),
