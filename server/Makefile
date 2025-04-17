@@ -111,6 +111,11 @@ schematyper:
 deep-copy:
 	(cd pkg/property && deep-copy --type Initializer --pointer-receiver -o initializer_gen.go .)
 
+grpc:
+	protoc --go_out=./internal/adapter/internalapi/ --go_opt=paths=source_relative \
+      --go-grpc_out=./internal/adapter/internalapi/ --go-grpc_opt=paths=source_relative  \
+        ./schemas/internalapi/v1/schema.proto
+
 # =======================
 # Tools
 # =======================
