@@ -141,7 +141,7 @@ func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomai
 	defer r.lock.Unlock()
 
 	var result []*project.Project
-	if !r.f.CanRead(id) {
+	if r.f.Readable == nil || !r.f.Readable.Has(id) {
 		for _, p := range r.data {
 			if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
 				result = append(result, p)
