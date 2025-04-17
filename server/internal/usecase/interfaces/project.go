@@ -74,6 +74,9 @@ type Project interface {
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 
+	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
+	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
+
 	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)
 	Update(context.Context, UpdateProjectParam, *usecase.Operator) (*project.Project, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error

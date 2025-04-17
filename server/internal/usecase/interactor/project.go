@@ -91,6 +91,14 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
 }
 
+func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
+	return i.projectRepo.FindActiveById(ctx, pid)
+}
+
+func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
+	return i.projectRepo.FindVisibilityByWorkspace(ctx, id)
+}
+
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	return i.createProject(ctx, createProjectInput{
 		WorkspaceID: input.WorkspaceID,
