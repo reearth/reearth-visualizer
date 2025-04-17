@@ -20,7 +20,7 @@ import {
   type HTMLProps,
   type ReactNode
 } from "react";
-import { createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 
 import usePopover from "./hooks";
 
@@ -43,24 +43,31 @@ type TriggerProps = {
   extendWidth?: boolean;
 };
 
-const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
-  function PopoverTrigger(
-    { children, disabled, extendWidth, ...props },
-    _propRef
-  ) {
-    const context = usePopoverContext();
+const Trigger = React.forwardRef<
+  HTMLElement,
+  HTMLProps<HTMLElement> & TriggerProps
+>(function PopoverTrigger(
+  { children, disabled, extendWidth, ...props },
+  propRef
+) {
+  const context = usePopoverContext();
+  const childrenRef =
+    React.isValidElement(children) && "ref" in children
+      ? (children.ref as React.Ref<HTMLElement> | undefined)
+      : null;
+  const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
-    return (
-      <TriggerWrapper
-        disabled={disabled}
-        extendwidth={extendWidth ? "true" : "false"}
-        {...context.getReferenceProps(props)}
-      >
-        {typeof children === "string" ? <Button title={children} /> : children}
-      </TriggerWrapper>
-    );
-  }
-);
+  return (
+    <TriggerWrapper
+      disabled={disabled}
+      extendwidth={extendWidth ? "true" : "false"}
+      ref={ref}
+      {...context.getReferenceProps(props)}
+    >
+      {typeof children === "string" ? <Button title={children} /> : children}
+    </TriggerWrapper>
+  );
+});
 
 const Content = forwardRef<
   HTMLDivElement,
