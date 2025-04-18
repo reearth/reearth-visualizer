@@ -19,6 +19,8 @@ export type ButtonProps = {
   onClick?: (e: MouseEvent<HTMLElement>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLElement>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement>) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 } & Pick<IconProps, "placement" | "tooltipText">;
 
 export const Button: FC<ButtonProps> = ({
@@ -38,7 +40,9 @@ export const Button: FC<ButtonProps> = ({
   placement,
   onClick,
   onMouseEnter,
-  onMouseLeave
+  onMouseLeave,
+  ariaLabel,
+  dataTestid = "button"
 }) => {
   return (
     <StyledButton
@@ -52,6 +56,8 @@ export const Button: FC<ButtonProps> = ({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      aria-label={iconButton || !title ? ariaLabel : undefined}
+      data-testid={dataTestid}
     >
       {icon && (
         <Icon
@@ -59,6 +65,7 @@ export const Button: FC<ButtonProps> = ({
           color={iconColor}
           tooltipText={tooltipText}
           placement={placement}
+          aria-hidden="true"
         />
       )}
       {!iconButton && title}
