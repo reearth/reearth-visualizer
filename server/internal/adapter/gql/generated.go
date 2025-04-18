@@ -556,6 +556,7 @@ type ComplexityRoot struct {
 		TeamID            func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
+		Visibility        func(childComplexity int) int
 		Visualizer        func(childComplexity int) int
 	}
 
@@ -3883,6 +3884,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.UpdatedAt(childComplexity), true
 
+	case "Project.visibility":
+		if e.complexity.Project.Visibility == nil {
+			break
+		}
+
+		return e.complexity.Project.Visibility(childComplexity), true
+
 	case "Project.visualizer":
 		if e.complexity.Project.Visualizer == nil {
 			break
@@ -6764,6 +6772,7 @@ extend type Mutation {
   trackingId: String!
   starred: Boolean!
   isDeleted: Boolean!
+  visibility: String!
 }
 
 type ProjectAliasAvailability {
@@ -6795,6 +6804,7 @@ input CreateProjectInput {
   name: String
   description: String
   coreSupport: Boolean
+  visibility: String
 }
 
 input UpdateProjectInput {
@@ -6818,6 +6828,7 @@ input UpdateProjectInput {
   sceneId: ID
   starred: Boolean
   deleted: Boolean
+  visibility: String
 }
 
 input PublishProjectInput {
@@ -27536,6 +27547,50 @@ func (ec *executionContext) fieldContext_Project_isDeleted(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_visibility(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_visibility(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visibility, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_visibility(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectAliasAvailability) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectAliasAvailability_alias(ctx, field)
 	if err != nil {
@@ -27765,6 +27820,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -28002,6 +28059,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -28100,6 +28159,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -34405,6 +34466,8 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_starred(ctx, field)
 			case "isDeleted":
 				return ec.fieldContext_Project_isDeleted(ctx, field)
+			case "visibility":
+				return ec.fieldContext_Project_visibility(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
 		},
@@ -44278,7 +44341,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -44320,6 +44383,13 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.CoreSupport = data
+		case "visibility":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Visibility = data
 		}
 	}
 
@@ -46243,7 +46313,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46390,6 +46460,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Deleted = data
+		case "visibility":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Visibility = data
 		}
 	}
 
@@ -51614,6 +51691,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "isDeleted":
 			out.Values[i] = ec._Project_isDeleted(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "visibility":
+			out.Values[i] = ec._Project_visibility(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
