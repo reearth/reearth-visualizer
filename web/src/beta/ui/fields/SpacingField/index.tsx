@@ -1,8 +1,10 @@
 import { NumberInput, NumberInputProps } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type SpacingValues = {
   top: number;

@@ -16,7 +16,7 @@ export { default as ListField } from "./ListField";
 export { default as TimePointField } from "./TimePointField";
 export { default as NumberField } from "./NumberField";
 export { default as RangeField } from "./RangeField";
-export { default as CheckboxField } from "./CheckboxField";
+export { default as CheckboxField } from "./CheckBoxField";
 export { default as SliderField } from "./SliderField";
 export { default as PropertySelectorField } from "./PropertySelectorField";
 export { default as RadioGroupField } from "./RadioGroupField";

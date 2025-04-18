@@ -3,23 +3,24 @@ import {
   NumberInputProps,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
 
-type CommonTuple = [number, number, number, number];
-
-export type TripletInputFieldProps = CommonFieldProps &
+type commonTupleProps = [number, number];
+export type TwinInputFieldProps = CommonFieldProps &
   Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
-    values: CommonTuple;
-    placeholders?: [string, string, string, string];
-    content?: [string, string, string, string];
-    onChange?: (values: CommonTuple) => void;
-    onBlur?: (values: CommonTuple) => void;
+    values: commonTupleProps;
+    placeholders?: [string, string];
+    content?: [string, string];
+    onChange?: (values: commonTupleProps) => void;
+    onBlur?: (values: commonTupleProps) => void;
   };
 
-const TripletInputField: FC<TripletInputFieldProps> = ({
+const TwinInputField: FC<TwinInputFieldProps> = ({
   title,
   description,
   values,
@@ -29,18 +30,20 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   onBlur,
   ...props
 }) => {
-  const [inputValues, setInputValues] = useState<CommonTuple>(values);
-
+  const [inputValues, setInputValues] = useState<commonTupleProps>(values);
   const theme = useTheme();
 
+  useEffect(() => {
+    setInputValues(values);
+  }, [values]);
+
   const handleChange = useCallback(
-    (index: number, newValue: number | undefined) => {
-      if (newValue !== undefined) {
-        const newValues = [...inputValues] as CommonTuple;
-        newValues[index] = newValue;
-        setInputValues(newValues);
-        onChange?.(newValues);
-      }
+    (index: number, value?: number) => {
+      if (value === undefined || Number.isNaN(value)) return;
+      const newValues = [...inputValues] as commonTupleProps;
+      newValues[index] = value;
+      setInputValues(newValues);
+      onChange?.(newValues);
     },
     [inputValues, onChange]
   );
@@ -49,10 +52,6 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
     onBlur?.(inputValues);
   }, [inputValues, onBlur]);
 
-  useEffect(() => {
-    setInputValues(values);
-  }, [values]);
-
   return (
     <CommonField title={title} description={description}>
       <Wrapper>
@@ -60,9 +59,9 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
           <InputWrapper key={index}>
             <NumberInput
               value={value}
-              placeholder={placeholders?.[index]}
               onChange={(newValue) => handleChange(index, newValue)}
               onBlur={handleBlur}
+              placeholder={placeholders?.[index]}
               extendWidth
               {...props}
             />
@@ -76,7 +75,7 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
   );
 };
 
-export default TripletInputField;
+export default TwinInputField;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -90,5 +89,6 @@ const InputWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  width: "100%"
+  width: "100%",
+  boxSizing: "border-box"
 }));

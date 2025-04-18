@@ -4,10 +4,12 @@ import {
   TextInput,
   TextInputProps
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type PropertySelectorProps = CommonFieldProps &
   Pick<

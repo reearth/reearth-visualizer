@@ -3,22 +3,24 @@ import {
   NumberInputProps,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
 
-type commonTupleProps = [number, number];
-export type TwinInputFieldProps = CommonFieldProps &
+type commonTurple = [number, number, number];
+export type TripletInputFieldProps = CommonFieldProps &
   Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
-    values: commonTupleProps;
-    placeholders?: [string, string];
-    content?: [string, string];
-    onChange?: (values: commonTupleProps) => void;
-    onBlur?: (values: commonTupleProps) => void;
+    values: commonTurple;
+    placeholders?: [string, string, string];
+    content?: [string, string, string];
+    onChange?: (values: commonTurple) => void;
+    onBlur?: (values: commonTurple) => void;
   };
 
-const TwinInputField: FC<TwinInputFieldProps> = ({
+const TripletInputField: FC<TripletInputFieldProps> = ({
   title,
   description,
   values,
@@ -28,7 +30,7 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
   onBlur,
   ...props
 }) => {
-  const [inputValues, setInputValues] = useState<commonTupleProps>(values);
+  const [inputValues, setInputValues] = useState<commonTurple>(values);
   const theme = useTheme();
 
   useEffect(() => {
@@ -38,7 +40,7 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
   const handleChange = useCallback(
     (index: number, value?: number) => {
       if (value === undefined || Number.isNaN(value)) return;
-      const newValues = [...inputValues] as commonTupleProps;
+      const newValues = [...inputValues] as commonTurple;
       newValues[index] = value;
       setInputValues(newValues);
       onChange?.(newValues);
@@ -57,9 +59,9 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
           <InputWrapper key={index}>
             <NumberInput
               value={value}
+              placeholder={placeholders?.[index]}
               onChange={(newValue) => handleChange(index, newValue)}
               onBlur={handleBlur}
-              placeholder={placeholders?.[index]}
               extendWidth
               {...props}
             />
@@ -73,7 +75,7 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
   );
 };
 
-export default TwinInputField;
+export default TripletInputField;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -87,6 +89,5 @@ const InputWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   alignItems: "center",
   gap: theme.spacing.smallest,
-  width: "100%",
-  boxSizing: "border-box"
+  width: "100%"
 }));

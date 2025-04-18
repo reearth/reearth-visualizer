@@ -3,10 +3,12 @@ import {
   NumberInputProps,
   Typography
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "./CommonField";
 
 export type RangeFieldProps = CommonFieldProps &
   Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
