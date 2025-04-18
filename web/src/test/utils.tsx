@@ -35,6 +35,14 @@ vitest.mock("@reearth/services/i18n", () => ({
   Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>
 }));
 
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = ResizeObserver;
+
 const render = (
   ui: React.ReactElement,
   queryMocks?: readonly MockedResponse<Record<string, unknown>>[],
