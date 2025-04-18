@@ -22,7 +22,12 @@ export const Switcher: FC<SwitcherProps> = ({ value, disabled, onChange }) => {
   }, [value]);
 
   return (
-    <SwitcherContainer onClick={handleClick} isOn={isOn} disabled={disabled}>
+    <SwitcherContainer
+      onClick={handleClick}
+      isOn={isOn}
+      disabled={disabled}
+      data-testid="switcher"
+    >
       <SwitcherCircle isOn={isOn} disabled={disabled} />
     </SwitcherContainer>
   );

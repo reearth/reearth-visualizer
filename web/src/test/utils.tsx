@@ -35,6 +35,31 @@ vitest.mock("@reearth/services/i18n", () => ({
   Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>
 }));
 
+vitest.mock("@reearth/services/state", () => ({
+  useNotification: () => [null, vitest.fn()],
+  useProjectId: () => ["project-id"],
+  useWorkspace: () => [{ id: "workspace-id" }],
+  useCurrentTheme: () => [undefined, vitest.fn()]
+}));
+
+vitest.mock("@reearth/beta/ui/fields/CommonField", () => ({
+  default: ({
+    children,
+    title,
+    description
+  }: {
+    children?: React.ReactNode;
+    title?: string;
+    description?: string;
+  }) => (
+    <div data-testid="common-field">
+      {title && <div data-testid="field-title">{title}</div>}
+      {description && <div data-testid="field-description">{description}</div>}
+      {children}
+    </div>
+  )
+}));
+
 class ResizeObserver {
   observe() {}
   unobserve() {}

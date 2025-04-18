@@ -25,7 +25,12 @@ export const CheckBox: FC<CheckBoxProps> = ({ value, disabled, onChange }) => {
   }, [value]);
 
   return (
-    <BoxField onClick={handleClick} disabled={disabled}>
+    <BoxField
+      onClick={handleClick}
+      disabled={disabled}
+      role="checkbox"
+      aria-checked={isChecked}
+    >
       {isChecked && (
         <Icon
           icon="check"
