@@ -141,7 +141,6 @@ const Swatch = styled("div")<{
   disabled?: boolean;
   alphaDisabled?: boolean;
   size: "normal" | "small";
-  "data-testid": "color-input-swatch";
 }>(({ theme, color, status, size, disabled, alphaDisabled }) => ({
   position: "relative",
   boxSizing: "border-box",
