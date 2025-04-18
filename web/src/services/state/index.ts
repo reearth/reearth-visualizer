@@ -89,18 +89,18 @@ export type GQLTask = {
   id: string;
 };
 
-const activeGQLTasksAtom = atom<GQLTask[]>([]);
+const activeApiTasksAtom = atom<GQLTask[]>([]);
 
-const addGQLTaskAtom = atom(null, (_get, set, task: GQLTask) => {
-  set(activeGQLTasksAtom, (prev) => [...prev, task]);
+const addApiTaskAtom = atom(null, (_get, set, task: GQLTask) => {
+  set(activeApiTasksAtom, (prev) => [...prev, task]);
 });
 
-const removeGQLTaskAtom = atom(null, (_get, set, task: GQLTask) => {
-  set(activeGQLTasksAtom, (prev) => prev.filter((t) => t.id !== task.id));
+const removeApiTaskAtom = atom(null, (_get, set, task: GQLTask) => {
+  set(activeApiTasksAtom, (prev) => prev.filter((t) => t.id !== task.id));
 });
 
-const hasActiveGQLTasksAtom = atom((get) => get(activeGQLTasksAtom).length > 0);
+const hasActiveGQLTasksAtom = atom((get) => get(activeApiTasksAtom).length > 0);
 
-export const useAddGQLTask = () => useSetAtom(addGQLTaskAtom);
-export const useRemoveGQLTask = () => useSetAtom(removeGQLTaskAtom);
-export const useHasActiveGQLTasks = () => useAtom(hasActiveGQLTasksAtom);
+export const useAddApiTask = () => useSetAtom(addApiTaskAtom);
+export const useRemoveApiTask = () => useSetAtom(removeApiTaskAtom);
+export const useHasActiveApiTasks = () => useAtom(hasActiveGQLTasksAtom);

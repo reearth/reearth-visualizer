@@ -6,8 +6,8 @@ import {
 } from "@apollo/client";
 import {
   GQLTask,
-  useAddGQLTask,
-  useRemoveGQLTask
+  useAddApiTask,
+  useRemoveApiTask
 } from "@reearth/services/state";
 import { useCallback, type ReactNode } from "react";
 
@@ -64,25 +64,25 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     }
   });
 
-  const addGQLTask = useAddGQLTask();
-  const removeGQLTask = useRemoveGQLTask();
+  const addApiTask = useAddApiTask();
+  const removeApiTask = useRemoveApiTask();
 
   const addTask = useCallback(
     (task: GQLTask) => {
       requestAnimationFrame(() => {
-        addGQLTask(task);
+        addApiTask(task);
       });
     },
-    [addGQLTask]
+    [addApiTask]
   );
 
   const removeTask = useCallback(
     (task: GQLTask) => {
       requestAnimationFrame(() => {
-        removeGQLTask(task);
+        removeApiTask(task);
       });
     },
-    [removeGQLTask]
+    [removeApiTask]
   );
 
   const client = new ApolloClient({

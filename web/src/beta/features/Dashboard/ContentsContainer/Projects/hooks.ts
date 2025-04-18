@@ -247,7 +247,7 @@ export default (workspaceId?: string) => {
       const file = event.target.files?.[0];
       if (file && workspaceId) {
         const result = await useImportProject(file, workspaceId);
-        if (result.status === "success") {
+        if (result.status === "chunk_received") {
           await refetch();
         }
       }
