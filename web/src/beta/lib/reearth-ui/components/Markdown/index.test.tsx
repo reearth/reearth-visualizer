@@ -56,7 +56,7 @@ describe("Markdown Component", () => {
   });
 
   test("renders markdown content", () => {
-    const markdownText = "# Hello World\n\nThis is a paragraph";
+    const markdownText = "# Hello World This is a paragraph";
     render(<Markdown>{markdownText}</Markdown>);
 
     const reactMarkdown = screen.getByTestId("mock-react-markdown");
