@@ -1,53 +1,9 @@
 import * as monacoEditor from "@monaco-editor/react";
-import { useTheme } from "@reearth/services/theme";
 import { render, screen, fireEvent } from "@reearth/test/utils";
 import React from "react";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import { vi, describe, it, expect, afterEach } from "vitest";
 
 import { CodeInput } from "./index";
-
-vi.mock("@reearth/services/theme", async (importOriginal) => {
-  const actual = await importOriginal();
-
-  return {
-    ...(typeof actual === "object" && actual ? actual : {}),
-    styled: new Proxy(
-      vi.fn().mockImplementation((Component, options) => {
-        const StyledComponent = ({
-          children,
-          ...props
-        }: React.HTMLAttributes<HTMLElement>) => {
-          const filteredProps = options?.shouldForwardProp
-            ? Object.fromEntries(
-                Object.entries(props).filter(([key]) =>
-                  options.shouldForwardProp(key)
-                )
-              )
-            : props;
-
-          if (typeof Component === "string") {
-            return React.createElement(Component, filteredProps, children);
-          }
-          return <Component {...filteredProps}>{children}</Component>;
-        };
-        return () => StyledComponent;
-      }),
-      {
-        get: (target, prop) => {
-          if (typeof prop === "string") {
-            return target.bind(null, prop);
-          }
-          if (typeof prop === "symbol") {
-            return undefined;
-          }
-          return target[prop];
-        }
-      }
-    ),
-    css: vi.fn(),
-    useTheme: vi.fn()
-  };
-});
 
 vi.mock("@monaco-editor/react", () => {
   return {
@@ -100,16 +56,6 @@ const mockMonacoInstance: MockMonacoType = {
 };
 
 describe("CodeInput", () => {
-  beforeEach(() => {
-    (useTheme as ReturnType<typeof vi.fn>).mockReturnValue({
-      bg: { 1: "#000000" },
-      outline: { weak: "#cccccc" },
-      select: { strong: "#0000ff" },
-      radius: { small: "4px" },
-      shadow: { input: "0px 2px 4px rgba(0, 0, 0, 0.1)" }
-    });
-  });
-
   afterEach(() => {
     vi.clearAllMocks();
   });
