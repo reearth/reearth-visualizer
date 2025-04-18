@@ -242,12 +242,12 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
-  const handleImportProject = useCallback(
+  const handleProjectImport = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file && workspaceId) {
         const result = await useImportProject(file, workspaceId);
-        if (result.status === "chunk_received") {
+        if (result.status === "success") {
           await refetch();
         }
       }
@@ -302,7 +302,7 @@ export default (workspaceId?: string) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject,
+    handleProjectImport,
     handleProjectRemove
   };
 };

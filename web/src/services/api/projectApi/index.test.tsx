@@ -52,7 +52,7 @@ describe("useProjectApi - useImportProject", () => {
     const file = new File(["test"], "test.zip", { type: "application/zip" });
     const teamId = "team-123";
 
-    mockAxiosPost.mockResolvedValueOnce({ data: { status: "chunk_received" } });
+    mockAxiosPost.mockResolvedValueOnce({ data: { status: "success" } });
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
@@ -66,7 +66,7 @@ describe("useProjectApi - useImportProject", () => {
       type: "success",
       text: "Successfully imported project!"
     });
-    expect(res).toEqual({ status: "chunk_received" });
+    expect(res).toEqual({ status: "success" });
   });
 
   it("handles successful upload of a multi-chunk file", async () => {
@@ -80,7 +80,7 @@ describe("useProjectApi - useImportProject", () => {
     mockAxiosPost
       .mockResolvedValueOnce({ data: { status: "processing" } })
       .mockResolvedValueOnce({ data: { status: "processing" } })
-      .mockResolvedValueOnce({ data: { status: "chunk_received" } });
+      .mockResolvedValueOnce({ data: { status: "success" } });
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
@@ -94,7 +94,7 @@ describe("useProjectApi - useImportProject", () => {
       type: "success",
       text: "Successfully imported project!"
     });
-    expect(res).toEqual({ status: "chunk_received" });
+    expect(res).toEqual({ status: "success" });
   });
 
   it("aborts upload if one chunk fails in the middle", async () => {
@@ -107,7 +107,9 @@ describe("useProjectApi - useImportProject", () => {
 
     mockAxiosPost
       .mockResolvedValueOnce({ data: { status: "processing" } })
-      .mockRejectedValueOnce(new Error("Chunk 2 failed"));
+      .mockRejectedValueOnce(
+        new Error("Error Chunk 2 failed on purpose purpose for testing")
+      );
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
@@ -128,7 +130,9 @@ describe("useProjectApi - useImportProject", () => {
     const file = new File(["data"], "fail.zip", { type: "application/zip" });
     const teamId = "team-123";
 
-    mockAxiosPost.mockRejectedValueOnce(new Error("Network error"));
+    mockAxiosPost.mockRejectedValueOnce(
+      new Error("Network error failed added on purpose for testing")
+    );
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
@@ -148,7 +152,7 @@ describe("useProjectApi - useImportProject", () => {
     const file = new File([""], "empty.zip", { type: "application/zip" });
     const teamId = "team-123";
 
-    mockAxiosPost.mockResolvedValueOnce({ data: { status: "chunk_received" } });
+    mockAxiosPost.mockResolvedValueOnce({ data: { status: "success" } });
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
@@ -161,6 +165,6 @@ describe("useProjectApi - useImportProject", () => {
       type: "success",
       text: "Successfully imported project!"
     });
-    expect(res).toEqual({ status: "chunk_received" });
+    expect(res).toEqual({ status: "success" });
   });
 });

@@ -568,7 +568,7 @@ export default () => {
         type: "success",
         text: t("Successfully imported project!")
       });
-      return lastResponse || { status: "chunk_received" };
+      return lastResponse || { status: "success" };
     },
     [axios, setNotification, t]
   );
