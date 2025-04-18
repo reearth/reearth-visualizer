@@ -3,12 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import TimePointField from ".";
 
-vi.mock("@reearth/services/theme", async (importOriginal) => {
-  const actual = await importOriginal();
-
-  return actual;
-});
-
 describe("TimePointField", () => {
   const mockOnChange = vi.fn();
 

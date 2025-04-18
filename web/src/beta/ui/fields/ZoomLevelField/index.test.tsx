@@ -4,47 +4,6 @@ import { describe, expect, it, vi } from "vitest";
 
 import ZoomLevelField from "./index";
 
-vi.mock("@reearth/services/theme", async (importOriginal) => {
-  const actual = await importOriginal();
-
-  return {
-    ...(typeof actual === "object" && actual ? actual : {}),
-    styled: new Proxy(
-      vi.fn().mockImplementation((Component, options) => {
-        const StyledComponent = ({
-          children,
-          ...props
-        }: React.HTMLAttributes<HTMLElement>) => {
-          const filteredProps = options?.shouldForwardProp
-            ? Object.fromEntries(
-                Object.entries(props).filter(([key]) =>
-                  options.shouldForwardProp(key)
-                )
-              )
-            : props;
-
-          if (typeof Component === "string") {
-            return React.createElement(Component, filteredProps, children);
-          }
-          return <Component {...filteredProps}>{children}</Component>;
-        };
-        return () => StyledComponent;
-      }),
-      {
-        get: (target, prop) => {
-          if (typeof prop === "string") {
-            return target.bind(null, prop);
-          }
-          if (typeof prop === "symbol") {
-            return undefined;
-          }
-          return target[prop];
-        }
-      }
-    )
-  };
-});
-
 describe("ZoomLevelField", () => {
   const defaultProps = {
     title: "Zoom Level",
