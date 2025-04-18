@@ -604,8 +604,8 @@ Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to import project.: プロジェクトのインポートに失敗しました。
 Successfully imported project!: プロジェクトのインポートに成功しました！
+Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
 Failed to create story.: ストーリーの作成に失敗しました。

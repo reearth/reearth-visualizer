@@ -113,7 +113,10 @@ export const EntryItem: FC<EntryItemProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{
+const Wrapper = styled("div", {
+  shouldForwardProp: (prop) =>
+    !["smallPaddingRight", "hovered", "highlight"].includes(prop)
+})<{
   hovered?: boolean;
   highlight?: boolean;
   smallPaddingRight?: boolean;
@@ -147,19 +150,19 @@ const Wrapper = styled("div")<{
   }
 }));
 
-const MainContent = styled("div")<{ asDragHandle?: boolean }>(
-  ({ theme, asDragHandle }) => ({
-    flex: 1,
-    display: "flex",
-    alignItems: "center",
-    gap: theme.spacing.smallest,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    ...(asDragHandle && {
-      cursor: "pointer"
-    })
+const MainContent = styled("div", {
+  shouldForwardProp: (prop) => prop !== "asDragHandle"
+})<{ asDragHandle?: boolean }>(({ theme, asDragHandle }) => ({
+  flex: 1,
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.smallest,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  ...(asDragHandle && {
+    cursor: "pointer"
   })
-);
+}));
 
 const Title = styled("div")(({ theme }) => ({
   width: "100%",

@@ -69,7 +69,9 @@ export const IconButton: FC<IconButtonProps> = ({
   );
 };
 
-const StyledButton = styled("button")<{
+const StyledButton = styled("button", {
+  shouldForwardProp: (prop) => !["iconRotate", "hasBorder"].includes(prop)
+})<{
   size: "normal" | "small" | "smallest" | "medium" | "large";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
   active?: boolean;

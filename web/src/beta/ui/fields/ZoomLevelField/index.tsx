@@ -4,11 +4,13 @@ import {
   RangeSliderProps,
   TextInput
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "../CommonField";
 
 import EditPanel from "./EditPanel";
 
@@ -33,7 +35,7 @@ const ZoomLevelField: FC<ZoomLevelFieldProps> = ({
   }, [onChange]);
 
   return (
-    <CommonField title={title} >
+    <CommonField title={title}>
       <InputWrapper>
         <TextInput
           value={
