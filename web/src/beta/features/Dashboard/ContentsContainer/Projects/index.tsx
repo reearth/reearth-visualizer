@@ -38,7 +38,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject,
+    handleProjectImport,
     handleProjectRemove
   } = useHooks(workspaceId);
 
@@ -84,7 +84,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               type="file"
               accept=".zip"
               ref={fileInputRef}
-              onChange={handleImportProject}
+              onChange={handleProjectImport}
             />
           </Fragment>
         ]}
