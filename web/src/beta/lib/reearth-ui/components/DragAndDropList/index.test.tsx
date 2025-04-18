@@ -27,7 +27,6 @@ vi.mock("react-sortablejs", () => ({
         data-testid="react-sortable"
         onDragStart={() => onStart?.()}
         onDragEnd={(_) => {
-          // Mock SortableEvent
           const mockEvent = {
             item: { dataset: { id: "item1" } },
             newIndex: 1
