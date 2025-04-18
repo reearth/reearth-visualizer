@@ -7,39 +7,47 @@ import {
   Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
+import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import { AliasSettingProps } from ".";
+type Prop = {
+  publicUrl: string;
+  isStory?: boolean;
+  alias?: string;
+  onClose?: () => void;
+  onSubmit?: (alias?: string) => void;
+};
 
-const EditPanel: FC<AliasSettingProps> = ({
+const EditPanel: FC<Prop> = ({
   alias,
   isStory,
+  publicUrl,
   onClose,
   onSubmit
 }) => {
   const t = useT();
   const theme = useTheme();
+  const { checkAlias } = useProjectFetcher();
+
+  const domainUrl = useMemo(() => {
+    const match = publicUrl.match(/^https?:\/\/([^/]+)/);
+    return match?.[1] ?? "";
+  }, [publicUrl]);
+
   const [localAlias, setLocalAlias] = useState("");
   const [warning, setWaring] = useState(false);
-  const [, setNotification] = useNotification();
 
   const handleChange = useCallback(
-    (value: string) => {
+    async (value: string) => {
+      const result = await checkAlias?.(value);
       if (value === alias) {
-        setWaring(true);
-        setNotification({
-          type: "error",
-          text: isStory
-            ? t("Unable to update published story alias.")
-            : t("Unable to update published project alias.")
-        });
+        setWaring(!result?.available);
       } else setWaring(false);
       setLocalAlias(value);
     },
-    [alias, isStory, setNotification, t]
+    [alias, checkAlias]
   );
 
   const handleSubmit = useCallback(() => {
@@ -80,9 +88,9 @@ const EditPanel: FC<AliasSettingProps> = ({
               <Typography size="body" color={theme.content.weak}>
                 {"https://"}
               </Typography>
-              <TextInput value={localAlias} onChange={handleChange} />
+              <TextInput value={localAlias} onBlur={handleChange} />
               <Typography size="body" color={theme.content.weak}>
-                {".visualizer.reearth.io"}
+                {domainUrl && `.${domainUrl}`}
               </Typography>
             </InputWrapper>
           </CommonField>

@@ -11,14 +11,18 @@ import { PublishItem } from "../hooks";
 
 import PublishedOrUpdatedSection from "./PublishedOrUpdatedSection";
 import PublishOrUpdateSection from "./PublishOrUpdateSection";
-import useAlias from "./useAlias";
 
 type Props = {
   publishItem: PublishItem;
+  isPublishMode: boolean;
   onClose: () => void;
 };
 
-const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
+const PublishOrUpdateModal: FC<Props> = ({
+  publishItem,
+  isPublishMode,
+  onClose
+}) => {
   const t = useT();
 
   const [publishDone, setPublishDone] = useState(false);
@@ -31,7 +35,10 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     publishItem.publishmentStatus === "PUBLIC"
   );
 
-  const { alias, aliasValid } = useAlias({ publishItem });
+  const alias = useMemo(
+    () => (publishItem.alias ? publishItem.alias : publishItem.id),
+    [publishItem.alias, publishItem.id]
+  );
 
   const [isPublishing, setIsPublishing] = useState(false);
   const handleProjectPublish = useCallback(async () => {
@@ -62,16 +69,12 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
   ]);
 
   const title = useMemo(() => {
-    return publishDone
-      ? t("Congratulations!")
-      : !publishItem.isPublished
-        ? publishItem.type === "story"
-          ? t(`Publish your story`)
-          : t(`Publish your scene`)
-        : publishItem.type === "story"
-          ? t(`Update your story`)
-          : t(`Update your scene`);
-  }, [t, publishDone, publishItem]);
+    const isStory = publishItem.type === "story";
+    if (isPublishMode) {
+      return isStory ? t("Publish your story") : t("Publish your scene");
+    }
+    return isStory ? t("Update your story") : t("Update your scene");
+  }, [publishItem.type, isPublishMode, t]);
 
   const primaryButtonText = useMemo(() => {
     return !publishItem.isPublished ? t("Publish") : t("Update");
@@ -94,7 +97,7 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
           <Button
             title={primaryButtonText}
             appearance="primary"
-            disabled={!aliasValid || isPublishing}
+            disabled={isPublishing}
             onClick={handleProjectPublish}
           />
         )}
@@ -103,7 +106,6 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     [
       onClose,
       handleProjectPublish,
-      aliasValid,
       primaryButtonText,
       secondaryButtonText,
       publishDone,
@@ -131,8 +133,9 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
       >
         {publishDone ? (
           <PublishedOrUpdatedSection
-            isStory={publishItem.type === "story"}
+            publishItem={publishItem}
             publicUrl={publicUrl}
+            isPublishMode={isPublishMode}
           />
         ) : (
           <PublishOrUpdateSection
