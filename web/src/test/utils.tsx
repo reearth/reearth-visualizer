@@ -59,12 +59,6 @@ vitest.mock("@reearth/beta/ui/fields/CommonField", () => ({
   )
 }));
 
-vitest.mock("@reearth/services/theme", async (importOriginal) => {
-  const actual = await importOriginal();
-
-  return actual;
-});
-
 class ResizeObserver {
   observe() {}
   unobserve() {}

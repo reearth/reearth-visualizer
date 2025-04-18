@@ -108,7 +108,9 @@ export const CodeInput: FC<CodeInputProps> = ({
   );
 };
 
-const EditorWrapper = styled("div")<{
+const EditorWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "isActive"
+})<{
   isActive?: boolean;
   disabled?: boolean;
 }>(({ theme, isActive, disabled }) => ({
