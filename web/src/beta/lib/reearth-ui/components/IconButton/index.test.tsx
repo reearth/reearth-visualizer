@@ -44,11 +44,9 @@ describe("IconButton Component", () => {
   test("renders with default props", () => {
     render(<IconButton icon="triangle" />);
 
-    // Button should be present
     const button = screen.getByRole("button");
     expect(button).toBeInTheDocument();
 
-    // Icon should be rendered
     const icon = screen.getByTestId("mock-icon");
     expect(icon).toBeInTheDocument();
     expect(icon).toHaveAttribute("data-icon", "triangle");

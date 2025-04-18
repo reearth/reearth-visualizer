@@ -1,6 +1,5 @@
 import * as monacoEditor from "@monaco-editor/react";
 import { render, screen, fireEvent } from "@reearth/test/utils";
-import React from "react";
 import { vi, describe, it, expect, afterEach } from "vitest";
 
 import { CodeInput } from "./index";
@@ -184,18 +183,15 @@ describe("CodeInput", () => {
     const handleBlur = vi.fn();
     render(<CodeInput onBlur={handleBlur} />);
 
-    // Set up the editor instance with the blur handler
     const monacoEditorMock = monacoEditor.default as unknown as ReturnType<
       typeof vi.fn
     >;
     const onMountCallback = monacoEditorMock.mock.calls[0][0].onMount;
     onMountCallback(mockEditorInstance, mockMonacoInstance);
 
-    // Simulate editor blur
     const inputElement = screen.getByTestId("monaco-editor-input");
     fireEvent.blur(inputElement);
 
-    // onBlur should be called with the current value
     expect(handleBlur).toHaveBeenCalled();
     expect(handleBlur).toHaveBeenCalledWith(undefined);
   });
@@ -203,22 +199,17 @@ describe("CodeInput", () => {
   it("updates active state on focus/blur", () => {
     render(<CodeInput />);
 
-    // Set up the editor instance with the focus/blur handlers
     const monacoEditorMock = monacoEditor.default as unknown as ReturnType<
       typeof vi.fn
     >;
     const onMountCallback = monacoEditorMock.mock.calls[0][0].onMount;
     onMountCallback(mockEditorInstance, mockMonacoInstance);
 
-    // Focus the editor
     const inputElement = screen.getByTestId("monaco-editor-input");
     fireEvent.focus(inputElement);
 
-    // Blur the editor
     fireEvent.blur(inputElement);
 
-    // The active state changes are verified through the internal state,
-    // but in real testing we would verify the style changes
     expect(mockEditorInstance.onDidFocusEditorWidget).toHaveBeenCalled();
     expect(mockEditorInstance.onDidBlurEditorText).toHaveBeenCalled();
   });

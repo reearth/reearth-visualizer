@@ -114,6 +114,6 @@ describe("DragAndDropList Component", () => {
     render(<DragAndDropList items={[]} setItems={mockSetItems} />);
 
     const sortableContainer = screen.getByTestId("react-sortable");
-    expect(sortableContainer.children.length).toBe(1); // Only has the hidden test button
+    expect(sortableContainer.children.length).toBe(1);
   });
 });

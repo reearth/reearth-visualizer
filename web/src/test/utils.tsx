@@ -3,7 +3,6 @@ import {
   MockedResponse
 } from "@apollo/client/testing";
 import { render as rtlRender } from "@testing-library/react";
-import React from "react";
 import { vitest } from "vitest";
 
 import { Provider as I18nProvider } from "../services/i18n";

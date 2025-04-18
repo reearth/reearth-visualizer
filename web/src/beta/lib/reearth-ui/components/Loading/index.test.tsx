@@ -34,7 +34,6 @@ describe("Loading Component", () => {
 
     expect(screen.queryByRole("img")).not.toBeInTheDocument();
 
-    // Check the wrapper has the right default position
     const wrapper = loader.parentElement;
     expect(wrapper).toHaveStyle("position: absolute");
   });
@@ -42,7 +41,6 @@ describe("Loading Component", () => {
   test("includes logo when includeLogo is true", () => {
     render(<Loading includeLogo />);
 
-    // Logo should be present
     const logo = screen.getByRole("img");
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute("src", "logo-path.svg");
