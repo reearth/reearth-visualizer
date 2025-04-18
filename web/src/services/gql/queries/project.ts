@@ -208,13 +208,6 @@ export const EXPORT_PROJECT = gql(`
   }
 `);
 
-export const IMPORT_PROJECT = gql(`
-  mutation ImportProject($teamId: ID!, $file: Upload!) {
-    importProject(input: { teamId: $teamId, file: $file }) {
-      projectData
-    }
-  }
-`);
 
 export const GET_DELETED_PROJECTS = gql(`
   query GetDeletedProjects($teamId: ID!) {
