@@ -16,17 +16,21 @@ export type BreadcrumbProp = {
   separator?: ReactNode;
   size?: "normal" | "large";
   onClick?: (id?: string) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 export const Breadcrumb: FC<BreadcrumbProp> = ({
   items = [],
   separator = " / ",
   size,
-  onClick
+  onClick,
+  ariaLabel = "breadcrumb",
+  dataTestid = "breadcrumb"
 }) => {
   const theme = useTheme();
   return (
-    <Wrapper>
+    <Wrapper as="nav" aria-label={ariaLabel} data-testid={dataTestid}>
       {items.map((item, index) => (
         <ItemWrapper key={index}>
           <Item onClick={() => onClick?.(item.id)}>
@@ -37,6 +41,7 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({
                     icon={item.icon}
                     size="small"
                     color={theme.content.weak}
+                    aria-hidden="true"
                   />
                 )}
                 <Typography
@@ -51,7 +56,9 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({
               item.title
             )}
           </Item>
-          {index < items.length - 1 && <Separator>{separator}</Separator>}
+          {index < items.length - 1 && (
+            <Separator aria-hidden="true">{separator}</Separator>
+          )}
         </ItemWrapper>
       ))}
     </Wrapper>
