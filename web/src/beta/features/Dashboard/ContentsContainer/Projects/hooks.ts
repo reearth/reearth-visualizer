@@ -14,7 +14,8 @@ import {
   useState,
   MouseEvent,
   useEffect,
-  useRef
+  useRef,
+  ChangeEvent
 } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -37,9 +38,9 @@ export default (workspaceId?: string) => {
     useUpdateProject,
     useCreateProject,
     useStarredProjectsQuery,
-    useImportProject,
     useUpdateProjectRemove,
-    usePublishProject
+    usePublishProject,
+    useImportProject
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
@@ -154,7 +155,7 @@ export default (workspaceId?: string) => {
         Visualizer.Cesium,
         data.name,
         true,
-        data.description,
+        data.description
       );
     },
     [useCreateProject, workspaceId]
@@ -241,20 +242,17 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
-  const handleImportProject = useCallback(
-    async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProjectImport = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
-      if (file) {
-        const result = await useImportProject({
-          teamId: workspaceId || "",
-          file
-        });
-        if (result.status === "success") {
+      if (file && workspaceId) {
+        const result = await useImportProject(file, workspaceId);
+        if (result.status === "chunk_received") {
           await refetch();
         }
       }
     },
-    [useImportProject, workspaceId, refetch]
+    [refetch, useImportProject, workspaceId]
   );
 
   // project remove
@@ -304,7 +302,7 @@ export default (workspaceId?: string) => {
     handleLayoutChange,
     handleProjectSortChange,
     handleSearch,
-    handleImportProject,
+    handleProjectImport,
     handleProjectRemove
   };
 };

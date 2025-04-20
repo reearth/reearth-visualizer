@@ -35,7 +35,7 @@ const ResourceUrl: FC<ResourceUrlProp> = ({ value, title, onSubmit }) => {
       text: t("Resource URL copied to clipboard")
     });
   }, [setNotification, t, value]);
-    
+
   return (
     <CommonField title={title}>
       <InputWrapper>
@@ -68,9 +68,7 @@ const ResourceUrl: FC<ResourceUrlProp> = ({ value, title, onSubmit }) => {
           offset={4}
           placement="bottom-start"
         >
-          {open && (
-            <EditPanel onClose={handleClose} onSubmit={onSubmit} />
-          )}
+          {open && <EditPanel onClose={handleClose} onSubmit={onSubmit} />}
         </Popup>
       </InputWrapper>
     </CommonField>

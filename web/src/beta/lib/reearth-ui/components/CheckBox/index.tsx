@@ -10,13 +10,7 @@ export type CheckBoxProps = {
   dataTestid?: string;
 };
 
-export const CheckBox: FC<CheckBoxProps> = ({
-  value,
-  disabled,
-  onChange,
-  ariaLabel,
-  dataTestid = "checkbox"
-}) => {
+export const CheckBox: FC<CheckBoxProps> = ({ value, disabled, onChange }) => {
   const [isChecked, setIsChecked] = useState(value);
 
   const theme = useTheme();
@@ -38,17 +32,6 @@ export const CheckBox: FC<CheckBoxProps> = ({
       disabled={disabled}
       role="checkbox"
       aria-checked={isChecked}
-      aria-label={ariaLabel}
-      aria-disabled={disabled}
-      data-testid={dataTestid}
-      tabIndex={disabled ? -1 : 0}
-      onKeyDown={(e) => {
-        if (disabled) return;
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
     >
       {isChecked && (
         <Icon

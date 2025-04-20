@@ -1,9 +1,11 @@
 import { Button, Typography } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "../CommonField";
 
 import EditPanel from "./EditPanel";
 
@@ -95,6 +97,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
             onClick={handleTimePeriodSettingDelete}
             disabled={!timePeriodValues}
             appearance="simple"
+            data-testid="delete-button"
           />
         </TimePeriodWrapper>
         <ButtonWrapper>
@@ -104,6 +107,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
             icon="clock"
             size="small"
             onClick={handleEditorModalOpen}
+            data-testid="set-button"
           />
         </ButtonWrapper>
       </Wrapper>

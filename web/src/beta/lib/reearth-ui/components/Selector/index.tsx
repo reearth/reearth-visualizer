@@ -139,6 +139,7 @@ export const Selector: FC<SelectorProps> = ({
         isOpen={isOpen}
         disabled={disabled}
         width={selectorWidth}
+        data-testid="select-input"
       >
         {!selectedValue?.length ? (
           <Typography size="body" color={theme.content.weaker}>
@@ -213,6 +214,7 @@ export const Selector: FC<SelectorProps> = ({
                 key={item.value ?? ""}
                 isSelected={isSelected(item.value)}
                 onClick={() => handleChange(item.value)}
+                role="option"
               >
                 <Typography size="body" color={theme.content.main}>
                   {item.label ?? item.value}
