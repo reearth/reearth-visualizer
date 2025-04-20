@@ -25,8 +25,8 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({
   separator = " / ",
   size,
   onClick,
-  ariaLabel = "breadcrumb",
-  dataTestid = "breadcrumb"
+  ariaLabel,
+  dataTestid
 }) => {
   const theme = useTheme();
   return (
