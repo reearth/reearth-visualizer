@@ -52,6 +52,7 @@ export const TimePicker: FC<TimePickerProps> = ({
         min="00:00:00"
         max="23:59:59"
         step={1}
+        data-testid="time-picker"
       />
     </Wrapper>
   );
