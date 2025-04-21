@@ -72,6 +72,7 @@ export const ColorInput: FC<ColorInputProps> = ({
             disabled={disabled}
             aria-label={ariaLabel}
             aria-valuetext={colorValue}
+            data-testid="color-input-swatch"
           />
         }
       >

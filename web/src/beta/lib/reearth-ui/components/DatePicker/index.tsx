@@ -61,6 +61,7 @@ export const DatePicker: FC<DatePickerProps> = ({
         type="date"
         aria-label={ariaLabel}
         title={title}
+        data-testid="date-picker-input"
       />
     </Wrapper>
   );
