@@ -5,13 +5,23 @@ export type ModalProps = {
   visible: boolean;
   children: ReactNode;
   size?: "small" | "medium" | "large";
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
+  dataTestid?: string;
 };
 
 const DEFAULT_SMALL_WIDTH = 416;
 const DEFAULT_MEDIUM_WIDTH = 572;
 const DEFAULT_LARGE_WIDTH = 778;
 
-export const Modal: FC<ModalProps> = ({ visible, children, size }) => {
+export const Modal: FC<ModalProps> = ({
+  visible,
+  children,
+  size,
+  ariaLabelledby,
+  ariaDescribedby,
+  dataTestid
+}) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const modalWidth = useMemo(
@@ -26,7 +36,15 @@ export const Modal: FC<ModalProps> = ({ visible, children, size }) => {
 
   return !visible ? null : (
     <Wrapper>
-      <ContentWrapper modalWidth={modalWidth} ref={ref}>
+      <ContentWrapper
+        modalWidth={modalWidth}
+        ref={ref}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={ariaLabelledby}
+        aria-describedby={ariaDescribedby}
+        data-testid={dataTestid}
+      >
         {children}
       </ContentWrapper>
     </Wrapper>

@@ -1,5 +1,12 @@
 import { styled } from "@reearth/services/theme";
-import { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import {
+  FC,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+  useMemo
+} from "react";
 
 import { Icon } from "../Icon";
 import { Typography } from "../Typography";
@@ -19,6 +26,8 @@ export type CollapseProps = {
   actions?: ReactNode;
   children: ReactNode;
   onCollapse?: (collapsed: boolean) => void;
+  id?: string;
+  dataTestid?: string;
 };
 
 export const Collapse: FC<CollapseProps> = ({
@@ -35,9 +44,18 @@ export const Collapse: FC<CollapseProps> = ({
   noShrink,
   actions,
   children,
-  onCollapse
+  onCollapse,
+  id,
+  dataTestid
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed ?? false);
+
+  const contentId = useMemo(
+    () =>
+      id ||
+      `collapse-content-${dataTestid || Math.floor(Math.random() * 10000)}`,
+    [id, dataTestid]
+  );
 
   useEffect(() => {
     setIsCollapsed(collapsed ?? false);
@@ -50,7 +68,11 @@ export const Collapse: FC<CollapseProps> = ({
   }, [disabled, isCollapsed, onCollapse]);
 
   return (
-    <StyledWrapper isCollapsed={isCollapsed} noShrink={noShrink}>
+    <StyledWrapper
+      isCollapsed={isCollapsed}
+      noShrink={noShrink}
+      data-testid={dataTestid}
+    >
       <StyledHeader
         onClick={handleCollapse}
         isCollapsed={isCollapsed}
@@ -58,6 +80,8 @@ export const Collapse: FC<CollapseProps> = ({
         headerBg={headerBg}
         iconPosition={iconPosition}
         disabled={disabled}
+        aria-expanded={!isCollapsed}
+        aria-controls={contentId}
       >
         <TitleWrapper>
           <Typography
@@ -75,13 +99,18 @@ export const Collapse: FC<CollapseProps> = ({
           {actions}
           {!disabled && (
             <IconWrapper isCollapsed={isCollapsed} iconPosition={iconPosition}>
-              <Icon size="small" icon="triangle" />
+              <Icon size="small" icon="triangle" aria-hidden="true" />
             </IconWrapper>
           )}
         </ActionsWrapper>
       </StyledHeader>
       {!isCollapsed && (
-        <ChildWrapper size={size} background={background} noPadding={noPadding}>
+        <ChildWrapper
+          id={contentId}
+          size={size}
+          background={background}
+          noPadding={noPadding}
+        >
           {children}
         </ChildWrapper>
       )}
