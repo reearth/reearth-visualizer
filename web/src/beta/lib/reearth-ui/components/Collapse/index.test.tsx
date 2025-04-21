@@ -155,11 +155,19 @@ describe("Collapse Component", () => {
       </Collapse>
     );
 
+    const icon = screen.getByTestId("icon-triangle");
+    const title = screen.getByText("Right Icon");
+    expect(title).toBeInTheDocument();
+    expect(icon).toBeInTheDocument();
+
     rerender(
       <Collapse title="Left Icon" iconPosition="left">
         <div>Content</div>
       </Collapse>
     );
+
+    const leftIcon = screen.getByTestId("icon-triangle");
+    expect(leftIcon).toBeInTheDocument();
 
     expect(screen.getByText("Left Icon")).toBeInTheDocument();
   });
