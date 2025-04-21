@@ -146,11 +146,6 @@ describe("Markdown Component", () => {
     expect(link).toHaveTextContent("Test Link");
   });
 
-  test("handles dark mode based on background color", () => {
-    const darkBackground = "#000000";
-    render(<Markdown backgroundColor={darkBackground}>Dark content</Markdown>);
-  });
-
   test("renders empty string when no children provided", () => {
     render(<Markdown />);
 
