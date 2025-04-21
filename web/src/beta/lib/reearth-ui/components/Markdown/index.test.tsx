@@ -125,6 +125,12 @@ describe("Markdown Component", () => {
     };
 
     render(<Markdown styles={customStyles}>Styled content</Markdown>);
+    const markdownWrapper = screen.getByTestId("markdown-wrapper");
+
+    expect(markdownWrapper).toHaveStyle({
+      fontSize: "16px",
+      fontWeight: "700"
+    });
   });
 
   test("renders custom link component that opens in new tab", () => {
