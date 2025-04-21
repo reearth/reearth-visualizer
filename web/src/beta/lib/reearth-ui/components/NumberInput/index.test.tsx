@@ -76,12 +76,11 @@ describe("NumberInput Component", () => {
     expect(mockOnBlur).toHaveBeenCalledWith(7.5);
   });
 
-  test("handles Enter key to trigger blur", () => {
+  test("calls onBlur after change and blur", () => {
     render(<NumberInput onBlur={mockOnBlur} />);
 
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "42" } });
-    fireEvent.keyDown(input, { key: "Enter" });
     fireEvent.blur(input);
     expect(mockOnBlur).toHaveBeenCalledWith(42);
   });
