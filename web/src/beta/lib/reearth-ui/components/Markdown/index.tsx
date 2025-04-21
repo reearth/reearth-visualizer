@@ -45,6 +45,7 @@ export const Markdown: FC<MarkdownProps> = ({
     <Wrapper
       className={className ?? "markdown-body"}
       styles={styles}
+      data-testid="markdown-wrapper"
       dark={dark}
       onClick={onClick}
       onDoubleClick={onDoubleClick}

@@ -66,6 +66,7 @@ export const ColorInput: FC<ColorInputProps> = ({
             status={isSwatchFocused}
             size={size}
             disabled={disabled}
+            data-testid="color-input-swatch"
           />
         }
       >
