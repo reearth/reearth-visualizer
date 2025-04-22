@@ -403,10 +403,10 @@ No description.: 説明なし
 Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
 'Repository url:': 'リポジトリURL:'
+Alias cannot start with 'project-' or 'story-': ''
 Edit Alias: エイリアスを編集
 You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
-The name is already taken by other users. Please choose a different name.: この名前はすでに他のユーザーが使用しています。別の名前を選んでください。
 Your Alias: あなたのエイリアス'
 clean: ''
 Public Info: 公開情報
@@ -580,7 +580,6 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Failed to check alias.: ''
 Successfully checked alias!: ''
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト

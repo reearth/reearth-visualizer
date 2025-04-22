@@ -133,13 +133,7 @@ export default () => {
       });
       
       if (error || !data?.checkProjectAlias) {
-        console.log("GraphQL: Failed to check alias.", error);
-        setNotification({
-          type: "error",
-          text: t("Failed to check alias.")
-        });
-
-        return { status: "error" };
+        return { status: "error", error };
       }
 
       setNotification({

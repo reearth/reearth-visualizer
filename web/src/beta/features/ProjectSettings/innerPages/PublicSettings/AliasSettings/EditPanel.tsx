@@ -31,23 +31,53 @@ const EditPanel: FC<Prop> = ({
   const theme = useTheme();
   const { checkAlias } = useProjectFetcher();
 
-  const domainUrl = useMemo(() => {
-    const match = publicUrl.match(/^https?:\/\/([^/]+)/);
-    return match?.[1] ?? "";
+  const [prefix, suffix] = useMemo(() => {
+    if (!publicUrl) return ["", ""];
+    const aliasMatch = publicUrl.match(/^(https?:\/\/[^?]+)\?alias=/);
+    if (aliasMatch) {
+      return [aliasMatch[1] + "?alias=", ""];
+    }
+
+    const subdomainMatch = publicUrl.match(/^https?:\/\/([^\\.]+)\.(.+)$/);
+    if (subdomainMatch) {
+      return ["https://", "." + subdomainMatch[2]];
+    }
+
+    return ["", ""];
   }, [publicUrl]);
 
-  const [localAlias, setLocalAlias] = useState("");
-  const [warning, setWaring] = useState(false);
+  const [localAlias, setLocalAlias] = useState(alias);
+  const [warning, setWaring] = useState("");
+  const [isAliasValid, setIsAliasValid] = useState(true);
 
-  const handleChange = useCallback(
+  const handleChange = useCallback((value: string) => {
+    setLocalAlias(value);
+    setWaring("");
+    setIsAliasValid(false);
+  }, []);
+
+  const handleBlur = useCallback(
     async (value: string) => {
+      if (/^(project-|story-)/.test(value)) {
+        setWaring(t("Alias cannot start with 'project-' or 'story-'"));
+        return;
+      }
+
       const result = await checkAlias?.(value);
-      if (value === alias) {
-        setWaring(!result?.available);
-      } else setWaring(false);
-      setLocalAlias(value);
+      if (!result?.available) {
+        setWaring(result?.error?.message || "");
+        setIsAliasValid(false);
+      } else {
+        setWaring("");
+        setIsAliasValid(true);
+      }
     },
-    [alias, checkAlias]
+    [checkAlias, t]
+  );
+
+  const isDisabled = useMemo(
+    () => !!warning || localAlias === alias || !isAliasValid,
+    [alias, localAlias, warning, isAliasValid]
   );
 
   const handleSubmit = useCallback(() => {
@@ -67,7 +97,7 @@ const EditPanel: FC<Prop> = ({
               extendWidth
               title={t("Apply")}
               appearance="primary"
-              disabled={warning || !localAlias}
+              disabled={isDisabled}
               onClick={handleSubmit}
             />
           </ButtonWrapper>
@@ -84,14 +114,22 @@ const EditPanel: FC<Prop> = ({
                 )}
           </Typography>
           <CommonField title={"Alias"}>
-            <InputWrapper>
-              <Typography size="body" color={theme.content.weak}>
-                {"https://"}
-              </Typography>
-              <TextInput value={localAlias} onBlur={handleChange} />
-              <Typography size="body" color={theme.content.weak}>
-                {domainUrl && `.${domainUrl}`}
-              </Typography>
+            <InputWrapper hasSuffix={!!suffix}>
+              {prefix && (
+                <Typography size="body" color={theme.content.weak}>
+                  {prefix}
+                </Typography>
+              )}
+              <TextInput
+                value={localAlias}
+                onBlur={handleBlur}
+                onChange={handleChange}
+              />
+              {suffix && (
+                <Typography size="body" color={theme.content.weak}>
+                  {suffix}
+                </Typography>
+              )}
             </InputWrapper>
           </CommonField>
 
@@ -100,9 +138,7 @@ const EditPanel: FC<Prop> = ({
               <>
                 <Icon icon="close" />
                 <Typography size="footnote" color={theme.dangerous.main}>
-                  {t(
-                    "The name is already taken by other users. Please choose a different name."
-                  )}
+                  {warning}
                 </Typography>
               </>
             ) : (
@@ -124,11 +160,14 @@ const Wrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal
 }));
 
-const InputWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.micro
-}));
+const InputWrapper = styled("div")<{ hasSuffix?: boolean }>(
+  ({ theme, hasSuffix }) => ({
+    display: "flex",
+    flexDirection: hasSuffix ? "row" : "column",
+    alignItems: hasSuffix ? "center" : undefined,
+    gap: theme.spacing.micro
+  })
+);
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",

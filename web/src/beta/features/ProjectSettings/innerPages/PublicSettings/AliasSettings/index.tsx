@@ -66,7 +66,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
   }, [alias, publicUrl, setNotification, t]);
 
   const handleSubmitAlias = useCallback(
-    async (alias?: string) => {
+    (alias?: string) => {
       onUpdateAlias?.({
         alias
       });
