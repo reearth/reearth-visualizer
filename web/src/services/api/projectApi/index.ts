@@ -41,6 +41,7 @@ import { useNotification } from "../../state";
 import { type PublishStatus } from "../publishTypes";
 import { toGqlStatus } from "../publishTypes";
 import { MutationReturn } from "../types";
+import { handleGqlError } from "../utils";
 
 export type Project = ProjectPayload["project"];
 const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
@@ -48,6 +49,7 @@ const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+
   const { axios } = useRestful();
 
   const useProjectQuery = useCallback((projectId?: string) => {
@@ -131,9 +133,10 @@ export default () => {
       const { data, error } = await fetchCheckAlias({
         variables: { alias }
       });
-      
+
       if (error || !data?.checkProjectAlias) {
-        return { status: "error", error };
+        const errors = handleGqlError(error);
+        return { status: "error", errors };
       }
 
       setNotification({

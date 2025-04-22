@@ -65,7 +65,11 @@ const EditPanel: FC<Prop> = ({
 
       const result = await checkAlias?.(value);
       if (!result?.available) {
-        setWaring(result?.error?.message || "");
+        const description = result?.errors?.find(
+          (e) => !!e.description
+        )?.description;
+
+        setWaring(description as string);
         setIsAliasValid(false);
       } else {
         setWaring("");
