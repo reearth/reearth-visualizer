@@ -2,29 +2,29 @@ import { Locator, Page } from "@playwright/test";
 
 export class DashBoardPage {
   projects: Locator = this.page.getByRole("link", {
-    name: /Projects/i,
+    name: /Projects/i
   });
 
   assets: Locator = this.page.getByRole("link", {
-    name: /Assets/i,
+    name: /Assets/i
   });
 
   recycleBin: Locator = this.page.getByRole("link", {
-    name: /Recycle bin/i,
+    name: /Recycle bin/i
   });
 
   starred: Locator = this.page.getByText(/Starred/i);
 
   pluginPlayground: Locator = this.page.getByRole("link", {
-    name: /Plugin Playground/i,
+    name: /Plugin Playground/i
   });
 
   documentation: Locator = this.page.getByRole("link", {
-    name: /Documentation/i,
+    name: /Documentation/i
   });
 
   community: Locator = this.page.getByRole("link", {
-    name: /Community/i,
+    name: /Community/i
   });
 
   userProfileDropdown: Locator = this.page.locator("div.css-1yc53zh svg");

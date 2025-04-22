@@ -8,13 +8,13 @@ export class LoginPage {
   passwordInput: Locator = this.page.getByLabel("Password");
   loginButton: Locator = this.page.getByRole("button", { name: "Log In" });
   errorMessageUsername: Locator = this.page.getByRole("alert", {
-    name: /Username can't be blank/i,
+    name: /Username can't be blank/i
   });
   errorMessagePassword: Locator = this.page.locator(
     "#auth0-lock-error-msg-username .auth0-lock-error-invalid-hint"
   );
   forgotPasswordLink: Locator = this.page.getByRole("link", {
-    name: /Don't remember your password/i,
+    name: /Don't remember your password/i
   });
   forgotPasswordError: Locator = this.page.locator(
     "#auth0-lock-error-msg-password .auth0-lock-error-invalid-hint"
