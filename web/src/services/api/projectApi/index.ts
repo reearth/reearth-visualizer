@@ -4,7 +4,7 @@ import {
   useLazyQuery,
   useMutation,
   useQuery
-} from "@apollo/client";
+, ApolloError } from "@apollo/client";
 import { GetProjectsQueryVariables } from "@reearth/services/gql";
 import {
   UpdateProjectInput,
@@ -32,6 +32,7 @@ import {
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
+import { GQLError } from "@reearth/services/state/gqlErrorHandling";
 import { useCallback, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 
@@ -40,11 +41,38 @@ import { useRestful } from "../../restful";
 import { useNotification } from "../../state";
 import { type PublishStatus } from "../publishTypes";
 import { toGqlStatus } from "../publishTypes";
-import { MutationReturn } from "../types";
-import { handleGqlError } from "../utils";
+import { MutationReturn } from "../types"; // 16MB
+
 
 export type Project = ProjectPayload["project"];
-const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
+const CHUNK_SIZE = 16 * 1024 * 1024;
+
+// This function will be handled on util in handle errors Pr
+const handleGqlError = (error?: ApolloError) => {
+  if (!error?.networkError && !error?.graphQLErrors) return;
+  let errors: GQLError[] = [];
+
+  if (error.networkError?.message) {
+    errors = [
+      {
+        message: error.networkError?.message,
+        description: error.networkError.message
+      }
+    ];
+  } else {
+    errors =
+      error.graphQLErrors?.map((gqlError) => {
+        return {
+          type: gqlError.path?.[0].toString(),
+          message: gqlError.message,
+          code: gqlError.extensions?.code as string,
+          description: gqlError.extensions?.description as string
+        };
+      }) ?? [];
+  }
+  return errors;
+};
+
 
 export default () => {
   const t = useT();
