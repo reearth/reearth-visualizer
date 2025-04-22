@@ -14,6 +14,7 @@ export type PanelProps = {
   background?: "default" | "normal" | string;
   areaRef?: React.RefObject<AreaRef>;
   showCollapseArea?: boolean;
+  dataTestid?: string;
   children?: ReactNode;
 };
 
@@ -27,6 +28,7 @@ export const Panel: FC<PanelProps> = ({
   background = "default",
   areaRef,
   showCollapseArea,
+  dataTestid,
   children
 }) => {
   const theme = useTheme();
@@ -98,7 +100,11 @@ export const Panel: FC<PanelProps> = ({
           {children}
         </Collapse>
       ) : (
-        <ContentWrapper background={backgroundStyle} extend={extend}>
+        <ContentWrapper
+          background={backgroundStyle}
+          extend={extend}
+          data-testId={dataTestid}
+        >
           {children}
         </ContentWrapper>
       )}

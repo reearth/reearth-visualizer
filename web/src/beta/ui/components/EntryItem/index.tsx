@@ -29,6 +29,7 @@ export interface EntryItemProps {
   optionsMenu?: PopupMenuItem[];
   optionsMenuWidth?: number;
   actions?: EntryItemAction[];
+  dataTestid?: string;
   onClick?: (e: MouseEvent) => void;
 }
 
@@ -41,6 +42,7 @@ export const EntryItem: FC<EntryItemProps> = ({
   optionsMenu,
   optionsMenuWidth,
   actions,
+  dataTestid,
   onClick
 }) => {
   const t = useT();
@@ -74,6 +76,7 @@ export const EntryItem: FC<EntryItemProps> = ({
       hovered={hovered}
       highlight={highlighted}
       smallPaddingRight={!!optionsMenu}
+      data-testId={dataTestid}
     >
       <MainContent
         className={dragHandleClassName}
