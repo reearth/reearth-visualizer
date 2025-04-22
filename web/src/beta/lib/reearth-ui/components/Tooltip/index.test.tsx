@@ -1,4 +1,4 @@
-import { screen, render } from "@reearth/test/utils";
+import { screen, render, fireEvent } from "@reearth/test/utils";
 import { describe, test, expect } from "vitest";
 
 import Tooltip from "./index";
@@ -37,5 +37,10 @@ describe("Tooltip Component", () => {
     render(<Tooltip type="custom" text="Help text" />);
 
     expect(screen.getByText("TIPS")).toBeInTheDocument();
+
+    const trigger = screen.getByText("TIPS");
+    fireEvent.click(trigger);
+
+    expect(screen.getByText("Help text")).toBeInTheDocument();
   });
 });

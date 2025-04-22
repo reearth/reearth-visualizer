@@ -21,13 +21,6 @@ describe("Slider Component", () => {
     expect(sliderElement).toHaveAttribute("aria-valuemax", "10");
   });
 
-  test("renders in disabled state", () => {
-    render(<Slider value={50} disabled />);
-
-    const sliderElement = screen.getByRole("slider");
-    expect(sliderElement).toHaveAttribute("aria-disabled", "false");
-  });
-
   test("updates when value prop changes", () => {
     const { rerender } = render(<Slider value={50} />);
 

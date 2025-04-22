@@ -3,12 +3,6 @@ import { describe, test, expect, vi } from "vitest";
 
 import { Selector } from "./index";
 
-global.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
-
 describe("Selector Component", () => {
   const options = [
     { value: "option1", label: "Option 1" },

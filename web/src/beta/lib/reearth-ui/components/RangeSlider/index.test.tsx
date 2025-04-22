@@ -18,6 +18,11 @@ describe("RangeSlider Component", () => {
 
     const sliderElement = document.querySelector(".rc-slider");
     expect(sliderElement).toBeInTheDocument();
+    const handles = document.querySelectorAll(".rc-slider-handle");
+    const firstHandle = handles[0] as HTMLElement;
+    const secondHandle = handles[1] as HTMLElement;
+    expect(firstHandle.style.left).toBe("30%");
+    expect(secondHandle.style.left).toBe("70%");
   });
 
   test("renders in disabled state", () => {
@@ -32,5 +37,8 @@ describe("RangeSlider Component", () => {
 
     const sliderElement = document.querySelector(".rc-slider");
     expect(sliderElement).toBeInTheDocument();
+
+    const slider = sliderElement as HTMLElement;
+    expect(slider.getAttribute("step") || "1").toBe("1");
   });
 });

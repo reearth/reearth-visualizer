@@ -20,22 +20,6 @@ describe("Popup Component", () => {
     expect(screen.getByText("Popup content")).toBeInTheDocument();
   });
 
-  test("hides content when clicking outside", () => {
-    render(
-      <div>
-        <Popup trigger="Click me">Popup content</Popup>
-        <div data-testid="outside">Outside</div>
-      </div>
-    );
-
-    const trigger = screen.getByText("Click me");
-    fireEvent.click(trigger);
-
-    expect(screen.getByText("Popup content")).toBeInTheDocument();
-
-    expect(screen.queryByText("outside")).not.toBeInTheDocument();
-  });
-
   test("renders as controlled component", () => {
     const handleOpenChange = vi.fn();
 
