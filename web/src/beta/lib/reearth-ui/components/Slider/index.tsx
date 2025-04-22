@@ -53,7 +53,7 @@ export const Slider: FC<SliderProps> = ({
   );
 
   return (
-    <SliderStyled data-testid="slider" disabled={!!disabled}>
+    <SliderStyled disabled={!!disabled}>
       <SliderWithTooltip
         value={currentValue}
         min={min}
