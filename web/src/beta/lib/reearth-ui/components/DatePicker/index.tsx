@@ -49,6 +49,7 @@ export const DatePicker: FC<DatePickerProps> = ({
         onBlur={handleBlur}
         onFocus={handleFocus}
         type="date"
+        data-testid="date-picker-input"
       />
     </Wrapper>
   );
