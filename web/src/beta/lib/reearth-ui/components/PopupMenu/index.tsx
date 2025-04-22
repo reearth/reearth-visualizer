@@ -5,7 +5,7 @@ import {
   PopupProps
 } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, ReactNode, useCallback, useEffect, useState } from "react";
+import { FC, ReactNode, useCallback, useEffect, useState, useId } from "react";
 import { Link } from "react-router-dom";
 
 const MULTLEVEL_OFFSET = 12;
@@ -50,6 +50,8 @@ export type PopupMenuProps = {
   triggerOnHover?: boolean;
   openMenu?: boolean;
   onOpenChange?: (open: boolean) => void;
+  dataTestid?: string;
+  ariaLabelledby?: string;
 };
 
 export const PopupMenu: FC<PopupMenuProps> = ({
@@ -65,10 +67,15 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   icon,
   openMenu = false,
   size = "normal",
-  onOpenChange
+  onOpenChange,
+  dataTestid,
+  ariaLabelledby
 }) => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
+
+  const uniqueId = useId();
+  const triggerElementId = ariaLabelledby || `${uniqueId}-trigger`;
 
   useEffect(() => {
     setOpen(openMenu);
@@ -112,6 +119,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           onClick?.(id);
           handlePopOver(false);
         }}
+        role="menuitem"
+        aria-checked={selected ? "true" : undefined}
+        data-testid={dataTestid ? `${dataTestid}-item-${index}` : undefined}
       >
         {icon && (
           <IconWrapper>
@@ -124,7 +134,16 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         )}
         <SubItem>
           {subItem ? (
-            <PopupMenu label={title} menu={subItem} width={width} nested />
+            <PopupMenu
+              label={title}
+              menu={subItem}
+              width={width}
+              nested
+              dataTestid={
+                dataTestid ? `${dataTestid}-submenu-${index}` : undefined
+              }
+              ariaLabelledby={triggerElementId}
+            />
           ) : path ? (
             <StyledLink to={disabled ? "" : path}>
               <TitleWrapper disabled={disabled} flex={!!tileComponent}>
@@ -172,7 +191,12 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     const customSubMenu = Object.values(groups) as PopupMenuItem[][];
 
     return (
-      <PopupMenuWrapper width={width} nested={nested}>
+      <PopupMenuWrapper
+        width={width}
+        nested={nested}
+        role="menu"
+        data-testid={dataTestid ? `${dataTestid}-submenu` : undefined}
+      >
         {customSubMenu.map((item, index) => (
           <Group key={index}>
             <SubMenuHeader>
@@ -193,6 +217,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         width={width}
         nested={nested}
         extendContentWidth={extendContentWidth}
+        role="menu"
+        aria-labelledby={triggerElementId}
+        data-testid={dataTestid}
       >
         {menuItems.map((item, index) => {
           return renderSingleItem(item, index);
@@ -203,7 +230,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
 
   const renderTrigger = () => {
     return typeof label === "string" ? (
-      <LabelWrapper size={size} nested={!!nested}>
+      <LabelWrapper size={size} nested={!!nested} id={triggerElementId}>
         {icon && <Icon icon={icon} size="small" />}
         <Label nested={!!nested}>{label}</Label>
         <Icon
@@ -213,9 +240,11 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         />
       </LabelWrapper>
     ) : label ? (
-      label
+      <div id={triggerElementId}>{label}</div>
     ) : icon ? (
-      <Icon icon={icon} size="small" />
+      <div id={triggerElementId}>
+        <Icon icon={icon} size="small" />
+      </div>
     ) : null;
   };
 
@@ -232,7 +261,12 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       extendContentWidth={extendContentWidth}
       autoClose
       trigger={
-        <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>
+        <TriggerWrapper
+          onClick={() => handlePopOver()}
+          nested={nested}
+          data-testid={dataTestid ? `${dataTestid}-trigger` : undefined}
+          aria-expanded={open}
+        >
           {renderTrigger()}
         </TriggerWrapper>
       }

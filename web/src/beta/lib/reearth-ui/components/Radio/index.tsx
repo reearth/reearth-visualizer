@@ -8,6 +8,8 @@ export type RadioProps = {
   checked?: boolean;
   content?: ReactNode;
   onChange?: (value: string) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 export const Radio: FC<RadioProps> = ({
@@ -16,7 +18,9 @@ export const Radio: FC<RadioProps> = ({
   disabled,
   checked,
   content,
-  onChange
+  onChange,
+  ariaLabel,
+  dataTestid
 }) => {
   const handleChange = () => {
     if (disabled) return;
@@ -24,7 +28,7 @@ export const Radio: FC<RadioProps> = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper data-testid={dataTestid}>
       <RadioWrapper onClick={handleChange}>
         <RadioInput
           type="radio"
@@ -32,8 +36,9 @@ export const Radio: FC<RadioProps> = ({
           checked={checked}
           disabled={disabled}
           onChange={handleChange}
+          aria-label={!label ? ariaLabel : undefined}
         />
-        <RadioButton checked={checked} disabled={disabled}>
+        <RadioButton checked={checked} disabled={disabled} aria-hidden="true">
           {checked && !disabled && <RadioIndicator checked={checked} />}
         </RadioButton>
         {label && <RadioLabel disabled={disabled}>{label}</RadioLabel>}

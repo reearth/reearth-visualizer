@@ -14,6 +14,8 @@ export type RangeSliderProps = {
   disabled?: boolean;
   onChange?: (value: number[]) => void;
   onChangeComplete?: (value: number[]) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 const calculateStep = (min?: number, max?: number, step?: number): number => {
@@ -39,7 +41,9 @@ export const RangeSlider: FC<RangeSliderProps> = ({
   step,
   disabled,
   onChange,
-  onChangeComplete
+  onChangeComplete,
+  ariaLabel,
+  dataTestid
 }) => {
   const calculatedStep = useMemo(
     () => calculateStep(min, max, step),
@@ -60,7 +64,7 @@ export const RangeSlider: FC<RangeSliderProps> = ({
   );
 
   return (
-    <SliderStyled disabled={!!disabled}>
+    <SliderStyled disabled={!!disabled} data-testid={dataTestid}>
       <RangeSliderWithTooltip
         value={currentValue}
         min={min}
@@ -70,6 +74,7 @@ export const RangeSlider: FC<RangeSliderProps> = ({
         onAfterChange={onChangeComplete}
         step={calculatedStep}
         draggableTrack
+        aria-label={ariaLabel}
       />
     </SliderStyled>
   );

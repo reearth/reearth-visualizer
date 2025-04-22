@@ -1,12 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import {
-  FC,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-  useMemo
-} from "react";
+import { FC, ReactNode, useCallback, useEffect, useState, useId } from "react";
 
 import { Icon } from "../Icon";
 import { Typography } from "../Typography";
@@ -50,12 +43,8 @@ export const Collapse: FC<CollapseProps> = ({
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed ?? false);
 
-  const contentId = useMemo(
-    () =>
-      id ||
-      `collapse-content-${dataTestid || Math.floor(Math.random() * 10000)}`,
-    [id, dataTestid]
-  );
+  const uniqueId = useId();
+  const contentId = id || `${uniqueId}-content`;
 
   useEffect(() => {
     setIsCollapsed(collapsed ?? false);

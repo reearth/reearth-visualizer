@@ -1,6 +1,6 @@
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useId } from "react";
 
 export type ModalPanelProps = {
   title?: string;
@@ -9,6 +9,9 @@ export type ModalPanelProps = {
   layout?: "common";
   onCancel?: () => void;
   appearance?: "simple" | "normal";
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
+  dataTestid?: string;
 };
 
 export const ModalPanel: FC<ModalPanelProps> = ({
@@ -18,18 +21,31 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   layout,
   onCancel,
   appearance = "normal",
+  ariaLabelledby,
+  ariaDescribedby,
+  dataTestid
 }) => {
+  const titleId = useId();
+  const headingId = ariaLabelledby || (title ? titleId : undefined);
+
   return (
-    <Wrapper>
+    <Wrapper
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={headingId}
+      aria-describedby={ariaDescribedby}
+      data-testid={dataTestid}
+    >
       {appearance !== "simple" && (
         <HeaderWrapper>
-          <Title>{title}</Title>
+          <Title id={title ? titleId : undefined}>{title}</Title>
           <Button
             iconButton
             icon="close"
             size="small"
             onClick={onCancel}
             appearance="simple"
+            ariaLabel="Close"
           />
         </HeaderWrapper>
       )}

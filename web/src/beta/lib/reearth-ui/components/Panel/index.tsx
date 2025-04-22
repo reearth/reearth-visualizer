@@ -1,6 +1,6 @@
 import { Button } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useId } from "react";
 
 const DEFAULT_PANEL_WIDTH = 286;
 
@@ -10,6 +10,7 @@ export type PanelProps = {
   children: ReactNode;
   actions?: ReactNode;
   onCancel?: () => void;
+  dataTestid?: string;
 };
 
 export const Panel: FC<PanelProps> = ({
@@ -17,19 +18,30 @@ export const Panel: FC<PanelProps> = ({
   width,
   children,
   actions,
-  onCancel
+  onCancel,
+  dataTestid
 }) => {
+  const uniqueId = useId();
+  const titleId = `${uniqueId}-title`;
+
   return (
-    <Wrapper width={width}>
+    <Wrapper
+      width={width}
+      role="region"
+      // Only apply aria-labelledby when title exists
+      aria-labelledby={title ? titleId : undefined}
+      data-testid={dataTestid}
+    >
       {title && (
         <HeaderWrapper>
-          <Title>{title}</Title>
+          <Title id={titleId}>{title}</Title>
           <Button
             iconButton
             icon="close"
             size="small"
             onClick={onCancel}
             appearance="simple"
+            ariaLabel="Close"
           />
         </HeaderWrapper>
       )}
