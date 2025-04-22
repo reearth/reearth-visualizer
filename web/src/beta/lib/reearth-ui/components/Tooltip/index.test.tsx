@@ -43,4 +43,16 @@ describe("Tooltip Component", () => {
 
     expect(screen.getByText("Help text")).toBeInTheDocument();
   });
+
+  test("displays tooltip content when hovering over trigger", async () => {
+    render(<Tooltip type="custom" text="Help information" />);
+
+    const trigger = screen.getByText("TIPS");
+    await fireEvent.click(trigger);
+
+    expect(screen.getByText("Help information")).toBeInTheDocument();
+
+    await fireEvent.click(trigger);
+    expect(screen.queryByText("Help information")).not.toBeInTheDocument();
+  });
 });
