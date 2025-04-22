@@ -122,7 +122,9 @@ export const NumberInput: FC<NumberInputProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{
+const Wrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "extendWidth"
+})<{
   size: "normal" | "small";
   status: "default" | "active";
   extendWidth?: boolean;

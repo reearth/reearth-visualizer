@@ -196,7 +196,9 @@ export const Popup = ({
   );
 };
 
-const TriggerWrapper = styled("div")<{
+const TriggerWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "extendWidth"
+})<{
   disabled?: boolean;
   extendWidth?: boolean;
 }>(({ disabled, extendWidth }) => ({

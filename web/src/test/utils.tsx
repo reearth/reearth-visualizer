@@ -29,6 +29,44 @@ vitest.mock("react-inlinesvg", () => {
   };
 });
 
+vitest.mock("@reearth/services/i18n", () => ({
+  useT: () => (key: string) => key,
+  Provider: ({ children }: { children: React.ReactNode }) => <>{children}</>
+}));
+
+vitest.mock("@reearth/services/state", () => ({
+  useNotification: () => [null, vitest.fn()],
+  useProjectId: () => ["project-id"],
+  useWorkspace: () => [{ id: "workspace-id" }],
+  useCurrentTheme: () => [undefined, vitest.fn()]
+}));
+
+vitest.mock("@reearth/beta/ui/fields/CommonField", () => ({
+  default: ({
+    children,
+    title,
+    description
+  }: {
+    children?: React.ReactNode;
+    title?: string;
+    description?: string;
+  }) => (
+    <div data-testid="common-field">
+      {title && <div data-testid="field-title">{title}</div>}
+      {description && <div data-testid="field-description">{description}</div>}
+      {children}
+    </div>
+  )
+}));
+
+class ResizeObserver {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+global.ResizeObserver = ResizeObserver;
+
 const render = (
   ui: React.ReactElement,
   queryMocks?: readonly MockedResponse<Record<string, unknown>>[],

@@ -1,4 +1,4 @@
-import { useHasActiveGQLTasks } from "@reearth/services/state";
+import { useHasActiveApiTasks } from "@reearth/services/state";
 import { keyframes, styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 
@@ -8,7 +8,7 @@ const offsetY = 16;
 const CursorStatus: FC = () => {
   const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [inView, setInView] = useState(true);
-  const [enabled] = useHasActiveGQLTasks();
+  const [enabled] = useHasActiveApiTasks();
 
   const animationFrameId = useRef<number | null>(null);
   const handleMouseMove = useCallback((event: MouseEvent) => {

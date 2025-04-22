@@ -1,10 +1,12 @@
 import { Button, Popup, TextInput } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { isValidDateTimeFormat } from "@reearth/beta/utils/time";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-import CommonField, { CommonFieldProps } from "../CommonField";
 
 import EditPanel from "./EditPanel";
 

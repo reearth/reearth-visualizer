@@ -121,7 +121,9 @@ export const TextInput: FC<TextInputProps> = ({
   );
 };
 
-const Wrapper = styled("div")<{
+const Wrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "extendWidth"
+})<{
   size: "normal" | "small";
   appearance?: "readonly" | "present";
   status: "default" | "active";
