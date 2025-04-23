@@ -88,7 +88,11 @@ export default defineConfig({
     exclude: [...configDefaults.exclude, "e2e/*"],
     coverage: {
       provider: "v8",
-      include: ["src/**/*.{ts,tsx}"],
+      include: [
+        "src/beta/lib/reearth-ui/**/*.{ts,tsx}",
+        "src/beta/ui/**/*.{ts,tsx}",
+        "src/beta/utils/**/*.{ts,tsx}"
+      ],
       exclude: [
         "src/**/*.d.ts",
         "src/**/*.cy.tsx",
