@@ -62,6 +62,7 @@ const CustomPropertiesSchema: FC<Props> = ({
           {sortedValues?.map(({ key, value }) => (
             <CustomPropertyFieldItem
               key={key}
+              data-testid={`custom-property-field-${key}`}
               title={key}
               icon={getIcon(value)}
               openCustomPropertySchema={() => handleEditField(key, value)}
