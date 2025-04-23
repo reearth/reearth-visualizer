@@ -219,7 +219,26 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         extendContentWidth={extendContentWidth}
         role="menu"
         aria-labelledby={triggerElementId}
+        id={`${uniqueId}-menu`}
         data-testid={dataTestid}
+        aria-orientation="vertical"
+        onKeyDown={(e) => {
+          const items = e.currentTarget.querySelectorAll('[role="menuitem"]');
+          const currentIndex = Array.from(items).findIndex(
+            (item) => item === document.activeElement
+          );
+
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            const nextIndex = (currentIndex + 1) % items.length;
+            (items[nextIndex] as HTMLElement).focus();
+          } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            const prevIndex = (currentIndex - 1 + items.length) % items.length;
+            (items[prevIndex] as HTMLElement).focus();
+          }
+        }}
+        tabIndex={-1}
       >
         {menuItems.map((item, index) => {
           return renderSingleItem(item, index);
@@ -231,7 +250,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   const renderTrigger = () => {
     return typeof label === "string" ? (
       <LabelWrapper size={size} nested={!!nested} id={triggerElementId}>
-        {icon && <Icon icon={icon} size="small" />}
+        {icon && <Icon icon={icon} size="small" aria-hidden="true" />}
         <Label nested={!!nested}>{label}</Label>
         <Icon
           color={theme.content.weak}
@@ -243,7 +262,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       <div id={triggerElementId}>{label}</div>
     ) : icon ? (
       <div id={triggerElementId}>
-        <Icon icon={icon} size="small" />
+        <Icon icon={icon} size="small" aria-hidden="true" />
       </div>
     ) : null;
   };
@@ -266,6 +285,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           nested={nested}
           data-testid={dataTestid ? `${dataTestid}-trigger` : undefined}
           aria-expanded={open}
+          aria-controls={open ? `${uniqueId}-menu` : undefined}
         >
           {renderTrigger()}
         </TriggerWrapper>
