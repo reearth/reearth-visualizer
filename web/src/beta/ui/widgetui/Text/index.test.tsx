@@ -19,13 +19,16 @@ describe("Text Component", () => {
 
   test("applies custom color when provided", () => {
     render(
-      <Text size="body" color="#ff0000" customColor>
+      <Text size="body" color="#ff0000">
         Custom color
       </Text>
     );
 
     const textElement = screen.getByText("Custom color");
     expect(textElement).not.toHaveStyle("color: rgb(224, 224, 224);");
+    expect(textElement).toHaveStyle({
+      color: "rgb(255, 0, 0)"
+    });
   });
 
   test("applies default theme color when no color is provided", () => {

@@ -1,6 +1,5 @@
-import { screen, render, fireEvent } from "@reearth/test/utils";
-import { createRef } from "react";
-import { describe, test, expect, vi } from "vitest";
+import { screen, render } from "@reearth/test/utils";
+import { describe, test, expect } from "vitest";
 
 import { Area } from "./index";
 
@@ -72,19 +71,6 @@ describe("Area Component", () => {
     expect(resizeHandle).not.toBeInTheDocument();
   });
 
-  test("calls onResize callback when area is resized", () => {
-    const handleResize = vi.fn();
-    const windowRef = createRef<HTMLDivElement>();
-
-    render(
-      <div ref={windowRef}>
-        <Area onResize={handleResize} direction="column" resizableEdge="right">
-          Content
-        </Area>
-      </div>
-    );
-  });
-
   test("applies background color", () => {
     const { container } = render(
       <Area backgroundColor="#ff0000">Content</Area>
@@ -120,24 +106,5 @@ describe("Area Component", () => {
     expect(areaElement).toHaveStyle("pointer-events: none");
     expect(areaElement).toHaveStyle("background-color: rgba(0, 0, 0, 0);");
     expect(areaElement).not.toHaveStyle("padding: 1px");
-  });
-
-  test("automatically collapses when resized below threshold", () => {
-    render(
-      <Area direction="column" resizableEdge="right">
-        <div>Collapsible content</div>
-      </Area>
-    );
-
-    const resizeHandle = screen.getByTestId("resize-handle");
-    fireEvent.mouseDown(resizeHandle as HTMLElement);
-
-    const resizeEvent = new MouseEvent("mousemove", {
-      clientX: 50,
-      bubbles: true
-    });
-    window.dispatchEvent(resizeEvent);
-
-    fireEvent.mouseUp(window);
   });
 });
