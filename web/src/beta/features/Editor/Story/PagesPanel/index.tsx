@@ -74,6 +74,7 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       extend
       alwaysOpen
       storageId="editor-story-pages-panel"
+      dataTestid="editor-story-pages-panel"
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}
     >

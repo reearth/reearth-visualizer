@@ -33,7 +33,7 @@ const PublishToolsPanel: FC = () => {
   });
 
   return (
-    <Panel extend>
+    <Panel dataTestid="publish-tools-panel" extend>
       <StyledSecondaryNav>
         <LeftSection>
           {publishItems.map((item) => (

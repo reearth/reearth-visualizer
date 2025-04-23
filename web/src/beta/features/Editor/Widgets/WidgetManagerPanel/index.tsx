@@ -34,6 +34,7 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       storageId="editor-widgets-widget-manager-panel"
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}
+      dataTestid="editor-widgets-widget-manager-panel"
     >
       <Wrapper>
         <ActionArea
