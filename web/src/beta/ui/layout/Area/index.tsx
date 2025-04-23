@@ -324,6 +324,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         {!collapsed && children}
         {resizableEdge && isValidEdge && !collapsed && (
           <ResizeHandle
+            data-testid="resize-handle"
             edge={resizableEdge}
             color={resizeHandleColor}
             onMouseDown={handleMouseDown}
