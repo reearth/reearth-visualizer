@@ -110,6 +110,6 @@ describe("Text Component", () => {
     render(<Text size="body">Unselectable text</Text>);
 
     const textElement = screen.getByText("Unselectable text");
-    expect(textElement).toHaveStyle("user-select: break");
+    expect(textElement).toHaveStyle("user-select: none");
   });
 });
