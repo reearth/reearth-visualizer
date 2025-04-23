@@ -11,7 +11,8 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useState
+  useState,
+  useId
 } from "react";
 
 export type TabItem = {
@@ -33,6 +34,7 @@ export type TabsProps = {
   flexHeight?: boolean;
   menuEdgeGap?: "small";
   onChange?: (tab: string) => void;
+  dataTestid?: string;
 };
 
 export const Tabs: FC<TabsProps> = ({
@@ -46,7 +48,8 @@ export const Tabs: FC<TabsProps> = ({
   noOverflowY,
   flexHeight,
   menuEdgeGap,
-  onChange
+  onChange,
+  dataTestid
 }) => {
   const [activeTab, setActiveTab] = useState(currentTab ?? tabs[0]?.id);
 
@@ -70,11 +73,14 @@ export const Tabs: FC<TabsProps> = ({
     return tabs.find(({ id }) => id === activeTab);
   }, [activeTab, tabs]);
 
+  const baseId = useId();
+
   return (
     <Wrapper
       position={position}
       flexHeight={flexHeight}
       background={background}
+      data-testid={dataTestid}
     >
       <TabsMenu
         position={position}
@@ -82,20 +88,26 @@ export const Tabs: FC<TabsProps> = ({
         alignment={alignment}
         background={background}
         edgeGap={menuEdgeGap}
+        role="tablist"
       >
         {tabs.map(({ id, icon, name, tooltipText, placement }) => (
           <Tab
             key={id}
+            id={`tab-${baseId}-${id}`}
             onClick={() => handleTabChange?.(id)}
             selected={id === activeTab}
             position={position}
             tabStyle={tabStyle}
+            role="tab"
+            aria-selected={id === activeTab}
+            aria-controls={`panel-${baseId}-${id}`}
           >
             {icon && (
               <Icon
                 tooltipText={tooltipText}
                 icon={icon}
                 placement={placement}
+                aria-hidden="true"
                 color={
                   id === activeTab ? theme.content.main : theme.content.weak
                 }
@@ -115,7 +127,13 @@ export const Tabs: FC<TabsProps> = ({
           </Tab>
         ))}
       </TabsMenu>
-      <Content noPadding={noPadding} noOverflowY={noOverflowY}>
+      <Content
+        noPadding={noPadding}
+        noOverflowY={noOverflowY}
+        role="tabpanel"
+        id={`panel-${baseId}-${activeTab}`}
+        aria-labelledby={`tab-${baseId}-${activeTab}`}
+      >
         {selectedTabItem ? selectedTabItem.children : null}
       </Content>
     </Wrapper>

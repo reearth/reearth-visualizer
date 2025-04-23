@@ -12,6 +12,10 @@ export type TextAreaProps = {
   maxLength?: number;
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
+  ariaLabel?: string;
+  isRequired?: boolean;
+  isInvalid?: boolean;
+  dataTestid?: string;
 };
 
 export const TextArea: FC<TextAreaProps> = ({
@@ -24,7 +28,11 @@ export const TextArea: FC<TextAreaProps> = ({
   maxLength,
   appearance,
   onChange,
-  onBlur
+  onBlur,
+  ariaLabel,
+  isRequired,
+  isInvalid,
+  dataTestid
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -68,6 +76,10 @@ export const TextArea: FC<TextAreaProps> = ({
           onFocus={handleFocus}
           maxLength={maxLength}
           appearance={appearance}
+          aria-label={ariaLabel}
+          aria-required={isRequired}
+          aria-invalid={isInvalid}
+          data-testid={dataTestid}
         />
       </TextAreaWrapper>
       {counter && maxLength ? (

@@ -7,7 +7,8 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState
+  useState,
+  useId
 } from "react";
 
 import { Button } from "../Button";
@@ -27,6 +28,8 @@ export type SelectorProps = {
   displayLabel?: string;
   onChange?: (value: string | string[]) => void;
   menuWidth?: number;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 export const Selector: FC<SelectorProps> = ({
@@ -40,7 +43,9 @@ export const Selector: FC<SelectorProps> = ({
   maxHeight,
   displayLabel,
   onChange,
-  menuWidth
+  menuWidth,
+  ariaLabel,
+  dataTestid
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -48,6 +53,8 @@ export const Selector: FC<SelectorProps> = ({
   const [selectedValue, setSelectedValue] = useState<
     string | string[] | undefined
   >(displayLabel ?? value ?? (multiple ? [] : undefined));
+
+  const dropdownId = useId();
 
   useEffect(() => {
     if (displayLabel) {
@@ -139,7 +146,11 @@ export const Selector: FC<SelectorProps> = ({
         isOpen={isOpen}
         disabled={disabled}
         width={selectorWidth}
-        data-testid="select-input"
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-controls={dropdownId}
+        aria-label={ariaLabel}
+        data-testid={dataTestid || "select-input"}
       >
         {!selectedValue?.length ? (
           <Typography size="body" color={theme.content.weaker}>
@@ -201,6 +212,7 @@ export const Selector: FC<SelectorProps> = ({
         <DropDownWrapper
           maxHeight={maxHeight}
           width={menuWidth ?? selectorWidth}
+          id={dropdownId}
         >
           {optionValues.length === 0 ? (
             <DropDownItem>
