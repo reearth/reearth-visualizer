@@ -24,6 +24,10 @@ export type TextInputProps = {
   onBlur?: (text: string) => void;
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   type?: string;
+  ariaLabel?: string;
+  isRequired?: boolean;
+  isInvalid?: boolean;
+  dataTestid?: string;
 };
 
 export const TextInput: FC<TextInputProps> = ({
@@ -40,7 +44,11 @@ export const TextInput: FC<TextInputProps> = ({
   onChange,
   onBlur,
   onKeyDown,
-  type
+  type,
+  ariaLabel,
+  isRequired,
+  isInvalid,
+  dataTestid
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -115,6 +123,10 @@ export const TextInput: FC<TextInputProps> = ({
         type={type}
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
+        aria-label={ariaLabel}
+        aria-required={isRequired}
+        aria-invalid={isInvalid}
+        data-testid={dataTestid}
       />
       {actions && <ActionsWrapper>{actions}</ActionsWrapper>}
     </Wrapper>
