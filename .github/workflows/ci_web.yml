@@ -39,6 +39,8 @@ jobs:
         run: yarn run type
       - name: eslint
         run: yarn run lint
+      - name: unit tests
+        run: yarn run test
       - name: Check
         run: yarn run coverage
       - name: Send coverage report
