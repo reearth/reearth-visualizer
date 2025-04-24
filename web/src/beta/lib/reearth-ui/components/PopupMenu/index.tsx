@@ -238,7 +238,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         />
       </LabelWrapper>
     ) : label ? (
-      <div>{label}</div>
+     label
     ) : icon ? (
       <Icon icon={icon} size="small" aria-hidden="true" />
     ) : null;
