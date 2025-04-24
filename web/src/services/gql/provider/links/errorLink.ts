@@ -10,7 +10,9 @@ export default () => {
 
   return onError(({ graphQLErrors, networkError, operation }) => {
     const skipGlobalError =
-      operation.getContext()?.headers?.[HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION];
+      operation.getContext()?.headers?.[
+        HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION
+      ];
 
     if (!networkError && !graphQLErrors) return;
 
@@ -32,8 +34,7 @@ export default () => {
 
     if (errors.length > 0) {
       reportError(errors);
-      if (skipGlobalError) return;
-      setErrors(errors);
+      if (!skipGlobalError) setErrors(errors);
     }
   });
 };
