@@ -76,7 +76,7 @@ export const EntryItem: FC<EntryItemProps> = ({
       hovered={hovered}
       highlight={highlighted}
       smallPaddingRight={!!optionsMenu}
-      data-testId={dataTestid}
+      data-testid={dataTestid}
     >
       <MainContent
         className={dragHandleClassName}

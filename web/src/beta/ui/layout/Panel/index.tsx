@@ -103,7 +103,7 @@ export const Panel: FC<PanelProps> = ({
         <ContentWrapper
           background={backgroundStyle}
           extend={extend}
-          data-testId={dataTestid}
+          data-testid={dataTestid}
         >
           {children}
         </ContentWrapper>
