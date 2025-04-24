@@ -7,8 +7,7 @@ import {
   useEffect,
   useMemo,
   useRef,
-  useState,
-  useId
+  useState
 } from "react";
 
 import { Button } from "../Button";
@@ -53,8 +52,6 @@ export const Selector: FC<SelectorProps> = ({
   const [selectedValue, setSelectedValue] = useState<
     string | string[] | undefined
   >(displayLabel ?? value ?? (multiple ? [] : undefined));
-
-  const dropdownId = useId();
 
   useEffect(() => {
     if (displayLabel) {
@@ -148,7 +145,6 @@ export const Selector: FC<SelectorProps> = ({
         width={selectorWidth}
         role="combobox"
         aria-expanded={isOpen}
-        aria-controls={dropdownId}
         aria-label={ariaLabel}
         data-testid={dataTestid || "select-input"}
       >
@@ -212,7 +208,6 @@ export const Selector: FC<SelectorProps> = ({
         <DropDownWrapper
           maxHeight={maxHeight}
           width={menuWidth ?? selectorWidth}
-          id={dropdownId}
         >
           {optionValues.length === 0 ? (
             <DropDownItem>

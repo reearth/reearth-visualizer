@@ -11,8 +11,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
-  useState,
-  useId
+  useState
 } from "react";
 
 export type TabItem = {
@@ -73,8 +72,6 @@ export const Tabs: FC<TabsProps> = ({
     return tabs.find(({ id }) => id === activeTab);
   }, [activeTab, tabs]);
 
-  const baseId = useId();
-
   return (
     <Wrapper
       position={position}
@@ -93,14 +90,12 @@ export const Tabs: FC<TabsProps> = ({
         {tabs.map(({ id, icon, name, tooltipText, placement }) => (
           <Tab
             key={id}
-            id={`tab-${baseId}-${id}`}
             onClick={() => handleTabChange?.(id)}
             selected={id === activeTab}
             position={position}
             tabStyle={tabStyle}
             role="tab"
             aria-selected={id === activeTab}
-            aria-controls={`panel-${baseId}-${id}`}
           >
             {icon && (
               <Icon
@@ -127,13 +122,7 @@ export const Tabs: FC<TabsProps> = ({
           </Tab>
         ))}
       </TabsMenu>
-      <Content
-        noPadding={noPadding}
-        noOverflowY={noOverflowY}
-        role="tabpanel"
-        id={`panel-${baseId}-${activeTab}`}
-        aria-labelledby={`tab-${baseId}-${activeTab}`}
-      >
+      <Content noPadding={noPadding} noOverflowY={noOverflowY} role="tabpanel">
         {selectedTabItem ? selectedTabItem.children : null}
       </Content>
     </Wrapper>

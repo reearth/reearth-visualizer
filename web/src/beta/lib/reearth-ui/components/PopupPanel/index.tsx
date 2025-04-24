@@ -1,6 +1,6 @@
 import { Button, ClickAway } from "@reearth/beta/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
-import { FC, ReactNode, useId } from "react";
+import { FC, ReactNode } from "react";
 
 const DEFAULT_PANEL_WIDTH = 286;
 
@@ -27,28 +27,25 @@ export const PopupPanel: FC<PopupPanelProps> = ({
   dataTestid,
   role
 }) => {
-  const titleId = useId();
-  const headingId = ariaLabelledby || (title ? titleId : undefined);
-
   return (
     <ClickAway onClickAway={onCancel}>
       <Wrapper
         width={width}
         role={role}
-        aria-labelledby={headingId}
+        aria-labelledby={ariaLabelledby}
         aria-describedby={ariaDescribedby}
         data-testid={dataTestid}
       >
         {title && (
           <HeaderWrapper>
-            <Title id={title ? titleId : undefined}>{title}</Title>
+            <Title>{title}</Title>
             <Button
               iconButton
               icon="close"
               size="small"
               onClick={onCancel}
               appearance="simple"
-              ariaLabel="Close"
+              ariaLabel="close"
             />
           </HeaderWrapper>
         )}

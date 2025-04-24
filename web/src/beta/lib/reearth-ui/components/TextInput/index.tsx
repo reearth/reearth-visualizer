@@ -25,8 +25,6 @@ export type TextInputProps = {
   onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
   type?: string;
   ariaLabel?: string;
-  isRequired?: boolean;
-  isInvalid?: boolean;
   dataTestid?: string;
 };
 
@@ -46,8 +44,6 @@ export const TextInput: FC<TextInputProps> = ({
   onKeyDown,
   type,
   ariaLabel,
-  isRequired,
-  isInvalid,
   dataTestid
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
@@ -124,8 +120,6 @@ export const TextInput: FC<TextInputProps> = ({
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
         aria-label={ariaLabel}
-        aria-required={isRequired}
-        aria-invalid={isInvalid}
         data-testid={dataTestid}
       />
       {actions && <ActionsWrapper>{actions}</ActionsWrapper>}

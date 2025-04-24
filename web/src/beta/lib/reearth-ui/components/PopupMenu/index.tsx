@@ -5,7 +5,7 @@ import {
   PopupProps
 } from "@reearth/beta/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, ReactNode, useCallback, useEffect, useState, useId } from "react";
+import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const MULTLEVEL_OFFSET = 12;
@@ -74,9 +74,6 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   const [open, setOpen] = useState(false);
   const theme = useTheme();
 
-  const uniqueId = useId();
-  const triggerElementId = ariaLabelledby || `${uniqueId}-trigger`;
-
   useEffect(() => {
     setOpen(openMenu);
   }, [openMenu]);
@@ -142,7 +139,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
               dataTestid={
                 dataTestid ? `${dataTestid}-submenu-${index}` : undefined
               }
-              ariaLabelledby={triggerElementId}
+              ariaLabelledby={ariaLabelledby}
             />
           ) : path ? (
             <StyledLink to={disabled ? "" : path}>
@@ -218,27 +215,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         nested={nested}
         extendContentWidth={extendContentWidth}
         role="menu"
-        aria-labelledby={triggerElementId}
-        id={`${uniqueId}-menu`}
+        aria-labelledby={ariaLabelledby}
         data-testid={dataTestid}
         aria-orientation="vertical"
-        onKeyDown={(e) => {
-          const items = e.currentTarget.querySelectorAll('[role="menuitem"]');
-          const currentIndex = Array.from(items).findIndex(
-            (item) => item === document.activeElement
-          );
-
-          if (e.key === "ArrowDown") {
-            e.preventDefault();
-            const nextIndex = (currentIndex + 1) % items.length;
-            (items[nextIndex] as HTMLElement).focus();
-          } else if (e.key === "ArrowUp") {
-            e.preventDefault();
-            const prevIndex = (currentIndex - 1 + items.length) % items.length;
-            (items[prevIndex] as HTMLElement).focus();
-          }
-        }}
-        tabIndex={-1}
       >
         {menuItems.map((item, index) => {
           return renderSingleItem(item, index);
@@ -249,7 +228,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
 
   const renderTrigger = () => {
     return typeof label === "string" ? (
-      <LabelWrapper size={size} nested={!!nested} id={triggerElementId}>
+      <LabelWrapper size={size} nested={!!nested}>
         {icon && <Icon icon={icon} size="small" aria-hidden="true" />}
         <Label nested={!!nested}>{label}</Label>
         <Icon
@@ -259,11 +238,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         />
       </LabelWrapper>
     ) : label ? (
-      <div id={triggerElementId}>{label}</div>
+      <div>{label}</div>
     ) : icon ? (
-      <div id={triggerElementId}>
-        <Icon icon={icon} size="small" aria-hidden="true" />
-      </div>
+      <Icon icon={icon} size="small" aria-hidden="true" />
     ) : null;
   };
 
@@ -285,7 +262,6 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           nested={nested}
           data-testid={dataTestid ? `${dataTestid}-trigger` : undefined}
           aria-expanded={open}
-          aria-controls={open ? `${uniqueId}-menu` : undefined}
         >
           {renderTrigger()}
         </TriggerWrapper>

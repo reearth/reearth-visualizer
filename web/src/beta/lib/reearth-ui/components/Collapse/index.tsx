@@ -1,5 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import { FC, ReactNode, useCallback, useEffect, useState, useId } from "react";
+import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 
 import { Icon } from "../Icon";
 import { Typography } from "../Typography";
@@ -19,8 +19,8 @@ export type CollapseProps = {
   actions?: ReactNode;
   children: ReactNode;
   onCollapse?: (collapsed: boolean) => void;
-  id?: string;
   dataTestid?: string;
+  ariaControls?: string;
 };
 
 export const Collapse: FC<CollapseProps> = ({
@@ -38,13 +38,10 @@ export const Collapse: FC<CollapseProps> = ({
   actions,
   children,
   onCollapse,
-  id,
-  dataTestid
+  dataTestid,
+  ariaControls
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed ?? false);
-
-  const uniqueId = useId();
-  const contentId = id || `${uniqueId}-content`;
 
   useEffect(() => {
     setIsCollapsed(collapsed ?? false);
@@ -70,7 +67,7 @@ export const Collapse: FC<CollapseProps> = ({
         iconPosition={iconPosition}
         disabled={disabled}
         aria-expanded={!isCollapsed}
-        aria-controls={contentId}
+        aria-controls={ariaControls}
       >
         <TitleWrapper>
           <Typography
@@ -94,12 +91,7 @@ export const Collapse: FC<CollapseProps> = ({
         </ActionsWrapper>
       </StyledHeader>
       {!isCollapsed && (
-        <ChildWrapper
-          id={contentId}
-          size={size}
-          background={background}
-          noPadding={noPadding}
-        >
+        <ChildWrapper size={size} background={background} noPadding={noPadding}>
           {children}
         </ChildWrapper>
       )}

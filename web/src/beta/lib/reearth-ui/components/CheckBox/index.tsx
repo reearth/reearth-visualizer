@@ -40,14 +40,6 @@ export const CheckBox: FC<CheckBoxProps> = ({
       aria-checked={isChecked}
       aria-label={ariaLabel}
       data-testid={dataTestid}
-      tabIndex={disabled ? -1 : 0}
-      onKeyDown={(e) => {
-        if (disabled) return;
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          handleClick();
-        }
-      }}
     >
       {isChecked && (
         <Icon

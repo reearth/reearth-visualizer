@@ -13,8 +13,6 @@ export type TextAreaProps = {
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
   ariaLabel?: string;
-  isRequired?: boolean;
-  isInvalid?: boolean;
   dataTestid?: string;
 };
 
@@ -30,8 +28,6 @@ export const TextArea: FC<TextAreaProps> = ({
   onChange,
   onBlur,
   ariaLabel,
-  isRequired,
-  isInvalid,
   dataTestid
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
@@ -77,8 +73,6 @@ export const TextArea: FC<TextAreaProps> = ({
           maxLength={maxLength}
           appearance={appearance}
           aria-label={ariaLabel}
-          aria-required={isRequired}
-          aria-invalid={isInvalid}
           data-testid={dataTestid}
         />
       </TextAreaWrapper>

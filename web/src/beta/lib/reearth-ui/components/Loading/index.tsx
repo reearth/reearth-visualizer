@@ -38,13 +38,7 @@ export const Loading: FC<LoadingProps> = ({
     >
       {includeLogo && (
         <LogoWrapper>
-          <img
-            src={logoWithText}
-            width={343}
-            height={106}
-            alt=""
-            aria-hidden="true"
-          />
+          <img src={logoWithText} width={343} height={106} aria-hidden="true" />
         </LogoWrapper>
       )}
       <BarLoader width={width ?? 344} color={color ?? brandRed.dynamicRed} />
