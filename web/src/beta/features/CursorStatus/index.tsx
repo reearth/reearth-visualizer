@@ -46,7 +46,7 @@ const CursorStatus: FC = () => {
     enabled &&
     inView && (
       <Wrapper left={mousePosition.x + offsetX} top={mousePosition.y + offsetY}>
-        <Loader />
+        <Loader data-testid="loader" />
       </Wrapper>
     )
   );
