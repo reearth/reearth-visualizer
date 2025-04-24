@@ -3,17 +3,16 @@ import { reportError } from "@reearth/sentry";
 import { useSetError } from "@reearth/services/state";
 import { GQLError } from "@reearth/services/state/gqlErrorHandling";
 
+import { SKIP_GLOBAL_ERROR } from "../..";
+
 export default () => {
   const { setErrors } = useSetError();
 
   return onError(({ graphQLErrors, networkError, operation }) => {
-
-  // 'x-' prefix marks this as a custom (non-standard) header to prevent naming conflicts with official HTTP headers.
     const skipGlobalError =
-      operation.getContext()?.headers?.["x-skip-global-error"];
+      operation.getContext()?.headers?.[SKIP_GLOBAL_ERROR];
 
     if (!networkError && !graphQLErrors) return;
-    if (skipGlobalError) return;
 
     let errors: GQLError[] = [];
 
@@ -32,8 +31,9 @@ export default () => {
     }
 
     if (errors.length > 0) {
-      setErrors(errors);
       reportError(errors);
+      if (skipGlobalError) return;
+      setErrors(errors);
     }
   });
 };
