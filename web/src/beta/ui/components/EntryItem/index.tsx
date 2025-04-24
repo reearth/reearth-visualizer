@@ -91,7 +91,10 @@ export const EntryItem: FC<EntryItemProps> = ({
           (a) => (highlighted || hovered || a.keepVisible) && a.comp
         )}
         {!!optionsMenu && (
-          <OptionsWrapper onClick={handleOptionsClick}>
+          <OptionsWrapper
+            data-testid="options-wrapper"
+            onClick={handleOptionsClick}
+          >
             <PopupMenu
               label={
                 <IconButton
