@@ -10,6 +10,10 @@ export type PopupPanelProps = {
   children: ReactNode;
   actions?: ReactNode;
   onCancel?: () => void;
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
+  dataTestid?: string;
+  role?: string;
 };
 
 export const PopupPanel: FC<PopupPanelProps> = ({
@@ -17,11 +21,21 @@ export const PopupPanel: FC<PopupPanelProps> = ({
   width,
   children,
   actions,
-  onCancel
+  onCancel,
+  ariaLabelledby,
+  ariaDescribedby,
+  dataTestid,
+  role
 }) => {
   return (
     <ClickAway onClickAway={onCancel}>
-      <Wrapper width={width}>
+      <Wrapper
+        width={width}
+        role={role}
+        aria-labelledby={ariaLabelledby}
+        aria-describedby={ariaDescribedby}
+        data-testid={dataTestid}
+      >
         {title && (
           <HeaderWrapper>
             <Title>{title}</Title>
@@ -31,6 +45,7 @@ export const PopupPanel: FC<PopupPanelProps> = ({
               size="small"
               onClick={onCancel}
               appearance="simple"
+              ariaLabel="close"
             />
           </HeaderWrapper>
         )}

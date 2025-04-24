@@ -7,13 +7,17 @@ export type TimePickerProps = {
   size?: "normal" | "small";
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
+  dataTestid?: string;
+  ariaLabel?: string;
 };
 
 export const TimePicker: FC<TimePickerProps> = ({
   value,
   disabled,
   onChange,
-  onBlur
+  onBlur,
+  dataTestid,
+  ariaLabel
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -52,6 +56,8 @@ export const TimePicker: FC<TimePickerProps> = ({
         min="00:00:00"
         max="23:59:59"
         step={1}
+        aria-label={ariaLabel}
+        data-testid={dataTestid}
       />
     </Wrapper>
   );

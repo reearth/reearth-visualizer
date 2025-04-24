@@ -19,6 +19,8 @@ export type CollapseProps = {
   actions?: ReactNode;
   children: ReactNode;
   onCollapse?: (collapsed: boolean) => void;
+  dataTestid?: string;
+  ariaControls?: string;
 };
 
 export const Collapse: FC<CollapseProps> = ({
@@ -35,7 +37,9 @@ export const Collapse: FC<CollapseProps> = ({
   noShrink,
   actions,
   children,
-  onCollapse
+  onCollapse,
+  dataTestid,
+  ariaControls
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(collapsed ?? false);
 
@@ -50,7 +54,11 @@ export const Collapse: FC<CollapseProps> = ({
   }, [disabled, isCollapsed, onCollapse]);
 
   return (
-    <StyledWrapper isCollapsed={isCollapsed} noShrink={noShrink}>
+    <StyledWrapper
+      isCollapsed={isCollapsed}
+      noShrink={noShrink}
+      data-testid={dataTestid}
+    >
       <StyledHeader
         onClick={handleCollapse}
         isCollapsed={isCollapsed}
@@ -58,6 +66,8 @@ export const Collapse: FC<CollapseProps> = ({
         headerBg={headerBg}
         iconPosition={iconPosition}
         disabled={disabled}
+        aria-expanded={!isCollapsed}
+        aria-controls={ariaControls}
       >
         <TitleWrapper>
           <Typography
@@ -75,7 +85,7 @@ export const Collapse: FC<CollapseProps> = ({
           {actions}
           {!disabled && (
             <IconWrapper isCollapsed={isCollapsed} iconPosition={iconPosition}>
-              <Icon size="small" icon="triangle" />
+              <Icon size="small" icon="triangle" aria-hidden="true" />
             </IconWrapper>
           )}
         </ActionsWrapper>
