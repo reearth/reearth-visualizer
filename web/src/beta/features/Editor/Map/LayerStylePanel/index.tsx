@@ -58,6 +58,7 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}
       noPadding
+      dataTestid="editor-map-scene-panel"
     >
       <LayerStyleManager onClick={() => handleSelectLayerStyle(undefined)}>
         <ActionsWrapper>

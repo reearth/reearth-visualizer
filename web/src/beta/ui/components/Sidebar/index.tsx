@@ -38,6 +38,7 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
       active={subItem ? false : active}
       disabled={disabled}
       onClick={subItem ? () => setIsOpen(!isOpen) : onClick}
+      data-testid="sidebar-menu"
     >
       <Info>
         {icon && (

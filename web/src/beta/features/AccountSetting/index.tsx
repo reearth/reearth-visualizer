@@ -51,7 +51,7 @@ const AccountSetting: FC = () => {
   return (
     <>
       <SettingBase tabs={tabs} tab={"account"}>
-        <InnerPage wide>
+        <InnerPage data-testid="inner-page" wide>
           <SettingsWrapper>
             <TitleWrapper size="body" weight="bold">
               {t("Account")}
