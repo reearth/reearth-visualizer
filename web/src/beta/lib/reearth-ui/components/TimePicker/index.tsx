@@ -16,7 +16,6 @@ export const TimePicker: FC<TimePickerProps> = ({
   disabled,
   onChange,
   onBlur,
-  dataTestid,
   ariaLabel
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
@@ -56,8 +55,8 @@ export const TimePicker: FC<TimePickerProps> = ({
         min="00:00:00"
         max="23:59:59"
         step={1}
+        data-testid="time-picker"
         aria-label={ariaLabel}
-        data-testid={dataTestid}
       />
     </Wrapper>
   );
