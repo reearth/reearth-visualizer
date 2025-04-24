@@ -11,6 +11,8 @@ export type LoadingProps = {
   relative?: boolean;
   overlay?: boolean;
   width?: number;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 export const Loading: FC<LoadingProps> = ({
@@ -19,13 +21,24 @@ export const Loading: FC<LoadingProps> = ({
   includeLogo = false,
   relative,
   overlay,
-  width
+  width,
+  ariaLabel,
+  dataTestid
 }) => {
   return (
-    <LoadingWrapper fixed={fixed} overlay={overlay} relative={relative}>
+    <LoadingWrapper
+      fixed={fixed}
+      overlay={overlay}
+      relative={relative}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label={ariaLabel}
+      data-testid={dataTestid}
+    >
       {includeLogo && (
         <LogoWrapper>
-          <img src={logoWithText} width={343} height={106} />
+          <img src={logoWithText} width={343} height={106} aria-hidden="true" />
         </LogoWrapper>
       )}
       <BarLoader width={width ?? 344} color={color ?? brandRed.dynamicRed} />
