@@ -3,14 +3,14 @@ import { reportError } from "@reearth/sentry";
 import { useSetError } from "@reearth/services/state";
 import { GQLError } from "@reearth/services/state/gqlErrorHandling";
 
-import { SKIP_GLOBAL_ERROR } from "../..";
+import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "../..";
 
 export default () => {
   const { setErrors } = useSetError();
 
   return onError(({ graphQLErrors, networkError, operation }) => {
     const skipGlobalError =
-      operation.getContext()?.headers?.[SKIP_GLOBAL_ERROR];
+      operation.getContext()?.headers?.[HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION];
 
     if (!networkError && !graphQLErrors) return;
 
