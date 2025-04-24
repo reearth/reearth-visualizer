@@ -10,6 +10,8 @@ export type PanelProps = {
   children: ReactNode;
   actions?: ReactNode;
   onCancel?: () => void;
+  dataTestid?: string;
+  ariaLabelledby?: string;
 };
 
 export const Panel: FC<PanelProps> = ({
@@ -17,10 +19,17 @@ export const Panel: FC<PanelProps> = ({
   width,
   children,
   actions,
-  onCancel
+  onCancel,
+  dataTestid,
+  ariaLabelledby
 }) => {
   return (
-    <Wrapper width={width}>
+    <Wrapper
+      width={width}
+      role="region"
+      aria-labelledby={ariaLabelledby}
+      data-testid={dataTestid}
+    >
       {title && (
         <HeaderWrapper>
           <Title>{title}</Title>
@@ -30,6 +39,7 @@ export const Panel: FC<PanelProps> = ({
             size="small"
             onClick={onCancel}
             appearance="simple"
+            ariaLabel="close"
           />
         </HeaderWrapper>
       )}

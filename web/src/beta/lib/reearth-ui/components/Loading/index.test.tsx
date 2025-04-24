@@ -32,7 +32,7 @@ describe("Loading Component", () => {
     expect(loader).toHaveAttribute("data-width", "344");
     expect(loader).toHaveAttribute("data-color", brandRed.dynamicRed);
 
-    expect(screen.queryByRole("img")).not.toBeInTheDocument();
+    expect(document.querySelector("img")).not.toBeInTheDocument();
 
     const wrapper = loader.parentElement;
     expect(wrapper).toHaveStyle("position: absolute");
@@ -41,7 +41,7 @@ describe("Loading Component", () => {
   test("includes logo when includeLogo is true", () => {
     render(<Loading includeLogo />);
 
-    const logo = screen.getByRole("img");
+    const logo = document.querySelector("img");
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute("src", "logo-path.svg");
     expect(logo).toHaveAttribute("width", "343");
@@ -99,7 +99,7 @@ describe("Loading Component", () => {
       />
     );
 
-    expect(screen.getByRole("img")).toBeInTheDocument();
+    expect(document.querySelector("img")).toBeInTheDocument();
 
     const loader = screen.getByTestId("mock-bar-loader");
     expect(loader).toHaveAttribute("data-color", customColor);

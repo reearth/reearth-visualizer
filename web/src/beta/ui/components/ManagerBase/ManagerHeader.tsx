@@ -183,6 +183,7 @@ export const ManagerHeader: FC<ManagerHeaderProps> = ({
         {!showDelete && (
           <Layouts>
             <IconButton
+              data-testid="grid-layout"
               icon="grid"
               appearance="simple"
               active={layout === "grid"}

@@ -10,7 +10,7 @@ export type SlideProps = {
 export const Slide: FC<SlideProps> = ({ className, children, pos }) => {
   return (
     <Wrapper className={className}>
-      <Inner pos={pos}>
+      <Inner pos={pos} data-testid="slide-inner">
         {React.Children.map(children, (child) =>
           React.isValidElement(child) ? (
             <Page key={child.key ?? undefined}>{child}</Page>

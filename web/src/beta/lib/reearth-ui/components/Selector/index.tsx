@@ -27,6 +27,8 @@ export type SelectorProps = {
   displayLabel?: string;
   onChange?: (value: string | string[]) => void;
   menuWidth?: number;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 export const Selector: FC<SelectorProps> = ({
@@ -40,7 +42,9 @@ export const Selector: FC<SelectorProps> = ({
   maxHeight,
   displayLabel,
   onChange,
-  menuWidth
+  menuWidth,
+  ariaLabel,
+  dataTestid
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -139,7 +143,10 @@ export const Selector: FC<SelectorProps> = ({
         isOpen={isOpen}
         disabled={disabled}
         width={selectorWidth}
-        data-testid="select-input"
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-label={ariaLabel}
+        data-testid={dataTestid || "select-input"}
       >
         {!selectedValue?.length ? (
           <Typography size="body" color={theme.content.weaker}>

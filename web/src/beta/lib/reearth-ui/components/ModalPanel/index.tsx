@@ -9,6 +9,9 @@ export type ModalPanelProps = {
   layout?: "common";
   onCancel?: () => void;
   appearance?: "simple" | "normal";
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
+  dataTestid?: string;
 };
 
 export const ModalPanel: FC<ModalPanelProps> = ({
@@ -18,9 +21,18 @@ export const ModalPanel: FC<ModalPanelProps> = ({
   layout,
   onCancel,
   appearance = "normal",
+  ariaLabelledby,
+  ariaDescribedby,
+  dataTestid
 }) => {
   return (
-    <Wrapper>
+    <Wrapper
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={ariaLabelledby}
+      aria-describedby={ariaDescribedby}
+      data-testid={dataTestid}
+    >
       {appearance !== "simple" && (
         <HeaderWrapper>
           <Title>{title}</Title>
@@ -30,6 +42,7 @@ export const ModalPanel: FC<ModalPanelProps> = ({
             size="small"
             onClick={onCancel}
             appearance="simple"
+            ariaLabel="close"
           />
         </HeaderWrapper>
       )}
