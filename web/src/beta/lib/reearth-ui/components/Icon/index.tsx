@@ -51,6 +51,7 @@ export const Icon: FC<IconProps> = ({
       color={color}
       className={className}
       aria-label={ariaLabel}
+      aria-hidden={!ariaLabel ? "true" : undefined}
     />
   ) : null;
 

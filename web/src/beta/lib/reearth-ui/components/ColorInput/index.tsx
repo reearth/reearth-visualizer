@@ -19,6 +19,8 @@ export type ColorInputProps = {
   alphaDisabled?: boolean;
   appearance?: "readonly" | undefined;
   onChange?: (text: string) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 const DEFAULT_PANEL_OFFSET = 4;
@@ -29,7 +31,9 @@ export const ColorInput: FC<ColorInputProps> = ({
   size = "normal",
   alphaDisabled,
   appearance,
-  onChange
+  onChange,
+  ariaLabel,
+  dataTestid
 }) => {
   const {
     open,
@@ -52,7 +56,7 @@ export const ColorInput: FC<ColorInputProps> = ({
   const t = useT();
 
   return (
-    <InputWrapper>
+    <InputWrapper data-testid={dataTestid}>
       <Popup
         open={open}
         placement="bottom"
@@ -66,6 +70,8 @@ export const ColorInput: FC<ColorInputProps> = ({
             status={isSwatchFocused}
             size={size}
             disabled={disabled}
+            aria-label={ariaLabel}
+            aria-valuetext={colorValue}
             data-testid="color-input-swatch"
           />
         }
@@ -91,7 +97,7 @@ export const ColorInput: FC<ColorInputProps> = ({
             </ActionsWrapper>
           }
         >
-          <ColorPickerWrapper>
+          <ColorPickerWrapper role="application">
             <ColorPicker
               className="colorPicker"
               alphaDisabled={alphaDisabled}

@@ -50,6 +50,8 @@ export type PopupMenuProps = {
   triggerOnHover?: boolean;
   openMenu?: boolean;
   onOpenChange?: (open: boolean) => void;
+  dataTestid?: string;
+  ariaLabelledby?: string;
 };
 
 export const PopupMenu: FC<PopupMenuProps> = ({
@@ -65,7 +67,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   icon,
   openMenu = false,
   size = "normal",
-  onOpenChange
+  onOpenChange,
+  dataTestid,
+  ariaLabelledby
 }) => {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
@@ -112,6 +116,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
           onClick?.(id);
           handlePopOver(false);
         }}
+        role="menuitem"
+        aria-checked={selected ? "true" : undefined}
+        data-testid={dataTestid ? `${dataTestid}-item-${index}` : undefined}
       >
         {icon && (
           <IconWrapper>
@@ -124,7 +131,16 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         )}
         <SubItem>
           {subItem ? (
-            <PopupMenu label={title} menu={subItem} width={width} nested />
+            <PopupMenu
+              label={title}
+              menu={subItem}
+              width={width}
+              nested
+              dataTestid={
+                dataTestid ? `${dataTestid}-submenu-${index}` : undefined
+              }
+              ariaLabelledby={ariaLabelledby}
+            />
           ) : path ? (
             <StyledLink to={disabled ? "" : path}>
               <TitleWrapper disabled={disabled} flex={!!tileComponent}>
@@ -172,7 +188,12 @@ export const PopupMenu: FC<PopupMenuProps> = ({
     const customSubMenu = Object.values(groups) as PopupMenuItem[][];
 
     return (
-      <PopupMenuWrapper width={width} nested={nested}>
+      <PopupMenuWrapper
+        width={width}
+        nested={nested}
+        role="menu"
+        data-testid={dataTestid ? `${dataTestid}-submenu` : undefined}
+      >
         {customSubMenu.map((item, index) => (
           <Group key={index}>
             <SubMenuHeader>
@@ -193,6 +214,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         width={width}
         nested={nested}
         extendContentWidth={extendContentWidth}
+        role="menu"
+        aria-labelledby={ariaLabelledby}
+        data-testid={dataTestid}
+        aria-orientation="vertical"
       >
         {menuItems.map((item, index) => {
           return renderSingleItem(item, index);
@@ -204,7 +229,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   const renderTrigger = () => {
     return typeof label === "string" ? (
       <LabelWrapper size={size} nested={!!nested}>
-        {icon && <Icon icon={icon} size="small" />}
+        {icon && <Icon icon={icon} size="small" aria-hidden="true" />}
         <Label nested={!!nested}>{label}</Label>
         <Icon
           color={theme.content.weak}
@@ -213,9 +238,9 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         />
       </LabelWrapper>
     ) : label ? (
-      label
+     label
     ) : icon ? (
-      <Icon icon={icon} size="small" />
+      <Icon icon={icon} size="small" aria-hidden="true" />
     ) : null;
   };
 
@@ -232,7 +257,12 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       extendContentWidth={extendContentWidth}
       autoClose
       trigger={
-        <TriggerWrapper onClick={() => handlePopOver()} nested={nested}>
+        <TriggerWrapper
+          onClick={() => handlePopOver()}
+          nested={nested}
+          data-testid={dataTestid ? `${dataTestid}-trigger` : undefined}
+          aria-expanded={open}
+        >
           {renderTrigger()}
         </TriggerWrapper>
       }
