@@ -12,6 +12,10 @@ import (
 )
 
 var (
+	ReservedReearthPrefixProject = "p-"
+
+	ReservedReearthPrefixStory = "s-"
+
 	reservedSubdomains = map[string]struct{}{
 		"admin":          {},
 		"administrator":  {},
@@ -96,6 +100,13 @@ var (
 		nil,
 	)
 
+	ErrInvalidProjectInvalidPrefixAlias = verror.NewVError(
+		errmsg.ErrKeyPkgProjectInvalidPrefixAlias,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidPrefixAlias],
+		nil,
+		nil,
+	)
+
 	ErrInvalidStorytellingAlias = verror.NewVError(
 		errmsg.ErrKeyPkgStorytellingInvalidAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgStorytellingInvalidAlias],
@@ -119,6 +130,13 @@ var (
 	ErrInvalidReservedStorytellingAlias = verror.NewVError(
 		errmsg.ErrKeyPkgStorytellingInvalidReservedAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgStorytellingInvalidReservedAlias],
+		nil,
+		nil,
+	)
+
+	ErrInvalidStorytellingInvalidPrefixAlias = verror.NewVError(
+		errmsg.ErrKeyPkgStorytellingInvalidPrefixAlias,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgStorytellingInvalidPrefixAlias],
 		nil,
 		nil,
 	)

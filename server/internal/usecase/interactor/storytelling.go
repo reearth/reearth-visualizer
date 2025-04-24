@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -261,14 +262,27 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	if inp.Alias == nil || *inp.Alias == "" {
 		// if you don't have an alias, set it to StoryID
 		if story.Alias() == "" {
-			story.UpdateAlias(story.Id().String()) // default ID
+			story.UpdateAlias(alias.ReservedReearthPrefixStory + story.Id().String()) // default prefix + ID
 		}
 		// if anything is set, do nothing
 	} else {
+
+		if strings.HasPrefix(*inp.Alias, alias.ReservedReearthPrefixProject) {
+			// error 'p-' prefix
+			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", *inp.Alias)
+		} else if strings.HasPrefix(*inp.Alias, alias.ReservedReearthPrefixStory) {
+			id := strings.TrimPrefix(*inp.Alias, alias.ReservedReearthPrefixStory)
+			// only allow self ID
+			if id != story.Id().String() {
+				// error 'p-' prefix
+				return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", *inp.Alias)
+			}
+		}
+
 		story.UpdateAlias(*inp.Alias)
 	}
 
-	if prevAlias == story.Alias() || story.Id().String() == story.Alias() {
+	if prevAlias == story.Alias() || story.Id().String() == story.Alias() || alias.ReservedReearthPrefixStory+story.Id().String() == story.Alias() {
 		// if do not change alias or self StoryID, do nothing
 	} else {
 		if err := alias.CheckAliasPatternStorytelling(story.Alias()); err != nil {

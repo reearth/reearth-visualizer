@@ -77,7 +77,6 @@ func TestProject_createProject(t *testing.T) {
 				Visualizer:  visualizer.VisualizerCesium,
 				Name:        lo.ToPtr("aaa"),
 				Description: lo.ToPtr("bbb"),
-				Alias:       lo.ToPtr("alias"),
 				ImageURL:    lo.Must(url.Parse("https://example.com/hoge")),
 				CoreSupport: lo.ToPtr(true),
 				Archived:    lo.ToPtr(true),
@@ -93,7 +92,6 @@ func TestProject_createProject(t *testing.T) {
 			assert.Equal(t, input.Visualizer, got.Visualizer())
 			assert.Equal(t, *input.Name, got.Name())
 			assert.Equal(t, *input.Description, got.Description())
-			assert.Equal(t, *input.Alias, got.Alias())
 			assert.Equal(t, input.ImageURL, got.ImageURL())
 			assert.Equal(t, *input.CoreSupport, got.CoreSupport())
 			assert.Equal(t, *input.Archived, got.IsArchived())
@@ -114,7 +112,6 @@ func TestProject_createProject(t *testing.T) {
 			assert.Equal(t, visualizer.Visualizer(""), got.Visualizer())
 			assert.Equal(t, "", got.Name())                  // name default value is empty string
 			assert.Equal(t, "", got.Description())           // description default value is empty string
-			assert.Equal(t, got.ID().String(), got.Alias())  // alias default value is project-{projectID}
 			assert.Equal(t, (*url.URL)(nil), got.ImageURL()) // image url default value is nil
 			assert.Equal(t, false, got.CoreSupport())        // core support default value is false
 			assert.Equal(t, false, got.IsArchived())         // archived default value is false

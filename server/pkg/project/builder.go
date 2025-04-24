@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -20,6 +21,9 @@ func New() *Builder {
 func (b *Builder) Build() (*Project, error) {
 	if b.p.id.IsNil() {
 		return nil, id.ErrInvalidID
+	}
+	if b.p.alias == "" {
+		b.p.alias = alias.ReservedReearthPrefixProject + b.p.id.String()
 	}
 	if b.p.updatedAt.IsZero() {
 		b.p.updatedAt = b.p.CreatedAt()

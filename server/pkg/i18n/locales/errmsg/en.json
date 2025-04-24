@@ -12,6 +12,10 @@
       "invalid_reserved_alias": {
         "message": "The alias '{{.aliasName}}' is reserved and cannot be used.",
         "description": "The following aliases are reserved and cannot be used: administrator,development"
+      },
+      "invalid_prefix_alias": {
+        "message": "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
+        "description": "Aliases that start with 'p-' or 's-' are reserved and cannot be used."
       }
     },
     "storytelling": {
@@ -26,6 +30,10 @@
       "invalid_reserved_alias": {
         "message": "The alias '{{.aliasName}}' is reserved and cannot be used.",
         "description": "The following aliases are reserved and cannot be used: administrator,development"
+      },
+      "invalid_prefix_alias": {
+        "message": "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
+        "description": "Aliases that start with 'p-' or 's-' are reserved and cannot be used."
       }
     }
   }

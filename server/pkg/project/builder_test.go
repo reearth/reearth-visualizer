@@ -193,7 +193,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				name:              "xxx.aaa",
 				description:       "ddd",
-				alias:             "aaaaa",
+				alias:             "p-" + pid.String(),
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -211,7 +211,7 @@ func TestBuilder_Build(t *testing.T) {
 				id:                pid,
 				description:       "ddd",
 				name:              "xxx.aaa",
-				alias:             "aaaaa",
+				alias:             "p-" + pid.String(),
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -232,6 +232,7 @@ func TestBuilder_Build(t *testing.T) {
 			},
 			expected: &Project{
 				id:        pid,
+				alias:     "p-" + pid.String(),
 				updatedAt: pid.Timestamp(),
 			},
 		},

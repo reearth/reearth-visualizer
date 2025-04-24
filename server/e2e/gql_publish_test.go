@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearthx/account/accountdomain"
 )
 
@@ -24,7 +25,7 @@ func TestPublishProject(t *testing.T) {
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             projectId, // default self id
+		"alias":             alias.ReservedReearthPrefixProject + projectId, // default prefix + self id
 		"publishmentStatus": "LIMITED",
 	})
 
@@ -244,6 +245,58 @@ func checkProjectAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value
 	})
 }
 
+func TestReservedReearthPrefixProject(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	projectId, _, _ := createProjectSet(e)
+
+	// prefix 'p-'
+	res, err := publishProjectErrors(e, uID, map[string]any{
+		"projectId": projectId,
+		"alias":     "p-test",
+		"status":    "LIMITED",
+	})
+	checkReservedReearthPrefixProject("p-test", res, err)
+
+	// prefix 's-'
+	res, err = publishProjectErrors(e, uID, map[string]any{
+		"projectId": projectId,
+		"alias":     "s-test",
+		"status":    "LIMITED",
+	})
+	checkReservedReearthPrefixProject("s-test", res, err)
+
+	// prefix + self id
+	res = publishProject(e, uID, map[string]any{
+		"projectId": projectId,
+		"alias":     alias.ReservedReearthPrefixProject + projectId,
+		"status":    "LIMITED",
+	})
+	res.Object().IsEqual(map[string]any{
+		"id":                projectId,
+		"alias":             alias.ReservedReearthPrefixProject + projectId, // ok
+		"publishmentStatus": "LIMITED",
+	})
+
+}
+
+func checkReservedReearthPrefixProject(alias string, res *httpexpect.Value, err *httpexpect.Value) {
+	message := fmt.Sprintf("Aliases starting with 'p-' or 's-' are not allowed: %s", alias)
+	res.IsNull()
+	err.Array().IsEqual([]map[string]any{
+		{
+			"message": message,
+			"path":    []any{"publishProject"},
+			"extensions": map[string]any{
+				"code":         "invalid_prefix_alias",
+				"description":  "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+				"message":      message,
+				"system_error": "",
+			},
+		},
+	})
+}
+
 /////// TestPublishStory ///////
 
 func TestPublishStory(t *testing.T) {
@@ -259,7 +312,7 @@ func TestPublishStory(t *testing.T) {
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                storyId,
-		"alias":             storyId, // default self id
+		"alias":             alias.ReservedReearthPrefixStory + storyId, // default self id
 		"publishmentStatus": "LIMITED",
 	})
 
@@ -473,6 +526,58 @@ func checkStoryAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) 
 				"code":         "alias_already_exists",
 				"description":  "Each alias must be unique across projects and stories.",
 				"message":      "This alias is already in use. Please try another one.",
+				"system_error": "",
+			},
+		},
+	})
+}
+
+func TestReservedReearthPrefixStory(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	_, _, storyId := createProjectSet(e)
+
+	// prefix 'p-'
+	res, err := publishStoryErrors(e, uID, map[string]any{
+		"storyId": storyId,
+		"alias":   "p-test",
+		"status":  "LIMITED",
+	})
+	checkReservedReearthPrefixStory("p-test", res, err)
+
+	// prefix 's-'
+	res, err = publishStoryErrors(e, uID, map[string]any{
+		"storyId": storyId,
+		"alias":   "s-test",
+		"status":  "LIMITED",
+	})
+	checkReservedReearthPrefixStory("s-test", res, err)
+
+	// prefix + self id
+	res = publishStory(e, uID, map[string]any{
+		"storyId": storyId,
+		"alias":   alias.ReservedReearthPrefixStory + storyId,
+		"status":  "LIMITED",
+	})
+	res.Object().IsEqual(map[string]any{
+		"id":                storyId,
+		"alias":             alias.ReservedReearthPrefixStory + storyId, // ok
+		"publishmentStatus": "LIMITED",
+	})
+
+}
+
+func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *httpexpect.Value) {
+	message := fmt.Sprintf("Aliases starting with 'p-' or 's-' are not allowed: %s", alias)
+	res.IsNull()
+	err.Array().IsEqual([]map[string]any{
+		{
+			"message": message,
+			"path":    []any{"publishStory"},
+			"extensions": map[string]any{
+				"code":         "invalid_prefix_alias",
+				"description":  "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+				"message":      message,
 				"system_error": "",
 			},
 		},

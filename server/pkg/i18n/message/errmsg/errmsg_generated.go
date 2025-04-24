@@ -9,9 +9,11 @@ import (
 const (
 	ErrKeyPkgProjectAliasAlreadyExists message.ErrKey = "pkg.project.alias_already_exists"
 	ErrKeyPkgProjectInvalidAlias message.ErrKey = "pkg.project.invalid_alias"
+	ErrKeyPkgProjectInvalidPrefixAlias message.ErrKey = "pkg.project.invalid_prefix_alias"
 	ErrKeyPkgProjectInvalidReservedAlias message.ErrKey = "pkg.project.invalid_reserved_alias"
 	ErrKeyPkgStorytellingAliasAlreadyExists message.ErrKey = "pkg.storytelling.alias_already_exists"
 	ErrKeyPkgStorytellingInvalidAlias message.ErrKey = "pkg.storytelling.invalid_alias"
+	ErrKeyPkgStorytellingInvalidPrefixAlias message.ErrKey = "pkg.storytelling.invalid_prefix_alias"
 	ErrKeyPkgStorytellingInvalidReservedAlias message.ErrKey = "pkg.storytelling.invalid_reserved_alias"
 )
 
@@ -34,6 +36,16 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "不正なエイリアス名です: {{.aliasName}}",
 			Description: "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。",
+		},
+	},
+	ErrKeyPkgProjectInvalidPrefixAlias: {
+		language.English: {
+			Message:     "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
+			Description: "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+		},
+		language.Japanese: {
+			Message:     "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+			Description: "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。",
 		},
 	},
 	ErrKeyPkgProjectInvalidReservedAlias: {
@@ -64,6 +76,16 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "不正なエイリアス名です: {{.aliasName}}",
 			Description: "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。",
+		},
+	},
+	ErrKeyPkgStorytellingInvalidPrefixAlias: {
+		language.English: {
+			Message:     "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
+			Description: "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+		},
+		language.Japanese: {
+			Message:     "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+			Description: "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。",
 		},
 	},
 	ErrKeyPkgStorytellingInvalidReservedAlias: {

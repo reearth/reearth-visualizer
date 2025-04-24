@@ -255,14 +255,27 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if params.Alias == nil || *params.Alias == "" {
 		// if you don't have an alias, set it to ProjectID
 		if prj.Alias() == "" {
-			prj.UpdateAlias(prj.ID().String()) // default ID
+			prj.UpdateAlias(alias.ReservedReearthPrefixProject + prj.ID().String()) // default prefix + ID
 		}
 		// if anything is set, do nothing
 	} else {
+
+		if strings.HasPrefix(*params.Alias, alias.ReservedReearthPrefixStory) {
+			// error 's-' prefix
+			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", *params.Alias)
+		} else if strings.HasPrefix(*params.Alias, alias.ReservedReearthPrefixProject) {
+			id := strings.TrimPrefix(*params.Alias, alias.ReservedReearthPrefixProject)
+			// only allow self ID
+			if id != prj.ID().String() {
+				// error 'p-' prefix
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", *params.Alias)
+			}
+		}
+
 		prj.UpdateAlias(*params.Alias)
 	}
 
-	if prevAlias == prj.Alias() || prj.ID().String() == prj.Alias() {
+	if prevAlias == prj.Alias() || prj.ID().String() == prj.Alias() || alias.ReservedReearthPrefixProject+prj.ID().String() == prj.Alias() {
 		// if do not change alias or self ProjectID, do nothing
 	} else {
 		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
@@ -713,12 +726,6 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		ID(prjID).
 		Workspace(input.WorkspaceID).
 		Visualizer(input.Visualizer)
-
-	if input.Alias != nil {
-		prj = prj.Alias(*input.Alias)
-	} else {
-		prj = prj.Alias(prjID.String())
-	}
 
 	if input.Archived != nil {
 		prj = prj.IsArchived(*input.Archived)
