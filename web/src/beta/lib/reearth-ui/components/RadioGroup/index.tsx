@@ -7,13 +7,17 @@ export type RadioGroupProps = {
   value?: string;
   options?: { value: string; label?: string; children?: ReactNode }[];
   onChange?: (value: string) => void;
+  ariaLabelledby?: string;
+  dataTestid?: string;
 };
 
 export const RadioGroup: FC<RadioGroupProps> = ({
   layout = "horizontal",
   value,
   options,
-  onChange
+  onChange,
+  ariaLabelledby,
+  dataTestid
 }) => {
   const [currentValue, setCurrentValue] = useState(value);
 
@@ -31,7 +35,12 @@ export const RadioGroup: FC<RadioGroupProps> = ({
   );
 
   return (
-    <RadioGroupWrapper layout={layout}>
+    <RadioGroupWrapper
+      layout={layout}
+      role="radiogroup"
+      aria-labelledby={ariaLabelledby}
+      data-testid={dataTestid}
+    >
       {options?.map((option, index) => (
         <Radio
           key={index}
