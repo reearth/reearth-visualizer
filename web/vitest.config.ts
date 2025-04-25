@@ -3,6 +3,7 @@ import { defineConfig, configDefaults } from "vitest/config";
 
 import viteConfig from "./vite.config";
 
+// This file is required by VSCode's Vitest extension.
 export default mergeConfig(
   viteConfig,
   defineConfig({
