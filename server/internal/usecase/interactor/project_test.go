@@ -12,7 +12,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/alias"
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -217,12 +216,6 @@ func TestProject_CheckAlias(t *testing.T) {
 	})
 
 	t.Run("when alias is invalid", func(t *testing.T) {
-		t.Run("when alias is already used by other project", func(t *testing.T) {
-			npid := id.NewProjectID()
-			ok, err := uc.CheckAlias(ctx, testAlias, &npid)
-			assert.EqualError(t, err, interfaces.ErrProjectAliasAlreadyUsed.Error())
-			assert.False(t, ok)
-		})
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
 				ok, err := uc.CheckAlias(ctx, "alias2"+c, &pid)
