@@ -48,6 +48,7 @@ const ResourceUrl: FC<ResourceUrlProp> = ({ value, title, onSubmit }) => {
               icon="copy"
               size="small"
               appearance="simple"
+              key="copy"
               iconColor={theme.content.weak}
               onClick={handleIconClick}
             />
