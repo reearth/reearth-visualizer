@@ -38,6 +38,7 @@ export type AreaProps = {
   storageId?: string;
   passive?: boolean;
   children?: ReactNode;
+  dataTestid?: string;
   onResize?: (props: AreaSize) => void;
 };
 
@@ -71,6 +72,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
       storageId,
       passive,
       children,
+      dataTestid,
       onResize
     },
     ref
@@ -320,6 +322,7 @@ export const Area = forwardRef<AreaRef, AreaProps>(
         backgroundColor={backgroundColor}
         asWrapper={asWrapper}
         passive={passive}
+        data-testid={dataTestid}
       >
         {!collapsed && children}
         {resizableEdge && isValidEdge && !collapsed && (

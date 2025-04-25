@@ -35,6 +35,7 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
     <Panel
       title={t("Page Settings")}
       storageId="editor-widgets-page-settings-panel"
+      dataTestid="editor-widgets-page-settings-panel"
       extend
       alwaysOpen
       showCollapseArea={showCollapseArea}
