@@ -354,6 +354,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			},
 			expected: &Project{
 				id:        pid,
+				alias:     "p-" + pid.String(),
 				updatedAt: pid.Timestamp(),
 			},
 		},
