@@ -28,7 +28,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -217,14 +216,64 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	return prj, nil
 }
 
-// NOTE: This function is currently incomplete.
-// It should receive the caller's project ID as an argument,
-// because if the calling project checks its own alias value,
-// this method may incorrectly return an error (as if the alias is already used).
-// However, since this behavior has existed for some time,
-// we'll leave it as-is until all related refactoring is completed.
-func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
-	return i.checkAlias(ctx, id.NewProjectID(), alias)
+func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
+	aliasName := strings.ToLower(newAlias)
+
+	if pid == nil {
+
+		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+	} else {
+
+		prj, err := i.projectRepo.FindByID(ctx, *pid)
+		if err != nil {
+			return false, err
+		}
+
+		if aliasName == prj.Alias() {
+			// current alias
+			return true, nil
+		}
+
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			// error 's-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
+			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixProject)
+			// only allow self ID
+			if id != prj.ID().String() {
+				// error 'p-' prefix
+				return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+			}
+		}
+
+		if prj.ID().String() == aliasName || alias.ReservedReearthPrefixProject+prj.ID().String() == aliasName {
+			// allow self ProjectID
+		} else {
+			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+				return false, err
+			}
+			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+		}
+	}
+
+	return true, nil
 }
 
 func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, op *usecase.Operator) (_ *project.Project, err error) {
@@ -259,20 +308,21 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 		// if anything is set, do nothing
 	} else {
+		newAlias := strings.ToLower(*params.Alias)
 
-		if strings.HasPrefix(*params.Alias, alias.ReservedReearthPrefixStory) {
+		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
 			// error 's-' prefix
-			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", *params.Alias)
-		} else if strings.HasPrefix(*params.Alias, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(*params.Alias, alias.ReservedReearthPrefixProject)
+			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
+			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
 			// only allow self ID
 			if id != prj.ID().String() {
 				// error 'p-' prefix
-				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", *params.Alias)
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
 		}
 
-		prj.UpdateAlias(*params.Alias)
+		prj.UpdateAlias(newAlias)
 	}
 
 	if prevAlias == prj.Alias() || prj.ID().String() == prj.Alias() || alias.ReservedReearthPrefixProject+prj.ID().String() == prj.Alias() {
@@ -653,23 +703,23 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 	return nil
 }
 
-func (i *Project) checkAlias(ctx context.Context, updatedProjectID id.ProjectID, newAlias string) (bool, error) {
-	if err := alias.CheckProjectAliasPattern(newAlias); err != nil {
-		return false, err
-	}
+// func (i *Project) checkAlias(ctx context.Context, updatedProjectID id.ProjectID, newAlias string) (bool, error) {
+// 	if err := alias.CheckProjectAliasPattern(newAlias); err != nil {
+// 		return false, err
+// 	}
 
-	prj, err := i.projectRepo.FindByPublicName(ctx, newAlias)
+// 	prj, err := i.projectRepo.FindByPublicName(ctx, newAlias)
 
-	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
-		return true, nil
-	}
+// 	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
+// 		return true, nil
+// 	}
 
-	if prj.ID() == updatedProjectID {
-		return true, nil
-	}
+// 	if prj.ID() == updatedProjectID {
+// 		return true, nil
+// 	}
 
-	return false, interfaces.ErrProjectAliasAlreadyUsed
-}
+// 	return false, interfaces.ErrProjectAliasAlreadyUsed
+// }
 
 type createProjectInput struct {
 	WorkspaceID accountdomain.WorkspaceID

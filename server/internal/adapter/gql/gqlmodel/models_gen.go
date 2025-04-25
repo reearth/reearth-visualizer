@@ -1079,6 +1079,11 @@ type Story struct {
 func (Story) IsNode()        {}
 func (this Story) GetID() ID { return this.ID }
 
+type StoryAliasAvailability struct {
+	Alias     string `json:"alias"`
+	Available bool   `json:"available"`
+}
+
 type StoryBlock struct {
 	ID          ID               `json:"id"`
 	PluginID    ID               `json:"pluginId"`

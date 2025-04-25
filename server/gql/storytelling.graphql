@@ -221,6 +221,15 @@ type RemoveStoryBlockPayload {
   story: Story!
 }
 
+type StoryAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+extend type Query {
+  checkStoryAlias(alias: String!, storyId: ID): StoryAliasAvailability!
+}
+
 extend type Mutation {
   createStory(input: CreateStoryInput!): StoryPayload!
   updateStory(input: UpdateStoryInput!): StoryPayload!

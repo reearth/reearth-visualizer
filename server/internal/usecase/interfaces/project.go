@@ -71,11 +71,14 @@ type Project interface {
 	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
+
 	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)
 	Update(context.Context, UpdateProjectParam, *usecase.Operator) (*project.Project, error)
-	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
-	CheckAlias(context.Context, string) (bool, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
+
+	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
+	CheckAlias(context.Context, string, *id.ProjectID) (bool, error)
+
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *[]byte, *usecase.Operator) (*project.Project, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error

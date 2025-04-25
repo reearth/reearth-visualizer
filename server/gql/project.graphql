@@ -28,11 +28,6 @@ type Project implements Node {
   visibility: String!
 }
 
-type ProjectAliasAvailability {
-  alias: String!
-  available: Boolean!
-}
-
 enum Visualizer {
   CESIUM
 }
@@ -125,6 +120,11 @@ type ImportProjectPayload {
   projectData: JSON!
 }
 
+type ProjectAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
 # Connection
 
 type ProjectConnection {
@@ -146,7 +146,7 @@ extend type Query {
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!): ProjectAliasAvailability!
+  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
 }
