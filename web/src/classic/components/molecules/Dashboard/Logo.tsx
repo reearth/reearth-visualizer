@@ -12,9 +12,12 @@ const Logo: React.FC<Props> = ({ className }) => {
   return (
     <Wrapper align="center" justify="center" className={className}>
       {window.REEARTH_CONFIG?.brand?.logoUrl ? (
-        <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ maxWidth: "100%" }} />
+        <img
+          src={window.REEARTH_CONFIG.brand.logoUrl}
+          style={{ maxWidth: "100%" }}
+        />
       ) : (
-        <Icon icon="logoColorful" size={122} />
+        <Icon icon="prolairelogo" size={122} />
       )}
     </Wrapper>
   );

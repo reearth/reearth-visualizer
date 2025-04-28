@@ -17,13 +17,16 @@ const RootPage: React.FC<Props> = ({ loading }) => {
       align="center"
       direction="column"
       gap={100}
-      bg={window.REEARTH_CONFIG?.brand?.background}>
+      bg={window.REEARTH_CONFIG?.brand?.background}
+    >
       {window.REEARTH_CONFIG?.brand?.logoUrl ? (
         <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ width: 200 }} />
       ) : (
-        <Icon icon="logo" size={200} />
+        <Icon icon="prolairelogoLight" size={200} />
       )}
-      {loading && <RingLoader size={35} color={theme.classic.main.strongText} />}
+      {loading && (
+        <RingLoader size={35} color={theme.classic.main.strongText} />
+      )}
     </Wrapper>
   );
 };

@@ -19,7 +19,11 @@ export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
   onPasswordResetRequest?: (email?: string) => any;
-  onNewPasswordSubmit?: (newPassword?: string, email?: string, token?: string) => Promise<void>;
+  onNewPasswordSubmit?: (
+    newPassword?: string,
+    email?: string,
+    token?: string
+  ) => Promise<void>;
   passwordPolicy?: PasswordPolicy;
 };
 
@@ -34,7 +38,9 @@ const PasswordReset: React.FC<Props> = ({
   const [sent, setSent] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
-  const newPasswordToken = new URLSearchParams(window.location.search).toString().split("=")[1];
+  const newPasswordToken = new URLSearchParams(window.location.search)
+    .toString()
+    .split("=")[1];
 
   useEffect(() => {
     if (!email) {
@@ -49,7 +55,7 @@ const PasswordReset: React.FC<Props> = ({
       const newValue = e.currentTarget.value;
       setEmail(newValue);
     },
-    [],
+    []
   );
 
   const handlePasswordResetRequest = useCallback(async () => {
@@ -72,12 +78,17 @@ const PasswordReset: React.FC<Props> = ({
       ) : sent ? (
         <SentFormWrapper direction="column" align="center" justify="center">
           <SentForm direction="column" align="center" justify="space-between">
-            <Icon icon="mailCircle" color={theme.classic.colors.brand.blue.strongest} />
+            <Icon
+              icon="mailCircle"
+              color={theme.classic.colors.brand.blue.strongest}
+            />
             <Text size="l" customColor>
               {t("Check Your Email")}
             </Text>
             <Text size="m" customColor>
-              {t("Please check your inbox for instructions on how to verify your account.")}
+              {t(
+                "Please check your inbox for instructions on how to verify your account."
+              )}
             </Text>
             <StyledButton
               className="form-item"
@@ -94,7 +105,8 @@ const PasswordReset: React.FC<Props> = ({
               size="xs"
               color={theme.classic.main.link}
               weight="bold"
-              otherProperties={{ marginLeft: "6px" }}>
+              otherProperties={{ marginLeft: "6px" }}
+            >
               {t("Go to log in page.")}
             </Text>
           </StyledLink>
@@ -102,13 +114,13 @@ const PasswordReset: React.FC<Props> = ({
       ) : (
         <>
           {loading && <Loading overlay />}
-          <Icon className="form-item" icon="logoColorful" size={60} />
+          <Icon className="form-item" icon="prolairelogo" size={60} />
           <Text className="form-item" size="l" customColor>
             {t("Forgot Your Password?")}
           </Text>
           <Text className="form-item" size="s" customColor>
             {t(
-              "Enter your email address and we will send you instructions to reset your password.",
+              "Enter your email address and we will send you instructions to reset your password."
             )}
           </Text>
           <StyledInput
@@ -124,8 +136,12 @@ const PasswordReset: React.FC<Props> = ({
             large
             onClick={handlePasswordResetRequest}
             disabled={disabled}
-            color={disabled ? theme.classic.main.text : theme.classic.other.white}
-            background={disabled ? theme.classic.main.weak : theme.classic.main.link}
+            color={
+              disabled ? theme.classic.main.text : theme.classic.other.white
+            }
+            background={
+              disabled ? theme.classic.main.weak : theme.classic.main.link
+            }
             text={t("Continue")}
           />
           <StyledLink to={"/login"}>
@@ -139,7 +155,11 @@ const PasswordReset: React.FC<Props> = ({
   );
 };
 
-const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
+const StyledButton = styled(Button)<{
+  color?: string;
+  background?: string;
+  border?: boolean;
+}>`
   width: 100%;
   background: ${({ background }) => background};
   border: ${({ border, theme }) =>

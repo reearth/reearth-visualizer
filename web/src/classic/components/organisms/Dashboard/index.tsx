@@ -57,7 +57,8 @@ const Dashboard: React.FC<Props> = ({ workspaceId }) => {
       }
       isLoading={projectLoading}
       hasMoreProjects={hasMoreProjects}
-      onGetMoreProjects={handleGetMoreProjects}>
+      onGetMoreProjects={handleGetMoreProjects}
+    >
       <Workspace workspace={currentWorkspace} isPersonal={isPersonal} />
       <QuickStart
         selectedAsset={selectedAsset}
@@ -75,7 +76,7 @@ const Dashboard: React.FC<Props> = ({ workspaceId }) => {
           />
         }
       />
-      <MarketplaceButton />
+      {/* <MarketplaceButton /> */}
       <Logo />
       <ProjectList projects={projects} />
     </MoleculeDashboard>

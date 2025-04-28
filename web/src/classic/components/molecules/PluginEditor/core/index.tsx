@@ -34,7 +34,14 @@ const PluginEditor: React.FC = () => {
 
   return (
     <DndProvider>
-      <div style={{ display: "flex", width: "100%", height: "100%", alignItems: "stretch" }}>
+      <div
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          alignItems: "stretch",
+        }}
+      >
         <Visualizer
           engine="cesium"
           rootLayerId="root"
@@ -58,39 +65,60 @@ const PluginEditor: React.FC = () => {
             alignItems: "stretch",
             width: "55%",
             zIndex: 1,
-          }}>
+          }}
+        >
           <div
             style={{
               background: "#171618",
               padding: "5px 15px",
-            }}>
+            }}
+          >
             <h3>Plugin Editor</h3>
             <div
               style={{
                 display: "flex",
                 justifyContent: "space-between",
                 gap: "20px",
-              }}>
+              }}
+            >
               <div id="title" style={{ flex: 1 }}>
                 <div
                   style={{
                     display: "flex",
                     width: "100%",
-                  }}>
-                  <LargeButton style={{ background: "orange" }} onClick={handleRun}>
+                  }}
+                >
+                  <LargeButton
+                    style={{ background: "orange" }}
+                    onClick={handleRun}
+                  >
                     Run
                   </LargeButton>
                   <LargeButton onClick={handleDownload}>Download</LargeButton>
-                  <LargeButton onClick={handleReset} style={{ padding: "3px 6px" }}>
+                  <LargeButton
+                    onClick={handleReset}
+                    style={{ padding: "3px 6px" }}
+                  >
                     Reset
                   </LargeButton>
                 </div>
-                <LargeButton onClick={handleOpen}>Upload your plugin</LargeButton>
+                <LargeButton onClick={handleOpen}>
+                  Upload your plugin
+                </LargeButton>
               </div>
               <div
                 id="options"
-                style={{ display: "flex", flexDirection: "column", flex: 1, margin: "4px 0" }}>
-                <Button selected={showAlignSystem} onClick={handleAlignSystemToggle}>
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  flex: 1,
+                  margin: "4px 0",
+                }}
+              >
+                <Button
+                  selected={showAlignSystem}
+                  onClick={handleAlignSystemToggle}
+                >
                   Widget Align System Positions
                 </Button>
                 <div
@@ -100,8 +128,11 @@ const PluginEditor: React.FC = () => {
                     paddingBottom: `${showAlignSystem ? "2px" : "0"}`,
                     overflow: "hidden",
                     transition: "all 1s",
-                    borderBottom: `${showAlignSystem ? "1px solid white" : "none"}`,
-                  }}>
+                    borderBottom: `${
+                      showAlignSystem ? "1px solid white" : "none"
+                    }`,
+                  }}
+                >
                   {positions.map((p, i) => (
                     <div
                       key={i}
@@ -109,8 +140,9 @@ const PluginEditor: React.FC = () => {
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "space-between",
-                      }}>
-                      {Object.keys(p).map(k => (
+                      }}
+                    >
+                      {Object.keys(p).map((k) => (
                         <Button
                           key={k}
                           selected={
@@ -122,14 +154,21 @@ const PluginEditor: React.FC = () => {
                               section: p[k].section,
                               area: p[k].area,
                             })
-                          }>
+                          }
+                        >
                           {k}
                         </Button>
                       ))}
                     </div>
                   ))}
                 </div>
-                <div style={{ display: "flex", flexDirection: "column", margin: "4px 0" }}>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    margin: "4px 0",
+                  }}
+                >
                   <Button selected={showInfobox} onClick={handleInfoboxToggle}>
                     Toggle Infobox
                   </Button>
@@ -141,21 +180,27 @@ const PluginEditor: React.FC = () => {
                       paddingBottom: `${showAlignSystem ? "2px" : "0"}`,
                       overflow: "hidden",
                       transition: "all 1s",
-                      borderBottom: `${showInfobox ? "1px solid white" : "none"}`,
-                    }}>
+                      borderBottom: `${
+                        showInfobox ? "1px solid white" : "none"
+                      }`,
+                    }}
+                  >
                     <Button
                       selected={infoboxSize === "small"}
-                      onClick={() => setInfoboxSize("small")}>
+                      onClick={() => setInfoboxSize("small")}
+                    >
                       Small
                     </Button>
                     <Button
                       selected={infoboxSize === "medium"}
-                      onClick={() => setInfoboxSize("medium")}>
+                      onClick={() => setInfoboxSize("medium")}
+                    >
                       Medium
                     </Button>
                     <Button
                       selected={infoboxSize === "large"}
-                      onClick={() => setInfoboxSize("large")}>
+                      onClick={() => setInfoboxSize("large")}
+                    >
                       Large
                     </Button>
                   </div>
@@ -164,19 +209,26 @@ const PluginEditor: React.FC = () => {
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                  }}>
+                  }}
+                >
                   <p>Extension type</p>
                   <select
                     value={mode}
-                    onChange={e =>
-                      setMode(e.currentTarget.value as "block" | "widget" | "primitive")
-                    }>
+                    onChange={(e) =>
+                      setMode(
+                        e.currentTarget.value as
+                          | "block"
+                          | "widget"
+                          | "primitive"
+                      )
+                    }
+                  >
                     <option value="block">Block</option>
                     <option value="widget">Widget</option>
                   </select>
                 </div>
               </div>
-              <Icon icon="logo" />
+              <Icon icon="prolairelogoLight" />
             </div>
           </div>
           <MonacoEditor

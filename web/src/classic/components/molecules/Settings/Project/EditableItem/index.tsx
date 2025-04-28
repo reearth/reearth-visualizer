@@ -2,7 +2,7 @@ import React, { useState, useCallback } from "react";
 
 import Avatar from "@reearth/classic/components/atoms/Avatar";
 import Icon from "@reearth/classic/components/atoms/Icon";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.png";
 import TextBox from "@reearth/classic/components/atoms/TextBox";
 import Field from "@reearth/classic/components/molecules/Settings/Field";
 import SelectField from "@reearth/classic/components/molecules/Settings/SelectField";
@@ -89,9 +89,14 @@ export default function EditableItem<T extends string = string>({
             <StyledIcon icon="cancel" size={20} onClick={cancelEdit} />
             <StyledIcon icon="check" size={20} onClick={saveEdit} />
           </ButtonWrapper>
-        }>
+        }
+      >
         <SelectFieldWrapper>
-          <SelectField value={inputState} items={dropdownItems} onChange={setInputState} />
+          <SelectField
+            value={inputState}
+            items={dropdownItems}
+            onChange={setInputState}
+          />
         </SelectFieldWrapper>
       </Field>
     ) : (
@@ -104,7 +109,8 @@ export default function EditableItem<T extends string = string>({
             <StyledIcon icon="cancel" size={20} onClick={cancelEdit} />
             <StyledIcon icon="check" size={20} onClick={saveEdit} />
           </ButtonWrapper>
-        }>
+        }
+      >
         <TextBox
           onChange={setInputState}
           floatedTextColor="white"
@@ -124,11 +130,18 @@ export default function EditableItem<T extends string = string>({
         !disabled &&
         !avatar && (
           <ButtonWrapper>
-            {imageSrc && <StyledIcon icon="bin" size={20} onClick={() => onSubmit?.(undefined)} />}
+            {imageSrc && (
+              <StyledIcon
+                icon="bin"
+                size={20}
+                onClick={() => onSubmit?.(undefined)}
+              />
+            )}
             <StyledIcon icon="edit" size={20} onClick={startEdit} />
           </ButtonWrapper>
         )
-      }>
+      }
+    >
       {imageSrc || isImage ? (
         <div>
           <Image src={imageSrc || defaultProjectImage} height={iHeight} />

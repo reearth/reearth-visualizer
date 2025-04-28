@@ -32,7 +32,8 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
         noHoverStyle
         centered
         hasIcon
-        openOnClick>
+        openOnClick
+      >
         <DropdownInner>
           <MenuList>
             <MenuListItem>
@@ -47,12 +48,13 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
                 text={t("Datasets")}
               />
             </MenuListItem>
-            <MenuListItem>
+            {/* PROLAIRE-46 */}
+            {/* <MenuListItem>
               <MenuListItemLabel
                 linkTo={`/settings/projects/${currentProject.id}/plugins`}
                 text={t("Plugins")}
               />
-            </MenuListItem>
+            </MenuListItem> */}
             <Spacer />
             <MenuListItem>
               <MenuListItemLabel
@@ -66,7 +68,9 @@ const ProjectMenu: React.FC<Props> = ({ currentProject, workspaceId }) => {
                 <MenuListItem>
                   <MenuListItemLabel
                     icon="help"
-                    onClick={() => window.open(documentationUrl, "_blank", "noopener")}
+                    onClick={() =>
+                      window.open(documentationUrl, "_blank", "noopener")
+                    }
                     text={t("Documentation")}
                   />
                 </MenuListItem>

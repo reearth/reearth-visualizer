@@ -17,7 +17,11 @@ import useHooks, { PasswordPolicy as PasswordPolicyType } from "./hooks";
 export type PasswordPolicy = PasswordPolicyType;
 
 export type Props = {
-  onSignup: (info: { email: string; username: string; password: string }) => any;
+  onSignup: (info: {
+    email: string;
+    username: string;
+    password: string;
+  }) => any;
   passwordPolicy?: PasswordPolicy;
 };
 
@@ -43,12 +47,17 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
       {!loading && sent ? (
         <SentFormWrapper direction="column" align="center" justify="center">
           <SentForm direction="column" align="center" justify="space-between">
-            <Icon icon="mailCircle" color={theme.classic.colors.brand.blue.strongest} />
+            <Icon
+              icon="mailCircle"
+              color={theme.classic.colors.brand.blue.strongest}
+            />
             <Text size="l" customColor>
               {t("Check Your Email")}
             </Text>
             <Text size="m" customColor>
-              {t("Please check your inbox for instructions on how to verify your account.")}
+              {t(
+                "Please check your inbox for instructions on how to verify your account."
+              )}
             </Text>
             <StyledButton
               className="form-item"
@@ -65,7 +74,8 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
               size="xs"
               color={theme.classic.main.link}
               weight="bold"
-              otherProperties={{ marginLeft: "6px" }}>
+              otherProperties={{ marginLeft: "6px" }}
+            >
               {t("Go to log in page.")}
             </Text>
           </StyledLink>
@@ -74,7 +84,7 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
         <>
           {loading && <Loading overlay />}
 
-          <Icon className="form-item" icon="logoColorful" size={60} />
+          <Icon className="form-item" icon="prolairelogo" size={60} />
           <Text className="form-item" size="l" customColor>
             {t("Create your Account")}
           </Text>
@@ -121,8 +131,12 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
             large
             onClick={handleSignup}
             disabled={disabled}
-            color={disabled ? theme.classic.main.text : theme.classic.other.white}
-            background={disabled ? theme.classic.main.weak : theme.classic.main.link}
+            color={
+              disabled ? theme.classic.main.text : theme.classic.other.white
+            }
+            background={
+              disabled ? theme.classic.main.weak : theme.classic.main.link
+            }
             text={t("Continue")}
           />
           <Footer className="form-item">
@@ -134,7 +148,8 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
                 size="xs"
                 color={theme.classic.main.link}
                 weight="bold"
-                otherProperties={{ marginLeft: "6px" }}>
+                otherProperties={{ marginLeft: "6px" }}
+              >
                 {t("Log in")}
               </Text>
             </StyledLink>
@@ -145,7 +160,11 @@ const Signup: React.FC<Props> = ({ onSignup, passwordPolicy }) => {
   );
 };
 
-const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
+const StyledButton = styled(Button)<{
+  color?: string;
+  background?: string;
+  border?: boolean;
+}>`
   width: 100%;
   background: ${({ background }) => background};
   border: ${({ border, theme }) =>

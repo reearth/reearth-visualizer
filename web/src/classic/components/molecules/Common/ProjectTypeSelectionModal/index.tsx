@@ -13,7 +13,11 @@ export interface Props {
   onSubmit?: (projectType: ProjectType) => void;
 }
 
-const ProjectTypeSelectionModal: React.FC<Props> = ({ open, onClose, onSubmit }) => {
+const ProjectTypeSelectionModal: React.FC<Props> = ({
+  open,
+  onClose,
+  onSubmit,
+}) => {
   const t = useT();
   const theme = useTheme();
   const handleTypeSelect = useCallback(
@@ -21,7 +25,7 @@ const ProjectTypeSelectionModal: React.FC<Props> = ({ open, onClose, onSubmit })
       onSubmit?.(projectType);
       onClose?.();
     },
-    [onSubmit, onClose],
+    [onSubmit, onClose]
   );
 
   const handleCloseModal = useCallback(() => {
@@ -35,7 +39,7 @@ const ProjectTypeSelectionModal: React.FC<Props> = ({ open, onClose, onSubmit })
       </TitleText>
       <ProjectTypeContainer>
         <ProjectTypeItem onClick={() => handleTypeSelect("classic")}>
-          <Icon icon="logo" size={101} />
+          <Icon icon="prolairelogoLight" size={101} />
           <Text size="s" color={theme.classic.other.white} weight={"bold"}>
             {t("classic")}
           </Text>
@@ -44,13 +48,13 @@ const ProjectTypeSelectionModal: React.FC<Props> = ({ open, onClose, onSubmit })
           </HintText>
         </ProjectTypeItem>
         <ProjectTypeItem onClick={() => handleTypeSelect("beta")}>
-          <Icon icon="logoColorful" size={101} />
+          <Icon icon="prolairelogo" size={101} />
           <Text size="s" color={theme.classic.other.white} weight={"bold"}>
             {t("Beta")}
           </Text>
           <HintText size="xs" color={theme.classic.main.weak} weight="normal">
             {t(
-              "Create project with the latest features and UI system (projects might break without prior notice)",
+              "Create project with the latest features and UI system (projects might break without prior notice)"
             )}
           </HintText>
         </ProjectTypeItem>

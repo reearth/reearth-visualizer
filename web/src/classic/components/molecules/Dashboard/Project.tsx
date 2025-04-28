@@ -7,7 +7,7 @@ import { useMedia } from "react-use";
 import Button from "@reearth/classic/components/atoms/Button";
 import Flex from "@reearth/classic/components/atoms/Flex";
 import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.png";
 import PublicationStatus from "@reearth/classic/components/atoms/PublicationStatus";
 import Text from "@reearth/classic/components/atoms/Text";
 import { Project as ProjectObjType } from "@reearth/classic/components/molecules/Dashboard/types";
@@ -42,24 +42,39 @@ const Project: React.FC<Props> = ({ className, project }) => {
         projectImage={image}
         projectType={project.projectType}
         onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}>
+        onMouseLeave={() => setHover(false)}
+      >
         <Content isHovered={isHovered}>
-          <Text size={isSmallWindow ? "m" : "l"} color={theme.classic.dashboard.projectName}>
+          <Text
+            size={isSmallWindow ? "m" : "l"}
+            color={theme.classic.dashboard.projectName}
+          >
             {name}
           </Text>
           <Actions isHovered={isHovered}>
             <ButtonWrapper>
               <StyledLink
-                to={project.projectType === "beta" ? `/scene/${sceneId}/map` : `/edit/${sceneId}`}>
+                to={
+                  project.projectType === "beta"
+                    ? `/scene/${sceneId}/map`
+                    : `/edit/${sceneId}`
+                }
+              >
                 <Button large buttonType="primary" icon="earthEditor" />
               </StyledLink>
-              <Button large buttonType="primary" icon="preview" onClick={onPreviewOpen} />
+              <Button
+                large
+                buttonType="primary"
+                icon="preview"
+                onClick={onPreviewOpen}
+              />
               <StyledLink
                 to={
                   project.projectType === "beta"
                     ? `/settings/project/${id}`
                     : `/settings/projects/${id}`
-                }>
+                }
+              >
                 <Button large buttonType="primary" icon="settings" />
               </StyledLink>
             </ButtonWrapper>
@@ -67,15 +82,21 @@ const Project: React.FC<Props> = ({ className, project }) => {
               <Description
                 size="s"
                 isParagraph={true}
-                color={theme.classic.dashboard.projectDescription}>
+                color={theme.classic.dashboard.projectDescription}
+              >
                 {description}
               </Description>
             </DescriptionWrapper>
           </Actions>
           <Flex gap={36}>
-            <PublicationStatus status={status} color={theme.classic.dashboard.publicationStatus} />
+            <PublicationStatus
+              status={status}
+              color={theme.classic.dashboard.publicationStatus}
+            />
             {timeSinceLastEdit && (
-              <Text size="xs">{t("timeSince", { timeSince: timeSinceLastEdit })}</Text>
+              <Text size="xs">
+                {t("timeSince", { timeSince: timeSinceLastEdit })}
+              </Text>
             )}
           </Flex>
         </Content>
@@ -97,7 +118,10 @@ const StyledWrapper = styled.div`
   }
 `;
 
-const Block = styled.div<{ projectImage?: string | null; projectType?: ProjectType }>`
+const Block = styled.div<{
+  projectImage?: string | null;
+  projectType?: ProjectType;
+}>`
   display: flex;
   height: 238px;
   border-radius: 12px;
@@ -165,7 +189,7 @@ const Actions = styled.div<{ isHovered?: boolean }>`
 `;
 
 const StyledLink = styled(Link)`
-  color: ${props => props.theme.classic.main.text};
+  color: ${(props) => props.theme.classic.main.text};
   text-decoration: none;
 
   &:hover {

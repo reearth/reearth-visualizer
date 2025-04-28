@@ -131,6 +131,9 @@ import CheckCircle2 from "./Icons/checkCircle2.svg";
 import MailCircle from "./Icons/mailCircle.svg";
 import Tag from "./Icons/tag.svg";
 import Resize from "./Icons/resize.svg";
+import Prolairelogo from "./Icons/prolairelogo.png";
+import ProlairelogoLight from "./Icons/prolairelogolight.svg";
+import ProlaireSplashLogo from "./Icons/prolaireSplashLogo.svg";
 
 // Plug-ins
 import Plugin from "./Icons/plugin.svg";
@@ -284,4 +287,7 @@ export default {
   compassFocus: CompassFocus,
   house: House,
   zoomToLayer: ZoomToLayer,
+  prolairelogo: Prolairelogo,
+  prolairelogoLight: ProlairelogoLight,
+  prolaireSplashLogo: ProlaireSplashLogo,
 };

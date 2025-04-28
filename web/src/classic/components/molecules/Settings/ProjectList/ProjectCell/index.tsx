@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 // Components
 import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.png";
 import PublicationStatus, {
   Status as StatusType,
 } from "@reearth/classic/components/atoms/PublicationStatus";
@@ -41,14 +41,21 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
         onClick={() => onSelect?.(project)}
         isHover={isHover}
         onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}>
+        onMouseLeave={() => setHover(false)}
+      >
         <Title size="l" color={theme.classic.projectCell.title}>
           {project.name ? project.name : t("No Title Project")}
         </Title>
         {isHover && (
           <DescriptionWrapper>
-            <Desc size="s" color={theme.classic.projectCell.description} isParagraph={true}>
-              {project.description ? project.description : t("No Description...")}
+            <Desc
+              size="s"
+              color={theme.classic.projectCell.description}
+              isParagraph={true}
+            >
+              {project.description
+                ? project.description
+                : t("No Description...")}
             </Desc>
           </DescriptionWrapper>
         )}
@@ -67,15 +74,16 @@ const ProjectCell: React.FC<Props> = ({ project, onSelect }) => {
 };
 
 const StyledWrapper = styled.div<{ project: Project }>`
-  background: ${props =>
+  background: ${(props) =>
     props.project.imageUrl
       ? `url(${props.project.imageUrl})`
       : props.project.projectType === "beta"
       ? `url(${defaultBetaProjectImage})`
       : `url(${defaultProjectImage})`};
-  background-size: ${props => (props.project.imageUrl ? "cover" : "400px 240px")};
+  background-size: ${(props) =>
+    props.project.imageUrl ? "cover" : "400px 240px"};
   background-position: center;
-  box-shadow: 0 0 5px ${props => props.theme.classic.projectCell.shadow};
+  box-shadow: 0 0 5px ${(props) => props.theme.classic.projectCell.shadow};
   height: 240px;
 `;
 
@@ -84,9 +92,10 @@ const Wrapper = styled.div<{ isHover?: boolean }>`
   padding: ${metricsSizes["2xl"]}px ${metricsSizes["l"]}px;
   cursor: pointer;
   height: 100%;
-  background-color: ${props => (props.isHover ? props.theme.classic.main.lightTransparentBg : "")};
+  background-color: ${(props) =>
+    props.isHover ? props.theme.classic.main.lightTransparentBg : ""};
   border: 1px solid
-    ${props =>
+    ${(props) =>
       props.isHover
         ? props.theme.classic.main.select
         : props.theme.classic.main.lightTransparentBg};
@@ -123,7 +132,7 @@ const StatusWrapper = styled.div`
 `;
 
 const Public = styled(PublicationStatus)`
-  color: ${props => props.theme.classic.projectCell.description};
+  color: ${(props) => props.theme.classic.projectCell.description};
   margin: 8px;
 `;
 
@@ -136,7 +145,7 @@ const ArchiveStatus = styled.div`
 const StatusCircle = styled.div`
   width: 9px;
   height: 9px;
-  background: ${props => props.theme.classic.notification.infoBg};
+  background: ${(props) => props.theme.classic.notification.infoBg};
   border-radius: 50px;
   margin: auto ${metricsSizes["s"]}px auto 0;
 `;

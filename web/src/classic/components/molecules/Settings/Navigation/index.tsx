@@ -32,9 +32,12 @@ const Navigation: React.FC<Props> = ({ workspace, project }) => {
     <Wrapper>
       <LogoWrapper>
         {window.REEARTH_CONFIG?.brand?.logoUrl ? (
-          <img src={window.REEARTH_CONFIG.brand.logoUrl} style={{ maxWidth: "100%" }} />
+          <img
+            src={window.REEARTH_CONFIG.brand.logoUrl}
+            style={{ maxWidth: "100%" }}
+          />
         ) : (
-          <Icon icon="logoColorful" size={110} />
+          <Icon icon="prolairelogo" size={110} />
         )}
       </LogoWrapper>
       <NavigationList>
@@ -46,7 +49,8 @@ const Navigation: React.FC<Props> = ({ workspace, project }) => {
               level={2}
               to={`/settings/workspaces/${workspace.id}`}
               key={workspace.id}
-              name={workspace.name as string}>
+              name={workspace.name as string}
+            >
               <NavigationItem
                 level={3}
                 to={`/settings/workspaces/${workspace.id}/asset`}
@@ -58,12 +62,14 @@ const Navigation: React.FC<Props> = ({ workspace, project }) => {
         <Divider margin="0" />
         <NavigationItem
           to={`/settings/workspaces/${workspace?.id}/projects`}
-          name={t("Project List")}>
+          name={t("Project List")}
+        >
           {project && !project.isArchived && (
             <NavigationItem
               level={2}
               to={`/settings/projects/${project.id}`}
-              name={project.name as string}>
+              name={project.name as string}
+            >
               <NavigationItem
                 level={3}
                 to={`/settings/projects/${project.id}/public`}
@@ -74,11 +80,12 @@ const Navigation: React.FC<Props> = ({ workspace, project }) => {
                 to={`/settings/projects/${project.id}/dataset`}
                 name={t("Dataset")}
               />
-              <NavigationItem
+              {/* PROLAIRE-46 */}
+              {/* <NavigationItem
                 level={3}
                 to={`/settings/projects/${project.id}/plugins`}
                 name={t("Plugins")}
-              />
+              /> */}
             </NavigationItem>
           )}
         </NavigationItem>

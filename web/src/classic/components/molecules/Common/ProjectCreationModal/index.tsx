@@ -4,7 +4,7 @@ import React, { useCallback, useEffect } from "react";
 import Button from "@reearth/classic/components/atoms/Button";
 import Divider from "@reearth/classic/components/atoms/Divider";
 import defaultBetaProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultBetaProjectImage.png";
-import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.jpg";
+import defaultProjectImage from "@reearth/classic/components/atoms/Icon/Icons/defaultProjectImage.png";
 import Loading from "@reearth/classic/components/atoms/Loading";
 import Modal from "@reearth/classic/components/atoms/Modal";
 import Text from "@reearth/classic/components/atoms/Text";
@@ -94,36 +94,56 @@ const ProjectCreationModal: React.FC<Props> = ({
           onClick={handleCreate}
         />
       }
-      button2={<Button large buttonType="secondary" text={t("Cancel")} onClick={handleClose} />}>
+      button2={
+        <Button
+          large
+          buttonType="secondary"
+          text={t("Cancel")}
+          onClick={handleClose}
+        />
+      }
+    >
       {formik.isSubmitting && <Loading overlay />}
       <Divider margin="20px" />
       <NewProjectForm onSubmit={formik.handleSubmit}>
         <FormInputWrapper>
-          <Text size="s" color={theme.classic.main.text} otherProperties={{ margin: "14px 0" }}>
+          <Text
+            size="s"
+            color={theme.classic.main.text}
+            otherProperties={{ margin: "14px 0" }}
+          >
             {t("Project Name")}
           </Text>
           <StyledInput
             type="text"
             {...formik.getFieldProps("name")}
-            onBlur={e => {
+            onBlur={(e) => {
               formik.handleBlur(e);
             }}
           />
         </FormInputWrapper>
         <FormInputWrapper>
-          <Text size="s" color={theme.classic.main.text} otherProperties={{ margin: "14px 0" }}>
+          <Text
+            size="s"
+            color={theme.classic.main.text}
+            otherProperties={{ margin: "14px 0" }}
+          >
             {t("Description")}
           </Text>
           <StyledTextArea
             rows={5}
             {...formik.getFieldProps("description")}
-            onBlur={e => {
+            onBlur={(e) => {
               formik.handleBlur(e);
             }}
           />
         </FormInputWrapper>
         <FormInputWrapper>
-          <Text size="s" color={theme.classic.main.text} otherProperties={{ margin: "14px 0" }}>
+          <Text
+            size="s"
+            color={theme.classic.main.text}
+            otherProperties={{ margin: "14px 0" }}
+          >
             {t("Select thumbnail image")}
           </Text>
           <Thumbnail
@@ -148,8 +168,8 @@ const FormInputWrapper = styled.div`
 
 const StyledInput = styled.input`
   width: calc(100% - 12px);
-  color: ${props => props.theme.classic.main.text};
-  background: ${props => props.theme.classic.main.deepBg};
+  color: ${(props) => props.theme.classic.main.text};
+  background: ${(props) => props.theme.classic.main.deepBg};
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.s}px;
   outline: none;
@@ -160,8 +180,8 @@ const StyledInput = styled.input`
 const StyledTextArea = styled.textarea`
   width: calc(100% - 12px);
   resize: none;
-  color: ${props => props.theme.classic.main.text};
-  background: ${props => props.theme.classic.main.deepBg};
+  color: ${(props) => props.theme.classic.main.text};
+  background: ${(props) => props.theme.classic.main.deepBg};
   border: 1px solid #3f3d45;
   font-size: ${fonts.sizes.s}px;
   outline: none;
@@ -170,7 +190,7 @@ const StyledTextArea = styled.textarea`
 `;
 
 const Thumbnail = styled.div<{ url: string; projectType?: ProjectType }>`
-  background-image: ${props =>
+  background-image: ${(props) =>
     props.url
       ? `url(${props.url})`
       : props.projectType === "beta"

@@ -79,14 +79,19 @@ const QuickStart: React.FC<Props> = ({
   return (
     <StyledDashboardBlock className={className} grow={4}>
       <Content direction="column" justify="space-around">
-        <Text size={isSmallWindow ? "m" : "l"} color={theme.classic.main.text} weight="bold">
+        <Text
+          size={isSmallWindow ? "m" : "l"}
+          color={theme.classic.main.text}
+          weight="bold"
+        >
           {t("Quick Start")}
         </Text>
         {documentationUrl && (
           <LongBannerButton
             align="center"
             justify="center"
-            onClick={() => window.open(documentationUrl, "_blank", "noopener")}>
+            onClick={() => window.open(documentationUrl, "_blank", "noopener")}
+          >
             <MapIcon icon="map" />
             <Text size="m" weight="bold" customColor>
               {t("User guide")}
@@ -94,22 +99,25 @@ const QuickStart: React.FC<Props> = ({
           </LongBannerButton>
         )}
         <Flex justify="space-between">
-          <HeroBannerButton
-            direction="column"
-            align="center"
-            justify="center"
-            linearGradient={window.REEARTH_CONFIG?.brand?.background}
-            onClick={handleCreateProjectClick}>
-            <StyledIcon icon="newProject" size={70} />
-            <Text size="m" weight="bold" customColor>
-              {t("New project")}
-            </Text>
-          </HeroBannerButton>
+          {/* PROLAIRE-50 */}
           <BannerButton
             direction="column"
             align="center"
             justify="center"
-            onClick={() => setWorkCreateOpen(true)}>
+            //linearGradient={window.REEARTH_CONFIG?.brand?.background}
+            onClick={handleCreateProjectClick}
+          >
+            <StyledIcon icon="newProject" size={70} />
+            <Text size="m" weight="bold" customColor>
+              {t("New project")}
+            </Text>
+          </BannerButton>
+          <BannerButton
+            direction="column"
+            align="center"
+            justify="center"
+            onClick={() => setWorkCreateOpen(true)}
+          >
             <StyledIcon icon="newWorkspace" size={70} />
             <Text size="m" weight="bold" customColor>
               {t("New workspace")}
@@ -156,7 +164,7 @@ const Content = styled(Flex)`
   min-width: ${metrics.dashboardQuickMinWidth}px;
   height: ${metrics.dashboardContentHeight}px;
   padding: ${metricsSizes.xl}px;
-  color: ${props => props.theme.classic.main.text};
+  color: ${(props) => props.theme.classic.main.text};
 
   @media only screen and (max-width: 1024px) {
     height: ${metrics.dashboardContentSmallHeight}px;
@@ -173,14 +181,14 @@ const BannerButtonStyles = css`
 
 const LongBannerButton = styled(Flex)`
   ${BannerButtonStyles};
-  background: ${props => props.theme.classic.main.paleBg};
+  background: ${(props) => props.theme.classic.main.paleBg};
   width: 100%;
-  color: ${props => props.theme.classic.main.text};
+  color: ${(props) => props.theme.classic.main.text};
   height: 70px;
 
   &:hover {
-    background: ${props => props.theme.classic.main.bg};
-    color: ${props => props.theme.classic.main.strongText};
+    background: ${(props) => props.theme.classic.main.bg};
+    color: ${(props) => props.theme.classic.main.strongText};
   }
 
   @media only screen and (max-width: 1024px) {
@@ -190,14 +198,14 @@ const LongBannerButton = styled(Flex)`
 
 const BannerButton = styled(Flex)`
   ${BannerButtonStyles};
-  background: ${props => props.theme.classic.main.paleBg};
-  color: ${props => props.theme.classic.main.text};
+  background: ${(props) => props.theme.classic.main.paleBg};
+  color: ${(props) => props.theme.classic.main.text};
   width: 48%;
   height: 114px;
 
   &:hover {
-    background: ${props => props.theme.classic.main.bg};
-    color: ${props => props.theme.classic.main.strongText};
+    background: ${(props) => props.theme.classic.main.bg};
+    color: ${(props) => props.theme.classic.main.strongText};
   }
 
   @media only screen and (max-width: 1024px) {

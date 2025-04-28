@@ -27,7 +27,7 @@ const Login: React.FC = () => {
       const newValue = e.currentTarget.value;
       setUsername(newValue);
     },
-    [],
+    []
   );
 
   const handlePasswordInput = useCallback(
@@ -35,12 +35,12 @@ const Login: React.FC = () => {
       const newValue = e.currentTarget.value;
       setPassword(newValue);
     },
-    [],
+    []
   );
 
   return (
     <AuthPage>
-      <Icon className="form-item" icon="logoColorful" size={60} />
+      <Icon className="form-item" icon="prolairelogo" size={60} />
       <Text className="form-item" size="l" customColor>
         {t("Welcome")}
       </Text>
@@ -50,11 +50,14 @@ const Login: React.FC = () => {
       <StyledForm
         id="login-form"
         action={`${window.REEARTH_CONFIG?.api || "/api"}/login`}
-        method="post">
+        method="post"
+      >
         <input
           type="hidden"
           name="id"
-          value={new URLSearchParams(window.location.search).get("id") ?? undefined}
+          value={
+            new URLSearchParams(window.location.search).get("id") ?? undefined
+          }
         />
         <StyledInput
           className="form-item"
@@ -81,7 +84,8 @@ const Login: React.FC = () => {
               className="form-item"
               size="xs"
               color={theme.classic.main.link}
-              otherProperties={{ display: "inline-block" }}>
+              otherProperties={{ display: "inline-block" }}
+            >
               {t("Forgot password?")}
             </Text>
           </StyledLink>
@@ -92,7 +96,9 @@ const Login: React.FC = () => {
           type="submit"
           disabled={disabled}
           color={disabled ? theme.classic.main.text : theme.classic.other.white}
-          background={disabled ? theme.classic.main.weak : theme.classic.main.link}
+          background={
+            disabled ? theme.classic.main.weak : theme.classic.main.link
+          }
           text={t("Continue")}
         />
       </StyledForm>
@@ -105,7 +111,8 @@ const Login: React.FC = () => {
             size="xs"
             color={theme.classic.main.link}
             weight="bold"
-            otherProperties={{ marginLeft: "6px" }}>
+            otherProperties={{ marginLeft: "6px" }}
+          >
             {t("Sign up")}
           </Text>
         </StyledLink>
@@ -124,7 +131,11 @@ const StyledForm = styled.form`
   }
 `;
 
-const StyledButton = styled(Button)<{ color?: string; background?: string; border?: boolean }>`
+const StyledButton = styled(Button)<{
+  color?: string;
+  background?: string;
+  border?: boolean;
+}>`
   width: 100%;
   background: ${({ background }) => background};
   border: ${({ border, theme }) =>

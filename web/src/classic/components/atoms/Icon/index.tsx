@@ -1,5 +1,11 @@
 import svgToMiniDataURI from "mini-svg-data-uri";
-import React, { AriaAttributes, AriaRole, CSSProperties, memo, useMemo } from "react";
+import React, {
+  AriaAttributes,
+  AriaRole,
+  CSSProperties,
+  memo,
+  useMemo,
+} from "react";
 import SVG from "react-inlinesvg";
 
 import { ariaProps } from "@reearth/classic/util/aria";
@@ -38,8 +44,9 @@ const Icon: React.FC<Props> = ({
   ...props
 }) => {
   const src = useMemo(
-    () => (icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons]),
-    [icon],
+    () =>
+      icon?.startsWith("<svg ") ? svgToMiniDataURI(icon) : Icons[icon as Icons],
+    [icon]
   );
   if (!icon) return null;
 
@@ -54,6 +61,23 @@ const Icon: React.FC<Props> = ({
         style={style}
         role={role}
         size={sizeStr}
+        notransition={notransition}
+        onClick={onClick}
+        {...aria}
+      />
+    );
+  }
+
+  if (src.endsWith(".png") || src.endsWith(".jpg")) {
+    return (
+      <StyledImg
+        className={className}
+        src={src}
+        alt={alt}
+        style={style}
+        role={role}
+        size={sizeStr}
+        height={"auto"}
         notransition={notransition}
         onClick={onClick}
         {...aria}
@@ -85,7 +109,7 @@ const Icon: React.FC<Props> = ({
 
 const StyledImg = styled.img<{ size?: string; notransition?: boolean }>`
   width: ${({ size }) => size};
-  height: ${({ size }) => size};
+  height: ${({ size, height }) => height ?? size};
   ${({ notransition }) => !notransition && "transition: all 0.3s;"}
 `;
 

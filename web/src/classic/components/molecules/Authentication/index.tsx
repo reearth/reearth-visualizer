@@ -15,7 +15,7 @@ const AuthPage: React.FC<{ children?: ReactNode }> = ({ children }) => {
         </Flex>
       )}
       <Flex justify="center" align="center" flex={3}>
-        <Icon icon="logo" size={250} />
+        <Icon icon="prolaireSplashLogo" size={550} />
       </Flex>
     </Wrapper>
   );
