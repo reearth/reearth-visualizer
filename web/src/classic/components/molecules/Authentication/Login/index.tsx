@@ -45,7 +45,7 @@ const Login: React.FC = () => {
         {t("Welcome")}
       </Text>
       <Text className="form-item" size="s" customColor>
-        {t("Log in to Re:Earth to continue.")}
+        {t("Log in to Prolaire to continue.")}
       </Text>
       <StyledForm
         id="login-form"

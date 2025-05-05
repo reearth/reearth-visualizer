@@ -10,7 +10,7 @@ const BrowserWidthWarning: React.FC = () => {
     <OverlayWithMessage
       title={t("Your browser is too small")}
       content={t(
-        "Re:Earth needs at least 900px width to be used effectively. Please resize your browser window.",
+        "Prolaire needs at least 900px width to be used effectively. Please resize your browser window."
       )}
       icon="resize"
       show={isSmallWindow}

@@ -63,18 +63,27 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
             />
             <Divider />
             <AssetWrapper direction="column" justify="space-between">
-              <AssetList wrap="nowrap" direction="column" justify="space-between">
+              <AssetList
+                wrap="nowrap"
+                direction="column"
+                justify="space-between"
+              >
                 {pickedFileSheets?.map((sheetItem: GoogleSheet) => (
                   <AssetListItem
                     key={sheetItem.properties.sheetId}
-                    asset={{ id: sheetItem.properties.sheetId, name: sheetItem.properties.title }}
+                    asset={{
+                      id: sheetItem.properties.sheetId,
+                      name: sheetItem.properties.title,
+                    }}
                     onCheck={() => {
                       handleSheetSelect({
                         id: sheetItem.properties.sheetId,
                         name: sheetItem.properties.title,
                       });
                     }}
-                    selected={sheetItem.properties.sheetId === selectedSheet?.id}
+                    selected={
+                      sheetItem.properties.sheetId === selectedSheet?.id
+                    }
                   />
                 ))}
               </AssetList>
@@ -88,8 +97,9 @@ const Gdrive: React.FC<Props> = ({ onReturn, syncLoading, onSheetSelect }) => {
             <Text
               size="m"
               color={theme.classic.infoBox.weakText}
-              otherProperties={{ marginBottom: metricsSizes["m"] + "px" }}>
-              {t("Re:Earth supports uploading Google Sheets and CSV files.")}
+              otherProperties={{ marginBottom: metricsSizes["m"] + "px" }}
+            >
+              {t("Prolaire supports uploading Google Sheets and CSV files.")}
             </Text>
 
             {isLoading ? (

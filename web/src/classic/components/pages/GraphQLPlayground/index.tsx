@@ -13,7 +13,7 @@ export default function GraphQLPlayground(_: { path?: string }): JSX.Element {
   const { getAccessToken } = useAuth();
   const [headers, setHeaders] = useState<string>();
   useEffect(() => {
-    getAccessToken().then(a => {
+    getAccessToken().then((a) => {
       setHeaders(JSON.stringify({ Authorization: `Bearer ${a}` }, null, 2));
     });
   }, [getAccessToken]);
@@ -23,6 +23,6 @@ export default function GraphQLPlayground(_: { path?: string }): JSX.Element {
       <GraphiQL fetcher={fetcher} isHeadersEditorEnabled headers={headers} />
     </Filled>
   ) : (
-    <div>Please log in to Re:Earth</div>
+    <div>Please log in to Prolaire</div>
   );
 }
