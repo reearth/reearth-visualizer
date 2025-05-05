@@ -33,9 +33,9 @@ const RootPage: React.FC<Props> = ({ loading }) => {
 
 const Wrapper = styled(Flex)<{ bg?: string }>`
   height: 100%;
-  background: ${({ theme, bg }) =>
-    bg ||
-    `linear-gradient(70deg, ${theme.classic.main.brandBlue} 10%, ${theme.classic.main.brandRed} 60%, ${theme.classic.main.brandBlue} 90%)`};
+  background: ${({ theme, bg }) => bg};
 `;
+
+// || `linear-gradient(70deg, ${theme.classic.main.brandBlue} 10%, ${theme.classic.main.brandRed} 60%, ${theme.classic.main.brandBlue} 90%)`};
 
 export default RootPage;
