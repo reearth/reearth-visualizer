@@ -703,24 +703,6 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 	return nil
 }
 
-// func (i *Project) checkAlias(ctx context.Context, updatedProjectID id.ProjectID, newAlias string) (bool, error) {
-// 	if err := alias.CheckProjectAliasPattern(newAlias); err != nil {
-// 		return false, err
-// 	}
-
-// 	prj, err := i.projectRepo.FindByPublicName(ctx, newAlias)
-
-// 	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
-// 		return true, nil
-// 	}
-
-// 	if prj.ID() == updatedProjectID {
-// 		return true, nil
-// 	}
-
-// 	return false, interfaces.ErrProjectAliasAlreadyUsed
-// }
-
 type createProjectInput struct {
 	WorkspaceID accountdomain.WorkspaceID
 	Visualizer  visualizer.Visualizer
