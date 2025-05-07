@@ -6815,7 +6815,6 @@ input UpdateProjectInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   imageUrl: URL
   publicTitle: String
   publicDescription: String
@@ -7322,7 +7321,6 @@ input UpdateStoryInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   publicTitle: String
   publicDescription: String
   publicImage: String
@@ -46313,7 +46311,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted", "visibility"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46369,13 +46367,6 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.BasicAuthPassword = data
-		case "alias":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Alias = data
 		case "imageUrl":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUrl"))
 			data, err := ec.unmarshalOURL2ᚖnetᚋurlᚐURL(ctx, v)
@@ -46638,7 +46629,7 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "enableGa", "trackingId"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46708,13 +46699,6 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 				return it, err
 			}
 			it.BasicAuthPassword = data
-		case "alias":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Alias = data
 		case "publicTitle":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicTitle"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)

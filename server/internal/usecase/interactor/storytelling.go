@@ -5,17 +5,19 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
-	scene2 "github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
@@ -181,27 +183,11 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetTrackingID(*inp.TrackingID)
 	}
 
-	oldAlias := story.Alias()
-	if inp.Alias != nil && *inp.Alias != oldAlias {
-		if err := story.UpdateAlias(*inp.Alias); err != nil {
-			return nil, err
-		}
-	}
-
 	// TODO: Handel ordering
 
 	err = i.storytellingRepo.Save(ctx, *story)
 	if err != nil {
 		return nil, err
-	}
-
-	if story.PublishmentStatus() != storytelling.PublishmentStatusPrivate && inp.Alias != nil && story.Alias() != oldAlias {
-		if err := i.file.MoveStory(ctx, oldAlias, story.Alias()); err != nil {
-			// ignore ErrNotFound
-			if !errors.Is(err, rerror.ErrNotFound) {
-				return nil, err
-			}
-		}
 	}
 
 	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
@@ -265,121 +251,68 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	if err != nil {
 		return nil, err
 	}
+
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
-		return nil, err
-	}
-	if err := i.CheckSceneLock(ctx, story.Scene()); err != nil {
-		return nil, err
-	}
-
-	scene, err := i.sceneRepo.FindByID(ctx, story.Scene())
-	if err != nil {
-		return nil, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, scene.Workspace())
-	if err != nil {
-		return nil, err
-	}
-
-	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate {
-		// enforce policy
-		if policyID := op.Policy(ws.Policy()); policyID != nil {
-			p, err := i.policyRepo.FindByID(ctx, *policyID)
-			if err != nil {
-				return nil, err
-			}
-			s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-			if err != nil {
-				return nil, err
-			}
-			if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
-	if err != nil {
-		return nil, err
-	}
-
-	layerStyles, err := i.layerStyles.FindByScene(ctx, story.Scene())
-	if err != nil {
 		return nil, err
 	}
 
 	prevAlias := story.Alias()
-	if inp.Alias == nil && prevAlias == "" && inp.Status != storytelling.PublishmentStatusPrivate {
-		return nil, interfaces.ErrProjectAliasIsNotSet
-	}
 
-	var prevPublishedAlias string
-	if story.PublishmentStatus() != storytelling.PublishmentStatusPrivate {
-		prevPublishedAlias = prevAlias
-	}
-
-	newAlias := prevAlias
-	if inp.Alias != nil && *inp.Alias != prevAlias {
-		if publishedStory, err := i.storytellingRepo.FindByPublicName(ctx, *inp.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return nil, err
-		} else if publishedStory != nil && story.Id() != publishedStory.Id() {
-			return nil, interfaces.ErrProjectAliasAlreadyUsed
+	// if StoryID is not specified
+	if inp.Alias == nil || *inp.Alias == "" {
+		// if you don't have an alias, set it to StoryID
+		if story.Alias() == "" {
+			story.UpdateAlias(alias.ReservedReearthPrefixStory + story.Id().String()) // default prefix + ID
 		}
-
-		if err := story.UpdateAlias(*inp.Alias); err != nil {
-			return nil, err
-		}
-		newAlias = *inp.Alias
-	}
-
-	// Lock
-	if err := i.UpdateSceneLock(ctx, scene.ID(), scene2.LockModeFree, scene2.LockModePublishing); err != nil {
-		return nil, err
-	}
-
-	defer i.ReleaseSceneLock(ctx, scene.ID())
-
-	if inp.Status == storytelling.PublishmentStatusPrivate {
-		// unpublish
-		if err = i.file.RemoveStory(ctx, prevPublishedAlias); err != nil {
-			return story, err
-		}
+		// if anything is set, do nothing
 	} else {
-		// publish
-		r, w := io.Pipe()
 
-		// Build
-		go func() {
-			var err error
-
-			defer func() {
-				_ = w.CloseWithError(err)
-			}()
-
-			err = builder.New(
-				repo.PropertyLoaderFrom(i.propertyRepo),
-				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
-				false,
-			).ForScene(scene).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).WithStory(story).Build(ctx, w, time.Now(), true, story.EnableGa(), story.TrackingID())
-		}()
-
-		// Save
-		if err := i.file.UploadStory(ctx, r, newAlias); err != nil {
-			return nil, err
+		if strings.HasPrefix(*inp.Alias, alias.ReservedReearthPrefixProject) {
+			// error 'p-' prefix
+			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", *inp.Alias)
+		} else if strings.HasPrefix(*inp.Alias, alias.ReservedReearthPrefixStory) {
+			id := strings.TrimPrefix(*inp.Alias, alias.ReservedReearthPrefixStory)
+			// only allow self ID
+			if id != story.Id().String() {
+				// error 'p-' prefix
+				return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", *inp.Alias)
+			}
 		}
 
-		// If project has been published before and alias is changed,
-		// remove old published data.
-		if prevPublishedAlias != "" && newAlias != prevPublishedAlias {
-			if err := i.file.RemoveStory(ctx, prevPublishedAlias); err != nil {
-				return nil, err
-			}
+		story.UpdateAlias(*inp.Alias)
+	}
+
+	if prevAlias == story.Alias() || story.Id().String() == story.Alias() || alias.ReservedReearthPrefixStory+story.Id().String() == story.Alias() {
+		// if do not change alias or self StoryID, do nothing
+	} else {
+		if err := alias.CheckAliasPatternStorytelling(story.Alias()); err != nil {
+			return nil, err
+		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+			return nil, err
+		}
+		if err = i.storytellingRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+			return nil, err
 		}
 	}
 
 	story.UpdatePublishmentStatus(inp.Status)
-	story.SetPublishedAt(time.Now())
+
+	// publish
+	if story.PublishmentStatus() != storytelling.PublishmentStatusPrivate {
+		if err := i.uploadPublishStory(ctx, story, op); err != nil {
+			return nil, err
+		}
+		story.SetPublishedAt(time.Now())
+	}
+
+	// unpublish
+	if story.PublishmentStatus() == storytelling.PublishmentStatusPrivate || prevAlias != story.Alias() {
+		// always delete previous aliase
+		if err = i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
+			return story, err
+		}
+	}
 
 	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
 		return nil, err
@@ -392,6 +325,91 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	tx.Commit()
 	return story, nil
+}
+
+func (i *Storytelling) checkPublishPolicy(ctx context.Context, story *storytelling.Story, op *usecase.Operator) (*scene.Scene, error) {
+	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, err
+	}
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+		if err != nil {
+			return nil, err
+		}
+		if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
+			return nil, err
+		}
+	}
+	return s, nil
+}
+
+func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelling.Story, op *usecase.Operator) error {
+
+	// enforce policy
+	s, err := i.checkPublishPolicy(ctx, story, op)
+	if err != nil {
+		return err
+	}
+
+	// Lock
+	if err := i.CheckSceneLock(ctx, story.Scene()); err != nil {
+		return err
+	}
+
+	if err := i.UpdateSceneLock(ctx, story.Scene(), scene.LockModeFree, scene.LockModePublishing); err != nil {
+		return err
+	}
+
+	defer i.ReleaseSceneLock(ctx, story.Scene())
+
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, story.Scene())
+	if err != nil {
+		return err
+	}
+
+	layerStyles, err := i.layerStyles.FindByScene(ctx, story.Scene())
+	if err != nil {
+		return err
+	}
+
+	// publish
+	r, w := io.Pipe()
+
+	// Build
+	go func() {
+		var err error
+
+		defer func() {
+			_ = w.CloseWithError(err)
+		}()
+
+		err = builder.New(
+			repo.PropertyLoaderFrom(i.propertyRepo),
+			repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+			false,
+		).ForScene(s).
+			WithNLSLayers(&nlsLayers).
+			WithLayerStyle(layerStyles).
+			WithStory(story).
+			Build(ctx, w, time.Now(), true, story.EnableGa(), story.TrackingID())
+	}()
+
+	// Save
+	if err := i.file.UploadStory(ctx, r, story.Alias()); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (i *Storytelling) Move(_ context.Context, _ interfaces.MoveStoryInput, _ *usecase.Operator) (*id.StoryID, int, error) {

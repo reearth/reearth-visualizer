@@ -28,7 +28,6 @@ type UpdateStoryInput struct {
 	IsBasicAuthActive *bool
 	BasicAuthUsername *string
 	BasicAuthPassword *string
-	Alias             *string
 	PublicTitle       *string
 	PublicDescription *string
 	PublicImage       *string

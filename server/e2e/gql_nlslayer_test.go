@@ -399,7 +399,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
 
@@ -792,7 +792,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
@@ -863,7 +863,7 @@ func TestInfoboxProperty(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
@@ -921,7 +921,7 @@ func TestPhotoOverlayProperty(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
@@ -1002,7 +1002,7 @@ func TestCustomProperties(t *testing.T) {
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
 	res.Object().

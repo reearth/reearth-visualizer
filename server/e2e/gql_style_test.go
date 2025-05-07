@@ -154,7 +154,7 @@ func TestStyleCRUD(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForStyles(e, sId)

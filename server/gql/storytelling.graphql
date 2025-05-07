@@ -73,7 +73,6 @@ input UpdateStoryInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   publicTitle: String
   publicDescription: String
   publicImage: String

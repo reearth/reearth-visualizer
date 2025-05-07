@@ -15,7 +15,7 @@ func TestValidateGeoJsonOfAssets(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	tests := []struct {
 		name     string
@@ -237,7 +237,7 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 				"coreSupport": true,
 			})
 
-			_, _, sId := createScene(e, pId)
+			sId := createScene(e, pId)
 			res := addNLSLayerSimpleByGeojson(e, sId, tt.url, "test", 0)
 			if tt.hasError {
 				res.Object().Value("errors").Array().NotEmpty()
@@ -258,7 +258,7 @@ func TestValidateGeoFormData(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 	tests := []struct {
 		name     string
 		geometry map[string]any

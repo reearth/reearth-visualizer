@@ -1253,7 +1253,6 @@ type UpdateProjectInput struct {
 	IsBasicAuthActive *bool    `json:"isBasicAuthActive,omitempty"`
 	BasicAuthUsername *string  `json:"basicAuthUsername,omitempty"`
 	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
-	Alias             *string  `json:"alias,omitempty"`
 	ImageURL          *url.URL `json:"imageUrl,omitempty"`
 	PublicTitle       *string  `json:"publicTitle,omitempty"`
 	PublicDescription *string  `json:"publicDescription,omitempty"`
@@ -1302,7 +1301,6 @@ type UpdateStoryInput struct {
 	IsBasicAuthActive *bool     `json:"isBasicAuthActive,omitempty"`
 	BasicAuthUsername *string   `json:"basicAuthUsername,omitempty"`
 	BasicAuthPassword *string   `json:"basicAuthPassword,omitempty"`
-	Alias             *string   `json:"alias,omitempty"`
 	PublicTitle       *string   `json:"publicTitle,omitempty"`
 	PublicDescription *string   `json:"publicDescription,omitempty"`
 	PublicImage       *string   `json:"publicImage,omitempty"`
