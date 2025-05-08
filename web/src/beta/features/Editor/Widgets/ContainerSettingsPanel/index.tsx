@@ -24,7 +24,12 @@ const ContainerSettingsPanel: FC = () => {
   const t = useT();
 
   return widgetArea ? (
-    <Panel title={t("Container Settings")} alwaysOpen extend>
+    <Panel
+      dataTestid="settings-panel"
+      title={t("Container Settings")}
+      alwaysOpen
+      extend
+    >
       <FieldsWrapper>
         <NumberField
           title={t("Padding top")}

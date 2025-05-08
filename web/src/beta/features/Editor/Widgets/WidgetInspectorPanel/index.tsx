@@ -17,7 +17,7 @@ const WidgetInspectorPanel: FC = () => {
   const { visibleItems } = useHooks({ sceneId, selectedWidget });
 
   return (
-    <Panel title={t("Inspector")} extend alwaysOpen>
+    <Panel dataTestid="inspector-panel" title={t("Inspector")} extend alwaysOpen>
       {selectedWidget && (
         <Wrapper>
           {visibleItems?.map((i, idx) => (

@@ -18,7 +18,9 @@ export const accountSettingTabs: {
   }
 ] as const;
 
-export default ({ workspaceId }: { workspaceId: string }) => {
+type Tabs = typeof accountSettingTabs;
+
+export default ({ workspaceId }: { workspaceId: string }): { tabs: Tabs } => {
   const t = useT();
 
   const tabs = useMemo(

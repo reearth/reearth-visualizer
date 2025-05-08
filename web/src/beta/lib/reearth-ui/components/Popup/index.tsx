@@ -57,6 +57,8 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
         disabled={disabled}
         extendWidth={extendWidth}
         ref={ref}
+        aria-expanded={context.context.open ? "true" : "false"}
+        aria-haspopup="true"
         {...context.getReferenceProps(props)}
       >
         {typeof children === "string" ? <Button title={children} /> : children}
@@ -67,8 +69,16 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
 
 const Content = forwardRef<
   HTMLDivElement,
-  HTMLProps<HTMLDivElement> & { tooltip?: boolean }
->(function Content({ style, tooltip, ...props }, propRef) {
+  HTMLProps<HTMLDivElement> & {
+    tooltip?: boolean;
+    ariaLabelledby?: string;
+    ariaDescribedby?: string;
+    dataTestid?: string;
+  }
+>(function Content(
+  { style, tooltip, ariaLabelledby, ariaDescribedby, dataTestid, ...props },
+  propRef
+) {
   const { context: floatingContext, ...context } = usePopoverContext();
 
   const ref = useMergeRefs([context.refs.setFloating, propRef]);
@@ -86,6 +96,10 @@ const Content = forwardRef<
             ...context.floatingStyles,
             ...style
           }}
+          role={tooltip ? "tooltip" : "menu"}
+          aria-labelledby={ariaLabelledby}
+          aria-describedby={ariaDescribedby}
+          data-testid={dataTestid}
           {...context.getFloatingProps(props)}
         >
           {tooltip && (
@@ -122,6 +136,9 @@ export type PopupProps = {
   nested?: boolean;
   tooltip?: boolean;
   onOpenChange?: (open: boolean) => void;
+  ariaLabelledby?: string;
+  ariaDescribedby?: string;
+  dataTestid?: string;
 };
 
 export const Popup = ({
@@ -133,6 +150,9 @@ export const Popup = ({
   extendContentWidth,
   autoClose,
   tooltip,
+  ariaLabelledby,
+  ariaDescribedby,
+  dataTestid,
   ...restOptions
 }: PopupProps) => {
   const popover = usePopover({ ...restOptions, triggerOnHover });
@@ -189,6 +209,9 @@ export const Popup = ({
         tooltip={tooltip}
         onClick={handleContentClick}
         style={contentStyle}
+        ariaLabelledby={ariaLabelledby}
+        ariaDescribedby={ariaDescribedby}
+        dataTestid={dataTestid}
       >
         {children}
       </Content>

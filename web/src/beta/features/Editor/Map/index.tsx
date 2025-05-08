@@ -48,6 +48,7 @@ const Map: FC = () => {
           direction="column"
           resizableEdge="right"
           storageId="editor-map-left-area"
+          dataTestid="editor-map-left-area"
           hidden={hideNormalPanels}
         >
           <ScenePanel />

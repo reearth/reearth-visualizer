@@ -36,7 +36,7 @@ const PublishToolsPanel: FC = () => {
   const [isPublishMode, setIsPublishMode] = useState(false);
 
   return (
-    <Panel extend>
+    <Panel dataTestid="publish-tools-panel" extend>
       <StyledSecondaryNav>
         <LeftSection>
           {publishItems.map((item) => (

@@ -47,7 +47,7 @@ const RecycleBinItem: FC<Prop> = ({
   ];
 
   return (
-    <Card>
+    <Card data-testid={`recycle-bin-item-${project?.id}`}>
       <CardImage
         backgroundImage={project?.imageUrl ?? defaultProjectBackgroundImage}
         isHovered={isHovered ?? false}

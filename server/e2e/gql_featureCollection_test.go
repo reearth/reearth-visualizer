@@ -183,7 +183,7 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
 	res.Object().

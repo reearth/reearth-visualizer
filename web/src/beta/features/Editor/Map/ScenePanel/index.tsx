@@ -34,7 +34,11 @@ const ScenePanel: FC = () => {
   );
 
   return (
-    <Panel title={t("Scene")} storageId="editor-map-scene-panel">
+    <Panel
+      title={t("Scene")}
+      storageId="editor-map-scene-panel"
+      dataTestid="editor-map-scene-panel"
+    >
       <Wrapper>
         {[
           ...new Set(
@@ -48,6 +52,7 @@ const ScenePanel: FC = () => {
                 title={handleTranslatedCollectionName(
                   collection as ScenePropertyCollection
                 )}
+                dataTestid="editor-map-scene-item"
                 highlighted={selectedSceneSetting === collection}
                 onClick={() => handleSceneSettingSelect(collection)}
               />

@@ -10,7 +10,7 @@ import (
 func TestGetScenePlaceholderEnglish(t *testing.T) {
 	e := ServerLanguage(t, language.English)
 	pID := createProjectWithExternalImage(e, "test")
-	_, _, sID := createScene(e, pID)
+	sID := createScene(e, pID)
 	r := getScene(e, sID, language.English.String())
 
 	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
@@ -36,7 +36,7 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 func TestGetScenePlaceholderJapanese(t *testing.T) {
 	e := ServerLanguage(t, language.Japanese)
 	pID := createProjectWithExternalImage(e, "test")
-	_, _, sID := createScene(e, pID)
+	sID := createScene(e, pID)
 	r := getScene(e, sID, language.Japanese.String())
 
 	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
@@ -70,7 +70,7 @@ func TestGetSceneNLSLayer(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99)
 
 	r := getScene(e, sId, language.Und.String())
@@ -94,4 +94,23 @@ func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 	}
 	res := Request(e, uID.String(), requestBody)
 	return res.Path("$.data.createProject.project.id").Raw().(string)
+}
+
+func createScene(e *httpexpect.Expect, pID string) string {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateScene",
+		Query: `mutation CreateScene($projectId: ID!) {
+			createScene( input: {projectId: $projectId} ) { 
+				scene { 
+					id
+				} 
+			}
+		}`,
+		Variables: map[string]any{
+			"projectId": pID,
+		},
+	}
+
+	res := Request(e, uID.String(), requestBody)
+	return res.Path("$.data.createScene.scene.id").Raw().(string)
 }
