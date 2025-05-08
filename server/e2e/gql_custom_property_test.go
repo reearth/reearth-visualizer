@@ -17,7 +17,7 @@ func TestUpdateCustomProperties(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 	lId := addTestNLSLayerSimple(e, sId)
 
 	proId1 := RandomString(10)
@@ -114,7 +114,7 @@ func TestChangeCustomPropertyTitle(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 	lId := addTestNLSLayerSimple(e, sId)
 
 	// change XXX -> ZZZ
@@ -241,7 +241,7 @@ func TestRemoveCustomProperty(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 	lId := addTestNLSLayerSimple(e, sId)
 
 	// remove XXX

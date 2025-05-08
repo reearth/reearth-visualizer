@@ -1,10 +1,40 @@
 {
-    "pkg": {
-      "project": {
-        "invalid_alias": {
-          "message": "不正なエイリアス名です: {{.aliasName}}",
-          "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
-        }
+  "pkg": {
+    "project": {
+      "invalid_alias": {
+        "message": "不正なエイリアス名です: {{.aliasName}}",
+        "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
+      },
+      "alias_already_exists": {
+        "message": "そのエイリアスは既に使用されています。別の値を試してください",
+        "description": "プロジェクトやストーリーのエイリアスは一意である必要があります。"
+      },
+      "invalid_reserved_alias": {
+        "message": "予約済みのエイリアス名は使用できません: {{.aliasName}}",
+        "description": "次のようなエイリアス名は予約されており、使用できません: administrator,development"
+      },
+      "invalid_prefix_alias": {
+        "message": "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+        "description": "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。"
+      }
+    },
+    "storytelling": {
+      "invalid_alias": {
+        "message": "不正なエイリアス名です: {{.aliasName}}",
+        "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
+      },
+      "alias_already_exists": {
+        "message": "そのエイリアスは既に使用されています。別の値を試してください",
+        "description": "プロジェクトやストーリーのエイリアスは一意である必要があります。"
+      },
+      "invalid_reserved_alias": {
+        "message": "予約済みのエイリアス名は使用できません: {{.aliasName}}",
+        "description": "次のようなエイリアス名は予約されており、使用できません: administrator,development"
+      },
+      "invalid_prefix_alias": {
+        "message": "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+        "description": "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。"
       }
     }
   }
+}

@@ -24,7 +24,11 @@ func TestStoryCRUD(t *testing.T) {
 		Value("stories").Array().
 		Length().IsEqual(1)
 
-	_, _, storyID1 := createStory(e, sceneID, "test", 1)
+	storyID1 := createStory(e, map[string]any{
+		"sceneId": sceneID,
+		"title":   "test",
+		"index":   1,
+	})
 
 	// fetch scene and check story
 	_, res = fetchSceneForStories(e, sceneID)
@@ -242,7 +246,30 @@ func TestStoryPublishing(t *testing.T) {
 	p := map[string]any{"left": 0, "right": 1, "top": 2, "bottom": 3}
 	updatePropertyValue(e, blockPropID, "panel", "", "padding", p, "SPACING")
 
-	publishStory(e, storyID1, "test-alias")
+	requestBody := GraphQLRequest{
+		OperationName: "PublishStory",
+		Query: `mutation PublishStory($storyId: ID!, $alias: String, $status: PublishmentStatus!) {
+			publishStory( input: {storyId: $storyId, alias: $alias, status: $status} ) { 
+				story{
+					id
+					publishedAt
+				}
+			}
+		}`,
+		Variables: map[string]any{
+			"storyId": storyID1,
+			"alias":   "test-alias",
+			"status":  "PUBLIC",
+		},
+	}
+
+	res = Request(e, uID.String(), requestBody)
+
+	res.Object().
+		Value("data").Object().
+		Value("publishStory").Object().
+		Value("story").Object().
+		HasValue("id", storyID)
 
 	rc, err := g.File.ReadStoryFile(context.Background(), "test-alias")
 	assert.NoError(t, err)
@@ -410,29 +437,6 @@ func TestStoryPublishing(t *testing.T) {
 
 }
 
-func createScene(e *httpexpect.Expect, pID string) (GraphQLRequest, *httpexpect.Value, string) {
-	requestBody := GraphQLRequest{
-		OperationName: "CreateScene",
-		Query: `mutation CreateScene($projectId: ID!) {
-			createScene( input: {projectId: $projectId} ) { 
-				scene { 
-					id
-					__typename 
-				} 
-				__typename 
-			}
-		}`,
-		Variables: map[string]any{
-			"projectId": pID,
-		},
-	}
-
-	res := Request(e, uID.String(), requestBody)
-
-	sID := res.Path("$.data.createScene.scene.id").Raw().(string)
-	return requestBody, res, sID
-}
-
 func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *httpexpect.Value) {
 	fetchSceneRequestBody := GraphQLRequest{
 		OperationName: "GetScene",
@@ -492,35 +496,20 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 	return fetchSceneRequestBody, res
 }
 
-func createStory(e *httpexpect.Expect, sID, name string, index int) (GraphQLRequest, *httpexpect.Value, string) {
+func createStory(e *httpexpect.Expect, variables map[string]any) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateStory",
 		Query: `mutation CreateStory($sceneId: ID!, $title: String!, $index: Int) {
 			createStory( input: {sceneId: $sceneId, title: $title, index: $index} ) { 
 				story { 
 					id
-					title
-					__typename 
 				} 
-				__typename 
 			}
 		}`,
-		Variables: map[string]any{
-			"sceneId": sID,
-			"title":   name,
-			"index":   index,
-		},
+		Variables: variables,
 	}
-
 	res := Request(e, uID.String(), requestBody)
-
-	res.Object().
-		Value("data").Object().
-		Value("createStory").Object().
-		Value("story").Object().
-		HasValue("title", name)
-
-	return requestBody, res, res.Path("$.data.createStory.story.id").Raw().(string)
+	return res.Path("$.data.createStory.story.id").Raw().(string)
 }
 
 func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *httpexpect.Value) {
@@ -579,35 +568,6 @@ func deleteStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *ht
 		Value("data").Object().
 		Value("deleteStory").Object().
 		HasValue("storyId", storyID)
-
-	return requestBody, res
-}
-
-func publishStory(e *httpexpect.Expect, storyID, alias string) (GraphQLRequest, *httpexpect.Value) {
-	requestBody := GraphQLRequest{
-		OperationName: "PublishStory",
-		Query: `mutation PublishStory($storyId: ID!, $alias: String, $status: PublishmentStatus!) {
-			publishStory( input: {storyId: $storyId, alias: $alias, status: $status} ) { 
-				story{
-					id
-					publishedAt
-				}
-			}
-		}`,
-		Variables: map[string]any{
-			"storyId": storyID,
-			"alias":   alias,
-			"status":  "PUBLIC",
-		},
-	}
-
-	res := Request(e, uID.String(), requestBody)
-
-	res.Object().
-		Value("data").Object().
-		Value("publishStory").Object().
-		Value("story").Object().
-		HasValue("id", storyID)
 
 	return requestBody, res
 }

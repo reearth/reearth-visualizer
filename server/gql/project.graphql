@@ -68,7 +68,6 @@ input UpdateProjectInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   imageUrl: URL
   publicTitle: String
   publicDescription: String
