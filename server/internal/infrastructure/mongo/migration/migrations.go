@@ -20,4 +20,5 @@ var migrations = migration.Migrations[DBClient]{
   250305230545: AssetProjectAssociation,
   250317115957: AddIndex,
   250417160823: SetProjectVisibility,
+  250507125156: UpdateAlias,
 }
