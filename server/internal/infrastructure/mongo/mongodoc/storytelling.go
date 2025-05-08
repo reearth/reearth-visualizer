@@ -70,7 +70,7 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 		Title:         s.Title(),
 		Alias:         s.Alias(),
 		Pages:         newPages(s.Pages()),
-		Status:        string(s.Status()),
+		Status:        string(s.PublishmentStatus()),
 		PublishedAt:   s.PublishedAt(),
 		UpdatedAt:     s.UpdatedAt(),
 		Index:         1,

@@ -3,6 +3,7 @@ package storytelling
 import (
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 )
 
@@ -17,6 +18,9 @@ func NewStory() *StoryBuilder {
 func (b *StoryBuilder) Build() (*Story, error) {
 	if b.s.id.IsNil() {
 		return nil, id.ErrInvalidID
+	}
+	if b.s.alias == "" {
+		b.s.alias = alias.ReservedReearthPrefixStory + b.s.id.String()
 	}
 	if b.s.updatedAt.IsZero() {
 		b.s.updatedAt = b.s.CreatedAt()

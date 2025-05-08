@@ -49,7 +49,6 @@ func (r *mutationResolver) UpdateStory(ctx context.Context, input gqlmodel.Updat
 		IsBasicAuthActive: input.IsBasicAuthActive,
 		BasicAuthUsername: input.BasicAuthUsername,
 		BasicAuthPassword: input.BasicAuthPassword,
-		Alias:             input.Alias,
 		PublicTitle:       input.PublicTitle,
 		PublicDescription: input.PublicDescription,
 		PublicImage:       input.PublicImage,

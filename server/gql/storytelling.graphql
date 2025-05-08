@@ -73,7 +73,6 @@ input UpdateStoryInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   publicTitle: String
   publicDescription: String
   publicImage: String
@@ -220,6 +219,15 @@ type RemoveStoryBlockPayload {
   blockId: ID!
   page: StoryPage!
   story: Story!
+}
+
+type StoryAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+extend type Query {
+  checkStoryAlias(alias: String!, storyId: ID): StoryAliasAvailability!
 }
 
 extend type Mutation {

@@ -16,7 +16,7 @@ func TestPropertySchemaOrder(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 	res := getScene(e, sId, language.Und.String())
 
 	propID := res.Path("$.property.id").Raw().(string)

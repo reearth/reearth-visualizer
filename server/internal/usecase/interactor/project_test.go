@@ -11,7 +11,7 @@ import (
 	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -76,7 +76,6 @@ func TestProject_createProject(t *testing.T) {
 				Visualizer:  visualizer.VisualizerCesium,
 				Name:        lo.ToPtr("aaa"),
 				Description: lo.ToPtr("bbb"),
-				Alias:       lo.ToPtr("alias"),
 				ImageURL:    lo.Must(url.Parse("https://example.com/hoge")),
 				CoreSupport: lo.ToPtr(true),
 				Archived:    lo.ToPtr(true),
@@ -92,7 +91,6 @@ func TestProject_createProject(t *testing.T) {
 			assert.Equal(t, input.Visualizer, got.Visualizer())
 			assert.Equal(t, *input.Name, got.Name())
 			assert.Equal(t, *input.Description, got.Description())
-			assert.Equal(t, *input.Alias, got.Alias())
 			assert.Equal(t, input.ImageURL, got.ImageURL())
 			assert.Equal(t, *input.CoreSupport, got.CoreSupport())
 			assert.Equal(t, *input.Archived, got.IsArchived())
@@ -113,7 +111,6 @@ func TestProject_createProject(t *testing.T) {
 			assert.Equal(t, visualizer.Visualizer(""), got.Visualizer())
 			assert.Equal(t, "", got.Name())                  // name default value is empty string
 			assert.Equal(t, "", got.Description())           // description default value is empty string
-			assert.Equal(t, got.ID().String(), got.Alias())  // alias default value is project-{projectID}
 			assert.Equal(t, (*url.URL)(nil), got.ImageURL()) // image url default value is nil
 			assert.Equal(t, false, got.CoreSupport())        // core support default value is false
 			assert.Equal(t, false, got.IsArchived())         // archived default value is false
@@ -196,47 +193,44 @@ func TestProject_CheckAlias(t *testing.T) {
 			Alias(testAlias)
 	})
 	_ = uc.projectRepo.Save(ctx, pj)
+	pid := pj.ID()
 
 	t.Run("when alias is valid", func(t *testing.T) {
+
 		t.Run("when alias length is valid max length", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 32))
+			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 32), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
 		t.Run("when alias length is valid min length", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 5))
+			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 5), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
 	})
 
 	t.Run("when alias update to same alias", func(t *testing.T) {
-		ok, err := uc.checkAlias(ctx, pj.ID(), testAlias)
+		ok, err := uc.CheckAlias(ctx, testAlias, &pid)
 		assert.NoError(t, err)
 		assert.True(t, ok)
 	})
 
 	t.Run("when alias is invalid", func(t *testing.T) {
-		t.Run("when alias is already used by other project", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, id.NewProjectID(), testAlias)
-			assert.EqualError(t, err, interfaces.ErrProjectAliasAlreadyUsed.Error())
-			assert.False(t, ok)
-		})
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
-				ok, err := uc.checkAlias(ctx, pj.ID(), "alias2"+c)
-				assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+				ok, err := uc.CheckAlias(ctx, "alias2"+c, &pid)
+				assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 				assert.False(t, ok)
 			}
 		})
 		t.Run("when alias is too short", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), "aaaa")
-			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+			ok, err := uc.CheckAlias(ctx, "aaaa", &pid)
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 		t.Run("when alias is too long", func(t *testing.T) {
-			ok, err := uc.checkAlias(ctx, pj.ID(), strings.Repeat("a", 33))
-			assert.EqualError(t, err, project.ErrInvalidProjectAlias.Error())
+			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 33), &pid)
+			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 	})

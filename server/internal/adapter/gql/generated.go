@@ -697,7 +697,8 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Assets            func(childComplexity int, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
-		CheckProjectAlias func(childComplexity int, alias string) int
+		CheckProjectAlias func(childComplexity int, alias string, projectID *gqlmodel.ID) int
+		CheckStoryAlias   func(childComplexity int, alias string, storyID *gqlmodel.ID) int
 		DeletedProjects   func(childComplexity int, teamID gqlmodel.ID) int
 		Me                func(childComplexity int) int
 		Node              func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
@@ -837,6 +838,11 @@ type ComplexityRoot struct {
 		Title             func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
+	}
+
+	StoryAliasAvailability struct {
+		Alias     func(childComplexity int) int
+		Available func(childComplexity int) int
 	}
 
 	StoryBlock struct {
@@ -1205,12 +1211,13 @@ type QueryResolver interface {
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
 	Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
-	CheckProjectAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error)
+	CheckProjectAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
 	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	DeletedProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
+	CheckStoryAlias(ctx context.Context, alias string, storyID *gqlmodel.ID) (*gqlmodel.StoryAliasAvailability, error)
 	Me(ctx context.Context) (*gqlmodel.Me, error)
 	SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error)
 }
@@ -4554,7 +4561,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.CheckProjectAlias(childComplexity, args["alias"].(string)), true
+		return e.complexity.Query.CheckProjectAlias(childComplexity, args["alias"].(string), args["projectId"].(*gqlmodel.ID)), true
+
+	case "Query.checkStoryAlias":
+		if e.complexity.Query.CheckStoryAlias == nil {
+			break
+		}
+
+		args, err := ec.field_Query_checkStoryAlias_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CheckStoryAlias(childComplexity, args["alias"].(string), args["storyId"].(*gqlmodel.ID)), true
 
 	case "Query.deletedProjects":
 		if e.complexity.Query.DeletedProjects == nil {
@@ -5226,6 +5245,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Story.UpdatedAt(childComplexity), true
+
+	case "StoryAliasAvailability.alias":
+		if e.complexity.StoryAliasAvailability.Alias == nil {
+			break
+		}
+
+		return e.complexity.StoryAliasAvailability.Alias(childComplexity), true
+
+	case "StoryAliasAvailability.available":
+		if e.complexity.StoryAliasAvailability.Available == nil {
+			break
+		}
+
+		return e.complexity.StoryAliasAvailability.Available(childComplexity), true
 
 	case "StoryBlock.extension":
 		if e.complexity.StoryBlock.Extension == nil {
@@ -6775,11 +6808,6 @@ extend type Mutation {
   visibility: String!
 }
 
-type ProjectAliasAvailability {
-  alias: String!
-  available: Boolean!
-}
-
 enum Visualizer {
   CESIUM
 }
@@ -6815,7 +6843,6 @@ input UpdateProjectInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   imageUrl: URL
   publicTitle: String
   publicDescription: String
@@ -6873,6 +6900,11 @@ type ImportProjectPayload {
   projectData: JSON!
 }
 
+type ProjectAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
 # Connection
 
 type ProjectConnection {
@@ -6894,7 +6926,7 @@ extend type Query {
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!): ProjectAliasAvailability!
+  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
 }
@@ -7322,7 +7354,6 @@ input UpdateStoryInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   publicTitle: String
   publicDescription: String
   publicImage: String
@@ -7469,6 +7500,15 @@ type RemoveStoryBlockPayload {
   blockId: ID!
   page: StoryPage!
   story: Story!
+}
+
+type StoryAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+extend type Query {
+  checkStoryAlias(alias: String!, storyId: ID): StoryAliasAvailability!
 }
 
 extend type Mutation {
@@ -10415,6 +10455,11 @@ func (ec *executionContext) field_Query_checkProjectAlias_args(ctx context.Conte
 		return nil, err
 	}
 	args["alias"] = arg0
+	arg1, err := ec.field_Query_checkProjectAlias_argsProjectID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["projectId"] = arg1
 	return args, nil
 }
 func (ec *executionContext) field_Query_checkProjectAlias_argsAlias(
@@ -10432,6 +10477,75 @@ func (ec *executionContext) field_Query_checkProjectAlias_argsAlias(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_checkProjectAlias_argsProjectID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*gqlmodel.ID, error) {
+	if _, ok := rawArgs["projectId"]; !ok {
+		var zeroVal *gqlmodel.ID
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
+	if tmp, ok := rawArgs["projectId"]; ok {
+		return ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+	}
+
+	var zeroVal *gqlmodel.ID
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_checkStoryAlias_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_checkStoryAlias_argsAlias(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["alias"] = arg0
+	arg1, err := ec.field_Query_checkStoryAlias_argsStoryID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["storyId"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_checkStoryAlias_argsAlias(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["alias"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
+	if tmp, ok := rawArgs["alias"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_checkStoryAlias_argsStoryID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*gqlmodel.ID, error) {
+	if _, ok := rawArgs["storyId"]; !ok {
+		var zeroVal *gqlmodel.ID
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("storyId"))
+	if tmp, ok := rawArgs["storyId"]; ok {
+		return ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+	}
+
+	var zeroVal *gqlmodel.ID
 	return zeroVal, nil
 }
 
@@ -32441,7 +32555,7 @@ func (ec *executionContext) _Query_checkProjectAlias(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string))
+		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string), fc.Args["projectId"].(*gqlmodel.ID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32819,6 +32933,67 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_scene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_checkStoryAlias(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_checkStoryAlias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CheckStoryAlias(rctx, fc.Args["alias"].(string), fc.Args["storyId"].(*gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.StoryAliasAvailability)
+	fc.Result = res
+	return ec.marshalNStoryAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryAliasAvailability(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_checkStoryAlias(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "alias":
+				return ec.fieldContext_StoryAliasAvailability_alias(ctx, field)
+			case "available":
+				return ec.fieldContext_StoryAliasAvailability_available(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type StoryAliasAvailability", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_checkStoryAlias_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -36904,6 +37079,94 @@ func (ec *executionContext) fieldContext_Story_trackingId(_ context.Context, fie
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StoryAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryAliasAvailability) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_StoryAliasAvailability_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_StoryAliasAvailability_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StoryAliasAvailability",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _StoryAliasAvailability_available(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.StoryAliasAvailability) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_StoryAliasAvailability_available(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Available, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_StoryAliasAvailability_available(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "StoryAliasAvailability",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -46313,7 +46576,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted", "visibility"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "imageUrl", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deleteImageUrl", "deletePublicImage", "enableGa", "trackingId", "sceneId", "starred", "deleted", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46369,13 +46632,6 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.BasicAuthPassword = data
-		case "alias":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Alias = data
 		case "imageUrl":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imageUrl"))
 			data, err := ec.unmarshalOURL2ᚖnetᚋurlᚐURL(ctx, v)
@@ -46638,7 +46894,7 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "alias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "enableGa", "trackingId"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46708,13 +46964,6 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 				return it, err
 			}
 			it.BasicAuthPassword = data
-		case "alias":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Alias = data
 		case "publicTitle":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicTitle"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -53413,6 +53662,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "checkStoryAlias":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_checkStoryAlias(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "me":
 			field := field
 
@@ -54771,6 +55042,50 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Story_trackingId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var storyAliasAvailabilityImplementors = []string{"StoryAliasAvailability"}
+
+func (ec *executionContext) _StoryAliasAvailability(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.StoryAliasAvailability) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, storyAliasAvailabilityImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("StoryAliasAvailability")
+		case "alias":
+			out.Values[i] = ec._StoryAliasAvailability_alias(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "available":
+			out.Values[i] = ec._StoryAliasAvailability_available(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -58922,6 +59237,20 @@ func (ec *executionContext) marshalNStory2ᚖgithubᚗcomᚋreearthᚋreearthᚋ
 		return graphql.Null
 	}
 	return ec._Story(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNStoryAliasAvailability2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryAliasAvailability(ctx context.Context, sel ast.SelectionSet, v gqlmodel.StoryAliasAvailability) graphql.Marshaler {
+	return ec._StoryAliasAvailability(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNStoryAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryAliasAvailability(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.StoryAliasAvailability) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._StoryAliasAvailability(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNStoryBlock2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐStoryBlockᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.StoryBlock) graphql.Marshaler {

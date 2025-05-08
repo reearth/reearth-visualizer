@@ -42,7 +42,7 @@ func TestStory_SettersGetters(t *testing.T) {
 	assert.Equal(t, sceneID, s.Scene())
 	assert.Equal(t, "test", s.Title())
 	assert.Equal(t, "abc", s.Alias())
-	assert.Equal(t, PublishmentStatusPrivate, s.Status())
+	assert.Equal(t, PublishmentStatusPrivate, s.PublishmentStatus())
 	assert.Equal(t, now, s.UpdatedAt())
 	assert.Nil(t, s.Pages())
 	assert.Nil(t, s.PublishedAt())

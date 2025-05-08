@@ -193,7 +193,7 @@ func TestBuilder_Build(t *testing.T) {
 			args: args{
 				name:              "xxx.aaa",
 				description:       "ddd",
-				alias:             "aaaaa",
+				alias:             "p-" + pid.String(),
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -211,7 +211,7 @@ func TestBuilder_Build(t *testing.T) {
 				id:                pid,
 				description:       "ddd",
 				name:              "xxx.aaa",
-				alias:             "aaaaa",
+				alias:             "p-" + pid.String(),
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -232,21 +232,13 @@ func TestBuilder_Build(t *testing.T) {
 			},
 			expected: &Project{
 				id:        pid,
+				alias:     "p-" + pid.String(),
 				updatedAt: pid.Timestamp(),
 			},
 		},
 		{
 			name: "failed invalid id",
 			err:  id.ErrInvalidID,
-		},
-		{
-			name: "failed invalid alias",
-			args: args{
-				id:    id.NewProjectID(),
-				alias: "xxx.aaa",
-			},
-			expected: nil,
-			err:      ErrInvalidProjectAlias,
 		},
 	}
 
@@ -362,20 +354,13 @@ func TestBuilder_MustBuild(t *testing.T) {
 			},
 			expected: &Project{
 				id:        pid,
+				alias:     "p-" + pid.String(),
 				updatedAt: pid.Timestamp(),
 			},
 		},
 		{
 			name: "failed invalid id",
 			err:  id.ErrInvalidID,
-		},
-		{
-			name: "failed invalid alias",
-			args: args{
-				id:    id.NewProjectID(),
-				alias: "xxx.aaa",
-			},
-			err: ErrInvalidProjectAlias,
 		},
 	}
 

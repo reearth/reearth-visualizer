@@ -5,33 +5,41 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCheckAliasPattern(t *testing.T) {
-	testCase := []struct {
-		name, alias string
-		expexted    bool
+	testCases := []struct {
+		name     string
+		alias    string
+		expected bool
 	}{
 		{
 			name:     "accepted regex",
 			alias:    "xxxxx",
-			expexted: true,
+			expected: true,
 		},
 		{
 			name:     "refused regex",
 			alias:    "xxx",
-			expexted: false,
+			expected: false,
 		},
 	}
 
-	for _, tt := range testCase {
+	for _, tt := range testCases {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expexted, CheckAliasPattern(tt.alias))
+
+			err := alias.CheckProjectAliasPattern(tt.alias)
+			if tt.expected {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+			}
 		})
 	}
 }
