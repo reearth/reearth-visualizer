@@ -26,10 +26,10 @@ const StorySettingsDetail: React.FC<Props> = ({
   );
   const handleColorChange = useCallback(
     (bgColor?: string) => {
-      setBackgroundColor(bgColor);
       onUpdateStory({
         bgColor
       });
+      setBackgroundColor(bgColor);
     },
     [onUpdateStory]
   );

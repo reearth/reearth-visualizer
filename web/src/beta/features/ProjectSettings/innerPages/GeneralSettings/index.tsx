@@ -93,12 +93,12 @@ const GeneralSettings: FC<Props> = ({
             <InputField
               title={t("Project Name")}
               value={project.name}
-              onChange={(name) => setLocalName(name)}
+              onChange={setLocalName}
               onBlur={handleSubmit}
             />
             <TextareaField
               title={t("Description")}
-              value={localDescription}
+              value={project.description}
               resizable="height"
               onChange={setLocalDescription}
               onBlur={handleSubmit}

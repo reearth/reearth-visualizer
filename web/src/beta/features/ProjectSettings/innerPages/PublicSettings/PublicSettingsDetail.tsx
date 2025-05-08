@@ -70,6 +70,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
     publicDescription: settingsItem.publicDescription,
     publicImage: settingsItem.publicImage
   });
+
   const handleSubmitPublicInfo = useCallback(
     (publicImage?: string) => {
       onUpdate({
@@ -103,7 +104,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         trackingId: localGA.trackingId
       });
     }
-  }, [localGA, onUpdateGA]);
+  }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -169,7 +170,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         />
         <TextAreaField
           title={t("Description")}
-          value={localPublicInfo.publicDescription ?? ""}
+          value={settingsItem.publicDescription ?? ""}
           placeholder={t("Write down your text")}
           description={t(
             "The Description setting will be applied to og:description."
@@ -184,7 +185,9 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <AssetField
             title={t("Thumbnail")}
             placeholder={t("Image url")}
-            description={t("The Thumbnail setting will be applied to og:image.")}
+            description={t(
+              "The Thumbnail setting will be applied to og:image."
+            )}
             inputMethod="asset"
             assetsTypes={IMAGE_TYPES}
             value={localPublicInfo.publicImage}
@@ -232,29 +235,25 @@ const PublicSettingsDetail: React.FC<Props> = ({
         <TitleWrapper size="body" weight="bold">
           {t("Custom Domain")}
         </TitleWrapper>
-        { isPublished &&
-          extensions &&
-          extensions.length > 0 &&
-          accessToken ? (
-            <ExtensionComponent
-              typename={settingsItem.__typename || ""}
-              {...(settingsItem.__typename === "Project"
-                ? {
-                    projectId: settingsItem.id,
-                    projectAlias: settingsItem.alias
-                  }
-                : {
-                    storyId: settingsItem.id,
-                    storyAlias: settingsItem.alias
-                  })}
-              lang={currentLang}
-              theme={currentTheme}
-              accessToken={accessToken}
-              onNotificationChange={onNotificationChange}
-              version="visualizer"
-            />
-          )
-           : (
+        {isPublished && extensions && extensions.length > 0 && accessToken ? (
+          <ExtensionComponent
+            typename={settingsItem.__typename || ""}
+            {...(settingsItem.__typename === "Project"
+              ? {
+                  projectId: settingsItem.id,
+                  projectAlias: settingsItem.alias
+                }
+              : {
+                  storyId: settingsItem.id,
+                  storyAlias: settingsItem.alias
+                })}
+            lang={currentLang}
+            theme={currentTheme}
+            accessToken={accessToken}
+            onNotificationChange={onNotificationChange}
+            version="visualizer"
+          />
+        ) : (
           <ContentDescription>
             <Typography size="body" color={theme.content.weak}>
               {isStory
