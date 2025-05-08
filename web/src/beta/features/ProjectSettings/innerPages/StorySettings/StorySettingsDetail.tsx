@@ -26,12 +26,14 @@ const StorySettingsDetail: React.FC<Props> = ({
   );
   const handleColorChange = useCallback(
     (bgColor?: string) => {
+      if (settingsItem?.bgColor !== bgColor) {
+        onUpdateStory({
+          bgColor
+        });
+      }
       setBackgroundColor(bgColor);
-      onUpdateStory({
-        bgColor
-      });
     },
-    [onUpdateStory]
+    [onUpdateStory, settingsItem?.bgColor]
   );
 
   const options = [

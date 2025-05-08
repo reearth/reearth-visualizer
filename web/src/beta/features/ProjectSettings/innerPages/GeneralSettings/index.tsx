@@ -55,14 +55,30 @@ const GeneralSettings: FC<Props> = ({
   );
 
   const handleSubmit = useCallback(
-    (imageUrl?: string) => {
-      onUpdateProject({
-        name: localName,
-        description: localDescription,
-        imageUrl
-      });
+    (field?: string) => {
+      const isUpdated =
+        (field === "name" && localName !== project?.name) ||
+        (field === "description" &&
+          localDescription !== project?.description) ||
+        (field === "imageUrl" && localImageUrl !== project?.imageUrl);
+
+      if (isUpdated) {
+        onUpdateProject({
+          name: localName,
+          description: localDescription,
+          imageUrl: localImageUrl
+        });
+      }
     },
-    [localName, localDescription, onUpdateProject]
+    [
+      localName,
+      localDescription,
+      localImageUrl,
+      project?.name,
+      project?.description,
+      project?.imageUrl,
+      onUpdateProject
+    ]
   );
 
   const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
@@ -75,7 +91,7 @@ const GeneralSettings: FC<Props> = ({
   const handleImageChange = useCallback(
     (value?: string) => {
       setLocalImageUrl(value);
-      handleSubmit(value);
+      handleSubmit("imageUrl");
     },
     [handleSubmit]
   );
@@ -92,16 +108,16 @@ const GeneralSettings: FC<Props> = ({
             </TitleWrapper>
             <InputField
               title={t("Project Name")}
-              value={project.name}
+              value={localName}
               onChange={(name) => setLocalName(name)}
-              onBlur={handleSubmit}
+              onBlur={() => handleSubmit("name")}
             />
             <TextareaField
               title={t("Description")}
               value={localDescription}
               resizable="height"
               onChange={setLocalDescription}
-              onBlur={handleSubmit}
+              onBlur={() => handleSubmit("description")}
             />
             <SettingsRow>
               <SettingsRowItem>
