@@ -19,49 +19,29 @@ extensions:
 const widgetFile: FileType = {
   id: "layers-add-geojson",
   title: "layers-add-geojson.js",
-  sourceCode: `// Example of adding a layer with GeoJSON data
+  sourceCode: `// Example of adding a layer with GeoJSON（Polygon,Polyline,Marker) data
 
 // Define the GeoJSON inline
-const layerGeojsonInline = { 
+const nycAirportPoint = {
   type: "simple", // Required
   data: {
     type: "geojson", // Write the data format
-    value: {
-      // Ensure that "value" contains GeoJSON
+    value: { // Ensure that "value" contains GeoJSON
       type: "FeatureCollection",
       features: [
         {
           type: "Feature",
           properties: {},
           geometry: {
-            type: "Polygon",
-            coordinates: [
-              [
-                [-97.52842673316115, 28.604966534790364],
-                [-97.52842673316115, 10.990084521105842],
-                [-82.13620852840572, 10.990084521105842],
-                [-82.13620852840572, 28.604966534790364],
-                [-97.52842673316115, 28.604966534790364],
-              ],
-            ],
+            coordinates: [-73.87355757907106, 40.77534208229679],
+            type: "Point",
           },
         },
         {
           type: "Feature",
           properties: {},
           geometry: {
-            coordinates: [
-              [-96.37001899616324, 41.04652707558762],
-              [-79.17331346249145, 40.45826161216959],
-            ],
-            type: "LineString",
-          },
-        },
-        {
-          type: "Feature",
-          properties: {},
-          geometry: {
-            coordinates: [-111.99963039093615, 19.881084591317787],
+            coordinates: [-73.78432524270048, 40.64650562178011],
             type: "Point",
           },
         },
@@ -69,37 +49,64 @@ const layerGeojsonInline = {
     },
   },
   // Settings for the feature style. This statement is required even if no style is set.
-  polygon: {},
-  polyline: {},
-  marker: {},
+  marker: {
+    "pointColor": "#ffa500",
+    "pointSize": 5,
+    "style": "point"
+  }
 };
 
 // Define the GeoJSON with URL
-const layerGeojsonFromUrl = {
+const nycAirportArea = {
   type: "simple",
   data: {
     type: "geojson",
     // URL of GeoJSON file
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_polygon_polyline_marker.geojson",
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/nyc_airport_polygon.geojson",
   },
   polygon: {
-    fillColor: 'red'
+    "fillColor": "#ffffff80",
+    "stroke": true,
+    "strokeColor": "#ffa500",
+    "strokeWidth": 2
+  }
+};
+
+const nycRoadPrimary = {
+  type: "simple",
+  data: {
+    type: "geojson",
+    // URL of GeoJSON file
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/nyc-road-primary.geojson",
   },
-  polyline: {
-    strokeColor: 'red'
-  },
-  marker: {
-    imageColor: 'red'
-  },
+  // Settings for the feature style. This statement is required even if no style is set.
+   polyline: {}
 };
 
 // Add the inline GeoJSON layer to Re:Earth
 // Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
-reearth.layers.add(layerGeojsonInline);
+
+reearth.layers.add(nycAirportPoint);
 
 // Add the GeoJSON layer from the URL to Re:Earth
-reearth.layers.add(layerGeojsonFromUrl);
-`
+reearth.layers.add(nycAirportArea);
+reearth.layers.add(nycRoadPrimary);
+
+// Move camera position
+reearth.camera.flyTo(
+  {
+    heading: 6.074459786948563,
+    height: 53215.9926669169,
+    lat: 40.64351884997972,
+    lng: -73.93193384749776,
+    pitch: -1.447791863773106,
+    roll: 6.283138405962417,
+  },
+  // Define camera movement time
+  {
+    duration: 2.0,
+  }
+);`
 };
 
 export const addGeojson: PluginType = {
