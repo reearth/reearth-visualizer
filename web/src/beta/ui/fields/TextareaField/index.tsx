@@ -21,8 +21,8 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   }, [value]);
 
   const handleBlur = () => {
-    if (internalValue && internalValue !== value) {
-      onBlur?.(internalValue);
+    if (internalValue !== value) {
+      onBlur?.(internalValue as string);
     }
   };
 
