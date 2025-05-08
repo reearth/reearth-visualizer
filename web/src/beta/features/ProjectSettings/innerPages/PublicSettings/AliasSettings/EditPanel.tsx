@@ -7,7 +7,10 @@ import {
   Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
-import { useProjectFetcher } from "@reearth/services/api";
+import {
+  useProjectFetcher,
+  useStorytellingFetcher
+} from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -16,6 +19,7 @@ type Prop = {
   publicUrl: string;
   isStory?: boolean;
   alias?: string;
+  itemId?: string;
   onClose?: () => void;
   onSubmit?: (alias?: string) => void;
 };
@@ -24,12 +28,14 @@ const EditPanel: FC<Prop> = ({
   alias,
   isStory,
   publicUrl,
+  itemId,
   onClose,
   onSubmit
 }) => {
   const t = useT();
   const theme = useTheme();
-  const { checkAlias } = useProjectFetcher();
+  const { checkProjectAlias } = useProjectFetcher();
+  const { checkStoryAlias } = useStorytellingFetcher();
 
   const [prefix, suffix] = useMemo(() => {
     if (!publicUrl) return ["", ""];
@@ -56,28 +62,24 @@ const EditPanel: FC<Prop> = ({
     setIsAliasValid(false);
   }, []);
 
-  const handleBlur = useCallback(
-    async (value: string) => {
-      if (/^(project-|story-)/.test(value)) {
-        setWaring(t("Alias cannot start with 'project-' or 'story-'"));
-        return;
-      }
+  const handleBlur = useCallback(async () => {
+    const alias = localAlias as string;
+    const result = isStory
+      ? await checkStoryAlias(alias, itemId)
+      : await checkProjectAlias?.(alias, itemId);
 
-      const result = await checkAlias?.(value);
-      if (!result?.available) {
-        const description = result?.errors?.find(
-          (e) => e?.extensions?.description
-        )?.extensions?.description;
+    if (!result?.available) {
+      const description = result?.errors?.find(
+        (e) => e?.extensions?.description
+      )?.extensions?.description;
 
-        setWaring(description as string);
-        setIsAliasValid(false);
-      } else {
-        setWaring("");
-        setIsAliasValid(true);
-      }
-    },
-    [checkAlias, t]
-  );
+      setWaring(description as string);
+      setIsAliasValid(false);
+    } else {
+      setWaring("");
+      setIsAliasValid(true);
+    }
+  }, [checkProjectAlias, checkStoryAlias, isStory, itemId, localAlias]);
 
   const isDisabled = useMemo(
     () => !!warning || localAlias === alias || !isAliasValid,

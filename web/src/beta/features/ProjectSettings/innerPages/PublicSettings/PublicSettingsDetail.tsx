@@ -32,14 +32,14 @@ import {
 } from ".";
 
 interface WithTypename {
-  __typename?: string;
+  type?: "project" | "story";
 }
 
 export type SettingsProjectWithTypename = SettingsProject & WithTypename;
 export type StoryWithTypename = Story & WithTypename;
 
 type Props = {
-  settingsItem: SettingsProjectWithTypename | StoryWithTypename;
+  settingsItem: (SettingsProject | Story) & WithTypename;
   isStory?: boolean;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
@@ -239,8 +239,8 @@ const PublicSettingsDetail: React.FC<Props> = ({
 
             {isPublished ? (
               <ExtensionComponent
-                typename={settingsItem.__typename || ""}
-                {...(settingsItem.__typename === "Project"
+                typename={settingsItem.type || ""}
+                {...(settingsItem.type === "project"
                   ? {
                       projectId: settingsItem.id,
                       projectAlias: settingsItem.alias

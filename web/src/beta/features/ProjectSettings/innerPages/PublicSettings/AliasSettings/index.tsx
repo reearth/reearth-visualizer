@@ -5,7 +5,10 @@ import {
 } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/common";
 import { Button, Icon } from "@reearth/beta/lib/reearth-ui";
 import CommonField from "@reearth/beta/ui/fields/CommonField";
-import { useProjectFetcher } from "@reearth/services/api";
+import {
+  useProjectFetcher,
+  useStorytellingFetcher
+} from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
@@ -34,7 +37,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
 }) => {
   const theme = useTheme();
   const t = useT();
-  const { checkAlias } = useProjectFetcher();
+  const { checkProjectAlias } = useProjectFetcher();
+  const { checkStoryAlias } = useStorytellingFetcher();
+
   const [, setNotification] = useNotification();
 
   const [open, setOpen] = useState(false);
@@ -74,14 +79,27 @@ const AliasSetting: FC<AliasSettingProps> = ({
     [onUpdateAlias]
   );
 
-  const handleCleanAlias = useCallback(
-    async (alias?: string) => {
-      const data = await checkAlias(alias);
-      if (data?.available) {
-        handleSubmitAlias(alias);
-      }
-    },
-    [checkAlias, handleSubmitAlias]
+  const handleCleanAlias = useCallback(async () => {
+    const alias = isStory ? `s-${settingsItem?.id}` : `p-${settingsItem?.id}`;
+
+    const data = isStory
+      ? await checkStoryAlias(alias, settingsItem?.id)
+      : await checkProjectAlias(alias, settingsItem?.id);
+    if (data?.available) {
+      handleSubmitAlias(alias);
+    }
+  }, [
+    checkProjectAlias,
+    checkStoryAlias,
+    handleSubmitAlias,
+    isStory,
+    settingsItem?.id
+  ]);
+
+  const isDisabled = useMemo(
+    () =>
+      alias === `p-${settingsItem?.id}` || alias === `s-${settingsItem?.id}`,
+    [alias, settingsItem?.id]
   );
 
   return (
@@ -103,9 +121,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
           title={t("clean")}
           icon="pencilLine"
           size="small"
-          disabled={settingsItem?.id === alias}
+          disabled={isDisabled}
           iconColor={theme.content.weak}
-          onClick={() => handleCleanAlias(settingsItem?.id)}
+          onClick={handleCleanAlias}
         />
 
         <Button
@@ -120,6 +138,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
           <EditPanel
             alias={alias}
             isStory={isStory}
+            itemId={settingsItem?.id}
             publicUrl={publicUrl}
             onClose={handleClose}
             onSubmit={handleSubmitAlias}
