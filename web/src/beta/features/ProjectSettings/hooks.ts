@@ -18,6 +18,7 @@ import {
   PublicGASettingsType,
   PublicStorySettingsType
 } from "./innerPages/PublicSettings";
+import { StorySettingsType } from "./innerPages/StorySettings";
 
 import { ProjectSettingsProps } from ".";
 
@@ -32,7 +33,8 @@ export default ({ projectId }: ProjectSettingsProps) => {
     usePublishProject
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
-  const { usePublishStory, useStoriesQuery } = useStorytellingFetcher();
+  const { usePublishStory, useStoriesQuery, useUpdateStory } =
+    useStorytellingFetcher();
 
   const client = useApolloClient();
 
@@ -146,7 +148,7 @@ export default ({ projectId }: ProjectSettingsProps) => {
     [stories]
   );
 
-  const handleUpdateStory = useCallback(
+  const handleUpdateStoryAlias = useCallback(
     async (settings: PublicStorySettingsType) => {
       if (!scene?.id || !currentStory?.id) return;
       const status =
@@ -159,6 +161,18 @@ export default ({ projectId }: ProjectSettingsProps) => {
       currentStory?.publishmentStatus,
       usePublishStory
     ]
+  );
+
+  const handleUpdateStory = useCallback(
+    async (settings: PublicStorySettingsType | StorySettingsType) => {
+      if (!scene?.id || !currentStory?.id) return;
+      await useUpdateStory({
+        storyId: currentStory.id,
+        sceneId: scene.id,
+        ...settings
+      });
+    },
+    [useUpdateStory, currentStory?.id, scene?.id]
   );
 
   const { getAccessToken } = useAuth();
@@ -193,6 +207,7 @@ export default ({ projectId }: ProjectSettingsProps) => {
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
-    handleUpdateStory
+    handleUpdateStory,
+    handleUpdateStoryAlias
   };
 };
