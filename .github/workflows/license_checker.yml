@@ -12,17 +12,17 @@ jobs:
       web: ${{ steps.web.outputs.any_modified }}
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
       - name: Server changes
         id: server
-        uses: step-security/changed-files@3dbe17c78367e7d60f00d78ae6781a35be47b4a1 # v45.0.1
+        uses: step-security/changed-files@95b56dadb92a30ca9036f16423fd3c088a71ee94 # v46.0.5
         with:
           files: |
             server/go.mod
             server/go.sum
       - name: Web changes
         id: web
-        uses: step-security/changed-files@3dbe17c78367e7d60f00d78ae6781a35be47b4a1 # v45.0.1
+        uses: step-security/changed-files@95b56dadb92a30ca9036f16423fd3c088a71ee94 # v46.0.5
         with:
           files: |
             web/package.json
@@ -37,14 +37,14 @@ jobs:
       run:
         working-directory: server
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5
         with:
           go-version-file: server/go.mod
           check-latest: true
           cache-dependency-path: |
             server/go.sum
-      - uses: reearth/actions/license-checker/go@ec26fbcf84f0e954a6ba3511859b18e3d2272c18
+      - uses: reearth/actions/license-checker/go@ecb4231198dc0992c3f69c333ee9748ec50ee8a4
         with:
           subdirectory: server
 
@@ -57,14 +57,14 @@ jobs:
       run:
         working-directory: web
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: lts/*
           cache: yarn
           cache-dependency-path: '**/yarn.lock'
       - name: Install
         run: yarn install
-      - uses: reearth/actions/license-checker/npm@e445d10332411e14f53e6abc73c966ecb49d3e57
+      - uses: reearth/actions/license-checker/npm@ecb4231198dc0992c3f69c333ee9748ec50ee8a4
         with:
           subdirectory: web
