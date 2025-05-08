@@ -91,6 +91,7 @@ func compareValue(t *testing.T, key string, e, a *httpexpect.Value) {
 			if isIgnore(`"id":`, expectedLine, actualLine) ||
 				isIgnore(`"propertyId":`, expectedLine, actualLine) ||
 				isIgnore(`"sceneId":`, expectedLine, actualLine) ||
+				isIgnore(`"alias":`, expectedLine, actualLine) ||
 				(isID(expectedLine) && isID(actualLine)) {
 				continue
 			}
