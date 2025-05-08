@@ -70,28 +70,15 @@ const PublicSettingsDetail: React.FC<Props> = ({
     publicDescription: settingsItem.publicDescription,
     publicImage: settingsItem.publicImage
   });
-  const handleSubmitPublicInfo = useCallback(
-    (field?: string) => {
-      const updated =
-        (field === "title" &&
-          localPublicInfo.publicTitle !== settingsItem.publicTitle) ||
-        (field === "description" &&
-          localPublicInfo.publicDescription !==
-            settingsItem.publicDescription) ||
-        (field === "imageUrl" &&
-          localPublicInfo.publicImage !== settingsItem.publicImage);
 
-      if (updated) {
-        onUpdate({ ...localPublicInfo });
-      }
+  const handleSubmitPublicInfo = useCallback(
+    (publicImage?: string) => {
+      onUpdate({
+        ...localPublicInfo,
+        publicImage
+      });
     },
-    [
-      localPublicInfo,
-      onUpdate,
-      settingsItem.publicTitle,
-      settingsItem.publicDescription,
-      settingsItem.publicImage
-    ]
+    [localPublicInfo, onUpdate]
   );
 
   const [localBasicAuthorization, setBasicAuthorization] = useState({
@@ -99,27 +86,11 @@ const PublicSettingsDetail: React.FC<Props> = ({
     basicAuthUsername: settingsItem.basicAuthUsername,
     basicAuthPassword: settingsItem.basicAuthPassword
   });
-  const handleSubmitBasicAuthorization = useCallback(
-    (field?: string) => {
-      if (
-        (field === "username" &&
-          settingsItem.basicAuthUsername !==
-            localBasicAuthorization.basicAuthUsername) ||
-        (field === "password" &&
-          settingsItem.basicAuthPassword !==
-            localBasicAuthorization.basicAuthPassword)
-      )
-        onUpdateBasicAuth({
-          ...localBasicAuthorization
-        });
-    },
-    [
-      localBasicAuthorization,
-      onUpdateBasicAuth,
-      settingsItem.basicAuthPassword,
-      settingsItem.basicAuthUsername
-    ]
-  );
+  const handleSubmitBasicAuthorization = useCallback(() => {
+    onUpdateBasicAuth({
+      ...localBasicAuthorization
+    });
+  }, [localBasicAuthorization, onUpdateBasicAuth]);
 
   const [localGA, setLocalGA] = useState<PublicGASettingsType>({
     enableGa: settingsItem.enableGa,
@@ -127,18 +98,13 @@ const PublicSettingsDetail: React.FC<Props> = ({
   });
 
   const handleSubmitGA = useCallback(() => {
-    if (onUpdateGA && settingsItem.trackingId !== localGA.trackingId) {
+    if (onUpdateGA) {
       onUpdateGA({
         enableGa: localGA.enableGa,
         trackingId: localGA.trackingId
       });
     }
-  }, [
-    localGA.enableGa,
-    localGA.trackingId,
-    onUpdateGA,
-    settingsItem.trackingId
-  ]);
+  }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -200,11 +166,11 @@ const PublicSettingsDetail: React.FC<Props> = ({
           onChange={(publicTitle: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicTitle }));
           }}
-          onBlur={() => handleSubmitPublicInfo("title")}
+          onBlur={handleSubmitPublicInfo}
         />
         <TextAreaField
           title={t("Description")}
-          value={localPublicInfo.publicDescription ?? ""}
+          value={settingsItem.publicDescription ?? ""}
           placeholder={t("Write down your text")}
           description={t(
             "The Description setting will be applied to og:description."
@@ -213,7 +179,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           onChange={(publicDescription: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicDescription }));
           }}
-          onBlur={() => handleSubmitPublicInfo("description")}
+          onBlur={handleSubmitPublicInfo}
         />
         <ThumbnailField>
           <AssetField
@@ -230,7 +196,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 ...s,
                 publicImage: publicImage ?? ""
               }));
-              handleSubmitPublicInfo("imageUrl");
+              handleSubmitPublicInfo(publicImage);
             }}
           />
           <StyledImage
@@ -321,7 +287,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
               }}
               disabled={!localBasicAuthorization.isBasicAuthActive}
-              onBlur={() => handleSubmitBasicAuthorization("username")}
+              onBlur={handleSubmitBasicAuthorization}
             />
             <InputField
               title={t("Password")}
@@ -330,7 +296,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
               }}
               disabled={!localBasicAuthorization.isBasicAuthActive}
-              onBlur={() => handleSubmitBasicAuthorization("password")}
+              onBlur={handleSubmitBasicAuthorization}
             />
           </>
         )}

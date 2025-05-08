@@ -55,30 +55,14 @@ const GeneralSettings: FC<Props> = ({
   );
 
   const handleSubmit = useCallback(
-    (field?: string) => {
-      const isUpdated =
-        (field === "name" && localName !== project?.name) ||
-        (field === "description" &&
-          localDescription !== project?.description) ||
-        (field === "imageUrl" && localImageUrl !== project?.imageUrl);
-
-      if (isUpdated) {
-        onUpdateProject({
-          name: localName,
-          description: localDescription,
-          imageUrl: localImageUrl
-        });
-      }
+    (imageUrl?: string) => {
+      onUpdateProject({
+        name: localName,
+        description: localDescription,
+        imageUrl
+      });
     },
-    [
-      localName,
-      localDescription,
-      localImageUrl,
-      project?.name,
-      project?.description,
-      project?.imageUrl,
-      onUpdateProject
-    ]
+    [localName, localDescription, onUpdateProject]
   );
 
   const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
@@ -91,7 +75,7 @@ const GeneralSettings: FC<Props> = ({
   const handleImageChange = useCallback(
     (value?: string) => {
       setLocalImageUrl(value);
-      handleSubmit("imageUrl");
+      handleSubmit(value);
     },
     [handleSubmit]
   );
@@ -108,16 +92,16 @@ const GeneralSettings: FC<Props> = ({
             </TitleWrapper>
             <InputField
               title={t("Project Name")}
-              value={localName}
-              onChange={(name) => setLocalName(name)}
-              onBlur={() => handleSubmit("name")}
+              value={project.name}
+              onChange={setLocalName}
+              onBlur={handleSubmit}
             />
             <TextareaField
               title={t("Description")}
-              value={localDescription}
+              value={project.description}
               resizable="height"
               onChange={setLocalDescription}
-              onBlur={() => handleSubmit("description")}
+              onBlur={handleSubmit}
             />
             <SettingsRow>
               <SettingsRowItem>
