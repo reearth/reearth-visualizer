@@ -211,3 +211,8 @@ export default ({ projectId }: ProjectSettingsProps) => {
     handleUpdateStoryAlias
   };
 };
+
+export function extractPrefixSuffix(url?: string) {
+  if (!url || !url.includes("{}")) return ["", ""];
+  return url.split("{}");
+}

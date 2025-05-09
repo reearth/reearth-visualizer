@@ -16,6 +16,7 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublicAliasSettingsType } from "..";
+import { extractPrefixSuffix } from "../../../hooks";
 import {
   SettingsProjectWithTypename,
   StoryWithTypename
@@ -46,29 +47,24 @@ const AliasSetting: FC<AliasSettingProps> = ({
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
 
-  const alias = useMemo(
-    () => (settingsItem?.alias ? settingsItem.alias : settingsItem?.id),
-    [settingsItem?.alias, settingsItem?.id]
-  );
-
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
-    if (!publishedConfig) return "";
-    const [prefix, suffix] = publishedConfig.split("{}");
-    const sanitizedAlias = alias?.replace(/^\/+|\/+$/g, "") ?? "";
+    if (!publishedConfig || !settingsItem) return "";
+    const [prefix, suffix] = extractPrefixSuffix(publishedConfig);
 
+    const sanitizedAlias = settingsItem.alias?.replace(/^\/+|\/+$/g, "") ?? "";
     return `${prefix}${sanitizedAlias}${suffix}`;
-  }, [alias]);
+  }, [settingsItem]);
 
   const handleIconClick = useCallback(() => {
-    if (!alias) return;
+    if (!settingsItem?.alias) return;
 
     navigator.clipboard.writeText(publicUrl);
     setNotification({
       type: "success",
       text: t("Resource URL copied to clipboard")
     });
-  }, [alias, publicUrl, setNotification, t]);
+  }, [publicUrl, setNotification, settingsItem?.alias, t]);
 
   const handleSubmitAlias = useCallback(
     (alias?: string) => {
@@ -98,8 +94,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
   const isDisabled = useMemo(
     () =>
-      alias === `p-${settingsItem?.id}` || alias === `s-${settingsItem?.id}`,
-    [alias, settingsItem?.id]
+      settingsItem?.alias === `p-${settingsItem?.id}` ||
+      settingsItem?.alias === `s-${settingsItem?.id}`,
+    [settingsItem?.alias, settingsItem?.id]
   );
 
   return (
@@ -136,7 +133,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
         {open && (
           <EditPanel
-            alias={alias}
+            alias={settingsItem?.alias}
             isStory={isStory}
             itemId={settingsItem?.id}
             publicUrl={publicUrl}

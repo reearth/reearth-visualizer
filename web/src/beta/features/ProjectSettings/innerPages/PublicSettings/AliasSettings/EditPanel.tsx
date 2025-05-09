@@ -15,6 +15,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
+import { extractPrefixSuffix } from "../../../hooks";
+
 type Prop = {
   publicUrl: string;
   isStory?: boolean;
@@ -37,20 +39,10 @@ const EditPanel: FC<Prop> = ({
   const { checkProjectAlias } = useProjectFetcher();
   const { checkStoryAlias } = useStorytellingFetcher();
 
-  const [prefix, suffix] = useMemo(() => {
-    if (!publicUrl) return ["", ""];
-    const aliasMatch = publicUrl.match(/^(https?:\/\/[^?]+)\?alias=/);
-    if (aliasMatch) {
-      return [aliasMatch[1] + "?alias=", ""];
-    }
-
-    const subdomainMatch = publicUrl.match(/^https?:\/\/([^\\.]+)\.(.+)$/);
-    if (subdomainMatch) {
-      return ["https://", "." + subdomainMatch[2]];
-    }
-
-    return ["", ""];
-  }, [publicUrl]);
+  const [prefix, suffix] = useMemo(
+    () => extractPrefixSuffix(publicUrl),
+    [publicUrl]
+  );
 
   const [localAlias, setLocalAlias] = useState(alias);
   const [warning, setWaring] = useState("");
