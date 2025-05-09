@@ -78,7 +78,7 @@ type Config struct {
 
 type InternalApiConfig struct {
 	Active bool   `default:"false" pp:",omitempty"`
-	Port   string `default:"50051" pp:",omitempty"`
+	Port   string `default:"8080" pp:",omitempty"`
 	Token  string `default:"" pp:",omitempty"`
 }
 

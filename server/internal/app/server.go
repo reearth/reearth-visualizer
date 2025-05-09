@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 
@@ -83,22 +82,23 @@ func (w *WebServer) Run(ctx context.Context) {
 		debugLog += " with debug mode"
 	}
 
-	go func() {
-		err := w.appServer.StartH2CServer(w.address, &http2.Server{})
-		log.Fatalc(ctx, err.Error())
-	}()
-	log.Infof("server: started%s at http://%s", debugLog, w.address)
-
 	if w.internalServer != nil {
+		l, err := net.Listen("tcp", w.internalPort)
+		if err != nil {
+			log.Fatalc(ctx, err.Error())
+		}
 		go func() {
-			l, err := net.Listen("tcp", w.internalPort)
-			if err != nil {
-				log.Fatalc(ctx, err.Error())
-			}
-			err = w.internalServer.Serve(l)
+			err = w.ServeGRPC(l)
 			log.Fatalc(ctx, err.Error())
 		}()
-		log.Infof("server: started internal grpc server at %s", w.internalPort)
+		port := l.Addr().(*net.TCPAddr).Port
+		log.Infof("server: started internal grpc server at %d", port)
+	} else {
+		go func() {
+			err := w.appServer.StartH2CServer(w.address, &http2.Server{})
+			log.Fatalc(ctx, err.Error())
+		}()
+		log.Infof("server: started%s at http://%s", debugLog, w.address)
 	}
 
 	quit := make(chan os.Signal, 1)
@@ -112,10 +112,6 @@ func (w *WebServer) Serve(l net.Listener) error {
 
 func (w *WebServer) ServeGRPC(l net.Listener) error {
 	return w.internalServer.Serve(l)
-}
-
-func (w *WebServer) ServeHTTP(wr http.ResponseWriter, r *http.Request) {
-	w.appServer.ServeHTTP(wr, r)
 }
 
 func (w *WebServer) Shutdown(ctx context.Context) error {
