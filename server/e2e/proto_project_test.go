@@ -162,7 +162,7 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 		"user-id":       userID,
 	}))
 
-	conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("failed to connect: %v", err)
 	}
