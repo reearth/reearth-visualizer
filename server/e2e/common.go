@@ -49,7 +49,7 @@ var (
 		},
 		InternalApi: config.InternalApiConfig{
 			Active: true,
-			Port:   "50051",
+			Port:   "8080",
 			Token:  "test",
 		},
 	}
