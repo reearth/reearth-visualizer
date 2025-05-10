@@ -52,6 +52,7 @@ type Props = {
   isStory: boolean;
   currentStory?: Story;
   onUpdateStory: (settings: PublicStorySettingsType) => void;
+  onUpdateStoryAlias: (settings: PublicStorySettingsType) => void;
   onUpdateProject: (settings: PublicSettingsType) => void;
   onUpdateProjectBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
   onUpdateProjectAlias: (settings: PublicAliasSettingsType) => void;
@@ -63,6 +64,7 @@ const PublicSettings: FC<Props> = ({
   isStory,
   currentStory,
   onUpdateStory,
+  onUpdateStoryAlias,
   onUpdateProject,
   onUpdateProjectBasicAuth,
   onUpdateProjectAlias,
@@ -80,7 +82,7 @@ const PublicSettings: FC<Props> = ({
             settingsItem={currentStory as Story}
             onUpdate={onUpdateStory}
             onUpdateBasicAuth={onUpdateStory}
-            onUpdateAlias={onUpdateStory}
+            onUpdateAlias={onUpdateStoryAlias}
             onUpdateGA={onUpdateStory}
           />
         ) : project ? (
