@@ -4,13 +4,16 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC, useEffect, useState } from "react";
 
-export type TextAreaFieldProps = CommonFieldProps & TextAreaProps;
+export type TextAreaFieldProps = {
+  onChangeComplete?: (text: string) => void;
+} & CommonFieldProps &
+  TextAreaProps;
 
 const TextAreaField: FC<TextAreaFieldProps> = ({
   title,
   description,
   value,
-  onBlur,
+  onChangeComplete,
   onChange,
   ...props
 }) => {
@@ -20,9 +23,9 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
     setInternalValue(value);
   }, [value]);
 
-  const handleBlur = () => {
+  const handleChangeComplete = () => {
     if (internalValue !== value) {
-      onBlur?.(internalValue as string);
+      onChangeComplete?.(internalValue as string);
     }
   };
 
@@ -37,7 +40,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         {...props}
         value={internalValue}
         onChange={handleChange}
-        onBlur={handleBlur}
+        onBlur={handleChangeComplete}
       />
     </CommonField>
   );

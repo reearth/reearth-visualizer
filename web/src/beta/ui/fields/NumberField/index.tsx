@@ -4,12 +4,15 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC, useEffect, useState } from "react";
 
-export type NumberFieldProps = CommonFieldProps & NumberInputProps;
+export type NumberFieldProps = {
+  onChangeComplete?: (value?: number) => void;
+} & CommonFieldProps &
+  NumberInputProps;
 const NumberField: FC<NumberFieldProps> = ({
   title,
   description,
   value,
-  onBlur,
+  onChangeComplete,
   onChange,
   ...props
 }) => {
@@ -19,9 +22,9 @@ const NumberField: FC<NumberFieldProps> = ({
     setCurrentValue(value);
   }, [value]);
 
-  const handleBlur = () => {
+  const handleChangeComplete = () => {
     if (currentValue !== value) {
-      onBlur?.(currentValue as number);
+      onChangeComplete?.(currentValue as number);
     }
   };
 
@@ -34,7 +37,7 @@ const NumberField: FC<NumberFieldProps> = ({
       <NumberInput
         {...props}
         value={currentValue}
-        onBlur={handleBlur}
+        onBlur={handleChangeComplete}
         onChange={handleChange}
       />
     </CommonField>

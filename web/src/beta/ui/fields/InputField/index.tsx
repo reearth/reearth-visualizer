@@ -4,10 +4,12 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC, useState, useEffect } from "react";
 
-export type InputFieldProps = CommonFieldProps &
+export type InputFieldProps = {
+  onChangeComplete?: (text: string) => void;
+} & CommonFieldProps &
   Pick<
     TextInputProps,
-    "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance"
+    "value" | "placeholder" | "onChange" | "disabled" | "appearance"
   >;
 
 const InputField: FC<InputFieldProps> = ({
@@ -15,7 +17,7 @@ const InputField: FC<InputFieldProps> = ({
   description,
   value,
   onChange,
-  onBlur,
+  onChangeComplete,
   ...props
 }) => {
   const [internalValue, setInternalValue] = useState(value);
@@ -24,9 +26,9 @@ const InputField: FC<InputFieldProps> = ({
     setInternalValue(value);
   }, [value]);
 
-  const handleBlur = () => {
+  const handleChangeComplete = () => {
     if (internalValue !== value) {
-      onBlur?.(internalValue as string);
+      onChangeComplete?.(internalValue as string);
     }
   };
 
@@ -41,7 +43,7 @@ const InputField: FC<InputFieldProps> = ({
         {...props}
         value={internalValue}
         onChange={handleChange}
-        onBlur={handleBlur}
+        onBlur={handleChangeComplete}
       />
     </CommonField>
   );
