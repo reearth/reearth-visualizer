@@ -5,15 +5,17 @@ import {
   useMutation,
   useQuery
 } from "@apollo/client";
-import { GetProjectsQueryVariables } from "@reearth/services/gql";
+import {
+  GetProjectsQueryVariables,
+  HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION
+} from "@reearth/services/gql";
 import {
   UpdateProjectInput,
   ProjectPayload,
   Visualizer,
   DeleteProjectInput,
   ArchiveProjectMutationVariables,
-  UpdateProjectBasicAuthMutationVariables,
-  UpdateProjectAliasMutationVariables
+  UpdateProjectBasicAuthMutationVariables
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -25,7 +27,6 @@ import {
   GET_STARRED_PROJECTS,
   PUBLISH_PROJECT,
   UPDATE_PROJECT,
-  UPDATE_PROJECT_ALIAS,
   UPDATE_PROJECT_BASIC_AUTH,
   EXPORT_PROJECT,
   GET_DELETED_PROJECTS
@@ -40,14 +41,15 @@ import { useRestful } from "../../restful";
 import { useNotification } from "../../state";
 import { type PublishStatus } from "../publishTypes";
 import { toGqlStatus } from "../publishTypes";
-import { MutationReturn } from "../types";
+import { MutationReturn } from "../types"; // 16MB
 
 export type Project = ProjectPayload["project"];
-const CHUNK_SIZE = 16 * 1024 * 1024; // 16MB
+const CHUNK_SIZE = 16 * 1024 * 1024;
 
 export default () => {
   const t = useT();
   const [, setNotification] = useNotification();
+
   const { axios } = useRestful();
 
   const useProjectQuery = useCallback((projectId?: string) => {
@@ -122,9 +124,38 @@ export default () => {
     return { deletedProjects, ...rest };
   }, []);
 
-  const useProjectAliasCheckLazyQuery = useCallback(() => {
-    return useLazyQuery(CHECK_PROJECT_ALIAS);
-  }, []);
+  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS);
+
+  const checkProjectAlias = useCallback(
+    async (alias: string, projectId?: string) => {
+      if (!alias) return null;
+
+      const { data, errors } = await fetchCheckProjectAlias({
+        variables: { alias, projectId },
+        errorPolicy: "all",
+        context: {
+          headers: {
+            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
+          }
+        }
+      });
+
+      if (errors || !data?.checkProjectAlias) {
+        return { status: "error", errors };
+      }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully checked alias!")
+      });
+      return {
+        available: data?.checkProjectAlias.available,
+        alias: data?.checkProjectAlias.alias,
+        status: "success"
+      };
+    },
+    [fetchCheckProjectAlias, setNotification, t]
+  );
 
   const [createNewProject] = useMutation(CREATE_PROJECT);
   const [createScene] = useMutation(CREATE_SCENE, {
@@ -437,33 +468,6 @@ export default () => {
     [updateProjectBasicAuthMutation, t, setNotification]
   );
 
-  const [updateProjectAliasMutation] = useMutation(UPDATE_PROJECT_ALIAS);
-  const useUpdateProjectAlias = useCallback(
-    async (input: UpdateProjectAliasMutationVariables) => {
-      if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectAliasMutation({
-        variables: { ...input }
-      });
-
-      if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to update project", errors);
-        setNotification({
-          type: "error",
-          text: t("Failed to update project.")
-        });
-
-        return { status: "error" };
-      }
-
-      setNotification({
-        type: "success",
-        text: t("Successfully updated project!")
-      });
-      return { data: data?.updateProject?.project, status: "success" };
-    },
-    [updateProjectAliasMutation, t, setNotification]
-  );
-
   const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
 
   const getBackendUrl = useCallback(() => {
@@ -577,14 +581,13 @@ export default () => {
     publishProjectLoading,
     useProjectQuery,
     useProjectsQuery,
-    useProjectAliasCheckLazyQuery,
+    checkProjectAlias,
     useCreateProject,
     usePublishProject,
     useUpdateProject,
     useArchiveProject,
     useDeleteProject,
     useUpdateProjectBasicAuth,
-    useUpdateProjectAlias,
     useStarredProjectsQuery,
     useExportProject,
     useUpdateProjectRemove,

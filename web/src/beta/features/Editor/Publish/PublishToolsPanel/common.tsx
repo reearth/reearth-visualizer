@@ -65,3 +65,18 @@ export const UrlAction = styled("div")(() => ({
   minHeight: 18,
   flexShrink: 0
 }));
+
+export const PublicUrlWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing.small,
+  alignItems: "center"
+}));
+
+export const PublishStatus = styled("div")<{ isPublished?: boolean }>(
+  ({ theme, isPublished }) => ({
+    width: "8px",
+    height: "8px",
+    backgroundColor: isPublished ? theme.publish.main : theme.content.weaker,
+    borderRadius: "50%"
+  })
+);

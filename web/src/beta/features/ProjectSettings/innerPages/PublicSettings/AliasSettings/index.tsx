@@ -5,6 +5,10 @@ import {
 } from "@reearth/beta/features/Editor/Publish/PublishToolsPanel/common";
 import { Button, Icon } from "@reearth/beta/lib/reearth-ui";
 import CommonField from "@reearth/beta/ui/fields/CommonField";
+import {
+  useProjectFetcher,
+  useStorytellingFetcher
+} from "@reearth/services/api";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
@@ -12,25 +16,31 @@ import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublicAliasSettingsType } from "..";
+import { extractPrefixSuffix } from "../../../hooks";
+import {
+  SettingsProjectWithTypename,
+  StoryWithTypename
+} from "../PublicSettingsDetail";
 
 import EditPanel from "./EditPanel";
 
 export type AliasSettingProps = {
-  alias: string;
   isStory?: boolean;
-  defaultAlias?: string;
+  alias?: string;
+  settingsItem?: SettingsProjectWithTypename | StoryWithTypename;
   onUpdateAlias?: (settings: PublicAliasSettingsType) => void;
-  onClose?: () => void;
-  onSubmit?: (alias?: string) => void;
 };
+
 const AliasSetting: FC<AliasSettingProps> = ({
-  alias,
   isStory,
-  defaultAlias,
+  settingsItem,
   onUpdateAlias
 }) => {
   const theme = useTheme();
   const t = useT();
+  const { checkProjectAlias } = useProjectFetcher();
+  const { checkStoryAlias } = useStorytellingFetcher();
+
   const [, setNotification] = useNotification();
 
   const [open, setOpen] = useState(false);
@@ -39,22 +49,22 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
-    if (!publishedConfig) return "";
+    if (!publishedConfig || !settingsItem) return "";
+    const [prefix, suffix] = extractPrefixSuffix(publishedConfig);
 
-    const [prefix, suffix] = publishedConfig.split("{}");
-    const sanitizedAlias = alias?.replace(/^\/+|\/+$/g, "") ?? "";
-
+    const sanitizedAlias = settingsItem.alias?.replace(/^\/+|\/+$/g, "") ?? "";
     return `${prefix}${sanitizedAlias}${suffix}`;
-  }, [alias]);
+  }, [settingsItem]);
 
   const handleIconClick = useCallback(() => {
-    if (!alias) return;
+    if (!settingsItem?.alias) return;
+
     navigator.clipboard.writeText(publicUrl);
     setNotification({
       type: "success",
       text: t("Resource URL copied to clipboard")
     });
-  }, [alias, publicUrl, setNotification, t]);
+  }, [publicUrl, setNotification, settingsItem?.alias, t]);
 
   const handleSubmitAlias = useCallback(
     (alias?: string) => {
@@ -65,11 +75,40 @@ const AliasSetting: FC<AliasSettingProps> = ({
     [onUpdateAlias]
   );
 
+  const handleCleanAlias = useCallback(async () => {
+    const alias = isStory ? `s-${settingsItem?.id}` : `p-${settingsItem?.id}`;
+
+    const data = isStory
+      ? await checkStoryAlias(alias, settingsItem?.id)
+      : await checkProjectAlias(alias, settingsItem?.id);
+    if (data?.available) {
+      handleSubmitAlias(alias);
+    }
+  }, [
+    checkProjectAlias,
+    checkStoryAlias,
+    handleSubmitAlias,
+    isStory,
+    settingsItem?.id
+  ]);
+
+  const isDisabled = useMemo(
+    () =>
+      settingsItem?.alias === `p-${settingsItem?.id}` ||
+      settingsItem?.alias === `s-${settingsItem?.id}`,
+    [settingsItem?.alias, settingsItem?.id]
+  );
+
   return (
     <CommonField title={t("Your Alias")}>
       <Wrapper>
         <UrlWrapper justify="space-between" noPadding>
-          <UrlText hasPublicUrl>{publicUrl}</UrlText>
+          <UrlText
+            hasPublicUrl
+            onClick={() => window.open(publicUrl, "_blank")}
+          >
+            {publicUrl}
+          </UrlText>
           <UrlAction onClick={handleIconClick}>
             <Icon icon="copy" />
           </UrlAction>
@@ -79,9 +118,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
           title={t("clean")}
           icon="pencilLine"
           size="small"
-          disabled={defaultAlias === alias}
+          disabled={isDisabled}
           iconColor={theme.content.weak}
-          onClick={() => handleSubmitAlias(defaultAlias)}
+          onClick={handleCleanAlias}
         />
 
         <Button
@@ -94,8 +133,10 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
         {open && (
           <EditPanel
-            alias={alias}
+            alias={settingsItem?.alias}
             isStory={isStory}
+            itemId={settingsItem?.id}
+            publicUrl={publicUrl}
             onClose={handleClose}
             onSubmit={handleSubmitAlias}
           />

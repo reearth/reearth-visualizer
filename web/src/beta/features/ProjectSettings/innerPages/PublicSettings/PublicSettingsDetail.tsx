@@ -32,14 +32,14 @@ import {
 } from ".";
 
 interface WithTypename {
-  __typename?: string;
+  type?: "project" | "story";
 }
 
-type SettingsProjectWithTypename = SettingsProject & WithTypename;
-type StoryWithTypename = Story & WithTypename;
+export type SettingsProjectWithTypename = SettingsProject & WithTypename;
+export type StoryWithTypename = Story & WithTypename;
 
 type Props = {
-  settingsItem: SettingsProjectWithTypename | StoryWithTypename;
+  settingsItem: (SettingsProject | Story) & WithTypename;
   isStory?: boolean;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
@@ -215,8 +215,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         {isPublished ? (
           <AliasSetting
             isStory={isStory}
-            defaultAlias={settingsItem.id}
-            alias={settingsItem.alias}
+            settingsItem={settingsItem}
             onUpdateAlias={onUpdateAlias}
           />
         ) : (
@@ -231,42 +230,47 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ContentDescription>
         )}
       </SettingsFields>
-      <SettingsFields>
-        <TitleWrapper size="body" weight="bold">
-          {t("Custom Domain")}
-        </TitleWrapper>
-        {isPublished && extensions && extensions.length > 0 && accessToken ? (
-          <ExtensionComponent
-            typename={settingsItem.__typename || ""}
-            {...(settingsItem.__typename === "Project"
-              ? {
-                  projectId: settingsItem.id,
-                  projectAlias: settingsItem.alias
-                }
-              : {
-                  storyId: settingsItem.id,
-                  storyAlias: settingsItem.alias
-                })}
-            lang={currentLang}
-            theme={currentTheme}
-            accessToken={accessToken}
-            onNotificationChange={onNotificationChange}
-            version="visualizer"
-          />
-        ) : (
-          <ContentDescription>
-            <Typography size="body" color={theme.content.weak}>
-              {isStory
-                ? t(
-                    "Please publish your map story before setting up your custom domain."
-                  )
-                : t(
-                    "Please publish your map project before setting up your custom domain."
-                  )}
-            </Typography>
-          </ContentDescription>
+      {extensions &&
+        extensions.filter((ext) => ext.type === "publication").length > 0 &&
+        accessToken && (
+          <SettingsFields>
+            <TitleWrapper size="body" weight="bold">
+              {t("Custom Domain")}
+            </TitleWrapper>
+
+            {isPublished ? (
+              <ExtensionComponent
+                typename={settingsItem.type || ""}
+                {...(settingsItem.type === "project"
+                  ? {
+                      projectId: settingsItem.id,
+                      projectAlias: settingsItem.alias
+                    }
+                  : {
+                      storyId: settingsItem.id,
+                      storyAlias: settingsItem.alias
+                    })}
+                lang={currentLang}
+                theme={currentTheme}
+                accessToken={accessToken}
+                onNotificationChange={onNotificationChange}
+                version="visualizer"
+              />
+            ) : (
+              <ContentDescription>
+                <Typography size="body" color={theme.content.weak}>
+                  {isStory
+                    ? t(
+                        "Please publish your map story before setting up your custom domain."
+                      )
+                    : t(
+                        "Please publish your map project before setting up your custom domain."
+                      )}
+                </Typography>
+              </ContentDescription>
+            )}
+          </SettingsFields>
         )}
-      </SettingsFields>
       <SettingsFields>
         <TitleWrapper size="body" weight="bold">
           {t("Basic Authorization")}
