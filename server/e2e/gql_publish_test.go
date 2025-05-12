@@ -653,7 +653,8 @@ func TestCheckProjectAlias(t *testing.T) {
 
 func TestCheckProjectAliasError(t *testing.T) {
 	e := Server(t, baseSeeder)
-	projectId, _, storyId := createProjectSet(e)
+	// projectId, sceneId, storyId := createProjectSet(e)
+	projectId, sceneId, storyId := createProjectSet(e)
 
 	type args struct {
 		alias     string
@@ -670,13 +671,18 @@ func TestCheckProjectAliasError(t *testing.T) {
 	}{
 		{
 			name: "project id as alias without project id",
-			args: args{projectId, ""},
+			args: args{sceneId, ""},
 			want: want{"This alias is already in use. Please try another one."},
 		},
 		{
 			name: "reserved prefix + projectId as alias without project id",
-			args: args{alias.ReservedReearthPrefixProject + projectId, ""},
-			want: want{"This alias is already in use. Please try another one."},
+			args: args{alias.ReservedReearthPrefixProject + sceneId, ""},
+			want: want{
+				fmt.Sprintf(
+					"Aliases starting with 'c-' or 's-' are not allowed: %s",
+					alias.ReservedReearthPrefixProject+sceneId,
+				),
+			},
 		},
 		{
 			name: "story id as alias with project id",
