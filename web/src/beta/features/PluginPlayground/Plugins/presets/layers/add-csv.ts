@@ -66,6 +66,8 @@ const layerCsv = {
 // Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layerCsv);
 
+// Move the camera to the position where the CSV data is displayed.
+// Documentation on Camera "flyTo" event: https://visualizer.developer.reearth.io/plugin-api/camera/#flyto
 reearth.camera.flyTo(
   // Define the camera position to be moved to
   {
