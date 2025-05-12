@@ -46,21 +46,39 @@ func updateEmptyAliases(ctx context.Context, c DBClient, collectionName, prefix 
 	var count int64
 	for cursor.Next(ctx) {
 		var doc struct {
-			ID primitive.ObjectID `bson:"_id"`
+			ID string `bson:"id"`
 		}
 		if err := cursor.Decode(&doc); err != nil {
 			log.Printf("failed to decode document in %s: %v", collectionName, err)
 			continue
 		}
 
-		alias := fmt.Sprintf("%s%s", prefix, doc.ID.Hex())
+		var alias string
+
+		if collectionName == "project" {
+			sceneID, err := getSceneIDByProjectID(ctx, c, doc.ID)
+			if err != nil {
+				log.Printf("failed to get scene ID for project %s: %v", doc.ID, err)
+				continue
+			}
+			alias = fmt.Sprintf("c-%s", sceneID)
+		} else {
+			var idDoc struct {
+				ObjectID primitive.ObjectID `bson:"_id"`
+			}
+			if err := cursor.Decode(&idDoc); err != nil {
+				log.Printf("failed to decode _id for %s: %v", collectionName, err)
+				continue
+			}
+			alias = fmt.Sprintf("%s%s", prefix, idDoc.ObjectID.Hex())
+		}
 
 		_, err := collection.UpdateOne(ctx,
-			bson.M{"_id": doc.ID},
+			bson.M{"id": doc.ID},
 			bson.M{"$set": bson.M{"alias": alias}},
 		)
 		if err != nil {
-			log.Printf("failed to update alias for %s %s: %v", collectionName, doc.ID.Hex(), err)
+			log.Printf("failed to update alias for %s %s: %v", collectionName, doc.ID, err)
 			continue
 		}
 		count++
@@ -68,4 +86,15 @@ func updateEmptyAliases(ctx context.Context, c DBClient, collectionName, prefix 
 
 	log.Printf("Updated alias for %d documents in %s\n", count, collectionName)
 	return nil
+}
+
+func getSceneIDByProjectID(ctx context.Context, c DBClient, projectID string) (string, error) {
+	sceneColl := c.WithCollection("scene").Client()
+	var sceneDoc struct {
+		ID string `bson:"id"`
+	}
+	if err := sceneColl.FindOne(ctx, bson.M{"project": projectID}).Decode(&sceneDoc); err != nil {
+		return "", fmt.Errorf("scene not found for project %s: %w", projectID, err)
+	}
+	return sceneDoc.ID, nil
 }

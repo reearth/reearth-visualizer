@@ -19,12 +19,13 @@ func TestUpdateAlias(t *testing.T) {
 	client := mongox.NewClientWithDatabase(db)
 	ctx := context.Background()
 
-	t.Run("updates alias where empty, null, or missing", func(t *testing.T) {
+	t.Run("updates alias for project using scene.id", func(t *testing.T) {
 		id1 := primitive.NewObjectID()
 		id2 := primitive.NewObjectID()
 		id3 := primitive.NewObjectID()
 		id4 := primitive.NewObjectID()
 
+		// Insert test project documents
 		_, err := db.Collection("project").InsertMany(ctx, []interface{}{
 			bson.M{"_id": id1, "id": "item1", "name": "Project 1", "alias": ""},
 			bson.M{"_id": id2, "id": "item2", "name": "Project 2"}, // alias missing
@@ -33,7 +34,15 @@ func TestUpdateAlias(t *testing.T) {
 		})
 		assert.NoError(t, err)
 
-		err = updateEmptyAliases(ctx, client, "project", "p-")
+		// Insert corresponding scenes for item1–item3
+		_, err = db.Collection("scene").InsertMany(ctx, []interface{}{
+			bson.M{"id": "scene1", "project": "item1"},
+			bson.M{"id": "scene2", "project": "item2"},
+			bson.M{"id": "scene3", "project": "item3"},
+		})
+		assert.NoError(t, err)
+
+		err = updateEmptyAliases(ctx, client, "project", "c-")
 		assert.NoError(t, err)
 
 		var results []bson.M
@@ -44,18 +53,25 @@ func TestUpdateAlias(t *testing.T) {
 		assert.Len(t, results, 4)
 
 		for _, doc := range results {
-			alias, _ := doc["alias"].(string)
-			id := doc["_id"].(primitive.ObjectID)
+			id := doc["id"].(string)
+			alias := doc["alias"].(string)
 
-			if id == id4 {
+			switch id {
+			case "item1":
+				assert.Equal(t, "c-scene1", alias)
+			case "item2":
+				assert.Equal(t, "c-scene2", alias)
+			case "item3":
+				assert.Equal(t, "c-scene3", alias)
+			case "item4":
 				assert.Equal(t, "existing-alias", alias)
-			} else {
-				assert.Equal(t, "p-"+id.Hex(), alias)
+			default:
+				t.Errorf("unexpected id: %s", id)
 			}
 		}
 	})
 
-	t.Run("updates alias where empty, null, or missing", func(t *testing.T) {
+	t.Run("updates alias for storytelling using _id", func(t *testing.T) {
 		id1 := primitive.NewObjectID()
 		id2 := primitive.NewObjectID()
 		id3 := primitive.NewObjectID()
@@ -63,7 +79,7 @@ func TestUpdateAlias(t *testing.T) {
 
 		_, err := db.Collection("storytelling").InsertMany(ctx, []interface{}{
 			bson.M{"_id": id1, "id": "item1", "name": "Storytelling 1", "alias": ""},
-			bson.M{"_id": id2, "id": "item2", "name": "Storytelling 2"}, // alias missing
+			bson.M{"_id": id2, "id": "item2", "name": "Storytelling 2"},
 			bson.M{"_id": id3, "id": "item3", "name": "Storytelling 3", "alias": nil},
 			bson.M{"_id": id4, "id": "item4", "name": "Storytelling 4", "alias": "existing-alias"},
 		})
@@ -80,8 +96,8 @@ func TestUpdateAlias(t *testing.T) {
 		assert.Len(t, results, 4)
 
 		for _, doc := range results {
-			alias, _ := doc["alias"].(string)
 			id := doc["_id"].(primitive.ObjectID)
+			alias := doc["alias"].(string)
 
 			if id == id4 {
 				assert.Equal(t, "existing-alias", alias)
