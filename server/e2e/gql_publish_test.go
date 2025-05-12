@@ -253,10 +253,10 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 	// prefix 'c-'
 	res, err := publishProjectErrors(e, uID, map[string]any{
 		"projectId": projectId,
-		"alias":     "p-test",
+		"alias":     "c-test",
 		"status":    "LIMITED",
 	})
-	checkReservedReearthPrefixProject("p-test", res, err)
+	checkReservedReearthPrefixProject("c-test", res, err)
 
 	// prefix 's-'
 	res, err = publishProjectErrors(e, uID, map[string]any{
@@ -540,10 +540,10 @@ func TestReservedReearthPrefixStory(t *testing.T) {
 	// prefix 'c-'
 	res, err := publishStoryErrors(e, uID, map[string]any{
 		"storyId": storyId,
-		"alias":   "p-test",
+		"alias":   "c-test",
 		"status":  "LIMITED",
 	})
-	checkReservedReearthPrefixStory("p-test", res, err)
+	checkReservedReearthPrefixStory("c-test", res, err)
 
 	// prefix 's-'
 	res, err = publishStoryErrors(e, uID, map[string]any{
