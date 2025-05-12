@@ -234,6 +234,67 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 	return &inp.StoryID, nil
 }
 
+func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.StoryID) (bool, error) {
+	aliasName := strings.ToLower(newAlias)
+
+	if sid == nil {
+
+		if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+	} else {
+
+		story, err := i.storytellingRepo.FindByID(ctx, *sid)
+		if err != nil {
+			return false, err
+		}
+
+		if aliasName == story.Alias() {
+			// current alias
+			return true, nil
+		}
+
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
+			// error 'p-' prefix
+			return false, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixStory)
+			// only allow self ID
+			if id != story.Id().String() {
+				// error 'p-' prefix
+				return false, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+			}
+		}
+
+		if story.Id().String() == aliasName || alias.ReservedReearthPrefixStory+story.Id().String() == aliasName {
+			// allow self StoryID
+		} else {
+			if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
+				return false, err
+			}
+			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+		}
+
+	}
+
+	return true, nil
+}
+
 func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryInput, op *usecase.Operator) (*storytelling.Story, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -266,20 +327,21 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		}
 		// if anything is set, do nothing
 	} else {
+		newAlias := strings.ToLower(*inp.Alias)
 
-		if strings.HasPrefix(*inp.Alias, alias.ReservedReearthPrefixProject) {
+		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
 			// error 'p-' prefix
-			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", *inp.Alias)
-		} else if strings.HasPrefix(*inp.Alias, alias.ReservedReearthPrefixStory) {
-			id := strings.TrimPrefix(*inp.Alias, alias.ReservedReearthPrefixStory)
+			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
+			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixStory)
 			// only allow self ID
 			if id != story.Id().String() {
 				// error 'p-' prefix
-				return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", *inp.Alias)
+				return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
 		}
 
-		story.UpdateAlias(*inp.Alias)
+		story.UpdateAlias(newAlias)
 	}
 
 	if prevAlias == story.Alias() || story.Id().String() == story.Alias() || alias.ReservedReearthPrefixStory+story.Id().String() == story.Alias() {

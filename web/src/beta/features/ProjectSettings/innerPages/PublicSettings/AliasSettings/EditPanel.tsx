@@ -7,39 +7,75 @@ import {
   Typography
 } from "@reearth/beta/lib/reearth-ui";
 import { CommonField } from "@reearth/beta/ui/fields";
+import {
+  useProjectFetcher,
+  useStorytellingFetcher
+} from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
-import { AliasSettingProps } from ".";
+import { extractPrefixSuffix } from "../../../hooks";
 
-const EditPanel: FC<AliasSettingProps> = ({
+type Prop = {
+  publicUrl: string;
+  isStory?: boolean;
+  alias?: string;
+  itemId?: string;
+  onClose?: () => void;
+  onSubmit?: (alias?: string) => void;
+};
+
+const EditPanel: FC<Prop> = ({
   alias,
   isStory,
+  publicUrl,
+  itemId,
   onClose,
   onSubmit
 }) => {
   const t = useT();
   const theme = useTheme();
-  const [localAlias, setLocalAlias] = useState("");
-  const [warning, setWaring] = useState(false);
-  const [, setNotification] = useNotification();
+  const { checkProjectAlias } = useProjectFetcher();
+  const { checkStoryAlias } = useStorytellingFetcher();
 
-  const handleChange = useCallback(
-    (value: string) => {
-      if (value === alias) {
-        setWaring(true);
-        setNotification({
-          type: "error",
-          text: isStory
-            ? t("Unable to update published story alias.")
-            : t("Unable to update published project alias.")
-        });
-      } else setWaring(false);
-      setLocalAlias(value);
-    },
-    [alias, isStory, setNotification, t]
+  const [prefix, suffix] = useMemo(
+    () => extractPrefixSuffix(publicUrl),
+    [publicUrl]
+  );
+
+  const [localAlias, setLocalAlias] = useState(alias);
+  const [warning, setWaring] = useState("");
+  const [isAliasValid, setIsAliasValid] = useState(true);
+
+  const handleChange = useCallback((value: string) => {
+    setLocalAlias(value);
+    setWaring("");
+    setIsAliasValid(false);
+  }, []);
+
+  const handleBlur = useCallback(async () => {
+    const alias = localAlias as string;
+    const result = isStory
+      ? await checkStoryAlias(alias, itemId)
+      : await checkProjectAlias?.(alias, itemId);
+
+    if (!result?.available) {
+      const description = result?.errors?.find(
+        (e) => e?.extensions?.description
+      )?.extensions?.description;
+
+      setWaring(description as string);
+      setIsAliasValid(false);
+    } else {
+      setWaring("");
+      setIsAliasValid(true);
+    }
+  }, [checkProjectAlias, checkStoryAlias, isStory, itemId, localAlias]);
+
+  const isDisabled = useMemo(
+    () => !!warning || localAlias === alias || !isAliasValid,
+    [alias, localAlias, warning, isAliasValid]
   );
 
   const handleSubmit = useCallback(() => {
@@ -59,7 +95,7 @@ const EditPanel: FC<AliasSettingProps> = ({
               extendWidth
               title={t("Apply")}
               appearance="primary"
-              disabled={warning || !localAlias}
+              disabled={isDisabled}
               onClick={handleSubmit}
             />
           </ButtonWrapper>
@@ -76,14 +112,22 @@ const EditPanel: FC<AliasSettingProps> = ({
                 )}
           </Typography>
           <CommonField title={"Alias"}>
-            <InputWrapper>
-              <Typography size="body" color={theme.content.weak}>
-                {"https://"}
-              </Typography>
-              <TextInput value={localAlias} onChange={handleChange} />
-              <Typography size="body" color={theme.content.weak}>
-                {".visualizer.reearth.io"}
-              </Typography>
+            <InputWrapper hasSuffix={!!suffix}>
+              {prefix && (
+                <Typography size="body" color={theme.content.weak}>
+                  {prefix}
+                </Typography>
+              )}
+              <TextInput
+                value={localAlias}
+                onBlur={handleBlur}
+                onChange={handleChange}
+              />
+              {suffix && (
+                <Typography size="body" color={theme.content.weak}>
+                  {suffix}
+                </Typography>
+              )}
             </InputWrapper>
           </CommonField>
 
@@ -92,9 +136,7 @@ const EditPanel: FC<AliasSettingProps> = ({
               <>
                 <Icon icon="close" />
                 <Typography size="footnote" color={theme.dangerous.main}>
-                  {t(
-                    "The name is already taken by other users. Please choose a different name."
-                  )}
+                  {warning}
                 </Typography>
               </>
             ) : (
@@ -116,11 +158,14 @@ const Wrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.normal
 }));
 
-const InputWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing.micro
-}));
+const InputWrapper = styled("div")<{ hasSuffix?: boolean }>(
+  ({ theme, hasSuffix }) => ({
+    display: "flex",
+    flexDirection: hasSuffix ? "row" : "column",
+    alignItems: hasSuffix ? "center" : undefined,
+    gap: theme.spacing.micro
+  })
+);
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",

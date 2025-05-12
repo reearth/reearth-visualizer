@@ -46,23 +46,40 @@ const GeneralSettings: FC<Props> = ({
 }) => {
   const t = useT();
 
-  const [localName, setLocalName] = useState(project?.name ?? "");
-  const [localDescription, setLocalDescription] = useState(
-    project?.description ?? ""
-  );
-  const [localImageUrl, setLocalImageUrl] = useState<string | undefined>(
-    project?.imageUrl ?? ""
+  const handleNameUpdate = useCallback(
+    (name: string) => {
+      if (!project) return;
+      onUpdateProject({
+        imageUrl: project.imageUrl || "",
+        description: project.description,
+        name
+      });
+    },
+    [project, onUpdateProject]
   );
 
-  const handleSubmit = useCallback(
-    (imageUrl?: string) => {
+  const handleDescriptionUpdate = useCallback(
+    (description: string) => {
+      if (!project) return;
       onUpdateProject({
-        name: localName,
-        description: localDescription,
+        name: project.name,
+        imageUrl: project.imageUrl || "",
+        description
+      });
+    },
+    [project, onUpdateProject]
+  );
+
+  const handleImageUpdate = useCallback(
+    (imageUrl?: string) => {
+      if (!project) return;
+      onUpdateProject({
+        name: project.name,
+        description: project.description,
         imageUrl
       });
     },
-    [localName, localDescription, onUpdateProject]
+    [project, onUpdateProject]
   );
 
   const [projectRemoveModalVisible, setProjectRemoveModalVisible] =
@@ -71,14 +88,6 @@ const GeneralSettings: FC<Props> = ({
   const handleProjectRemoveModal = useCallback((value: boolean) => {
     setProjectRemoveModalVisible(value);
   }, []);
-
-  const handleImageChange = useCallback(
-    (value?: string) => {
-      setLocalImageUrl(value);
-      handleSubmit(value);
-    },
-    [handleSubmit]
-  );
 
   return project ? (
     <InnerPage wide>
@@ -93,15 +102,13 @@ const GeneralSettings: FC<Props> = ({
             <InputField
               title={t("Project Name")}
               value={project.name}
-              onChange={(name) => setLocalName(name)}
-              onBlur={handleSubmit}
+              onChangeComplete={handleNameUpdate}
             />
             <TextareaField
               title={t("Description")}
-              value={localDescription}
+              value={project.description}
               resizable="height"
-              onChange={setLocalDescription}
-              onBlur={handleSubmit}
+              onChangeComplete={handleDescriptionUpdate}
             />
             <SettingsRow>
               <SettingsRowItem>
@@ -109,13 +116,13 @@ const GeneralSettings: FC<Props> = ({
                   title={t("Thumbnail")}
                   inputMethod="asset"
                   assetsTypes={IMAGE_TYPES}
-                  value={localImageUrl}
-                  onChange={(v) => handleImageChange(v)}
+                  value={project.imageUrl || ""}
+                  onChange={handleImageUpdate}
                 />
               </SettingsRowItem>
               <SettingsRowItem>
                 <Thumbnail
-                  src={localImageUrl || defaultProjectBackgroundImage}
+                  src={project.imageUrl || defaultProjectBackgroundImage}
                 />
               </SettingsRowItem>
             </SettingsRow>

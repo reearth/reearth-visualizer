@@ -89,7 +89,7 @@ const LinkBlockEditor: FC<Props> = ({
             title={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
-            onBlur={(value) =>
+            onChangeComplete={(value) =>
               debounceOnUpdate(selected, "title", "string", value)
             }
           />

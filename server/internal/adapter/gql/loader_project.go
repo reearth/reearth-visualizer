@@ -70,8 +70,10 @@ func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, k
 	}, nil
 }
 
-func (c *ProjectLoader) CheckAlias(ctx context.Context, alias string) (*gqlmodel.ProjectAliasAvailability, error) {
-	ok, err := c.usecase.CheckAlias(ctx, alias)
+func (c *ProjectLoader) CheckAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
+	pid := gqlmodel.ToIDRef[id.Project](projectID)
+
+	ok, err := c.usecase.CheckAlias(ctx, alias, pid)
 	if err != nil {
 		return nil, err
 	}

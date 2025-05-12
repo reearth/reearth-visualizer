@@ -584,6 +584,254 @@ func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *h
 	})
 }
 
+/////// Test CheckProjectAlias ///////
+
+func TestCheckProjectAlias(t *testing.T) {
+	e := Server(t, baseSeeder)
+	projectId, _, _ := createProjectSet(e)
+
+	type args struct {
+		alias     string
+		projectId string
+	}
+	type want struct {
+		alias     string
+		available bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want want
+	}{
+		{
+			name: "not reserved",
+			args: args{"test-xxxxxx", projectId},
+			want: want{"test-xxxxxx", true},
+		},
+		{
+			name: "alias equals projectId",
+			args: args{projectId, projectId},
+			want: want{projectId, true},
+		},
+		{
+			name: "reserved prefix ok for self project",
+			args: args{alias.ReservedReearthPrefixProject + projectId, projectId},
+			want: want{alias.ReservedReearthPrefixProject + projectId, true},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt // capture
+		t.Run(tt.name, func(t *testing.T) {
+			res := checkProjectAlias(e, uID, map[string]any{
+				"alias":     tt.args.alias,
+				"projectId": tt.args.projectId,
+			})
+			res.Object().IsEqual(map[string]any{
+				"alias":     tt.want.alias,
+				"available": tt.want.available,
+			})
+		})
+	}
+
+	// Check with the alias set once
+	publishProject(e, uID, map[string]any{
+		"projectId": projectId,
+		"alias":     "test-xxxxxx",
+		"status":    "LIMITED",
+	})
+	res := checkProjectAlias(e, uID, map[string]any{
+		"alias":     "test-xxxxxx", // current self alias
+		"projectId": projectId,
+	})
+	res.Object().IsEqual(map[string]any{
+		"alias":     "test-xxxxxx",
+		"available": true,
+	})
+
+}
+
+func TestCheckProjectAliasError(t *testing.T) {
+	e := Server(t, baseSeeder)
+	projectId, _, storyId := createProjectSet(e)
+
+	type args struct {
+		alias     string
+		projectId string
+	}
+	type want struct {
+		message string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want want
+	}{
+		{
+			name: "project id as alias without project id",
+			args: args{projectId, ""},
+			want: want{"This alias is already in use. Please try another one."},
+		},
+		{
+			name: "reserved prefix + projectId as alias without project id",
+			args: args{alias.ReservedReearthPrefixProject + projectId, ""},
+			want: want{"This alias is already in use. Please try another one."},
+		},
+		{
+			name: "story id as alias with project id",
+			args: args{storyId, projectId},
+			want: want{"This alias is already in use. Please try another one."},
+		},
+		{
+			name: "reserved prefix + storyId as alias with project id",
+			args: args{alias.ReservedReearthPrefixProject + storyId, projectId},
+			want: want{
+				fmt.Sprintf(
+					"Aliases starting with 'p-' or 's-' are not allowed: %s",
+					alias.ReservedReearthPrefixProject+storyId,
+				),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt // capture loop var
+		t.Run(tt.name, func(t *testing.T) {
+			res, err := checkProjectAliasError(e, uID, map[string]any{
+				"alias":     tt.args.alias,
+				"projectId": tt.args.projectId,
+			})
+			res.IsNull()
+			err.Array().Value(0).Path("$.message").IsEqual(tt.want.message)
+		})
+	}
+}
+
+/////// Test CheckStoryAlias ///////
+
+// // go test -v -run TestCheckStoryAlias ./e2e/...
+func TestCheckStoryAlias(t *testing.T) {
+	e := Server(t, baseSeeder)
+	_, _, storyId := createProjectSet(e)
+
+	type args struct {
+		alias   string
+		storyId string
+	}
+	type want struct {
+		alias     string
+		available bool
+	}
+	tests := []struct {
+		name string
+		args args
+		want want
+	}{
+		{
+			name: "not reserved",
+			args: args{"test-xxxxxx", storyId},
+			want: want{"test-xxxxxx", true},
+		},
+		{
+			name: "alias equals storyId",
+			args: args{storyId, storyId},
+			want: want{storyId, true},
+		},
+		{
+			name: "reserved prefix ok for self story",
+			args: args{alias.ReservedReearthPrefixStory + storyId, storyId},
+			want: want{alias.ReservedReearthPrefixStory + storyId, true},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt // capture
+		t.Run(tt.name, func(t *testing.T) {
+			res := checkStoryAlias(e, uID, map[string]any{
+				"alias":   tt.args.alias,
+				"storyId": tt.args.storyId,
+			})
+			res.Object().IsEqual(map[string]any{
+				"alias":     tt.want.alias,
+				"available": tt.want.available,
+			})
+		})
+	}
+
+	// Check with the alias set once
+	publishStory(e, uID, map[string]any{
+		"storyId": storyId,
+		"alias":   "test-xxxxxx",
+		"status":  "LIMITED",
+	})
+	res := checkStoryAlias(e, uID, map[string]any{
+		"alias":   "test-xxxxxx", // current self alias
+		"storyId": storyId,
+	})
+	res.Object().IsEqual(map[string]any{
+		"alias":     "test-xxxxxx",
+		"available": true,
+	})
+}
+
+func TestCheckStoryAliasError(t *testing.T) {
+	e := Server(t, baseSeeder)
+	projectId, _, storyId := createProjectSet(e)
+
+	type args struct {
+		alias   string
+		storyId string
+	}
+	type want struct {
+		message string
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want want
+	}{
+		{
+			name: "story id as alias without story id",
+			args: args{storyId, ""},
+			want: want{"This alias is already in use. Please try another one."},
+		},
+		{
+			name: "reserved prefix + storyId as alias without story id",
+			args: args{alias.ReservedReearthPrefixStory + storyId, ""},
+			want: want{"This alias is already in use. Please try another one."},
+		},
+		{
+			name: "story id as alias with story id",
+			args: args{projectId, storyId},
+			want: want{"This alias is already in use. Please try another one."},
+		},
+		{
+			name: "reserved prefix + storyId as alias with story id",
+			args: args{alias.ReservedReearthPrefixStory + projectId, storyId},
+			want: want{
+				fmt.Sprintf(
+					"Aliases starting with 'p-' or 's-' are not allowed: %s",
+					alias.ReservedReearthPrefixStory+projectId,
+				),
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt // capture loop var
+		t.Run(tt.name, func(t *testing.T) {
+			res, err := checkStoryAliasError(e, uID, map[string]any{
+				"alias":   tt.args.alias,
+				"storyId": tt.args.storyId,
+			})
+			res.IsNull()
+			err.Array().Value(0).Path("$.message").IsEqual(tt.want.message)
+		})
+	}
+}
+
 /////// Common ///////
 
 const PublishProjectMutation = `
@@ -615,6 +863,22 @@ mutation PublishStory(
       alias
       publishmentStatus
     }
+  }
+}`
+
+const CheckProjectAliasQuery = `
+query CheckProjectAlias($alias: String!, $projectId: ID) {
+  checkProjectAlias(alias: $alias, projectId: $projectId) {
+    alias
+    available
+  }
+}`
+
+const CheckStoryAliasQuery = `
+query CheckStoryAlias($alias: String!, $storyId: ID) {
+  checkStoryAlias(alias: $alias, storyId: $storyId) {
+    alias
+    available
   }
 }`
 
@@ -670,6 +934,46 @@ func publishStoryErrors(e *httpexpect.Expect, u accountdomain.UserID, variables 
 	requestBody := GraphQLRequest{
 		OperationName: "PublishStory",
 		Query:         PublishStoryMutation,
+		Variables:     variables,
+	}
+	res := Request(e, u.String(), requestBody)
+	return res.Path("$.data"), res.Path("$.errors")
+}
+
+func checkProjectAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "CheckProjectAlias",
+		Query:         CheckProjectAliasQuery,
+		Variables:     variables,
+	}
+	res := Request(e, u.String(), requestBody)
+	return res.Path("$.data.checkProjectAlias")
+}
+
+func checkProjectAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "CheckProjectAlias",
+		Query:         CheckProjectAliasQuery,
+		Variables:     variables,
+	}
+	res := Request(e, u.String(), requestBody)
+	return res.Path("$.data"), res.Path("$.errors")
+}
+
+func checkStoryAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "CheckStoryAlias",
+		Query:         CheckStoryAliasQuery,
+		Variables:     variables,
+	}
+	res := Request(e, u.String(), requestBody)
+	return res.Path("$.data.checkStoryAlias")
+}
+
+func checkStoryAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+	requestBody := GraphQLRequest{
+		OperationName: "CheckStoryAlias",
+		Query:         CheckStoryAliasQuery,
 		Variables:     variables,
 	}
 	res := Request(e, u.String(), requestBody)

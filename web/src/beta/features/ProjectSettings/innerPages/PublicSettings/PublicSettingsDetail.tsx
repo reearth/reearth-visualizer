@@ -32,14 +32,14 @@ import {
 } from ".";
 
 interface WithTypename {
-  __typename?: string;
+  type?: "project" | "story";
 }
 
-type SettingsProjectWithTypename = SettingsProject & WithTypename;
-type StoryWithTypename = Story & WithTypename;
+export type SettingsProjectWithTypename = SettingsProject & WithTypename;
+export type StoryWithTypename = Story & WithTypename;
 
 type Props = {
-  settingsItem: SettingsProjectWithTypename | StoryWithTypename;
+  settingsItem: (SettingsProject | Story) & WithTypename;
   isStory?: boolean;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
@@ -70,6 +70,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
     publicDescription: settingsItem.publicDescription,
     publicImage: settingsItem.publicImage
   });
+
   const handleSubmitPublicInfo = useCallback(
     (publicImage?: string) => {
       onUpdate({
@@ -103,7 +104,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         trackingId: localGA.trackingId
       });
     }
-  }, [localGA, onUpdateGA]);
+  }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -165,11 +166,11 @@ const PublicSettingsDetail: React.FC<Props> = ({
           onChange={(publicTitle: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicTitle }));
           }}
-          onBlur={handleSubmitPublicInfo}
+          onChangeComplete={handleSubmitPublicInfo}
         />
         <TextAreaField
           title={t("Description")}
-          value={localPublicInfo.publicDescription ?? ""}
+          value={settingsItem.publicDescription ?? ""}
           placeholder={t("Write down your text")}
           description={t(
             "The Description setting will be applied to og:description."
@@ -178,13 +179,15 @@ const PublicSettingsDetail: React.FC<Props> = ({
           onChange={(publicDescription: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicDescription }));
           }}
-          onBlur={handleSubmitPublicInfo}
+          onChangeComplete={handleSubmitPublicInfo}
         />
         <ThumbnailField>
           <AssetField
             title={t("Thumbnail")}
             placeholder={t("Image url")}
-            description={t("The Thumbnail setting will be applied to og:image.")}
+            description={t(
+              "The Thumbnail setting will be applied to og:image."
+            )}
             inputMethod="asset"
             assetsTypes={IMAGE_TYPES}
             value={localPublicInfo.publicImage}
@@ -212,8 +215,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         {isPublished ? (
           <AliasSetting
             isStory={isStory}
-            defaultAlias={settingsItem.id}
-            alias={settingsItem.alias}
+            settingsItem={settingsItem}
             onUpdateAlias={onUpdateAlias}
           />
         ) : (
@@ -228,46 +230,47 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </ContentDescription>
         )}
       </SettingsFields>
-      <SettingsFields>
-        <TitleWrapper size="body" weight="bold">
-          {t("Custom Domain")}
-        </TitleWrapper>
-        { isPublished &&
-          extensions &&
-          extensions.length > 0 &&
-          accessToken ? (
-            <ExtensionComponent
-              typename={settingsItem.__typename || ""}
-              {...(settingsItem.__typename === "Project"
-                ? {
-                    projectId: settingsItem.id,
-                    projectAlias: settingsItem.alias
-                  }
-                : {
-                    storyId: settingsItem.id,
-                    storyAlias: settingsItem.alias
-                  })}
-              lang={currentLang}
-              theme={currentTheme}
-              accessToken={accessToken}
-              onNotificationChange={onNotificationChange}
-              version="visualizer"
-            />
-          )
-           : (
-          <ContentDescription>
-            <Typography size="body" color={theme.content.weak}>
-              {isStory
-                ? t(
-                    "Please publish your map story before setting up your custom domain."
-                  )
-                : t(
-                    "Please publish your map project before setting up your custom domain."
-                  )}
-            </Typography>
-          </ContentDescription>
+      {extensions &&
+        extensions.filter((ext) => ext.type === "publication").length > 0 &&
+        accessToken && (
+          <SettingsFields>
+            <TitleWrapper size="body" weight="bold">
+              {t("Custom Domain")}
+            </TitleWrapper>
+
+            {isPublished ? (
+              <ExtensionComponent
+                typename={settingsItem.type || ""}
+                {...(settingsItem.type === "project"
+                  ? {
+                      projectId: settingsItem.id,
+                      projectAlias: settingsItem.alias
+                    }
+                  : {
+                      storyId: settingsItem.id,
+                      storyAlias: settingsItem.alias
+                    })}
+                lang={currentLang}
+                theme={currentTheme}
+                accessToken={accessToken}
+                onNotificationChange={onNotificationChange}
+                version="visualizer"
+              />
+            ) : (
+              <ContentDescription>
+                <Typography size="body" color={theme.content.weak}>
+                  {isStory
+                    ? t(
+                        "Please publish your map story before setting up your custom domain."
+                      )
+                    : t(
+                        "Please publish your map project before setting up your custom domain."
+                      )}
+                </Typography>
+              </ContentDescription>
+            )}
+          </SettingsFields>
         )}
-      </SettingsFields>
       <SettingsFields>
         <TitleWrapper size="body" weight="bold">
           {t("Basic Authorization")}
@@ -288,7 +291,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
               }}
               disabled={!localBasicAuthorization.isBasicAuthActive}
-              onBlur={handleSubmitBasicAuthorization}
+              onChangeComplete={handleSubmitBasicAuthorization}
             />
             <InputField
               title={t("Password")}
@@ -297,7 +300,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
               }}
               disabled={!localBasicAuthorization.isBasicAuthActive}
-              onBlur={handleSubmitBasicAuthorization}
+              onChangeComplete={handleSubmitBasicAuthorization}
             />
           </>
         )}
@@ -320,7 +323,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             onChange={(trackingId: string) => {
               setLocalGA((s) => ({ ...s, trackingId }));
             }}
-            onBlur={handleSubmitGA}
+            onChangeComplete={handleSubmitGA}
           />
         )}
       </SettingsFields>
