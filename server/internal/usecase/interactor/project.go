@@ -294,6 +294,11 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
+	sce, err := i.sceneRepo.FindByProject(ctx, params.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := i.CanWriteWorkspace(prj.Workspace(), op); err != nil {
 		return nil, err
 	}
@@ -304,7 +309,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if params.Alias == nil || *params.Alias == "" {
 		// if you don't have an alias, set it to ProjectID
 		if prj.Alias() == "" {
-			prj.UpdateAlias(alias.ReservedReearthPrefixProject + prj.ID().String()) // default prefix + ID
+			// prj.UpdateAlias(alias.ReservedReearthPrefixProject + prj.ID().String()) // default prefix + ID
+			prj.UpdateAlias(alias.ReservedReearthPrefixProject + sce.ID().String()) // default prefix + ID
 		}
 		// if anything is set, do nothing
 	} else {
