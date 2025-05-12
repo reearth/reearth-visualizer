@@ -242,7 +242,7 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 		if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
 			return false, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
 		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -282,7 +282,7 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 			if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
 				return false, err
 			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 				return false, err
 			}
 			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -350,7 +350,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		if err := alias.CheckAliasPatternStorytelling(story.Alias()); err != nil {
 			return nil, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+		if err := i.sceneRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
 			return nil, err
 		}
 		if err = i.storytellingRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
