@@ -265,13 +265,13 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 		}
 
 		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
-			// error 'p-' prefix
+			// error 'c-' prefix
 			return false, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
 			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixStory)
 			// only allow self ID
 			if id != story.Id().String() {
-				// error 'p-' prefix
+				// error 'c-' prefix
 				return false, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 			}
 		}
@@ -330,13 +330,13 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		newAlias := strings.ToLower(*inp.Alias)
 
 		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
-			// error 'p-' prefix
+			// error 'c-' prefix
 			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
 			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixStory)
 			// only allow self ID
 			if id != story.Id().String() {
-				// error 'p-' prefix
+				// error 'c-' prefix
 				return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
 		}

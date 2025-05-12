@@ -253,7 +253,7 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixProject)
 			// only allow self ID
 			if id != prj.ID().String() {
-				// error 'p-' prefix
+				// error 'c-' prefix
 				return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 			}
 		}
@@ -317,7 +317,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
 			// only allow self ID
 			if id != prj.ID().String() {
-				// error 'p-' prefix
+				// error 'c-' prefix
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
 		}
