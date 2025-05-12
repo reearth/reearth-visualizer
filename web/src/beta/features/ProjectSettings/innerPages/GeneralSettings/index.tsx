@@ -50,8 +50,6 @@ const GeneralSettings: FC<Props> = ({
     (name: string) => {
       if (!project) return;
       onUpdateProject({
-        imageUrl: project.imageUrl || "",
-        description: project.description,
         name
       });
     },
@@ -62,8 +60,6 @@ const GeneralSettings: FC<Props> = ({
     (description: string) => {
       if (!project) return;
       onUpdateProject({
-        name: project.name,
-        imageUrl: project.imageUrl || "",
         description
       });
     },
@@ -74,8 +70,6 @@ const GeneralSettings: FC<Props> = ({
     (imageUrl?: string) => {
       if (!project) return;
       onUpdateProject({
-        name: project.name,
-        description: project.description,
         imageUrl
       });
     },
