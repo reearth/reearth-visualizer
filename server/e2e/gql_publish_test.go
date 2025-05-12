@@ -15,7 +15,7 @@ import (
 func TestPublishProject(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	projectId, _, _ := createProjectSet(e)
+	projectId, sceneId, _ := createProjectSet(e)
 
 	// default
 	res := publishProject(e, uID, map[string]any{
@@ -25,7 +25,7 @@ func TestPublishProject(t *testing.T) {
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             alias.ReservedReearthPrefixProject + projectId, // default prefix + self id
+		"alias":             alias.ReservedReearthPrefixProject + sceneId, // default prefix + self id
 		"publishmentStatus": "LIMITED",
 	})
 

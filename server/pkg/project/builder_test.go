@@ -309,9 +309,9 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			name: "build normal project",
 			args: args{
-				name:              "xxx.aaa",
-				description:       "ddd",
-				alias:             "aaaaa",
+				name:        "xxx.aaa",
+				description: "ddd",
+				// alias:             "aaaaa",
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
