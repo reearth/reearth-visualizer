@@ -4,6 +4,8 @@ import { LoginPage } from "../pages/loginPage";
 import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
+import path from "path";
+import { ProjectScreenPage } from "../pages/projectScreenPage";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -15,6 +17,9 @@ const projectName = faker.lorem.word(5);
 const projectDescription = faker.lorem.sentence();
 const specialProjectName = faker.lorem.word(5) + "!@#$%^&*()_+";
 
+const fileName = "Test_Asset_migration.zip";
+const docPath = path.resolve(__dirname, "../test-data", fileName);
+
 test.describe("Project Management", () => {
   let context: BrowserContext;
   let page: Page;
@@ -22,6 +27,7 @@ test.describe("Project Management", () => {
   let dashBoardPage: DashBoardPage;
   let projectsPage: ProjectsPage;
   let recycleBinPage: RecycleBinPage;
+  let projectScreenPage: ProjectScreenPage;
   test.beforeAll(async ({ browser }) => {
     context = await browser.newContext({
       recordVideo: {
@@ -34,6 +40,7 @@ test.describe("Project Management", () => {
     dashBoardPage = new DashBoardPage(page);
     projectsPage = new ProjectsPage(page);
     recycleBinPage = new RecycleBinPage(page);
+    projectScreenPage = new ProjectScreenPage(page);
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
   });
 
@@ -149,5 +156,33 @@ test.describe("Project Management", () => {
     await recycleBinPage.confirmDeletion(specialProjectName);
     await recycleBinPage.confirmDeleteButton.click();
     await expect(page.getByText("Successfully delete project!")).toBeVisible();
+  });
+
+  test("Should import a project and verify it", async () => {
+    await dashBoardPage.projects.click();
+    await projectsPage.importProject(docPath);
+    await projectsPage.verifyImportProject("Test_Asset_migration");
+    await expect(page.getByText("Test_Asset_migration")).toBeVisible({
+      timeout: 20000
+    });
+  });
+
+  test("Should verify the Imported project assests", async () => {
+    await projectsPage.goToProjectPage("Test_Asset_migration");
+    await expect(projectScreenPage.scenePanel).toBeVisible();
+    await expect(projectScreenPage.layersPanel).toBeVisible();
+    await expect(projectScreenPage.viewerCanvas).toBeVisible();
+  });
+
+  test("Should delete the imported project", async () => {
+    await page.goto(REEARTH_WEB_E2E_BASEURL);
+    await dashBoardPage.projects.click();
+    await expect(page.getByText("Test_Asset_migration")).toBeVisible({
+      timeout: 20000
+    });
+    await projectsPage.deleteProject("Test_Asset_migration");
+    await expect(
+      page.getByText("Successfully moved to Recycle bin!")
+    ).toBeVisible();
   });
 });
