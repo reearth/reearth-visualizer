@@ -250,7 +250,7 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 
 	projectId, _, _ := createProjectSet(e)
 
-	// prefix 'p-'
+	// prefix 'c-'
 	res, err := publishProjectErrors(e, uID, map[string]any{
 		"projectId": projectId,
 		"alias":     "p-test",
@@ -281,7 +281,7 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 }
 
 func checkReservedReearthPrefixProject(alias string, res *httpexpect.Value, err *httpexpect.Value) {
-	message := fmt.Sprintf("Aliases starting with 'p-' or 's-' are not allowed: %s", alias)
+	message := fmt.Sprintf("Aliases starting with 'c-' or 's-' are not allowed: %s", alias)
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
 		{
@@ -289,7 +289,7 @@ func checkReservedReearthPrefixProject(alias string, res *httpexpect.Value, err 
 			"path":    []any{"publishProject"},
 			"extensions": map[string]any{
 				"code":         "invalid_prefix_alias",
-				"description":  "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+				"description":  "Aliases that start with 'c-' or 's-' are reserved and cannot be used.",
 				"message":      message,
 				"system_error": "",
 			},
@@ -537,7 +537,7 @@ func TestReservedReearthPrefixStory(t *testing.T) {
 
 	_, _, storyId := createProjectSet(e)
 
-	// prefix 'p-'
+	// prefix 'c-'
 	res, err := publishStoryErrors(e, uID, map[string]any{
 		"storyId": storyId,
 		"alias":   "p-test",
@@ -568,7 +568,7 @@ func TestReservedReearthPrefixStory(t *testing.T) {
 }
 
 func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *httpexpect.Value) {
-	message := fmt.Sprintf("Aliases starting with 'p-' or 's-' are not allowed: %s", alias)
+	message := fmt.Sprintf("Aliases starting with 'c-' or 's-' are not allowed: %s", alias)
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
 		{
@@ -576,7 +576,7 @@ func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *h
 			"path":    []any{"publishStory"},
 			"extensions": map[string]any{
 				"code":         "invalid_prefix_alias",
-				"description":  "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+				"description":  "Aliases that start with 'c-' or 's-' are reserved and cannot be used.",
 				"message":      message,
 				"system_error": "",
 			},
@@ -688,7 +688,7 @@ func TestCheckProjectAliasError(t *testing.T) {
 			args: args{alias.ReservedReearthPrefixProject + storyId, projectId},
 			want: want{
 				fmt.Sprintf(
-					"Aliases starting with 'p-' or 's-' are not allowed: %s",
+					"Aliases starting with 'c-' or 's-' are not allowed: %s",
 					alias.ReservedReearthPrefixProject+storyId,
 				),
 			},
@@ -812,7 +812,7 @@ func TestCheckStoryAliasError(t *testing.T) {
 			args: args{alias.ReservedReearthPrefixStory + projectId, storyId},
 			want: want{
 				fmt.Sprintf(
-					"Aliases starting with 'p-' or 's-' are not allowed: %s",
+					"Aliases starting with 'c-' or 's-' are not allowed: %s",
 					alias.ReservedReearthPrefixStory+projectId,
 				),
 			},
