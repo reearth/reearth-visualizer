@@ -11,7 +11,7 @@ import (
 
 func UpdateAlias(ctx context.Context, c DBClient) error {
 
-	if err := updateEmptyAliases(ctx, c, "project", "p-"); err != nil {
+	if err := updateEmptyAliases(ctx, c, "project", "c-"); err != nil {
 		return err
 	}
 
