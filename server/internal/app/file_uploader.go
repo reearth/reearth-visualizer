@@ -148,7 +148,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 				log.Printf("failed to open assembled file: %v", err)
 				return
 			}
-			defer f.Close()
+			defer closeWithError(f, &err)
 
 			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(adapter.CurrentHost(bgctx), f)
 			if err != nil {
