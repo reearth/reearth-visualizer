@@ -19,7 +19,7 @@ extensions:
 const widgetFile: FileType = {
   id: "layers-add-photogrammetric-3D-model",
   title: "layers-add-photogrammetric-3D-model.js",
-  sourceCode: `// Example of adding photogrammetry 3D model in the 3D Tiles format
+  sourceCode: `// Example of adding photogrammetric 3D model in the 3D Tiles format
 
 // Define 3D Tiles
 const photogrammetry = {

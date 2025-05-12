@@ -53,7 +53,7 @@ const layerCsv = {
     labelText: {
       expression: "\${施設名}", 
     },
-    // Define label positon "left" | "right" | "top" | "bottom" | "lefttop" | "leftbottom" | "righttop" | "rightbottom";
+    // Define label positon. "left" | "right" | "top" | "bottom" | "lefttop" | "leftbottom" | "righttop" | "rightbottom";
     labelPosition: "top",
     labelTypography: {
       color: "#FFFFFF",
@@ -62,7 +62,7 @@ const layerCsv = {
   },
 };
 
-// Add the CSV layer from the URL to Re:Earth
+// Add the CSV layer from the URL to Visualizer
 // Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
 reearth.layers.add(layerCsv);
 
