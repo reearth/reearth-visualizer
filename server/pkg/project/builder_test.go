@@ -167,19 +167,20 @@ func TestBuilder_Build(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
 
 	type args struct {
-		name, description  string
-		alias, publicTitle string
-		publicDescription  string
-		publicImage        string
-		id                 id.ProjectID
-		isArchived         bool
-		updatedAt          time.Time
-		publishedAt        time.Time
-		imageURL           *url.URL
-		publicNoIndex      bool
-		workspace          accountdomain.WorkspaceID
-		visualizer         visualizer.Visualizer
-		publishmentStatus  PublishmentStatus
+		name, description string
+		// alias,
+		publicTitle       string
+		publicDescription string
+		publicImage       string
+		id                id.ProjectID
+		isArchived        bool
+		updatedAt         time.Time
+		publishedAt       time.Time
+		imageURL          *url.URL
+		publicNoIndex     bool
+		workspace         accountdomain.WorkspaceID
+		visualizer        visualizer.Visualizer
+		publishmentStatus PublishmentStatus
 	}
 
 	tests := []struct {
@@ -280,22 +281,23 @@ func TestBuilder_MustBuild(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
 
 	type args struct {
-		name, description  string
-		alias, publicTitle string
-		publicDescription  string
-		publicImage        string
-		id                 id.ProjectID
-		isArchived         bool
-		updatedAt          time.Time
-		publishedAt        time.Time
-		imageURL           *url.URL
-		publicNoIndex      bool
-		workspace          accountdomain.WorkspaceID
-		visualizer         visualizer.Visualizer
-		publishmentStatus  PublishmentStatus
-		trackingId         string
-		enableGa           bool
-		starred            bool
+		name, description string
+		// alias,
+		publicTitle       string
+		publicDescription string
+		publicImage       string
+		id                id.ProjectID
+		isArchived        bool
+		updatedAt         time.Time
+		publishedAt       time.Time
+		imageURL          *url.URL
+		publicNoIndex     bool
+		workspace         accountdomain.WorkspaceID
+		visualizer        visualizer.Visualizer
+		publishmentStatus PublishmentStatus
+		trackingId        string
+		enableGa          bool
+		starred           bool
 	}
 
 	tests := []struct {
