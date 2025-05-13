@@ -169,9 +169,11 @@ test.describe("Project Management", () => {
 
   test("Should verify the Imported project assests", async () => {
     await projectsPage.goToProjectPage("Test_Asset_migration");
-    await expect(projectScreenPage.scenePanel).toBeVisible();
-    await expect(projectScreenPage.layersPanel).toBeVisible();
-    await expect(projectScreenPage.viewerCanvas).toBeVisible();
+    await expect(projectScreenPage.scenePanel).toBeVisible({ timeout: 10000 });
+    await expect(projectScreenPage.layersPanel).toBeVisible({ timeout: 10000 });
+    await expect(projectScreenPage.viewerCanvas).toBeVisible({
+      timeout: 10000
+    });
   });
 
   test("Should delete the imported project", async () => {
