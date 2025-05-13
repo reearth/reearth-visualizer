@@ -134,38 +134,40 @@ export default () => {
     [publishStoryMutation, t, setNotification]
   );
 
-    const [fetchCheckProjectAlias] = useLazyQuery(CHECK_STORY_ALIAS);
+  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_STORY_ALIAS, {
+    fetchPolicy: "network-only" // Disable caching for this query
+  });
 
-    const checkStoryAlias = useCallback(
-      async (alias: string, storyId?: string) => {
-        if (!alias) return null;
+  const checkStoryAlias = useCallback(
+    async (alias: string, storyId?: string) => {
+      if (!alias) return null;
 
-        const { data, errors } = await fetchCheckProjectAlias({
-          variables: { alias, storyId },
-          errorPolicy: "all",
-          context: {
-            headers: {
-              [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
-            }
+      const { data, errors } = await fetchCheckProjectAlias({
+        variables: { alias, storyId },
+        errorPolicy: "all",
+        context: {
+          headers: {
+            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
           }
-        });
-
-        if (errors || !data?.checkStoryAlias) {
-          return { status: "error", errors };
         }
+      });
 
-        setNotification({
-          type: "success",
-          text: t("Successfully checked alias!")
-        });
-        return {
-          available: data?.checkStoryAlias.available,
-          alias: data?.checkStoryAlias.alias,
-          status: "success"
-        };
-      },
-      [fetchCheckProjectAlias, setNotification, t]
-    );
+      if (errors || !data?.checkStoryAlias) {
+        return { status: "error", errors };
+      }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully checked alias!")
+      });
+      return {
+        available: data?.checkStoryAlias.available,
+        alias: data?.checkStoryAlias.alias,
+        status: "success"
+      };
+    },
+    [fetchCheckProjectAlias, setNotification, t]
+  );
 
   const {
     useCreateStoryPage,
