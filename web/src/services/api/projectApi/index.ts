@@ -124,7 +124,9 @@ export default () => {
     return { deletedProjects, ...rest };
   }, []);
 
-  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS);
+  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS, {
+    fetchPolicy: "network-only" // Disable caching for this query
+  });
 
   const checkProjectAlias = useCallback(
     async (alias: string, projectId?: string) => {
@@ -280,6 +282,45 @@ export default () => {
                 )
               : t(
                   "Successfully unpublished your scene. Now nobody can access your scene."
+                )
+      });
+      return { data: data.publishProject.project, status: "success" };
+    },
+    [publishProjectMutation, t, setNotification]
+  );
+
+  const useUpdatePublishProject = useCallback(
+    async (s: PublishStatus, projectId?: string, alias?: string) => {
+      if (!projectId) return;
+
+      const gqlStatus = toGqlStatus(s);
+
+      const { data, errors } = await publishProjectMutation({
+        variables: { projectId, alias, status: gqlStatus }
+      });
+
+      if (errors || !data?.publishProject) {
+        console.log("GraphQL: Failed to update project", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to update project.")
+        });
+
+        return { status: "error" };
+      }
+
+      setNotification({
+        type:
+          s === "limited" ? "success" : s == "published" ? "success" : "info",
+        text:
+          s === "limited"
+            ? t("Successfully updated your scene!")
+            : s == "published"
+              ? t(
+                  "Successfully updated your scene with search engine indexing!"
+                )
+              : t(
+                  "Successfully updated your scene. Now nobody can access your scene."
                 )
       });
       return { data: data.publishProject.project, status: "success" };
@@ -584,6 +625,7 @@ export default () => {
     checkProjectAlias,
     useCreateProject,
     usePublishProject,
+    useUpdatePublishProject,
     useUpdateProject,
     useArchiveProject,
     useDeleteProject,

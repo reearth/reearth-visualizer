@@ -40,6 +40,7 @@ export type StoryWithTypename = Story & WithTypename;
 
 type Props = {
   settingsItem: (SettingsProject | Story) & WithTypename;
+  sceneId?: string;
   isStory?: boolean;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
@@ -56,6 +57,7 @@ type ExtensionComponentProps = (
 
 const PublicSettingsDetail: React.FC<Props> = ({
   settingsItem,
+  sceneId,
   isStory,
   onUpdate,
   onUpdateBasicAuth,
@@ -70,6 +72,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
     publicDescription: settingsItem.publicDescription,
     publicImage: settingsItem.publicImage
   });
+
   const handleSubmitPublicInfo = useCallback(
     (publicImage?: string) => {
       onUpdate({
@@ -103,7 +106,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         trackingId: localGA.trackingId
       });
     }
-  }, [localGA, onUpdateGA]);
+  }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -165,11 +168,11 @@ const PublicSettingsDetail: React.FC<Props> = ({
           onChange={(publicTitle: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicTitle }));
           }}
-          onBlur={handleSubmitPublicInfo}
+          onChangeComplete={handleSubmitPublicInfo}
         />
         <TextAreaField
           title={t("Description")}
-          value={localPublicInfo.publicDescription ?? ""}
+          value={settingsItem.publicDescription ?? ""}
           placeholder={t("Write down your text")}
           description={t(
             "The Description setting will be applied to og:description."
@@ -178,7 +181,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           onChange={(publicDescription: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicDescription }));
           }}
-          onBlur={handleSubmitPublicInfo}
+          onChangeComplete={handleSubmitPublicInfo}
         />
         <ThumbnailField>
           <AssetField
@@ -215,6 +218,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <AliasSetting
             isStory={isStory}
             settingsItem={settingsItem}
+            sceneId={sceneId}
             onUpdateAlias={onUpdateAlias}
           />
         ) : (
@@ -290,7 +294,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 setBasicAuthorization((s) => ({ ...s, basicAuthUsername }));
               }}
               disabled={!localBasicAuthorization.isBasicAuthActive}
-              onBlur={handleSubmitBasicAuthorization}
+              onChangeComplete={handleSubmitBasicAuthorization}
             />
             <InputField
               title={t("Password")}
@@ -299,7 +303,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 setBasicAuthorization((s) => ({ ...s, basicAuthPassword }));
               }}
               disabled={!localBasicAuthorization.isBasicAuthActive}
-              onBlur={handleSubmitBasicAuthorization}
+              onChangeComplete={handleSubmitBasicAuthorization}
             />
           </>
         )}
@@ -322,7 +326,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             onChange={(trackingId: string) => {
               setLocalGA((s) => ({ ...s, trackingId }));
             }}
-            onBlur={handleSubmitGA}
+            onChangeComplete={handleSubmitGA}
           />
         )}
       </SettingsFields>

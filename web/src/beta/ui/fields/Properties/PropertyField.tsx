@@ -103,7 +103,7 @@ const PropertyField: FC<Props> = ({
             resizable="height"
             value={(value as string) ?? ""}
             description={schema.description}
-            onBlur={handleChange}
+            onChangeComplete={handleChange}
           />
         ) : (
           <InputField
@@ -112,7 +112,7 @@ const PropertyField: FC<Props> = ({
             value={(value as string) ?? ""}
             description={schema.description}
             placeholder={schema.placeholder}
-            onBlur={handleChange}
+            onChangeComplete={handleChange}
           />
         )
       ) : schema.type === "url" ? (
@@ -165,7 +165,7 @@ const PropertyField: FC<Props> = ({
             min={schema.min}
             max={schema.max}
             description={schema.description}
-            onBlur={handleChange}
+            onChangeComplete={handleChange}
           />
         )
       ) : schema.type === "latlng" ? (
