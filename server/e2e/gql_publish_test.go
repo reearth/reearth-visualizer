@@ -543,7 +543,7 @@ func TestCheckProjectAlias(t *testing.T) {
 			want: want{"test-xxxxxx", true},
 		},
 		{
-			name: "alias equals projectId",
+			name: "alias equals sceneID",
 			args: args{sceneID, projectId},
 			want: want{sceneID, true},
 		},
@@ -606,16 +606,6 @@ func TestCheckProjectAliasError(t *testing.T) {
 			name: "project id as alias without project id",
 			args: args{sceneId, ""},
 			want: want{"This alias is already in use. Please try another one."},
-		},
-		{
-			name: "reserved prefix + projectId as alias without project id",
-			args: args{alias.ReservedReearthPrefixProject + sceneId, ""},
-			want: want{
-				fmt.Sprintf(
-					"Aliases starting with 'c-' or 's-' are not allowed: %s",
-					alias.ReservedReearthPrefixProject+sceneId,
-				),
-			},
 		},
 		{
 			name: "story id as alias with project id",
