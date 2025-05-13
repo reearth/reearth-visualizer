@@ -2,7 +2,9 @@ package gql
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -22,6 +24,12 @@ func (r *mutationResolver) CreateStory(ctx context.Context, input gqlmodel.Creat
 		Index:   input.Index,
 	}
 
+	b, err := json.MarshalIndent(inp, "", "  ")
+	if err != nil {
+		fmt.Println("JSON Marshal error:", err)
+
+	}
+	fmt.Println(string(b))
 	res, err := usecases(ctx).StoryTelling.Create(ctx, inp, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -150,6 +158,16 @@ func (r *mutationResolver) CreateStoryPage(ctx context.Context, input gqlmodel.C
 	if err != nil {
 		return nil, err
 	}
+
+	// 	type CreatePageParam struct {
+	//     SceneID         id.SceneID
+	//     StoryID         id.StoryID
+	//     Title           *string
+	//     Swipeable       *bool
+	//     Layers          *[]id.NLSLayerID
+	//     SwipeableLayers *[]id.NLSLayerID
+	//     Index           *int
+	// }
 
 	inp := interfaces.CreatePageParam{
 		SceneID:         sceneId,

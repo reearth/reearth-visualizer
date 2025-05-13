@@ -125,13 +125,13 @@ func (c *ProjectLoader) FindDeletedByWorkspace(ctx context.Context, wsID gqlmode
 	}, nil
 }
 
-func (c *ProjectLoader) VisibilityByWorkspace(ctx context.Context, wsID gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+func (c *ProjectLoader) VisibilityByWorkspace(ctx context.Context, wsID gqlmodel.ID, authenticated bool) (*gqlmodel.ProjectConnection, error) {
 	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := c.usecase.FindVisibilityByWorkspace(ctx, tid, getOperator(ctx))
+	res, err := c.usecase.FindVisibilityByWorkspace(ctx, tid, authenticated, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
