@@ -224,7 +224,7 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
 			return false, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
 		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -246,25 +246,30 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 			return true, nil
 		}
 
+		sce, err := i.sceneRepo.FindByProject(ctx, *pid)
+		if err != nil {
+			return false, err
+		}
+
 		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
 			// error 's-' prefix
 			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
 			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixProject)
 			// only allow self ID
-			if id != prj.ID().String() {
-				// error 'p-' prefix
+			if id != sce.ID().String() {
+				// error 'c-' prefix
 				return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 			}
 		}
 
-		if prj.ID().String() == aliasName || alias.ReservedReearthPrefixProject+prj.ID().String() == aliasName {
+		if sce.ID().String() == aliasName || sce.DefaultAlias() == aliasName {
 			// allow self ProjectID
 		} else {
 			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
 				return false, err
 			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 				return false, err
 			}
 			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -294,6 +299,11 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
+	sce, err := i.sceneRepo.FindByProject(ctx, params.ID)
+	if err != nil {
+		return nil, err
+	}
+
 	if err := i.CanWriteWorkspace(prj.Workspace(), op); err != nil {
 		return nil, err
 	}
@@ -302,9 +312,9 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	// if ProjectID is not specified
 	if params.Alias == nil || *params.Alias == "" {
-		// if you don't have an alias, set it to ProjectID
+		// if you don't have an alias, set it to default alias
 		if prj.Alias() == "" {
-			prj.UpdateAlias(alias.ReservedReearthPrefixProject + prj.ID().String()) // default prefix + ID
+			prj.UpdateAlias(sce.DefaultAlias())
 		}
 		// if anything is set, do nothing
 	} else {
@@ -316,8 +326,8 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
 			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
 			// only allow self ID
-			if id != prj.ID().String() {
-				// error 'p-' prefix
+			if id != sce.ID().String() {
+				// error 'c-' prefix
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
 		}
@@ -325,13 +335,13 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		prj.UpdateAlias(newAlias)
 	}
 
-	if prevAlias == prj.Alias() || prj.ID().String() == prj.Alias() || alias.ReservedReearthPrefixProject+prj.ID().String() == prj.Alias() {
+	if prevAlias == prj.Alias() || sce.ID().String() == prj.Alias() || sce.DefaultAlias() == prj.Alias() {
 		// if do not change alias or self ProjectID, do nothing
 	} else {
 		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
 			return nil, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
+		if err := i.sceneRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
 			return nil, err
 		}
 		if err = i.storytellingRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {

@@ -93,7 +93,7 @@ const CameraBlockEditor: FC<Props> = ({
             title={editorProperties?.title?.title}
             description={editorProperties?.title?.description}
             value={editorProperties?.title?.value}
-            onBlur={(value) =>
+            onChangeComplete={(value) =>
               debounceOnUpdate(selected, "title", "string", value)
             }
           />
@@ -130,7 +130,7 @@ const CameraBlockEditor: FC<Props> = ({
           title={editorProperties?.cameraDuration?.title}
           description={editorProperties?.cameraDuration?.description}
           value={editorProperties?.cameraDuration?.value}
-          onBlur={(value) =>
+          onChangeComplete={(value) =>
             handleUpdate(selected, "cameraDuration", "number", value || 0)
           }
         />

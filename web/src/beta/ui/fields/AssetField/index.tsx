@@ -55,12 +55,12 @@ const AssetField: FC<AssetFieldProps> = ({
 
   const handleChange = useCallback(
     (url?: string, name?: string) => {
-      if (!url) {
+      if (!url && url !== value) {
         onChange?.(url, name);
         return;
       }
 
-      const extension = (url.split(".").pop() ?? "").toLowerCase();
+      const extension = (url?.split(".").pop() ?? "").toLowerCase();
       const acceptedTypes = [
         ...IMAGE_FILE_TYPES,
         ...GIS_FILE_TYPES,
@@ -77,10 +77,12 @@ const AssetField: FC<AssetFieldProps> = ({
         });
         setCurrentValue(undefined);
       } else {
-        onChange?.(url, name);
+        if (url !== value) {
+          onChange?.(url, name);
+        }
       }
     },
-    [inputMethod, onChange, setNotification, t]
+    [inputMethod, onChange, setNotification, t, value]
   );
 
   const handleInputChange = useCallback(

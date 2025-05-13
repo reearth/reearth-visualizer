@@ -14,8 +14,8 @@
         "description": "次のようなエイリアス名は予約されており、使用できません: administrator,development"
       },
       "invalid_prefix_alias": {
-        "message": "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
-        "description": "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。"
+        "message": "'c-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+        "description": "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。"
       }
     },
     "storytelling": {
@@ -32,8 +32,8 @@
         "description": "次のようなエイリアス名は予約されており、使用できません: administrator,development"
       },
       "invalid_prefix_alias": {
-        "message": "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
-        "description": "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。"
+        "message": "'c-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+        "description": "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。"
       }
     }
   }
