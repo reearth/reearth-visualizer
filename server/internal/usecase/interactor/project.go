@@ -224,12 +224,16 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
 			return false, err
 		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
 		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
 		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
+
 		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
 			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		}
@@ -267,6 +271,9 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 			// allow self ProjectID
 		} else {
 			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+				return false, err
+			}
+			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 				return false, err
 			}
 			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -339,6 +346,9 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		// if do not change alias or self ProjectID, do nothing
 	} else {
 		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
+			return nil, err
+		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
 			return nil, err
 		}
 		if err := i.sceneRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {

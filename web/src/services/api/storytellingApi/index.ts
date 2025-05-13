@@ -134,38 +134,75 @@ export default () => {
     [publishStoryMutation, t, setNotification]
   );
 
-    const [fetchCheckProjectAlias] = useLazyQuery(CHECK_STORY_ALIAS);
+  const useUpdatePublishStory = useCallback(
+    async (s: PublishStatus, storyId?: string, alias?: string) => {
+      if (!storyId) return;
 
-    const checkStoryAlias = useCallback(
-      async (alias: string, storyId?: string) => {
-        if (!alias) return null;
+      const gqlStatus = toGqlStatus(s);
 
-        const { data, errors } = await fetchCheckProjectAlias({
-          variables: { alias, storyId },
-          errorPolicy: "all",
-          context: {
-            headers: {
-              [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
-            }
+      const { data, errors } = await publishStoryMutation({
+        variables: { storyId, alias, status: gqlStatus }
+      });
+
+      if (errors || !data?.publishStory) {
+        setNotification({ type: "error", text: t("Failed to update story.") });
+
+        return { status: "error" };
+      }
+
+      setNotification({
+        type:
+          s === "limited" ? "success" : s == "published" ? "success" : "info",
+        text:
+          s === "limited"
+            ? t("Successfully updated your story!")
+            : s == "published"
+              ? t(
+                  "Successfully updated your story with search engine indexing!"
+                )
+              : t(
+                  "Successfully updated your story. Now nobody can access your story."
+                )
+      });
+      return { data: data.publishStory.story, status: "success" };
+    },
+    [publishStoryMutation, t, setNotification]
+  );
+
+  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_STORY_ALIAS, {
+    fetchPolicy: "network-only" // Disable caching for this query
+  });
+
+  const checkStoryAlias = useCallback(
+    async (alias: string, storyId?: string) => {
+      if (!alias) return null;
+
+      const { data, errors } = await fetchCheckProjectAlias({
+        variables: { alias, storyId },
+        errorPolicy: "all",
+        context: {
+          headers: {
+            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
           }
-        });
-
-        if (errors || !data?.checkStoryAlias) {
-          return { status: "error", errors };
         }
+      });
 
-        setNotification({
-          type: "success",
-          text: t("Successfully checked alias!")
-        });
-        return {
-          available: data?.checkStoryAlias.available,
-          alias: data?.checkStoryAlias.alias,
-          status: "success"
-        };
-      },
-      [fetchCheckProjectAlias, setNotification, t]
-    );
+      if (errors || !data?.checkStoryAlias) {
+        return { status: "error", errors };
+      }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully checked alias!")
+      });
+      return {
+        available: data?.checkStoryAlias.available,
+        alias: data?.checkStoryAlias.alias,
+        status: "success"
+      };
+    },
+    [fetchCheckProjectAlias, setNotification, t]
+  );
 
   const {
     useCreateStoryPage,
@@ -197,6 +234,7 @@ export default () => {
     useDeleteStoryBlock,
     useMoveStoryBlock,
     usePublishStory,
+    useUpdatePublishStory,
     checkStoryAlias
   };
 };

@@ -30,11 +30,16 @@ export default ({ projectId }: ProjectSettingsProps) => {
     useUpdateProject,
     useUpdateProjectBasicAuth,
     useUpdateProjectRemove,
-    usePublishProject
+    usePublishProject,
+    useUpdatePublishProject
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
-  const { usePublishStory, useStoriesQuery, useUpdateStory } =
-    useStorytellingFetcher();
+  const {
+    usePublishStory,
+    useUpdatePublishStory,
+    useStoriesQuery,
+    useUpdateStory
+  } = useStorytellingFetcher();
 
   const client = useApolloClient();
 
@@ -130,9 +135,9 @@ export default ({ projectId }: ProjectSettingsProps) => {
       if (!projectId || settings.alias === undefined) return;
       const status =
         project?.publishmentStatus === "PUBLIC" ? "published" : "limited";
-      await usePublishProject(status, projectId, settings.alias);
+      await useUpdatePublishProject(status, projectId, settings.alias);
     },
-    [project?.publishmentStatus, projectId, usePublishProject]
+    [project?.publishmentStatus, projectId, useUpdatePublishProject]
   );
 
   const handleUpdateProjectGA = useCallback(
@@ -153,13 +158,13 @@ export default ({ projectId }: ProjectSettingsProps) => {
       if (!scene?.id || !currentStory?.id) return;
       const status =
         currentStory?.publishmentStatus === "PUBLIC" ? "published" : "limited";
-      await usePublishStory(status, currentStory.id, settings.alias);
+      await useUpdatePublishStory(status, currentStory.id, settings.alias);
     },
     [
       scene?.id,
       currentStory?.id,
       currentStory?.publishmentStatus,
-      usePublishStory
+      useUpdatePublishStory
     ]
   );
 

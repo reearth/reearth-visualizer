@@ -27,8 +27,14 @@ const PublishOrUpdateModal: FC<Props> = ({
 
   const [publishDone, setPublishDone] = useState(false);
 
-  const { usePublishProject: publishProject } = useProjectFetcher();
-  const { usePublishStory: publishStory } = useStorytellingFetcher();
+  const {
+    usePublishProject: publishProject,
+    useUpdatePublishProject: updatePublishProject
+  } = useProjectFetcher();
+  const {
+    usePublishStory: publishStory,
+    useUpdatePublishStory: updatePublishStory
+  } = useStorytellingFetcher();
 
   // search engine index
   const [searchEngineIndexEnabled, setSearchEngineIndexEnabled] = useState(
@@ -38,22 +44,50 @@ const PublishOrUpdateModal: FC<Props> = ({
   const [isPublishing, setIsPublishing] = useState(false);
   const handleProjectPublish = useCallback(async () => {
     setIsPublishing(true);
-    if (publishItem.type === "story") {
-      await publishStory(
-        searchEngineIndexEnabled ? "published" : "limited",
-        publishItem.storyId,
-        publishItem.alias
-      );
+    if (publishItem.isPublished) {
+      if (publishItem.type === "story") {
+        await updatePublishStory(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.storyId,
+          publishItem.alias
+        );
+      } else {
+        await updatePublishProject(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.projectId,
+          publishItem.alias
+        );
+      }
     } else {
-      await publishProject(
-        searchEngineIndexEnabled ? "published" : "limited",
-        publishItem.projectId,
-        publishItem.alias
-      );
+      if (publishItem.type === "story") {
+        await publishStory(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.storyId,
+          publishItem.alias
+        );
+      } else {
+        await publishProject(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.projectId,
+          publishItem.alias
+        );
+      }
     }
+
     setIsPublishing(false);
     setPublishDone(true);
-  }, [publishItem.type, publishItem.storyId, publishItem.alias, publishItem.projectId, publishStory, searchEngineIndexEnabled, publishProject]);
+  }, [
+    publishItem.type,
+    publishItem.storyId,
+    publishItem.alias,
+    publishItem.projectId,
+    publishItem.isPublished,
+    searchEngineIndexEnabled,
+    publishStory,
+    publishProject,
+    updatePublishStory,
+    updatePublishProject
+  ]);
 
   const title = useMemo(() => {
     const isStory = publishItem.type === "story";
