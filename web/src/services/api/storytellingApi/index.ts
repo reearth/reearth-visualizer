@@ -134,6 +134,41 @@ export default () => {
     [publishStoryMutation, t, setNotification]
   );
 
+  const useUpdatePublishStory = useCallback(
+    async (s: PublishStatus, storyId?: string, alias?: string) => {
+      if (!storyId) return;
+
+      const gqlStatus = toGqlStatus(s);
+
+      const { data, errors } = await publishStoryMutation({
+        variables: { storyId, alias, status: gqlStatus }
+      });
+
+      if (errors || !data?.publishStory) {
+        setNotification({ type: "error", text: t("Failed to updated story.") });
+
+        return { status: "error" };
+      }
+
+      setNotification({
+        type:
+          s === "limited" ? "success" : s == "published" ? "success" : "info",
+        text:
+          s === "limited"
+            ? t("Successfully updated your story!")
+            : s == "published"
+              ? t(
+                  "Successfully updated your story with search engine indexing!"
+                )
+              : t(
+                  "Successfully updated your story. Now nobody can access your story."
+                )
+      });
+      return { data: data.publishStory.story, status: "success" };
+    },
+    [publishStoryMutation, t, setNotification]
+  );
+
   const [fetchCheckProjectAlias] = useLazyQuery(CHECK_STORY_ALIAS, {
     fetchPolicy: "network-only" // Disable caching for this query
   });
@@ -199,6 +234,7 @@ export default () => {
     useDeleteStoryBlock,
     useMoveStoryBlock,
     usePublishStory,
+    useUpdatePublishStory,
     checkStoryAlias
   };
 };
