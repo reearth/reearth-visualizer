@@ -8,21 +8,7 @@ on:
     branches: [main]
 
 jobs:
-  check-changes:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Check for changes in the web directory
-        id: changes
-        uses: reearth/changed-files@v1
-        with:
-          paths: |
-            web/**
-
   test:
-    if: steps.changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -35,7 +21,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: “20”
 
       - name: Install dependencies and Playwright browsers
         run: |
@@ -46,16 +32,16 @@ jobs:
 
       - name: Validate secrets
         run: |
-          if [ -z "${{ secrets.REEARTH_E2E_EMAIL }}" ]; then
-            echo "Error: REEARTH_E2E_EMAIL secret is not set."
+          if [ -z “${{ secrets.REEARTH_E2E_EMAIL }}” ]; then
+            echo “Error: REEARTH_E2E_EMAIL secret is not set.”
             exit 1
           fi
-          if [ -z "${{ secrets.REEARTH_E2E_PASSWORD }}" ]; then
-            echo "Error: REEARTH_E2E_PASSWORD secret is not set."
+          if [ -z “${{ secrets.REEARTH_E2E_PASSWORD }}” ]; then
+            echo “Error: REEARTH_E2E_PASSWORD secret is not set.”
             exit 1
           fi
-          if [ -z "${{ secrets.REEARTH_WEB_E2E_BASEURL }}" ]; then
-            echo "Error: REEARTH_WEB_E2E_BASEURL secret is not set."
+          if [ -z “${{ secrets.REEARTH_WEB_E2E_BASEURL }}” ]; then
+            echo “Error: REEARTH_WEB_E2E_BASEURL secret is not set.”
             exit 1
           fi
 
