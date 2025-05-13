@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/mongox"
+	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -82,6 +83,24 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 		return nil, err
 	}
 	return res, nil
+}
+
+func (r *Scene) FindByPublicName(ctx context.Context, name string) (*scene.Scene, error) {
+	if name == "" {
+		return nil, rerror.ErrNotFound
+	}
+
+	f := bson.D{
+		{
+			Key: "$or",
+			Value: []bson.D{
+				{{Key: "alias", Value: name}, {Key: "publishmentstatus", Value: bson.D{{Key: "$in", Value: []string{"public", "limited"}}}}},
+				{{Key: "domains.domain", Value: name}, {Key: "publishmentstatus", Value: "public"}},
+			},
+		},
+	}
+
+	return r.findOne(ctx, f)
 }
 
 func (r *Scene) CheckAliasUnique(ctx context.Context, name string) error {

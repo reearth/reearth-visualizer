@@ -21,6 +21,21 @@ type SceneDocument struct {
 	Plugins     []ScenePluginDocument
 	UpdateAt    time.Time
 	Property    string
+
+	Alias             string
+	PublishmentStatus string
+	PublishedAt       time.Time
+	PublicTitle       string
+	PublicDescription string
+	PublicImage       string
+	PublicNoIndex     bool
+
+	IsBasicAuthActive bool
+	BasicAuthUsername string
+	BasicAuthPassword string
+
+	EnableGA   bool
+	TrackingID string
 }
 
 type SceneWidgetDocument struct {
@@ -105,6 +120,21 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		AlignSystem: NewWidgetAlignSystem(scene.Widgets().Alignment()),
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
+
+		Alias:             scene.Alias(),
+		PublishmentStatus: string(scene.PublishmentStatus()),
+		PublishedAt:       scene.PublishedAt(),
+		PublicTitle:       scene.PublicTitle(),
+		PublicDescription: scene.PublicDescription(),
+		PublicImage:       scene.PublicImage(),
+		PublicNoIndex:     scene.PublicNoIndex(),
+
+		IsBasicAuthActive: scene.IsBasicAuthActive(),
+		BasicAuthUsername: scene.BasicAuthUsername(),
+		BasicAuthPassword: scene.BasicAuthPassword(),
+
+		EnableGA:   scene.EnableGA(),
+		TrackingID: scene.TrackingID(),
 	}, id
 }
 
@@ -172,6 +202,18 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).
 		Property(prid).
+		Alias(d.Alias).
+		PublishmentStatus(scene.PublishmentStatus(d.PublishmentStatus)).
+		PublishedAt(d.PublishedAt).
+		PublicTitle(d.PublicTitle).
+		PublicDescription(d.PublicDescription).
+		PublicImage(d.PublicImage).
+		PublicNoIndex(d.PublicNoIndex).
+		IsBasicAuthActive(d.IsBasicAuthActive).
+		BasicAuthUsername(d.BasicAuthUsername).
+		BasicAuthPassword(d.BasicAuthPassword).
+		EnableGA(d.EnableGA).
+		TrackingID(d.TrackingID).
 		Build()
 }
 

@@ -30,15 +30,17 @@ type Story struct {
 	alias             string
 	status            PublishmentStatus
 	publishedAt       *time.Time
-	isBasicAuthActive bool
-	basicAuthUsername string
-	basicAuthPassword string
 	publicTitle       string
 	publicDescription string
 	publicImage       string
 	publicNoIndex     bool
-	enableGa          bool
-	trackingID        string
+
+	isBasicAuthActive bool
+	basicAuthUsername string
+	basicAuthPassword string
+
+	enableGa   bool
+	trackingID string
 }
 
 func (s *Story) Id() id.StoryID {

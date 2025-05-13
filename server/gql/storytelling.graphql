@@ -1,25 +1,31 @@
 type Story implements Node {
   id: ID!
   title: String!
-  alias: String!
   propertyId: ID!
   property: Property
   pages: [StoryPage!]!
-  publishmentStatus: PublishmentStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
-  publishedAt: DateTime
   sceneId: ID!
   scene: Scene
   panelPosition: Position!
   bgColor: String
-  isBasicAuthActive: Boolean!
-  basicAuthUsername: String!
-  basicAuthPassword: String!
+
+  # Publish
+  alias: String!
+  publishmentStatus: PublishmentStatus!
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
+  publishedAt: DateTime
+
+  # BasicAuth(Publish)
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+
+  # Analytics(Publish)
   enableGa: Boolean!
   trackingId: String!
 }

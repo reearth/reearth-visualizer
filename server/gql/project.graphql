@@ -32,12 +32,6 @@ enum Visualizer {
   CESIUM
 }
 
-enum PublishmentStatus {
-  PUBLIC
-  LIMITED
-  PRIVATE
-}
-
 enum ProjectSortField {
   CREATEDAT
   UPDATEDAT

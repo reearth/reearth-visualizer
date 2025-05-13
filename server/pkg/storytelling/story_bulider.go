@@ -19,14 +19,14 @@ func (b *StoryBuilder) Build() (*Story, error) {
 	if b.s.id.IsNil() {
 		return nil, id.ErrInvalidID
 	}
-	if b.s.alias == "" {
-		b.s.alias = alias.ReservedReearthPrefixStory + b.s.id.String()
-	}
 	if b.s.updatedAt.IsZero() {
 		b.s.updatedAt = b.s.CreatedAt()
 	}
 	if len(b.s.panelPosition) == 0 {
 		b.s.panelPosition = PositionLeft
+	}
+	if b.s.alias == "" {
+		b.s.alias = alias.ReservedReearthPrefixStory + b.s.id.String()
 	}
 	b.s.coreSupport = true
 	return b.s, nil

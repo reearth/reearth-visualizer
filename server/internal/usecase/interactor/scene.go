@@ -11,7 +11,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
@@ -115,13 +114,6 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 
 	sceneID := id.NewSceneID()
 
-	if prj.Alias() == "" {
-		prj.UpdateAlias(alias.ReservedReearthPrefixProject + sceneID.String())
-		if err := i.projectRepo.Save(ctx, prj); err != nil {
-			return nil, err
-		}
-	}
-
 	prop, err := i.addDefaultVisualizerTilesProperty(ctx, sceneID, prj.CoreSupport())
 	if err != nil {
 		return nil, err
@@ -160,6 +152,10 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 	operator.AddNewScene(ws, sceneID)
 	tx.Commit()
 	return res, nil
+}
+
+func (i *Scene) Publish(ctx context.Context, params interfaces.PublishSceneParam, op *usecase.Operator) (_ *scene.Scene, err error) {
+	return nil, nil
 }
 
 func (i *Scene) addDefaultVisualizerTilesProperty(ctx context.Context, sceneID id.SceneID, coreSupport bool) (*property.Property, error) {
@@ -546,8 +542,6 @@ func (i *Scene) ExportScene(ctx context.Context, prj *project.Project) (*scene.S
 		ctx,
 		time.Now(),
 		prj.CoreSupport(),
-		prj.EnableGA(),
-		prj.TrackingID(),
 	)
 	if err != nil {
 		return nil, nil, errors.New("Fail BuildResult :" + err.Error())

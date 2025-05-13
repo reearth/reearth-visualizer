@@ -25,7 +25,7 @@ func TestPublishProject(t *testing.T) {
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             alias.ReservedReearthPrefixProject + sceneId, // default prefix + self id
+		"alias":             alias.ReservedReearthPrefixScene + sceneId, // default prefix + self id
 		"publishmentStatus": "LIMITED",
 	})
 
@@ -245,7 +245,7 @@ func checkProjectAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value
 	})
 }
 
-func TestReservedReearthPrefixProject(t *testing.T) {
+func TestReservedReearthPrefixScene(t *testing.T) {
 	e := Server(t, baseSeeder)
 
 	projectId, _, _ := createProjectSet(e)
@@ -256,7 +256,7 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 		"alias":     "c-test",
 		"status":    "LIMITED",
 	})
-	checkReservedReearthPrefixProject("c-test", res, err)
+	checkReservedReearthPrefixScene("c-test", res, err)
 
 	// prefix 's-'
 	res, err = publishProjectErrors(e, uID, map[string]any{
@@ -264,23 +264,23 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 		"alias":     "s-test",
 		"status":    "LIMITED",
 	})
-	checkReservedReearthPrefixProject("s-test", res, err)
+	checkReservedReearthPrefixScene("s-test", res, err)
 
 	// prefix + self id
 	res = publishProject(e, uID, map[string]any{
 		"projectId": projectId,
-		"alias":     alias.ReservedReearthPrefixProject + projectId,
+		"alias":     alias.ReservedReearthPrefixScene + projectId,
 		"status":    "LIMITED",
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             alias.ReservedReearthPrefixProject + projectId, // ok
+		"alias":             alias.ReservedReearthPrefixScene + projectId, // ok
 		"publishmentStatus": "LIMITED",
 	})
 
 }
 
-func checkReservedReearthPrefixProject(alias string, res *httpexpect.Value, err *httpexpect.Value) {
+func checkReservedReearthPrefixScene(alias string, res *httpexpect.Value, err *httpexpect.Value) {
 	message := fmt.Sprintf("Aliases starting with 'c-' or 's-' are not allowed: %s", alias)
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
@@ -615,8 +615,8 @@ func TestCheckProjectAlias(t *testing.T) {
 		},
 		{
 			name: "reserved prefix ok for self project",
-			args: args{alias.ReservedReearthPrefixProject + projectId, projectId},
-			want: want{alias.ReservedReearthPrefixProject + projectId, true},
+			args: args{alias.ReservedReearthPrefixScene + projectId, projectId},
+			want: want{alias.ReservedReearthPrefixScene + projectId, true},
 		},
 	}
 
@@ -676,11 +676,11 @@ func TestCheckProjectAliasError(t *testing.T) {
 		},
 		{
 			name: "reserved prefix + projectId as alias without project id",
-			args: args{alias.ReservedReearthPrefixProject + sceneId, ""},
+			args: args{alias.ReservedReearthPrefixScene + sceneId, ""},
 			want: want{
 				fmt.Sprintf(
 					"Aliases starting with 'c-' or 's-' are not allowed: %s",
-					alias.ReservedReearthPrefixProject+sceneId,
+					alias.ReservedReearthPrefixScene+sceneId,
 				),
 			},
 		},
@@ -691,11 +691,11 @@ func TestCheckProjectAliasError(t *testing.T) {
 		},
 		{
 			name: "reserved prefix + storyId as alias with project id",
-			args: args{alias.ReservedReearthPrefixProject + storyId, projectId},
+			args: args{alias.ReservedReearthPrefixScene + storyId, projectId},
 			want: want{
 				fmt.Sprintf(
 					"Aliases starting with 'c-' or 's-' are not allowed: %s",
-					alias.ReservedReearthPrefixProject+storyId,
+					alias.ReservedReearthPrefixScene+storyId,
 				),
 			},
 		},

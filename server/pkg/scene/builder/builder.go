@@ -108,12 +108,12 @@ func (b *Builder) Build(ctx context.Context, w io.Writer, publishedAt time.Time,
 }
 
 // BuildResult this will be used to export the project. The difference from the above is that the property value is assigned a type.
-func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
+func (b *Builder) BuildResult(ctx context.Context, publishedAt time.Time, coreSupport bool) (*sceneJSON, error) {
 	if b == nil || b.scene == nil {
 		return nil, errors.New("invalid builder state")
 	}
 
-	sceneData, err := b.buildScene(ctx, publishedAt, coreSupport, enableGa, trackingId)
+	sceneData, err := b.buildScene(ctx, publishedAt, coreSupport, b.scene.EnableGA(), b.scene.TrackingID())
 	if err != nil {
 		return nil, errors.New("Fail buildScene :" + err.Error())
 	}

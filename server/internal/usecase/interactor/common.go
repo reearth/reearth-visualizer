@@ -33,9 +33,9 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 	config ContainerConfig) interfaces.Container {
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
-		published = NewPublishedWithURL(r.Project, r.Storytelling, g.File, config.PublishedIndexURL)
+		published = NewPublishedWithURL(r.Project, r.Scene, r.Storytelling, g.File, config.PublishedIndexURL)
 	} else {
-		published = NewPublished(r.Project, r.Storytelling, g.File, config.PublishedIndexHTML)
+		published = NewPublished(r.Project, r.Scene, r.Storytelling, g.File, config.PublishedIndexHTML)
 	}
 
 	return interfaces.Container{

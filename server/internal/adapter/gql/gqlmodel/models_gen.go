@@ -865,6 +865,16 @@ type PublishProjectInput struct {
 	Status    PublishmentStatus `json:"status"`
 }
 
+type PublishSceneInput struct {
+	SceneID ID                `json:"sceneId"`
+	Alias   *string           `json:"alias,omitempty"`
+	Status  PublishmentStatus `json:"status"`
+}
+
+type PublishScenePayload struct {
+	Scene *Scene `json:"scene"`
+}
+
 type PublishStoryInput struct {
 	StoryID ID                `json:"storyId"`
 	Alias   *string           `json:"alias,omitempty"`
@@ -1001,6 +1011,18 @@ type Scene struct {
 	NewLayers         []NLSLayer         `json:"newLayers"`
 	Stories           []*Story           `json:"stories"`
 	Styles            []*Style           `json:"styles"`
+	Alias             *string            `json:"alias,omitempty"`
+	Status            PublishmentStatus  `json:"status"`
+	PublishedAt       *time.Time         `json:"publishedAt,omitempty"`
+	PublicTitle       string             `json:"publicTitle"`
+	PublicDescription string             `json:"publicDescription"`
+	PublicImage       string             `json:"publicImage"`
+	PublicNoIndex     bool               `json:"publicNoIndex"`
+	IsBasicAuthActive bool               `json:"isBasicAuthActive"`
+	BasicAuthUsername string             `json:"basicAuthUsername"`
+	BasicAuthPassword string             `json:"basicAuthPassword"`
+	EnableGa          bool               `json:"enableGa"`
+	TrackingID        string             `json:"trackingId"`
 }
 
 func (Scene) IsNode()        {}
@@ -1053,25 +1075,25 @@ type Spacing struct {
 type Story struct {
 	ID                ID                `json:"id"`
 	Title             string            `json:"title"`
-	Alias             string            `json:"alias"`
 	PropertyID        ID                `json:"propertyId"`
 	Property          *Property         `json:"property,omitempty"`
 	Pages             []*StoryPage      `json:"pages"`
-	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
 	SceneID           ID                `json:"sceneId"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	PanelPosition     Position          `json:"panelPosition"`
 	BgColor           *string           `json:"bgColor,omitempty"`
-	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
-	BasicAuthUsername string            `json:"basicAuthUsername"`
-	BasicAuthPassword string            `json:"basicAuthPassword"`
+	Alias             string            `json:"alias"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	PublicTitle       string            `json:"publicTitle"`
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
+	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
 }

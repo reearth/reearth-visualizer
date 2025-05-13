@@ -1,6 +1,7 @@
 package gqlmodel
 
 import (
+	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/samber/lo"
 )
@@ -10,27 +11,28 @@ func ToStory(s *storytelling.Story) *Story {
 		return nil
 	}
 	return &Story{
-		ID:                IDFrom(s.Id()),
-		Title:             s.Title(),
-		Alias:             s.Alias(),
-		PropertyID:        IDFrom(s.Property()),
-		Property:          nil,
-		Pages:             ToPages(s.Pages()),
-		PublishmentStatus: ToStoryPublishmentStatus(s.PublishmentStatus()),
-		CreatedAt:         s.Id().Timestamp(),
-		UpdatedAt:         s.UpdatedAt(),
-		PublishedAt:       s.PublishedAt(),
-		SceneID:           IDFrom(s.Scene()),
-		PanelPosition:     ToStoryPosition(s.PanelPosition()),
-		BgColor:           ToStoryBgColor(s.BgColor()),
+		ID:            IDFrom(s.Id()),
+		Title:         s.Title(),
+		PropertyID:    IDFrom(s.Property()),
+		Property:      nil,
+		Pages:         ToPages(s.Pages()),
+		CreatedAt:     s.Id().Timestamp(),
+		UpdatedAt:     s.UpdatedAt(),
+		SceneID:       IDFrom(s.Scene()),
+		PanelPosition: ToStoryPosition(s.PanelPosition()),
+		BgColor:       ToStoryBgColor(s.BgColor()),
 
-		IsBasicAuthActive: s.IsBasicAuthActive(),
-		BasicAuthUsername: s.BasicAuthUsername(),
-		BasicAuthPassword: s.BasicAuthPassword(),
+		Alias:             s.Alias(),
+		PublishmentStatus: ToStoryPublishmentStatus(s.PublishmentStatus()),
+		PublishedAt:       s.PublishedAt(),
 		PublicTitle:       s.PublicTitle(),
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
+
+		IsBasicAuthActive: s.IsBasicAuthActive(),
+		BasicAuthUsername: s.BasicAuthUsername(),
+		BasicAuthPassword: s.BasicAuthPassword(),
 
 		EnableGa:   s.EnableGa(),
 		TrackingID: s.TrackingID(),
@@ -130,6 +132,18 @@ func FromStoryPositionRef(v *Position) *storytelling.Position {
 		return lo.ToPtr(storytelling.PositionRight)
 	}
 	return nil
+}
+
+func FromScenePublishmentStatus(v PublishmentStatus) scene.PublishmentStatus {
+	switch v {
+	case PublishmentStatusPublic:
+		return scene.PublishmentStatusPublic
+	case PublishmentStatusLimited:
+		return scene.PublishmentStatusLimited
+	case PublishmentStatusPrivate:
+		return scene.PublishmentStatusPrivate
+	}
+	return ""
 }
 
 func FromStoryPublishmentStatus(v PublishmentStatus) storytelling.PublishmentStatus {

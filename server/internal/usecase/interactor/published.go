@@ -23,26 +23,29 @@ import (
 
 type Published struct {
 	project      repo.Project
+	Scene        repo.Scene
 	Storytelling repo.Storytelling
 	file         gateway.File
 	indexHTML    *util.Cache[string]
 	indexHTMLStr string
 }
 
-func NewPublished(project repo.Project, storytelling repo.Storytelling, file gateway.File, indexHTML string) interfaces.Published {
+func NewPublished(project repo.Project, scene repo.Scene, storytelling repo.Storytelling, file gateway.File, indexHTML string) interfaces.Published {
 	return &Published{
 		project:      project,
+		Scene:        scene,
 		Storytelling: storytelling,
 		file:         file,
 		indexHTMLStr: indexHTML,
 	}
 }
 
-func NewPublishedWithURL(project repo.Project, storytelling repo.Storytelling, file gateway.File, indexHTMLURL *url.URL) interfaces.Published {
+func NewPublishedWithURL(project repo.Project, scene repo.Scene, storytelling repo.Storytelling, file gateway.File, indexHTMLURL *url.URL) interfaces.Published {
 	return &Published{
 		project:      project,
-		file:         file,
+		Scene:        scene,
 		Storytelling: storytelling,
+		file:         file,
 		indexHTML: util.NewCache(func(c context.Context, i string) (string, error) {
 			req, err := http.NewRequestWithContext(c, http.MethodGet, indexHTMLURL.String(), nil)
 			if err != nil {
@@ -70,24 +73,25 @@ func NewPublishedWithURL(project repo.Project, storytelling repo.Storytelling, f
 	}
 }
 
-func (i *Published) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
-	prj, err := i.project.FindByPublicName(ctx, name)
+func (i *Published) Metadata(ctx context.Context, name string) (interfaces.PublishedMetadata, error) {
+
+	sce, err := i.Scene.FindByPublicName(ctx, name)
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-		return interfaces.ProjectPublishedMetadata{}, err
+		return interfaces.PublishedMetadata{}, err
+	}
+	if sce != nil {
+		return interfaces.PublishedMetadataFrom(sce), nil
 	}
 
-	if prj == nil {
-		story, err := i.Storytelling.FindByPublicName(ctx, name)
-		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return interfaces.ProjectPublishedMetadata{}, err
-		}
-		if story != nil {
-			return interfaces.PublishedMetadataFrom(story), nil
-		}
-		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
+	story, err := i.Storytelling.FindByPublicName(ctx, name)
+	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		return interfaces.PublishedMetadata{}, err
 	}
+	if story != nil {
+		return interfaces.PublishedMetadataFrom(story), nil
+	}
+	return interfaces.PublishedMetadata{}, rerror.ErrNotFound
 
-	return interfaces.PublishedMetadataFrom(prj), nil
 }
 
 func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
@@ -123,12 +127,12 @@ func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string,
 		return htmlStr, nil
 	}
 
-	prj, err := i.project.FindByPublicName(ctx, name)
+	sce, err := i.Scene.FindByPublicName(ctx, name)
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
 		return "", err
 	}
-	if prj != nil {
-		md := interfaces.PublishedMetadataFrom(prj)
+	if sce != nil {
+		md := interfaces.PublishedMetadataFrom(sce)
 		return renderIndex(htmlStr, u.String(), md), nil
 	}
 
@@ -162,7 +166,7 @@ var (
 )
 
 // renderIndex returns index HTML with OGP and some meta tags for the project.
-func renderIndex(index, url string, d interfaces.ProjectPublishedMetadata) string {
+func renderIndex(index, url string, d interfaces.PublishedMetadata) string {
 	if d.Title != "" {
 		index = titleRegexp.ReplaceAllLiteralString(index, "<title>"+html.EscapeString(d.Title)+"</title>")
 	}

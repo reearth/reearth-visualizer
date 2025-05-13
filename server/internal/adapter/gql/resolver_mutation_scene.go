@@ -34,6 +34,24 @@ func (r *mutationResolver) CreateScene(ctx context.Context, input gqlmodel.Creat
 	}, nil
 }
 
+func (r *mutationResolver) PublishScene(ctx context.Context, input gqlmodel.PublishSceneInput) (*gqlmodel.PublishScenePayload, error) {
+	pid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).Scene.Publish(ctx, interfaces.PublishSceneParam{
+		ID:     pid,
+		Alias:  input.Alias,
+		Status: gqlmodel.FromScenePublishmentStatus(input.Status),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.PublishScenePayload{Scene: gqlmodel.ToScene(res)}, nil
+}
+
 func (r *mutationResolver) AddWidget(ctx context.Context, input gqlmodel.AddWidgetInput) (*gqlmodel.AddWidgetPayload, error) {
 	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
 	if err != nil {

@@ -370,6 +370,7 @@ type ComplexityRoot struct {
 		MoveStoryBlock            func(childComplexity int, input gqlmodel.MoveStoryBlockInput) int
 		MoveStoryPage             func(childComplexity int, input gqlmodel.MoveStoryPageInput) int
 		PublishProject            func(childComplexity int, input gqlmodel.PublishProjectInput) int
+		PublishScene              func(childComplexity int, input gqlmodel.PublishSceneInput) int
 		PublishStory              func(childComplexity int, input gqlmodel.PublishStoryInput) int
 		RemoveAsset               func(childComplexity int, input gqlmodel.RemoveAssetInput) int
 		RemoveCustomProperty      func(childComplexity int, input gqlmodel.RemoveCustomPropertyInput) int
@@ -695,6 +696,10 @@ type ComplexityRoot struct {
 		TranslatedTitle       func(childComplexity int, lang *language.Tag) int
 	}
 
+	PublishScenePayload struct {
+		Scene func(childComplexity int) int
+	}
+
 	Query struct {
 		Assets            func(childComplexity int, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
 		CheckProjectAlias func(childComplexity int, alias string, projectID *gqlmodel.ID) int
@@ -761,18 +766,30 @@ type ComplexityRoot struct {
 	}
 
 	Scene struct {
+		Alias             func(childComplexity int) int
+		BasicAuthPassword func(childComplexity int) int
+		BasicAuthUsername func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
+		EnableGa          func(childComplexity int) int
 		ID                func(childComplexity int) int
+		IsBasicAuthActive func(childComplexity int) int
 		NewLayers         func(childComplexity int) int
 		Plugins           func(childComplexity int) int
 		Project           func(childComplexity int) int
 		ProjectID         func(childComplexity int) int
 		Property          func(childComplexity int) int
 		PropertyID        func(childComplexity int) int
+		PublicDescription func(childComplexity int) int
+		PublicImage       func(childComplexity int) int
+		PublicNoIndex     func(childComplexity int) int
+		PublicTitle       func(childComplexity int) int
+		PublishedAt       func(childComplexity int) int
+		Status            func(childComplexity int) int
 		Stories           func(childComplexity int) int
 		Styles            func(childComplexity int) int
 		Team              func(childComplexity int) int
 		TeamID            func(childComplexity int) int
+		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		WidgetAlignSystem func(childComplexity int) int
 		Widgets           func(childComplexity int) int
@@ -1105,6 +1122,7 @@ type MutationResolver interface {
 	RemovePropertyItem(ctx context.Context, input gqlmodel.RemovePropertyItemInput) (*gqlmodel.PropertyItemPayload, error)
 	UpdatePropertyItems(ctx context.Context, input gqlmodel.UpdatePropertyItemInput) (*gqlmodel.PropertyItemPayload, error)
 	CreateScene(ctx context.Context, input gqlmodel.CreateSceneInput) (*gqlmodel.CreateScenePayload, error)
+	PublishScene(ctx context.Context, input gqlmodel.PublishSceneInput) (*gqlmodel.PublishScenePayload, error)
 	CreateStory(ctx context.Context, input gqlmodel.CreateStoryInput) (*gqlmodel.StoryPayload, error)
 	UpdateStory(ctx context.Context, input gqlmodel.UpdateStoryInput) (*gqlmodel.StoryPayload, error)
 	DeleteStory(ctx context.Context, input gqlmodel.DeleteStoryInput) (*gqlmodel.DeleteStoryPayload, error)
@@ -2599,6 +2617,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.PublishProject(childComplexity, args["input"].(gqlmodel.PublishProjectInput)), true
+
+	case "Mutation.publishScene":
+		if e.complexity.Mutation.PublishScene == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_publishScene_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.PublishScene(childComplexity, args["input"].(gqlmodel.PublishSceneInput)), true
 
 	case "Mutation.publishStory":
 		if e.complexity.Mutation.PublishStory == nil {
@@ -4539,6 +4569,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PropertySchemaGroup.TranslatedTitle(childComplexity, args["lang"].(*language.Tag)), true
 
+	case "PublishScenePayload.scene":
+		if e.complexity.PublishScenePayload.Scene == nil {
+			break
+		}
+
+		return e.complexity.PublishScenePayload.Scene(childComplexity), true
+
 	case "Query.assets":
 		if e.complexity.Query.Assets == nil {
 			break
@@ -4833,6 +4870,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RemoveWidgetPayload.WidgetID(childComplexity), true
 
+	case "Scene.alias":
+		if e.complexity.Scene.Alias == nil {
+			break
+		}
+
+		return e.complexity.Scene.Alias(childComplexity), true
+
+	case "Scene.basicAuthPassword":
+		if e.complexity.Scene.BasicAuthPassword == nil {
+			break
+		}
+
+		return e.complexity.Scene.BasicAuthPassword(childComplexity), true
+
+	case "Scene.basicAuthUsername":
+		if e.complexity.Scene.BasicAuthUsername == nil {
+			break
+		}
+
+		return e.complexity.Scene.BasicAuthUsername(childComplexity), true
+
 	case "Scene.createdAt":
 		if e.complexity.Scene.CreatedAt == nil {
 			break
@@ -4840,12 +4898,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Scene.CreatedAt(childComplexity), true
 
+	case "Scene.enableGa":
+		if e.complexity.Scene.EnableGa == nil {
+			break
+		}
+
+		return e.complexity.Scene.EnableGa(childComplexity), true
+
 	case "Scene.id":
 		if e.complexity.Scene.ID == nil {
 			break
 		}
 
 		return e.complexity.Scene.ID(childComplexity), true
+
+	case "Scene.isBasicAuthActive":
+		if e.complexity.Scene.IsBasicAuthActive == nil {
+			break
+		}
+
+		return e.complexity.Scene.IsBasicAuthActive(childComplexity), true
 
 	case "Scene.newLayers":
 		if e.complexity.Scene.NewLayers == nil {
@@ -4889,6 +4961,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Scene.PropertyID(childComplexity), true
 
+	case "Scene.publicDescription":
+		if e.complexity.Scene.PublicDescription == nil {
+			break
+		}
+
+		return e.complexity.Scene.PublicDescription(childComplexity), true
+
+	case "Scene.publicImage":
+		if e.complexity.Scene.PublicImage == nil {
+			break
+		}
+
+		return e.complexity.Scene.PublicImage(childComplexity), true
+
+	case "Scene.publicNoIndex":
+		if e.complexity.Scene.PublicNoIndex == nil {
+			break
+		}
+
+		return e.complexity.Scene.PublicNoIndex(childComplexity), true
+
+	case "Scene.publicTitle":
+		if e.complexity.Scene.PublicTitle == nil {
+			break
+		}
+
+		return e.complexity.Scene.PublicTitle(childComplexity), true
+
+	case "Scene.publishedAt":
+		if e.complexity.Scene.PublishedAt == nil {
+			break
+		}
+
+		return e.complexity.Scene.PublishedAt(childComplexity), true
+
+	case "Scene.status":
+		if e.complexity.Scene.Status == nil {
+			break
+		}
+
+		return e.complexity.Scene.Status(childComplexity), true
+
 	case "Scene.stories":
 		if e.complexity.Scene.Stories == nil {
 			break
@@ -4916,6 +5030,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Scene.TeamID(childComplexity), true
+
+	case "Scene.trackingId":
+		if e.complexity.Scene.TrackingID == nil {
+			break
+		}
+
+		return e.complexity.Scene.TrackingID(childComplexity), true
 
 	case "Scene.updatedAt":
 		if e.complexity.Scene.UpdatedAt == nil {
@@ -5996,6 +6117,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPagination,
 		ec.unmarshalInputProjectSort,
 		ec.unmarshalInputPublishProjectInput,
+		ec.unmarshalInputPublishSceneInput,
 		ec.unmarshalInputPublishStoryInput,
 		ec.unmarshalInputRemoveAssetInput,
 		ec.unmarshalInputRemoveCustomPropertyInput,
@@ -6812,12 +6934,6 @@ enum Visualizer {
   CESIUM
 }
 
-enum PublishmentStatus {
-  PUBLIC
-  LIMITED
-  PRIVATE
-}
-
 enum ProjectSortField {
   CREATEDAT
   UPDATEDAT
@@ -7238,6 +7354,30 @@ extend type Mutation {
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
+
+  # Publish
+  alias: String
+  status: PublishmentStatus!
+  publishedAt: DateTime
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
+
+  # BasicAuth(Publish)
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+
+  # Analytics(Publish)
+  enableGa: Boolean!
+  trackingId: String!
+}
+
+enum PublishmentStatus {
+  PUBLIC
+  LIMITED
+  PRIVATE
 }
 
 type SceneWidget {
@@ -7265,9 +7405,19 @@ input CreateSceneInput {
   projectId: ID!
 }
 
+input PublishSceneInput {
+  sceneId: ID!
+  alias: String
+  status: PublishmentStatus!
+}
+
 # Payload
 
 type CreateScenePayload {
+  scene: Scene!
+}
+
+type PublishScenePayload {
   scene: Scene!
 }
 
@@ -7277,30 +7427,37 @@ extend type Query {
 
 extend type Mutation {
   createScene(input: CreateSceneInput!): CreateScenePayload
+  publishScene(input: PublishSceneInput!): PublishScenePayload
 }
 `, BuiltIn: false},
 	{Name: "../../../gql/storytelling.graphql", Input: `type Story implements Node {
   id: ID!
   title: String!
-  alias: String!
   propertyId: ID!
   property: Property
   pages: [StoryPage!]!
-  publishmentStatus: PublishmentStatus!
   createdAt: DateTime!
   updatedAt: DateTime!
-  publishedAt: DateTime
   sceneId: ID!
   scene: Scene
   panelPosition: Position!
   bgColor: String
-  isBasicAuthActive: Boolean!
-  basicAuthUsername: String!
-  basicAuthPassword: String!
+
+  # Publish
+  alias: String!
+  publishmentStatus: PublishmentStatus!
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
+  publishedAt: DateTime
+
+  # BasicAuth(Publish)
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+
+  # Analytics(Publish)
   enableGa: Boolean!
   trackingId: String!
 }
@@ -8924,6 +9081,34 @@ func (ec *executionContext) field_Mutation_publishProject_argsInput(
 	}
 
 	var zeroVal gqlmodel.PublishProjectInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_publishScene_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_publishScene_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_publishScene_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.PublishSceneInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal gqlmodel.PublishSceneInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNPublishSceneInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishSceneInput(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.PublishSceneInput
 	return zeroVal, nil
 }
 
@@ -11699,6 +11884,30 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -13074,6 +13283,30 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -13252,22 +13485,16 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -13276,12 +13503,10 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -13290,6 +13515,14 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -13626,22 +13859,16 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(_ context.
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -13650,12 +13877,10 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(_ context.
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -13664,6 +13889,14 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(_ context.
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -14845,6 +15078,30 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -14921,6 +15178,30 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -17305,22 +17586,16 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(_ context.C
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -17329,12 +17604,10 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(_ context.C
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -17343,6 +17616,14 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(_ context.C
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -17553,22 +17834,16 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(_ context.Co
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -17577,12 +17852,10 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(_ context.Co
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -17591,6 +17864,14 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(_ context.Co
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -17777,22 +18058,16 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(_ context.Cont
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -17801,12 +18076,10 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(_ context.Cont
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -17815,6 +18088,14 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(_ context.Cont
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -20235,6 +20516,62 @@ func (ec *executionContext) fieldContext_Mutation_createScene(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_publishScene(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_publishScene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().PublishScene(rctx, fc.Args["input"].(gqlmodel.PublishSceneInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.PublishScenePayload)
+	fc.Result = res
+	return ec.marshalOPublishScenePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishScenePayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_publishScene(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "scene":
+				return ec.fieldContext_PublishScenePayload_scene(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PublishScenePayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_publishScene_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_createStory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createStory(ctx, field)
 	if err != nil {
@@ -22533,6 +22870,30 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -23108,6 +23469,30 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -23686,6 +24071,30 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -24079,6 +24488,30 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -24892,6 +25325,30 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -27434,6 +27891,30 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -32129,6 +32610,106 @@ func (ec *executionContext) fieldContext_PropertySchemaGroup_translatedTitle(ctx
 	return fc, nil
 }
 
+func (ec *executionContext) _PublishScenePayload_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PublishScenePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PublishScenePayload_scene(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Scene, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Scene)
+	fc.Result = res
+	return ec.marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScene(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PublishScenePayload_scene(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PublishScenePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Scene_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Scene_projectId(ctx, field)
+			case "teamId":
+				return ec.fieldContext_Scene_teamId(ctx, field)
+			case "propertyId":
+				return ec.fieldContext_Scene_propertyId(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Scene_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Scene_updatedAt(ctx, field)
+			case "widgets":
+				return ec.fieldContext_Scene_widgets(ctx, field)
+			case "plugins":
+				return ec.fieldContext_Scene_plugins(ctx, field)
+			case "widgetAlignSystem":
+				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "project":
+				return ec.fieldContext_Scene_project(ctx, field)
+			case "team":
+				return ec.fieldContext_Scene_team(ctx, field)
+			case "property":
+				return ec.fieldContext_Scene_property(ctx, field)
+			case "newLayers":
+				return ec.fieldContext_Scene_newLayers(ctx, field)
+			case "stories":
+				return ec.fieldContext_Scene_stories(ctx, field)
+			case "styles":
+				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_node(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_node(ctx, field)
 	if err != nil {
@@ -32921,6 +33502,30 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -33911,22 +34516,16 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -33935,12 +34534,10 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -33949,6 +34546,14 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -34073,6 +34678,30 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -34849,22 +35478,16 @@ func (ec *executionContext) fieldContext_Scene_stories(_ context.Context, field 
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -34873,12 +35496,10 @@ func (ec *executionContext) fieldContext_Scene_stories(_ context.Context, field 
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -34887,6 +35508,14 @@ func (ec *executionContext) fieldContext_Scene_stories(_ context.Context, field 
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -34949,6 +35578,528 @@ func (ec *executionContext) fieldContext_Scene_styles(_ context.Context, field g
 				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_status(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.PublishmentStatus)
+	fc.Result = res
+	return ec.marshalNPublishmentStatus2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishmentStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type PublishmentStatus does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_publishedAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_publishedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublishedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalODateTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_publishedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_publicTitle(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_publicTitle(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicTitle, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_publicTitle(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_publicDescription(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_publicDescription(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicDescription, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_publicDescription(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_publicImage(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_publicImage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicImage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_publicImage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_publicNoIndex(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_publicNoIndex(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicNoIndex, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_publicNoIndex(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_isBasicAuthActive(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsBasicAuthActive, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_isBasicAuthActive(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_basicAuthUsername(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasicAuthUsername, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_basicAuthUsername(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_basicAuthPassword(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasicAuthPassword, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_basicAuthPassword(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_enableGa(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_enableGa(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableGa, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_enableGa(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_trackingId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_trackingId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TrackingID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_trackingId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -36104,50 +37255,6 @@ func (ec *executionContext) fieldContext_Story_title(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Story_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Story_alias(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Alias, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Story_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Story",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Story_propertyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Story_propertyId(ctx, field)
 	if err != nil {
@@ -36313,50 +37420,6 @@ func (ec *executionContext) fieldContext_Story_pages(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Story_publishmentStatus(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Story_publishmentStatus(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PublishmentStatus, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.PublishmentStatus)
-	fc.Result = res
-	return ec.marshalNPublishmentStatus2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishmentStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Story_publishmentStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Story",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type PublishmentStatus does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Story_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Story_createdAt(ctx, field)
 	if err != nil {
@@ -36433,47 +37496,6 @@ func (ec *executionContext) _Story_updatedAt(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_Story_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Story",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Story_publishedAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Story_publishedAt(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PublishedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*time.Time)
-	fc.Result = res
-	return ec.marshalODateTime2ᚖtimeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Story_publishedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Story",
 		Field:      field,
@@ -36596,6 +37618,30 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -36688,8 +37734,8 @@ func (ec *executionContext) fieldContext_Story_bgColor(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Story_isBasicAuthActive(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+func (ec *executionContext) _Story_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_alias(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -36702,51 +37748,7 @@ func (ec *executionContext) _Story_isBasicAuthActive(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.IsBasicAuthActive, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Story_isBasicAuthActive(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Story",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Story_basicAuthUsername(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Story_basicAuthUsername(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.BasicAuthUsername, nil
+		return obj.Alias, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -36763,7 +37765,7 @@ func (ec *executionContext) _Story_basicAuthUsername(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Story_basicAuthUsername(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Story_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Story",
 		Field:      field,
@@ -36776,8 +37778,8 @@ func (ec *executionContext) fieldContext_Story_basicAuthUsername(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Story_basicAuthPassword(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Story_basicAuthPassword(ctx, field)
+func (ec *executionContext) _Story_publishmentStatus(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_publishmentStatus(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -36790,7 +37792,7 @@ func (ec *executionContext) _Story_basicAuthPassword(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.BasicAuthPassword, nil
+		return obj.PublishmentStatus, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -36802,19 +37804,19 @@ func (ec *executionContext) _Story_basicAuthPassword(ctx context.Context, field 
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(gqlmodel.PublishmentStatus)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNPublishmentStatus2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishmentStatus(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Story_basicAuthPassword(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Story_publishmentStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Story",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type PublishmentStatus does not have child fields")
 		},
 	}
 	return fc, nil
@@ -36991,6 +37993,179 @@ func (ec *executionContext) fieldContext_Story_publicNoIndex(_ context.Context, 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_publishedAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_publishedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublishedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalODateTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_publishedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_isBasicAuthActive(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsBasicAuthActive, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_isBasicAuthActive(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_basicAuthUsername(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_basicAuthUsername(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasicAuthUsername, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_basicAuthUsername(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Story_basicAuthPassword(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_basicAuthPassword(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.BasicAuthPassword, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_basicAuthPassword(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -38081,6 +39256,30 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -38199,22 +39398,16 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(_ context.Contex
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -38223,12 +39416,10 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(_ context.Contex
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -38237,6 +39428,14 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(_ context.Contex
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -38291,22 +39490,16 @@ func (ec *executionContext) fieldContext_StoryPayload_story(_ context.Context, f
 				return ec.fieldContext_Story_id(ctx, field)
 			case "title":
 				return ec.fieldContext_Story_title(ctx, field)
-			case "alias":
-				return ec.fieldContext_Story_alias(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Story_propertyId(ctx, field)
 			case "property":
 				return ec.fieldContext_Story_property(ctx, field)
 			case "pages":
 				return ec.fieldContext_Story_pages(ctx, field)
-			case "publishmentStatus":
-				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Story_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Story_updatedAt(ctx, field)
-			case "publishedAt":
-				return ec.fieldContext_Story_publishedAt(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -38315,12 +39508,10 @@ func (ec *executionContext) fieldContext_StoryPayload_story(_ context.Context, f
 				return ec.fieldContext_Story_panelPosition(ctx, field)
 			case "bgColor":
 				return ec.fieldContext_Story_bgColor(ctx, field)
-			case "isBasicAuthActive":
-				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
-			case "basicAuthUsername":
-				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
-			case "basicAuthPassword":
-				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
+			case "alias":
+				return ec.fieldContext_Story_alias(ctx, field)
+			case "publishmentStatus":
+				return ec.fieldContext_Story_publishmentStatus(ctx, field)
 			case "publicTitle":
 				return ec.fieldContext_Story_publicTitle(ctx, field)
 			case "publicDescription":
@@ -38329,6 +39520,14 @@ func (ec *executionContext) fieldContext_StoryPayload_story(_ context.Context, f
 				return ec.fieldContext_Story_publicImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Story_publishedAt(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Story_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Story_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Story_basicAuthPassword(ctx, field)
 			case "enableGa":
 				return ec.fieldContext_Story_enableGa(ctx, field)
 			case "trackingId":
@@ -38582,6 +39781,30 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -39710,6 +40933,30 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40203,6 +41450,30 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40279,6 +41550,30 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40419,6 +41714,30 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40627,6 +41946,30 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
+			case "status":
+				return ec.fieldContext_Scene_status(ctx, field)
+			case "publishedAt":
+				return ec.fieldContext_Scene_publishedAt(ctx, field)
+			case "publicTitle":
+				return ec.fieldContext_Scene_publicTitle(ctx, field)
+			case "publicDescription":
+				return ec.fieldContext_Scene_publicDescription(ctx, field)
+			case "publicImage":
+				return ec.fieldContext_Scene_publicImage(ctx, field)
+			case "publicNoIndex":
+				return ec.fieldContext_Scene_publicNoIndex(ctx, field)
+			case "isBasicAuthActive":
+				return ec.fieldContext_Scene_isBasicAuthActive(ctx, field)
+			case "basicAuthUsername":
+				return ec.fieldContext_Scene_basicAuthUsername(ctx, field)
+			case "basicAuthPassword":
+				return ec.fieldContext_Scene_basicAuthPassword(ctx, field)
+			case "enableGa":
+				return ec.fieldContext_Scene_enableGa(ctx, field)
+			case "trackingId":
+				return ec.fieldContext_Scene_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -45655,6 +46998,47 @@ func (ec *executionContext) unmarshalInputPublishProjectInput(ctx context.Contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputPublishSceneInput(ctx context.Context, obj any) (gqlmodel.PublishSceneInput, error) {
+	var it gqlmodel.PublishSceneInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"sceneId", "alias", "status"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "sceneId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SceneID = data
+		case "alias":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Alias = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalNPublishmentStatus2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishmentStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPublishStoryInput(ctx context.Context, obj any) (gqlmodel.PublishStoryInput, error) {
 	var it gqlmodel.PublishStoryInput
 	asMap := map[string]any{}
@@ -50420,6 +51804,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createScene(ctx, field)
 			})
+		case "publishScene":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_publishScene(ctx, field)
+			})
 		case "createStory":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createStory(ctx, field)
@@ -53391,6 +54779,45 @@ func (ec *executionContext) _PropertySchemaGroup(ctx context.Context, sel ast.Se
 	return out
 }
 
+var publishScenePayloadImplementors = []string{"PublishScenePayload"}
+
+func (ec *executionContext) _PublishScenePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.PublishScenePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, publishScenePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PublishScenePayload")
+		case "scene":
+			out.Values[i] = ec._PublishScenePayload_scene(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var queryImplementors = []string{"Query"}
 
 func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -54438,6 +55865,60 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "alias":
+			out.Values[i] = ec._Scene_alias(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._Scene_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "publishedAt":
+			out.Values[i] = ec._Scene_publishedAt(ctx, field, obj)
+		case "publicTitle":
+			out.Values[i] = ec._Scene_publicTitle(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "publicDescription":
+			out.Values[i] = ec._Scene_publicDescription(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "publicImage":
+			out.Values[i] = ec._Scene_publicImage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "publicNoIndex":
+			out.Values[i] = ec._Scene_publicNoIndex(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "isBasicAuthActive":
+			out.Values[i] = ec._Scene_isBasicAuthActive(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "basicAuthUsername":
+			out.Values[i] = ec._Scene_basicAuthUsername(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "basicAuthPassword":
+			out.Values[i] = ec._Scene_basicAuthPassword(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "enableGa":
+			out.Values[i] = ec._Scene_enableGa(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "trackingId":
+			out.Values[i] = ec._Scene_trackingId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -54888,11 +56369,6 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "alias":
-			out.Values[i] = ec._Story_alias(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "propertyId":
 			out.Values[i] = ec._Story_propertyId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -54936,11 +56412,6 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "publishmentStatus":
-			out.Values[i] = ec._Story_publishmentStatus(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdAt":
 			out.Values[i] = ec._Story_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -54951,8 +56422,6 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "publishedAt":
-			out.Values[i] = ec._Story_publishedAt(ctx, field, obj)
 		case "sceneId":
 			out.Values[i] = ec._Story_sceneId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -54998,18 +56467,13 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "bgColor":
 			out.Values[i] = ec._Story_bgColor(ctx, field, obj)
-		case "isBasicAuthActive":
-			out.Values[i] = ec._Story_isBasicAuthActive(ctx, field, obj)
+		case "alias":
+			out.Values[i] = ec._Story_alias(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "basicAuthUsername":
-			out.Values[i] = ec._Story_basicAuthUsername(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "basicAuthPassword":
-			out.Values[i] = ec._Story_basicAuthPassword(ctx, field, obj)
+		case "publishmentStatus":
+			out.Values[i] = ec._Story_publishmentStatus(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -55030,6 +56494,23 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "publicNoIndex":
 			out.Values[i] = ec._Story_publicNoIndex(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "publishedAt":
+			out.Values[i] = ec._Story_publishedAt(ctx, field, obj)
+		case "isBasicAuthActive":
+			out.Values[i] = ec._Story_isBasicAuthActive(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "basicAuthUsername":
+			out.Values[i] = ec._Story_basicAuthUsername(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "basicAuthPassword":
+			out.Values[i] = ec._Story_basicAuthPassword(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -58934,6 +60415,11 @@ func (ec *executionContext) unmarshalNPublishProjectInput2githubᚗcomᚋreearth
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNPublishSceneInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishSceneInput(ctx context.Context, v any) (gqlmodel.PublishSceneInput, error) {
+	res, err := ec.unmarshalInputPublishSceneInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNPublishStoryInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishStoryInput(ctx context.Context, v any) (gqlmodel.PublishStoryInput, error) {
 	res, err := ec.unmarshalInputPublishStoryInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -60728,6 +62214,13 @@ func (ec *executionContext) marshalOPropertySchemaGroup2ᚖgithubᚗcomᚋreeart
 		return graphql.Null
 	}
 	return ec._PropertySchemaGroup(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPublishScenePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPublishScenePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PublishScenePayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PublishScenePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalORemoveAssetPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveAssetPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveAssetPayload) graphql.Marshaler {

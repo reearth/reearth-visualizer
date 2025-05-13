@@ -16,7 +16,7 @@ func NewPublishedController(usecase interfaces.Published) *PublishedController {
 	return &PublishedController{usecase: usecase}
 }
 
-func (c *PublishedController) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
+func (c *PublishedController) Metadata(ctx context.Context, name string) (interfaces.PublishedMetadata, error) {
 	return c.usecase.Metadata(ctx, name)
 }
 

@@ -94,6 +94,21 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 	return result, nil
 }
 
+func (r *Scene) FindByPublicName(ctx context.Context, name string) (*scene.Scene, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if name == "" {
+		return nil, nil
+	}
+	for _, s := range r.data {
+		if s.MatchWithPublicName(name) {
+			return s, nil
+		}
+	}
+	return nil, rerror.ErrNotFound
+}
+
 func (r *Scene) CheckAliasUnique(ctx context.Context, name string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()

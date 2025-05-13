@@ -48,6 +48,7 @@ func TestWeb(t *testing.T) {
 	lo.Must0(afero.WriteFile(mfs, "web/published.html", []byte(publishedHTML), 0777))
 	lo.Must0(afero.WriteFile(mfs, "web/test.js", []byte(testJS), 0777))
 	prjRepo := memory.NewProject()
+	sceRepo := memory.NewScene()
 	storyRepo := memory.NewStorytelling()
 	lo.Must0(prjRepo.Save(ctx, prj))
 	fileg := lo.Must(fs.NewFile(mfs, ""))
@@ -179,7 +180,7 @@ func TestWeb(t *testing.T) {
 
 			e.Use(ContextMiddleware(func(ctx context.Context) context.Context {
 				return adapter.AttachUsecases(ctx, &interfaces.Container{
-					Published: interactor.NewPublished(prjRepo, storyRepo, fileg, publishedHTML),
+					Published: interactor.NewPublished(prjRepo, sceRepo, storyRepo, fileg, publishedHTML),
 				})
 			}))
 

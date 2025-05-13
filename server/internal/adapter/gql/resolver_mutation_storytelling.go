@@ -46,16 +46,18 @@ func (r *mutationResolver) UpdateStory(ctx context.Context, input gqlmodel.Updat
 		PanelPosition: gqlmodel.FromStoryPositionRef(input.PanelPosition),
 		BgColor:       input.BgColor,
 
-		IsBasicAuthActive: input.IsBasicAuthActive,
-		BasicAuthUsername: input.BasicAuthUsername,
-		BasicAuthPassword: input.BasicAuthPassword,
 		PublicTitle:       input.PublicTitle,
 		PublicDescription: input.PublicDescription,
 		PublicImage:       input.PublicImage,
 		PublicNoIndex:     input.PublicNoIndex,
 		DeletePublicImage: input.DeletePublicImage,
-		EnableGa:          input.EnableGa,
-		TrackingID:        input.TrackingID,
+
+		IsBasicAuthActive: input.IsBasicAuthActive,
+		BasicAuthUsername: input.BasicAuthUsername,
+		BasicAuthPassword: input.BasicAuthPassword,
+
+		EnableGa:   input.EnableGa,
+		TrackingID: input.TrackingID,
 	}
 
 	res, err := usecases(ctx).StoryTelling.Update(ctx, inp, getOperator(ctx))

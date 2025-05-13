@@ -22,7 +22,7 @@ func (b *Builder) Build() (*Project, error) {
 		return nil, id.ErrInvalidID
 	}
 	// if b.p.alias == "" {
-	// 	b.p.alias = alias.ReservedReearthPrefixProject + b.p.id.String()
+	// 	b.p.alias = alias.ReservedReearthPrefixStory + b.p.id.String()
 	// }
 	if b.p.updatedAt.IsZero() {
 		b.p.updatedAt = b.p.CreatedAt()
