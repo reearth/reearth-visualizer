@@ -95,8 +95,8 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 	return i.projectRepo.FindActiveById(ctx, pid)
 }
 
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindVisibilityByWorkspace(ctx, id)
+func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
+	return i.projectRepo.FindVisibilityByWorkspace(ctx, id, authenticated)
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {

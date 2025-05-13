@@ -63,7 +63,10 @@ enum PublishmentStatus {
 }
 
 // Request messages
-message GetProjectListRequest { string team_id = 1; }
+message GetProjectListRequest {
+  string team_id = 1;
+  bool authenticated = 2;
+}
 
 message GetProjectRequest { string project_id = 1; }
 
