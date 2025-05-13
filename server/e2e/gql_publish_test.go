@@ -543,7 +543,7 @@ func TestCheckProjectAlias(t *testing.T) {
 			want: want{"test-xxxxxx", true},
 		},
 		{
-			name: "alias equals projectId",
+			name: "alias equals sceneID",
 			args: args{sceneID, projectId},
 			want: want{sceneID, true},
 		},
