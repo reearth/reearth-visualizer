@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 )
@@ -110,4 +111,8 @@ func (s *Scene) Properties() []id.PropertyID {
 	ids = append(ids, s.plugins.Properties()...)
 	ids = append(ids, s.widgets.Properties()...)
 	return ids
+}
+
+func (s *Scene) DefaultAlias() string {
+	return alias.ReservedReearthPrefixProject + s.ID().String()
 }

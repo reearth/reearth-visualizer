@@ -1,5 +1,6 @@
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { CustomOptions, MutationReturn } from "@reearth/services/api/types";
+import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "@reearth/services/gql";
 import {
   CreateStoryInput,
   CreateStoryMutation,
@@ -8,6 +9,7 @@ import {
 } from "@reearth/services/gql/__gen__/graphql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import {
+  CHECK_STORY_ALIAS,
   CREATE_STORY,
   PUBLISH_STORY,
   UPDATE_STORY
@@ -132,6 +134,39 @@ export default () => {
     [publishStoryMutation, t, setNotification]
   );
 
+    const [fetchCheckProjectAlias] = useLazyQuery(CHECK_STORY_ALIAS);
+
+    const checkStoryAlias = useCallback(
+      async (alias: string, storyId?: string) => {
+        if (!alias) return null;
+
+        const { data, errors } = await fetchCheckProjectAlias({
+          variables: { alias, storyId },
+          errorPolicy: "all",
+          context: {
+            headers: {
+              [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
+            }
+          }
+        });
+
+        if (errors || !data?.checkStoryAlias) {
+          return { status: "error", errors };
+        }
+
+        setNotification({
+          type: "success",
+          text: t("Successfully checked alias!")
+        });
+        return {
+          available: data?.checkStoryAlias.available,
+          alias: data?.checkStoryAlias.alias,
+          status: "success"
+        };
+      },
+      [fetchCheckProjectAlias, setNotification, t]
+    );
+
   const {
     useCreateStoryPage,
     useDeleteStoryPage,
@@ -161,6 +196,7 @@ export default () => {
     useCreateStoryBlock,
     useDeleteStoryBlock,
     useMoveStoryBlock,
-    usePublishStory
+    usePublishStory,
+    checkStoryAlias
   };
 };

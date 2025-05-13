@@ -78,7 +78,7 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
             onChange={setLocalWorkspaceName}
             appearance={workspace?.personal ? "readonly" : undefined}
             disabled={!!workspace?.personal || meRole !== Role.Owner}
-            onBlur={handleSubmitUpdateWorkspaceName}
+            onChangeComplete={handleSubmitUpdateWorkspaceName}
           />
         </SettingsFields>
         {!workspace?.personal && (

@@ -25,12 +25,7 @@ const DataSource: FC<Props> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const [localTitle, setLocalTitle] = useState(selectedLayer.title);
   const [localUrl, setLocalUrl] = useState(selectedLayer.config?.data?.url);
-
-  useEffect(() => {
-    setLocalTitle(selectedLayer.title);
-  }, [selectedLayer.title]);
 
   useEffect(() => {
     setLocalUrl(selectedLayer.config?.data?.url);
@@ -68,11 +63,12 @@ const DataSource: FC<Props> = ({
     [saveCollapseState]
   );
 
-  const handleTitleUpdate = useCallback(() => {
-    if (!localTitle || localTitle === selectedLayer.title) {
-      setLocalTitle(selectedLayer.title);
-    } else onLayerNameUpdate?.({ layerId: selectedLayer.id, name: localTitle });
-  }, [localTitle, onLayerNameUpdate, selectedLayer.id, selectedLayer.title]);
+  const handleTitleUpdate = useCallback(
+    (name: string) => {
+      onLayerNameUpdate?.({ layerId: selectedLayer.id, name });
+    },
+    [onLayerNameUpdate, selectedLayer.id]
+  );
 
   const handleLayerUrlUpdate = useCallback(
     (url: string) => {
@@ -102,9 +98,8 @@ const DataSource: FC<Props> = ({
         <InputWrapper>
           <InputField
             title={t("Layer Name")}
-            value={localTitle}
-            onChange={setLocalTitle}
-            onBlur={handleTitleUpdate}
+            value={selectedLayer.title}
+            onChangeComplete={handleTitleUpdate}
           />
           <InputField
             title={t("Format")}

@@ -38,7 +38,8 @@ vitest.mock("@reearth/services/state", () => ({
   useNotification: () => [null, vitest.fn()],
   useProjectId: () => ["project-id"],
   useWorkspace: () => [{ id: "workspace-id" }],
-  useCurrentTheme: () => [undefined, vitest.fn()]
+  useCurrentTheme: () => [undefined, vitest.fn()],
+  useAddWorkspaceModal: () => [false, vitest.fn()]
 }));
 
 vitest.mock("@reearth/beta/ui/fields/CommonField", () => ({

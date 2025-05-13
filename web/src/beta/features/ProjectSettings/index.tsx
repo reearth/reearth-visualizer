@@ -57,7 +57,8 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
-    handleUpdateStory
+    handleUpdateStory,
+    handleUpdateStoryAlias
   } = useHooks({
     projectId,
     subId,
@@ -166,8 +167,10 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
           {tab === "public" && project && (
             <PublicSettings
               project={project}
+              sceneId={sceneId}
               isStory={!!subId}
               currentStory={currentStory}
+              onUpdateStoryAlias={handleUpdateStoryAlias}
               onUpdateStory={handleUpdateStory}
               onUpdateProject={handleUpdateProject}
               onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}

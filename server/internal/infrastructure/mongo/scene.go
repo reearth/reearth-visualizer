@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -83,6 +84,23 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 	return res, nil
 }
 
+func (r *Scene) CheckAliasUnique(ctx context.Context, name string) error {
+	filter := bson.M{
+		"$or": []bson.M{
+			{"id": name},
+			{"alias": name},
+		},
+	}
+	count, err := r.count(ctx, filter)
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		return alias.ErrExistsProjectAlias
+	}
+	return nil
+}
+
 func (r *Scene) Save(ctx context.Context, scene *scene.Scene) error {
 	if !r.f.CanWrite(scene.Workspace()) {
 		return repo.ErrOperationDenied
@@ -93,6 +111,10 @@ func (r *Scene) Save(ctx context.Context, scene *scene.Scene) error {
 
 func (r *Scene) Remove(ctx context.Context, id id.SceneID) error {
 	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
+}
+
+func (r *Scene) count(ctx context.Context, filter interface{}) (int64, error) {
+	return r.client.Count(ctx, filter)
 }
 
 func (r *Scene) find(ctx context.Context, filter interface{}) ([]*scene.Scene, error) {

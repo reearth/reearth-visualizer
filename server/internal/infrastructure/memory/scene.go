@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -91,6 +92,19 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 		}
 	}
 	return result, nil
+}
+
+func (r *Scene) CheckAliasUnique(ctx context.Context, name string) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, s := range r.data {
+		if s.ID().String() == name {
+			return alias.ErrExistsStorytellingAlias
+		}
+	}
+
+	return nil
 }
 
 func (r *Scene) Save(ctx context.Context, s *scene.Scene) error {

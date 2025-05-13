@@ -2,19 +2,49 @@ import { TextInput, TextInputProps } from "@reearth/beta/lib/reearth-ui";
 import CommonField, {
   CommonFieldProps
 } from "@reearth/beta/ui/fields/CommonField";
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 
-
-export type InputFieldProps = CommonFieldProps &
+export type InputFieldProps = {
+  onChangeComplete?: (text: string) => void;
+} & CommonFieldProps &
   Pick<
     TextInputProps,
-    "value" | "placeholder" | "onChange" | "onBlur" | "disabled" | "appearance"
+    "value" | "placeholder" | "onChange" | "disabled" | "appearance"
   >;
 
-const InputField: FC<InputFieldProps> = ({ title, description, ...props }) => {
+const InputField: FC<InputFieldProps> = ({
+  title,
+  description,
+  value,
+  onChange,
+  onChangeComplete,
+  ...props
+}) => {
+  const [internalValue, setInternalValue] = useState(value);
+
+  useEffect(() => {
+    setInternalValue(value);
+  }, [value]);
+
+  const handleChangeComplete = () => {
+    if (internalValue !== value) {
+      onChangeComplete?.(internalValue as string);
+    }
+  };
+
+  const handleChange = (newValue: string) => {
+    setInternalValue(newValue);
+    onChange?.(newValue);
+  };
+
   return (
     <CommonField title={title} description={description}>
-      <TextInput {...props} />
+      <TextInput
+        {...props}
+        value={internalValue}
+        onChange={handleChange}
+        onBlur={handleChangeComplete}
+      />
     </CommonField>
   );
 };

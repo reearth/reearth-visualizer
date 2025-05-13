@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ReservedReearthPrefixProject = "p-"
+	ReservedReearthPrefixProject = "c-"
 
 	ReservedReearthPrefixStory = "s-"
 

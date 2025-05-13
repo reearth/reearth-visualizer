@@ -257,28 +257,25 @@ Are you sure you want to delete this feature? If deleted, you can not recover it
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
-Congratulations!: おめでとうございます！
 Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
-Your story has been published!: ストーリーが公開されました。
-Your scene has been published!: シーンが公開されました。
-Public URL: 公開URL
-'* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
-'* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
-Copy: コピー
+Congratulations! 🎊 Your story has been published: 🎊おめでとうございます！あなたのストーリーが公開されました。
+Congratulations! 🎊 Your scene has been published: 🎊おめでとうございます！あなたのシーンが公開されました。
+Congratulations! 🎊 Your story has been updated: 🎊おめでとうございます！あなたのストーリーが更新されました。
+Congratulations! 🎊 Your scene has been updated: 🎊おめでとうございます！あなたのシーンが更新されました。
+Please visit your project by URL below !: 以下のURLからあなたのプロジェクトをご確認ください。
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 '* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
+Want to change public settings?: 公開設定を変更しますか？
+Go to settings: 設定へ
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
-Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
-Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
-Publish domain: 公開ドメイン
-Need to change domain related settings?: ドメイン設定を変更しますか？
-Go to settings: 設定へ
+Your story will be published. This means anybody can view this story by default url.: ストーリーが公開されます。デフォルトのURLを知っている人は誰でもこのストーリーを閲覧できるようになります。
+Your scene will be published. This means anybody can view this project by default url.: シーンが公開されます。デフォルトのURLを知っている人は誰でもこのプロジェクトを閲覧できるようになります。
 Search engine indexing: 検索可能にする
 Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
 Your story will be unpublished.: ストーリーを非公開にする
@@ -406,12 +403,9 @@ No description.: 説明なし
 Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
 'Repository url:': 'リポジトリURL:'
-Unable to update published story alias.: 公開されているストーリーのエイリアスは更新できません
-Unable to update published project alias.: 公開されているプロジェクトのエイリアスは更新できません
 Edit Alias: エイリアスを編集
 You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
-The name is already taken by other users. Please choose a different name.: この名前はすでに他のユーザーが使用しています。別の名前を選んでください。
 Your Alias: あなたのエイリアス'
 clean: ''
 Public Info: 公開情報
@@ -585,6 +579,7 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
+Successfully checked alias!: ''
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
@@ -607,8 +602,8 @@ Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Successfully imported project!: プロジェクトのインポートに成功しました！
 Failed to import project.: プロジェクトのインポートに失敗しました。
+Successfully imported project!: プロジェクトのインポートに成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
 Failed to create story.: ストーリーの作成に失敗しました。

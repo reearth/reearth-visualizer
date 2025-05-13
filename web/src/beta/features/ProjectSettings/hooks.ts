@@ -5,7 +5,6 @@ import {
   useStorytellingFetcher
 } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
-import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
@@ -30,12 +29,12 @@ export default ({ projectId }: ProjectSettingsProps) => {
     useProjectQuery,
     useUpdateProject,
     useUpdateProjectBasicAuth,
-    useUpdateProjectAlias,
     useUpdateProjectRemove,
     usePublishProject
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
-  const { usePublishStory } = useStorytellingFetcher();
+  const { usePublishStory, useStoriesQuery, useUpdateStory } =
+    useStorytellingFetcher();
 
   const client = useApolloClient();
 
@@ -129,10 +128,11 @@ export default ({ projectId }: ProjectSettingsProps) => {
   const handleUpdateProjectAlias = useCallback(
     async (settings: PublicAliasSettingsType) => {
       if (!projectId || settings.alias === undefined) return;
-      const alias = settings.alias;
-      await useUpdateProjectAlias({ projectId, alias });
+      const status =
+        project?.publishmentStatus === "PUBLIC" ? "published" : "limited";
+      await usePublishProject(status, projectId, settings.alias);
     },
-    [projectId, useUpdateProjectAlias]
+    [project?.publishmentStatus, projectId, usePublishProject]
   );
 
   const handleUpdateProjectGA = useCallback(
@@ -142,14 +142,27 @@ export default ({ projectId }: ProjectSettingsProps) => {
     },
     [projectId, useUpdateProject]
   );
-  const { useStoriesQuery } = useStorytellingAPI();
   const { stories = [] } = useStoriesQuery({ sceneId: scene?.id });
   const currentStory = useMemo(
     () => (stories?.length ? stories[0] : undefined),
     [stories]
   );
 
-  const { useUpdateStory } = useStorytellingAPI();
+  const handleUpdateStoryAlias = useCallback(
+    async (settings: PublicStorySettingsType) => {
+      if (!scene?.id || !currentStory?.id) return;
+      const status =
+        currentStory?.publishmentStatus === "PUBLIC" ? "published" : "limited";
+      await usePublishStory(status, currentStory.id, settings.alias);
+    },
+    [
+      scene?.id,
+      currentStory?.id,
+      currentStory?.publishmentStatus,
+      usePublishStory
+    ]
+  );
+
   const handleUpdateStory = useCallback(
     async (settings: PublicStorySettingsType | StorySettingsType) => {
       if (!scene?.id || !currentStory?.id) return;
@@ -194,6 +207,12 @@ export default ({ projectId }: ProjectSettingsProps) => {
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
-    handleUpdateStory
+    handleUpdateStory,
+    handleUpdateStoryAlias
   };
 };
+
+export function extractPrefixSuffix(url?: string) {
+  if (!url || !url.includes("{}")) return ["", ""];
+  return url.split("{}");
+}

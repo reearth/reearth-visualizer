@@ -46,7 +46,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       key={field?.id}
       title={field?.title}
       value={field.value as string}
-      onBlur={handleChange}
+      onChangeComplete={handleChange}
       disabled={!editMode}
       appearance={appearance}
     />
@@ -56,7 +56,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       title={field?.title}
       value={field.value as string}
       resizable="height"
-      onBlur={handleChange}
+      onChangeComplete={handleChange}
       disabled={!editMode}
       appearance={appearance}
     />
@@ -85,7 +85,7 @@ export const FieldComponent = ({ field, editMode, setFields }: Props) => {
       key={field?.id}
       title={field?.title}
       value={field.value as number}
-      onBlur={handleChange}
+      onChangeComplete={handleChange}
       disabled={!editMode}
       appearance={appearance}
     />

@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
@@ -113,6 +114,13 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 	}
 
 	sceneID := id.NewSceneID()
+
+	if prj.Alias() == "" {
+		prj.UpdateAlias(alias.ReservedReearthPrefixProject + sceneID.String())
+		if err := i.projectRepo.Save(ctx, prj); err != nil {
+			return nil, err
+		}
+	}
 
 	prop, err := i.addDefaultVisualizerTilesProperty(ctx, sceneID, prj.CoreSupport())
 	if err != nil {

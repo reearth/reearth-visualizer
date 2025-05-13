@@ -14,8 +14,8 @@
         "description": "The following aliases are reserved and cannot be used: administrator,development"
       },
       "invalid_prefix_alias": {
-        "message": "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
-        "description": "Aliases that start with 'p-' or 's-' are reserved and cannot be used."
+        "message": "Aliases starting with 'c-' or 's-' are not allowed: {{.aliasName}}",
+        "description": "Aliases that start with 'c-' or 's-' are reserved and cannot be used."
       }
     },
     "storytelling": {
@@ -32,8 +32,8 @@
         "description": "The following aliases are reserved and cannot be used: administrator,development"
       },
       "invalid_prefix_alias": {
-        "message": "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
-        "description": "Aliases that start with 'p-' or 's-' are reserved and cannot be used."
+        "message": "Aliases starting with 'c-' or 's-' are not allowed: {{.aliasName}}",
+        "description": "Aliases that start with 'c-' or 's-' are reserved and cannot be used."
       }
     }
   }

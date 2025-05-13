@@ -40,12 +40,12 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 	},
 	ErrKeyPkgProjectInvalidPrefixAlias: {
 		language.English: {
-			Message:     "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
-			Description: "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+			Message:     "Aliases starting with 'c-' or 's-' are not allowed: {{.aliasName}}",
+			Description: "Aliases that start with 'c-' or 's-' are reserved and cannot be used.",
 		},
 		language.Japanese: {
-			Message:     "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
-			Description: "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。",
+			Message:     "'c-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+			Description: "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。",
 		},
 	},
 	ErrKeyPkgProjectInvalidReservedAlias: {
@@ -80,12 +80,12 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 	},
 	ErrKeyPkgStorytellingInvalidPrefixAlias: {
 		language.English: {
-			Message:     "Aliases starting with 'p-' or 's-' are not allowed: {{.aliasName}}",
-			Description: "Aliases that start with 'p-' or 's-' are reserved and cannot be used.",
+			Message:     "Aliases starting with 'c-' or 's-' are not allowed: {{.aliasName}}",
+			Description: "Aliases that start with 'c-' or 's-' are reserved and cannot be used.",
 		},
 		language.Japanese: {
-			Message:     "'p-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
-			Description: "エイリアス名の先頭が 'p-' または 's-' で始まるものは予約されており、使用できません。",
+			Message:     "'c-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+			Description: "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。",
 		},
 	},
 	ErrKeyPkgStorytellingInvalidReservedAlias: {

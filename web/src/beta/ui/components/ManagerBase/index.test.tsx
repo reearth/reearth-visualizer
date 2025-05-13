@@ -15,6 +15,12 @@ describe("Manager Components", () => {
       expect(screen.getByTestId("action")).toBeInTheDocument();
     });
 
+    test("renders correctly when no actions are provided", () => {
+      render(<ManagerHeader />);
+
+      expect(screen.queryByTestId("action")).not.toBeInTheDocument();
+    });
+
     test("renders delete text when enableDelete is true and selectedIds are given", () => {
       const handleLayoutChange = vi.fn();
       const selectedIds = ["item1", "item2"];
@@ -34,6 +40,14 @@ describe("Manager Components", () => {
 
       const searchInput = screen.getByPlaceholderText("Search...");
       expect(searchInput).toBeInTheDocument();
+    });
+
+    test("does not render search input when showSearch is false", () => {
+      render(<ManagerHeader showSearch={false} />);
+
+      expect(
+        screen.queryByPlaceholderText("Search...")
+      ).not.toBeInTheDocument();
     });
 
     test("calls onSearch when Enter key is pressed in search input", () => {

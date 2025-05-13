@@ -91,7 +91,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
             resizable="height"
             description={field.description}
             value={(value as string) ?? ""}
-            onBlur={handleChange}
+            onChangeComplete={handleChange}
           />
         ) : (
           <InputField
@@ -99,7 +99,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
             title={field.title}
             value={value as string}
             description={field.description}
-            onBlur={handleChange}
+            onChangeComplete={handleChange}
           />
         )
       ) : field.type === "url" ? (
@@ -152,7 +152,7 @@ const PropertyItem: FC<Props> = ({ id, value, field, onUpdate }) => {
             description={field.description}
             min={field.min}
             max={field.max}
-            onBlur={handleChange}
+            onChangeComplete={handleChange}
           />
         )
       ) : field.type === "latlng" ? (

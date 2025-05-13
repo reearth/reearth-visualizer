@@ -38,8 +38,8 @@ export const GET_PROJECTS = gql(`
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`
-  query CheckProjectAlias($alias: String!) {
-    checkProjectAlias(alias: $alias) {
+  query CheckProjectAlias($alias: String!, $projectId: ID) {
+    checkProjectAlias(alias: $alias, projectId: $projectId) {
       alias
       available
     }
@@ -141,28 +141,17 @@ export const UPDATE_PROJECT_BASIC_AUTH = gql(`
   }
 `);
 
-export const UPDATE_PROJECT_ALIAS = gql(`
-  mutation UpdateProjectAlias($projectId: ID!, $alias: String!) {
-    updateProject(input: { projectId: $projectId, alias: $alias }) {
-      project {
-        id
-        name
-        alias
-      }
-    }
-  }
-`);
 
 export const PUBLISH_PROJECT = gql(`
-  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
-    publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
-      project {
-        id
-        alias
-        publishmentStatus
-      }
+ mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
+  publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
+    project {
+      id
+      alias
+      publishmentStatus
     }
   }
+}
 `);
 
 export const ARCHIVE_PROJECT = gql(`
