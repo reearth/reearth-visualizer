@@ -364,6 +364,7 @@ func (x *Project) GetVisibility() string {
 type GetProjectListRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TeamId        string                 `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	Authenticated bool                   `protobuf:"varint,2,opt,name=authenticated,proto3" json:"authenticated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -403,6 +404,13 @@ func (x *GetProjectListRequest) GetTeamId() string {
 		return x.TeamId
 	}
 	return ""
+}
+
+func (x *GetProjectListRequest) GetAuthenticated() bool {
+	if x != nil {
+		return x.Authenticated
+	}
+	return false
 }
 
 type GetProjectRequest struct {
@@ -797,9 +805,10 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"visibilityB\x0f\n" +
 	"\r_published_atB\f\n" +
 	"\n" +
-	"_image_url\"0\n" +
+	"_image_url\"V\n" +
 	"\x15GetProjectListRequest\x12\x17\n" +
-	"\ateam_id\x18\x01 \x01(\tR\x06teamId\"2\n" +
+	"\ateam_id\x18\x01 \x01(\tR\x06teamId\x12$\n" +
+	"\rauthenticated\x18\x02 \x01(\bR\rauthenticated\"2\n" +
 	"\x11GetProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\"\xb8\x02\n" +

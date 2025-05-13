@@ -29,7 +29,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		return nil, err
 	}
 
-	res, err := uc.Project.FindVisibilityByWorkspace(ctx, wId, op)
+	res, err := uc.Project.FindVisibilityByWorkspace(ctx, wId, req.Authenticated, op)
 
 	if err != nil {
 		return nil, err
@@ -71,7 +71,6 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
 	wId, err := accountdomain.WorkspaceIDFrom(req.TeamId)
-
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +83,38 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		CoreSupport: req.CoreSupport,
 		Visibility:  req.Visibility,
 	}, op)
+	if err != nil {
+		return nil, err
+	}
 
+	c, err := uc.Scene.Create(ctx, p.ID(), true, op)
+	if err != nil {
+		return nil, err
+	}
+
+	index := 0
+	storyInput := interfaces.CreateStoryInput{
+		SceneID: c.ID(),
+		Title:   "Default",
+		Index:   &index,
+	}
+	st, err := uc.StoryTelling.Create(ctx, storyInput, op)
+	if err != nil {
+		return nil, err
+	}
+
+	title := "Page"
+	swipeable := false
+	pageParam := interfaces.CreatePageParam{
+		SceneID:         c.ID(),
+		StoryID:         st.Id(),
+		Title:           &title,
+		Swipeable:       &swipeable,
+		Layers:          &[]id.NLSLayerID{},
+		SwipeableLayers: &[]id.NLSLayerID{},
+		Index:           &index,
+	}
+	_, _, err = uc.StoryTelling.CreatePage(ctx, pageParam, op)
 	if err != nil {
 		return nil, err
 	}
