@@ -82,7 +82,12 @@ const LayersPanel: FC = () => {
   );
 
   return (
-    <Panel title={t("Layers")} storageId="editor-map-layers-panel" extend>
+    <Panel
+      dataTestid="editor-map-layers-panel"
+      title={t("Layers")}
+      storageId="editor-map-layers-panel"
+      extend
+    >
       <Wrapper>
         <PopupMenu
           label={
@@ -105,9 +110,8 @@ const LayersPanel: FC = () => {
             onMoveStart={handleMoveStart}
             dragDisabled={false}
           />
-          <EmptySpace onClick={() => handleLayerSelect(undefined)} />
+          <EmptySpace data-testid="empty-space" onClick={() => handleLayerSelect(undefined)} />
         </LayersContainer>
-        
       </Wrapper>
     </Panel>
   );

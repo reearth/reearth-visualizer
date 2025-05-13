@@ -25,11 +25,7 @@ type Project implements Node {
   trackingId: String!
   starred: Boolean!
   isDeleted: Boolean!
-}
-
-type ProjectAliasAvailability {
-  alias: String!
-  available: Boolean!
+  visibility: String!
 }
 
 enum Visualizer {
@@ -55,10 +51,8 @@ input CreateProjectInput {
   visualizer: Visualizer!
   name: String
   description: String
-  imageUrl: URL
-  alias: String
-  archived: Boolean
   coreSupport: Boolean
+  visibility: String
 }
 
 input UpdateProjectInput {
@@ -69,7 +63,6 @@ input UpdateProjectInput {
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
-  alias: String
   imageUrl: URL
   publicTitle: String
   publicDescription: String
@@ -82,6 +75,7 @@ input UpdateProjectInput {
   sceneId: ID
   starred: Boolean
   deleted: Boolean
+  visibility: String
 }
 
 input PublishProjectInput {
@@ -126,6 +120,11 @@ type ImportProjectPayload {
   projectData: JSON!
 }
 
+type ProjectAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
 # Connection
 
 type ProjectConnection {
@@ -147,7 +146,7 @@ extend type Query {
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!): ProjectAliasAvailability!
+  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
 }

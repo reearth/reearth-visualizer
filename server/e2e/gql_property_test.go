@@ -5,7 +5,6 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/samber/lo"
-	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
@@ -153,23 +152,6 @@ func addPropertyItem(e *httpexpect.Expect, propertyID, schemaGroupID string) (Gr
 	groupId := res.Path("$.data.addPropertyItem.property.items[0].groups[0].id").Raw().(string)
 
 	return requestBody, res, itemId, groupId
-}
-
-func TestUpdateScenePropertyValue(t *testing.T) {
-	e := Server(t, fullSeeder)
-	sceneID := sID.String()
-	res := getScene(e, sceneID, language.Und.String())
-
-	// TODO: Write detailed tests
-
-	// Scene Property test ---------------------------------------
-	scenePropertySchemaGroups := res.Path("$.property.schema.groups")
-	assert.NotNil(t, scenePropertySchemaGroups)
-
-	// Widgets Property test ---------------------------------------
-	widgetPropertySchemaGroups := res.Path("$.widgets[0].property.schema.groups")
-	assert.NotNil(t, widgetPropertySchemaGroups)
-
 }
 
 func TestUpdateStoryPropertyValue(t *testing.T) {

@@ -16,6 +16,8 @@ export type IconButtonProps = {
   iconColor?: string;
   stopPropagationOnClick?: boolean;
   onClick?: (e: MouseEvent) => void;
+  ariaLabel?: string;
+  ariaLabelledby?: string;
 } & Pick<IconProps, "placement" | "tooltipText">;
 
 export const IconButton: FC<IconButtonProps> = ({
@@ -31,7 +33,9 @@ export const IconButton: FC<IconButtonProps> = ({
   hasBorder,
   tooltipText,
   placement,
-  onClick
+  onClick,
+  ariaLabel,
+  ariaLabelledby
 }) => {
   const handleClick = useCallback(
     (e: MouseEvent) => {
@@ -51,8 +55,10 @@ export const IconButton: FC<IconButtonProps> = ({
       iconRotate={iconRotate}
       onClick={handleClick}
       hasBorder={hasBorder}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledby}
     >
-      <Icon icon={icon} color={iconColor} />
+      <Icon icon={icon} color={iconColor} aria-hidden="true" />
     </StyledButton>
   );
 
@@ -69,7 +75,10 @@ export const IconButton: FC<IconButtonProps> = ({
   );
 };
 
-const StyledButton = styled("button")<{
+const StyledButton = styled("button", {
+  shouldForwardProp: (prop) =>
+    !["iconRotate", "hasBorder", "active"].includes(prop)
+})<{
   size: "normal" | "small" | "smallest" | "medium" | "large";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
   active?: boolean;

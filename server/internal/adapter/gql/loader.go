@@ -20,6 +20,7 @@ type Loaders struct {
 	Project   *ProjectLoader
 	Property  *PropertyLoader
 	Scene     *SceneLoader
+	Story     *StoryLoader
 	Workspace *WorkspaceLoader
 	User      *UserLoader
 }
@@ -32,6 +33,7 @@ type DataLoaders struct {
 	Property       PropertyDataLoader
 	PropertySchema PropertySchemaDataLoader
 	Scene          SceneDataLoader
+	Story          StoryDataLoader
 	Workspace      WorkspaceDataLoader
 	User           UserDataLoader
 }
@@ -48,6 +50,7 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Project:   NewProjectLoader(usecases.Project),
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
+		Story:     NewStoryLoader(usecases.StoryTelling),
 		Workspace: NewWorkspaceLoader(usecases.Workspace),
 		User:      NewUserLoader(usecases.User),
 	}

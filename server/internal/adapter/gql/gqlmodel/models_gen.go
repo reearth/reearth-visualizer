@@ -196,10 +196,8 @@ type CreateProjectInput struct {
 	Visualizer  Visualizer `json:"visualizer"`
 	Name        *string    `json:"name,omitempty"`
 	Description *string    `json:"description,omitempty"`
-	ImageURL    *url.URL   `json:"imageUrl,omitempty"`
-	Alias       *string    `json:"alias,omitempty"`
-	Archived    *bool      `json:"archived,omitempty"`
 	CoreSupport *bool      `json:"coreSupport,omitempty"`
+	Visibility  *string    `json:"visibility,omitempty"`
 }
 
 type CreateSceneInput struct {
@@ -708,6 +706,7 @@ type Project struct {
 	TrackingID        string            `json:"trackingId"`
 	Starred           bool              `json:"starred"`
 	IsDeleted         bool              `json:"isDeleted"`
+	Visibility        string            `json:"visibility"`
 }
 
 func (Project) IsNode()        {}
@@ -1080,6 +1079,11 @@ type Story struct {
 func (Story) IsNode()        {}
 func (this Story) GetID() ID { return this.ID }
 
+type StoryAliasAvailability struct {
+	Alias     string `json:"alias"`
+	Available bool   `json:"available"`
+}
+
 type StoryBlock struct {
 	ID          ID               `json:"id"`
 	PluginID    ID               `json:"pluginId"`
@@ -1254,7 +1258,6 @@ type UpdateProjectInput struct {
 	IsBasicAuthActive *bool    `json:"isBasicAuthActive,omitempty"`
 	BasicAuthUsername *string  `json:"basicAuthUsername,omitempty"`
 	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
-	Alias             *string  `json:"alias,omitempty"`
 	ImageURL          *url.URL `json:"imageUrl,omitempty"`
 	PublicTitle       *string  `json:"publicTitle,omitempty"`
 	PublicDescription *string  `json:"publicDescription,omitempty"`
@@ -1267,6 +1270,7 @@ type UpdateProjectInput struct {
 	SceneID           *ID      `json:"sceneId,omitempty"`
 	Starred           *bool    `json:"starred,omitempty"`
 	Deleted           *bool    `json:"deleted,omitempty"`
+	Visibility        *string  `json:"visibility,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
@@ -1302,7 +1306,6 @@ type UpdateStoryInput struct {
 	IsBasicAuthActive *bool     `json:"isBasicAuthActive,omitempty"`
 	BasicAuthUsername *string   `json:"basicAuthUsername,omitempty"`
 	BasicAuthPassword *string   `json:"basicAuthPassword,omitempty"`
-	Alias             *string   `json:"alias,omitempty"`
 	PublicTitle       *string   `json:"publicTitle,omitempty"`
 	PublicDescription *string   `json:"publicDescription,omitempty"`
 	PublicImage       *string   `json:"publicImage,omitempty"`

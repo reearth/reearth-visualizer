@@ -1,32 +1,13 @@
 package project
 
 import (
+	"errors"
 	"net/url"
-	"regexp"
 	"time"
 
-	"github.com/reearth/reearth/server/pkg/i18n/message"
-	"github.com/reearth/reearth/server/pkg/i18n/message/entitymsg"
-	"github.com/reearth/reearth/server/pkg/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"golang.org/x/text/language"
-)
-
-var (
-	ErrInvalidAlias = verror.NewVError(
-		errmsg.ErrKeyPkgProjectInvalidAlias,
-		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias],
-		message.MultiLocaleTemplateData(map[string]interface{}{
-			"minLength": 5,
-			"maxLength": 32,
-			"allowedChars": func(locale language.Tag) string {
-				return entitymsg.GetLocalizedEntityMessage(entitymsg.EntityKeyPkgProjectAliasAllowedChars, locale)
-			},
-		}), nil)
-	aliasRegexp = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
 type Project struct {
@@ -54,6 +35,7 @@ type Project struct {
 	sceneId           id.SceneID
 	starred           bool
 	isDeleted         bool
+	visibility        string
 }
 
 func (p *Project) ID() id.ProjectID {
@@ -86,6 +68,10 @@ func (p *Project) PublishedAt() time.Time {
 
 func (p *Project) Name() string {
 	return p.name
+}
+
+func (p *Project) Visibility() string {
+	return p.visibility
 }
 
 func (p *Project) Description() string {
@@ -207,17 +193,20 @@ func (p *Project) UpdateName(name string) {
 	p.name = name
 }
 
+func (p *Project) UpdateVisibility(visibility string) error {
+	if visibility != "public" && visibility != "private" {
+		return errors.New("visibility must be either 'public' or 'private'")
+	}
+	p.visibility = visibility
+	return nil
+}
+
 func (p *Project) UpdateDescription(description string) {
 	p.description = description
 }
 
-func (p *Project) UpdateAlias(alias string) error {
-	if CheckAliasPattern(alias) {
-		p.alias = alias
-	} else {
-		return ErrInvalidAlias.AddTemplateData("aliasName", alias)
-	}
-	return nil
+func (p *Project) UpdateAlias(alias string) {
+	p.alias = alias
 }
 
 func (p *Project) UpdatePublicTitle(publicTitle string) {
@@ -275,8 +264,4 @@ func (p *Project) MatchWithPublicName(name string) bool {
 		return true
 	}
 	return false
-}
-
-func CheckAliasPattern(alias string) bool {
-	return alias != "" && aliasRegexp.Match([]byte(alias))
 }

@@ -21,9 +21,6 @@ func (b *Builder) Build() (*Project, error) {
 	if b.p.id.IsNil() {
 		return nil, id.ErrInvalidID
 	}
-	if b.p.alias != "" && !CheckAliasPattern(b.p.alias) {
-		return nil, ErrInvalidAlias
-	}
 	if b.p.updatedAt.IsZero() {
 		b.p.updatedAt = b.p.CreatedAt()
 	}
@@ -80,6 +77,11 @@ func (b *Builder) PublishedAt(publishedAt time.Time) *Builder {
 
 func (b *Builder) Name(name string) *Builder {
 	b.p.name = name
+	return b
+}
+
+func (b *Builder) Visibility(visibility string) *Builder {
+	b.p.visibility = visibility
 	return b
 }
 

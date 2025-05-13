@@ -19,6 +19,8 @@ export type ButtonProps = {
   onClick?: (e: MouseEvent<HTMLElement>) => void;
   onMouseEnter?: (e: MouseEvent<HTMLElement>) => void;
   onMouseLeave?: (e: MouseEvent<HTMLElement>) => void;
+  ariaLabel?: string;
+  "data-testid"?: string;
 } & Pick<IconProps, "placement" | "tooltipText">;
 
 export const Button: FC<ButtonProps> = ({
@@ -38,7 +40,9 @@ export const Button: FC<ButtonProps> = ({
   placement,
   onClick,
   onMouseEnter,
-  onMouseLeave
+  onMouseLeave,
+  ariaLabel,
+  "data-testid": dataTestId
 }) => {
   return (
     <StyledButton
@@ -52,6 +56,8 @@ export const Button: FC<ButtonProps> = ({
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      aria-label={iconButton || !title ? ariaLabel : undefined}
+      data-testid={dataTestId}
     >
       {icon && (
         <Icon
@@ -59,6 +65,7 @@ export const Button: FC<ButtonProps> = ({
           color={iconColor}
           tooltipText={tooltipText}
           placement={placement}
+          aria-hidden="true"
         />
       )}
       {!iconButton && title}
@@ -68,13 +75,17 @@ export const Button: FC<ButtonProps> = ({
   );
 };
 
-const StyledButton = styled("button")<{
+const StyledButton = styled("button", {
+  shouldForwardProp: (prop) =>
+    !["extendWidth", "iconButton", "minWidth"].includes(prop)
+})<{
   size: "normal" | "small";
   appearance: "primary" | "secondary" | "dangerous" | "simple";
   iconButton?: boolean;
   extendWidth?: boolean;
   minWidth?: number;
   background?: string;
+  "data-testid"?: string;
 }>(
   ({
     appearance,

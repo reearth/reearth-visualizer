@@ -8,8 +8,14 @@ func TestValidateGeoJsonOfAssets(t *testing.T) {
 	e := Server(t, baseSeeder)
 
 	teamId := wID.String()
-	pId := createProject(e, "test")
-	_, _, sId := createScene(e, pId)
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, pId)
 
 	tests := []struct {
 		name     string
@@ -223,8 +229,15 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			e := Server(t, baseSeeder)
-			pId := createProject(e, "test")
-			_, _, sId := createScene(e, pId)
+			pId := createProject(e, uID, map[string]any{
+				"name":        "test",
+				"description": "abc",
+				"teamId":      wID.String(),
+				"visualizer":  "CESIUM",
+				"coreSupport": true,
+			})
+
+			sId := createScene(e, pId)
 			res := addNLSLayerSimpleByGeojson(e, sId, tt.url, "test", 0)
 			if tt.hasError {
 				res.Object().Value("errors").Array().NotEmpty()
@@ -238,8 +251,14 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 func TestValidateGeoFormData(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
-	_, _, sId := createScene(e, pId)
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, pId)
 	tests := []struct {
 		name     string
 		geometry map[string]any

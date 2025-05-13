@@ -16,7 +16,7 @@ func ToStory(s *storytelling.Story) *Story {
 		PropertyID:        IDFrom(s.Property()),
 		Property:          nil,
 		Pages:             ToPages(s.Pages()),
-		PublishmentStatus: ToStoryPublishmentStatus(s.Status()),
+		PublishmentStatus: ToStoryPublishmentStatus(s.PublishmentStatus()),
 		CreatedAt:         s.Id().Timestamp(),
 		UpdatedAt:         s.UpdatedAt(),
 		PublishedAt:       s.PublishedAt(),

@@ -176,8 +176,14 @@ func deleteGeoJSONFeature(
 func TestFeatureCollectionCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
-	_, _, sId := createScene(e, pId)
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
 	res.Object().

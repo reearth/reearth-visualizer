@@ -3,11 +3,20 @@
     "message": "An unknown error occurred.",
     "description": "The cause of the error cannot be determined."
   },
-  "repo": {
-    "resource_not_found": {
-      "message": "Resource not found.",
-      "description": "The resource does not exist or you do not have access."
+  "usecase": {
+    "repo": {
+      "resource_not_found": {
+        "message": "Resource not found.",
+        "description": "The resource does not exist or you do not have access."
+      }
+    },
+    "interface": {
+      "project": {
+        "alias_already_used": {
+          "message": "The project alias is already used by another project.",
+          "description": "The name is already token by other users. Please choose a different name."
+        }
+      }
     }
   }
 }
-

@@ -88,7 +88,27 @@ func ZipBasePath(zr *zip.Reader) (b string) {
 	return
 }
 
+func FileSizeCheck(sizeMB int, file io.ReadSeeker) error {
+	const MB = 1024 * 1024
+	maxFileSize := int64(sizeMB) * MB
+	fileSize, err := file.Seek(0, io.SeekEnd)
+	if err != nil {
+		return fmt.Errorf("failed to get file size: %w", err)
+	}
+	if fileSize > maxFileSize {
+		return fmt.Errorf("file size (%.2fMB) exceeds %dMB limit", float64(fileSize)/float64(MB), sizeMB)
+	}
+	if _, err := file.Seek(0, io.SeekStart); err != nil {
+		return fmt.Errorf("failed to reset file position: %w", err)
+	}
+	return nil
+}
+
 func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[string]*zip.File, map[string]*zip.File, error) {
+	// 500MB
+	if err := FileSizeCheck(500, file); err != nil {
+		return nil, nil, nil, err
+	}
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
 		return nil, nil, nil, err

@@ -8,11 +8,10 @@ import { resolve } from "path";
 import yaml from "@rollup/plugin-yaml";
 import react from "@vitejs/plugin-react-swc";
 import { readEnv } from "read-env";
-import { defineConfig, loadEnv, type Plugin } from "vite";
+import { defineConfig, loadEnv, PluginOption, type Plugin } from "vite";
 import cesium from "vite-plugin-cesium";
 import svgr from "vite-plugin-svgr";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { configDefaults } from "vitest/config";
 
 import pkg from "./package.json";
 
@@ -44,7 +43,7 @@ export default defineConfig({
   plugins: [
     svgr(),
     react(),
-    yaml(),
+    yaml() as PluginOption,
     cesium({
       cesiumBaseUrl: cesiumVersion ? `cesium-${cesiumVersion}/` : undefined
     }),
@@ -79,27 +78,6 @@ export default defineConfig({
   resolve: {
     alias: [
       { find: "crypto", replacement: "crypto-js" } // quickjs-emscripten
-    ]
-  },
-  test: {
-    environment: "jsdom",
-    setupFiles: ["src/test/setup.ts"],
-    exclude: [...configDefaults.exclude, "e2e/*"],
-    coverage: {
-      all: true,
-      include: ["src/**/*.ts", "src/**/*.tsx"],
-      exclude: [
-        "src/**/*.d.ts",
-        "src/**/*.cy.tsx",
-        "src/**/*.stories.tsx",
-        "src/beta/services/gql/__gen__/**/*",
-        "src/test/**/*"
-      ],
-      reporter: ["text", "json", "lcov"]
-    },
-    alias: [
-      { find: "crypto", replacement: "crypto" }, // reset setting for quickjs-emscripten
-      { find: "csv-parse", replacement: "csv-parse" }
     ]
   }
 });

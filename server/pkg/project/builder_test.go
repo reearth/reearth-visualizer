@@ -167,19 +167,20 @@ func TestBuilder_Build(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
 
 	type args struct {
-		name, description  string
-		alias, publicTitle string
-		publicDescription  string
-		publicImage        string
-		id                 id.ProjectID
-		isArchived         bool
-		updatedAt          time.Time
-		publishedAt        time.Time
-		imageURL           *url.URL
-		publicNoIndex      bool
-		workspace          accountdomain.WorkspaceID
-		visualizer         visualizer.Visualizer
-		publishmentStatus  PublishmentStatus
+		name, description string
+		// alias,
+		publicTitle       string
+		publicDescription string
+		publicImage       string
+		id                id.ProjectID
+		isArchived        bool
+		updatedAt         time.Time
+		publishedAt       time.Time
+		imageURL          *url.URL
+		publicNoIndex     bool
+		workspace         accountdomain.WorkspaceID
+		visualizer        visualizer.Visualizer
+		publishmentStatus PublishmentStatus
 	}
 
 	tests := []struct {
@@ -191,9 +192,9 @@ func TestBuilder_Build(t *testing.T) {
 		{
 			name: "build normal project",
 			args: args{
-				name:              "xxx.aaa",
-				description:       "ddd",
-				alias:             "aaaaa",
+				name:        "xxx.aaa",
+				description: "ddd",
+				// alias:             "c-" + pid.String(),
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -208,10 +209,10 @@ func TestBuilder_Build(t *testing.T) {
 				publishmentStatus: "ppp",
 			},
 			expected: &Project{
-				id:                pid,
-				description:       "ddd",
-				name:              "xxx.aaa",
-				alias:             "aaaaa",
+				id:          pid,
+				description: "ddd",
+				name:        "xxx.aaa",
+				// alias:             "c-" + pid.String(),
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -231,22 +232,14 @@ func TestBuilder_Build(t *testing.T) {
 				id: pid,
 			},
 			expected: &Project{
-				id:        pid,
+				id: pid,
+				// alias:     "c-" + pid.String(),
 				updatedAt: pid.Timestamp(),
 			},
 		},
 		{
 			name: "failed invalid id",
 			err:  id.ErrInvalidID,
-		},
-		{
-			name: "failed invalid alias",
-			args: args{
-				id:    id.NewProjectID(),
-				alias: "xxx.aaa",
-			},
-			expected: nil,
-			err:      ErrInvalidAlias,
 		},
 	}
 
@@ -266,7 +259,7 @@ func TestBuilder_Build(t *testing.T) {
 				Workspace(tt.args.workspace).
 				ImageURL(tt.args.imageURL).
 				Name(tt.args.name).
-				Alias(tt.args.alias).
+				// Alias(tt.args.alias).
 				Visualizer(tt.args.visualizer).
 				UpdatedAt(tt.args.updatedAt).
 				Description(tt.args.description).
@@ -288,22 +281,23 @@ func TestBuilder_MustBuild(t *testing.T) {
 	tid := accountdomain.NewWorkspaceID()
 
 	type args struct {
-		name, description  string
-		alias, publicTitle string
-		publicDescription  string
-		publicImage        string
-		id                 id.ProjectID
-		isArchived         bool
-		updatedAt          time.Time
-		publishedAt        time.Time
-		imageURL           *url.URL
-		publicNoIndex      bool
-		workspace          accountdomain.WorkspaceID
-		visualizer         visualizer.Visualizer
-		publishmentStatus  PublishmentStatus
-		trackingId         string
-		enableGa           bool
-		starred            bool
+		name, description string
+		// alias,
+		publicTitle       string
+		publicDescription string
+		publicImage       string
+		id                id.ProjectID
+		isArchived        bool
+		updatedAt         time.Time
+		publishedAt       time.Time
+		imageURL          *url.URL
+		publicNoIndex     bool
+		workspace         accountdomain.WorkspaceID
+		visualizer        visualizer.Visualizer
+		publishmentStatus PublishmentStatus
+		trackingId        string
+		enableGa          bool
+		starred           bool
 	}
 
 	tests := []struct {
@@ -315,9 +309,9 @@ func TestBuilder_MustBuild(t *testing.T) {
 		{
 			name: "build normal project",
 			args: args{
-				name:              "xxx.aaa",
-				description:       "ddd",
-				alias:             "aaaaa",
+				name:        "xxx.aaa",
+				description: "ddd",
+				// alias:             "aaaaa",
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -335,10 +329,10 @@ func TestBuilder_MustBuild(t *testing.T) {
 				starred:           true,
 			},
 			expected: &Project{
-				id:                pid,
-				description:       "ddd",
-				name:              "xxx.aaa",
-				alias:             "aaaaa",
+				id:          pid,
+				description: "ddd",
+				name:        "xxx.aaa",
+				// alias:             "aaaaa",
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
@@ -361,21 +355,14 @@ func TestBuilder_MustBuild(t *testing.T) {
 				id: pid,
 			},
 			expected: &Project{
-				id:        pid,
+				id: pid,
+				// alias:     "c-" + pid.String(),
 				updatedAt: pid.Timestamp(),
 			},
 		},
 		{
 			name: "failed invalid id",
 			err:  id.ErrInvalidID,
-		},
-		{
-			name: "failed invalid alias",
-			args: args{
-				id:    id.NewProjectID(),
-				alias: "xxx.aaa",
-			},
-			err: ErrInvalidAlias,
 		},
 	}
 
@@ -398,7 +385,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 					Workspace(tt.args.workspace).
 					ImageURL(tt.args.imageURL).
 					Name(tt.args.name).
-					Alias(tt.args.alias).
+					// Alias(tt.args.alias).
 					Visualizer(tt.args.visualizer).
 					UpdatedAt(tt.args.updatedAt).
 					Description(tt.args.description).

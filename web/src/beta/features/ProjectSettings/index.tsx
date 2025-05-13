@@ -9,7 +9,7 @@ import {
 } from "@reearth/beta/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useMemo } from "react";
+import { FC, useMemo } from "react";
 
 import CursorStatus from "../CursorStatus";
 
@@ -30,13 +30,17 @@ export const projectSettingsTabs = [
 
 export type ProjectSettingsTab = (typeof projectSettingsTabs)[number];
 
-type Props = {
+export type ProjectSettingsProps = {
   projectId: string;
   tab?: ProjectSettingsTab;
   subId?: string;
 };
 
-const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
+const ProjectSettings: FC<ProjectSettingsProps> = ({
+  projectId,
+  tab,
+  subId
+}) => {
   const t = useT();
   const {
     sceneId,
@@ -53,10 +57,12 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
-    handleUpdateStory
+    handleUpdateStory,
+    handleUpdateStoryAlias
   } = useHooks({
     projectId,
-    subId
+    subId,
+    tab
   });
 
   const tabs = useMemo(
@@ -65,34 +71,52 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
         id: "general",
         text: t("General"),
         icon: "setting" as const,
-        path: `/settings/projects/${projectId}/`
+        path: `/settings/projects/${projectId}/`,
+        active: tab === "general"
       },
       {
         id: "story",
         text: t("Story"),
         icon: "sidebar" as const,
-        path: `/settings/projects/${projectId}/story`
+        path: `/settings/projects/${projectId}/story`,
+        active: tab === "story"
       },
       {
         id: "public",
         text: t("Public"),
         icon: "paperPlaneTilt" as const,
-        path: `/settings/projects/${projectId}/public`
+        path: `/settings/projects/${projectId}/public`,
+        subItem: [
+          {
+            id: "scene",
+            text: t("Scene"),
+            path: `/settings/projects/${projectId}/public`,
+            active: tab === "public" && !subId
+          },
+          ...stories.map((s) => ({
+            id: s.id,
+            text: `${t("Story")} ${s.title}`,
+            path: `/settings/projects/${projectId}/public/${s.id}`,
+            active: tab === "public" && subId === s.id
+          }))
+        ]
       },
       {
         id: "assets",
         text: t("Assets"),
         icon: "file" as const,
-        path: `/settings/projects/${projectId}/assets`
+        path: `/settings/projects/${projectId}/assets`,
+        active: tab === "assets"
       },
       {
         id: "plugins",
         text: t("Plugin"),
         icon: "puzzlePiece" as const,
-        path: `/settings/projects/${projectId}/plugins`
+        path: `/settings/projects/${projectId}/plugins`,
+        active: tab === "plugins"
       }
     ],
-    [projectId, t]
+    [projectId, stories, tab, subId, t]
   );
 
   return (
@@ -113,8 +137,10 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
                     key={t.id}
                     path={t.path}
                     text={t.text}
-                    active={t.id === tab}
+                    active={t.active}
                     icon={t.icon}
+                    subItem={t.subItem}
+                    openSubItem={true}
                   />
                 ))}
               </SidebarButtonsWrapper>
@@ -141,9 +167,10 @@ const ProjectSettings: React.FC<Props> = ({ projectId, tab, subId }) => {
           {tab === "public" && project && (
             <PublicSettings
               project={project}
-              stories={stories}
+              sceneId={sceneId}
+              isStory={!!subId}
               currentStory={currentStory}
-              subId={subId}
+              onUpdateStoryAlias={handleUpdateStoryAlias}
               onUpdateStory={handleUpdateStory}
               onUpdateProject={handleUpdateProject}
               onUpdateProjectBasicAuth={handleUpdateProjectBasicAuth}

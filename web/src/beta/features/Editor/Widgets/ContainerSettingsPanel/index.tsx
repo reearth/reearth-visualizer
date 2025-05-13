@@ -24,12 +24,17 @@ const ContainerSettingsPanel: FC = () => {
   const t = useT();
 
   return widgetArea ? (
-    <Panel title={t("Container Settings")} alwaysOpen extend>
+    <Panel
+      dataTestid="settings-panel"
+      title={t("Container Settings")}
+      alwaysOpen
+      extend
+    >
       <FieldsWrapper>
         <NumberField
           title={t("Padding top")}
           value={widgetArea?.padding?.top.toString()}
-          onBlur={(newVal) => {
+          onChangeComplete={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
               padding: {
@@ -42,7 +47,7 @@ const ContainerSettingsPanel: FC = () => {
         <NumberField
           title={t("Padding right")}
           value={widgetArea?.padding?.right.toString()}
-          onBlur={(newVal) => {
+          onChangeComplete={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
               padding: {
@@ -55,7 +60,7 @@ const ContainerSettingsPanel: FC = () => {
         <NumberField
           title={t("Padding bottom")}
           value={widgetArea?.padding?.bottom.toString()}
-          onBlur={(newVal) => {
+          onChangeComplete={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
               padding: {
@@ -68,7 +73,7 @@ const ContainerSettingsPanel: FC = () => {
         <NumberField
           title={t("Padding left")}
           value={widgetArea?.padding?.left.toString()}
-          onBlur={(newVal) => {
+          onChangeComplete={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
               padding: {
@@ -82,7 +87,7 @@ const ContainerSettingsPanel: FC = () => {
         <NumberField
           title={t("Gap spacing")}
           value={(widgetArea?.gap ?? 6).toString()}
-          onBlur={(newVal) => {
+          onChangeComplete={(newVal) => {
             handleWidgetAreaStateChange({
               ...widgetArea,
               gap: Number(newVal)
