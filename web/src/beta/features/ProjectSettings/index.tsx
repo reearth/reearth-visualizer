@@ -167,6 +167,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
           {tab === "public" && project && (
             <PublicSettings
               project={project}
+              sceneId={sceneId}
               isStory={!!subId}
               currentStory={currentStory}
               onUpdateStoryAlias={handleUpdateStoryAlias}
