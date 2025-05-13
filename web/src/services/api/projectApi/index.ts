@@ -124,7 +124,9 @@ export default () => {
     return { deletedProjects, ...rest };
   }, []);
 
-  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS);
+  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS, {
+    fetchPolicy: "network-only" // Disable caching for this query
+  });
 
   const checkProjectAlias = useCallback(
     async (alias: string, projectId?: string) => {
