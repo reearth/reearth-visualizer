@@ -224,7 +224,7 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
 			return false, err
 		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
 		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -269,7 +269,7 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
 				return false, err
 			}
-			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 				return false, err
 			}
 			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -341,7 +341,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
 			return nil, err
 		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
+		if err := i.projectRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
 			return nil, err
 		}
 		if err = i.storytellingRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
