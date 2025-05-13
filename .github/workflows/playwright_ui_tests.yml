@@ -8,7 +8,21 @@ on:
     branches: [main]
 
 jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check for changes in the web directory
+        id: changes
+        uses: reearth/changed-files@v1
+        with:
+          paths: |
+            web/**
+
   test:
+    if: steps.changes.outputs.any_changed == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
