@@ -145,7 +145,7 @@ export default () => {
       });
 
       if (errors || !data?.publishStory) {
-        setNotification({ type: "error", text: t("Failed to updated story.") });
+        setNotification({ type: "error", text: t("Failed to update story.") });
 
         return { status: "error" };
       }

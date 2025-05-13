@@ -589,9 +589,9 @@ Successfully published your scene!: シーンの公開に成功しました！
 Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
 Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
-Successfully updated your scene!: 'シーンの更新されました！'
-Successfully updated your scene with search engine indexing!: '検索エンジンのインデックスを含めてシーンの更新に成功しました！'
-Successfully updated your scene. Now nobody can access your scene.: 'シーンの更新に成功しました。現在、誰も閲覧することはできません。'
+Successfully updated your scene!: シーンの更新されました！
+Successfully updated your scene with search engine indexing!: 検索エンジンのインデックスを含めてシーンの更新に成功しました！
+Successfully updated your scene. Now nobody can access your scene.: シーンの更新に成功しました。現在、誰も閲覧することはできません。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
 Failed to move to the Recycle bin.: ゴミ箱への移動に失敗しました。
 Failed to recover the project!: プロジェクトの復元に失敗しました。
@@ -617,10 +617,9 @@ Failed to publish story.: ストーリーの公開に失敗しました。
 Successfully published your story!: ストーリーの公開に成功しました！
 Successfully published your story with search engine indexing!: 検索エンジンのインデックスを含めてストーリーの公開に成功しました！
 Successfully unpublished your story. Now nobody can access your story.: ストーリーは非公開状態です。現在、誰も閲覧することはできません。
-Failed to updated story.: 'ストーリーの更新に失敗しました。'
-Successfully updated your story!: 'ストーリーの更新に成功しました！'
-Successfully updated your story with search engine indexing!: '検索エンジンのインデックスを含めてストーリーの更新に成功しました！'
-Successfully updated your story. Now nobody can access your story.: 'ストーリーの更新に成功しました。現在、誰も閲覧することはできません。'
+Successfully updated your story!: ストーリーの更新に成功しました！
+Successfully updated your story with search engine indexing!: 検索エンジンのインデックスを含めてストーリーの更新に成功しました！
+Successfully updated your story. Now nobody can access your story.: ストーリーの更新に成功しました。現在、誰も閲覧することはできません。
 Failed to create page.: ページの作成に失敗しました。
 Successfully created a page!: ページの作成に成功しました！
 Failed to delete page.: ページの削除に失敗しました。
