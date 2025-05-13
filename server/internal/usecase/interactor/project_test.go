@@ -12,7 +12,11 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/alias"
+	"github.com/reearth/reearth/server/pkg/builtin"
+	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/property"
+	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -195,6 +199,25 @@ func TestProject_CheckAlias(t *testing.T) {
 	_ = uc.projectRepo.Save(ctx, pj)
 	pid := pj.ID()
 
+	sid := id.NewSceneID()
+	schema := builtin.GetPropertySchemaByVisualizer(visualizer.VisualizerCesiumBeta)
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sid).Build()
+	if err != nil {
+		panic(err)
+	}
+	ps := scene.NewPlugins([]*scene.Plugin{
+		scene.NewPlugin(id.OfficialPluginID, nil),
+	})
+	sc := factory.NewScene(func(p *scene.Builder) {
+		p.ID(sid)
+		p.Project(pid)
+		p.Workspace(pj.Workspace())
+		p.Property(prop.ID())
+		p.Plugins(ps)
+	})
+
+	err = uc.sceneRepo.Save(ctx, sc)
+	assert.NoError(t, err)
 	t.Run("when alias is valid", func(t *testing.T) {
 
 		t.Run("when alias length is valid max length", func(t *testing.T) {
