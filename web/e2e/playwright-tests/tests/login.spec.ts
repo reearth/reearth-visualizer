@@ -18,6 +18,7 @@ test.describe("Login Page Tests", () => {
   let dashBoardPage: DashBoardPage;
 
   test.beforeAll(async ({ browser }) => {
+    test.setTimeout(20000);
     context = await browser.newContext({
       recordVideo: {
         dir: "videos/",
@@ -30,7 +31,7 @@ test.describe("Login Page Tests", () => {
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
   });
 
-  test.afterEach(async ({ }, testInfo) => {
+  test.afterEach(async ({}, testInfo) => {
     const videoPath = await page.video()?.path();
     if (videoPath) {
       await testInfo.attach("video", {

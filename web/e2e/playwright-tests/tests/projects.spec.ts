@@ -29,6 +29,7 @@ test.describe("Project Management", () => {
   let recycleBinPage: RecycleBinPage;
   let projectScreenPage: ProjectScreenPage;
   test.beforeAll(async ({ browser }) => {
+    test.setTimeout(20000);
     context = await browser.newContext({
       recordVideo: {
         dir: "videos/",
@@ -162,7 +163,7 @@ test.describe("Project Management", () => {
     await dashBoardPage.projects.click();
     await projectsPage.importProject(docPath);
     await projectsPage.verifyImportProject("Test_Asset_migration");
-    await expect(page.getByText("Test_Asset_migration")).toBeVisible({
+    await expect(page.getByText("Test_Asset_migration").first()).toBeVisible({
       timeout: 20000
     });
   });
@@ -176,15 +177,74 @@ test.describe("Project Management", () => {
     });
   });
 
-  test("Should delete the imported project", async () => {
-    await page.goto(REEARTH_WEB_E2E_BASEURL);
-    await dashBoardPage.projects.click();
-    await expect(page.getByText("Test_Asset_migration")).toBeVisible({
-      timeout: 20000
+  test.describe("Delete the Imported Project", () => {
+    let context: BrowserContext;
+    let page: Page;
+    let loginPage: LoginPage;
+    let dashBoardPage: DashBoardPage;
+    let projectsPage: ProjectsPage;
+    let recycleBinPage: RecycleBinPage;
+    let projectScreenPage: ProjectScreenPage;
+    test.beforeAll(async ({ browser }) => {
+      test.setTimeout(20000);
+      context = await browser.newContext({
+        recordVideo: {
+          dir: "videos/",
+          size: { width: 1280, height: 720 }
+        }
+      });
+      page = await context.newPage();
+      loginPage = new LoginPage(page);
+      dashBoardPage = new DashBoardPage(page);
+      projectsPage = new ProjectsPage(page);
+      recycleBinPage = new RecycleBinPage(page);
+      projectScreenPage = new ProjectScreenPage(page);
+      await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
     });
-    await projectsPage.deleteProject("Test_Asset_migration");
-    await expect(
-      page.getByText("Successfully moved to Recycle bin!")
-    ).toBeVisible();
+
+    test.afterEach(async ({}, testInfo) => {
+      const videoPath = await page.video()?.path();
+      if (videoPath) {
+        await testInfo.attach("video", {
+          path: videoPath,
+          contentType: "video/webm"
+        });
+      }
+    });
+
+    test.afterAll(async () => {
+      await context.close();
+    });
+    test("Login with valid credentials", async ({ page }) => {
+      await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
+      await expect(dashBoardPage.projects).toBeVisible();
+      await expect(dashBoardPage.assets).toBeVisible();
+      await expect(dashBoardPage.recycleBin).toBeVisible();
+      await expect(dashBoardPage.starred).toBeVisible();
+      await expect(dashBoardPage.pluginPlayground).toBeVisible();
+      await expect(dashBoardPage.documentation).toBeVisible();
+    });
+
+    test("Should delete all imported projects with the same name", async () => {
+      await dashBoardPage.projects.click();
+
+      // Repeatedly attempt to find and delete projects
+      while (true) {
+        const projectLocator = page.locator("text=Test_Asset_migration");
+
+        const count = await projectLocator.count();
+
+        if (count === 0) break; // Exit loop when no projects found
+
+        for (let i = 0; i < count; i++) {
+          await projectLocator.nth(0).click(); // Always delete the first match
+          await projectsPage.deleteProject("Test_Asset_migration");
+          await expect(
+            page.getByText("Successfully moved to Recycle bin!")
+          ).toBeVisible();
+          await page.reload(); // Refresh list before next loop
+        }
+      }
+    });
   });
 });
