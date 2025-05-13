@@ -53,7 +53,15 @@ const PublishOrUpdateModal: FC<Props> = ({
     }
     setIsPublishing(false);
     setPublishDone(true);
-  }, [publishItem.type, publishItem.storyId, publishItem.alias, publishItem.projectId, publishStory, searchEngineIndexEnabled, publishProject]);
+  }, [
+    publishItem.type,
+    publishItem.storyId,
+    publishItem.alias,
+    publishItem.projectId,
+    publishStory,
+    searchEngineIndexEnabled,
+    publishProject
+  ]);
 
   const title = useMemo(() => {
     const isStory = publishItem.type === "story";
