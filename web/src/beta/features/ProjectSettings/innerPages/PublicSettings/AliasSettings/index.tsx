@@ -76,7 +76,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
   );
 
   const handleCleanAlias = useCallback(async () => {
-    const alias = isStory ? `s-${settingsItem?.id}` : `p-${settingsItem?.id}`;
+    const alias = isStory ? `s-${settingsItem?.id}` : `c-${settingsItem?.id}`;
 
     const data = isStory
       ? await checkStoryAlias(alias, settingsItem?.id)
@@ -94,7 +94,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
   const isDisabled = useMemo(
     () =>
-      settingsItem?.alias === `p-${settingsItem?.id}` ||
+      settingsItem?.alias === `c-${settingsItem?.id}` ||
       settingsItem?.alias === `s-${settingsItem?.id}`,
     [settingsItem?.alias, settingsItem?.id]
   );
