@@ -245,6 +245,9 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
+		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
 		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
@@ -283,6 +286,9 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 				return false, err
 			}
 			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 				return false, err
 			}
 			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
@@ -351,6 +357,9 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 			return nil, err
 		}
 		if err := i.projectRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+			return nil, err
+		}
+		if err := i.sceneRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
 			return nil, err
 		}
 		if err = i.storytellingRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {

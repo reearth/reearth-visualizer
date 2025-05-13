@@ -543,7 +543,7 @@ func TestCheckProjectAlias(t *testing.T) {
 			want: want{"test-xxxxxx", true},
 		},
 		{
-			name: "alias equals sceneID",
+			name: "alias equals projectId",
 			args: args{sceneID, projectId},
 			want: want{sceneID, true},
 		},
@@ -587,7 +587,6 @@ func TestCheckProjectAlias(t *testing.T) {
 
 func TestCheckProjectAliasError(t *testing.T) {
 	e := Server(t, baseSeeder)
-	// projectId, sceneId, storyId := createProjectSet(e)
 	projectId, sceneId, storyId := createProjectSet(e)
 
 	type args struct {
