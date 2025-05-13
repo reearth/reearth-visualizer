@@ -40,6 +40,7 @@ export type StoryWithTypename = Story & WithTypename;
 
 type Props = {
   settingsItem: (SettingsProject | Story) & WithTypename;
+  sceneId?: string;
   isStory?: boolean;
   onUpdate: (settings: PublicSettingsType) => void;
   onUpdateBasicAuth: (settings: PublicBasicAuthSettingsType) => void;
@@ -56,6 +57,7 @@ type ExtensionComponentProps = (
 
 const PublicSettingsDetail: React.FC<Props> = ({
   settingsItem,
+  sceneId,
   isStory,
   onUpdate,
   onUpdateBasicAuth,
@@ -216,6 +218,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <AliasSetting
             isStory={isStory}
             settingsItem={settingsItem}
+            sceneId={sceneId}
             onUpdateAlias={onUpdateAlias}
           />
         ) : (
