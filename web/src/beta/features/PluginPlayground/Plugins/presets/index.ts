@@ -14,6 +14,7 @@ import { addPointCloud } from "./layers/add-point-cloud";
 import { addCsv } from "./layers/add-csv";
 import { addCzml } from "./layers/add-czml";
 import { addGeojson } from "./layers/add-geojson";
+import { addLargeGeojson } from "./layers/add-large-geojson";
 import { addStyledGeojson } from "./layers/add-styled-geojson";
 import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addKml } from "./layers/add-kml";
@@ -80,6 +81,7 @@ export const presetPlugins: PresetPlugins = [
     id: "layers",
     plugins: [
       addGeojson,
+      addLargeGeojson,
       addStyledGeojson,
       addCzml,
       addKml,
