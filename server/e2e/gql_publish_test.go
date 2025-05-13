@@ -29,17 +29,17 @@ func TestPublishProject(t *testing.T) {
 		"publishmentStatus": "LIMITED",
 	})
 
-	projectId, _, _ = createProjectSet(e)
+	projectId, sceneId, _ = createProjectSet(e)
 
-	// self project id
+	// self sceneId
 	res = publishProject(e, uID, map[string]any{
 		"projectId": projectId,
-		"alias":     projectId,
+		"alias":     sceneId,
 		"status":    "LIMITED",
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             projectId, // ok
+		"alias":             sceneId, // ok
 		"publishmentStatus": "LIMITED",
 	})
 
