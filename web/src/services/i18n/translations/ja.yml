@@ -348,7 +348,7 @@ Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
 Mouse Events: マウスイベント
 Add GeoJSON: GeoJSONを追加
-Add Large Geojson: データ容量が大きいGeoJSONを追加
+Add Large Geojson: 大容量のGeoJSONを追加
 Add Styled GeoJSON: ''
 Add CSV: CSVを追加
 Add KML: KMLを追加
