@@ -1,6 +1,5 @@
 import useAccountSettingsTabs from "@reearth/beta/hooks/useAccountSettingsTabs";
 import {
-  Collapse,
   TextInput,
   Typography,
   IconButton
@@ -52,53 +51,54 @@ const AccountSetting: FC = () => {
   return (
     <>
       <SettingBase tabs={tabs} tab={"account"}>
-        <InnerPage>
+        <InnerPage data-testid="inner-page" wide>
           <SettingsWrapper>
-            <Collapse size="large" title={t("Account")}>
-              <SettingsFields>
-                <InputField
-                  title={t("Name")}
-                  value={meData.name ? t(meData.name) : ""}
-                  appearance="readonly"
-                  disabled
-                />
-                <InputField
-                  title={t("Email address")}
-                  value={meData.email ? t(meData.email) : ""}
-                  appearance="readonly"
-                  disabled
-                />
+            <TitleWrapper size="body" weight="bold">
+              {t("Account")}
+            </TitleWrapper>
+            <SettingsFields>
+              <InputField
+                title={t("Name")}
+                value={meData.name ? t(meData.name) : ""}
+                appearance="readonly"
+                disabled
+              />
+              <InputField
+                title={t("Email address")}
+                value={meData.email ? t(meData.email) : ""}
+                appearance="readonly"
+                disabled
+              />
 
-                <PasswordWrapper>
-                  <Typography size="body">{t("Password")}</Typography>
-                  <PasswordInputWrapper>
-                    <TextInput
-                      value={"**********"}
-                      appearance="readonly"
-                      disabled
-                      extendWidth
-                    />
-                    <IconButton
-                      appearance="secondary"
-                      icon="pencilSimple"
-                      onClick={() => {
-                        setChangePasswordModal(true);
-                      }}
-                      size="medium"
-                      hasBorder={true}
-                    />
-                  </PasswordInputWrapper>
-                </PasswordWrapper>
-                <SelectField
-                  title={t("Language")}
-                  value={meData.lang ?? "und"}
-                  options={options}
-                  onChange={(value) => {
-                    handleUpdateUserLanguage({ lang: value as string });
-                  }}
-                />
-              </SettingsFields>
-            </Collapse>
+              <PasswordWrapper>
+                <Typography size="body">{t("Password")}</Typography>
+                <PasswordInputWrapper>
+                  <TextInput
+                    value={"**********"}
+                    appearance="readonly"
+                    disabled
+                    extendWidth
+                  />
+                  <IconButton
+                    appearance="secondary"
+                    icon="pencilSimple"
+                    onClick={() => {
+                      setChangePasswordModal(true);
+                    }}
+                    size="medium"
+                    hasBorder={true}
+                  />
+                </PasswordInputWrapper>
+              </PasswordWrapper>
+              <SelectField
+                title={t("Language")}
+                value={meData.lang ?? "und"}
+                options={options}
+                onChange={(value) => {
+                  handleUpdateUserLanguage({ lang: value as string });
+                }}
+              />
+            </SettingsFields>
           </SettingsWrapper>
 
           <PasswordModal
@@ -146,11 +146,17 @@ const SettingsWrapper = styled("div")(({ theme }) => ({
   flex: 1,
   ["> div:not(:last-child)"]: {
     borderBottom: `1px solid ${theme.outline.weaker}`
-  }
+  },
+  padding: `${theme.spacing.normal}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));
 
 const SettingsFields = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.largest
+}));
+
+const TitleWrapper = styled(Typography)(({ theme }) => ({
+  color: theme.content.main,
+  paddingBottom: theme.spacing.normal
 }));

@@ -185,6 +185,7 @@ const LayerItem: FC<LayerItemProps> = ({
         optionsMenu={optionsMenu}
         optionsMenuWidth={150}
         actions={hoverActions}
+        dataTestid="layer-item"
       />
       {showDeleteLayerConfirmModal && (
         <ConfirmModal

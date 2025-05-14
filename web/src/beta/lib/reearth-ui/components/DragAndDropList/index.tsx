@@ -20,6 +20,8 @@ export interface DragAndDropListProps<T extends ItemInterface> {
   dragDisabled?: boolean;
   onMoveStart?: () => void;
   onMoveEnd?: (itemId?: string, newIndex?: number) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 }
 
 const GHOST_CLASSNAME = "reearth-visualizer-dnd-ghost";
@@ -34,7 +36,9 @@ export const DragAndDropList = <T extends ItemInterface>({
   gap = "small",
   dragDisabled,
   onMoveStart,
-  onMoveEnd
+  onMoveEnd,
+  ariaLabel,
+  dataTestid
 }: DragAndDropListProps<T>) => {
   const handleSetList = (
     newState: ItemInterface[],
@@ -56,28 +60,32 @@ export const DragAndDropList = <T extends ItemInterface>({
   );
 
   return (
-    <StyledReactSortable
-      list={items}
-      setList={handleSetList}
-      group={group}
-      className={className}
-      gap={gap}
-      handle={handleClassName ? `.${handleClassName}` : undefined}
-      animation={150}
-      ghostClass={GHOST_CLASSNAME}
-      filter={`.${NO_DRAG_CLASSNAME}`}
-      onStart={handleStart}
-      onEnd={handleEnd}
-    >
-      {items?.map((item) => (
-        <ItemWrapper
-          key={item.id}
-          className={dragDisabled ? NO_DRAG_CLASSNAME : ""}
-        >
-          {item.content}
-        </ItemWrapper>
-      ))}
-    </StyledReactSortable>
+    <div role="list" aria-label={ariaLabel} data-testid={dataTestid}>
+      <StyledReactSortable
+        list={items}
+        setList={handleSetList}
+        group={group}
+        className={className}
+        gap={gap}
+        handle={handleClassName ? `.${handleClassName}` : undefined}
+        animation={150}
+        ghostClass={GHOST_CLASSNAME}
+        filter={`.${NO_DRAG_CLASSNAME}`}
+        onStart={handleStart}
+        onEnd={handleEnd}
+      >
+        {items?.map((item, index) => (
+          <ItemWrapper
+            key={item.id}
+            className={dragDisabled ? NO_DRAG_CLASSNAME : ""}
+            role="listitem"
+            data-testid={dataTestid && `${dataTestid}-${index}`}
+          >
+            {item.content}
+          </ItemWrapper>
+        ))}
+      </StyledReactSortable>
+    </div>
   );
 };
 

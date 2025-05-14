@@ -36,7 +36,7 @@ const LeftSidePanel: FC<Props> = ({
   onWorkspaceChange
 }) => {
   return (
-    <SidebarWrapper>
+    <SidebarWrapper data-testid="left-side-panel">
       <SidebarMainSection>
         <LogoWrapper />
         <SidebarDivider />
@@ -57,6 +57,7 @@ const LeftSidePanel: FC<Props> = ({
               icon={tab.icon}
               active={tab.id === currentTab}
               disabled={tab.disabled}
+              data-testid={`sidebar-tab-${tab.id}`}
               tileComponent={tab.tileComponent}
             />
           ))}
@@ -76,6 +77,7 @@ const LeftSidePanel: FC<Props> = ({
               icon={tab.icon}
               active={tab.id === currentTab}
               disabled={tab.disabled}
+              data-testid={`sidebar-tab-${tab.id}`}
               tileComponent={tab.tileComponent}
             />
           ))}

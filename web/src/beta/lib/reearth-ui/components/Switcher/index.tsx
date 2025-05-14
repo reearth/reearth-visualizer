@@ -5,9 +5,17 @@ export type SwitcherProps = {
   value?: boolean;
   disabled?: boolean;
   onChange?: (value: boolean) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
-export const Switcher: FC<SwitcherProps> = ({ value, disabled, onChange }) => {
+export const Switcher: FC<SwitcherProps> = ({
+  value,
+  disabled,
+  onChange,
+  ariaLabel,
+  dataTestid
+}) => {
   const [isOn, setIsOn] = useState(!!value);
 
   const handleClick = () => {
@@ -22,7 +30,15 @@ export const Switcher: FC<SwitcherProps> = ({ value, disabled, onChange }) => {
   }, [value]);
 
   return (
-    <SwitcherContainer onClick={handleClick} isOn={isOn} disabled={disabled}>
+    <SwitcherContainer
+      onClick={handleClick}
+      isOn={isOn}
+      disabled={disabled}
+      role="switch"
+      aria-checked={isOn}
+      aria-label={ariaLabel}
+      data-testid={dataTestid || "switcher"}
+    >
       <SwitcherCircle isOn={isOn} disabled={disabled} />
     </SwitcherContainer>
   );

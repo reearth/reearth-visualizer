@@ -7,10 +7,27 @@ import (
 )
 
 const (
+	ErrKeyPkgProjectAliasAlreadyExists message.ErrKey = "pkg.project.alias_already_exists"
 	ErrKeyPkgProjectInvalidAlias message.ErrKey = "pkg.project.invalid_alias"
+	ErrKeyPkgProjectInvalidPrefixAlias message.ErrKey = "pkg.project.invalid_prefix_alias"
+	ErrKeyPkgProjectInvalidReservedAlias message.ErrKey = "pkg.project.invalid_reserved_alias"
+	ErrKeyPkgStorytellingAliasAlreadyExists message.ErrKey = "pkg.storytelling.alias_already_exists"
+	ErrKeyPkgStorytellingInvalidAlias message.ErrKey = "pkg.storytelling.invalid_alias"
+	ErrKeyPkgStorytellingInvalidPrefixAlias message.ErrKey = "pkg.storytelling.invalid_prefix_alias"
+	ErrKeyPkgStorytellingInvalidReservedAlias message.ErrKey = "pkg.storytelling.invalid_reserved_alias"
 )
 
 var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
+	ErrKeyPkgProjectAliasAlreadyExists: {
+		language.English: {
+			Message:     "This alias is already in use. Please try another one.",
+			Description: "Each alias must be unique across projects and stories.",
+		},
+		language.Japanese: {
+			Message:     "そのエイリアスは既に使用されています。別の値を試してください",
+			Description: "プロジェクトやストーリーのエイリアスは一意である必要があります。",
+		},
+	},
 	ErrKeyPkgProjectInvalidAlias: {
 		language.English: {
 			Message:     "Invalid alias name: {{.aliasName}}",
@@ -19,6 +36,66 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "不正なエイリアス名です: {{.aliasName}}",
 			Description: "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。",
+		},
+	},
+	ErrKeyPkgProjectInvalidPrefixAlias: {
+		language.English: {
+			Message:     "Aliases starting with 'c-' or 's-' are not allowed: {{.aliasName}}",
+			Description: "Aliases that start with 'c-' or 's-' are reserved and cannot be used.",
+		},
+		language.Japanese: {
+			Message:     "'c-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+			Description: "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。",
+		},
+	},
+	ErrKeyPkgProjectInvalidReservedAlias: {
+		language.English: {
+			Message:     "The alias '{{.aliasName}}' is reserved and cannot be used.",
+			Description: "The following aliases are reserved and cannot be used: administrator,development",
+		},
+		language.Japanese: {
+			Message:     "予約済みのエイリアス名は使用できません: {{.aliasName}}",
+			Description: "次のようなエイリアス名は予約されており、使用できません: administrator,development",
+		},
+	},
+	ErrKeyPkgStorytellingAliasAlreadyExists: {
+		language.English: {
+			Message:     "This alias is already in use. Please try another one.",
+			Description: "Each alias must be unique across projects and stories.",
+		},
+		language.Japanese: {
+			Message:     "そのエイリアスは既に使用されています。別の値を試してください",
+			Description: "プロジェクトやストーリーのエイリアスは一意である必要があります。",
+		},
+	},
+	ErrKeyPkgStorytellingInvalidAlias: {
+		language.English: {
+			Message:     "Invalid alias name: {{.aliasName}}",
+			Description: "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}.",
+		},
+		language.Japanese: {
+			Message:     "不正なエイリアス名です: {{.aliasName}}",
+			Description: "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。",
+		},
+	},
+	ErrKeyPkgStorytellingInvalidPrefixAlias: {
+		language.English: {
+			Message:     "Aliases starting with 'c-' or 's-' are not allowed: {{.aliasName}}",
+			Description: "Aliases that start with 'c-' or 's-' are reserved and cannot be used.",
+		},
+		language.Japanese: {
+			Message:     "'c-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
+			Description: "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。",
+		},
+	},
+	ErrKeyPkgStorytellingInvalidReservedAlias: {
+		language.English: {
+			Message:     "The alias '{{.aliasName}}' is reserved and cannot be used.",
+			Description: "The following aliases are reserved and cannot be used: administrator,development",
+		},
+		language.Japanese: {
+			Message:     "予約済みのエイリアス名は使用できません: {{.aliasName}}",
+			Description: "次のようなエイリアス名は予約されており、使用できません: administrator,development",
 		},
 	},
 }

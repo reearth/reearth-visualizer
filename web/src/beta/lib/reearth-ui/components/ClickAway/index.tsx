@@ -3,9 +3,14 @@ import { FC, ReactNode, useEffect, useRef } from "react";
 type ClickAwayProps = {
   children: ReactNode;
   onClickAway?: () => void;
+  dataTestid?: string;
 };
 
-export const ClickAway: FC<ClickAwayProps> = ({ children, onClickAway }) => {
+export const ClickAway: FC<ClickAwayProps> = ({
+  children,
+  onClickAway,
+  dataTestid
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,5 +38,9 @@ export const ClickAway: FC<ClickAwayProps> = ({ children, onClickAway }) => {
     };
   }, [onClickAway]);
 
-  return <div ref={containerRef}>{children}</div>;
+  return (
+    <div ref={containerRef} data-testid={dataTestid}>
+      {children}
+    </div>
+  );
 };

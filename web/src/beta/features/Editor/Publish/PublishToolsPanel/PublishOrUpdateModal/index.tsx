@@ -11,67 +11,91 @@ import { PublishItem } from "../hooks";
 
 import PublishedOrUpdatedSection from "./PublishedOrUpdatedSection";
 import PublishOrUpdateSection from "./PublishOrUpdateSection";
-import useAlias from "./useAlias";
 
 type Props = {
   publishItem: PublishItem;
+  isPublishMode: boolean;
   onClose: () => void;
 };
 
-const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
+const PublishOrUpdateModal: FC<Props> = ({
+  publishItem,
+  isPublishMode,
+  onClose
+}) => {
   const t = useT();
 
   const [publishDone, setPublishDone] = useState(false);
 
-  const { usePublishProject: publishProject } = useProjectFetcher();
-  const { usePublishStory: publishStory } = useStorytellingFetcher();
+  const {
+    usePublishProject: publishProject,
+    useUpdatePublishProject: updatePublishProject
+  } = useProjectFetcher();
+  const {
+    usePublishStory: publishStory,
+    useUpdatePublishStory: updatePublishStory
+  } = useStorytellingFetcher();
 
   // search engine index
   const [searchEngineIndexEnabled, setSearchEngineIndexEnabled] = useState(
     publishItem.publishmentStatus === "PUBLIC"
   );
 
-  const { alias, aliasValid } = useAlias({ publishItem });
-
   const [isPublishing, setIsPublishing] = useState(false);
   const handleProjectPublish = useCallback(async () => {
     setIsPublishing(true);
-    if (publishItem.type === "story") {
-      await publishStory(
-        searchEngineIndexEnabled ? "published" : "limited",
-        publishItem.storyId,
-        alias
-      );
+    if (publishItem.isPublished) {
+      if (publishItem.type === "story") {
+        await updatePublishStory(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.storyId,
+          publishItem.alias
+        );
+      } else {
+        await updatePublishProject(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.projectId,
+          publishItem.alias
+        );
+      }
     } else {
-      await publishProject(
-        searchEngineIndexEnabled ? "published" : "limited",
-        publishItem.projectId,
-        alias
-      );
+      if (publishItem.type === "story") {
+        await publishStory(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.storyId,
+          publishItem.alias
+        );
+      } else {
+        await publishProject(
+          searchEngineIndexEnabled ? "published" : "limited",
+          publishItem.projectId,
+          publishItem.alias
+        );
+      }
     }
+
     setIsPublishing(false);
     setPublishDone(true);
   }, [
-    alias,
-    searchEngineIndexEnabled,
     publishItem.type,
     publishItem.storyId,
+    publishItem.alias,
     publishItem.projectId,
+    publishItem.isPublished,
+    searchEngineIndexEnabled,
+    publishStory,
     publishProject,
-    publishStory
+    updatePublishStory,
+    updatePublishProject
   ]);
 
   const title = useMemo(() => {
-    return publishDone
-      ? t("Congratulations!")
-      : !publishItem.isPublished
-        ? publishItem.type === "story"
-          ? t(`Publish your story`)
-          : t(`Publish your scene`)
-        : publishItem.type === "story"
-          ? t(`Update your story`)
-          : t(`Update your scene`);
-  }, [t, publishDone, publishItem]);
+    const isStory = publishItem.type === "story";
+    if (isPublishMode) {
+      return isStory ? t("Publish your story") : t("Publish your scene");
+    }
+    return isStory ? t("Update your story") : t("Update your scene");
+  }, [publishItem.type, isPublishMode, t]);
 
   const primaryButtonText = useMemo(() => {
     return !publishItem.isPublished ? t("Publish") : t("Update");
@@ -94,7 +118,7 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
           <Button
             title={primaryButtonText}
             appearance="primary"
-            disabled={!aliasValid || isPublishing}
+            disabled={isPublishing}
             onClick={handleProjectPublish}
           />
         )}
@@ -103,7 +127,6 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     [
       onClose,
       handleProjectPublish,
-      aliasValid,
       primaryButtonText,
       secondaryButtonText,
       publishDone,
@@ -116,10 +139,10 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
     if (!publishedConfig) return "";
 
     const [prefix, suffix] = publishedConfig.split("{}");
-    const sanitizedAlias = alias?.replace(/^\/+|\/+$/g, "") ?? "";
+    const sanitizedAlias = publishItem.alias?.replace(/^\/+|\/+$/g, "") ?? "";
 
     return `${prefix}${sanitizedAlias}${suffix}`;
-  }, [alias]);
+  }, [publishItem.alias]);
 
   return (
     <Modal size="small" visible>
@@ -131,8 +154,9 @@ const PublishOrUpdateModal: FC<Props> = ({ publishItem, onClose }) => {
       >
         {publishDone ? (
           <PublishedOrUpdatedSection
-            isStory={publishItem.type === "story"}
+            publishItem={publishItem}
             publicUrl={publicUrl}
+            isPublishMode={isPublishMode}
           />
         ) : (
           <PublishOrUpdateSection

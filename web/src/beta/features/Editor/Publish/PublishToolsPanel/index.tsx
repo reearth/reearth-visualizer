@@ -3,10 +3,11 @@ import { EntryItem } from "@reearth/beta/ui/components";
 import { Panel } from "@reearth/beta/ui/layout";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC } from "react";
+import { FC, useState } from "react";
 
 import { usePublishPage } from "../context";
 
+import { PublishStatus } from "./common";
 import useHooks from "./hooks";
 import PublishOrUpdateModal from "./PublishOrUpdateModal";
 import UnpublishModal from "./UnpublishModal";
@@ -32,8 +33,10 @@ const PublishToolsPanel: FC = () => {
     handleActiveSubProjectChange
   });
 
+  const [isPublishMode, setIsPublishMode] = useState(false);
+
   return (
-    <Panel extend>
+    <Panel dataTestid="publish-tools-panel" extend>
       <StyledSecondaryNav>
         <LeftSection>
           {publishItems.map((item) => (
@@ -56,7 +59,10 @@ const PublishToolsPanel: FC = () => {
                 title={t("Publish")}
                 icon="paperPlaneTilt"
                 size="small"
-                onClick={() => setPublishModalVisible(true)}
+                onClick={() => {
+                  setIsPublishMode(true);
+                  setPublishModalVisible(true);
+                }}
               />
             ) : (
               <>
@@ -70,7 +76,10 @@ const PublishToolsPanel: FC = () => {
                   title={t("Update")}
                   icon="caretDoubleUp"
                   size="small"
-                  onClick={() => setPublishModalVisible(true)}
+                  onClick={() => {
+                    setIsPublishMode(false);
+                    setPublishModalVisible(true);
+                  }}
                 />
               </>
             )}
@@ -86,6 +95,7 @@ const PublishToolsPanel: FC = () => {
       {publishItem && publishModalVisible && (
         <PublishOrUpdateModal
           publishItem={publishItem}
+          isPublishMode={isPublishMode}
           onClose={() => setPublishModalVisible(false)}
         />
       )}
@@ -131,15 +141,6 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small,
   minWidth: "116px"
 }));
-
-const PublishStatus = styled("div")<{ isPublished: boolean }>(
-  ({ theme, isPublished }) => ({
-    width: "8px",
-    height: "8px",
-    backgroundColor: isPublished ? "#24A148" : theme.content.weaker,
-    borderRadius: "50%"
-  })
-);
 
 const StatusWrapper = styled("div")({
   width: "8px"

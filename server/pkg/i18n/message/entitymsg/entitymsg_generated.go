@@ -8,12 +8,17 @@ import (
 
 const (
 	EntityKeyPkgProjectAliasAllowedChars message.EntityKey = "pkg.project.alias.allowed_chars"
+	EntityKeyPkgStorytellingAliasAllowedChars message.EntityKey = "pkg.storytelling.alias.allowed_chars"
 )
 
 var EntityMessages = map[message.EntityKey]map[language.Tag]string{
 	EntityKeyPkgProjectAliasAllowedChars: {
-		language.English: "alphanumeric, underscore, hyphen",
-		language.Japanese: "英数字、アンダースコア、ハイフン",
+		language.English: "alphanumeric, hyphen (a-z, 0-9, -)",
+		language.Japanese: "英数字、ハイフン（a-z、0-9、-）",
+	},
+	EntityKeyPkgStorytellingAliasAllowedChars: {
+		language.English: "alphanumeric, hyphen (a-z, 0-9, -)",
+		language.Japanese: "英数字、ハイフン（a-z、0-9、-）",
 	},
 }
 

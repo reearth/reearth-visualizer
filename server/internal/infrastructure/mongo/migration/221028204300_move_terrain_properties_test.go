@@ -110,11 +110,11 @@ func TestMoveTerrainProperties(t *testing.T) {
 					Type:        "group",
 					SchemaGroup: "terrain",
 					Fields: []*mongodoc.PropertyFieldDocument{
-						{Field: "depthTestAgainstTerrain", Type: "bool", Value: true},
 						{Field: "terrain", Type: "bool", Value: true},
+						{Field: "terrainType", Type: "string", Value: "cesium"},
 						{Field: "terrainExaggeration", Type: "number", Value: 2.0},
 						{Field: "terrainExaggerationRelativeHeight", Type: "number", Value: 1.0},
-						{Field: "terrainType", Type: "string", Value: "cesium"},
+						{Field: "depthTestAgainstTerrain", Type: "bool", Value: true},
 					},
 				},
 			},

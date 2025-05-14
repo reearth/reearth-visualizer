@@ -180,7 +180,11 @@ const ToolsPanel: FC = () => {
   ]);
 
   return (
-    <Panel storageId="editor-map-tools-panel" extend>
+    <Panel
+      dataTestid="editor-map-tools-panel"
+      storageId="editor-map-tools-panel"
+      extend
+    >
       <SketchToolsWrapper>
         <SketchFeatureButtons>
           {sketchTools.map(

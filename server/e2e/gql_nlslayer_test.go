@@ -305,6 +305,7 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
             id
             items {
               ... on PropertyGroup {
+			  schemaGroupId
                 fields {
                   id
                   value
@@ -384,7 +385,13 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 func TestNLSLayerCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 
 	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
@@ -392,7 +399,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
 
@@ -771,7 +778,13 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 func TestInfoboxBlocksCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 
 	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
@@ -779,7 +792,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
@@ -843,8 +856,14 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 func TestInfoboxProperty(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
-	_, _, sId := createScene(e, pId)
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
@@ -895,8 +914,14 @@ func TestInfoboxProperty(t *testing.T) {
 func TestPhotoOverlayProperty(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
-	_, _, sId := createScene(e, pId)
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForNewLayers(e, sId)
@@ -963,7 +988,13 @@ func updateCustomProperties(
 func TestCustomProperties(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
 
 	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
@@ -971,7 +1002,7 @@ func TestCustomProperties(t *testing.T) {
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	_, _, sId := createScene(e, pId)
+	sId := createScene(e, pId)
 
 	_, res := fetchSceneForNewLayers(e, sId)
 	res.Object().

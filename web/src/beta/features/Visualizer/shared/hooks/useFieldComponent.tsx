@@ -249,7 +249,7 @@ export const FieldComponent = ({
         value={field?.value}
         description={field?.description}
         placeholder={field?.placeholder}
-        onBlur={handlePropertyValueUpdate(
+        onChangeComplete={handlePropertyValueUpdate(
           groupId,
           propertyId,
           fieldId,

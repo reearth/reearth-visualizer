@@ -5,7 +5,6 @@ import {
   useStorytellingFetcher
 } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
-import useStorytellingAPI from "@reearth/services/api/storytellingApi";
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
@@ -21,24 +20,26 @@ import {
 } from "./innerPages/PublicSettings";
 import { StorySettingsType } from "./innerPages/StorySettings";
 
-type Props = {
-  projectId: string;
-  subId?: string;
-};
+import { ProjectSettingsProps } from ".";
 
-export default ({ projectId }: Props) => {
+export default ({ projectId }: ProjectSettingsProps) => {
   const navigate = useNavigate();
 
   const {
     useProjectQuery,
     useUpdateProject,
     useUpdateProjectBasicAuth,
-    useUpdateProjectAlias,
     useUpdateProjectRemove,
-    usePublishProject
+    usePublishProject,
+    useUpdatePublishProject
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
-  const { usePublishStory } = useStorytellingFetcher();
+  const {
+    usePublishStory,
+    useUpdatePublishStory,
+    useStoriesQuery,
+    useUpdateStory
+  } = useStorytellingFetcher();
 
   const client = useApolloClient();
 
@@ -132,10 +133,11 @@ export default ({ projectId }: Props) => {
   const handleUpdateProjectAlias = useCallback(
     async (settings: PublicAliasSettingsType) => {
       if (!projectId || settings.alias === undefined) return;
-      const alias = settings.alias;
-      await useUpdateProjectAlias({ projectId, alias });
+      const status =
+        project?.publishmentStatus === "PUBLIC" ? "published" : "limited";
+      await useUpdatePublishProject(status, projectId, settings.alias);
     },
-    [projectId, useUpdateProjectAlias]
+    [project?.publishmentStatus, projectId, useUpdatePublishProject]
   );
 
   const handleUpdateProjectGA = useCallback(
@@ -145,14 +147,27 @@ export default ({ projectId }: Props) => {
     },
     [projectId, useUpdateProject]
   );
-  const { useStoriesQuery } = useStorytellingAPI();
   const { stories = [] } = useStoriesQuery({ sceneId: scene?.id });
   const currentStory = useMemo(
     () => (stories?.length ? stories[0] : undefined),
     [stories]
   );
 
-  const { useUpdateStory } = useStorytellingAPI();
+  const handleUpdateStoryAlias = useCallback(
+    async (settings: PublicStorySettingsType) => {
+      if (!scene?.id || !currentStory?.id) return;
+      const status =
+        currentStory?.publishmentStatus === "PUBLIC" ? "published" : "limited";
+      await useUpdatePublishStory(status, currentStory.id, settings.alias);
+    },
+    [
+      scene?.id,
+      currentStory?.id,
+      currentStory?.publishmentStatus,
+      useUpdatePublishStory
+    ]
+  );
+
   const handleUpdateStory = useCallback(
     async (settings: PublicStorySettingsType | StorySettingsType) => {
       if (!scene?.id || !currentStory?.id) return;
@@ -197,6 +212,12 @@ export default ({ projectId }: Props) => {
     handleUpdateProjectBasicAuth,
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
-    handleUpdateStory
+    handleUpdateStory,
+    handleUpdateStoryAlias
   };
 };
+
+export function extractPrefixSuffix(url?: string) {
+  if (!url || !url.includes("{}")) return ["", ""];
+  return url.split("{}");
+}

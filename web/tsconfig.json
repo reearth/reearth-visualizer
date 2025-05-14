@@ -4,7 +4,11 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ESNext",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "noEmit": true,
     "module": "ESNext",
     "moduleResolution": "Node",
@@ -18,9 +22,15 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@reearth/e2e/*": ["e2e/*"],
-      "@reearth/*": ["src/*"],
-      "@reearth-widget-ui/*": ["src/beta/lib/reearth-widget-ui/*"]
+      "@reearth/e2e/*": [
+        "e2e/*"
+      ],
+      "@reearth/*": [
+        "src/*"
+      ],
+      "@reearth-widget-ui/*": [
+        "src/beta/lib/reearth-widget-ui/*"
+      ]
     },
     "plugins": [
       {
@@ -28,8 +38,14 @@
       }
     ]
   },
-  "exclude": ["src/beta/lib/unsafeBuiltinPlugins", "dist"],
-  "include": ["src", "e2e", "eslint.config.mjs"],
+  "exclude": [
+    "src/beta/lib/unsafeBuiltinPlugins",
+    "dist"
+  ],
+  "include": [
+    "src",
+    "eslint.config.mjs"
+  ],
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"
