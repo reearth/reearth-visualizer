@@ -7,13 +7,19 @@ export type DatePickerProps = {
   size?: "normal" | "small";
   onChange?: (text: string) => void;
   onBlur?: (text: string) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
+  title?: string;
 };
 
 export const DatePicker: FC<DatePickerProps> = ({
   value,
   disabled,
   onChange,
-  onBlur
+  onBlur,
+  ariaLabel,
+  dataTestid,
+  title
 }) => {
   const [currentValue, setCurrentValue] = useState(value ?? "");
   const [isFocused, setIsFocused] = useState(false);
@@ -41,7 +47,11 @@ export const DatePicker: FC<DatePickerProps> = ({
   }, []);
 
   return (
-    <Wrapper status={isFocused ? "active" : "default"}>
+    <Wrapper
+      status={isFocused ? "active" : "default"}
+      role="application"
+      data-testid={dataTestid}
+    >
       <StyledInput
         value={currentValue}
         disabled={disabled}
@@ -49,6 +59,9 @@ export const DatePicker: FC<DatePickerProps> = ({
         onBlur={handleBlur}
         onFocus={handleFocus}
         type="date"
+        aria-label={ariaLabel}
+        title={title}
+        data-testid="date-picker-input"
       />
     </Wrapper>
   );

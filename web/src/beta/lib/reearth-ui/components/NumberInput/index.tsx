@@ -20,6 +20,8 @@ export type NumberInputProps = {
   max?: number;
   onChange?: (value?: number) => void;
   onBlur?: (value?: number) => void;
+  ariaLabel?: string;
+  dataTestid?: string;
 };
 
 export const NumberInput: FC<NumberInputProps> = ({
@@ -33,7 +35,9 @@ export const NumberInput: FC<NumberInputProps> = ({
   min,
   max,
   onChange,
-  onBlur
+  onBlur,
+  ariaLabel,
+  dataTestid
 }) => {
   const [currentValue, setCurrentValue] = useState<string>(
     value?.toString() ?? ""
@@ -106,6 +110,7 @@ export const NumberInput: FC<NumberInputProps> = ({
       size={size}
       status={isFocused ? "active" : "default"}
       extendWidth={extendWidth}
+      data-testid={dataTestid}
     >
       <StyledInput
         value={currentValue}
@@ -116,13 +121,23 @@ export const NumberInput: FC<NumberInputProps> = ({
         onBlur={handleBlur}
         onFocus={handleFocus}
         onKeyDown={handleKeyDown}
+        aria-label={ariaLabel}
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={
+          currentValue !== "" && !isNaN(Number(currentValue))
+            ? Number(currentValue)
+            : undefined
+        }
       />
       {unit && <UnitWrapper> {unit}</UnitWrapper>}
     </Wrapper>
   );
 };
 
-const Wrapper = styled("div")<{
+const Wrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "extendWidth"
+})<{
   size: "normal" | "small";
   status: "default" | "active";
   extendWidth?: boolean;

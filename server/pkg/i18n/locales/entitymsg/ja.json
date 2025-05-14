@@ -2,7 +2,12 @@
   "pkg": {
     "project": {
       "alias": {
-        "allowed_chars": "英数字、アンダースコア、ハイフン"
+        "allowed_chars": "英数字、ハイフン（a-z、0-9、-）"
+      }
+    },
+    "storytelling": {
+      "alias": {
+        "allowed_chars": "英数字、ハイフン（a-z、0-9、-）"
       }
     }
   }

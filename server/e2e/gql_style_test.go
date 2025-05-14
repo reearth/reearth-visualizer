@@ -147,8 +147,14 @@ func fetchSceneForStyles(e *httpexpect.Expect, sID string) (GraphQLRequest, *htt
 func TestStyleCRUD(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	pId := createProject(e, "test")
-	_, _, sId := createScene(e, pId)
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, pId)
 
 	// fetch scene
 	_, res := fetchSceneForStyles(e, sId)

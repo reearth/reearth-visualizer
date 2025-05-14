@@ -2,7 +2,6 @@ package storytelling
 
 import (
 	"fmt"
-	"regexp"
 	"time"
 
 	"github.com/pkg/errors"
@@ -15,7 +14,6 @@ import (
 var (
 	ErrBasicAuthUserNamePasswordEmpty       = errors.New("basic auth username or password is empty")
 	ErrInvalidAlias                   error = errors.New("invalid alias")
-	aliasRegexp                             = regexp.MustCompile("^[a-zA-Z0-9_-]{5,32}$")
 )
 
 type Story struct {
@@ -68,10 +66,6 @@ func (s *Story) Title() string {
 
 func (s *Story) Alias() string {
 	return s.alias
-}
-
-func (s *Story) Status() PublishmentStatus {
-	return s.status
 }
 
 func (s *Story) PublishedAt() *time.Time {
@@ -240,13 +234,8 @@ func (s *Story) SetPublishedAt(now time.Time) {
 	s.publishedAt = &now
 }
 
-func (s *Story) UpdateAlias(alias string) error {
-	if CheckAliasPattern(alias) {
-		s.alias = alias
-	} else {
-		return ErrInvalidAlias
-	}
-	return nil
+func (s *Story) UpdateAlias(newAlias string) {
+	s.alias = newAlias
 }
 
 func (s *Story) MatchWithPublicName(name string) bool {
@@ -254,8 +243,4 @@ func (s *Story) MatchWithPublicName(name string) bool {
 		return false
 	}
 	return s.alias == name
-}
-
-func CheckAliasPattern(alias string) bool {
-	return alias != "" && aliasRegexp.Match([]byte(alias))
 }

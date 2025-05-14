@@ -33,6 +33,7 @@ export type TabsProps = {
   flexHeight?: boolean;
   menuEdgeGap?: "small";
   onChange?: (tab: string) => void;
+  dataTestid?: string;
 };
 
 export const Tabs: FC<TabsProps> = ({
@@ -46,7 +47,8 @@ export const Tabs: FC<TabsProps> = ({
   noOverflowY,
   flexHeight,
   menuEdgeGap,
-  onChange
+  onChange,
+  dataTestid
 }) => {
   const [activeTab, setActiveTab] = useState(currentTab ?? tabs[0]?.id);
 
@@ -75,6 +77,7 @@ export const Tabs: FC<TabsProps> = ({
       position={position}
       flexHeight={flexHeight}
       background={background}
+      data-testid={dataTestid}
     >
       <TabsMenu
         position={position}
@@ -82,6 +85,7 @@ export const Tabs: FC<TabsProps> = ({
         alignment={alignment}
         background={background}
         edgeGap={menuEdgeGap}
+        role="tablist"
       >
         {tabs.map(({ id, icon, name, tooltipText, placement }) => (
           <Tab
@@ -90,12 +94,15 @@ export const Tabs: FC<TabsProps> = ({
             selected={id === activeTab}
             position={position}
             tabStyle={tabStyle}
+            role="tab"
+            aria-selected={id === activeTab}
           >
             {icon && (
               <Icon
                 tooltipText={tooltipText}
                 icon={icon}
                 placement={placement}
+                aria-hidden="true"
                 color={
                   id === activeTab ? theme.content.main : theme.content.weak
                 }
@@ -115,7 +122,7 @@ export const Tabs: FC<TabsProps> = ({
           </Tab>
         ))}
       </TabsMenu>
-      <Content noPadding={noPadding} noOverflowY={noOverflowY}>
+      <Content noPadding={noPadding} noOverflowY={noOverflowY} role="tabpanel">
         {selectedTabItem ? selectedTabItem.children : null}
       </Content>
     </Wrapper>

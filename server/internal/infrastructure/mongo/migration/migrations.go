@@ -19,4 +19,6 @@ var migrations = migration.Migrations[DBClient]{
   221028204300: MoveTerrainProperties,
   250305230545: AssetProjectAssociation,
   250317115957: AddIndex,
+  250417160823: SetProjectVisibility,
+  250507125156: UpdateAlias,
 }

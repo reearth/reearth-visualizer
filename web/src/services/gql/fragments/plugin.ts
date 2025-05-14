@@ -3,7 +3,12 @@ import { gql } from "@apollo/client";
 export const pluginFragment = gql(`
   fragment PluginFragment on Plugin {
     id
+    version
+    author
     name
+    description
+    translatedName(lang: $lang)
+    translatedDescription(lang: $lang)
     extensions {
       extensionId
       description

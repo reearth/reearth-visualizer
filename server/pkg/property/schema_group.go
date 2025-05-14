@@ -1,8 +1,6 @@
 package property
 
 import (
-	"sort"
-
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 )
@@ -38,11 +36,7 @@ func (s *SchemaGroup) Fields() []*SchemaField {
 	if s == nil {
 		return nil
 	}
-	sortedFields := append([]*SchemaField{}, s.fields...)
-	sort.Slice(sortedFields, func(i, j int) bool {
-		return sortedFields[i].id.String() < sortedFields[j].id.String()
-	})
-	return sortedFields
+	return append([]*SchemaField{}, s.fields...)
 }
 
 // Field returns a field whose id is specified
@@ -123,4 +117,30 @@ func (s *SchemaGroup) RepresentativeField() *SchemaField {
 
 func (s *SchemaGroup) SetTitle(t i18n.String) {
 	s.title = t.Clone()
+}
+
+// Move moves a field from one index to another within the fields slice
+func (s *SchemaGroup) Move(from int, to int) {
+	if s == nil {
+		return
+	}
+	if from < 0 || from >= len(s.fields) {
+		return
+	}
+	if to < 0 || to >= len(s.fields) {
+		return
+	}
+
+	// Extract the field to move
+	field := s.fields[from]
+
+	// Remove the field from the original position
+	s.fields = append(s.fields[:from], s.fields[from+1:]...)
+
+	// Insert the field into the new position
+	if to >= len(s.fields) {
+		s.fields = append(s.fields, field)
+	} else {
+		s.fields = append(s.fields[:to], append([]*SchemaField{field}, s.fields[to:]...)...)
+	}
 }

@@ -33,10 +33,8 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        input.Name,
 		Description: input.Description,
-		ImageURL:    input.ImageURL,
-		Alias:       input.Alias,
-		Archived:    input.Archived,
 		CoreSupport: input.CoreSupport,
+		Visibility:  input.Visibility,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -65,7 +63,6 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		ID:                pid,
 		Name:              input.Name,
 		Description:       input.Description,
-		Alias:             input.Alias,
 		ImageURL:          input.ImageURL,
 		Archived:          input.Archived,
 		IsBasicAuthActive: input.IsBasicAuthActive,
@@ -82,6 +79,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		Starred:           input.Starred,
 		Deleted:           input.Deleted,
 		SceneID:           gqlmodel.ToIDRef[id.Scene](input.SceneID),
+		Visibility:        input.Visibility,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

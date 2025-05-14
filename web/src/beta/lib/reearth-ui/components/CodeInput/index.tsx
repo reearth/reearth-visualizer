@@ -12,6 +12,7 @@ export type CodeInputProps = {
   onChange?: (val: string | undefined) => void;
   onBlur?: (val: string | undefined) => void;
   onMount?: OnMount;
+  dataTestid?: string;
 };
 
 export const CodeInput: FC<CodeInputProps> = ({
@@ -22,7 +23,8 @@ export const CodeInput: FC<CodeInputProps> = ({
   height,
   onChange,
   onBlur,
-  onMount
+  onMount,
+  dataTestid
 }) => {
   const theme = useTheme();
   const t = useT();
@@ -93,7 +95,11 @@ export const CodeInput: FC<CodeInputProps> = ({
   }, [value]);
 
   return (
-    <EditorWrapper isActive={isActive} disabled={disabled}>
+    <EditorWrapper
+      isActive={isActive}
+      disabled={disabled}
+      data-testid={dataTestid}
+    >
       <MonacoEditor
         language={language}
         theme="vs-dark"
@@ -108,7 +114,9 @@ export const CodeInput: FC<CodeInputProps> = ({
   );
 };
 
-const EditorWrapper = styled("div")<{
+const EditorWrapper = styled("div", {
+  shouldForwardProp: (prop) => prop !== "isActive"
+})<{
   isActive?: boolean;
   disabled?: boolean;
 }>(({ theme, isActive, disabled }) => ({

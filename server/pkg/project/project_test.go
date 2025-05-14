@@ -5,33 +5,41 @@ import (
 	"testing"
 	"time"
 
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCheckAliasPattern(t *testing.T) {
-	testCase := []struct {
-		name, alias string
-		expexted    bool
+	testCases := []struct {
+		name     string
+		alias    string
+		expected bool
 	}{
 		{
 			name:     "accepted regex",
 			alias:    "xxxxx",
-			expexted: true,
+			expected: true,
 		},
 		{
 			name:     "refused regex",
 			alias:    "xxx",
-			expexted: false,
+			expected: false,
 		},
 	}
 
-	for _, tt := range testCase {
+	for _, tt := range testCases {
 		tt := tt
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			assert.Equal(t, tt.expexted, CheckAliasPattern(tt.alias))
+
+			err := alias.CheckProjectAliasPattern(tt.alias)
+			if tt.expected {
+				assert.NoError(t, err)
+			} else {
+				assert.Error(t, err)
+			}
 		})
 	}
 }
@@ -189,38 +197,9 @@ func TestProject_UpdateVisualizer(t *testing.T) {
 }
 
 func TestProject_UpdateAlias(t *testing.T) {
-	tests := []struct {
-		name, a  string
-		expected string
-		err      error
-	}{
-		{
-			name:     "accepted alias",
-			a:        "xxxxx",
-			expected: "xxxxx",
-			err:      nil,
-		},
-		{
-			name:     "fail: invalid alias",
-			a:        "xxx",
-			expected: "",
-			err:      ErrInvalidAlias,
-		},
-	}
-
-	for _, tt := range tests {
-		tt := tt
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-			p := &Project{}
-			err := p.UpdateAlias(tt.a)
-			if tt.err == nil {
-				assert.Equal(t, tt.expected, p.Alias())
-			} else {
-				assert.Equal(t, tt.err, err)
-			}
-		})
-	}
+	p := &Project{}
+	p.UpdateAlias("xxxxx")
+	assert.Equal(t, "xxxxx", p.Alias())
 }
 
 func TestProject_UpdateGAConfig(t *testing.T) {

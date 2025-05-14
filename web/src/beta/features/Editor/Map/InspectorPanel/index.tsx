@@ -36,6 +36,7 @@ const InspectorPanel: FC<Props> = ({ areaRef, showCollapseArea }) => {
   return (
     <Panel
       title={t("Inspector")}
+      dataTestid="editor-map-inspector-panel"
       storageId="editor-map-inspector-panel"
       extend
       alwaysOpen

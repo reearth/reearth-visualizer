@@ -25,5 +25,8 @@ export function areCamerasCloseEnoughCustomTolerance(
   );
 }
 
-const isClose = (val1: number, val2: number, tolerance: number): boolean =>
-  Math.abs(val1 - val2) < tolerance;
+export const isClose = (
+  val1: number,
+  val2: number,
+  tolerance: number
+): boolean => Math.abs(val1 - val2) < tolerance;

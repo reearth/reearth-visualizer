@@ -257,28 +257,25 @@ Are you sure you want to delete this feature? If deleted, you can not recover it
 Story: ストーリー
 Publish: 公開
 Unpublish: 非公開にする
-Congratulations!: おめでとうございます！
 Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
 Ok: 確認
-Your story has been published!: ストーリーが公開されました。
-Your scene has been published!: シーンが公開されました。
-Public URL: 公開URL
-'* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
-'* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
-Copy: コピー
+Congratulations! 🎊 Your story has been published: 🎊おめでとうございます！あなたのストーリーが公開されました。
+Congratulations! 🎊 Your scene has been published: 🎊おめでとうございます！あなたのシーンが公開されました。
+Congratulations! 🎊 Your story has been updated: 🎊おめでとうございます！あなたのストーリーが更新されました。
+Congratulations! 🎊 Your scene has been updated: 🎊おめでとうございます！あなたのシーンが更新されました。
+Please visit your project by URL below !: 以下のURLからあなたのプロジェクトをご確認ください。
 Embed Code: 埋め込み用コード
 '* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
 '* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
+Want to change public settings?: 公開設定を変更しますか？
+Go to settings: 設定へ
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
-Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
-Your scene will be published. This means anybody with the below URL will be able to view this scene.: シーンが公開されます。URLを知っている人は誰でもこのシーンを見ることができるようになります。
-Publish domain: 公開ドメイン
-Need to change domain related settings?: ドメイン設定を変更しますか？
-Go to settings: 設定へ
+Your story will be published. This means anybody can view this story by default url.: ストーリーが公開されます。デフォルトのURLを知っている人は誰でもこのストーリーを閲覧できるようになります。
+Your scene will be published. This means anybody can view this project by default url.: シーンが公開されます。デフォルトのURLを知っている人は誰でもこのプロジェクトを閲覧できるようになります。
 Search engine indexing: 検索可能にする
 Page will be available as result on search engines: プロジェクトが検索エンジンの検索結果に表示されるようになります
 Your story will be unpublished.: ストーリーを非公開にする
@@ -390,7 +387,7 @@ UI Language: UI言語
 General: 一般
 Public: 公開
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
-Project Info: プロジェクト情報
+Basic settings: 基本設定
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Remove this project: このプロジェクトを削除
@@ -410,20 +407,34 @@ No description.: 説明なし
 Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
 'Repository url:': 'リポジトリURL:'
+Edit Alias: エイリアスを編集
+You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
+You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
+Your Alias: あなたのエイリアス'
+clean: ''
 Public Info: 公開情報
+Published page settings: 公開ページ設定
+This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: このセクションの設定は、主に公開ページのヘッダーにあるOpen Graph Protocolの設定に適用されます。
+The Title setting will be applied to the <title> tag and og:title.: タイトルの設定は<title>タグとog:titleに適用されます。
+Write down your text: 文章を書く
+The Description setting will be applied to og:description.: 説明の設定はog:descriptionに適用されます。
+Image url: 画像URL
+The Thumbnail setting will be applied to og:image.: サムネイルの設定はog:imageに適用されます。
+Alias Setting: エイリアス設定
+Please publish your story before setting up your alias.: エイリアスを設定する前にストーリーを公開してください。
+Please publish your map project before setting up your alias.: エイリアスを設定する前にプロジェクトを公開してください。
+Custom Domain: カスタムドメイン
+Please publish your map story before setting up your custom domain.: カスタムドメインを設定する前に、ストーリーを公開してください
+Please publish your map project before setting up your custom domain.: カスタムドメインを設定する前に、プロジェクトを公開してください。
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効にする
 Username: ユーザー名
-Site Setting: サイト設定
-Site name: サイト名
-You are about to change the site name for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのサイト名を変更します。英数字とハイフンのみ入力可能です。
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
-Custom Domain: カスタムドメイン
 Left: 左
 Right: 右
-Story Panel: ストーリーパネル
+Story Panel settings: ストーリーパネル設定
 Panel Position: パネル位置
 Background Color: 背景色
 Your account has been successfully verified! Feel free to login now.: アカウントが正常に確認されました！ログインしてください。
@@ -572,6 +583,7 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
+Successfully checked alias!: ''
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
@@ -581,6 +593,9 @@ Successfully published your scene!: シーンの公開に成功しました！
 Successfully published your project with search engine indexing!: 検索エンジンのインデックス含めてプロジェクトの公開に成功しました！
 Successfully unpublished your scene. Now nobody can access your scene.: シーンは非公開状態です。現在、誰も閲覧することはできません。
 Failed to update project.: プロジェクトのアップデートに失敗しました。
+Successfully updated your scene!: シーンの更新されました！
+Successfully updated your scene with search engine indexing!: 検索エンジンのインデックスを含めてシーンの更新に成功しました！
+Successfully updated your scene. Now nobody can access your scene.: シーンの更新に成功しました。現在、誰も閲覧することはできません。
 Successfully updated project!: プロジェクトのアップデートに成功しました！
 Failed to move to the Recycle bin.: ゴミ箱への移動に失敗しました。
 Failed to recover the project!: プロジェクトの復元に失敗しました。
@@ -606,6 +621,9 @@ Failed to publish story.: ストーリーの公開に失敗しました。
 Successfully published your story!: ストーリーの公開に成功しました！
 Successfully published your story with search engine indexing!: 検索エンジンのインデックスを含めてストーリーの公開に成功しました！
 Successfully unpublished your story. Now nobody can access your story.: ストーリーは非公開状態です。現在、誰も閲覧することはできません。
+Successfully updated your story!: ストーリーの更新に成功しました！
+Successfully updated your story with search engine indexing!: 検索エンジンのインデックスを含めてストーリーの更新に成功しました！
+Successfully updated your story. Now nobody can access your story.: ストーリーの更新に成功しました。現在、誰も閲覧することはできません。
 Failed to create page.: ページの作成に失敗しました。
 Successfully created a page!: ページの作成に成功しました！
 Failed to delete page.: ページの削除に失敗しました。

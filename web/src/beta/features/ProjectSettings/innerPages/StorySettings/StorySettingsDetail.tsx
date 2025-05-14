@@ -1,15 +1,9 @@
-import { Button, Collapse } from "@reearth/beta/lib/reearth-ui";
 import { ColorField, SelectField } from "@reearth/beta/ui/fields";
 import { Position } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useState } from "react";
 
-import {
-  SettingsFields,
-  ButtonWrapper,
-  SettingsRow,
-  SettingsRowItem
-} from "../common";
+import { SettingsFields, TitleWrapper } from "../common";
 
 import { StorySettingsType } from ".";
 
@@ -30,12 +24,15 @@ const StorySettingsDetail: React.FC<Props> = ({
   const [backgroundColor, setBackgroundColor] = useState<string | undefined>(
     settingsItem?.bgColor
   );
-  const handleSubmit = useCallback(() => {
-    onUpdateStory({
-      panelPosition: localPanelPosition,
-      bgColor: backgroundColor
-    });
-  }, [backgroundColor, localPanelPosition, onUpdateStory]);
+  const handleColorChange = useCallback(
+    (bgColor?: string) => {
+      onUpdateStory({
+        bgColor
+      });
+      setBackgroundColor(bgColor);
+    },
+    [onUpdateStory]
+  );
 
   const options = [
     {
@@ -48,35 +45,33 @@ const StorySettingsDetail: React.FC<Props> = ({
     }
   ];
 
+  const handlePositionChange = useCallback(
+    (panelPosition?: Position) => {
+      setLocalPanelPosition(panelPosition as Position);
+      onUpdateStory({
+        panelPosition
+      });
+    },
+    [onUpdateStory]
+  );
+
   return (
-    <Collapse title={t("Story Panel")} size="large" noShrink>
-      <SettingsFields>
-        <SettingsRow>
-          <SettingsRowItem>
-            <SelectField
-              title={t("Panel Position")}
-              value={localPanelPosition}
-              options={options}
-              onChange={(value) => setLocalPanelPosition(value as Position)}
-            />
-          </SettingsRowItem>
-          <SettingsRowItem>
-            <ColorField
-              title={t("Background Color")}
-              value={backgroundColor}
-              onChange={(value) => setBackgroundColor(value)}
-            />
-          </SettingsRowItem>
-        </SettingsRow>
-        <ButtonWrapper>
-          <Button
-            title={t("Submit")}
-            appearance="primary"
-            onClick={handleSubmit}
-          />
-        </ButtonWrapper>
-      </SettingsFields>
-    </Collapse>
+    <SettingsFields>
+      <TitleWrapper size="body" weight="bold">
+        {t("Story Panel settings")}
+      </TitleWrapper>
+      <SelectField
+        title={t("Panel Position")}
+        value={localPanelPosition}
+        options={options}
+        onChange={(value) => handlePositionChange(value as Position)}
+      />
+      <ColorField
+        title={t("Background Color")}
+        value={backgroundColor}
+        onChange={(value) => handleColorChange(value)}
+      />
+    </SettingsFields>
   );
 };
 

@@ -2,6 +2,99 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.6.0 - 2025-05-13
+
+### Web
+
+#### 🚀 Features
+
+- Support restful api for split import project [VIZ-1508] ([#1570](https://github.com/reearth/reearth-visualizer/pull/1570)) [`cb134b`](https://github.com/reearth/reearth-visualizer/commit/cb134b)
+- Support custom timeout for project export&#x2F;import&#x2F;delete mutation [VIZ-1494] ([#1550](https://github.com/reearth/reearth-visualizer/pull/1550)) [`f25527`](https://github.com/reearth/reearth-visualizer/commit/f25527)
+
+#### 🔧 Bug Fixes
+
+- Disable cache on valid alias queries &amp; fix ui around alias ([#1603](https://github.com/reearth/reearth-visualizer/pull/1603)) [`d0faf3`](https://github.com/reearth/reearth-visualizer/commit/d0faf3)
+- Remove unnecessary project properties from update calls in project general settings ([#1595](https://github.com/reearth/reearth-visualizer/pull/1595)) [`040023`](https://github.com/reearth/reearth-visualizer/commit/040023)
+- Skip project mutation update when no change [VIZ-1523] ([#1591](https://github.com/reearth/reearth-visualizer/pull/1591)) [`649676`](https://github.com/reearth/reearth-visualizer/commit/649676)
+- Fix TS error in vite.config.ts file [VIZ-1559] ([#1586](https://github.com/reearth/reearth-visualizer/pull/1586)) [`7c1e45`](https://github.com/reearth/reearth-visualizer/commit/7c1e45)
+- Input&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s action key missing ([#1588](https://github.com/reearth/reearth-visualizer/pull/1588)) [`6fa63d`](https://github.com/reearth/reearth-visualizer/commit/6fa63d)
+- Auth session persistence after logout when using browser back button [VIZ-1486] ([#1554](https://github.com/reearth/reearth-visualizer/pull/1554)) [`d23b95`](https://github.com/reearth/reearth-visualizer/commit/d23b95)
+- Missing property on installed plugin [VIZ-1492] ([#1549](https://github.com/reearth/reearth-visualizer/pull/1549)) [`3cf1ef`](https://github.com/reearth/reearth-visualizer/commit/3cf1ef)
+
+#### ✨ Refactor
+
+- Use scene.id when reset alias of published map [VIZ-1601] ([#1599](https://github.com/reearth/reearth-visualizer/pull/1599)) [`edfff9`](https://github.com/reearth/reearth-visualizer/commit/edfff9)
+- Update alias prefix in public settings for consistency ([#1596](https://github.com/reearth/reearth-visualizer/pull/1596)) [`352be7`](https://github.com/reearth/reearth-visualizer/commit/352be7)
+- Publish project page ui&#x2F;ux [VIZ-1439] ([#1558](https://github.com/reearth/reearth-visualizer/pull/1558)) [`23beb8`](https://github.com/reearth/reearth-visualizer/commit/23beb8)
+- Improve error handling [VIZ-1485] ([#1584](https://github.com/reearth/reearth-visualizer/pull/1584)) [`6b772a`](https://github.com/reearth/reearth-visualizer/commit/6b772a)
+- Improve ui components accessibility [VIZ-1522] ([#1576](https://github.com/reearth/reearth-visualizer/pull/1576)) [`2a2c53`](https://github.com/reearth/reearth-visualizer/commit/2a2c53)
+- Rename measured height[VIZ-1542] ([#1583](https://github.com/reearth/reearth-visualizer/pull/1583)) [`be1755`](https://github.com/reearth/reearth-visualizer/commit/be1755)
+- Settings page layout [VIZ-1431] ([#1560](https://github.com/reearth/reearth-visualizer/pull/1560)) [`c16ba0`](https://github.com/reearth/reearth-visualizer/commit/c16ba0)
+
+#### 🧪 Testing
+
+- Import project tests ([#1593](https://github.com/reearth/reearth-visualizer/pull/1593)) [`bda584`](https://github.com/reearth/reearth-visualizer/commit/bda584)
+- Add unit tests for hooks [VIZ-1577] ([#1592](https://github.com/reearth/reearth-visualizer/pull/1592)) [`147afa`](https://github.com/reearth/reearth-visualizer/commit/147afa)
+- Add tests for hooks [VIZ-1559] ([#1589](https://github.com/reearth/reearth-visualizer/pull/1589)) [`5f40a4`](https://github.com/reearth/reearth-visualizer/commit/5f40a4)
+- Add unit tests to components [VIZ-1465] ([#1579](https://github.com/reearth/reearth-visualizer/pull/1579)) [`610c93`](https://github.com/reearth/reearth-visualizer/commit/610c93)
+- Reduce unit test coverage and add unit tests to components [VIZ-1501] ([#1582](https://github.com/reearth/reearth-visualizer/pull/1582)) [`94328b`](https://github.com/reearth/reearth-visualizer/commit/94328b)
+- Added tests for project screen ([#1581](https://github.com/reearth/reearth-visualizer/pull/1581)) [`dfd42e`](https://github.com/reearth/reearth-visualizer/commit/dfd42e)
+- Add unit tests to components [VIZ-1465] ([#1577](https://github.com/reearth/reearth-visualizer/pull/1577)) [`6198ee`](https://github.com/reearth/reearth-visualizer/commit/6198ee)
+- Add unit tests for field components [VIZ-1498] ([#1567](https://github.com/reearth/reearth-visualizer/pull/1567)) [`ec6a89`](https://github.com/reearth/reearth-visualizer/commit/ec6a89)
+- Add test screen recording ([#1571](https://github.com/reearth/reearth-visualizer/pull/1571)) [`42585f`](https://github.com/reearth/reearth-visualizer/commit/42585f)
+- Add unit tests to utility functions [VIZ-1497] ([#1552](https://github.com/reearth/reearth-visualizer/pull/1552)) [`c137ea`](https://github.com/reearth/reearth-visualizer/commit/c137ea)
+- Add component tests for Breadcrumb, Button, CheckBox, and ClickAway in reearth-ui ([#1533](https://github.com/reearth/reearth-visualizer/pull/1533)) [`2a30f2`](https://github.com/reearth/reearth-visualizer/commit/2a30f2)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.6.0 ([#1600](https://github.com/reearth/reearth-visualizer/pull/1600)) [`e942be`](https://github.com/reearth/reearth-visualizer/commit/e942be)
+- Enable Corepack and set Yarn version in license checker workflow ([#1601](https://github.com/reearth/reearth-visualizer/pull/1601)) [`413fb3`](https://github.com/reearth/reearth-visualizer/commit/413fb3)
+- Improve accessibility in feature&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s component ([#1585](https://github.com/reearth/reearth-visualizer/pull/1585)) [`1e15dc`](https://github.com/reearth/reearth-visualizer/commit/1e15dc)
+- QA Automation Framework ([#1559](https://github.com/reearth/reearth-visualizer/pull/1559)) [`5875bd`](https://github.com/reearth/reearth-visualizer/commit/5875bd)
+- Update code owner of e2e ([#1561](https://github.com/reearth/reearth-visualizer/pull/1561)) [`5905e2`](https://github.com/reearth/reearth-visualizer/commit/5905e2)
+- Update test related packages and reduce test coverage scope temporarily [VIZ-1460] ([#1551](https://github.com/reearth/reearth-visualizer/pull/1551)) [`45a938`](https://github.com/reearth/reearth-visualizer/commit/45a938)
+
+### Server
+
+#### 🚀 Features
+
+- Migrate project&#x2F;story alias [VIZ-1478] ([#1590](https://github.com/reearth/reearth-visualizer/pull/1590)) [`b639e3`](https://github.com/reearth/reearth-visualizer/commit/b639e3)
+- Update alias check [VIZ-1541] ([#1587](https://github.com/reearth/reearth-visualizer/pull/1587)) [`3e84d8`](https://github.com/reearth/reearth-visualizer/commit/3e84d8)
+- Update alias validation[VIZ-1535] [VIZ-1558] ([#1580](https://github.com/reearth/reearth-visualizer/pull/1580)) [`85b4c0`](https://github.com/reearth/reearth-visualizer/commit/85b4c0)
+- Add Public Projects Support[VIZ-1481] [VIZ-1480] ([#1573](https://github.com/reearth/reearth-visualizer/pull/1573)) [`a5a657`](https://github.com/reearth/reearth-visualizer/commit/a5a657)
+- Set project visibility [VIZ-1517] ([#1575](https://github.com/reearth/reearth-visualizer/pull/1575)) [`071011`](https://github.com/reearth/reearth-visualizer/commit/071011)
+- Split file uploads command [VIZ-1470] ([#1553](https://github.com/reearth/reearth-visualizer/pull/1553)) [`149084`](https://github.com/reearth/reearth-visualizer/commit/149084)
+- Add windows batch [VIZ-1468] ([#1544](https://github.com/reearth/reearth-visualizer/pull/1544)) [`68cf3a`](https://github.com/reearth/reearth-visualizer/commit/68cf3a)
+- Insert project id to project alias value when project is created [VIZ-1475] ([#1556](https://github.com/reearth/reearth-visualizer/pull/1556)) [`5779d7`](https://github.com/reearth/reearth-visualizer/commit/5779d7)
+
+#### 🔧 Bug Fixes
+
+- Fix alias duplicate check ([#1602](https://github.com/reearth/reearth-visualizer/pull/1602)) [`f1779a`](https://github.com/reearth/reearth-visualizer/commit/f1779a)
+- Use scene.id when id is checked in project.Publish ([#1598](https://github.com/reearth/reearth-visualizer/pull/1598)) [`1b7894`](https://github.com/reearth/reearth-visualizer/commit/1b7894)
+- Use epsilon comparison [VIZ-1488] ([#1548](https://github.com/reearth/reearth-visualizer/pull/1548)) [`82f130`](https://github.com/reearth/reearth-visualizer/commit/82f130)
+- Revert sort logic [VIZ-1423] ([#1528](https://github.com/reearth/reearth-visualizer/pull/1528)) [`47c8b9`](https://github.com/reearth/reearth-visualizer/commit/47c8b9)
+- Import url replace error ([#1526](https://github.com/reearth/reearth-visualizer/pull/1526)) [`c8ffef`](https://github.com/reearth/reearth-visualizer/commit/c8ffef)
+
+#### Miscellaneous Tasks
+
+- Return appropriate error from project updateAlias ([#1543](https://github.com/reearth/reearth-visualizer/pull/1543)) [`085504`](https://github.com/reearth/reearth-visualizer/commit/085504)
+- Fix graceful shutdown &amp; fix filename typo [VIZ-1483] ([#1545](https://github.com/reearth/reearth-visualizer/pull/1545)) [`dc2a27`](https://github.com/reearth/reearth-visualizer/commit/dc2a27)
+- Add file size check [VIZ-1425] ([#1542](https://github.com/reearth/reearth-visualizer/pull/1542)) [`2d6abc`](https://github.com/reearth/reearth-visualizer/commit/2d6abc)
+- Update README about how to add error message ([#1541](https://github.com/reearth/reearth-visualizer/pull/1541)) [`346dff`](https://github.com/reearth/reearth-visualizer/commit/346dff)
+- Add document about how to add error message ([#1540](https://github.com/reearth/reearth-visualizer/pull/1540)) [`744e8f`](https://github.com/reearth/reearth-visualizer/commit/744e8f)
+
+### Misc
+
+
+### qa-web
+
+#### Miscellaneous Tasks
+
+- Update dev-test-run.yml ([#1563](https://github.com/reearth/reearth-visualizer/pull/1563)) [`4ef360`](https://github.com/reearth/reearth-visualizer/commit/4ef360)
+- Fixing qa pipeline ([#1562](https://github.com/reearth/reearth-visualizer/pull/1562)) [`ac2bcc`](https://github.com/reearth/reearth-visualizer/commit/ac2bcc)
+
+###
+
 ## 1.0.0-beta.5.1 - 2025-03-31
 
 ### Web

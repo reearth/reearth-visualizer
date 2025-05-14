@@ -19,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
@@ -27,7 +28,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -91,80 +91,15 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
 }
 
-func (i *Project) Create(ctx context.Context, p interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-	if err := i.CanWriteWorkspace(p.WorkspaceID, operator); err != nil {
-		return nil, err
-	}
-
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return
-	}
-
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	ws, err := i.workspaceRepo.FindByID(ctx, p.WorkspaceID)
-	if err != nil {
-		return nil, err
-	}
-
-	// enforce policy
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-
-		projectCount, err := i.projectRepo.CountByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-
-		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
-			return nil, err
-		}
-	}
-
-	pb := project.New().
-		NewID().
-		Workspace(p.WorkspaceID).
-		Visualizer(p.Visualizer)
-	if p.Name != nil {
-		pb = pb.Name(*p.Name)
-	}
-	if p.Description != nil {
-		pb = pb.Description(*p.Description)
-	}
-	if p.ImageURL != nil {
-		pb = pb.ImageURL(p.ImageURL)
-	}
-	if p.Alias != nil {
-		pb = pb.Alias(*p.Alias)
-	}
-	if p.Archived != nil {
-		pb = pb.IsArchived(*p.Archived)
-	}
-	if p.CoreSupport != nil {
-		pb = pb.CoreSupport(*p.CoreSupport)
-	}
-
-	proj, err := pb.Build()
-	if err != nil {
-		return nil, err
-	}
-
-	err = i.projectRepo.Save(ctx, proj)
-	if err != nil {
-		return nil, err
-	}
-
-	tx.Commit()
-	return proj, nil
+func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+	return i.createProject(ctx, createProjectInput{
+		WorkspaceID: input.WorkspaceID,
+		Visualizer:  input.Visualizer,
+		Name:        input.Name,
+		Description: input.Description,
+		CoreSupport: input.CoreSupport,
+		Visibility:  input.Visibility,
+	}, operator)
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -188,20 +123,12 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		return nil, err
 	}
 
-	oldAlias := prj.Alias()
-
 	if p.Name != nil {
 		prj.UpdateName(*p.Name)
 	}
 
 	if p.Description != nil {
 		prj.UpdateDescription(*p.Description)
-	}
-
-	if p.Alias != nil {
-		if err := prj.UpdateAlias(*p.Alias); err != nil {
-			graphql.AddError(ctx, err)
-		}
 	}
 
 	if p.DeleteImageURL {
@@ -268,12 +195,9 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdatePublicDescription(*p.PublicDescription)
 	}
 
-	if prj.PublishmentStatus() != project.PublishmentStatusPrivate && p.Alias != nil && *p.Alias != oldAlias {
-		if err := i.file.MoveBuiltScene(ctx, oldAlias, *p.Alias); err != nil {
-			// ignore ErrNotFound
-			if !errors.Is(err, rerror.ErrNotFound) {
-				return nil, err
-			}
+	if p.Visibility != nil {
+		if err := prj.UpdateVisibility(*p.Visibility); err != nil {
+			return nil, err
 		}
 	}
 
@@ -292,20 +216,79 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	return prj, nil
 }
 
-func (i *Project) CheckAlias(ctx context.Context, alias string) (bool, error) {
-	if !project.CheckAliasPattern(alias) {
-		return false, project.ErrInvalidAlias
+func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
+	aliasName := strings.ToLower(newAlias)
+
+	if pid == nil {
+
+		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+	} else {
+
+		prj, err := i.projectRepo.FindByID(ctx, *pid)
+		if err != nil {
+			return false, err
+		}
+
+		if aliasName == prj.Alias() {
+			// current alias
+			return true, nil
+		}
+
+		sce, err := i.sceneRepo.FindByProject(ctx, *pid)
+		if err != nil {
+			return false, err
+		}
+
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			// error 's-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
+			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixProject)
+			// only allow self ID
+			if id != sce.ID().String() {
+				// error 'c-' prefix
+				return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+			}
+		}
+
+		if sce.ID().String() == aliasName || sce.DefaultAlias() == aliasName {
+			// allow self ProjectID
+		} else {
+			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+				return false, err
+			}
+			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+				return false, err
+			}
+		}
 	}
 
-	prj, err := i.projectRepo.FindByPublicName(ctx, alias)
-	if prj == nil && err == nil || err != nil && errors.Is(err, rerror.ErrNotFound) {
-		return true, nil
-	}
-
-	return false, err
+	return true, nil
 }
 
-func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectParam, op *usecase.Operator) (_ *project.Project, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -322,136 +305,77 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if err != nil {
 		return nil, err
 	}
-	coreSupport := prj.CoreSupport()
-	enableGa := prj.EnableGA()
-	trackingId := prj.TrackingID()
-	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
-		return nil, err
-	}
 
-	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
+	sce, err := i.sceneRepo.FindByProject(ctx, params.ID)
 	if err != nil {
 		return nil, err
 	}
 
-	// enforce policy
-	if params.Status != project.PublishmentStatusPrivate {
-		if policyID := operator.Policy(ws.Policy()); policyID != nil {
-			p, err := i.policyRepo.FindByID(ctx, *policyID)
-			if err != nil {
-				return nil, err
-			}
-
-			projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-			if err != nil {
-				return nil, err
-			}
-
-			// newrly published
-			if prj.PublishmentStatus() == project.PublishmentStatusPrivate {
-				projectCount += 1
-			}
-
-			if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	s, err := i.sceneRepo.FindByProject(ctx, params.ID)
-	if err != nil {
+	if err := i.CanWriteWorkspace(prj.Workspace(), op); err != nil {
 		return nil, err
 	}
-
-	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
-		return nil, err
-	}
-
-	sceneID := s.ID()
 
 	prevAlias := prj.Alias()
-	if params.Alias == nil && prevAlias == "" && params.Status != project.PublishmentStatusPrivate {
-		return nil, interfaces.ErrProjectAliasIsNotSet
-	}
 
-	var prevPublishedAlias string
-	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-		prevPublishedAlias = prevAlias
-	}
-
-	newAlias := prevAlias
-	if params.Alias != nil {
-		if prj2, err := i.projectRepo.FindByPublicName(ctx, *params.Alias); err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return nil, err
-		} else if prj2 != nil && prj.ID() != prj2.ID() {
-			return nil, interfaces.ErrProjectAliasAlreadyUsed
+	// if ProjectID is not specified
+	if params.Alias == nil || *params.Alias == "" {
+		// if you don't have an alias, set it to default alias
+		if prj.Alias() == "" {
+			prj.UpdateAlias(sce.DefaultAlias())
 		}
-
-		if err := prj.UpdateAlias(*params.Alias); err != nil {
-			return nil, err
-		}
-		newAlias = *params.Alias
-	}
-
-	newPublishedAlias := newAlias
-
-	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, sceneID)
-	if err != nil {
-		return nil, err
-	}
-
-	layerStyles, err := i.layerStyles.FindByScene(ctx, sceneID)
-	if err != nil {
-		return nil, err
-	}
-
-	// Lock
-	if err := i.UpdateSceneLock(ctx, sceneID, scene.LockModeFree, scene.LockModePublishing); err != nil {
-		return nil, err
-	}
-
-	defer i.ReleaseSceneLock(ctx, sceneID)
-
-	if params.Status == project.PublishmentStatusPrivate {
-		// unpublish
-		if err = i.file.RemoveBuiltScene(ctx, prevPublishedAlias); err != nil {
-			return prj, err
-		}
+		// if anything is set, do nothing
 	} else {
-		// publish
-		r, w := io.Pipe()
+		newAlias := strings.ToLower(*params.Alias)
 
-		// Build
-		go func() {
-			var err error
-
-			defer func() {
-				_ = w.CloseWithError(err)
-			}()
-
-			err = builder.New(
-				repo.PropertyLoaderFrom(i.propertyRepo),
-				repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
-				false,
-			).ForScene(s).WithNLSLayers(&nlsLayers).WithLayerStyle(layerStyles).Build(ctx, w, time.Now(), coreSupport, enableGa, trackingId)
-		}()
-
-		// Save
-		if err := i.file.UploadBuiltScene(ctx, r, newPublishedAlias); err != nil {
-			return nil, err
+		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
+			// error 's-' prefix
+			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
+			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
+			// only allow self ID
+			if id != sce.ID().String() {
+				// error 'c-' prefix
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
 		}
 
-		// If project has been published before and alias is changed,
-		// remove old published data.
-		if prevPublishedAlias != "" && newPublishedAlias != prevPublishedAlias {
-			if err := i.file.RemoveBuiltScene(ctx, prevPublishedAlias); err != nil {
-				return nil, err
-			}
+		prj.UpdateAlias(newAlias)
+	}
+
+	if prevAlias == prj.Alias() || sce.ID().String() == prj.Alias() || sce.DefaultAlias() == prj.Alias() {
+		// if do not change alias or self ProjectID, do nothing
+	} else {
+		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
+			return nil, err
+		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
+			return nil, err
+		}
+		if err := i.sceneRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
+			return nil, err
+		}
+		if err = i.storytellingRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
+			return nil, err
 		}
 	}
 
 	prj.UpdatePublishmentStatus(params.Status)
-	prj.SetPublishedAt(time.Now())
+
+	// publish
+	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
+		if err := i.uploadPublishScene(ctx, prj, op); err != nil {
+			return nil, err
+		}
+		prj.SetPublishedAt(time.Now())
+	}
+
+	// unpublish
+	if prj.PublishmentStatus() == project.PublishmentStatusPrivate || prevAlias != prj.Alias() {
+		// always delete previous aliase
+		if err = i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
+			return prj, err
+		}
+	}
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -459,6 +383,96 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	tx.Commit()
 	return prj, nil
+}
+
+func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) (*scene.Scene, error) {
+
+	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
+	if err != nil {
+		return nil, err
+	}
+
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+
+		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+		if err != nil {
+			return nil, err
+		}
+
+		// newrly published
+		if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
+			projectCount += 1
+		}
+
+		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
+			return nil, err
+		}
+	}
+
+	return i.sceneRepo.FindByProject(ctx, prj.ID())
+}
+
+func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, op *usecase.Operator) error {
+
+	// enforce policy
+	s, err := i.checkPublishPolicy(ctx, p, op)
+	if err != nil {
+		return err
+	}
+
+	// Lock
+	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
+		return err
+	}
+
+	if err := i.UpdateSceneLock(ctx, s.ID(), scene.LockModeFree, scene.LockModePublishing); err != nil {
+		return err
+	}
+
+	defer i.ReleaseSceneLock(ctx, s.ID())
+
+	nlsLayers, err := i.nlsLayerRepo.FindByScene(ctx, s.ID())
+	if err != nil {
+		return err
+	}
+
+	layerStyles, err := i.layerStyles.FindByScene(ctx, s.ID())
+	if err != nil {
+		return err
+	}
+
+	// publish
+	r, w := io.Pipe()
+
+	// Build
+	go func() {
+		var err error
+
+		defer func() {
+			_ = w.CloseWithError(err)
+		}()
+
+		err = builder.New(
+			repo.PropertyLoaderFrom(i.propertyRepo),
+			repo.NLSLayerLoaderFrom(i.nlsLayerRepo),
+			false,
+		).ForScene(s).
+			WithNLSLayers(&nlsLayers).
+			WithLayerStyle(layerStyles).
+			Build(ctx, w, time.Now(), p.CoreSupport(), p.EnableGA(), p.TrackingID())
+	}()
+
+	// Save
+	if err := i.file.UploadBuiltScene(ctx, r, p.Alias()); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {
@@ -662,7 +676,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, data 
 		return nil, err
 	}
 
-	result, err := i.Create(ctx, interfaces.CreateProjectParam{
+	result, err := i.createProject(ctx, createProjectInput{
 		WorkspaceID: workspaceId,
 		Visualizer:  visualizer.Visualizer(input.Visualizer),
 		Name:        &input.Name,
@@ -707,4 +721,101 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 		return err
 	}
 	return nil
+}
+
+type createProjectInput struct {
+	WorkspaceID accountdomain.WorkspaceID
+	Visualizer  visualizer.Visualizer
+	Name        *string
+	Description *string
+	ImageURL    *url.URL
+	Alias       *string
+	Archived    *bool
+	CoreSupport *bool
+	Visibility  *string
+}
+
+func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
+	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
+		return nil, err
+	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	txCtx := tx.Context()
+	defer func() {
+		if err2 := tx.End(txCtx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	ws, err := i.workspaceRepo.FindByID(txCtx, input.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(txCtx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+
+		projectCount, err := i.projectRepo.CountByWorkspace(txCtx, ws.ID())
+		if err != nil {
+			return nil, err
+		}
+
+		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
+			return nil, err
+		}
+	}
+
+	prjID := id.NewProjectID()
+	prj := project.New().
+		ID(prjID).
+		Workspace(input.WorkspaceID).
+		Visualizer(input.Visualizer)
+
+	if input.Archived != nil {
+		prj = prj.IsArchived(*input.Archived)
+	}
+
+	if input.CoreSupport != nil {
+		prj = prj.CoreSupport(*input.CoreSupport)
+	}
+
+	if input.Description != nil {
+		prj = prj.Description(*input.Description)
+	}
+
+	if input.ImageURL != nil {
+		prj = prj.ImageURL(input.ImageURL)
+	}
+
+	if input.Name != nil {
+		prj = prj.Name(*input.Name)
+	}
+
+	if input.Visibility != nil {
+		prj = prj.Visibility(*input.Visibility)
+	} else {
+		prj = prj.Visibility("private")
+	}
+
+	proj, err := prj.Build()
+	if err != nil {
+		return nil, err
+	}
+
+	err = i.projectRepo.Save(txCtx, proj)
+	if err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+
+	return proj, nil
 }

@@ -10,7 +10,7 @@ import (
 func TestGetScenePlaceholderEnglish(t *testing.T) {
 	e := ServerLanguage(t, language.English)
 	pID := createProjectWithExternalImage(e, "test")
-	_, _, sID := createScene(e, pID)
+	sID := createScene(e, pID)
 	r := getScene(e, sID, language.English.String())
 
 	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
@@ -36,7 +36,7 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 func TestGetScenePlaceholderJapanese(t *testing.T) {
 	e := ServerLanguage(t, language.Japanese)
 	pID := createProjectWithExternalImage(e, "test")
-	_, _, sID := createScene(e, pID)
+	sID := createScene(e, pID)
 	r := getScene(e, sID, language.Japanese.String())
 
 	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
@@ -63,8 +63,14 @@ func TestGetScenePlaceholderJapanese(t *testing.T) {
 
 func TestGetSceneNLSLayer(t *testing.T) {
 	e := Server(t, baseSeeder)
-	pId := createProject(e, "test")
-	_, _, sId := createScene(e, pId)
+	pId := createProject(e, uID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"teamId":      wID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, pId)
 	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99)
 
 	r := getScene(e, sId, language.Und.String())
@@ -77,19 +83,10 @@ func TestGetSceneNLSLayer(t *testing.T) {
 func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
-		Query: `mutation CreateProject($teamId: ID!, $visualizer: Visualizer!, $name: String!, $description: String!, $imageUrl: URL, $coreSupport: Boolean) {
-			createProject( input: {teamId: $teamId, visualizer: $visualizer, name: $name, description: $description, imageUrl: $imageUrl, coreSupport: $coreSupport} ) { 
-				project { 
-					id
-					__typename 
-				} 
-				__typename 
-			}
-		}`,
+		Query:         CreateProjectMutation,
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"imageUrl":    "https://test.com/project.jpg",
 			"teamId":      wID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": true,
@@ -97,4 +94,23 @@ func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 	}
 	res := Request(e, uID.String(), requestBody)
 	return res.Path("$.data.createProject.project.id").Raw().(string)
+}
+
+func createScene(e *httpexpect.Expect, pID string) string {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateScene",
+		Query: `mutation CreateScene($projectId: ID!) {
+			createScene( input: {projectId: $projectId} ) { 
+				scene { 
+					id
+				} 
+			}
+		}`,
+		Variables: map[string]any{
+			"projectId": pID,
+		},
+	}
+
+	res := Request(e, uID.String(), requestBody)
+	return res.Path("$.data.createScene.scene.id").Raw().(string)
 }

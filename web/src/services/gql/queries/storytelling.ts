@@ -125,3 +125,12 @@ export const REMOVE_STORY_BLOCK = gql(`
     }
   }
 `);
+
+export const CHECK_STORY_ALIAS = gql(`
+  query CheckStoryAlias($alias: String!, $storyId: ID) {
+    checkStoryAlias(alias: $alias, storyId: $storyId) {
+      alias
+      available
+    }
+  }
+`);

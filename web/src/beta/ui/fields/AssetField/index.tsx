@@ -11,6 +11,9 @@ import {
   Button,
   TextInputProps
 } from "@reearth/beta/lib/reearth-ui";
+import CommonField, {
+  CommonFieldProps
+} from "@reearth/beta/ui/fields/CommonField";
 import { useT } from "@reearth/services/i18n";
 import {
   useNotification,
@@ -19,8 +22,6 @@ import {
 } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
-
-import CommonField, { CommonFieldProps } from "../CommonField";
 
 import useAssetUpload from "./useAssetUpload";
 
@@ -54,12 +55,12 @@ const AssetField: FC<AssetFieldProps> = ({
 
   const handleChange = useCallback(
     (url?: string, name?: string) => {
-      if (!url) {
+      if (!url && url !== value) {
         onChange?.(url, name);
         return;
       }
 
-      const extension = (url.split(".").pop() ?? "").toLowerCase();
+      const extension = (url?.split(".").pop() ?? "").toLowerCase();
       const acceptedTypes = [
         ...IMAGE_FILE_TYPES,
         ...GIS_FILE_TYPES,
@@ -76,10 +77,12 @@ const AssetField: FC<AssetFieldProps> = ({
         });
         setCurrentValue(undefined);
       } else {
-        onChange?.(url, name);
+        if (url !== value) {
+          onChange?.(url, name);
+        }
       }
     },
-    [inputMethod, onChange, setNotification, t]
+    [inputMethod, onChange, setNotification, t, value]
   );
 
   const handleInputChange = useCallback(
