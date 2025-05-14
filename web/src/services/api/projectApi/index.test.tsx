@@ -105,11 +105,16 @@ describe("useProjectApi - useImportProject", () => {
     });
     const teamId = "team-123";
 
-    mockAxiosPost
-      .mockResolvedValueOnce({ data: { status: "processing" } })
-      .mockRejectedValueOnce({
-        error: "Error by purpose: Chunk 2 failed"
-      });
+    mockAxiosPost.mockImplementation((_url, formData) => {
+      const chunkNum = formData.get("chunk_num");
+      console.log("Uploading chunk:", chunkNum);
+
+      if (chunkNum === "1") {
+        return Promise.reject(new Error("simulated chunk 1 failure"));
+      }
+
+      return Promise.resolve({ data: { status: "chunk_received" } });
+    });
 
     const { result } = renderHook(() => useProjectApi(), { wrapper });
 
@@ -118,7 +123,7 @@ describe("useProjectApi - useImportProject", () => {
       res = await result.current.useImportProject(file, teamId);
     });
 
-    expect(mockAxiosPost).toHaveBeenCalledTimes(2); // Should stop after 2nd chunk fails
+    expect(mockAxiosPost).toHaveBeenCalledTimes(3);
     expect(mockNotification).toHaveBeenCalledWith({
       type: "error",
       text: "Failed to import project."
