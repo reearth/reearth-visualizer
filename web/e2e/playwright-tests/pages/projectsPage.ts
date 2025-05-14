@@ -1,4 +1,5 @@
 import { Locator, Page, expect } from "@playwright/test";
+import path from "path";
 export class ProjectsPage {
   newProjectButton: Locator = this.page.getByRole("button", {
     name: "New Project"
@@ -70,9 +71,11 @@ export class ProjectsPage {
     await this.applyButton.click();
   }
   async deleteProject(projectName: string) {
-    const projectRow = this.page.locator(`.css-96bt7k`, {
-      hasText: projectName
-    });
+    const projectRow = this.page
+      .locator(`.css-96bt7k`, {
+        hasText: projectName
+      })
+      .first();
     const projectMenuButton = projectRow
       .locator('button[appearance="simple"]')
       .nth(1);
@@ -93,6 +96,16 @@ export class ProjectsPage {
       .nth(0);
     await projectMenuButton.click();
   }
+
+  async verifyImportProject(projectName: string) {
+    const projectRow = this.page
+      .locator(`div.css-1r5b2ac`, {
+        hasText: projectName
+      })
+      .first();
+    await expect(projectRow).toBeVisible();
+  }
+
   async verifyStarredProject(specialProjectName: string) {
     const projectRow = this.page.locator(
       `div:has-text("${specialProjectName}")`
@@ -121,5 +134,25 @@ export class ProjectsPage {
     return this.page.locator(
       `xpath=//div[contains(@class, 'css-1ez7fby')]//div[contains(@title, "${projectName}")]`
     );
+  }
+  async goToProjectPage(projectName: string) {
+    const projectRow = this.page.locator(`.css-96bt7k`, {
+      hasText: projectName
+    });
+    await projectRow.first().dblclick();
+  }
+
+  async importProject(zipFilePath: string) {
+    // Listen for file chooser and trigger it by clicking the Import button
+    const [fileChooser] = await Promise.all([
+      this.page.waitForEvent("filechooser"),
+      this.importButton.click() // This triggers the file picker
+    ]);
+
+    // Set the zip file
+    await fileChooser.setFiles(zipFilePath);
+
+    // Optional: wait for upload to complete
+    await this.page.waitForTimeout(2000);
   }
 }

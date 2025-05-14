@@ -49,6 +49,7 @@ export type SettingsProject = {
 
 type Props = {
   project: SettingsProject;
+  sceneId?: string;
   isStory: boolean;
   currentStory?: Story;
   onUpdateStory: (settings: PublicStorySettingsType) => void;
@@ -61,6 +62,7 @@ type Props = {
 
 const PublicSettings: FC<Props> = ({
   project,
+  sceneId,
   isStory,
   currentStory,
   onUpdateStory,
@@ -89,6 +91,7 @@ const PublicSettings: FC<Props> = ({
           <PublicSettingsDetail
             key="map"
             settingsItem={project}
+            sceneId={sceneId}
             onUpdate={onUpdateProject}
             onUpdateBasicAuth={onUpdateProjectBasicAuth}
             onUpdateAlias={onUpdateProjectAlias}
