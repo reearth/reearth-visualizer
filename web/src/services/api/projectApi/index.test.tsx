@@ -107,8 +107,6 @@ describe("useProjectApi - useImportProject", () => {
 
     mockAxiosPost.mockImplementation((_url, formData) => {
       const chunkNum = formData.get("chunk_num");
-      console.log("Uploading chunk:", chunkNum);
-
       if (chunkNum === "1") {
         return Promise.reject(new Error("simulated chunk 1 failure"));
       }
