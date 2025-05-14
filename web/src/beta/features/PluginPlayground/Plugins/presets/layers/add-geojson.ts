@@ -19,21 +19,22 @@ extensions:
 const widgetFile: FileType = {
   id: "layers-add-geojson",
   title: "layers-add-geojson.js",
-  sourceCode: `// Example of adding a layer with GeoJSON（Polygon,Polyline,Marker) data
+  sourceCode: `// Example of adding a layer with GeoJSON data
 
 // Define the GeoJSON inline
-const nycAirportPoint = {
+const parking = {
   type: "simple", // Required
   data: {
     type: "geojson", // Write the data format
-    value: { // Ensure that "value" contains GeoJSON
+    value: {
+      // Ensure that "value" contains GeoJSON
       type: "FeatureCollection",
       features: [
         {
           type: "Feature",
           properties: {},
           geometry: {
-            coordinates: [-73.87355757907106, 40.77534208229679],
+            coordinates: [139.6801173467784, 35.664320051880225],
             type: "Point",
           },
         },
@@ -41,7 +42,31 @@ const nycAirportPoint = {
           type: "Feature",
           properties: {},
           geometry: {
-            coordinates: [-73.78432524270048, 40.64650562178011],
+            coordinates: [139.68096498886888, 35.66422614308836],
+            type: "Point",
+          },
+        },
+        {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [139.6804930063421, 35.6646252546914],
+            type: "Point",
+          },
+        },
+        {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [139.67922154320564, 35.66688684942308],
+            type: "Point",
+          },
+        },
+        {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            coordinates: [139.67630295737206, 35.66621385561031],
             type: "Point",
           },
         },
@@ -49,64 +74,64 @@ const nycAirportPoint = {
     },
   },
   // Settings for the feature style. This statement is required even if no style is set.
+  // Documentation on feature style: https://visualizer.developer.reearth.io/plugin-api/layers/#layer-appearance-types
   marker: {
-    "pointColor": "#ffa500",
-    "pointSize": 5,
-    "style": "point"
-  }
+    image:
+      "https://reearth.github.io/visualizer-plugin-sample-data/public/image/parking.svg",
+    imageSize: 0.15,
+  },
 };
 
 // Define the GeoJSON with URL
-const nycAirportArea = {
+const buildings = {
   type: "simple",
   data: {
     type: "geojson",
     // URL of GeoJSON file
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/nyc_airport_polygon.geojson",
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/buildings_sample.geojson",
   },
   polygon: {
-    "fillColor": "#ffffff80",
-    "stroke": true,
-    "strokeColor": "#ffa500",
-    "strokeWidth": 2
-  }
+    fillColor: "#dcdcdc",
+  },
 };
 
-const nycRoadPrimary = {
+const road = {
   type: "simple",
   data: {
     type: "geojson",
     // URL of GeoJSON file
-    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/nyc-road-primary.geojson",
+    url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/road_sample.geojson",
   },
-  // Settings for the feature style. This statement is required even if no style is set.
-   polyline: {}
+  polyline: {
+    strokeColor: "#f5f5f5",
+    strokeWidth: 2,
+  },
 };
 
 // Add the inline GeoJSON layer to Re:Earth
 // Documentation on Layers "add" event: https://visualizer.developer.reearth.io/plugin-api/layers/#add
-
-reearth.layers.add(nycAirportPoint);
-
-// Add the GeoJSON layer from the URL to Re:Earth
-reearth.layers.add(nycAirportArea);
-reearth.layers.add(nycRoadPrimary);
+reearth.layers.add(parking);
+reearth.layers.add(buildings);
+reearth.layers.add(road);
 
 // Move camera position
 reearth.camera.flyTo(
   {
-    heading: 6.074459786948563,
-    height: 53215.9926669169,
-    lat: 40.64351884997972,
-    lng: -73.93193384749776,
-    pitch: -1.447791863773106,
-    roll: 6.283138405962417,
+    heading: 0.009823371835937067,
+    height: 1058.7119398361438,
+    lat: 35.65662797724089,
+    lng: 139.67962458714757,
+    pitch: -0.8118880670484745,
+    roll: 0.000004443281002686206,
   },
   // Define camera movement time
   {
     duration: 2.0,
   }
-);`
+);
+
+data: © OpenStreetMap
+`
 };
 
 export const addGeojson: PluginType = {
