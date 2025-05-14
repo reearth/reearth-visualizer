@@ -1,25 +1,29 @@
 type Story implements Node {
   id: ID!
+  sceneId: ID!
+  scene: Scene
+
   title: String!
-  alias: String!
+  bgColor: String
+  panelPosition: Position!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
   propertyId: ID!
   property: Property
   pages: [StoryPage!]!
+
+  # publishment
+  alias: String!
   publishmentStatus: PublishmentStatus!
-  createdAt: DateTime!
-  updatedAt: DateTime!
   publishedAt: DateTime
-  sceneId: ID!
-  scene: Scene
-  panelPosition: Position!
-  bgColor: String
-  isBasicAuthActive: Boolean!
-  basicAuthUsername: String!
-  basicAuthPassword: String!
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
 }
@@ -69,17 +73,15 @@ input UpdateStoryInput {
   panelPosition: Position
   bgColor: String
 
-  # Publishment
-  isBasicAuthActive: Boolean
-  basicAuthUsername: String
-  basicAuthPassword: String
+  # publishment
   publicTitle: String
   publicDescription: String
   publicImage: String
   publicNoIndex: Boolean
   deletePublicImage: Boolean
-
-  # Google Analytics
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
   enableGa: Boolean
   trackingId: String
 }

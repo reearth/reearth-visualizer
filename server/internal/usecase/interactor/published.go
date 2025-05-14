@@ -70,21 +70,21 @@ func NewPublishedWithURL(project repo.Project, storytelling repo.Storytelling, f
 	}
 }
 
-func (i *Published) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
+func (i *Published) Metadata(ctx context.Context, name string) (interfaces.PublishedMetadata, error) {
 	prj, err := i.project.FindByPublicName(ctx, name)
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-		return interfaces.ProjectPublishedMetadata{}, err
+		return interfaces.PublishedMetadata{}, err
 	}
 
 	if prj == nil {
 		story, err := i.Storytelling.FindByPublicName(ctx, name)
 		if err != nil && !errors.Is(err, rerror.ErrNotFound) {
-			return interfaces.ProjectPublishedMetadata{}, err
+			return interfaces.PublishedMetadata{}, err
 		}
 		if story != nil {
 			return interfaces.PublishedMetadataFrom(story), nil
 		}
-		return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
+		return interfaces.PublishedMetadata{}, rerror.ErrNotFound
 	}
 
 	return interfaces.PublishedMetadataFrom(prj), nil
@@ -162,7 +162,7 @@ var (
 )
 
 // renderIndex returns index HTML with OGP and some meta tags for the project.
-func renderIndex(index, url string, d interfaces.ProjectPublishedMetadata) string {
+func renderIndex(index, url string, d interfaces.PublishedMetadata) string {
 	if d.Title != "" {
 		index = titleRegexp.ReplaceAllLiteralString(index, "<title>"+html.EscapeString(d.Title)+"</title>")
 	}

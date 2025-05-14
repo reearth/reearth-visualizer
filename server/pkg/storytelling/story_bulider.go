@@ -65,11 +65,6 @@ func (b *StoryBuilder) Pages(pages *PageList) *StoryBuilder {
 	return b
 }
 
-func (b *StoryBuilder) Status(status PublishmentStatus) *StoryBuilder {
-	b.s.status = status
-	return b
-}
-
 func (b *StoryBuilder) PanelPosition(position Position) *StoryBuilder {
 	b.s.panelPosition = position
 	return b
@@ -80,18 +75,8 @@ func (b *StoryBuilder) BgColor(bgColor string) *StoryBuilder {
 	return b
 }
 
-func (b *StoryBuilder) Alias(alias string) *StoryBuilder {
-	b.s.alias = alias
-	return b
-}
-
 func (b *StoryBuilder) Title(title string) *StoryBuilder {
 	b.s.title = title
-	return b
-}
-
-func (b *StoryBuilder) PublishedAt(t *time.Time) *StoryBuilder {
-	b.s.publishedAt = t
 	return b
 }
 
@@ -100,10 +85,20 @@ func (b *StoryBuilder) UpdatedAt(at time.Time) *StoryBuilder {
 	return b
 }
 
-func (b *StoryBuilder) PublicBasicAuth(active bool, username, password string) *StoryBuilder {
-	b.s.isBasicAuthActive = active
-	b.s.basicAuthUsername = username
-	b.s.basicAuthPassword = password
+// publishment ---------------------
+
+func (b *StoryBuilder) Alias(alias string) *StoryBuilder {
+	b.s.alias = alias
+	return b
+}
+
+func (b *StoryBuilder) Status(status PublishmentStatus) *StoryBuilder {
+	b.s.status = status
+	return b
+}
+
+func (b *StoryBuilder) PublishedAt(t *time.Time) *StoryBuilder {
+	b.s.publishedAt = t
 	return b
 }
 
@@ -124,6 +119,13 @@ func (b *StoryBuilder) PublicImage(image string) *StoryBuilder {
 
 func (b *StoryBuilder) PublicNoIndex(noIndex bool) *StoryBuilder {
 	b.s.publicNoIndex = noIndex
+	return b
+}
+
+func (b *StoryBuilder) PublicBasicAuth(active bool, username, password string) *StoryBuilder {
+	b.s.isBasicAuthActive = active
+	b.s.basicAuthUsername = username
+	b.s.basicAuthPassword = password
 	return b
 }
 
