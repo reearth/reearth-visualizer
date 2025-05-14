@@ -84,7 +84,10 @@ reearth.camera.flyTo(
   {
     duration: 2.0,
   }
-);`
+);
+
+//data: 国土交通省国土数値情報ダウンロードサイト https://nlftp.mlit.go.jp/ksj/gml/datalist/KsjTmplt-N03-v2_3.html 
+`
 };
 
 export const addLargeGeojson: PluginType = {
