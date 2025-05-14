@@ -71,9 +71,11 @@ export class ProjectsPage {
     await this.applyButton.click();
   }
   async deleteProject(projectName: string) {
-    const projectRow = this.page.locator(`.css-96bt7k`, {
-      hasText: projectName
-    });
+    const projectRow = this.page
+      .locator(`.css-96bt7k`, {
+        hasText: projectName
+      })
+      .first();
     const projectMenuButton = projectRow
       .locator('button[appearance="simple"]')
       .nth(1);
@@ -94,11 +96,16 @@ export class ProjectsPage {
       .nth(0);
     await projectMenuButton.click();
   }
+
   async verifyImportProject(projectName: string) {
-    const projectRow = this.page.locator(`.css-96bt7k`, {
-      hasText: projectName
-    });
+    const projectRow = this.page
+      .locator(`div.css-1r5b2ac`, {
+        hasText: projectName
+      })
+      .first();
+    await expect(projectRow).toBeVisible();
   }
+
   async verifyStarredProject(specialProjectName: string) {
     const projectRow = this.page.locator(
       `div:has-text("${specialProjectName}")`
@@ -132,7 +139,7 @@ export class ProjectsPage {
     const projectRow = this.page.locator(`.css-96bt7k`, {
       hasText: projectName
     });
-    await projectRow.dblclick();
+    await projectRow.first().dblclick();
   }
 
   async importProject(zipFilePath: string) {
