@@ -39,9 +39,6 @@ create: 作成する
 Your workspace Name*: ワークスペース名*
 your workspace name: ワークスペース名
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
-Important Changes: 重要な変更点
-dashboard.assets.migration.warning: >-
-  機能要件に基づき、プロジェクトの構造を変更することを決定しました。これまでワークスペース内で管理されていたアセット管理ページを、各プロジェクトごとのページに移動します。つまり、アセットはプロジェクト単位で管理されるようになり、ユーザーがインポートやエクスポートをより便利に行えるようになります。<br/>そのため、このページは今後利用できなくなり、次のバージョンで削除される予定です。詳細については、<1>こちらのページ</1>をご参照ください。
 Add a team member: チームメンバーを追加
 Add: 追加
 Search by email address or user name: メールアドレスまたはユーザー名で検索
