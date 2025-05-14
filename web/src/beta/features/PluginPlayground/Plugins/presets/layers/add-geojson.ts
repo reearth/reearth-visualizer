@@ -130,7 +130,7 @@ reearth.camera.flyTo(
   }
 );
 
-data: © OpenStreetMap
+// data: © OpenStreetMap
 `
 };
 
