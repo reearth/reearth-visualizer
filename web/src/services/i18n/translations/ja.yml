@@ -48,8 +48,8 @@ Search by email address or user name: メールアドレスまたはユーザー
 Can't find the user: ユーザーが見つかりません
 User already joined this workspace.: ユーザーはすでにこのワークスペースに参加しています。
 Remove: 削除
-"Your are removing member ": "次のメンバーを削除しています "
-" out of this workspace. Are you sure you want to do that?": " 削除後このワークスペースに存在しない。本当に削除しますか？"
+'Your are removing member ': '次のメンバーを削除しています '
+' out of this workspace. Are you sure you want to do that?': ' 削除後このワークスペースに存在しない。本当に削除しますか？'
 Search member by name or email: 名前またはEメールでメンバーを検索
 invite user: ユーザーを招待
 User Name: ユーザー名
@@ -119,8 +119,7 @@ Column Name: 列名
 Longitude Column Name: 経度の列名
 Add to Layer: レイヤーに追加
 From Value: 値から
-Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.:
-  >-
+Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
   CZMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 Input Text: テキストを入力
 Value: 値
@@ -128,14 +127,12 @@ Input data here: ここにデータを入力
 Invalid GeoJSON format: 不正なGeoJSON形式
 Please enter valid GeoJSON: 有効なGeoJSONを入力してください
 Prioritize Performance: パフォーマンスを優先
-If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.:
-  >-
+If Prioritize Performance is set to True, the Visualizer will prioritize performance. This layer will not use the Layer Style but instead will apply its own predefined style, which cannot be modified.: >-
   パフォーマンスを優先に設定すると、ビジュアライザーはパフォーマンスを優先します。このレイヤーはレイヤースタイルを使用せず、独自の事前定義されたスタイルを適用します。これは変更できません。
 Vector Tile: ベクトルタイル
 3D Tiles: 3Dタイル
 Data Source Manager: データソースマネージャー
-Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.:
-  >-
+Support for the KML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution.: >-
   KMLフォーマットのサポートは現在、実験的な段階にあり、安定性に欠ける部分があります。また、いくつかの機能はまだ完全にはサポートされていません。ご利用の際はご注意ください。
 Cesium OSM 3D Tiles: Cesium OSM 3Dタイル
 Google Photorealistic 3D Tiles: Googleフォトリアリスティック3Dタイル
@@ -231,7 +228,7 @@ Unknown scene setting: 不明なシーン設定
 Scene: シーン
 New Sketch Layer: 新しいスケッチレイヤー
 Create: 作成
-" Text": " テキスト"
+' Text': ' テキスト'
 Type Title here: タイトルをここに入力
 Title: タイトル
 Type: タイプ
@@ -269,12 +266,12 @@ Ok: 確認
 Your story has been published!: ストーリーが公開されました。
 Your scene has been published!: シーンが公開されました。
 Public URL: 公開URL
-"* Anyone can see your story with this URL": "* このリンクを知っているインターネット上の全員が閲覧できます"
-"* Anyone can see your scene with this URL": "* このリンクを知っているインターネット上の全員が閲覧できます"
+'* Anyone can see your story with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
+'* Anyone can see your scene with this URL': '* このリンクを知っているインターネット上の全員が閲覧できます'
 Copy: コピー
 Embed Code: 埋め込み用コード
-"* Please use this code if you want to embed your story into a webpage": その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
-"* Please use this code if you want to embed your scene into a webpage": その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
+'* Please use this code if you want to embed your story into a webpage': その他のWebサイトでこのストーリーを埋め込む場合は、こちらのコードを使用してください
+'* Please use this code if you want to embed your scene into a webpage': その他のWebサイトでこのシーンを埋め込む場合は、こちらのコードを使用してください
 Your published story will be updated. This means all current changes will overwrite the current published story.: 公開されたストーリーが更新されます。公開されているストーリーへ現在の内容が上書きされます。
 Your published scene will be updated. This means all current changes will overwrite the current published scene.: 公開されたシーンが更新されます。公開されているシーンへ現在の内容が上書きされます。
 Your story will be published. This means anybody with the below URL will be able to view this story.: ストーリーが公開されます。URLを知っている人は誰でもこのストーリーを見ることができるようになります。
@@ -353,15 +350,16 @@ Enable Terrain: 3D地形を有効にする
 Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
 Mouse Events: マウスイベント
-Add GeoJSON: "GeoJSONを追加"
-Add Large Geojson: "データ容量が大きいGeoJSONを追加"
+Add GeoJSON: GeoJSONを追加
+Add Large Geojson: データ容量が大きいGeoJSONを追加
+Add Styled GeoJSON: ''
 Add CSV: CSVを追加
 Add KML: KMLを追加
 Add WMS: WMSを追加
 Add CZML: CZMLを追加
 Add 3D Tiles: 3Dタイルを追加
-Add Photogrammetric 3D model: ""
-Add Point Cloud: ""
+Add Photogrammetric 3D model: ''
+Add Point Cloud: ''
 Add Google Photorealistic 3D Tiles: Google Photorealistic 3D Tilesを追加
 Add OSM 3D Tiles: OSM 3D Tilesを追加
 Hide Fly To Delete Layer: カメラ移動とレイヤーの削除
@@ -411,7 +409,7 @@ Please be sure before uninstalling.: プラグインをアンインストール�
 No description.: 説明なし
 Import GitHub repository: GitHubリポジトリをインポート
 Continue: 続行
-"Repository url:": "リポジトリURL:"
+'Repository url:': 'リポジトリURL:'
 Public Info: 公開情報
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効にする
@@ -440,7 +438,7 @@ New Link Button: 新しいリンクボタン
 Add markdown text here: マークダウンテキストをここに追加
 Color: 色
 Data Attribution: データ帰属
-"Data Provided by:": データ提供元：
+'Data Provided by:': データ提供元：
 aria-label-compass: コンパス
 aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
@@ -490,7 +488,7 @@ Clear Formatting: 書式をクリア
 Loading...: ロード中...
 Please select: 選択してください
 This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
-"Sort:": "並び替え:"
+'Sort:': '並び替え:'
 Grid Layout: グリッドレイアウト
 List Layout: リストのレイアウト
 Version: バージョン
@@ -518,11 +516,11 @@ New Credit: 新しいクレジット
 min: 最小
 max: 最大
 Time Period Settings: 期間設定
-"* Start Time": "* 開始時間"
+'* Start Time': '* 開始時間'
 Start time for the timeline: タイムラインの開始時間
-"* Current Time": "* 現在の時間"
+'* Current Time': '* 現在の時間'
 Current time should be between start and end time: 現在の時間は開始時間と終了時間の間である必要があります
-"* End Time": "* 終了時間"
+'* End Time': '* 終了時間'
 End time for the timeline: タイムラインの終了時間
 Please make sure the Current time must between the Start time and End Time.: 現在の時間は開始時間と終了時間の間である必要があります。
 set: 設定
