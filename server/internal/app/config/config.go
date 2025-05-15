@@ -77,9 +77,9 @@ type Config struct {
 }
 
 type InternalApiConfig struct {
-	Active bool   `default:"false" pp:",omitempty"`
-	Port   string `default:"8080" pp:",omitempty"`
-	Token  string `default:"" pp:",omitempty"`
+	Active bool `default:"false" pp:",omitempty"`
+	// Port   string `default:"8080" pp:",omitempty"`
+	// Token  string `default:"" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {

@@ -159,16 +159,6 @@ func (r *mutationResolver) CreateStoryPage(ctx context.Context, input gqlmodel.C
 		return nil, err
 	}
 
-	// 	type CreatePageParam struct {
-	//     SceneID         id.SceneID
-	//     StoryID         id.StoryID
-	//     Title           *string
-	//     Swipeable       *bool
-	//     Layers          *[]id.NLSLayerID
-	//     SwipeableLayers *[]id.NLSLayerID
-	//     Index           *int
-	// }
-
 	inp := interfaces.CreatePageParam{
 		SceneID:         sceneId,
 		StoryID:         storyId,

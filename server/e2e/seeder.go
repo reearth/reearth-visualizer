@@ -120,6 +120,7 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		Workspace(w.ID()).
 		Alias(pAlias).
 		Visualizer(visualizer.VisualizerCesiumBeta).
+		Visibility("private").
 		CoreSupport(true).
 		Starred(false).
 		Deleted(false).
