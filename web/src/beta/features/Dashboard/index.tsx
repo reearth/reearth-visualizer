@@ -21,7 +21,6 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   const topTabItems: Omit<TabItems[], "active"> = useMemo(
     () => [
       { id: "projects", text: t("Projects"), icon: "grid" },
-      { id: "asset", text: t("Assets"), icon: "file" },
       { id: "members", text: t("Members"), icon: "users" },
       { id: "bin", text: t("Recycle bin"), icon: "trash" }
     ],
