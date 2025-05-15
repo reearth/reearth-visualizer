@@ -71,13 +71,68 @@ func (Visualizer) EnumDescriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{0}
 }
 
+type ProjectImportStatus int32
+
+const (
+	ProjectImportStatus_NONE       ProjectImportStatus = 0
+	ProjectImportStatus_PROCESSING ProjectImportStatus = 1
+	ProjectImportStatus_FAIL       ProjectImportStatus = 2
+	ProjectImportStatus_SUCCESS    ProjectImportStatus = 3
+)
+
+// Enum value maps for ProjectImportStatus.
+var (
+	ProjectImportStatus_name = map[int32]string{
+		0: "NONE",
+		1: "PROCESSING",
+		2: "FAIL",
+		3: "SUCCESS",
+	}
+	ProjectImportStatus_value = map[string]int32{
+		"NONE":       0,
+		"PROCESSING": 1,
+		"FAIL":       2,
+		"SUCCESS":    3,
+	}
+)
+
+func (x ProjectImportStatus) Enum() *ProjectImportStatus {
+	p := new(ProjectImportStatus)
+	*p = x
+	return p
+}
+
+func (x ProjectImportStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (ProjectImportStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_schemas_internalapi_v1_schema_proto_enumTypes[1].Descriptor()
+}
+
+func (ProjectImportStatus) Type() protoreflect.EnumType {
+	return &file_schemas_internalapi_v1_schema_proto_enumTypes[1]
+}
+
+func (x ProjectImportStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use ProjectImportStatus.Descriptor instead.
+func (ProjectImportStatus) EnumDescriptor() ([]byte, []int) {
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{1}
+}
+
 type PublishmentStatus int32
 
 const (
 	PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED PublishmentStatus = 0
-	PublishmentStatus_PUBLISHMENT_STATUS_PUBLIC      PublishmentStatus = 1
-	PublishmentStatus_PUBLISHMENT_STATUS_LIMITED     PublishmentStatus = 2
-	PublishmentStatus_PUBLISHMENT_STATUS_PRIVATE     PublishmentStatus = 3
+	// The project is published and publicly accessible.
+	PublishmentStatus_PUBLISHMENT_STATUS_PUBLIC PublishmentStatus = 1
+	// The project is published with limited access.
+	PublishmentStatus_PUBLISHMENT_STATUS_LIMITED PublishmentStatus = 2
+	// The project is unpublished (web files have been deleted).
+	PublishmentStatus_PUBLISHMENT_STATUS_PRIVATE PublishmentStatus = 3
 )
 
 // Enum value maps for PublishmentStatus.
@@ -107,11 +162,11 @@ func (x PublishmentStatus) String() string {
 }
 
 func (PublishmentStatus) Descriptor() protoreflect.EnumDescriptor {
-	return file_schemas_internalapi_v1_schema_proto_enumTypes[1].Descriptor()
+	return file_schemas_internalapi_v1_schema_proto_enumTypes[2].Descriptor()
 }
 
 func (PublishmentStatus) Type() protoreflect.EnumType {
-	return &file_schemas_internalapi_v1_schema_proto_enumTypes[1]
+	return &file_schemas_internalapi_v1_schema_proto_enumTypes[2]
 }
 
 func (x PublishmentStatus) Number() protoreflect.EnumNumber {
@@ -120,39 +175,66 @@ func (x PublishmentStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PublishmentStatus.Descriptor instead.
 func (PublishmentStatus) EnumDescriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{1}
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{2}
 }
 
-// Core messages
+// Core Project messages
 type Project struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	IsArchived        bool                   `protobuf:"varint,2,opt,name=is_archived,json=isArchived,proto3" json:"is_archived,omitempty"`
-	IsBasicAuthActive bool                   `protobuf:"varint,3,opt,name=is_basic_auth_active,json=isBasicAuthActive,proto3" json:"is_basic_auth_active,omitempty"`
-	BasicAuthUsername string                 `protobuf:"bytes,4,opt,name=basic_auth_username,json=basicAuthUsername,proto3" json:"basic_auth_username,omitempty"`
-	BasicAuthPassword string                 `protobuf:"bytes,5,opt,name=basic_auth_password,json=basicAuthPassword,proto3" json:"basic_auth_password,omitempty"`
-	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	PublishedAt       *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
-	Name              string                 `protobuf:"bytes,9,opt,name=name,proto3" json:"name,omitempty"`
-	Description       string                 `protobuf:"bytes,10,opt,name=description,proto3" json:"description,omitempty"`
-	Alias             string                 `protobuf:"bytes,11,opt,name=alias,proto3" json:"alias,omitempty"`
-	PublicTitle       string                 `protobuf:"bytes,12,opt,name=public_title,json=publicTitle,proto3" json:"public_title,omitempty"`
-	PublicDescription string                 `protobuf:"bytes,13,opt,name=public_description,json=publicDescription,proto3" json:"public_description,omitempty"`
-	PublicImage       string                 `protobuf:"bytes,14,opt,name=public_image,json=publicImage,proto3" json:"public_image,omitempty"`
-	PublicNoIndex     bool                   `protobuf:"varint,15,opt,name=public_no_index,json=publicNoIndex,proto3" json:"public_no_index,omitempty"`
-	ImageUrl          *string                `protobuf:"bytes,16,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
-	TeamId            string                 `protobuf:"bytes,17,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Visualizer        Visualizer             `protobuf:"varint,18,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
-	PublishmentStatus PublishmentStatus      `protobuf:"varint,19,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
-	CoreSupport       bool                   `protobuf:"varint,20,opt,name=core_support,json=coreSupport,proto3" json:"core_support,omitempty"`
-	EnableGa          bool                   `protobuf:"varint,21,opt,name=enable_ga,json=enableGa,proto3" json:"enable_ga,omitempty"`
-	TrackingId        string                 `protobuf:"bytes,22,opt,name=tracking_id,json=trackingId,proto3" json:"tracking_id,omitempty"`
-	Starred           bool                   `protobuf:"varint,23,opt,name=starred,proto3" json:"starred,omitempty"`
-	IsDeleted         bool                   `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
-	Visibility        string                 `protobuf:"bytes,25,opt,name=visibility,proto3" json:"visibility,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project ID
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	// Workspace ID
+	WorkspaceId string `protobuf:"bytes,2,opt,name=workspace_id,json=workspaceId,proto3" json:"workspace_id,omitempty"`
+	// Scene ID
+	SceneId string `protobuf:"bytes,3,opt,name=scene_id,json=sceneId,proto3" json:"scene_id,omitempty"`
+	// Project title
+	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	// Project description
+	Description string `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	// Project image (URL link)
+	ImageUrl *string `protobuf:"bytes,8,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
+	// Type of visualizer (e.g., Cesium)
+	Visualizer Visualizer `protobuf:"varint,9,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
+	// Creation date
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	// Last updated date
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	// Currently unused
+	IsArchived bool `protobuf:"varint,12,opt,name=is_archived,json=isArchived,proto3" json:"is_archived,omitempty"`
+	// Indicates whether it's a classic or visualizer project type
+	CoreSupport bool `protobuf:"varint,13,opt,name=core_support,json=coreSupport,proto3" json:"core_support,omitempty"`
+	// Whether the project is marked as a favorite
+	Starred bool `protobuf:"varint,14,opt,name=starred,proto3" json:"starred,omitempty"`
+	// Whether the project is in the trash
+	IsDeleted bool `protobuf:"varint,15,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
+	// Visibility of the project (e.g., "public", "private")
+	Visibility string `protobuf:"bytes,16,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	// Publishment value
+	Alias string `protobuf:"bytes,18,opt,name=alias,proto3" json:"alias,omitempty"`
+	// Publishment value
+	PublishmentStatus PublishmentStatus `protobuf:"varint,19,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
+	// Publishment value
+	PublishedAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	// Publishment value
+	PublicTitle string `protobuf:"bytes,21,opt,name=public_title,json=publicTitle,proto3" json:"public_title,omitempty"`
+	// Publishment value
+	PublicDescription string `protobuf:"bytes,22,opt,name=public_description,json=publicDescription,proto3" json:"public_description,omitempty"`
+	// Publishment value
+	PublicImage string `protobuf:"bytes,23,opt,name=public_image,json=publicImage,proto3" json:"public_image,omitempty"`
+	// Publishment value
+	PublicNoIndex bool `protobuf:"varint,24,opt,name=public_no_index,json=publicNoIndex,proto3" json:"public_no_index,omitempty"`
+	// Publishment value
+	IsBasicAuthActive bool `protobuf:"varint,25,opt,name=is_basic_auth_active,json=isBasicAuthActive,proto3" json:"is_basic_auth_active,omitempty"`
+	// Publishment value
+	BasicAuthUsername string `protobuf:"bytes,26,opt,name=basic_auth_username,json=basicAuthUsername,proto3" json:"basic_auth_username,omitempty"`
+	// Publishment value
+	BasicAuthPassword string `protobuf:"bytes,27,opt,name=basic_auth_password,json=basicAuthPassword,proto3" json:"basic_auth_password,omitempty"`
+	// Publishment value
+	EnableGa bool `protobuf:"varint,28,opt,name=enable_ga,json=enableGa,proto3" json:"enable_ga,omitempty"`
+	// Publishment value
+	TrackingId    string `protobuf:"bytes,29,opt,name=tracking_id,json=trackingId,proto3" json:"tracking_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Project) Reset() {
@@ -192,53 +274,18 @@ func (x *Project) GetId() string {
 	return ""
 }
 
-func (x *Project) GetIsArchived() bool {
+func (x *Project) GetWorkspaceId() string {
 	if x != nil {
-		return x.IsArchived
-	}
-	return false
-}
-
-func (x *Project) GetIsBasicAuthActive() bool {
-	if x != nil {
-		return x.IsBasicAuthActive
-	}
-	return false
-}
-
-func (x *Project) GetBasicAuthUsername() string {
-	if x != nil {
-		return x.BasicAuthUsername
+		return x.WorkspaceId
 	}
 	return ""
 }
 
-func (x *Project) GetBasicAuthPassword() string {
+func (x *Project) GetSceneId() string {
 	if x != nil {
-		return x.BasicAuthPassword
+		return x.SceneId
 	}
 	return ""
-}
-
-func (x *Project) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *Project) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-func (x *Project) GetPublishedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.PublishedAt
-	}
-	return nil
 }
 
 func (x *Project) GetName() string {
@@ -255,11 +302,88 @@ func (x *Project) GetDescription() string {
 	return ""
 }
 
+func (x *Project) GetImageUrl() string {
+	if x != nil && x.ImageUrl != nil {
+		return *x.ImageUrl
+	}
+	return ""
+}
+
+func (x *Project) GetVisualizer() Visualizer {
+	if x != nil {
+		return x.Visualizer
+	}
+	return Visualizer_VISUALIZER_UNSPECIFIED
+}
+
+func (x *Project) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Project) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Project) GetIsArchived() bool {
+	if x != nil {
+		return x.IsArchived
+	}
+	return false
+}
+
+func (x *Project) GetCoreSupport() bool {
+	if x != nil {
+		return x.CoreSupport
+	}
+	return false
+}
+
+func (x *Project) GetStarred() bool {
+	if x != nil {
+		return x.Starred
+	}
+	return false
+}
+
+func (x *Project) GetIsDeleted() bool {
+	if x != nil {
+		return x.IsDeleted
+	}
+	return false
+}
+
+func (x *Project) GetVisibility() string {
+	if x != nil {
+		return x.Visibility
+	}
+	return ""
+}
+
 func (x *Project) GetAlias() string {
 	if x != nil {
 		return x.Alias
 	}
 	return ""
+}
+
+func (x *Project) GetPublishmentStatus() PublishmentStatus {
+	if x != nil {
+		return x.PublishmentStatus
+	}
+	return PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED
+}
+
+func (x *Project) GetPublishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PublishedAt
+	}
+	return nil
 }
 
 func (x *Project) GetPublicTitle() string {
@@ -290,39 +414,25 @@ func (x *Project) GetPublicNoIndex() bool {
 	return false
 }
 
-func (x *Project) GetImageUrl() string {
-	if x != nil && x.ImageUrl != nil {
-		return *x.ImageUrl
-	}
-	return ""
-}
-
-func (x *Project) GetTeamId() string {
+func (x *Project) GetIsBasicAuthActive() bool {
 	if x != nil {
-		return x.TeamId
-	}
-	return ""
-}
-
-func (x *Project) GetVisualizer() Visualizer {
-	if x != nil {
-		return x.Visualizer
-	}
-	return Visualizer_VISUALIZER_UNSPECIFIED
-}
-
-func (x *Project) GetPublishmentStatus() PublishmentStatus {
-	if x != nil {
-		return x.PublishmentStatus
-	}
-	return PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED
-}
-
-func (x *Project) GetCoreSupport() bool {
-	if x != nil {
-		return x.CoreSupport
+		return x.IsBasicAuthActive
 	}
 	return false
+}
+
+func (x *Project) GetBasicAuthUsername() string {
+	if x != nil {
+		return x.BasicAuthUsername
+	}
+	return ""
+}
+
+func (x *Project) GetBasicAuthPassword() string {
+	if x != nil {
+		return x.BasicAuthPassword
+	}
+	return ""
 }
 
 func (x *Project) GetEnableGa() bool {
@@ -339,32 +449,14 @@ func (x *Project) GetTrackingId() string {
 	return ""
 }
 
-func (x *Project) GetStarred() bool {
-	if x != nil {
-		return x.Starred
-	}
-	return false
-}
-
-func (x *Project) GetIsDeleted() bool {
-	if x != nil {
-		return x.IsDeleted
-	}
-	return false
-}
-
-func (x *Project) GetVisibility() string {
-	if x != nil {
-		return x.Visibility
-	}
-	return ""
-}
-
-// Request messages
+// If the authenticated flag is true, private items will also be included in the
+// response. However, deleted items are excluded.
 type GetProjectListRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TeamId        string                 `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Authenticated bool                   `protobuf:"varint,2,opt,name=authenticated,proto3" json:"authenticated,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Workspace ID
+	WorkspaceId string `protobuf:"bytes,1,opt,name=workspace_id,json=workspaceId,proto3" json:"workspace_id,omitempty"`
+	// Authenticated Flag
+	Authenticated bool `protobuf:"varint,2,opt,name=authenticated,proto3" json:"authenticated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -399,9 +491,9 @@ func (*GetProjectListRequest) Descriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *GetProjectListRequest) GetTeamId() string {
+func (x *GetProjectListRequest) GetWorkspaceId() string {
 	if x != nil {
-		return x.TeamId
+		return x.WorkspaceId
 	}
 	return ""
 }
@@ -413,9 +505,12 @@ func (x *GetProjectListRequest) GetAuthenticated() bool {
 	return false
 }
 
+// Retrieves a project regardless of authentication.
+// Note: Call this only if the user is allowed to view the project.
 type GetProjectRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project ID
+	ProjectId     string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -457,14 +552,22 @@ func (x *GetProjectRequest) GetProjectId() string {
 	return ""
 }
 
+// Creates a new project.
+// Cannot be created under a team the user does not belong to.
 type CreateProjectRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	TeamId        string                 `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Visualizer    Visualizer             `protobuf:"varint,2,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
-	Name          *string                `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
-	Description   *string                `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	CoreSupport   *bool                  `protobuf:"varint,5,opt,name=core_support,json=coreSupport,proto3,oneof" json:"core_support,omitempty"`
-	Visibility    *string                `protobuf:"bytes,6,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Workspace ID
+	WorkspaceId string `protobuf:"bytes,1,opt,name=workspace_id,json=workspaceId,proto3" json:"workspace_id,omitempty"`
+	// Specify VISUALIZER_CESIUM
+	Visualizer Visualizer `protobuf:"varint,2,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
+	// Project title
+	Name *string `protobuf:"bytes,3,opt,name=name,proto3,oneof" json:"name,omitempty"`
+	// Project description
+	Description *string `protobuf:"bytes,4,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	// Set to true
+	CoreSupport *bool `protobuf:"varint,5,opt,name=core_support,json=coreSupport,proto3,oneof" json:"core_support,omitempty"`
+	// Visibility of the project (e.g., "public", "private")
+	Visibility    *string `protobuf:"bytes,6,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -499,9 +602,9 @@ func (*CreateProjectRequest) Descriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *CreateProjectRequest) GetTeamId() string {
+func (x *CreateProjectRequest) GetWorkspaceId() string {
 	if x != nil {
-		return x.TeamId
+		return x.WorkspaceId
 	}
 	return ""
 }
@@ -541,16 +644,76 @@ func (x *CreateProjectRequest) GetVisibility() string {
 	return ""
 }
 
+// Update project visibility.
+// Only the project owner can operate this
+type UpdateProjectVisibilityRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project ID
+	ProjectId string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	// Visibility of the project (e.g., "public", "private")
+	Visibility    *string `protobuf:"bytes,2,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProjectVisibilityRequest) Reset() {
+	*x = UpdateProjectVisibilityRequest{}
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProjectVisibilityRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProjectVisibilityRequest) ProtoMessage() {}
+
+func (x *UpdateProjectVisibilityRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProjectVisibilityRequest.ProtoReflect.Descriptor instead.
+func (*UpdateProjectVisibilityRequest) Descriptor() ([]byte, []int) {
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UpdateProjectVisibilityRequest) GetProjectId() string {
+	if x != nil {
+		return x.ProjectId
+	}
+	return ""
+}
+
+func (x *UpdateProjectVisibilityRequest) GetVisibility() string {
+	if x != nil && x.Visibility != nil {
+		return *x.Visibility
+	}
+	return ""
+}
+
+// Deletes a project.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
 type DeleteProjectRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project ID
+	ProjectId     string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteProjectRequest) Reset() {
 	*x = DeleteProjectRequest{}
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[4]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -562,7 +725,7 @@ func (x *DeleteProjectRequest) String() string {
 func (*DeleteProjectRequest) ProtoMessage() {}
 
 func (x *DeleteProjectRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[4]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -575,7 +738,7 @@ func (x *DeleteProjectRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProjectRequest.ProtoReflect.Descriptor instead.
 func (*DeleteProjectRequest) Descriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{4}
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *DeleteProjectRequest) GetProjectId() string {
@@ -587,15 +750,16 @@ func (x *DeleteProjectRequest) GetProjectId() string {
 
 // Response messages
 type GetProjectResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       *Project               `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project
+	Project       *Project `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetProjectResponse) Reset() {
 	*x = GetProjectResponse{}
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[5]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -607,7 +771,7 @@ func (x *GetProjectResponse) String() string {
 func (*GetProjectResponse) ProtoMessage() {}
 
 func (x *GetProjectResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[5]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -620,7 +784,7 @@ func (x *GetProjectResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProjectResponse.ProtoReflect.Descriptor instead.
 func (*GetProjectResponse) Descriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{5}
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetProjectResponse) GetProject() *Project {
@@ -630,16 +794,18 @@ func (x *GetProjectResponse) GetProject() *Project {
 	return nil
 }
 
+// Response messages
 type GetProjectListResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Projects      []*Project             `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project List
+	Projects      []*Project `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetProjectListResponse) Reset() {
 	*x = GetProjectListResponse{}
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[6]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -651,7 +817,7 @@ func (x *GetProjectListResponse) String() string {
 func (*GetProjectListResponse) ProtoMessage() {}
 
 func (x *GetProjectListResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[6]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -664,7 +830,7 @@ func (x *GetProjectListResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetProjectListResponse.ProtoReflect.Descriptor instead.
 func (*GetProjectListResponse) Descriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{6}
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetProjectListResponse) GetProjects() []*Project {
@@ -674,16 +840,18 @@ func (x *GetProjectListResponse) GetProjects() []*Project {
 	return nil
 }
 
+// Response messages
 type CreateProjectResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Project       *Project               `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project
+	Project       *Project `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *CreateProjectResponse) Reset() {
 	*x = CreateProjectResponse{}
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[7]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -695,7 +863,7 @@ func (x *CreateProjectResponse) String() string {
 func (*CreateProjectResponse) ProtoMessage() {}
 
 func (x *CreateProjectResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[7]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -708,7 +876,7 @@ func (x *CreateProjectResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateProjectResponse.ProtoReflect.Descriptor instead.
 func (*CreateProjectResponse) Descriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{7}
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CreateProjectResponse) GetProject() *Project {
@@ -718,16 +886,64 @@ func (x *CreateProjectResponse) GetProject() *Project {
 	return nil
 }
 
+// Response messages
+type UpdateProjectVisibilityResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project
+	Project       *Project `protobuf:"bytes,1,opt,name=project,proto3" json:"project,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateProjectVisibilityResponse) Reset() {
+	*x = UpdateProjectVisibilityResponse{}
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateProjectVisibilityResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateProjectVisibilityResponse) ProtoMessage() {}
+
+func (x *UpdateProjectVisibilityResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateProjectVisibilityResponse.ProtoReflect.Descriptor instead.
+func (*UpdateProjectVisibilityResponse) Descriptor() ([]byte, []int) {
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *UpdateProjectVisibilityResponse) GetProject() *Project {
+	if x != nil {
+		return x.Project
+	}
+	return nil
+}
+
+// Response messages
 type DeleteProjectResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	ProjectId     string                 `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Project ID
+	ProjectId     string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *DeleteProjectResponse) Reset() {
 	*x = DeleteProjectResponse{}
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[8]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -739,7 +955,7 @@ func (x *DeleteProjectResponse) String() string {
 func (*DeleteProjectResponse) ProtoMessage() {}
 
 func (x *DeleteProjectResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[8]
+	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -752,7 +968,7 @@ func (x *DeleteProjectResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteProjectResponse.ProtoReflect.Descriptor instead.
 func (*DeleteProjectResponse) Descriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{8}
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *DeleteProjectResponse) GetProjectId() string {
@@ -766,54 +982,55 @@ var File_schemas_internalapi_v1_schema_proto protoreflect.FileDescriptor
 
 const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
-	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\b\n" +
+	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc3\b\n" +
 	"\aProject\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
-	"\vis_archived\x18\x02 \x01(\bR\n" +
-	"isArchived\x12/\n" +
-	"\x14is_basic_auth_active\x18\x03 \x01(\bR\x11isBasicAuthActive\x12.\n" +
-	"\x13basic_auth_username\x18\x04 \x01(\tR\x11basicAuthUsername\x12.\n" +
-	"\x13basic_auth_password\x18\x05 \x01(\tR\x11basicAuthPassword\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
+	"\fworkspace_id\x18\x02 \x01(\tR\vworkspaceId\x12\x19\n" +
+	"\bscene_id\x18\x03 \x01(\tR\asceneId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\x12 \n" +
+	"\timage_url\x18\b \x01(\tH\x00R\bimageUrl\x88\x01\x01\x12A\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"visualizer\x18\t \x01(\x0e2!.reearth.visualizer.v1.VisualizerR\n" +
+	"visualizer\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12B\n" +
-	"\fpublished_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampH\x00R\vpublishedAt\x88\x01\x01\x12\x12\n" +
-	"\x04name\x18\t \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\n" +
-	" \x01(\tR\vdescription\x12\x14\n" +
-	"\x05alias\x18\v \x01(\tR\x05alias\x12!\n" +
-	"\fpublic_title\x18\f \x01(\tR\vpublicTitle\x12-\n" +
-	"\x12public_description\x18\r \x01(\tR\x11publicDescription\x12!\n" +
-	"\fpublic_image\x18\x0e \x01(\tR\vpublicImage\x12&\n" +
-	"\x0fpublic_no_index\x18\x0f \x01(\bR\rpublicNoIndex\x12 \n" +
-	"\timage_url\x18\x10 \x01(\tH\x01R\bimageUrl\x88\x01\x01\x12\x17\n" +
-	"\ateam_id\x18\x11 \x01(\tR\x06teamId\x12A\n" +
+	"created_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"visualizer\x18\x12 \x01(\x0e2!.reearth.visualizer.v1.VisualizerR\n" +
-	"visualizer\x12W\n" +
-	"\x12publishment_status\x18\x13 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12!\n" +
-	"\fcore_support\x18\x14 \x01(\bR\vcoreSupport\x12\x1b\n" +
-	"\tenable_ga\x18\x15 \x01(\bR\benableGa\x12\x1f\n" +
-	"\vtracking_id\x18\x16 \x01(\tR\n" +
-	"trackingId\x12\x18\n" +
-	"\astarred\x18\x17 \x01(\bR\astarred\x12\x1d\n" +
+	"updated_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
+	"\vis_archived\x18\f \x01(\bR\n" +
+	"isArchived\x12!\n" +
+	"\fcore_support\x18\r \x01(\bR\vcoreSupport\x12\x18\n" +
+	"\astarred\x18\x0e \x01(\bR\astarred\x12\x1d\n" +
 	"\n" +
-	"is_deleted\x18\x18 \x01(\bR\tisDeleted\x12\x1e\n" +
+	"is_deleted\x18\x0f \x01(\bR\tisDeleted\x12\x1e\n" +
 	"\n" +
-	"visibility\x18\x19 \x01(\tR\n" +
-	"visibilityB\x0f\n" +
-	"\r_published_atB\f\n" +
+	"visibility\x18\x10 \x01(\tR\n" +
+	"visibility\x12\x14\n" +
+	"\x05alias\x18\x12 \x01(\tR\x05alias\x12W\n" +
+	"\x12publishment_status\x18\x13 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12B\n" +
+	"\fpublished_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vpublishedAt\x88\x01\x01\x12!\n" +
+	"\fpublic_title\x18\x15 \x01(\tR\vpublicTitle\x12-\n" +
+	"\x12public_description\x18\x16 \x01(\tR\x11publicDescription\x12!\n" +
+	"\fpublic_image\x18\x17 \x01(\tR\vpublicImage\x12&\n" +
+	"\x0fpublic_no_index\x18\x18 \x01(\bR\rpublicNoIndex\x12/\n" +
+	"\x14is_basic_auth_active\x18\x19 \x01(\bR\x11isBasicAuthActive\x12.\n" +
+	"\x13basic_auth_username\x18\x1a \x01(\tR\x11basicAuthUsername\x12.\n" +
+	"\x13basic_auth_password\x18\x1b \x01(\tR\x11basicAuthPassword\x12\x1b\n" +
+	"\tenable_ga\x18\x1c \x01(\bR\benableGa\x12\x1f\n" +
+	"\vtracking_id\x18\x1d \x01(\tR\n" +
+	"trackingIdB\f\n" +
 	"\n" +
-	"_image_url\"V\n" +
-	"\x15GetProjectListRequest\x12\x17\n" +
-	"\ateam_id\x18\x01 \x01(\tR\x06teamId\x12$\n" +
+	"_image_urlB\x0f\n" +
+	"\r_published_at\"`\n" +
+	"\x15GetProjectListRequest\x12!\n" +
+	"\fworkspace_id\x18\x01 \x01(\tR\vworkspaceId\x12$\n" +
 	"\rauthenticated\x18\x02 \x01(\bR\rauthenticated\"2\n" +
 	"\x11GetProjectRequest\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tR\tprojectId\"\xb8\x02\n" +
-	"\x14CreateProjectRequest\x12\x17\n" +
-	"\ateam_id\x18\x01 \x01(\tR\x06teamId\x12A\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\"\xc2\x02\n" +
+	"\x14CreateProjectRequest\x12!\n" +
+	"\fworkspace_id\x18\x01 \x01(\tR\vworkspaceId\x12A\n" +
 	"\n" +
 	"visualizer\x18\x02 \x01(\x0e2!.reearth.visualizer.v1.VisualizerR\n" +
 	"visualizer\x12\x17\n" +
@@ -826,6 +1043,13 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_core_supportB\r\n" +
+	"\v_visibility\"s\n" +
+	"\x1eUpdateProjectVisibilityRequest\x12\x1d\n" +
+	"\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\x12#\n" +
+	"\n" +
+	"visibility\x18\x02 \x01(\tH\x00R\n" +
+	"visibility\x88\x01\x01B\r\n" +
 	"\v_visibility\"5\n" +
 	"\x14DeleteProjectRequest\x12\x1d\n" +
 	"\n" +
@@ -835,6 +1059,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x16GetProjectListResponse\x12:\n" +
 	"\bprojects\x18\x01 \x03(\v2\x1e.reearth.visualizer.v1.ProjectR\bprojects\"Q\n" +
 	"\x15CreateProjectResponse\x128\n" +
+	"\aproject\x18\x01 \x01(\v2\x1e.reearth.visualizer.v1.ProjectR\aproject\"[\n" +
+	"\x1fUpdateProjectVisibilityResponse\x128\n" +
 	"\aproject\x18\x01 \x01(\v2\x1e.reearth.visualizer.v1.ProjectR\aproject\"6\n" +
 	"\x15DeleteProjectResponse\x12\x1d\n" +
 	"\n" +
@@ -843,17 +1069,24 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"Visualizer\x12\x1a\n" +
 	"\x16VISUALIZER_UNSPECIFIED\x10\x00\x12\x15\n" +
 	"\x11VISUALIZER_CESIUM\x10\x01\x12\x1a\n" +
-	"\x16VISUALIZER_CESIUM_BETA\x10\x02*\x96\x01\n" +
+	"\x16VISUALIZER_CESIUM_BETA\x10\x02*F\n" +
+	"\x13ProjectImportStatus\x12\b\n" +
+	"\x04NONE\x10\x00\x12\x0e\n" +
+	"\n" +
+	"PROCESSING\x10\x01\x12\b\n" +
+	"\x04FAIL\x10\x02\x12\v\n" +
+	"\aSUCCESS\x10\x03*\x96\x01\n" +
 	"\x11PublishmentStatus\x12\"\n" +
 	"\x1ePUBLISHMENT_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19PUBLISHMENT_STATUS_PUBLIC\x10\x01\x12\x1e\n" +
 	"\x1aPUBLISHMENT_STATUS_LIMITED\x10\x02\x12\x1e\n" +
-	"\x1aPUBLISHMENT_STATUS_PRIVATE\x10\x032\xc5\x03\n" +
+	"\x1aPUBLISHMENT_STATUS_PRIVATE\x10\x032\xd2\x04\n" +
 	"\x11ReEarthVisualizer\x12o\n" +
 	"\x0eGetProjectList\x12,.reearth.visualizer.v1.GetProjectListRequest\x1a-.reearth.visualizer.v1.GetProjectListResponse\"\x00\x12c\n" +
 	"\n" +
 	"GetProject\x12(.reearth.visualizer.v1.GetProjectRequest\x1a).reearth.visualizer.v1.GetProjectResponse\"\x00\x12l\n" +
-	"\rCreateProject\x12+.reearth.visualizer.v1.CreateProjectRequest\x1a,.reearth.visualizer.v1.CreateProjectResponse\"\x00\x12l\n" +
+	"\rCreateProject\x12+.reearth.visualizer.v1.CreateProjectRequest\x1a,.reearth.visualizer.v1.CreateProjectResponse\"\x00\x12\x8a\x01\n" +
+	"\x17UpdateProjectVisibility\x125.reearth.visualizer.v1.UpdateProjectVisibilityRequest\x1a6.reearth.visualizer.v1.UpdateProjectVisibilityResponse\"\x00\x12l\n" +
 	"\rDeleteProject\x12+.reearth.visualizer.v1.DeleteProjectRequest\x1a,.reearth.visualizer.v1.DeleteProjectResponse\"\x00B\n" +
 	"Z\bproto/v1b\x06proto3"
 
@@ -869,45 +1102,51 @@ func file_schemas_internalapi_v1_schema_proto_rawDescGZIP() []byte {
 	return file_schemas_internalapi_v1_schema_proto_rawDescData
 }
 
-var file_schemas_internalapi_v1_schema_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_schemas_internalapi_v1_schema_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_schemas_internalapi_v1_schema_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_schemas_internalapi_v1_schema_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
-	(Visualizer)(0),                // 0: reearth.visualizer.v1.Visualizer
-	(PublishmentStatus)(0),         // 1: reearth.visualizer.v1.PublishmentStatus
-	(*Project)(nil),                // 2: reearth.visualizer.v1.Project
-	(*GetProjectListRequest)(nil),  // 3: reearth.visualizer.v1.GetProjectListRequest
-	(*GetProjectRequest)(nil),      // 4: reearth.visualizer.v1.GetProjectRequest
-	(*CreateProjectRequest)(nil),   // 5: reearth.visualizer.v1.CreateProjectRequest
-	(*DeleteProjectRequest)(nil),   // 6: reearth.visualizer.v1.DeleteProjectRequest
-	(*GetProjectResponse)(nil),     // 7: reearth.visualizer.v1.GetProjectResponse
-	(*GetProjectListResponse)(nil), // 8: reearth.visualizer.v1.GetProjectListResponse
-	(*CreateProjectResponse)(nil),  // 9: reearth.visualizer.v1.CreateProjectResponse
-	(*DeleteProjectResponse)(nil),  // 10: reearth.visualizer.v1.DeleteProjectResponse
-	(*timestamppb.Timestamp)(nil),  // 11: google.protobuf.Timestamp
+	(Visualizer)(0),                         // 0: reearth.visualizer.v1.Visualizer
+	(ProjectImportStatus)(0),                // 1: reearth.visualizer.v1.ProjectImportStatus
+	(PublishmentStatus)(0),                  // 2: reearth.visualizer.v1.PublishmentStatus
+	(*Project)(nil),                         // 3: reearth.visualizer.v1.Project
+	(*GetProjectListRequest)(nil),           // 4: reearth.visualizer.v1.GetProjectListRequest
+	(*GetProjectRequest)(nil),               // 5: reearth.visualizer.v1.GetProjectRequest
+	(*CreateProjectRequest)(nil),            // 6: reearth.visualizer.v1.CreateProjectRequest
+	(*UpdateProjectVisibilityRequest)(nil),  // 7: reearth.visualizer.v1.UpdateProjectVisibilityRequest
+	(*DeleteProjectRequest)(nil),            // 8: reearth.visualizer.v1.DeleteProjectRequest
+	(*GetProjectResponse)(nil),              // 9: reearth.visualizer.v1.GetProjectResponse
+	(*GetProjectListResponse)(nil),          // 10: reearth.visualizer.v1.GetProjectListResponse
+	(*CreateProjectResponse)(nil),           // 11: reearth.visualizer.v1.CreateProjectResponse
+	(*UpdateProjectVisibilityResponse)(nil), // 12: reearth.visualizer.v1.UpdateProjectVisibilityResponse
+	(*DeleteProjectResponse)(nil),           // 13: reearth.visualizer.v1.DeleteProjectResponse
+	(*timestamppb.Timestamp)(nil),           // 14: google.protobuf.Timestamp
 }
 var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
-	11, // 0: reearth.visualizer.v1.Project.created_at:type_name -> google.protobuf.Timestamp
-	11, // 1: reearth.visualizer.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 2: reearth.visualizer.v1.Project.published_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: reearth.visualizer.v1.Project.visualizer:type_name -> reearth.visualizer.v1.Visualizer
-	1,  // 4: reearth.visualizer.v1.Project.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
+	0,  // 0: reearth.visualizer.v1.Project.visualizer:type_name -> reearth.visualizer.v1.Visualizer
+	14, // 1: reearth.visualizer.v1.Project.created_at:type_name -> google.protobuf.Timestamp
+	14, // 2: reearth.visualizer.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
+	2,  // 3: reearth.visualizer.v1.Project.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
+	14, // 4: reearth.visualizer.v1.Project.published_at:type_name -> google.protobuf.Timestamp
 	0,  // 5: reearth.visualizer.v1.CreateProjectRequest.visualizer:type_name -> reearth.visualizer.v1.Visualizer
-	2,  // 6: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	2,  // 7: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
-	2,  // 8: reearth.visualizer.v1.CreateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	3,  // 9: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
-	4,  // 10: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
-	5,  // 11: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:input_type -> reearth.visualizer.v1.CreateProjectRequest
-	6,  // 12: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:input_type -> reearth.visualizer.v1.DeleteProjectRequest
-	8,  // 13: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
-	7,  // 14: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
-	9,  // 15: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:output_type -> reearth.visualizer.v1.CreateProjectResponse
-	10, // 16: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:output_type -> reearth.visualizer.v1.DeleteProjectResponse
-	13, // [13:17] is the sub-list for method output_type
-	9,  // [9:13] is the sub-list for method input_type
-	9,  // [9:9] is the sub-list for extension type_name
-	9,  // [9:9] is the sub-list for extension extendee
-	0,  // [0:9] is the sub-list for field type_name
+	3,  // 6: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	3,  // 7: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
+	3,  // 8: reearth.visualizer.v1.CreateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	3,  // 9: reearth.visualizer.v1.UpdateProjectVisibilityResponse.project:type_name -> reearth.visualizer.v1.Project
+	4,  // 10: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
+	5,  // 11: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
+	6,  // 12: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:input_type -> reearth.visualizer.v1.CreateProjectRequest
+	7,  // 13: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectVisibility:input_type -> reearth.visualizer.v1.UpdateProjectVisibilityRequest
+	8,  // 14: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:input_type -> reearth.visualizer.v1.DeleteProjectRequest
+	10, // 15: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
+	9,  // 16: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
+	11, // 17: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:output_type -> reearth.visualizer.v1.CreateProjectResponse
+	12, // 18: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectVisibility:output_type -> reearth.visualizer.v1.UpdateProjectVisibilityResponse
+	13, // 19: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:output_type -> reearth.visualizer.v1.DeleteProjectResponse
+	15, // [15:20] is the sub-list for method output_type
+	10, // [10:15] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_schemas_internalapi_v1_schema_proto_init() }
@@ -917,13 +1156,14 @@ func file_schemas_internalapi_v1_schema_proto_init() {
 	}
 	file_schemas_internalapi_v1_schema_proto_msgTypes[0].OneofWrappers = []any{}
 	file_schemas_internalapi_v1_schema_proto_msgTypes[3].OneofWrappers = []any{}
+	file_schemas_internalapi_v1_schema_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_schemas_internalapi_v1_schema_proto_rawDesc), len(file_schemas_internalapi_v1_schema_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   9,
+			NumEnums:      3,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

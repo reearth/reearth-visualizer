@@ -187,6 +187,6 @@ func (r *queryResolver) DeletedProjects(ctx context.Context, teamId gqlmodel.ID)
 	return loaders(ctx).Project.FindDeletedByWorkspace(ctx, teamId)
 }
 
-func (r *queryResolver) VisibilityProjects(ctx context.Context, teamId gqlmodel.ID, authenticated bool) (*gqlmodel.ProjectConnection, error) {
+func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bool, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.VisibilityByWorkspace(ctx, teamId, authenticated)
 }

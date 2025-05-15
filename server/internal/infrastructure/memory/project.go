@@ -137,27 +137,31 @@ func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project
 	return nil, nil
 }
 
-func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool) ([]*project.Project, error) {
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	var result []*project.Project
-	if r.f.Readable == nil || !r.f.Readable.Has(id) {
+
+	if authenticated {
 		for _, p := range r.data {
-			if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
+			if p.Workspace() == id {
 				result = append(result, p)
 			}
 		}
-
-		sort.Slice(result, func(i, j int) bool {
-			return result[i].UpdatedAt().After(result[j].UpdatedAt())
-		})
-
-	}
-
-	for _, p := range r.data {
-		if p.Workspace() == id && !p.IsDeleted() {
-			result = append(result, p)
+	} else {
+		if isWorkspaceOwner {
+			for _, p := range r.data {
+				if p.Workspace() == id && !p.IsDeleted() {
+					result = append(result, p)
+				}
+			}
+		} else {
+			for _, p := range r.data {
+				if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
+					result = append(result, p)
+				}
+			}
 		}
 	}
 

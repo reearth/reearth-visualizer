@@ -19,20 +19,31 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ReEarthVisualizer_GetProjectList_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectList"
-	ReEarthVisualizer_GetProject_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
-	ReEarthVisualizer_CreateProject_FullMethodName  = "/reearth.visualizer.v1.ReEarthVisualizer/CreateProject"
-	ReEarthVisualizer_DeleteProject_FullMethodName  = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProject"
+	ReEarthVisualizer_GetProjectList_FullMethodName          = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectList"
+	ReEarthVisualizer_GetProject_FullMethodName              = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
+	ReEarthVisualizer_CreateProject_FullMethodName           = "/reearth.visualizer.v1.ReEarthVisualizer/CreateProject"
+	ReEarthVisualizer_UpdateProjectVisibility_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectVisibility"
+	ReEarthVisualizer_DeleteProject_FullMethodName           = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProject"
 )
 
 // ReEarthVisualizerClient is the client API for ReEarthVisualizer service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ReEarthVisualizerClient interface {
-	// Main operations
+	// Retrieves the list of projects the user can access.
+	// Request headers: user-id: <User ID>
 	GetProjectList(ctx context.Context, in *GetProjectListRequest, opts ...grpc.CallOption) (*GetProjectListResponse, error)
+	// Retrieves a specific project regardless of authentication.
+	// Request headers: user-id: <User ID>
 	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectResponse, error)
+	// Creates a new project in the specified team.
+	// Request headers: user-id: <User ID>
 	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectResponse, error)
+	// Update the visibility a project.
+	// Request headers: user-id: <User ID>
+	UpdateProjectVisibility(ctx context.Context, in *UpdateProjectVisibilityRequest, opts ...grpc.CallOption) (*UpdateProjectVisibilityResponse, error)
+	// Deletes a project.
+	// Request headers: user-id: <User ID>
 	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectResponse, error)
 }
 
@@ -74,6 +85,16 @@ func (c *reEarthVisualizerClient) CreateProject(ctx context.Context, in *CreateP
 	return out, nil
 }
 
+func (c *reEarthVisualizerClient) UpdateProjectVisibility(ctx context.Context, in *UpdateProjectVisibilityRequest, opts ...grpc.CallOption) (*UpdateProjectVisibilityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateProjectVisibilityResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_UpdateProjectVisibility_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *reEarthVisualizerClient) DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeleteProjectResponse)
@@ -88,10 +109,20 @@ func (c *reEarthVisualizerClient) DeleteProject(ctx context.Context, in *DeleteP
 // All implementations must embed UnimplementedReEarthVisualizerServer
 // for forward compatibility.
 type ReEarthVisualizerServer interface {
-	// Main operations
+	// Retrieves the list of projects the user can access.
+	// Request headers: user-id: <User ID>
 	GetProjectList(context.Context, *GetProjectListRequest) (*GetProjectListResponse, error)
+	// Retrieves a specific project regardless of authentication.
+	// Request headers: user-id: <User ID>
 	GetProject(context.Context, *GetProjectRequest) (*GetProjectResponse, error)
+	// Creates a new project in the specified team.
+	// Request headers: user-id: <User ID>
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectResponse, error)
+	// Update the visibility a project.
+	// Request headers: user-id: <User ID>
+	UpdateProjectVisibility(context.Context, *UpdateProjectVisibilityRequest) (*UpdateProjectVisibilityResponse, error)
+	// Deletes a project.
+	// Request headers: user-id: <User ID>
 	DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectResponse, error)
 	mustEmbedUnimplementedReEarthVisualizerServer()
 }
@@ -111,6 +142,9 @@ func (UnimplementedReEarthVisualizerServer) GetProject(context.Context, *GetProj
 }
 func (UnimplementedReEarthVisualizerServer) CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProject not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) UpdateProjectVisibility(context.Context, *UpdateProjectVisibilityRequest) (*UpdateProjectVisibilityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateProjectVisibility not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProject not implemented")
@@ -190,6 +224,24 @@ func _ReEarthVisualizer_CreateProject_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReEarthVisualizer_UpdateProjectVisibility_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateProjectVisibilityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).UpdateProjectVisibility(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_UpdateProjectVisibility_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).UpdateProjectVisibility(ctx, req.(*UpdateProjectVisibilityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ReEarthVisualizer_DeleteProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(DeleteProjectRequest)
 	if err := dec(in); err != nil {
@@ -226,6 +278,10 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateProject",
 			Handler:    _ReEarthVisualizer_CreateProject_Handler,
+		},
+		{
+			MethodName: "UpdateProjectVisibility",
+			Handler:    _ReEarthVisualizer_UpdateProjectVisibility_Handler,
 		},
 		{
 			MethodName: "DeleteProject",

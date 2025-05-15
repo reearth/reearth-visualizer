@@ -73,13 +73,15 @@ type Config struct {
 
 	MockAuth bool `pp:",omitempty"`
 
+	Visualizer VisualizerConfig `pp:",omitempty"`
+}
+
+type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
 }
 
 type InternalApiConfig struct {
-	Active bool   `default:"false" pp:",omitempty"`
-	Port   string `default:"8080" pp:",omitempty"`
-	Token  string `default:"" pp:",omitempty"`
+	Active bool `default:"false" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {

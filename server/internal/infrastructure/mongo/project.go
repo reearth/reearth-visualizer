@@ -166,20 +166,49 @@ func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project
 	return prj, nil
 }
 
-func (r *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool) ([]*project.Project, error) {
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
 	var filter bson.M
 
 	if authenticated {
+
+		// All workspace project
 		filter = bson.M{
-			"team":    id.String(),
-			"deleted": false,
+			"team": id.String(),
 		}
+
 	} else {
-		filter = bson.M{
-			"team":       id.String(),
-			"deleted":    false,
-			"visibility": "public",
+
+		if isWorkspaceOwner {
+
+			// All workspace project
+			filter = bson.M{
+				"team": id.String(),
+			}
+
+		} else {
+
+			isWorkspaceMember := r.f.Readable.Has(id)
+
+			if isWorkspaceMember {
+
+				// public and private
+				filter = bson.M{
+					"team":    id.String(),
+					"deleted": false,
+				}
+
+			} else {
+
+				// public only
+				filter = bson.M{
+					"team":       id.String(),
+					"deleted":    false,
+					"visibility": "public",
+				}
+
+			}
 		}
+
 	}
 
 	return r.find(ctx, filter)

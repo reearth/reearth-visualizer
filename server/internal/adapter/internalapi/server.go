@@ -23,7 +23,7 @@ func NewServer() pb.ReEarthVisualizerServer {
 func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListRequest) (*pb.GetProjectListResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	wId, err := accountdomain.WorkspaceIDFrom(req.TeamId)
+	wId, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
 
 	if err != nil {
 		return nil, err
@@ -70,7 +70,7 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest) (*pb.CreateProjectResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	wId, err := accountdomain.WorkspaceIDFrom(req.TeamId)
+	wId, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
 	if err != nil {
 		return nil, err
 	}
@@ -113,6 +113,7 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		Layers:          &[]id.NLSLayerID{},
 		SwipeableLayers: &[]id.NLSLayerID{},
 		Index:           &index,
+		// ImportStatus:    status.ProjectImportStatusNone,
 	}
 	_, _, err = uc.StoryTelling.CreatePage(ctx, pageParam, op)
 	if err != nil {
@@ -122,6 +123,26 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 	return &pb.CreateProjectResponse{
 		Project: internalapimodel.ToProject(p),
 	}, nil
+}
+
+func (s server) UpdateProjectVisibility(ctx context.Context, req *pb.UpdateProjectVisibilityRequest) (*pb.UpdateProjectVisibilityResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pId, err := id.ProjectIDFrom(req.ProjectId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := uc.Project.UpdateVisibility(ctx, pId, *req.Visibility, op)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdateProjectVisibilityResponse{
+		Project: internalapimodel.ToProject(p),
+	}, nil
+
 }
 
 func (s server) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest) (*pb.DeleteProjectResponse, error) {
