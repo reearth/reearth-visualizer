@@ -23,30 +23,35 @@ service ReEarthVisualizer {
 // Core messages
 message Project {
   string id = 1;
-  bool is_archived = 2;
-  bool is_basic_auth_active = 3;
-  string basic_auth_username = 4;
-  string basic_auth_password = 5;
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Timestamp updated_at = 7;
-  optional google.protobuf.Timestamp published_at = 8;
-  string name = 9;
-  string description = 10;
-  string alias = 11;
-  string public_title = 12;
-  string public_description = 13;
-  string public_image = 14;
-  bool public_no_index = 15;
-  optional string image_url = 16;
-  string team_id = 17;
-  Visualizer visualizer = 18;
-  PublishmentStatus publishment_status = 19;
-  bool core_support = 20;
-  bool enable_ga = 21;
-  string tracking_id = 22;
-  bool starred = 23;
-  bool is_deleted = 24;
-  string visibility = 25;
+  string team_id = 2;
+  string scene_id = 3;
+
+  string name = 4;
+  string description = 5;
+  optional string image_url = 6;
+  Visualizer visualizer = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+
+  bool is_archived = 10;
+  bool core_support = 11;
+  bool starred = 12;
+  bool is_deleted = 13;
+  string visibility = 14;
+
+  // publishment
+  string alias = 15;
+  PublishmentStatus publishment_status = 16;
+  optional google.protobuf.Timestamp published_at = 17;
+  string public_title = 18;
+  string public_description = 19;
+  string public_image = 20;
+  bool public_no_index = 21;
+  bool is_basic_auth_active = 22;
+  string basic_auth_username = 23;
+  string basic_auth_password = 24;
+  bool enable_ga = 25;
+  string tracking_id = 26;
 }
 
 enum Visualizer {
@@ -63,10 +68,7 @@ enum PublishmentStatus {
 }
 
 // Request messages
-message GetProjectListRequest {
-  string team_id = 1;
-  bool authenticated = 2;
-}
+message GetProjectListRequest { string team_id = 1; }
 
 message GetProjectRequest { string project_id = 1; }
 

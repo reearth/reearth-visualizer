@@ -125,32 +125,34 @@ func (PublishmentStatus) EnumDescriptor() ([]byte, []int) {
 
 // Core messages
 type Project struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	Id                string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	IsArchived        bool                   `protobuf:"varint,2,opt,name=is_archived,json=isArchived,proto3" json:"is_archived,omitempty"`
-	IsBasicAuthActive bool                   `protobuf:"varint,3,opt,name=is_basic_auth_active,json=isBasicAuthActive,proto3" json:"is_basic_auth_active,omitempty"`
-	BasicAuthUsername string                 `protobuf:"bytes,4,opt,name=basic_auth_username,json=basicAuthUsername,proto3" json:"basic_auth_username,omitempty"`
-	BasicAuthPassword string                 `protobuf:"bytes,5,opt,name=basic_auth_password,json=basicAuthPassword,proto3" json:"basic_auth_password,omitempty"`
-	CreatedAt         *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt         *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	PublishedAt       *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
-	Name              string                 `protobuf:"bytes,9,opt,name=name,proto3" json:"name,omitempty"`
-	Description       string                 `protobuf:"bytes,10,opt,name=description,proto3" json:"description,omitempty"`
-	Alias             string                 `protobuf:"bytes,11,opt,name=alias,proto3" json:"alias,omitempty"`
-	PublicTitle       string                 `protobuf:"bytes,12,opt,name=public_title,json=publicTitle,proto3" json:"public_title,omitempty"`
-	PublicDescription string                 `protobuf:"bytes,13,opt,name=public_description,json=publicDescription,proto3" json:"public_description,omitempty"`
-	PublicImage       string                 `protobuf:"bytes,14,opt,name=public_image,json=publicImage,proto3" json:"public_image,omitempty"`
-	PublicNoIndex     bool                   `protobuf:"varint,15,opt,name=public_no_index,json=publicNoIndex,proto3" json:"public_no_index,omitempty"`
-	ImageUrl          *string                `protobuf:"bytes,16,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
-	TeamId            string                 `protobuf:"bytes,17,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Visualizer        Visualizer             `protobuf:"varint,18,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
-	PublishmentStatus PublishmentStatus      `protobuf:"varint,19,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
-	CoreSupport       bool                   `protobuf:"varint,20,opt,name=core_support,json=coreSupport,proto3" json:"core_support,omitempty"`
-	EnableGa          bool                   `protobuf:"varint,21,opt,name=enable_ga,json=enableGa,proto3" json:"enable_ga,omitempty"`
-	TrackingId        string                 `protobuf:"bytes,22,opt,name=tracking_id,json=trackingId,proto3" json:"tracking_id,omitempty"`
-	Starred           bool                   `protobuf:"varint,23,opt,name=starred,proto3" json:"starred,omitempty"`
-	IsDeleted         bool                   `protobuf:"varint,24,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
-	Visibility        string                 `protobuf:"bytes,25,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	TeamId      string                 `protobuf:"bytes,2,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
+	SceneId     string                 `protobuf:"bytes,3,opt,name=scene_id,json=sceneId,proto3" json:"scene_id,omitempty"`
+	Name        string                 `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	ImageUrl    *string                `protobuf:"bytes,6,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
+	Visualizer  Visualizer             `protobuf:"varint,7,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
+	CreatedAt   *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt   *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	IsArchived  bool                   `protobuf:"varint,10,opt,name=is_archived,json=isArchived,proto3" json:"is_archived,omitempty"`
+	CoreSupport bool                   `protobuf:"varint,11,opt,name=core_support,json=coreSupport,proto3" json:"core_support,omitempty"`
+	Starred     bool                   `protobuf:"varint,12,opt,name=starred,proto3" json:"starred,omitempty"`
+	IsDeleted   bool                   `protobuf:"varint,13,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
+	Visibility  string                 `protobuf:"bytes,14,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	// publishment
+	Alias             string                 `protobuf:"bytes,15,opt,name=alias,proto3" json:"alias,omitempty"`
+	PublishmentStatus PublishmentStatus      `protobuf:"varint,16,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
+	PublishedAt       *timestamppb.Timestamp `protobuf:"bytes,17,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	PublicTitle       string                 `protobuf:"bytes,18,opt,name=public_title,json=publicTitle,proto3" json:"public_title,omitempty"`
+	PublicDescription string                 `protobuf:"bytes,19,opt,name=public_description,json=publicDescription,proto3" json:"public_description,omitempty"`
+	PublicImage       string                 `protobuf:"bytes,20,opt,name=public_image,json=publicImage,proto3" json:"public_image,omitempty"`
+	PublicNoIndex     bool                   `protobuf:"varint,21,opt,name=public_no_index,json=publicNoIndex,proto3" json:"public_no_index,omitempty"`
+	IsBasicAuthActive bool                   `protobuf:"varint,22,opt,name=is_basic_auth_active,json=isBasicAuthActive,proto3" json:"is_basic_auth_active,omitempty"`
+	BasicAuthUsername string                 `protobuf:"bytes,23,opt,name=basic_auth_username,json=basicAuthUsername,proto3" json:"basic_auth_username,omitempty"`
+	BasicAuthPassword string                 `protobuf:"bytes,24,opt,name=basic_auth_password,json=basicAuthPassword,proto3" json:"basic_auth_password,omitempty"`
+	EnableGa          bool                   `protobuf:"varint,25,opt,name=enable_ga,json=enableGa,proto3" json:"enable_ga,omitempty"`
+	TrackingId        string                 `protobuf:"bytes,26,opt,name=tracking_id,json=trackingId,proto3" json:"tracking_id,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -192,53 +194,18 @@ func (x *Project) GetId() string {
 	return ""
 }
 
-func (x *Project) GetIsArchived() bool {
+func (x *Project) GetTeamId() string {
 	if x != nil {
-		return x.IsArchived
-	}
-	return false
-}
-
-func (x *Project) GetIsBasicAuthActive() bool {
-	if x != nil {
-		return x.IsBasicAuthActive
-	}
-	return false
-}
-
-func (x *Project) GetBasicAuthUsername() string {
-	if x != nil {
-		return x.BasicAuthUsername
+		return x.TeamId
 	}
 	return ""
 }
 
-func (x *Project) GetBasicAuthPassword() string {
+func (x *Project) GetSceneId() string {
 	if x != nil {
-		return x.BasicAuthPassword
+		return x.SceneId
 	}
 	return ""
-}
-
-func (x *Project) GetCreatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.CreatedAt
-	}
-	return nil
-}
-
-func (x *Project) GetUpdatedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.UpdatedAt
-	}
-	return nil
-}
-
-func (x *Project) GetPublishedAt() *timestamppb.Timestamp {
-	if x != nil {
-		return x.PublishedAt
-	}
-	return nil
 }
 
 func (x *Project) GetName() string {
@@ -255,11 +222,88 @@ func (x *Project) GetDescription() string {
 	return ""
 }
 
+func (x *Project) GetImageUrl() string {
+	if x != nil && x.ImageUrl != nil {
+		return *x.ImageUrl
+	}
+	return ""
+}
+
+func (x *Project) GetVisualizer() Visualizer {
+	if x != nil {
+		return x.Visualizer
+	}
+	return Visualizer_VISUALIZER_UNSPECIFIED
+}
+
+func (x *Project) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Project) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Project) GetIsArchived() bool {
+	if x != nil {
+		return x.IsArchived
+	}
+	return false
+}
+
+func (x *Project) GetCoreSupport() bool {
+	if x != nil {
+		return x.CoreSupport
+	}
+	return false
+}
+
+func (x *Project) GetStarred() bool {
+	if x != nil {
+		return x.Starred
+	}
+	return false
+}
+
+func (x *Project) GetIsDeleted() bool {
+	if x != nil {
+		return x.IsDeleted
+	}
+	return false
+}
+
+func (x *Project) GetVisibility() string {
+	if x != nil {
+		return x.Visibility
+	}
+	return ""
+}
+
 func (x *Project) GetAlias() string {
 	if x != nil {
 		return x.Alias
 	}
 	return ""
+}
+
+func (x *Project) GetPublishmentStatus() PublishmentStatus {
+	if x != nil {
+		return x.PublishmentStatus
+	}
+	return PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED
+}
+
+func (x *Project) GetPublishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.PublishedAt
+	}
+	return nil
 }
 
 func (x *Project) GetPublicTitle() string {
@@ -290,39 +334,25 @@ func (x *Project) GetPublicNoIndex() bool {
 	return false
 }
 
-func (x *Project) GetImageUrl() string {
-	if x != nil && x.ImageUrl != nil {
-		return *x.ImageUrl
-	}
-	return ""
-}
-
-func (x *Project) GetTeamId() string {
+func (x *Project) GetIsBasicAuthActive() bool {
 	if x != nil {
-		return x.TeamId
-	}
-	return ""
-}
-
-func (x *Project) GetVisualizer() Visualizer {
-	if x != nil {
-		return x.Visualizer
-	}
-	return Visualizer_VISUALIZER_UNSPECIFIED
-}
-
-func (x *Project) GetPublishmentStatus() PublishmentStatus {
-	if x != nil {
-		return x.PublishmentStatus
-	}
-	return PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED
-}
-
-func (x *Project) GetCoreSupport() bool {
-	if x != nil {
-		return x.CoreSupport
+		return x.IsBasicAuthActive
 	}
 	return false
+}
+
+func (x *Project) GetBasicAuthUsername() string {
+	if x != nil {
+		return x.BasicAuthUsername
+	}
+	return ""
+}
+
+func (x *Project) GetBasicAuthPassword() string {
+	if x != nil {
+		return x.BasicAuthPassword
+	}
+	return ""
 }
 
 func (x *Project) GetEnableGa() bool {
@@ -339,32 +369,10 @@ func (x *Project) GetTrackingId() string {
 	return ""
 }
 
-func (x *Project) GetStarred() bool {
-	if x != nil {
-		return x.Starred
-	}
-	return false
-}
-
-func (x *Project) GetIsDeleted() bool {
-	if x != nil {
-		return x.IsDeleted
-	}
-	return false
-}
-
-func (x *Project) GetVisibility() string {
-	if x != nil {
-		return x.Visibility
-	}
-	return ""
-}
-
 // Request messages
 type GetProjectListRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	TeamId        string                 `protobuf:"bytes,1,opt,name=team_id,json=teamId,proto3" json:"team_id,omitempty"`
-	Authenticated bool                   `protobuf:"varint,2,opt,name=authenticated,proto3" json:"authenticated,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -404,13 +412,6 @@ func (x *GetProjectListRequest) GetTeamId() string {
 		return x.TeamId
 	}
 	return ""
-}
-
-func (x *GetProjectListRequest) GetAuthenticated() bool {
-	if x != nil {
-		return x.Authenticated
-	}
-	return false
 }
 
 type GetProjectRequest struct {
@@ -766,49 +767,49 @@ var File_schemas_internalapi_v1_schema_proto protoreflect.FileDescriptor
 
 const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
-	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x9e\b\n" +
+	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xb9\b\n" +
 	"\aProject\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
-	"\vis_archived\x18\x02 \x01(\bR\n" +
-	"isArchived\x12/\n" +
-	"\x14is_basic_auth_active\x18\x03 \x01(\bR\x11isBasicAuthActive\x12.\n" +
-	"\x13basic_auth_username\x18\x04 \x01(\tR\x11basicAuthUsername\x12.\n" +
-	"\x13basic_auth_password\x18\x05 \x01(\tR\x11basicAuthPassword\x129\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x17\n" +
+	"\ateam_id\x18\x02 \x01(\tR\x06teamId\x12\x19\n" +
+	"\bscene_id\x18\x03 \x01(\tR\asceneId\x12\x12\n" +
+	"\x04name\x18\x04 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x05 \x01(\tR\vdescription\x12 \n" +
+	"\timage_url\x18\x06 \x01(\tH\x00R\bimageUrl\x88\x01\x01\x12A\n" +
 	"\n" +
-	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"visualizer\x18\a \x01(\x0e2!.reearth.visualizer.v1.VisualizerR\n" +
+	"visualizer\x129\n" +
 	"\n" +
-	"updated_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12B\n" +
-	"\fpublished_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampH\x00R\vpublishedAt\x88\x01\x01\x12\x12\n" +
-	"\x04name\x18\t \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\n" +
-	" \x01(\tR\vdescription\x12\x14\n" +
-	"\x05alias\x18\v \x01(\tR\x05alias\x12!\n" +
-	"\fpublic_title\x18\f \x01(\tR\vpublicTitle\x12-\n" +
-	"\x12public_description\x18\r \x01(\tR\x11publicDescription\x12!\n" +
-	"\fpublic_image\x18\x0e \x01(\tR\vpublicImage\x12&\n" +
-	"\x0fpublic_no_index\x18\x0f \x01(\bR\rpublicNoIndex\x12 \n" +
-	"\timage_url\x18\x10 \x01(\tH\x01R\bimageUrl\x88\x01\x01\x12\x17\n" +
-	"\ateam_id\x18\x11 \x01(\tR\x06teamId\x12A\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"visualizer\x18\x12 \x01(\x0e2!.reearth.visualizer.v1.VisualizerR\n" +
-	"visualizer\x12W\n" +
-	"\x12publishment_status\x18\x13 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12!\n" +
-	"\fcore_support\x18\x14 \x01(\bR\vcoreSupport\x12\x1b\n" +
-	"\tenable_ga\x18\x15 \x01(\bR\benableGa\x12\x1f\n" +
-	"\vtracking_id\x18\x16 \x01(\tR\n" +
-	"trackingId\x12\x18\n" +
-	"\astarred\x18\x17 \x01(\bR\astarred\x12\x1d\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
+	"\vis_archived\x18\n" +
+	" \x01(\bR\n" +
+	"isArchived\x12!\n" +
+	"\fcore_support\x18\v \x01(\bR\vcoreSupport\x12\x18\n" +
+	"\astarred\x18\f \x01(\bR\astarred\x12\x1d\n" +
 	"\n" +
-	"is_deleted\x18\x18 \x01(\bR\tisDeleted\x12\x1e\n" +
+	"is_deleted\x18\r \x01(\bR\tisDeleted\x12\x1e\n" +
 	"\n" +
-	"visibility\x18\x19 \x01(\tR\n" +
-	"visibilityB\x0f\n" +
-	"\r_published_atB\f\n" +
+	"visibility\x18\x0e \x01(\tR\n" +
+	"visibility\x12\x14\n" +
+	"\x05alias\x18\x0f \x01(\tR\x05alias\x12W\n" +
+	"\x12publishment_status\x18\x10 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12B\n" +
+	"\fpublished_at\x18\x11 \x01(\v2\x1a.google.protobuf.TimestampH\x01R\vpublishedAt\x88\x01\x01\x12!\n" +
+	"\fpublic_title\x18\x12 \x01(\tR\vpublicTitle\x12-\n" +
+	"\x12public_description\x18\x13 \x01(\tR\x11publicDescription\x12!\n" +
+	"\fpublic_image\x18\x14 \x01(\tR\vpublicImage\x12&\n" +
+	"\x0fpublic_no_index\x18\x15 \x01(\bR\rpublicNoIndex\x12/\n" +
+	"\x14is_basic_auth_active\x18\x16 \x01(\bR\x11isBasicAuthActive\x12.\n" +
+	"\x13basic_auth_username\x18\x17 \x01(\tR\x11basicAuthUsername\x12.\n" +
+	"\x13basic_auth_password\x18\x18 \x01(\tR\x11basicAuthPassword\x12\x1b\n" +
+	"\tenable_ga\x18\x19 \x01(\bR\benableGa\x12\x1f\n" +
+	"\vtracking_id\x18\x1a \x01(\tR\n" +
+	"trackingIdB\f\n" +
 	"\n" +
-	"_image_url\"V\n" +
+	"_image_urlB\x0f\n" +
+	"\r_published_at\"0\n" +
 	"\x15GetProjectListRequest\x12\x17\n" +
-	"\ateam_id\x18\x01 \x01(\tR\x06teamId\x12$\n" +
-	"\rauthenticated\x18\x02 \x01(\bR\rauthenticated\"2\n" +
+	"\ateam_id\x18\x01 \x01(\tR\x06teamId\"2\n" +
 	"\x11GetProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\"\xb8\x02\n" +
@@ -886,11 +887,11 @@ var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
 	(*timestamppb.Timestamp)(nil),  // 11: google.protobuf.Timestamp
 }
 var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
-	11, // 0: reearth.visualizer.v1.Project.created_at:type_name -> google.protobuf.Timestamp
-	11, // 1: reearth.visualizer.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
-	11, // 2: reearth.visualizer.v1.Project.published_at:type_name -> google.protobuf.Timestamp
-	0,  // 3: reearth.visualizer.v1.Project.visualizer:type_name -> reearth.visualizer.v1.Visualizer
-	1,  // 4: reearth.visualizer.v1.Project.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
+	0,  // 0: reearth.visualizer.v1.Project.visualizer:type_name -> reearth.visualizer.v1.Visualizer
+	11, // 1: reearth.visualizer.v1.Project.created_at:type_name -> google.protobuf.Timestamp
+	11, // 2: reearth.visualizer.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
+	1,  // 3: reearth.visualizer.v1.Project.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
+	11, // 4: reearth.visualizer.v1.Project.published_at:type_name -> google.protobuf.Timestamp
 	0,  // 5: reearth.visualizer.v1.CreateProjectRequest.visualizer:type_name -> reearth.visualizer.v1.Visualizer
 	2,  // 6: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
 	2,  // 7: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project

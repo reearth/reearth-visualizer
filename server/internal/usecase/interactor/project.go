@@ -95,8 +95,8 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 	return i.projectRepo.FindActiveById(ctx, pid)
 }
 
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindVisibilityByWorkspace(ctx, id, authenticated)
+func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
+	return i.projectRepo.FindVisibilityByWorkspace(ctx, id)
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -133,6 +133,23 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	if p.Name != nil {
 		prj.UpdateName(*p.Name)
+
+		// !!!!!!!! connectivity check !!!!!!!!
+		// internalapi.InvokeApi(
+		// 	ctx,
+		// 	operator.AcOperator.User.String(),
+		// 	"reearth-visualizer-internal-api-xxxxxx-an.a.run.app",
+		// 	func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+		// 		res, err := client.GetProject(ctx, &pb.GetProjectRequest{
+		// 			ProjectId: prj.ID().String(),
+		// 		})
+		// 		if err != nil {
+		// 			log.Printf("!!! gRPC GetProject Error : %v", err)
+		// 		} else {
+		// 			log.Printf("OK!! gRPC GetProject : %v", res)
+		// 		}
+		// 	})
+		// !!!!!!!! connectivity check !!!!!!!!
 	}
 
 	if p.Description != nil {

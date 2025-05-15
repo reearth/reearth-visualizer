@@ -29,7 +29,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		return nil, err
 	}
 
-	res, err := uc.Project.FindVisibilityByWorkspace(ctx, wId, req.Authenticated, op)
+	res, err := uc.Project.FindVisibilityByWorkspace(ctx, wId, op)
 
 	if err != nil {
 		return nil, err
