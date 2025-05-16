@@ -9,6 +9,7 @@ import (
 
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
@@ -197,7 +198,9 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 func CreateProjectInternal(t *testing.T, ctx context.Context, r *repo.Container, client pb.ReEarthVisualizerClient, visibility string, req *pb.CreateProjectRequest) {
 	// test CreateProject
 	res, err := client.CreateProject(ctx, req)
-	assert.Nil(t, err)
+	require.Nil(t, err)
+	require.NotNil(t, res.GetProject())
+
 	pid, err := id.ProjectIDFrom(res.GetProject().Id)
 	assert.Nil(t, err)
 	prj, err := r.Project.FindByID(ctx, pid)
