@@ -7,50 +7,79 @@ import "google/protobuf/timestamp.proto";
 option go_package = "proto/v1";
 
 service ReEarthVisualizer {
-  // Main operations
   rpc GetProjectList(GetProjectListRequest) returns (GetProjectListResponse) {}
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
   rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
 }
 
-// Implementation note:
-// Authentication should be implemented using gRPC interceptors
-// M2M tokens should be passed in metadata with key "authorization"
-// Format: "Bearer <token>"
-// UserId should be passed in metadata with key "user-id"
-
-// Core messages
+// Core Project messages
 message Project {
+  // Project ID
   string id = 1;
+
+  // Team ID (Workspace ID)
   string team_id = 2;
+
+  // Scene ID
   string scene_id = 3;
 
+  // Project title
   string name = 4;
+
+  // Project description
   string description = 5;
+
+  // Project image (URL link)
   optional string image_url = 6;
+
+  // Type of visualizer (e.g., Cesium)
   Visualizer visualizer = 7;
+
+  // Creation date
   google.protobuf.Timestamp created_at = 8;
+
+  // Last updated date
   google.protobuf.Timestamp updated_at = 9;
 
+  // Currently unused
   bool is_archived = 10;
+
+  // Indicates whether it's a classic or visualizer project type
   bool core_support = 11;
+
+  // Whether the project is marked as a favorite
   bool starred = 12;
+
+  // Whether the project is in the trash
   bool is_deleted = 13;
+
+  // Visibility of the project (e.g., "public", "private")
   string visibility = 14;
 
-  // publishment
+  // publishmen value
   string alias = 15;
+  // publishmen value
   PublishmentStatus publishment_status = 16;
+  // publishmen value
   optional google.protobuf.Timestamp published_at = 17;
+  // publishmen value
   string public_title = 18;
+  // publishmen value
   string public_description = 19;
+  // publishmen value
   string public_image = 20;
+  // publishmen value
   bool public_no_index = 21;
+  // publishmen value
   bool is_basic_auth_active = 22;
+  // publishmen value
   string basic_auth_username = 23;
+  // publishmen value
   string basic_auth_password = 24;
+  // publishmen value
   bool enable_ga = 25;
+  // publishmen value
   string tracking_id = 26;
 }
 
@@ -66,28 +95,71 @@ enum PublishmentStatus {
   PUBLISHMENT_STATUS_LIMITED = 2;
   PUBLISHMENT_STATUS_PRIVATE = 3;
 }
-
-// Request messages
-message GetProjectListRequest { string team_id = 1; }
-
-message GetProjectRequest { string project_id = 1; }
-
-message CreateProjectRequest {
+// Returns projects visible to the user.
+// If the user does not belong to the team, only projects with "public"
+// visibility are returned. If the user is a member of the team, all projects
+// under the team are returned.
+message GetProjectListRequest {
+  // Team ID (Workspace ID)
   string team_id = 1;
+}
+
+// Retrieves a project regardless of authentication.
+// Note: Call this only if the user is allowed to view the project.
+message GetProjectRequest {
+  // Project ID
+  string project_id = 1;
+}
+
+// Creates a new project.
+// Cannot be created under a team the user does not belong to.
+message CreateProjectRequest {
+  // Team ID (Workspace ID)
+  string team_id = 1;
+
+  // Specify VISUALIZER_CESIUM
   Visualizer visualizer = 2;
+
+  // Project title
   optional string name = 3;
+
+  // Project description
   optional string description = 4;
+
+  // Set to true
   optional bool core_support = 5;
+
+  // Visibility of the project (e.g., "public", "private")
   optional string visibility = 6;
 }
 
-message DeleteProjectRequest { string project_id = 1; }
+// Deletes a project.
+// Cannot be deleted if the user does not belong to the project's team.
+message DeleteProjectRequest {
+  // Project ID
+  string project_id = 1;
+}
 
 // Response messages
-message GetProjectResponse { Project project = 1; }
+message GetProjectResponse {
+  // Project
+  Project project = 1;
+}
 
-message GetProjectListResponse { repeated Project projects = 1; }
+// Response messages
+message GetProjectListResponse {
+  // Project List
+  repeated Project projects = 1;
+}
 
-message CreateProjectResponse { Project project = 1; }
+// Response messages
+message CreateProjectResponse {
+  // Project
+  Project project = 1;
+}
 
-message DeleteProjectResponse { string project_id = 1; }
+// Response messages
+message DeleteProjectResponse {
+  // Project ID
+  string project_id = 1;
+}
