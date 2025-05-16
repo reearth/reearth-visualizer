@@ -47,9 +47,8 @@ func InvokeApi(
 	defer SafeClose(conn)
 
 	client := pb.NewReEarthVisualizerClient(conn)
-	handleFunc(client, ctx)
 
-	return nil
+	return handleFunc(client, ctx)
 }
 
 func SafeClose(c io.Closer) {
