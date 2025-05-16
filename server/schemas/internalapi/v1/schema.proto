@@ -7,9 +7,20 @@ import "google/protobuf/timestamp.proto";
 option go_package = "proto/v1";
 
 service ReEarthVisualizer {
+  // Retrieves the list of projects the user can access.
+  // Request headers: user-id: <User ID>
   rpc GetProjectList(GetProjectListRequest) returns (GetProjectListResponse) {}
+
+  // Retrieves a specific project regardless of authentication.
+  // Request headers: user-id: <User ID>
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
+
+  // Creates a new project in the specified team.
+  // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
+
+  // Deletes a project.
+  // Request headers: user-id: <User ID>
   rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
 }
 
@@ -91,10 +102,17 @@ enum Visualizer {
 
 enum PublishmentStatus {
   PUBLISHMENT_STATUS_UNSPECIFIED = 0;
+
+  // The project is published and publicly accessible.
   PUBLISHMENT_STATUS_PUBLIC = 1;
+
+  // The project is published with limited access.
   PUBLISHMENT_STATUS_LIMITED = 2;
+
+  // The project is unpublished (web files have been deleted).
   PUBLISHMENT_STATUS_PRIVATE = 3;
 }
+
 // Returns projects visible to the user.
 // If the user does not belong to the team, only projects with "public"
 // visibility are returned. If the user is a member of the team, all projects
