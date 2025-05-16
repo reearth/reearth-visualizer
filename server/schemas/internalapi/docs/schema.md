@@ -211,9 +211,9 @@ Core Project messages
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | PUBLISHMENT_STATUS_UNSPECIFIED | 0 |  |
-| PUBLISHMENT_STATUS_PUBLIC | 1 |  |
-| PUBLISHMENT_STATUS_LIMITED | 2 |  |
-| PUBLISHMENT_STATUS_PRIVATE | 3 |  |
+| PUBLISHMENT_STATUS_PUBLIC | 1 | The project is published and publicly accessible. |
+| PUBLISHMENT_STATUS_LIMITED | 2 | The project is published with limited access. |
+| PUBLISHMENT_STATUS_PRIVATE | 3 | The project is unpublished (web files have been deleted). |
 
 
 
@@ -241,10 +241,10 @@ Core Project messages
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | aaaaaaaaa |
-| GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) |  |
-| CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) |  |
-| DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) |  |
+| GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | Retrieves the list of projects the user can access. Request headers: user-id: &lt;User ID&gt; |
+| GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) | Retrieves a specific project regardless of authentication. Request headers: user-id: &lt;User ID&gt; |
+| CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
+| DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
 
  
 
