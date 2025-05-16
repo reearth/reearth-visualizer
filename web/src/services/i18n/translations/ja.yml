@@ -356,6 +356,7 @@ Hide Fly To Delete Layer: カメラ移動とレイヤーの削除
 Override Layer Data: レイヤーデータの上書き
 Show Selected Features Information: 選択された地物情報を表示
 Add infobox to show all properties: 全てのプロパティを表示するインフォボックスを追加
+Add infobox to show specific properties: 特定のプロパティを表示するインフォボックスを追加
 Layer Styling Examples: レイヤースタイリング
 Feature Style 3D Model: フィーチャースタイル 3D モデル
 Feature Style 3D Tiles: フィーチャースタイル 3D タイル
