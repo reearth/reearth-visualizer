@@ -131,7 +131,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	var err error
 
 	if cfg.InternalApi.Active {
-		l, err = net.Listen("tcp", ":"+cfg.Port)
+		l, err = net.Listen("tcp", ":8080")
 		if err != nil {
 			t.Fatalf("server failed to listen: %v", err)
 		}
