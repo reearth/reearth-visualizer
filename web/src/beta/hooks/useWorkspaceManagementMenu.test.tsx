@@ -72,6 +72,7 @@ describe("useWorkspaceManagementMenu", () => {
       title: "New workspace",
       icon: "newWorkspace",
       hasBorderBottom: true,
+      dataTestid: "add-workspace",
       onClick: expect.any(Function)
     });
 
@@ -79,6 +80,7 @@ describe("useWorkspaceManagementMenu", () => {
       id: "accountSettings",
       title: "Account settings",
       icon: "user",
+      dataTestid: "account-settings",
       onClick: expect.any(Function)
     });
 
