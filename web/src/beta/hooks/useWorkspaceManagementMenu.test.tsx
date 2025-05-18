@@ -63,6 +63,7 @@ describe("useWorkspaceManagementMenu", () => {
       id: "workspaceSettings",
       title: "Workspace settings",
       icon: "setting",
+      dataTestid: "workspace-settings",
       onClick: expect.any(Function)
     });
 
