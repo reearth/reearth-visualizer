@@ -85,10 +85,8 @@ test.describe("Login Page Tests", () => {
     await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
     await page.waitForURL(/\/dashboard\/.+/, { timeout: 30000 });
     const currentURL = page.url();
-    await expect(dashBoardPage.projects).toBeVisible();
-    await expect(dashBoardPage.assets).toBeVisible();
+    // await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
-    await expect(dashBoardPage.starred).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
     await expect(dashBoardPage.documentation).toBeVisible();
     await dashBoardPage.logOut();

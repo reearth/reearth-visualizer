@@ -90,19 +90,25 @@ const GeneralSettings: FC<Props> = ({
           <ArchivedSettingNotice />
         ) : (
           <SettingsFields>
-            <TitleWrapper size="body" weight="bold">
+            <TitleWrapper
+              size="body"
+              weight="bold"
+              data-testid="general-settings-title"
+            >
               {t("Basic settings")}
             </TitleWrapper>
             <InputField
               title={t("Project Name")}
               value={project.name}
               onChangeComplete={handleNameUpdate}
+              data-testid="project-name-input"
             />
             <TextareaField
               title={t("Description")}
               value={project.description}
               resizable="height"
               onChangeComplete={handleDescriptionUpdate}
+              data-testid="project-description-input"
             />
             <SettingsRow>
               <SettingsRowItem>
@@ -112,26 +118,36 @@ const GeneralSettings: FC<Props> = ({
                   assetsTypes={IMAGE_TYPES}
                   value={project.imageUrl || ""}
                   onChange={handleImageUpdate}
+                  data-testid="project-thumbnail-assetfield"
                 />
               </SettingsRowItem>
               <SettingsRowItem>
                 <Thumbnail
                   src={project.imageUrl || defaultProjectBackgroundImage}
+                  data-testid="project-thumbnail-image"
                 />
               </SettingsRowItem>
             </SettingsRow>
           </SettingsFields>
         )}
         <SettingsFields>
-          <TitleWrapper size="body" weight="bold">
+          <TitleWrapper
+            size="body"
+            weight="bold"
+            data-testid="danger-zone-title"
+          >
             {t("Danger Zone")}
           </TitleWrapper>
 
-          <DangerItem>
-            <Typography size="body" weight="bold">
+          <DangerItem data-testid="danger-zone-item">
+            <Typography
+              size="body"
+              weight="bold"
+              data-testid="remove-project-title"
+            >
               {t("Remove this project")}
             </Typography>
-            <Typography size="body">
+            <Typography size="body" data-testid="remove-project-description">
               {t("This process will move this project to Recycle bin.")}
             </Typography>
             <ButtonWrapper>
@@ -139,6 +155,7 @@ const GeneralSettings: FC<Props> = ({
                 title={t("Move to Recycle Bin")}
                 appearance="dangerous"
                 onClick={() => handleProjectRemoveModal(true)}
+                data-testid="move-to-recycle-bin-button"
               />
             </ButtonWrapper>
           </DangerItem>
@@ -150,6 +167,7 @@ const GeneralSettings: FC<Props> = ({
           onClose={() => handleProjectRemoveModal(false)}
           onProjectRemove={onProjectRemove}
           disabled={disabled}
+          data-testid="project-remove-modal"
         />
       )}
     </InnerPage>
