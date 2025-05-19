@@ -91,7 +91,7 @@ const buildings = {
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/buildings_sample.geojson",
   },
   polygon: {
-    fillColor: "#dcdcdc",
+    fillColor: "#f5deb3",
   },
 };
 
