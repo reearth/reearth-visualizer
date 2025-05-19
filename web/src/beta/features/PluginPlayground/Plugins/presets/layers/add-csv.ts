@@ -34,15 +34,6 @@ const layerCsv = {
       latColumn: "latitude",
     },
   },
-  // Activate Infobox
-  infobox: {
-    blocks: [
-      {
-        pluginId: "reearth",
-        extensionId: "propertyInfoboxBetaBlock",
-      },
-    ],
-  },
   // Settings for the feature style. This statement is required even if no style is set.
   marker: {
     style: "image",
