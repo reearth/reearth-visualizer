@@ -19,7 +19,9 @@ extensions:
 const widgetFile: FileType = {
   id: "add-infobox-specific-properties",
   title: "add-infobox-specific-properties.js",
-  sourceCode: `// Japanese airport data(Only large and medium airports)
+  sourceCode: `// This example shows how to activate Infobox that display specific properties
+
+// Japanese airport data(Only large and medium airports)
 reearth.layers.add({
   type: "simple",
   data: {
@@ -62,18 +64,22 @@ reearth.layers.add({
       },
     ],
   },
-  marker: {},
+  marker: {
+    style: "image",
+    image: "https://reearth.github.io/visualizer-plugin-sample-data/public/image/airport.svg",
+    imageSize: 1.5,
+  },
 });
 
 
 // Move the camera to the position where the GeoJSON data is displayed.
 reearth.camera.setView({
-    "lat": 35.2963,
-    "lng": 138.7982,
-    "height": 380000,
-    "heading": 0,
-    "pitch": -1.37,
-    "roll": 0
+  "lat": 35.2963,
+  "lng": 138.7982,
+  "height": 380000,
+  "heading": 0,
+  "pitch": -1.37,
+  "roll": 0
 });
 
 
