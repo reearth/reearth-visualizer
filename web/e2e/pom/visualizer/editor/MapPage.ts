@@ -1,4 +1,4 @@
-import type { Page, Locator } from "@reearth/e2e/utils";
+import type { Page, Locator } from "playwright"; // or the correct path where Page and Locator are exported
 
 export default class MapPage {
   readonly page: Page;

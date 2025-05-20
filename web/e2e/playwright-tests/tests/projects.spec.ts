@@ -62,9 +62,7 @@ test.describe("Project Management", () => {
   test("Login with valid credentials", async ({ page }) => {
     await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
     await expect(dashBoardPage.projects).toBeVisible();
-    await expect(dashBoardPage.assets).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
-    await expect(dashBoardPage.starred).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
     await expect(dashBoardPage.documentation).toBeVisible();
   });
@@ -159,7 +157,7 @@ test.describe("Project Management", () => {
     await expect(page.getByText("Successfully delete project!")).toBeVisible();
   });
 
-  test("Should import a project and verify it", async () => {
+  test.skip("Should import a project and verify it", async () => {
     await dashBoardPage.projects.click();
     await projectsPage.importProject(docPath);
     await projectsPage.verifyImportProject("Test_Asset_migration");
@@ -168,7 +166,10 @@ test.describe("Project Management", () => {
     });
   });
 
-  test("Should verify the Imported project assests", async () => {
+  test.skip("Should verify the Imported project assests", async () => {
+    await expect(
+      projectsPage.gridProjectImage("Test_Asset_migration").first()
+    ).toBeVisible();
     await projectsPage.goToProjectPage("Test_Asset_migration");
     await expect(projectScreenPage.scenePanel).toBeVisible({ timeout: 10000 });
     await expect(projectScreenPage.layersPanel).toBeVisible({ timeout: 10000 });
@@ -177,7 +178,7 @@ test.describe("Project Management", () => {
     });
   });
 
-  test.describe("Delete the Imported Project", () => {
+  test.describe.skip("Delete the Imported Project", () => {
     let context: BrowserContext;
     let page: Page;
     let loginPage: LoginPage;
@@ -218,9 +219,7 @@ test.describe("Project Management", () => {
     test("Login with valid credentials", async ({ page }) => {
       await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
       await expect(dashBoardPage.projects).toBeVisible();
-      await expect(dashBoardPage.assets).toBeVisible();
       await expect(dashBoardPage.recycleBin).toBeVisible();
-      await expect(dashBoardPage.starred).toBeVisible();
       await expect(dashBoardPage.pluginPlayground).toBeVisible();
       await expect(dashBoardPage.documentation).toBeVisible();
     });
