@@ -51,12 +51,14 @@ func HealthCheck(conf *config.Config, ver string) echo.HandlerFunc {
 			if err != nil {
 				log.Fatalf("invalid issuer URL: %v", err)
 			}
+			// Capture the issuer URL string so each closure gets its own copy.
+			issuerURL := u.JoinPath(".well-known/openid-configuration").String()
 			checks = append(checks, health.Config{
 				Name:      "auth:" + a.ISS,
 				Timeout:   time.Second * 5,
 				SkipOnErr: false,
 				Check: func(ctx context.Context) error {
-					return authServerPingCheck(u.JoinPath(".well-known/openid-configuration").String())
+					return authServerPingCheck(issuerURL)
 				},
 			})
 		}
