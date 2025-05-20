@@ -198,7 +198,7 @@ func PublishedAuthMiddleware() echo.MiddlewareFunc {
 	key := keyType{}
 	return middleware.BasicAuthWithConfig(middleware.BasicAuthConfig{
 		Validator: func(user string, password string, c echo.Context) (bool, error) {
-			md, ok := c.Request().Context().Value(key).(interfaces.ProjectPublishedMetadata)
+			md, ok := c.Request().Context().Value(key).(interfaces.PublishedMetadata)
 			if !ok {
 				return true, echo.ErrNotFound
 			}

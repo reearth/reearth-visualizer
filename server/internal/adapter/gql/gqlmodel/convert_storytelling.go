@@ -10,30 +10,30 @@ func ToStory(s *storytelling.Story) *Story {
 		return nil
 	}
 	return &Story{
-		ID:                IDFrom(s.Id()),
-		Title:             s.Title(),
-		Alias:             s.Alias(),
-		PropertyID:        IDFrom(s.Property()),
-		Property:          nil,
-		Pages:             ToPages(s.Pages()),
-		PublishmentStatus: ToStoryPublishmentStatus(s.PublishmentStatus()),
-		CreatedAt:         s.Id().Timestamp(),
-		UpdatedAt:         s.UpdatedAt(),
-		PublishedAt:       s.PublishedAt(),
-		SceneID:           IDFrom(s.Scene()),
-		PanelPosition:     ToStoryPosition(s.PanelPosition()),
-		BgColor:           ToStoryBgColor(s.BgColor()),
+		ID:            IDFrom(s.Id()),
+		Title:         s.Title(),
+		PropertyID:    IDFrom(s.Property()),
+		Property:      nil,
+		Pages:         ToPages(s.Pages()),
+		CreatedAt:     s.Id().Timestamp(),
+		UpdatedAt:     s.UpdatedAt(),
+		SceneID:       IDFrom(s.Scene()),
+		PanelPosition: ToStoryPosition(s.PanelPosition()),
+		BgColor:       ToStoryBgColor(s.BgColor()),
 
-		IsBasicAuthActive: s.IsBasicAuthActive(),
-		BasicAuthUsername: s.BasicAuthUsername(),
-		BasicAuthPassword: s.BasicAuthPassword(),
+		// publishment
+		Alias:             s.Alias(),
+		PublishmentStatus: ToStoryPublishmentStatus(s.PublishmentStatus()),
+		PublishedAt:       s.PublishedAt(),
 		PublicTitle:       s.PublicTitle(),
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
-
-		EnableGa:   s.EnableGa(),
-		TrackingID: s.TrackingID(),
+		IsBasicAuthActive: s.IsBasicAuthActive(),
+		BasicAuthUsername: s.BasicAuthUsername(),
+		BasicAuthPassword: s.BasicAuthPassword(),
+		EnableGa:          s.EnableGa(),
+		TrackingID:        s.TrackingID(),
 	}
 }
 
