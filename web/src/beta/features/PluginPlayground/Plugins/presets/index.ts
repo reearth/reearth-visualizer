@@ -17,6 +17,7 @@ import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
 import { addInfoboxAllProperties } from "./layers/addInfoboxAllProperties";
+import { addInfoboxRichBlocks } from "./layers/addInfoboxRichBlocks";
 import { addInfoboxSpecificProperties } from "./layers/addInfoboxSpecificProperties";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { overrideLayerData } from "./layers/overrideLayerData";
@@ -90,7 +91,8 @@ export const presetPlugins: PresetPlugins = [
       overrideLayerData,
       showFeaturesInfo,
       addInfoboxAllProperties,
-      addInfoboxSpecificProperties
+      addInfoboxSpecificProperties,
+      addInfoboxRichBlocks
     ]
   },
   {
