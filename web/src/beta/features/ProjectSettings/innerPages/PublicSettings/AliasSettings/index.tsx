@@ -124,11 +124,11 @@ const AliasSetting: FC<AliasSettingProps> = ({
         </UrlWrapper>
         <Button
           appearance="secondary"
-          title={t("clean")}
+          title={t("Reset")}
           icon="pencilLine"
           size="small"
           disabled={isDisabled}
-          iconColor={theme.content.weak}
+          iconColor={isDisabled ? theme.content.weak : theme.content.main}
           onClick={handleCleanAlias}
         />
 
