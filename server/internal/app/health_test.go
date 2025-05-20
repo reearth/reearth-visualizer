@@ -31,6 +31,20 @@ func TestHealthCheck(t *testing.T) {
 		wantStatusCode int
 	}{
 		{
+			name: "with auth - correct credentials",
+			config: &config.Config{
+				DB: dbURI,
+				HealthCheck: config.HealthCheckConfig{
+					Username: "testuser",
+					Password: "testpass",
+				},
+			},
+			version:        "1.0.0",
+			username:       "testuser",
+			password:       "testpass",
+			wantStatusCode: http.StatusOK,
+		},
+		{
 			name: "with auth - incorrect credentials",
 			config: &config.Config{
 				DB: dbURI,
