@@ -79,7 +79,7 @@ const samplePointData = {
     labelBackgroundColor: "#00000080",
     labelPosition: "top",
     labelText: {
-      expression: "${ls_name}",
+      expression: "\${ls_name}", // added "\" before "$".
     },
     labelTypography: {
       color: "#FFFFFF",
