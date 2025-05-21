@@ -16,7 +16,6 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
-// HealthCheck returns an echo.HandlerFunc that serves the health check endpoint
 func HealthCheck(conf *config.Config, ver string) echo.HandlerFunc {
 	checks := []health.Config{
 		{
