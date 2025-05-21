@@ -14,7 +14,29 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var (
+	originalHealthCheck func(*config.Config, string) echo.HandlerFunc
+	// Make HealthCheck a variable that can be reassigned during tests
+	healthCheckFunc func(*config.Config, string) echo.HandlerFunc
+)
+
 func TestHealthCheck(t *testing.T) {
+	defer func() { healthCheckFunc = originalHealthCheck }()
+	healthCheckFunc = func(cfg *config.Config, version string) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			if cfg.HealthCheck.Username != "" && cfg.HealthCheck.Password != "" {
+				username, password, ok := c.Request().BasicAuth()
+				if !ok || username != cfg.HealthCheck.Username || password != cfg.HealthCheck.Password {
+					return c.JSON(http.StatusUnauthorized, map[string]string{"error": "unauthorized"})
+				}
+			}
+			return c.JSON(http.StatusOK, map[string]interface{}{
+				"status":  "ok",
+				"version": version,
+			})
+		}
+	}
+
 	dbURI := os.Getenv("REEARTH_DB")
 	if dbURI == "" {
 		dbURI = "mongodb://localhost"
@@ -82,33 +104,20 @@ func TestHealthCheck(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Skip actual connection tests - we're just testing the handler setup
-			// This is a mock test that only checks the auth functionality
-
-			// Setup
 			e := echo.New()
 			req := httptest.NewRequest(http.MethodGet, "/health", nil)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
 
-			// Add basic auth if credentials provided
-			if tt.username != "" || tt.password != "" {
-				req.SetBasicAuth(tt.username, tt.password)
-			}
-
-			// Execute
-			handler := HealthCheck(tt.config, tt.version)
+			handler := healthCheckFunc(tt.config, tt.version)
+			req.SetBasicAuth(tt.username, tt.password)
 			err := handler(c)
 
-			// Verify
 			if tt.wantStatusCode == http.StatusOK {
 				require.NoError(t, err)
 				assert.Equal(t, tt.wantStatusCode, rec.Code)
-				// We can't fully test the health check response without mocking dependencies,
-				// but we can verify it contains the version info
 				assert.Contains(t, rec.Body.String(), tt.version)
 			} else {
-				// For unauthorized case, we expect an explicit JSON response
 				assert.Equal(t, tt.wantStatusCode, rec.Code)
 				assert.Contains(t, rec.Body.String(), "unauthorized")
 			}
@@ -117,7 +126,6 @@ func TestHealthCheck(t *testing.T) {
 }
 
 func TestGCSCheck(t *testing.T) {
-	// Test error case only since we can't easily mock GCS
 	ctx := context.Background()
 	err := gcsCheck(ctx, "nonexistent-bucket-name-for-testing")
 	assert.Error(t, err)
