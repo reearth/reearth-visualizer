@@ -43,19 +43,20 @@ func ToProject(p *project.Project) *Project {
 	}
 
 	return &Project{
-		ID:          IDFrom(p.ID()),
-		CreatedAt:   p.CreatedAt(),
-		IsArchived:  p.IsArchived(),
-		Name:        p.Name(),
-		Description: p.Description(),
-		ImageURL:    p.ImageURL(),
-		UpdatedAt:   p.UpdatedAt(),
-		Visualizer:  Visualizer(p.Visualizer()),
-		TeamID:      IDFrom(p.Workspace()),
-		Starred:     p.Starred(),
-		IsDeleted:   p.IsDeleted(),
-		Visibility:  p.Visibility(),
-		CoreSupport: p.CoreSupport(),
+		ID:           IDFrom(p.ID()),
+		CreatedAt:    p.CreatedAt(),
+		IsArchived:   p.IsArchived(),
+		Name:         p.Name(),
+		Description:  p.Description(),
+		ImageURL:     p.ImageURL(),
+		UpdatedAt:    p.UpdatedAt(),
+		Visualizer:   Visualizer(p.Visualizer()),
+		ImportStatus: ProjectImportStatus(p.ImportStatus()),
+		TeamID:       IDFrom(p.Workspace()),
+		Starred:      p.Starred(),
+		IsDeleted:    p.IsDeleted(),
+		Visibility:   p.Visibility(),
+		CoreSupport:  p.CoreSupport(),
 
 		// publishment
 		Alias:             p.Alias(),
