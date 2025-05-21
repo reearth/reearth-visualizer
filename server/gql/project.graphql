@@ -10,6 +10,7 @@ type Project implements Node {
   visualizer: Visualizer!
   createdAt: DateTime!
   updatedAt: DateTime!
+  importStatus: ProjectImportStatus!
 
   isArchived: Boolean!
   coreSupport: Boolean!
@@ -30,6 +31,13 @@ type Project implements Node {
   basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
+}
+
+enum ProjectImportStatus {
+  NONE
+  PROCESSING
+  FAILED
+  SUCCESS
 }
 
 enum Visualizer {
@@ -103,11 +111,6 @@ input ExportProjectInput {
   projectId: ID!
 }
 
-input ImportProjectInput {
-  teamId: ID!
-  file: Upload!
-}
-
 # Payload
 
 type ProjectPayload {
@@ -120,10 +123,6 @@ type DeleteProjectPayload {
 
 type ExportProjectPayload {
   projectDataPath: String!
-}
-
-type ImportProjectPayload {
-  projectData: JSON!
 }
 
 type ProjectAliasAvailability {
@@ -163,5 +162,4 @@ extend type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
-  importProject(input: ImportProjectInput!): ImportProjectPayload
 }

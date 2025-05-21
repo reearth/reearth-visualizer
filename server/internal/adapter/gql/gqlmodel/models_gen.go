@@ -349,15 +349,6 @@ type GeometryCollection struct {
 
 func (GeometryCollection) IsGeometry() {}
 
-type ImportProjectInput struct {
-	TeamID ID             `json:"teamId"`
-	File   graphql.Upload `json:"file"`
-}
-
-type ImportProjectPayload struct {
-	ProjectData JSON `json:"projectData"`
-}
-
 type InfoboxBlock struct {
 	ID          ID               `json:"id"`
 	SceneID     ID               `json:"sceneId"`
@@ -680,33 +671,34 @@ type Polygon struct {
 func (Polygon) IsGeometry() {}
 
 type Project struct {
-	ID                ID                `json:"id"`
-	TeamID            ID                `json:"teamId"`
-	Team              *Team             `json:"team,omitempty"`
-	Scene             *Scene            `json:"scene,omitempty"`
-	Name              string            `json:"name"`
-	Description       string            `json:"description"`
-	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
-	Visualizer        Visualizer        `json:"visualizer"`
-	CreatedAt         time.Time         `json:"createdAt"`
-	UpdatedAt         time.Time         `json:"updatedAt"`
-	IsArchived        bool              `json:"isArchived"`
-	CoreSupport       bool              `json:"coreSupport"`
-	Starred           bool              `json:"starred"`
-	IsDeleted         bool              `json:"isDeleted"`
-	Visibility        string            `json:"visibility"`
-	Alias             string            `json:"alias"`
-	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
-	PublicTitle       string            `json:"publicTitle"`
-	PublicDescription string            `json:"publicDescription"`
-	PublicImage       string            `json:"publicImage"`
-	PublicNoIndex     bool              `json:"publicNoIndex"`
-	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
-	BasicAuthUsername string            `json:"basicAuthUsername"`
-	BasicAuthPassword string            `json:"basicAuthPassword"`
-	EnableGa          bool              `json:"enableGa"`
-	TrackingID        string            `json:"trackingId"`
+	ID                ID                  `json:"id"`
+	TeamID            ID                  `json:"teamId"`
+	Team              *Team               `json:"team,omitempty"`
+	Scene             *Scene              `json:"scene,omitempty"`
+	Name              string              `json:"name"`
+	Description       string              `json:"description"`
+	ImageURL          *url.URL            `json:"imageUrl,omitempty"`
+	Visualizer        Visualizer          `json:"visualizer"`
+	CreatedAt         time.Time           `json:"createdAt"`
+	UpdatedAt         time.Time           `json:"updatedAt"`
+	ImportStatus      ProjectImportStatus `json:"importStatus"`
+	IsArchived        bool                `json:"isArchived"`
+	CoreSupport       bool                `json:"coreSupport"`
+	Starred           bool                `json:"starred"`
+	IsDeleted         bool                `json:"isDeleted"`
+	Visibility        string              `json:"visibility"`
+	Alias             string              `json:"alias"`
+	PublishmentStatus PublishmentStatus   `json:"publishmentStatus"`
+	PublishedAt       *time.Time          `json:"publishedAt,omitempty"`
+	PublicTitle       string              `json:"publicTitle"`
+	PublicDescription string              `json:"publicDescription"`
+	PublicImage       string              `json:"publicImage"`
+	PublicNoIndex     bool                `json:"publicNoIndex"`
+	IsBasicAuthActive bool                `json:"isBasicAuthActive"`
+	BasicAuthUsername string              `json:"basicAuthUsername"`
+	BasicAuthPassword string              `json:"basicAuthPassword"`
+	EnableGa          bool                `json:"enableGa"`
+	TrackingID        string              `json:"trackingId"`
 }
 
 func (Project) IsNode()        {}
@@ -1716,6 +1708,51 @@ func (e *Position) UnmarshalGQL(v any) error {
 }
 
 func (e Position) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ProjectImportStatus string
+
+const (
+	ProjectImportStatusNone       ProjectImportStatus = "NONE"
+	ProjectImportStatusProcessing ProjectImportStatus = "PROCESSING"
+	ProjectImportStatusFailed     ProjectImportStatus = "FAILED"
+	ProjectImportStatusSuccess    ProjectImportStatus = "SUCCESS"
+)
+
+var AllProjectImportStatus = []ProjectImportStatus{
+	ProjectImportStatusNone,
+	ProjectImportStatusProcessing,
+	ProjectImportStatusFailed,
+	ProjectImportStatusSuccess,
+}
+
+func (e ProjectImportStatus) IsValid() bool {
+	switch e {
+	case ProjectImportStatusNone, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
+		return true
+	}
+	return false
+}
+
+func (e ProjectImportStatus) String() string {
+	return string(e)
+}
+
+func (e *ProjectImportStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProjectImportStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProjectImportStatus", str)
+	}
+	return nil
+}
+
+func (e ProjectImportStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

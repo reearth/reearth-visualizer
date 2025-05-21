@@ -25,9 +25,11 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -108,12 +110,13 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomai
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	return i.createProject(ctx, createProjectInput{
-		WorkspaceID: input.WorkspaceID,
-		Visualizer:  input.Visualizer,
-		Name:        input.Name,
-		Description: input.Description,
-		CoreSupport: input.CoreSupport,
-		Visibility:  input.Visibility,
+		WorkspaceID:  input.WorkspaceID,
+		Visualizer:   input.Visualizer,
+		Name:         input.Name,
+		Description:  input.Description,
+		CoreSupport:  input.CoreSupport,
+		Visibility:   input.Visibility,
+		ImportStatus: input.ImportStatus,
 	}, operator)
 }
 
@@ -238,6 +241,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err != nil {
 		return nil, err
 	}
+
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
@@ -249,6 +253,24 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err := prj.UpdateVisibility(visibility); err != nil {
 		return nil, err
 	}
+	currentTime := time.Now().UTC()
+	prj.SetUpdatedAt(currentTime)
+
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, err
+	}
+	return prj, nil
+
+}
+
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus status.ProjectImportStatus, operator *usecase.Operator) (*project.Project, error) {
+
+	prj, err := i.projectRepo.FindByID(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
+
+	prj.UpdateImportStatus(importStatus)
 
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
@@ -697,7 +719,7 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProjectData(ctx context.Context, workspace string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+func (i *Project) ImportProjectData(ctx context.Context, workspace string, projectId *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
@@ -721,14 +743,16 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, data 
 	}
 
 	result, err := i.createProject(ctx, createProjectInput{
-		WorkspaceID: workspaceId,
-		Visualizer:  visualizer.Visualizer(input.Visualizer),
-		Name:        &input.Name,
-		Description: &input.Description,
-		ImageURL:    input.ImageURL,
-		Alias:       &alias,
-		Archived:    &archived,
-		CoreSupport: &coreSupport,
+		WorkspaceID:  workspaceId,
+		ProjectID:    projectId,
+		Visualizer:   visualizer.Visualizer(input.Visualizer),
+		ImportStatus: status.ProjectImportStatusProcessing,
+		Name:         &input.Name,
+		Description:  &input.Description,
+		ImageURL:     input.ImageURL,
+		Alias:        &alias,
+		Archived:     &archived,
+		CoreSupport:  &coreSupport,
 	}, op)
 	if err != nil {
 		return nil, err
@@ -768,15 +792,17 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 type createProjectInput struct {
-	WorkspaceID accountdomain.WorkspaceID
-	Visualizer  visualizer.Visualizer
-	Name        *string
-	Description *string
-	ImageURL    *url.URL
-	Alias       *string
-	Archived    *bool
-	CoreSupport *bool
-	Visibility  *string
+	WorkspaceID  accountdomain.WorkspaceID
+	ProjectID    *string
+	Visualizer   visualizer.Visualizer
+	ImportStatus status.ProjectImportStatus
+	Name         *string
+	Description  *string
+	ImageURL     *url.URL
+	Alias        *string
+	Archived     *bool
+	CoreSupport  *bool
+	Visibility   *string
 }
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -817,11 +843,21 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		}
 	}
 
-	prjID := id.NewProjectID()
+	var prjID idx.ID[id.Project]
+	if input.ProjectID != nil {
+		prjID, err = id.ProjectIDFrom(*input.ProjectID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		prjID = id.NewProjectID()
+	}
+
 	prj := project.New().
 		ID(prjID).
 		Workspace(input.WorkspaceID).
-		Visualizer(input.Visualizer)
+		Visualizer(input.Visualizer).
+		ImportStatus(input.ImportStatus)
 
 	if input.Archived != nil {
 		prj = prj.IsArchived(*input.Archived)

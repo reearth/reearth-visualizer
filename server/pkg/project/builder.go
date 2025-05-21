@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 )
@@ -82,6 +83,11 @@ func (b *Builder) Name(name string) *Builder {
 
 func (b *Builder) Visibility(visibility string) *Builder {
 	b.p.visibility = visibility
+	return b
+}
+
+func (b *Builder) ImportStatus(importStatus status.ProjectImportStatus) *Builder {
+	b.p.importStatus = importStatus
 	return b
 }
 
