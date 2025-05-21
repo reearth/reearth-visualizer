@@ -25,7 +25,7 @@ func TestRenderIndex(t *testing.T) {
   <title>Foobar</title>
 </head></html>`,
 		"https://xxss.com",
-		interfaces.ProjectPublishedMetadata{
+		interfaces.PublishedMetadata{
 			Title:       "xxx>",
 			Description: "desc",
 			Image:       "hogehoge",

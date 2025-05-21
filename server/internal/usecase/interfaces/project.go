@@ -28,26 +28,28 @@ type CreateProjectParam struct {
 }
 
 type UpdateProjectParam struct {
-	ID                id.ProjectID
-	Name              *string
-	Description       *string
-	Archived          *bool
-	IsBasicAuthActive *bool
-	BasicAuthUsername *string
-	BasicAuthPassword *string
-	ImageURL          *url.URL
+	ID             id.ProjectID
+	Name           *string
+	Description    *string
+	Archived       *bool
+	ImageURL       *url.URL
+	DeleteImageURL bool
+	SceneID        *id.SceneID
+	Starred        *bool
+	Deleted        *bool
+	Visibility     *string
+
+	// publishment
 	PublicTitle       *string
 	PublicDescription *string
 	PublicImage       *string
 	PublicNoIndex     *bool
 	DeletePublicImage bool
-	DeleteImageURL    bool
+	IsBasicAuthActive *bool
+	BasicAuthUsername *string
+	BasicAuthPassword *string
 	EnableGa          *bool
 	TrackingID        *string
-	SceneID           *id.SceneID
-	Starred           *bool
-	Deleted           *bool
-	Visibility        *string
 }
 
 type PublishProjectParam struct {

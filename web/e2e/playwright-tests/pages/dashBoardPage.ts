@@ -1,48 +1,60 @@
 import { Locator, Page } from "@playwright/test";
 
 export class DashBoardPage {
-  projects: Locator = this.page.getByRole("link", {
-    name: /Projects/i
-  });
+  constructor(public page: Page) {}
+  // Sidebar
+  projects: Locator = this.page.getByTestId("sidebar-tab-projects-link");
+  recycleBin: Locator = this.page.getByTestId("sidebar-tab-bin-link");
+  pluginPlayground: Locator = this.page.getByTestId("sidebar-tab-plugin-link");
+  documentation: Locator = this.page.getByTestId(
+    "sidebar-tab-documentation-link"
+  );
+  community: Locator = this.page.getByTestId("sidebar-tab-community-link");
 
-  assets: Locator = this.page.getByRole("link", {
-    name: /Assets/i
-  });
+  // Starred Projects
+  starredSectionTitle: Locator = this.page.locator(
+    '[data-testid="starred-projects-wrapper"] p',
+    {
+      hasText: "Starred"
+    }
+  );
+  starredProjectList: Locator = this.page.getByTestId("starred-projects-list");
+  firstStarredProject: Locator = this.page
+    .locator('[data-testid^="starred-project-item-"]')
+    .first();
+  firstStarredProjectTitle: Locator = this.page
+    .locator('[data-testid^="starred-project-item-title-"]')
+    .first();
 
-  recycleBin: Locator = this.page.getByRole("link", {
-    name: /Recycle bin/i
-  });
+  // Profile Area
+  profileWrapper: Locator = this.page.getByTestId("profile-wrapper");
+  profileAvatar: Locator = this.page.getByTestId("profile-avatar");
+  profileUsername: Locator = this.page.getByTestId("profile-titleWrapper");
+  profileDropdownButton: Locator = this.page
+    .getByTestId("profile-popupWrapper")
+    .locator("svg");
 
-  starred: Locator = this.page.getByText(/Starred/i);
+  // Dropdown Menu Items (from profile menu)
+  switchWorkspace: Locator = this.page.getByTestId(
+    "profile-switchWorkspace-item-0"
+  );
+  switchWorkspaceSubmenuTrigger: Locator = this.page.getByTestId(
+    "profile-switchWorkspace-submenu-0-trigger"
+  );
+  workspaceSettings: Locator = this.page.getByTestId(
+    "workspace-settings-item-1"
+  );
+  newWorkspace: Locator = this.page.getByTestId("add-workspace-item-2");
+  accountSettings: Locator = this.page.getByTestId("account-settings-item-3");
+  logOutCTA: Locator = this.page.getByTestId("profile-signOut-item-4");
 
-  pluginPlayground: Locator = this.page.getByRole("link", {
-    name: /Plugin Playground/i
-  });
+  // Logo and Footer
+  logo: Locator = this.page.locator('img[src*="LogoWithText.svg"]');
+  appVersion: Locator = this.page.locator("p", { hasText: /Version/i });
 
-  documentation: Locator = this.page.getByRole("link", {
-    name: /Documentation/i
-  });
-
-  community: Locator = this.page.getByRole("link", {
-    name: /Community/i
-  });
-
-  userProfileDropdown: Locator = this.page.locator("div.css-1yc53zh svg");
-
-  switchWorkSpace: Locator = this.page.getByText(/Switch workspace/i);
-
-  workSpaceSettings: Locator = this.page.getByText(/Workspace settings/i);
-
-  newWorkspace: Locator = this.page.getByText(/New workspace/i);
-
-  accountSettings: Locator = this.page.getByText(/Account settings/i);
-
-  logOutCTA: Locator = this.page.getByText(/Log out/i);
-
-  constructor(private page: Page) {}
-
+  // Action
   async logOut() {
-    await this.userProfileDropdown.click();
+    await this.profileDropdownButton.click();
     await this.logOutCTA.click();
   }
 }

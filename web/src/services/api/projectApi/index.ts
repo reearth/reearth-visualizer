@@ -580,11 +580,12 @@ export default () => {
 
   const useImportProject = useCallback(
     async (file: File, teamId: string) => {
+      const CHUNK_CONCURRENCY = 4;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
       const fileId = uuidv4();
       let lastResponse = null;
 
-      for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
+      const uploadChunk = async (chunkNum: number) => {
         const start = chunkNum * CHUNK_SIZE;
         const end = Math.min(file.size, start + CHUNK_SIZE);
         const chunk = file.slice(start, end);
@@ -596,18 +597,33 @@ export default () => {
         formData.append("chunk_num", chunkNum.toString());
         formData.append("total_chunks", totalChunks.toString());
 
-        try {
-          const response = await axios.post("/split-import", formData);
-          lastResponse = response.data;
-        } catch (error) {
-          setNotification({
-            type: "error",
-            text: t("Failed to import project.")
-          });
-          console.log("Restful: Failed to import project", error);
-          return { status: "error" };
+        const response = await axios.post("/split-import", formData);
+        return response.data;
+      };
+
+      const chunkIndices = Array.from({ length: totalChunks }, (_, i) => i);
+
+      const parallelUpload = async (indices: number[]): Promise<any[]> => {
+        const results = [];
+        for (let i = 0; i < indices.length; i += CHUNK_CONCURRENCY) {
+          const batch = indices.slice(i, i + CHUNK_CONCURRENCY);
+          try {
+            const responses = await Promise.all(batch.map(uploadChunk));
+            results.push(...responses);
+          } catch (error) {
+            setNotification({
+              type: "error",
+              text: t("Failed to import project.")
+            });
+            console.error("Failed chunk batch:", error);
+            return [{ status: "error" }];
+          }
         }
-      }
+        return results;
+      };
+
+      const responses = await parallelUpload(chunkIndices);
+      lastResponse = responses[responses.length - 1];
 
       setNotification({
         type: "success",

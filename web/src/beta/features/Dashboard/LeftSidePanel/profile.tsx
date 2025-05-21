@@ -48,6 +48,7 @@ export const Profile: FC<ProfileProp> = ({
       {
         id: "workspace",
         title: t("Switch workspace"),
+        dataTestid: "profile-switchWorkspace",
         icon: "arrowLeftRight",
         subItem: workspaces?.map((w) => {
           return {
@@ -67,6 +68,7 @@ export const Profile: FC<ProfileProp> = ({
       ...workspaceManagementMenu,
       {
         id: "signOut",
+        dataTestid: "profile-signOut",
         title: t("Log out"),
         icon: "exit",
         onClick: onSignOut
@@ -83,17 +85,19 @@ export const Profile: FC<ProfileProp> = ({
   );
 
   return (
-    <Wrapper>
-      <ProfileWrapper>
+    <Wrapper data-testid="profile-wrapper">
+      <ProfileWrapper data-testid="profile-profileWrapper">
         {isPersonal && (
-          <Avatar>
+          <Avatar data-testid="profile-avatar">
             <Typography size="body">
               {currentUser?.charAt(0).toUpperCase()}
             </Typography>
           </Avatar>
         )}
-        <TitleWrapper>{currentUser}</TitleWrapper>
-        <PopupWrapper>
+        <TitleWrapper data-testid="profile-titleWrapper">
+          {currentUser}
+        </TitleWrapper>
+        <PopupWrapper data-testid="profile-popupWrapper">
           <PopupMenu
             label={
               <Icon color={theme.content.weak} icon="caretDown" size="small" />

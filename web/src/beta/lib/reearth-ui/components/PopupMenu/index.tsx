@@ -34,6 +34,7 @@ export type PopupMenuItem = {
   title?: string;
   disabled?: boolean;
   tileComponent?: ReactNode;
+  dataTestid?: string;
 };
 
 export type PopupMenuProps = {
@@ -102,6 +103,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
       subItem,
       title,
       disabled,
+      dataTestid,
       tileComponent
     } = item;
 
@@ -238,7 +240,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
         />
       </LabelWrapper>
     ) : label ? (
-     label
+      label
     ) : icon ? (
       <Icon icon={icon} size="small" aria-hidden="true" />
     ) : null;

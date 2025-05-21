@@ -17,12 +17,14 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
         ? [
             {
               id: "workspaceSettings",
+              dataTestid: "workspace-settings",
               title: t("Workspace settings"),
               icon: "setting",
               onClick: () => navigate(`/settings/workspaces/${workspaceId}`)
             },
             {
               id: "addWorkspace",
+              dataTestid: "add-workspace",
               title: t("New workspace"),
               icon: "newWorkspace",
               hasBorderBottom: true,
@@ -32,6 +34,7 @@ export default ({ workspaceId }: { workspaceId?: string }) => {
             },
             {
               id: "accountSettings",
+              dataTestid: "account-settings",
               title: t("Account settings"),
               icon: "user",
               onClick: () => navigate("/settings/account")

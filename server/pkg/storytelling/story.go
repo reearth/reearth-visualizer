@@ -27,16 +27,17 @@ type Story struct {
 	updatedAt     time.Time
 	coreSupport   bool
 
+	// publishment
 	alias             string
 	status            PublishmentStatus
 	publishedAt       *time.Time
-	isBasicAuthActive bool
-	basicAuthUsername string
-	basicAuthPassword string
 	publicTitle       string
 	publicDescription string
 	publicImage       string
 	publicNoIndex     bool
+	isBasicAuthActive bool
+	basicAuthUsername string
+	basicAuthPassword string
 	enableGa          bool
 	trackingID        string
 }
@@ -64,14 +65,6 @@ func (s *Story) Title() string {
 	return s.title
 }
 
-func (s *Story) Alias() string {
-	return s.alias
-}
-
-func (s *Story) PublishedAt() *time.Time {
-	return s.publishedAt
-}
-
 func (s *Story) CreatedAt() time.Time {
 	return s.id.Timestamp()
 }
@@ -80,42 +73,8 @@ func (s *Story) UpdatedAt() time.Time {
 	return s.updatedAt
 }
 
-func (s *Story) IsBasicAuthActive() bool {
-	return s.isBasicAuthActive
-}
-
-func (s *Story) BasicAuthUsername() string {
-	if !s.isBasicAuthActive {
-		return ""
-	}
-	return s.basicAuthUsername
-}
-
-func (s *Story) BasicAuthPassword() string {
-	if !s.isBasicAuthActive {
-		return ""
-	}
-	return s.basicAuthPassword
-}
-
-func (s *Story) PublicTitle() string {
-	return s.publicTitle
-}
-
 func (s *Story) CoreSupport() bool {
 	return s.coreSupport
-}
-
-func (s *Story) SetPublicDescription(publicDescription string) {
-	s.publicDescription = publicDescription
-}
-
-func (s *Story) SetPublicImage(publicImage string) {
-	s.publicImage = publicImage
-}
-
-func (s *Story) SetPublicNoIndex(publicNoIndex bool) {
-	s.publicNoIndex = publicNoIndex
 }
 
 func (s *Story) SetPanelPosition(panelPosition Position) {
@@ -124,14 +83,6 @@ func (s *Story) SetPanelPosition(panelPosition Position) {
 
 func (s *Story) SetBgColor(bgColor string) {
 	s.bgColor = bgColor
-}
-
-func (s *Story) SetEnableGa(enableGa bool) {
-	s.enableGa = enableGa
-}
-
-func (s *Story) SetTrackingID(trackingID string) {
-	s.trackingID = trackingID
 }
 
 func (s *Story) Rename(name string) {
@@ -143,51 +94,12 @@ func (s *Story) SetUpdatedAt(now time.Time) {
 	s.updatedAt = now
 }
 
-func (s *Story) SetBasicAuth(isBasicAuthActive bool, basicAuthUsername, basicAuthPassword *string) error {
-	s.isBasicAuthActive = isBasicAuthActive
-	if !isBasicAuthActive {
-		s.basicAuthUsername = ""
-		s.basicAuthPassword = ""
-		return nil
-	}
-	if isBasicAuthActive && (basicAuthUsername == nil || basicAuthPassword == nil) {
-		return ErrBasicAuthUserNamePasswordEmpty
-	}
-	s.basicAuthUsername = *basicAuthUsername
-	s.basicAuthPassword = *basicAuthPassword
-	return nil
-}
-
-func (s *Story) SetPublicTitle(publicTitle string) {
-	s.publicTitle = publicTitle
-}
-
-func (s *Story) PublicDescription() string {
-	return s.publicDescription
-}
-
-func (s *Story) PublicImage() string {
-	return s.publicImage
-}
-
-func (s *Story) PublicNoIndex() bool {
-	return s.publicNoIndex
-}
-
 func (s *Story) PanelPosition() Position {
 	return s.panelPosition
 }
 
 func (s *Story) BgColor() string {
 	return s.bgColor
-}
-
-func (s *Story) EnableGa() bool {
-	return s.enableGa
-}
-
-func (s *Story) TrackingID() string {
-	return s.trackingID
 }
 
 func (s *Story) ValidateProperties(pm property.Map) error {
@@ -222,8 +134,71 @@ func (s *Story) Properties() id.PropertyIDList {
 	return ids
 }
 
+func (s *Story) MatchWithPublicName(name string) bool {
+	if s == nil || name == "" || s.status == PublishmentStatusPrivate {
+		return false
+	}
+	return s.alias == name
+}
+
+// publishment ---------------------
+
+func (s *Story) Alias() string {
+	return s.alias
+}
+
 func (s *Story) PublishmentStatus() PublishmentStatus {
 	return s.status
+}
+
+func (s *Story) PublishedAt() *time.Time {
+	return s.publishedAt
+}
+
+func (s *Story) IsBasicAuthActive() bool {
+	return s.isBasicAuthActive
+}
+
+func (s *Story) BasicAuthUsername() string {
+	if !s.isBasicAuthActive {
+		return ""
+	}
+	return s.basicAuthUsername
+}
+
+func (s *Story) BasicAuthPassword() string {
+	if !s.isBasicAuthActive {
+		return ""
+	}
+	return s.basicAuthPassword
+}
+
+func (s *Story) PublicTitle() string {
+	return s.publicTitle
+}
+
+func (s *Story) PublicDescription() string {
+	return s.publicDescription
+}
+
+func (s *Story) PublicImage() string {
+	return s.publicImage
+}
+
+func (s *Story) PublicNoIndex() bool {
+	return s.publicNoIndex
+}
+
+func (s *Story) EnableGa() bool {
+	return s.enableGa
+}
+
+func (s *Story) TrackingID() string {
+	return s.trackingID
+}
+
+func (s *Story) UpdateAlias(newAlias string) {
+	s.alias = newAlias
 }
 
 func (s *Story) UpdatePublishmentStatus(status PublishmentStatus) {
@@ -234,13 +209,41 @@ func (s *Story) SetPublishedAt(now time.Time) {
 	s.publishedAt = &now
 }
 
-func (s *Story) UpdateAlias(newAlias string) {
-	s.alias = newAlias
+func (s *Story) SetPublicTitle(publicTitle string) {
+	s.publicTitle = publicTitle
 }
 
-func (s *Story) MatchWithPublicName(name string) bool {
-	if s == nil || name == "" || s.status == PublishmentStatusPrivate {
-		return false
+func (s *Story) SetPublicDescription(publicDescription string) {
+	s.publicDescription = publicDescription
+}
+
+func (s *Story) SetPublicImage(publicImage string) {
+	s.publicImage = publicImage
+}
+
+func (s *Story) SetPublicNoIndex(publicNoIndex bool) {
+	s.publicNoIndex = publicNoIndex
+}
+
+func (s *Story) SetBasicAuth(isBasicAuthActive bool, basicAuthUsername, basicAuthPassword *string) error {
+	s.isBasicAuthActive = isBasicAuthActive
+	if !isBasicAuthActive {
+		s.basicAuthUsername = ""
+		s.basicAuthPassword = ""
+		return nil
 	}
-	return s.alias == name
+	if isBasicAuthActive && (basicAuthUsername == nil || basicAuthPassword == nil) {
+		return ErrBasicAuthUserNamePasswordEmpty
+	}
+	s.basicAuthUsername = *basicAuthUsername
+	s.basicAuthPassword = *basicAuthPassword
+	return nil
+}
+
+func (s *Story) SetEnableGa(enableGa bool) {
+	s.enableGa = enableGa
+}
+
+func (s *Story) SetTrackingID(trackingID string) {
+	s.trackingID = trackingID
 }

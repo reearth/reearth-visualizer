@@ -11,17 +11,31 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const { starredProjects, handleProjectOpen } = useHooks(workspaceId);
 
   return (
-    <Wrapper>
-      <Collapse iconPosition="left" title={t("Starred")} size="small" noPadding>
-        <ProjectsWrapper>
+    <Wrapper data-testid="starred-projects-wrapper">
+      <Collapse
+        iconPosition="left"
+        title={t("Starred")}
+        size="small"
+        noPadding
+        data-testid="starred-projects-collapse"
+      >
+        <ProjectsWrapper data-testid="starred-projects-list">
           {starredProjects?.map((project) =>
             project ? (
               <Item
                 key={project.id}
                 onClick={() => handleProjectOpen(project?.scene?.id)}
+                data-testid={`starred-project-item-${project.id}`}
               >
-                <IconWrapper icon="notebook" color={theme.content.weak} />
-                <TitleWrapper title={project?.name}>
+                <IconWrapper
+                  icon="notebook"
+                  color={theme.content.weak}
+                  data-testid={`starred-project-item-icon-${project.id}`}
+                />
+                <TitleWrapper
+                  title={project?.name}
+                  data-testid={`starred-project-item-title-${project.id}`}
+                >
                   {project?.name}
                 </TitleWrapper>
               </Item>

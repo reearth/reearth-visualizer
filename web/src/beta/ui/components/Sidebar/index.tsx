@@ -19,7 +19,9 @@ export type SidebarMenuItemProps = {
 
 export const DEFAULT_SIDEBAR_WIDTH = 213;
 
-export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
+export const SidebarMenuItem: FC<
+  SidebarMenuItemProps & { "data-testid"?: string }
+> = ({
   icon,
   text,
   active,
@@ -28,7 +30,8 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   tileComponent,
   subItem,
   openSubItem = false,
-  onClick
+  onClick,
+  "data-testid": dataTestId
 }) => {
   const theme = useTheme();
   const [isOpen, setIsOpen] = useState<boolean>(openSubItem);
@@ -38,19 +41,21 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
       active={subItem ? false : active}
       disabled={disabled}
       onClick={subItem ? () => setIsOpen(!isOpen) : onClick}
-      data-testid="sidebar-menu"
+      data-testid={dataTestId || "sidebar-menu"}
     >
-      <Info>
+      <Info data-testid={dataTestId ? `${dataTestId}-info` : undefined}>
         {icon && (
           <Icon
             icon={icon}
             size="normal"
             color={active ? theme.content.main : theme.content.weak}
+            data-testid={dataTestId ? `${dataTestId}-icon` : undefined}
           />
         )}
         <Typography
           size="body"
           color={disabled ? theme.content.weak : theme.content.main}
+          data-testid={dataTestId ? `${dataTestId}-text` : undefined}
         >
           {text}
         </Typography>
@@ -59,9 +64,14 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
         <Icon
           icon={isOpen ? "caretUp" : "caretDown"}
           color={disabled ? theme.content.weaker : theme.content.main}
+          data-testid={dataTestId ? `${dataTestId}-caret` : undefined}
         />
       )}
-      {tileComponent && <Tile>{tileComponent}</Tile>}
+      {tileComponent && (
+        <Tile data-testid={dataTestId ? `${dataTestId}-tile` : undefined}>
+          {tileComponent}
+        </Tile>
+      )}
     </MenuWrapper>
   );
 
@@ -70,7 +80,9 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
       <>
         {Content}
         {isOpen && (
-          <SubMenu>
+          <SubMenu
+            data-testid={dataTestId ? `${dataTestId}-submenu` : undefined}
+          >
             {subItem.map((t) => (
               <SidebarMenuItem
                 key={t.id}
@@ -79,6 +91,9 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
                 active={t.active}
                 icon={t.icon}
                 subItem={t.subItem}
+                data-testid={
+                  dataTestId ? `${dataTestId}-subitem-${t.id}` : undefined
+                }
               />
             ))}
           </SubMenu>
@@ -88,7 +103,11 @@ export const SidebarMenuItem: FC<SidebarMenuItemProps> = ({
   }
 
   return (
-    <StyledLinkButton to={path || ""} disabled={disabled}>
+    <StyledLinkButton
+      to={path || ""}
+      disabled={disabled}
+      data-testid={dataTestId ? `${dataTestId}-link` : undefined}
+    >
       {Content}
     </StyledLinkButton>
   );

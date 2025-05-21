@@ -131,82 +131,89 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 	}
 
 	if completed {
-		// go func() {
+		go func(session *UploadSession) {
+			bgctx := context.Background()
 
-		assembledPath := filepath.Join(m.tempDir, session.FileID)
-		if err := m.AssembleChunks(session, assembledPath); err != nil {
-			return nil, fmt.Errorf("failed to assemble chunks: %w", err)
-		}
-		defer safeRemove(assembledPath)
+			assembledPath := filepath.Join(m.tempDir, session.FileID)
+			defer safeRemove(assembledPath)
 
-		fs := afero.NewOsFs()
-		f, err := fs.Open(assembledPath)
-		if err != nil {
-			return nil, fmt.Errorf("failed to open assembled file: %w", err)
-		}
-		defer closeWithError(f, &err)
+			if err := m.AssembleChunks(session, assembledPath); err != nil {
+				log.Printf("failed to assemble chunks: %v", err)
+				return
+			}
 
-		importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(adapter.CurrentHost(ctx), f)
-		if err != nil {
-			return nil, errors.New("Fail UncompressExportZip :" + err.Error())
-		}
+			fs := afero.NewOsFs()
+			f, err := fs.Open(assembledPath)
+			if err != nil {
+				log.Printf("failed to open assembled file: %v", err)
+				return
+			}
+			defer closeWithError(f, &err)
 
-		// First, create the project. A project associated with the asset is required.
-		newProject, err := usecases.Project.ImportProjectData(ctx, teamId, importData, op)
-		if err != nil {
-			return nil, errors.New("Fail Import ProjectData :" + err.Error())
-		}
+			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(adapter.CurrentHost(bgctx), f)
+			if err != nil {
+				log.Printf("fail UncompressExportZip: %v", err)
+				return
+			}
 
-		importData, err = usecases.Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject)
-		if err != nil {
-			return nil, errors.New("Fail Import AssetFiles :" + err.Error())
-		}
+			newProject, err := usecases.Project.ImportProjectData(bgctx, teamId, importData, op)
+			if err != nil {
+				log.Printf("fail Import ProjectData: %v", err)
+				return
+			}
 
-		newScene, err := usecases.Scene.Create(ctx, newProject.ID(), false, op)
-		if err != nil {
-			return nil, errors.New("Fail Create Scene :" + err.Error())
-		}
+			importData, err = usecases.Asset.ImportAssetFiles(bgctx, assetsZip, importData, newProject)
+			if err != nil {
+				log.Printf("fail Import AssetFiles: %v", err)
+				return
+			}
 
-		oldSceneID, err := replaceOldSceneID(importData, newScene)
-		if err != nil {
-			return nil, errors.New("Fail Get OldSceneID :" + err.Error())
-		}
+			newScene, err := usecases.Scene.Create(bgctx, newProject.ID(), false, op)
+			if err != nil {
+				log.Printf("fail Create Scene: %v", err)
+				return
+			}
 
-		_, _, err = usecases.Plugin.ImportPlugins(ctx, pluginsZip, oldSceneID, newScene, importData)
-		if err != nil {
-			return nil, errors.New("Fail ImportPlugins :" + err.Error())
-		}
+			oldSceneID, err := replaceOldSceneID(importData, newScene)
+			if err != nil {
+				log.Printf("fail Get OldSceneID: %v", err)
+				return
+			}
 
-		//　The following is the saving of sceneJSON. -----------------------
+			_, _, err = usecases.Plugin.ImportPlugins(bgctx, pluginsZip, oldSceneID, newScene, importData)
+			if err != nil {
+				log.Printf("fail ImportPlugins: %v", err)
+				return
+			}
 
-		// Scene data save
-		newScene, err = usecases.Scene.ImportScene(ctx, newScene, importData)
-		if err != nil {
-			return nil, errors.New("Fail sceneJSON ImportScene :" + err.Error())
-		}
+			newScene, err = usecases.Scene.ImportScene(bgctx, newScene, importData)
+			if err != nil {
+				log.Printf("fail sceneJSON ImportScene: %v", err)
+				return
+			}
 
-		// Styles data save
-		_, err = usecases.Style.ImportStyles(ctx, newScene.ID(), importData)
-		if err != nil {
-			return nil, errors.New("Fail sceneJSON ImportStyles :" + err.Error())
-		}
+			_, err = usecases.Style.ImportStyles(bgctx, newScene.ID(), importData)
+			if err != nil {
+				log.Printf("fail sceneJSON ImportStyles: %v", err)
+				return
+			}
 
-		// NLSLayers data save
-		_, err = usecases.NLSLayer.ImportNLSLayers(ctx, newScene.ID(), importData)
-		if err != nil {
-			return nil, errors.New("Fail sceneJSON ImportNLSLayers :" + err.Error())
-		}
+			_, err = usecases.NLSLayer.ImportNLSLayers(bgctx, newScene.ID(), importData)
+			if err != nil {
+				log.Printf("fail sceneJSON ImportNLSLayers: %v", err)
+				return
+			}
 
-		// Story data save
-		_, err = usecases.StoryTelling.ImportStory(ctx, newScene.ID(), importData)
-		if err != nil {
-			return nil, errors.New("Fail sceneJSON ImportStory :" + err.Error())
-		}
+			_, err = usecases.StoryTelling.ImportStory(bgctx, newScene.ID(), importData)
+			if err != nil {
+				log.Printf("fail sceneJSON ImportStory: %v", err)
+				return
+			}
 
-		m.CleanupSession(session.FileID)
+			m.CleanupSession(session.FileID)
+			log.Printf("Upload completed: %s (%d chunks)", session.FileID, session.TotalChunks)
 
-		log.Printf("Upload completed: %s (%d chunks)", session.FileID, session.TotalChunks)
-		// }()
+		}(session)
 	}
 
 	return map[string]interface{}{

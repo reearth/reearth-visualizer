@@ -60,26 +60,28 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 	}
 
 	res, err := usecases(ctx).Project.Update(ctx, interfaces.UpdateProjectParam{
-		ID:                pid,
-		Name:              input.Name,
-		Description:       input.Description,
-		ImageURL:          input.ImageURL,
-		Archived:          input.Archived,
-		IsBasicAuthActive: input.IsBasicAuthActive,
-		BasicAuthUsername: input.BasicAuthUsername,
-		BasicAuthPassword: input.BasicAuthPassword,
+		ID:             pid,
+		Name:           input.Name,
+		Description:    input.Description,
+		ImageURL:       input.ImageURL,
+		Archived:       input.Archived,
+		DeleteImageURL: deleteImageURL,
+		Starred:        input.Starred,
+		Deleted:        input.Deleted,
+		SceneID:        gqlmodel.ToIDRef[id.Scene](input.SceneID),
+		Visibility:     input.Visibility,
+
+		// publishment
 		PublicTitle:       input.PublicTitle,
 		PublicDescription: input.PublicDescription,
 		PublicImage:       input.PublicImage,
 		PublicNoIndex:     input.PublicNoIndex,
 		DeletePublicImage: deletePublicImage,
-		DeleteImageURL:    deleteImageURL,
+		IsBasicAuthActive: input.IsBasicAuthActive,
+		BasicAuthUsername: input.BasicAuthUsername,
+		BasicAuthPassword: input.BasicAuthPassword,
 		EnableGa:          input.EnableGa,
 		TrackingID:        input.TrackingID,
-		Starred:           input.Starred,
-		Deleted:           input.Deleted,
-		SceneID:           gqlmodel.ToIDRef[id.Scene](input.SceneID),
-		Visibility:        input.Visibility,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

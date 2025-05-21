@@ -58,8 +58,12 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <ManagerWrapper onClick={() => handleProjectSelect(undefined)}>
+    <ManagerWrapper
+      data-testid="projects-manager-wrapper"
+      onClick={() => handleProjectSelect(undefined)}
+    >
       <ManagerHeader
+        data-testid="projects-manager-header"
         size="large"
         actions={[
           <Fragment key="action-buttons">
@@ -70,6 +74,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               icon="plus"
               appearance="primary"
               onClick={showProjectCreator}
+              data-testid="create-project-btn"
             />
             <ManagerHeaderButton
               key={"import-project"}
@@ -79,12 +84,14 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               appearance="secondary"
               onClick={() => fileInputRef.current?.click()}
               tileComponent={<Tooltip type="experimental" />}
+              data-testid="import-project-btn"
             />
             <HiddenFileInput
               type="file"
               accept=".zip"
               ref={fileInputRef}
               onChange={handleProjectImport}
+              data-testid="import-project-file-input"
             />
           </Fragment>
         ]}
@@ -98,9 +105,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         onSearch={handleSearch}
       />
       {filtedProjects?.length ? (
-        <ManagerContent>
+        <ManagerContent data-testid="projects-manager-content">
           <ContentWrapper>
-            <BreadcrumbContainer>
+            <BreadcrumbContainer data-testid="projects-breadcrumb-container">
               <Breadcrumb
                 items={[
                   {
@@ -109,6 +116,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         size="h5"
                         weight="bold"
                         color={theme.content.weak}
+                        data-testid="breadcrumb-all-projects"
                       >
                         {t("All projects")}
                       </Typography>
@@ -122,6 +130,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                               size="h5"
                               weight="bold"
                               color={theme.content.weak}
+                              data-testid="breadcrumb-search-result"
                             >
                               {`${t("Search Result for")} "${searchTerm}"`}
                             </Typography>
@@ -133,29 +142,38 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
               />
             </BreadcrumbContainer>
             {layout === "list" && (
-              <ListHeader width={contentWidth}>
-                <ThumbnailCol />
-                <ProjectNameCol>
+              <ListHeader
+                width={contentWidth}
+                data-testid="projects-list-header"
+              >
+                <ThumbnailCol data-testid="projects-list-thumbnail-col" />
+                <ProjectNameCol data-testid="projects-list-name-col">
                   <Typography size="body" color={theme.content.weak}>
                     {t("Project Name")}
                   </Typography>
                 </ProjectNameCol>
-                <TimeCol>
+                <TimeCol data-testid="projects-list-updated-col">
                   <Typography size="body" color={theme.content.weak}>
                     {t("Updated At")}
                   </Typography>
                 </TimeCol>
-                <TimeCol>
+                <TimeCol data-testid="projects-list-created-col">
                   <Typography size="body" color={theme.content.weak}>
                     {t("Created At")}
                   </Typography>
                 </TimeCol>
-                <ActionCol />
+                <ActionCol data-testid="projects-list-action-col" />
               </ListHeader>
             )}
-            <ProjectsWrapper ref={wrapperRef}>
-              <ProjectsContainer ref={contentRef}>
-                <ProjectsGroup layout={layout}>
+            <ProjectsWrapper ref={wrapperRef} data-testid="projects-wrapper">
+              <ProjectsContainer
+                ref={contentRef}
+                data-testid="projects-container"
+              >
+                <ProjectsGroup
+                  layout={layout}
+                  data-testid={`projects-group-${layout}`}
+                >
                   {filtedProjects.map((project) =>
                     layout === "grid" ? (
                       <ProjectGridViewItem
@@ -166,6 +184,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                         onProjectRemove={() => handleProjectRemove(project)}
+                        data-testid={`project-grid-item-${project.id}`}
                       />
                     ) : (
                       <ProjectListViewItem
@@ -176,23 +195,24 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectSelect={handleProjectSelect}
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                         onProjectRemove={() => handleProjectRemove(project)}
+                        data-testid={`project-list-item-${project.id}`}
                       />
                     )
                   )}
                 </ProjectsGroup>
               </ProjectsContainer>
               {isLoading && (
-                <LoadingWrapper>
-                  <Loading relative />
+                <LoadingWrapper data-testid="projects-loading-wrapper">
+                  <Loading relative data-testid="projects-loading" />
                 </LoadingWrapper>
               )}
             </ProjectsWrapper>
           </ContentWrapper>
         </ManagerContent>
       ) : isLoading ? (
-        <Loading relative />
+        <Loading relative data-testid="projects-loading" />
       ) : (
-        <ManagerEmptyContent>
+        <ManagerEmptyContent data-testid="projects-empty-content">
           <Typography size="h5" color={theme.content.weak}>
             {t("No Project has been created yet")}
           </Typography>
@@ -204,6 +224,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
           visible={projectCreatorVisible}
           onClose={closeProjectCreator}
           onProjectCreate={handleProjectCreate}
+          data-testid="project-creator-modal"
         />
       )}
     </ManagerWrapper>

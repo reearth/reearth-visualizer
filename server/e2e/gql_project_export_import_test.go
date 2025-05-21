@@ -3,8 +3,10 @@ package e2e
 import (
 	"encoding/json"
 	"fmt"
+	"math"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -16,7 +18,49 @@ import (
 )
 
 // export REEARTH_DB=mongodb://localhost
-// go test -v -run TestProjectExportImport ./e2e/...
+// go test -v -run TestSplitImport ./e2e/...
+
+func TestSplitImport(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	data, err := os.ReadFile("test.zip")
+	assert.NoError(t, err)
+
+	const CHUNK_SIZE = 1024 * 512 // 512KB
+	totalChunks := int(math.Ceil(float64(len(data)) / float64(CHUNK_SIZE)))
+	fileID := "test-file-id"
+	teamID := "test-team-id"
+
+	for i := 0; i < totalChunks; i++ {
+		start := i * CHUNK_SIZE
+		end := (i + 1) * CHUNK_SIZE
+		if end > len(data) {
+			end = len(data)
+		}
+		chunk := data[start:end]
+
+		tmpfile := fmt.Sprintf("test_chunk_%d.zip", i)
+		err := os.WriteFile(tmpfile, chunk, 0644)
+		assert.NoError(t, err)
+		defer func() {
+			if err := os.Remove(tmpfile); err != nil {
+				t.Logf("failed to remove temp file %s: %v", tmpfile, err)
+			}
+		}()
+
+		e.POST("/api/split-import").
+			WithMultipart().
+			WithFile("file", tmpfile).
+			WithForm(map[string]interface{}{
+				"file_id":      fileID,
+				"team_id":      teamID,
+				"chunk_num":    strconv.Itoa(i),
+				"total_chunks": strconv.Itoa(totalChunks),
+			}).
+			Expect().
+			Status(http.StatusOK)
+	}
+}
 
 func TestProjectExportImport(t *testing.T) {
 

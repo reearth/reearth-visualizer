@@ -51,7 +51,11 @@ const AddWorkspaceModal: FC = () => {
   }, [addWorkspaceModal]);
 
   return (
-    <Modal visible={addWorkspaceModal} size="small">
+    <Modal
+      visible={addWorkspaceModal}
+      size="small"
+      data-testid="addworkspace-modal"
+    >
       <ModalPanel
         title={t("Create new workspace")}
         layout="common"
@@ -62,6 +66,7 @@ const AddWorkspaceModal: FC = () => {
             title={t("Cancel")}
             appearance="secondary"
             onClick={handleCloseAddworkspaceModal}
+            data-testid="addworkspace-cancel-btn"
           />,
           <Button
             key="create"
@@ -69,18 +74,23 @@ const AddWorkspaceModal: FC = () => {
             appearance="primary"
             disabled={isDuplicatedName}
             onClick={handleAddWorkspace}
+            data-testid="addworkspace-create-btn"
           />
         ]}
+        data-testid="addworkspace-modal-panel"
       >
-        <ModalContentWrapper>
-          <Typography size="body">{t("Your workspace Name*")}</Typography>
+        <ModalContentWrapper data-testid="addworkspace-modal-content">
+          <Typography size="body" data-testid="addworkspace-title">
+            {t("Your workspace Name*")}
+          </Typography>
           <TextInput
             placeholder={t("your workspace name")}
             onChange={setWorkspaceNameConfirm}
+            data-testid="addworkspace-name-input"
           />
 
           {isDuplicatedName && (
-            <WarningContentWrapper>
+            <WarningContentWrapper data-testid="addworkspace-warning">
               <Icon icon="lightBulb" color={theme.warning.main} size="normal" />
               <WarningTextMessage size="body" color={theme.warning.main}>
                 {t(

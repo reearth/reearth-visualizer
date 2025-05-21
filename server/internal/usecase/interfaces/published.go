@@ -17,7 +17,7 @@ type HasPublicMeta interface {
 	CoreSupport() bool
 }
 
-type ProjectPublishedMetadata struct {
+type PublishedMetadata struct {
 	Title             string `json:"title,omitempty"`
 	Description       string `json:"description,omitempty"`
 	Image             string `json:"image,omitempty"`
@@ -28,8 +28,8 @@ type ProjectPublishedMetadata struct {
 	CoreSupport       bool   `json:"coreSupport,omitempty"`
 }
 
-func PublishedMetadataFrom(i HasPublicMeta) ProjectPublishedMetadata {
-	return ProjectPublishedMetadata{
+func PublishedMetadataFrom(i HasPublicMeta) PublishedMetadata {
+	return PublishedMetadata{
 		Title:             i.PublicTitle(),
 		Description:       i.PublicDescription(),
 		Image:             i.PublicImage(),
@@ -42,7 +42,7 @@ func PublishedMetadataFrom(i HasPublicMeta) ProjectPublishedMetadata {
 }
 
 type Published interface {
-	Metadata(context.Context, string) (ProjectPublishedMetadata, error)
+	Metadata(context.Context, string) (PublishedMetadata, error)
 	Data(context.Context, string) (io.Reader, error)
 	Index(context.Context, string, *url.URL) (string, error)
 }

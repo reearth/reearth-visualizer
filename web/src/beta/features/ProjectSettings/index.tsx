@@ -120,15 +120,16 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
   );
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="project-settings-wrapper">
       <Navbar
+        data-testid="project-settings-navbar"
         projectId={projectId}
         workspaceId={workspaceId}
         sceneId={sceneId}
         page="projectSettings"
       />
-      <MainSection>
-        <LeftSidePanel>
+      <MainSection data-testid="project-settings-main-section">
+        <LeftSidePanel data-testid="project-settings-sidebar">
           <SidebarWrapper>
             <SidebarMainSection>
               <SidebarButtonsWrapper>
@@ -141,16 +142,21 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
                     icon={t.icon}
                     subItem={t.subItem}
                     openSubItem={true}
+                    data-testid={`project-settings-tab-${t.id}`}
                   />
                 ))}
               </SidebarButtonsWrapper>
             </SidebarMainSection>
-            <SidebarVersion />
+            <SidebarVersion data-testid="project-settings-sidebar-version" />
           </SidebarWrapper>
         </LeftSidePanel>
-        <Content tab={tab}>
+        <Content
+          data-testid={`project-settings-content-${tab ?? "none"}`}
+          tab={tab}
+        >
           {tab === "general" && project && (
             <GeneralSettings
+              data-testid="project-settings-general"
               project={project}
               onUpdateProject={handleUpdateProject}
               onProjectRemove={handleProjectRemove}
@@ -159,6 +165,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
           )}
           {tab === "story" && currentStory && (
             <StorySettings
+              data-testid="project-settings-story"
               currentStory={currentStory}
               isArchived={!!project?.isArchived}
               onUpdateStory={handleUpdateStory}
@@ -166,6 +173,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
           )}
           {tab === "public" && project && (
             <PublicSettings
+              data-testid="project-settings-public"
               project={project}
               sceneId={sceneId}
               isStory={!!subId}
@@ -179,11 +187,16 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
             />
           )}
           {tab === "assets" && project && (
-            <Assets projectId={projectId} workspaceId={workspaceId} />
+            <Assets
+              data-testid="project-settings-assets"
+              projectId={projectId}
+              workspaceId={workspaceId}
+            />
           )}
 
           {tab === "plugins" && (
             <PluginSettings
+              data-testid="project-settings-plugins"
               sceneId={sceneId}
               isArchived={!!project?.isArchived}
               accessToken={accessToken}
@@ -193,7 +206,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
           )}
         </Content>
       </MainSection>
-      <CursorStatus />
+      <CursorStatus data-testid="project-settings-cursor-status" />
     </Wrapper>
   );
 };

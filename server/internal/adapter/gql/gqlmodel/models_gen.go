@@ -681,32 +681,32 @@ func (Polygon) IsGeometry() {}
 
 type Project struct {
 	ID                ID                `json:"id"`
-	IsArchived        bool              `json:"isArchived"`
-	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
-	BasicAuthUsername string            `json:"basicAuthUsername"`
-	BasicAuthPassword string            `json:"basicAuthPassword"`
-	CreatedAt         time.Time         `json:"createdAt"`
-	UpdatedAt         time.Time         `json:"updatedAt"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	TeamID            ID                `json:"teamId"`
+	Team              *Team             `json:"team,omitempty"`
+	Scene             *Scene            `json:"scene,omitempty"`
 	Name              string            `json:"name"`
 	Description       string            `json:"description"`
+	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
+	Visualizer        Visualizer        `json:"visualizer"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
+	IsArchived        bool              `json:"isArchived"`
+	CoreSupport       bool              `json:"coreSupport"`
+	Starred           bool              `json:"starred"`
+	IsDeleted         bool              `json:"isDeleted"`
+	Visibility        string            `json:"visibility"`
 	Alias             string            `json:"alias"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
+	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
 	PublicTitle       string            `json:"publicTitle"`
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
-	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
-	TeamID            ID                `json:"teamId"`
-	Visualizer        Visualizer        `json:"visualizer"`
-	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
-	Team              *Team             `json:"team,omitempty"`
-	Scene             *Scene            `json:"scene,omitempty"`
-	CoreSupport       bool              `json:"coreSupport"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
-	Starred           bool              `json:"starred"`
-	IsDeleted         bool              `json:"isDeleted"`
-	Visibility        string            `json:"visibility"`
 }
 
 func (Project) IsNode()        {}
@@ -1052,26 +1052,26 @@ type Spacing struct {
 
 type Story struct {
 	ID                ID                `json:"id"`
+	SceneID           ID                `json:"sceneId"`
+	Scene             *Scene            `json:"scene,omitempty"`
 	Title             string            `json:"title"`
-	Alias             string            `json:"alias"`
+	BgColor           *string           `json:"bgColor,omitempty"`
+	PanelPosition     Position          `json:"panelPosition"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
 	PropertyID        ID                `json:"propertyId"`
 	Property          *Property         `json:"property,omitempty"`
 	Pages             []*StoryPage      `json:"pages"`
+	Alias             string            `json:"alias"`
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
-	CreatedAt         time.Time         `json:"createdAt"`
-	UpdatedAt         time.Time         `json:"updatedAt"`
 	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
-	SceneID           ID                `json:"sceneId"`
-	Scene             *Scene            `json:"scene,omitempty"`
-	PanelPosition     Position          `json:"panelPosition"`
-	BgColor           *string           `json:"bgColor,omitempty"`
-	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
-	BasicAuthUsername string            `json:"basicAuthUsername"`
-	BasicAuthPassword string            `json:"basicAuthPassword"`
 	PublicTitle       string            `json:"publicTitle"`
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
 }
@@ -1255,22 +1255,22 @@ type UpdateProjectInput struct {
 	Name              *string  `json:"name,omitempty"`
 	Description       *string  `json:"description,omitempty"`
 	Archived          *bool    `json:"archived,omitempty"`
-	IsBasicAuthActive *bool    `json:"isBasicAuthActive,omitempty"`
-	BasicAuthUsername *string  `json:"basicAuthUsername,omitempty"`
-	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
 	ImageURL          *url.URL `json:"imageUrl,omitempty"`
-	PublicTitle       *string  `json:"publicTitle,omitempty"`
-	PublicDescription *string  `json:"publicDescription,omitempty"`
-	PublicImage       *string  `json:"publicImage,omitempty"`
-	PublicNoIndex     *bool    `json:"publicNoIndex,omitempty"`
 	DeleteImageURL    *bool    `json:"deleteImageUrl,omitempty"`
-	DeletePublicImage *bool    `json:"deletePublicImage,omitempty"`
-	EnableGa          *bool    `json:"enableGa,omitempty"`
-	TrackingID        *string  `json:"trackingId,omitempty"`
 	SceneID           *ID      `json:"sceneId,omitempty"`
 	Starred           *bool    `json:"starred,omitempty"`
 	Deleted           *bool    `json:"deleted,omitempty"`
 	Visibility        *string  `json:"visibility,omitempty"`
+	PublicTitle       *string  `json:"publicTitle,omitempty"`
+	PublicDescription *string  `json:"publicDescription,omitempty"`
+	PublicImage       *string  `json:"publicImage,omitempty"`
+	PublicNoIndex     *bool    `json:"publicNoIndex,omitempty"`
+	DeletePublicImage *bool    `json:"deletePublicImage,omitempty"`
+	IsBasicAuthActive *bool    `json:"isBasicAuthActive,omitempty"`
+	BasicAuthUsername *string  `json:"basicAuthUsername,omitempty"`
+	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
+	EnableGa          *bool    `json:"enableGa,omitempty"`
+	TrackingID        *string  `json:"trackingId,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
@@ -1303,14 +1303,14 @@ type UpdateStoryInput struct {
 	Index             *int      `json:"index,omitempty"`
 	PanelPosition     *Position `json:"panelPosition,omitempty"`
 	BgColor           *string   `json:"bgColor,omitempty"`
-	IsBasicAuthActive *bool     `json:"isBasicAuthActive,omitempty"`
-	BasicAuthUsername *string   `json:"basicAuthUsername,omitempty"`
-	BasicAuthPassword *string   `json:"basicAuthPassword,omitempty"`
 	PublicTitle       *string   `json:"publicTitle,omitempty"`
 	PublicDescription *string   `json:"publicDescription,omitempty"`
 	PublicImage       *string   `json:"publicImage,omitempty"`
 	PublicNoIndex     *bool     `json:"publicNoIndex,omitempty"`
 	DeletePublicImage *bool     `json:"deletePublicImage,omitempty"`
+	IsBasicAuthActive *bool     `json:"isBasicAuthActive,omitempty"`
+	BasicAuthUsername *string   `json:"basicAuthUsername,omitempty"`
+	BasicAuthPassword *string   `json:"basicAuthPassword,omitempty"`
 	EnableGa          *bool     `json:"enableGa,omitempty"`
 	TrackingID        *string   `json:"trackingId,omitempty"`
 }

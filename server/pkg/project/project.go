@@ -11,31 +11,33 @@ import (
 )
 
 type Project struct {
-	id                id.ProjectID
-	isArchived        bool
-	isBasicAuthActive bool
-	basicAuthUsername string
-	basicAuthPassword string
-	updatedAt         time.Time
-	publishedAt       time.Time
-	name              string
-	description       string
+	id          id.ProjectID
+	isArchived  bool
+	updatedAt   time.Time
+	name        string
+	description string
+	imageURL    *url.URL
+	workspace   accountdomain.WorkspaceID
+	visualizer  visualizer.Visualizer
+	coreSupport bool
+	sceneId     id.SceneID
+	starred     bool
+	isDeleted   bool
+	visibility  string
+
+	// publishment
 	alias             string
-	imageURL          *url.URL
+	publishmentStatus PublishmentStatus
+	publishedAt       time.Time
 	publicTitle       string
 	publicDescription string
 	publicImage       string
 	publicNoIndex     bool
-	workspace         accountdomain.WorkspaceID
-	visualizer        visualizer.Visualizer
-	publishmentStatus PublishmentStatus
-	coreSupport       bool
+	isBasicAuthActive bool
+	basicAuthUsername string
+	basicAuthPassword string
 	enableGa          bool
 	trackingId        string
-	sceneId           id.SceneID
-	starred           bool
-	isDeleted         bool
-	visibility        string
 }
 
 func (p *Project) ID() id.ProjectID {
@@ -46,24 +48,8 @@ func (p *Project) IsArchived() bool {
 	return p.isArchived
 }
 
-func (p *Project) IsBasicAuthActive() bool {
-	return p.isBasicAuthActive
-}
-
-func (p *Project) BasicAuthUsername() string {
-	return p.basicAuthUsername
-}
-
-func (p *Project) BasicAuthPassword() string {
-	return p.basicAuthPassword
-}
-
 func (p *Project) UpdatedAt() time.Time {
 	return p.updatedAt
-}
-
-func (p *Project) PublishedAt() time.Time {
-	return p.publishedAt
 }
 
 func (p *Project) Name() string {
@@ -78,10 +64,6 @@ func (p *Project) Description() string {
 	return p.description
 }
 
-func (p *Project) Alias() string {
-	return p.alias
-}
-
 func (p *Project) ImageURL() *url.URL {
 	if p == nil || p.imageURL == nil {
 		return nil
@@ -91,40 +73,12 @@ func (p *Project) ImageURL() *url.URL {
 	return &imageURL2
 }
 
-func (p *Project) PublicTitle() string {
-	return p.publicTitle
-}
-
-func (p *Project) PublicDescription() string {
-	return p.publicDescription
-}
-
-func (p *Project) PublicImage() string {
-	return p.publicImage
-}
-
-func (p *Project) PublicNoIndex() bool {
-	return p.publicNoIndex
-}
-
 func (p *Project) CoreSupport() bool {
 	return p.coreSupport
 }
 
-func (p *Project) EnableGA() bool {
-	return p.enableGa
-}
-
-func (p *Project) TrackingID() string {
-	return p.trackingId
-}
-
 func (p *Project) Scene() id.SceneID {
 	return p.sceneId
-}
-
-func (p *Project) PublishmentStatus() PublishmentStatus {
-	return p.publishmentStatus
 }
 
 func (p *Project) Workspace() accountdomain.WorkspaceID {
@@ -151,24 +105,8 @@ func (p *Project) SetArchived(isArchived bool) {
 	p.isArchived = isArchived
 }
 
-func (p *Project) SetIsBasicAuthActive(isBasicAuthActive bool) {
-	p.isBasicAuthActive = isBasicAuthActive
-}
-
-func (p *Project) SetBasicAuthUsername(basicAuthUsername string) {
-	p.basicAuthUsername = basicAuthUsername
-}
-
-func (p *Project) SetBasicAuthPassword(basicAuthPassword string) {
-	p.basicAuthPassword = basicAuthPassword
-}
-
 func (p *Project) SetUpdatedAt(updatedAt time.Time) {
 	p.updatedAt = updatedAt
-}
-
-func (p *Project) SetPublishedAt(publishedAt time.Time) {
-	p.publishedAt = publishedAt
 }
 
 func (p *Project) SetImageURL(imageURL *url.URL) {
@@ -205,44 +143,12 @@ func (p *Project) UpdateDescription(description string) {
 	p.description = description
 }
 
-func (p *Project) UpdateAlias(alias string) {
-	p.alias = alias
-}
-
-func (p *Project) UpdatePublicTitle(publicTitle string) {
-	p.publicTitle = publicTitle
-}
-
-func (p *Project) UpdatePublicDescription(publicDescription string) {
-	p.publicDescription = publicDescription
-}
-
-func (p *Project) UpdatePublicImage(publicImage string) {
-	p.publicImage = publicImage
-}
-
-func (p *Project) UpdatePublicNoIndex(publicNoIndex bool) {
-	p.publicNoIndex = publicNoIndex
-}
-
 func (p *Project) UpdateWorkspace(workspace accountdomain.WorkspaceID) {
 	p.workspace = workspace
 }
 
 func (p *Project) UpdateVisualizer(visualizer visualizer.Visualizer) {
 	p.visualizer = visualizer
-}
-
-func (p *Project) UpdatePublishmentStatus(publishmentStatus PublishmentStatus) {
-	p.publishmentStatus = publishmentStatus
-}
-
-func (p *Project) UpdateEnableGA(enableGa bool) {
-	p.enableGa = enableGa
-}
-
-func (p *Project) UpdateTrackingID(trackingId string) {
-	p.trackingId = trackingId
 }
 
 func (p *Project) UpdateSceneID(sceneId id.SceneID) {
@@ -264,4 +170,102 @@ func (p *Project) MatchWithPublicName(name string) bool {
 		return true
 	}
 	return false
+}
+
+// publishment ---------------------
+
+func (p *Project) Alias() string {
+	return p.alias
+}
+
+func (p *Project) PublishmentStatus() PublishmentStatus {
+	return p.publishmentStatus
+}
+
+func (p *Project) PublishedAt() time.Time {
+	return p.publishedAt
+}
+
+func (p *Project) PublicTitle() string {
+	return p.publicTitle
+}
+
+func (p *Project) PublicDescription() string {
+	return p.publicDescription
+}
+
+func (p *Project) PublicImage() string {
+	return p.publicImage
+}
+
+func (p *Project) PublicNoIndex() bool {
+	return p.publicNoIndex
+}
+
+func (p *Project) IsBasicAuthActive() bool {
+	return p.isBasicAuthActive
+}
+
+func (p *Project) BasicAuthUsername() string {
+	return p.basicAuthUsername
+}
+
+func (p *Project) BasicAuthPassword() string {
+	return p.basicAuthPassword
+}
+
+func (p *Project) EnableGA() bool {
+	return p.enableGa
+}
+
+func (p *Project) TrackingID() string {
+	return p.trackingId
+}
+
+func (p *Project) UpdateAlias(alias string) {
+	p.alias = alias
+}
+
+func (p *Project) UpdatePublishmentStatus(publishmentStatus PublishmentStatus) {
+	p.publishmentStatus = publishmentStatus
+}
+
+func (p *Project) SetPublishedAt(publishedAt time.Time) {
+	p.publishedAt = publishedAt
+}
+
+func (p *Project) UpdatePublicTitle(publicTitle string) {
+	p.publicTitle = publicTitle
+}
+
+func (p *Project) UpdatePublicDescription(publicDescription string) {
+	p.publicDescription = publicDescription
+}
+
+func (p *Project) UpdatePublicImage(publicImage string) {
+	p.publicImage = publicImage
+}
+
+func (p *Project) UpdatePublicNoIndex(publicNoIndex bool) {
+	p.publicNoIndex = publicNoIndex
+}
+
+func (p *Project) SetIsBasicAuthActive(isBasicAuthActive bool) {
+	p.isBasicAuthActive = isBasicAuthActive
+}
+
+func (p *Project) SetBasicAuthUsername(basicAuthUsername string) {
+	p.basicAuthUsername = basicAuthUsername
+}
+
+func (p *Project) SetBasicAuthPassword(basicAuthPassword string) {
+	p.basicAuthPassword = basicAuthPassword
+}
+
+func (p *Project) UpdateEnableGA(enableGa bool) {
+	p.enableGa = enableGa
+}
+
+func (p *Project) UpdateTrackingID(trackingId string) {
+	p.trackingId = trackingId
 }
