@@ -12,7 +12,7 @@ import {
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublicAliasSettingsType } from "..";
@@ -38,7 +38,6 @@ const AliasSetting: FC<AliasSettingProps> = ({
   settingsItem,
   onUpdateAlias
 }) => {
-  const theme = useTheme();
   const t = useT();
   const { checkProjectAlias } = useProjectFetcher();
   const { checkStoryAlias } = useStorytellingFetcher();
@@ -128,7 +127,6 @@ const AliasSetting: FC<AliasSettingProps> = ({
           icon="pencilLine"
           size="small"
           disabled={isDisabled}
-          iconColor={isDisabled ? theme.content.weak : theme.content.main}
           onClick={handleCleanAlias}
         />
 
