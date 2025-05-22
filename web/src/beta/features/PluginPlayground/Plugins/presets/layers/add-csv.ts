@@ -30,18 +30,9 @@ const layerCsv = {
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/csv/tokyoEvacuationPoint.csv", // URL of CSV
     csv: {
       // Define by column name
-      lngColumn: "経度",
-      latColumn: "緯度",
+      lngColumn: "longitude",
+      latColumn: "latitude",
     },
-  },
-  // Activate Infobox
-  infobox: {
-    blocks: [
-      {
-        pluginId: "reearth",
-        extensionId: "propertyInfoboxBetaBlock",
-      },
-    ],
   },
   // Settings for the feature style. This statement is required even if no style is set.
   marker: {
@@ -51,7 +42,7 @@ const layerCsv = {
     label: true,
     // Define the column name you want to display as label
     labelText: {
-      expression: "\${施設名}", 
+      expression: "\${name}", 
     },
     // Define label positon. "left" | "right" | "top" | "bottom" | "lefttop" | "leftbottom" | "righttop" | "rightbottom";
     labelPosition: "top",

@@ -53,7 +53,7 @@ reearth.camera.flyTo(
   }
 );
 
-// data:Nagasaki Prefectural(CCBY4.0) https://opennagasaki.nerc.or.jp/`
+// data:Nagasaki Prefectural(CCBY4.0) https://opennagasaki.nerc.or.jp`
 };
 
 export const addPointCloud: PluginType = {
