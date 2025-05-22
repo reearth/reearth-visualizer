@@ -15,22 +15,23 @@ type StorytellingDocument struct {
 	Property      string
 	Scene         string
 	Title         string
-	Alias         string
 	Pages         []PageDocument
-	Status        string
-	PublishedAt   *time.Time
 	UpdatedAt     time.Time
 	Index         int
 	PanelPosition string
 	BgColor       string
 
-	IsBasicAuthActive bool
-	BasicAuthUsername string
-	BasicAuthPassword string
+	// publishment
+	Alias             string
+	Status            string
+	PublishedAt       *time.Time
 	PublicTitle       string
 	PublicDescription string
 	PublicImage       string
 	PublicNoIndex     bool
+	IsBasicAuthActive bool
+	BasicAuthUsername string
+	BasicAuthPassword string
 	EnableGa          bool
 	TrackingID        string
 }
@@ -68,22 +69,23 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 		Property:      s.Property().String(),
 		Scene:         s.Scene().String(),
 		Title:         s.Title(),
-		Alias:         s.Alias(),
 		Pages:         newPages(s.Pages()),
-		Status:        string(s.PublishmentStatus()),
-		PublishedAt:   s.PublishedAt(),
 		UpdatedAt:     s.UpdatedAt(),
 		Index:         1,
 		PanelPosition: string(s.PanelPosition()),
 		BgColor:       s.BgColor(),
 
-		IsBasicAuthActive: s.IsBasicAuthActive(),
-		BasicAuthUsername: s.BasicAuthUsername(),
-		BasicAuthPassword: s.BasicAuthPassword(),
+		// publishment
+		Alias:             s.Alias(),
+		Status:            string(s.PublishmentStatus()),
+		PublishedAt:       s.PublishedAt(),
 		PublicTitle:       s.PublicTitle(),
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
+		IsBasicAuthActive: s.IsBasicAuthActive(),
+		BasicAuthUsername: s.BasicAuthUsername(),
+		BasicAuthPassword: s.BasicAuthPassword(),
 		EnableGa:          s.EnableGa(),
 		TrackingID:        s.TrackingID(),
 	}, sId
@@ -182,14 +184,20 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		Property(property).
 		Scene(scene).
 		Title(d.Title).
-		Alias(d.Alias).
-		Status(storytelling.PublishmentStatus(d.Status)).
 		PanelPosition(storytelling.Position(d.PanelPosition)).
 		BgColor(d.BgColor).
-		PublishedAt(d.PublishedAt).
 		UpdatedAt(d.UpdatedAt).
 		Pages(storytelling.NewPageList(pages)).
-		PublicBasicAuth(d.IsBasicAuthActive, d.BasicAuthUsername, d.BasicAuthPassword).
+
+		// publishment
+		Alias(d.Alias).
+		Status(storytelling.PublishmentStatus(d.Status)).
+		PublishedAt(d.PublishedAt).
+		PublicBasicAuth(
+			d.IsBasicAuthActive,
+			d.BasicAuthUsername,
+			d.BasicAuthPassword,
+		).
 		PublicTitle(d.PublicTitle).
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).

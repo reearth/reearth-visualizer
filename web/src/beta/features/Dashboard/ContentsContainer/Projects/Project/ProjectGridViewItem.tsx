@@ -43,8 +43,9 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
 
   return (
     <>
-      <Card>
+      <Card data-testid={`project-grid-item-${project.name}`}>
         <CardImage
+          data-testid={`project-grid-item-image-${project.name}`}
           backgroundImage={project.imageUrl ?? defaultProjectBackgroundImage}
           onDoubleClick={onProjectOpen}
           onClick={(e) => onProjectSelect?.(e, project.id)}
@@ -56,6 +57,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           <StarButtonWrapper
             isStarred={isStarred ?? false}
             isHovered={isHovered ?? false}
+            data-testid={`project-grid-item-star-btn-wrapper-${project.name}`}
           >
             <Button
               iconButton
@@ -63,14 +65,24 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
               onClick={(e) => handleProjectStarClick?.(e)}
               iconColor={isStarred ? theme.warning.main : theme.content.main}
               appearance="simple"
+              data-testid={`project-grid-item-star-btn-${project.name}`}
             />
           </StarButtonWrapper>
         </CardImage>
-        <CardFooter>
-          {hasMapOrStoryPublished && <PublishStatus />}
-          <CardTitleWrapper>
+        <CardFooter data-testid={`project-grid-item-footer-${project.name}`}>
+          {hasMapOrStoryPublished && (
+            <PublishStatus
+              data-testid={`project-grid-item-publish-status-${project.name}`}
+            />
+          )}
+          <CardTitleWrapper
+            data-testid={`project-grid-item-title-wrapper-${project.name}`}
+          >
             {!isEditing ? (
-              <CardTitle onDoubleClick={handleProjectNameDoubleClick}>
+              <CardTitle
+                onDoubleClick={handleProjectNameDoubleClick}
+                data-testid={`project-grid-item-title-${project.name}`}
+              >
                 {projectName}
               </CardTitle>
             ) : (
@@ -80,14 +92,21 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
                 value={projectName}
                 autoFocus={isEditing}
                 appearance="present"
+                data-testid={`project-grid-item-title-input-${project.name}`}
               />
             )}
           </CardTitleWrapper>
           <PopupMenu
             menu={popupMenu}
             label={
-              <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+              <Button
+                icon="dotsThreeVertical"
+                iconButton
+                appearance="simple"
+                data-testid={`project-grid-item-menu-btn-${project.name}`}
+              />
             }
+            data-testid={`project-grid-item-menu-${project.name}`}
           />
         </CardFooter>
       </Card>
@@ -96,6 +115,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           isVisible={projectRemoveModalVisible}
           onClose={() => handleProjectRemoveModal(false)}
           onProjectRemove={() => handleProjectRemove(project.id)}
+          data-testid={`project-grid-item-remove-modal-${project.name}`}
         />
       )}
     </>

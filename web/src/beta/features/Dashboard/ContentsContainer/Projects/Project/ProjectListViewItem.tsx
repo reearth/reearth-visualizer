@@ -65,6 +65,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   return (
     <>
       <ListWrapper
+        data-testid={`project-list-item-${project.name}`}
         onClick={(e) => onProjectSelect?.(e, project.id)}
         isHovered={isHovered ?? false}
         onDoubleClick={onProjectOpen}
@@ -72,11 +73,16 @@ const ProjectListViewItem: FC<ProjectProps> = ({
         onMouseLeave={() => handleProjectHover?.(false)}
         isSelected={selectedProjectId === project.id}
       >
-        <ThumbnailCol>
-          <ActionWrapper>
+        <ThumbnailCol
+          data-testid={`project-list-item-thumbnail-col-${project.name}`}
+        >
+          <ActionWrapper
+            data-testid={`project-list-item-action-wrapper-${project.name}`}
+          >
             <StarButtonWrapper
               isStarred={isStarred ?? false}
               isHovered={isHovered ?? false}
+              data-testid={`project-list-item-star-btn-wrapper-${project.name}`}
             >
               <Button
                 iconButton
@@ -84,15 +90,27 @@ const ProjectListViewItem: FC<ProjectProps> = ({
                 onClick={(e) => handleProjectStarClick?.(e)}
                 iconColor={isStarred ? theme.warning.main : theme.content.main}
                 appearance="simple"
+                data-testid={`project-list-item-star-btn-${project.name}`}
               />
             </StarButtonWrapper>
-            <ProjectImage backgroundImage={project.imageUrl} />
+            <ProjectImage
+              backgroundImage={project.imageUrl}
+              data-testid={`project-list-item-image-${project.name}`}
+            />
           </ActionWrapper>
         </ThumbnailCol>
-        <ProjectNameCol>
-          <PublishStatus status={hasMapOrStoryPublished} />
+        <ProjectNameCol
+          data-testid={`project-list-item-name-col-${project.name}`}
+        >
+          <PublishStatus
+            status={hasMapOrStoryPublished}
+            data-testid={`project-list-item-publish-status-${project.name}`}
+          />
           {!isEditing ? (
-            <TitleWrapper onDoubleClick={handleProjectNameDoubleClick}>
+            <TitleWrapper
+              onDoubleClick={handleProjectNameDoubleClick}
+              data-testid={`project-list-item-title-${project.name}`}
+            >
               {projectName}
             </TitleWrapper>
           ) : (
@@ -102,16 +120,28 @@ const ProjectListViewItem: FC<ProjectProps> = ({
               value={projectName}
               autoFocus={isEditing}
               appearance="present"
+              data-testid={`project-list-item-title-input-${project.name}`}
             />
           )}
         </ProjectNameCol>
-        <TimeCol>
-          <Typography size="body">{UpdatedAt}</Typography>
+        <TimeCol data-testid={`project-list-item-updated-col-${project.name}`}>
+          <Typography
+            size="body"
+            data-testid={`project-list-item-updated-${project.name}`}
+          >
+            {UpdatedAt}
+          </Typography>
         </TimeCol>
-        <TimeCol>
-          <Typography size="body">{createAt}</Typography>
+        <TimeCol data-testid={`project-list-item-created-col-${project.name}`}>
+          <Typography
+            size="body"
+            data-testid={`project-list-item-created-${project.name}`}
+          >
+            {createAt}
+          </Typography>
         </TimeCol>
         <ActionCol
+          data-testid={`project-list-item-action-col-${project.name}`}
           onClick={(e: MouseEvent) => {
             e.stopPropagation();
           }}
@@ -119,8 +149,14 @@ const ProjectListViewItem: FC<ProjectProps> = ({
           <PopupMenu
             menu={popupMenu}
             label={
-              <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+              <Button
+                icon="dotsThreeVertical"
+                iconButton
+                appearance="simple"
+                data-testid={`project-list-item-menu-btn-${project.name}`}
+              />
             }
+            data-testid={`project-list-item-menu-${project.name}`}
           />
         </ActionCol>
       </ListWrapper>
@@ -129,6 +165,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
           isVisible={projectRemoveModalVisible}
           onClose={() => handleProjectRemoveModal(false)}
           onProjectRemove={() => handleProjectRemove(project.id)}
+          data-testid={`project-list-item-remove-modal-${project.name}`}
         />
       )}
     </>

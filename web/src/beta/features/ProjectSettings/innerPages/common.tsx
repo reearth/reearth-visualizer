@@ -30,7 +30,7 @@ export const SettingsWrapper = styled("div")(({ theme }) => ({
   flex: 1,
   ["> div:not(:last-child)"]: {
     borderBottom: `1px solid ${theme.outline.weaker}`
-  },
+  }
 }));
 
 export const SettingsFields = styled("div")(({ theme }) => ({

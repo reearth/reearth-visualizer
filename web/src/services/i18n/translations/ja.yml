@@ -407,7 +407,7 @@ Edit Alias: エイリアスを編集
 You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 Your Alias: あなたのエイリアス'
-clean: ''
+Reset: リセット
 Public Info: 公開情報
 Published page settings: 公開ページ設定
 This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: このセクションの設定は、主に公開ページのヘッダーにあるOpen Graph Protocolの設定に適用されます。
