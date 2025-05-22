@@ -96,6 +96,9 @@ func (p *Project) Visualizer() visualizer.Visualizer {
 }
 
 func (p *Project) ImportStatus() status.ProjectImportStatus {
+	if p.importStatus == "" {
+		return status.ProjectImportStatusNone
+	}
 	return p.importStatus
 }
 
