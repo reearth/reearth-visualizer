@@ -34,7 +34,8 @@ export default () => {
       "show-label": t("Show Label"),
       "take-screenshot": t("Take Screenshot"),
       "mouse-events": t("Mouse Events"),
-      "add-geojson": t("Add Geojson"),
+      "add-geojson": t("Add GeoJSON"),
+      "add-large-geojson": t("Add Large Geojson"),
       "add-csv": t("Add CSV"),
       "add-kml": t("Add KML"),
       "add-wms": t("Add WMS"),
@@ -45,6 +46,11 @@ export default () => {
       "add-google-photorealistic-3d-tiles": t(
         "Add Google Photorealistic 3D Tiles"
       ),
+      "add-infobox-all-properties": t("Add infobox to show all properties"),
+      "add-infobox-specific-properties": t(
+        "Add infobox to show specific properties"
+      ),
+      "add-infobox-rich-block": t("Add infobox to show rich blocks"),
       "add-osm-3d-tiles": t("Add OSM 3D Tiles"),
       "hide-fly-to-delete-layer": t("Hide Fly To Delete Layer"),
       "override-layer-data": t("Override Layer Data"),

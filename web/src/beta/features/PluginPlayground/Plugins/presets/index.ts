@@ -14,10 +14,14 @@ import { addPointCloud } from "./layers/add-point-cloud";
 import { addCsv } from "./layers/add-csv";
 import { addCzml } from "./layers/add-czml";
 import { addGeojson } from "./layers/add-geojson";
+import { addLargeGeojson } from "./layers/add-large-geojson";
 import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
 import { addWms } from "./layers/add-wms";
+import { addInfoboxAllProperties } from "./layers/addInfoboxAllProperties";
+import { addInfoboxRichBlocks } from "./layers/addInfoboxRichBlocks";
+import { addInfoboxSpecificProperties } from "./layers/addInfoboxSpecificProperties";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { overrideLayerData } from "./layers/overrideLayerData";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
@@ -79,6 +83,7 @@ export const presetPlugins: PresetPlugins = [
     id: "layers",
     plugins: [
       addGeojson,
+      addLargeGeojson,
       addCzml,
       addKml,
       addCsv,
@@ -90,7 +95,10 @@ export const presetPlugins: PresetPlugins = [
       addGooglePhotorealistic3dTiles,
       hideFlyToDeleteLayer,
       overrideLayerData,
-      showFeaturesInfo
+      showFeaturesInfo,
+      addInfoboxAllProperties,
+      addInfoboxSpecificProperties,
+      addInfoboxRichBlocks
     ]
   },
   {
