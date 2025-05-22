@@ -2,7 +2,6 @@ package gql
 
 import (
 	"archive/zip"
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -15,7 +14,6 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -191,20 +189,4 @@ func Normalize(data any) map[string]any {
 		}
 	}
 	return nil
-}
-
-func replaceOldSceneID(data *[]byte, newScene *scene.Scene) (string, error) {
-	var d map[string]any
-	if err := json.Unmarshal(*data, &d); err != nil {
-		return "", err
-	}
-	if s, ok := d["scene"].(map[string]any); ok {
-		if oldSceneID, ok := s["id"].(string); ok {
-
-			// Replace new scene id
-			*data = bytes.Replace(*data, []byte(oldSceneID), []byte(newScene.ID().String()), -1)
-			return oldSceneID, nil
-		}
-	}
-	return "", errors.New("scene id not found")
 }
