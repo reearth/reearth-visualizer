@@ -9,9 +9,12 @@ import { extensionProperty } from "./data/extensionProperty";
 import { messengerBetweenExtensions } from "./data/messengerBetweenExtensions";
 import { uiExtensionMessenger } from "./data/uiExtensionMessenger";
 import { add3dTiles } from "./layers/add-3Dtiles";
+import { addPhotogrammetric3dModel } from "./layers/add-photogrammetric-3D-model";
+import { addPointCloud } from "./layers/add-point-cloud";
 import { addCsv } from "./layers/add-csv";
 import { addCzml } from "./layers/add-czml";
 import { addGeojson } from "./layers/add-geojson";
+import { addLargeGeojson } from "./layers/add-large-geojson";
 import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addKml } from "./layers/add-kml";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
@@ -80,10 +83,13 @@ export const presetPlugins: PresetPlugins = [
     id: "layers",
     plugins: [
       addGeojson,
+      addLargeGeojson,
       addCzml,
       addKml,
       addCsv,
       add3dTiles,
+      addPhotogrammetric3dModel,
+      addPointCloud,
       addOsm3dTiles,
       addWms,
       addGooglePhotorealistic3dTiles,
