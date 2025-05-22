@@ -12,7 +12,7 @@ import {
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
-import { styled, useTheme } from "@reearth/services/theme";
+import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublicAliasSettingsType } from "..";
@@ -27,16 +27,17 @@ import EditPanel from "./EditPanel";
 export type AliasSettingProps = {
   isStory?: boolean;
   alias?: string;
+  sceneId?: string;
   settingsItem?: SettingsProjectWithTypename | StoryWithTypename;
   onUpdateAlias?: (settings: PublicAliasSettingsType) => void;
 };
 
 const AliasSetting: FC<AliasSettingProps> = ({
   isStory,
+  sceneId,
   settingsItem,
   onUpdateAlias
 }) => {
-  const theme = useTheme();
   const t = useT();
   const { checkProjectAlias } = useProjectFetcher();
   const { checkStoryAlias } = useStorytellingFetcher();
@@ -76,7 +77,12 @@ const AliasSetting: FC<AliasSettingProps> = ({
   );
 
   const handleCleanAlias = useCallback(async () => {
-    const alias = isStory ? `s-${settingsItem?.id}` : `p-${settingsItem?.id}`;
+    if ((isStory && !settingsItem?.id) || (!isStory && !sceneId)) return;
+
+    // Default alias
+    // `c-${scene.id}` for published map (scene)
+    // `s-${story.id}` for published story
+    const alias = isStory ? `s-${settingsItem?.id}` : `c-${sceneId}`;
 
     const data = isStory
       ? await checkStoryAlias(alias, settingsItem?.id)
@@ -89,14 +95,16 @@ const AliasSetting: FC<AliasSettingProps> = ({
     checkStoryAlias,
     handleSubmitAlias,
     isStory,
-    settingsItem?.id
+    settingsItem?.id,
+    sceneId
   ]);
 
   const isDisabled = useMemo(
     () =>
-      settingsItem?.alias === `p-${settingsItem?.id}` ||
+      (!isStory && !sceneId) ||
+      settingsItem?.alias === `c-${sceneId}` ||
       settingsItem?.alias === `s-${settingsItem?.id}`,
-    [settingsItem?.alias, settingsItem?.id]
+    [settingsItem?.alias, settingsItem?.id, sceneId, isStory]
   );
 
   return (
@@ -115,11 +123,10 @@ const AliasSetting: FC<AliasSettingProps> = ({
         </UrlWrapper>
         <Button
           appearance="secondary"
-          title={t("clean")}
+          title={t("Reset")}
           icon="pencilLine"
           size="small"
           disabled={isDisabled}
-          iconColor={theme.content.weak}
           onClick={handleCleanAlias}
         />
 

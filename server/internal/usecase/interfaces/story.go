@@ -25,13 +25,14 @@ type UpdateStoryInput struct {
 	PanelPosition *storytelling.Position
 	BgColor       *string
 
-	IsBasicAuthActive *bool
-	BasicAuthUsername *string
-	BasicAuthPassword *string
+	// publishment
 	PublicTitle       *string
 	PublicDescription *string
 	PublicImage       *string
 	PublicNoIndex     *bool
+	IsBasicAuthActive *bool
+	BasicAuthUsername *string
+	BasicAuthPassword *string
 	DeletePublicImage *bool
 	EnableGa          *bool
 	TrackingID        *string

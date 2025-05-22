@@ -203,21 +203,21 @@ type mockPublished struct {
 	EmptyIndex bool
 }
 
-func (p *mockPublished) Metadata(ctx context.Context, name string) (interfaces.ProjectPublishedMetadata, error) {
+func (p *mockPublished) Metadata(ctx context.Context, name string) (interfaces.PublishedMetadata, error) {
 	if name == "active" {
-		return interfaces.ProjectPublishedMetadata{
+		return interfaces.PublishedMetadata{
 			IsBasicAuthActive: true,
 			BasicAuthUsername: "fooo",
 			BasicAuthPassword: "baar",
 		}, nil
 	} else if name == "inactive" {
-		return interfaces.ProjectPublishedMetadata{
+		return interfaces.PublishedMetadata{
 			IsBasicAuthActive: false,
 			BasicAuthUsername: "fooo",
 			BasicAuthPassword: "baar",
 		}, nil
 	}
-	return interfaces.ProjectPublishedMetadata{}, rerror.ErrNotFound
+	return interfaces.PublishedMetadata{}, rerror.ErrNotFound
 }
 
 func (p *mockPublished) Data(ctx context.Context, name string) (io.Reader, error) {

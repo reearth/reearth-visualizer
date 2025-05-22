@@ -124,7 +124,9 @@ export default () => {
     return { deletedProjects, ...rest };
   }, []);
 
-  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS);
+  const [fetchCheckProjectAlias] = useLazyQuery(CHECK_PROJECT_ALIAS, {
+    fetchPolicy: "network-only" // Disable caching for this query
+  });
 
   const checkProjectAlias = useCallback(
     async (alias: string, projectId?: string) => {
@@ -280,6 +282,45 @@ export default () => {
                 )
               : t(
                   "Successfully unpublished your scene. Now nobody can access your scene."
+                )
+      });
+      return { data: data.publishProject.project, status: "success" };
+    },
+    [publishProjectMutation, t, setNotification]
+  );
+
+  const useUpdatePublishProject = useCallback(
+    async (s: PublishStatus, projectId?: string, alias?: string) => {
+      if (!projectId) return;
+
+      const gqlStatus = toGqlStatus(s);
+
+      const { data, errors } = await publishProjectMutation({
+        variables: { projectId, alias, status: gqlStatus }
+      });
+
+      if (errors || !data?.publishProject) {
+        console.log("GraphQL: Failed to update project", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to update project.")
+        });
+
+        return { status: "error" };
+      }
+
+      setNotification({
+        type:
+          s === "limited" ? "success" : s == "published" ? "success" : "info",
+        text:
+          s === "limited"
+            ? t("Successfully updated your scene!")
+            : s == "published"
+              ? t(
+                  "Successfully updated your scene with search engine indexing!"
+                )
+              : t(
+                  "Successfully updated your scene. Now nobody can access your scene."
                 )
       });
       return { data: data.publishProject.project, status: "success" };
@@ -539,11 +580,12 @@ export default () => {
 
   const useImportProject = useCallback(
     async (file: File, teamId: string) => {
+      const CHUNK_CONCURRENCY = 4;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
       const fileId = uuidv4();
       let lastResponse = null;
 
-      for (let chunkNum = 0; chunkNum < totalChunks; chunkNum++) {
+      const uploadChunk = async (chunkNum: number) => {
         const start = chunkNum * CHUNK_SIZE;
         const end = Math.min(file.size, start + CHUNK_SIZE);
         const chunk = file.slice(start, end);
@@ -555,18 +597,33 @@ export default () => {
         formData.append("chunk_num", chunkNum.toString());
         formData.append("total_chunks", totalChunks.toString());
 
-        try {
-          const response = await axios.post("/split-import", formData);
-          lastResponse = response.data;
-        } catch (error) {
-          setNotification({
-            type: "error",
-            text: t("Failed to import project.")
-          });
-          console.log("Restful: Failed to import project", error);
-          return { status: "error" };
+        const response = await axios.post("/split-import", formData);
+        return response.data;
+      };
+
+      const chunkIndices = Array.from({ length: totalChunks }, (_, i) => i);
+
+      const parallelUpload = async (indices: number[]): Promise<any[]> => {
+        const results = [];
+        for (let i = 0; i < indices.length; i += CHUNK_CONCURRENCY) {
+          const batch = indices.slice(i, i + CHUNK_CONCURRENCY);
+          try {
+            const responses = await Promise.all(batch.map(uploadChunk));
+            results.push(...responses);
+          } catch (error) {
+            setNotification({
+              type: "error",
+              text: t("Failed to import project.")
+            });
+            console.error("Failed chunk batch:", error);
+            return [{ status: "error" }];
+          }
         }
-      }
+        return results;
+      };
+
+      const responses = await parallelUpload(chunkIndices);
+      lastResponse = responses[responses.length - 1];
 
       setNotification({
         type: "success",
@@ -584,6 +641,7 @@ export default () => {
     checkProjectAlias,
     useCreateProject,
     usePublishProject,
+    useUpdatePublishProject,
     useUpdateProject,
     useArchiveProject,
     useDeleteProject,

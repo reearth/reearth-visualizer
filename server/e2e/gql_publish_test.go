@@ -29,17 +29,17 @@ func TestPublishProject(t *testing.T) {
 		"publishmentStatus": "LIMITED",
 	})
 
-	projectId, _, _ = createProjectSet(e)
+	projectId, sceneId, _ = createProjectSet(e)
 
-	// self project id
+	// self sceneId
 	res = publishProject(e, uID, map[string]any{
 		"projectId": projectId,
-		"alias":     projectId,
+		"alias":     sceneId,
 		"status":    "LIMITED",
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             projectId, // ok
+		"alias":             sceneId, // ok
 		"publishmentStatus": "LIMITED",
 	})
 
@@ -194,39 +194,6 @@ func TestPublishProjectUniqueAlias(t *testing.T) {
 			tc.expect(res, err)
 		})
 	}
-
-	// // publish projectId2 => 'project-id2'
-	// publishProject(e, uID, map[string]any{
-	// 	"projectId": projectId2,
-	// 	"alias":     "project-id2",
-	// 	"status":    "LIMITED",
-	// })
-	// // publish storyId1 => 'story-id1'
-	// publishStory(e, uID, map[string]any{
-	// 	"storyId": storyId1,
-	// 	"alias":   "story-id1",
-	// 	"status":  "LIMITED",
-	// })
-	// // publish storyId2 => 'story-id2'
-	// publishStory(e, uID, map[string]any{
-	// 	"storyId": storyId2,
-	// 	"alias":   "story-id2",
-	// 	"status":  "LIMITED",
-	// })
-
-	// // used aliases
-	// aliases := []string{"project-id2", "story-id1", "story-id2"}
-
-	// for _, alias := range aliases {
-	// 	t.Run("alias conflict: "+alias, func(t *testing.T) {
-	// 		res, err := publishProjectErrors(e, uID, map[string]any{
-	// 			"projectId": projectId1,
-	// 			"alias":     alias,
-	// 			"status":    "LIMITED",
-	// 		})
-	// 		checkProjectAliasAlreadyExists(res, err)
-	// 	})
-	// }
 }
 
 func checkProjectAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) {
@@ -248,7 +215,7 @@ func checkProjectAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value
 func TestReservedReearthPrefixProject(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	projectId, _, _ := createProjectSet(e)
+	projectId, sceneId, _ := createProjectSet(e)
 
 	// prefix 'c-'
 	res, err := publishProjectErrors(e, uID, map[string]any{
@@ -269,12 +236,12 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 	// prefix + self id
 	res = publishProject(e, uID, map[string]any{
 		"projectId": projectId,
-		"alias":     alias.ReservedReearthPrefixProject + projectId,
+		"alias":     alias.ReservedReearthPrefixProject + sceneId,
 		"status":    "LIMITED",
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             alias.ReservedReearthPrefixProject + projectId, // ok
+		"alias":             alias.ReservedReearthPrefixProject + sceneId, // ok
 		"publishmentStatus": "LIMITED",
 	})
 
@@ -481,39 +448,6 @@ func TestPublishStoryUniqueAlias(t *testing.T) {
 			tc.expect(res, err)
 		})
 	}
-
-	// // publish projectId1 => 'project-id1'
-	// publishProject(e, uID, map[string]any{
-	// 	"projectId": projectId1,
-	// 	"alias":     "project-id1",
-	// 	"status":    "LIMITED",
-	// })
-	// // publish projectId2 => 'project-id2'
-	// publishProject(e, uID, map[string]any{
-	// 	"projectId": projectId2,
-	// 	"alias":     "project-id2",
-	// 	"status":    "LIMITED",
-	// })
-	// // publish storyId2 => 'story-id2'
-	// publishStory(e, uID, map[string]any{
-	// 	"storyId": storyId2,
-	// 	"alias":   "story-id2",
-	// 	"status":  "LIMITED",
-	// })
-
-	// // used aliases
-	// aliases := []string{"project-id1", "project-id2", "story-id2"}
-
-	// for _, alias := range aliases {
-	// 	t.Run("alias conflict: "+alias, func(t *testing.T) {
-	// 		res, err := publishStoryErrors(e, uID, map[string]any{
-	// 			"storyId": storyId1,
-	// 			"alias":   alias,
-	// 			"status":  "LIMITED",
-	// 		})
-	// 		checkStoryAliasAlreadyExists(res, err)
-	// 	})
-	// }
 }
 
 func checkStoryAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) {
@@ -588,7 +522,7 @@ func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *h
 
 func TestCheckProjectAlias(t *testing.T) {
 	e := Server(t, baseSeeder)
-	projectId, _, _ := createProjectSet(e)
+	projectId, sceneID, _ := createProjectSet(e)
 
 	type args struct {
 		alias     string
@@ -609,14 +543,14 @@ func TestCheckProjectAlias(t *testing.T) {
 			want: want{"test-xxxxxx", true},
 		},
 		{
-			name: "alias equals projectId",
-			args: args{projectId, projectId},
-			want: want{projectId, true},
+			name: "alias equals sceneID",
+			args: args{sceneID, projectId},
+			want: want{sceneID, true},
 		},
 		{
 			name: "reserved prefix ok for self project",
-			args: args{alias.ReservedReearthPrefixProject + projectId, projectId},
-			want: want{alias.ReservedReearthPrefixProject + projectId, true},
+			args: args{alias.ReservedReearthPrefixProject + sceneID, projectId},
+			want: want{alias.ReservedReearthPrefixProject + sceneID, true},
 		},
 	}
 
@@ -653,7 +587,6 @@ func TestCheckProjectAlias(t *testing.T) {
 
 func TestCheckProjectAliasError(t *testing.T) {
 	e := Server(t, baseSeeder)
-	// projectId, sceneId, storyId := createProjectSet(e)
 	projectId, sceneId, storyId := createProjectSet(e)
 
 	type args struct {
@@ -673,16 +606,6 @@ func TestCheckProjectAliasError(t *testing.T) {
 			name: "project id as alias without project id",
 			args: args{sceneId, ""},
 			want: want{"This alias is already in use. Please try another one."},
-		},
-		{
-			name: "reserved prefix + projectId as alias without project id",
-			args: args{alias.ReservedReearthPrefixProject + sceneId, ""},
-			want: want{
-				fmt.Sprintf(
-					"Aliases starting with 'c-' or 's-' are not allowed: %s",
-					alias.ReservedReearthPrefixProject+sceneId,
-				),
-			},
 		},
 		{
 			name: "story id as alias with project id",

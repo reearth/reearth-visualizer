@@ -1,31 +1,71 @@
 import { Locator, Page, expect } from "@playwright/test";
+import path from "path";
 export class ProjectsPage {
-  newProjectButton: Locator = this.page.getByRole("button", {
-    name: "New Project"
-  });
-  importButton: Locator = this.page.getByRole("button", { name: "Import" });
-  importFileInput: Locator = this.page.locator(
-    'input[type="file"][accept=".zip"]'
-  );
+  newProjectButton: Locator = this.page.getByTestId("create-project-btn");
+  importButton: Locator = this.page.getByTestId("import-project-btn");
+  importFileInput: Locator = this.page.getByTestId("import-project-file-input");
+
+  // Search & Sort
   searchProjectInput: Locator = this.page.getByPlaceholder("Search project");
-  sortLabel: Locator = this.page.getByText("Sort:");
-  sortDropdown: Locator = this.page.locator('[data-testid="select-input"]');
-  gridViewToggle: Locator = this.page
-    .locator('button[appearance="simple"] svg')
-    .locator('path[d*="M6.8 2H2.6"]');
-  listViewToggle: Locator = this.page
-    .locator('button[appearance="simple"] svg')
-    .locator('path[d*="M2.5 4H13.5"]');
-  allProjectsHeader: Locator = this.page.getByText("All projects");
-  columnHeaderProjectName: Locator = this.page.getByText("Project Name");
-  columnHeaderUpdatedAt: Locator = this.page.getByText("Updated At");
-  columnHeaderCreatedAt: Locator = this.page.getByText("Created At");
-  assetMigrationTitle: Locator = this.page.getByText("Test_Asset_migration");
+  sortLabel: Locator = this.page.locator("p", { hasText: "Sort:" });
+  sortDropdown: Locator = this.page.getByTestId("select-input");
+
+  // View Toggles
+  gridViewToggle: Locator = this.page.locator(
+    'button.css-sfuwxk svg path[d*="M6.8 2H2.6"]'
+  );
+  listViewToggle: Locator = this.page.locator(
+    'button.css-zkhtif svg path[d*="M2.5 4H13.5"]'
+  );
+
+  // Table View Headers
+  columnHeaderProjectName: Locator = this.page.getByTestId(
+    "projects-list-name-col"
+  );
+  columnHeaderUpdatedAt: Locator = this.page.getByTestId(
+    "projects-list-updated-col"
+  );
+  columnHeaderCreatedAt: Locator = this.page.getByTestId(
+    "projects-list-created-col"
+  );
+
+  // Grid View - Project Card
+  gridProjectItem(projectName: string): Locator {
+    return this.page.getByTestId(`project-grid-item-${projectName}`);
+  }
+  gridProjectTitle(projectName: string): Locator {
+    return this.page.getByTestId(`project-grid-item-title-${projectName}`);
+  }
+  gridProjectStarButton(projectName: string): Locator {
+    return this.page.getByTestId(`project-grid-item-star-btn-${projectName}`);
+  }
+  gridProjectMenuButton(projectName: string): Locator {
+    return this.page.getByTestId(`project-grid-item-menu-btn-${projectName}`);
+  }
+  gridProjectImage(projectName: string): Locator {
+    return this.page.getByTestId(`project-grid-item-image-${projectName}`);
+  }
+
+  // All Projects Header (breadcrumb)
+  allProjectsHeader: Locator = this.page.locator(
+    '[data-testid="projects-breadcrumb-container"] p',
+    { hasText: "All projects" }
+  );
+
+  // List View (fallback)
+  assetMigrationTitle: Locator = this.page.locator(
+    '[data-testid^="project-list-item-title-"]',
+    { hasText: "Test_Asset_migration" }
+  );
   projectDates: Locator = this.page.locator("div.css-9u2lx8 p");
-  firstProjectOptions: Locator = this.page.locator("button.css-19yctgj").nth(0);
-  favoriteButton: Locator = this.page
-    .locator("button.css-19yctgj svg")
-    .locator('path[d*="M8.27569 11.9208"]');
+  firstProjectOptions: Locator = this.page
+    .locator('[data-testid^="project-list-item-menu-btn-"]')
+    .first();
+  favoriteButton: Locator = this.page.locator(
+    'button.css-19yctgj svg path[d*="M14.9479 6.0882"]'
+  );
+
+  // Modal - Create New Project
   modalTitle: Locator = this.page.getByText("Create new project");
   projectNameLabel: Locator = this.page.getByText("Project Name *");
   projectNameInput: Locator = this.page.locator('input[placeholder="Text"]');
@@ -35,11 +75,21 @@ export class ProjectsPage {
   );
   cancelButton: Locator = this.page.getByRole("button", { name: "Cancel" });
   applyButton: Locator = this.page.getByRole("button", { name: "Apply" });
+
+  // Notifications
   noticeBanner: Locator = this.page.getByText("Notice");
 
+  // Starred Section
   projectFavrtButton: Locator = this.page
-    .locator('button[appearance="simple"]')
-    .nth(0);
+    .locator('[data-testid^="project-list-item-star-btn-"]')
+    .first();
+  starIcon: Locator = this.page.locator('svg[color="#f1c21b"]');
+  starredSection: Locator = this.page.locator(
+    '[data-testid="starred-projects-wrapper"] p',
+    { hasText: "Starred" }
+  );
+
+  // Sidebar and Project Actions
   renameButton: Locator = this.page.getByText("Rename");
   projectSettingLink: Locator = this.page.getByRole("link", {
     name: "Project Setting"
@@ -50,15 +100,13 @@ export class ProjectsPage {
   exportButton: Locator = this.page.getByText("Export");
   moveToRecycleBinButton: Locator = this.page.getByText("Move to Recycle Bin");
 
+  // Pop-up confirmations
   popUpCancelButton: Locator = this.page.getByRole("button", {
     name: "Cancel"
   });
   popUpRemoveButton: Locator = this.page.getByRole("button", {
     name: "Remove"
   });
-
-  starIcon: Locator = this.page.locator('svg[color="#f1c21b"]');
-  starredSection: Locator = this.page.locator('div:has(p:has-text("Starred"))');
 
   constructor(private page: Page) {}
 
@@ -70,9 +118,11 @@ export class ProjectsPage {
     await this.applyButton.click();
   }
   async deleteProject(projectName: string) {
-    const projectRow = this.page.locator(`.css-96bt7k`, {
-      hasText: projectName
-    });
+    const projectRow = this.page
+      .locator(`.css-96bt7k`, {
+        hasText: projectName
+      })
+      .first();
     const projectMenuButton = projectRow
       .locator('button[appearance="simple"]')
       .nth(1);
@@ -93,6 +143,16 @@ export class ProjectsPage {
       .nth(0);
     await projectMenuButton.click();
   }
+
+  async verifyImportProject(projectName: string) {
+    const projectRow = this.page
+      .locator(`div.css-1r5b2ac`, {
+        hasText: projectName
+      })
+      .first();
+    await expect(projectRow).toBeVisible();
+  }
+
   async verifyStarredProject(specialProjectName: string) {
     const projectRow = this.page.locator(
       `div:has-text("${specialProjectName}")`
@@ -121,5 +181,51 @@ export class ProjectsPage {
     return this.page.locator(
       `xpath=//div[contains(@class, 'css-1ez7fby')]//div[contains(@title, "${projectName}")]`
     );
+  }
+  // async goToProjectPage(projectName: string) {
+  //   const projectRow = this.page.getByTestId(
+  //     `project-grid-item-${projectName}`
+  //   );
+  //   await projectRow.first().dblclick();
+  // }
+
+  // ...existing code...
+
+  async goToProjectPage(projectName: string) {
+    const projectRow = this.page.getByTestId(
+      `project-grid-item-${projectName}`
+    );
+    let attempts = 0;
+    while (attempts < 3) {
+      await projectRow.first().dblclick();
+      try {
+        await this.page
+          .locator('[data-testid="editor-map-scene-item"]')
+          .first()
+          .waitFor({ state: "visible", timeout: 10000 });
+        return;
+      } catch {
+        attempts++;
+        if (attempts === 3) {
+          throw new Error(
+            "Scene items did not become visible after 3 attempts."
+          );
+        }
+      }
+    }
+  }
+
+  async importProject(zipFilePath: string) {
+    // Listen for file chooser and trigger it by clicking the Import button
+    const [fileChooser] = await Promise.all([
+      this.page.waitForEvent("filechooser"),
+      this.importButton.click() // This triggers the file picker
+    ]);
+
+    // Set the zip file
+    await fileChooser.setFiles(zipFilePath);
+
+    // Optional: wait for upload to complete
+    await this.page.waitForTimeout(2000);
   }
 }

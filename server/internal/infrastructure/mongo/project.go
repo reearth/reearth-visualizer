@@ -168,10 +168,11 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return r.findOne(ctx, f, false)
 }
 
+// [TODO] This function is not used when scene alias migration is completed
 func (r *Project) CheckAliasUnique(ctx context.Context, name string) error {
 	filter := bson.M{
 		"$or": []bson.M{
-			{"id": name},
+			// {"id": name},
 			{"alias": name},
 		},
 	}
