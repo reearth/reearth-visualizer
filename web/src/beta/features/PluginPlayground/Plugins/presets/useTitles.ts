@@ -43,6 +43,11 @@ export default () => {
       "add-google-photorealistic-3d-tiles": t(
         "Add Google Photorealistic 3D Tiles"
       ),
+      "add-infobox-all-properties": t("Add infobox to show all properties"),
+      "add-infobox-specific-properties": t(
+        "Add infobox to show specific properties"
+      ),
+      "add-infobox-rich-block": t("Add infobox to show rich blocks"),
       "add-osm-3d-tiles": t("Add OSM 3D Tiles"),
       "hide-fly-to-delete-layer": t("Hide Fly To Delete Layer"),
       "override-layer-data": t("Override Layer Data"),
