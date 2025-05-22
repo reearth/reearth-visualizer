@@ -18,8 +18,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -53,7 +55,7 @@ func (i *Asset) FindByWorkspaceProject(ctx context.Context, tid accountdomain.Wo
 	)
 }
 
-func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, operator *usecase.Operator) (result *asset.Asset, err error) {
+func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, operator *usecase.Operator) (*asset.Asset, error) {
 	if inp.File == nil {
 		return nil, interfaces.ErrFileNotIncluded
 	}
@@ -67,45 +69,16 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	url, size, err := i.gateways.File.UploadAsset(ctx, inp.File)
-	if err != nil {
-		return nil, err
-	}
-
-	// enforce policy
+	var p *policy.Policy
 	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.repos.Policy.FindByID(ctx, *policyID)
+		p, err = i.repos.Policy.FindByID(ctx, *policyID)
 		if err != nil {
 			return nil, err
 		}
-		s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-		if err := p.EnforceAssetStorageSize(s + size); err != nil {
-			_ = i.gateways.File.RemoveAsset(ctx, url)
-			return nil, err
-		}
 	}
 
-	a, err := asset.New().
-		NewID().
-		Workspace(inp.WorkspaceID).
-		Project(inp.ProjectID).
-		Name(path.Base(inp.File.Path)).
-		Size(size).
-		URL(url.String()).
-		CoreSupport(inp.CoreSupport).
-		Build()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := i.repos.Asset.Save(ctx, a); err != nil {
-		return nil, err
-	}
-
-	return a, nil
+	result, _, err := i.uploadAndSave(ctx, inp.File, ws, inp.ProjectID, p, inp.CoreSupport)
+	return result, err
 }
 
 func (i *Asset) Update(ctx context.Context, aid id.AssetID, pid *id.ProjectID, operator *usecase.Operator) (id.AssetID, *id.ProjectID, error) {
@@ -154,7 +127,7 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	)
 }
 
-func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data *[]byte, newProject *project.Project) (*[]byte, error) {
+func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data *[]byte, newProject *project.Project, operator *usecase.Operator) (*[]byte, error) {
 	currentHost := adapter.CurrentHost(ctx)
 
 	var d map[string]any
@@ -169,6 +142,18 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		}
 	}
 
+	ws, err := i.repos.Workspace.FindByID(ctx, newProject.Workspace())
+	if err != nil {
+		return nil, err
+	}
+
+	var p *policy.Policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err = i.repos.Policy.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+	}
 	for beforeName, zipFile := range assets {
 		if zipFile.UncompressedSize64 == 0 {
 			continue
@@ -176,7 +161,8 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		realName := assetNames[beforeName]
 		readCloser, err := zipFile.Open()
 		if err != nil {
-			return nil, err
+			fmt.Printf("!!! Open failed for %s: %v", realName, err.Error())
+			continue
 		}
 
 		defer func() {
@@ -192,38 +178,17 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 			ContentType: http.DetectContentType([]byte(zipFile.Name)),
 		}
 
-		url, size, err := i.gateways.File.UploadAsset(ctx, file)
+		pid := newProject.ID()
+		_, url, err := i.uploadAndSave(ctx, file, ws, &pid, p, true)
 		if err != nil {
 			return nil, err
 		}
 
 		// Project logo update will be at this time
-		if newProject.ImageURL() != nil {
-			if path.Base(newProject.ImageURL().Path) == beforeName {
-				newProject.SetImageURL(url)
-				err := i.repos.Project.Save(ctx, newProject)
-				if err != nil {
-					return nil, err
-				}
-			}
-		}
-
-		a, err := asset.New().
-			NewID().
-			Workspace(newProject.Workspace()).
-			Project(newProject.ID().Ref()).
-			Name(path.Base(realName)).
-			Size(size).
-			URL(url.String()).
-			CoreSupport(true).
-			Build()
-		if err != nil {
+		if err := i.updateProjectImage(ctx, newProject, url, beforeName); err != nil {
 			return nil, err
 		}
 
-		if err := i.repos.Asset.Save(ctx, a); err != nil {
-			return nil, err
-		}
 		afterName := path.Base(url.Path)
 
 		// Replace new asset file name
@@ -233,4 +198,55 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 	}
 
 	return data, nil
+}
+
+func (i *Asset) updateProjectImage(ctx context.Context, newProject *project.Project, url *url.URL, beforeName string) error {
+	if newProject.ImageURL() != nil {
+		if path.Base(newProject.ImageURL().Path) == beforeName {
+			newProject.SetImageURL(url)
+			return i.repos.Project.Save(ctx, newProject)
+		}
+	}
+	return nil
+}
+
+func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, p *policy.Policy, coreSupport bool) (*asset.Asset, *url.URL, error) {
+
+	// upload
+	u, size, err := i.gateways.File.UploadAsset(ctx, f)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// enforce policy
+	if p != nil {
+		s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
+		if err != nil {
+			return nil, nil, err
+		}
+		if err := p.EnforceAssetStorageSize(s + size); err != nil {
+			_ = i.gateways.File.RemoveAsset(ctx, u)
+			return nil, nil, err
+		}
+	}
+
+	// data save
+	a, err := asset.New().
+		NewID().
+		Workspace(ws.ID()).
+		Project(pid).
+		Name(path.Base(f.Path)).
+		Size(size).
+		URL(u.String()).
+		CoreSupport(coreSupport).
+		Build()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if err := i.repos.Asset.Save(ctx, a); err != nil {
+		return nil, nil, err
+	}
+
+	return a, u, nil
 }

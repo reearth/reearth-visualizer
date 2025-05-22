@@ -6,24 +6,26 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"golang.org/x/exp/slices"
 )
 
 type ProjectDocument struct {
-	ID          string
-	Archived    bool
-	UpdatedAt   time.Time
-	Name        string
-	Description string
-	ImageURL    string
-	Team        string // DON'T CHANGE NAME'
-	Visualizer  string
-	CoreSupport bool
-	Starred     bool
-	Deleted     bool
-	Visibility  string
+	ID           string
+	Archived     bool
+	UpdatedAt    time.Time
+	Name         string
+	Description  string
+	ImageURL     string
+	Team         string // DON'T CHANGE NAME'
+	Visualizer   string
+	ImportStatus string
+	CoreSupport  bool
+	Starred      bool
+	Deleted      bool
+	Visibility   string
 
 	// publishment
 	Alias             string
@@ -57,18 +59,19 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 	}
 
 	return &ProjectDocument{
-		ID:          pid,
-		Archived:    project.IsArchived(),
-		UpdatedAt:   project.UpdatedAt(),
-		Name:        project.Name(),
-		Description: project.Description(),
-		ImageURL:    imageURL,
-		Team:        project.Workspace().String(),
-		Visualizer:  string(project.Visualizer()),
-		Starred:     project.Starred(),
-		Deleted:     project.IsDeleted(),
-		Visibility:  project.Visibility(),
-		CoreSupport: project.CoreSupport(),
+		ID:           pid,
+		Archived:     project.IsArchived(),
+		UpdatedAt:    project.UpdatedAt(),
+		Name:         project.Name(),
+		Description:  project.Description(),
+		ImageURL:     imageURL,
+		Team:         project.Workspace().String(),
+		Visualizer:   string(project.Visualizer()),
+		ImportStatus: string(project.ImportStatus()),
+		Starred:      project.Starred(),
+		Deleted:      project.IsDeleted(),
+		Visibility:   project.Visibility(),
+		CoreSupport:  project.CoreSupport(),
 
 		// publishment
 		Alias:             project.Alias(),
@@ -117,6 +120,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		ImageURL(imageURL).
 		Workspace(tid).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
+		ImportStatus(status.ProjectImportStatus(d.ImportStatus)).
 		Starred(d.Starred).
 		Deleted(d.Deleted).
 		Visibility(d.Visibility).

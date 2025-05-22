@@ -6,24 +6,26 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type Project struct {
-	id          id.ProjectID
-	isArchived  bool
-	updatedAt   time.Time
-	name        string
-	description string
-	imageURL    *url.URL
-	workspace   accountdomain.WorkspaceID
-	visualizer  visualizer.Visualizer
-	coreSupport bool
-	sceneId     id.SceneID
-	starred     bool
-	isDeleted   bool
-	visibility  string
+	id           id.ProjectID
+	isArchived   bool
+	updatedAt    time.Time
+	name         string
+	description  string
+	imageURL     *url.URL
+	workspace    accountdomain.WorkspaceID
+	visualizer   visualizer.Visualizer
+	importStatus status.ProjectImportStatus
+	coreSupport  bool
+	sceneId      id.SceneID
+	starred      bool
+	isDeleted    bool
+	visibility   string
 
 	// publishment
 	alias             string
@@ -93,6 +95,13 @@ func (p *Project) Visualizer() visualizer.Visualizer {
 	return p.visualizer
 }
 
+func (p *Project) ImportStatus() status.ProjectImportStatus {
+	if p.importStatus == "" {
+		return status.ProjectImportStatusNone
+	}
+	return p.importStatus
+}
+
 func (p *Project) Starred() bool {
 	return p.starred
 }
@@ -149,6 +158,10 @@ func (p *Project) UpdateWorkspace(workspace accountdomain.WorkspaceID) {
 
 func (p *Project) UpdateVisualizer(visualizer visualizer.Visualizer) {
 	p.visualizer = visualizer
+}
+
+func (p *Project) UpdateImportStatus(importStatus status.ProjectImportStatus) {
+	p.importStatus = importStatus
 }
 
 func (p *Project) UpdateSceneID(sceneId id.SceneID) {
