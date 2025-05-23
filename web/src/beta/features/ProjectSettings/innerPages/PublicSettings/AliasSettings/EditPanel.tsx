@@ -88,18 +88,21 @@ const EditPanel: FC<Prop> = ({
       <ModalPanel
         title={t("Edit Alias")}
         onCancel={onClose}
-        actions={
-          <ButtonWrapper>
-            <Button extendWidth title={t("Cancel")} onClick={onClose} />
-            <Button
-              extendWidth
-              title={t("Apply")}
-              appearance="primary"
-              disabled={isDisabled}
-              onClick={handleSubmit}
-            />
-          </ButtonWrapper>
-        }
+        actions={[
+          <Button
+            key="cancel"
+            title={t("Cancel")}
+            appearance="secondary"
+            onClick={onClose}
+          />,
+          <Button
+            key="apply"
+            title={t("Apply")}
+            appearance="primary"
+            disabled={isDisabled}
+            onClick={handleSubmit}
+          />
+        ]}
       >
         <Wrapper>
           <Typography size="body">
@@ -166,13 +169,6 @@ const InputWrapper = styled("div")<{ hasSuffix?: boolean }>(
     gap: theme.spacing.micro
   })
 );
-
-const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start",
-  gap: theme.spacing.small
-}));
 
 const WarningMessage = styled("div")(({ theme }) => ({
   color: theme.dangerous.main,
