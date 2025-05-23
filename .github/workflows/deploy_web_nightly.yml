@@ -27,6 +27,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      issues: write # allow comment on the PR
+      pull-requests: write # allow comment on the PR
     steps:
       - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v2
