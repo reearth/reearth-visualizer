@@ -40,7 +40,7 @@ func ToProject(p *project.Project) *pb.Project {
 		PublicDescription: p.PublicDescription(),
 		PublicImage:       p.PublicImage(),
 		PublicNoIndex:     p.PublicNoIndex(),
-		TeamId:            p.Workspace().String(),
+		WorkspaceId:       p.Workspace().String(),
 		Visualizer:        ToVisualizer(p.Visualizer()),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
 		CoreSupport:       p.CoreSupport(),

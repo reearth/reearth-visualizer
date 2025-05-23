@@ -13,7 +13,10 @@
     - [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest)
     - [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse)
     - [Project](#reearth-visualizer-v1-Project)
+    - [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest)
+    - [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse)
   
+    - [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus)
     - [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus)
     - [Visualizer](#reearth-visualizer-v1-Visualizer)
   
@@ -39,7 +42,7 @@ Cannot be created under a team the user does not belong to.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| team_id | [string](#string) |  | Team ID (Workspace ID) |
+| workspace_id | [string](#string) |  | Workspace ID |
 | visualizer | [Visualizer](#reearth-visualizer-v1-Visualizer) |  | Specify VISUALIZER_CESIUM |
 | name | [string](#string) | optional | Project title |
 | description | [string](#string) | optional | Project description |
@@ -100,15 +103,14 @@ Response messages
 <a name="reearth-visualizer-v1-GetProjectListRequest"></a>
 
 ### GetProjectListRequest
-Returns projects visible to the user.
-If the user does not belong to the team, only projects with &#34;public&#34;
-visibility are returned. If the user is a member of the team, all projects
-under the team are returned.
+If the authenticated flag is true, private items will also be included in the
+response. However, deleted items are excluded.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| team_id | [string](#string) |  | Team ID (Workspace ID) |
+| workspace_id | [string](#string) |  | Workspace ID |
+| authenticated | [bool](#bool) |  | Authenticated Flag |
 
 
 
@@ -170,7 +172,7 @@ Core Project messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [string](#string) |  | Project ID |
-| team_id | [string](#string) |  | Team ID (Workspace ID) |
+| workspace_id | [string](#string) |  | Workspace ID |
 | scene_id | [string](#string) |  | Scene ID |
 | name | [string](#string) |  | Project title |
 | description | [string](#string) |  | Project description |
@@ -183,24 +185,69 @@ Core Project messages
 | starred | [bool](#bool) |  | Whether the project is marked as a favorite |
 | is_deleted | [bool](#bool) |  | Whether the project is in the trash |
 | visibility | [string](#string) |  | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
-| alias | [string](#string) |  | publishmen value |
-| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | publishmen value |
-| published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | publishmen value |
-| public_title | [string](#string) |  | publishmen value |
-| public_description | [string](#string) |  | publishmen value |
-| public_image | [string](#string) |  | publishmen value |
-| public_no_index | [bool](#bool) |  | publishmen value |
-| is_basic_auth_active | [bool](#bool) |  | publishmen value |
-| basic_auth_username | [string](#string) |  | publishmen value |
-| basic_auth_password | [string](#string) |  | publishmen value |
-| enable_ga | [bool](#bool) |  | publishmen value |
-| tracking_id | [string](#string) |  | publishmen value |
+| alias | [string](#string) |  | Publishment value |
+| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Publishment value |
+| published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | Publishment value |
+| public_title | [string](#string) |  | Publishment value |
+| public_description | [string](#string) |  | Publishment value |
+| public_image | [string](#string) |  | Publishment value |
+| public_no_index | [bool](#bool) |  | Publishment value |
+| is_basic_auth_active | [bool](#bool) |  | Publishment value |
+| basic_auth_username | [string](#string) |  | Publishment value |
+| basic_auth_password | [string](#string) |  | Publishment value |
+| enable_ga | [bool](#bool) |  | Publishment value |
+| tracking_id | [string](#string) |  | Publishment value |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectVisibilityRequest"></a>
+
+### UpdateProjectVisibilityRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+| visibility | [string](#string) | optional | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectVisibilityResponse"></a>
+
+### UpdateProjectVisibilityResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
 
 
 
 
 
  
+
+
+<a name="reearth-visualizer-v1-ProjectImportStatus"></a>
+
+### ProjectImportStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| NONE | 0 |  |
+| PROCESSING | 1 |  |
+| FAIL | 2 |  |
+| SUCCESS | 3 |  |
+
 
 
 <a name="reearth-visualizer-v1-PublishmentStatus"></a>
@@ -244,6 +291,7 @@ Core Project messages
 | GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | Retrieves the list of projects the user can access. Request headers: user-id: &lt;User ID&gt; |
 | GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) | Retrieves a specific project regardless of authentication. Request headers: user-id: &lt;User ID&gt; |
 | CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
+| UpdateProjectVisibility | [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest) | [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse) | Update the visibility a project. Request headers: user-id: &lt;User ID&gt; |
 | DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
 
  

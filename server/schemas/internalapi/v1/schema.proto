@@ -19,6 +19,11 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
 
+  // Update the visibility a project.
+  // Request headers: user-id: <User ID>
+  rpc UpdateProjectVisibility(UpdateProjectVisibilityRequest)
+      returns (UpdateProjectVisibilityResponse) {}
+
   // Deletes a project.
   // Request headers: user-id: <User ID>
   rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
@@ -29,8 +34,8 @@ message Project {
   // Project ID
   string id = 1;
 
-  // Team ID (Workspace ID)
-  string team_id = 2;
+  // Workspace ID
+  string workspace_id = 2;
 
   // Scene ID
   string scene_id = 3;
@@ -68,36 +73,46 @@ message Project {
   // Visibility of the project (e.g., "public", "private")
   string visibility = 14;
 
-  // publishmen value
-  string alias = 15;
-  // publishmen value
-  PublishmentStatus publishment_status = 16;
-  // publishmen value
-  optional google.protobuf.Timestamp published_at = 17;
-  // publishmen value
-  string public_title = 18;
-  // publishmen value
-  string public_description = 19;
-  // publishmen value
-  string public_image = 20;
-  // publishmen value
-  bool public_no_index = 21;
-  // publishmen value
-  bool is_basic_auth_active = 22;
-  // publishmen value
-  string basic_auth_username = 23;
-  // publishmen value
-  string basic_auth_password = 24;
-  // publishmen value
-  bool enable_ga = 25;
-  // publishmen value
-  string tracking_id = 26;
+  // Project import status — if PROCESSING, data should not be retrieved
+  // ProjectImportStatus import_status = 15;
+
+  // Publishment value
+  string alias = 16;
+  // Publishment value
+  PublishmentStatus publishment_status = 17;
+  // Publishment value
+  optional google.protobuf.Timestamp published_at = 18;
+  // Publishment value
+  string public_title = 19;
+  // Publishment value
+  string public_description = 20;
+  // Publishment value
+  string public_image = 21;
+  // Publishment value
+  bool public_no_index = 22;
+  // Publishment value
+  bool is_basic_auth_active = 23;
+  // Publishment value
+  string basic_auth_username = 24;
+  // Publishment value
+  string basic_auth_password = 25;
+  // Publishment value
+  bool enable_ga = 26;
+  // Publishment value
+  string tracking_id = 27;
 }
 
 enum Visualizer {
   VISUALIZER_UNSPECIFIED = 0;
   VISUALIZER_CESIUM = 1;
   VISUALIZER_CESIUM_BETA = 2;
+}
+
+enum ProjectImportStatus {
+  NONE = 0;
+  PROCESSING = 1;
+  FAIL = 2;
+  SUCCESS = 3;
 }
 
 enum PublishmentStatus {
@@ -113,13 +128,13 @@ enum PublishmentStatus {
   PUBLISHMENT_STATUS_PRIVATE = 3;
 }
 
-// Returns projects visible to the user.
-// If the user does not belong to the team, only projects with "public"
-// visibility are returned. If the user is a member of the team, all projects
-// under the team are returned.
+// If the authenticated flag is true, private items will also be included in the
+// response. However, deleted items are excluded.
 message GetProjectListRequest {
-  // Team ID (Workspace ID)
-  string team_id = 1;
+  // Workspace ID
+  string workspace_id = 1;
+  // Authenticated Flag
+  bool authenticated = 2;
 }
 
 // Retrieves a project regardless of authentication.
@@ -132,8 +147,8 @@ message GetProjectRequest {
 // Creates a new project.
 // Cannot be created under a team the user does not belong to.
 message CreateProjectRequest {
-  // Team ID (Workspace ID)
-  string team_id = 1;
+  // Workspace ID
+  string workspace_id = 1;
 
   // Specify VISUALIZER_CESIUM
   Visualizer visualizer = 2;
@@ -151,8 +166,18 @@ message CreateProjectRequest {
   optional string visibility = 6;
 }
 
+// Update project visibility.
+// Only the project owner can operate this
+message UpdateProjectVisibilityRequest {
+  // Project ID
+  string project_id = 1;
+  // Visibility of the project (e.g., "public", "private")
+  optional string visibility = 2;
+}
+
 // Deletes a project.
-// Cannot be deleted if the user does not belong to the project's team.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
 message DeleteProjectRequest {
   // Project ID
   string project_id = 1;
@@ -172,6 +197,12 @@ message GetProjectListResponse {
 
 // Response messages
 message CreateProjectResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateProjectVisibilityResponse {
   // Project
   Project project = 1;
 }
