@@ -117,7 +117,7 @@ jobs:
     secrets: inherit
 
   deploy-web-pr:
-    needs: build-web-pr
+    needs: [build-web-pr, build-prepare-pr]
     uses: ./.github/workflows/deploy_web_nightly.yml
     with:
       version: ${{ needs.build-prepare-pr.outputs.sha_short }}
