@@ -1,7 +1,7 @@
 import BlockAddBar from "@reearth/beta/features/Visualizer/shared/components/BlockAddBar";
 import { EditModeProvider } from "@reearth/beta/features/Visualizer/shared/contexts/editModeContext";
 import { InstallableBlock } from "@reearth/beta/features/Visualizer/shared/types";
-import { DragAndDropList } from "@reearth/beta/lib/reearth-ui";
+import { DragAndDropList, Icon } from "@reearth/beta/lib/reearth-ui";
 import { ValueType, ValueTypes } from "@reearth/beta/utils/value";
 import { Layer, Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
@@ -66,6 +66,7 @@ export type Props = {
     schemaGroupId?: string,
     itemId?: string
   ) => Promise<void>;
+  onCloseInfobox?: () => void;
 };
 
 const Infobox: FC<Props> = ({
@@ -80,7 +81,8 @@ const Infobox: FC<Props> = ({
   onPropertyUpdate,
   onPropertyItemAdd,
   onPropertyItemMove,
-  onPropertyItemDelete
+  onPropertyItemDelete,
+  onCloseInfobox
 }) => {
   const {
     wrapperRef,
@@ -170,31 +172,30 @@ const Infobox: FC<Props> = ({
 
   return showInfobox ? (
     <EditModeProvider value={editModeContext}>
-      <Wrapper
-        ref={wrapperRef}
-        position={positionField?.value}
-        padding={paddingField?.value}
-      >
-        {isEditable && !disableSelection && (
-          <BlockAddBar
-            id="top-bar"
-            openBlocks={openBlocksIndex === -1}
-            installableBlocks={installableInfoboxBlocks}
-            parentWidth={INFOBOX_WIDTH}
-            alwaysShow={infoboxBlocks.length < 1}
-            onBlockOpen={() => handleBlockOpen(-1)}
-            onBlockAdd={handleBlockCreate?.(0)}
-          />
-        )}
-        {infoboxBlocks && infoboxBlocks.length > 0 && (
-          <DragAndDropList
-            items={DraggableInfoboxBlock}
-            handleClassName={INFOBOX_DRAG_HANDLE_CLASS_NAME}
-            onMoveEnd={handleMoveEnd}
-            dragDisabled={false}
-            gap={gapField?.value ?? GAP_DEFAULT_VALUE}
-          />
-        )}
+      <Wrapper ref={wrapperRef} position={positionField?.value}>
+        <CloseButton onClick={onCloseInfobox} />
+        <Content padding={paddingField?.value}>
+          {isEditable && !disableSelection && (
+            <BlockAddBar
+              id="top-bar"
+              openBlocks={openBlocksIndex === -1}
+              installableBlocks={installableInfoboxBlocks}
+              parentWidth={INFOBOX_WIDTH}
+              alwaysShow={infoboxBlocks.length < 1}
+              onBlockOpen={() => handleBlockOpen(-1)}
+              onBlockAdd={handleBlockCreate?.(0)}
+            />
+          )}
+          {infoboxBlocks && infoboxBlocks.length > 0 && (
+            <DragAndDropList
+              items={DraggableInfoboxBlock}
+              handleClassName={INFOBOX_DRAG_HANDLE_CLASS_NAME}
+              onMoveEnd={handleMoveEnd}
+              dragDisabled={false}
+              gap={gapField?.value ?? GAP_DEFAULT_VALUE}
+            />
+          )}
+        </Content>
       </Wrapper>
     </EditModeProvider>
   ) : null;
@@ -205,26 +206,50 @@ export default memo(Infobox);
 const Wrapper = styled("div")<{
   position?: InfoboxPosition;
   padding?: Spacing;
-}>(({ position, padding, theme }) => ({
+}>(({ position, theme }) => ({
   display: "flex",
   flexDirection: "column",
   position: "absolute",
   top: "37px",
-  minHeight: "370px",
-  maxHeight: "515px",
   width: `${INFOBOX_WIDTH}px`,
   background: "#ffffff",
   borderRadius: theme.radius.normal,
   zIndex: theme.zIndexes.visualizer.infobox,
   boxSizing: "border-box",
-  overflow: "auto",
+  [position ?? POSITION_DEFAULT_VALUE]: "13px"
+}));
+
+const Content = styled("div")<{
+  padding?: Spacing;
+}>(({ padding }) => ({
+  minHeight: "370px",
+  maxHeight: "515px",
+  display: "flex",
+  flexDirection: "column",
+  gap: `${padding?.top ?? `${PADDING_DEFAULT_VALUE}px`}`,
   paddingTop: padding?.top ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingBottom: padding?.bottom ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingLeft: padding?.left ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingRight: padding?.right ?? `${PADDING_DEFAULT_VALUE}px`,
-  [position ?? POSITION_DEFAULT_VALUE]: "13px"
+  boxSizing: "border-box",
+  overflow: "auto"
 }));
 
 const ItemWrapper = styled("div")(() => ({
   background: "#ffffff"
 }));
+
+const CloseButton: FC<{
+  onClick?: () => void;
+}> = ({ onClick }) => {
+  return (
+    <div className="tw-px-3 tw-pt-3 tw-flex tw-justify-end tw-text-black">
+      <div
+        className="tw-cursor-pointer tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center"
+        onClick={onClick}
+      >
+        <Icon icon="close" />
+      </div>
+    </div>
+  );
+};
