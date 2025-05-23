@@ -73,7 +73,8 @@ Response messages
 
 ### DeleteProjectRequest
 Deletes a project.
-Cannot be deleted if the user does not belong to the project&#39;s team.
+This is a physical deletion, not a logical deletion. Data cannot be restored.
+Only the project owner can operate this
 
 
 | Field | Type | Label | Description |
@@ -206,7 +207,8 @@ Core Project messages
 <a name="reearth-visualizer-v1-UpdateProjectVisibilityRequest"></a>
 
 ### UpdateProjectVisibilityRequest
-
+Update project visibility.
+Only the project owner can operate this
 
 
 | Field | Type | Label | Description |

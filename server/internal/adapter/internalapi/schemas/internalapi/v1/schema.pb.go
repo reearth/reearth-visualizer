@@ -644,6 +644,8 @@ func (x *CreateProjectRequest) GetVisibility() string {
 	return ""
 }
 
+// Update project visibility.
+// Only the project owner can operate this
 type UpdateProjectVisibilityRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Project ID
@@ -699,7 +701,8 @@ func (x *UpdateProjectVisibilityRequest) GetVisibility() string {
 }
 
 // Deletes a project.
-// Cannot be deleted if the user does not belong to the project's team.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
 type DeleteProjectRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Project ID
