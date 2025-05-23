@@ -137,5 +137,5 @@ jobs:
     needs: deploy-web-pr
     uses: ./.github/workflows/playwright_ui_tests.yml
     with:
-      url: ${{ needs.deploy-web-pr.outputs.url }}
+      url: ${{ needs.deploy-web-pr.outputs.preview_url }}
     secrets: inherit

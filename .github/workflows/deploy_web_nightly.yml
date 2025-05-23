@@ -19,9 +19,11 @@ jobs:
   deploy_test:
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-visualizer'
+    outputs:
+      preview_url: ${{ steps.deploy-pr.outputs.url }}
     env:
-      SOURCE_IMAGE: '${{ WEB_IMAGE_BASE }}:${{ inputs.version }}'
-      DEPLOY_IMAGE: '${{ WEB_IMAGE_GC_BASE }}:${{ inputs.version }}'
+      SOURCE_IMAGE: '${{ secrets.WEB_IMAGE_BASE }}:${{ inputs.version }}'
+      DEPLOY_IMAGE: '${{ secrets.WEB_IMAGE_GC_BASE }}:${{ inputs.version }}'
     permissions:
       contents: read
       id-token: write
@@ -56,12 +58,31 @@ jobs:
             --platform managed \
             --quiet
       - name: Deploy to Cloud Run (PR)
+        id: deploy-pr
         if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
-        run: |
-          gcloud run deploy reearth-visualizer-web \
-            --image ${{ env.DEPLOY_IMAGE }} \
-            --region ${{ secrets.GC_REGION }} \
-            --tag=pr-${{ github.event.pull_request.number }} \
-            --no-traffic \
-            --platform managed \
-            --quiet
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: reearth-visualizer-web
+          image: ${{ env.DEPLOY_IMAGE }}
+          region: ${{ secrets.GC_REGION }}
+          tag: pr-${{ github.event.pull_request.number }}
+          no_traffic: true
+      - name: Comment PR with preview URL
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const url = `${{ steps.deploy-pr.outputs.url }}`;
+
+            const body = `🚀 **Cloud Run Preview Deployed**\n\n🔗 [Preview URL](${url})`;
+
+            await github.rest.issues.createComment({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });
+        env:
+          REGION: ${{ secrets.GC_REGION }}
