@@ -91,6 +91,21 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
 }
 
+func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
+	return i.projectRepo.FindActiveById(ctx, pid)
+}
+
+func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
+
+	isWorkspaceOwner := false
+
+	if len(operator.AcOperator.OwningWorkspaces) > 0 {
+		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == id
+	}
+
+	return i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, id)
+}
+
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	return i.createProject(ctx, createProjectInput{
 		WorkspaceID: input.WorkspaceID,
@@ -125,6 +140,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	if p.Name != nil {
 		prj.UpdateName(*p.Name)
+
 	}
 
 	if p.Description != nil {
@@ -214,6 +230,34 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	tx.Commit()
 	return prj, nil
+}
+
+func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibility string, operator *usecase.Operator) (*project.Project, error) {
+
+	prj, err := i.projectRepo.FindByID(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
+	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
+		return nil, err
+	}
+
+	if len(operator.AcOperator.OwningWorkspaces) == 0 || operator.AcOperator.OwningWorkspaces[0] != prj.Workspace() {
+		return nil, errors.New("operation that only the owner is allowed to perform.")
+	}
+
+	if err := prj.UpdateVisibility(visibility); err != nil {
+		return nil, err
+	}
+
+	currentTime := time.Now().UTC()
+	prj.SetUpdatedAt(currentTime)
+
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, err
+	}
+	return prj, nil
+
 }
 
 func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {

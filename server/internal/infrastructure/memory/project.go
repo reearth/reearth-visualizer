@@ -128,6 +128,50 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return result, nil
 }
 
+func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+	for _, p := range r.data {
+		if p.ID() == id && !p.IsDeleted() {
+			return p, nil
+		}
+	}
+	return nil, nil
+}
+
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	var result []*project.Project
+
+	if authenticated {
+		for _, p := range r.data {
+			if p.Workspace() == id {
+				result = append(result, p)
+			}
+		}
+	} else {
+		if isWorkspaceOwner {
+			for _, p := range r.data {
+				if p.Workspace() == id && !p.IsDeleted() {
+					result = append(result, p)
+				}
+			}
+		} else {
+			for _, p := range r.data {
+				if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
+					result = append(result, p)
+				}
+			}
+		}
+	}
+
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].UpdatedAt().After(result[j].UpdatedAt())
+	})
+
+	return result, nil
+}
+
 func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []id.ProjectID, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
