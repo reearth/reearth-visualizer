@@ -2,14 +2,27 @@ name: Playwright UI Tests On Dev
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    inputs:
+      url:
+        description: 'URL to run tests against'
+        type: string
+        required: false
+  workflow_call:
+    inputs:
+      url:
+        description: 'URL to run tests against'
+        type: string
+        required: false
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ inputs.url || secrets.REEARTH_WEB_E2E_BASEURL }}
     defaults:
       run:
         working-directory: web/e2e/playwright-tests
@@ -18,6 +31,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: playwright-${{ runner.os }}-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -26,30 +45,12 @@ jobs:
       - name: Install dependencies and Playwright browsers
         run: |
           npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install
-
-      - name: Validate secrets
-        run: |
-          if [ -z "${{ secrets.REEARTH_E2E_EMAIL }}" ]; then
-            echo "Error: REEARTH_E2E_EMAIL secret is not set."
-            exit 1
-          fi
-          if [ -z "${{ secrets.REEARTH_E2E_PASSWORD }}" ]; then
-            echo "Error: REEARTH_E2E_PASSWORD secret is not set."
-            exit 1
-          fi
-          if [ -z "${{ secrets.REEARTH_WEB_E2E_BASEURL }}" ]; then
-            echo "Error: REEARTH_WEB_E2E_BASEURL secret is not set."
-            exit 1
-          fi
-
+          npx playwright install
       - name: Run Playwright tests
         env:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
-          REEARTH_WEB_E2E_BASEURL: ${{ secrets.REEARTH_WEB_E2E_BASEURL }}
+          REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
         run: npx playwright test --config=playwright.config.ts
 
       - name: Upload test results

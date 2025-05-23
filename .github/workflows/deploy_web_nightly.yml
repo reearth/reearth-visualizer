@@ -1,7 +1,17 @@
 name: deploy-web-nightly
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version to deploy.'
+        type: string
+        required: false
   workflow_call:
+    inputs:
+      version:
+        description: 'Image version to deploy.'
+        type: string
+        required: false
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -9,9 +19,16 @@ jobs:
   deploy_test:
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-visualizer'
+    outputs:
+      preview_url: ${{ steps.deploy-pr.outputs.url }}
+    env:
+      SOURCE_IMAGE: '${{ secrets.WEB_IMAGE_BASE }}:${{ inputs.version }}'
+      DEPLOY_IMAGE: '${{ secrets.WEB_IMAGE_GC_BASE }}:${{ inputs.version }}'
     permissions:
       contents: read
       id-token: write
+      issues: write # allow comment on the PR
+      pull-requests: write # allow comment on the PR
     steps:
       - uses: actions/checkout@v4
       - uses: google-github-actions/auth@v2
@@ -23,14 +40,73 @@ jobs:
       - name: Configure docker
         run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - name: docker push
+        if: ${{ github.event_name == 'push' && (github.ref_name == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
         run: |
           docker pull ${{ secrets.WEB_IMAGE }}
           docker tag ${{ secrets.WEB_IMAGE }} ${{ secrets.WEB_IMAGE_GC }}
           docker push ${{ secrets.WEB_IMAGE_GC }}
+      - name: docker push (PR)
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
+        run: |
+          docker pull ${{ env.SOURCE_IMAGE }}
+          docker tag ${{ env.SOURCE_IMAGE }} ${{ env.DEPLOY_IMAGE }}
+          docker push ${{ env.DEPLOY_IMAGE }}
       - name: Deploy to Cloud Run
+        if: ${{ github.event_name == 'push' && (github.ref_name == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
         run: |
           gcloud run deploy reearth-visualizer-web \
             --image ${{ secrets.WEB_IMAGE_GC }} \
             --region ${{ secrets.GC_REGION }} \
             --platform managed \
             --quiet
+      - name: Deploy to Cloud Run (PR)
+        id: deploy-pr
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: reearth-visualizer-web
+          image: ${{ env.DEPLOY_IMAGE }}
+          region: ${{ secrets.GC_REGION }}
+          tag: pr-${{ github.event.pull_request.number }}
+          no_traffic: true
+      - name: Comment or update PR with preview URL
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') && github.event.pull_request.head.repo.full_name == github.repository }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const url = `${{ steps.deploy-pr.outputs.url }}`;
+            const marker = '<!-- cloud-run-preview -->';
+            const body = `${marker}
+             🚀 **Cloud Run Preview Deployed**
+
+             🔗 [Click here to open the preview in a new tab](${url})`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              issue_number: prNumber,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+
+            const existingComment = comments.find(
+              comment =>
+                comment.user.type === 'Bot' &&
+                comment.body.includes(marker)
+            );
+
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                comment_id: existingComment.id,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                issue_number: prNumber,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body,
+              });
+            }
