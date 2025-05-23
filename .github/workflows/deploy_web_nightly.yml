@@ -20,8 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-visualizer'
     env:
-      SOURCE_IMAGE: '${{ secrets.WEB_IMAGE_BASE }}:${{ inputs.version }}'
-      DEPLOY_IMAGE: '${{ secrets.WEB_IMAGE_GC_BASE }}:${{ inputs.version }}'
+      SOURCE_IMAGE: 'reearth/reearth-visualizer-web:${{ inputs.version }}'
+      DEPLOY_IMAGE: 'us-central1-docker.pkg.dev/reearth-oss/reearth/reearth-visualizer-web:${{ inputs.version }}'
     permissions:
       contents: read
       id-token: write
