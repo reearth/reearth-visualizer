@@ -4,19 +4,24 @@ on:
     inputs:
       sha_short:
         type: string
-        required: true
+        required: false
+        default: ''
       new_tag:
         type: string
-        required: true
+        required: false
+        default: ''
       new_tag_short:
         type: string
-        required: true
+        required: false
+        default: ''
       name:
         type: string
-        required: true
+        required: false
+        default: ''
       sha:
         type: string
-        required: true
+        required: false
+        default: ''
 
 jobs:
   build-web-docker:
@@ -115,7 +120,7 @@ jobs:
   release-nightly-rc:
     runs-on: ubuntu-latest
     needs: [build-web]
-    if: ${{ inputs.name != '' }}
+    if: ${{ inputs.name != '' && inputs.sha != '' }}
     env:
       ARTIFACT: reearth-web_${{ inputs.name }}.tar.gz
     steps:

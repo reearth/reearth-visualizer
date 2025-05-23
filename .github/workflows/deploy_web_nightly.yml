@@ -1,7 +1,17 @@
 name: deploy-web-nightly
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Image version to deploy.'
+        type: string
+        required: false
   workflow_call:
+    inputs:
+      version:
+        description: 'Image version to deploy.'
+        type: string
+        required: false
 concurrency:
   group: ${{ github.workflow }}
   cancel-in-progress: true
@@ -9,6 +19,9 @@ jobs:
   deploy_test:
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-visualizer'
+    env:
+      SOURCE_IMAGE: '${{ secrets.WEB_IMAGE_BASE }}:${{ inputs.version }}'
+      DEPLOY_IMAGE: '${{ secrets.WEB_IMAGE_GC_BASE }}:${{ inputs.version }}'
     permissions:
       contents: read
       id-token: write
@@ -23,14 +36,32 @@ jobs:
       - name: Configure docker
         run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - name: docker push
+        if: ${{ github.event_name == 'push' && (github.ref_name == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
         run: |
           docker pull ${{ secrets.WEB_IMAGE }}
           docker tag ${{ secrets.WEB_IMAGE }} ${{ secrets.WEB_IMAGE_GC }}
           docker push ${{ secrets.WEB_IMAGE_GC }}
+      - name: docker push (PR)
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
+        run: |
+          docker pull ${{ env.SOURCE_IMAGE }}
+          docker tag ${{ env.SOURCE_IMAGE }} ${{ env.DEPLOY_IMAGE }}
+          docker push ${{ env.DEPLOY_IMAGE }}
       - name: Deploy to Cloud Run
+        if: ${{ github.event_name == 'push' && (github.ref_name == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
         run: |
           gcloud run deploy reearth-visualizer-web \
             --image ${{ secrets.WEB_IMAGE_GC }} \
             --region ${{ secrets.GC_REGION }} \
+            --platform managed \
+            --quiet
+      - name: Deploy to Cloud Run (PR)
+        if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
+        run: |
+          gcloud run deploy reearth-visualizer-web \
+            --image ${{ env.DEPLOY_IMAGE }} \
+            --region ${{ secrets.GC_REGION }} \
+            --tag=pr-${{ github.event.pull_request.number }} \
+            --no-traffic \
             --platform managed \
             --quiet

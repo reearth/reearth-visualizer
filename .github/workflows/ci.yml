@@ -62,6 +62,11 @@ jobs:
     if: ${{ github.repository == 'reearth/reearth-visualizer' && github.event_name == 'push' && (github.ref_name == 'release' || !startsWith(github.event.head_commit.message, 'v')) }}
     uses: ./.github/workflows/build_prepare.yml
 
+  build-prepare-pr:
+    needs: prepare
+    if: ${{ github.repository == 'reearth/reearth-visualizer' && github.event_name == 'pull_request' && github.base_ref == 'main' && (github.event.action == 'opened' || github.event.action == 'synchronize') }}
+    uses: ./.github/workflows/build_prepare.yml
+
   build-web:
     needs: [ci-web, build-prepare]
     uses: ./.github/workflows/build_web.yml
@@ -73,20 +78,16 @@ jobs:
       sha: ${{ github.sha }}
     secrets: inherit
 
-  build-web-post:
-    # needs build-web, but also this job should be triggered even if it was skipped
-    needs: [build-prepare, build-web]
-    if: ${{ !cancelled() }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "OK"
+  build-web-pr:
+    needs: [ci-web, build-prepare-pr]
+    uses: ./.github/workflows/build_web.yml
+    with:
+      sha_short: ${{ needs.build-prepare-pr.outputs.sha_short }}
+      name: ${{ needs.build-prepare-pr.outputs.sha_short }}
+    secrets: inherit
 
   build-server:
-    # required to trigger this job after build-web, but even if build-web is skipped
-    # TODO: Remove build-web-post from needs when we discontinue embedding front-end in the server
-    needs: [ci-server, build-prepare, build-web-post]
-    if: ${{ !cancelled() }}
-    #
+    needs: [ci-server, build-prepare]
     uses: ./.github/workflows/build_server.yml
     with:
       sha_short: ${{ needs.build-prepare.outputs.sha_short }}
@@ -115,10 +116,26 @@ jobs:
     uses: ./.github/workflows/deploy_web_nightly.yml
     secrets: inherit
 
+  deploy-web-pr:
+    needs: build-web-pr
+    uses: ./.github/workflows/deploy_web_nightly.yml
+    with:
+      version: ${{ needs.build-prepare-pr.outputs.sha_short }}
+    secrets: inherit
+
   deploy-server:
     needs: build-server
-    # due to the build_server "if" hack, this "if" is also required to trigger this job
-    # TODO: Remove "if" when we discontinue embedding front-end in the server
-    if: ${{ !cancelled() }}
     uses: ./.github/workflows/deploy_server_nightly.yml
+    secrets: inherit
+
+  playwright-tests:
+    needs: deploy-web
+    uses: ./.github/workflows/playwright_ui_tests.yml
+    secrets: inherit
+
+  playwright-tests-pr:
+    needs: deploy-web-pr
+    uses: ./.github/workflows/playwright_ui_tests.yml
+    with:
+      url: ${{ needs.deploy-web-pr.outputs.url }}
     secrets: inherit
