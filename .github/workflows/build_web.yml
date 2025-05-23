@@ -84,7 +84,7 @@ jobs:
     defaults:
       run:
         working-directory: web
-    if: inputs.name
+    if: ${{ inputs.name != '' && inputs.sha != '' }}
     env:
       NODE_OPTIONS: "--max-old-space-size=8192"
     steps:
