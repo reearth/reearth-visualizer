@@ -31,6 +31,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: playwright-${{ runner.os }}-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -46,13 +52,6 @@ jobs:
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
         run: npx playwright test --config=playwright.config.ts
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: playwright-${{ runner.os }}-
 
       - name: Upload test results
         if: always()
