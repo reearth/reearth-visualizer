@@ -12,7 +12,7 @@ import {
   type MapRef
 } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { useMemo, type RefObject, useContext } from "react";
+import { useMemo, type RefObject, useContext, useCallback } from "react";
 
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
@@ -306,6 +306,10 @@ export default function Crust({
     selectedComputedFeature
   ]);
 
+  const handleCloseInfobox = useCallback(() => {
+    mapRef?.current?.layers?.select(undefined);
+  }, [mapRef]);
+
   return (
     <Plugins
       engineName={engineName}
@@ -377,6 +381,7 @@ export default function Crust({
         onPropertyItemAdd={onPropertyItemAdd}
         onPropertyItemDelete={onPropertyItemDelete}
         onPropertyItemMove={onPropertyItemMove}
+        onCloseInfobox={handleCloseInfobox}
       />
       {showStoryPanel && (
         <StoryPanel
