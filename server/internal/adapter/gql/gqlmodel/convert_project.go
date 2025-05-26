@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/aws/smithy-go/ptr"
 	"github.com/reearth/reearth/server/pkg/project"
 )
 
@@ -48,6 +49,8 @@ func ToProject(p *project.Project) *Project {
 		IsArchived:  p.IsArchived(),
 		Name:        p.Name(),
 		Description: p.Description(),
+		Readme:      ptr.String(p.Readme()),
+		License:     ptr.String(p.License()),
 		ImageURL:    p.ImageURL(),
 		UpdatedAt:   p.UpdatedAt(),
 		Visualizer:  Visualizer(p.Visualizer()),

@@ -19,30 +19,32 @@ import (
 const ProjectFragment = `
 fragment ProjectFragment on Project {
   id
-  isArchived
-  isBasicAuthActive
-  basicAuthUsername
-  basicAuthPassword
-  createdAt
-  updatedAt
-  publishedAt
+  teamId
   name
   description
+  readme
+  license
+  imageUrl
+  visualizer
+  createdAt
+  updatedAt
+  isArchived
+  coreSupport
+  starred
+  isDeleted
+  visibility
   alias
+  publishmentStatus
+  publishedAt
   publicTitle
   publicDescription
   publicImage
   publicNoIndex
-  imageUrl
-  teamId
-  visualizer
-  publishmentStatus
-  coreSupport
+  isBasicAuthActive
+  basicAuthUsername
+  basicAuthPassword
   enableGa
   trackingId
-  starred
-  isDeleted
-  visibility
   __typename
 }`
 
@@ -92,6 +94,30 @@ query GetProjects(
   }
 }
 ` + ProjectFragment
+
+func getProjects(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Array {
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
+		Variables:     variables,
+	}
+	return Request(e, u.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+}
+
+func getProjects2(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any, count interface{}, next interface{}) ([]httpexpect.Value, string) {
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
+		Variables:     variables,
+	}
+	projects := Request(e, uID.String(), requestBody).
+		Path("$.data.projects").Object()
+	projects.HasValue("totalCount", count)
+	pageInfo := projects.Value("pageInfo").Object()
+	pageInfo.HasValue("hasNextPage", next)
+	return projects.Value("edges").Array().Iter(), pageInfo.Value("endCursor").Raw().(string)
+}
 
 const CreateProjectMutation = `
 mutation CreateProject(
@@ -169,22 +195,16 @@ func TestCreateAndGetProject(t *testing.T) {
 	testData(e)
 
 	// GetProjects
-	requestBody := GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"teamId": wID.String(),
-			"pagination": map[string]any{
-				"first": 16,
-			},
-			"sort": map[string]string{
-				"field":     "UPDATEDAT",
-				"direction": "DESC",
-			},
+	edges := getProjects(e, uID, map[string]any{
+		"teamId": wID.String(),
+		"pagination": map[string]any{
+			"first": 16,
 		},
-	}
-	edges := Request(e, uID.String(), requestBody).
-		Path("$.data.projects.edges").Array()
+		"sort": map[string]string{
+			"field":     "UPDATEDAT",
+			"direction": "DESC",
+		},
+	})
 
 	edges.Length().IsEqual(2)
 	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("test2-1")
@@ -231,23 +251,16 @@ func TestSortByName(t *testing.T) {
 		"coreSupport": true,
 	})
 
-	requestBody := GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"pagination": map[string]any{
-				"last": 5,
-			},
-			"teamId": wID.String(),
-			"sort": map[string]string{
-				"field":     "NAME",
-				"direction": "ASC",
-			},
+	edges := getProjects(e, uID, map[string]any{
+		"pagination": map[string]any{
+			"last": 5,
 		},
-	}
-
-	edges := Request(e, uID.String(), requestBody).
-		Path("$.data.projects.edges").Array()
+		"teamId": wID.String(),
+		"sort": map[string]string{
+			"field":     "NAME",
+			"direction": "ASC",
+		},
+	})
 
 	edges.Length().IsEqual(5)
 	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("a-project")
@@ -375,40 +388,36 @@ func updateStarProject(e *httpexpect.Expect, projectID string) {
 // go test -v -run TestFindVisibilityProjects ./e2e/...
 func TestFindVisibilityProjects(t *testing.T) {
 	e := Server(t, baseSeeder)
+
 	project1ID := createProject(e, uID, map[string]any{
 		"name":        "Project 1",
 		"description": "abc",
 		"teamId":      wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
+		// "visibility":  nil,
 	})
 
-	requestBody := GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"pagination": map[string]any{
-				"last": 5,
-			},
-			"teamId": wID.String(),
-			"sort": map[string]string{
-				"field":     "NAME",
-				"direction": "ASC",
-			},
+	requestBody := map[string]any{
+		"pagination": map[string]any{
+			"last": 5,
+		},
+		"teamId": wID.String(),
+		"sort": map[string]string{
+			"field":     "NAME",
+			"direction": "ASC",
 		},
 	}
 
 	// default private
-	edges := Request(e, uID.String(), requestBody).
-		Path("$.data.projects.edges").Array()
+	edges := getProjects(e, uID, requestBody)
 	edges.Value(1).Path("$.node.visibility").IsEqual("private")
 
 	// update public
 	updateVisibilityProject(e, project1ID)
 
 	// result public
-	edges = Request(e, uID.String(), requestBody).
-		Path("$.data.projects.edges").Array()
+	edges = getProjects(e, uID, requestBody)
 	edges.Value(1).Path("$.node.visibility").IsEqual("public")
 
 	// create public
@@ -420,9 +429,8 @@ func TestFindVisibilityProjects(t *testing.T) {
 		"coreSupport": true,
 		"visibility":  "public",
 	})
-	edges = Request(e, uID.String(), requestBody).
-		Path("$.data.projects.edges").Array()
-	edges.Value(2).Path("$.node.visibility").IsEqual("public")
+	edges = getProjects(e, uID, requestBody)
+	edges.Value(2).Path("$.node.visibility").IsEqual("public") // public
 
 }
 
@@ -472,24 +480,16 @@ func TestSortByUpdatedAt(t *testing.T) {
 		},
 	}).Object()
 
-	requestBody := GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"pagination": map[string]any{
-				"first": 3, // Get first 3 itme
-			},
-			"teamId": wID.String(),
-			"sort": map[string]string{
-				"field":     "UPDATEDAT",
-				"direction": "DESC", // Sort DESC by UPDATEDAT
-			},
+	edges := getProjects(e, uID, map[string]any{
+		"pagination": map[string]any{
+			"first": 3, // Get first 3 itme
 		},
-	}
-
-	edges := Request(e, uID.String(), requestBody).
-		Path("$.data.projects.edges").Array()
-
+		"teamId": wID.String(),
+		"sort": map[string]string{
+			"field":     "UPDATEDAT",
+			"direction": "DESC", // Sort DESC by UPDATEDAT
+		},
+	})
 	edges.Length().IsEqual(3)
 	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("project2-test") // 'project2' is first
 }
@@ -677,70 +677,48 @@ func TestGetProjectPagination(t *testing.T) {
 	projects(t, ctx, r, 20, wId1, "[wId1]project", "ALIAS2", true)
 
 	// ===== First request
-	requestBody := GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"pagination": map[string]any{
-				"first": 16,
-			},
-			"teamId": wID.String(),
-			"sort": map[string]string{
-				"field":     "UPDATEDAT",
-				"direction": "DESC",
-			},
-			// "keyword": "Project",
+	edges, endCursor := getProjects2(e, uID, map[string]any{
+		"pagination": map[string]any{
+			"first": 16,
 		},
-	}
+		"teamId": wID.String(),
+		"sort": map[string]string{
+			"field":     "UPDATEDAT",
+			"direction": "DESC",
+		},
+		// "keyword": "Project",
+	},
+		21,
+		true,
+	)
 
-	projects := Request(e, uID.String(), requestBody).
-		Path("$.data.projects").Object()
-
-	projects.HasValue("totalCount", 21)
-
-	edges := projects.Value("edges").Array().Iter()
-	assert.Equal(t, len(edges), 16)
+	assert.Equal(t, len(edges), 16) // first 16
 	for _, v := range edges {
 		//Only the same teamId
 		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
 
-	pageInfo := projects.Value("pageInfo").Object()
-	pageInfo.HasValue("hasNextPage", true)
-
-	// ===== Second request
-	endCursor := pageInfo.Value("endCursor").Raw().(string)
-
-	requestBody = GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"pagination": map[string]any{
-				"after": endCursor,
-				"first": 16,
-			},
-			"teamId": wID.String(),
-			"sort": map[string]string{
-				"field":     "UPDATEDAT",
-				"direction": "DESC",
-			},
-			// "keyword": "Project",
+	// ===== Second request with endCursor
+	edges, _ = getProjects2(e, uID, map[string]any{
+		"pagination": map[string]any{
+			"after": endCursor,
+			"first": 16,
 		},
-	}
-	projects = Request(e, uID.String(), requestBody).
-		Path("$.data.projects").Object()
-
-	projects.HasValue("totalCount", 5)
-
-	edges = projects.Value("edges").Array().Iter()
-	assert.Equal(t, len(edges), 5)
+		"teamId": wID.String(),
+		"sort": map[string]string{
+			"field":     "UPDATEDAT",
+			"direction": "DESC",
+		},
+		// "keyword": "Project",
+	},
+		5,
+		false,
+	)
+	assert.Equal(t, len(edges), 5) // last 5
 	for _, v := range edges {
 		//Only the same teamId
 		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
-
-	pageInfo = projects.Value("pageInfo").Object()
-	pageInfo.HasValue("hasNextPage", false)
 
 }
 
@@ -761,71 +739,49 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 	projectsOldData(t, ctx, r, 10, wID, "BBBProjectBBBB", "ALIAS6")
 
 	// ===== First request
-	requestBody := GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"pagination": map[string]any{
-				"first": 16,
-			},
-			"teamId": wID.String(),
-			"sort": map[string]string{
-				"field":     "UPDATEDAT",
-				"direction": "DESC",
-			},
-			"keyword": "Project",
+	edges, endCursor := getProjects2(e, uID, map[string]any{
+		"pagination": map[string]any{
+			"first": 16,
 		},
-	}
+		"teamId": wID.String(),
+		"sort": map[string]string{
+			"field":     "UPDATEDAT",
+			"direction": "DESC",
+		},
+		"keyword": "Project",
+	},
+		20,
+		true,
+	)
 
-	projects := Request(e, uID.String(), requestBody).
-		Path("$.data.projects").Object()
-
-	projects.HasValue("totalCount", 20)
-
-	edges := projects.Value("edges").Array().Iter()
-	assert.Equal(t, len(edges), 16)
+	assert.Equal(t, len(edges), 16) // first 16
 	for _, v := range edges {
 		//Only the same teamId
 		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
-
-	pageInfo := projects.Value("pageInfo").Object()
-	pageInfo.HasValue("hasNextPage", true)
 
 	// ===== Second request
-	endCursor := pageInfo.Value("endCursor").Raw().(string)
-
-	requestBody = GraphQLRequest{
-		OperationName: "GetProjects",
-		Query:         GetProjectsQuery,
-		Variables: map[string]any{
-			"pagination": map[string]any{
-				"after": endCursor,
-				"first": 16,
-			},
-			"teamId": wID.String(),
-			"sort": map[string]string{
-				"field":     "UPDATEDAT",
-				"direction": "DESC",
-			},
-			"keyword": "Project",
+	edges, _ = getProjects2(e, uID, map[string]any{
+		"pagination": map[string]any{
+			"after": endCursor,
+			"first": 16,
 		},
-	}
-	projects = Request(e, uID.String(), requestBody).
-		Path("$.data.projects").Object()
+		"teamId": wID.String(),
+		"sort": map[string]string{
+			"field":     "UPDATEDAT",
+			"direction": "DESC",
+		},
+		"keyword": "Project",
+	},
+		4,
+		false,
+	)
 
-	projects.HasValue("totalCount", 4)
-
-	edges = projects.Value("edges").Array().Iter()
-	assert.Equal(t, len(edges), 4)
+	assert.Equal(t, len(edges), 146) // last 4
 	for _, v := range edges {
 		//Only the same teamId
 		v.Object().Value("node").Object().HasValue("teamId", wID.String())
 	}
-
-	pageInfo = projects.Value("pageInfo").Object()
-	pageInfo.HasValue("hasNextPage", false)
-
 }
 
 func TestProjectVisibility(t *testing.T) {
@@ -852,4 +808,40 @@ func TestProjectVisibility(t *testing.T) {
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
+}
+
+// export REEARTH_DB=mongodb://localhost
+// go test -v -run TestUpdateReadmeLicense ./e2e/...
+
+func TestUpdateReadmeLicense(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	requestBody := map[string]any{
+		"teamId": wID.String(),
+		"pagination": map[string]any{
+			"first": 1,
+		},
+		"sort": map[string]string{
+			"field":     "UPDATEDAT",
+			"direction": "DESC",
+		},
+	}
+
+	edges := getProjects(e, uID, requestBody)
+	res := edges.Value(0).Object().Value("node").Object()
+	res.Value("readme").IsEqual("")
+	res.Value("license").IsEqual("")
+
+	updateProject(e, uID, map[string]any{
+		"input": map[string]any{
+			"projectId": pID.String(),
+			"readme":    "test readme",
+			"license":   "test license",
+		},
+	}).Object()
+
+	edges = getProjects(e, uID, requestBody)
+	res = edges.Value(0).Object().Value("node").Object()
+	res.Value("readme").IsEqual("test readme")
+	res.Value("license").IsEqual("test license")
 }

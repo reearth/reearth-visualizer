@@ -131,6 +131,14 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdateDescription(*p.Description)
 	}
 
+	if p.Readme != nil {
+		prj.UpdateReadme(*p.Readme)
+	}
+
+	if p.License != nil {
+		prj.UpdateLicense(*p.License)
+	}
+
 	if p.DeleteImageURL {
 		prj.SetImageURL(nil)
 	} else if p.ImageURL != nil {

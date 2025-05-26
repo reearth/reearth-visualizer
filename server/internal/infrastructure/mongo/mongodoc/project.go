@@ -17,6 +17,8 @@ type ProjectDocument struct {
 	UpdatedAt   time.Time
 	Name        string
 	Description string
+	Readme      string
+	License     string
 	ImageURL    string
 	Team        string // DON'T CHANGE NAME'
 	Visualizer  string
@@ -62,6 +64,8 @@ func NewProject(project *project.Project) (*ProjectDocument, string) {
 		UpdatedAt:   project.UpdatedAt(),
 		Name:        project.Name(),
 		Description: project.Description(),
+		Readme:      project.Readme(),
+		License:     project.License(),
 		ImageURL:    imageURL,
 		Team:        project.Workspace().String(),
 		Visualizer:  string(project.Visualizer()),
@@ -114,6 +118,8 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		UpdatedAt(d.UpdatedAt).
 		Name(d.Name).
 		Description(d.Description).
+		Readme(d.Readme).
+		License(d.License).
 		ImageURL(imageURL).
 		Workspace(tid).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).

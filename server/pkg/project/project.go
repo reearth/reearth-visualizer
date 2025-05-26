@@ -16,6 +16,8 @@ type Project struct {
 	updatedAt   time.Time
 	name        string
 	description string
+	readme      string
+	license     string
 	imageURL    *url.URL
 	workspace   accountdomain.WorkspaceID
 	visualizer  visualizer.Visualizer
@@ -62,6 +64,14 @@ func (p *Project) Visibility() string {
 
 func (p *Project) Description() string {
 	return p.description
+}
+
+func (p *Project) Readme() string {
+	return p.readme
+}
+
+func (p *Project) License() string {
+	return p.license
 }
 
 func (p *Project) ImageURL() *url.URL {
@@ -141,6 +151,14 @@ func (p *Project) UpdateVisibility(visibility string) error {
 
 func (p *Project) UpdateDescription(description string) {
 	p.description = description
+}
+
+func (p *Project) UpdateReadme(readme string) {
+	p.readme = readme
+}
+
+func (p *Project) UpdateLicense(license string) {
+	p.license = license
 }
 
 func (p *Project) UpdateWorkspace(workspace accountdomain.WorkspaceID) {

@@ -686,6 +686,8 @@ type Project struct {
 	Scene             *Scene            `json:"scene,omitempty"`
 	Name              string            `json:"name"`
 	Description       string            `json:"description"`
+	Readme            *string           `json:"readme,omitempty"`
+	License           *string           `json:"license,omitempty"`
 	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
 	Visualizer        Visualizer        `json:"visualizer"`
 	CreatedAt         time.Time         `json:"createdAt"`
@@ -1254,6 +1256,8 @@ type UpdateProjectInput struct {
 	ProjectID         ID       `json:"projectId"`
 	Name              *string  `json:"name,omitempty"`
 	Description       *string  `json:"description,omitempty"`
+	Readme            *string  `json:"readme,omitempty"`
+	License           *string  `json:"license,omitempty"`
 	Archived          *bool    `json:"archived,omitempty"`
 	ImageURL          *url.URL `json:"imageUrl,omitempty"`
 	DeleteImageURL    *bool    `json:"deleteImageUrl,omitempty"`

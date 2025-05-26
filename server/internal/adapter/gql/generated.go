@@ -543,6 +543,7 @@ type ComplexityRoot struct {
 		IsArchived        func(childComplexity int) int
 		IsBasicAuthActive func(childComplexity int) int
 		IsDeleted         func(childComplexity int) int
+		License           func(childComplexity int) int
 		Name              func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
@@ -550,6 +551,7 @@ type ComplexityRoot struct {
 		PublicTitle       func(childComplexity int) int
 		PublishedAt       func(childComplexity int) int
 		PublishmentStatus func(childComplexity int) int
+		Readme            func(childComplexity int) int
 		Scene             func(childComplexity int) int
 		Starred           func(childComplexity int) int
 		Team              func(childComplexity int) int
@@ -3800,6 +3802,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.IsDeleted(childComplexity), true
 
+	case "Project.license":
+		if e.complexity.Project.License == nil {
+			break
+		}
+
+		return e.complexity.Project.License(childComplexity), true
+
 	case "Project.name":
 		if e.complexity.Project.Name == nil {
 			break
@@ -3848,6 +3857,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.PublishmentStatus(childComplexity), true
+
+	case "Project.readme":
+		if e.complexity.Project.Readme == nil {
+			break
+		}
+
+		return e.complexity.Project.Readme(childComplexity), true
 
 	case "Project.scene":
 		if e.complexity.Project.Scene == nil {
@@ -6786,6 +6802,8 @@ extend type Mutation {
 
   name: String!
   description: String!
+  readme: String
+  license: String
   imageUrl: URL
   visualizer: Visualizer!
   createdAt: DateTime!
@@ -6843,6 +6861,8 @@ input UpdateProjectInput {
   projectId: ID!
   name: String
   description: String
+  readme: String
+  license: String
   archived: Boolean
   imageUrl: URL
   deleteImageUrl: Boolean
@@ -26795,6 +26815,88 @@ func (ec *executionContext) fieldContext_Project_description(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_readme(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_readme(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Readme, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_readme(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_license(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_license(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.License, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_license(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_imageUrl(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_imageUrl(ctx, field)
 	if err != nil {
@@ -27902,6 +28004,10 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Project_description(ctx, field)
+			case "readme":
+				return ec.fieldContext_Project_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_Project_license(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
 			case "visualizer":
@@ -28141,6 +28247,10 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Project_description(ctx, field)
+			case "readme":
+				return ec.fieldContext_Project_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_Project_license(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
 			case "visualizer":
@@ -28241,6 +28351,10 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Project_description(ctx, field)
+			case "readme":
+				return ec.fieldContext_Project_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_Project_license(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
 			case "visualizer":
@@ -34609,6 +34723,10 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Project_description(ctx, field)
+			case "readme":
+				return ec.fieldContext_Project_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_Project_license(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
 			case "visualizer":
@@ -46584,7 +46702,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "readme", "license", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46612,6 +46730,20 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Description = data
+		case "readme":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("readme"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Readme = data
+		case "license":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("license"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.License = data
 		case "archived":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("archived"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -51857,6 +51989,10 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "readme":
+			out.Values[i] = ec._Project_readme(ctx, field, obj)
+		case "license":
+			out.Values[i] = ec._Project_license(ctx, field, obj)
 		case "imageUrl":
 			out.Values[i] = ec._Project_imageUrl(ctx, field, obj)
 		case "visualizer":

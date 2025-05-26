@@ -90,6 +90,16 @@ func (b *Builder) Description(description string) *Builder {
 	return b
 }
 
+func (b *Builder) Readme(readme string) *Builder {
+	b.p.readme = readme
+	return b
+}
+
+func (b *Builder) License(license string) *Builder {
+	b.p.license = license
+	return b
+}
+
 func (b *Builder) Alias(alias string) *Builder {
 	b.p.alias = alias
 	return b

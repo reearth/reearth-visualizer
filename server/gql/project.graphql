@@ -6,6 +6,8 @@ type Project implements Node {
 
   name: String!
   description: String!
+  readme: String
+  license: String
   imageUrl: URL
   visualizer: Visualizer!
   createdAt: DateTime!
@@ -63,6 +65,8 @@ input UpdateProjectInput {
   projectId: ID!
   name: String
   description: String
+  readme: String
+  license: String
   archived: Boolean
   imageUrl: URL
   deleteImageUrl: Boolean

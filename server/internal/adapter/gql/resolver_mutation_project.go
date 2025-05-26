@@ -63,6 +63,8 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		ID:             pid,
 		Name:           input.Name,
 		Description:    input.Description,
+		Readme:         input.Readme,
+		License:        input.License,
 		ImageURL:       input.ImageURL,
 		Archived:       input.Archived,
 		DeleteImageURL: deleteImageURL,

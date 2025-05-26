@@ -31,6 +31,8 @@ type UpdateProjectParam struct {
 	ID             id.ProjectID
 	Name           *string
 	Description    *string
+	Readme         *string
+	License        *string
 	Archived       *bool
 	ImageURL       *url.URL
 	DeleteImageURL bool
