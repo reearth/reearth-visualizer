@@ -34,12 +34,15 @@ export default () => {
       "show-label": t("Show Label"),
       "take-screenshot": t("Take Screenshot"),
       "mouse-events": t("Mouse Events"),
-      "add-geojson": t("Add Geojson"),
+      "add-geojson": t("Add GeoJSON"),
+      "add-large-geojson": t("Add Large Geojson"),
       "add-csv": t("Add CSV"),
       "add-kml": t("Add KML"),
       "add-wms": t("Add WMS"),
       "add-czml": t("Add CZML"),
       "add-3d-tiles": t("Add 3D Tiles"),
+      "add-photogrammetric-3D-model": t("Add Photogrammetric 3D model"),
+      "add-point-cloud": t("Add Point Cloud"),
       "add-google-photorealistic-3d-tiles": t(
         "Add Google Photorealistic 3D Tiles"
       ),
