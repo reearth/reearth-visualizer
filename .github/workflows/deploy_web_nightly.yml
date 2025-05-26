@@ -65,6 +65,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: reearth-visualizer-web
+          skip_default_labels: true
           image: ${{ env.DEPLOY_IMAGE }}
           region: ${{ secrets.GC_REGION }}
           tag: pr-${{ github.event.pull_request.number }}
