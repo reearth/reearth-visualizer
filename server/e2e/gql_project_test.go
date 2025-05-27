@@ -777,7 +777,7 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 		false,
 	)
 
-	assert.Equal(t, len(edges), 146) // last 4
+	assert.Equal(t, len(edges), 4) // last 4
 	for _, v := range edges {
 		//Only the same teamId
 		v.Object().Value("node").Object().HasValue("teamId", wID.String())
@@ -809,9 +809,6 @@ func TestProjectVisibility(t *testing.T) {
 		"coreSupport": true,
 	})
 }
-
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestUpdateReadmeLicense ./e2e/...
 
 func TestUpdateReadmeLicense(t *testing.T) {
 	e := Server(t, baseSeeder)
