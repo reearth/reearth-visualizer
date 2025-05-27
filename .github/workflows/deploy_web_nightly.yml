@@ -56,6 +56,7 @@ jobs:
         uses: google-github-actions/deploy-cloudrun@v2
         with:
           service: reearth-visualizer-web
+          skip_default_labels: true
           image: ${{ secrets.WEB_IMAGE_GC }}
           region: ${{ secrets.GC_REGION }}
           revision_traffic: 'LATEST=100'
