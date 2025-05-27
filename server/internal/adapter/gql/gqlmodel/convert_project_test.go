@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/aws/smithy-go/ptr"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -73,31 +74,35 @@ func TestToProject(t *testing.T) {
 				CoreSupport(false).
 				MustBuild(),
 			want: &Project{
-				ID:                IDFrom(pId),
-				IsArchived:        false,
-				IsBasicAuthActive: false,
-				BasicAuthUsername: "",
-				BasicAuthPassword: "",
-				CreatedAt:         pId.Timestamp(),
-				UpdatedAt:         now,
-				PublishedAt:       nil,
-				Name:              "aaa",
-				Description:       "bbb",
+				ID:          IDFrom(pId),
+				Team:        nil,
+				Scene:       nil,
+				Name:        "aaa",
+				Description: "bbb",
+				Readme:      ptr.String(""),
+				License:     ptr.String(""),
+				ImageURL:    lo.Must(url.Parse("https://example.com/hoge.gif")),
+				TeamID:      IDFrom(wsId),
+				Visualizer:  Visualizer(visualizer.VisualizerCesium),
+				CreatedAt:   pId.Timestamp(),
+				UpdatedAt:   now,
+				IsArchived:  false,
+				CoreSupport: false,
+				Starred:     false,
+
+				// Publishment
 				Alias:             "aliasalias",
+				PublishmentStatus: PublishmentStatusPrivate,
+				PublishedAt:       nil,
 				PublicTitle:       "",
 				PublicDescription: "",
 				PublicImage:       "",
 				PublicNoIndex:     false,
-				ImageURL:          lo.Must(url.Parse("https://example.com/hoge.gif")),
-				TeamID:            IDFrom(wsId),
-				Visualizer:        Visualizer(visualizer.VisualizerCesium),
-				PublishmentStatus: PublishmentStatusPrivate,
-				Team:              nil,
-				Scene:             nil,
-				CoreSupport:       false,
+				IsBasicAuthActive: false,
+				BasicAuthUsername: "",
+				BasicAuthPassword: "",
 				EnableGa:          false,
 				TrackingID:        "",
-				Starred:           false,
 			},
 		},
 	}
