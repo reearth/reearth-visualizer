@@ -1,0 +1,46 @@
+name: Remove PR Cloud Run Revision Tags
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        description: 'Service name to remove revision tags.'
+        type: string
+        required: true
+      tag:
+        description: 'Revision tag to remove.'
+        type: string
+        required: true
+  workflow_call:
+    inputs:
+      service:
+        description: 'Service name to remove revision tags.'
+        type: string
+        required: true
+      tag:
+        description: 'Revision tag to remove.'
+        type: string
+        required: true
+
+jobs:
+  remove-revision-tags:
+    runs-on: ubuntu-latest
+    if: github.event.repository.full_name == 'reearth/reearth-visualizer'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        service_account: ${{ secrets.GC_SA_EMAIL }}
+        workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+
+    - name: Remove revision tags
+      run: |
+        gcloud run services update-traffic ${{ inputs.service }} \
+          --region ${{ secrets.GC_REGION }} \
+          --remove-tags=${{ inputs.tag }}
