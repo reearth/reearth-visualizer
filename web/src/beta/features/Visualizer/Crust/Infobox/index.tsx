@@ -243,7 +243,7 @@ const CloseButton: FC<{
   onClick?: () => void;
 }> = ({ onClick }) => {
   return (
-    <div className="tw-px-3 tw-pt-3 tw-flex tw-justify-end tw-text-black">
+    <div className="tw-p-2 tw-flex tw-justify-end tw-text-black tw-border-b tw-border-gray-200">
       <div
         className="tw-cursor-pointer tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center"
         onClick={onClick}
