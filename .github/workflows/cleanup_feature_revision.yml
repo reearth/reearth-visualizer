@@ -43,4 +43,4 @@ jobs:
       run: |
         gcloud run services update-traffic ${{ inputs.service }} \
           --region ${{ secrets.GC_REGION }} \
-          --remove-tags=${{ inputs.tag }}
+          --remove-tags=${{ inputs.tag }} || echo "Warning: Failed to remove tag ${{ inputs.tag }} - it may not exist"
