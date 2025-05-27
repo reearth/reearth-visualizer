@@ -140,7 +140,7 @@ jobs:
       url: ${{ needs.deploy-web-pr.outputs.preview_url }}
     secrets: inherit
 
-  cleanup-web-pr-revision:
+  cleanup-pr-revision-web:
     if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.action == 'closed' }}
     uses: ./.github/workflows/cleanup_feature_revision.yml
     with:
