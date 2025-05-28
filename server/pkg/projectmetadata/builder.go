@@ -1,4 +1,4 @@
-package readme
+package projectmetadata
 
 import (
 	"time"
@@ -7,14 +7,14 @@ import (
 )
 
 type Builder struct {
-	r *Readme
+	r *ProjectMetadata
 }
 
 func New() *Builder {
-	return &Builder{r: &Readme{}}
+	return &Builder{r: &ProjectMetadata{}}
 }
 
-func (b *Builder) Build() (*Readme, error) {
+func (b *Builder) Build() (*ProjectMetadata, error) {
 	if b.r.id.IsNil() {
 		return nil, id.ErrInvalidID
 	}
@@ -27,7 +27,7 @@ func (b *Builder) Build() (*Readme, error) {
 	return b.r, nil
 }
 
-func (b *Builder) MustBuild() *Readme {
+func (b *Builder) MustBuild() *ProjectMetadata {
 	r, err := b.Build()
 	if err != nil {
 		panic(err)
@@ -35,13 +35,13 @@ func (b *Builder) MustBuild() *Readme {
 	return r
 }
 
-func (b *Builder) ID(id id.ReadmeID) *Builder {
+func (b *Builder) ID(id id.ProjectMetadataID) *Builder {
 	b.r.id = id
 	return b
 }
 
 func (b *Builder) NewID() *Builder {
-	b.r.id = id.NewReadmeID()
+	b.r.id = id.NewProjectMetadataID()
 	return b
 }
 

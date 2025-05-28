@@ -3,7 +3,7 @@ package id
 import "github.com/reearth/reearthx/idx"
 
 type Asset struct{}
-type Readme struct{}
+type ProjectMetadata struct{}
 type AuthRequest struct{}
 type InfoboxField struct{}
 type NLSLayer struct{}
@@ -24,7 +24,7 @@ type InfoboxBlock struct{}
 type Feature struct{}
 
 func (Asset) Type() string               { return "asset" }
-func (Readme) Type() string              { return "readme" }
+func (ProjectMetadata) Type() string     { return "projectmetadata" }
 func (AuthRequest) Type() string         { return "authRequest" }
 func (InfoboxField) Type() string        { return "infoboxField" }
 func (NLSLayer) Type() string            { return "nlsLayer" }
@@ -45,7 +45,7 @@ func (InfoboxBlock) Type() string        { return "infoboxBlock" }
 func (Feature) Type() string             { return "feature" }
 
 type AssetID = idx.ID[Asset]
-type ReadmeID = idx.ID[Readme]
+type ProjectMetadataID = idx.ID[ProjectMetadata]
 type AuthRequestID = idx.ID[AuthRequest]
 type InfoboxFieldID = idx.ID[InfoboxField]
 type NLSLayerID = idx.ID[NLSLayer]
@@ -66,7 +66,7 @@ type PropertySchemaGroupID = idx.StringID[PropertySchemaGroup]
 type PropertyFieldID = idx.StringID[PropertyField]
 
 var NewAssetID = idx.New[Asset]
-var NewReadmeID = idx.New[Readme]
+var NewProjectMetadataID = idx.New[ProjectMetadata]
 var NewAuthRequestID = idx.New[AuthRequest]
 var NewInfoboxFieldID = idx.New[InfoboxField]
 var NewNLSLayerID = idx.New[NLSLayer]
@@ -82,7 +82,7 @@ var NewInfoboxBlockID = idx.New[InfoboxBlock]
 var NewFeatureID = idx.New[Feature]
 
 var MustAssetID = idx.Must[Asset]
-var MustReadmeID = idx.Must[Readme]
+var MustProjectMetadataID = idx.Must[ProjectMetadata]
 var MustAuthRequestID = idx.Must[AuthRequest]
 var MustInfoboxFieldID = idx.Must[InfoboxField]
 var MustNLSLayerID = idx.Must[NLSLayer]
@@ -99,7 +99,7 @@ var MustInfoboxBlockID = idx.Must[InfoboxBlock]
 var MustFeatureID = idx.Must[Feature]
 
 var AssetIDFrom = idx.From[Asset]
-var ReadmeIDFrom = idx.From[Readme]
+var ProjectMetadataIDFrom = idx.From[ProjectMetadata]
 var AuthRequestIDFrom = idx.From[AuthRequest]
 var InfoboxFieldIDFrom = idx.From[InfoboxField]
 var NLSLayerIDFrom = idx.From[NLSLayer]
@@ -116,7 +116,7 @@ var InfoboxBlockIDFrom = idx.From[InfoboxBlock]
 var FeatureIDFrom = idx.From[Feature]
 
 var AssetIDFromRef = idx.FromRef[Asset]
-var ReadmeIDFromRef = idx.FromRef[Readme]
+var ProjectMetadataIDFromRef = idx.FromRef[ProjectMetadata]
 var AuthRequestIDFromRef = idx.FromRef[AuthRequest]
 var InfoboxFieldIDFromRef = idx.FromRef[InfoboxField]
 var NLSLayerIDFromRef = idx.FromRef[NLSLayer]
@@ -137,7 +137,7 @@ var PropertyFieldIDFromRef = idx.StringIDFromRef[PropertyField]
 var PropertySchemaGroupIDFromRef = idx.StringIDFromRef[PropertySchemaGroup]
 
 type AssetIDList = idx.List[Asset]
-type ReadmeIDList = idx.List[Readme]
+type ProjectMetadataIDList = idx.List[ProjectMetadata]
 type AuthRequestIDList = idx.List[AuthRequest]
 type InfoboxFieldIDList = idx.List[InfoboxField]
 type NLSLayerIDList = idx.List[NLSLayer]
@@ -154,7 +154,7 @@ type InfoboxBlockIDList = idx.List[InfoboxBlock]
 type FeatureIDList = idx.List[Feature]
 
 var AssetIDListFrom = idx.ListFrom[Asset]
-var ReadmeIDListFrom = idx.ListFrom[Readme]
+var ProjectMetadataIDListFrom = idx.ListFrom[ProjectMetadata]
 var AuthRequestIDListFrom = idx.ListFrom[AuthRequest]
 var InfoboxFieldIDListFrom = idx.ListFrom[InfoboxField]
 var NLSLayerIDListFrom = idx.ListFrom[NLSLayer]
@@ -171,7 +171,7 @@ var InfoboxBlockIDListFrom = idx.ListFrom[InfoboxBlock]
 var FeatureIDListFrom = idx.ListFrom[Feature]
 
 type AssetIDSet = idx.Set[Asset]
-type ReadmeIDSet = idx.Set[Readme]
+type ProjectMetadataIDSet = idx.Set[ProjectMetadata]
 type AuthRequestIDSet = idx.Set[AuthRequest]
 type InfoboxFieldIDSet = idx.Set[InfoboxField]
 type NLSLayerIDSet = idx.Set[NLSLayer]
@@ -188,7 +188,7 @@ type InfoboxBlockIDSet = idx.Set[InfoboxBlock]
 type FeatureIDSet = idx.Set[Feature]
 
 var NewAssetIDSet = idx.NewSet[Asset]
-var NewReadmeIDSet = idx.NewSet[Readme]
+var NewProjectMetadataIDSet = idx.NewSet[ProjectMetadata]
 var NewAuthRequestIDSet = idx.NewSet[AuthRequest]
 var NewInfoboxFieldIDSet = idx.NewSet[InfoboxField]
 var NewNLSLayerIDSet = idx.NewSet[NLSLayer]

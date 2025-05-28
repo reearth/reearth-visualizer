@@ -1,4 +1,4 @@
-package readme
+package projectmetadata
 
 import (
 	"errors"
@@ -13,8 +13,8 @@ var (
 	ErrEmptySize        = errors.New("file size cannot be zero")
 )
 
-type Readme struct {
-	id        id.ReadmeID
+type ProjectMetadata struct {
+	id        id.ProjectMetadataID
 	project   id.ProjectID
 	readme    string
 	license   string
@@ -22,44 +22,44 @@ type Readme struct {
 	updatedAt time.Time
 }
 
-func (r *Readme) ID() id.ReadmeID {
+func (r *ProjectMetadata) ID() id.ProjectMetadataID {
 	return r.id
 }
 
-func (r *Readme) Project() id.ProjectID {
+func (r *ProjectMetadata) Project() id.ProjectID {
 	return r.project
 }
 
-func (r *Readme) Readme() string {
+func (r *ProjectMetadata) Readme() string {
 	return r.readme
 }
 
-func (a *Readme) License() string {
+func (a *ProjectMetadata) License() string {
 	return a.license
 }
 
-func (r *Readme) CreatedAt() time.Time {
+func (r *ProjectMetadata) CreatedAt() time.Time {
 	if r == nil {
 		return time.Time{}
 	}
 	return r.createdAt
 }
 
-func (r *Readme) UpdatedAt() time.Time {
+func (r *ProjectMetadata) UpdatedAt() time.Time {
 	if r == nil {
 		return time.Time{}
 	}
 	return r.updatedAt
 }
 
-func (r *Readme) SetCreatedAt(createdAt time.Time) {
+func (r *ProjectMetadata) SetCreatedAt(createdAt time.Time) {
 	if r == nil {
 		return
 	}
 	r.createdAt = createdAt
 }
 
-func (r *Readme) SetUpdatedAt(updatedAt time.Time) {
+func (r *ProjectMetadata) SetUpdatedAt(updatedAt time.Time) {
 	if r == nil {
 		return
 	}

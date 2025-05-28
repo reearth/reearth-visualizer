@@ -4,11 +4,11 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/readme"
+	"github.com/reearth/reearth/server/pkg/projectmetadata"
 	"golang.org/x/exp/slices"
 )
 
-type ReadmeDocument struct {
+type ProjectMetadataDocument struct {
 	ID        string
 	Project   string
 	Readme    string
@@ -17,17 +17,17 @@ type ReadmeDocument struct {
 	UpdatedAt time.Time
 }
 
-type ReadmeConsumer = Consumer[*ReadmeDocument, *readme.Readme]
+type ProjectMetadataConsumer = Consumer[*ProjectMetadataDocument, *projectmetadata.ProjectMetadata]
 
-func NewReadmeConsumer(projects []id.ProjectID) *ReadmeConsumer {
-	return NewConsumer[*ReadmeDocument, *readme.Readme](func(s *readme.Readme) bool {
+func NewProjectMetadataConsumer(projects []id.ProjectID) *ProjectMetadataConsumer {
+	return NewConsumer[*ProjectMetadataDocument, *projectmetadata.ProjectMetadata](func(s *projectmetadata.ProjectMetadata) bool {
 		return projects == nil || slices.Contains(projects, s.Project())
 	})
 }
 
-func NewReadme(r *readme.Readme) (*ReadmeDocument, string) {
+func NewProjectMetadata(r *projectmetadata.ProjectMetadata) (*ProjectMetadataDocument, string) {
 	rid := r.ID().String()
-	return &ReadmeDocument{
+	return &ProjectMetadataDocument{
 		ID:        rid,
 		Project:   r.Project().String(),
 		Readme:    r.Readme(),
@@ -37,8 +37,8 @@ func NewReadme(r *readme.Readme) (*ReadmeDocument, string) {
 	}, rid
 }
 
-func (d *ReadmeDocument) Model() (*readme.Readme, error) {
-	rid, err := id.ReadmeIDFrom(d.ID)
+func (d *ProjectMetadataDocument) Model() (*projectmetadata.ProjectMetadata, error) {
+	rid, err := id.ProjectMetadataIDFrom(d.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (d *ReadmeDocument) Model() (*readme.Readme, error) {
 	// 	pid = &pidValue
 	// }
 
-	return readme.New().
+	return projectmetadata.New().
 		ID(rid).
 
 		// CreatedAt(d.CreatedAt).
