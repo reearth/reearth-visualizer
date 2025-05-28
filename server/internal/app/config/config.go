@@ -73,7 +73,15 @@ type Config struct {
 
 	MockAuth bool `pp:",omitempty"`
 
+	// Health Check Configuration
+	HealthCheck HealthCheckConfig `pp:",omitempty"`
+
 	Visualizer VisualizerConfig `pp:",omitempty"`
+}
+
+type HealthCheckConfig struct {
+	Username string `pp:",omitempty"`
+	Password string `pp:",omitempty"`
 }
 
 type VisualizerConfig struct {

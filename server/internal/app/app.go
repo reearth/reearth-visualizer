@@ -134,6 +134,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api := e.Group("/api")
 	api.GET("/ping", Ping(), privateCache)
 	api.GET("/published/:name", PublishedMetadata())
+	api.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
 	api.GET("/published_data/:name", PublishedData("", true))
 
 	apiPrivate := api.Group("", privateCache)
