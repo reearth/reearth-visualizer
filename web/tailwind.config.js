@@ -6,8 +6,7 @@ export default {
   prefix: "tw-",
   content: [
     "./src/beta/lib/reearth-widget-ui/**/*.{ts,tsx}",
-    "./src/beta/features/Visualizer/Crust/Widgets/Widget/builtin/**/*.{ts,tsx}",
-    "./src/beta/features/Visualizer/Crust/PhotoOverlay/**/*.{ts,tsx}"
+    "./src/beta/features/Visualizer/Crust/**/*.{ts,tsx}"
   ],
   theme: {
     extend: {
