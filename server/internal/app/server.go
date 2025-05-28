@@ -101,7 +101,7 @@ func (w *WebServer) Run(ctx context.Context) {
 			err := w.appServer.StartH2CServer(w.address, &http2.Server{})
 			log.Fatalc(ctx, err.Error())
 		}()
-		log.Infof("server: started%s at http://%s", debugLog, w.address)
+		log.Infof("server: started%s echo server at http://%s", debugLog, w.address)
 	}
 
 	quit := make(chan os.Signal, 1)

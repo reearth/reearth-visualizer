@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/url"
 	"path"
 	"strings"
@@ -15,6 +16,8 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/internal/adapter/internalapi"
+	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -140,6 +143,25 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	if p.Name != nil {
 		prj.UpdateName(*p.Name)
+
+		// ------- InvokeApi Test
+		err := internalapi.InvokeApi(
+			ctx,
+			operator.AcOperator.User.String(),
+			"reearth-visualizer-internal-ajr67subya-an.a.run.app",
+			func(client pb.ReEarthVisualizerClient, ctx context.Context) error {
+				res, err := client.GetProject(ctx, &pb.GetProjectRequest{
+					ProjectId: prj.ID().String(),
+				})
+				if err != nil {
+					log.Printf("!!! gRPC GetProject Error : %v", err)
+					return err
+				}
+				log.Printf("OK!! gRPC GetProject : %v", res)
+				return err
+			},
+		)
+		log.Printf("!!! internalapi.InvokeApi Error : %v", err)
 
 	}
 
