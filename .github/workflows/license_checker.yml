@@ -44,7 +44,7 @@ jobs:
           check-latest: true
           cache-dependency-path: |
             server/go.sum
-      - uses: reearth/actions/license-checker/go@ec26fbcf84f0e954a6ba3511859b18e3d2272c18
+      - uses: reearth/actions/license-checker/go@068adca3188a504b557a5bd66d2a97a35677d82c
         with:
           subdirectory: server
 
@@ -67,6 +67,6 @@ jobs:
           corepack prepare yarn@4.6.0 --activate
       - name: Install
         run: yarn install
-      - uses: reearth/actions/license-checker/npm@e445d10332411e14f53e6abc73c966ecb49d3e57
+      - uses: reearth/actions/license-checker/npm@068adca3188a504b557a5bd66d2a97a35677d82c
         with:
           subdirectory: web
