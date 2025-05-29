@@ -1,6 +1,9 @@
 import { useMemo, useEffect, useCallback } from "react";
 
-import { ClusterProperty, Layer } from "@reearth/classic/components/molecules/Visualizer";
+import {
+  ClusterProperty,
+  Layer,
+} from "@reearth/classic/components/molecules/Visualizer";
 import {
   Location,
   Alignment,
@@ -21,7 +24,12 @@ import {
   WidgetAreaAlign,
   ValueType,
 } from "@reearth/classic/gql";
-import { valueTypeToGQL, ValueTypes, valueToGQL, LatLngHeight } from "@reearth/classic/util/value";
+import {
+  valueTypeToGQL,
+  ValueTypes,
+  valueToGQL,
+  LatLngHeight,
+} from "@reearth/classic/util/value";
 import { config } from "@reearth/services/config";
 import { useLang } from "@reearth/services/i18n";
 import {
@@ -77,7 +85,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [lang, moveInfoboxField, selected],
+    [lang, moveInfoboxField, selected]
   );
 
   const onBlockRemove = useCallback(
@@ -91,7 +99,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [lang, removeInfoboxField, selected],
+    [lang, removeInfoboxField, selected]
   );
 
   const { data: layerData } = useGetLayersQuery({
@@ -105,19 +113,25 @@ export default (isBuilt?: boolean) => {
   });
 
   const rootLayerId =
-    layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
-  const scene = sceneData?.node?.__typename === "Scene" ? sceneData.node : undefined;
+    layerData?.node?.__typename === "Scene"
+      ? layerData.node.rootLayer?.id
+      : undefined;
+  const scene =
+    sceneData?.node?.__typename === "Scene" ? sceneData.node : undefined;
 
   // convert data
-  const selectedLayerId = selected?.type === "layer" ? selected.layerId : undefined;
+  const selectedLayerId =
+    selected?.type === "layer" ? selected.layerId : undefined;
 
   // datasets
   const datasetSchemaIds = useMemo(
     () =>
-      layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
+      layerData?.node &&
+      layerData.node.__typename === "Scene" &&
+      layerData.node.rootLayer
         ? extractDatasetSchemas(layerData.node.rootLayer as RawLayer)
         : undefined,
-    [layerData],
+    [layerData]
   );
 
   const { datasets, loaded: datasetLoaded } = useDatasets(datasetSchemaIds);
@@ -128,35 +142,45 @@ export default (isBuilt?: boolean) => {
       layerData?.node &&
       layerData.node.__typename === "Scene" &&
       layerData.node.rootLayer
-        ? processLayer(layerData?.node.rootLayer as RawLayer, undefined, datasets)
+        ? processLayer(
+            layerData?.node.rootLayer as RawLayer,
+            undefined,
+            datasets
+          )
         : undefined,
-    [layerData, datasets, datasetLoaded],
+    [layerData, datasets, datasetLoaded]
   );
 
   const widgets = useMemo(() => convertWidgets(sceneData), [sceneData]);
-  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
-  const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
+  const sceneProperty = useMemo(
+    () => processProperty(scene?.property),
+    [scene?.property]
+  );
+  const tags = useMemo(
+    () => processSceneTags(scene?.tags ?? []),
+    [scene?.tags]
+  );
 
   const clusterProperty = useMemo<ClusterProperty[]>(
     () =>
       scene?.clusters
         .map((a): any => ({ ...processProperty(a.property), id: a.id }))
         .filter((c): c is ClusterProperty => !!c) ?? [],
-    [scene?.clusters],
+    [scene?.clusters]
   );
 
   const pluginProperty = useMemo(
     () =>
       scene?.plugins.reduce<{ [key: string]: any }>(
         (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
-        {},
+        {}
       ),
-    [scene?.plugins],
+    [scene?.plugins]
   );
 
   const selectLayer = useCallback(
     (id?: string) => select(id ? { layerId: id, type: "layer" } : undefined),
-    [select],
+    [select]
   );
 
   const onBlockChange = useCallback(
@@ -166,10 +190,11 @@ export default (isBuilt?: boolean) => {
       fid: string,
       v: ValueTypes[T],
       vt: T,
-      selectedLayer?: Layer,
+      selectedLayer?: Layer
     ) => {
-      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
-        ?.propertyId as string | undefined;
+      const propertyId = (
+        selectedLayer?.infobox?.blocks?.find((b) => b.id === blockId) as any
+      )?.propertyId as string | undefined;
       if (!propertyId) return;
 
       const gvt = valueTypeToGQL(vt);
@@ -186,16 +211,17 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [updatePropertyValue, lang],
+    [updatePropertyValue, lang]
   );
 
   const onFovChange = useCallback(
     (fov: number) => camera && onCameraChange({ ...camera, fov }),
-    [camera, onCameraChange],
+    [camera, onCameraChange]
   );
 
   useEffect(() => {
-    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
+    sceneProperty?.default?.sceneMode &&
+      setSceneMode(sceneProperty?.default?.sceneMode);
   }, [sceneProperty, setSceneMode]);
 
   // block selector
@@ -246,11 +272,11 @@ export default (isBuilt?: boolean) => {
           },
         },
       });
-      const itemId = undefined
+      const itemId = undefined;
       const heightfieldId = "height";
-      const vt = "number"
+      const vt = "number";
       const gvt: any = valueTypeToGQL(vt);
-      
+
       if (position?.height && position.height > 0) {
         updatePropertyValue({
           variables: {
@@ -265,12 +291,15 @@ export default (isBuilt?: boolean) => {
         });
       }
     },
-    [updatePropertyValue],
+    [updatePropertyValue]
   );
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
   const onWidgetUpdate = useCallback(
-    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+    async (
+      id: string,
+      update: { location?: Location; extended?: boolean; index?: number }
+    ) => {
       if (!sceneId) return;
 
       await updateWidgetMutation({
@@ -281,7 +310,8 @@ export default (isBuilt?: boolean) => {
           location: update.location
             ? {
                 zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                section:
+                  update.location.section?.toUpperCase() as WidgetSectionType,
                 area: update.location.area?.toUpperCase() as WidgetAreaType,
               }
             : undefined,
@@ -291,10 +321,11 @@ export default (isBuilt?: boolean) => {
         refetchQueries: ["GetEarthWidgets"],
       });
     },
-    [sceneId, updateWidgetMutation],
+    [sceneId, updateWidgetMutation]
   );
 
-  const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation();
+  const [updateWidgetAlignSystemMutation] =
+    useUpdateWidgetAlignSystemMutation();
   const onWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
       if (!sceneId) return;
@@ -311,14 +342,14 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [sceneId, updateWidgetAlignSystemMutation],
+    [sceneId, updateWidgetAlignSystemMutation]
   );
 
   const engineMeta = useMemo(
     () => ({
       cesiumIonAccessToken: config()?.cesiumIonAccessToken,
     }),
-    [],
+    []
   );
 
   return {

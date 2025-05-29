@@ -7,14 +7,13 @@ import type { Layer as LayerPlugin } from "../../Plugin";
 import { useContext } from "../../Plugin";
 import type { CommonReearth } from "../../Plugin/api";
 
-import {
-  Layer,
-} from "@reearth/classic/components/molecules/EarthEditor/OutlinePane";
+import { Layer } from "@reearth/classic/components/molecules/EarthEditor/OutlinePane";
 import {
   useGetLayersFromLayerIdQuery,
   useUpdateLayerMutation,
   Maybe,
   GetLayersFromLayerIdQuery,
+  useGetLayersQuery,
 } from "@reearth/classic/gql";
 import { useLang, useT } from "@reearth/services/i18n";
 import {
@@ -26,9 +25,10 @@ import {
   useSelectedWidgetArea,
   useRootLayer,
   usePublishedPage,
+  useSceneId,
 } from "@reearth/services/state";
 
-type __typename = {__typename?: "LayerGroup" | "LayerItem" | undefined};
+type __typename = { __typename?: "LayerGroup" | "LayerItem" | undefined };
 
 const defaultRange = 50000;
 const defaultDuration = 3;
@@ -62,6 +62,8 @@ export default ({
   autoOrbit?: boolean;
 }) => {
   const t = useT();
+  const lang = useLang();
+  const [sceneId] = useSceneId();
   const [publishedPage] = usePublishedPage();
   const [rootLayer, setRootLayer] = useRootLayer();
   const [selected, select] = useSelected();
@@ -72,7 +74,7 @@ export default ({
   const [, selectWidgetArea] = useSelectedWidgetArea();
 
   const [selectedLayerToMoveCamera, selectLayerToMoveCamera] = useState<{
-    layer?:LayerPlugin;
+    layer?: LayerPlugin;
     duration: number;
     camera: CameraValue;
     range: number;
@@ -87,66 +89,98 @@ export default ({
     select: selectLayerFromContext,
   } = reearth?.layers ?? {};
 
+  const { data: layerData, loading } = !publishedPage
+    ? useGetLayersQuery({
+        variables: { sceneId: sceneId ?? "", lang: lang },
+        skip: !sceneId,
+      })
+    : { data: undefined, loading: false };
+
   const timeout = useRef<number>();
 
   const handleAutoOrbit = useCallback(
-    (...args: Parameters<CommonReearth["visualizer"]["camera"]["autoOrbit"]>) => {
+    (
+      ...args: Parameters<CommonReearth["visualizer"]["camera"]["autoOrbit"]>
+    ) => {
       // Prioritize camera flight by the photo overlay
       timeout.current = window.setTimeout(() => {
         stopOrbiting = reearth?.visualizer.camera.autoOrbit(...args);
       }, 100);
     },
-    [reearth?.visualizer.camera],
+    [reearth?.visualizer.camera]
   );
 
   const handleCancelOrbit = useCallback(() => {
-    if(stopOrbiting?.stopOrbit) {
+    if (stopOrbiting?.stopOrbit) {
       stopOrbiting?.stopOrbit();
     }
-  },[stopOrbiting]);
+  }, [stopOrbiting]);
 
   useEffect(
     () => () => {
       window.clearTimeout(timeout.current);
       handleCancelOrbit();
     },
-    [],
+    []
   );
-  const { data, loading } = !publishedPage
-    ? useGetLayersFromLayerIdQuery({
-        variables: { layerId: rootLayerId ?? "" },
-        skip: !rootLayerId,
-      })
-    : useMemo(() =>({
-        data: { layer: rootLayer?.children },
-        loading: false,
-      }), [rootLayer?.children]);
+  const { data } = !publishedPage
+    ? {
+        data: {
+          layer:
+            layerData?.node && "rootLayer" in layerData.node
+              ? (layerData.node as { rootLayer?: { layers?: any[] } }).rootLayer
+              : undefined,
+        },
+      }
+    : useMemo(
+        () => ({
+          data: { layer: rootLayer?.children },
+          loading: false,
+        }),
+        [rootLayer?.children]
+      );
   const layers = useMemo(() => {
     const normLayer = publishedPage
       ? normalisedLayer((data?.layer as LayerPlugin[]) || [])
-      : (data?.layer as { __typename?: "LayerGroup" | undefined; layers?: LayerPlugin[] })?.layers;
+      : (
+          data?.layer as {
+            __typename?: "LayerGroup" | undefined;
+            layers?: LayerPlugin[];
+          }
+        )?.layers;
     return (
       normLayer
         ?.map((l: LayerPlugin) => convertLayer(l as GQLLayer))
         .filter((l: Layer | undefined): l is Layer => !!l)
         .reverse() ?? []
     );
-  }, [rootLayer?.children, JSON.stringify(rootLayer?.children), data?.layer, publishedPage]);
+  }, [
+    rootLayer?.children,
+    JSON.stringify(rootLayer?.children),
+    data?.layer,
+    publishedPage,
+  ]);
 
   let updateLayerVisibility = useCallback(
     (layerId: string, visible: boolean) => {
-      if(visible){
+      if (visible) {
         reearth?.layers.show(layerId);
-      }else{
+      } else {
         reearth?.layers.hide(layerId);
       }
-      changeVisibility(rootLayer?.children, 'id', layerId, 'isVisible', visible);
+      changeVisibility(
+        rootLayer?.children,
+        "id",
+        layerId,
+        "isVisible",
+        visible
+      );
       setRootLayer(rootLayer);
     },
-    [reearth?.layers, data?.layer, publishedPage],
+    [reearth?.layers, data?.layer, publishedPage]
   );
-  
-  if(!publishedPage){
+
+  if (!publishedPage) {
     const [updateLayerMutation] = useUpdateLayerMutation();
     updateLayerVisibility = useCallback(
       (layerId: string, visible: boolean) => {
@@ -157,7 +191,7 @@ export default ({
           },
         });
       },
-      [updateLayerMutation],
+      [updateLayerMutation]
     );
   }
 
@@ -173,7 +207,7 @@ export default ({
       });
       selectLayerFromContext?.(id, { reason: "storytelling" });
     },
-    [autoOrbit, camera, duration, findLayerById, range, selectLayerFromContext],
+    [autoOrbit, camera, duration, findLayerById, range, selectLayerFromContext]
   );
 
   const selectLayer = useCallback(
@@ -182,7 +216,7 @@ export default ({
       selectBlock(undefined);
       selectAt(id);
     },
-    [select, selectBlock, selectAt, stopOrbiting],
+    [select, selectBlock, selectAt, stopOrbiting]
   );
 
   useEffect(() => {
@@ -199,7 +233,7 @@ export default ({
             noCameraFlight: true,
             autoOrbit,
           }
-        : undefined,
+        : undefined
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLayerFromContext, selected, stopOrbiting]); // ignore camera, duration, range, stories
@@ -222,19 +256,21 @@ export default ({
       height: (p?.height as number | undefined) ?? 0,
     };
 
-    if (typeof position.lat !== "number" && typeof position.lng !== "number") return;
+    if (typeof position.lat !== "number" && typeof position.lng !== "number")
+      return;
 
-    handleAutoOrbit({
-      ...position,
-      heading: selectedLayerToMoveCamera.camera.heading,
-      pitch: selectedLayerToMoveCamera.camera.pitch,
-      range: selectedLayerToMoveCamera.range,
-    },
-    {
-      duration: selectedLayerToMoveCamera.duration,
-      autoOrbit: selectedLayerToMoveCamera.autoOrbit,
-    });
-
+    handleAutoOrbit(
+      {
+        ...position,
+        heading: selectedLayerToMoveCamera.camera.heading,
+        pitch: selectedLayerToMoveCamera.camera.pitch,
+        range: selectedLayerToMoveCamera.range,
+      },
+      {
+        duration: selectedLayerToMoveCamera.duration,
+        autoOrbit: selectedLayerToMoveCamera.autoOrbit,
+      }
+    );
   }, [selectedLayerToMoveCamera, handleAutoOrbit]);
 
   useEffect(() => {
@@ -245,7 +281,7 @@ export default ({
   }, [selected?.type, toggleWidgetAlignEditor, selectWidgetArea]);
 
   return {
-    rootLayerId: rootLayerId || 'rootlayerId',
+    rootLayerId: rootLayerId || "rootlayerId",
     layers,
     selectedType: selected?.type,
     selectedLayerId: selected?.type === "layer" ? selected.layerId : undefined,
@@ -257,10 +293,44 @@ export default ({
   };
 };
 
-type GQLLayer = Omit<NonNullable<GetLayersFromLayerIdQuery["layer"]>, "layers"> & {
+type GQLLayer = Omit<
+  NonNullable<GetLayersFromLayerIdQuery["layer"]>,
+  "layers"
+> & {
   linkedDatasetSchemaId?: string | null;
   linkedDatasetId?: string | null;
   layers?: (GQLLayer | null | undefined)[];
+  property?: Record<string, any> | null; // Add the property field
+};
+
+const hideLayerItems = [
+  "resource",
+  "model",
+  "ellipsoid",
+  "photooverlay",
+  "tileset",
+];
+
+const isHideLayerItem = (pluginId: string = ""): boolean => {
+  return hideLayerItems.includes(pluginId);
+};
+
+const convertProperty = (
+  property: Record<string, any> | null | undefined
+): any | undefined => {
+  if (!property) return undefined;
+  const proterty: any = {};
+  if (!property?.items) return property;
+  if (!property?.items?.length) return proterty;
+  property.items.forEach((item: any) => {
+    if (!proterty[item.schemaGroupId]) {
+      proterty[item.schemaGroupId] = {};
+    }
+    item?.fields?.forEach((f: any) => {
+      proterty[item.schemaGroupId][f?.fieldId] = f?.value;
+    });
+  });
+  return proterty;
 };
 
 const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
@@ -279,14 +349,24 @@ const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
           .reverse(),
       }
     : layer.__typename === "LayerItem"
-    ? {
-        id: layer.id,
-        title: layer.name,
-        visible: layer.isVisible,
-        linked: !!layer.linkedDatasetId,
-        icon: layer.pluginId === "reearth" ? layer.extensionId ?? undefined : undefined,
-        type: "item",
-      }
+    ? isHideLayerItem(
+        layer.pluginId === "reearth"
+          ? layer.extensionId ?? undefined
+          : undefined
+      )
+      ? undefined
+      : {
+          id: layer.id,
+          title: layer.name,
+          visible: layer.isVisible,
+          linked: !!layer.linkedDatasetId,
+          icon:
+            layer.pluginId === "reearth"
+              ? layer.extensionId ?? undefined
+              : undefined,
+          type: "item",
+          property: convertProperty(layer?.property) ?? undefined,
+        }
     : undefined;
 
 function isPhotoOverlay(layer: LayerPlugin): boolean {
@@ -297,9 +377,11 @@ function isPhotoOverlay(layer: LayerPlugin): boolean {
   );
 }
 
-const normalisedLayer = (layerRaw: LayerPlugin[]) : (LayerPlugin & __typename)[] | undefined =>{
-  if(!layerRaw || !layerRaw?.length) return;
-  return layerRaw.map(l => {
+const normalisedLayer = (
+  layerRaw: LayerPlugin[]
+): (LayerPlugin & __typename)[] | undefined => {
+  if (!layerRaw || !layerRaw?.length) return;
+  return layerRaw.map((l) => {
     return {
       ...l,
       name: l?.title,
@@ -308,32 +390,45 @@ const normalisedLayer = (layerRaw: LayerPlugin[]) : (LayerPlugin & __typename)[]
         : l?.children && l?.children.length > 0
         ? "LayerGroup"
         : "LayerItem",
-      linkedDatasetSchemaId: l?.extensionId && l?.children && l?.children.length > 0,
+      linkedDatasetSchemaId:
+        l?.extensionId && l?.children && l?.children.length > 0,
       layers:
         l?.children && l?.children.length > 0
           ? normalisedLayer(l.children)
           : l?.children,
     };
-  })
-}
+  });
+};
 
-function searchTreeNode(data: any, key: string, match: string | number, modifyField: any, modifyValue: any) {
+function searchTreeNode(
+  data: any,
+  key: string,
+  match: string | number,
+  modifyField: any,
+  modifyValue: any
+) {
   const stack: any[] = [];
   data.map((item: any) => stack.push(item));
   while (stack.length > 0) {
     const node = stack.pop();
     if (node[key] === match) {
-      if(!modifyField) return;
+      if (!modifyField) return;
       node[modifyField] = modifyValue;
       return node;
     } else if (node.children) {
-      node.children.map((child: any) => stack.push(child))
+      node.children.map((child: any) => stack.push(child));
     }
   }
   return null;
 }
 
-function changeVisibility(data: any, key: string, match: string | number, modifyField: any, modifyValue: any) {
+function changeVisibility(
+  data: any,
+  key: string,
+  match: string | number,
+  modifyField: any,
+  modifyValue: any
+) {
   const stack: any[] = [];
   data.map((item: any) => stack.push(item));
   while (stack.length > 0) {
@@ -359,7 +454,7 @@ function modifyTreeNode(data: any, modifyField: any, modifyValue: any) {
       node[modifyField] = modifyValue;
     }
     if (node.children) {
-      node.children.map((child: any) => stack.push(child))
+      node.children.map((child: any) => stack.push(child));
     }
   }
   return null;

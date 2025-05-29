@@ -1,6 +1,10 @@
 import { forwardRef, ReactNode, Ref, useCallback, useMemo } from "react";
 
-import type { ItemProps, DropType, Item } from "@reearth/classic/components/atoms/TreeView";
+import type {
+  ItemProps,
+  DropType,
+  Item,
+} from "@reearth/classic/components/atoms/TreeView";
 import { styled } from "@reearth/services/theme";
 
 import Layer, { Layer as LayerType, Format } from "./Layer";
@@ -52,7 +56,7 @@ function LayerTreeViewItem<T = unknown>(
     onImport,
     onZoomToLayer,
   }: Props<T>,
-  ref: Ref<HTMLDivElement>,
+  ref: Ref<HTMLDivElement>
 ) {
   const handleClick = useCallback(() => {
     if (!item.selectable) {
@@ -62,14 +66,16 @@ function LayerTreeViewItem<T = unknown>(
     }
   }, [item.selectable, onExpand, onSelect]);
 
-  const allSiblingsDoesNotHaveChildren = !!siblings?.every(s => !s.content.group);
-
+  const allSiblingsDoesNotHaveChildren = !!siblings?.every(
+    (s) => !s.content.group
+  );
   return (
     <Wrapper
       className={className}
       shown={shown}
       selected={selected}
-      dropType={canDrop ? dropType : undefined}>
+      dropType={canDrop ? dropType : undefined}
+    >
       <Layer
         ref={ref}
         rootLayerId={rootLayerId}
@@ -79,7 +85,9 @@ function LayerTreeViewItem<T = unknown>(
         disabled={!selectable}
         layer={item.content}
         dropType={
-          canDrop && dropType !== "topOfChildren" && (dropType !== "bottom" || !expanded)
+          canDrop &&
+          dropType !== "topOfChildren" &&
+          (dropType !== "bottom" || !expanded)
             ? dropType
             : undefined
         }
@@ -107,7 +115,11 @@ function LayerTreeViewItem<T = unknown>(
   );
 }
 
-const Wrapper = styled.div<{ shown: boolean; selected?: boolean; dropType?: DropType }>`
+const Wrapper = styled.div<{
+  shown: boolean;
+  selected?: boolean;
+  dropType?: DropType;
+}>`
   display: ${({ shown }) => (shown ? "block" : "none")};
 `;
 
@@ -169,7 +181,7 @@ export function useLayerTreeViewItem<T>({
             : undefined,
           onRename: item ? (name: string) => onRename?.(item, name) : undefined,
         }),
-        [item],
+        [item]
       );
 
       return LayerTreeViewItem<T>(
@@ -187,7 +199,7 @@ export function useLayerTreeViewItem<T>({
           onZoomToLayer,
           ...events,
         },
-        ref,
+        ref
       );
     }
     return forwardRef(InnerLayerTreeViewItem);

@@ -83,7 +83,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [lang, moveInfoboxField, selected],
+    [lang, moveInfoboxField, selected]
   );
 
   const onBlockRemove = useCallback(
@@ -97,7 +97,7 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [lang, removeInfoboxField, selected],
+    [lang, removeInfoboxField, selected]
   );
 
   const { data: layerData } = useGetLayersQuery({
@@ -110,8 +110,11 @@ export default (isBuilt?: boolean) => {
   });
 
   const rootLayerId =
-    layerData?.node?.__typename === "Scene" ? layerData.node.rootLayer?.id : undefined;
-  const scene = sceneData?.node?.__typename === "Scene" ? sceneData.node : undefined;
+    layerData?.node?.__typename === "Scene"
+      ? layerData.node.rootLayer?.id
+      : undefined;
+  const scene =
+    sceneData?.node?.__typename === "Scene" ? sceneData.node : undefined;
 
   // convert data
   const selectedLayerId = useMemo(
@@ -119,20 +122,23 @@ export default (isBuilt?: boolean) => {
       selected?.type === "layer"
         ? { layerId: selected.layerId, featureId: selected.featureId }
         : undefined,
-    [selected],
+    [selected]
   );
   const layerSelectionReason = useMemo(
-    () => (selected?.type === "layer" ? selected.layerSelectionReason : undefined),
-    [selected],
+    () =>
+      selected?.type === "layer" ? selected.layerSelectionReason : undefined,
+    [selected]
   );
 
   // datasets
   const datasetSchemaIds = useMemo(
     () =>
-      layerData?.node && layerData.node.__typename === "Scene" && layerData.node.rootLayer
+      layerData?.node &&
+      layerData.node.__typename === "Scene" &&
+      layerData.node.rootLayer
         ? extractDatasetSchemas(layerData.node.rootLayer as RawLayer)
         : undefined,
-    [layerData],
+    [layerData]
   );
 
   const { datasets, loaded: datasetLoaded } = useDatasets(datasetSchemaIds);
@@ -144,22 +150,32 @@ export default (isBuilt?: boolean) => {
       layerData.node.__typename === "Scene" &&
       layerData.node.rootLayer
         ? convertLegacyLayer(
-            processLayer(layerData?.node.rootLayer as RawLayer, undefined, datasets),
+            processLayer(
+              layerData?.node.rootLayer as RawLayer,
+              undefined,
+              datasets
+            )
           )
         : undefined;
     return l ? [l] : undefined;
   }, [datasetLoaded, datasets, layerData?.node]);
 
   const widgets = useMemo(() => convertWidgets(sceneData), [sceneData]);
-  const sceneProperty = useMemo(() => processProperty(scene?.property), [scene?.property]);
-  const tags = useMemo(() => processSceneTags(scene?.tags ?? []), [scene?.tags]);
+  const sceneProperty = useMemo(
+    () => processProperty(scene?.property),
+    [scene?.property]
+  );
+  const tags = useMemo(
+    () => processSceneTags(scene?.tags ?? []),
+    [scene?.tags]
+  );
 
   const legacyClusters = useMemo<LegacyCluster[]>(
     () =>
       scene?.clusters
         .map((a): any => ({ ...processProperty(a.property), id: a.id }))
         .filter((c): c is LegacyCluster => !!c) ?? [],
-    [scene?.clusters],
+    [scene?.clusters]
   );
   const clusters = convertLegacyCluster(legacyClusters);
 
@@ -167,9 +183,9 @@ export default (isBuilt?: boolean) => {
     () =>
       scene?.plugins.reduce<{ [key: string]: any }>(
         (a, b) => ({ ...a, [b.pluginId]: processProperty(b.property) }),
-        {},
+        {}
       ),
-    [scene?.plugins],
+    [scene?.plugins]
   );
 
   const selectLayer = useCallback(
@@ -177,9 +193,14 @@ export default (isBuilt?: boolean) => {
       id?: string,
       featureId?: string,
       _layer?: () => Promise<ComputedLayer | undefined>,
-      layerSelectionReason?: LayerSelectionReason,
-    ) => select(id ? { layerId: id, featureId, layerSelectionReason, type: "layer" } : undefined),
-    [select],
+      layerSelectionReason?: LayerSelectionReason
+    ) =>
+      select(
+        id
+          ? { layerId: id, featureId, layerSelectionReason, type: "layer" }
+          : undefined
+      ),
+    [select]
   );
 
   const onBlockChange = useCallback(
@@ -189,10 +210,11 @@ export default (isBuilt?: boolean) => {
       fid: string,
       v: ValueTypes[T],
       vt: T,
-      selectedLayer?: Layer,
+      selectedLayer?: Layer
     ) => {
-      const propertyId = (selectedLayer?.infobox?.blocks?.find(b => b.id === blockId) as any)
-        ?.propertyId as string | undefined;
+      const propertyId = (
+        selectedLayer?.infobox?.blocks?.find((b) => b.id === blockId) as any
+      )?.propertyId as string | undefined;
       if (!propertyId) return;
 
       const gvt = valueTypeToGQL(vt);
@@ -209,16 +231,17 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [updatePropertyValue, lang],
+    [updatePropertyValue, lang]
   );
 
   const onFovChange = useCallback(
     (fov: number) => camera && onCameraChange({ ...camera, fov }),
-    [camera, onCameraChange],
+    [camera, onCameraChange]
   );
 
   useEffect(() => {
-    sceneProperty?.default?.sceneMode && setSceneMode(sceneProperty?.default?.sceneMode);
+    sceneProperty?.default?.sceneMode &&
+      setSceneMode(sceneProperty?.default?.sceneMode);
   }, [sceneProperty, setSceneMode]);
 
   // block selector
@@ -250,7 +273,11 @@ export default (isBuilt?: boolean) => {
   }, [isBuilt, title]);
 
   const handleDropLayer = useCallback(
-    async (propertyId: string, propertyKey: string, position?: LatLngHeight) => {
+    async (
+      propertyId: string,
+      propertyKey: string,
+      position?: LatLngHeight
+    ) => {
       // propertyKey will be "default.location" for example
       const [schemaGroupId, fieldId] = propertyKey.split(".", 2);
 
@@ -266,9 +293,9 @@ export default (isBuilt?: boolean) => {
           },
         },
       });
-      const itemId = undefined
+      const itemId = undefined;
       const heightfieldId = "height";
-      const vt = "number"
+      const vt = "number";
       const gvt: any = valueTypeToGQL(vt);
       if (position?.height && position.height > 0) {
         updatePropertyValue({
@@ -284,12 +311,15 @@ export default (isBuilt?: boolean) => {
         });
       }
     },
-    [updatePropertyValue],
+    [updatePropertyValue]
   );
 
   const [updateWidgetMutation] = useUpdateWidgetMutation();
   const onWidgetUpdate = useCallback(
-    async (id: string, update: { location?: Location; extended?: boolean; index?: number }) => {
+    async (
+      id: string,
+      update: { location?: Location; extended?: boolean; index?: number }
+    ) => {
       if (!sceneId) return;
 
       await updateWidgetMutation({
@@ -300,7 +330,8 @@ export default (isBuilt?: boolean) => {
           location: update.location
             ? {
                 zone: update.location.zone?.toUpperCase() as WidgetZoneType,
-                section: update.location.section?.toUpperCase() as WidgetSectionType,
+                section:
+                  update.location.section?.toUpperCase() as WidgetSectionType,
                 area: update.location.area?.toUpperCase() as WidgetAreaType,
               }
             : undefined,
@@ -310,10 +341,11 @@ export default (isBuilt?: boolean) => {
         refetchQueries: ["GetEarthWidgets"],
       });
     },
-    [sceneId, updateWidgetMutation],
+    [sceneId, updateWidgetMutation]
   );
 
-  const [updateWidgetAlignSystemMutation] = useUpdateWidgetAlignSystemMutation();
+  const [updateWidgetAlignSystemMutation] =
+    useUpdateWidgetAlignSystemMutation();
   const onWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
       if (!sceneId) return;
@@ -330,14 +362,14 @@ export default (isBuilt?: boolean) => {
         },
       });
     },
-    [sceneId, updateWidgetAlignSystemMutation],
+    [sceneId, updateWidgetAlignSystemMutation]
   );
 
   const engineMeta = useMemo(
     () => ({
       cesiumIonAccessToken: config()?.cesiumIonAccessToken,
     }),
-    [],
+    []
   );
 
   const useExperimentalSandbox = useMemo(() => {

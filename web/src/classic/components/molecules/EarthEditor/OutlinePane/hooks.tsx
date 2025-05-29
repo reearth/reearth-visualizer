@@ -4,7 +4,10 @@ import { Item as TreeViewItemType } from "@reearth/classic/components/atoms/Tree
 import { arrayEquals } from "@reearth/classic/components/atoms/TreeView/util";
 import { useT } from "@reearth/services/i18n";
 
-import { Layer as LayerTreeViewItemItem, useLayerTreeViewItem } from "../LayerTreeViewItem";
+import {
+  Layer as LayerTreeViewItemItem,
+  useLayerTreeViewItem,
+} from "../LayerTreeViewItem";
 
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
 
@@ -14,6 +17,7 @@ export type Layer = {
   icon?: string;
   linked?: boolean;
   visible?: boolean;
+  property?: any;
 } & (LayerGroup | LayerItem);
 
 export type LayerGroup = {
@@ -107,7 +111,11 @@ export default ({
   onLayerRemove?: (id: string) => void;
   onSceneSelect?: () => void;
   onWidgetsSelect?: () => void;
-  onWidgetSelect?: (widgetId: string | undefined, pluginId: string, extensionId: string) => void;
+  onWidgetSelect?: (
+    widgetId: string | undefined,
+    pluginId: string,
+    extensionId: string
+  ) => void;
   onWidgetAdd?: (id?: string) => Promise<void>;
   onWidgetActivation?: (widgetId: string, enabled: boolean) => Promise<void>;
   onClusterSelect?: (clusterId: string) => void;
@@ -118,7 +126,7 @@ export default ({
     dest: string,
     destIndex: number,
     destChildrenCount: number,
-    parent: string,
+    parent: string
   ) => void;
   onLayerRename?: (id: string, name: string) => void;
   onClusterRename?: (id: string, name: string) => void;
@@ -133,8 +141,8 @@ export default ({
 
   const select = useCallback(
     (items: TreeViewItemType<TreeViewItem>[], i: number[][]) => {
-      const ids = items.map(i => i.id);
-      setSelected(selected => (!arrayEquals(selected, ids) ? ids : selected));
+      const ids = items.map((i) => i.id);
+      setSelected((selected) => (!arrayEquals(selected, ids) ? ids : selected));
 
       const item = items[0];
       if (!item) return;
@@ -143,7 +151,8 @@ export default ({
       } else if (item.id === "widgets") {
         onWidgetsSelect?.();
       } else if (item.content.type === "widget") {
-        const [pluginId, extensionId, widgetId] = item.content.id?.split("/") ?? [];
+        const [pluginId, extensionId, widgetId] =
+          item.content.id?.split("/") ?? [];
         onWidgetSelect?.(widgetId, pluginId, extensionId);
       } else if (item.content.type === "cluster") {
         // console.log(item.content);
@@ -154,11 +163,19 @@ export default ({
         onLayerSelect?.(
           item.id,
           // because other items can be exist like Scene, Widget
-          ...(typeof i[0][0] === "number" ? [i[0][0] - 2, ...i[0].slice(1)] : []),
+          ...(typeof i[0][0] === "number"
+            ? [i[0][0] - 2, ...i[0].slice(1)]
+            : [])
         );
       }
     },
-    [onClusterSelect, onLayerSelect, onSceneSelect, onWidgetsSelect, onWidgetSelect],
+    [
+      onClusterSelect,
+      onLayerSelect,
+      onSceneSelect,
+      onWidgetsSelect,
+      onWidgetSelect,
+    ]
   );
 
   const drop = useCallback(
@@ -167,7 +184,7 @@ export default ({
       destItem: TreeViewItemType<TreeViewItem>,
       _index: number[],
       destIndex: number[],
-      parent: TreeViewItemType<TreeViewItem>,
+      parent: TreeViewItemType<TreeViewItem>
     ) => {
       if (destItem.content.type !== "layer") return;
       onLayerMove?.(
@@ -175,16 +192,20 @@ export default ({
         destItem.id,
         Math.max(0, destIndex[destIndex.length - 1]),
         destItem.content.childrenCount ?? 0,
-        parent.id,
+        parent.id
       );
     },
-    [onLayerMove],
+    [onLayerMove]
   );
 
   const dropExternals = useCallback(
     (_: any, item: TreeViewItemType<LayerTreeViewItemItem>, index: number[]) =>
-      onDrop?.(item.id, index[index.length - 1], item.content.childrenCount ?? 0),
-    [onDrop],
+      onDrop?.(
+        item.id,
+        index[index.length - 1],
+        item.content.childrenCount ?? 0
+      ),
+    [onDrop]
   );
 
   const removeLayer = useCallback(() => {
@@ -228,7 +249,7 @@ export default ({
             title: widgetTitle,
             group: true,
             showLayerActions: true,
-            actionItems: widgetTypes?.map(w => ({
+            actionItems: widgetTypes?.map((w) => ({
               type: "widget",
               id: `${w.pluginId}/${w.extensionId}`,
               title: w.title,
@@ -241,7 +262,7 @@ export default ({
           droppableIntoChildren: false,
           expandable: true,
           selectable: true,
-          children: widgets?.map(w => ({
+          children: widgets?.map((w) => ({
             id: `${w.pluginId}/${w.extensionId}/${w.id}`,
             content: {
               id: `${w.pluginId}/${w.extensionId}/${w.id}`,
@@ -263,7 +284,7 @@ export default ({
         },
       ],
     }),
-    [sceneTitle, sceneDescription, widgetTitle, widgets, widgetTypes],
+    [sceneTitle, sceneDescription, widgetTitle, widgets, widgetTypes]
   );
 
   const layersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
@@ -295,7 +316,7 @@ export default ({
             ],
           }
         : undefined,
-    [layerTitle, rootLayerId, layers],
+    [layerTitle, rootLayerId, layers]
   );
 
   const clustersItem = useMemo<TreeViewItemType<TreeViewItem> | undefined>(
@@ -328,7 +349,7 @@ export default ({
             group: true,
           },
           expandable: true,
-          children: clusters?.map(c => ({
+          children: clusters?.map((c) => ({
             id: c.id,
             content: {
               id: c.id,
@@ -348,26 +369,31 @@ export default ({
         },
       ],
     }),
-    [clusterTitle, clusters],
+    [clusterTitle, clusters]
   );
 
   const layerTreeViewItemOnRename = useCallback(
     (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, name: string) =>
       onLayerRename?.(item.id, name),
-    [onLayerRename],
+    [onLayerRename]
   );
   const layerTreeViewItemOnLayerVisibilityChange = useCallback(
-    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, visibility: boolean) =>
-      onLayerVisibilityChange?.(item.id, visibility),
-    [onLayerVisibilityChange],
+    (
+      item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>,
+      visibility: boolean
+    ) => onLayerVisibilityChange?.(item.id, visibility),
+    [onLayerVisibilityChange]
   );
 
   const layerTreeViewItemOnWidgetActivation = useCallback(
-    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, activate: boolean) => {
+    (
+      item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>,
+      activate: boolean
+    ) => {
       const widgetId = item.id.split("/")[2];
       onWidgetActivation?.(widgetId, activate);
     },
-    [onWidgetActivation],
+    [onWidgetActivation]
   );
 
   const SceneTreeViewItem = useLayerTreeViewItem<ItemEx>({
@@ -392,7 +418,7 @@ export default ({
   const clusterTreeViewItemOnRename = useCallback(
     (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, name: string) =>
       onClusterRename?.(item.id, name),
-    [onClusterRename],
+    [onClusterRename]
   );
 
   const ClusterTreeViewItem = useLayerTreeViewItem<ItemEx>({
@@ -416,7 +442,7 @@ export default ({
         : selectedType === "widget" && selectedWidgetId
         ? [selectedWidgetId]
         : [];
-    setSelected(ids => (arrayEquals(ids, newState) ? ids : newState));
+    setSelected((ids) => (arrayEquals(ids, newState) ? ids : newState));
   }, [selectedLayerId, selectedType, selectedWidgetId, selectedClusterId]);
 
   return {
@@ -436,15 +462,16 @@ export default ({
 
 const convertLayers = (
   layers: Layer[] | undefined,
-  parent?: Layer,
+  parent?: Layer
 ): TreeViewItemType<LayerTreeViewItemItem<{ type: "layer" }>>[] | undefined =>
-  layers?.map(layer => ({
+  layers?.map((layer) => ({
     id: layer.id,
     content: {
       id: layer.id,
       type: "layer",
       group: layer.type === "group",
-      childrenCount: layer.type === "group" ? layer.children?.length : undefined,
+      childrenCount:
+        layer.type === "group" ? layer.children?.length : undefined,
       showChildrenCount: true,
       icon: layer.icon,
       title: layer.title,
@@ -452,8 +479,10 @@ const convertLayers = (
       visible: layer.visible,
       visibilityChangeable: true,
       renamable: true,
+      property: layer?.property,
     },
-    children: layer.type === "group" ? convertLayers(layer.children, layer) : undefined,
+    children:
+      layer.type === "group" ? convertLayers(layer.children, layer) : undefined,
     draggable: parent?.type !== "group" || !parent.linked,
     droppable: parent?.type !== "group" || !parent.linked,
     droppableIntoChildren: layer.type === "group" && !layer.linked,

@@ -1087,6 +1087,73 @@ extensions:
             - id: extrude
               type: bool
               title: Extruded
+        - id: template
+          title: Template
+          fields:
+            - id: templateEnabled
+              type: bool
+              title: Enable
+              defaultValue: false
+              description: Enable template to use.
+            - id: templateType
+              type: string
+              title: Template
+              description: Choose a template to use.
+              defaultValue: template1
+              choices:
+                - key: template1
+                  label: Template 1
+                - key: template2
+                  label: Template 2
+                - key: template3
+                  label: Template 3
+                - key: template4
+                  label: Template 4
+            - id: templateImage
+              type: url
+              title: Image
+              ui: image
+            - id: templateTitle1
+              type: string
+              title: Text 1
+              defaultValue: "Text 1"
+            - id: templateTitleTypography1
+              type: typography
+              title: Template font 1
+            - id: templateTitle2
+              type: string
+              title: Text 2
+              defaultValue: "Text 2"
+            - id: templateTitleTypography2
+              type: typography
+              title: Template font 2
+            - id: templateTitle3
+              type: string
+              title: Text 3
+              defaultValue: "Text 3"
+              availableIf:
+                field: templateType
+                type: string
+                value: template4
+            - id: templateTitleTypography3
+              type: typography
+              title: Template font 3
+              availableIf:
+                field: templateType
+                type: string
+                value: template4
+            - id: boxBackgroundColor1
+              type: string
+              title: Box background color 1
+              ui: color
+            - id: boxBackgroundColor2
+              type: string
+              title: Box background color 2
+              ui: color
+              availableIf:
+                field: templateType
+                type: string
+                value: template4
         - id: distanceDisplayCondition
           title: Distance display
           fields:
@@ -1109,6 +1176,9 @@ extensions:
         url:
           schemaGroupId: default
           fieldId: image
+        url:
+          schemaGroupId: default
+          fieldId: templateImage
   - id: polyline
     visualizer: cesium
     type: primitive
@@ -2350,67 +2420,67 @@ extensions:
                   label: Medium
                 - key: large
                   label: Large
-            - id: heightType
-              type: string
-              title: Height type
-              defaultValue: auto
-              choices:
-                - key: auto
-                  label: Auto
-                - key: manual
-                  label: Manual
-            - id: height
-              type: number
-              title: Height
-              min: 284
-              max: 2048
-              suffix: px
-              description: "This sets the drawer height. Min: 284  Max: 2048"
-              availableIf:
-                field: heightType
-                type: string
-                value: manual
-            - id: infoboxPaddingTop
-              type: number
-              title: Top padding
-              min: 0
-              max: 40
-              suffix: px
-              description: "The space between the top of the infobox and the title. Min: 0  Max: 40"
-            - id: infoboxPaddingBottom
-              type: number
-              title: Bottom padding
-              min: 0
-              max: 40
-              suffix: px
-              description: "The space between the bottom of the infobox and the last block. Min: 0  Max: 40"
-            - id: infoboxPaddingLeft
-              type: number
-              title: Left padding
-              min: 0
-              max: 40
-              suffix: px
-              description: "The space between the left side of the infobox and the title and blocks. Min: 0  Max: 40"
-            - id: infoboxPaddingRight
-              type: number
-              title: Right padding
-              min: 0
-              max: 40
-              suffix: px
-              description: "The space between the right side of the infobox and the title and blocks. Min: 0  Max: 40"
+            # - id: heightType
+            #   type: string
+            #   title: Height type
+            #   defaultValue: auto
+            #   choices:
+            #     - key: auto
+            #       label: Auto
+            #     - key: manual
+            #       label: Manual
+            # - id: height
+            #   type: number
+            #   title: Height
+            #   min: 284
+            #   max: 2048
+            #   suffix: px
+            #   description: "This sets the drawer height. Min: 284  Max: 2048"
+            #   availableIf:
+            #     field: heightType
+            #     type: string
+            #     value: manual
+            # - id: infoboxPaddingTop
+            #   type: number
+            #   title: Top padding
+            #   min: 0
+            #   max: 40
+            #   suffix: px
+            #   description: "The space between the top of the infobox and the title. Min: 0  Max: 40"
+            # - id: infoboxPaddingBottom
+            #   type: number
+            #   title: Bottom padding
+            #   min: 0
+            #   max: 40
+            #   suffix: px
+            #   description: "The space between the bottom of the infobox and the last block. Min: 0  Max: 40"
+            # - id: infoboxPaddingLeft
+            #   type: number
+            #   title: Left padding
+            #   min: 0
+            #   max: 40
+            #   suffix: px
+            #   description: "The space between the left side of the infobox and the title and blocks. Min: 0  Max: 40"
+            # - id: infoboxPaddingRight
+            #   type: number
+            #   title: Right padding
+            #   min: 0
+            #   max: 40
+            #   suffix: px
+            #   description: "The space between the right side of the infobox and the title and blocks. Min: 0  Max: 40"
             - id: bgcolor
               type: string
               title: Background color
               ui: color
-            - id: outlineWidth
-              type: number
-              title: Outline width
-              suffix: px
-              max: 20
-            - id: outlineColor
-              type: string
-              title: Outline color
-              ui: color
+            # - id: outlineWidth
+            #   type: number
+            #   title: Outline width
+            #   suffix: px
+            #   max: 20
+            # - id: outlineColor
+            #   type: string
+            #   title: Outline color
+            #   ui: color
         - id: camera
           title: Camera
           fields:

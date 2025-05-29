@@ -19,22 +19,29 @@ import {
   Layer as RawLayer,
   WidgetAreaPadding,
 } from "./types";
-import { useRootLayer } from "@reearth/services/state";
+import { useRootLayer, useSceneId } from "@reearth/services/state";
 
 export default (alias?: string) => {
   const [, setRootLayer] = useRootLayer();
   const [data, setData] = useState<PublishedData>();
   const [ready, setReady] = useState(false);
   const [error, setError] = useState(false);
+  const [, setSceneId] = useSceneId();
 
   const sceneProperty = processProperty(data?.property);
-  const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{ [key: string]: any }>(
+  const pluginProperty = Object.keys(data?.plugins ?? {}).reduce<{
+    [key: string]: any;
+  }>(
     (a, b) => ({ ...a, [b]: processProperty(data?.plugins?.[b]?.property) }),
-    {},
+    {}
   );
   const clusterProperty = useMemo<ClusterProperty[]>(
-    () => data?.clusters?.map(a => ({ ...processProperty(a.property), id: a.id })) ?? [],
-    [data],
+    () =>
+      data?.clusters?.map((a) => ({
+        ...processProperty(a.property),
+        id: a.id,
+      })) ?? [],
+    [data]
   );
 
   const rootLayer = useMemo(() => {
@@ -44,12 +51,21 @@ export default (alias?: string) => {
     };
   }, [data]);
 
+  const sceneId = useMemo(() => {
+    return data?.id || "";
+  }, [data]);
+
+  useEffect(() => {
+    setSceneId(sceneId);
+  }, [sceneId, setSceneId]);
+
   useEffect(() => setRootLayer(rootLayer), [rootLayer]);
 
   const tags = data?.tags; // Currently no need to convert tags
 
   const widgets = useMemo<
-    { floatingWidgets: Widget[]; alignSystem: WidgetAlignSystem | undefined } | undefined
+    | { floatingWidgets: Widget[]; alignSystem: WidgetAlignSystem | undefined }
+    | undefined
   >(() => {
     if (!data?.widgets) return undefined;
 
@@ -58,7 +74,8 @@ export default (alias?: string) => {
       for (const z of ["inner", "outer"] as const) {
         for (const s of ["left", "center", "right"] as const) {
           for (const a of ["top", "middle", "bottom"] as const) {
-            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ?? []) {
+            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ??
+              []) {
               widgetsInWas.add(w);
             }
           }
@@ -67,7 +84,7 @@ export default (alias?: string) => {
     }
 
     const floatingWidgets = data?.widgets
-      .filter(w => !widgetsInWas.has(w.id))
+      .filter((w) => !widgetsInWas.has(w.id))
       .map(
         (w): Widget => ({
           id: w.id,
@@ -75,11 +92,11 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-        }),
+        })
       );
 
     const widgets = data?.widgets
-      .filter(w => widgetsInWas.has(w.id))
+      .filter((w) => widgetsInWas.has(w.id))
       .map(
         (w): Widget => ({
           id: w.id,
@@ -87,7 +104,7 @@ export default (alias?: string) => {
           pluginId: w.pluginId,
           extensionId: w.extensionId,
           property: processProperty(w.property),
-        }),
+        })
       );
 
     const widgetZone = (zone?: WidgetZone | null) => {
@@ -118,7 +135,7 @@ export default (alias?: string) => {
       const align = area?.align.toLowerCase() as Alignment | undefined;
       const padding = area?.padding as WidgetAreaPadding | undefined;
       const areaWidgets: Widget[] | undefined = area?.widgetIds
-        .map<Widget | undefined>(w => widgets?.find(w2 => w === w2.id))
+        .map<Widget | undefined>((w) => widgets?.find((w2) => w === w2.id))
         .filter((w): w is Widget => !!w);
       if (!areaWidgets || areaWidgets.length < 1) return;
       return {
@@ -148,8 +165,11 @@ export default (alias?: string) => {
   }, [data]);
 
   const actualAlias = useMemo(
-    () => alias || new URLSearchParams(window.location.search).get("alias") || undefined,
-    [alias],
+    () =>
+      alias ||
+      new URLSearchParams(window.location.search).get("alias") ||
+      undefined,
+    [alias]
   );
 
   useEffect(() => {
@@ -192,7 +212,7 @@ export default (alias?: string) => {
     () => ({
       cesiumIonAccessToken: config()?.cesiumIonAccessToken,
     }),
-    [],
+    []
   );
 
   return {
@@ -221,7 +241,7 @@ function processLayer(l: RawLayer): Layer {
     infobox: l.infobox
       ? {
           property: processProperty(l.infobox.property),
-          blocks: l.infobox.fields.map<Block>(f => ({
+          blocks: l.infobox.fields.map<Block>((f) => ({
             id: f.id,
             pluginId: f.pluginId,
             extensionId: f.extensionId,
@@ -236,23 +256,35 @@ function processLayer(l: RawLayer): Layer {
 
 function processProperty(p: any): any {
   if (typeof p !== "object") return p;
-  return mapValues(p, g =>
-    Array.isArray(g) ? g.map(h => processPropertyGroup(h)) : processPropertyGroup(g),
+  return mapValues(p, (g) =>
+    Array.isArray(g)
+      ? g.map((h) => processPropertyGroup(h))
+      : processPropertyGroup(g)
   );
 }
 
 function processPropertyGroup(g: any): any {
   if (typeof g !== "object") return g;
-  return mapValues(g, v => {
+  return mapValues(g, (v) => {
     // For compability
     if (Array.isArray(v)) {
-      return v.map(vv =>
-        typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v
+      return v.map((vv) =>
+        typeof v === "object" &&
+        v &&
+        "lat" in v &&
+        "lng" in v &&
+        "altitude" in v
           ? { ...vv, height: vv.altitude }
-          : vv,
+          : vv
       );
     }
-    if (typeof v === "object" && v && "lat" in v && "lng" in v && "altitude" in v) {
+    if (
+      typeof v === "object" &&
+      v &&
+      "lat" in v &&
+      "lng" in v &&
+      "altitude" in v
+    ) {
       return {
         ...v,
         height: v.altitude,

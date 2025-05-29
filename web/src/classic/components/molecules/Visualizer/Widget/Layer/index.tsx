@@ -1,25 +1,36 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useClickAway, useMedia } from "react-use";
 
 import Icon from "@reearth/classic/components/atoms/Icon";
 import { metricsSizes } from "@reearth/classic/theme";
 import fonts from "@reearth/classic/theme/reearthTheme/common/fonts";
 import { Camera as CameraValue } from "@reearth/classic/util/value";
-import { styled, usePublishTheme, PublishTheme, css } from "@reearth/services/theme";
+import {
+  styled,
+  usePublishTheme,
+  PublishTheme,
+  css,
+} from "@reearth/services/theme";
 
 import { ComponentProps as WidgetProps } from "..";
 import useHooks from "./hooks";
 import LayerTreeView from "./LayerTreeView";
 import { usePublishedPage } from "@reearth/services/state";
 
-
 export type Props = WidgetProps<Property>;
 
 export type Property = {
   default?: {
     size?: "small" | "large" | "medium" | undefined;
-    height? :number | undefined;
-    heightType? : "auto" | "manual" | undefined;
+    height?: number | undefined;
+    heightType?: "auto" | "manual" | undefined;
     bgcolor?: string;
     infoboxPaddingTop?: number;
     infoboxPaddingBottom?: number;
@@ -39,7 +50,7 @@ export type Property = {
 const layerWidgetWidth = {
   large: 624,
   medium: 540,
-  small: 346
+  small: 346,
 };
 
 const Layer = ({ widget, sceneProperty }: Props): JSX.Element | null => {
@@ -66,12 +77,8 @@ const Layer = ({ widget, sceneProperty }: Props): JSX.Element | null => {
     outlineWidth,
   } = (widget?.property as Property | undefined)?.default ?? {};
 
-  const {
-    duration,
-    range,
-    camera,
-    autoOrbit,
-  } = (widget?.property as Property | undefined)?.camera ?? {};
+  const { duration, range, camera, autoOrbit } =
+    (widget?.property as Property | undefined)?.camera ?? {};
 
   const {
     rootLayerId,
@@ -91,44 +98,51 @@ const Layer = ({ widget, sceneProperty }: Props): JSX.Element | null => {
   });
 
   const [open, setOpen] = useState<boolean>(true);
-  const [width, setWidth] = useState<number>(layerWidgetWidth[size || 'small']);
+  const [width, setWidth] = useState<number>(layerWidgetWidth[size || "small"]);
 
   useEffect(() => {
     setOpen(true);
     return () => {
       setOpen(false);
       handleCancelOrbit();
-    }
-  }, [])
-  
-  const handleToggle = useCallback(() =>{
+    };
+  }, []);
+
+  const handleToggle = useCallback(() => {
     setOpen(!open);
-    (!open)
-  },[open]);
+    !open;
+  }, [open]);
 
-  const handler = useCallback((mouseDownEvent: MouseEvent) => {
-    if (!mouseDownEvent) return;
-    mouseDownEvent.stopPropagation();
-    mouseDownEvent.preventDefault();
-    const startSize = width;
-    const startPosition = { x: mouseDownEvent.pageX, y: mouseDownEvent.pageY };
+  const handler = useCallback(
+    (mouseDownEvent: MouseEvent) => {
+      if (!mouseDownEvent) return;
+      mouseDownEvent.stopPropagation();
+      mouseDownEvent.preventDefault();
+      const startSize = width;
+      const startPosition = {
+        x: mouseDownEvent.pageX,
+        y: mouseDownEvent.pageY,
+      };
 
-    function onMouseMove(mouseMoveEvent: any) {
-      setWidth(startSize - startPosition.x + mouseMoveEvent.pageX);
-    }
-    function onMouseUp() {
-      document.body.removeEventListener("mousemove", onMouseMove);
-      // uncomment the following line if not using `{ once: true }`
-      // document.body.removeEventListener("mouseup", onMouseUp);
-    }
+      function onMouseMove(mouseMoveEvent: any) {
+        setWidth(startSize - startPosition.x + mouseMoveEvent.pageX);
+      }
+      function onMouseUp() {
+        document.body.removeEventListener("mousemove", onMouseMove);
+        // uncomment the following line if not using `{ once: true }`
+        // document.body.removeEventListener("mouseup", onMouseUp);
+      }
 
-    document.body.addEventListener("mousemove", onMouseMove);
-    document.body.addEventListener("mouseup", onMouseUp, { once: true });
-  }, [width]);
+      document.body.addEventListener("mousemove", onMouseMove);
+      document.body.addEventListener("mouseup", onMouseUp, { once: true });
+    },
+    [width]
+  );
 
   useEffect(() => {
-    setWidth(layerWidgetWidth[size || 'small']);
+    setWidth(layerWidgetWidth[size || "small"]);
   }, [size]);
+
   return (
     <Widget
       open={open}
@@ -143,12 +157,14 @@ const Layer = ({ widget, sceneProperty }: Props): JSX.Element | null => {
       outlineWidth={outlineWidth}
       bgcolor={bgcolor}
       isPublished={publishedPage}
-      >
-      {<div className="draghandle" onMouseDown={handler} >
-        <button className="toggle-infoBox-btn" onClick={handleToggle}>
-          <Icon icon={ open ? "arrowRight" : "arrowLeft"} />
-        </button>
-      </div>}
+    >
+      {
+        <div className="draghandle" onMouseDown={handler}>
+          <button className="toggle-infoBox-btn" onClick={handleToggle}>
+            <Icon icon={open ? "arrowRight" : "arrowLeft"} />
+          </button>
+        </div>
+      }
       <Wrapper ref={ref} open={open}>
         <Content
           ref={ref2}
@@ -188,7 +204,8 @@ const Widget = styled.div<{
   bgcolor?: string;
   isPublished: boolean;
 }>`
-  background-color: ${({ publishedTheme, bgcolor }) => bgcolor || publishedTheme?.background};
+  background-color: ${({ publishedTheme, bgcolor }) =>
+    bgcolor || publishedTheme?.background};
   color: ${({ publishedTheme }) => publishedTheme.mainText};
   display: flex;
   align-items: stretch;
@@ -196,12 +213,12 @@ const Widget = styled.div<{
   //overflow: hidden;
   ${({ heightType, height, open, isPreviewPage }) =>
     heightType === "auto"
-    ? `height: calc(100vh - ${isPreviewPage ? "14" : "106"}px);`
-    : height && open
-    ? `height: ${height}px;`
-    : `height: calc(100vh - ${isPreviewPage ? "14" : "106"}px);`}
+      ? `height: calc(100vh - ${isPreviewPage ? "14" : "106"}px);`
+      : height && open
+      ? `height: ${height}px;`
+      : `height: calc(100vh - ${isPreviewPage ? "14" : "106"}px);`}
 
-  width: ${({ open, width }) => open? width : 0}px;
+  width: ${({ open, width }) => (open ? width : 0)}px;
 
   box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
   //top: 10px;
@@ -228,16 +245,17 @@ const Widget = styled.div<{
   .draghandle {
     position: absolute;
     cursor: col-resize;
-    width: ${({open}) => open ? 4 : 0}px;
+    width: ${({ open }) => (open ? 4 : 0)}px;
     height: 100%;
     z-index: 1;
 
-    ${({ open }) => open ?"right: 0; " : ""}
+    ${({ open }) => (open ? "right: 0; " : "")}
 
     .toggle-infoBox-btn {
       position: absolute;
       top: 50%;
-      left: ${({ open, isPublished }) => (open ? "5px" : isPublished? "1px" : "-5px")};
+      left: ${({ open, isPublished }) =>
+        open ? "5px" : isPublished ? "1px" : "-5px"};
       background: #fbf9f9 !important;
       border-radius: 0px 92px 92px 0px;
       padding: 0px;
@@ -290,11 +308,14 @@ const Content = styled.div<{
 
   max-height: ${({ open }) => (open ? "100%" : "0")};
   padding: ${({ open }) => (open ? "20px 0" : "0")};
-  padding-top: ${({ paddingTop, open }) => (paddingTop && open ? `${paddingTop}px` : null)};
+  padding-top: ${({ paddingTop, open }) =>
+    paddingTop && open ? `${paddingTop}px` : null};
   padding-bottom: ${({ paddingBottom, open }) =>
     paddingBottom && open ? `${paddingBottom}px` : null};
-  padding-left: ${({ paddingLeft, open }) => (paddingLeft && open ? `${paddingLeft}px` : null)};
-  padding-right: ${({ paddingRight, open }) => (paddingRight && open ? `${paddingRight}px` : null)};
+  padding-left: ${({ paddingLeft, open }) =>
+    paddingLeft && open ? `${paddingLeft}px` : null};
+  padding-right: ${({ paddingRight, open }) =>
+    paddingRight && open ? `${paddingRight}px` : null};
 `;
 
 export default Layer;

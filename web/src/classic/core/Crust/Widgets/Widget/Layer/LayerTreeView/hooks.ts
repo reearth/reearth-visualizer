@@ -3,7 +3,10 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { Item as TreeViewItemType } from "@reearth/classic/components/atoms/TreeView";
 import { arrayEquals } from "@reearth/classic/components/atoms/TreeView/util";
 import { useT } from "@reearth/services/i18n";
-import { Layer as LayerTreeViewItemItem, useLayerTreeViewItem } from "@reearth/classic/components/molecules/EarthEditor/LayerTreeViewItem";
+import {
+  Layer as LayerTreeViewItemItem,
+  useLayerTreeViewItem,
+} from "@reearth/classic/components/molecules/EarthEditor/LayerTreeViewItem";
 
 export type Format = "kml" | "czml" | "geojson" | "shape" | "reearth";
 
@@ -13,6 +16,7 @@ export type Layer = {
   icon?: string;
   linked?: boolean;
   visible?: boolean;
+  property?: any;
 } & (LayerGroup | LayerItem);
 
 export type LayerGroup = {
@@ -57,20 +61,22 @@ export default ({
 
   const select = useCallback(
     (items: TreeViewItemType<TreeViewItem>[], i: number[][]) => {
-      const ids = items.map(i => i.id);
-      setSelected(selected => (!arrayEquals(selected, ids) ? ids : selected));
+      const ids = items.map((i) => i.id);
+      setSelected((selected) => (!arrayEquals(selected, ids) ? ids : selected));
 
       const item = items[0];
       if (!item) return;
-     if (item.content.type === "layer") {
+      if (item.content.type === "layer") {
         onLayerSelect?.(
           item.id,
           // because other items can be exist like Scene, Widget
-          ...(typeof i[0][0] === "number" ? [i[0][0] - 2, ...i[0].slice(1)] : []),
+          ...(typeof i[0][0] === "number"
+            ? [i[0][0] - 2, ...i[0].slice(1)]
+            : [])
         );
       }
     },
-    [onLayerSelect],
+    [onLayerSelect]
   );
 
   const layerTitle = t("Layers");
@@ -104,13 +110,15 @@ export default ({
             ],
           }
         : undefined,
-    [layerTitle, rootLayerId, layers],
+    [layerTitle, rootLayerId, layers]
   );
 
   const layerTreeViewItemOnLayerVisibilityChange = useCallback(
-    (item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>, visibility: boolean) =>
-      onLayerVisibilityChange?.(item.id, visibility),
-    [onLayerVisibilityChange, JSON.stringify(layers)],
+    (
+      item: TreeViewItemType<LayerTreeViewItemItem<ItemEx>>,
+      visibility: boolean
+    ) => onLayerVisibilityChange?.(item.id, visibility),
+    [onLayerVisibilityChange, JSON.stringify(layers)]
   );
 
   const LayerTreeViewItem = useLayerTreeViewItem<ItemEx>({
@@ -123,10 +131,8 @@ export default ({
 
   useEffect(() => {
     const newState =
-        selectedType === "layer" && selectedLayerId
-        ? [selectedLayerId]
-        : [];
-    setSelected(ids => (arrayEquals(ids, newState) ? ids : newState));
+      selectedType === "layer" && selectedLayerId ? [selectedLayerId] : [];
+    setSelected((ids) => (arrayEquals(ids, newState) ? ids : newState));
   }, [selectedLayerId, selectedType]);
 
   return {
@@ -139,15 +145,16 @@ export default ({
 
 const convertLayers = (
   layers: Layer[] | undefined,
-  parent?: Layer,
+  parent?: Layer
 ): TreeViewItemType<LayerTreeViewItemItem<{ type: "layer" }>>[] | undefined =>
-  layers?.map(layer => ({
+  layers?.map((layer) => ({
     id: layer.id,
     content: {
       id: layer.id,
       type: "layer",
       group: layer.type === "group",
-      childrenCount: layer.type === "group" ? layer.children?.length : undefined,
+      childrenCount:
+        layer.type === "group" ? layer.children?.length : undefined,
       showChildrenCount: false,
       icon: layer.icon,
       title: layer.title,
@@ -155,8 +162,10 @@ const convertLayers = (
       visible: layer.visible,
       visibilityChangeable: true,
       renamable: false,
+      property: layer?.property,
     },
-    children: layer.type === "group" ? convertLayers(layer.children, layer) : undefined,
+    children:
+      layer.type === "group" ? convertLayers(layer.children, layer) : undefined,
     draggable: parent?.type !== "group" || !parent.linked,
     droppable: parent?.type !== "group" || !parent.linked,
     droppableIntoChildren: layer.type === "group" && !layer.linked,
