@@ -2,10 +2,12 @@ import useAccountSettingsTabs from "@reearth/beta/hooks/useAccountSettingsTabs";
 import {
   TextInput,
   Typography,
-  IconButton
+  IconButton,
+  Button
 } from "@reearth/beta/lib/reearth-ui";
 import SettingBase from "@reearth/beta/ui/components/SettingBase";
 import { InputField, SelectField } from "@reearth/beta/ui/fields";
+import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -47,6 +49,13 @@ const AccountSetting: FC = () => {
       value: "ja"
     }
   ];
+
+  const { useDeleteUser: deleteUser } = useMeFetcher();
+
+  const handleDeleteMe = () => {
+    if (!meData.id) return;
+    deleteUser({ userId: meData.id });
+  };
 
   return (
     <>
@@ -97,6 +106,11 @@ const AccountSetting: FC = () => {
                 onChange={(value) => {
                   handleUpdateUserLanguage({ lang: value as string });
                 }}
+              />
+              <Button
+                onClick={handleDeleteMe}
+                appearance="dangerous"
+                title="DELETE ME"
               />
             </SettingsFields>
           </SettingsWrapper>
