@@ -34,23 +34,24 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 	}
 
 	c := &repo.Container{
-		Asset:          NewAsset(client),
-		AuthRequest:    authserver.NewMongo(client.WithCollection("authRequest")),
-		Config:         NewConfig(db.Collection("config"), lock),
-		NLSLayer:       NewNLSLayer(client),
-		Style:          NewStyle(client),
-		Plugin:         NewPlugin(client),
-		Project:        NewProject(client),
-		PropertySchema: NewPropertySchema(client),
-		Property:       NewProperty(client),
-		Scene:          NewScene(client),
-		SceneLock:      NewSceneLock(client),
-		Policy:         NewPolicy(client),
-		Storytelling:   NewStorytelling(client),
-		Lock:           lock,
-		Transaction:    client.Transaction(),
-		Workspace:      account.Workspace,
-		User:           account.User,
+		Asset:           NewAsset(client),
+		AuthRequest:     authserver.NewMongo(client.WithCollection("authRequest")),
+		Config:          NewConfig(db.Collection("config"), lock),
+		NLSLayer:        NewNLSLayer(client),
+		Style:           NewStyle(client),
+		Plugin:          NewPlugin(client),
+		Project:         NewProject(client),
+		ProjectMetadata: NewProjectMetadata(client),
+		PropertySchema:  NewPropertySchema(client),
+		Property:        NewProperty(client),
+		Scene:           NewScene(client),
+		SceneLock:       NewSceneLock(client),
+		Policy:          NewPolicy(client),
+		Storytelling:    NewStorytelling(client),
+		Lock:            lock,
+		Transaction:     client.Transaction(),
+		Workspace:       account.Workspace,
+		User:            account.User,
 	}
 
 	// init
@@ -124,6 +125,13 @@ func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interfac
 		return filter
 	}
 	return mongox.And(filter, "team", bson.M{"$in": ids.Strings()})
+}
+
+func applyWorkspaceFilterW(filter interface{}, ids user.WorkspaceIDList) interface{} {
+	if ids == nil {
+		return filter
+	}
+	return mongox.And(filter, "workspace", bson.M{"$in": ids.Strings()})
 }
 
 func applySceneFilter(filter interface{}, ids id.SceneIDList) interface{} {

@@ -3,20 +3,19 @@ type Project implements Node {
   teamId: ID!
   team: Team
   scene: Scene
-
   name: String!
   description: String!
   imageUrl: URL
-  visualizer: Visualizer!
   createdAt: DateTime!
   updatedAt: DateTime!
-  importStatus: ProjectImportStatus!
-
+  visualizer: Visualizer!
   isArchived: Boolean!
   coreSupport: Boolean!
   starred: Boolean!
   isDeleted: Boolean!
   visibility: String!
+
+  metadata: ProjectMetadata
 
   # publishment
   alias: String!
@@ -31,6 +30,17 @@ type Project implements Node {
   basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
+}
+
+type ProjectMetadata {
+  id: ID!
+  project: ID!
+  workspace: ID!
+  readme: String
+  license: String
+  importStatus: ProjectImportStatus
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 enum ProjectImportStatus {

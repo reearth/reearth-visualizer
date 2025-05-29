@@ -14,14 +14,16 @@ import (
 )
 
 type ProjectLoader struct {
-	usecase interfaces.Project
+	usecase  interfaces.Project
+	metadata interfaces.ProjectMetadata
 }
 
-func NewProjectLoader(usecase interfaces.Project) *ProjectLoader {
-	return &ProjectLoader{usecase: usecase}
+func NewProjectLoader(usecase interfaces.Project, metadata interfaces.ProjectMetadata) *ProjectLoader {
+	return &ProjectLoader{usecase: usecase, metadata: metadata}
 }
 
 func (c *ProjectLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Project, []error) {
+
 	ids2, err := util.TryMap(ids, gqlmodel.ToID[id.Project])
 	if err != nil {
 		return nil, []error{err}
@@ -32,8 +34,20 @@ func (c *ProjectLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmod
 		return nil, []error{err}
 	}
 
+	metadatas, err := c.metadata.Fetch(ctx, ids2, getOperator(ctx))
+	if err != nil {
+		return nil, []error{err}
+	}
+
 	projects := make([]*gqlmodel.Project, 0, len(res))
 	for _, project := range res {
+		for _, metadata := range metadatas {
+			if project.ID() == metadata.Project() {
+				project.SetMetadata(metadata)
+				break
+			}
+		}
+
 		projects = append(projects, gqlmodel.ToProject(project))
 	}
 
@@ -41,6 +55,7 @@ func (c *ProjectLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmod
 }
 
 func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, keyword *string, sort *project.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error) {
+
 	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
 	if err != nil {
 		return nil, err

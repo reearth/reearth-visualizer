@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/status"
 )
 
 func FromPublishmentStatus(v PublishmentStatus) project.PublishmentStatus {
@@ -32,6 +33,53 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 	return PublishmentStatus("")
 }
 
+// ProjectImportStatusProcessing ProjectImportStatus = "PROCESSING"
+// ProjectImportStatusFailed     ProjectImportStatus = "FAILED"
+// ProjectImportStatusSuccess    ProjectImportStatus = "SUCCESS"
+
+func FromProjectImportStatus(v ProjectImportStatus) status.ProjectImportStatus {
+	switch v {
+	case ProjectImportStatusProcessing:
+		return status.ProjectImportStatusProcessing
+	case ProjectImportStatusFailed:
+		return status.ProjectImportStatusFailed
+	case ProjectImportStatusSuccess:
+		return status.ProjectImportStatusSuccess
+	}
+	return status.ProjectImportStatusNone
+}
+
+func ToProjectImportStatus(v status.ProjectImportStatus) ProjectImportStatus {
+	switch v {
+	case status.ProjectImportStatusProcessing:
+		return ProjectImportStatusProcessing
+	case status.ProjectImportStatusFailed:
+		return ProjectImportStatusFailed
+	case status.ProjectImportStatusSuccess:
+		return ProjectImportStatusSuccess
+	}
+	return ProjectImportStatusNone
+}
+
+func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
+	if pm == nil {
+		return nil
+	}
+
+	importStatus := ToProjectImportStatus(*pm.ImportStatus())
+
+	return &ProjectMetadata{
+		ID:           IDFrom(pm.ID()),
+		Workspace:    IDFrom(pm.Workspace()),
+		Project:      IDFrom(pm.Project()),
+		Readme:       pm.Readme(),
+		License:      pm.License(),
+		ImportStatus: &importStatus,
+		CreatedAt:    pm.CreatedAt(),
+		UpdatedAt:    pm.UpdatedAt(),
+	}
+}
+
 func ToProject(p *project.Project) *Project {
 	if p == nil {
 		return nil
@@ -43,21 +91,20 @@ func ToProject(p *project.Project) *Project {
 	}
 
 	return &Project{
-		ID:           IDFrom(p.ID()),
-		CreatedAt:    p.CreatedAt(),
-		IsArchived:   p.IsArchived(),
-		Name:         p.Name(),
-		Description:  p.Description(),
-		ImageURL:     p.ImageURL(),
-		UpdatedAt:    p.UpdatedAt(),
-		Visualizer:   Visualizer(p.Visualizer()),
-		ImportStatus: ProjectImportStatus(p.ImportStatus()),
-		TeamID:       IDFrom(p.Workspace()),
-		Starred:      p.Starred(),
-		IsDeleted:    p.IsDeleted(),
-		Visibility:   p.Visibility(),
-		CoreSupport:  p.CoreSupport(),
-
+		ID:          IDFrom(p.ID()),
+		TeamID:      IDFrom(p.Workspace()),
+		Name:        p.Name(),
+		Description: p.Description(),
+		ImageURL:    p.ImageURL(),
+		CreatedAt:   p.CreatedAt(),
+		UpdatedAt:   p.UpdatedAt(),
+		Visualizer:  Visualizer(p.Visualizer()),
+		IsArchived:  p.IsArchived(),
+		CoreSupport: p.CoreSupport(),
+		Starred:     p.Starred(),
+		IsDeleted:   p.IsDeleted(),
+		Visibility:  p.Visibility(),
+		Metadata:    ToProjectMetadata(p.Metadata()),
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),

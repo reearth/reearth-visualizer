@@ -535,10 +535,10 @@ type ComplexityRoot struct {
 		EnableGa          func(childComplexity int) int
 		ID                func(childComplexity int) int
 		ImageURL          func(childComplexity int) int
-		ImportStatus      func(childComplexity int) int
 		IsArchived        func(childComplexity int) int
 		IsBasicAuthActive func(childComplexity int) int
 		IsDeleted         func(childComplexity int) int
+		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
@@ -571,6 +571,17 @@ type ComplexityRoot struct {
 	ProjectEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
+	}
+
+	ProjectMetadata struct {
+		CreatedAt    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ImportStatus func(childComplexity int) int
+		License      func(childComplexity int) int
+		Project      func(childComplexity int) int
+		Readme       func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		Workspace    func(childComplexity int) int
 	}
 
 	ProjectPayload struct {
@@ -3755,13 +3766,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.ImageURL(childComplexity), true
 
-	case "Project.importStatus":
-		if e.complexity.Project.ImportStatus == nil {
-			break
-		}
-
-		return e.complexity.Project.ImportStatus(childComplexity), true
-
 	case "Project.isArchived":
 		if e.complexity.Project.IsArchived == nil {
 			break
@@ -3782,6 +3786,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.IsDeleted(childComplexity), true
+
+	case "Project.metadata":
+		if e.complexity.Project.Metadata == nil {
+			break
+		}
+
+		return e.complexity.Project.Metadata(childComplexity), true
 
 	case "Project.name":
 		if e.complexity.Project.Name == nil {
@@ -3943,6 +3954,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectEdge.Node(childComplexity), true
+
+	case "ProjectMetadata.createdAt":
+		if e.complexity.ProjectMetadata.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.CreatedAt(childComplexity), true
+
+	case "ProjectMetadata.id":
+		if e.complexity.ProjectMetadata.ID == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.ID(childComplexity), true
+
+	case "ProjectMetadata.importStatus":
+		if e.complexity.ProjectMetadata.ImportStatus == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.ImportStatus(childComplexity), true
+
+	case "ProjectMetadata.license":
+		if e.complexity.ProjectMetadata.License == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.License(childComplexity), true
+
+	case "ProjectMetadata.project":
+		if e.complexity.ProjectMetadata.Project == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Project(childComplexity), true
+
+	case "ProjectMetadata.readme":
+		if e.complexity.ProjectMetadata.Readme == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Readme(childComplexity), true
+
+	case "ProjectMetadata.updatedAt":
+		if e.complexity.ProjectMetadata.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.UpdatedAt(childComplexity), true
+
+	case "ProjectMetadata.workspace":
+		if e.complexity.ProjectMetadata.Workspace == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Workspace(childComplexity), true
 
 	case "ProjectPayload.project":
 		if e.complexity.ProjectPayload.Project == nil {
@@ -6765,20 +6832,19 @@ extend type Mutation {
   teamId: ID!
   team: Team
   scene: Scene
-
   name: String!
   description: String!
   imageUrl: URL
-  visualizer: Visualizer!
   createdAt: DateTime!
   updatedAt: DateTime!
-  importStatus: ProjectImportStatus!
-
+  visualizer: Visualizer!
   isArchived: Boolean!
   coreSupport: Boolean!
   starred: Boolean!
   isDeleted: Boolean!
   visibility: String!
+
+  metadata: ProjectMetadata
 
   # publishment
   alias: String!
@@ -6793,6 +6859,17 @@ extend type Mutation {
   basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
+}
+
+type ProjectMetadata {
+  id: ID!
+  project: ID!
+  workspace: ID!
+  readme: String
+  license: String
+  importStatus: ProjectImportStatus
+  createdAt: DateTime
+  updatedAt: DateTime
 }
 
 enum ProjectImportStatus {
@@ -26688,50 +26765,6 @@ func (ec *executionContext) fieldContext_Project_imageUrl(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_visualizer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_visualizer(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Visualizer, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.Visualizer)
-	fc.Result = res
-	return ec.marshalNVisualizer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Project_visualizer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Project",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Visualizer does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Project_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_createdAt(ctx, field)
 	if err != nil {
@@ -26820,8 +26853,8 @@ func (ec *executionContext) fieldContext_Project_updatedAt(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_importStatus(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_importStatus(ctx, field)
+func (ec *executionContext) _Project_visualizer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_visualizer(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26834,7 +26867,7 @@ func (ec *executionContext) _Project_importStatus(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ImportStatus, nil
+		return obj.Visualizer, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26846,19 +26879,19 @@ func (ec *executionContext) _Project_importStatus(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(gqlmodel.ProjectImportStatus)
+	res := resTmp.(gqlmodel.Visualizer)
 	fc.Result = res
-	return ec.marshalNProjectImportStatus2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx, field.Selections, res)
+	return ec.marshalNVisualizer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_importStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_visualizer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ProjectImportStatus does not have child fields")
+			return nil, errors.New("field of type Visualizer does not have child fields")
 		},
 	}
 	return fc, nil
@@ -27079,6 +27112,65 @@ func (ec *executionContext) fieldContext_Project_visibility(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_metadata(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectMetadata)
+	fc.Result = res
+	return ec.marshalOProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ProjectMetadata_id(ctx, field)
+			case "project":
+				return ec.fieldContext_ProjectMetadata_project(ctx, field)
+			case "workspace":
+				return ec.fieldContext_ProjectMetadata_workspace(ctx, field)
+			case "readme":
+				return ec.fieldContext_ProjectMetadata_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_ProjectMetadata_license(ctx, field)
+			case "importStatus":
+				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_ProjectMetadata_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectMetadata", field.Name)
 		},
 	}
 	return fc, nil
@@ -27800,14 +27892,12 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
-			case "importStatus":
-				return ec.fieldContext_Project_importStatus(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -27818,6 +27908,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -28041,14 +28133,12 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
-			case "importStatus":
-				return ec.fieldContext_Project_importStatus(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -28059,6 +28149,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -28085,6 +28177,343 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_project(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_project(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Project, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_project(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_workspace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Workspace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_readme(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_readme(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Readme, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_readme(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_license(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_license(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.License, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_license(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_importStatus(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImportStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectImportStatus)
+	fc.Result = res
+	return ec.marshalOProjectImportStatus2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_importStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ProjectImportStatus does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalODateTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_updatedAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalODateTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -28143,14 +28572,12 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
-			case "importStatus":
-				return ec.fieldContext_Project_importStatus(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -28161,6 +28588,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -34513,14 +34942,12 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
-			case "importStatus":
-				return ec.fieldContext_Project_importStatus(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -34531,6 +34958,8 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -51686,11 +52115,6 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "imageUrl":
 			out.Values[i] = ec._Project_imageUrl(ctx, field, obj)
-		case "visualizer":
-			out.Values[i] = ec._Project_visualizer(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdAt":
 			out.Values[i] = ec._Project_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -51701,8 +52125,8 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "importStatus":
-			out.Values[i] = ec._Project_importStatus(ctx, field, obj)
+		case "visualizer":
+			out.Values[i] = ec._Project_visualizer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -51731,6 +52155,8 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "metadata":
+			out.Values[i] = ec._Project_metadata(ctx, field, obj)
 		case "alias":
 			out.Values[i] = ec._Project_alias(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -51927,6 +52353,65 @@ func (ec *executionContext) _ProjectEdge(ctx context.Context, sel ast.SelectionS
 			}
 		case "node":
 			out.Values[i] = ec._ProjectEdge_node(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectMetadataImplementors = []string{"ProjectMetadata"}
+
+func (ec *executionContext) _ProjectMetadata(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ProjectMetadata) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectMetadataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectMetadata")
+		case "id":
+			out.Values[i] = ec._ProjectMetadata_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "project":
+			out.Values[i] = ec._ProjectMetadata_project(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "workspace":
+			out.Values[i] = ec._ProjectMetadata_workspace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "readme":
+			out.Values[i] = ec._ProjectMetadata_readme(ctx, field, obj)
+		case "license":
+			out.Values[i] = ec._ProjectMetadata_license(ctx, field, obj)
+		case "importStatus":
+			out.Values[i] = ec._ProjectMetadata_importStatus(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._ProjectMetadata_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._ProjectMetadata_updatedAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -58400,16 +58885,6 @@ func (ec *executionContext) marshalNProjectEdge2ᚖgithubᚗcomᚋreearthᚋreea
 	return ec._ProjectEdge(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNProjectImportStatus2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx context.Context, v any) (gqlmodel.ProjectImportStatus, error) {
-	var res gqlmodel.ProjectImportStatus
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNProjectImportStatus2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx context.Context, sel ast.SelectionSet, v gqlmodel.ProjectImportStatus) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNProjectSortField2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSortField(ctx context.Context, v any) (gqlmodel.ProjectSortField, error) {
 	var res gqlmodel.ProjectSortField
 	err := res.UnmarshalGQL(v)
@@ -60418,6 +60893,29 @@ func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋreearthᚋreearth�
 		return graphql.Null
 	}
 	return ec._Project(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOProjectImportStatus2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx context.Context, v any) (*gqlmodel.ProjectImportStatus, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(gqlmodel.ProjectImportStatus)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOProjectImportStatus2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectImportStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalOProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectMetadata) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectMetadata(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectPayload) graphql.Marshaler {

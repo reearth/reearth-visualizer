@@ -671,34 +671,34 @@ type Polygon struct {
 func (Polygon) IsGeometry() {}
 
 type Project struct {
-	ID                ID                  `json:"id"`
-	TeamID            ID                  `json:"teamId"`
-	Team              *Team               `json:"team,omitempty"`
-	Scene             *Scene              `json:"scene,omitempty"`
-	Name              string              `json:"name"`
-	Description       string              `json:"description"`
-	ImageURL          *url.URL            `json:"imageUrl,omitempty"`
-	Visualizer        Visualizer          `json:"visualizer"`
-	CreatedAt         time.Time           `json:"createdAt"`
-	UpdatedAt         time.Time           `json:"updatedAt"`
-	ImportStatus      ProjectImportStatus `json:"importStatus"`
-	IsArchived        bool                `json:"isArchived"`
-	CoreSupport       bool                `json:"coreSupport"`
-	Starred           bool                `json:"starred"`
-	IsDeleted         bool                `json:"isDeleted"`
-	Visibility        string              `json:"visibility"`
-	Alias             string              `json:"alias"`
-	PublishmentStatus PublishmentStatus   `json:"publishmentStatus"`
-	PublishedAt       *time.Time          `json:"publishedAt,omitempty"`
-	PublicTitle       string              `json:"publicTitle"`
-	PublicDescription string              `json:"publicDescription"`
-	PublicImage       string              `json:"publicImage"`
-	PublicNoIndex     bool                `json:"publicNoIndex"`
-	IsBasicAuthActive bool                `json:"isBasicAuthActive"`
-	BasicAuthUsername string              `json:"basicAuthUsername"`
-	BasicAuthPassword string              `json:"basicAuthPassword"`
-	EnableGa          bool                `json:"enableGa"`
-	TrackingID        string              `json:"trackingId"`
+	ID                ID                `json:"id"`
+	TeamID            ID                `json:"teamId"`
+	Team              *Team             `json:"team,omitempty"`
+	Scene             *Scene            `json:"scene,omitempty"`
+	Name              string            `json:"name"`
+	Description       string            `json:"description"`
+	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
+	Visualizer        Visualizer        `json:"visualizer"`
+	IsArchived        bool              `json:"isArchived"`
+	CoreSupport       bool              `json:"coreSupport"`
+	Starred           bool              `json:"starred"`
+	IsDeleted         bool              `json:"isDeleted"`
+	Visibility        string            `json:"visibility"`
+	Metadata          *ProjectMetadata  `json:"metadata,omitempty"`
+	Alias             string            `json:"alias"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
+	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	PublicTitle       string            `json:"publicTitle"`
+	PublicDescription string            `json:"publicDescription"`
+	PublicImage       string            `json:"publicImage"`
+	PublicNoIndex     bool              `json:"publicNoIndex"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
+	EnableGa          bool              `json:"enableGa"`
+	TrackingID        string            `json:"trackingId"`
 }
 
 func (Project) IsNode()        {}
@@ -719,6 +719,17 @@ type ProjectConnection struct {
 type ProjectEdge struct {
 	Cursor usecasex.Cursor `json:"cursor"`
 	Node   *Project        `json:"node,omitempty"`
+}
+
+type ProjectMetadata struct {
+	ID           ID                   `json:"id"`
+	Project      ID                   `json:"project"`
+	Workspace    ID                   `json:"workspace"`
+	Readme       *string              `json:"readme,omitempty"`
+	License      *string              `json:"license,omitempty"`
+	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
+	CreatedAt    *time.Time           `json:"createdAt,omitempty"`
+	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
 }
 
 type ProjectPayload struct {

@@ -24,6 +24,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -191,6 +192,21 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		return err
 	}
 
+	st := status.ProjectImportStatusNone
+	metadata, err := project.NewProjectMetadata().
+		NewID().
+		Workspace(w.ID()).
+		Project(pID).
+		ImportStatus(&st).
+		Build()
+	if err != nil {
+		return err
+	}
+
+	err = r.ProjectMetadata.Save(ctx, metadata)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

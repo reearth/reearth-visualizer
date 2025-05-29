@@ -91,7 +91,6 @@ func TestToProject(t *testing.T) {
 				ImageURL:          lo.Must(url.Parse("https://example.com/hoge.gif")),
 				TeamID:            IDFrom(wsId),
 				Visualizer:        Visualizer(visualizer.VisualizerCesium),
-				ImportStatus:      "NONE",
 				PublishmentStatus: PublishmentStatusPrivate,
 				Team:              nil,
 				Scene:             nil,

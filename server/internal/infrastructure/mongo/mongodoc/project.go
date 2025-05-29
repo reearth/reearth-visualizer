@@ -6,27 +6,24 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"golang.org/x/exp/slices"
 )
 
 type ProjectDocument struct {
-	ID           string
-	Archived     bool
-	UpdatedAt    time.Time
-	Name         string
-	Description  string
-	ImageURL     string
-	Team         string // DON'T CHANGE NAME'
-	Visualizer   string
-	ImportStatus string
-	CoreSupport  bool
-	Starred      bool
-	Deleted      bool
-	Visibility   string
-
+	ID          string
+	Team        string // DON'T CHANGE NAME'
+	Name        string
+	Description string
+	ImageURL    string
+	UpdatedAt   time.Time
+	Visualizer  string
+	Archived    bool
+	CoreSupport bool
+	Starred     bool
+	Deleted     bool
+	Visibility  string
 	// publishment
 	Alias             string
 	PublishmentStatus string
@@ -50,42 +47,40 @@ func NewProjectConsumer(workspaces []accountdomain.WorkspaceID) *ProjectConsumer
 	})
 }
 
-func NewProject(project *project.Project) (*ProjectDocument, string) {
-	pid := project.ID().String()
+func NewProject(p *project.Project) (*ProjectDocument, string) {
+	pid := p.ID().String()
 
 	imageURL := ""
-	if u := project.ImageURL(); u != nil {
+	if u := p.ImageURL(); u != nil {
 		imageURL = u.String()
 	}
 
 	return &ProjectDocument{
-		ID:           pid,
-		Archived:     project.IsArchived(),
-		UpdatedAt:    project.UpdatedAt(),
-		Name:         project.Name(),
-		Description:  project.Description(),
-		ImageURL:     imageURL,
-		Team:         project.Workspace().String(),
-		Visualizer:   string(project.Visualizer()),
-		ImportStatus: string(project.ImportStatus()),
-		Starred:      project.Starred(),
-		Deleted:      project.IsDeleted(),
-		Visibility:   project.Visibility(),
-		CoreSupport:  project.CoreSupport(),
-
+		ID:          pid,
+		Team:        p.Workspace().String(),
+		Name:        p.Name(),
+		Description: p.Description(),
+		ImageURL:    imageURL,
+		UpdatedAt:   p.UpdatedAt(),
+		Visualizer:  string(p.Visualizer()),
+		Archived:    p.IsArchived(),
+		CoreSupport: p.CoreSupport(),
+		Starred:     p.Starred(),
+		Deleted:     p.IsDeleted(),
+		Visibility:  p.Visibility(),
 		// publishment
-		Alias:             project.Alias(),
-		PublishmentStatus: string(project.PublishmentStatus()),
-		PublishedAt:       project.PublishedAt(),
-		PublicTitle:       project.PublicTitle(),
-		PublicDescription: project.PublicDescription(),
-		PublicImage:       project.PublicImage(),
-		PublicNoIndex:     project.PublicNoIndex(),
-		IsBasicAuthActive: project.IsBasicAuthActive(),
-		BasicAuthUsername: project.BasicAuthUsername(),
-		BasicAuthPassword: project.BasicAuthPassword(),
-		EnableGA:          project.EnableGA(),
-		TrackingID:        project.TrackingID(),
+		Alias:             p.Alias(),
+		PublishmentStatus: string(p.PublishmentStatus()),
+		PublishedAt:       p.PublishedAt(),
+		PublicTitle:       p.PublicTitle(),
+		PublicDescription: p.PublicDescription(),
+		PublicImage:       p.PublicImage(),
+		PublicNoIndex:     p.PublicNoIndex(),
+		IsBasicAuthActive: p.IsBasicAuthActive(),
+		BasicAuthUsername: p.BasicAuthUsername(),
+		BasicAuthPassword: p.BasicAuthPassword(),
+		EnableGA:          p.EnableGA(),
+		TrackingID:        p.TrackingID(),
 	}, pid
 }
 
@@ -113,18 +108,17 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 
 	return project.New().
 		ID(pid).
-		IsArchived(d.Archived).
-		UpdatedAt(d.UpdatedAt).
+		Workspace(tid).
 		Name(d.Name).
 		Description(d.Description).
 		ImageURL(imageURL).
-		Workspace(tid).
+		UpdatedAt(d.UpdatedAt).
 		Visualizer(visualizer.Visualizer(d.Visualizer)).
-		ImportStatus(status.ProjectImportStatus(d.ImportStatus)).
+		IsArchived(d.Archived).
+		CoreSupport(d.CoreSupport).
 		Starred(d.Starred).
 		Deleted(d.Deleted).
 		Visibility(d.Visibility).
-		CoreSupport(d.CoreSupport).
 		// publishment
 		Alias(d.Alias).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
