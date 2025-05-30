@@ -85,5 +85,5 @@ func (r *ProjectMetadata) findOne(ctx context.Context, filter any) (*project.Pro
 }
 
 func (r *ProjectMetadata) writeFilter(filter interface{}) interface{} {
-	return applyWorkspaceFilterW(filter, r.f.Writable)
+	return applyWorkspaceFilter(filter, r.f.Writable)
 }
