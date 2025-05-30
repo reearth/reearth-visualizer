@@ -22,4 +22,5 @@ var migrations = migration.Migrations[DBClient]{
   250417160823: SetProjectVisibility,
   250507125156: UpdateAlias,
   250514185337: DeleteJunkData,
+  250529134852: ProjectMetadata,
 }

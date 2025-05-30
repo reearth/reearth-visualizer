@@ -244,9 +244,9 @@ func filterAssets(ids []id.AssetID, rows []*asset.Asset) []*asset.Asset {
 }
 
 // func (r *Asset) readFilter(filter any) any {
-// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// 	return applyTeamFilter(filter, r.f.Readable)
 // }
 
 func (r *Asset) writeFilter(filter any) any {
-	return applyWorkspaceFilter(filter, r.f.Writable)
+	return applyTeamFilter(filter, r.f.Writable)
 }

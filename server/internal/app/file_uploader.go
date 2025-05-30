@@ -12,7 +12,9 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -23,7 +25,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	file_ "github.com/reearth/reearth/server/pkg/file"
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/status"
+	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/spf13/afero"
 )
 
@@ -38,6 +45,7 @@ type UploadManager struct {
 
 type UploadSession struct {
 	FileID      string
+	ProjectID   string
 	Chunks      []string
 	TotalChunks int
 	Received    int
@@ -47,14 +55,14 @@ type UploadSession struct {
 
 func serveUploadFiles(
 	ec *echo.Echo,
-	repo gateway.File,
+	r gateway.File,
 ) {
 	uploadManager := &UploadManager{
 		activeUploads: make(map[string]*UploadSession),
 		tempDir:       os.TempDir(),
 		chunkSize:     16 * 1024 * 1024, // 16MB
 		maxRetries:    3,
-		fileGateway:   repo,
+		fileGateway:   r,
 	}
 
 	uploadManager.StartCleanupRoutine(1 * time.Hour)
@@ -117,6 +125,40 @@ func serveUploadFiles(
 
 }
 
+func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, teamId string) (*project.Project, error) {
+
+	visibility := "private"
+	coreSupport := true
+	unknown := "It's importing now..."
+	workspaceID, err := accountdomain.WorkspaceIDFrom(teamId)
+	if err != nil {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid team id")
+	}
+
+	prj, err := usecases.Project.Create(ctx, interfaces.CreateProjectParam{
+		WorkspaceID:  workspaceID,
+		Visualizer:   visualizer.VisualizerCesium,
+		Name:         &unknown,
+		Description:  &unknown,
+		CoreSupport:  &coreSupport,
+		Visibility:   &visibility,
+		ImportStatus: status.ProjectImportStatusProcessing, // PROCESSING
+	}, op)
+	if err != nil {
+		return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to create project")
+	}
+
+	return prj, nil
+
+}
+
+func UpdateImportStatus(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, pid id.ProjectID, status status.ProjectImportStatus) {
+	_, err := usecases.Project.UpdateImportStatus(ctx, pid, status, op)
+	if err != nil {
+		log.Printf("failed to update import status: %v", err)
+	}
+}
+
 func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, teamId, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
 	// chunkPath, err := m.SaveChunk(fileID, chunkNum, file)
@@ -125,13 +167,29 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, "Failed to save chunk")
 	}
 
-	session, completed, err := m.UpdateSession(fileID, chunkNum, totalChunks)
+	var prj *project.Project
+	if chunkNum == 0 {
+		prj, err = CreateProcessingProject(ctx, usecases, op, teamId)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	session, completed, err := m.UpdateSession(fileID, chunkNum, totalChunks, prj)
 	if err != nil {
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, "Failed to update upload session")
 	}
 
 	if completed {
+		// Import process, this process will take some time
 		go func(session *UploadSession) {
+
+			pid, err := id.ProjectIDFrom(session.ProjectID)
+			if err != nil {
+				log.Printf("Invalid project id: %v", err)
+				return
+			}
+
 			bgctx := context.Background()
 
 			assembledPath := filepath.Join(m.tempDir, session.FileID)
@@ -139,6 +197,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 
 			if err := m.AssembleChunks(session, assembledPath); err != nil {
 				log.Printf("failed to assemble chunks: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
@@ -146,6 +205,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 			f, err := fs.Open(assembledPath)
 			if err != nil {
 				log.Printf("failed to open assembled file: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 			defer closeWithError(f, &err)
@@ -153,64 +213,75 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(adapter.CurrentHost(bgctx), f)
 			if err != nil {
 				log.Printf("fail UncompressExportZip: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
-			newProject, err := usecases.Project.ImportProjectData(bgctx, teamId, importData, op)
+			newProject, err := usecases.Project.ImportProjectData(bgctx, teamId, &session.ProjectID, importData, op)
 			if err != nil {
 				log.Printf("fail Import ProjectData: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
-			importData, err = usecases.Asset.ImportAssetFiles(bgctx, assetsZip, importData, newProject)
+			importData, err = usecases.Asset.ImportAssetFiles(bgctx, assetsZip, importData, newProject, op)
 			if err != nil {
 				log.Printf("fail Import AssetFiles: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			newScene, err := usecases.Scene.Create(bgctx, newProject.ID(), false, op)
 			if err != nil {
 				log.Printf("fail Create Scene: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			oldSceneID, err := replaceOldSceneID(importData, newScene)
 			if err != nil {
 				log.Printf("fail Get OldSceneID: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			_, _, err = usecases.Plugin.ImportPlugins(bgctx, pluginsZip, oldSceneID, newScene, importData)
 			if err != nil {
 				log.Printf("fail ImportPlugins: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			newScene, err = usecases.Scene.ImportScene(bgctx, newScene, importData)
 			if err != nil {
 				log.Printf("fail sceneJSON ImportScene: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			_, err = usecases.Style.ImportStyles(bgctx, newScene.ID(), importData)
 			if err != nil {
 				log.Printf("fail sceneJSON ImportStyles: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			_, err = usecases.NLSLayer.ImportNLSLayers(bgctx, newScene.ID(), importData)
 			if err != nil {
 				log.Printf("fail sceneJSON ImportNLSLayers: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			_, err = usecases.StoryTelling.ImportStory(bgctx, newScene.ID(), importData)
 			if err != nil {
 				log.Printf("fail sceneJSON ImportStory: %v", err)
+				UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusFailed)
 				return
 			}
 
 			m.CleanupSession(session.FileID)
+			UpdateImportStatus(bgctx, usecases, op, pid, status.ProjectImportStatusSuccess) // SUCCESS
 			log.Printf("Upload completed: %s (%d chunks)", session.FileID, session.TotalChunks)
 
 		}(session)
@@ -218,6 +289,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 
 	return map[string]interface{}{
 		"status":     "chunk_received",
+		"project_id": session.ProjectID,
 		"file_id":    fileID,
 		"chunk_num":  chunkNum,
 		"received":   session.Received,
@@ -245,7 +317,7 @@ func (m *UploadManager) SaveChunk(fileID string, chunkNum int, src io.Reader) (s
 	return "", fmt.Errorf("failed to save chunk")
 }
 
-func (m *UploadManager) UpdateSession(fileID string, chunkNum, totalChunks int) (*UploadSession, bool, error) {
+func (m *UploadManager) UpdateSession(fileID string, chunkNum, totalChunks int, prj *project.Project) (*UploadSession, bool, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
@@ -257,6 +329,9 @@ func (m *UploadManager) UpdateSession(fileID string, chunkNum, totalChunks int) 
 			CreatedAt:   time.Now(),
 		}
 		m.activeUploads[fileID] = session
+	}
+	if prj != nil {
+		m.activeUploads[fileID].ProjectID = prj.ID().String()
 	}
 
 	session.UpdatedAt = time.Now()
@@ -280,6 +355,24 @@ func (m *UploadManager) AssembleChunks(session *UploadSession, outputPath string
 		return fmt.Errorf("failed to create output file: %w", err)
 	}
 	defer closeWithError(outFile, &err)
+
+	sort.Slice(session.Chunks, func(i, j int) bool {
+		getChunkNumber := func(s string) int {
+			parts := strings.Split(s, "_part_")
+			if len(parts) != 2 {
+				log.Printf("warning: unexpected chunk name format: %s", s)
+				return 0
+			}
+			n, err := strconv.Atoi(parts[1])
+			if err != nil {
+				log.Printf("warning: failed to parse chunk number from %s: %v", s, err)
+				return 0
+			}
+			return n
+		}
+
+		return getChunkNumber(session.Chunks[i]) < getChunkNumber(session.Chunks[j])
+	})
 
 	for _, chunk := range session.Chunks {
 		chunkPath := filepath.Join(m.tempDir, chunk)

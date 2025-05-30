@@ -26,16 +26,17 @@ type Loaders struct {
 }
 
 type DataLoaders struct {
-	Asset          AssetDataLoader
-	Plugin         PluginDataLoader
-	Policy         PolicyDataLoader
-	Project        ProjectDataLoader
-	Property       PropertyDataLoader
-	PropertySchema PropertySchemaDataLoader
-	Scene          SceneDataLoader
-	Story          StoryDataLoader
-	Workspace      WorkspaceDataLoader
-	User           UserDataLoader
+	Asset           AssetDataLoader
+	Plugin          PluginDataLoader
+	Policy          PolicyDataLoader
+	Project         ProjectDataLoader
+	ProjectMetadata ProjectMetadataLoader
+	Property        PropertyDataLoader
+	PropertySchema  PropertySchemaDataLoader
+	Scene           SceneDataLoader
+	Story           StoryDataLoader
+	Workspace       WorkspaceDataLoader
+	User            UserDataLoader
 }
 
 func NewLoaders(usecases *interfaces.Container) *Loaders {
@@ -47,7 +48,7 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Asset:     NewAssetLoader(usecases.Asset),
 		Plugin:    NewPluginLoader(usecases.Plugin),
 		Policy:    NewPolicyLoader(usecases.Policy),
-		Project:   NewProjectLoader(usecases.Project),
+		Project:   NewProjectLoader(usecases.Project, usecases.ProjectMetadata),
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
 		Story:     NewStoryLoader(usecases.StoryTelling),

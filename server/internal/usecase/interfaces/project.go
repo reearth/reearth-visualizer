@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/i18n/message"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/status"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -19,12 +20,13 @@ import (
 )
 
 type CreateProjectParam struct {
-	WorkspaceID accountdomain.WorkspaceID
-	Visualizer  visualizer.Visualizer
-	Name        *string
-	Description *string
-	CoreSupport *bool
-	Visibility  *string
+	WorkspaceID  accountdomain.WorkspaceID
+	Visualizer   visualizer.Visualizer
+	Name         *string
+	Description  *string
+	CoreSupport  *bool
+	Visibility   *string
+	ImportStatus status.ProjectImportStatus
 }
 
 type UpdateProjectParam struct {
@@ -34,6 +36,7 @@ type UpdateProjectParam struct {
 	Archived       *bool
 	ImageURL       *url.URL
 	DeleteImageURL bool
+	ImportStatus   status.ProjectImportStatus
 	SceneID        *id.SceneID
 	Starred        *bool
 	Deleted        *bool
@@ -86,6 +89,7 @@ type Project interface {
 	CheckAlias(context.Context, string, *id.ProjectID) (bool, error)
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
-	ImportProjectData(context.Context, string, *[]byte, *usecase.Operator) (*project.Project, error)
+	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
+	UpdateImportStatus(context.Context, id.ProjectID, status.ProjectImportStatus, *usecase.Operator) (*project.Project, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }
