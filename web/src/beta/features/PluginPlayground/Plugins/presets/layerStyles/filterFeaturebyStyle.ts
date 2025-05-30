@@ -73,7 +73,19 @@ const samplePointData = {
     url: "https://reearth.github.io/visualizer-plugin-sample-data/public/geojson/sample_population_marker.geojson"
 
   },
-  marker: {},
+  marker: {
+    label: true,
+    labelBackground: true,
+    labelBackgroundColor: "#00000080",
+    labelPosition: "top",
+    labelText: {
+      expression: "\${ls_name}",
+    },
+    labelTypography: {
+      color: "#FFFFFF",
+      fontSize: 12,
+    },
+  },
 };
 
 // Add the layer to Re:Earth
