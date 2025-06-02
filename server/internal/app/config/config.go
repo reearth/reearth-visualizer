@@ -72,6 +72,24 @@ type Config struct {
 	Ext_Plugin []string `pp:",omitempty"`
 
 	MockAuth bool `pp:",omitempty"`
+
+	// Health Check Configuration
+	HealthCheck HealthCheckConfig `pp:",omitempty"`
+
+	Visualizer VisualizerConfig `pp:",omitempty"`
+}
+
+type HealthCheckConfig struct {
+	Username string `pp:",omitempty"`
+	Password string `pp:",omitempty"`
+}
+
+type VisualizerConfig struct {
+	InternalApi InternalApiConfig `pp:",omitempty"`
+}
+
+type InternalApiConfig struct {
+	Active bool `default:"false" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {

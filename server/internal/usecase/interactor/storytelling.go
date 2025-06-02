@@ -87,9 +87,9 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 	if err := i.CanWriteScene(inp.SceneID, op); err != nil {
 		return nil, interfaces.ErrOperationDenied
 	}
-
 	storySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
-	prop, err := i.addNewProperty(ctx, storySchema.ID(), inp.SceneID, nil)
+	filter := Filter(inp.SceneID)
+	prop, err := i.addNewProperty(ctx, storySchema.ID(), inp.SceneID, &filter)
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +107,7 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 	}
 
 	// TODO: Handel ordering
-	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+	if err := i.storytellingRepo.Filtered(filter).Save(ctx, *story); err != nil {
 		return nil, err
 	}
 
@@ -504,12 +504,18 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		return nil, nil, interfaces.ErrOperationDenied
 	}
 
-	storyPageSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
-	prop, err := i.addNewProperty(ctx, storyPageSchema.ID(), inp.SceneID, nil)
+	filter := Filter(inp.SceneID)
+
+	story, err := i.storytellingRepo.Filtered(filter).FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
 	}
 
+	storyPageSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
+	prop, err := i.addNewProperty(ctx, storyPageSchema.ID(), inp.SceneID, &filter)
+	if err != nil {
+		return nil, nil, err
+	}
 	builder := storytelling.NewPage().
 		NewID().
 		Property(prop.ID())
@@ -531,11 +537,6 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	}
 
 	page, err := builder.Build()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -564,7 +565,7 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 
 	story.Pages().AddAt(page, inp.Index)
 
-	if err := i.storytellingRepo.Save(ctx, *story); err != nil {
+	if err := i.storytellingRepo.Filtered(filter).Save(ctx, *story); err != nil {
 		return nil, nil, err
 	}
 

@@ -33,11 +33,24 @@ import (
 )
 
 var (
-	fr                 *gateway.File
+	fr *gateway.File
+
 	disabledAuthConfig = &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
+		},
+	}
+
+	internalApiConfig = &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+		Visualizer: config.VisualizerConfig{
+			InternalApi: config.InternalApiConfig{
+				Active: true,
+			},
 		},
 	}
 )
@@ -109,20 +122,38 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	}
 
 	ctx := context.Background()
-	l, err := net.Listen("tcp", ":0")
-	if err != nil {
-		t.Fatalf("server failed to listen: %v", err)
-	}
 
 	srv, gateways, accountGateway := initServerWithAccountGateway(cfg, repos, ctx)
 
 	ch := make(chan error)
-	go func() {
-		if err := srv.Serve(l); err != http.ErrServerClosed {
-			ch <- err
+
+	var l net.Listener
+	var err error
+
+	if cfg.Visualizer.InternalApi.Active {
+		l, err = net.Listen("tcp", ":8080")
+		if err != nil {
+			t.Fatalf("server failed to listen: %v", err)
 		}
-		close(ch)
-	}()
+		go func() {
+			if err := srv.ServeGRPC(l); err != http.ErrServerClosed {
+				ch <- err
+			}
+			close(ch)
+		}()
+	} else {
+		l, err = net.Listen("tcp", ":0")
+		if err != nil {
+			t.Fatalf("server failed to listen: %v", err)
+		}
+		go func() {
+			if err := srv.Serve(l); err != http.ErrServerClosed {
+				ch <- err
+			}
+			close(ch)
+		}()
+	}
+
 	t.Cleanup(func() {
 		if err := srv.Shutdown(context.Background()); err != nil {
 			t.Fatalf("server shutdown: %v", err)
@@ -132,6 +163,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 			t.Fatalf("server serve: %v", err)
 		}
 	})
+
 	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
 }
 
@@ -149,6 +181,10 @@ func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder)
 
 func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
 	return startServer(t, disabledAuthConfig, true, seeder)
+}
+
+func GRPCServer(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	return startServer(t, internalApiConfig, true, seeder)
 }
 
 func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {

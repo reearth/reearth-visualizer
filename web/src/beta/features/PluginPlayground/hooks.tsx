@@ -72,7 +72,7 @@ export default () => {
   const [infoboxEnabled, setInfoboxEnabled] = useState(true);
   const [selectedLayerId, setSelectedLayerId] = useState("");
   const [visibleLayerIds, setVisibleLayerIds] = useState<string[]>(
-    DEFAULT_LAYERS_PLUGIN_PLAYGROUND.map((l) => l.id)
+    DEFAULT_LAYERS_PLUGIN_PLAYGROUND.filter((l) => l.visible).map((l) => l.id)
   );
 
   const layerTitles: Record<string, string> = useMemo(() => {
