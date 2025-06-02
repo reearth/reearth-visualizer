@@ -24,6 +24,9 @@ on:
 
 jobs:
   remove-revision-tags:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
     if: github.event.repository.full_name == 'reearth/reearth-visualizer'
     steps:
