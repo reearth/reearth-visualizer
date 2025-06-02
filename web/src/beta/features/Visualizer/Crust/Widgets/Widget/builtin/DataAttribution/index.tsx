@@ -1,11 +1,12 @@
 import { Modal } from "@reearth/beta/lib/reearth-ui";
-import { Credit } from "@reearth/core";
+import { Credits } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useCallback, useEffect, useState } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
 
+import { useDataAttribution } from "./hooks";
 import { DataAttributionUI } from "./UI";
 
 export type Props = WidgetProps;
@@ -20,38 +21,48 @@ const DataAttribution = ({
   const handleModalOpen = useCallback(() => setVisible(true), []);
   const handleModalClose = useCallback(() => setVisible(false), []);
 
-  const [visualizerCredits, setVisualizerCredits] = useState<Credit[]>([]);
+  const [visualizerCredits, setVisualizerCredits] = useState<Credits>();
 
+  console.log("visualizerCredits", visualizerCredits);
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
-    if (visible) {
       const credits = getCredits?.();
       if (credits) {
         setVisualizerCredits(credits);
       }
-
       intervalId = setInterval(() => {
         const credits = getCredits?.();
         if (credits) {
           setVisualizerCredits(credits);
         }
       }, 3000);
-    }
 
     return () => {
       if (intervalId) clearInterval(intervalId);
     };
   }, [getCredits, visible]);
 
+  const { cesiumCredit, otherCredits } = useDataAttribution({
+    credits: visualizerCredits,
+    widget
+  });
   return (
     <Wrapper>
+      {cesiumCredit && (
+        <CesiumLink
+          target="_blank"
+          href={cesiumCredit.creditUrl}
+          rel="noreferrer"
+        >
+          <img src={cesiumCredit.logo} title={cesiumCredit.description} />
+        </CesiumLink>
+      )}
       <DataLink onClick={handleModalOpen}>{t("Data Attribution")}</DataLink>
       <Modal size="small" visible={visible}>
         <DataAttributionUI
           onClose={handleModalClose}
           theme={theme}
-          widget={widget}
-          credits={visualizerCredits}
+          credits={otherCredits}
         />
       </Modal>
     </Wrapper>
@@ -59,8 +70,9 @@ const DataAttribution = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.scrollBar
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small,
 }));
 
 const DataLink = styled("div")(({ theme }) => ({
@@ -68,9 +80,14 @@ const DataLink = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.bold,
+  padding: theme.spacing.smallest,
   "&:hover": {
     color: theme.primary.strong
   }
+}));
+
+const CesiumLink = styled("a")(() => ({
+  height: 33,
 }));
 
 export default DataAttribution;
