@@ -7,37 +7,6 @@ permissions:
   contents: read
   id-token: write
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      web: ${{ steps.web.outputs.any_modified }}
-      server: ${{ steps.server.outputs.any_modified }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: changed files for web
-        id: web
-        uses: step-security/changed-files@3dbe17c78367e7d60f00d78ae6781a35be47b4a1 # v45.0.1
-        with:
-          files: |
-            web/
-            .github/workflows/ci_web.yml
-            .github/workflows/build_web.yml
-            .github/workflows/deploy_web_nightly.yml
-            CHANGELOG.md
-
-      - name: changed files for server
-        id: server
-        uses: step-security/changed-files@3dbe17c78367e7d60f00d78ae6781a35be47b4a1 # v45.0.1
-        with:
-          files: |
-            server/
-            .github/workflows/ci_server.yml
-            .github/workflows/build_server.yml
-            .github/workflows/deploy_server_nightly.yml
-            CHANGELOG.md
-
   show-github-event-info:
     runs-on: ubuntu-latest
     steps:
@@ -50,7 +19,7 @@ jobs:
           echo "PR number: ${{ github.event.pull_request.number }}"
 
   cleanup-pr-revision-server:
-    needs: [prepare,show-github-event-info]
+    needs: [show-github-event-info]
     if: needs.prepare.outputs.server == 'true'
     uses: ./.github/workflows/cleanup-cloudrun-tag.yml
     with:
@@ -59,7 +28,7 @@ jobs:
     secrets: inherit
 
   cleanup-pr-revision-web:
-    needs: [prepare,show-github-event-info]
+    needs: [show-github-event-info]
     if: needs.prepare.outputs.web == 'true'
     uses: ./.github/workflows/cleanup-cloudrun-tag.yml
     with:
