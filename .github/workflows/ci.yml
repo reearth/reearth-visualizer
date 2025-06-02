@@ -139,24 +139,3 @@ jobs:
     with:
       url: ${{ needs.deploy-web-pr.outputs.preview_url }}
     secrets: inherit
-
-  show-github-event-info:
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Debug event info
-        run: |
-          echo "Event name: ${{ github.event_name }}"
-          echo "Event action: ${{ github.event.action }}"
-          echo "Base ref: ${{ github.base_ref }}"
-          echo "PR merged: ${{ github.event.pull_request.merged }}"
-          echo "PR number: ${{ github.event.pull_request.number }}"
-
-  cleanup-pr-revision-web:
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' }}
-    needs: [show-github-event-info]
-    uses: ./.github/workflows/cleanup_feature_revision.yml
-    with:
-      service: reearth-visualizer-web
-      tag: pr-${{ github.event.pull_request.number }}
-    secrets: inherit
