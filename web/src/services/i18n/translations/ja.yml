@@ -351,16 +351,16 @@ Add KML: KMLを追加
 Add WMS: WMSを追加
 Add CZML: CZMLを追加
 Add 3D Tiles: 3Dタイルを追加
-Add Photogrammetric 3D model: 'フォトグラメトリ3Dモデルを追加'
-Add Point Cloud: '点群データを追加'
+Add Photogrammetric 3D model: フォトグラメトリ3Dモデルを追加
+Add Point Cloud: 点群データを追加
 Add Google Photorealistic 3D Tiles: Google Photorealistic 3D Tilesを追加
+Add infobox to show all properties: 全てのプロパティを表示するインフォボックスを追加
+Add infobox to show specific properties: 特定のプロパティを表示するインフォボックスを追加
+Add infobox to show rich blocks: リッチブロックを表示するインフォボックスを追加
 Add OSM 3D Tiles: OSM 3D Tilesを追加
 Hide Fly To Delete Layer: カメラ移動とレイヤーの削除
 Override Layer Data: レイヤーデータの上書き
 Show Selected Features Information: 選択された地物情報を表示
-Add infobox to show all properties: 全てのプロパティを表示するインフォボックスを追加
-Add infobox to show specific properties: 特定のプロパティを表示するインフォボックスを追加
-Add infobox to show rich blocks: リッチブロックを表示するインフォボックスを追加
 Layer Styling Examples: レイヤースタイリング
 Feature Style 3D Model: フィーチャースタイル 3D モデル
 Feature Style 3D Tiles: フィーチャースタイル 3D タイル
@@ -428,9 +428,6 @@ Please publish your map project before setting up your custom domain.: カスタ
 Basic Authorization: ベーシック認証
 Enable Basic Authorization: ベーシック認証を有効にする
 Username: ユーザー名
-Google Analytics: Googleアナリティクス
-Enable Google Analytics: Googleアナリティクスを有効にする
-Tracking ID: トラッキングID
 Left: 左
 Right: 右
 Story Panel settings: ストーリーパネル設定

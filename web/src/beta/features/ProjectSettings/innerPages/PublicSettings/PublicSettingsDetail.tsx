@@ -62,7 +62,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
   onUpdate,
   onUpdateBasicAuth,
   onUpdateAlias,
-  onUpdateGA
+  // onUpdateGA
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -94,19 +94,20 @@ const PublicSettingsDetail: React.FC<Props> = ({
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
 
-  const [localGA, setLocalGA] = useState<PublicGASettingsType>({
-    enableGa: settingsItem.enableGa,
-    trackingId: settingsItem.trackingId
-  });
+  // TODO: Hide for now need investigation
+  // const [localGA, setLocalGA] = useState<PublicGASettingsType>({
+  //   enableGa: settingsItem.enableGa,
+  //   trackingId: settingsItem.trackingId
+  // });
 
-  const handleSubmitGA = useCallback(() => {
-    if (onUpdateGA) {
-      onUpdateGA({
-        enableGa: localGA.enableGa,
-        trackingId: localGA.trackingId
-      });
-    }
-  }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
+  // const handleSubmitGA = useCallback(() => {
+  //   if (onUpdateGA) {
+  //     onUpdateGA({
+  //       enableGa: localGA.enableGa,
+  //       trackingId: localGA.trackingId
+  //     });
+  //   }
+  // }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -308,7 +309,8 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </>
         )}
       </SettingsFields>
-      <SettingsFields>
+      {/* TODO: hide for now it need investigation why not working*/}
+      {/* <SettingsFields>
         <TitleWrapper size="body" weight="bold">
           {t("Google Analytics")}
         </TitleWrapper>
@@ -329,7 +331,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
             onChangeComplete={handleSubmitGA}
           />
         )}
-      </SettingsFields>
+      </SettingsFields> */}
     </SettingsWrapper>
   );
 };
