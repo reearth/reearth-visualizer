@@ -20,7 +20,6 @@ jobs:
 
   cleanup-pr-revision-server:
     needs: [show-github-event-info]
-    if: needs.prepare.outputs.server == 'true'
     uses: ./.github/workflows/cleanup-cloudrun-tag.yml
     with:
       service: reearth-visualizer-api
@@ -29,7 +28,6 @@ jobs:
 
   cleanup-pr-revision-web:
     needs: [show-github-event-info]
-    if: needs.prepare.outputs.web == 'true'
     uses: ./.github/workflows/cleanup-cloudrun-tag.yml
     with:
       service: reearth-visualizer-web
