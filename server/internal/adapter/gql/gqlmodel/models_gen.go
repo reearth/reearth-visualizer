@@ -349,15 +349,6 @@ type GeometryCollection struct {
 
 func (GeometryCollection) IsGeometry() {}
 
-type ImportProjectInput struct {
-	TeamID ID             `json:"teamId"`
-	File   graphql.Upload `json:"file"`
-}
-
-type ImportProjectPayload struct {
-	ProjectData JSON `json:"projectData"`
-}
-
 type InfoboxBlock struct {
 	ID          ID               `json:"id"`
 	SceneID     ID               `json:"sceneId"`
@@ -687,14 +678,15 @@ type Project struct {
 	Name              string            `json:"name"`
 	Description       string            `json:"description"`
 	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
-	Visualizer        Visualizer        `json:"visualizer"`
 	CreatedAt         time.Time         `json:"createdAt"`
 	UpdatedAt         time.Time         `json:"updatedAt"`
+	Visualizer        Visualizer        `json:"visualizer"`
 	IsArchived        bool              `json:"isArchived"`
 	CoreSupport       bool              `json:"coreSupport"`
 	Starred           bool              `json:"starred"`
 	IsDeleted         bool              `json:"isDeleted"`
 	Visibility        string            `json:"visibility"`
+	Metadata          *ProjectMetadata  `json:"metadata,omitempty"`
 	Alias             string            `json:"alias"`
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
@@ -727,6 +719,17 @@ type ProjectConnection struct {
 type ProjectEdge struct {
 	Cursor usecasex.Cursor `json:"cursor"`
 	Node   *Project        `json:"node,omitempty"`
+}
+
+type ProjectMetadata struct {
+	ID           ID                   `json:"id"`
+	Project      ID                   `json:"project"`
+	Workspace    ID                   `json:"workspace"`
+	Readme       *string              `json:"readme,omitempty"`
+	License      *string              `json:"license,omitempty"`
+	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
+	CreatedAt    *time.Time           `json:"createdAt,omitempty"`
+	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
 }
 
 type ProjectPayload struct {
@@ -1716,6 +1719,51 @@ func (e *Position) UnmarshalGQL(v any) error {
 }
 
 func (e Position) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type ProjectImportStatus string
+
+const (
+	ProjectImportStatusNone       ProjectImportStatus = "NONE"
+	ProjectImportStatusProcessing ProjectImportStatus = "PROCESSING"
+	ProjectImportStatusFailed     ProjectImportStatus = "FAILED"
+	ProjectImportStatusSuccess    ProjectImportStatus = "SUCCESS"
+)
+
+var AllProjectImportStatus = []ProjectImportStatus{
+	ProjectImportStatusNone,
+	ProjectImportStatusProcessing,
+	ProjectImportStatusFailed,
+	ProjectImportStatusSuccess,
+}
+
+func (e ProjectImportStatus) IsValid() bool {
+	switch e {
+	case ProjectImportStatusNone, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
+		return true
+	}
+	return false
+}
+
+func (e ProjectImportStatus) String() string {
+	return string(e)
+}
+
+func (e *ProjectImportStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProjectImportStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProjectImportStatus", str)
+	}
+	return nil
+}
+
+func (e ProjectImportStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
