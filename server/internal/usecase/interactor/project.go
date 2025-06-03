@@ -75,7 +75,27 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 }
 
 func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindByIDs(ctx, ids)
+
+	projects, err := i.projectRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return []*project.Project{}, err
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return []*project.Project{}, err
+	}
+
+	for _, project := range projects {
+		for _, metadata := range metadatas {
+			if project.ID() == metadata.Project() {
+				project.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return projects, nil
 }
 
 func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {

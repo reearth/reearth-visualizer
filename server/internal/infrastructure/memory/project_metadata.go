@@ -1,19 +1,3 @@
-// var (
-// 	projectmetadataIndexes       = []string{"project"}
-// 	projectmetadataUniqueIndexes = []string{"id"}
-// )
-
-// type ProjectMetadata struct {
-// 	client *mongox.ClientCollection
-// 	f      repo.WorkspaceFilter
-// }
-
-// func NewProjectMetadata(client *mongox.Client) *ProjectMetadata {
-// 	return &ProjectMetadata{
-// 		client: client.WithCollection("projectmetadata"),
-// 	}
-// }
-
 package memory
 
 import (

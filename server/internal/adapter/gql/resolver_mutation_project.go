@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/spf13/afero"
@@ -26,12 +27,13 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 	}
 
 	res, err := usecases(ctx).Project.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: tid,
-		Visualizer:  visualizer.Visualizer(input.Visualizer),
-		Name:        input.Name,
-		Description: input.Description,
-		CoreSupport: input.CoreSupport,
-		Visibility:  input.Visibility,
+		WorkspaceID:  tid,
+		Visualizer:   visualizer.Visualizer(input.Visualizer),
+		Name:         input.Name,
+		Description:  input.Description,
+		CoreSupport:  input.CoreSupport,
+		Visibility:   input.Visibility,
+		ImportStatus: project.ProjectImportStatusNone,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
