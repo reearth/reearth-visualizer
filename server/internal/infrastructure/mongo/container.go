@@ -119,11 +119,18 @@ func Init(r *repo.Container) error {
 	)
 }
 
-func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
+func applyTeamFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
 	if ids == nil {
 		return filter
 	}
 	return mongox.And(filter, "team", bson.M{"$in": ids.Strings()})
+}
+
+func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
+	if ids == nil {
+		return filter
+	}
+	return mongox.And(filter, "workspace", bson.M{"$in": ids.Strings()})
 }
 
 func applySceneFilter(filter interface{}, ids id.SceneIDList) interface{} {
