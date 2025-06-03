@@ -62,7 +62,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
   onUpdate,
   onUpdateBasicAuth,
   onUpdateAlias,
-  // onUpdateGA
+  onUpdateGA
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -94,20 +94,22 @@ const PublicSettingsDetail: React.FC<Props> = ({
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
 
-  // TODO: Hide for now need investigation
-  // const [localGA, setLocalGA] = useState<PublicGASettingsType>({
-  //   enableGa: settingsItem.enableGa,
-  //   trackingId: settingsItem.trackingId
-  // });
+  const [localGA, setLocalGA] = useState<PublicGASettingsType>({
+    enableGa: settingsItem.enableGa,
+    trackingId: settingsItem.trackingId
+  });
 
-  // const handleSubmitGA = useCallback(() => {
-  //   if (onUpdateGA) {
-  //     onUpdateGA({
-  //       enableGa: localGA.enableGa,
-  //       trackingId: localGA.trackingId
-  //     });
-  //   }
-  // }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
+  //TODO: Removed after investigation
+  const hideGASettings = true;
+
+  const handleSubmitGA = useCallback(() => {
+    if (onUpdateGA) {
+      onUpdateGA({
+        enableGa: localGA.enableGa,
+        trackingId: localGA.trackingId
+      });
+    }
+  }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -309,29 +311,30 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </>
         )}
       </SettingsFields>
-      {/* TODO: hide for now it need investigation why not working*/}
-      {/* <SettingsFields>
-        <TitleWrapper size="body" weight="bold">
-          {t("Google Analytics")}
-        </TitleWrapper>
-        <SwitchField
-          title={t("Enable Google Analytics")}
-          value={localGA.enableGa ?? false}
-          onChange={(enableGa: boolean) => {
-            setLocalGA((s) => ({ ...s, enableGa }));
-          }}
-        />
-        {localGA.enableGa && (
-          <InputField
-            title={t("Tracking ID")}
-            value={settingsItem.trackingId}
-            onChange={(trackingId: string) => {
-              setLocalGA((s) => ({ ...s, trackingId }));
+      {!hideGASettings ? (
+        <SettingsFields>
+          <TitleWrapper size="body" weight="bold">
+            {t("Google Analytics")}
+          </TitleWrapper>
+          <SwitchField
+            title={t("Enable Google Analytics")}
+            value={localGA.enableGa ?? false}
+            onChange={(enableGa: boolean) => {
+              setLocalGA((s) => ({ ...s, enableGa }));
             }}
-            onChangeComplete={handleSubmitGA}
           />
-        )}
-      </SettingsFields> */}
+          {localGA.enableGa && (
+            <InputField
+              title={t("Tracking ID")}
+              value={settingsItem.trackingId}
+              onChange={(trackingId: string) => {
+                setLocalGA((s) => ({ ...s, trackingId }));
+              }}
+              onChangeComplete={handleSubmitGA}
+            />
+          )}
+        </SettingsFields>
+      ) : null}
     </SettingsWrapper>
   );
 };
