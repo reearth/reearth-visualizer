@@ -23,10 +23,9 @@ const DataAttribution = ({
 
   const [visualizerCredits, setVisualizerCredits] = useState<Credits>();
 
-  console.log("visualizerCredits", visualizerCredits);
   useEffect(() => {
     let intervalId: NodeJS.Timeout | null = null;
-      const credits = getCredits?.();
+    const credits = getCredits?.();
       if (credits) {
         setVisualizerCredits(credits);
       }
@@ -42,10 +41,12 @@ const DataAttribution = ({
     };
   }, [getCredits, visible]);
 
+
   const { cesiumCredit, otherCredits } = useDataAttribution({
     credits: visualizerCredits,
     widget
   });
+
   return (
     <Wrapper>
       {cesiumCredit && (
