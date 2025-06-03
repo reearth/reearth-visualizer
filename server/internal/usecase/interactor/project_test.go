@@ -35,20 +35,21 @@ func init() {
 func createNewProjectUC(client *mongox.Client) *Project {
 	gw, _ := gcs.NewFile(true, "test-bucket", "/assets", "public, max-age=3600")
 	return &Project{
-		assetRepo:          mongo.NewAsset(client),
-		projectRepo:        mongo.NewProject(client),
-		storytellingRepo:   mongo.NewStorytelling(client),
-		userRepo:           accountmongo.NewUser(client),
-		workspaceRepo:      accountmongo.NewWorkspace(client),
-		sceneRepo:          mongo.NewScene(client),
-		propertyRepo:       mongo.NewProperty(client),
-		propertySchemaRepo: mongo.NewPropertySchema(client),
-		transaction:        client.Transaction(),
-		policyRepo:         mongo.NewPolicy(client),
-		nlsLayerRepo:       mongo.NewNLSLayer(client),
-		layerStyles:        mongo.NewStyle(client),
-		pluginRepo:         mongo.NewPlugin(client),
-		file:               gw,
+		assetRepo:           mongo.NewAsset(client),
+		projectRepo:         mongo.NewProject(client),
+		projectMetadataRepo: mongo.NewProjectMetadata(client),
+		storytellingRepo:    mongo.NewStorytelling(client),
+		userRepo:            accountmongo.NewUser(client),
+		workspaceRepo:       accountmongo.NewWorkspace(client),
+		sceneRepo:           mongo.NewScene(client),
+		propertyRepo:        mongo.NewProperty(client),
+		propertySchemaRepo:  mongo.NewPropertySchema(client),
+		transaction:         client.Transaction(),
+		policyRepo:          mongo.NewPolicy(client),
+		nlsLayerRepo:        mongo.NewNLSLayer(client),
+		layerStyles:         mongo.NewStyle(client),
+		pluginRepo:          mongo.NewPlugin(client),
+		file:                gw,
 	}
 }
 func TestProject_createProject(t *testing.T) {
