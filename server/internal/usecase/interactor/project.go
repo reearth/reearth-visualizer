@@ -28,6 +28,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -35,39 +36,41 @@ import (
 type Project struct {
 	common
 	commonSceneLock
-	assetRepo          repo.Asset
-	projectRepo        repo.Project
-	storytellingRepo   repo.Storytelling
-	userRepo           accountrepo.User
-	workspaceRepo      accountrepo.Workspace
-	sceneRepo          repo.Scene
-	propertyRepo       repo.Property
-	propertySchemaRepo repo.PropertySchema
-	transaction        usecasex.Transaction
-	policyRepo         repo.Policy
-	file               gateway.File
-	nlsLayerRepo       repo.NLSLayer
-	layerStyles        repo.Style
-	pluginRepo         repo.Plugin
+	assetRepo           repo.Asset
+	projectRepo         repo.Project
+	projectMetadataRepo repo.ProjectMetadata
+	storytellingRepo    repo.Storytelling
+	userRepo            accountrepo.User
+	workspaceRepo       accountrepo.Workspace
+	sceneRepo           repo.Scene
+	propertyRepo        repo.Property
+	propertySchemaRepo  repo.PropertySchema
+	transaction         usecasex.Transaction
+	policyRepo          repo.Policy
+	file                gateway.File
+	nlsLayerRepo        repo.NLSLayer
+	layerStyles         repo.Style
+	pluginRepo          repo.Plugin
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
-		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
-		assetRepo:          r.Asset,
-		projectRepo:        r.Project,
-		storytellingRepo:   r.Storytelling,
-		userRepo:           r.User,
-		workspaceRepo:      r.Workspace,
-		sceneRepo:          r.Scene,
-		propertyRepo:       r.Property,
-		transaction:        r.Transaction,
-		policyRepo:         r.Policy,
-		file:               gr.File,
-		nlsLayerRepo:       r.NLSLayer,
-		layerStyles:        r.Style,
-		pluginRepo:         r.Plugin,
-		propertySchemaRepo: r.PropertySchema,
+		commonSceneLock:     commonSceneLock{sceneLockRepo: r.SceneLock},
+		assetRepo:           r.Asset,
+		projectRepo:         r.Project,
+		projectMetadataRepo: r.ProjectMetadata,
+		storytellingRepo:    r.Storytelling,
+		userRepo:            r.User,
+		workspaceRepo:       r.Workspace,
+		sceneRepo:           r.Scene,
+		propertyRepo:        r.Property,
+		transaction:         r.Transaction,
+		policyRepo:          r.Policy,
+		file:                gr.File,
+		nlsLayerRepo:        r.NLSLayer,
+		layerStyles:         r.Style,
+		pluginRepo:          r.Plugin,
+		propertySchemaRepo:  r.PropertySchema,
 	}
 }
 
@@ -75,12 +78,37 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Oper
 	return i.projectRepo.FindByIDs(ctx, ids)
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
-	return i.projectRepo.FindByWorkspace(ctx, id, repo.ProjectFilter{
+func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	pList, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
 		Pagination: p,
 		Sort:       sort,
 		Keyword:    keyword,
 	})
+	if err != nil {
+		return pList, pInfo, err
+	}
+
+	ids := make(id.ProjectIDList, 0, len(pList))
+	for _, p := range pList {
+		ids = append(ids, p.ID())
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, p := range pList {
+		for _, metadata := range metadatas {
+			if p.ID() == metadata.Project() {
+				p.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return pList, pInfo, err
 }
 
 func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
@@ -108,12 +136,13 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomai
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	return i.createProject(ctx, createProjectInput{
-		WorkspaceID: input.WorkspaceID,
-		Visualizer:  input.Visualizer,
-		Name:        input.Name,
-		Description: input.Description,
-		CoreSupport: input.CoreSupport,
-		Visibility:  input.Visibility,
+		WorkspaceID:  input.WorkspaceID,
+		Visualizer:   input.Visualizer,
+		Name:         input.Name,
+		Description:  input.Description,
+		CoreSupport:  input.CoreSupport,
+		Visibility:   input.Visibility,
+		ImportStatus: input.ImportStatus,
 	}, operator)
 }
 
@@ -238,6 +267,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err != nil {
 		return nil, err
 	}
+
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
@@ -249,9 +279,31 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err := prj.UpdateVisibility(visibility); err != nil {
 		return nil, err
 	}
-
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
+
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, err
+	}
+	return prj, nil
+
+}
+
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, operator *usecase.Operator) (*project.Project, error) {
+
+	prj, err := i.projectRepo.FindByID(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
+
+	currentTime := time.Now().UTC()
+
+	metadata := prj.Metadata()
+	if metadata != nil {
+		metadata.SetImportStatus(&importStatus)
+		metadata.SetUpdatedAt(&currentTime)
+	}
+	prj.SetMetadata(metadata)
 
 	if err := i.projectRepo.Save(ctx, prj); err != nil {
 		return nil, err
@@ -552,9 +604,10 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 			PropertySchema: i.propertySchemaRepo,
 			File:           i.file,
 		},
-		File:    i.file,
-		Project: i.projectRepo,
-		Asset:   i.assetRepo,
+		File:            i.file,
+		Project:         i.projectRepo,
+		ProjectMetadata: i.projectMetadataRepo,
+		Asset:           i.assetRepo,
 	}
 	if err := deleter.Delete(ctx, prj, true, operator); err != nil {
 		return err
@@ -697,7 +750,7 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProjectData(ctx context.Context, workspace string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+func (i *Project) ImportProjectData(ctx context.Context, workspace string, projectId *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
@@ -721,14 +774,16 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, data 
 	}
 
 	result, err := i.createProject(ctx, createProjectInput{
-		WorkspaceID: workspaceId,
-		Visualizer:  visualizer.Visualizer(input.Visualizer),
-		Name:        &input.Name,
-		Description: &input.Description,
-		ImageURL:    input.ImageURL,
-		Alias:       &alias,
-		Archived:    &archived,
-		CoreSupport: &coreSupport,
+		WorkspaceID:  workspaceId,
+		ProjectID:    projectId,
+		Visualizer:   visualizer.Visualizer(input.Visualizer),
+		ImportStatus: project.ProjectImportStatusProcessing,
+		Name:         &input.Name,
+		Description:  &input.Description,
+		ImageURL:     input.ImageURL,
+		Alias:        &alias,
+		Archived:     &archived,
+		CoreSupport:  &coreSupport,
 	}, op)
 	if err != nil {
 		return nil, err
@@ -768,15 +823,17 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 type createProjectInput struct {
-	WorkspaceID accountdomain.WorkspaceID
-	Visualizer  visualizer.Visualizer
-	Name        *string
-	Description *string
-	ImageURL    *url.URL
-	Alias       *string
-	Archived    *bool
-	CoreSupport *bool
-	Visibility  *string
+	WorkspaceID  accountdomain.WorkspaceID
+	ProjectID    *string
+	Visualizer   visualizer.Visualizer
+	ImportStatus project.ProjectImportStatus
+	Name         *string
+	Description  *string
+	ImageURL     *url.URL
+	Alias        *string
+	Archived     *bool
+	CoreSupport  *bool
+	Visibility   *string
 }
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -817,11 +874,39 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		}
 	}
 
-	prjID := id.NewProjectID()
+	var prjID idx.ID[id.Project]
+	if input.ProjectID != nil {
+		prjID, err = id.ProjectIDFrom(*input.ProjectID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		prjID = id.NewProjectID()
+	}
+
+	metadata, err := i.projectMetadataRepo.FindByProjectID(ctx, prjID)
+	if metadata == nil || err != nil { // if not found
+		metadata, err = project.NewProjectMetadata().
+			NewID().
+			Workspace(input.WorkspaceID).
+			Project(prjID).
+			ImportStatus(&input.ImportStatus).
+			Build()
+		if err != nil {
+			return nil, err
+		}
+
+		err = i.projectMetadataRepo.Save(ctx, metadata)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	prj := project.New().
 		ID(prjID).
 		Workspace(input.WorkspaceID).
-		Visualizer(input.Visualizer)
+		Visualizer(input.Visualizer).
+		Metadata(metadata)
 
 	if input.Archived != nil {
 		prj = prj.IsArchived(*input.Archived)
