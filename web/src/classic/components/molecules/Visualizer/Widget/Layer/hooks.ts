@@ -300,7 +300,26 @@ type GQLLayer = Omit<
   linkedDatasetSchemaId?: string | null;
   linkedDatasetId?: string | null;
   layers?: (GQLLayer | null | undefined)[];
-  property?: Record<string, any> | null; // Add the property field
+  property?: {
+    items?: {
+      schemaGroupId: string;
+      fields?: {
+        fieldId: string;
+        value: any;
+      }[];
+    }[];
+  } | null;
+  merged?: {
+    property?: {
+      groups?: {
+        schemaGroupId: string;
+        fields?: {
+          fieldId: string;
+          actualValue: any;
+        }[];
+      }[];
+    } | null;
+  } | null;
 };
 
 const hideLayerItems = [
@@ -316,18 +335,34 @@ const isHideLayerItem = (pluginId: string = ""): boolean => {
 };
 
 const convertProperty = (
-  property: Record<string, any> | null | undefined
+  layer: Maybe<GQLLayer> | undefined
 ): any | undefined => {
-  if (!property) return undefined;
   const proterty: any = {};
+  const { linkedDatasetSchemaId, linkedDatasetId, merged, property } =
+    layer ?? {};
+
+  if ((linkedDatasetSchemaId || linkedDatasetId) && merged?.property?.groups) {
+    const groups = merged?.property?.groups ?? [];
+    groups.forEach(({ schemaGroupId, fields }) => {
+      if (!proterty[schemaGroupId]) {
+        proterty[schemaGroupId] = {};
+      }
+      fields?.forEach((f) => {
+        proterty[schemaGroupId][f?.fieldId] = f?.actualValue;
+      });
+    });
+    return proterty;
+  }
+
+  if (!property) return undefined;
   if (!property?.items) return property;
   if (!property?.items?.length) return proterty;
-  property.items.forEach((item: any) => {
-    if (!proterty[item.schemaGroupId]) {
-      proterty[item.schemaGroupId] = {};
+  property.items.forEach(({ schemaGroupId, fields }) => {
+    if (!proterty[schemaGroupId]) {
+      proterty[schemaGroupId] = {};
     }
-    item?.fields?.forEach((f: any) => {
-      proterty[item.schemaGroupId][f?.fieldId] = f?.value;
+    fields?.forEach((f) => {
+      proterty[schemaGroupId][f?.fieldId] = f?.value;
     });
   });
   return proterty;
@@ -365,7 +400,7 @@ const convertLayer = (layer: Maybe<GQLLayer> | undefined): Layer | undefined =>
               ? layer.extensionId ?? undefined
               : undefined,
           type: "item",
-          property: convertProperty(layer?.property) ?? undefined,
+          property: convertProperty(layer) ?? undefined,
         }
     : undefined;
 
