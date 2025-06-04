@@ -145,8 +145,8 @@ const valueTypeMapper: Record<GQLValueType, ValueType> = {
 };
 export type Credit = {
   description?: string;
-  img?: string;
-  link?: string;
+  logo?: string;
+  creditUrl?: string;
 };
 
 export type ValueType = keyof ValueTypes;
