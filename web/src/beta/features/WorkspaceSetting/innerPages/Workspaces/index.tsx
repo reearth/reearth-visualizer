@@ -27,7 +27,7 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
     (name: string) => {
       if (!workspace?.id) return;
        updateWorkspace({
-        teamId: workspace?.id ?? "",
+        teamId: workspace.id,
         name
       });
     },
