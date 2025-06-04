@@ -119,13 +119,16 @@ jobs:
   deploy-web-pr:
     needs: [build-web-pr, build-prepare-pr]
     runs-on: ubuntu-latest
+    outputs:
+      preview_url: ${{ steps.deploy.outputs.url }}
     permissions:
       contents: read
       id-token: write
       issues: write
       pull-requests: write
     steps:
-      - uses: reearth/actions/deploy-cloud-run-with-tag@0c76c619bb30f7fcc62eb31d70997792b4766462 # main
+      - uses: reearth/actions/deploy-cloud-run-with-tag@b63f7da8796f4514712947e1a4902994be29e3d9 # main
+        id: deploy
         with:
           image: '${{ secrets.WEB_IMAGE_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}'
           image_internal: '${{ secrets.WEB_IMAGE_GC_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}'
