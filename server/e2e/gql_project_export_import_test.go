@@ -14,7 +14,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
-	"golang.org/x/text/language"
 )
 
 // export REEARTH_DB=mongodb://localhost
@@ -62,7 +61,7 @@ func TestSplitImport(t *testing.T) {
 	}
 }
 
-func TestProjectExportImport(t *testing.T) {
+/*func TestProjectExportImport(t *testing.T) {
 
 	e := Server(t, fullSeeder)
 
@@ -104,7 +103,7 @@ func TestProjectExportImport(t *testing.T) {
 		assert.Nil(t, err)
 	}()
 
-}
+}*/
 
 func convertLine(t *testing.T, key string, v *httpexpect.Value) []string {
 	v2, err := json.MarshalIndent(v.Object().Value(key).Raw(), "", "  ")

@@ -26,6 +26,7 @@ import (
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"golang.org/x/text/language"
 	"gopkg.in/square/go-jose.v2"
 	"gopkg.in/square/go-jose.v2/jwt"
 )
@@ -43,6 +44,9 @@ func TestEndpoint(t *testing.T) {
 	ur := accountmongo.NewUser(mongox.NewClientWithDatabase(db))
 	rr := authserver.NewMongo(mongox.NewClientCollection(db.Collection("authRequest")))
 
+	m := user.NewMetadata()
+	m.SetLang(language.Japanese)
+
 	uid := user.NewID()
 	usr := user.New().ID(uid).
 		Name("aaa").
@@ -51,6 +55,7 @@ func TestEndpoint(t *testing.T) {
 		Auths(user.Auths{user.NewReearthAuth("subsub")}).
 		PasswordPlainText("Xyzxyz123").
 		Verification(user.VerificationFrom("", time.Time{}, true)).
+		Metadata(m).
 		MustBuild()
 	lo.Must0(ur.Save(ctx, usr))
 
@@ -137,6 +142,7 @@ func TestEndpoint(t *testing.T) {
 	assert.Equal(t, map[string]any{
 		"sub":            "reearth|subsub",
 		"email":          "aaa@example.com",
+		"locale":         "ja",
 		"name":           "aaa",
 		"email_verified": true,
 	}, r2)

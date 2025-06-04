@@ -69,11 +69,15 @@ var (
 func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 	defer util.MockNow(now)()
 
+	m := user.NewMetadata()
+	m.SetLang(language.English)
+
 	u := user.New().
 		ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
+		Metadata(m).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
@@ -83,6 +87,7 @@ func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 		Workspace(wID2).
 		Name(uName2).
 		Email(uEmail2).
+		Metadata(m).
 		MustBuild()
 	if err := r.User.Save(ctx, u2); err != nil {
 		return err
@@ -93,6 +98,7 @@ func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 		Workspace(wID3).
 		Name(uName3).
 		Email(uEmail3).
+		Metadata(m).
 		MustBuild()
 	if err := r.User.Save(ctx, u3); err != nil {
 		return err
@@ -144,11 +150,14 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, lang language.Tag) error {
 	defer util.MockNow(now)()
 
+	m := user.NewMetadata()
+	m.SetLang(lang)
+
 	u := user.New().ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
-		Lang(lang).
+		Metadata(m).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
@@ -240,10 +249,13 @@ func addAsset(path string, ctx context.Context, r *repo.Container, gf gateway.Fi
 
 func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 	defer util.MockNow(now)()
+	m := user.NewMetadata()
+	m.SetLang(language.English)
 	u := user.New().ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
+		Metadata(m).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
