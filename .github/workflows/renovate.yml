@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 2
       - name: fix
-        uses: at-wat/go-sum-fix-action@v0
+        uses: at-wat/go-sum-fix-action@93a2c32f035d523d3faf771cf223c8f71c401f40 # v0.9.1
         with:
           git_user: ${{ github.actor }}
           git_email: ${{ github.actor }}@users.noreply.github.com
