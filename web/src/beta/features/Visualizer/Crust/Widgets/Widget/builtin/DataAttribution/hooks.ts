@@ -48,11 +48,13 @@ export const useDataAttribution = ({
             widgetCredit.logo ||
             widgetCredit.creditUrl
         )
-        .map((widgetCredit: WidgetCredit) => ({
-          description: widgetCredit.description || "",
-          img: widgetCredit.logo,
-          link: widgetCredit.creditUrl
-        }));
+        .map(
+          (widgetCredit: WidgetCredit): ProcessesCredit => ({
+            description: widgetCredit.description || "",
+            logo: widgetCredit.logo,
+            creditUrl: widgetCredit.creditUrl
+          })
+        );
 
       setOtherCredits([
         ...lightboxCredits,
