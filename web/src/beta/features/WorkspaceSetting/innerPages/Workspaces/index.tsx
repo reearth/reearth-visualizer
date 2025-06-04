@@ -21,17 +21,17 @@ type Props = {
 const WorkspaceSetting: FC<Props> = ({ workspace }) => {
   const t = useT();
 
-  const [localWorkspaceName, setLocalWorkspaceName] = useState<string>(
-    workspace?.name ?? ""
-  );
-
   const { useUpdateWorkspace: updateWorkspace } = useWorkspaceFetcher();
-  const handleSubmitUpdateWorkspaceName = useCallback(async () => {
-    await updateWorkspace({
-      teamId: workspace?.id ?? "",
-      name: localWorkspaceName
-    });
-  }, [workspace, localWorkspaceName, updateWorkspace]);
+
+  const handleSubmitUpdateWorkspaceName = useCallback(
+    async (name: string) => {
+      await updateWorkspace({
+        teamId: workspace?.id ?? "",
+        name
+      });
+    },
+    [workspace, updateWorkspace]
+  );
 
   const { useProjectsQuery } = useProjectFetcher();
   const { projects } = useProjectsQuery({
@@ -74,8 +74,7 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
           </TitleWrapper>
           <InputField
             title={t("Workspace Name")}
-            value={localWorkspaceName}
-            onChange={setLocalWorkspaceName}
+            value={workspace?.name}
             appearance={workspace?.personal ? "readonly" : undefined}
             disabled={!!workspace?.personal || meRole !== Role.Owner}
             onChangeComplete={handleSubmitUpdateWorkspaceName}
