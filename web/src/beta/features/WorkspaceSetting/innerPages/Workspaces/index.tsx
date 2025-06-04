@@ -24,8 +24,9 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
   const { useUpdateWorkspace: updateWorkspace } = useWorkspaceFetcher();
 
   const handleSubmitUpdateWorkspaceName = useCallback(
-    async (name: string) => {
-      await updateWorkspace({
+    (name: string) => {
+      if (!workspace?.id) return;
+       updateWorkspace({
         teamId: workspace?.id ?? "",
         name
       });
