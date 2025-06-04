@@ -27,15 +27,15 @@ jobs:
       ARTIFACTS: server/dist/reearth_*.*
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
       - name: Set up Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
           go-version: "1.23.5"
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+        uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
         # TODO: fix error=archive named dist/reearth_0.0.0-SNAPSHOT-xxxxxxxx.tar.gz already exists. Check your archive name template
         with:
           distribution: goreleaser
@@ -51,7 +51,7 @@ jobs:
         run: ls -l server/dist
       - name: Release nightly/rc
         if: ${{ inputs.name != '' }}
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
         with:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACTS }}
@@ -62,13 +62,13 @@ jobs:
           prerelease: true
       - name: Download latest changelog
         if: ${{ inputs.new_tag != '' }}
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@268677152d06ba59fcec7a7f0b5d961b6ccd7e1e # v2.28.0
         with:
           workflow: release.yml
           name: changelog-${{ inputs.new_tag }}
       - name: Create GitHub release
         if: ${{ inputs.new_tag != '' }}
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@440c8c1cb0ed28b9f43e4d1d670870f059653174 # v1.16.0
         with:
           allowUpdates: true
           artifacts: ${{ env.ARTIFACTS }}

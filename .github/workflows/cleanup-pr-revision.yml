@@ -10,7 +10,7 @@ jobs:
   show-github-event-info:
     runs-on: ubuntu-latest
     steps:
-      - name: Debug event info
+      - name: Print event information
         run: |
           echo "Event name: ${{ github.event_name }}"
           echo "Event action: ${{ github.event.action }}"
@@ -20,16 +20,26 @@ jobs:
 
   cleanup-pr-revision-server:
     needs: [show-github-event-info]
-    uses: ./.github/workflows/cleanup-cloudrun-tag.yml
-    with:
-      service: reearth-visualizer-api
-      tag: pr-${{ github.event.pull_request.number }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove Cloud Run Tag
+        uses: reearth/actions/remove-cloud-run-tag@1ae08d22fd3c8a91f1346329f46b26327968f401 # main
+        with:
+          region: ${{ secrets.GC_REGION }}
+          service: reearth-visualizer-server
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          tag: pr-${{ github.event.pull_request.number }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
 
   cleanup-pr-revision-web:
     needs: [show-github-event-info]
-    uses: ./.github/workflows/cleanup-cloudrun-tag.yml
-    with:
-      service: reearth-visualizer-web
-      tag: pr-${{ github.event.pull_request.number }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove Cloud Run Tag
+        uses: reearth/actions/remove-cloud-run-tag@1ae08d22fd3c8a91f1346329f46b26327968f401 # main
+        with:
+          region: ${{ secrets.GC_REGION }}
+          service: reearth-visualizer-web
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          tag: pr-${{ github.event.pull_request.number }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
