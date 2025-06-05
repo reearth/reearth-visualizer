@@ -1,31 +1,35 @@
 type Project implements Node {
   id: ID!
-  isArchived: Boolean!
-  isBasicAuthActive: Boolean!
-  basicAuthUsername: String!
-  basicAuthPassword: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  publishedAt: DateTime
+  teamId: ID!
+  team: Team
+  scene: Scene
+
   name: String!
   description: String!
+  imageUrl: URL
+  visualizer: Visualizer!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+
+  isArchived: Boolean!
+  coreSupport: Boolean!
+  starred: Boolean!
+  isDeleted: Boolean!
+  visibility: String!
+
+  # publishment
   alias: String!
+  publishmentStatus: PublishmentStatus!
+  publishedAt: DateTime
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
-  imageUrl: URL
-  teamId: ID!
-  visualizer: Visualizer!
-  publishmentStatus: PublishmentStatus!
-  team: Team
-  scene: Scene
-  coreSupport: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
-  starred: Boolean!
-  isDeleted: Boolean!
-  visibility: String!
 }
 
 enum Visualizer {
@@ -60,22 +64,24 @@ input UpdateProjectInput {
   name: String
   description: String
   archived: Boolean
-  isBasicAuthActive: Boolean
-  basicAuthUsername: String
-  basicAuthPassword: String
   imageUrl: URL
-  publicTitle: String
-  publicDescription: String
-  publicImage: String
-  publicNoIndex: Boolean
   deleteImageUrl: Boolean
-  deletePublicImage: Boolean
-  enableGa: Boolean
-  trackingId: String
   sceneId: ID
   starred: Boolean
   deleted: Boolean
   visibility: String
+
+  # publishment
+  publicTitle: String
+  publicDescription: String
+  publicImage: String
+  publicNoIndex: Boolean
+  deletePublicImage: Boolean
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  enableGa: Boolean
+  trackingId: String
 }
 
 input PublishProjectInput {

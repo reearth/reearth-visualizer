@@ -18,5 +18,6 @@ reviews:
     - '!**/*.md'
     - '!**/*.txt'
     - '!**/*.lock'
+    - '!**/*.conf'
 chat:
   auto_reply: true

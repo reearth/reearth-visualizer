@@ -39,9 +39,6 @@ create: 作成する
 Your workspace Name*: ワークスペース名*
 your workspace name: ワークスペース名
 The name is already in use by another workspace. Please choose a different name.: このワークスペース名はすでに使用されています。別の名前を指定してください。
-Important Changes: 重要な変更点
-dashboard.assets.migration.warning: >-
-  機能要件に基づき、プロジェクトの構造を変更することを決定しました。これまでワークスペース内で管理されていたアセット管理ページを、各プロジェクトごとのページに移動します。つまり、アセットはプロジェクト単位で管理されるようになり、ユーザーがインポートやエクスポートをより便利に行えるようになります。<br/>そのため、このページは今後利用できなくなり、次のバージョンで削除される予定です。詳細については、<1>こちらのページ</1>をご参照ください。
 Add a team member: チームメンバーを追加
 Add: 追加
 Search by email address or user name: メールアドレスまたはユーザー名で検索
@@ -347,13 +344,19 @@ Enable Terrain: 3D地形を有効にする
 Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
 Mouse Events: マウスイベント
-Add Geojson: Geojsonを追加
+Add GeoJSON: GeoJSONを追加
+Add Large Geojson: 大容量のGeoJSONを追加
 Add CSV: CSVを追加
 Add KML: KMLを追加
 Add WMS: WMSを追加
 Add CZML: CZMLを追加
 Add 3D Tiles: 3Dタイルを追加
+Add Photogrammetric 3D model: フォトグラメトリ3Dモデルを追加
+Add Point Cloud: 点群データを追加
 Add Google Photorealistic 3D Tiles: Google Photorealistic 3D Tilesを追加
+Add infobox to show all properties: 全てのプロパティを表示するインフォボックスを追加
+Add infobox to show specific properties: 特定のプロパティを表示するインフォボックスを追加
+Add infobox to show rich blocks: リッチブロックを表示するインフォボックスを追加
 Add OSM 3D Tiles: OSM 3D Tilesを追加
 Hide Fly To Delete Layer: カメラ移動とレイヤーの削除
 Override Layer Data: レイヤーデータの上書き
@@ -407,7 +410,7 @@ Edit Alias: エイリアスを編集
 You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 Your Alias: あなたのエイリアス'
-clean: ''
+Reset: リセット
 Public Info: 公開情報
 Published page settings: 公開ページ設定
 This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: このセクションの設定は、主に公開ページのヘッダーにあるOpen Graph Protocolの設定に適用されます。

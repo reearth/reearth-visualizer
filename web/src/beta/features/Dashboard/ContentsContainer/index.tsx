@@ -3,7 +3,6 @@ import { FC } from "react";
 
 import { Workspace } from "../type";
 
-import Assets from "./Assets";
 import Members from "./Members";
 import Projects from "./Projects";
 import RecycleBin from "./RecycleBin";
@@ -21,7 +20,6 @@ const ContentsContainer: FC<ContainerProps> = ({
   return (
     <Wrapper>
       {tab === "projects" && <Projects workspaceId={workspaceId} />}
-      {tab === "asset" && <Assets workspaceId={workspaceId} />}
       {tab === "bin" && <RecycleBin workspaceId={workspaceId} />}
       {tab === "members" && <Members currentWorkspace={currentWorkspace} />}
     </Wrapper>

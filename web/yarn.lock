@@ -8696,9 +8696,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.34":
-  version: 0.0.7-alpha.34
-  resolution: "@reearth/core@npm:0.0.7-alpha.34"
+"@reearth/core@npm:0.0.7-alpha.38":
+  version: 0.0.7-alpha.38
+  resolution: "@reearth/core@npm:0.0.7-alpha.38"
   dependencies:
     "@radix-ui/react-checkbox": "npm:1.1.1"
     "@radix-ui/react-dialog": "npm:1.1.1"
@@ -8753,7 +8753,7 @@ __metadata:
     cesium: 1.118.x
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/876bcae133be09b0360c23517c0fe1a8df2df908d2cbb93f7ff3f75b72f9896389445dd0f60e4e99803559e07d591a5617632d518a4ddcb66e50e5e475a38c14
+  checksum: 10c0/c23c95b4a421897bb3812ab2e876a9eab4d1f69d0ef682cefa5b1891cc270a641f11fe2dd64096832b85feaee9e7be19a685d25c5a380e8325b1eecc3e38ff35
   languageName: node
   linkType: hard
 
@@ -8802,7 +8802,7 @@ __metadata:
     "@playwright/test": "npm:1.46.1"
     "@popperjs/core": "npm:2.11.8"
     "@radix-ui/react-slot": "npm:1.1.0"
-    "@reearth/core": "npm:0.0.7-alpha.34"
+    "@reearth/core": "npm:0.0.7-alpha.38"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"

@@ -47,21 +47,29 @@ const RecycleBinItem: FC<Prop> = ({
   ];
 
   return (
-    <Card data-testid={`recycle-bin-item-${project?.id}`}>
+    <Card data-testid={`recycle-bin-item-${project?.name}`}>
       <CardImage
+        data-testid={`recycle-bin-item-image-${project?.name}`}
         backgroundImage={project?.imageUrl ?? defaultProjectBackgroundImage}
         isHovered={isHovered ?? false}
         onMouseEnter={() => handleProjectHover(true)}
         onMouseLeave={() => handleProjectHover(false)}
       />
-      <CardFooter>
+      <CardFooter data-testid={`recycle-bin-item-footer-${project?.name}`}>
         <CardTitleWrapper>
-          <CardTitle>{project?.name}</CardTitle>
+          <CardTitle data-testid={`recycle-bin-item-title-${project?.name}`}>
+            {project?.name}
+          </CardTitle>
         </CardTitleWrapper>
         <PopupMenu
           menu={popupMenu}
           label={
-            <Button icon="dotsThreeVertical" iconButton appearance="simple" />
+            <Button
+              data-testid={`recycle-bin-item-menu-btn-${project?.name}`}
+              icon="dotsThreeVertical"
+              iconButton
+              appearance="simple"
+            />
           }
         />
       </CardFooter>
@@ -72,6 +80,7 @@ const RecycleBinItem: FC<Prop> = ({
           projectName={project?.name || ""}
           onClose={handleDeleteModalClose}
           onProjectDelete={onProjectDelete}
+          data-testid={`recycle-bin-item-${project?.name}`}
         />
       )}
     </Card>
