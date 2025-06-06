@@ -220,9 +220,10 @@ func (d SceneDeleter) Delete(ctx context.Context, s *scene.Scene, force bool) er
 
 type ProjectDeleter struct {
 	SceneDeleter
-	File    gateway.File
-	Project repo.Project
-	Asset   repo.Asset
+	File            gateway.File
+	Project         repo.Project
+	ProjectMetadata repo.ProjectMetadata
+	Asset           repo.Asset
 }
 
 func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force bool, operator *usecase.Operator) error {
@@ -255,6 +256,11 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 
 	// Delete project
 	if err := d.Project.Remove(ctx, prj.ID()); err != nil {
+		return err
+	}
+
+	// Delete project metadata
+	if err := d.ProjectMetadata.Remove(ctx, prj.ID()); err != nil {
 		return err
 	}
 
