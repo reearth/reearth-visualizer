@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 
@@ -15,7 +14,6 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
-	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
@@ -86,22 +84,21 @@ func (w *WebServer) Run(ctx context.Context) {
 
 	if w.internalServer != nil {
 		go func() {
-			handler := h2c.NewHandler(http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-				if r.ProtoMajor == 2 && r.Header.Get("Content-Type") == "application/grpc" {
-					w.internalServer.ServeHTTP(rw, r)
-				}
-			}), &http2.Server{})
-			if err := http.ListenAndServe(w.internalPort, handler); err != nil {
-				log.Fatalf("ListenAndServe failed: %v", err)
+			lis, err := net.Listen("tcp", w.internalPort) // e.g. ":8080"
+			if err != nil {
+				log.Fatalf("failed to listen: %v", err)
+			}
+			log.Infof("server: started internal grpc server at %s", w.internalPort)
+			if err := w.internalServer.Serve(lis); err != nil {
+				log.Fatalf("failed to serve gRPC: %v", err)
 			}
 		}()
-		log.Infof("server: started internal grpc server at %d", w.internalPort)
 	} else {
 		go func() {
-			err := w.appServer.StartH2CServer(w.address, &http2.Server{})
+			err := w.appServer.StartH2CServer(w.address, &http2.Server{}) // Echo fallback
 			log.Fatalc(ctx, err.Error())
 		}()
-		log.Infof("server: started%s at http://%s", debugLog, w.address)
+		log.Infof("server: echo api started%s at http://%s", debugLog, w.address)
 	}
 
 	quit := make(chan os.Signal, 1)
