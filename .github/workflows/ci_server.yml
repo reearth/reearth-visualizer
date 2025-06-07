@@ -1,8 +1,6 @@
 name: ci-server
 on:
   workflow_call:
-env:
-  GO_VERSION: "1.23.5"
 
 jobs:
   ci-server-lint:
@@ -14,12 +12,12 @@ jobs:
       - name: set up
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: 'server/go.mod'
           cache: false
       - name: golangci-lint
         uses: golangci/golangci-lint-action@55c2c1448f86e01eaae002a5a3a9624417608d84 # v6.5.2
         with:
-          version: v1.63.4
+          version: v1.64.5
           args: --timeout=10m
           working-directory: server
       - name: Run go generate
@@ -50,7 +48,7 @@ jobs:
       - name: set up
         uses: actions/setup-go@d35c59abb061a4a6fb18e82ac0862c26744d6ab5 # v5.5.0
         with:
-          go-version: ${{ env.GO_VERSION }}
+          go-version-file: 'server/go.mod'
           cache-dependency-path: server/go.sum
       - name: test
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
