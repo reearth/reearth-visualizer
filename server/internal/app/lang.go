@@ -12,6 +12,7 @@ func LanguageExtractor(req *http.Request) language.Tag {
 	lang := req.Header.Get("lang")
 
 	u := adapter.User(req.Context())
+
 	if u != nil && u.Metadata() != nil && !u.Metadata().Lang().IsRoot() {
 		lang = u.Metadata().Lang().String()
 	}
