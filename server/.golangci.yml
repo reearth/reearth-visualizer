@@ -1,5 +1,4 @@
-version: "2.1"
-
+version: "2"
 linters:
   exclusions:
     presets:
@@ -8,7 +7,7 @@ linters:
       - legacy
       - std-error-handling
   settings:
-    goci: 'github.com/reearth/server'
+    gci: 'github.com/reearth/server'
 
 formatters:
   enable:
