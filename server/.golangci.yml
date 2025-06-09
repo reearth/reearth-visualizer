@@ -6,8 +6,6 @@ linters:
       - common-false-positives
       - legacy
       - std-error-handling
-  settings:
-    gci: 'github.com/reearth/server'
 
 formatters:
   enable:
