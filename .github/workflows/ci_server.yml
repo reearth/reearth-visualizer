@@ -20,7 +20,7 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           version: v2.1
-          args: --timeout=10m
+          args: --new-from-rev=HEAD --timeout=10m
           working-directory: server
       - name: Run go generate
         run: |
