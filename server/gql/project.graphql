@@ -3,19 +3,19 @@ type Project implements Node {
   teamId: ID!
   team: Team
   scene: Scene
-
   name: String!
   description: String!
   imageUrl: URL
-  visualizer: Visualizer!
   createdAt: DateTime!
   updatedAt: DateTime!
-
+  visualizer: Visualizer!
   isArchived: Boolean!
   coreSupport: Boolean!
   starred: Boolean!
   isDeleted: Boolean!
   visibility: String!
+
+  metadata: ProjectMetadata
 
   # publishment
   alias: String!
@@ -30,6 +30,24 @@ type Project implements Node {
   basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
+}
+
+type ProjectMetadata {
+  id: ID!
+  project: ID!
+  workspace: ID!
+  readme: String
+  license: String
+  importStatus: ProjectImportStatus
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+enum ProjectImportStatus {
+  NONE
+  PROCESSING
+  FAILED
+  SUCCESS
 }
 
 enum Visualizer {
@@ -103,11 +121,6 @@ input ExportProjectInput {
   projectId: ID!
 }
 
-input ImportProjectInput {
-  teamId: ID!
-  file: Upload!
-}
-
 # Payload
 
 type ProjectPayload {
@@ -120,10 +133,6 @@ type DeleteProjectPayload {
 
 type ExportProjectPayload {
   projectDataPath: String!
-}
-
-type ImportProjectPayload {
-  projectData: JSON!
 }
 
 type ProjectAliasAvailability {
@@ -163,5 +172,4 @@ extend type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
-  importProject(input: ImportProjectInput!): ImportProjectPayload
 }

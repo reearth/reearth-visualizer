@@ -13,25 +13,11 @@ export const Normal: StoryFn<DataAttributionProps> = (args) => (
     <div style={{ width: "100%", maxWidth: "416px" }}>
       <DataAttributionUI
         {...args}
-        widget={{
-          id: "",
-          extended: {
-            horizontally: false,
-            vertically: false
-          },
-          property: {
-            default: [
-              {
-                description: "Testing",
-                creditUrl: "https://www.sample.com/",
-                id: "01"
-              }
-            ]
-          }
-        }}
         credits={[
           {
-            html: `<a href="https://example.com" target="_blank">Example Credit</a>`
+            description: "Test description",
+            logo: "",
+            creditUrl: "https://www.sample.com/"
           }
         ]}
       />

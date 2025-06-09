@@ -19,24 +19,25 @@ var (
 )
 
 type Container struct {
-	Asset          Asset
-	AuthRequest    authserver.RequestRepo
-	Config         Config
-	NLSLayer       NLSLayer
-	Style          Style
-	Lock           Lock
-	Plugin         Plugin
-	Project        Project
-	PropertySchema PropertySchema
-	Property       Property
-	Scene          Scene
-	SceneLock      SceneLock
-	Workspace      accountrepo.Workspace
-	User           accountrepo.User
-	Policy         Policy
-	Storytelling   Storytelling
-	Transaction    usecasex.Transaction
-	Extensions     []id.PluginID
+	Asset           Asset
+	AuthRequest     authserver.RequestRepo
+	Config          Config
+	NLSLayer        NLSLayer
+	Style           Style
+	Lock            Lock
+	Plugin          Plugin
+	Project         Project
+	ProjectMetadata ProjectMetadata
+	PropertySchema  PropertySchema
+	Property        Property
+	Scene           Scene
+	SceneLock       SceneLock
+	Workspace       accountrepo.Workspace
+	User            accountrepo.User
+	Policy          Policy
+	Storytelling    Storytelling
+	Transaction     usecasex.Transaction
+	Extensions      []id.PluginID
 }
 
 func (c *Container) AccountRepos() *accountrepo.Container {
@@ -53,24 +54,25 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		return c
 	}
 	return &Container{
-		Asset:          c.Asset.Filtered(workspace),
-		AuthRequest:    c.AuthRequest,
-		Config:         c.Config,
-		NLSLayer:       c.NLSLayer.Filtered(scene),
-		Style:          c.Style.Filtered(scene),
-		Lock:           c.Lock,
-		Plugin:         c.Plugin.Filtered(scene),
-		Policy:         c.Policy,
-		Storytelling:   c.Storytelling.Filtered(scene),
-		Project:        c.Project.Filtered(workspace),
-		PropertySchema: c.PropertySchema.Filtered(scene),
-		Property:       c.Property.Filtered(scene),
-		Scene:          c.Scene.Filtered(workspace),
-		SceneLock:      c.SceneLock,
-		Transaction:    c.Transaction,
-		User:           c.User,
-		Workspace:      c.Workspace,
-		Extensions:     c.Extensions,
+		Asset:           c.Asset.Filtered(workspace),
+		AuthRequest:     c.AuthRequest,
+		Config:          c.Config,
+		NLSLayer:        c.NLSLayer.Filtered(scene),
+		Style:           c.Style.Filtered(scene),
+		Lock:            c.Lock,
+		Plugin:          c.Plugin.Filtered(scene),
+		Policy:          c.Policy,
+		Storytelling:    c.Storytelling.Filtered(scene),
+		Project:         c.Project.Filtered(workspace),
+		ProjectMetadata: c.ProjectMetadata.Filtered(workspace),
+		PropertySchema:  c.PropertySchema.Filtered(scene),
+		Property:        c.Property.Filtered(scene),
+		Scene:           c.Scene.Filtered(workspace),
+		SceneLock:       c.SceneLock,
+		Transaction:     c.Transaction,
+		User:            c.User,
+		Workspace:       c.Workspace,
+		Extensions:      c.Extensions,
 	}
 }
 

@@ -26,16 +26,17 @@ type Loaders struct {
 }
 
 type DataLoaders struct {
-	Asset          AssetDataLoader
-	Plugin         PluginDataLoader
-	Policy         PolicyDataLoader
-	Project        ProjectDataLoader
-	Property       PropertyDataLoader
-	PropertySchema PropertySchemaDataLoader
-	Scene          SceneDataLoader
-	Story          StoryDataLoader
-	Workspace      WorkspaceDataLoader
-	User           UserDataLoader
+	Asset           AssetDataLoader
+	Plugin          PluginDataLoader
+	Policy          PolicyDataLoader
+	Project         ProjectDataLoader
+	ProjectMetadata ProjectMetadataLoader
+	Property        PropertyDataLoader
+	PropertySchema  PropertySchemaDataLoader
+	Scene           SceneDataLoader
+	Story           StoryDataLoader
+	Workspace       WorkspaceDataLoader
+	User            UserDataLoader
 }
 
 func NewLoaders(usecases *interfaces.Container) *Loaders {
