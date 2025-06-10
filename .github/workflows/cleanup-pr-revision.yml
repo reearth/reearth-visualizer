@@ -18,7 +18,7 @@ jobs:
           echo "PR merged: ${{ github.event.pull_request.merged }}"
           echo "PR number: ${{ github.event.pull_request.number }}"
 
-  cleanup-pr-revision-server:
+  cleanup-pr-revision-api:
     needs: [show-github-event-info]
     runs-on: ubuntu-latest
     steps:
@@ -26,7 +26,7 @@ jobs:
         uses: reearth/actions/remove-cloud-run-tag@b63f7da8796f4514712947e1a4902994be29e3d9 # main
         with:
           region: ${{ secrets.GC_REGION }}
-          service: reearth-visualizer-server
+          service: reearth-visualizer-api
           service_account: ${{ secrets.GC_SA_EMAIL }}
           tag: pr-${{ github.event.pull_request.number }}
           workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}

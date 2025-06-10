@@ -19,30 +19,46 @@ import (
 const ProjectFragment = `
 fragment ProjectFragment on Project {
   id
-  isArchived
-  isBasicAuthActive
-  basicAuthUsername
-  basicAuthPassword
-  createdAt
-  updatedAt
-  publishedAt
+  teamId
   name
   description
+  imageUrl
+  createdAt
+  updatedAt
+  visualizer
+  isArchived
+  coreSupport
+  starred
+  isDeleted
+  visibility
+  metadata {
+    id
+    ...ProjectMetadataFragment
+  }
   alias
+  publishmentStatus
+  publishedAt
   publicTitle
   publicDescription
   publicImage
   publicNoIndex
-  imageUrl
-  teamId
-  visualizer
-  publishmentStatus
-  coreSupport
+  isBasicAuthActive
+  basicAuthUsername
+  basicAuthPassword
   enableGa
   trackingId
-  starred
-  isDeleted
-  visibility
+  __typename
+}`
+
+const ProjectMetadataFragment = `
+fragment ProjectMetadataFragment on ProjectMetadata {
+  project
+  workspace
+  readme
+  license
+  importStatus
+  createdAt
+  updatedAt
   __typename
 }`
 
@@ -91,7 +107,7 @@ query GetProjects(
     __typename
   }
 }
-` + ProjectFragment
+` + ProjectFragment + ProjectMetadataFragment
 
 const CreateProjectMutation = `
 mutation CreateProject(
@@ -119,7 +135,7 @@ mutation CreateProject(
     __typename
   }
 }
-` + ProjectFragment
+` + ProjectFragment + ProjectMetadataFragment
 
 func createProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) string {
 	requestBody := GraphQLRequest{
@@ -151,7 +167,7 @@ mutation UpdateProject($input: UpdateProjectInput!) {
     __typename
   }
 }
-` + ProjectFragment
+` + ProjectFragment + ProjectMetadataFragment
 
 func updateProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
@@ -163,11 +179,13 @@ func updateProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[s
 		Path("$.data.updateProject.project")
 }
 
+// export REEARTH_DB=mongodb://localhost
+// go test -v -run TestCreateAndGetProject ./e2e/...
+
 func TestCreateAndGetProject(t *testing.T) {
 	e := Server(t, baseSeeder)
 
 	testData(e)
-
 	// GetProjects
 	requestBody := GraphQLRequest{
 		OperationName: "GetProjects",
@@ -195,6 +213,7 @@ func TestCreateAndGetProject(t *testing.T) {
 		edge.Object().Value("node").Object().Value("coreSupport").IsEqual(true)
 		// isDeleted false only
 		edge.Object().Value("node").Object().Value("isDeleted").IsEqual(false)
+		edge.Object().Value("node").Object().Value("metadata").Object().Value("importStatus").IsEqual("NONE")
 	}
 
 }

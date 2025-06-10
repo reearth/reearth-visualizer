@@ -22,16 +22,17 @@ var (
 )
 
 type Container struct {
-	Asset        Asset
-	NLSLayer     NLSLayer
-	Plugin       Plugin
-	Policy       Policy
-	Project      Project
-	Property     Property
-	Published    Published
-	Scene        Scene
-	StoryTelling Storytelling
-	Style        Style
-	User         accountinterfaces.User
-	Workspace    accountinterfaces.Workspace
+	Asset           Asset
+	NLSLayer        NLSLayer
+	Plugin          Plugin
+	Policy          Policy
+	Project         Project
+	ProjectMetadata ProjectMetadata
+	Property        Property
+	Published       Published
+	Scene           Scene
+	StoryTelling    Storytelling
+	Style           Style
+	User            accountinterfaces.User
+	Workspace       accountinterfaces.Workspace
 }
