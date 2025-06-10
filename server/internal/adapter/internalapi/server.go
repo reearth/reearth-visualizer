@@ -125,6 +125,28 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 	}, nil
 }
 
+func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProjectMetadataRequest) (*pb.UpdateProjectMetadataResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pid, err := id.ProjectIDFrom(req.ProjectId)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := uc.ProjectMetadata.Update(ctx, interfaces.UpdateProjectMetadataParam{
+		ID:      pid,
+		Readme:  req.Readme,
+		License: req.License,
+	}, op)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdateProjectMetadataResponse{
+		Metadata: internalapimodel.ToProjectMetadata(meta),
+	}, nil
+}
+
 func (s server) UpdateProjectVisibility(ctx context.Context, req *pb.UpdateProjectVisibilityRequest) (*pb.UpdateProjectVisibilityResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
