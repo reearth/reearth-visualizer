@@ -13,6 +13,9 @@
     - [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest)
     - [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse)
     - [Project](#reearth-visualizer-v1-Project)
+    - [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata)
+    - [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest)
+    - [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse)
     - [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest)
     - [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse)
   
@@ -186,6 +189,7 @@ Core Project messages
 | starred | [bool](#bool) |  | Whether the project is marked as a favorite |
 | is_deleted | [bool](#bool) |  | Whether the project is in the trash |
 | visibility | [string](#string) |  | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+| metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) | optional | Project metadata |
 | alias | [string](#string) |  | Publishment value |
 | publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Publishment value |
 | published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | Publishment value |
@@ -198,6 +202,61 @@ Core Project messages
 | basic_auth_password | [string](#string) |  | Publishment value |
 | enable_ga | [bool](#bool) |  | Publishment value |
 | tracking_id | [string](#string) |  | Publishment value |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ProjectMetadata"></a>
+
+### ProjectMetadata
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | ProjectMetadata id |
+| project_id | [string](#string) |  | Project id |
+| workspace_id | [string](#string) |  | Workspace id |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+| import_status | [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus) |  | Project import status — if PROCESSING, data should not be retrieved |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata created date |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata updated date |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectMetadataRequest"></a>
+
+### UpdateProjectMetadataRequest
+Updates a new project metadata.
+Cannot be updated under a team the user does not belong to.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectMetadataResponse"></a>
+
+### UpdateProjectMetadataResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) |  | Project metadata |
 
 
 
@@ -293,6 +352,7 @@ Response messages
 | GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | Retrieves the list of projects the user can access. Request headers: user-id: &lt;User ID&gt; |
 | GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) | Retrieves a specific project regardless of authentication. Request headers: user-id: &lt;User ID&gt; |
 | CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
+| UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified team. Request headers: user-id: &lt;User ID&gt; |
 | UpdateProjectVisibility | [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest) | [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse) | Update the visibility a project. Request headers: user-id: &lt;User ID&gt; |
 | DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
 

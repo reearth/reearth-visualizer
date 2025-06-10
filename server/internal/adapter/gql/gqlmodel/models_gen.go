@@ -732,6 +732,10 @@ type ProjectMetadata struct {
 	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
 }
 
+type ProjectMetadataPayload struct {
+	Metadata *ProjectMetadata `json:"metadata"`
+}
+
 type ProjectPayload struct {
 	Project *Project `json:"project"`
 }
@@ -1274,6 +1278,12 @@ type UpdateProjectInput struct {
 	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
 	EnableGa          *bool    `json:"enableGa,omitempty"`
 	TrackingID        *string  `json:"trackingId,omitempty"`
+}
+
+type UpdateProjectMetadataInput struct {
+	Project ID      `json:"project"`
+	Readme  *string `json:"readme,omitempty"`
+	License *string `json:"license,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {

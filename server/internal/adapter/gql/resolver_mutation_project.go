@@ -89,6 +89,24 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 	return &gqlmodel.ProjectPayload{Project: gqlmodel.ToProject(res)}, nil
 }
 
+func (r *mutationResolver) UpdateProjectMetadata(ctx context.Context, input gqlmodel.UpdateProjectMetadataInput) (*gqlmodel.ProjectMetadataPayload, error) {
+	pid, err := gqlmodel.ToID[id.Project](input.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).ProjectMetadata.Update(ctx, interfaces.UpdateProjectMetadataParam{
+		ID:      pid,
+		Readme:  input.Readme,
+		License: input.License,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.ProjectMetadataPayload{Metadata: gqlmodel.ToProjectMetadata(res)}, nil
+}
+
 func (r *mutationResolver) PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error) {
 	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
 	if err != nil {

@@ -392,6 +392,7 @@ type ComplexityRoot struct {
 		UpdateNLSLayer            func(childComplexity int, input gqlmodel.UpdateNLSLayerInput) int
 		UpdateNLSLayers           func(childComplexity int, input gqlmodel.UpdateNLSLayersInput) int
 		UpdateProject             func(childComplexity int, input gqlmodel.UpdateProjectInput) int
+		UpdateProjectMetadata     func(childComplexity int, input gqlmodel.UpdateProjectMetadataInput) int
 		UpdatePropertyItems       func(childComplexity int, input gqlmodel.UpdatePropertyItemInput) int
 		UpdatePropertyValue       func(childComplexity int, input gqlmodel.UpdatePropertyValueInput) int
 		UpdateStory               func(childComplexity int, input gqlmodel.UpdateStoryInput) int
@@ -582,6 +583,10 @@ type ComplexityRoot struct {
 		Readme       func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
 		Workspace    func(childComplexity int) int
+	}
+
+	ProjectMetadataPayload struct {
+		Metadata func(childComplexity int) int
 	}
 
 	ProjectPayload struct {
@@ -1102,6 +1107,7 @@ type MutationResolver interface {
 	PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error)
 	DeleteProject(ctx context.Context, input gqlmodel.DeleteProjectInput) (*gqlmodel.DeleteProjectPayload, error)
 	ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error)
+	UpdateProjectMetadata(ctx context.Context, input gqlmodel.UpdateProjectMetadataInput) (*gqlmodel.ProjectMetadataPayload, error)
 	UpdatePropertyValue(ctx context.Context, input gqlmodel.UpdatePropertyValueInput) (*gqlmodel.PropertyFieldPayload, error)
 	RemovePropertyField(ctx context.Context, input gqlmodel.RemovePropertyFieldInput) (*gqlmodel.PropertyFieldPayload, error)
 	UploadFileToProperty(ctx context.Context, input gqlmodel.UploadFileToPropertyInput) (*gqlmodel.PropertyFieldPayload, error)
@@ -2911,6 +2917,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdateProject(childComplexity, args["input"].(gqlmodel.UpdateProjectInput)), true
 
+	case "Mutation.updateProjectMetadata":
+		if e.complexity.Mutation.UpdateProjectMetadata == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateProjectMetadata_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateProjectMetadata(childComplexity, args["input"].(gqlmodel.UpdateProjectMetadataInput)), true
+
 	case "Mutation.updatePropertyItems":
 		if e.complexity.Mutation.UpdatePropertyItems == nil {
 			break
@@ -4010,6 +4028,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectMetadata.Workspace(childComplexity), true
+
+	case "ProjectMetadataPayload.metadata":
+		if e.complexity.ProjectMetadataPayload.Metadata == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadataPayload.Metadata(childComplexity), true
 
 	case "ProjectPayload.project":
 		if e.complexity.ProjectPayload.Project == nil {
@@ -6070,6 +6095,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateNLSLayerInput,
 		ec.unmarshalInputUpdateNLSLayersInput,
 		ec.unmarshalInputUpdateProjectInput,
+		ec.unmarshalInputUpdateProjectMetadataInput,
 		ec.unmarshalInputUpdatePropertyItemInput,
 		ec.unmarshalInputUpdatePropertyItemOperationInput,
 		ec.unmarshalInputUpdatePropertyValueInput,
@@ -6931,6 +6957,12 @@ input UpdateProjectInput {
   trackingId: String
 }
 
+input UpdateProjectMetadataInput {
+  project: ID!
+  readme: String
+  license: String
+}
+
 input PublishProjectInput {
   projectId: ID!
   alias: String
@@ -6969,6 +7001,10 @@ type ProjectAliasAvailability {
   available: Boolean!
 }
 
+type ProjectMetadataPayload {
+  metadata: ProjectMetadata!
+}
+
 # Connection
 
 type ProjectConnection {
@@ -7001,6 +7037,9 @@ extend type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
+  updateProjectMetadata(
+    input: UpdateProjectMetadataInput!
+  ): ProjectMetadataPayload
 }
 `, BuiltIn: false},
 	{Name: "../../../gql/property.graphql", Input: `type PropertySchema {
@@ -9689,6 +9728,34 @@ func (ec *executionContext) field_Mutation_updateNLSLayers_argsInput(
 	}
 
 	var zeroVal gqlmodel.UpdateNLSLayersInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectMetadata_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateProjectMetadata_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateProjectMetadata_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.UpdateProjectMetadataInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal gqlmodel.UpdateProjectMetadataInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateProjectMetadataInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateProjectMetadataInput(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.UpdateProjectMetadataInput
 	return zeroVal, nil
 }
 
@@ -19652,6 +19719,62 @@ func (ec *executionContext) fieldContext_Mutation_exportProject(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateProjectMetadata(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateProjectMetadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateProjectMetadata(rctx, fc.Args["input"].(gqlmodel.UpdateProjectMetadataInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectMetadataPayload)
+	fc.Result = res
+	return ec.marshalOProjectMetadataPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadataPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateProjectMetadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "metadata":
+				return ec.fieldContext_ProjectMetadataPayload_metadata(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectMetadataPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateProjectMetadata_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_updatePropertyValue(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_updatePropertyValue(ctx, field)
 	if err != nil {
@@ -28514,6 +28637,68 @@ func (ec *executionContext) fieldContext_ProjectMetadata_updatedAt(_ context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadataPayload_metadata(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadataPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadataPayload_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectMetadata)
+	fc.Result = res
+	return ec.marshalNProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadataPayload_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadataPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ProjectMetadata_id(ctx, field)
+			case "project":
+				return ec.fieldContext_ProjectMetadata_project(ctx, field)
+			case "workspace":
+				return ec.fieldContext_ProjectMetadata_workspace(ctx, field)
+			case "readme":
+				return ec.fieldContext_ProjectMetadata_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_ProjectMetadata_license(ctx, field)
+			case "importStatus":
+				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_ProjectMetadata_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectMetadata", field.Name)
 		},
 	}
 	return fc, nil
@@ -47036,6 +47221,47 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context.Context, obj any) (gqlmodel.UpdateProjectMetadataInput, error) {
+	var it gqlmodel.UpdateProjectMetadataInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"project", "readme", "license"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "project":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("project"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Project = data
+		case "readme":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("readme"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Readme = data
+		case "license":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("license"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.License = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdatePropertyItemInput(ctx context.Context, obj any) (gqlmodel.UpdatePropertyItemInput, error) {
 	var it gqlmodel.UpdatePropertyItemInput
 	asMap := map[string]any{}
@@ -50648,6 +50874,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_exportProject(ctx, field)
 			})
+		case "updateProjectMetadata":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateProjectMetadata(ctx, field)
+			})
 		case "updatePropertyValue":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePropertyValue(ctx, field)
@@ -52412,6 +52642,45 @@ func (ec *executionContext) _ProjectMetadata(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._ProjectMetadata_createdAt(ctx, field, obj)
 		case "updatedAt":
 			out.Values[i] = ec._ProjectMetadata_updatedAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectMetadataPayloadImplementors = []string{"ProjectMetadataPayload"}
+
+func (ec *executionContext) _ProjectMetadataPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ProjectMetadataPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectMetadataPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectMetadataPayload")
+		case "metadata":
+			out.Values[i] = ec._ProjectMetadataPayload_metadata(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -58885,6 +59154,16 @@ func (ec *executionContext) marshalNProjectEdge2ᚖgithubᚗcomᚋreearthᚋreea
 	return ec._ProjectEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectMetadata) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectMetadata(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNProjectSortField2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSortField(ctx context.Context, v any) (gqlmodel.ProjectSortField, error) {
 	var res gqlmodel.ProjectSortField
 	err := res.UnmarshalGQL(v)
@@ -60028,6 +60307,11 @@ func (ec *executionContext) unmarshalNUpdateProjectInput2githubᚗcomᚋreearth�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateProjectMetadataInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateProjectMetadataInput(ctx context.Context, v any) (gqlmodel.UpdateProjectMetadataInput, error) {
+	res, err := ec.unmarshalInputUpdateProjectMetadataInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdatePropertyItemInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdatePropertyItemInput(ctx context.Context, v any) (gqlmodel.UpdatePropertyItemInput, error) {
 	res, err := ec.unmarshalInputUpdatePropertyItemInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -60916,6 +61200,13 @@ func (ec *executionContext) marshalOProjectMetadata2ᚖgithubᚗcomᚋreearthᚋ
 		return graphql.Null
 	}
 	return ec._ProjectMetadata(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProjectMetadataPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadataPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectMetadataPayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectMetadataPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectPayload) graphql.Marshaler {
