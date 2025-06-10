@@ -54,6 +54,12 @@ type UpdateProjectParam struct {
 	TrackingID        *string
 }
 
+type UpdateProjectMetadataParam struct {
+	ID      id.ProjectID
+	Readme  *string
+	License *string
+}
+
 type PublishProjectParam struct {
 	ID     id.ProjectID
 	Alias  *string

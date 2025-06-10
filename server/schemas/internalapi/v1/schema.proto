@@ -19,6 +19,11 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
 
+  // Updates a new project metadata in the specified team.
+  // Request headers: user-id: <User ID>
+  rpc UpdateProjectMetadata(UpdateProjectMetadataRequest)
+      returns (UpdateProjectMetadataResponse) {}
+
   // Update the visibility a project.
   // Request headers: user-id: <User ID>
   rpc UpdateProjectVisibility(UpdateProjectVisibilityRequest)
@@ -46,66 +51,79 @@ message Project {
   // Project description
   string description = 5;
 
-  // Project readme
-  // string readme = 6;
-
-  // Project license
-  // string license = 7;
-
   // Project image (URL link)
-  optional string image_url = 8;
+  optional string image_url = 6;
 
   // Type of visualizer (e.g., Cesium)
-  Visualizer visualizer = 9;
+  Visualizer visualizer = 7;
 
   // Creation date
-  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp created_at = 8;
 
   // Last updated date
-  google.protobuf.Timestamp updated_at = 11;
+  google.protobuf.Timestamp updated_at = 9;
 
   // Currently unused
-  bool is_archived = 12;
+  bool is_archived = 10;
 
   // Indicates whether it's a classic or visualizer project type
-  bool core_support = 13;
+  bool core_support = 11;
 
   // Whether the project is marked as a favorite
-  bool starred = 14;
+  bool starred = 12;
 
   // Whether the project is in the trash
-  bool is_deleted = 15;
+  bool is_deleted = 13;
 
   // Visibility of the project (e.g., "public", "private")
-  string visibility = 16;
+  string visibility = 14;
 
+  // Project metadata
+  optional ProjectMetadata metadata = 15;
+
+  // Publishment value
+  string alias = 16;
+  // Publishment value
+  PublishmentStatus publishment_status = 17;
+  // Publishment value
+  optional google.protobuf.Timestamp published_at = 18;
+  // Publishment value
+  string public_title = 19;
+  // Publishment value
+  string public_description = 20;
+  // Publishment value
+  string public_image = 21;
+  // Publishment value
+  bool public_no_index = 22;
+  // Publishment value
+  bool is_basic_auth_active = 23;
+  // Publishment value
+  string basic_auth_username = 24;
+  // Publishment value
+  string basic_auth_password = 25;
+  // Publishment value
+  bool enable_ga = 26;
+  // Publishment value
+  string tracking_id = 27;
+}
+
+message ProjectMetadata {
+  // ProjectMetadata id
+  string id = 1;
+  // Project id
+  string project_id = 2;
+  // Workspace id
+  string workspace_id = 3;
+  // Project readme
+  optional string readme = 4;
+  // Project license
+  optional string license = 5;
   // Project import status — if PROCESSING, data should not be retrieved
-  // ProjectImportStatus import_status = 17;
-
-  // Publishment value
-  string alias = 18;
-  // Publishment value
-  PublishmentStatus publishment_status = 19;
-  // Publishment value
-  optional google.protobuf.Timestamp published_at = 20;
-  // Publishment value
-  string public_title = 21;
-  // Publishment value
-  string public_description = 22;
-  // Publishment value
-  string public_image = 23;
-  // Publishment value
-  bool public_no_index = 24;
-  // Publishment value
-  bool is_basic_auth_active = 25;
-  // Publishment value
-  string basic_auth_username = 26;
-  // Publishment value
-  string basic_auth_password = 27;
-  // Publishment value
-  bool enable_ga = 28;
-  // Publishment value
-  string tracking_id = 29;
+  ProjectImportStatus import_status = 6;
+  // ProjectMetadata created date
+  google.protobuf.Timestamp created_at = 7;
+  // ProjectMetadata updated date
+  google.protobuf.Timestamp updated_at = 8;
 }
 
 enum Visualizer {
@@ -172,6 +190,17 @@ message CreateProjectRequest {
   optional string visibility = 6;
 }
 
+// Updates a new project metadata.
+// Cannot be updated under a team the user does not belong to.
+message UpdateProjectMetadataRequest {
+  // Project ID
+  string project_id = 1;
+  // Project readme
+  optional string readme = 4;
+  // Project license
+  optional string license = 5;
+}
+
 // Update project visibility.
 // Only the project owner can operate this
 message UpdateProjectVisibilityRequest {
@@ -205,6 +234,12 @@ message GetProjectListResponse {
 message CreateProjectResponse {
   // Project
   Project project = 1;
+}
+
+// Response messages
+message UpdateProjectMetadataResponse {
+  // Project metadata
+  ProjectMetadata metadata = 1;
 }
 
 // Response messages
