@@ -161,7 +161,7 @@ jobs:
       - name: Rename artifact
         run: mv reearth-web_rc.tar.gz $ARTIFACT
       - name: Download latest changelog
-        uses: dawidd6/action-download-artifact@20319c5641d495c8a52e688b7dc5fada6c3a9fbc # v8
+        uses: dawidd6/action-download-artifact@4c1e823582f43b179e2cbb49c3eade4e41f992e2 # v10
         with:
           workflow: release.yml
           name: changelog-${{ inputs.new_tag }}
