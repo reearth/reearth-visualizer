@@ -1,31 +1,23 @@
 import { IconButton } from "@reearth/beta/lib/reearth-ui";
-import { Credit } from "@reearth/core";
+import { Credit } from "@reearth/beta/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-import { Theme, Widget } from "../../../types";
-
-import { useDataAttribution } from "./hooks";
+import { Theme } from "../../../types";
 
 export type DataAttributionProps = {
   theme?: Theme;
-  widget: Widget;
   credits?: Credit[];
   onClose: () => void;
 };
 
 export const DataAttributionUI: FC<DataAttributionProps> = ({
   theme,
-  widget,
   credits,
   onClose
 }) => {
   const t = useT();
-  const { processedCredits } = useDataAttribution({
-    credits,
-    widget
-  });
 
   return (
     <Wrapper>
@@ -41,19 +33,19 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
       <Title>{t("Data Provided by:")}</Title>
       <ContentWrapper>
         <Content>
-          {processedCredits &&
-            processedCredits.map((credit, i) => (
+          {credits &&
+            credits.map((credit, i) => (
               <ListItem key={i}>
                 <ListMarker>•</ListMarker>
-                {credit.link ? (
+                {credit.creditUrl ? (
                   <CreditItemLink
                     target="_blank"
-                    href={credit.link}
+                    href={credit.creditUrl}
                     rel="noopener noreferrer"
                   >
-                    {credit.img && (
+                    {credit.logo && (
                       <LogoWrapper>
-                        <StyledImage src={credit.img} />
+                        <StyledImage src={credit.logo} />
                       </LogoWrapper>
                     )}
                     {credit.description && (
@@ -62,9 +54,9 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                   </CreditItemLink>
                 ) : (
                   <CreditItem>
-                    {credit.img && (
+                    {credit.logo && (
                       <LogoWrapper>
-                        <StyledImage src={credit.img} />
+                        <StyledImage src={credit.logo} />
                       </LogoWrapper>
                     )}
                     {credit.description && (

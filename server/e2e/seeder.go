@@ -191,6 +191,21 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		return err
 	}
 
+	st := project.ProjectImportStatusNone
+	metadata, err := project.NewProjectMetadata().
+		NewID().
+		Workspace(w.ID()).
+		Project(pID).
+		ImportStatus(&st).
+		Build()
+	if err != nil {
+		return err
+	}
+
+	err = r.ProjectMetadata.Save(ctx, metadata)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 

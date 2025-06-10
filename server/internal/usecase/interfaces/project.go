@@ -19,12 +19,13 @@ import (
 )
 
 type CreateProjectParam struct {
-	WorkspaceID accountdomain.WorkspaceID
-	Visualizer  visualizer.Visualizer
-	Name        *string
-	Description *string
-	CoreSupport *bool
-	Visibility  *string
+	WorkspaceID  accountdomain.WorkspaceID
+	Visualizer   visualizer.Visualizer
+	Name         *string
+	Description  *string
+	CoreSupport  *bool
+	Visibility   *string
+	ImportStatus project.ProjectImportStatus
 }
 
 type UpdateProjectParam struct {
@@ -34,6 +35,7 @@ type UpdateProjectParam struct {
 	Archived       *bool
 	ImageURL       *url.URL
 	DeleteImageURL bool
+	ImportStatus   project.ProjectImportStatus
 	SceneID        *id.SceneID
 	Starred        *bool
 	Deleted        *bool
@@ -86,6 +88,7 @@ type Project interface {
 	CheckAlias(context.Context, string, *id.ProjectID) (bool, error)
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
-	ImportProjectData(context.Context, string, *[]byte, *usecase.Operator) (*project.Project, error)
+	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
+	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *usecase.Operator) (*project.Project, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }
