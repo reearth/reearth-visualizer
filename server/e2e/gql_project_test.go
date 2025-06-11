@@ -56,6 +56,7 @@ fragment ProjectMetadataFragment on ProjectMetadata {
   workspace
   readme
   license
+  topics
   importStatus
   createdAt
   updatedAt

@@ -60,7 +60,6 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 	if pm == nil {
 		return nil
 	}
-
 	importStatus := ToProjectImportStatus(*pm.ImportStatus())
 
 	return &ProjectMetadata{
@@ -69,6 +68,7 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 		Project:      IDFrom(pm.Project()),
 		Readme:       pm.Readme(),
 		License:      pm.License(),
+		Topics:       pm.Topics(),
 		ImportStatus: &importStatus,
 		CreatedAt:    pm.CreatedAt(),
 		UpdatedAt:    pm.UpdatedAt(),

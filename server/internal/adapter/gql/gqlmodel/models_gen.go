@@ -727,9 +727,14 @@ type ProjectMetadata struct {
 	Workspace    ID                   `json:"workspace"`
 	Readme       *string              `json:"readme,omitempty"`
 	License      *string              `json:"license,omitempty"`
+	Topics       *string              `json:"topics,omitempty"`
 	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
 	CreatedAt    *time.Time           `json:"createdAt,omitempty"`
 	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
+}
+
+type ProjectMetadataPayload struct {
+	Metadata *ProjectMetadata `json:"metadata"`
 }
 
 type ProjectPayload struct {
@@ -1274,6 +1279,13 @@ type UpdateProjectInput struct {
 	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
 	EnableGa          *bool    `json:"enableGa,omitempty"`
 	TrackingID        *string  `json:"trackingId,omitempty"`
+}
+
+type UpdateProjectMetadataInput struct {
+	Project ID      `json:"project"`
+	Readme  *string `json:"readme,omitempty"`
+	License *string `json:"license,omitempty"`
+	Topics  *string `json:"topics,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
