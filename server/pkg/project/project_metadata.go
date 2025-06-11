@@ -21,6 +21,7 @@ type ProjectMetadata struct {
 	importStatus *ProjectImportStatus
 	readme       *string
 	license      *string
+	topics       *string
 	createdAt    *time.Time
 	updatedAt    *time.Time
 }
@@ -50,6 +51,10 @@ func (r *ProjectMetadata) ImportStatus() *ProjectImportStatus {
 
 func (r *ProjectMetadata) License() *string {
 	return r.license
+}
+
+func (r *ProjectMetadata) Topics() *string {
+	return r.topics
 }
 
 func (r *ProjectMetadata) CreatedAt() *time.Time {
@@ -87,6 +92,13 @@ func (r *ProjectMetadata) SetLicense(license *string) {
 		return
 	}
 	r.license = license
+}
+
+func (r *ProjectMetadata) SetTopics(topics *string) {
+	if r == nil {
+		return
+	}
+	r.topics = topics
 }
 
 func (r *ProjectMetadata) SetCreatedAt(createdAt *time.Time) {

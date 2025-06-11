@@ -1284,6 +1284,7 @@ type UpdateProjectMetadataInput struct {
 	Project ID      `json:"project"`
 	Readme  *string `json:"readme,omitempty"`
 	License *string `json:"license,omitempty"`
+	Topics  *string `json:"topics,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {

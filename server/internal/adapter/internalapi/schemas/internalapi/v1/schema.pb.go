@@ -470,12 +470,14 @@ type ProjectMetadata struct {
 	Readme *string `protobuf:"bytes,4,opt,name=readme,proto3,oneof" json:"readme,omitempty"`
 	// Project license
 	License *string `protobuf:"bytes,5,opt,name=license,proto3,oneof" json:"license,omitempty"`
+	// Project topics
+	Topics *string `protobuf:"bytes,6,opt,name=topics,proto3,oneof" json:"topics,omitempty"`
 	// Project import status — if PROCESSING, data should not be retrieved
-	ImportStatus ProjectImportStatus `protobuf:"varint,6,opt,name=import_status,json=importStatus,proto3,enum=reearth.visualizer.v1.ProjectImportStatus" json:"import_status,omitempty"`
+	ImportStatus ProjectImportStatus `protobuf:"varint,7,opt,name=import_status,json=importStatus,proto3,enum=reearth.visualizer.v1.ProjectImportStatus" json:"import_status,omitempty"`
 	// ProjectMetadata created date
-	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// ProjectMetadata updated date
-	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -541,6 +543,13 @@ func (x *ProjectMetadata) GetReadme() string {
 func (x *ProjectMetadata) GetLicense() string {
 	if x != nil && x.License != nil {
 		return *x.License
+	}
+	return ""
+}
+
+func (x *ProjectMetadata) GetTopics() string {
+	if x != nil && x.Topics != nil {
+		return *x.Topics
 	}
 	return ""
 }
@@ -969,9 +978,11 @@ type UpdateProjectMetadataRequest struct {
 	// Project ID
 	ProjectId string `protobuf:"bytes,1,opt,name=project_id,json=projectId,proto3" json:"project_id,omitempty"`
 	// Project readme
-	Readme *string `protobuf:"bytes,4,opt,name=readme,proto3,oneof" json:"readme,omitempty"`
+	Readme *string `protobuf:"bytes,2,opt,name=readme,proto3,oneof" json:"readme,omitempty"`
 	// Project license
-	License       *string `protobuf:"bytes,5,opt,name=license,proto3,oneof" json:"license,omitempty"`
+	License *string `protobuf:"bytes,3,opt,name=license,proto3,oneof" json:"license,omitempty"`
+	// Project topics
+	Topics        *string `protobuf:"bytes,4,opt,name=topics,proto3,oneof" json:"topics,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1023,6 +1034,13 @@ func (x *UpdateProjectMetadataRequest) GetReadme() string {
 func (x *UpdateProjectMetadataRequest) GetLicense() string {
 	if x != nil && x.License != nil {
 		return *x.License
+	}
+	return ""
+}
+
+func (x *UpdateProjectMetadataRequest) GetTopics() string {
+	if x != nil && x.Topics != nil {
+		return *x.Topics
 	}
 	return ""
 }
@@ -1397,22 +1415,24 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
 	"_image_urlB\v\n" +
 	"\t_metadataB\x0f\n" +
-	"\r_published_at\"\xfd\x02\n" +
+	"\r_published_at\"\xa5\x03\n" +
 	"\x0fProjectMetadata\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x02 \x01(\tR\tprojectId\x12!\n" +
 	"\fworkspace_id\x18\x03 \x01(\tR\vworkspaceId\x12\x1b\n" +
 	"\x06readme\x18\x04 \x01(\tH\x00R\x06readme\x88\x01\x01\x12\x1d\n" +
-	"\alicense\x18\x05 \x01(\tH\x01R\alicense\x88\x01\x01\x12O\n" +
-	"\rimport_status\x18\x06 \x01(\x0e2*.reearth.visualizer.v1.ProjectImportStatusR\fimportStatus\x129\n" +
+	"\alicense\x18\x05 \x01(\tH\x01R\alicense\x88\x01\x01\x12\x1b\n" +
+	"\x06topics\x18\x06 \x01(\tH\x02R\x06topics\x88\x01\x01\x12O\n" +
+	"\rimport_status\x18\a \x01(\x0e2*.reearth.visualizer.v1.ProjectImportStatusR\fimportStatus\x129\n" +
 	"\n" +
-	"created_at\x18\a \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\t\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAtB\t\n" +
 	"\a_readmeB\n" +
 	"\n" +
-	"\b_license\"`\n" +
+	"\b_licenseB\t\n" +
+	"\a_topics\"`\n" +
 	"\x15GetProjectListRequest\x12!\n" +
 	"\fworkspace_id\x18\x01 \x01(\tR\vworkspaceId\x12$\n" +
 	"\rauthenticated\x18\x02 \x01(\bR\rauthenticated\"2\n" +
@@ -1483,15 +1503,17 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x14_basic_auth_passwordB\f\n" +
 	"\n" +
 	"_enable_gaB\x0e\n" +
-	"\f_tracking_id\"\x90\x01\n" +
+	"\f_tracking_id\"\xb8\x01\n" +
 	"\x1cUpdateProjectMetadataRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x1b\n" +
-	"\x06readme\x18\x04 \x01(\tH\x00R\x06readme\x88\x01\x01\x12\x1d\n" +
-	"\alicense\x18\x05 \x01(\tH\x01R\alicense\x88\x01\x01B\t\n" +
+	"\x06readme\x18\x02 \x01(\tH\x00R\x06readme\x88\x01\x01\x12\x1d\n" +
+	"\alicense\x18\x03 \x01(\tH\x01R\alicense\x88\x01\x01\x12\x1b\n" +
+	"\x06topics\x18\x04 \x01(\tH\x02R\x06topics\x88\x01\x01B\t\n" +
 	"\a_readmeB\n" +
 	"\n" +
-	"\b_license\"5\n" +
+	"\b_licenseB\t\n" +
+	"\a_topics\"5\n" +
 	"\x14DeleteProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\"N\n" +
