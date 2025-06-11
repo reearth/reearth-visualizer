@@ -360,7 +360,7 @@ func TestInternalAPI_update(t *testing.T) {
 
 		deleteImageUrl := true
 		deletePublicImage := true
-		res, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
+		_, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
 			ProjectId:         pid1.String(),
 			DeleteImageUrl:    &deleteImageUrl,
 			DeletePublicImage: &deletePublicImage,
