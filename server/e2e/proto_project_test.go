@@ -304,7 +304,7 @@ func TestInternalAPI_update(t *testing.T) {
 				Visibility:  lo.ToPtr("public"),
 			})
 		v := "private"
-		res, err := client.UpdateProjectVisibility(ctx, &pb.UpdateProjectVisibilityRequest{
+		res, err := client.UpdateProject(ctx, &pb.UpdateProjectRequest{
 			ProjectId:  pid1.String(),
 			Visibility: &v,
 		})
@@ -316,7 +316,7 @@ func TestInternalAPI_update(t *testing.T) {
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		v := "public"
-		res, err := client.UpdateProjectVisibility(ctx, &pb.UpdateProjectVisibilityRequest{
+		res, err := client.UpdateProject(ctx, &pb.UpdateProjectRequest{
 			ProjectId:  pid1.String(),
 			Visibility: &v,
 		})
