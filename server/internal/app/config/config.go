@@ -76,7 +76,7 @@ type Config struct {
 	// Health Check Configuration
 	HealthCheck HealthCheckConfig `pp:",omitempty"`
 
-	Visualizer VisualizerConfig `pp:",omitempty"`
+	InternalApi InternalApiConfig `pp:",omitempty"`
 }
 
 type HealthCheckConfig struct {
@@ -84,12 +84,10 @@ type HealthCheckConfig struct {
 	Password string `pp:",omitempty"`
 }
 
-type VisualizerConfig struct {
-	InternalApi InternalApiConfig `pp:",omitempty"`
-}
-
 type InternalApiConfig struct {
-	Active bool `default:"false" pp:",omitempty"`
+	Active bool   `default:"false" pp:",omitempty" envconfig:"REEARTH_INTERNAL_API_ACTIVE"`
+	Port   string `default:"50051" pp:",omitempty" envconfig:"REEARTH_INTERNAL_API_PORT"`
+	Token  string `default:"" pp:",omitempty" envconfig:"REEARTH_INTERNAL_API_TOKEN"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
