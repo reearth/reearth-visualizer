@@ -38,6 +38,7 @@ type ProjectMetadata {
   workspace: ID!
   readme: String
   license: String
+  topics: String
   importStatus: ProjectImportStatus
   createdAt: DateTime
   updatedAt: DateTime
