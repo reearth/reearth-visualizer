@@ -6961,6 +6961,7 @@ input UpdateProjectMetadataInput {
   project: ID!
   readme: String
   license: String
+  topics: String
 }
 
 input PublishProjectInput {
@@ -47228,7 +47229,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"project", "readme", "license"}
+	fieldsInOrder := [...]string{"project", "readme", "license", "topics"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47256,6 +47257,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context
 				return it, err
 			}
 			it.License = data
+		case "topics":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Topics = data
 		}
 	}
 

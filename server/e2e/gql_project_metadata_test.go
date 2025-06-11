@@ -16,6 +16,7 @@ mutation UpdateProjectMetadata($input: UpdateProjectMetadataInput!) {
       workspace
       readme
       license
+	  topics
       importStatus
       createdAt
       updatedAt
@@ -58,6 +59,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 			"project": projectID,
 			"readme":  "readme test",
 			"license": "license test",
+			"topics":  "topics test",
 		},
 	})
 
@@ -82,5 +84,5 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 
 	res.Value("readme").String().IsEqual("readme test")
 	res.Value("license").String().IsEqual("license test")
-
+	res.Value("topics").String().IsEqual("topics test")
 }

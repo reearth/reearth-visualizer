@@ -106,6 +106,7 @@ input UpdateProjectMetadataInput {
   project: ID!
   readme: String
   license: String
+  topics: String
 }
 
 input PublishProjectInput {

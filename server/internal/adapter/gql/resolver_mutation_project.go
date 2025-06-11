@@ -99,6 +99,7 @@ func (r *mutationResolver) UpdateProjectMetadata(ctx context.Context, input gqlm
 		ID:      pid,
 		Readme:  input.Readme,
 		License: input.License,
+		Topics:  input.Topics,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
