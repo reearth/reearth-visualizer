@@ -150,6 +150,15 @@ func TestSearchUser(t *testing.T) {
 	o.Value("name").String().IsEqual("e2e")
 	o.Value("email").String().IsEqual("e2e@e2e.com")
 
+	query = fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, " e2e")
+	request = GraphQLRequest{
+		Query: query,
+	}
+	o = Request(e, uId1.String(), request).Object().Value("data").Object().Value("searchUser").Object()
+	o.Value("id").String().IsEqual(uId1.String())
+	o.Value("name").String().IsEqual("e2e")
+	o.Value("email").String().IsEqual("e2e@e2e.com")
+
 	query = fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, "notfound")
 	request = GraphQLRequest{
 		Query: query,
