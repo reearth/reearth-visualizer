@@ -140,18 +140,68 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 }
 
 func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
-	return i.projectRepo.FindActiveById(ctx, pid)
+	pj, err := i.projectRepo.FindActiveById(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
 }
 
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindActiveByAlias(ctx, alias)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
 
 	isWorkspaceOwner := false
 
 	if len(operator.AcOperator.OwningWorkspaces) > 0 {
-		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == id
+		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == aid
 	}
 
-	return i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, id)
+	pList, err := i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, aid)
+	if err != nil {
+		return nil, err
+	}
+
+	ids := make(id.ProjectIDList, 0, len(pList))
+	for _, p := range pList {
+		ids = append(ids, p.ID())
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range pList {
+		for _, metadata := range metadatas {
+			if p.ID() == metadata.Project() {
+				p.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return pList, err
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -331,9 +381,26 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 
 }
 
+func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
+
+	prj, err := i.projectRepo.FindByID(ctx, *pid)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	sce, err := i.sceneRepo.FindByProject(ctx, *pid)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	dedicatedID1 := alias.ReservedReearthPrefixScene + sce.ID().String()
+	dedicatedID2 := sce.ID().String()
+
+	return prj, dedicatedID1, dedicatedID2, err
+}
+
 func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
 	aliasName := strings.ToLower(newAlias)
-
 	if pid == nil {
 
 		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
@@ -342,62 +409,48 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
 		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
 
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixScene) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
 			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		}
 
 	} else {
 
-		prj, err := i.projectRepo.FindByID(ctx, *pid)
+		prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, pid)
 		if err != nil {
 			return false, err
 		}
 
-		if aliasName == prj.Alias() {
-			// current alias
+		if aliasName == dedicatedID1 || aliasName == dedicatedID2 || aliasName == prj.Alias() {
+			// allow self sceneId or current alias
 			return true, nil
 		}
 
-		sce, err := i.sceneRepo.FindByProject(ctx, *pid)
-		if err != nil {
+		// story prefix check
+		if _, found := strings.CutPrefix(aliasName, alias.ReservedReearthPrefixStory); found {
+			// error 's-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+		// scene prefix check
+		if _, found := strings.CutPrefix(aliasName, alias.ReservedReearthPrefixScene); found {
+			// error 'c-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
 
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
-			// error 's-' prefix
-			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixProject)
-			// only allow self ID
-			if id != sce.ID().String() {
-				// error 'c-' prefix
-				return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-			}
-		}
-
-		if sce.ID().String() == aliasName || sce.DefaultAlias() == aliasName {
-			// allow self ProjectID
-		} else {
-			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
-				return false, err
-			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-		}
 	}
 
 	return true, nil
@@ -416,12 +469,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 	}()
 
-	prj, err := i.projectRepo.FindByID(ctx, params.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	sce, err := i.sceneRepo.FindByProject(ctx, params.ID)
+	prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -436,42 +484,43 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if params.Alias == nil || *params.Alias == "" {
 		// if you don't have an alias, set it to default alias
 		if prj.Alias() == "" {
-			prj.UpdateAlias(sce.DefaultAlias())
+			prj.UpdateAlias(dedicatedID1)
 		}
 		// if anything is set, do nothing
 	} else {
+
 		newAlias := strings.ToLower(*params.Alias)
 
-		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
-			// error 's-' prefix
-			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
-		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
-			// only allow self ID
-			if id != sce.ID().String() {
+		if newAlias == dedicatedID1 || newAlias == dedicatedID2 || prevAlias == newAlias {
+
+			// allow self sceneId or current alias
+
+		} else {
+
+			// story prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixStory); found {
+				// error 's-' prefix
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			// scene prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixScene); found {
 				// error 'c-' prefix
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			if err := alias.CheckProjectAliasPattern(newAlias); err != nil {
+				return nil, err
+			}
+			if err := i.projectRepo.CheckAliasUnique(ctx, newAlias); err != nil {
+				return nil, err
+			}
+			if err = i.storytellingRepo.CheckAliasUnique(ctx, newAlias); err != nil {
+				return nil, err
 			}
 		}
 
 		prj.UpdateAlias(newAlias)
-	}
-
-	if prevAlias == prj.Alias() || sce.ID().String() == prj.Alias() || sce.DefaultAlias() == prj.Alias() {
-		// if do not change alias or self ProjectID, do nothing
-	} else {
-		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err = i.storytellingRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
 	}
 
 	prj.UpdatePublishmentStatus(params.Status)
@@ -636,18 +685,27 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
-	prj, err := i.projectRepo.FindByID(ctx, projectID)
+	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, errors.New("project " + err.Error())
 	}
+
 	if prj.IsDeleted() {
 		fmt.Printf("Error Deleted project: %v\n", prj.ID())
 		return nil, errors.New("This project is deleted")
 	}
 
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
+	if err != nil {
+		return nil, errors.New("project metadate " + err.Error())
+	}
+
+	prj.SetMetadata(meta)
+
 	return prj, nil
+
 }
 
 func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
@@ -781,7 +839,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		return nil, errors.New("project parse error")
 	}
 
-	var input = jsonmodel.ToProjectExportFromJSON(projectData)
+	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
 
 	alias := ""
 	archived := false

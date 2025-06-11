@@ -7,37 +7,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 )
 
-const UpdateProjectMetadataMutation = `
-mutation UpdateProjectMetadata($input: UpdateProjectMetadataInput!) {
-  updateProjectMetadata(input: $input) {
-    metadata {
-      id
-      project
-      workspace
-      readme
-      license
-      importStatus
-      createdAt
-      updatedAt
-      __typename
-	}
-    __typename
-  }
-}
-`
-
-func updateProjectMetadata(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
-	requestBody := GraphQLRequest{
-		OperationName: "UpdateProjectMetadata",
-		Query:         UpdateProjectMetadataMutation,
-		Variables:     variables,
-	}
-	// RequestDump(requestBody)
-	res := Request(e, u.String(), requestBody)
-	// ValueDump(res)
-	return res.Path("$.data.updateProjectMetadata.metadata")
-}
-
 // export REEARTH_DB=mongodb://localhost
 // go test -v -run TestCreateAndGetProjectMetadata ./e2e/...
 
@@ -52,16 +21,15 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 		"coreSupport": true,
 	})
 
-	// response :=
 	updateProjectMetadata(e, uID, map[string]any{
 		"input": map[string]any{
 			"project": projectID,
 			"readme":  "readme test",
 			"license": "license test",
+			"topics":  "topics test",
 		},
 	})
 
-	// ValueDump(response)
 	requestBody := GraphQLRequest{
 		OperationName: "GetProjects",
 		Query:         GetProjectsQuery,
@@ -82,5 +50,35 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 
 	res.Value("readme").String().IsEqual("readme test")
 	res.Value("license").String().IsEqual("license test")
+	res.Value("topics").String().IsEqual("topics test")
+}
 
+const UpdateProjectMetadataMutation = `
+mutation UpdateProjectMetadata($input: UpdateProjectMetadataInput!) {
+  updateProjectMetadata(input: $input) {
+    metadata {
+      id
+      project
+      workspace
+      readme
+      license
+	  topics
+      importStatus
+      createdAt
+      updatedAt
+      __typename
+	}
+    __typename
+  }
+}
+`
+
+func updateProjectMetadata(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "UpdateProjectMetadata",
+		Query:         UpdateProjectMetadataMutation,
+		Variables:     variables,
+	}
+	res := Request(e, u.String(), requestBody)
+	return res.Path("$.data.updateProjectMetadata.metadata")
 }

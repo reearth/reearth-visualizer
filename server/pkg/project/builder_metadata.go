@@ -56,18 +56,23 @@ func (b *MetadataBuilder) Project(project id.ProjectID) *MetadataBuilder {
 	return b
 }
 
-func (b *MetadataBuilder) Readme(readme *string) *MetadataBuilder {
-	b.r.readme = readme
-	return b
-}
-
 func (b *MetadataBuilder) ImportStatus(importStatus *ProjectImportStatus) *MetadataBuilder {
 	b.r.importStatus = importStatus
 	return b
 }
 
+func (b *MetadataBuilder) Readme(readme *string) *MetadataBuilder {
+	b.r.readme = readme
+	return b
+}
+
 func (b *MetadataBuilder) License(license *string) *MetadataBuilder {
 	b.r.license = license
+	return b
+}
+
+func (b *MetadataBuilder) Topics(topics *string) *MetadataBuilder {
+	b.r.topics = topics
 	return b
 }
 

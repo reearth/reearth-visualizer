@@ -1,14 +1,18 @@
 package internalapimodel
 
 import (
+	"context"
+
+	"github.com/reearth/reearth/server/internal/adapter"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ToProject(p *project.Project) *pb.Project {
+func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.Story) *pb.Project {
 	if p == nil {
 		return nil
 	}
@@ -19,12 +23,10 @@ func ToProject(p *project.Project) *pb.Project {
 		imageURL = &urlStr
 	}
 
-	var publishedAt *timestamppb.Timestamp
-	if !p.PublishedAt().IsZero() {
-		publishedAt = timestamppb.New(p.PublishedAt())
-	}
+	editorUrl := adapter.CurrentHost(ctx) + "/scene/" + p.Scene().String() + "/map"
+	publishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
 
-	return &pb.Project{
+	project := &pb.Project{
 		Id:          p.ID().String(),
 		WorkspaceId: p.Workspace().String(),
 
@@ -39,23 +41,32 @@ func ToProject(p *project.Project) *pb.Project {
 		IsDeleted:   p.IsDeleted(),
 		Visibility:  p.Visibility(),
 
+		EditorUrl: editorUrl,
+
 		Metadata: ToProjectMetadata(p.Metadata()),
 
-		// publishment
+		// Scene publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
-		PublishedAt:       publishedAt,
-		PublicTitle:       p.PublicTitle(),
-		PublicDescription: p.PublicDescription(),
-		PublicImage:       p.PublicImage(),
-		PublicNoIndex:     p.PublicNoIndex(),
-		IsBasicAuthActive: p.IsBasicAuthActive(),
-		BasicAuthUsername: p.BasicAuthUsername(),
-		BasicAuthPassword: p.BasicAuthPassword(),
-		EnableGa:          p.EnableGA(),
-		TrackingId:        p.TrackingID(),
+		PublishedUrl:      &publishedUrl,
 	}
 
+	if s != nil {
+		project.SceneId = s.Scene().String()
+		project.StoryId = s.Id().String()
+		storyPublishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
+
+		// Story publishment
+		project.StoryAlias = s.Alias()
+		project.StoryPublishmentStatus = ToStoryPublishmentStatus(s.PublishmentStatus())
+		project.StoryPublishedUrl = &storyPublishedUrl
+
+	} else {
+		project.SceneId = p.Scene().String()
+		project.StoryId = ""
+	}
+
+	return project
 }
 
 func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
@@ -80,6 +91,7 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		WorkspaceId:  p.Workspace().String(),
 		Readme:       p.Readme(),
 		License:      p.License(),
+		Topics:       p.Topics(),
 		ImportStatus: importStatus,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,
@@ -119,6 +131,19 @@ func ToPublishmentStatus(s project.PublishmentStatus) pb.PublishmentStatus {
 		return pb.PublishmentStatus_PUBLISHMENT_STATUS_LIMITED
 	}
 	if s == project.PublishmentStatusPrivate {
+		return pb.PublishmentStatus_PUBLISHMENT_STATUS_PRIVATE
+	}
+	return pb.PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED
+}
+
+func ToStoryPublishmentStatus(s storytelling.PublishmentStatus) pb.PublishmentStatus {
+	if s == storytelling.PublishmentStatusPublic {
+		return pb.PublishmentStatus_PUBLISHMENT_STATUS_PUBLIC
+	}
+	if s == storytelling.PublishmentStatusLimited {
+		return pb.PublishmentStatus_PUBLISHMENT_STATUS_LIMITED
+	}
+	if s == storytelling.PublishmentStatusPrivate {
 		return pb.PublishmentStatus_PUBLISHMENT_STATUS_PRIVATE
 	}
 	return pb.PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED

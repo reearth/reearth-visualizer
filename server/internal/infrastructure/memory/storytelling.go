@@ -76,6 +76,35 @@ func (r *Storytelling) FindByScene(_ context.Context, sId id.SceneID) (*storytel
 	return &result, nil
 }
 
+func (r *Storytelling) FindByScenes(_ context.Context, sIds []id.SceneID) (*storytelling.StoryList, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if len(sIds) == 0 {
+		return &storytelling.StoryList{}, nil
+	}
+
+	readableIds := make(map[id.SceneID]bool)
+	for _, sId := range sIds {
+		if r.f.CanRead(sId) {
+			readableIds[sId] = true
+		}
+	}
+
+	if len(readableIds) == 0 {
+		return &storytelling.StoryList{}, nil
+	}
+
+	result := storytelling.StoryList{}
+	for _, s := range r.data {
+		if readableIds[s.Scene()] {
+			result = append(result, s)
+		}
+	}
+
+	return &result, nil
+}
+
 func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*storytelling.Story, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
