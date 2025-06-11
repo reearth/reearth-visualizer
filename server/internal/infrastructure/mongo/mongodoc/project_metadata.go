@@ -16,6 +16,7 @@ type ProjectMetadataDocument struct {
 	ImportStatus *string
 	Readme       *string
 	License      *string
+	Topics       *string
 	CreatedAt    *time.Time
 	UpdatedAt    *time.Time
 }
@@ -44,6 +45,7 @@ func NewProjectMetadata(r *project.ProjectMetadata) (*ProjectMetadataDocument, s
 		ImportStatus: importStatus,
 		Readme:       r.Readme(),
 		License:      r.License(),
+		Topics:       r.Topics(),
 		CreatedAt:    r.CreatedAt(),
 		UpdatedAt:    r.UpdatedAt(),
 	}, rid
@@ -79,6 +81,7 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		ImportStatus(importStatus).
 		Readme(d.Readme).
 		License(d.License).
+		Topics(d.Topics).
 		UpdatedAt(d.UpdatedAt).
 		CreatedAt(d.CreatedAt).
 		Build()

@@ -64,6 +64,10 @@ func (i *ProjectMetadata) Update(ctx context.Context, p interfaces.UpdateProject
 		meta.SetLicense(p.License)
 	}
 
+	if p.Topics != nil {
+		meta.SetTopics(p.Topics)
+	}
+
 	currentTime := time.Now().UTC()
 	meta.SetUpdatedAt(&currentTime)
 	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
