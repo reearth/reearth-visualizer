@@ -2,6 +2,7 @@ package e2e
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 	"testing"
@@ -29,7 +30,7 @@ func TestInternalAPI_private(t *testing.T) {
 	// user2: workspaceId: wID2  userId: uID2
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create default Project -> private
 		CreateProjectInternal(
@@ -72,7 +73,7 @@ func TestInternalAPI_private(t *testing.T) {
 	})
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID2.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// get list size 0
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			WorkspaceId: wID.String(), // not wID2
@@ -89,7 +90,7 @@ func TestInternalAPI_public(t *testing.T) {
 	var publicProjectId string
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
 		CreateProjectInternal(
@@ -134,7 +135,7 @@ func TestInternalAPI_public(t *testing.T) {
 	})
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID2.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// get list size 1
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			WorkspaceId: wID.String(), // not wID2
@@ -152,7 +153,7 @@ func TestInternalAPI_public(t *testing.T) {
 	})
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// test DeleteProject
 		res6, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
@@ -164,7 +165,7 @@ func TestInternalAPI_public(t *testing.T) {
 	})
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID2.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// get list size 0
 		res7, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
@@ -181,7 +182,7 @@ func TestInternalAPI(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
 		pid1 := CreateProjectInternal(
@@ -249,7 +250,7 @@ func TestInternalAPI(t *testing.T) {
 	})
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID2.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// get list size 1
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			WorkspaceId: wID.String(),
@@ -269,7 +270,7 @@ func TestInternalAPI(t *testing.T) {
 	})
 
 	// user3 call api (menber)
-	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID3.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// get list size 3
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
@@ -290,7 +291,7 @@ func TestInternalAPI_update(t *testing.T) {
 
 	var pid1 id.ProjectID
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
 		pid1 = CreateProjectInternal(
@@ -313,7 +314,7 @@ func TestInternalAPI_update(t *testing.T) {
 	})
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, uID2.String(), token, func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		v := "public"
 		res, err := client.UpdateProjectVisibility(ctx, &pb.UpdateProjectVisibilityRequest{
@@ -326,15 +327,16 @@ func TestInternalAPI_update(t *testing.T) {
 
 }
 
-func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+func runTestWithUser(t *testing.T, userID, token string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"user-id": userID,
+		"user-id":       userID,
+		"authorization": fmt.Sprintf("Bearer %s", token),
 	}))
 
-	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(":8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("failed to connect: %v", err)
 	}

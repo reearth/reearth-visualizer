@@ -45,10 +45,14 @@ var (
 	internalApiConfig = &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
+			Dev:      true,
+			Disabled: false,
+			Issuer:   "http://localhost:8080",
 		},
 		InternalApi: config.InternalApiConfig{
 			Active: true,
+			Port:   "8080",
+			Token:  "token",
 		},
 	}
 )
