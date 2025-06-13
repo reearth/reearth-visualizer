@@ -1,17 +1,24 @@
 package internalapi
 
 import (
+	"archive/zip"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"net/url"
+	"os"
+	"time"
 
 	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/adapter/internalapi/internalapimodel"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/spf13/afero"
 )
 
 type server struct {
@@ -217,4 +224,79 @@ func (s server) DeleteProject(ctx context.Context, req *pb.DeleteProjectRequest)
 	return &pb.DeleteProjectResponse{
 		ProjectId: pId.String(),
 	}, nil
+}
+
+func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest) (*pb.ExportProjectResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pid, err := id.ProjectIDFrom(req.ProjectId)
+	if err != nil {
+		return nil, err
+	}
+
+	fs := afero.NewOsFs()
+
+	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
+	if err != nil {
+		return nil, errors.New("Fail Zip Create :" + err.Error())
+	}
+	defer func() {
+		if cerr := zipFile.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+		//　delete after saving to storage
+		if cerr := os.Remove(zipFile.Name()); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
+
+	zipWriter := zip.NewWriter(zipFile)
+	defer func() {
+		if cerr := zipWriter.Close(); cerr != nil && err == nil {
+			err = cerr
+		}
+	}()
+
+	prj, err := uc.Project.ExportProjectData(ctx, pid, zipWriter, op)
+	if err != nil {
+		return nil, errors.New("Fail ExportProject :" + err.Error())
+	}
+
+	sce, exportData, err := uc.Scene.ExportScene(ctx, prj)
+	if err != nil {
+		return nil, errors.New("Fail ExportScene :" + err.Error())
+	}
+
+	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)
+	if err != nil {
+		return nil, errors.New("Fail ExportPlugins :" + err.Error())
+	}
+
+	exportData["project"] = gqlmodel.ToProjectExport(prj)
+	exportData["plugins"] = gqlmodel.ToPlugins(plugins)
+	exportData["schemas"] = gqlmodel.ToPropertySchemas(schemas)
+	exportData["exportedInfo"] = map[string]string{
+		"host":      adapter.CurrentHost(ctx),
+		"project":   prj.ID().String(),
+		"timestamp": time.Now().Format(time.RFC3339),
+	}
+
+	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	if err != nil {
+		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
+	}
+
+	return &pb.ExportProjectResponse{
+		ProjectDataPath: "/export/" + zipFile.Name(),
+	}, nil
+}
+
+func Normalize(data any) map[string]any {
+	if b, err := json.Marshal(data); err == nil {
+		var result map[string]any
+		if err := json.Unmarshal(b, &result); err == nil {
+			return result
+		}
+	}
+	return nil
 }
