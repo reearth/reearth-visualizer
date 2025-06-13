@@ -2,6 +2,7 @@ package gql
 
 import (
 	"context"
+	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -38,6 +39,10 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 }
 
 func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
+
+	trimmed := strings.TrimSpace(nameOrEmail)
+	nameOrEmail = trimmed
+
 	res, err := c.usecase.SearchUser(ctx, nameOrEmail)
 	if err != nil {
 		return nil, err
