@@ -156,21 +156,34 @@ type ProjectExport struct {
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	ImageURL    *url.URL   `json:"imageUrl,omitempty"`
+
+	License *string `json:"readme,omitempty"`
+	Readme  *string `json:"license,omitempty"`
+	Topics  *string `json:"topics,omitempty"`
 }
 
 func ToProjectExport(p *project.Project) *ProjectExport {
 	if p == nil {
 		return nil
 	}
-	return &ProjectExport{
+
+	export := &ProjectExport{
 		Visualizer:  Visualizer(p.Visualizer()),
 		Name:        p.Name(),
 		Description: p.Description(),
 		ImageURL:    p.ImageURL(),
 	}
+
+	if pm := p.Metadata(); pm != nil {
+		export.License = pm.License()
+		export.Readme = pm.Readme()
+		export.Topics = pm.Topics()
+	}
+
+	return export
 }
 
-func ToProjectExportFromJSON(data map[string]any) *ProjectExport {
+func ToProjectExportDataFromJSON(data map[string]any) *ProjectExport {
 	var p ProjectExport
 	bytes, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {

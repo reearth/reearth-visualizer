@@ -636,18 +636,27 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
-	prj, err := i.projectRepo.FindByID(ctx, projectID)
+	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, errors.New("project " + err.Error())
 	}
+
 	if prj.IsDeleted() {
 		fmt.Printf("Error Deleted project: %v\n", prj.ID())
 		return nil, errors.New("This project is deleted")
 	}
 
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
+	if err != nil {
+		return nil, errors.New("project metadate " + err.Error())
+	}
+
+	prj.SetMetadata(meta)
+
 	return prj, nil
+
 }
 
 func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
@@ -781,7 +790,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		return nil, errors.New("project parse error")
 	}
 
-	var input = jsonmodel.ToProjectExportFromJSON(projectData)
+	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
 
 	alias := ""
 	archived := false

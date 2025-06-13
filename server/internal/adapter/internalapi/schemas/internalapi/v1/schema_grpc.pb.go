@@ -25,6 +25,7 @@ const (
 	ReEarthVisualizer_UpdateProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProject"
 	ReEarthVisualizer_UpdateProjectMetadata_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectMetadata"
 	ReEarthVisualizer_DeleteProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProject"
+	ReEarthVisualizer_ExportProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject"
 )
 
 // ReEarthVisualizerClient is the client API for ReEarthVisualizer service.
@@ -49,6 +50,9 @@ type ReEarthVisualizerClient interface {
 	// Deletes a project.
 	// Request headers: user-id: <User ID>
 	DeleteProject(ctx context.Context, in *DeleteProjectRequest, opts ...grpc.CallOption) (*DeleteProjectResponse, error)
+	// Export a project.
+	// Request headers: user-id: <User ID>
+	ExportProject(ctx context.Context, in *ExportProjectRequest, opts ...grpc.CallOption) (*ExportProjectResponse, error)
 }
 
 type reEarthVisualizerClient struct {
@@ -119,6 +123,16 @@ func (c *reEarthVisualizerClient) DeleteProject(ctx context.Context, in *DeleteP
 	return out, nil
 }
 
+func (c *reEarthVisualizerClient) ExportProject(ctx context.Context, in *ExportProjectRequest, opts ...grpc.CallOption) (*ExportProjectResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ExportProjectResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_ExportProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReEarthVisualizerServer is the server API for ReEarthVisualizer service.
 // All implementations must embed UnimplementedReEarthVisualizerServer
 // for forward compatibility.
@@ -141,6 +155,9 @@ type ReEarthVisualizerServer interface {
 	// Deletes a project.
 	// Request headers: user-id: <User ID>
 	DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectResponse, error)
+	// Export a project.
+	// Request headers: user-id: <User ID>
+	ExportProject(context.Context, *ExportProjectRequest) (*ExportProjectResponse, error)
 	mustEmbedUnimplementedReEarthVisualizerServer()
 }
 
@@ -168,6 +185,9 @@ func (UnimplementedReEarthVisualizerServer) UpdateProjectMetadata(context.Contex
 }
 func (UnimplementedReEarthVisualizerServer) DeleteProject(context.Context, *DeleteProjectRequest) (*DeleteProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProject not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) ExportProject(context.Context, *ExportProjectRequest) (*ExportProjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExportProject not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) mustEmbedUnimplementedReEarthVisualizerServer() {}
 func (UnimplementedReEarthVisualizerServer) testEmbeddedByValue()                           {}
@@ -298,6 +318,24 @@ func _ReEarthVisualizer_DeleteProject_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReEarthVisualizer_ExportProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ExportProjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).ExportProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_ExportProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).ExportProject(ctx, req.(*ExportProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReEarthVisualizer_ServiceDesc is the grpc.ServiceDesc for ReEarthVisualizer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +366,10 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProject",
 			Handler:    _ReEarthVisualizer_DeleteProject_Handler,
+		},
+		{
+			MethodName: "ExportProject",
+			Handler:    _ReEarthVisualizer_ExportProject_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
