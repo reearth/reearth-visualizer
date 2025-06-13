@@ -34,6 +34,7 @@ export default () => {
       "show-label": t("Show Label"),
       "take-screenshot": t("Take Screenshot"),
       "mouse-events": t("Mouse Events"),
+      "get-current-location": t("Get Current Location"),
       "add-geojson": t("Add GeoJSON"),
       "add-large-geojson": t("Add Large Geojson"),
       "add-csv": t("Add CSV"),
