@@ -45,12 +45,14 @@ var (
 	internalApiConfig = &config.Config{
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
+			Dev:      true,
+			Disabled: false,
+			Issuer:   "http://localhost:8080",
 		},
-		Visualizer: config.VisualizerConfig{
-			InternalApi: config.InternalApiConfig{
-				Active: true,
-			},
+		InternalApi: config.InternalApiConfig{
+			Active: true,
+			Port:   "8080",
+			Token:  "token",
 		},
 	}
 )
@@ -130,7 +132,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	var l net.Listener
 	var err error
 
-	if cfg.Visualizer.InternalApi.Active {
+	if cfg.InternalApi.Active {
 		l, err = net.Listen("tcp", ":8080")
 		if err != nil {
 			t.Fatalf("server failed to listen: %v", err)
