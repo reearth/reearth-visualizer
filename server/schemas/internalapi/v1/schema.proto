@@ -31,6 +31,10 @@ service ReEarthVisualizer {
   // Deletes a project.
   // Request headers: user-id: <User ID>
   rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
+
+  // Export a project.
+  // Request headers: user-id: <User ID>
+  rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
 }
 
 // Core Project messages
@@ -243,6 +247,12 @@ message DeleteProjectRequest {
   string project_id = 1;
 }
 
+// Export a project.
+message ExportProjectRequest {
+  // Project ID
+  string project_id = 1;
+}
+
 // Response messages
 message GetProjectResponse {
   // Project
@@ -277,4 +287,10 @@ message UpdateProjectMetadataResponse {
 message DeleteProjectResponse {
   // Project ID
   string project_id = 1;
+}
+
+// Response messages
+message ExportProjectResponse {
+  // Project Export zip file download url
+  string project_data_path = 1;
 }
