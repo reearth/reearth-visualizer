@@ -8,6 +8,8 @@
     - [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse)
     - [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest)
     - [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse)
+    - [ExportProjectRequest](#reearth-visualizer-v1-ExportProjectRequest)
+    - [ExportProjectResponse](#reearth-visualizer-v1-ExportProjectResponse)
     - [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest)
     - [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse)
     - [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest)
@@ -98,6 +100,36 @@ Response messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | project_id | [string](#string) |  | Project ID |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ExportProjectRequest"></a>
+
+### ExportProjectRequest
+Export a project.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ExportProjectResponse"></a>
+
+### ExportProjectResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_data_path | [string](#string) |  | Project Export zip file download url |
 
 
 
@@ -375,6 +407,7 @@ Response messages
 | UpdateProject | [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest) | [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse) | Update a project. Request headers: user-id: &lt;User ID&gt; |
 | UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified team. Request headers: user-id: &lt;User ID&gt; |
 | DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
+| ExportProject | [ExportProjectRequest](#reearth-visualizer-v1-ExportProjectRequest) | [ExportProjectResponse](#reearth-visualizer-v1-ExportProjectResponse) | Export a project. Request headers: user-id: &lt;User ID&gt; |
 
  
 

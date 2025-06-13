@@ -784,7 +784,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		return nil, errors.New("project parse error")
 	}
 
-	var input = jsonmodel.ToProjectExportFromJSON(projectData)
+	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
 
 	alias := ""
 	archived := false

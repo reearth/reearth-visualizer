@@ -45,16 +45,16 @@ func (r *ProjectMetadata) Readme() *string {
 	return r.readme
 }
 
-func (r *ProjectMetadata) ImportStatus() *ProjectImportStatus {
-	return r.importStatus
-}
-
 func (r *ProjectMetadata) License() *string {
 	return r.license
 }
 
 func (r *ProjectMetadata) Topics() *string {
 	return r.topics
+}
+
+func (r *ProjectMetadata) ImportStatus() *ProjectImportStatus {
+	return r.importStatus
 }
 
 func (r *ProjectMetadata) CreatedAt() *time.Time {
