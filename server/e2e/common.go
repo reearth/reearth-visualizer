@@ -232,6 +232,7 @@ func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *htt
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", user).
 		WithHeader("Content-Type", "application/json").
+		WithHeader("lang", "en").
 		WithJSON(requestBody).
 		Expect().
 		Status(http.StatusOK).

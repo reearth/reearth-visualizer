@@ -50,7 +50,11 @@ func TestLanguageExtractor(t *testing.T) {
 			req.Header.Set("lang", tt.headerLang)
 
 			u := &user.User{}
-			u.UpdateLang(tt.userLang)
+
+			m := user.NewMetadata()
+			m.SetLang(tt.userLang)
+
+			u.SetMetadata(m)
 			ctx := adapter.AttachUser(context.Background(), u)
 			req = req.WithContext(ctx)
 
