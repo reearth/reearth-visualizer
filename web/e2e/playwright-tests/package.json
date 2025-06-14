@@ -10,16 +10,16 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.51.1",
+    "@playwright/test": "^1.53.0",
     "@types/dotenv": "^8.2.3",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.13.14",
-    "dotenv": "^16.4.7",
-    "jest": "^29.7.0",
+    "@types/node": "^22.15.31",
+    "dotenv": "^16.5.0",
+    "jest": "^30.0.0",
     "prettier": "^3.5.3",
-    "ts-jest": "^29.3.0"
+    "ts-jest": "^29.4.0"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.6.0"
+    "@faker-js/faker": "^9.8.0"
   }
 }
