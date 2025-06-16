@@ -344,6 +344,7 @@ Enable Terrain: 3D地形を有効にする
 Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
 Mouse Events: マウスイベント
+Get Current Location: 現在位置を取得
 Add GeoJSON: GeoJSONを追加
 Add Large Geojson: 大容量のGeoJSONを追加
 Add CSV: CSVを追加
