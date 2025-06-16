@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:ui": "npx playwright test --config=playwright.config.ts"
+    "test:ui": "npx playwright test --config=playwright.config.ts",
+    "test:local": "REEARTH_WEB_E2E_BASEURL=http://localhost:3000 npx playwright test --config=playwright.config.ts"
   },
   "keywords": [],
   "author": "",

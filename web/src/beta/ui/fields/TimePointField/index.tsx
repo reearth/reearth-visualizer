@@ -7,7 +7,6 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-
 import EditPanel from "./EditPanel";
 
 export type TimePointFieldProps = CommonFieldProps & {
@@ -55,11 +54,16 @@ const TimePointField: FC<TimePointFieldProps> = ({
   );
 
   return (
-    <CommonField title={title} description={description}>
-      <Wrapper>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="time-point-field"
+    >
+      <Wrapper data-testid="time-point-wrapper">
         <TextInput
           value={localValue}
           onBlur={handleInputBlur}
+          data-testid="time-point-text-input"
           actions={[
             <Button
               key="delete"
@@ -70,6 +74,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
               disabled={!localValue}
               onClick={handleTimeSettingDelete}
               iconColor={localValue ? theme.content.main : theme.content.weak}
+              data-testid="time-point-delete-button"
             />
           ]}
           placeholder={"YYYY-MM-DDThh:mm:ss±hh:mm"}
@@ -82,11 +87,13 @@ const TimePointField: FC<TimePointFieldProps> = ({
               icon="clock"
               size="small"
               onClick={() => setOpen(true)}
+              data-testid="time-point-set-button"
             />
           }
           open={open}
           offset={8}
           placement="bottom-end"
+          data-testid="time-point-popup"
         >
           {open && (
             <EditPanel
