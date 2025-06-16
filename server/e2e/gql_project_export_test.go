@@ -1,8 +1,9 @@
 package e2e
 
 import (
-	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const ExportProjectMutation = `
@@ -30,5 +31,6 @@ func TestProjectExport(t *testing.T) {
 	projectDataPath := Request(e, uID.String(), requestBody).
 		Path("$.data.exportProject.projectDataPath").String()
 
-	fmt.Println(projectDataPath)
+	assert.NotNil(t, projectDataPath)
+
 }
