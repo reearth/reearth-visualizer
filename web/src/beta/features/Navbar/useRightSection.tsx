@@ -26,28 +26,32 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
   const rightSide = useMemo(() => {
     if (page === "editor") {
       return (
-        <RightSection>
+        <RightSection data-testid="navbar-right-section">
           <TabButton
             onClick={() => handleEditorNavigation?.("map")}
             selected={currentTab === "map"}
+            data-testid="navbar-tab-map"
           >
             {t("Map")}
           </TabButton>
           <TabButton
             onClick={() => handleEditorNavigation?.("story")}
             selected={currentTab === "story"}
+            data-testid="navbar-tab-story"
           >
             {t("Story")}
           </TabButton>
           <TabButton
             onClick={() => handleEditorNavigation?.("widgets")}
             selected={currentTab === "widgets"}
+            data-testid="navbar-tab-widgets"
           >
             {t("Widgets")}
           </TabButton>
           <TabButton
             onClick={() => handleEditorNavigation?.("publish")}
             selected={currentTab === "publish"}
+            data-testid="navbar-tab-publish"
           >
             {t("Publish")}
           </TabButton>
@@ -56,6 +60,7 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
               icon="pluginInstall"
               appearance="simple"
               onClick={handleDevPluginsInstall}
+              data-testid="navbar-plugin-install"
             />
           )}
           {!!devPluginExtensions && (
@@ -63,6 +68,7 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
               icon="pluginUpdate"
               appearance="simple"
               onClick={handleDevPluginExtensionsReload}
+              data-testid="navbar-plugin-reload"
             />
           )}
         </RightSection>

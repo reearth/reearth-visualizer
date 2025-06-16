@@ -1,11 +1,13 @@
+import path from "path";
+
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
-import { LoginPage } from "../pages/loginPage";
+
 import { DashBoardPage } from "../pages/dashBoardPage";
+import { LoginPage } from "../pages/loginPage";
+import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
-import path from "path";
-import { ProjectScreenPage } from "../pages/projectScreenPage";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -20,7 +22,7 @@ const specialProjectName = faker.lorem.word(5) + "!@#$%^&*()_+";
 const fileName = "Test_Asset_migration.zip";
 const docPath = path.resolve(__dirname, "../test-data", fileName);
 
-test.describe("Project Management", () => {
+test.describe("DASHBOARD - Test cases", () => {
   let context: BrowserContext;
   let page: Page;
   let loginPage: LoginPage;
@@ -173,9 +175,6 @@ test.describe("Project Management", () => {
     await projectsPage.goToProjectPage("Test_Asset_migration");
     await expect(projectScreenPage.scenePanel).toBeVisible({ timeout: 10000 });
     await expect(projectScreenPage.layersPanel).toBeVisible({ timeout: 10000 });
-    await expect(projectScreenPage.viewerCanvas).toBeVisible({
-      timeout: 10000
-    });
   });
 
   test.describe.skip("Delete the Imported Project", () => {

@@ -71,8 +71,8 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
 
   return (
     <>
-      <Wrapper>
-        <LeftSideWrapper>
+      <Wrapper data-testid="dashboard-wrapper">
+        <LeftSideWrapper data-testid="dashboard-left-side-wrapper">
           <LeftSidePanel
             tab={currentTab}
             isPersonal={isPersonal}
@@ -82,16 +82,18 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
             bottomTabs={bottomTabs}
             onSignOut={onSignOut}
             onWorkspaceChange={handleWorkspaceChange}
+            data-testid="dashboard-left-side-panel"
           />
         </LeftSideWrapper>
         <ContentsContainer
           tab={currentTab}
           workspaceId={workspaceId}
           currentWorkspace={currentWorkspace}
+          data-testid="dashboard-contents-container"
         />
-        <CursorStatus />
+        <CursorStatus data-testid="dashboard-cursor-status" />
       </Wrapper>
-      <AddWorkspaceModal />
+      <AddWorkspaceModal data-testid="dashboard-add-workspace-modal" />
     </>
   );
 };

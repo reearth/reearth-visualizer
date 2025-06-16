@@ -6,7 +6,6 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-
 import EditPanel from "./EditPanel";
 
 export type TimePeriodFieldProp = {
@@ -63,29 +62,40 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
   );
 
   return (
-    <CommonField title={title} description={description}>
-      <Wrapper>
-        <TimePeriodWrapper>
-          <ProgressSteps>
-            <Circle filled />
-            <Circle />
-            <Circle filled />
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="timeperiodfield-commonfield"
+    >
+      <Wrapper data-testid="timeperiodfield-wrapper">
+        <TimePeriodWrapper data-testid="timeperiodfield-periodwrapper">
+          <ProgressSteps data-testid="timeperiodfield-progresssteps">
+            <Circle filled data-testid="timeperiodfield-circle-start" />
+            <Circle data-testid="timeperiodfield-circle-current" />
+            <Circle filled data-testid="timeperiodfield-circle-end" />
           </ProgressSteps>
-          <NoteIcon>
+          <NoteIcon data-testid="timeperiodfield-noteicon">
             {!checkAllFieldsSet ? (
-              <Typography size="body" color={theme.content.weak}>
+              <Typography
+                size="body"
+                color={theme.content.weak}
+                data-testid="timeperiodfield-notset"
+              >
                 {t("Not set")}
               </Typography>
             ) : (
               <>
-                <Typography size="body">
+                <Typography size="body" data-testid="timeperiodfield-starttime">
                   {timePeriodValues?.startTime && timePeriodValues?.startTime}
                 </Typography>
-                <Typography size="body">
+                <Typography
+                  size="body"
+                  data-testid="timeperiodfield-currenttime"
+                >
                   {timePeriodValues?.currentTime &&
                     timePeriodValues?.currentTime}
                 </Typography>
-                <Typography size="body">
+                <Typography size="body" data-testid="timeperiodfield-endtime">
                   {timePeriodValues?.endTime && timePeriodValues?.endTime}
                 </Typography>
               </>
@@ -100,7 +110,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
             data-testid="delete-button"
           />
         </TimePeriodWrapper>
-        <ButtonWrapper>
+        <ButtonWrapper data-testid="timeperiodfield-buttonwrapper">
           <Button
             appearance="secondary"
             title={t("set")}
@@ -117,6 +127,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
           onChange={onChange}
           onClose={handleEditorModalClose}
           visible
+          data-testid="timeperiodfield-editpanel"
         />
       )}
     </CommonField>

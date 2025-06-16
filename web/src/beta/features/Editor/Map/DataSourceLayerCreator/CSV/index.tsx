@@ -72,13 +72,14 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   }, []);
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="csv-layer-creator">
       <ContentWrapper>
         <InputGroup label={t("Source Type")}>
           <RadioGroup
             value={sourceType}
             options={dataSourceOptions}
             onChange={handleDataSourceTypeChange}
+            data-testid="csv-source-type"
           />
         </InputGroup>
 
@@ -90,6 +91,7 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               value={value}
               assetsTypes={assetsTypes}
               onChange={handleValueChange}
+              data-testid="csv-asset-field"
             />
           </InputsWrapper>
         )}
@@ -100,17 +102,19 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 placeholder="https://"
                 value={value}
                 onChange={handleValueChange}
+                data-testid="csv-url-input"
               />
             </InputsWrapper>
           </InputGroup>
         )}
-        <Warning>
+        <Warning data-testid="csv-warning">
           <IconWrapper
             icon="lightBulb"
             color={theme.warning.main}
             size="normal"
+            data-testid="csv-warning-icon"
           />
-          <TextWrapper>
+          <TextWrapper data-testid="csv-warning-text">
             {t(
               "Visualizer currently only supports CSV point data. Please specify the column names for latitude and longitude in your data below."
             )}
@@ -123,6 +127,7 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 value={lat}
                 placeholder={t("Column Name")}
                 onChange={(value) => setLat(value)}
+                data-testid="csv-lat-input"
               />
             </InputsWrapper>
           </InputGroup>
@@ -132,6 +137,7 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 value={lng}
                 placeholder={t("Column Name")}
                 onChange={(value) => setLng(value)}
+                data-testid="csv-lng-input"
               />
             </InputsWrapper>
           </InputGroup>
@@ -143,6 +149,7 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           disabled={!value || !lng || !lat}
           appearance="primary"
           onClick={handleSubmit}
+          data-testid="csv-submit-button"
         />
       </SubmitWrapper>
     </Wrapper>

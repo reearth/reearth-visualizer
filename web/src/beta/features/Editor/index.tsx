@@ -57,15 +57,19 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
   } = useHooks({ sceneId, tab, projectId });
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="editor-wrapper">
       <Navbar
         sceneId={sceneId}
         projectId={projectId}
         workspaceId={workspaceId}
         currentTab={tab}
+        data-testid="editor-navbar"
       />
-      <Content>
-        <VisualizerArea style={{ ...visualizerSize }}>
+      <Content data-testid="editor-content">
+        <VisualizerArea
+          style={{ ...visualizerSize }}
+          data-testid="editor-visualizer-area"
+        >
           <EditorVisualizer
             inEditor={tab !== "publish"}
             selectedLayer={selectedLayer}
@@ -87,9 +91,10 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
             onCoreAPIReady={handleCoreAPIReady}
             setSelectedStoryPageId={selectStoryPage}
             selectWidgetArea={selectWidgetArea}
+            data-testid="editor-visualizer"
           />
         </VisualizerArea>
-        <Workbench>
+        <Workbench data-testid="editor-workbench">
           {tab === "map" && (
             <MapPageProvider value={mapPageValue}>
               <Map />
@@ -117,6 +122,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           sceneId={sceneId}
           onClose={closeDataSourceLayerCreator}
           onSubmit={handleLayerAdd}
+          data-testid="editor-datasource-layer-creator"
         />
       )}
       {sketchLayerCreatorShown && (
@@ -124,9 +130,10 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           onSubmit={handleLayerAdd}
           sceneId={sceneId}
           onClose={closeSketchLayerCreator}
+          data-testid="editor-sketch-layer-creator"
         />
       )}
-      <CursorStatus />
+      <CursorStatus data-testid="editor-cursor-status" />
     </Wrapper>
   );
 };

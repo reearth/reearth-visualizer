@@ -16,6 +16,7 @@ export type IconProps = {
   tooltipText?: string;
   offset?: number;
   placement?: Placement;
+  dataTestId?: string;
 };
 
 export const Icon: FC<IconProps> = ({
@@ -26,7 +27,8 @@ export const Icon: FC<IconProps> = ({
   ariaLabel,
   tooltipText,
   offset,
-  placement
+  placement,
+  dataTestId = `icon-${icon}`
 }) => {
   const theme = useTheme();
   const SvgIcon = useMemo(() => {
@@ -52,6 +54,7 @@ export const Icon: FC<IconProps> = ({
       className={className}
       aria-label={ariaLabel}
       aria-hidden={!ariaLabel ? "true" : undefined}
+      data-testid={dataTestId}
     />
   ) : null;
 
@@ -63,6 +66,7 @@ export const Icon: FC<IconProps> = ({
       offset={offset}
       iconColor={color}
       placement={placement}
+      data-testid={`tooltip-${dataTestId}`}
     />
   ) : (
     IconComponent

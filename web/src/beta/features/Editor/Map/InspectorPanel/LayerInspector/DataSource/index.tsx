@@ -86,7 +86,7 @@ const DataSource: FC<Props> = ({
   );
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="data-source-wrapper">
       <Collapse
         title={t("Data source")}
         size="small"
@@ -94,24 +94,28 @@ const DataSource: FC<Props> = ({
         headerBg={theme.relative.dim}
         collapsed={collapsedStates.dataSource}
         onCollapse={(state) => handleCollapse("dataSource", state)}
+        data-testid="data-source-collapse"
       >
-        <InputWrapper>
+        <InputWrapper data-testid="data-source-input-wrapper">
           <InputField
             title={t("Layer Name")}
             value={selectedLayer.title}
             onChangeComplete={handleTitleUpdate}
+            data-testid="data-source-layer-name-input"
           />
           <InputField
             title={t("Format")}
             value={selectedLayer.config?.data?.type}
             appearance="present"
             disabled
+            data-testid="data-source-format-input"
           />
           {localUrl && (
             <ResourceUrl
               title={t("Resource URL")}
               value={localUrl}
               onSubmit={handleLayerUrlUpdate}
+              data-testid="data-source-resource-url"
             />
           )}
         </InputWrapper>
@@ -124,10 +128,12 @@ const DataSource: FC<Props> = ({
           headerBg={theme.relative.dim}
           collapsed={collapsedStates.customProperties}
           onCollapse={(state) => handleCollapse("customProperties", state)}
+          data-testid="custom-property-schema-collapse"
         >
           <CustomPropertiesSchema
             customPropertySchema={selectedLayer.sketch?.customPropertySchema}
             layerId={selectedLayer.id}
+            data-testid="custom-property-schema"
           />
         </Collapse>
       )}

@@ -1,7 +1,8 @@
-import { test, expect, BrowserContext, Page } from "@playwright/test";
 import { faker } from "@faker-js/faker";
-import { LoginPage } from "../pages/loginPage";
+import { test, expect, BrowserContext, Page } from "@playwright/test";
+
 import { DashBoardPage } from "../pages/dashBoardPage";
+import { LoginPage } from "../pages/loginPage";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;

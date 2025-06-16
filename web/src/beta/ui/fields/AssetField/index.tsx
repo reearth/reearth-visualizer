@@ -109,8 +109,12 @@ const AssetField: FC<AssetFieldProps> = ({
   const handleModalClose = useCallback(() => setOpen(false), []);
 
   return (
-    <CommonField title={title} description={description}>
-      <AssetWrapper>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="assetfield-commonfield"
+    >
+      <AssetWrapper data-testid="assetfield-wrapper">
         <TextInput
           value={currentValue}
           onBlur={handleChange}
@@ -118,9 +122,10 @@ const AssetField: FC<AssetFieldProps> = ({
           appearance={appearance}
           placeholder={placeholder ?? t("Not set")}
           onChange={handleInputChange}
+          data-testid="assetfield-input"
         />
         {inputMethod === "asset" && (
-          <ButtonWrapper>
+          <ButtonWrapper data-testid="assetfield-buttonwrapper">
             <Button
               icon={"image"}
               size="small"
@@ -128,6 +133,7 @@ const AssetField: FC<AssetFieldProps> = ({
               onClick={handleClick}
               disabled={disabled}
               extendWidth
+              data-testid="assetfield-choose-btn"
             />
             <Button
               icon={"uploadSimple"}
@@ -136,6 +142,7 @@ const AssetField: FC<AssetFieldProps> = ({
               disabled={disabled}
               onClick={handleFileUpload}
               extendWidth
+              data-testid="assetfield-upload-btn"
             />
           </ButtonWrapper>
         )}
@@ -148,6 +155,7 @@ const AssetField: FC<AssetFieldProps> = ({
           projectId={currentProjectId}
           onAssetSelect={handleChange}
           assetsTypes={assetsTypes}
+          data-testid="assetfield-assetsselector"
         />
       )}
     </CommonField>

@@ -34,14 +34,14 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       storageId="editor-widgets-widget-manager-panel"
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}
-      dataTestid="editor-widgets-widget-manager-panel"
+      data-testid="editor-widgets-widget-manager-panel"
     >
-      <Wrapper>
+      <Wrapper data-testid="widget-manager-wrapper">
         <ActionArea
           installableWidgets={installableWidgets}
           onWidgetAdd={handleWidgetAdd}
         />
-        <InstalledWidgetsList>
+        <InstalledWidgetsList data-testid="installed-widgets-list">
           {installedWidgets?.map((w) => (
             <ListItem
               key={w.id}
@@ -49,11 +49,15 @@ const WidgetManagerPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
               selected={w.id === selectedWidget?.id}
               onItemSelect={handleWidgetSelection}
               onItemDelete={handleWidgetRemove}
+              data-testid={`installed-widget-list-item-${w.id}`}
             />
           ))}
         </InstalledWidgetsList>
       </Wrapper>
-      <EmptySpace onClick={() => selectWidget(undefined)} />
+      <EmptySpace
+        data-testid="widget-manager-empty-space"
+        onClick={() => selectWidget(undefined)}
+      />
     </Panel>
   );
 };

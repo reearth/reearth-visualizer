@@ -55,6 +55,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
             onDoubleClick={(field: string) => handleDoubleClick(idx, field)}
             onTypeChange={handleTypeChange(idx)}
             onCustomPropertyDelete={() => handleCustomPropertyDelete(idx)}
+            data-testid={`custom-property-item-${item.id}`}
           />
         )
       })),
@@ -70,30 +71,34 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
   );
 
   return (
-    <ContentWrapper>
-      <PropertyTable>
-        <Label>{t("Custom property schema")}</Label>
-        <PropertyTableRow>
+    <ContentWrapper data-testid="sketch-custom-properties-wrapper">
+      <PropertyTable data-testid="property-table">
+        <Label data-testid="custom-property-schema-label">
+          {t("Custom property schema")}
+        </Label>
+        <PropertyTableRow data-testid="property-table-header">
           <ActionCol />
           <PropertyHeaderCol>
-            <Title>{t("Title")}</Title>
+            <Title data-testid="title-header">{t("Title")}</Title>
           </PropertyHeaderCol>
           <PropertyHeaderCol>
-            <Title>{t("Type")}</Title>
+            <Title data-testid="type-header">{t("Type")}</Title>
           </PropertyHeaderCol>
           <ActionCol />
         </PropertyTableRow>
-        <PropertyTableBody>
+        <PropertyTableBody data-testid="property-table-body">
           {propertiesList && propertiesList.length > 0 && (
             <DragAndDropList
               items={DraggableCustomPropertyItems}
               onMoveStart={handleMoveStart}
               onMoveEnd={handleMoveEnd}
+              handleClassName={CUSTOM_PROPERTIES_DRAG_HANDLE_CLASS_NAME}
+              data-testid="custom-properties-drag-drop-list"
             />
           )}
         </PropertyTableBody>
         {warning && (
-          <Warning>
+          <Warning data-testid="property-warning">
             <Icon icon="warning" size="large" />
             {t(
               "The keyword you want to use as the custom property title has been used in the system, please choose any other keyword"
@@ -107,6 +112,7 @@ const SketchCustomProperties: FC<CustomPropertyProps> = ({
           onClick={handleCustomPropertyAdd}
           appearance="primary"
           disabled={warning}
+          data-testid="new-property-button"
         />
       </PropertyTable>
     </ContentWrapper>

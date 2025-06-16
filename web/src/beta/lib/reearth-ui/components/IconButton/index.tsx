@@ -50,6 +50,7 @@ export const IconButton: FC<IconButtonProps> = ({
       className={className}
       disabled={disabled}
       appearance={appearance}
+      data-testid={`icon-button-${icon}`}
       size={size}
       active={active}
       iconRotate={iconRotate}

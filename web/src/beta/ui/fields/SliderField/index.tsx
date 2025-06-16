@@ -4,7 +4,6 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC } from "react";
 
-
 export type SliderFieldProps = CommonFieldProps & SliderProps;
 const SliderField: FC<SliderFieldProps> = ({
   title,
@@ -12,7 +11,11 @@ const SliderField: FC<SliderFieldProps> = ({
   ...props
 }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="sliderfield-commonfield"
+    >
       <Slider {...props} />
     </CommonField>
   );

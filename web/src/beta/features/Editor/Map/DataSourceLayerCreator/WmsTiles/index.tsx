@@ -74,23 +74,34 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <Wrapper>
-      <ContentWrapper>
-        <InputGroup label={t("Resource URL")}>
-          <InputsWrapper>
+    <Wrapper data-testid="wmstiles-wrapper">
+      <ContentWrapper data-testid="wmstiles-content">
+        <InputGroup label={t("Resource URL")} data-testid="wmstiles-url-group">
+          <InputsWrapper data-testid="wmstiles-url-inputs">
             <TextInput
               placeholder="https://"
               value={wmsUrlValue}
               onChange={(value) => handleValueChange(value)}
+              data-testid="wmstiles-url-textinput"
             />
           </InputsWrapper>
         </InputGroup>
-        <InputGroup label={t("Choose layer to add")}>
-          <LayerNameListWrapper>
-            <LayerNameList>
+        <InputGroup
+          label={t("Choose layer to add")}
+          data-testid="wmstiles-layer-group"
+        >
+          <LayerNameListWrapper data-testid="wmstiles-layer-list-wrapper">
+            <LayerNameList data-testid="wmstiles-layer-list">
               {layersNameList.map((layer: string, index: number) => (
-                <LayerWrapper key={index}>
-                  <TextInput value={`${layer}`} extendWidth />
+                <LayerWrapper
+                  key={index}
+                  data-testid={`wmstiles-layer-item-${index}`}
+                >
+                  <TextInput
+                    value={`${layer}`}
+                    extendWidth
+                    data-testid={`wmstiles-layer-textinput-${index}`}
+                  />
                   <Button
                     icon="close"
                     iconButton
@@ -98,17 +109,19 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                     size="small"
                     iconColor={theme.content.main}
                     onClick={() => handleLayerNameDelete(index)}
+                    data-testid={`wmstiles-layer-delete-button-${index}`}
                   />
                 </LayerWrapper>
               ))}
               {(!layersNameList.length || isLayerName) && (
-                <LayerWrapper>
+                <LayerWrapper data-testid="wmstiles-layer-input-wrapper">
                   <TextInput
                     placeholder={t("layer name")}
                     value={layerNameValue}
                     extendWidth
                     onBlur={handleBlur}
                     onChange={(value) => setLayerNameValue(value)}
+                    data-testid="wmstiles-layer-input"
                   />
                   <Button
                     icon="close"
@@ -117,6 +130,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                     iconColor={theme.content.weak}
                     appearance="simple"
                     disabled
+                    data-testid="wmstiles-layer-input-disabled-button"
                   />
                 </LayerWrapper>
               )}
@@ -127,15 +141,17 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             title={t("Layer name")}
             size="small"
             onClick={handleLayerNameButtonClick}
+            data-testid="wmstiles-layer-add-button"
           />
         </InputGroup>
       </ContentWrapper>
-      <SubmitWrapper>
+      <SubmitWrapper data-testid="wmstiles-submit-wrapper">
         <Button
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
           disabled={!wmsUrlValue || !layersNameList.length}
+          data-testid="wmstiles-submit-button"
         />
       </SubmitWrapper>
     </Wrapper>

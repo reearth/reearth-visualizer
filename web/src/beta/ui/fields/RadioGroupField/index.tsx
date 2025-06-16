@@ -4,7 +4,6 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC } from "react";
 
-
 export type RadioGroupFieldProps = CommonFieldProps & RadioGroupProps;
 
 const RadioGroupField: FC<RadioGroupFieldProps> = ({
@@ -13,7 +12,11 @@ const RadioGroupField: FC<RadioGroupFieldProps> = ({
   ...props
 }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="radiogroupfield-commonfield"
+    >
       <RadioGroup {...props} />
     </CommonField>
   );

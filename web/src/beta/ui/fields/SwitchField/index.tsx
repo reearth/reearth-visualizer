@@ -4,7 +4,6 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC } from "react";
 
-
 export type SwitchFieldProps = CommonFieldProps & SwitcherProps;
 
 const SwitchField: FC<SwitchFieldProps> = ({
@@ -13,7 +12,11 @@ const SwitchField: FC<SwitchFieldProps> = ({
   ...props
 }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="switchfield-commonfield"
+    >
       <Switcher {...props} />
     </CommonField>
   );

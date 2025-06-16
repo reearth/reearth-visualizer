@@ -30,12 +30,16 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   const renderUrlInput = useMemo(() => {
     if (sourceType === "url") {
       return (
-        <InputGroup label={t("Resource URL")}>
-          <InputsWrapper>
+        <InputGroup
+          label={t("Resource URL")}
+          data-testid="threedtiles-url-group"
+        >
+          <InputsWrapper data-testid="threedtiles-url-inputs">
             <TextInput
               placeholder="https://"
               value={value}
               onChange={(value) => setValue(value)}
+              data-testid="threedtiles-url-textinput"
             />
           </InputsWrapper>
         </InputGroup>
@@ -96,21 +100,23 @@ const ThreeDTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <Wrapper>
-      <ContentWrapper>
+    <Wrapper data-testid="threedtiles-wrapper">
+      <ContentWrapper data-testid="threedtiles-content">
         <RadioGroup
           value={sourceType}
           layout="vertical"
           options={dataSourceOptions}
           onChange={handleDataSourceTypeChange}
+          data-testid="threedtiles-source-type-radio"
         />
       </ContentWrapper>
-      <SubmitWrapper>
+      <SubmitWrapper data-testid="threedtiles-submit-wrapper">
         <Button
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
           disabled={!value && sourceType === "url"}
+          data-testid="threedtiles-submit-button"
         />
       </SubmitWrapper>
     </Wrapper>

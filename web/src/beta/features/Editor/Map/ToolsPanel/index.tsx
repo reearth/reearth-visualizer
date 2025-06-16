@@ -185,11 +185,12 @@ const ToolsPanel: FC = () => {
       storageId="editor-map-tools-panel"
       extend
     >
-      <SketchToolsWrapper>
-        <SketchFeatureButtons>
+      <SketchToolsWrapper data-testid="sketch-tools-wrapper">
+        <SketchFeatureButtons data-testid="sketch-feature-buttons-draw">
           {sketchTools.map(
             ({ icon, selected, tooltipText, placement, onClick }) => (
               <IconButton
+                data-testid={`sketch-tool-${icon}`}
                 key={icon}
                 icon={icon}
                 disabled={!sketchEnabled}
@@ -202,8 +203,8 @@ const ToolsPanel: FC = () => {
             )
           )}
         </SketchFeatureButtons>
-        <Divider />
-        <SketchFeatureButtons>
+        <Divider data-testid="sketch-tools-divider" />
+        <SketchFeatureButtons data-testid="sketch-feature-buttons-edit">
           <IconButton
             icon="pencilLine"
             disabled={!selectedSketchFeature}
@@ -212,6 +213,7 @@ const ToolsPanel: FC = () => {
             placement="top"
             onClick={handleEditSketchFeature}
             tooltipText={t("Edit Geometry")}
+            data-testid="sketch-tool-edit"
           />
           <IconButton
             icon="trash"
@@ -220,6 +222,7 @@ const ToolsPanel: FC = () => {
             tooltipText={t("Delete Feature")}
             placement="top"
             onClick={handleShowDeleteFeatureConfirmModal}
+            data-testid="sketch-tool-delete-feature"
           />
         </SketchFeatureButtons>
       </SketchToolsWrapper>
@@ -230,18 +233,21 @@ const ToolsPanel: FC = () => {
           description={t(
             "Are you sure you want to delete this feature? If deleted, you can not recover it again."
           )}
+          data-testid="sketch-delete-confirm-modal"
           actions={
             <>
               <Button
                 size="normal"
                 title={t("Cancel")}
                 onClick={() => setShowDeleteFeatureConfirmModal(false)}
+                data-testid="sketch-delete-cancel-button"
               />
               <Button
                 size="normal"
                 title={t("Delete")}
                 appearance="dangerous"
                 onClick={handleDeleteSketchFeature}
+                data-testid="sketch-delete-confirm-button"
               />
             </>
           }

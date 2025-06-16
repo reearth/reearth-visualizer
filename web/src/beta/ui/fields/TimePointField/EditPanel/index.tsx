@@ -36,6 +36,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
       width={247}
       title={t("Set Time")}
       onCancel={onClose}
+      data-testid="time-edit-panel"
       actions={
         <ButtonWrapper>
           <Button
@@ -43,6 +44,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
             size="small"
             title={t("Cancel")}
             onClick={onClose}
+            data-testid="time-edit-cancel-button"
           />
           <Button
             extendWidth
@@ -51,25 +53,34 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
             appearance="primary"
             disabled={applyDisabled}
             onClick={handleApply}
+            data-testid="time-edit-apply-button"
           />
         </ButtonWrapper>
       }
     >
-      <EditorWrapper>
+      <EditorWrapper data-testid="time-edit-wrapper">
         <Wrapper>
-          <Label>{t("Date")}</Label>
+          <Label data-testid="time-edit-date-label">{t("Date")}</Label>
           <InputWrapper>
-            <DatePicker value={date} onChange={handleDateChange} />
+            <DatePicker
+              value={date}
+              onChange={handleDateChange}
+              data-testid="time-edit-date-picker"
+            />
           </InputWrapper>
         </Wrapper>
         <Wrapper>
-          <Label>{t("Time")}</Label>
+          <Label data-testid="time-edit-time-label">{t("Time")}</Label>
           <InputWrapper>
-            <TimePicker value={time} onChange={handleTimeChange} />
+            <TimePicker
+              value={time}
+              onChange={handleTimeChange}
+              data-testid="time-edit-time-picker"
+            />
           </InputWrapper>
         </Wrapper>
         <Wrapper>
-          <Label>{t("Time Zone")}</Label>
+          <Label data-testid="time-edit-timezone-label">{t("Time Zone")}</Label>
           <InputWrapper
             onMouseDown={(e) => {
               e.stopPropagation();
@@ -83,6 +94,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
               }))}
               maxHeight={200}
               onChange={handleTimezoneSelect}
+              data-testid="time-edit-timezone-selector"
             />
           </InputWrapper>
         </Wrapper>

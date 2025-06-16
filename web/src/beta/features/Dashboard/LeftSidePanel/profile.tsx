@@ -89,7 +89,7 @@ export const Profile: FC<ProfileProp> = ({
       <ProfileWrapper data-testid="profile-profileWrapper">
         {isPersonal && (
           <Avatar data-testid="profile-avatar">
-            <Typography size="body">
+            <Typography size="body" data-testid="profile-avatar-initial">
               {currentUser?.charAt(0).toUpperCase()}
             </Typography>
           </Avatar>
@@ -99,8 +99,14 @@ export const Profile: FC<ProfileProp> = ({
         </TitleWrapper>
         <PopupWrapper data-testid="profile-popupWrapper">
           <PopupMenu
+            data-testid="profile-popupMenu"
             label={
-              <Icon color={theme.content.weak} icon="caretDown" size="small" />
+              <Icon
+                color={theme.content.weak}
+                icon="caretDown"
+                size="small"
+                data-testid="profile-caretDownIcon"
+              />
             }
             menu={popupMenu}
           />

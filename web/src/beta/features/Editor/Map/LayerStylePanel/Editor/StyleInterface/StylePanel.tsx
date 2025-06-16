@@ -76,8 +76,8 @@ const StylePanel: FC<Props> = ({
   );
 
   return (
-    <Wrapper>
-      <ButtonWrapper>
+    <Wrapper data-testid="style-panel-wrapper">
+      <ButtonWrapper data-testid="button-wrapper">
         <PopupMenu
           extendTriggerWidth
           extendContentWidth
@@ -90,12 +90,13 @@ const StylePanel: FC<Props> = ({
               icon="plus"
               appearance="primary"
               disabled={!editMode}
+              data-testid="new-node-button"
             />
           }
         />
       </ButtonWrapper>
-      <NodeListScrollArea>
-        <NodeList>
+      <NodeListScrollArea data-testid="node-list-scroll-area">
+        <NodeList data-testid="node-list">
           {styleNodes?.map((node) =>
             !node.notSupported ? (
               <StyleNodeComp
@@ -104,6 +105,7 @@ const StylePanel: FC<Props> = ({
                 onUpdate={updateNode}
                 onDelete={deleteNode}
                 editMode={editMode}
+                data-testid={`style-node-${node.id}`}
               />
             ) : null
           )}

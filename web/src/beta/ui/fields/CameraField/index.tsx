@@ -14,7 +14,6 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { useCallback, useState, FC } from "react";
 
-
 import CapturePanel from "./CapturePanel";
 import EditPanel from "./EditorPanel";
 
@@ -94,8 +93,12 @@ const CameraField: FC<CameraFieldProps> = ({
   );
 
   return (
-    <CommonField title={title} description={description}>
-      <InputWrapper>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="camerafield-commonfield"
+    >
+      <InputWrapper data-testid="camerafield-inputwrapper">
         <TextInput
           value={value && t("Position Set")}
           placeholder={t("Not set")}
@@ -112,8 +115,10 @@ const CameraField: FC<CameraFieldProps> = ({
               disabled={!value}
               onClick={handleCameraSettingDelete}
               iconColor={value ? theme.content.main : theme.content.weak}
+              data-testid="camerafield-delete-btn"
             />
           ]}
+          data-testid="camerafield-input"
         />
         <Popup
           trigger={
@@ -124,11 +129,13 @@ const CameraField: FC<CameraFieldProps> = ({
               size="small"
               onClick={() => handleClick("editor")}
               disabled={disabled}
+              data-testid="camerafield-edit-btn"
             />
           }
           open={open === "editor"}
           offset={4}
           placement="bottom-start"
+          data-testid="camerafield-edit-popup"
         >
           {open === "editor" && (
             <EditPanel
@@ -137,6 +144,7 @@ const CameraField: FC<CameraFieldProps> = ({
               onSave={handleSave}
               onFlyTo={handleFlyto}
               onClose={handleClose}
+              data-testid="camerafield-editpanel"
             />
           )}
         </Popup>
@@ -149,11 +157,13 @@ const CameraField: FC<CameraFieldProps> = ({
               size="small"
               onClick={() => handleClick("capture")}
               disabled={disabled}
+              data-testid="camerafield-capture-btn"
             />
           }
           open={open === "capture"}
           offset={4}
           placement="bottom-start"
+          data-testid="camerafield-capture-popup"
         >
           {open === "capture" && (
             <CapturePanel
@@ -162,6 +172,7 @@ const CameraField: FC<CameraFieldProps> = ({
               onSave={handleSave}
               onClose={handleClose}
               onFlyTo={handleFlyto}
+              data-testid="camerafield-capturepanel"
             />
           )}
         </Popup>

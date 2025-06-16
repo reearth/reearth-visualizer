@@ -37,6 +37,7 @@ const ExpressionTab: FC<Props> = ({
             disabled={!editMode}
             appearance={!editMode ? "readonly" : undefined}
             placeholder={t("${your property name}")}
+            data-testid="expression-input"
           />
         </>
       )}

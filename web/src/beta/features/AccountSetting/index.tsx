@@ -81,6 +81,7 @@ const AccountSetting: FC = () => {
                   />
                   <IconButton
                     appearance="secondary"
+                    data-testid="change-password-button"
                     icon="pencilSimple"
                     onClick={() => {
                       setChangePasswordModal(true);

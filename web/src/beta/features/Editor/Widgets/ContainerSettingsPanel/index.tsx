@@ -32,6 +32,7 @@ const ContainerSettingsPanel: FC = () => {
     >
       <FieldsWrapper>
         <NumberField
+          data-testid="padding-top-field"
           title={t("Padding top")}
           value={widgetArea?.padding?.top.toString()}
           onChangeComplete={(newVal) => {
@@ -45,6 +46,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <NumberField
+          data-testid="padding-right-field"
           title={t("Padding right")}
           value={widgetArea?.padding?.right.toString()}
           onChangeComplete={(newVal) => {
@@ -58,6 +60,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <NumberField
+          data-testid="padding-bottom-field"
           title={t("Padding bottom")}
           value={widgetArea?.padding?.bottom.toString()}
           onChangeComplete={(newVal) => {
@@ -71,6 +74,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <NumberField
+          data-testid="padding-left-field"
           title={t("Padding left")}
           value={widgetArea?.padding?.left.toString()}
           onChangeComplete={(newVal) => {
@@ -85,6 +89,7 @@ const ContainerSettingsPanel: FC = () => {
         />
 
         <NumberField
+          data-testid="gap-spacing-field"
           title={t("Gap spacing")}
           value={(widgetArea?.gap ?? 6).toString()}
           onChangeComplete={(newVal) => {
@@ -95,6 +100,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <SwitchField
+          data-testid="align-centered-field"
           title={t("Align centered")}
           value={!!widgetArea?.centered}
           onChange={(newVal) => {
@@ -105,6 +111,7 @@ const ContainerSettingsPanel: FC = () => {
           }}
         />
         <ColorField
+          data-testid="background-color-field"
           title={t("Background color")}
           value={widgetArea?.background}
           onChange={(newVal) => {

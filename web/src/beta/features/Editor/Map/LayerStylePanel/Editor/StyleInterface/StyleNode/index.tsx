@@ -87,10 +87,15 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
   );
 
   return (
-    <Wrapper>
-      <HeaderWrapper>
-        <TitleWrapper>{node.title}</TitleWrapper>
-        <Actions>
+    <Wrapper
+      data-testid={`style-node-wrapper-${node.id}`}
+      id={`style-node-wrapper-${node.id}`}
+    >
+      <HeaderWrapper data-testid={`style-node-header-${node.id}`}>
+        <TitleWrapper data-testid={`style-node-title-${node.id}`}>
+          {node.title}
+        </TitleWrapper>
+        <Actions data-testid={`style-node-actions-${node.id}`}>
           {actions.map((action) => (
             <IconButton
               key={action.id}
@@ -103,10 +108,14 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
               }
               appearance="simple"
               onClick={() => setActiveTab(action.id)}
+              data-testid={`style-node-action-${action.id}-${node.id}`}
             />
           ))}
           {!!optionsMenu && (
-            <OptionsWrapper onClick={(e) => e.stopPropagation()}>
+            <OptionsWrapper
+              onClick={(e) => e.stopPropagation()}
+              data-testid={`style-node-options-wrapper-${node.id}`}
+            >
               <PopupMenu
                 label={
                   <IconButton
@@ -114,16 +123,18 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
                     size="small"
                     appearance="simple"
                     disabled={!editMode}
+                    data-testid={`style-node-options-button-${node.id}`}
                   />
                 }
                 placement="bottom-start"
                 menu={optionsMenu}
+                data-testid={`style-node-options-menu-${node.id}`}
               />
             </OptionsWrapper>
           )}
         </Actions>
       </HeaderWrapper>
-      <ContentWrapper>
+      <ContentWrapper data-testid={`style-node-content-${node.id}`}>
         {activeTab === "value" && (
           <ValueTab
             field={node.field}
@@ -131,6 +142,7 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
             valueOptions={valueOptions}
             editMode={editMode}
             onUpdate={handleValueUpdate}
+            data-testid={`style-node-value-tab-${node.id}`}
           />
         )}
         {activeTab === "expression" && (
@@ -139,9 +151,15 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
             onUpdate={handleExpressionUpdate}
             disabled={node.disableExpression}
             editMode={editMode}
+            data-testid={`style-node-expression-tab-${node.id}`}
           />
         )}
-        {activeTab === "deepExpression" && <ExpressionTab disabled />}
+        {activeTab === "deepExpression" && (
+          <ExpressionTab
+            disabled
+            data-testid="style-node-deep-expression-tab"
+          />
+        )}
         {activeTab === "conditions" && (
           <ConditionsTab
             conditions={node.conditions}
@@ -150,9 +168,15 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
             editMode={editMode}
             onUpdate={handleConditionsUpdate}
             disabled={node.disableConditions}
+            data-testid={`style-node-conditions-tab-${node.id}`}
           />
         )}
-        {activeTab === "deepConditions" && <ConditionsTab disabled />}
+        {activeTab === "deepConditions" && (
+          <ConditionsTab
+            disabled
+            data-testid="style-node-deep-conditions-tab"
+          />
+        )}
       </ContentWrapper>
     </Wrapper>
   );

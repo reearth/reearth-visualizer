@@ -51,11 +51,13 @@ const ActionArea: FC<ActionAreaProps> = ({
           size="small"
           extendWidth
           onClick={() => setOpen(!open)}
+          data-testid="add-widget-button"
         />
       }
       menu={items}
       extendTriggerWidth
       extendContentWidth
+      data-testid="add-widget-popup-menu"
     />
   );
 };

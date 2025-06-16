@@ -4,7 +4,6 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC } from "react";
 
-
 export type SelectorFieldProps = CommonFieldProps & SelectorProps;
 
 const SelectorField: FC<SelectorFieldProps> = ({
@@ -13,7 +12,11 @@ const SelectorField: FC<SelectorFieldProps> = ({
   ...props
 }) => {
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="selectorfield-commonfield"
+    >
       <Selector {...props} />
     </CommonField>
   );

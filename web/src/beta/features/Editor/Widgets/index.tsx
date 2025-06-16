@@ -15,10 +15,15 @@ const Widgets: FC = () => {
   const rightAreaRef = useRef<AreaRef>(null);
 
   return (
-    <Window ref={windowRef}>
-      <Area extend asWrapper>
-        <Area direction="column" extend asWrapper>
-          <Area initialHeight={34}>
+    <Window ref={windowRef} data-testid="widgets-window">
+      <Area extend asWrapper data-testid="widgets-main-area">
+        <Area
+          direction="column"
+          extend
+          asWrapper
+          data-testid="widgets-left-area"
+        >
+          <Area initialHeight={34} data-testid="widgets-tools-area">
             <WASToolsPanel />
           </Area>
           <Area
@@ -26,6 +31,7 @@ const Widgets: FC = () => {
             onResize={handleVisualizerResize}
             windowRef={windowRef}
             passive
+            data-testid="widgets-visualizer-area"
           />
         </Area>
         <Area
@@ -33,6 +39,7 @@ const Widgets: FC = () => {
           resizableEdge="left"
           storageId="editor-widgets-right-area"
           ref={rightAreaRef}
+          data-testid="widgets-right-area"
         >
           <WidgetManagerPanel showCollapseArea areaRef={rightAreaRef} />
           {selectedWidget && <WidgetInspectorPanel />}
