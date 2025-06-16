@@ -8,6 +8,8 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
+import { useT } from "@reearth/services/i18n";
+import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
@@ -40,7 +42,8 @@ export default (workspaceId?: string) => {
     useStarredProjectsQuery,
     useUpdateProjectRemove,
     usePublishProject,
-    useImportProject
+    useImportProject,
+    useProjectQuery
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
@@ -75,6 +78,7 @@ export default (workspaceId?: string) => {
               id: project.id,
               description: project.description,
               name: project.name,
+              teamId: project.teamId,
               imageUrl: project.imageUrl,
               isArchived: project.isArchived,
               status: toPublishmentStatus(project.publishmentStatus),
@@ -86,7 +90,8 @@ export default (workspaceId?: string) => {
               isDeleted: project.isDeleted,
               isPublished:
                 project.publishmentStatus === "PUBLIC" ||
-                project.publishmentStatus === "LIMITED"
+                project.publishmentStatus === "LIMITED",
+              metadata: project?.metadata
             }
           : undefined
       )
@@ -242,19 +247,82 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
-  const handleProjectImport = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file && workspaceId) {
-        const result = await useImportProject(file, workspaceId);
-        if (result.status === "chunk_received") {
-          await refetch();
-        }
-      }
-    },
-    [refetch, useImportProject, workspaceId]
-  );
+  //import project
+  const [importedProjectId, setImportedProjectId] = useState<
+    string | undefined
+  >();
+  const { project, refetch: refetchProject } = useProjectQuery(importedProjectId);
 
+  const t = useT();
+  const [, setNotification] = useNotification();
+
+    const handleProjectImport = useCallback(
+      async (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file && workspaceId) {
+          const result = await useImportProject(file, workspaceId);
+          if (!result?.project_id) return;
+          setImportedProjectId(result.project_id);
+        }
+      },
+      [workspaceId, useImportProject]
+    );
+
+
+ useEffect(() => {
+   if (!importedProjectId) return;
+
+   let retries = 0;
+   const MAX_RETRIES = 100;
+
+   const interval = setInterval(async () => {
+     retries++;
+     try {
+       const result = await refetchProject(); 
+
+       const updatedProject =
+         result.data?.node?.__typename === "Project"
+           ? result.data.node
+           : undefined;
+       
+       if (updatedProject?.metadata?.importStatus === "SUCCESS") {
+         clearInterval(interval);
+         setNotification({
+           type: "success",
+           text: t("Project import completed successfully.")
+         });
+         setImportedProjectId(undefined);
+       } else if (updatedProject?.metadata?.importStatus === "FAILED") {
+         clearInterval(interval);
+         setNotification({
+           type: "error",
+           text: t("Project import failed.")
+         });
+         setImportedProjectId(undefined);
+       } else if (retries >= MAX_RETRIES) {
+         clearInterval(interval);
+         setNotification({
+           type: "error",
+           text: t("Project import status check timed out.")
+         });
+         setImportedProjectId(undefined);
+       }
+     } catch (e) {
+       console.error("Polling error:", e);
+       clearInterval(interval);
+       setNotification({
+         type: "error",
+         text: t("An error occurred while checking import status.")
+       });
+       setImportedProjectId(undefined);
+     }
+   }, 2000);
+
+   return () => clearInterval(interval);
+ }, [importedProjectId, refetch, refetchProject, setNotification, t]);
+
+
+  console.log("project", project);
   // project remove
   const handleProjectRemove = useCallback(
     async (project: Project) => {

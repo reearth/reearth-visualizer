@@ -583,53 +583,59 @@ export default () => {
       const CHUNK_CONCURRENCY = 4;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
       const fileId = uuidv4();
-      let lastResponse = null;
 
       const uploadChunk = async (chunkNum: number) => {
-        const start = chunkNum * CHUNK_SIZE;
-        const end = Math.min(file.size, start + CHUNK_SIZE);
-        const chunk = file.slice(start, end);
+        const chunk = file.slice(
+          chunkNum * CHUNK_SIZE,
+          Math.min(file.size, (chunkNum + 1) * CHUNK_SIZE)
+        );
 
         const formData = new FormData();
         formData.append("file", chunk, `${file.name}.part${chunkNum}`);
         formData.append("file_id", fileId);
         formData.append("team_id", teamId);
-        formData.append("chunk_num", chunkNum.toString());
-        formData.append("total_chunks", totalChunks.toString());
+        formData.append("chunk_num", `${chunkNum}`);
+        formData.append("total_chunks", `${totalChunks}`);
 
         const response = await axios.post("/split-import", formData);
-        return response.data;
+        return { ...response.data, chunk_num: chunkNum };
       };
 
-      const chunkIndices = Array.from({ length: totalChunks }, (_, i) => i);
+      const results: any[] = [];
 
-      const parallelUpload = async (indices: number[]): Promise<any[]> => {
-        const results = [];
-        for (let i = 0; i < indices.length; i += CHUNK_CONCURRENCY) {
-          const batch = indices.slice(i, i + CHUNK_CONCURRENCY);
-          try {
-            const responses = await Promise.all(batch.map(uploadChunk));
-            results.push(...responses);
-          } catch (error) {
-            setNotification({
-              type: "error",
-              text: t("Failed to import project.")
-            });
-            console.error("Failed chunk batch:", error);
-            return [{ status: "error" }];
-          }
+      // Upload chunk 0 first
+      try {
+        results.push(await uploadChunk(0));
+      } catch (error) {
+        setNotification({
+          type: "error",
+          text: t("Failed to upload chunk 0.")
+        });
+        console.error("Failed chunk 0:", error);
+        return [{ status: "error" }];
+      }
+
+      // Upload remaining chunks in parallel batches
+      const remainingChunks = Array.from(
+        { length: totalChunks - 1 },
+        (_, i) => i + 1
+      );
+      for (let i = 0; i < remainingChunks.length; i += CHUNK_CONCURRENCY) {
+        const batch = remainingChunks.slice(i, i + CHUNK_CONCURRENCY);
+        try {
+          const responses = await Promise.all(batch.map(uploadChunk));
+          results.push(...responses);
+        } catch (error) {
+          setNotification({
+            type: "error",
+            text: t("Failed to import project.")
+          });
+          console.error("Failed chunk batch:", error);
+          return [{ status: "error" }];
         }
-        return results;
-      };
+      }
 
-      const responses = await parallelUpload(chunkIndices);
-      lastResponse = responses[responses.length - 1];
-
-      setNotification({
-        type: "success",
-        text: t("Successfully imported project!")
-      });
-      return lastResponse || { status: "chunk_received" };
+      return results.at(-1) || { status: "chunk_received" };
     },
     [axios, setNotification, t]
   );
