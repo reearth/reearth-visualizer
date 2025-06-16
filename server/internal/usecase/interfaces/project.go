@@ -54,6 +54,12 @@ type UpdateProjectParam struct {
 	TrackingID        *string
 }
 
+type UpdateProjectMetadataParam struct {
+	ID      id.ProjectID
+	Readme  *string
+	License *string
+}
+
 type PublishProjectParam struct {
 	ID     id.ProjectID
 	Alias  *string
@@ -89,6 +95,6 @@ type Project interface {
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
-	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *usecase.Operator) (*project.Project, error)
+	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *usecase.Operator) (*project.ProjectMetadata, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }
