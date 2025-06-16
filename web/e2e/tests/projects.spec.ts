@@ -116,8 +116,5 @@ test.describe("Project Management", () => {
         }
       }
     });
-    await projectScreen.addPointsOnMap(112, 227);
-    await projectScreen.addPointsOnMap(105, 198);
-    await projectScreen.addPointsOnMap(102, 287);
   });
 });
