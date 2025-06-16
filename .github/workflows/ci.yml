@@ -11,7 +11,7 @@ jobs:
       web: ${{ steps.web.outputs.any_modified }}
       server: ${{ steps.server.outputs.any_modified }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           fetch-depth: 0
       - name: changed files for web
@@ -118,10 +118,25 @@ jobs:
 
   deploy-web-pr:
     needs: [build-web-pr, build-prepare-pr]
-    uses: ./.github/workflows/deploy_web_nightly.yml
-    with:
-      version: ${{ needs.build-prepare-pr.outputs.sha_short }}
-    secrets: inherit
+    runs-on: ubuntu-latest
+    outputs:
+      preview_url: ${{ steps.deploy.outputs.url }}
+    permissions:
+      contents: read
+      id-token: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: reearth/actions/deploy-cloud-run-with-tag@b63f7da8796f4514712947e1a4902994be29e3d9 # main
+        id: deploy
+        with:
+          image: '${{ secrets.WEB_IMAGE_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}'
+          image_internal: '${{ secrets.WEB_IMAGE_GC_BASE }}:${{ needs.build-prepare-pr.outputs.sha_short }}'
+          region: ${{ secrets.GC_REGION }}
+          service: reearth-visualizer-web
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          tag: pr-${{ github.event.pull_request.number }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
 
   deploy-server:
     needs: build-server
@@ -138,12 +153,4 @@ jobs:
     uses: ./.github/workflows/playwright_ui_tests.yml
     with:
       url: ${{ needs.deploy-web-pr.outputs.preview_url }}
-    secrets: inherit
-
-  cleanup-pr-revision-web:
-    if: ${{ github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.action == 'closed' }}
-    uses: ./.github/workflows/cleanup_feature_revision.yml
-    with:
-      service: reearth-visualizer-web
-      tag: pr-${{ github.event.pull_request.number }}
     secrets: inherit

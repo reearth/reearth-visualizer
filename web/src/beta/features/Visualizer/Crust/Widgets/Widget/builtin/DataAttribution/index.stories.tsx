@@ -22,7 +22,6 @@ Default.args = {
       horizontally: false,
       vertically: false
     },
-
     property: {
       default: [
         {
@@ -35,9 +34,18 @@ Default.args = {
     }
   },
   context: {
-    getCredits: () => [
-      { html: '<a href="#">Credit 1</a>' },
-      { html: '<a href="#">Credit 2</a>' }
-    ]
+    getCredits: () => ({
+      engine: {
+        cesium: {
+          html: `<a href="#">Credit 1</a>`
+        }
+      },
+      lightbox: [
+        {
+          html: `<a href="#">Credit 2</a>`
+        }
+      ],
+      screen: []
+    })
   }
 };

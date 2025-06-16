@@ -134,9 +134,9 @@ func (r *Scene) findOne(ctx context.Context, filter any) (*scene.Scene, error) {
 }
 
 // func (r *Scene) readFilter(filter any) any {
-// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// 	return applyTeamFilter(filter, r.f.Readable)
 // }
 
 func (r *Scene) writeFilter(filter any) any {
-	return applyWorkspaceFilter(filter, r.f.Writable)
+	return applyTeamFilter(filter, r.f.Writable)
 }

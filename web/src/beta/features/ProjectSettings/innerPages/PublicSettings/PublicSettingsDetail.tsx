@@ -99,6 +99,9 @@ const PublicSettingsDetail: React.FC<Props> = ({
     trackingId: settingsItem.trackingId
   });
 
+  //TODO: Removed after investigation
+  const hideGASettings = true;
+
   const handleSubmitGA = useCallback(() => {
     if (onUpdateGA) {
       onUpdateGA({
@@ -308,28 +311,30 @@ const PublicSettingsDetail: React.FC<Props> = ({
           </>
         )}
       </SettingsFields>
-      <SettingsFields>
-        <TitleWrapper size="body" weight="bold">
-          {t("Google Analytics")}
-        </TitleWrapper>
-        <SwitchField
-          title={t("Enable Google Analytics")}
-          value={localGA.enableGa ?? false}
-          onChange={(enableGa: boolean) => {
-            setLocalGA((s) => ({ ...s, enableGa }));
-          }}
-        />
-        {localGA.enableGa && (
-          <InputField
-            title={t("Tracking ID")}
-            value={settingsItem.trackingId}
-            onChange={(trackingId: string) => {
-              setLocalGA((s) => ({ ...s, trackingId }));
+      {!hideGASettings ? (
+        <SettingsFields>
+          <TitleWrapper size="body" weight="bold">
+            {t("Google Analytics")}
+          </TitleWrapper>
+          <SwitchField
+            title={t("Enable Google Analytics")}
+            value={localGA.enableGa ?? false}
+            onChange={(enableGa: boolean) => {
+              setLocalGA((s) => ({ ...s, enableGa }));
             }}
-            onChangeComplete={handleSubmitGA}
           />
-        )}
-      </SettingsFields>
+          {localGA.enableGa && (
+            <InputField
+              title={t("Tracking ID")}
+              value={settingsItem.trackingId}
+              onChange={(trackingId: string) => {
+                setLocalGA((s) => ({ ...s, trackingId }));
+              }}
+              onChangeComplete={handleSubmitGA}
+            />
+          )}
+        </SettingsFields>
+      ) : null}
     </SettingsWrapper>
   );
 };
