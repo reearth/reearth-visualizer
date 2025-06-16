@@ -19,7 +19,9 @@ extensions:
 const widgetFile: FileType = {
   id: "get-current-location",
   title: "get-current-location.js",
-  sourceCode: `reearth.ui.show(\`
+  sourceCode: `// This is sample code how to show user's current location
+
+reearth.ui.show(\`
   <style>
   @import url("https://reearth.github.io/visualizer-plugin-sample-data/public/css/preset-ui.css");
   </style>
