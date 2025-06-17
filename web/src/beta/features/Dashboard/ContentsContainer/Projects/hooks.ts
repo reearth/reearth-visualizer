@@ -21,7 +21,7 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Project } from "../../type";
+import { getImportStatus, ImportStatus, Project } from "../../type";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
@@ -69,6 +69,9 @@ export default (workspaceId?: string) => {
     sort: pagination(sortValue).sortBy,
     keyword: searchTerm
   });
+
+  const t = useT();
+  const [, setNotification] = useNotification();
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
@@ -251,78 +254,55 @@ export default (workspaceId?: string) => {
   const [importedProjectId, setImportedProjectId] = useState<
     string | undefined
   >();
-  const { project, refetch: refetchProject } = useProjectQuery(importedProjectId);
+  const [importStatus, setImportStatus] = useState<ImportStatus>();
 
-  const t = useT();
-  const [, setNotification] = useNotification();
+  const { refetch: refetchProject } = useProjectQuery(importedProjectId);
 
-    const handleProjectImport = useCallback(
-      async (event: ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file && workspaceId) {
-          const result = await useImportProject(file, workspaceId);
-          if (!result?.project_id) return;
-          setImportedProjectId(result.project_id);
+  const handleProjectImport = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file && workspaceId) {
+        setImportStatus("processing");
+        const result = await useImportProject(file, workspaceId);
+        if (!result?.project_id) return;
+        setImportedProjectId(result.project_id);
+      }
+    },
+    [workspaceId, useImportProject]
+  );
+
+  useEffect(() => {
+    if (!importedProjectId) return;
+
+    let retries = 0;
+    const MAX_RETRIES = 100;
+
+    const interval = setInterval(() => {
+      if (++retries > MAX_RETRIES) {
+        clearInterval(interval);
+        return;
+      }
+      refetchProject().then((result) => {
+        const status =
+          result.data?.node?.__typename === "Project"
+            ? getImportStatus(result.data.node.metadata?.importStatus)
+            : undefined;
+
+        setImportStatus(status);
+        if (status === "success") {
+          setNotification({
+            type: "success",
+            text: t("Successfully imported project!")
+          });
+          refetch();
         }
-      },
-      [workspaceId, useImportProject]
-    );
+        if (status !== "processing") clearInterval(interval);
+      });
+    }, 3000);
 
+    return () => clearInterval(interval);
+  }, [importedProjectId, refetch, refetchProject, setNotification, t]);
 
- useEffect(() => {
-   if (!importedProjectId) return;
-
-   let retries = 0;
-   const MAX_RETRIES = 100;
-
-   const interval = setInterval(async () => {
-     retries++;
-     try {
-       const result = await refetchProject(); 
-
-       const updatedProject =
-         result.data?.node?.__typename === "Project"
-           ? result.data.node
-           : undefined;
-       
-       if (updatedProject?.metadata?.importStatus === "SUCCESS") {
-         clearInterval(interval);
-         setNotification({
-           type: "success",
-           text: t("Project import completed successfully.")
-         });
-         setImportedProjectId(undefined);
-       } else if (updatedProject?.metadata?.importStatus === "FAILED") {
-         clearInterval(interval);
-         setNotification({
-           type: "error",
-           text: t("Project import failed.")
-         });
-         setImportedProjectId(undefined);
-       } else if (retries >= MAX_RETRIES) {
-         clearInterval(interval);
-         setNotification({
-           type: "error",
-           text: t("Project import status check timed out.")
-         });
-         setImportedProjectId(undefined);
-       }
-     } catch (e) {
-       console.error("Polling error:", e);
-       clearInterval(interval);
-       setNotification({
-         type: "error",
-         text: t("An error occurred while checking import status.")
-       });
-       setImportedProjectId(undefined);
-     }
-   }, 2000);
-
-   return () => clearInterval(interval);
- }, [importedProjectId, refetch, refetchProject, setNotification, t]);
-
-
-  console.log("project", project);
   // project remove
   const handleProjectRemove = useCallback(
     async (project: Project) => {
@@ -360,6 +340,7 @@ export default (workspaceId?: string) => {
     sortValue,
     contentWidth,
     starredProjects,
+    importStatus,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,

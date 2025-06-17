@@ -4,11 +4,7 @@ import { ProjectImportStatus, TeamMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
 
-export type importStatus =
-  | "failed"
-  | "none"
-  | "processing"
-  | "success";
+export type ImportStatus = "failed" | "none" | "processing" | "success";
 
 export type ProjectMetadata = {
   id: string;
@@ -77,7 +73,7 @@ export type Workspace = {
   personal?: boolean;
 };
 
-export const checkImportStatus = (s?: ProjectImportStatus) => {
+export const getImportStatus = (s?: ProjectImportStatus | null) => {
   switch (s) {
     case ProjectImportStatus.Failed:
       return "failed";
