@@ -1,14 +1,18 @@
 package internalapimodel
 
 import (
+	"context"
+
+	"github.com/reearth/reearth/server/internal/adapter"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ToProject(p *project.Project) *pb.Project {
+func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.Story) *pb.Project {
 	if p == nil {
 		return nil
 	}
@@ -24,7 +28,9 @@ func ToProject(p *project.Project) *pb.Project {
 		publishedAt = timestamppb.New(p.PublishedAt())
 	}
 
-	return &pb.Project{
+	editorUrl := adapter.CurrentHost(ctx) + "/scene/" + p.Scene().String() + "/map"
+
+	project := &pb.Project{
 		Id:          p.ID().String(),
 		WorkspaceId: p.Workspace().String(),
 
@@ -39,9 +45,11 @@ func ToProject(p *project.Project) *pb.Project {
 		IsDeleted:   p.IsDeleted(),
 		Visibility:  p.Visibility(),
 
+		EditorUrl: editorUrl,
+
 		Metadata: ToProjectMetadata(p.Metadata()),
 
-		// publishment
+		// Scene publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
 		PublishedAt:       publishedAt,
@@ -56,6 +64,32 @@ func ToProject(p *project.Project) *pb.Project {
 		TrackingId:        p.TrackingID(),
 	}
 
+	if s != nil {
+		project.SceneId = s.Scene().String()
+		project.StoryId = s.Id().String()
+
+		// Story publishment
+		project.StoryAlias = s.Alias()
+		project.StoryPublishmentStatus = ToStoryPublishmentStatus(s.PublishmentStatus())
+		project.StoryPublicTitle = s.PublicTitle()
+		project.StoryPublicDescription = s.PublicDescription()
+		project.StoryPublicImage = s.PublicImage()
+		project.StoryPublicNoIndex = s.PublicNoIndex()
+		project.StoryIsBasicAuthActive = s.IsBasicAuthActive()
+		project.StoryBasicAuthUsername = s.BasicAuthUsername()
+		project.StoryBasicAuthPassword = s.BasicAuthPassword()
+		project.StoryEnableGa = s.EnableGa()
+		project.StoryTrackingId = s.TrackingID()
+
+		if s.PublishedAt() != nil {
+			project.StoryPublishedAt = timestamppb.New(*s.PublishedAt())
+		}
+	} else {
+		project.SceneId = p.Scene().String()
+		project.StoryId = ""
+	}
+
+	return project
 }
 
 func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
@@ -120,6 +154,19 @@ func ToPublishmentStatus(s project.PublishmentStatus) pb.PublishmentStatus {
 		return pb.PublishmentStatus_PUBLISHMENT_STATUS_LIMITED
 	}
 	if s == project.PublishmentStatusPrivate {
+		return pb.PublishmentStatus_PUBLISHMENT_STATUS_PRIVATE
+	}
+	return pb.PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED
+}
+
+func ToStoryPublishmentStatus(s storytelling.PublishmentStatus) pb.PublishmentStatus {
+	if s == storytelling.PublishmentStatusPublic {
+		return pb.PublishmentStatus_PUBLISHMENT_STATUS_PUBLIC
+	}
+	if s == storytelling.PublishmentStatusLimited {
+		return pb.PublishmentStatus_PUBLISHMENT_STATUS_LIMITED
+	}
+	if s == storytelling.PublishmentStatusPrivate {
 		return pb.PublishmentStatus_PUBLISHMENT_STATUS_PRIVATE
 	}
 	return pb.PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED

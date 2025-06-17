@@ -187,56 +187,84 @@ type Project struct {
 	WorkspaceId string `protobuf:"bytes,2,opt,name=workspace_id,json=workspaceId,proto3" json:"workspace_id,omitempty"`
 	// Scene ID
 	SceneId string `protobuf:"bytes,3,opt,name=scene_id,json=sceneId,proto3" json:"scene_id,omitempty"`
+	// Story ID
+	StoryId string `protobuf:"bytes,4,opt,name=story_id,json=storyId,proto3" json:"story_id,omitempty"`
 	// Project title
-	Name string `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Name string `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
 	// Project description
-	Description string `protobuf:"bytes,5,opt,name=description,proto3" json:"description,omitempty"`
+	Description string `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
 	// Project image (URL link)
-	ImageUrl *string `protobuf:"bytes,6,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
+	ImageUrl *string `protobuf:"bytes,7,opt,name=image_url,json=imageUrl,proto3,oneof" json:"image_url,omitempty"`
 	// Type of visualizer (e.g., Cesium)
-	Visualizer Visualizer `protobuf:"varint,7,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
+	Visualizer Visualizer `protobuf:"varint,8,opt,name=visualizer,proto3,enum=reearth.visualizer.v1.Visualizer" json:"visualizer,omitempty"`
 	// Creation date
-	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	// Last updated date
-	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	// Currently unused
-	IsArchived bool `protobuf:"varint,10,opt,name=is_archived,json=isArchived,proto3" json:"is_archived,omitempty"`
+	IsArchived bool `protobuf:"varint,11,opt,name=is_archived,json=isArchived,proto3" json:"is_archived,omitempty"`
 	// Indicates whether it's a classic or visualizer project type
-	CoreSupport bool `protobuf:"varint,11,opt,name=core_support,json=coreSupport,proto3" json:"core_support,omitempty"`
+	CoreSupport bool `protobuf:"varint,12,opt,name=core_support,json=coreSupport,proto3" json:"core_support,omitempty"`
 	// Whether the project is marked as a favorite
-	Starred bool `protobuf:"varint,12,opt,name=starred,proto3" json:"starred,omitempty"`
+	Starred bool `protobuf:"varint,13,opt,name=starred,proto3" json:"starred,omitempty"`
 	// Whether the project is in the trash
-	IsDeleted bool `protobuf:"varint,13,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
+	IsDeleted bool `protobuf:"varint,14,opt,name=is_deleted,json=isDeleted,proto3" json:"is_deleted,omitempty"`
 	// Visibility of the project (e.g., "public", "private")
-	Visibility string `protobuf:"bytes,14,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	Visibility string `protobuf:"bytes,15,opt,name=visibility,proto3" json:"visibility,omitempty"`
+	// URL to visualizer project
+	EditorUrl string `protobuf:"bytes,16,opt,name=editor_url,json=editorUrl,proto3" json:"editor_url,omitempty"`
 	// Project metadata
-	Metadata *ProjectMetadata `protobuf:"bytes,15,opt,name=metadata,proto3,oneof" json:"metadata,omitempty"`
-	// Publishment value
-	Alias string `protobuf:"bytes,16,opt,name=alias,proto3" json:"alias,omitempty"`
-	// Publishment value
-	PublishmentStatus PublishmentStatus `protobuf:"varint,17,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
-	// Publishment value
-	PublishedAt *timestamppb.Timestamp `protobuf:"bytes,18,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
-	// Publishment value
-	PublicTitle string `protobuf:"bytes,19,opt,name=public_title,json=publicTitle,proto3" json:"public_title,omitempty"`
-	// Publishment value
-	PublicDescription string `protobuf:"bytes,20,opt,name=public_description,json=publicDescription,proto3" json:"public_description,omitempty"`
-	// Publishment value
-	PublicImage string `protobuf:"bytes,21,opt,name=public_image,json=publicImage,proto3" json:"public_image,omitempty"`
-	// Publishment value
-	PublicNoIndex bool `protobuf:"varint,22,opt,name=public_no_index,json=publicNoIndex,proto3" json:"public_no_index,omitempty"`
-	// Publishment value
-	IsBasicAuthActive bool `protobuf:"varint,23,opt,name=is_basic_auth_active,json=isBasicAuthActive,proto3" json:"is_basic_auth_active,omitempty"`
-	// Publishment value
-	BasicAuthUsername string `protobuf:"bytes,24,opt,name=basic_auth_username,json=basicAuthUsername,proto3" json:"basic_auth_username,omitempty"`
-	// Publishment value
-	BasicAuthPassword string `protobuf:"bytes,25,opt,name=basic_auth_password,json=basicAuthPassword,proto3" json:"basic_auth_password,omitempty"`
-	// Publishment value
-	EnableGa bool `protobuf:"varint,26,opt,name=enable_ga,json=enableGa,proto3" json:"enable_ga,omitempty"`
-	// Publishment value
-	TrackingId    string `protobuf:"bytes,27,opt,name=tracking_id,json=trackingId,proto3" json:"tracking_id,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Metadata *ProjectMetadata `protobuf:"bytes,17,opt,name=metadata,proto3,oneof" json:"metadata,omitempty"`
+	// Scene Publishment value
+	Alias string `protobuf:"bytes,18,opt,name=alias,proto3" json:"alias,omitempty"`
+	// Scene Publishment value
+	PublishmentStatus PublishmentStatus `protobuf:"varint,19,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
+	// Scene Publishment value
+	PublishedAt *timestamppb.Timestamp `protobuf:"bytes,20,opt,name=published_at,json=publishedAt,proto3,oneof" json:"published_at,omitempty"`
+	// Scene Publishment value
+	PublicTitle string `protobuf:"bytes,21,opt,name=public_title,json=publicTitle,proto3" json:"public_title,omitempty"`
+	// Scene Publishment value
+	PublicDescription string `protobuf:"bytes,22,opt,name=public_description,json=publicDescription,proto3" json:"public_description,omitempty"`
+	// Scene Publishment value
+	PublicImage string `protobuf:"bytes,23,opt,name=public_image,json=publicImage,proto3" json:"public_image,omitempty"`
+	// Scene Publishment value
+	PublicNoIndex bool `protobuf:"varint,24,opt,name=public_no_index,json=publicNoIndex,proto3" json:"public_no_index,omitempty"`
+	// Scene Publishment value
+	IsBasicAuthActive bool `protobuf:"varint,25,opt,name=is_basic_auth_active,json=isBasicAuthActive,proto3" json:"is_basic_auth_active,omitempty"`
+	// Scene Publishment value
+	BasicAuthUsername string `protobuf:"bytes,26,opt,name=basic_auth_username,json=basicAuthUsername,proto3" json:"basic_auth_username,omitempty"`
+	// Scene Publishment value
+	BasicAuthPassword string `protobuf:"bytes,27,opt,name=basic_auth_password,json=basicAuthPassword,proto3" json:"basic_auth_password,omitempty"`
+	// Scene Publishment value
+	EnableGa bool `protobuf:"varint,28,opt,name=enable_ga,json=enableGa,proto3" json:"enable_ga,omitempty"`
+	// Scene Publishment value
+	TrackingId string `protobuf:"bytes,29,opt,name=tracking_id,json=trackingId,proto3" json:"tracking_id,omitempty"`
+	// Story Publishment value
+	StoryAlias string `protobuf:"bytes,30,opt,name=story_alias,json=storyAlias,proto3" json:"story_alias,omitempty"`
+	// Story Publishment value
+	StoryPublishmentStatus PublishmentStatus `protobuf:"varint,31,opt,name=story_publishment_status,json=storyPublishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"story_publishment_status,omitempty"`
+	// Story Publishment value
+	StoryPublishedAt *timestamppb.Timestamp `protobuf:"bytes,32,opt,name=story_published_at,json=storyPublishedAt,proto3,oneof" json:"story_published_at,omitempty"`
+	// Story Publishment value
+	StoryPublicTitle string `protobuf:"bytes,33,opt,name=story_public_title,json=storyPublicTitle,proto3" json:"story_public_title,omitempty"`
+	// Story Publishment value
+	StoryPublicDescription string `protobuf:"bytes,34,opt,name=story_public_description,json=storyPublicDescription,proto3" json:"story_public_description,omitempty"`
+	// Story Publishment value
+	StoryPublicImage string `protobuf:"bytes,35,opt,name=story_public_image,json=storyPublicImage,proto3" json:"story_public_image,omitempty"`
+	// Story Publishment value
+	StoryPublicNoIndex bool `protobuf:"varint,36,opt,name=story_public_no_index,json=storyPublicNoIndex,proto3" json:"story_public_no_index,omitempty"`
+	// Story Publishment value
+	StoryIsBasicAuthActive bool `protobuf:"varint,37,opt,name=story_is_basic_auth_active,json=storyIsBasicAuthActive,proto3" json:"story_is_basic_auth_active,omitempty"`
+	// Story Publishment value
+	StoryBasicAuthUsername string `protobuf:"bytes,38,opt,name=story_basic_auth_username,json=storyBasicAuthUsername,proto3" json:"story_basic_auth_username,omitempty"`
+	// Story Publishment value
+	StoryBasicAuthPassword string `protobuf:"bytes,39,opt,name=story_basic_auth_password,json=storyBasicAuthPassword,proto3" json:"story_basic_auth_password,omitempty"`
+	// Story Publishment value
+	StoryEnableGa bool `protobuf:"varint,40,opt,name=story_enable_ga,json=storyEnableGa,proto3" json:"story_enable_ga,omitempty"`
+	// Story Publishment value
+	StoryTrackingId string `protobuf:"bytes,41,opt,name=story_tracking_id,json=storyTrackingId,proto3" json:"story_tracking_id,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *Project) Reset() {
@@ -286,6 +314,13 @@ func (x *Project) GetWorkspaceId() string {
 func (x *Project) GetSceneId() string {
 	if x != nil {
 		return x.SceneId
+	}
+	return ""
+}
+
+func (x *Project) GetStoryId() string {
+	if x != nil {
+		return x.StoryId
 	}
 	return ""
 }
@@ -363,6 +398,13 @@ func (x *Project) GetIsDeleted() bool {
 func (x *Project) GetVisibility() string {
 	if x != nil {
 		return x.Visibility
+	}
+	return ""
+}
+
+func (x *Project) GetEditorUrl() string {
+	if x != nil {
+		return x.EditorUrl
 	}
 	return ""
 }
@@ -454,6 +496,90 @@ func (x *Project) GetEnableGa() bool {
 func (x *Project) GetTrackingId() string {
 	if x != nil {
 		return x.TrackingId
+	}
+	return ""
+}
+
+func (x *Project) GetStoryAlias() string {
+	if x != nil {
+		return x.StoryAlias
+	}
+	return ""
+}
+
+func (x *Project) GetStoryPublishmentStatus() PublishmentStatus {
+	if x != nil {
+		return x.StoryPublishmentStatus
+	}
+	return PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED
+}
+
+func (x *Project) GetStoryPublishedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.StoryPublishedAt
+	}
+	return nil
+}
+
+func (x *Project) GetStoryPublicTitle() string {
+	if x != nil {
+		return x.StoryPublicTitle
+	}
+	return ""
+}
+
+func (x *Project) GetStoryPublicDescription() string {
+	if x != nil {
+		return x.StoryPublicDescription
+	}
+	return ""
+}
+
+func (x *Project) GetStoryPublicImage() string {
+	if x != nil {
+		return x.StoryPublicImage
+	}
+	return ""
+}
+
+func (x *Project) GetStoryPublicNoIndex() bool {
+	if x != nil {
+		return x.StoryPublicNoIndex
+	}
+	return false
+}
+
+func (x *Project) GetStoryIsBasicAuthActive() bool {
+	if x != nil {
+		return x.StoryIsBasicAuthActive
+	}
+	return false
+}
+
+func (x *Project) GetStoryBasicAuthUsername() string {
+	if x != nil {
+		return x.StoryBasicAuthUsername
+	}
+	return ""
+}
+
+func (x *Project) GetStoryBasicAuthPassword() string {
+	if x != nil {
+		return x.StoryBasicAuthPassword
+	}
+	return ""
+}
+
+func (x *Project) GetStoryEnableGa() bool {
+	if x != nil {
+		return x.StoryEnableGa
+	}
+	return false
+}
+
+func (x *Project) GetStoryTrackingId() string {
+	if x != nil {
+		return x.StoryTrackingId
 	}
 	return ""
 }
@@ -1465,49 +1591,66 @@ var File_schemas_internalapi_v1_schema_proto protoreflect.FileDescriptor
 
 const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
-	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x99\t\n" +
+	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x8d\x0f\n" +
 	"\aProject\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fworkspace_id\x18\x02 \x01(\tR\vworkspaceId\x12\x19\n" +
-	"\bscene_id\x18\x03 \x01(\tR\asceneId\x12\x12\n" +
-	"\x04name\x18\x04 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x05 \x01(\tR\vdescription\x12 \n" +
-	"\timage_url\x18\x06 \x01(\tH\x00R\bimageUrl\x88\x01\x01\x12A\n" +
+	"\bscene_id\x18\x03 \x01(\tR\asceneId\x12\x19\n" +
+	"\bstory_id\x18\x04 \x01(\tR\astoryId\x12\x12\n" +
+	"\x04name\x18\x05 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x06 \x01(\tR\vdescription\x12 \n" +
+	"\timage_url\x18\a \x01(\tH\x00R\bimageUrl\x88\x01\x01\x12A\n" +
 	"\n" +
-	"visualizer\x18\a \x01(\x0e2!.reearth.visualizer.v1.VisualizerR\n" +
+	"visualizer\x18\b \x01(\x0e2!.reearth.visualizer.v1.VisualizerR\n" +
 	"visualizer\x129\n" +
 	"\n" +
-	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"created_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
 	"\n" +
-	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
-	"\vis_archived\x18\n" +
-	" \x01(\bR\n" +
+	"updated_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\x12\x1f\n" +
+	"\vis_archived\x18\v \x01(\bR\n" +
 	"isArchived\x12!\n" +
-	"\fcore_support\x18\v \x01(\bR\vcoreSupport\x12\x18\n" +
-	"\astarred\x18\f \x01(\bR\astarred\x12\x1d\n" +
+	"\fcore_support\x18\f \x01(\bR\vcoreSupport\x12\x18\n" +
+	"\astarred\x18\r \x01(\bR\astarred\x12\x1d\n" +
 	"\n" +
-	"is_deleted\x18\r \x01(\bR\tisDeleted\x12\x1e\n" +
+	"is_deleted\x18\x0e \x01(\bR\tisDeleted\x12\x1e\n" +
 	"\n" +
-	"visibility\x18\x0e \x01(\tR\n" +
-	"visibility\x12G\n" +
-	"\bmetadata\x18\x0f \x01(\v2&.reearth.visualizer.v1.ProjectMetadataH\x01R\bmetadata\x88\x01\x01\x12\x14\n" +
-	"\x05alias\x18\x10 \x01(\tR\x05alias\x12W\n" +
-	"\x12publishment_status\x18\x11 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12B\n" +
-	"\fpublished_at\x18\x12 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\vpublishedAt\x88\x01\x01\x12!\n" +
-	"\fpublic_title\x18\x13 \x01(\tR\vpublicTitle\x12-\n" +
-	"\x12public_description\x18\x14 \x01(\tR\x11publicDescription\x12!\n" +
-	"\fpublic_image\x18\x15 \x01(\tR\vpublicImage\x12&\n" +
-	"\x0fpublic_no_index\x18\x16 \x01(\bR\rpublicNoIndex\x12/\n" +
-	"\x14is_basic_auth_active\x18\x17 \x01(\bR\x11isBasicAuthActive\x12.\n" +
-	"\x13basic_auth_username\x18\x18 \x01(\tR\x11basicAuthUsername\x12.\n" +
-	"\x13basic_auth_password\x18\x19 \x01(\tR\x11basicAuthPassword\x12\x1b\n" +
-	"\tenable_ga\x18\x1a \x01(\bR\benableGa\x12\x1f\n" +
-	"\vtracking_id\x18\x1b \x01(\tR\n" +
-	"trackingIdB\f\n" +
+	"visibility\x18\x0f \x01(\tR\n" +
+	"visibility\x12\x1d\n" +
+	"\n" +
+	"editor_url\x18\x10 \x01(\tR\teditorUrl\x12G\n" +
+	"\bmetadata\x18\x11 \x01(\v2&.reearth.visualizer.v1.ProjectMetadataH\x01R\bmetadata\x88\x01\x01\x12\x14\n" +
+	"\x05alias\x18\x12 \x01(\tR\x05alias\x12W\n" +
+	"\x12publishment_status\x18\x13 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12B\n" +
+	"\fpublished_at\x18\x14 \x01(\v2\x1a.google.protobuf.TimestampH\x02R\vpublishedAt\x88\x01\x01\x12!\n" +
+	"\fpublic_title\x18\x15 \x01(\tR\vpublicTitle\x12-\n" +
+	"\x12public_description\x18\x16 \x01(\tR\x11publicDescription\x12!\n" +
+	"\fpublic_image\x18\x17 \x01(\tR\vpublicImage\x12&\n" +
+	"\x0fpublic_no_index\x18\x18 \x01(\bR\rpublicNoIndex\x12/\n" +
+	"\x14is_basic_auth_active\x18\x19 \x01(\bR\x11isBasicAuthActive\x12.\n" +
+	"\x13basic_auth_username\x18\x1a \x01(\tR\x11basicAuthUsername\x12.\n" +
+	"\x13basic_auth_password\x18\x1b \x01(\tR\x11basicAuthPassword\x12\x1b\n" +
+	"\tenable_ga\x18\x1c \x01(\bR\benableGa\x12\x1f\n" +
+	"\vtracking_id\x18\x1d \x01(\tR\n" +
+	"trackingId\x12\x1f\n" +
+	"\vstory_alias\x18\x1e \x01(\tR\n" +
+	"storyAlias\x12b\n" +
+	"\x18story_publishment_status\x18\x1f \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x16storyPublishmentStatus\x12M\n" +
+	"\x12story_published_at\x18  \x01(\v2\x1a.google.protobuf.TimestampH\x03R\x10storyPublishedAt\x88\x01\x01\x12,\n" +
+	"\x12story_public_title\x18! \x01(\tR\x10storyPublicTitle\x128\n" +
+	"\x18story_public_description\x18\" \x01(\tR\x16storyPublicDescription\x12,\n" +
+	"\x12story_public_image\x18# \x01(\tR\x10storyPublicImage\x121\n" +
+	"\x15story_public_no_index\x18$ \x01(\bR\x12storyPublicNoIndex\x12:\n" +
+	"\x1astory_is_basic_auth_active\x18% \x01(\bR\x16storyIsBasicAuthActive\x129\n" +
+	"\x19story_basic_auth_username\x18& \x01(\tR\x16storyBasicAuthUsername\x129\n" +
+	"\x19story_basic_auth_password\x18' \x01(\tR\x16storyBasicAuthPassword\x12&\n" +
+	"\x0fstory_enable_ga\x18( \x01(\bR\rstoryEnableGa\x12*\n" +
+	"\x11story_tracking_id\x18) \x01(\tR\x0fstoryTrackingIdB\f\n" +
 	"\n" +
 	"_image_urlB\v\n" +
 	"\t_metadataB\x0f\n" +
-	"\r_published_at\"\xa5\x03\n" +
+	"\r_published_atB\x15\n" +
+	"\x13_story_published_at\"\xa5\x03\n" +
 	"\x0fProjectMetadata\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -1697,34 +1840,36 @@ var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
 	4,  // 3: reearth.visualizer.v1.Project.metadata:type_name -> reearth.visualizer.v1.ProjectMetadata
 	2,  // 4: reearth.visualizer.v1.Project.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
 	19, // 5: reearth.visualizer.v1.Project.published_at:type_name -> google.protobuf.Timestamp
-	1,  // 6: reearth.visualizer.v1.ProjectMetadata.import_status:type_name -> reearth.visualizer.v1.ProjectImportStatus
-	19, // 7: reearth.visualizer.v1.ProjectMetadata.created_at:type_name -> google.protobuf.Timestamp
-	19, // 8: reearth.visualizer.v1.ProjectMetadata.updated_at:type_name -> google.protobuf.Timestamp
-	0,  // 9: reearth.visualizer.v1.CreateProjectRequest.visualizer:type_name -> reearth.visualizer.v1.Visualizer
-	3,  // 10: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	3,  // 11: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
-	3,  // 12: reearth.visualizer.v1.CreateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	3,  // 13: reearth.visualizer.v1.UpdateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	4,  // 14: reearth.visualizer.v1.UpdateProjectMetadataResponse.metadata:type_name -> reearth.visualizer.v1.ProjectMetadata
-	5,  // 15: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
-	6,  // 16: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
-	7,  // 17: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:input_type -> reearth.visualizer.v1.CreateProjectRequest
-	8,  // 18: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:input_type -> reearth.visualizer.v1.UpdateProjectRequest
-	9,  // 19: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:input_type -> reearth.visualizer.v1.UpdateProjectMetadataRequest
-	10, // 20: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:input_type -> reearth.visualizer.v1.DeleteProjectRequest
-	11, // 21: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:input_type -> reearth.visualizer.v1.ExportProjectRequest
-	13, // 22: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
-	12, // 23: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
-	14, // 24: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:output_type -> reearth.visualizer.v1.CreateProjectResponse
-	15, // 25: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:output_type -> reearth.visualizer.v1.UpdateProjectResponse
-	16, // 26: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:output_type -> reearth.visualizer.v1.UpdateProjectMetadataResponse
-	17, // 27: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:output_type -> reearth.visualizer.v1.DeleteProjectResponse
-	18, // 28: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:output_type -> reearth.visualizer.v1.ExportProjectResponse
-	22, // [22:29] is the sub-list for method output_type
-	15, // [15:22] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	2,  // 6: reearth.visualizer.v1.Project.story_publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
+	19, // 7: reearth.visualizer.v1.Project.story_published_at:type_name -> google.protobuf.Timestamp
+	1,  // 8: reearth.visualizer.v1.ProjectMetadata.import_status:type_name -> reearth.visualizer.v1.ProjectImportStatus
+	19, // 9: reearth.visualizer.v1.ProjectMetadata.created_at:type_name -> google.protobuf.Timestamp
+	19, // 10: reearth.visualizer.v1.ProjectMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 11: reearth.visualizer.v1.CreateProjectRequest.visualizer:type_name -> reearth.visualizer.v1.Visualizer
+	3,  // 12: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	3,  // 13: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
+	3,  // 14: reearth.visualizer.v1.CreateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	3,  // 15: reearth.visualizer.v1.UpdateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	4,  // 16: reearth.visualizer.v1.UpdateProjectMetadataResponse.metadata:type_name -> reearth.visualizer.v1.ProjectMetadata
+	5,  // 17: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
+	6,  // 18: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
+	7,  // 19: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:input_type -> reearth.visualizer.v1.CreateProjectRequest
+	8,  // 20: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:input_type -> reearth.visualizer.v1.UpdateProjectRequest
+	9,  // 21: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:input_type -> reearth.visualizer.v1.UpdateProjectMetadataRequest
+	10, // 22: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:input_type -> reearth.visualizer.v1.DeleteProjectRequest
+	11, // 23: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:input_type -> reearth.visualizer.v1.ExportProjectRequest
+	13, // 24: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
+	12, // 25: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
+	14, // 26: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:output_type -> reearth.visualizer.v1.CreateProjectResponse
+	15, // 27: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:output_type -> reearth.visualizer.v1.UpdateProjectResponse
+	16, // 28: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:output_type -> reearth.visualizer.v1.UpdateProjectMetadataResponse
+	17, // 29: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:output_type -> reearth.visualizer.v1.DeleteProjectResponse
+	18, // 30: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:output_type -> reearth.visualizer.v1.ExportProjectResponse
+	24, // [24:31] is the sub-list for method output_type
+	17, // [17:24] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_schemas_internalapi_v1_schema_proto_init() }

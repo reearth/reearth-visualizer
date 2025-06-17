@@ -66,6 +66,21 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scen
 	})
 }
 
+func (r *Scene) FindByProjects(ctx context.Context, ids []id.ProjectID) ([]*scene.Scene, error) {
+	if len(ids) == 0 {
+		return []*scene.Scene{}, nil
+	}
+
+	var projectIds []string
+	for _, id := range ids {
+		projectIds = append(projectIds, id.String())
+	}
+
+	return r.find(ctx, bson.M{
+		"project": bson.M{"$in": projectIds},
+	})
+}
+
 func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
 	if len(workspaces) == 0 {
 		return nil, nil
