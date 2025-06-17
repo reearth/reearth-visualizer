@@ -16,6 +16,7 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/spf13/afero"
@@ -33,46 +34,84 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
 	wId, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
-
 	if err != nil {
 		return nil, err
 	}
 
 	res, err := uc.Project.FindVisibilityByWorkspace(ctx, wId, req.Authenticated, op)
+	if err != nil {
+		return nil, err
+	}
 
+	var pids []id.ProjectID
+	for _, pj := range res {
+		pids = append(pids, pj.ID())
+	}
+
+	scenes, storytellings, err := uc.Scene.FindByProjectsWithStory(ctx, pids, op)
 	if err != nil {
 		return nil, err
 	}
 
 	projects := make([]*pb.Project, 0, len(res))
-
-	for _, p := range res {
-		projects = append(projects, internalapimodel.ToProject(p))
+	for _, pj := range res {
+		for _, sc := range scenes {
+			if pj.ID() == sc.Project() {
+				pj.UpdateSceneID(sc.ID())
+				st := findMatchStory(sc.ID(), storytellings)
+				projects = append(projects, internalapimodel.ToInternalProject(ctx, pj, st))
+			}
+		}
 	}
 
 	return &pb.GetProjectListResponse{
 		Projects: projects,
 	}, nil
+}
 
+func findMatchStory(sid id.SceneID, storytellings *storytelling.StoryList) *storytelling.Story {
+	if storytellings != nil {
+		for _, st := range *storytellings {
+			if sid == st.Scene() {
+				return st
+			}
+		}
+	}
+	return nil
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
 	pId, err := id.ProjectIDFrom(req.ProjectId)
-
 	if err != nil {
 		return nil, err
 	}
 
-	p, err := uc.Project.FindActiveById(ctx, pId, op)
-
+	pj, err := uc.Project.FindActiveById(ctx, pId, op)
 	if err != nil {
 		return nil, err
 	}
+
+	sc, err := uc.Scene.FindByProject(ctx, pj.ID(), op)
+	if err != nil {
+		return nil, err
+	}
+
+	pj.UpdateSceneID(sc.ID())
+
+	sts, err := uc.StoryTelling.FetchByScene(ctx, pj.Scene(), op)
+	if err != nil {
+		return nil, err
+	}
+
+	if sts == nil || len(*sts) == 0 {
+		return nil, fmt.Errorf("no stories found for scene %v", pj.Scene())
+	}
+	st := (*sts)[0]
 
 	return &pb.GetProjectResponse{
-		Project: internalapimodel.ToProject(p),
+		Project: internalapimodel.ToInternalProject(ctx, pj, st),
 	}, nil
 }
 
@@ -84,7 +123,7 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		return nil, err
 	}
 
-	p, err := uc.Project.Create(ctx, interfaces.CreateProjectParam{
+	pj, err := uc.Project.Create(ctx, interfaces.CreateProjectParam{
 		WorkspaceID: wId,
 		Visualizer:  visualizer.Visualizer(req.Visualizer),
 		Name:        req.Name,
@@ -96,14 +135,16 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		return nil, err
 	}
 
-	c, err := uc.Scene.Create(ctx, p.ID(), true, op)
+	sc, err := uc.Scene.Create(ctx, pj.ID(), true, op)
 	if err != nil {
 		return nil, err
 	}
 
+	pj.UpdateSceneID(sc.ID())
+
 	index := 0
 	storyInput := interfaces.CreateStoryInput{
-		SceneID: c.ID(),
+		SceneID: sc.ID(),
 		Title:   "Default",
 		Index:   &index,
 	}
@@ -115,14 +156,13 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 	title := "Page"
 	swipeable := false
 	pageParam := interfaces.CreatePageParam{
-		SceneID:         c.ID(),
+		SceneID:         sc.ID(),
 		StoryID:         st.Id(),
 		Title:           &title,
 		Swipeable:       &swipeable,
 		Layers:          &[]id.NLSLayerID{},
 		SwipeableLayers: &[]id.NLSLayerID{},
 		Index:           &index,
-		// ImportStatus:    status.ProjectImportStatusNone,
 	}
 	_, _, err = uc.StoryTelling.CreatePage(ctx, pageParam, op)
 	if err != nil {
@@ -130,7 +170,7 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 	}
 
 	return &pb.CreateProjectResponse{
-		Project: internalapimodel.ToProject(p),
+		Project: internalapimodel.ToInternalProject(ctx, pj, st),
 	}, nil
 }
 
@@ -174,7 +214,7 @@ func (s server) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest)
 		imageURL = parsedURL
 	}
 
-	p, err := uc.Project.Update(ctx, interfaces.UpdateProjectParam{
+	pj, err := uc.Project.Update(ctx, interfaces.UpdateProjectParam{
 		ID:             pId,
 		Name:           req.Name,
 		Description:    req.Description,
@@ -202,8 +242,21 @@ func (s server) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest)
 		return nil, err
 	}
 
+	scenes, storytellings, err := uc.Scene.FindByProjectsWithStory(ctx, []id.ProjectID{pj.ID()}, op)
+	if err != nil {
+		return nil, err
+	}
+
+	sc := scenes[0]
+	pj.UpdateSceneID(sc.ID())
+
+	var st *storytelling.Story
+	if storytellings != nil && len(*storytellings) > 0 {
+		st = (*storytellings)[0]
+	}
+
 	return &pb.UpdateProjectResponse{
-		Project: internalapimodel.ToProject(p),
+		Project: internalapimodel.ToInternalProject(ctx, pj, st),
 	}, nil
 
 }

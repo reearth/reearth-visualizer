@@ -36,7 +36,6 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
 }
-
 // Core Project messages
 message Project {
   // Project ID
@@ -48,66 +47,61 @@ message Project {
   // Scene ID
   string scene_id = 3;
 
+  // Story ID
+  string story_id = 4;
+
   // Project title
-  string name = 4;
+  string name = 5;
 
   // Project description
-  string description = 5;
+  string description = 6;
 
   // Project image (URL link)
-  optional string image_url = 6;
+  optional string image_url = 7;
 
   // Type of visualizer (e.g., Cesium)
-  Visualizer visualizer = 7;
+  Visualizer visualizer = 8;
 
   // Creation date
-  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp created_at = 9;
 
   // Last updated date
-  google.protobuf.Timestamp updated_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
 
   // Currently unused
-  bool is_archived = 10;
+  bool is_archived = 11;
 
   // Indicates whether it's a classic or visualizer project type
-  bool core_support = 11;
+  bool core_support = 12;
 
   // Whether the project is marked as a favorite
-  bool starred = 12;
+  bool starred = 13;
 
   // Whether the project is in the trash
-  bool is_deleted = 13;
+  bool is_deleted = 14;
 
   // Visibility of the project (e.g., "public", "private")
-  string visibility = 14;
+  string visibility = 15;
+
+  // URL to visualizer project
+  string editor_url = 16;
 
   // Project metadata
-  optional ProjectMetadata metadata = 15;
+  optional ProjectMetadata metadata = 17;
 
-  // Publishment value
-  string alias = 16;
-  // Publishment value
-  PublishmentStatus publishment_status = 17;
-  // Publishment value
-  optional google.protobuf.Timestamp published_at = 18;
-  // Publishment value
-  string public_title = 19;
-  // Publishment value
-  string public_description = 20;
-  // Publishment value
-  string public_image = 21;
-  // Publishment value
-  bool public_no_index = 22;
-  // Publishment value
-  bool is_basic_auth_active = 23;
-  // Publishment value
-  string basic_auth_username = 24;
-  // Publishment value
-  string basic_auth_password = 25;
-  // Publishment value
-  bool enable_ga = 26;
-  // Publishment value
-  string tracking_id = 27;
+  // Scene Publishment value
+  string alias = 18;
+  // Scene Publishment value
+  PublishmentStatus publishment_status = 19;
+  // Scene Publishment value
+  optional string published_url = 20;
+
+  // Story Publishment value
+  string story_alias = 21;
+  // Story Publishment value
+  PublishmentStatus story_publishment_status = 22;
+  // Story Publishment value
+  optional string story_published_url = 23;
 }
 
 message ProjectMetadata {

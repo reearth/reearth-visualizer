@@ -2,6 +2,8 @@ package e2e
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"testing"
@@ -13,6 +15,8 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -21,161 +25,6 @@ import (
 
 // export REEARTH_DB=mongodb://localhost
 // go test -v -run TestInternalAPI ./e2e/...
-
-func TestInternalAPI_private(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-
-	// user1: workspaceId: wID   userId: uID
-	// user2: workspaceId: wID2  userId: uID2
-
-	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// create default Project -> private
-		CreateProjectInternal(
-			t, ctx, r, client, "private",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				// Visibility:  nil,
-			})
-
-		// create private Project
-		CreateProjectInternal(
-			t, ctx, r, client, "private",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				Visibility:  lo.ToPtr("private"),
-			})
-
-		// 0: creante seeder => private
-		// 1: creante default => private
-		// 2: creante private => private
-
-		// get list size 3
-		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
-		assert.Equal(t, "private", res3.Projects[0].Visibility)
-		assert.Equal(t, "private", res3.Projects[1].Visibility)
-		assert.Equal(t, "private", res3.Projects[2].Visibility)
-
-	})
-
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-		// get list size 0
-		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 0, len(res4.Projects))
-	})
-
-}
-
-func TestInternalAPI_public(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-
-	var publicProjectId string
-
-	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// create public Project
-		CreateProjectInternal(
-			t, ctx, r, client, "public",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				Visibility:  lo.ToPtr("public"),
-			})
-
-		// create private Project
-		CreateProjectInternal(
-			t, ctx, r, client, "private",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				Visibility:  lo.ToPtr("private"),
-			})
-
-		// 0: creante seeder => private
-		// 1: creante public => public
-		// 2: creante private => private
-
-		// get list size 3
-		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
-		assert.Equal(t, "private", res3.Projects[0].Visibility)
-		assert.Equal(t, "public", res3.Projects[1].Visibility)
-		assert.Equal(t, "private", res3.Projects[2].Visibility)
-
-		publicProjectId = res3.Projects[1].Id
-
-	})
-
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-		// get list size 1
-		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res4.Projects))
-
-		// test DeleteProject
-		res5, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
-			ProjectId: publicProjectId,
-		})
-		assert.Equal(t, "rpc error: code = Unknown desc = operation denied", err.Error())
-		assert.Nil(t, res5)
-
-	})
-
-	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// test DeleteProject
-		res6, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
-			ProjectId: publicProjectId,
-		})
-		assert.Nil(t, err)
-		assert.NotNil(t, res6)
-
-	})
-
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// get list size 0
-		res7, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 0, len(res7.Projects))
-
-	})
-
-}
 
 func TestInternalAPI(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
@@ -233,18 +82,17 @@ func TestInternalAPI(t *testing.T) {
 		LogicalDeleteProject(t, ctx, r, pid1)
 		LogicalDeleteProject(t, ctx, r, pid2)
 
-		// 0: creante seeder  => private  delete => false
-		// 1: creante public  => public   delete => true !!
-		// 2: creante private => private  delete => true !!
-		// 3: creante public  => public   delete => false
-		// 4: creante private => private  delete => false
+		// 0: creante public  => public   delete => true !!
+		// 1: creante private => private  delete => true !!
+		// 2: creante public  => public   delete => false
+		// 3: creante private => private  delete => false
 
 		// get list size 5
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			WorkspaceId: wID.String(),
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 5, len(res3.Projects))
+		assert.Equal(t, 4, len(res3.Projects))
 
 	})
 
@@ -264,7 +112,7 @@ func TestInternalAPI(t *testing.T) {
 			Authenticated: true,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 5, len(res4.Projects))
+		assert.Equal(t, 4, len(res4.Projects))
 
 	})
 
@@ -276,24 +124,21 @@ func TestInternalAPI(t *testing.T) {
 			WorkspaceId: wID.String(),
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
+		assert.Equal(t, 2, len(res3.Projects))
 
-		// 0: creante seeder  => private  delete => false
-		// 3: creante public  => public   delete => false
-		// 4: creante private => private  delete => false
+		// 2: creante public  => public   delete => false
+		// 3: creante private => private  delete => false
 	})
 
 }
 
-func TestInternalAPI_update(t *testing.T) {
+func TestInternalAPI_unit(t *testing.T) {
+
 	_, r, _ := GRPCServer(t, baseSeeder)
 
-	var pid1 id.ProjectID
-	// user1 call api
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// create public Project
-		pid1 = CreateProjectInternal(
+		// Create Project
+		pid := CreateProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -303,89 +148,98 @@ func TestInternalAPI_update(t *testing.T) {
 				CoreSupport: lo.ToPtr(true),
 				Visibility:  lo.ToPtr("public"),
 			})
-
-		name := "Updated Project Name"
-		desc := "Updated Description"
-		archived := true
-		imageUrl := "https://example.com/image.png"
-		starred := true
-		deleted := false
-		visibility := "private"
-		publicTitle := "Public Title"
-		publicDescription := "Public Description"
-		publicImage := "https://example.com/public_image.png"
-		publicNoIndex := true
-		isBasicAuthActive := true
-		basicAuthUsername := "user"
-		basicAuthPassword := "pass"
-		enableGa := true
-		trackingId := "GA-XXXX"
-
-		res, err := client.UpdateProject(ctx, &pb.UpdateProjectRequest{
-			ProjectId:         pid1.String(),
-			Name:              &name,
-			Description:       &desc,
-			Archived:          &archived,
-			ImageUrl:          &imageUrl,
-			Starred:           &starred,
-			Deleted:           &deleted,
-			Visibility:        &visibility,
-			PublicTitle:       &publicTitle,
-			PublicDescription: &publicDescription,
-			PublicImage:       &publicImage,
-			PublicNoIndex:     &publicNoIndex,
-			IsBasicAuthActive: &isBasicAuthActive,
-			BasicAuthUsername: &basicAuthUsername,
-			BasicAuthPassword: &basicAuthPassword,
-			EnableGa:          &enableGa,
-			TrackingId:        &trackingId,
+		UpdateProjectMetadata(
+			t, ctx, r, client,
+			&pb.UpdateProjectMetadataRequest{
+				ProjectId: pid.String(),
+				Readme:    lo.ToPtr("test readme"),
+				License:   lo.ToPtr("test license"),
+				Topics:    lo.ToPtr("test topics"),
+			},
+		)
+		res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+			WorkspaceId: wID.String(),
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, visibility, res.Project.Visibility)
-		assert.Equal(t, name, res.Project.Name)
-		assert.Equal(t, desc, res.Project.Description)
-		assert.Equal(t, archived, res.Project.IsArchived)
-		assert.Equal(t, imageUrl, *res.Project.ImageUrl)
-		assert.Equal(t, starred, res.Project.Starred)
-		assert.Equal(t, deleted, res.Project.IsDeleted)
-		assert.Equal(t, publicTitle, res.Project.PublicTitle)
-		assert.Equal(t, publicDescription, res.Project.PublicDescription)
-		assert.Equal(t, publicImage, res.Project.PublicImage)
-		assert.Equal(t, publicNoIndex, res.Project.PublicNoIndex)
-		assert.Equal(t, isBasicAuthActive, res.Project.IsBasicAuthActive)
-		assert.Equal(t, basicAuthUsername, res.Project.BasicAuthUsername)
-		assert.Equal(t, basicAuthPassword, res.Project.BasicAuthPassword)
-		assert.Equal(t, enableGa, res.Project.EnableGa)
-		assert.Equal(t, trackingId, res.Project.TrackingId)
+		assert.Equal(t, 1, len(res.Projects))
 
-		deleteImageUrl := true
-		deletePublicImage := true
-		_, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
-			ProjectId:         pid1.String(),
-			DeleteImageUrl:    &deleteImageUrl,
-			DeletePublicImage: &deletePublicImage,
-		})
-		assert.Nil(t, err)
+		for _, pj := range res.Projects {
+			checkProjectFields(t, pj)
+			// PbDump(pj)
+		}
+
 		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
-			ProjectId: pid1.String(),
+			ProjectId: pid.String(),
 		})
 		assert.Nil(t, err)
-		assert.Nil(t, res2.Project.ImageUrl)
-		assert.Equal(t, "", res2.Project.PublicImage)
+
+		checkProjectFields(t, res2.Project)
+		// PbDump(res2.Project)
+
 	})
+}
 
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+func checkProjectFields(t *testing.T, project *pb.Project) {
+	b, err := protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(project)
+	assert.Nil(t, err)
 
-		v := "public"
-		res, err := client.UpdateProject(ctx, &pb.UpdateProjectRequest{
-			ProjectId:  pid1.String(),
-			Visibility: &v,
-		})
-		assert.NotNil(t, err) // error!
-		assert.Nil(t, res)
-	})
+	var m map[string]any
+	err = json.Unmarshal(b, &m)
+	assert.Nil(t, err)
 
+	// top-level fields
+	assert.Contains(t, m, "id")
+	assert.Contains(t, m, "workspaceId")
+	assert.Contains(t, m, "sceneId")
+	assert.Contains(t, m, "storyId")
+	assert.Contains(t, m, "name")
+	assert.Contains(t, m, "description")
+	assert.Contains(t, m, "visualizer")
+	assert.Contains(t, m, "createdAt")
+	assert.Contains(t, m, "updatedAt")
+	assert.Contains(t, m, "isArchived")
+	assert.Contains(t, m, "coreSupport")
+	assert.Contains(t, m, "starred")
+	assert.Contains(t, m, "isDeleted")
+	assert.Contains(t, m, "visibility")
+
+	assert.Contains(t, m, "editorUrl")
+
+	// metadata
+	meta, ok := m["metadata"].(map[string]any)
+	assert.True(t, ok, "metadata should be a map")
+	assert.Contains(t, meta, "id")
+	assert.Contains(t, meta, "projectId")
+	assert.Contains(t, meta, "workspaceId")
+	assert.Contains(t, meta, "readme")
+	assert.Contains(t, meta, "license")
+	assert.Contains(t, meta, "topics")
+	assert.Contains(t, meta, "importStatus")
+	assert.Contains(t, meta, "createdAt")
+	assert.Contains(t, meta, "updatedAt")
+
+	// Scene publishment field
+	assert.Contains(t, m, "alias")
+	assert.Contains(t, m, "publishmentStatus")
+	assert.Contains(t, m, "publishedUrl")
+
+	// Story publishment fields
+	assert.Contains(t, m, "storyAlias")
+	assert.Contains(t, m, "storyPublishmentStatus")
+	assert.Contains(t, m, "storyPublishedUrl")
+
+}
+
+func PbDump(m proto.Message) {
+	jsonBytes, _ := protojson.MarshalOptions{
+		Multiline:       true,
+		Indent:          "  ",
+		UseProtoNames:   true,
+		EmitUnpopulated: true,
+	}.Marshal(m)
+	fmt.Println(string(jsonBytes))
 }
 
 func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {

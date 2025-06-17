@@ -210,6 +210,7 @@ Core Project messages
 | id | [string](#string) |  | Project ID |
 | workspace_id | [string](#string) |  | Workspace ID |
 | scene_id | [string](#string) |  | Scene ID |
+| story_id | [string](#string) |  | Story ID |
 | name | [string](#string) |  | Project title |
 | description | [string](#string) |  | Project description |
 | image_url | [string](#string) | optional | Project image (URL link) |
@@ -221,19 +222,14 @@ Core Project messages
 | starred | [bool](#bool) |  | Whether the project is marked as a favorite |
 | is_deleted | [bool](#bool) |  | Whether the project is in the trash |
 | visibility | [string](#string) |  | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+| editor_url | [string](#string) |  | URL to visualizer project |
 | metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) | optional | Project metadata |
-| alias | [string](#string) |  | Publishment value |
-| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Publishment value |
-| published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | Publishment value |
-| public_title | [string](#string) |  | Publishment value |
-| public_description | [string](#string) |  | Publishment value |
-| public_image | [string](#string) |  | Publishment value |
-| public_no_index | [bool](#bool) |  | Publishment value |
-| is_basic_auth_active | [bool](#bool) |  | Publishment value |
-| basic_auth_username | [string](#string) |  | Publishment value |
-| basic_auth_password | [string](#string) |  | Publishment value |
-| enable_ga | [bool](#bool) |  | Publishment value |
-| tracking_id | [string](#string) |  | Publishment value |
+| alias | [string](#string) |  | Scene Publishment value |
+| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Scene Publishment value |
+| published_url | [string](#string) | optional | Scene Publishment value |
+| story_alias | [string](#string) |  | Story Publishment value |
+| story_publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Story Publishment value |
+| story_published_url | [string](#string) | optional | Story Publishment value |
 
 
 
