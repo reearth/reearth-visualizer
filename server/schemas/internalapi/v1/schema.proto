@@ -36,6 +36,7 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
 }
+
 // Core Project messages
 message Project {
   // Project ID

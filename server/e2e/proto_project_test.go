@@ -82,18 +82,17 @@ func TestInternalAPI(t *testing.T) {
 		LogicalDeleteProject(t, ctx, r, pid1)
 		LogicalDeleteProject(t, ctx, r, pid2)
 
-		// 0: creante seeder  => private  delete => false
-		// 1: creante public  => public   delete => true !!
-		// 2: creante private => private  delete => true !!
-		// 3: creante public  => public   delete => false
-		// 4: creante private => private  delete => false
+		// 0: creante public  => public   delete => true !!
+		// 1: creante private => private  delete => true !!
+		// 2: creante public  => public   delete => false
+		// 3: creante private => private  delete => false
 
 		// get list size 5
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			WorkspaceId: wID.String(),
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 5, len(res3.Projects))
+		assert.Equal(t, 4, len(res3.Projects))
 
 	})
 
@@ -113,7 +112,7 @@ func TestInternalAPI(t *testing.T) {
 			Authenticated: true,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 5, len(res4.Projects))
+		assert.Equal(t, 4, len(res4.Projects))
 
 	})
 
@@ -125,11 +124,10 @@ func TestInternalAPI(t *testing.T) {
 			WorkspaceId: wID.String(),
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
+		assert.Equal(t, 2, len(res3.Projects))
 
-		// 0: creante seeder  => private  delete => false
-		// 3: creante public  => public   delete => false
-		// 4: creante private => private  delete => false
+		// 2: creante public  => public   delete => false
+		// 3: creante private => private  delete => false
 	})
 
 }

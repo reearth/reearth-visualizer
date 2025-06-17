@@ -54,20 +54,12 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 	}
 
 	projects := make([]*pb.Project, 0, len(res))
-
 	for _, pj := range res {
 		for _, sc := range scenes {
 			if pj.ID() == sc.Project() {
 				pj.UpdateSceneID(sc.ID())
-				if storytellings != nil {
-					var st *storytelling.Story
-					for _, _st := range *storytellings {
-						if sc.ID() == _st.Scene() {
-							st = _st
-						}
-					}
-					projects = append(projects, internalapimodel.ToInternalProject(ctx, pj, st))
-				}
+				st := findMatchStory(sc.ID(), storytellings)
+				projects = append(projects, internalapimodel.ToInternalProject(ctx, pj, st))
 			}
 		}
 	}
@@ -75,6 +67,17 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 	return &pb.GetProjectListResponse{
 		Projects: projects,
 	}, nil
+}
+
+func findMatchStory(sid id.SceneID, storytellings *storytelling.StoryList) *storytelling.Story {
+	if storytellings != nil {
+		for _, st := range *storytellings {
+			if sid == st.Scene() {
+				return st
+			}
+		}
+	}
+	return nil
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {

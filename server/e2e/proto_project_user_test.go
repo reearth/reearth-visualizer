@@ -42,19 +42,17 @@ func TestInternalAPI_private(t *testing.T) {
 				Visibility:  lo.ToPtr("private"),
 			})
 
-		// 0: creante seeder => private
-		// 1: creante default => private
-		// 2: creante private => private
+		// 0: creante default => private
+		// 1: creante private => private
 
 		// get list size 3
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			WorkspaceId: wID.String(),
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
+		assert.Equal(t, 2, len(res3.Projects))
 		assert.Equal(t, "private", res3.Projects[0].Visibility)
 		assert.Equal(t, "private", res3.Projects[1].Visibility)
-		assert.Equal(t, "private", res3.Projects[2].Visibility)
 
 	})
 
@@ -102,21 +100,19 @@ func TestInternalAPI_public(t *testing.T) {
 				Visibility:  lo.ToPtr("private"),
 			})
 
-		// 0: creante seeder => private
-		// 1: creante public => public
-		// 2: creante private => private
+		// 0: creante public => public
+		// 1: creante private => private
 
 		// get list size 3
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			WorkspaceId: wID.String(),
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
-		assert.Equal(t, "private", res3.Projects[0].Visibility)
-		assert.Equal(t, "public", res3.Projects[1].Visibility)
-		assert.Equal(t, "private", res3.Projects[2].Visibility)
+		assert.Equal(t, 2, len(res3.Projects))
+		assert.Equal(t, "public", res3.Projects[0].Visibility)
+		assert.Equal(t, "private", res3.Projects[1].Visibility)
 
-		publicProjectId = res3.Projects[1].Id
+		publicProjectId = res3.Projects[0].Id
 
 	})
 
@@ -143,7 +139,7 @@ func TestInternalAPI_public(t *testing.T) {
 
 		// test DeleteProject
 		res6, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
-			ProjectId: publicProjectId,
+			ProjectId: publicProjectId, // public delete => private only
 		})
 		assert.Nil(t, err)
 		assert.NotNil(t, res6)
