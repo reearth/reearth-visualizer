@@ -41,7 +41,6 @@ export class ProjectScreenPage {
   );
   // right sidebar
 
-  // Updated selectors using data-testid attributes
   addNewStyleButton: Locator = this.page.getByTestId("icon-button-plus");
   assignNewStyleButton: Locator = this.page.getByTestId("icon-button-return");
 
@@ -70,11 +69,9 @@ export class ProjectScreenPage {
     "data-source-wrapper"
   );
 
-  // Sketch Tools Panel
   sketchToolsPanel: Locator = this.page.getByTestId("editor-map-tools-panel");
   sketchToolsWrapper: Locator = this.page.getByTestId("sketch-tools-wrapper");
 
-  // Draw feature buttons
   drawFeatureButtons: Locator = this.page.getByTestId(
     "sketch-feature-buttons-draw"
   );
@@ -87,7 +84,6 @@ export class ProjectScreenPage {
   cubeButton: Locator = this.page.getByTestId("icon-button-cube");
   extrudeButton: Locator = this.page.getByTestId("icon-button-extrude");
 
-  // Edit feature buttons - updated to use data-testid
   sketchToolsDivider: Locator = this.page.getByTestId("sketch-tools-divider");
   editFeatureButtons: Locator = this.page.getByTestId(
     "sketch-feature-buttons-edit"
@@ -95,7 +91,6 @@ export class ProjectScreenPage {
   editButton: Locator = this.page.getByTestId("icon-button-pencilLine");
   deleteButton: Locator = this.page.getByTestId("icon-button-trash");
 
-  // Additional selectors
   editorWrapper: Locator = this.page.getByTestId("editor-wrapper");
   editorMapLeftArea: Locator = this.page.getByTestId("editor-map-left-area");
   layersPanelWrapper: Locator = this.page.getByTestId("layers-panel-wrapper");
