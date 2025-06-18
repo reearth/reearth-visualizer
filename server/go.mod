@@ -1,19 +1,19 @@
 module github.com/reearth/reearth/server
 
 require (
-	cloud.google.com/go/profiler v0.4.2
-	cloud.google.com/go/storage v1.49.0
-	github.com/99designs/gqlgen v0.17.73
-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.27.0
-	github.com/avast/retry-go/v4 v4.6.0
-	github.com/aws/aws-sdk-go-v2 v1.36.3
-	github.com/aws/aws-sdk-go-v2/config v1.29.14
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.74.1
+	cloud.google.com/go/profiler v0.4.3
+	cloud.google.com/go/storage v1.55.0
+	github.com/99designs/gqlgen v0.17.75
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.29.0
+	github.com/avast/retry-go/v4 v4.6.1
+	github.com/aws/aws-sdk-go-v2 v1.36.5
+	github.com/aws/aws-sdk-go-v2/config v1.29.17
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.81.0
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/gavv/httpexpect/v2 v2.16.0
+	github.com/gavv/httpexpect/v2 v2.17.0
 	github.com/globusdigital/deep-copy v0.5.4
-	github.com/go-faker/faker/v4 v4.6.0
-	github.com/goccy/go-yaml v1.17.1
+	github.com/go-faker/faker/v4 v4.6.1
+	github.com/goccy/go-yaml v1.18.0
 	github.com/google/uuid v1.6.0
 	github.com/hellofresh/health-go/v5 v5.5.4
 	github.com/iancoleman/strcase v0.3.0
@@ -24,33 +24,33 @@ require (
 	github.com/k0kubun/pp/v3 v3.4.1
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kennygrant/sanitize v1.2.4
-	github.com/labstack/echo/v4 v4.13.3
+	github.com/labstack/echo/v4 v4.13.4
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
-	github.com/ravilushqa/otelgqlgen v0.17.0
+	github.com/ravilushqa/otelgqlgen v0.18.0
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
 	github.com/reearth/reearthx v0.0.0-20250611035436-860a38897750
-	github.com/samber/lo v1.50.0
+	github.com/samber/lo v1.51.0
 	github.com/spf13/afero v1.14.0
 	github.com/square/mongo-lock v0.0.0-20201208161834-4db518ed7fb2
 	github.com/stretchr/testify v1.10.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	github.com/vektah/dataloaden v0.3.0
-	github.com/vektah/gqlparser/v2 v2.5.27
-	github.com/zitadel/oidc v1.13.5
-	go.mongodb.org/mongo-driver v1.17.3
-	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.59.0
-	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.59.0
-	go.opentelemetry.io/otel v1.35.0
-	go.opentelemetry.io/otel/sdk v1.35.0
+	github.com/vektah/gqlparser/v2 v2.5.28
+	github.com/zitadel/oidc/v3 v3.39.0
+	go.mongodb.org/mongo-driver/v2 v2.2.2
+	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.61.0
+	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.61.0
+	go.opentelemetry.io/otel v1.36.0
+	go.opentelemetry.io/otel/sdk v1.36.0
 	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a
-	golang.org/x/net v0.40.0
-	golang.org/x/oauth2 v0.25.0
-	golang.org/x/text v0.25.0
-	golang.org/x/tools v0.33.0
-	google.golang.org/api v0.219.0
-	google.golang.org/grpc v1.70.0
+	golang.org/x/net v0.41.0
+	golang.org/x/oauth2 v0.30.0
+	golang.org/x/text v0.26.0
+	golang.org/x/tools v0.34.0
+	google.golang.org/api v0.238.0
+	google.golang.org/grpc v1.73.0
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gopkg.in/square/go-jose.v2 v2.6.0
@@ -188,6 +188,6 @@ require (
 	moul.io/http2curl/v2 v2.3.0 // indirect
 )
 
-go 1.24
+go 1.24.4
 
-toolchain go1.24.2
+toolchain go1.24.4
