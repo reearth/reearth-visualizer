@@ -6,7 +6,6 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
-
 import ListItem from "./ListItem";
 
 const LIST_FIELD_DRAG_HANDLE_CLASS_NAME =
@@ -112,8 +111,12 @@ const ListField: FC<ListFieldProps> = ({
   }, []);
 
   return (
-    <CommonField title={title} description={description}>
-      <FieldContainer>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="listfield-commonfield"
+    >
+      <FieldContainer data-testid="listfield-container">
         <Button
           onClick={onItemAdd}
           icon="plus"
@@ -121,13 +124,15 @@ const ListField: FC<ListFieldProps> = ({
           title={t("New Item")}
           size="small"
           extendWidth
+          data-testid="listfield-add-btn"
         />
-        <FieldWrapper>
+        <FieldWrapper data-testid="listfield-listwrapper">
           <DragAndDropList
             items={DraggableListItems}
             handleClassName={LIST_FIELD_DRAG_HANDLE_CLASS_NAME}
             onMoveStart={handleMoveStart}
             onMoveEnd={handleMoveEnd}
+            data-testid="listfield-dragdroplist"
           />
         </FieldWrapper>
       </FieldContainer>

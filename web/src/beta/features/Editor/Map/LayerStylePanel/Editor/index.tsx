@@ -47,6 +47,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
               <Button
                 onClick={handleCancelLayerStyle}
                 size="small"
+                data-testid="cancel-layer-style-button"
                 icon="close"
                 extendWidth
               />
@@ -54,6 +55,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
                 extendWidth
                 icon="check"
                 size="small"
+                data-testid="save-layer-style-button"
                 appearance="primary"
                 onClick={handleSave}
               />
@@ -62,6 +64,7 @@ const LayerStyleEditor: FC<LayerStyleEditorProps> = ({
             <Button
               onClick={handleEditLayerStyle}
               size="small"
+              data-testid="edit-layer-style-button"
               icon="pencilSimple"
               title={t("Edit")}
               extendWidth

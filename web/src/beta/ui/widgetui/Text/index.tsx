@@ -58,6 +58,7 @@ const Text: React.FC<Props> = ({
 
   return Typography ? (
     <Typography
+      data-testid="text-component"
       className={className}
       style={{
         userSelect: "none",

@@ -38,12 +38,17 @@ const InputField: FC<InputFieldProps> = ({
   };
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="inputfield-commonfield"
+    >
       <TextInput
         {...props}
         value={internalValue}
         onChange={handleChange}
         onBlur={handleChangeComplete}
+        data-testid="inputfield-input"
       />
     </CommonField>
   );

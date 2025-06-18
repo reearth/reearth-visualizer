@@ -31,13 +31,14 @@ const ListItem: FC<ListItemProps> = ({
   );
 
   return (
-    <Wrapper>
+    <Wrapper data-testid={`installed-widget-list-item-${item.id}`}>
       <EntryItem
         title={<TitleWrapper>{item.title}</TitleWrapper>}
         optionsMenu={optionsMenu}
         highlighted={selected}
         optionsMenuWidth={100}
         onClick={() => onItemSelect?.(item.id)}
+        data-testid={`entry-item-${item.id}`}
       />
     </Wrapper>
   );
