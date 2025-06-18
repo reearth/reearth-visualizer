@@ -91,16 +91,17 @@ test.describe("Project Management", () => {
     await projectScreen.verifyLayerAdded(layerName);
     await projectScreen.clickLayer(layerName);
     await projectScreen.addNewLayerStyle();
-    const responsePromise = page.waitForResponse(
-      (response) =>
-        response.url().includes("/graphql") &&
-        (response.request().postData()?.includes("addGeoJSONFeature") ?? false)
-    );
 
-    await projectScreen.addPointsOnMap(110, 198);
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (r) =>
+          r.url().includes("/graphql") &&
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false)
+      ),
+      projectScreen.addPointsOnMap(110, 198)
+    ]);
 
-    // Wait for and verify the GraphQL response
-    const response = await responsePromise;
+    // Verify the GraphQL response
     const responseBody = await response.json();
     expect(responseBody).toMatchObject({
       data: {

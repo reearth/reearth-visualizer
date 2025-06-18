@@ -41,14 +41,9 @@ export class ProjectScreenPage {
   );
   // right sidebar
 
-  // addNewStyleButton: Locator = this.page.locator(
-  //   'button:has([data-testid="icon-plus"])'
-  // );
-  addNewStyleButton: Locator = this.page.locator(".css-1pek4b9").first();
+  addNewStyleButton: Locator = this.page.getByTestId("icon-button-plus");
+  assignNewStyleButton: Locator = this.page.getByTestId("icon-button-return");
 
-  assignNewStyleButton: Locator = this.page.locator(
-    "div:nth-child(2) > .css-1pek4b9"
-  );
   emptyState: Locator = this.page.getByRole("menuitem", { name: "Empty" });
   defaultState: Locator = this.page.getByRole("menuitem", { name: "Default" });
   professionalState: Locator = this.page.getByRole("menuitem", {
@@ -74,11 +69,9 @@ export class ProjectScreenPage {
     "data-source-wrapper"
   );
 
-  // Sketch Tools Panel
   sketchToolsPanel: Locator = this.page.getByTestId("editor-map-tools-panel");
   sketchToolsWrapper: Locator = this.page.getByTestId("sketch-tools-wrapper");
 
-  // Draw feature buttons
   drawFeatureButtons: Locator = this.page.getByTestId(
     "sketch-feature-buttons-draw"
   );
@@ -91,16 +84,21 @@ export class ProjectScreenPage {
   cubeButton: Locator = this.page.getByTestId("icon-button-cube");
   extrudeButton: Locator = this.page.getByTestId("icon-button-extrude");
 
-  // Edit feature buttons
   sketchToolsDivider: Locator = this.page.getByTestId("sketch-tools-divider");
   editFeatureButtons: Locator = this.page.getByTestId(
     "sketch-feature-buttons-edit"
   );
-  editButton: Locator = this.page.locator(
-    'button:has([data-testid="icon-pencilLine"])'
-  );
-  deleteButton: Locator = this.page.locator(
-    'button:has([data-testid="icon-trash"])'
+  editButton: Locator = this.page.getByTestId("icon-button-pencilLine");
+  deleteButton: Locator = this.page.getByTestId("icon-button-trash");
+
+  editorWrapper: Locator = this.page.getByTestId("editor-wrapper");
+  editorMapLeftArea: Locator = this.page.getByTestId("editor-map-left-area");
+  layersPanelWrapper: Locator = this.page.getByTestId("layers-panel-wrapper");
+  layersContainer: Locator = this.page.getByTestId("layers-container");
+  stylePanelWrapper: Locator = this.page.getByTestId("style-panel-wrapper");
+  nodeListScrollArea: Locator = this.page.getByTestId("node-list-scroll-area");
+  editLayerStyleButton: Locator = this.page.getByTestId(
+    "edit-layer-style-button"
   );
 
   async createNewLayer(layerName: string) {
@@ -137,9 +135,9 @@ export class ProjectScreenPage {
     await this.addNewStyleButton.click();
     await expect(this.page.getByText("Empty")).toBeVisible();
     await this.basicGeometryState.hover();
-    await this.pointsState.first().isVisible();
-    await this.pointWithLabelState.first().isVisible();
-    await this.polylineState.first().isVisible();
+    await expect(this.pointsState.first()).toBeVisible();
+    await expect(this.pointWithLabelState.first()).toBeVisible();
+    await expect(this.polylineState.first()).toBeVisible();
     await this.page.waitForTimeout(1000);
     await this.pointsState.first().click();
     await this.assignNewStyleButton.click();

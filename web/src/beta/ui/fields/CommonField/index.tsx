@@ -5,6 +5,7 @@ import { FC, ReactNode } from "react";
 export interface CommonFieldProps {
   title?: string;
   description?: string;
+  dataTestId?: string;
 }
 
 const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({

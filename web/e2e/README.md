@@ -6,14 +6,24 @@ This project is a Playwright framework setup that follows the Page Object Design
 
 ```
 ├── pages
-│   │   └── homePage.ts        # Contains the HomePage class with methods specific to the home page
-│   ├── tests
-│   │   ├── homePage.test.ts   # Test cases for the HomePage
-│ └── utils         # Utility functions for the project
+│   ├── projectPage.ts
+│   ├── loginPage.ts
+│   └── dashboardPage.ts
+│   └── projectScreenPage.ts
+│   └── recycleBinPage.ts
+|
+├── tests
+│   ├── login.spec.ts      # Test cases for the LoginPage
+│   └── dashboardPage.spec.ts  # Test cases for the DashboardPage
+│   └── Projects.spec.ts   # Test cases for the ProjectScreenPage
+|
+├── test-Data
+│   ├── testData.ts        # contains test data used in the tests
+|
 ├── playwright.config.ts        # Configuration file for Playwright
 ├── package.json                # npm configuration file with dependencies and scripts
-├── tsconfig.json              # TypeScript configuration file
-└── README.md                  # Project documentation
+├── tsconfig.json               # TypeScript configuration file
+└── README.md                   # Project documentation
 ```
 
 ## Setup Instructions
@@ -21,7 +31,7 @@ This project is a Playwright framework setup that follows the Page Object Design
 1. **Clone the repository:**
 
    ```
-   cd playwright-project
+   cd reearth-visualizer/web/e2e
    ```
 
 2. **Install dependencies:**
@@ -30,7 +40,18 @@ This project is a Playwright framework setup that follows the Page Object Design
    npm install
    ```
 
-3. **Run tests:**
+3. **Set up the `.env` file:**
+
+   Create a `.env` file in the root of the `e2e` folder and add the following variables:
+
+   ```
+   REEARTH_WEB_E2E_BASEURL=http://localhost:3000 OR DEV URL
+   REEARTH_WEB_E2E_ACCOUNT=your_visualizer_account
+   REEARTH_WEB_E2E_ACCOUNT_PASSWORD=your_visualizer_password
+   ```
+
+4. **Run tests:**
+
    ```
    npx playwright test
    ```
