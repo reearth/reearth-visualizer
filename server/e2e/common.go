@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
@@ -39,6 +40,16 @@ var (
 		Origins: []string{"https://example.com"},
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
+		},
+	}
+
+	policyConfig = &config.Config{
+		Origins: []string{"https://example.com"},
+		AuthSrv: config.AuthSrvConfig{
+			Disabled: true,
+		},
+		Policy: config.PolicyConfig{
+			Default: &policyID,
 		},
 	}
 
@@ -114,14 +125,12 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 	}), gateways, accountGateway
 }
 
-func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container, *accountgateway.Container) {
+func StartGQLServerWithRepos(t *testing.T, ctx context.Context, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container, *accountgateway.Container) {
 	t.Helper()
 
 	if testing.Short() {
 		t.Skip("skipping test in short mode.")
 	}
-
-	ctx := context.Background()
 
 	srv, gateways, accountGateway := initServerWithAccountGateway(cfg, repos, ctx)
 
@@ -167,33 +176,37 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
 }
 
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container, context.Context) {
+	ctx := context.Background()
 	repos, _ := initRepos(t, true, seeder)
-	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
-	return e, repos.AccountRepos()
+	e, _, _ := StartGQLServerWithRepos(t, ctx, disabledAuthConfig, repos)
+	return e, repos.AccountRepos(), ctx
 }
 
-func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, context.Context, *repo.Container, *gateway.Container) {
+	ctx := context.Background()
 	repos, _ := initRepos(t, useMongo, seeder)
-	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
-	return e, repos, gateways
+	e, gateways, _ := StartGQLServerWithRepos(t, ctx, cfg, repos)
+	return e, ctx, repos, gateways
 }
 
 func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	return startServer(t, disabledAuthConfig, true, seeder)
+	e, _, r, g := startServer(t, disabledAuthConfig, true, seeder)
+	return e, r, g
 }
 
 func GRPCServer(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	return startServer(t, internalApiConfig, true, seeder)
+	e, _, r, g := startServer(t, internalApiConfig, true, seeder)
+	return e, r, g
 }
 
 func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
-	e, _, _ := startServer(t, disabledAuthConfig, true, seeder)
+	e, _, _, _ := startServer(t, disabledAuthConfig, true, seeder)
 	return e
 }
 
 func ServerPingTest(t *testing.T) *httpexpect.Expect {
-	e, _, _ := startServer(t, disabledAuthConfig, false, nil)
+	e, _, _, _ := startServer(t, disabledAuthConfig, false, nil)
 	return e
 }
 
@@ -206,17 +219,25 @@ func ServerMockTest(t *testing.T) *httpexpect.Expect {
 			Disabled: true,
 		},
 	}
-	e, _, _ := startServer(t, c, true, nil)
+	e, _, _, _ := startServer(t, c, true, nil)
 	return e
 }
 
-func ServerLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
-	e, _, _ := startServer(t, disabledAuthConfig, true,
+func ServerWithLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
+	e, _, _, _ := startServer(t, disabledAuthConfig, true,
 		func(ctx context.Context, r *repo.Container, f gateway.File) error {
 			return baseSeederWithLang(ctx, r, f, lang)
 		},
 	)
 	return e
+}
+
+func ServerWithPolicy(t *testing.T, opts policy.Option) (*httpexpect.Expect, context.Context, *repo.Container, *gateway.Container) {
+	return startServer(t, policyConfig, true,
+		func(ctx context.Context, r *repo.Container, f gateway.File) error {
+			return baseSeederWithPolicy(ctx, r, f, opts)
+		},
+	)
 }
 
 type GraphQLRequest struct {

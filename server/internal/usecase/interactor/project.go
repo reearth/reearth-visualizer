@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/url"
 	"path"
+	"regexp"
 	"strings"
 	"time"
 
@@ -20,7 +21,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/alias"
-	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -431,6 +431,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	}
 
 	prevAlias := prj.Alias()
+	prevStatus := prj.PublishmentStatus()
 
 	// if ProjectID is not specified
 	if params.Alias == nil || *params.Alias == "" {
@@ -445,8 +446,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
 			// error 's-' prefix
 			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
-		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
+		} else if id, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixProject); found {
 			// only allow self ID
 			if id != sce.ID().String() {
 				// error 'c-' prefix
@@ -454,7 +454,18 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 			}
 		}
 
+		if newAlias != prevAlias {
+			matched, _ := regexp.MatchString(`^(c-|s-)`, newAlias)
+			if !matched {
+				// check count custom domains
+				if err := i.checkCustomDomainPolicy(ctx, prj, op); err != nil {
+					return nil, err
+				}
+			}
+		}
+
 		prj.UpdateAlias(newAlias)
+
 	}
 
 	if prevAlias == prj.Alias() || sce.ID().String() == prj.Alias() || sce.DefaultAlias() == prj.Alias() {
@@ -478,9 +489,12 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	// publish
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-		if err := i.uploadPublishScene(ctx, prj, op); err != nil {
+		// changed private to public/limited
+		new := prevStatus == project.PublishmentStatusPrivate
+		if err := i.uploadPublishScene(ctx, prj, new, op); err != nil {
 			return nil, err
 		}
+
 		prj.SetPublishedAt(time.Now())
 	}
 
@@ -500,42 +514,78 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	return prj, nil
 }
 
-func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) (*scene.Scene, error) {
+func (i *Project) checkCustomDomainPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) error {
+	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
+	if err != nil {
+		return err
+	}
+
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return err
+		}
+
+		count, err := i.projectRepo.CountCustomDomainByWorkspace(ctx, prj.Workspace())
+		if err != nil {
+			return err
+		}
+
+		if err := p.EnforceCustomDomainCount(count + 1); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, new bool, op *usecase.Operator) (*scene.Scene, error) {
 
 	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
 	if err != nil {
 		return nil, err
 	}
 
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
+	if new {
+		if policyID := op.Policy(ws.Policy()); policyID != nil {
+			p, err := i.policyRepo.FindByID(ctx, *policyID)
+			if err != nil {
+				return nil, err
+			}
 
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
+			scCont, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+			if err != nil {
+				return nil, err
+			}
 
-		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
+			ws2, err := accountdomain.WorkspaceIDFrom(ws.ID().String())
+			if err != nil {
+				return nil, err
+			}
 
-		// newrly published
-		if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-			projectCount += 1
-		}
+			slist, err := i.sceneRepo.FindByWorkspace(ctx, ws2)
+			if err != nil {
+				return nil, err
+			}
 
-		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
-			return nil, err
+			stCount, err := i.storytellingRepo.CountPublicByScenes(ctx, slist)
+			if err != nil {
+				return nil, err
+			}
+
+			if err := p.EnforcePublishableCount(scCont + stCount + 1); err != nil {
+				return nil, err
+			}
 		}
 	}
 
 	return i.sceneRepo.FindByProject(ctx, prj.ID())
 }
 
-func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, op *usecase.Operator) error {
+func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, new bool, op *usecase.Operator) error {
 
 	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, p, op)
+	s, err := i.checkPublishPolicy(ctx, p, new, op)
 	if err != nil {
 		return err
 	}
@@ -715,7 +765,7 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	return nil
 }
 
-func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
+func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]any, prj *project.Project, op *usecase.Operator) error {
 
 	assetNames := make(map[string]string)
 	if project, ok := data["project"].(map[string]interface{}); ok {
@@ -753,9 +803,22 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	if _, err := zipFile.Seek(0, 0); err != nil {
 		return err
 	}
-	// 500MB
-	if err := file.FileSizeCheck(500, zipFile); err != nil {
+
+	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
+	if err != nil {
 		return err
+	}
+
+	if policyID := op.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return err
+		}
+
+		if err := p.EnforceMaximumProjectExportSize(zipFile); err != nil {
+			return err
+		}
+
 	}
 
 	defer func() {
@@ -877,13 +940,18 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return nil, err
 	}
 
+	visibility := "private"
+	if input.Visibility != nil {
+		visibility = *input.Visibility
+	}
+
 	if policyID := operator.Policy(ws.Policy()); policyID != nil {
 		p, err := i.policyRepo.FindByID(txCtx, *policyID)
 		if err != nil {
 			return nil, err
 		}
 
-		projectCount, err := i.projectRepo.CountByWorkspace(txCtx, ws.ID())
+		projectCount, err := i.projectRepo.CountByWorkspace(ctx, ws.ID())
 		if err != nil {
 			return nil, err
 		}
@@ -891,6 +959,13 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
 			return nil, err
 		}
+
+		if visibility == "private" {
+			if err := p.EnforcePrivateProject(true); err != nil {
+				return nil, err
+			}
+		}
+
 	}
 
 	var prjID idx.ID[id.Project]
@@ -947,11 +1022,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		prj = prj.Name(*input.Name)
 	}
 
-	if input.Visibility != nil {
-		prj = prj.Visibility(*input.Visibility)
-	} else {
-		prj = prj.Visibility("private")
-	}
+	prj = prj.Visibility(visibility)
 
 	proj, err := prj.Build()
 	if err != nil {

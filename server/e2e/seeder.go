@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -29,6 +30,7 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/util"
 	"golang.org/x/text/language"
 )
@@ -40,6 +42,8 @@ var (
 	uEmail = "e2e@e2e.com"
 	uName  = "e2e"
 	wID    = accountdomain.NewWorkspaceID()
+
+	policyID = policy.ID("e2e-test-policy")
 
 	// ---------------- user2
 	uID2    = user.NewID()
@@ -53,12 +57,11 @@ var (
 	uEmail3 = "e4e@e4e.com"
 	uName3  = "e4e"
 
-	pID    = id.NewProjectID()
-	pName  = "p1"
-	pDesc  = pName + " desc"
-	pAlias = "PROJECT_ALIAS"
-	sID    = id.NewSceneID()
-	now    = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
+	pID   = id.NewProjectID()
+	pName = "p1"
+	pDesc = pName + " desc"
+	sID   = id.NewSceneID()
+	now   = time.Date(2022, time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	nlsLayerId = id.NewNLSLayerID()
 	storyID    = id.NewStoryID()
@@ -66,43 +69,92 @@ var (
 	blockID    = id.NewBlockID()
 )
 
-func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
-	defer util.MockNow(now)()
+type WorkspaceUserOption struct {
+	wID    idx.ID[accountdomain.Workspace]
+	uID    idx.ID[accountdomain.User]
+	uName  string
+	uEmail string
+}
+
+func createUserAndWorkspace(ctx context.Context, r *repo.Container, lang language.Tag, po *workspace.PolicyID, o WorkspaceUserOption) (*workspace.Workspace, *user.User, error) {
+
+	auth := user.ReearthSub(o.uID.String())
 
 	metadata := user.NewMetadata()
+	metadata.SetLang(lang)
+	metadata.SetTheme(user.ThemeDark)
+
 	u := user.New().
-		ID(uID).
-		Workspace(wID).
-		Name(uName).
-		Email(uEmail).
+		ID(o.uID).
+		Workspace(o.wID).
+		Name(o.uName).
+		Email(o.uEmail).
+		Auths([]user.Auth{*auth}).
 		Metadata(metadata).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
-		return err
+		return nil, nil, err
 	}
-	u2 := user.New().
-		ID(uID2).
-		Workspace(wID2).
-		Name(uName2).
-		Email(uEmail2).
-		Metadata(metadata).
+
+	m := workspace.Member{
+		Role: workspace.RoleOwner,
+	}
+
+	wMetadata := workspace.NewMetadata()
+	w := workspace.New().ID(o.wID).
+		Name(o.uName).
+		Personal(false).
+		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Metadata(wMetadata).
+		Policy(po).
 		MustBuild()
-	if err := r.User.Save(ctx, u2); err != nil {
+	if err := r.Workspace.Save(ctx, w); err != nil {
+		return nil, nil, err
+	}
+
+	return w, u, nil
+}
+
+func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
+	defer util.MockNow(now)()
+
+	w, u, err := createUserAndWorkspace(ctx, r, language.English, nil,
+		WorkspaceUserOption{
+			wID:    wID,
+			uID:    uID,
+			uName:  uName,
+			uEmail: uEmail,
+		},
+	)
+	if err != nil {
 		return err
 	}
 
-	u3 := user.New().
-		ID(uID3).
-		Workspace(wID3).
-		Name(uName3).
-		Email(uEmail3).
-		Metadata(metadata).
-		MustBuild()
-	if err := r.User.Save(ctx, u3); err != nil {
+	if err := baseSetup(ctx, r, w, u, f); err != nil {
 		return err
 	}
 
-	if err := baseSetup(ctx, r, u, f); err != nil {
+	_, _, err = createUserAndWorkspace(ctx, r, language.English, nil,
+		WorkspaceUserOption{
+			wID:    wID2,
+			uID:    uID2,
+			uName:  uName2,
+			uEmail: uEmail2,
+		},
+	)
+	if err != nil {
+		return err
+	}
+
+	_, u3, err := createUserAndWorkspace(ctx, r, language.English, nil,
+		WorkspaceUserOption{
+			wID:    wID,
+			uID:    uID,
+			uName:  uName,
+			uEmail: uEmail,
+		},
+	)
+	if err != nil {
 		return err
 	}
 
@@ -150,35 +202,43 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, lang language.Tag) error {
 	defer util.MockNow(now)()
 
-	metadata := user.NewMetadata()
-	metadata.SetLang(lang)
-
-	u := user.New().ID(uID).
-		Workspace(wID).
-		Name(uName).
-		Email(uEmail).
-		Metadata(metadata).
-		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
+	w, u, err := createUserAndWorkspace(ctx, r, lang, nil,
+		WorkspaceUserOption{
+			wID:    wID,
+			uID:    uID,
+			uName:  uName,
+			uEmail: uEmail,
+		},
+	)
+	if err != nil {
 		return err
 	}
-	return baseSetup(ctx, r, u, f)
+
+	return baseSetup(ctx, r, w, u, f)
 }
 
-func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.File) error {
-	m := workspace.Member{
-		Role: workspace.RoleOwner,
-	}
-	wMetadata := workspace.NewMetadata()
-	w := workspace.New().ID(wID).
-		Name("e2e").
-		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
-		Metadata(wMetadata).
-		MustBuild()
-	if err := r.Workspace.Save(ctx, w); err != nil {
+func baseSeederWithPolicy(ctx context.Context, r *repo.Container, f gateway.File, opts policy.Option) error {
+
+	po := policy.New(opts)
+	if err := r.Policy.Save(ctx, po); err != nil {
 		return err
 	}
+
+	w, u, err := createUserAndWorkspace(ctx, r, language.English, opts.ID.Ref(),
+		WorkspaceUserOption{
+			wID:    wID,
+			uID:    uID,
+			uName:  uName,
+			uEmail: uEmail,
+		},
+	)
+	if err != nil {
+		return err
+	}
+	return baseSetup(ctx, r, w, u, f)
+}
+
+func baseSetup(ctx context.Context, r *repo.Container, w *workspace.Workspace, u *user.User, f gateway.File) error {
 
 	url, err := addAsset("test.png", ctx, r, f)
 	if err != nil {
@@ -190,7 +250,7 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		Description(pDesc).
 		ImageURL(url).
 		Workspace(w.ID()).
-		Alias(pAlias).
+		Alias("c-" + sID.String()).
 		Visualizer(visualizer.VisualizerCesiumBeta).
 		Visibility("private").
 		CoreSupport(true).
@@ -265,17 +325,19 @@ func addAsset(path string, ctx context.Context, r *repo.Container, gf gateway.Fi
 
 func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 	defer util.MockNow(now)()
-	metadata := user.NewMetadata()
-	u := user.New().ID(uID).
-		Workspace(wID).
-		Name(uName).
-		Email(uEmail).
-		Metadata(metadata).
-		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
+
+	w, u, err := createUserAndWorkspace(ctx, r, language.English, nil,
+		WorkspaceUserOption{
+			wID:    wID,
+			uID:    uID,
+			uName:  uName,
+			uEmail: uEmail,
+		})
+	if err != nil {
 		return err
 	}
-	if err := baseSetup(ctx, r, u, f); err != nil {
+
+	if err := baseSetup(ctx, r, w, u, f); err != nil {
 		return err
 	}
 	return fullSetup(ctx, r)

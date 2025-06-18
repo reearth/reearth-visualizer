@@ -839,6 +839,16 @@ func publishProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[
 	return res.Path("$.data.publishProject.project")
 }
 
+func publishProject2(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "PublishProject",
+		Query:         PublishProjectMutation,
+		Variables:     variables,
+	}
+	res := Request(e, u.String(), requestBody)
+	return res
+}
+
 func publishProjectErrors(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishProject",

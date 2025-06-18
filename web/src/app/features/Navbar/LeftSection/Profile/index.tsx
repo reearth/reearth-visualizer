@@ -2,7 +2,6 @@ import useWorkspaceManagementMenu from "@reearth/app/hooks/useWorkspaceManagemen
 import { PopupMenu, PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { Workspace } from "../../types";
 
@@ -28,13 +27,6 @@ const HeaderProfile: React.FC<Props> = ({
     },
     [onWorkspaceChange]
   );
-
-  const navigate = useNavigate();
-  const handleAssetManager = useCallback(() => {
-    if (currentWorkspace?.id) {
-      navigate(`/dashboard/${currentWorkspace.id}/asset`);
-    }
-  }, [currentWorkspace?.id, navigate]);
 
   const { workspaceManagementMenu } = useWorkspaceManagementMenu({
     workspaceId: currentWorkspace?.id
@@ -68,17 +60,10 @@ const HeaderProfile: React.FC<Props> = ({
         hasBorderBottom: true,
         onClick: onSignOut,
         title: t("Log out")
-      },
-      {
-        icon: "file",
-        id: "assetManagement",
-        onClick: handleAssetManager,
-        title: t("Asset management")
       }
     ],
     [
       currentWorkspace?.id,
-      handleAssetManager,
       handleWorkspaceChange,
       onSignOut,
       t,

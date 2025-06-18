@@ -29,6 +29,7 @@ type Project interface {
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	CheckAliasUnique(context.Context, string) error
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
+	CountCustomDomainByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error
 	Remove(context.Context, id.ProjectID) error
