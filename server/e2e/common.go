@@ -114,7 +114,7 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 	}), gateways, accountGateway
 }
 
-func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container, *accountgateway.Container) {
+func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container, *accountgateway.Container, context.Context) {
 	t.Helper()
 
 	if testing.Short() {
@@ -164,18 +164,18 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 		}
 	})
 
-	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
+	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway, ctx
 }
 
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container, context.Context) {
 	repos, _ := initRepos(t, true, seeder)
-	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
-	return e, repos.AccountRepos()
+	e, _, _, ctx := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
+	return e, repos.AccountRepos(), ctx
 }
 
 func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
 	repos, _ := initRepos(t, useMongo, seeder)
-	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
+	e, gateways, _, _ := StartGQLServerWithRepos(t, cfg, repos)
 	return e, repos, gateways
 }
 
