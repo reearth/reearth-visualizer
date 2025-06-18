@@ -2,6 +2,8 @@ package internalapi
 
 import (
 	"context"
+	"fmt"
+	"net/url"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/internalapi/internalapimodel"
@@ -147,21 +149,52 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 	}, nil
 }
 
-func (s server) UpdateProjectVisibility(ctx context.Context, req *pb.UpdateProjectVisibilityRequest) (*pb.UpdateProjectVisibilityResponse, error) {
+func (s server) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest) (*pb.UpdateProjectResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
 	pId, err := id.ProjectIDFrom(req.ProjectId)
-
 	if err != nil {
 		return nil, err
 	}
 
-	p, err := uc.Project.UpdateVisibility(ctx, pId, *req.Visibility, op)
+	var imageURL *url.URL
+	if req.ImageUrl != nil {
+		parsedURL, err := url.Parse(*req.ImageUrl)
+		if err != nil {
+			return nil, fmt.Errorf("invalid image_url: %w", err)
+		}
+		imageURL = parsedURL
+	}
+
+	p, err := uc.Project.Update(ctx, interfaces.UpdateProjectParam{
+		ID:             pId,
+		Name:           req.Name,
+		Description:    req.Description,
+		Archived:       req.Archived,
+		ImageURL:       imageURL,
+		DeleteImageURL: req.DeleteImageUrl != nil && *req.DeleteImageUrl,
+		SceneID:        id.SceneIDFromRef(req.SceneId),
+		Starred:        req.Starred,
+		Deleted:        req.Deleted,
+		Visibility:     req.Visibility,
+
+		// publishment
+		PublicTitle:       req.PublicTitle,
+		PublicDescription: req.PublicDescription,
+		PublicImage:       req.PublicImage,
+		PublicNoIndex:     req.PublicNoIndex,
+		DeletePublicImage: req.DeletePublicImage != nil && *req.DeletePublicImage,
+		IsBasicAuthActive: req.IsBasicAuthActive,
+		BasicAuthUsername: req.BasicAuthUsername,
+		BasicAuthPassword: req.BasicAuthPassword,
+		EnableGa:          req.EnableGa,
+		TrackingID:        req.TrackingId,
+	}, op)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.UpdateProjectVisibilityResponse{
+	return &pb.UpdateProjectResponse{
 		Project: internalapimodel.ToProject(p),
 	}, nil
 

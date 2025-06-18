@@ -303,20 +303,82 @@ func TestInternalAPI_update(t *testing.T) {
 				CoreSupport: lo.ToPtr(true),
 				Visibility:  lo.ToPtr("public"),
 			})
-		v := "private"
-		res, err := client.UpdateProjectVisibility(ctx, &pb.UpdateProjectVisibilityRequest{
-			ProjectId:  pid1.String(),
-			Visibility: &v,
+
+		name := "Updated Project Name"
+		desc := "Updated Description"
+		archived := true
+		imageUrl := "https://example.com/image.png"
+		starred := true
+		deleted := false
+		visibility := "private"
+		publicTitle := "Public Title"
+		publicDescription := "Public Description"
+		publicImage := "https://example.com/public_image.png"
+		publicNoIndex := true
+		isBasicAuthActive := true
+		basicAuthUsername := "user"
+		basicAuthPassword := "pass"
+		enableGa := true
+		trackingId := "GA-XXXX"
+
+		res, err := client.UpdateProject(ctx, &pb.UpdateProjectRequest{
+			ProjectId:         pid1.String(),
+			Name:              &name,
+			Description:       &desc,
+			Archived:          &archived,
+			ImageUrl:          &imageUrl,
+			Starred:           &starred,
+			Deleted:           &deleted,
+			Visibility:        &visibility,
+			PublicTitle:       &publicTitle,
+			PublicDescription: &publicDescription,
+			PublicImage:       &publicImage,
+			PublicNoIndex:     &publicNoIndex,
+			IsBasicAuthActive: &isBasicAuthActive,
+			BasicAuthUsername: &basicAuthUsername,
+			BasicAuthPassword: &basicAuthPassword,
+			EnableGa:          &enableGa,
+			TrackingId:        &trackingId,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, v, res.Project.Visibility)
+		assert.Equal(t, visibility, res.Project.Visibility)
+		assert.Equal(t, name, res.Project.Name)
+		assert.Equal(t, desc, res.Project.Description)
+		assert.Equal(t, archived, res.Project.IsArchived)
+		assert.Equal(t, imageUrl, *res.Project.ImageUrl)
+		assert.Equal(t, starred, res.Project.Starred)
+		assert.Equal(t, deleted, res.Project.IsDeleted)
+		assert.Equal(t, publicTitle, res.Project.PublicTitle)
+		assert.Equal(t, publicDescription, res.Project.PublicDescription)
+		assert.Equal(t, publicImage, res.Project.PublicImage)
+		assert.Equal(t, publicNoIndex, res.Project.PublicNoIndex)
+		assert.Equal(t, isBasicAuthActive, res.Project.IsBasicAuthActive)
+		assert.Equal(t, basicAuthUsername, res.Project.BasicAuthUsername)
+		assert.Equal(t, basicAuthPassword, res.Project.BasicAuthPassword)
+		assert.Equal(t, enableGa, res.Project.EnableGa)
+		assert.Equal(t, trackingId, res.Project.TrackingId)
+
+		deleteImageUrl := true
+		deletePublicImage := true
+		_, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
+			ProjectId:         pid1.String(),
+			DeleteImageUrl:    &deleteImageUrl,
+			DeletePublicImage: &deletePublicImage,
+		})
+		assert.Nil(t, err)
+		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
+			ProjectId: pid1.String(),
+		})
+		assert.Nil(t, err)
+		assert.Nil(t, res2.Project.ImageUrl)
+		assert.Equal(t, "", res2.Project.PublicImage)
 	})
 
 	// user2 call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		v := "public"
-		res, err := client.UpdateProjectVisibility(ctx, &pb.UpdateProjectVisibilityRequest{
+		res, err := client.UpdateProject(ctx, &pb.UpdateProjectRequest{
 			ProjectId:  pid1.String(),
 			Visibility: &v,
 		})
