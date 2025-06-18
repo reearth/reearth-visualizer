@@ -12,12 +12,11 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
   title,
   description,
   children,
-  dataTestId,
   ...props
 }) => {
   const theme = useTheme();
   return (
-    <Wrapper data-testid={dataTestId ?? "commonfield-wrapper"} {...props}>
+    <Wrapper data-testid="commonfield-wrapper" {...props}>
       {title && (
         <Typography size="body" data-testid="commonfield-title">
           {title}
