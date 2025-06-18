@@ -43,6 +43,11 @@ func (r *Policy) FindByIDs(ctx context.Context, ids []policy.ID) ([]*policy.Poli
 	})
 }
 
+func (r *Policy) Save(ctx context.Context, po *policy.Policy) error {
+	doc, id := mongodoc.NewPolicyDoc(po)
+	return r.client.SaveOne(ctx, id, doc)
+}
+
 func (r *Policy) findOne(ctx context.Context, filter interface{}) (*policy.Policy, error) {
 	c := mongodoc.NewPolicyConsumer()
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
