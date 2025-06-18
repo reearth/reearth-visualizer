@@ -41,8 +41,8 @@ export type Policy = {
   name: string;
   projectCount?: number | null;
   memberCount?: number | null;
-  publishedProjectCount?: number | null;
-  layerCount?: number | null;
+  publishableCount?: number | null;
+  nlsLayersCount?: number | null;
   assetStorageSize?: number | null;
   datasetSchemaCount?: number | null;
   datasetCount?: number | null;

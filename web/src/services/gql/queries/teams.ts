@@ -20,8 +20,8 @@ export const GetTeamsDocument = gql`
       name
       projectCount
       memberCount
-      publishedProjectCount
-      layerCount
+      publishableCount
+      nlsLayersCount
       assetStorageSize
     }
   }

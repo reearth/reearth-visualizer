@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -28,6 +29,8 @@ import (
 
 type Scene struct {
 	common
+	workspaceRepo      accountrepo.Workspace
+	policyRepo         repo.Policy
 	assetRepo          repo.Asset
 	sceneRepo          repo.Scene
 	propertyRepo       repo.Property
@@ -45,6 +48,8 @@ type Scene struct {
 
 func NewScene(r *repo.Container, g *gateway.Container) interfaces.Scene {
 	return &Scene{
+		workspaceRepo:      r.Workspace,
+		policyRepo:         r.Policy,
 		assetRepo:          r.Asset,
 		sceneRepo:          r.Scene,
 		propertyRepo:       r.Property,

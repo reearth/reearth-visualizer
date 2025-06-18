@@ -27,8 +27,8 @@ export const GET_ME = gql(`
           name
           projectCount
           memberCount
-          publishedProjectCount
-          layerCount
+          publishableCount
+          nlsLayersCount
           assetStorageSize
         }
       }
@@ -51,8 +51,8 @@ export const GET_ME = gql(`
           name
           projectCount
           memberCount
-          publishedProjectCount
-          layerCount
+          publishableCount
+          nlsLayersCount
           assetStorageSize
         }
       }

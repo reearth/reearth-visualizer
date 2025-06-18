@@ -157,6 +157,16 @@ func createProject2(e *httpexpect.Expect, u accountdomain.UserID, variables map[
 	return res.Path("$.data.createProject.project")
 }
 
+func createProject3(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables:     variables,
+	}
+	res := Request(e, u.String(), requestBody)
+	return res
+}
+
 const UpdateProjectMutation = `
 mutation UpdateProject($input: UpdateProjectInput!) {
   updateProject(input: $input) {

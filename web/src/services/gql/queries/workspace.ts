@@ -22,8 +22,8 @@ export const CREATE_WORKSPACE = gql(`
           name
           projectCount
           memberCount
-          publishedProjectCount
-          layerCount
+          publishableCount
+          nlsLayersCount
           assetStorageSize
         }
       }
@@ -61,8 +61,8 @@ export const UPDATE_WORKSPACE = gql(`
           name
           projectCount
           memberCount
-          publishedProjectCount
-          layerCount
+          publishableCount
+          nlsLayersCount
           assetStorageSize
         }
       }
@@ -92,8 +92,8 @@ export const ADD_MEMBER_TO_WORKSPACE = gql(`
           name
           projectCount
           memberCount
-          publishedProjectCount
-          layerCount
+          publishableCount
+          nlsLayersCount
           assetStorageSize
         }
       }
@@ -123,8 +123,8 @@ export const REMOVE_MEMBER_FROM_WORKSPACE = gql(`
           name
           projectCount
           memberCount
-          publishedProjectCount
-          layerCount
+          publishableCount
+          nlsLayersCount
           assetStorageSize
         }
       }
@@ -156,8 +156,8 @@ export const UPDATE_MEMBER_OF_WORKSPACE = gql(`
           name
           projectCount
           memberCount
-          publishedProjectCount
-          layerCount
+          publishableCount
+          nlsLayersCount
           assetStorageSize
         }
       }
