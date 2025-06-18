@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -40,6 +41,8 @@ var (
 	uEmail = "e2e@e2e.com"
 	uName  = "e2e"
 	wID    = accountdomain.NewWorkspaceID()
+
+	policyID = policy.ID("e2e-test-policy")
 
 	// ---------------- user2
 	uID2    = user.NewID()
@@ -102,7 +105,7 @@ func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 		return err
 	}
 
-	if err := baseSetup(ctx, r, u, f); err != nil {
+	if err := baseSetup(ctx, r, u, f, nil); err != nil {
 		return err
 	}
 
@@ -162,10 +165,31 @@ func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, 
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
 	}
-	return baseSetup(ctx, r, u, f)
+	return baseSetup(ctx, r, u, f, nil)
 }
 
-func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.File) error {
+func baseSeederWithPolicy(ctx context.Context, r *repo.Container, f gateway.File, opts policy.Option) error {
+
+	po := policy.New(opts)
+	if err := r.Policy.Save(ctx, po); err != nil {
+		return err
+	}
+
+	metadata := user.NewMetadata()
+
+	u := user.New().ID(uID).
+		Workspace(wID).
+		Name(uName).
+		Email(uEmail).
+		Metadata(metadata).
+		MustBuild()
+	if err := r.User.Save(ctx, u); err != nil {
+		return err
+	}
+	return baseSetup(ctx, r, u, f, po.ID().Ref())
+}
+
+func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.File, po *workspace.PolicyID) error {
 	m := workspace.Member{
 		Role: workspace.RoleOwner,
 	}
@@ -175,6 +199,7 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		Personal(false).
 		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
 		Metadata(wMetadata).
+		Policy(po).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err
@@ -282,7 +307,7 @@ func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
 	}
-	if err := baseSetup(ctx, r, u, f); err != nil {
+	if err := baseSetup(ctx, r, u, f, nil); err != nil {
 		return err
 	}
 	return fullSetup(ctx, r)

@@ -12,7 +12,7 @@ import (
 )
 
 func TestCreateTeam(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
+	e, _, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := `mutation { createTeam(input: {name: "test"}){ team{ id name } }}`
 	request := GraphQLRequest{
 		Query: query,
@@ -22,7 +22,7 @@ func TestCreateTeam(t *testing.T) {
 }
 
 func TestDeleteTeam(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	_, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	query := fmt.Sprintf(`mutation { deleteTeam(input: {teamId: "%s"}){ teamId }}`, wId1)
@@ -45,7 +45,7 @@ func TestDeleteTeam(t *testing.T) {
 }
 
 func TestUpdateTeam(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -71,7 +71,7 @@ func TestUpdateTeam(t *testing.T) {
 }
 
 func TestAddMemberToTeam(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -97,7 +97,7 @@ func TestAddMemberToTeam(t *testing.T) {
 }
 
 func TestRemoveMemberFromTeam(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
@@ -118,7 +118,7 @@ func TestRemoveMemberFromTeam(t *testing.T) {
 }
 
 func TestUpdateMemberOfTeam(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)

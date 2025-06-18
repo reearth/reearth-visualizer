@@ -20,7 +20,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/alias"
-	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
@@ -557,23 +556,32 @@ func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, 
 	}
 
 	if policyID := op.Policy(ws.Policy()); policyID != nil {
-
 		p, err := i.policyRepo.FindByID(ctx, *policyID)
 		if err != nil {
 			return nil, err
 		}
 
-		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+		scCont, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
 		if err != nil {
 			return nil, err
 		}
 
-		// newrly published
-		if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-			projectCount += 1
+		ws2, err := accountdomain.WorkspaceIDFrom(ws.ID().String())
+		if err != nil {
+			return nil, err
 		}
 
-		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
+		slist, err := i.sceneRepo.FindByWorkspace(ctx, ws2)
+		if err != nil {
+			return nil, err
+		}
+
+		stCount, err := i.storytellingRepo.CountPublicByWorkspace(ctx, slist)
+		if err != nil {
+			return nil, err
+		}
+
+		if err := p.EnforcePublishableCount(scCont + stCount + 1); err != nil {
 			return nil, err
 		}
 	}
@@ -773,7 +781,7 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	return nil
 }
 
-func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
+func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]any, prj *project.Project, op *usecase.Operator) error {
 
 	assetNames := make(map[string]string)
 	if project, ok := data["project"].(map[string]interface{}); ok {
@@ -809,10 +817,6 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	}
 
 	if _, err := zipFile.Seek(0, 0); err != nil {
-		return err
-	}
-	// 500MB
-	if err := file.FileSizeCheck(500, zipFile); err != nil {
 		return err
 	}
 
@@ -935,13 +939,18 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		return nil, err
 	}
 
+	visibility := "private"
+	if input.Visibility != nil {
+		visibility = *input.Visibility
+	}
+
 	if policyID := operator.Policy(ws.Policy()); policyID != nil {
 		p, err := i.policyRepo.FindByID(txCtx, *policyID)
 		if err != nil {
 			return nil, err
 		}
 
-		projectCount, err := i.projectRepo.CountByWorkspace(txCtx, ws.ID())
+		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
 		if err != nil {
 			return nil, err
 		}
@@ -949,6 +958,13 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
 			return nil, err
 		}
+
+		if visibility == "private" {
+			if err := p.EnforcePrivateProject(true); err != nil {
+				return nil, err
+			}
+		}
+
 	}
 
 	var prjID idx.ID[id.Project]
@@ -1005,11 +1021,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		prj = prj.Name(*input.Name)
 	}
 
-	if input.Visibility != nil {
-		prj = prj.Visibility(*input.Visibility)
-	} else {
-		prj = prj.Visibility("private")
-	}
+	prj = prj.Visibility(visibility)
 
 	proj, err := prj.Build()
 	if err != nil {

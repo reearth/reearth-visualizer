@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/rerror"
 )
@@ -131,6 +132,22 @@ func (r *Storytelling) CheckAliasUnique(ctx context.Context, name string) error 
 	}
 
 	return nil
+}
+
+func (r *Storytelling) CountPublicByWorkspace(_ context.Context, scenes scene.List) (n int, _ error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, st := range r.data {
+		for _, sc := range scenes {
+			if sc.ID().String() == st.Scene().String() {
+				if st.PublishmentStatus() == storytelling.PublishmentStatusPublic {
+					n++
+				}
+			}
+		}
+	}
+	return
 }
 
 func (r *Storytelling) Save(_ context.Context, p storytelling.Story) error {

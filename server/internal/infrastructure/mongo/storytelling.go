@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/pkg/alias"
+	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -122,6 +123,24 @@ func (r *Storytelling) CheckAliasUnique(ctx context.Context, name string) error 
 		return alias.ErrExistsStorytellingAlias
 	}
 	return nil
+}
+
+func (r *Storytelling) CountPublicByWorkspace(ctx context.Context, scenes scene.List) (int, error) {
+
+	sceneIDs := make([]string, len(scenes))
+	for i, s := range scenes {
+		sceneIDs[i] = s.ID().String()
+	}
+
+	count, err := r.client.Count(ctx, bson.M{
+		"scene": bson.M{
+			"$in": sceneIDs,
+		},
+		"status": bson.M{
+			"$in": []string{"public", "limited"},
+		},
+	})
+	return int(count), err
 }
 
 func (r *Storytelling) Save(ctx context.Context, story storytelling.Story) error {

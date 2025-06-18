@@ -9,4 +9,5 @@ import (
 type Policy interface {
 	FindByID(context.Context, policy.ID) (*policy.Policy, error)
 	FindByIDs(context.Context, []policy.ID) ([]*policy.Policy, error)
+	Save(context.Context, *policy.Policy) error
 }

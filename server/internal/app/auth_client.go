@@ -120,6 +120,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			}
 
 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+			ctx = adapter.AttachDashboardApi(ctx, cfg.Config.Dashboard.Api)
 
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)
