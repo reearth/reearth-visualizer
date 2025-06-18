@@ -17,7 +17,7 @@ const CheckBoxField: FC<CheckBoxFieldProps> = ({
       description={description}
       data-testid="checkboxfield-commonfield"
     >
-      <CheckBox {...props} data-testid="checkboxfield-checkbox" />
+      <CheckBox {...props} dataTestid="checkboxfield-checkbox" />
     </CommonField>
   );
 };

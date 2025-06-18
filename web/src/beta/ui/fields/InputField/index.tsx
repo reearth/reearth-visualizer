@@ -48,7 +48,7 @@ const InputField: FC<InputFieldProps> = ({
         value={internalValue}
         onChange={handleChange}
         onBlur={handleChangeComplete}
-        data-testid="inputfield-input"
+        dataTestid="inputfield-input"
       />
     </CommonField>
   );

@@ -43,7 +43,7 @@ const NumberField: FC<NumberFieldProps> = ({
         value={currentValue}
         onBlur={handleChangeComplete}
         onChange={handleChange}
-        data-testid="numberfield-input"
+        dataTestid="numberfield-input"
       />
     </CommonField>
   );
