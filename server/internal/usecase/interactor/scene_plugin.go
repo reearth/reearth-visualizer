@@ -19,7 +19,7 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 	if err != nil {
 		return
 	}
-
+	//
 	ctx = tx.Context()
 	defer func() {
 		if err2 := tx.End(ctx); err == nil && err2 != nil {
@@ -37,6 +37,22 @@ func (i *Scene) InstallPlugin(ctx context.Context, sid id.SceneID, pid id.Plugin
 
 	if s.Plugins().HasPlugin(pid) {
 		return nil, nil, interfaces.ErrPluginAlreadyInstalled
+	}
+
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if err := p.EnforceInstallPluginCount(len(s.Plugins().Plugins())); err != nil {
+			return nil, nil, err
+		}
 	}
 
 	plugin, err := i.pluginCommon().GetOrDownloadPlugin(ctx, pid)

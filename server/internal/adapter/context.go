@@ -20,6 +20,7 @@ const (
 	contextUsecases    ContextKey = "usecases"
 	contextMockAuth    ContextKey = "mockauth"
 	contextCurrentHost ContextKey = "currenthost"
+	contextDashboard   ContextKey = "dashboard"
 	contextLang        ContextKey = "lang"
 	contextInternal    ContextKey = "Internal"
 )
@@ -62,6 +63,10 @@ func AttachCurrentHost(ctx context.Context, currentHost string) context.Context 
 
 func AttachInternal(ctx context.Context, isInternal bool) context.Context {
 	return context.WithValue(ctx, contextInternal, isInternal)
+}
+
+func AttachDashboardApi(ctx context.Context, dashboardApi string) context.Context {
+	return context.WithValue(ctx, contextDashboard, dashboardApi)
 }
 
 func User(ctx context.Context) *user.User {
@@ -148,6 +153,15 @@ func CurrentHost(ctx context.Context) string {
 	if v := ctx.Value(contextCurrentHost); v != nil {
 		if currentHost, ok := v.(string); ok {
 			return currentHost
+		}
+	}
+	return ""
+}
+
+func DashboardApi(ctx context.Context) string {
+	if v := ctx.Value(contextDashboard); v != nil {
+		if api, ok := v.(string); ok {
+			return api
 		}
 	}
 	return ""
