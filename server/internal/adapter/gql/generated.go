@@ -509,16 +509,19 @@ type ComplexityRoot struct {
 	}
 
 	Policy struct {
-		AssetStorageSize      func(childComplexity int) int
-		BlocksCount           func(childComplexity int) int
-		ID                    func(childComplexity int) int
-		LayerCount            func(childComplexity int) int
-		MemberCount           func(childComplexity int) int
-		Name                  func(childComplexity int) int
-		NlsLayersCount        func(childComplexity int) int
-		PageCount             func(childComplexity int) int
-		ProjectCount          func(childComplexity int) int
-		PublishedProjectCount func(childComplexity int) int
+		AssetStorageSize         func(childComplexity int) int
+		CustomDomainCount        func(childComplexity int) int
+		ID                       func(childComplexity int) int
+		InstallPluginCount       func(childComplexity int) int
+		MaximumProjectExportSize func(childComplexity int) int
+		MaximumSizePerAsset      func(childComplexity int) int
+		MemberCount              func(childComplexity int) int
+		Name                     func(childComplexity int) int
+		NlsLayersCount           func(childComplexity int) int
+		PrivateProject           func(childComplexity int) int
+		ProjectCount             func(childComplexity int) int
+		ProjectImportingTimeout  func(childComplexity int) int
+		PublishableCount         func(childComplexity int) int
 	}
 
 	Polygon struct {
@@ -3645,12 +3648,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Policy.AssetStorageSize(childComplexity), true
 
-	case "Policy.blocksCount":
-		if e.complexity.Policy.BlocksCount == nil {
+	case "Policy.customDomainCount":
+		if e.complexity.Policy.CustomDomainCount == nil {
 			break
 		}
 
-		return e.complexity.Policy.BlocksCount(childComplexity), true
+		return e.complexity.Policy.CustomDomainCount(childComplexity), true
 
 	case "Policy.id":
 		if e.complexity.Policy.ID == nil {
@@ -3659,12 +3662,26 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Policy.ID(childComplexity), true
 
-	case "Policy.layerCount":
-		if e.complexity.Policy.LayerCount == nil {
+	case "Policy.installPluginCount":
+		if e.complexity.Policy.InstallPluginCount == nil {
 			break
 		}
 
-		return e.complexity.Policy.LayerCount(childComplexity), true
+		return e.complexity.Policy.InstallPluginCount(childComplexity), true
+
+	case "Policy.maximumProjectExportSize":
+		if e.complexity.Policy.MaximumProjectExportSize == nil {
+			break
+		}
+
+		return e.complexity.Policy.MaximumProjectExportSize(childComplexity), true
+
+	case "Policy.maximumSizePerAsset":
+		if e.complexity.Policy.MaximumSizePerAsset == nil {
+			break
+		}
+
+		return e.complexity.Policy.MaximumSizePerAsset(childComplexity), true
 
 	case "Policy.memberCount":
 		if e.complexity.Policy.MemberCount == nil {
@@ -3687,12 +3704,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Policy.NlsLayersCount(childComplexity), true
 
-	case "Policy.pageCount":
-		if e.complexity.Policy.PageCount == nil {
+	case "Policy.privateProject":
+		if e.complexity.Policy.PrivateProject == nil {
 			break
 		}
 
-		return e.complexity.Policy.PageCount(childComplexity), true
+		return e.complexity.Policy.PrivateProject(childComplexity), true
 
 	case "Policy.projectCount":
 		if e.complexity.Policy.ProjectCount == nil {
@@ -3701,12 +3718,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Policy.ProjectCount(childComplexity), true
 
-	case "Policy.publishedProjectCount":
-		if e.complexity.Policy.PublishedProjectCount == nil {
+	case "Policy.projectImportingTimeout":
+		if e.complexity.Policy.ProjectImportingTimeout == nil {
 			break
 		}
 
-		return e.complexity.Policy.PublishedProjectCount(childComplexity), true
+		return e.complexity.Policy.ProjectImportingTimeout(childComplexity), true
+
+	case "Policy.publishableCount":
+		if e.complexity.Policy.PublishableCount == nil {
+			break
+		}
+
+		return e.complexity.Policy.PublishableCount(childComplexity), true
 
 	case "Polygon.polygonCoordinates":
 		if e.complexity.Polygon.PolygonCoordinates == nil {
@@ -7962,14 +7986,17 @@ type TeamMember {
 type Policy {
   id: ID!
   name: String!
-  projectCount: Int
   memberCount: Int
-  publishedProjectCount: Int
-  layerCount: Int
+  projectCount: Int
+  privateProject: Boolean
+  customDomainCount: Int
+  publishableCount: Int
   assetStorageSize: FileSize
+  maximumSizePerAsset: FileSize
+  projectImportingTimeout: Int
+  maximumProjectExportSize: FileSize
+  installPluginCount: Int
   nlsLayersCount: Int
-  pageCount: Int
-  blocksCount: Int
 }
 
 enum Role {
@@ -26133,47 +26160,6 @@ func (ec *executionContext) fieldContext_Policy_name(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Policy_projectCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_projectCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Policy_projectCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Policy_memberCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Policy_memberCount(ctx, field)
 	if err != nil {
@@ -26215,8 +26201,8 @@ func (ec *executionContext) fieldContext_Policy_memberCount(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Policy_publishedProjectCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_publishedProjectCount(ctx, field)
+func (ec *executionContext) _Policy_projectCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_projectCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26229,7 +26215,7 @@ func (ec *executionContext) _Policy_publishedProjectCount(ctx context.Context, f
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.PublishedProjectCount, nil
+		return obj.ProjectCount, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26243,7 +26229,7 @@ func (ec *executionContext) _Policy_publishedProjectCount(ctx context.Context, f
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Policy_publishedProjectCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Policy_projectCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Policy",
 		Field:      field,
@@ -26256,8 +26242,8 @@ func (ec *executionContext) fieldContext_Policy_publishedProjectCount(_ context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Policy_layerCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_layerCount(ctx, field)
+func (ec *executionContext) _Policy_privateProject(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_privateProject(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26270,7 +26256,48 @@ func (ec *executionContext) _Policy_layerCount(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.LayerCount, nil
+		return obj.PrivateProject, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_privateProject(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Policy_customDomainCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_customDomainCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CustomDomainCount, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26284,7 +26311,48 @@ func (ec *executionContext) _Policy_layerCount(ctx context.Context, field graphq
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Policy_layerCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Policy_customDomainCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Policy_publishableCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_publishableCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublishableCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_publishableCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Policy",
 		Field:      field,
@@ -26338,6 +26406,170 @@ func (ec *executionContext) fieldContext_Policy_assetStorageSize(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Policy_maximumSizePerAsset(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_maximumSizePerAsset(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MaximumSizePerAsset, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int64)
+	fc.Result = res
+	return ec.marshalOFileSize2ᚖint64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_maximumSizePerAsset(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type FileSize does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Policy_projectImportingTimeout(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_projectImportingTimeout(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectImportingTimeout, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_projectImportingTimeout(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Policy_maximumProjectExportSize(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_maximumProjectExportSize(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MaximumProjectExportSize, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int64)
+	fc.Result = res
+	return ec.marshalOFileSize2ᚖint64(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_maximumProjectExportSize(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type FileSize does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Policy_installPluginCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Policy_installPluginCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.InstallPluginCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Policy_installPluginCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Policy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Policy_nlsLayersCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Policy_nlsLayersCount(ctx, field)
 	if err != nil {
@@ -26367,88 +26599,6 @@ func (ec *executionContext) _Policy_nlsLayersCount(ctx context.Context, field gr
 }
 
 func (ec *executionContext) fieldContext_Policy_nlsLayersCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_pageCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_pageCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Policy_pageCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_blocksCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Policy_blocksCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.BlocksCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Policy_blocksCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Policy",
 		Field:      field,
@@ -39435,22 +39585,28 @@ func (ec *executionContext) fieldContext_Team_policy(_ context.Context, field gr
 				return ec.fieldContext_Policy_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Policy_name(ctx, field)
-			case "projectCount":
-				return ec.fieldContext_Policy_projectCount(ctx, field)
 			case "memberCount":
 				return ec.fieldContext_Policy_memberCount(ctx, field)
-			case "publishedProjectCount":
-				return ec.fieldContext_Policy_publishedProjectCount(ctx, field)
-			case "layerCount":
-				return ec.fieldContext_Policy_layerCount(ctx, field)
+			case "projectCount":
+				return ec.fieldContext_Policy_projectCount(ctx, field)
+			case "privateProject":
+				return ec.fieldContext_Policy_privateProject(ctx, field)
+			case "customDomainCount":
+				return ec.fieldContext_Policy_customDomainCount(ctx, field)
+			case "publishableCount":
+				return ec.fieldContext_Policy_publishableCount(ctx, field)
 			case "assetStorageSize":
 				return ec.fieldContext_Policy_assetStorageSize(ctx, field)
+			case "maximumSizePerAsset":
+				return ec.fieldContext_Policy_maximumSizePerAsset(ctx, field)
+			case "projectImportingTimeout":
+				return ec.fieldContext_Policy_projectImportingTimeout(ctx, field)
+			case "maximumProjectExportSize":
+				return ec.fieldContext_Policy_maximumProjectExportSize(ctx, field)
+			case "installPluginCount":
+				return ec.fieldContext_Policy_installPluginCount(ctx, field)
 			case "nlsLayersCount":
 				return ec.fieldContext_Policy_nlsLayersCount(ctx, field)
-			case "pageCount":
-				return ec.fieldContext_Policy_pageCount(ctx, field)
-			case "blocksCount":
-				return ec.fieldContext_Policy_blocksCount(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Policy", field.Name)
 		},
@@ -52225,22 +52381,28 @@ func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "projectCount":
-			out.Values[i] = ec._Policy_projectCount(ctx, field, obj)
 		case "memberCount":
 			out.Values[i] = ec._Policy_memberCount(ctx, field, obj)
-		case "publishedProjectCount":
-			out.Values[i] = ec._Policy_publishedProjectCount(ctx, field, obj)
-		case "layerCount":
-			out.Values[i] = ec._Policy_layerCount(ctx, field, obj)
+		case "projectCount":
+			out.Values[i] = ec._Policy_projectCount(ctx, field, obj)
+		case "privateProject":
+			out.Values[i] = ec._Policy_privateProject(ctx, field, obj)
+		case "customDomainCount":
+			out.Values[i] = ec._Policy_customDomainCount(ctx, field, obj)
+		case "publishableCount":
+			out.Values[i] = ec._Policy_publishableCount(ctx, field, obj)
 		case "assetStorageSize":
 			out.Values[i] = ec._Policy_assetStorageSize(ctx, field, obj)
+		case "maximumSizePerAsset":
+			out.Values[i] = ec._Policy_maximumSizePerAsset(ctx, field, obj)
+		case "projectImportingTimeout":
+			out.Values[i] = ec._Policy_projectImportingTimeout(ctx, field, obj)
+		case "maximumProjectExportSize":
+			out.Values[i] = ec._Policy_maximumProjectExportSize(ctx, field, obj)
+		case "installPluginCount":
+			out.Values[i] = ec._Policy_installPluginCount(ctx, field, obj)
 		case "nlsLayersCount":
 			out.Values[i] = ec._Policy_nlsLayersCount(ctx, field, obj)
-		case "pageCount":
-			out.Values[i] = ec._Policy_pageCount(ctx, field, obj)
-		case "blocksCount":
-			out.Values[i] = ec._Policy_blocksCount(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

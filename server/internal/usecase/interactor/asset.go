@@ -212,22 +212,27 @@ func (i *Asset) updateProjectImage(ctx context.Context, newProject *project.Proj
 
 func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, p *policy.Policy, coreSupport bool) (*asset.Asset, *url.URL, error) {
 
+	// enforce policy
+	if p != nil {
+
+		if err := p.EnforceMaximumSizePerAsset(f.Size); err != nil {
+			return nil, nil, err
+		}
+
+		totalSize, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if err := p.EnforceAssetStorageSize(totalSize + f.Size); err != nil {
+			return nil, nil, err
+		}
+	}
+
 	// upload
 	u, size, err := i.gateways.File.UploadAsset(ctx, f)
 	if err != nil {
 		return nil, nil, err
-	}
-
-	// enforce policy
-	if p != nil {
-		s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, nil, err
-		}
-		if err := p.EnforceAssetStorageSize(s + size); err != nil {
-			_ = i.gateways.File.RemoveAsset(ctx, u)
-			return nil, nil, err
-		}
 	}
 
 	// data save
