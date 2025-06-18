@@ -38,7 +38,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
     <CommonField
       title={title}
       description={description}
-      dataTestid="textareafield-commonfield"
+      dataTestId="textareafield-commonfield"
     >
       <TextArea
         {...props}
