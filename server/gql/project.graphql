@@ -102,6 +102,12 @@ input UpdateProjectInput {
   trackingId: String
 }
 
+input UpdateProjectMetadataInput {
+  project: ID!
+  readme: String
+  license: String
+}
+
 input PublishProjectInput {
   projectId: ID!
   alias: String
@@ -140,6 +146,10 @@ type ProjectAliasAvailability {
   available: Boolean!
 }
 
+type ProjectMetadataPayload {
+  metadata: ProjectMetadata!
+}
+
 # Connection
 
 type ProjectConnection {
@@ -172,4 +182,7 @@ extend type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
+  updateProjectMetadata(
+    input: UpdateProjectMetadataInput!
+  ): ProjectMetadataPayload
 }

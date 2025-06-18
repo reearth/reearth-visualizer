@@ -117,6 +117,7 @@ export const context: Context = {
         getLocationFromScreenCoordinate: act("getLocationFromScreenCoordinate"),
         getScreenCoordinateFromPosition: act("getScreenCoordinateFromPosition"),
         getTerrainHeightAsync: act("getTerrainHeightAsync"),
+        getCurrentLocationAsync: act("getCurrentLocationAsync"),
         getGlobeHeight: act("getGlobeHeight"),
         getGlobeHeightByCamera: act("getGlobeHeightByCamera"),
         cartographicToCartesian: act("cartographicToCartesian"),

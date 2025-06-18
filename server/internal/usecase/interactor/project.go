@@ -266,8 +266,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		}
 	}
 
-	if len(graphql.GetErrors(ctx)) > 0 {
-		return prj, nil
+	if !adapter.IsInternal(ctx) {
+		if errs := graphql.GetErrors(ctx); len(errs) > 0 {
+			return prj, nil
+		}
 	}
 
 	currentTime := time.Now().UTC()
@@ -309,26 +311,23 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 }
 
-func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 
-	prj, err := i.projectRepo.FindByID(ctx, pid)
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
 		return nil, err
 	}
 
-	currentTime := time.Now().UTC()
-
-	metadata := prj.Metadata()
-	if metadata != nil {
-		metadata.SetImportStatus(&importStatus)
-		metadata.SetUpdatedAt(&currentTime)
+	if meta != nil {
+		currentTime := time.Now().UTC()
+		meta.SetImportStatus(&importStatus)
+		meta.SetUpdatedAt(&currentTime)
 	}
-	prj.SetMetadata(metadata)
 
-	if err := i.projectRepo.Save(ctx, prj); err != nil {
+	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
 		return nil, err
 	}
-	return prj, nil
+	return meta, nil
 
 }
 

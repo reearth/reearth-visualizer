@@ -83,6 +83,12 @@ export declare type Env = {
   readonly isBuilt: boolean;
 };
 
+export declare type GeolocationOptions = {
+  enableHighAccuracy?: boolean;
+  timeout?: number;
+  maximumAge?: number;
+};
+
 export declare type Tools = {
   readonly getLocationFromScreenCoordinate: (
     x: number,
@@ -125,6 +131,9 @@ export declare type Tools = {
     lng?: number,
     lat?: number
   ) => Promise<number | undefined>;
+  readonly getCurrentLocationAsync: (
+    options?: GeolocationOptions
+  ) => Promise<LatLngHeight | undefined>;
 };
 
 export declare type ViewerEventType = {

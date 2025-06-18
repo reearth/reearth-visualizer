@@ -220,6 +220,42 @@ export default ({
     [geoidRef]
   );
 
+  const getCurrentLocationAsync = useCallback(
+    async (options?: {
+      enableHighAccuracy?: boolean;
+      timeout?: number;
+      maximumAge?: number;
+    }) => {
+      return new Promise<
+        { lat: number; lng: number; height: number } | undefined
+      >((resolve) => {
+        if (!navigator.geolocation) {
+          resolve(undefined);
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            resolve({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+              height: position.coords.altitude ?? 0
+            });
+          },
+          () => {
+            resolve(undefined);
+          },
+          {
+            enableHighAccuracy: options?.enableHighAccuracy ?? false,
+            timeout: options?.timeout ?? 10000,
+            maximumAge: options?.maximumAge ?? 0
+          }
+        );
+      });
+    },
+    []
+  );
+
   // events
   const [viewerEvents, emit] = useMemo(() => events<ViewerEventType>(), []);
 
@@ -315,6 +351,7 @@ export default ({
     transformByOffsetOnScreen,
     isPositionVisibleOnGlobe,
     getGeoidHeight,
+    getCurrentLocationAsync,
     viewerEventsOn,
     viewerEventsOff,
     viewerEvents,

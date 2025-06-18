@@ -149,6 +149,7 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 
 		uc := interactor.NewContainer(r, g, ar, ag, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
+		ctx = adapter.AttachInternal(ctx, true)
 		return handler(ctx, req)
 	}
 }
