@@ -26,17 +26,21 @@ const WASToolsPanel: FC = () => {
   }, [showWASEditor, selectWidgetArea]);
 
   return (
-    <Panel extend>
-      <StyledSecondaryNav>
+    <Panel extend data-testid="was-tools-panel">
+      <StyledSecondaryNav data-testid="was-secondary-nav">
         <Devices
           selectedDevice={selectedDevice}
           onDeviceChange={handleDeviceChange}
+          data-testid="was-devices"
         />
-        <AlignSystem>
-          <Typography size="body">{t("Align System")}</Typography>
+        <AlignSystem data-testid="was-align-system">
+          <Typography size="body" data-testid="was-align-system-label">
+            {t("Align System")}
+          </Typography>
           <Switcher
             value={showWASEditor}
             onChange={handleShowWASEditorToggle}
+            data-testid="was-align-system-switch"
           />
         </AlignSystem>
       </StyledSecondaryNav>

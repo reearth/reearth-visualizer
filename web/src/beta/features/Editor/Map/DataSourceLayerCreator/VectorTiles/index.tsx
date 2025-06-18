@@ -71,23 +71,37 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   };
 
   return (
-    <Wrapper>
-      <ContentWrapper>
-        <InputGroup label={t("Resource URL")}>
-          <InputsWrapper>
+    <Wrapper data-testid="vectortiles-wrapper">
+      <ContentWrapper data-testid="vectortiles-content">
+        <InputGroup
+          label={t("Resource URL")}
+          data-testid="vectortiles-url-group"
+        >
+          <InputsWrapper data-testid="vectortiles-url-inputs">
             <TextInput
               placeholder="https://"
               value={mvtUrlValue}
               onChange={(value) => handleValueChange(value)}
+              data-testid="vectortiles-url-textinput"
             />
           </InputsWrapper>
         </InputGroup>
-        <InputGroup label={t("Choose layer to add")}>
-          <LayerNameListWrapper>
-            <LayerNameList>
+        <InputGroup
+          label={t("Choose layer to add")}
+          data-testid="vectortiles-layer-group"
+        >
+          <LayerNameListWrapper data-testid="vectortiles-layer-list-wrapper">
+            <LayerNameList data-testid="vectortiles-layer-list">
               {layerNameList.map((layer: string, index: number) => (
-                <LayerWrapper key={index}>
-                  <TextInput value={`${layer}`} extendWidth />
+                <LayerWrapper
+                  key={index}
+                  data-testid={`vectortiles-layer-item-${index}`}
+                >
+                  <TextInput
+                    value={`${layer}`}
+                    extendWidth
+                    data-testid={`vectortiles-layer-textinput-${index}`}
+                  />
                   <Button
                     icon="close"
                     iconButton
@@ -95,17 +109,19 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                     size="small"
                     iconColor={theme.content.main}
                     onClick={() => handleLayerNameDelete(index)}
+                    data-testid={`vectortiles-layer-delete-button-${index}`}
                   />
                 </LayerWrapper>
               ))}
               {(!layerNameList.length || isLayerName) && (
-                <LayerWrapper>
+                <LayerWrapper data-testid="vectortiles-layer-input-wrapper">
                   <TextInput
                     placeholder={t("layer name")}
                     value={layerName}
                     extendWidth
                     onBlur={handleBlur}
                     onChange={(value) => setLayerName(value)}
+                    data-testid="vectortiles-layer-input"
                   />
                   <Button
                     icon="close"
@@ -114,6 +130,7 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                     size="small"
                     appearance="simple"
                     disabled
+                    data-testid="vectortiles-layer-input-disabled-button"
                   />
                 </LayerWrapper>
               )}
@@ -125,16 +142,18 @@ const WmsTiles: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             title={t("Layer name")}
             size="small"
             onClick={handleLayerNameButtonClick}
+            data-testid="vectortiles-layer-add-button"
           />
         </InputGroup>
       </ContentWrapper>
 
-      <SubmitWrapper>
+      <SubmitWrapper data-testid="vectortiles-submit-wrapper">
         <Button
           title={t("Add to Layer")}
           appearance="primary"
           onClick={handleSubmit}
           disabled={!mvtUrlValue || !layerNameList.length}
+          data-testid="vectortiles-submit-button"
         />
       </SubmitWrapper>
     </Wrapper>
