@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/reearth/reearth-cms/server/internal/usecase/gateway"
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )

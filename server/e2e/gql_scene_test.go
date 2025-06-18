@@ -8,7 +8,7 @@ import (
 )
 
 func TestGetScenePlaceholderEnglish(t *testing.T) {
-	e := ServerLanguage(t, language.English)
+	e := ServerWithLanguage(t, language.English)
 	pID := createProjectWithExternalImage(e, "test")
 	sID := createScene(e, pID)
 	r := getScene(e, sID, language.English.String())
@@ -34,7 +34,7 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 }
 
 func TestGetScenePlaceholderJapanese(t *testing.T) {
-	e := ServerLanguage(t, language.Japanese)
+	e := ServerWithLanguage(t, language.Japanese)
 	pID := createProjectWithExternalImage(e, "test")
 	sID := createScene(e, pID)
 	r := getScene(e, sID, language.Japanese.String())

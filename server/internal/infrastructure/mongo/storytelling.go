@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/pkg/alias"
+	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -122,6 +123,45 @@ func (r *Storytelling) CheckStorytellingAlias(ctx context.Context, name string) 
 		return alias.ErrExistsStorytellingAlias
 	}
 	return nil
+}
+
+func (r *Storytelling) CountCustomDomainByScenes(ctx context.Context, scenes scene.List) (int, error) {
+
+	sceneIDs := make([]string, len(scenes))
+	for i, s := range scenes {
+		sceneIDs[i] = s.ID().String()
+	}
+
+	count, err := r.client.Count(ctx, bson.M{
+		"scene": bson.M{
+			"$in": sceneIDs,
+		},
+		"$and": []bson.M{
+			{"alias": bson.M{"$exists": true}},
+			{"alias": bson.M{"$ne": nil}},
+			{"alias": bson.M{"$ne": ""}},
+			{"alias": bson.M{"$not": bson.M{"$regex": "^(c-|s-)"}}},
+		},
+	})
+	return int(count), err
+}
+
+func (r *Storytelling) CountPublicByScenes(ctx context.Context, scenes scene.List) (int, error) {
+
+	sceneIDs := make([]string, len(scenes))
+	for i, s := range scenes {
+		sceneIDs[i] = s.ID().String()
+	}
+
+	count, err := r.client.Count(ctx, bson.M{
+		"scene": bson.M{
+			"$in": sceneIDs,
+		},
+		"status": bson.M{
+			"$in": []string{"public", "limited"},
+		},
+	})
+	return int(count), err
 }
 
 func (r *Storytelling) Save(ctx context.Context, story storytelling.Story) error {

@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
@@ -91,6 +92,11 @@ func TestPlugin_Upload_New(t *testing.T) {
 	pid := mockPluginID.WithScene(sid.Ref())
 
 	repos := memory.New()
+	work, err := workspace.New().ID(ws).Build()
+	assert.NoError(t, err)
+	err = repos.Workspace.Save(ctx, work)
+	assert.NoError(t, err)
+
 	mfs := mockFS(nil)
 	files, err := fs.NewFile(mfs, "")
 	assert.NoError(t, err)
@@ -98,6 +104,7 @@ func TestPlugin_Upload_New(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
+		workspaceRepo:      repos.Workspace,
 		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,
@@ -151,6 +158,11 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	wid1 := id.NewWidgetID()
 
 	repos := memory.New()
+	work, err := workspace.New().ID(ws).Build()
+	assert.NoError(t, err)
+	err = repos.Workspace.Save(ctx, work)
+	assert.NoError(t, err)
+
 	mfs := mockFS(map[string]string{
 		"plugins/" + pid.String() + "/hogehoge": "foobar",
 	})
@@ -178,6 +190,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
+		workspaceRepo:      repos.Workspace,
 		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,
@@ -248,6 +261,12 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	wid := id.NewWidgetID()
 
 	repos := memory.New()
+
+	work, err := workspace.New().ID(ws).Build()
+	assert.NoError(t, err)
+	err = repos.Workspace.Save(ctx, work)
+	assert.NoError(t, err)
+
 	mfs := mockFS(map[string]string{
 		"plugins/" + oldpid.String() + "/hogehoge": "foobar",
 	})
@@ -284,6 +303,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
+		workspaceRepo:      repos.Workspace,
 		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,

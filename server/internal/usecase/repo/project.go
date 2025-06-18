@@ -34,6 +34,7 @@ type Project interface {
 	CheckProjectAliasUnique(context.Context, accountdomain.WorkspaceID, string, *id.ProjectID) error
 	CheckSceneAliasUnique(context.Context, string) error
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
+	CountCustomDomainByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error
 	Remove(context.Context, id.ProjectID) error

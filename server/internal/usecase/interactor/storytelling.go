@@ -20,6 +20,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -324,6 +325,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	}
 
 	prevAlias := story.Alias()
+	prevStatus := story.PublishmentStatus()
 
 	// if StoryID is not specified
 	if inp.Alias == nil || *inp.Alias == "" {
@@ -338,8 +340,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
 			// error 'c-' prefix
 			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
-		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
-			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixStory)
+		} else if id, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixStory); found {
 			// only allow self ID
 			if id != story.Id().String() {
 				// error 'c-' prefix
@@ -368,9 +369,14 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 
 	// publish
 	if story.PublishmentStatus() != storytelling.PublishmentStatusPrivate {
-		if err := i.uploadPublishStory(ctx, story, op); err != nil {
+
+		// changed private to public/limited
+		new := prevStatus == storytelling.PublishmentStatusPrivate
+
+		if err := i.uploadPublishStory(ctx, story, new, op); err != nil {
 			return nil, err
 		}
+
 		story.SetPublishedAt(time.Now())
 	}
 
@@ -395,7 +401,8 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	return story, nil
 }
 
-func (i *Storytelling) checkPublishPolicy(ctx context.Context, story *storytelling.Story, op *usecase.Operator) (*scene.Scene, error) {
+func (i *Storytelling) checkPublishPolicy(ctx context.Context, story *storytelling.Story, new bool, op *usecase.Operator) (*scene.Scene, error) {
+
 	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
 	if err != nil {
 		return nil, err
@@ -405,26 +412,49 @@ func (i *Storytelling) checkPublishPolicy(ctx context.Context, story *storytelli
 	if err != nil {
 		return nil, err
 	}
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-		if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
-			return nil, err
+
+	if new {
+
+		if policyID := op.Policy(ws.Policy()); policyID != nil {
+			p, err := i.policyRepo.FindByID(ctx, *policyID)
+			if err != nil {
+				return nil, err
+			}
+
+			scCont, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
+			if err != nil {
+				return nil, err
+			}
+
+			ws2, err := accountdomain.WorkspaceIDFrom(ws.ID().String())
+			if err != nil {
+				return nil, err
+			}
+
+			slist, err := i.sceneRepo.FindByWorkspace(ctx, ws2)
+			if err != nil {
+				return nil, err
+			}
+
+			stCount, err := i.storytellingRepo.CountPublicByScenes(ctx, slist)
+			if err != nil {
+				return nil, err
+			}
+
+			if err := p.EnforcePublishableCount(scCont + stCount + 1); err != nil {
+				return nil, err
+			}
 		}
 	}
+
 	return s, nil
+
 }
 
-func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelling.Story, op *usecase.Operator) error {
+func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelling.Story, new bool, op *usecase.Operator) error {
 
 	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, story, op)
+	s, err := i.checkPublishPolicy(ctx, story, new, op)
 	if err != nil {
 		return err
 	}
@@ -536,28 +566,6 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	page, err := builder.Build()
 	if err != nil {
 		return nil, nil, err
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		var pageCount = len(story.Pages().Pages())
-		if err := p.EnforcePageCount(pageCount + 1); err != nil {
-			return nil, nil, err
-		}
 	}
 
 	story.Pages().AddAt(page, inp.Index)
@@ -879,38 +887,6 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 	}
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, nil, -1, err
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
-	if err != nil {
-		return nil, nil, nil, -1, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, nil, nil, -1, err
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, nil, nil, -1, err
-		}
-
-		story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
-		if err != nil {
-			return nil, nil, nil, -1, err
-		}
-
-		page := story.Pages().Page(inp.PageID)
-		if page == nil {
-			return nil, nil, nil, -1, interfaces.ErrPageNotFound
-		}
-
-		var s = page.Count()
-		if err := p.EnforceBlocksCount(s + 1); err != nil {
-			return nil, nil, nil, -1, err
-		}
 	}
 
 	_, extension, err := i.getStoryBlockPlugin(ctx, story.Scene(), inp.PluginID.String(), inp.ExtensionID.String())

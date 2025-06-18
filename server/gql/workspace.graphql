@@ -31,14 +31,17 @@ type WorkspaceMember {
 type Policy {
   id: ID!
   name: String!
-  projectCount: Int
   memberCount: Int
-  publishedProjectCount: Int
-  layerCount: Int
+  projectCount: Int
+  privateProject: Boolean
+  customDomainCount: Int
+  publishableCount: Int
   assetStorageSize: FileSize
+  maximumSizePerAsset: FileSize
+  projectImportingTimeout: Int
+  maximumProjectExportSize: FileSize
+  installPluginCount: Int
   nlsLayersCount: Int
-  pageCount: Int
-  blocksCount: Int
 }
 
 enum Role {

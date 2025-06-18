@@ -447,7 +447,7 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
 
-	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj, op)
 	if err != nil {
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}

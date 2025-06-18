@@ -24,6 +24,13 @@ const (
 	VisibilityPrivate Visibility = "private"
 )
 
+func ToVisibility(visibility string) Visibility {
+	if visibility == "public" {
+		return VisibilityPublic
+	}
+	return VisibilityPrivate
+}
+
 func (b *Builder) Build() (*Project, error) {
 	if b.p.id.IsNil() {
 		return nil, id.ErrInvalidID

@@ -12,7 +12,7 @@ import (
 )
 
 func TestCreateWorkspace(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
+	e, _, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := `mutation { createWorkspace(input: {name: "test"}){ workspace{ id name } }}`
 	request := GraphQLRequest{
 		Query: query,
@@ -22,7 +22,7 @@ func TestCreateWorkspace(t *testing.T) {
 }
 
 func TestDeleteWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	_, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	query := fmt.Sprintf(`mutation { deleteWorkspace(input: {workspaceId: "%s"}){ workspaceId }}`, wId1)
@@ -45,7 +45,7 @@ func TestDeleteWorkspace(t *testing.T) {
 }
 
 func TestUpdateWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -71,7 +71,7 @@ func TestUpdateWorkspace(t *testing.T) {
 }
 
 func TestAddMemberToWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
@@ -97,7 +97,7 @@ func TestAddMemberToWorkspace(t *testing.T) {
 }
 
 func TestRemoveMemberFromWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
@@ -118,7 +118,7 @@ func TestRemoveMemberFromWorkspace(t *testing.T) {
 }
 
 func TestUpdateMemberOfWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)

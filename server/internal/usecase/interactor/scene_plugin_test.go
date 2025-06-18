@@ -15,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -96,7 +97,12 @@ func TestScene_InstallPlugin(t *testing.T) {
 			assert := assert.New(t)
 			ctx := context.Background()
 
+			repos := memory.New()
 			tid := accountdomain.NewWorkspaceID()
+			work := workspace.New().ID(tid).MustBuild()
+			err := repos.Workspace.Save(ctx, work)
+			assert.NotNil(t, err)
+
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			for _, p := range tt.installedScenePlugins {
 				sc.Plugins().Add(p)
@@ -110,6 +116,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			prr := memory.NewProperty()
 
 			uc := &Scene{
+				workspaceRepo:  repos.Workspace,
 				sceneRepo:      sr,
 				pluginRepo:     pr,
 				pluginRegistry: &mockPluginRegistry{},
@@ -232,7 +239,9 @@ func TestScene_UninstallPlugin(t *testing.T) {
 
 			fsg, _ := fs.NewFile(afero.NewMemMapFs(), "")
 
+			repos := memory.New()
 			uc := &Scene{
+				workspaceRepo:      repos.Workspace,
 				sceneRepo:          sr,
 				pluginRepo:         pr,
 				propertyRepo:       prr,
@@ -365,7 +374,9 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 			sr := memory.NewSceneWith(sc)
 
+			repos := memory.New()
 			uc := &Scene{
+				workspaceRepo:      repos.Workspace,
 				sceneRepo:          sr,
 				pluginRepo:         pr,
 				propertyRepo:       prr,

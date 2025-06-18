@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -259,6 +260,21 @@ func (r *Project) CountByWorkspace(_ context.Context, ws accountdomain.Workspace
 
 	for _, p := range r.data {
 		if p.Workspace() == ws && r.f.CanRead(p.Workspace()) {
+			n++
+		}
+	}
+	return
+}
+
+func (r *Project) CountCustomDomainByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (n int, _ error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	re := regexp.MustCompile(`^(c-|s-)`)
+
+	for _, p := range r.data {
+		matched := re.MatchString(p.Alias())
+		if p.Workspace() == ws && r.f.CanRead(p.Workspace()) && !matched {
 			n++
 		}
 	}

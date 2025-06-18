@@ -102,6 +102,22 @@ func (i *Plugin) upload(ctx context.Context, p *pluginpack.Package, sid id.Scene
 	newpid := p.Manifest.Plugin.ID()
 	oldpid := s.Plugins().PluginByName(newpid.Name()).PluginRef()
 
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if err := p.EnforceInstallPluginCount(len(s.Plugins().Plugins())); err != nil {
+			return nil, nil, err
+		}
+	}
+
 	// if the old plugin is public, it should not be deleted
 	if oldpid != nil && oldpid.Scene() == nil {
 		return nil, nil, interfaces.ErrPluginAlreadyInstalled

@@ -103,7 +103,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 }
 
 func TestUpdateMe(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
+	e, _, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := `mutation { updateMe(input: {name: "updated",email:"hoge@test.com",lang: "ja",theme: DEFAULT,password: "Ajsownndww1",passwordConfirmation: "Ajsownndww1"}){ me{ id name email lang theme } }}`
 	request := GraphQLRequest{
 		Query: query,
@@ -116,7 +116,7 @@ func TestUpdateMe(t *testing.T) {
 }
 
 func TestRemoveMyAuth(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	u, err := r.User.FindByID(context.Background(), uId1)
 	assert.Nil(t, err)
 	assert.Equal(t, &user.Auth{Provider: "reearth", Sub: "reearth|" + uId1.String()}, u.Auths().GetByProvider("reearth"))
@@ -133,7 +133,7 @@ func TestRemoveMyAuth(t *testing.T) {
 }
 
 func TestDeleteMe(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	u, err := r.User.FindByID(context.Background(), uId1)
 	assert.Nil(t, err)
 	assert.NotNil(t, u)
@@ -149,7 +149,7 @@ func TestDeleteMe(t *testing.T) {
 }
 
 func TestSearchUser(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
+	e, _, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, "e2e")
 	request := GraphQLRequest{
 		Query: query,
@@ -170,7 +170,7 @@ func TestSearchUser(t *testing.T) {
 }
 
 func TestNode(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
+	e, _, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := fmt.Sprintf(` { node(id: "%s", type: USER){ id } }`, uId1.String())
 	request := GraphQLRequest{
 		Query: query,
@@ -180,7 +180,7 @@ func TestNode(t *testing.T) {
 }
 
 func TestNodes(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
+	e, _, _ := StartGQLServerAndRepos(t, baseSeederUser)
 	query := fmt.Sprintf(` { nodes(id: "%s", type: USER){ id } }`, uId1.String())
 	request := GraphQLRequest{
 		Query: query,

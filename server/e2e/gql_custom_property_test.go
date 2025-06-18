@@ -812,6 +812,39 @@ func addTestNLSLayerSimple(e *httpexpect.Expect, sId string) string {
 	return res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
 }
 
+func addTestNLSLayerSimple2(e *httpexpect.Expect, sId string) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "AddNLSLayerSimple",
+		Query:         "mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) { addNLSLayerSimple(input: $input) { layers { id __typename } __typename }}",
+		Variables: map[string]any{
+			"input": map[string]any{
+				"sceneId": sId,
+				"config": map[string]any{
+					"properties": map[string]any{
+						"name": "TestLayer",
+					},
+					"layerStyleId": "",
+					"data": map[string]any{
+						"type": "geojson",
+					},
+				},
+				"visible":   true,
+				"layerType": "simple",
+				"title":     "TestLayer",
+				"index":     0,
+				"schema": map[string]any{
+					"AAA": "Text_1",
+					"BBB": "Int_2",
+					"XXX": "URL_3",
+					"YYY": "Boolean_4",
+				},
+			},
+		},
+	}
+
+	return Request(e, uID.String(), requestBody)
+}
+
 func addTestGeoJSONFeature(e *httpexpect.Expect, lId string, proId string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "AddGeoJSONFeature",

@@ -198,7 +198,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
 
-	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj, getOperator(ctx))
 	if err != nil {
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}
