@@ -19,15 +19,14 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
 
+  // Update  a project.
+  // Request headers: user-id: <User ID>
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
+
   // Updates a new project metadata in the specified team.
   // Request headers: user-id: <User ID>
   rpc UpdateProjectMetadata(UpdateProjectMetadataRequest)
       returns (UpdateProjectMetadataResponse) {}
-
-  // Update the visibility a project.
-  // Request headers: user-id: <User ID>
-  rpc UpdateProjectVisibility(UpdateProjectVisibilityRequest)
-      returns (UpdateProjectVisibilityResponse) {}
 
   // Deletes a project.
   // Request headers: user-id: <User ID>
@@ -190,6 +189,36 @@ message CreateProjectRequest {
   optional string visibility = 6;
 }
 
+// Update project fields.
+// Only the project owner can operate this
+message UpdateProjectRequest {
+  // Project ID (required)
+  string project_id = 1;
+
+  // Project basic info (optional)
+  optional string name = 2;
+  optional string description = 3;
+  optional bool archived = 4;
+  optional string image_url = 5;
+  optional bool delete_image_url = 6;
+  optional string scene_id = 7;
+  optional bool starred = 8;
+  optional bool deleted = 9;
+  optional string visibility = 10;
+
+  // Publishment settings (optional)
+  optional string public_title = 11;
+  optional string public_description = 12;
+  optional string public_image = 13;
+  optional bool public_no_index = 14;
+  optional bool delete_public_image = 15;
+  optional bool is_basic_auth_active = 16;
+  optional string basic_auth_username = 17;
+  optional string basic_auth_password = 18;
+  optional bool enable_ga = 19;
+  optional string tracking_id = 20;
+}
+
 // Updates a new project metadata.
 // Cannot be updated under a team the user does not belong to.
 message UpdateProjectMetadataRequest {
@@ -199,15 +228,6 @@ message UpdateProjectMetadataRequest {
   optional string readme = 4;
   // Project license
   optional string license = 5;
-}
-
-// Update project visibility.
-// Only the project owner can operate this
-message UpdateProjectVisibilityRequest {
-  // Project ID
-  string project_id = 1;
-  // Visibility of the project (e.g., "public", "private")
-  optional string visibility = 2;
 }
 
 // Deletes a project.
@@ -237,15 +257,15 @@ message CreateProjectResponse {
 }
 
 // Response messages
-message UpdateProjectMetadataResponse {
-  // Project metadata
-  ProjectMetadata metadata = 1;
+message UpdateProjectResponse {
+  // Project
+  Project project = 1;
 }
 
 // Response messages
-message UpdateProjectVisibilityResponse {
-  // Project
-  Project project = 1;
+message UpdateProjectMetadataResponse {
+  // Project metadata
+  ProjectMetadata metadata = 1;
 }
 
 // Response messages
