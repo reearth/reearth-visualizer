@@ -39,6 +39,7 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Config:          NewConfig(db.Collection("config"), lock),
 		NLSLayer:        NewNLSLayer(client),
 		Style:           NewStyle(client),
+		Lock:            lock,
 		Plugin:          NewPlugin(client),
 		Project:         NewProject(client),
 		ProjectMetadata: NewProjectMetadata(client),
@@ -46,12 +47,14 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Property:        NewProperty(client),
 		Scene:           NewScene(client),
 		SceneLock:       NewSceneLock(client),
-		Policy:          NewPolicy(client),
-		Storytelling:    NewStorytelling(client),
-		Lock:            lock,
-		Transaction:     client.Transaction(),
 		Workspace:       account.Workspace,
 		User:            account.User,
+		Policy:          NewPolicy(client),
+		Storytelling:    NewStorytelling(client),
+		Transaction:     client.Transaction(),
+		Extensions:      nil,
+		Role:            account.Role,
+		Permittable:     account.Permittable,
 	}
 
 	// init

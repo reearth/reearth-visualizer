@@ -44,13 +44,15 @@ const EditPanel: FC<EditPanelProps> = ({
     <PopupPanel
       title={t("Zoom Level Editor")}
       onCancel={onClose}
+      data-testid="zoom-edit-panel"
       actions={
-        <ButtonWrapper>
+        <ButtonWrapper data-testid="zoom-edit-button-wrapper">
           <Button
             extendWidth
             size="small"
             title={t("Cancel")}
             onClick={onClose}
+            data-testid="zoom-edit-cancel-button"
           />
           <Button
             extendWidth
@@ -58,23 +60,29 @@ const EditPanel: FC<EditPanelProps> = ({
             title={t("Apply")}
             appearance="primary"
             onClick={handleSave}
+            data-testid="zoom-edit-apply-button"
           />
         </ButtonWrapper>
       }
     >
-      <Wrapper>
-        <SliderWrapper>
-          <Icon icon="videoCamera" />
+      <Wrapper data-testid="zoom-edit-wrapper">
+        <SliderWrapper data-testid="zoom-edit-slider-wrapper">
+          <Icon icon="videoCamera" data-testid="zoom-edit-camera-icon" />
           <RangeSlider
             value={localValue}
             min={min}
             max={max}
             step={1}
             onChange={setLocalValue}
+            data-testid="zoom-edit-range-slider"
           />
-          <Icon icon="globeSimple" />
+          <Icon icon="globeSimple" data-testid="zoom-edit-globe-icon" />
         </SliderWrapper>
-        <Typography size="footnote" color={theme.content.weak}>
+        <Typography
+          size="footnote"
+          color={theme.content.weak}
+          data-testid="zoom-edit-description"
+        >
           {description}
         </Typography>
       </Wrapper>

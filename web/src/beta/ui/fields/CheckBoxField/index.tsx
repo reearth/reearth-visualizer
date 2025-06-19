@@ -4,7 +4,6 @@ import CommonField, {
 } from "@reearth/beta/ui/fields/CommonField";
 import { FC } from "react";
 
-
 export type CheckBoxFieldProps = CommonFieldProps & CheckBoxProps;
 
 const CheckBoxField: FC<CheckBoxFieldProps> = ({
@@ -13,8 +12,12 @@ const CheckBoxField: FC<CheckBoxFieldProps> = ({
   ...props
 }) => {
   return (
-    <CommonField title={title} description={description}>
-      <CheckBox {...props} />
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="checkboxfield-commonfield"
+    >
+      <CheckBox {...props} dataTestid="checkboxfield-checkbox" />
     </CommonField>
   );
 };

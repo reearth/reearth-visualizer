@@ -40,6 +40,7 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
             setLayerStyle={setLayerStyle}
             key={layerStyle?.id}
             editMode={editMode}
+            data-testid="style-interface"
           />
         )
       },
@@ -51,6 +52,7 @@ export default ({ selectedLayerStyle, onLayerStyleValueUpdate }: Props) => {
             layerStyle={layerStyle}
             setLayerStyle={setLayerStyle}
             editMode={editMode}
+            data-testid="style-code"
           />
         )
       }

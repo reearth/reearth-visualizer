@@ -61,6 +61,7 @@ const LayersPanel: FC = () => {
             isDragging={isDragging}
             editingLayerNameId={editingLayerNameId}
             setEditingLayerNameId={setEditingLayerNameId}
+            data-testid={`layer-item-${layer.id}`}
           />
         )
       })),
@@ -88,7 +89,7 @@ const LayersPanel: FC = () => {
       storageId="editor-map-layers-panel"
       extend
     >
-      <Wrapper>
+      <Wrapper data-testid="layers-panel-wrapper">
         <PopupMenu
           label={
             <Button
@@ -96,21 +97,27 @@ const LayersPanel: FC = () => {
               title={t("New Layer")}
               size="small"
               extendWidth
+              data-testid="new-layer-button"
             />
           }
           extendTriggerWidth
           placement="bottom-end"
           menu={newLayerMenu}
+          data-testid="new-layer-menu"
         />
-        <LayersContainer>
+        <LayersContainer data-testid="layers-container">
           <DragAndDropList
             items={DraggableLayerItems}
             handleClassName={LAYERS_DRAG_HANDLE_CLASS_NAME}
             onMoveEnd={handleMoveEnd}
             onMoveStart={handleMoveStart}
             dragDisabled={false}
+            data-testid="layer-drag-drop-list"
           />
-          <EmptySpace data-testid="empty-space" onClick={() => handleLayerSelect(undefined)} />
+          <EmptySpace
+            data-testid="empty-space"
+            onClick={() => handleLayerSelect(undefined)}
+          />
         </LayersContainer>
       </Wrapper>
     </Panel>

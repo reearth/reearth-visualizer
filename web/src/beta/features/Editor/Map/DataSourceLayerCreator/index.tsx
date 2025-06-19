@@ -81,10 +81,19 @@ const DataSourceLayerCreator: FC<DataProps> = ({
   ];
 
   return (
-    <Modal size="medium" visible={true}>
-      <ModalPanel title={t("Data Source Manager")} onCancel={onClose}>
-        <Wrapper>
-          <Tabs tabs={tabsItem} position="left" tabStyle="separated" />
+    <Modal size="medium" visible={true} data-testid="datasource-modal">
+      <ModalPanel
+        title={t("Data Source Manager")}
+        onCancel={onClose}
+        data-testid="datasource-modal-panel"
+      >
+        <Wrapper data-testid="datasource-wrapper">
+          <Tabs
+            tabs={tabsItem}
+            position="left"
+            tabStyle="separated"
+            data-testid="datasource-tabs"
+          />
         </Wrapper>
       </ModalPanel>
     </Modal>

@@ -13,16 +13,23 @@ const ColorInputField: FC<ColorInputFieldProps> = ({
   onChange,
   ...props
 }) => {
-
   const handleChange = (newValue: string) => {
     if (newValue !== value) {
       onChange?.(newValue);
     }
   };
-  
+
   return (
-    <CommonField title={title} description={description}>
-      <ColorInput {...props} onChange={handleChange} />
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="colorfield-commonfield"
+    >
+      <ColorInput
+        {...props}
+        onChange={handleChange}
+        data-testid="colorfield-input"
+      />
     </CommonField>
   );
 };

@@ -35,45 +35,63 @@ const EditModal: FC<EditPanelProps> = ({
   });
 
   return (
-    <Modal visible={visible} size="small">
+    <Modal
+      visible={visible}
+      size="small"
+      data-testid="timeperiodfield-editpanel-modal"
+    >
       <ModalPanel
         title={t("Time Period Settings")}
         onCancel={onClose}
+        data-testid="timeperiodfield-editpanel-modalpanel"
         actions={
           <>
-            <Button onClick={onClose} size="normal" title={t("Cancel")} />
+            <Button
+              onClick={onClose}
+              size="normal"
+              title={t("Cancel")}
+              data-testid="timeperiodfield-editpanel-cancel-btn"
+            />
             <Button
               size="normal"
               title={t("Apply")}
               appearance="primary"
               disabled={submitDisabled}
               onClick={handleSubmit}
+              data-testid="timeperiodfield-editpanel-apply-btn"
             />
           </>
         }
       >
-        <FieldsWrapper>
+        <FieldsWrapper data-testid="timeperiodfield-editpanel-fieldswrapper">
           <TimePointField
             title={t("* Start Time")}
             description={t("Start time for the timeline")}
             onChange={(newValue) => handleChange(newValue || "", "startTime")}
             value={localValue?.startTime}
+            data-testid="timeperiodfield-editpanel-starttime-field"
           />
           <TimePointField
             title={t("* Current Time")}
             description={t("Current time should be between start and end time")}
             onChange={(newValue) => handleChange(newValue || "", "currentTime")}
             value={localValue?.currentTime}
+            data-testid="timeperiodfield-editpanel-currenttime-field"
           />
           <TimePointField
             title={t("* End Time")}
             onChange={(newValue) => handleChange(newValue || "", "endTime")}
             description={t("End time for the timeline")}
             value={localValue?.endTime}
+            data-testid="timeperiodfield-editpanel-endtime-field"
           />
           {timeRangeInvalid && (
-            <Warning>
-              <Icon icon="warning" size="large" />
+            <Warning data-testid="timeperiodfield-editpanel-warning">
+              <Icon
+                icon="warning"
+                size="large"
+                data-testid="timeperiodfield-editpanel-warning-icon"
+              />
               {t(
                 "Please make sure the Current time must between the Start time and End Time."
               )}

@@ -37,10 +37,11 @@ const LeftSidePanel: FC<Props> = ({
 }) => {
   return (
     <SidebarWrapper data-testid="left-side-panel">
-      <SidebarMainSection>
-        <LogoWrapper />
-        <SidebarDivider />
+      <SidebarMainSection data-testid="sidebar-main-section">
+        <LogoWrapper data-testid="sidebar-logo" />
+        <SidebarDivider data-testid="sidebar-divider-top" />
         <Profile
+          data-testid="sidebar-profile"
           currentUser={currentWorkspace?.name}
           isPersonal={isPersonal}
           currentWorkspace={currentWorkspace}
@@ -48,7 +49,7 @@ const LeftSidePanel: FC<Props> = ({
           onSignOut={onSignOut}
           onWorkspaceChange={onWorkspaceChange}
         />
-        <SidebarButtonsWrapper>
+        <SidebarButtonsWrapper data-testid="sidebar-top-tabs">
           {topTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
@@ -62,13 +63,16 @@ const LeftSidePanel: FC<Props> = ({
             />
           ))}
         </SidebarButtonsWrapper>
-        <SidebarDivider />
-        <StarredProject workspaceId={currentWorkspace?.id} />
+        <SidebarDivider data-testid="sidebar-divider-middle" />
+        <StarredProject
+          data-testid="sidebar-starred-project"
+          workspaceId={currentWorkspace?.id}
+        />
       </SidebarMainSection>
 
-      <SidebarFooterSection>
-        <SidebarDivider />
-        <SidebarButtonsWrapper>
+      <SidebarFooterSection data-testid="sidebar-footer-section">
+        <SidebarDivider data-testid="sidebar-divider-bottom" />
+        <SidebarButtonsWrapper data-testid="sidebar-bottom-tabs">
           {bottomTabs?.map((tab) => (
             <SidebarMenuItem
               key={tab.id}
@@ -82,8 +86,8 @@ const LeftSidePanel: FC<Props> = ({
             />
           ))}
         </SidebarButtonsWrapper>
-        <SidebarDivider />
-        <SidebarVersion />
+        <SidebarDivider data-testid="sidebar-divider-footer" />
+        <SidebarVersion data-testid="sidebar-version" />
       </SidebarFooterSection>
     </SidebarWrapper>
   );
