@@ -117,12 +117,15 @@ message ProjectMetadata {
   optional string readme = 4;
   // Project license
   optional string license = 5;
+  // Project topics
+  optional string topics = 6;
+
   // Project import status — if PROCESSING, data should not be retrieved
-  ProjectImportStatus import_status = 6;
+  ProjectImportStatus import_status = 7;
   // ProjectMetadata created date
-  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp created_at = 8;
   // ProjectMetadata updated date
-  google.protobuf.Timestamp updated_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
 }
 
 enum Visualizer {
@@ -225,9 +228,11 @@ message UpdateProjectMetadataRequest {
   // Project ID
   string project_id = 1;
   // Project readme
-  optional string readme = 4;
+  optional string readme = 2;
   // Project license
-  optional string license = 5;
+  optional string license = 3;
+  // Project topics
+  optional string topics = 4;
 }
 
 // Deletes a project.

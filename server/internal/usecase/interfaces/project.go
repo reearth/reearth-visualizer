@@ -58,6 +58,7 @@ type UpdateProjectMetadataParam struct {
 	ID      id.ProjectID
 	Readme  *string
 	License *string
+	Topics  *string
 }
 
 type PublishProjectParam struct {
