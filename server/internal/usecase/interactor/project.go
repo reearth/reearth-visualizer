@@ -140,18 +140,53 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 }
 
 func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
-	return i.projectRepo.FindActiveById(ctx, pid)
+	pj, err := i.projectRepo.FindActiveById(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
 }
 
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
 
 	isWorkspaceOwner := false
 
 	if len(operator.AcOperator.OwningWorkspaces) > 0 {
-		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == id
+		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == aid
 	}
 
-	return i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, id)
+	pList, err := i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, aid)
+	if err != nil {
+		return nil, err
+	}
+
+	ids := make(id.ProjectIDList, 0, len(pList))
+	for _, p := range pList {
+		ids = append(ids, p.ID())
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range pList {
+		for _, metadata := range metadatas {
+			if p.ID() == metadata.Project() {
+				p.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return pList, err
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -636,18 +671,27 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
-	prj, err := i.projectRepo.FindByID(ctx, projectID)
+	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, errors.New("project " + err.Error())
 	}
+
 	if prj.IsDeleted() {
 		fmt.Printf("Error Deleted project: %v\n", prj.ID())
 		return nil, errors.New("This project is deleted")
 	}
 
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
+	if err != nil {
+		return nil, errors.New("project metadate " + err.Error())
+	}
+
+	prj.SetMetadata(meta)
+
 	return prj, nil
+
 }
 
 func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
@@ -781,7 +825,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		return nil, errors.New("project parse error")
 	}
 
-	var input = jsonmodel.ToProjectExportFromJSON(projectData)
+	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
 
 	alias := ""
 	archived := false
