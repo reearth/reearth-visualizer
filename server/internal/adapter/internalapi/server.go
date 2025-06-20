@@ -15,7 +15,9 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/internalapi/internalapimodel"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -93,6 +95,37 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 		return nil, err
 	}
 
+	st, err := s.findStoryTelling(ctx, pj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetProjectResponse{
+		Project: internalapimodel.ToInternalProject(ctx, pj, st),
+	}, nil
+}
+
+func (s server) GetProjectByAlias(ctx context.Context, req *pb.GetProjectByAliasRequest) (*pb.GetProjectByAliasResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pj, err := uc.Project.FindActiveByAlias(ctx, req.Alias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	st, err := s.findStoryTelling(ctx, pj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetProjectByAliasResponse{
+		Project: internalapimodel.ToInternalProject(ctx, pj, st),
+	}, nil
+}
+
+func (s server) findStoryTelling(ctx context.Context, pj *project.Project) (*storytelling.Story, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
 	sc, err := uc.Scene.FindByProject(ctx, pj.ID(), op)
 	if err != nil {
 		return nil, err
@@ -108,10 +141,27 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 	if sts == nil || len(*sts) == 0 {
 		return nil, fmt.Errorf("no stories found for scene %v", pj.Scene())
 	}
-	st := (*sts)[0]
 
-	return &pb.GetProjectResponse{
-		Project: internalapimodel.ToInternalProject(ctx, pj, st),
+	return (*sts)[0], nil
+}
+
+func (s server) ValidateProjectAlias(ctx context.Context, req *pb.ValidateProjectAliasRequest) (*pb.ValidateProjectAliasResponse, error) {
+	uc := adapter.Usecases(ctx)
+
+	pid := id.ProjectIDFromRef(req.ProjectId)
+	available, err := uc.Project.CheckAlias(ctx, req.Alias, pid)
+	if err != nil {
+		errorMessage := err.Error()
+		return &pb.ValidateProjectAliasResponse{
+			ProjectId:    req.ProjectId,
+			Available:    available,
+			ErrorMessage: &errorMessage,
+		}, nil
+	}
+
+	return &pb.ValidateProjectAliasResponse{
+		ProjectId: req.ProjectId,
+		Available: available,
 	}, nil
 }
 
@@ -141,6 +191,9 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 	}
 
 	pj.UpdateSceneID(sc.ID())
+	if pj.Alias() == "" {
+		pj.UpdateAlias(alias.ReservedReearthPrefixScene + sc.ID().String())
+	}
 
 	index := 0
 	storyInput := interfaces.CreateStoryInput{

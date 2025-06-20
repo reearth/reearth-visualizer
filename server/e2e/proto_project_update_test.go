@@ -20,7 +20,7 @@ func TestInternalAPI_update(t *testing.T) {
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
-		pid1 = CreateProjectInternal(
+		pid1 = createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),

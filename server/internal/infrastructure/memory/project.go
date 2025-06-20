@@ -137,6 +137,15 @@ func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project
 	return nil, nil
 }
 
+func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project.Project, error) {
+	for _, p := range r.data {
+		if p.Alias() == alias && !p.IsDeleted() {
+			return p, nil
+		}
+	}
+	return nil, nil
+}
+
 func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()

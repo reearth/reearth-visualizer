@@ -33,7 +33,7 @@ func TestInternalAPI(t *testing.T) {
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
-		pid1 := CreateProjectInternal(
+		pid1 := createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -45,7 +45,7 @@ func TestInternalAPI(t *testing.T) {
 			})
 
 		// create private Project
-		pid2 := CreateProjectInternal(
+		pid2 := createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -57,7 +57,7 @@ func TestInternalAPI(t *testing.T) {
 			})
 
 		// create public Project2
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -68,7 +68,7 @@ func TestInternalAPI(t *testing.T) {
 				Visibility:  lo.ToPtr("public"),
 			})
 
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -79,8 +79,8 @@ func TestInternalAPI(t *testing.T) {
 				Visibility:  lo.ToPtr("private"),
 			})
 
-		LogicalDeleteProject(t, ctx, r, pid1)
-		LogicalDeleteProject(t, ctx, r, pid2)
+		logicalDeleteProject(t, ctx, r, pid1)
+		logicalDeleteProject(t, ctx, r, pid2)
 
 		// 0: creante public  => public   delete => true !!
 		// 1: creante private => private  delete => true !!
@@ -138,7 +138,7 @@ func TestInternalAPI_unit(t *testing.T) {
 
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// Create Project
-		pid := CreateProjectInternal(
+		pid := createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -260,7 +260,7 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 	testFunc(client, ctx)
 }
 
-func CreateProjectInternal(t *testing.T, ctx context.Context, r *repo.Container, client pb.ReEarthVisualizerClient, visibility string, req *pb.CreateProjectRequest) id.ProjectID {
+func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container, client pb.ReEarthVisualizerClient, visibility string, req *pb.CreateProjectRequest) id.ProjectID {
 	// test CreateProject
 	res, err := client.CreateProject(ctx, req)
 	require.Nil(t, err)
@@ -276,16 +276,25 @@ func CreateProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	s, err := r.Storytelling.FindByScene(ctx, c.ID())
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(*s))
+
 	// test GetProject
 	res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
 		ProjectId: res.Project.Id,
 	})
 	assert.Nil(t, err)
 	assert.Equal(t, visibility, res2.Project.Visibility)
+
+	// test GetProjectByAlias
+	res3, err := client.GetProjectByAlias(ctx, &pb.GetProjectByAliasRequest{
+		Alias: res2.Project.Alias,
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, res2.Project.Alias, res3.Project.Alias)
+
 	return pid
 }
 
-func LogicalDeleteProject(t *testing.T, ctx context.Context, r *repo.Container, pid id.ProjectID) {
+func logicalDeleteProject(t *testing.T, ctx context.Context, r *repo.Container, pid id.ProjectID) {
 	prj, err := r.Project.FindByID(ctx, pid)
 	assert.Nil(t, err)
 	prj.SetDeleted(true)
