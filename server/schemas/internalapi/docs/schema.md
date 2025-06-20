@@ -226,28 +226,10 @@ Core Project messages
 | metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) | optional | Project metadata |
 | alias | [string](#string) |  | Scene Publishment value |
 | publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Scene Publishment value |
-| published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | Scene Publishment value |
-| public_title | [string](#string) |  | Scene Publishment value |
-| public_description | [string](#string) |  | Scene Publishment value |
-| public_image | [string](#string) |  | Scene Publishment value |
-| public_no_index | [bool](#bool) |  | Scene Publishment value |
-| is_basic_auth_active | [bool](#bool) |  | Scene Publishment value |
-| basic_auth_username | [string](#string) |  | Scene Publishment value |
-| basic_auth_password | [string](#string) |  | Scene Publishment value |
-| enable_ga | [bool](#bool) |  | Scene Publishment value |
-| tracking_id | [string](#string) |  | Scene Publishment value |
+| published_url | [string](#string) | optional | Scene Publishment value |
 | story_alias | [string](#string) |  | Story Publishment value |
 | story_publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Story Publishment value |
-| story_published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | Story Publishment value |
-| story_public_title | [string](#string) |  | Story Publishment value |
-| story_public_description | [string](#string) |  | Story Publishment value |
-| story_public_image | [string](#string) |  | Story Publishment value |
-| story_public_no_index | [bool](#bool) |  | Story Publishment value |
-| story_is_basic_auth_active | [bool](#bool) |  | Story Publishment value |
-| story_basic_auth_username | [string](#string) |  | Story Publishment value |
-| story_basic_auth_password | [string](#string) |  | Story Publishment value |
-| story_enable_ga | [bool](#bool) |  | Story Publishment value |
-| story_tracking_id | [string](#string) |  | Story Publishment value |
+| story_published_url | [string](#string) | optional | Story Publishment value |
 
 
 

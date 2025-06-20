@@ -36,7 +36,6 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
 }
-
 // Core Project messages
 message Project {
   // Project ID
@@ -95,50 +94,14 @@ message Project {
   // Scene Publishment value
   PublishmentStatus publishment_status = 19;
   // Scene Publishment value
-  optional google.protobuf.Timestamp published_at = 20;
-  // Scene Publishment value
-  string public_title = 21;
-  // Scene Publishment value
-  string public_description = 22;
-  // Scene Publishment value
-  string public_image = 23;
-  // Scene Publishment value
-  bool public_no_index = 24;
-  // Scene Publishment value
-  bool is_basic_auth_active = 25;
-  // Scene Publishment value
-  string basic_auth_username = 26;
-  // Scene Publishment value
-  string basic_auth_password = 27;
-  // Scene Publishment value
-  bool enable_ga = 28;
-  // Scene Publishment value
-  string tracking_id = 29;
+  optional string published_url = 20;
 
   // Story Publishment value
-  string story_alias = 30;
+  string story_alias = 21;
   // Story Publishment value
-  PublishmentStatus story_publishment_status = 31;
+  PublishmentStatus story_publishment_status = 22;
   // Story Publishment value
-  optional google.protobuf.Timestamp story_published_at = 32;
-  // Story Publishment value
-  string story_public_title = 33;
-  // Story Publishment value
-  string story_public_description = 34;
-  // Story Publishment value
-  string story_public_image = 35;
-  // Story Publishment value
-  bool story_public_no_index = 36;
-  // Story Publishment value
-  bool story_is_basic_auth_active = 37;
-  // Story Publishment value
-  string story_basic_auth_username = 38;
-  // Story Publishment value
-  string story_basic_auth_password = 39;
-  // Story Publishment value
-  bool story_enable_ga = 40;
-  // Story Publishment value
-  string story_tracking_id = 41;
+  optional string story_published_url = 23;
 }
 
 message ProjectMetadata {

@@ -10,6 +10,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// go test -v -run TestInternalAPI_update ./e2e/...
+
 func TestInternalAPI_update(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 
@@ -73,15 +75,6 @@ func TestInternalAPI_update(t *testing.T) {
 		assert.Equal(t, imageUrl, *res.Project.ImageUrl)
 		assert.Equal(t, starred, res.Project.Starred)
 		assert.Equal(t, deleted, res.Project.IsDeleted)
-		assert.Equal(t, publicTitle, res.Project.PublicTitle)
-		assert.Equal(t, publicDescription, res.Project.PublicDescription)
-		assert.Equal(t, publicImage, res.Project.PublicImage)
-		assert.Equal(t, publicNoIndex, res.Project.PublicNoIndex)
-		assert.Equal(t, isBasicAuthActive, res.Project.IsBasicAuthActive)
-		assert.Equal(t, basicAuthUsername, res.Project.BasicAuthUsername)
-		assert.Equal(t, basicAuthPassword, res.Project.BasicAuthPassword)
-		assert.Equal(t, enableGa, res.Project.EnableGa)
-		assert.Equal(t, trackingId, res.Project.TrackingId)
 
 		deleteImageUrl := true
 		deletePublicImage := true
@@ -96,7 +89,7 @@ func TestInternalAPI_update(t *testing.T) {
 		})
 		assert.Nil(t, err)
 		assert.Nil(t, res2.Project.ImageUrl)
-		assert.Equal(t, "", res2.Project.PublicImage)
+
 	})
 
 	// user2 call api

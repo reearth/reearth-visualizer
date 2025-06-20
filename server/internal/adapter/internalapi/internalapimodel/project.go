@@ -23,12 +23,8 @@ func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.
 		imageURL = &urlStr
 	}
 
-	var publishedAt *timestamppb.Timestamp
-	if !p.PublishedAt().IsZero() {
-		publishedAt = timestamppb.New(p.PublishedAt())
-	}
-
 	editorUrl := adapter.CurrentHost(ctx) + "/scene/" + p.Scene().String() + "/map"
+	publishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
 
 	project := &pb.Project{
 		Id:          p.ID().String(),
@@ -52,38 +48,19 @@ func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.
 		// Scene publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
-		PublishedAt:       publishedAt,
-		PublicTitle:       p.PublicTitle(),
-		PublicDescription: p.PublicDescription(),
-		PublicImage:       p.PublicImage(),
-		PublicNoIndex:     p.PublicNoIndex(),
-		IsBasicAuthActive: p.IsBasicAuthActive(),
-		BasicAuthUsername: p.BasicAuthUsername(),
-		BasicAuthPassword: p.BasicAuthPassword(),
-		EnableGa:          p.EnableGA(),
-		TrackingId:        p.TrackingID(),
+		PublishedUrl:      &publishedUrl,
 	}
 
 	if s != nil {
 		project.SceneId = s.Scene().String()
 		project.StoryId = s.Id().String()
+		storyPublishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
 
 		// Story publishment
 		project.StoryAlias = s.Alias()
 		project.StoryPublishmentStatus = ToStoryPublishmentStatus(s.PublishmentStatus())
-		project.StoryPublicTitle = s.PublicTitle()
-		project.StoryPublicDescription = s.PublicDescription()
-		project.StoryPublicImage = s.PublicImage()
-		project.StoryPublicNoIndex = s.PublicNoIndex()
-		project.StoryIsBasicAuthActive = s.IsBasicAuthActive()
-		project.StoryBasicAuthUsername = s.BasicAuthUsername()
-		project.StoryBasicAuthPassword = s.BasicAuthPassword()
-		project.StoryEnableGa = s.EnableGa()
-		project.StoryTrackingId = s.TrackingID()
+		project.PublishedUrl = &storyPublishedUrl
 
-		if s.PublishedAt() != nil {
-			project.StoryPublishedAt = timestamppb.New(*s.PublishedAt())
-		}
 	} else {
 		project.SceneId = p.Scene().String()
 		project.StoryId = ""
