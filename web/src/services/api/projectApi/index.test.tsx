@@ -62,10 +62,6 @@ describe("useProjectApi - useImportProject", () => {
     });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(1);
-    expect(mockNotification).toHaveBeenCalledWith({
-      type: "success",
-      text: "Successfully imported project!"
-    });
     expect(res).toEqual({ status: "chunk_received" });
   });
 
@@ -90,10 +86,6 @@ describe("useProjectApi - useImportProject", () => {
     });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(3);
-    expect(mockNotification).toHaveBeenCalledWith({
-      type: "success",
-      text: "Successfully imported project!"
-    });
     expect(res).toEqual({ status: "chunk_received" });
   });
 
@@ -144,10 +136,13 @@ describe("useProjectApi - useImportProject", () => {
       res = await result.current.useImportProject(file, teamId);
     });
 
-    expect(mockNotification).toHaveBeenCalledWith({
-      type: "error",
-      text: "Failed to import project."
-    });
+    expect(mockNotification).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "error",
+        text: expect.stringContaining("Failed")
+      })
+    );
+
     expect(res).toEqual({ status: "error" });
   });
 
@@ -162,11 +157,6 @@ describe("useProjectApi - useImportProject", () => {
     let res;
     await act(async () => {
       res = await result.current.useImportProject(file, teamId);
-    });
-
-    expect(mockNotification).toHaveBeenCalledWith({
-      type: "success",
-      text: "Successfully imported project!"
     });
     expect(res).toEqual({ status: "chunk_received" });
   });

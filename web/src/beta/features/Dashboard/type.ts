@@ -1,12 +1,26 @@
 import { IconName } from "@reearth/beta/lib/reearth-ui";
 import { PublishStatus } from "@reearth/services/api/publishTypes";
-import { TeamMember } from "@reearth/services/gql";
+import { ProjectImportStatus, TeamMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
+
+export type ImportStatus = "failed" | "none" | "processing" | "success";
+
+export type ProjectMetadata = {
+  id: string;
+  project: string;
+  workspace: string;
+  readme?: string | null;
+  license?: string | null;
+  importStatus?: ProjectImportStatus | null;
+  createdAt?: Date | null;
+  updatedAt?: Date | null;
+};
 
 export type Project = {
   id: string;
   name: string;
+  teamId: string;
   imageUrl?: string | null;
   status?: PublishStatus;
   isArchived?: boolean;
@@ -18,6 +32,7 @@ export type Project = {
   starred?: boolean;
   isDeleted?: boolean;
   isPublished?: boolean;
+  metadata?: ProjectMetadata | null;
 };
 
 export type DeletedProject = {
@@ -56,4 +71,17 @@ export type Workspace = {
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
   personal?: boolean;
+};
+
+export const getImportStatus = (s?: ProjectImportStatus | null) => {
+  switch (s) {
+    case ProjectImportStatus.Failed:
+      return "failed";
+    case ProjectImportStatus.Success:
+      return "success";
+    case ProjectImportStatus.Processing:
+      return "processing";
+    default:
+      return "none";
+  }
 };

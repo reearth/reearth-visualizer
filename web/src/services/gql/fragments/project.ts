@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const projectFragment = gql`
   fragment ProjectFragment on Project {
     id
+    teamId
     name
     description
     imageUrl
@@ -13,6 +14,8 @@ export const projectFragment = gql`
     publicTitle
     publicDescription
     publicImage
+    publishedAt
+    publicNoIndex
     alias
     enableGa
     trackingId
@@ -22,5 +25,23 @@ export const projectFragment = gql`
     coreSupport
     starred
     isDeleted
+    metadata {
+      id
+      ...ProjectMetadataFragment
+    }
+    visualizer
+    visibility
   }
 `;
+
+export const projectMetadataFragment = gql`
+  fragment ProjectMetadataFragment on ProjectMetadata {
+  project
+  workspace
+  readme
+  license
+  importStatus
+  createdAt
+  updatedAt
+}
+`
