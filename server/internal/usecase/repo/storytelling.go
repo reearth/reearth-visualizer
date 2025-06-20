@@ -12,6 +12,7 @@ type Storytelling interface {
 	FindByID(context.Context, id.StoryID) (*storytelling.Story, error)
 	FindByIDs(context.Context, id.StoryIDList) (*storytelling.StoryList, error)
 	FindByScene(context.Context, id.SceneID) (*storytelling.StoryList, error)
+	FindByScenes(context.Context, []id.SceneID) (*storytelling.StoryList, error)
 	FindByPublicName(context.Context, string) (*storytelling.Story, error)
 	CheckAliasUnique(context.Context, string) error
 	Save(context.Context, storytelling.Story) error

@@ -581,6 +581,7 @@ type ComplexityRoot struct {
 		License      func(childComplexity int) int
 		Project      func(childComplexity int) int
 		Readme       func(childComplexity int) int
+		Topics       func(childComplexity int) int
 		UpdatedAt    func(childComplexity int) int
 		Workspace    func(childComplexity int) int
 	}
@@ -4015,6 +4016,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.ProjectMetadata.Readme(childComplexity), true
 
+	case "ProjectMetadata.topics":
+		if e.complexity.ProjectMetadata.Topics == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Topics(childComplexity), true
+
 	case "ProjectMetadata.updatedAt":
 		if e.complexity.ProjectMetadata.UpdatedAt == nil {
 			break
@@ -6893,6 +6901,7 @@ type ProjectMetadata {
   workspace: ID!
   readme: String
   license: String
+  topics: String
   importStatus: ProjectImportStatus
   createdAt: DateTime
   updatedAt: DateTime
@@ -6961,6 +6970,7 @@ input UpdateProjectMetadataInput {
   project: ID!
   readme: String
   license: String
+  topics: String
 }
 
 input PublishProjectInput {
@@ -27286,6 +27296,8 @@ func (ec *executionContext) fieldContext_Project_metadata(_ context.Context, fie
 				return ec.fieldContext_ProjectMetadata_readme(ctx, field)
 			case "license":
 				return ec.fieldContext_ProjectMetadata_license(ctx, field)
+			case "topics":
+				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
 			case "importStatus":
 				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
 			case "createdAt":
@@ -28519,6 +28531,47 @@ func (ec *executionContext) fieldContext_ProjectMetadata_license(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _ProjectMetadata_topics(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_topics(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Topics, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_topics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ProjectMetadata_importStatus(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
 	if err != nil {
@@ -28691,6 +28744,8 @@ func (ec *executionContext) fieldContext_ProjectMetadataPayload_metadata(_ conte
 				return ec.fieldContext_ProjectMetadata_readme(ctx, field)
 			case "license":
 				return ec.fieldContext_ProjectMetadata_license(ctx, field)
+			case "topics":
+				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
 			case "importStatus":
 				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
 			case "createdAt":
@@ -47228,7 +47283,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"project", "readme", "license"}
+	fieldsInOrder := [...]string{"project", "readme", "license", "topics"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47256,6 +47311,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context
 				return it, err
 			}
 			it.License = data
+		case "topics":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Topics = data
 		}
 	}
 
@@ -52636,6 +52698,8 @@ func (ec *executionContext) _ProjectMetadata(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._ProjectMetadata_readme(ctx, field, obj)
 		case "license":
 			out.Values[i] = ec._ProjectMetadata_license(ctx, field, obj)
+		case "topics":
+			out.Values[i] = ec._ProjectMetadata_topics(ctx, field, obj)
 		case "importStatus":
 			out.Values[i] = ec._ProjectMetadata_importStatus(ctx, field, obj)
 		case "createdAt":
