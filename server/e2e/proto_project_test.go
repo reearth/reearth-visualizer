@@ -220,31 +220,15 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, meta, "createdAt")
 	assert.Contains(t, meta, "updatedAt")
 
-	// Scene Publishment
+	// Scene publishment field
 	assert.Contains(t, m, "alias")
 	assert.Contains(t, m, "publishmentStatus")
-	assert.Contains(t, m, "publicTitle")
-	assert.Contains(t, m, "publicDescription")
-	assert.Contains(t, m, "publicImage")
-	assert.Contains(t, m, "publicNoIndex")
-	assert.Contains(t, m, "isBasicAuthActive")
-	assert.Contains(t, m, "basicAuthUsername")
-	assert.Contains(t, m, "basicAuthPassword")
-	assert.Contains(t, m, "enableGa")
-	assert.Contains(t, m, "trackingId")
+	assert.Contains(t, m, "publishedUrl")
 
-	// Story Publishment
+	// Story publishment fields
 	assert.Contains(t, m, "storyAlias")
 	assert.Contains(t, m, "storyPublishmentStatus")
-	assert.Contains(t, m, "storyPublicTitle")
-	assert.Contains(t, m, "storyPublicDescription")
-	assert.Contains(t, m, "storyPublicImage")
-	assert.Contains(t, m, "storyPublicNoIndex")
-	assert.Contains(t, m, "storyIsBasicAuthActive")
-	assert.Contains(t, m, "storyBasicAuthUsername")
-	assert.Contains(t, m, "storyBasicAuthPassword")
-	assert.Contains(t, m, "storyEnableGa")
-	assert.Contains(t, m, "storyTrackingId")
+	assert.Contains(t, m, "storyPublishedUrl")
 
 }
 

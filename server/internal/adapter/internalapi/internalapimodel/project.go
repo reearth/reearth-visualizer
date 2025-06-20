@@ -59,7 +59,7 @@ func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.
 		// Story publishment
 		project.StoryAlias = s.Alias()
 		project.StoryPublishmentStatus = ToStoryPublishmentStatus(s.PublishmentStatus())
-		project.PublishedUrl = &storyPublishedUrl
+		project.StoryPublishedUrl = &storyPublishedUrl
 
 	} else {
 		project.SceneId = p.Scene().String()
