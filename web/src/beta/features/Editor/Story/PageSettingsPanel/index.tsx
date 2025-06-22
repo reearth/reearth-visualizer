@@ -40,31 +40,44 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
       alwaysOpen
       showCollapseArea={showCollapseArea}
       areaRef={areaRef}
+      data-testid="editor-widgets-page-settings-panel"
     >
       {selectedStoryPage && (
-        <Wrapper>
+        <Wrapper data-testid="page-settings-wrapper">
           {tab == "story" && (
-            <Collapse title={t("Layers")} size="small">
+            <Collapse
+              title={t("Layers")}
+              size="small"
+              data-testid="page-settings-layers-collapse"
+            >
               {layers && layers.length > 0 && (
-                <LayerWrapper>
-                  <AllLayers>
+                <LayerWrapper data-testid="page-settings-layer-wrapper">
+                  <AllLayers data-testid="page-settings-all-layers">
                     <CheckBoxField
                       onChange={handleAllLayersCheck}
                       value={allCheckedLayers}
+                      data-testid="page-settings-all-layers-checkbox"
                     />
-                    <Title>{t("All Layers")}</Title>
+                    <Title data-testid="page-settings-all-layers-title">
+                      {t("All Layers")}
+                    </Title>
                   </AllLayers>
-                  <LayerList>
+                  <LayerList data-testid="page-settings-layer-list">
                     {layers.map((layer) => (
-                      <Layer key={layer.id}>
+                      <Layer
+                        key={layer.id}
+                        data-testid={`page-settings-layer-${layer.id}`}
+                      >
                         <CheckBoxField
                           onChange={() => handleLayerCheck(layer.id)}
                           value={checkedLayers.includes(layer.id)}
+                          data-testid={`page-settings-layer-checkbox-${layer.id}`}
                         />
                         <EntryItem
                           icon="file"
                           title={layer.title}
                           disableHover
+                          data-testid={`page-settings-layer-title-${layer.id}`}
                         />
                       </Layer>
                     ))}
@@ -75,12 +88,18 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           )}
 
           {visibleItems?.map((i, idx) => (
-            <Collapse key={idx} title={i.title ?? t("Settings")} size="small">
+            <Collapse
+              key={idx}
+              title={i.title ?? t("Settings")}
+              size="small"
+              data-testid={`page-settings-property-collapse-${i.id}`}
+            >
               <PropertyItem
                 key={i.id}
                 propertyId={selectedStoryPage.property.id}
                 item={i}
                 onFlyTo={handleFlyTo}
+                data-testid={`page-settings-property-item-${i.id}`}
               />
             </Collapse>
           ))}

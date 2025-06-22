@@ -44,10 +44,12 @@ func TestEndpoint(t *testing.T) {
 	rr := authserver.NewMongo(mongox.NewClientCollection(db.Collection("authRequest")))
 
 	uid := user.NewID()
+	metadata := user.NewMetadata()
 	usr := user.New().ID(uid).
 		Name("aaa").
 		Workspace(user.NewWorkspaceID()).
 		Email("aaa@example.com").
+		Metadata(metadata).
 		Auths(user.Auths{user.NewReearthAuth("subsub")}).
 		PasswordPlainText("Xyzxyz123").
 		Verification(user.VerificationFrom("", time.Time{}, true)).

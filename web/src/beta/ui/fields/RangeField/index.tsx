@@ -9,7 +9,6 @@ import CommonField, {
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
 
-
 export type RangeFieldProps = CommonFieldProps &
   Omit<NumberInputProps, "onBlur" | "onChange" | "placeholder" | "value"> & {
     values: number[];
@@ -73,9 +72,13 @@ const RangeField: FC<RangeFieldProps> = ({
   }, [values]);
 
   return (
-    <CommonField title={title} description={description}>
-      <Wrapper>
-        <InputWrapper>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="rangefield-commonfield"
+    >
+      <Wrapper data-testid="rangefield-wrapper">
+        <InputWrapper data-testid="rangefield-min-inputwrapper">
           <NumberInput
             value={inputValues[0]}
             placeholder={placeholders?.[0]}
@@ -83,13 +86,18 @@ const RangeField: FC<RangeFieldProps> = ({
             onBlur={handleBlur}
             extendWidth
             {...props}
+            data-testid="rangefield-min-input"
           />
-          <Typography size="body" color={theme.content.weak}>
+          <Typography
+            size="body"
+            color={theme.content.weak}
+            data-testid="rangefield-min-content"
+          >
             {content?.[0]}
           </Typography>
         </InputWrapper>
-        <Dash>~</Dash>
-        <InputWrapper>
+        <Dash data-testid="rangefield-dash">~</Dash>
+        <InputWrapper data-testid="rangefield-max-inputwrapper">
           <NumberInput
             value={inputValues[1]}
             placeholder={placeholders?.[1]}
@@ -97,8 +105,13 @@ const RangeField: FC<RangeFieldProps> = ({
             onBlur={handleBlur}
             extendWidth
             {...props}
+            data-testid="rangefield-max-input"
           />
-          <Typography size="body" color={theme.content.weak}>
+          <Typography
+            size="body"
+            color={theme.content.weak}
+            data-testid="rangefield-max-content"
+          >
             {content?.[1]}
           </Typography>
         </InputWrapper>

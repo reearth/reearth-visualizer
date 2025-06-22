@@ -1291,7 +1291,7 @@ func (e *executableSchema) Schema() *ast.Schema {
 	return parsedSchema
 }
 
-func (e *executableSchema) Complexity(typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
+func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
@@ -2190,7 +2190,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addGeoJSONFeature_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addGeoJSONFeature_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2202,7 +2202,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addMemberToTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addMemberToTeam_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2214,7 +2214,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addNLSInfoboxBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addNLSInfoboxBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2226,7 +2226,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addNLSLayerSimple_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addNLSLayerSimple_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2238,7 +2238,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addPageLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addPageLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2250,7 +2250,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addPropertyItem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addPropertyItem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2262,7 +2262,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2274,7 +2274,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2286,7 +2286,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_changeCustomPropertyTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_changeCustomPropertyTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2298,7 +2298,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createAsset_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createAsset_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2310,7 +2310,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createNLSInfobox_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createNLSInfobox_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2322,7 +2322,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createNLSPhotoOverlay_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createNLSPhotoOverlay_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2334,7 +2334,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2346,7 +2346,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createScene_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createScene_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2358,7 +2358,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2370,7 +2370,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createStoryBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createStoryBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2382,7 +2382,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2394,7 +2394,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createTeam_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2406,7 +2406,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteGeoJSONFeature_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteGeoJSONFeature_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2418,7 +2418,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteMe_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteMe_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2430,7 +2430,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2442,7 +2442,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2454,7 +2454,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteTeam_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2466,7 +2466,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_duplicateNLSLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_duplicateNLSLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2478,7 +2478,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_duplicateStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_duplicateStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2490,7 +2490,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_duplicateStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_duplicateStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2502,7 +2502,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_exportProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_exportProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2514,7 +2514,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_installPlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_installPlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2526,7 +2526,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveNLSInfoboxBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveNLSInfoboxBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2538,7 +2538,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_movePropertyItem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_movePropertyItem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2550,7 +2550,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2562,7 +2562,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveStoryBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveStoryBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2574,7 +2574,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2586,7 +2586,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_publishProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_publishProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2598,7 +2598,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_publishStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_publishStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2610,7 +2610,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeAsset_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeAsset_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2622,7 +2622,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeCustomProperty_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeCustomProperty_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2634,7 +2634,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeMemberFromTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeMemberFromTeam_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2646,7 +2646,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeMyAuth_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeMyAuth_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2658,7 +2658,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSInfobox_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSInfobox_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2670,7 +2670,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSInfoboxBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSInfoboxBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2682,7 +2682,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2694,7 +2694,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSPhotoOverlay_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSPhotoOverlay_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2706,7 +2706,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removePageLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removePageLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2718,7 +2718,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removePropertyField_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removePropertyField_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2730,7 +2730,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removePropertyItem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removePropertyItem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2742,7 +2742,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeStoryBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeStoryBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2754,7 +2754,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2766,7 +2766,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2778,7 +2778,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2790,7 +2790,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_signup_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_signup_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2802,7 +2802,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_uninstallPlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uninstallPlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2814,7 +2814,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_unlinkPropertyValue_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_unlinkPropertyValue_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2826,7 +2826,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateAsset_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateAsset_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2838,7 +2838,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateCustomProperties_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateCustomProperties_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2850,7 +2850,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateGeoJSONFeature_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateGeoJSONFeature_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2862,7 +2862,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateMe_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateMe_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2874,7 +2874,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateMemberOfTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateMemberOfTeam_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2886,7 +2886,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateNLSLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateNLSLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2898,7 +2898,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateNLSLayers_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateNLSLayers_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2910,7 +2910,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2922,7 +2922,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateProjectMetadata_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateProjectMetadata_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2934,7 +2934,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updatePropertyItems_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updatePropertyItems_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2946,7 +2946,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updatePropertyValue_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updatePropertyValue_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2958,7 +2958,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2970,7 +2970,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2982,7 +2982,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2994,7 +2994,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateTeam_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3006,7 +3006,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3018,7 +3018,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateWidgetAlignSystem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateWidgetAlignSystem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3030,7 +3030,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_upgradePlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_upgradePlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3042,7 +3042,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_uploadFileToProperty_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uploadFileToProperty_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3054,7 +3054,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_uploadPlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uploadPlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3451,7 +3451,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Plugin_scenePlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Plugin_scenePlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3463,7 +3463,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Plugin_translatedDescription_args(context.TODO(), rawArgs)
+		args, err := ec.field_Plugin_translatedDescription_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3475,7 +3475,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Plugin_translatedName_args(context.TODO(), rawArgs)
+		args, err := ec.field_Plugin_translatedName_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3564,7 +3564,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PluginExtension_sceneWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_PluginExtension_sceneWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3583,7 +3583,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PluginExtension_translatedDescription_args(context.TODO(), rawArgs)
+		args, err := ec.field_PluginExtension_translatedDescription_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3595,7 +3595,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PluginExtension_translatedName_args(context.TODO(), rawArgs)
+		args, err := ec.field_PluginExtension_translatedName_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4440,7 +4440,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaField_translatedDescription_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaField_translatedDescription_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4452,7 +4452,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaField_translatedPlaceholder_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaField_translatedPlaceholder_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4464,7 +4464,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaField_translatedTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaField_translatedTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4518,7 +4518,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaFieldChoice_translatedTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaFieldChoice_translatedTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4607,7 +4607,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaGroup_translatedTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaGroup_translatedTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4619,7 +4619,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_assets_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_assets_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4631,7 +4631,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_checkProjectAlias_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_checkProjectAlias_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4643,7 +4643,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_checkStoryAlias_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_checkStoryAlias_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4655,7 +4655,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_deletedProjects_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_deletedProjects_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4674,7 +4674,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_node_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_node_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4686,7 +4686,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_nodes_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_nodes_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4698,7 +4698,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_plugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_plugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4710,7 +4710,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_plugins_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_plugins_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4722,7 +4722,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_projects_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_projects_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4734,7 +4734,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_propertySchema_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_propertySchema_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4746,7 +4746,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_propertySchemas_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_propertySchemas_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4758,7 +4758,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_scene_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_scene_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4770,7 +4770,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_searchUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_searchUser_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4782,7 +4782,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_starredProjects_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_starredProjects_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -5522,7 +5522,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Team_assets_args(context.TODO(), rawArgs)
+		args, err := ec.field_Team_assets_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -5576,7 +5576,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Team_projects_args(context.TODO(), rawArgs)
+		args, err := ec.field_Team_projects_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -33689,6 +33689,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -33701,8 +33703,6 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -42730,6 +42730,50 @@ func (ec *executionContext) fieldContext___Directive_description(_ context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext___Directive_isRepeatable(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRepeatable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Directive",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Directive_locations(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext___Directive_locations(ctx, field)
 	if err != nil {
@@ -42839,50 +42883,6 @@ func (ec *executionContext) fieldContext___Directive_args(ctx context.Context, f
 	if fc.Args, err = ec.field___Directive_args_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext___Directive_isRepeatable(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsRepeatable, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "__Directive",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
 	}
 	return fc, nil
 }
@@ -43256,6 +43256,8 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43268,8 +43270,6 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43494,6 +43494,8 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43506,8 +43508,6 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43729,6 +43729,8 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43741,8 +43743,6 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43797,6 +43797,8 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43809,8 +43811,6 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43862,6 +43862,8 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43874,8 +43876,6 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43927,6 +43927,8 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43939,8 +43941,6 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43993,12 +43993,12 @@ func (ec *executionContext) fieldContext___Schema_directives(_ context.Context, 
 				return ec.fieldContext___Directive_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Directive_description(ctx, field)
+			case "isRepeatable":
+				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			case "locations":
 				return ec.fieldContext___Directive_locations(ctx, field)
 			case "args":
 				return ec.fieldContext___Directive_args(ctx, field)
-			case "isRepeatable":
-				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Directive", field.Name)
 		},
@@ -44132,6 +44132,47 @@ func (ec *executionContext) fieldContext___Type_description(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext___Type_specifiedByURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpecifiedByURL(), nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Type",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Type_fields(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext___Type_fields(ctx, field)
 	if err != nil {
@@ -44240,6 +44281,8 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -44252,8 +44295,6 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -44305,6 +44346,8 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -44317,8 +44360,6 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -44487,6 +44528,8 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -44499,53 +44542,10 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext___Type_specifiedByURL(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SpecifiedByURL(), nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "__Type",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -48068,20 +48068,6 @@ func (ec *executionContext) _Geometry(ctx context.Context, sel ast.SelectionSet,
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case gqlmodel.Point:
-		return ec._Point(ctx, sel, &obj)
-	case *gqlmodel.Point:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Point(ctx, sel, obj)
-	case gqlmodel.LineString:
-		return ec._LineString(ctx, sel, &obj)
-	case *gqlmodel.LineString:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._LineString(ctx, sel, obj)
 	case gqlmodel.Polygon:
 		return ec._Polygon(ctx, sel, &obj)
 	case *gqlmodel.Polygon:
@@ -48089,6 +48075,13 @@ func (ec *executionContext) _Geometry(ctx context.Context, sel ast.SelectionSet,
 			return graphql.Null
 		}
 		return ec._Polygon(ctx, sel, obj)
+	case gqlmodel.Point:
+		return ec._Point(ctx, sel, &obj)
+	case *gqlmodel.Point:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Point(ctx, sel, obj)
 	case gqlmodel.MultiPolygon:
 		return ec._MultiPolygon(ctx, sel, &obj)
 	case *gqlmodel.MultiPolygon:
@@ -48096,6 +48089,13 @@ func (ec *executionContext) _Geometry(ctx context.Context, sel ast.SelectionSet,
 			return graphql.Null
 		}
 		return ec._MultiPolygon(ctx, sel, obj)
+	case gqlmodel.LineString:
+		return ec._LineString(ctx, sel, &obj)
+	case *gqlmodel.LineString:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._LineString(ctx, sel, obj)
 	case gqlmodel.GeometryCollection:
 		return ec._GeometryCollection(ctx, sel, &obj)
 	case *gqlmodel.GeometryCollection:
@@ -48135,55 +48135,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case gqlmodel.Asset:
-		return ec._Asset(ctx, sel, &obj)
-	case *gqlmodel.Asset:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Asset(ctx, sel, obj)
-	case gqlmodel.Project:
-		return ec._Project(ctx, sel, &obj)
-	case *gqlmodel.Project:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Project(ctx, sel, obj)
-	case gqlmodel.Property:
-		return ec._Property(ctx, sel, &obj)
-	case *gqlmodel.Property:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Property(ctx, sel, obj)
-	case gqlmodel.Scene:
-		return ec._Scene(ctx, sel, &obj)
-	case *gqlmodel.Scene:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Scene(ctx, sel, obj)
-	case gqlmodel.Story:
-		return ec._Story(ctx, sel, &obj)
-	case *gqlmodel.Story:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Story(ctx, sel, obj)
-	case gqlmodel.StoryPage:
-		return ec._StoryPage(ctx, sel, &obj)
-	case *gqlmodel.StoryPage:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._StoryPage(ctx, sel, obj)
-	case gqlmodel.StoryBlock:
-		return ec._StoryBlock(ctx, sel, &obj)
-	case *gqlmodel.StoryBlock:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._StoryBlock(ctx, sel, obj)
 	case gqlmodel.User:
 		return ec._User(ctx, sel, &obj)
 	case *gqlmodel.User:
@@ -48198,6 +48149,55 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Team(ctx, sel, obj)
+	case gqlmodel.StoryPage:
+		return ec._StoryPage(ctx, sel, &obj)
+	case *gqlmodel.StoryPage:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._StoryPage(ctx, sel, obj)
+	case gqlmodel.StoryBlock:
+		return ec._StoryBlock(ctx, sel, &obj)
+	case *gqlmodel.StoryBlock:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._StoryBlock(ctx, sel, obj)
+	case gqlmodel.Story:
+		return ec._Story(ctx, sel, &obj)
+	case *gqlmodel.Story:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Story(ctx, sel, obj)
+	case gqlmodel.Scene:
+		return ec._Scene(ctx, sel, &obj)
+	case *gqlmodel.Scene:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Scene(ctx, sel, obj)
+	case gqlmodel.Property:
+		return ec._Property(ctx, sel, &obj)
+	case *gqlmodel.Property:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Property(ctx, sel, obj)
+	case gqlmodel.Project:
+		return ec._Project(ctx, sel, &obj)
+	case *gqlmodel.Project:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Project(ctx, sel, obj)
+	case gqlmodel.Asset:
+		return ec._Asset(ctx, sel, &obj)
+	case *gqlmodel.Asset:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Asset(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -48207,13 +48207,6 @@ func (ec *executionContext) _PropertyItem(ctx context.Context, sel ast.Selection
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case gqlmodel.PropertyGroup:
-		return ec._PropertyGroup(ctx, sel, &obj)
-	case *gqlmodel.PropertyGroup:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._PropertyGroup(ctx, sel, obj)
 	case gqlmodel.PropertyGroupList:
 		return ec._PropertyGroupList(ctx, sel, &obj)
 	case *gqlmodel.PropertyGroupList:
@@ -48221,6 +48214,13 @@ func (ec *executionContext) _PropertyItem(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._PropertyGroupList(ctx, sel, obj)
+	case gqlmodel.PropertyGroup:
+		return ec._PropertyGroup(ctx, sel, &obj)
+	case *gqlmodel.PropertyGroup:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._PropertyGroup(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -57401,6 +57401,11 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
+		case "isRepeatable":
+			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -57408,11 +57413,6 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "isRepeatable":
-			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -57675,6 +57675,8 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_name(ctx, field, obj)
 		case "description":
 			out.Values[i] = ec.___Type_description(ctx, field, obj)
+		case "specifiedByURL":
+			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
 		case "fields":
 			out.Values[i] = ec.___Type_fields(ctx, field, obj)
 		case "interfaces":
@@ -57687,8 +57689,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_inputFields(ctx, field, obj)
 		case "ofType":
 			out.Values[i] = ec.___Type_ofType(ctx, field, obj)
-		case "specifiedByURL":
-			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
 		case "isOneOf":
 			out.Values[i] = ec.___Type_isOneOf(ctx, field, obj)
 		default:
@@ -57899,6 +57899,7 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (
 }
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalBoolean(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57978,6 +57979,7 @@ func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋreearthᚋreearthx�
 }
 
 func (ec *executionContext) marshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx context.Context, sel ast.SelectionSet, v usecasex.Cursor) graphql.Marshaler {
+	_ = sel
 	res := gqlmodel.MarshalCursor(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57993,6 +57995,7 @@ func (ec *executionContext) unmarshalNDateTime2timeᚐTime(ctx context.Context, 
 }
 
 func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalTime(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -58172,6 +58175,7 @@ func (ec *executionContext) unmarshalNFileSize2int64(ctx context.Context, v any)
 }
 
 func (ec *executionContext) marshalNFileSize2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalInt64(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -58187,6 +58191,7 @@ func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) 
 }
 
 func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalFloatContext(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -58198,9 +58203,7 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 
 func (ec *executionContext) unmarshalNFloat2ᚕfloat64ᚄ(ctx context.Context, v any) ([]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]float64, len(vSlice))
 	for i := range vSlice {
@@ -58230,9 +58233,7 @@ func (ec *executionContext) marshalNFloat2ᚕfloat64ᚄ(ctx context.Context, sel
 
 func (ec *executionContext) unmarshalNFloat2ᚕᚕfloat64ᚄ(ctx context.Context, v any) ([][]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([][]float64, len(vSlice))
 	for i := range vSlice {
@@ -58262,9 +58263,7 @@ func (ec *executionContext) marshalNFloat2ᚕᚕfloat64ᚄ(ctx context.Context, 
 
 func (ec *executionContext) unmarshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx context.Context, v any) ([][][]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([][][]float64, len(vSlice))
 	for i := range vSlice {
@@ -58294,9 +58293,7 @@ func (ec *executionContext) marshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx context.Contex
 
 func (ec *executionContext) unmarshalNFloat2ᚕᚕᚕᚕfloat64ᚄ(ctx context.Context, v any) ([][][][]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([][][][]float64, len(vSlice))
 	for i := range vSlice {
@@ -58385,6 +58382,7 @@ func (ec *executionContext) unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserv
 }
 
 func (ec *executionContext) marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx context.Context, sel ast.SelectionSet, v gqlmodel.ID) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(string(v))
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -58396,9 +58394,7 @@ func (ec *executionContext) marshalNID2githubᚗcomᚋreearthᚋreearthᚋserver
 
 func (ec *executionContext) unmarshalNID2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐIDᚄ(ctx context.Context, v any) ([]gqlmodel.ID, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]gqlmodel.ID, len(vSlice))
 	for i := range vSlice {
@@ -58491,6 +58487,7 @@ func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v any) (int, 
 }
 
 func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -58512,6 +58509,7 @@ func (ec *executionContext) marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 		}
 		return graphql.Null
 	}
+	_ = sel
 	res := gqlmodel.MarshalJSON(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -58527,6 +58525,7 @@ func (ec *executionContext) unmarshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐ
 }
 
 func (ec *executionContext) marshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, sel ast.SelectionSet, v language.Tag) graphql.Marshaler {
+	_ = sel
 	res := gqlmodel.MarshalLang(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -59994,6 +59993,7 @@ func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) 
 }
 
 func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -60005,9 +60005,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]string, len(vSlice))
 	for i := range vSlice {
@@ -60249,9 +60247,7 @@ func (ec *executionContext) unmarshalNUpdateNLSLayerInput2githubᚗcomᚋreearth
 
 func (ec *executionContext) unmarshalNUpdateNLSLayerInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerInputᚄ(ctx context.Context, v any) ([]*gqlmodel.UpdateNLSLayerInput, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]*gqlmodel.UpdateNLSLayerInput, len(vSlice))
 	for i := range vSlice {
@@ -60319,9 +60315,7 @@ func (ec *executionContext) unmarshalNUpdatePropertyItemInput2githubᚗcomᚋree
 
 func (ec *executionContext) unmarshalNUpdatePropertyItemOperationInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdatePropertyItemOperationInputᚄ(ctx context.Context, v any) ([]*gqlmodel.UpdatePropertyItemOperationInput, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]*gqlmodel.UpdatePropertyItemOperationInput, len(vSlice))
 	for i := range vSlice {
@@ -60385,6 +60379,7 @@ func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgen�
 }
 
 func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalUpload(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -60543,6 +60538,7 @@ func (ec *executionContext) unmarshalN__DirectiveLocation2string(ctx context.Con
 }
 
 func (ec *executionContext) marshalN__DirectiveLocation2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -60554,9 +60550,7 @@ func (ec *executionContext) marshalN__DirectiveLocation2string(ctx context.Conte
 
 func (ec *executionContext) unmarshalN__DirectiveLocation2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]string, len(vSlice))
 	for i := range vSlice {
@@ -60733,6 +60727,7 @@ func (ec *executionContext) unmarshalN__TypeKind2string(ctx context.Context, v a
 }
 
 func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -60782,6 +60777,8 @@ func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.S
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalAny(v)
 	return res
 }
@@ -60807,6 +60804,8 @@ func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (
 }
 
 func (ec *executionContext) marshalOBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalBoolean(v)
 	return res
 }
@@ -60823,6 +60822,8 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalBoolean(*v)
 	return res
 }
@@ -60874,6 +60875,8 @@ func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthx�
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalCursor(*v)
 	return res
 }
@@ -60890,6 +60893,8 @@ func (ec *executionContext) marshalODateTime2ᚖtimeᚐTime(ctx context.Context,
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalTime(*v)
 	return res
 }
@@ -60948,6 +60953,8 @@ func (ec *executionContext) marshalOFileSize2ᚖint64(ctx context.Context, sel a
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalInt64(*v)
 	return res
 }
@@ -60964,6 +60971,7 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
 	res := graphql.MarshalFloatContext(*v)
 	return graphql.WrapContextMarshaler(ctx, res)
 }
@@ -60973,9 +60981,7 @@ func (ec *executionContext) unmarshalOID2ᚕgithubᚗcomᚋreearthᚋreearthᚋs
 		return nil, nil
 	}
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]gqlmodel.ID, len(vSlice))
 	for i := range vSlice {
@@ -61019,6 +61025,8 @@ func (ec *executionContext) marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋser
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalString(string(*v))
 	return res
 }
@@ -61042,6 +61050,8 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalInt(*v)
 	return res
 }
@@ -61058,6 +61068,8 @@ func (ec *executionContext) marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalJSON(v)
 	return res
 }
@@ -61074,6 +61086,8 @@ func (ec *executionContext) marshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguage�
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalLang(*v)
 	return res
 }
@@ -61453,6 +61467,8 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalString(*v)
 	return res
 }
@@ -61508,6 +61524,8 @@ func (ec *executionContext) marshalOTranslatedString2map(ctx context.Context, se
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalMap(v)
 	return res
 }
@@ -61524,6 +61542,8 @@ func (ec *executionContext) marshalOURL2ᚖnetᚋurlᚐURL(ctx context.Context, 
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalURL(*v)
 	return res
 }
@@ -61603,6 +61623,8 @@ func (ec *executionContext) marshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgen�
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalUpload(*v)
 	return res
 }

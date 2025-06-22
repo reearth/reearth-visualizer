@@ -25,7 +25,7 @@ export const dataTypes: SketchLayerDataType[] = [
   "Asset",
   "Float",
   "Int",
-  "Boolean",
+  "Boolean"
 ];
 
 const SketchLayerCreator: FC<SketchLayerProps> = ({
@@ -74,26 +74,37 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
   };
 
   return (
-    <Modal size="medium" visible={true}>
+    <Modal
+      size="medium"
+      visible={true}
+      data-testid="sketch-layer-creator-modal-root"
+    >
       <ModalPanel
+        data-testid="sketch-layer-creator-modal"
         title={t("New Sketch Layer")}
         onCancel={onClose}
         actions={
           <>
-            <Button onClick={onClose} size="normal" title={t("Cancel")} />
+            <Button
+              onClick={onClose}
+              size="normal"
+              title={t("Cancel")}
+              data-testid="sketch-layer-creator-cancel-btn"
+            />
             <Button
               size="normal"
               title={t("Create")}
               appearance="primary"
               onClick={handleSubmit}
               disabled={!layerName || warning}
+              data-testid="sketch-layer-creator-create-btn"
             />
           </>
         }
       >
-        <Wrapper>
+        <Wrapper data-testid="sketch-layer-creator-wrapper">
           <InputGroup label={t("Layer Name")}>
-            <InputsWrapper>
+            <InputsWrapper data-testid="sketch-layer-creator-name-input">
               <TextInput
                 placeholder={t(" Text")}
                 value={layerName}
@@ -108,6 +119,7 @@ const SketchLayerCreator: FC<SketchLayerProps> = ({
             setWarning={setWarning}
             setCustomProperties={setCustomProperties}
             setPropertiesList={setPropertiesList}
+            data-testid="sketch-layer-creator-custom-properties"
           />
         </Wrapper>
       </ModalPanel>

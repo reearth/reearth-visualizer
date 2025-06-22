@@ -35,13 +35,14 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
   } = useHooks({ sceneId, onSubmit, onClose });
 
   return (
-    <Wrapper>
+    <Wrapper data-testid="geojson-layer-creator">
       <ContentWrapper>
         <InputGroup label={t("Source Type")}>
           <RadioGroup
             value={sourceType}
             options={dataSourceTypeOptions}
             onChange={handleDataSourceTypeChange}
+            data-testid="geojson-source-type"
           />
         </InputGroup>
 
@@ -53,6 +54,7 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               value={value}
               assetsTypes={["geojson"]}
               onChange={handleValueChange}
+              data-testid="geojson-asset-field"
             />
           </InputsWrapper>
         )}
@@ -63,6 +65,7 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 placeholder={t("Input Text")}
                 value={value}
                 onChange={handleValueChange}
+                data-testid="geojson-url-input"
               />
             </InputsWrapper>
           </InputGroup>
@@ -75,6 +78,7 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 rows={8}
                 value={value}
                 onChange={handleValueChange}
+                data-testid="geojson-value-input"
               />
             </InputsWrapper>
           </InputGroup>
@@ -88,6 +92,7 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           <Switcher
             value={prioritizePerformance}
             onChange={(v) => setPrioritizePerformance(v)}
+            data-testid="geojson-prioritize-switcher"
           />
         </InputGroup>
       </ContentWrapper>
@@ -97,6 +102,7 @@ const GeoJSON: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           appearance="primary"
           onClick={handleSubmit}
           disabled={!value}
+          data-testid="geojson-submit-button"
         />
       </SubmitWrapper>
     </Wrapper>

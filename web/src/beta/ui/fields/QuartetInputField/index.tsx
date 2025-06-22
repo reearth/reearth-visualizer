@@ -55,10 +55,17 @@ const QuartetInputField: FC<QuartetInputFieldProps> = ({
   }, [values]);
 
   return (
-    <CommonField title={title} description={description}>
-      <Wrapper>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="quartetinputfield-commonfield"
+    >
+      <Wrapper data-testid="quartetinputfield-wrapper">
         {inputValues.map((value, index) => (
-          <InputWrapper key={index}>
+          <InputWrapper
+            key={index}
+            data-testid={`quartetinputfield-inputwrapper-${index}`}
+          >
             <NumberInput
               value={value}
               placeholder={placeholders?.[index]}
@@ -66,8 +73,13 @@ const QuartetInputField: FC<QuartetInputFieldProps> = ({
               onBlur={handleBlur}
               extendWidth
               {...props}
+              data-testid={`quartetinputfield-input-${index}`}
             />
-            <Typography size="body" color={theme.content.weak}>
+            <Typography
+              size="body"
+              color={theme.content.weak}
+              data-testid={`quartetinputfield-content-${index}`}
+            >
               {content?.[index]}
             </Typography>
           </InputWrapper>

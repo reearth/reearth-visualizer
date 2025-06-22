@@ -266,8 +266,10 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		}
 	}
 
-	if len(graphql.GetErrors(ctx)) > 0 {
-		return prj, nil
+	if !adapter.IsInternal(ctx) {
+		if errs := graphql.GetErrors(ctx); len(errs) > 0 {
+			return prj, nil
+		}
 	}
 
 	currentTime := time.Now().UTC()

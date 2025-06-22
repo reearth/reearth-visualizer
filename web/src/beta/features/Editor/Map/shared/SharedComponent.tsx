@@ -6,12 +6,17 @@ export const InputGroup: FC<{
   label: string | ReactNode;
   description?: string;
   children: ReactNode;
-}> = ({ label, description, children }) => {
+  "data-testid"?: string;
+}> = ({ label, description, children, "data-testid": dataTestId }) => {
   return (
-    <InputGroupWrapper>
-      <Label>{label}</Label>
+    <InputGroupWrapper data-testid={dataTestId || "input-group"}>
+      <Label data-testid="input-group-label">{label}</Label>
       {children}
-      {description && <Description>{description}</Description>}
+      {description && (
+        <Description data-testid="input-group-description">
+          {description}
+        </Description>
+      )}
     </InputGroupWrapper>
   );
 };

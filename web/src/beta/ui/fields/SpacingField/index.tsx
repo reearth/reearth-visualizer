@@ -5,7 +5,6 @@ import CommonField, {
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
-
 export type SpacingValues = {
   top: number;
   left: number;
@@ -54,7 +53,11 @@ const SpacingField: FC<SpacingFieldProps> = ({
 
   const renderInputs = () => {
     return spacingPosition.map((position, index) => (
-      <CenteredInput key={index} position={position}>
+      <CenteredInput
+        key={index}
+        position={position}
+        data-testid={`spacingfield-input-${position}`}
+      >
         <NumberInput
           value={processedSpacingValues[index]}
           onChange={(value) =>
@@ -63,14 +66,21 @@ const SpacingField: FC<SpacingFieldProps> = ({
           onBlur={handleBlur}
           unit="px"
           {...props}
+          data-testid={`spacingfield-numberinput-${position}`}
         />
       </CenteredInput>
     ));
   };
 
   return (
-    <CommonField title={title} description={description}>
-      <InputWrapper>{renderInputs()}</InputWrapper>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="spacingfield-commonfield"
+    >
+      <InputWrapper data-testid="spacingfield-inputwrapper">
+        {renderInputs()}
+      </InputWrapper>
     </CommonField>
   );
 };

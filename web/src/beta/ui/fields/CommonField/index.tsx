@@ -5,20 +5,30 @@ import { FC, ReactNode } from "react";
 export interface CommonFieldProps {
   title?: string;
   description?: string;
+  dataTestId?: string;
 }
 
 const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
   title,
   description,
-  children
+  children,
+  ...props
 }) => {
   const theme = useTheme();
   return (
-    <Wrapper>
-      {title && <Typography size="body">{title}</Typography>}
+    <Wrapper data-testid="commonfield-wrapper" {...props}>
+      {title && (
+        <Typography size="body" data-testid="commonfield-title">
+          {title}
+        </Typography>
+      )}
       {children}
       {description && (
-        <Typography size="footnote" color={theme.content.weak}>
+        <Typography
+          size="footnote"
+          color={theme.content.weak}
+          data-testid="commonfield-description"
+        >
           {description}
         </Typography>
       )}
