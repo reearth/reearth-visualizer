@@ -605,8 +605,25 @@ export default () => {
 
       const parallelUpload = async (indices: number[]): Promise<any[]> => {
         const results = [];
-        for (let i = 0; i < indices.length; i += CHUNK_CONCURRENCY) {
-          const batch = indices.slice(i, i + CHUNK_CONCURRENCY);
+
+        // 1. Always upload chunk 0 first
+        try {
+          const firstChunkResponse = await uploadChunk(0);
+          results.push(firstChunkResponse);
+        } catch (error) {
+          setNotification({
+            type: "error",
+            text: t("Failed to upload chunk 0.")
+          });
+          console.error("Failed chunk 0:", error);
+          return [{ status: "error" }];
+        }
+
+        // 2. Upload remaining chunks in parallel (excluding 0)
+        const remaining = indices.slice(1);
+
+        for (let i = 0; i < remaining.length; i += CHUNK_CONCURRENCY) {
+          const batch = remaining.slice(i, i + CHUNK_CONCURRENCY);
           try {
             const responses = await Promise.all(batch.map(uploadChunk));
             results.push(...responses);
@@ -619,16 +636,13 @@ export default () => {
             return [{ status: "error" }];
           }
         }
+
         return results;
       };
 
       const responses = await parallelUpload(chunkIndices);
-      lastResponse = responses[responses.length - 1];
-
-      setNotification({
-        type: "success",
-        text: t("Successfully imported project!")
-      });
+      lastResponse = responses.at(-1);
+      
       return lastResponse || { status: "chunk_received" };
     },
     [axios, setNotification, t]

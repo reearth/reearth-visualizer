@@ -29,6 +29,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     layout,
     searchTerm,
     sortValue,
+    importStatus,
     showProjectCreator,
     closeProjectCreator,
     handleProjectUpdate,
@@ -174,6 +175,16 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   layout={layout}
                   data-testid={`projects-group-${layout}`}
                 >
+                  {importStatus === "processing" &&
+                    (layout === "grid" ? (
+                      <ImportingCardContainer>
+                        <ImportCardPlaceholder />
+                        <ImportingCardFotter />
+                      </ImportingCardContainer>
+                    ) : (
+                      <ImportingListContainer />
+                    ))}
+
                   {filtedProjects.map((project) =>
                     layout === "grid" ? (
                       <ProjectGridViewItem
@@ -326,3 +337,48 @@ const LoadingWrapper = styled("div")(() => ({
 const HiddenFileInput = styled("input")({
   display: "none"
 });
+
+const ImportingCardContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  height: "218px",
+  "@media (max-width: 567px)": {
+    height: "171px"
+  }
+}));
+
+
+
+const shimmerEffect = {
+  background:
+    "linear-gradient(90deg, #292929 0%, #474747 33.04%, #474747 58.56%, #292929 100.09%)",
+  backgroundSize: "400% 100%",
+  animation: "shimmer 1.2s infinite ease-in-out",
+  "@keyframes shimmer": {
+    "0%": { backgroundPosition: "-400px 0" },
+    "100%": { backgroundPosition: "400px 0" }
+  }
+};
+
+const ImportingListContainer = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.small,
+  height: "25px",
+  borderRadius: theme.radius.normal,
+  ...shimmerEffect
+}));
+
+const ImportCardPlaceholder = styled("div")(({ theme }) => ({
+  flex: 1,
+  borderRadius: theme.radius.normal,
+  ...shimmerEffect
+}));
+
+const ImportingCardFotter = styled("div")(({ theme }) => ({
+  height: "20px",
+  borderRadius: theme.radius.normal,
+  flexShrink: 0,
+  ...shimmerEffect
+}));
