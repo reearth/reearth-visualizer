@@ -3703,40 +3703,49 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cesium/engine@npm:^9.2.0":
-  version: 9.2.0
-  resolution: "@cesium/engine@npm:9.2.0"
+"@cesium/engine@npm:^18.2.0":
+  version: 18.2.0
+  resolution: "@cesium/engine@npm:18.2.0"
   dependencies:
-    "@tweenjs/tween.js": "npm:^23.1.1"
+    "@cesium/wasm-splats": "npm:^0.1.0-alpha.2"
+    "@spz-loader/core": "npm:^0.1.0"
+    "@tweenjs/tween.js": "npm:^25.0.0"
     "@zip.js/zip.js": "npm:^2.7.34"
     autolinker: "npm:^4.0.0"
     bitmap-sdf: "npm:^1.0.3"
     dompurify: "npm:^3.0.2"
     draco3d: "npm:^1.5.1"
-    earcut: "npm:^2.2.4"
+    earcut: "npm:^3.0.0"
     grapheme-splitter: "npm:^1.0.4"
     jsep: "npm:^1.3.8"
     kdbush: "npm:^4.0.1"
-    ktx-parse: "npm:^0.7.0"
+    ktx-parse: "npm:^1.0.0"
     lerc: "npm:^2.0.0"
     mersenne-twister: "npm:^1.1.0"
-    meshoptimizer: "npm:^0.20.0"
+    meshoptimizer: "npm:^0.23.0"
     pako: "npm:^2.0.4"
     protobufjs: "npm:^7.1.0"
-    rbush: "npm:^3.0.1"
+    rbush: "npm:^4.0.1"
     topojson-client: "npm:^3.1.0"
     urijs: "npm:^1.19.7"
-  checksum: 10c0/b5bfa043b9ea10f2abea11c5b04b06589c0b21ef9578ffbfdeb1629627e01995d9bb64866ffb0a51b070d521c6fcd399a67b71c985969df46158d48bcef4908e
+  checksum: 10c0/ac9b247a9b12e5df42f77c6eac7128e4359b63db7fd916d8736dbb2b241954aea3dc787581746934933f7d5e3b2ddc18d6f6d5889fe26cd806f564a181076b39
   languageName: node
   linkType: hard
 
-"@cesium/widgets@npm:^6.1.0":
-  version: 6.1.2
-  resolution: "@cesium/widgets@npm:6.1.2"
+"@cesium/wasm-splats@npm:^0.1.0-alpha.2":
+  version: 0.1.0-alpha.2
+  resolution: "@cesium/wasm-splats@npm:0.1.0-alpha.2"
+  checksum: 10c0/658aec14f4a2210cbbb6083cc411599ff2ab590ca10d656e32b1d741e5d7571b9f50346912f7795f1c60ef33d6bd5142103bdbec0c5d9cbc46c3d73eb53ef141
+  languageName: node
+  linkType: hard
+
+"@cesium/widgets@npm:^12.2.0":
+  version: 12.2.0
+  resolution: "@cesium/widgets@npm:12.2.0"
   dependencies:
-    "@cesium/engine": "npm:^9.2.0"
+    "@cesium/engine": "npm:^18.2.0"
     nosleep.js: "npm:^0.12.0"
-  checksum: 10c0/268c4480b89e9edb631eaae21c907e181dd6e4ad3d35699fd3ebbb08f88d520315901c0fd29ce82b8d25cc67b396661287dc15ee9558a9771dfbda178e1883aa
+  checksum: 10c0/0b422294591df24f7b4b4b1bf7daeace43662c58da4630f4a70018e604c499684619cd954ac62ba451e2628d90845cb7c79bd7db2e7b21cbc256730160fd7d22
   languageName: node
   linkType: hard
 
@@ -8717,7 +8726,7 @@ __metadata:
     autoprefixer: "npm:10.4.20"
     aws-amplify: "npm:5.3.11"
     axios: "npm:1.7.7"
-    cesium: "npm:1.118.0"
+    cesium: "npm:1.130.1"
     class-variance-authority: "npm:0.7.1"
     clsx: "npm:2.1.1"
     core-js: "npm:3.38.1"
@@ -9064,6 +9073,13 @@ __metadata:
   dependencies:
     tslib: "npm:^2.6.2"
   checksum: 10c0/8b350562b9ed4ff97465025b4ae77a34bb07b9d47fb6f9781755aac9401b0355a63c2fef307393e2dae3fa0277149dd7d83f5bc2a63d4ad3519ea32fd56b5cda
+  languageName: node
+  linkType: hard
+
+"@spz-loader/core@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@spz-loader/core@npm:0.1.0"
+  checksum: 10c0/15b520c87f51e0d0d58cb032d4cce353280d0618450c7740e7e7cca0c9b16fbb5fad17508080a4a5dddd997e8cb3cbcf0089045dae79dabcd018ecfb4225d24a
   languageName: node
   linkType: hard
 
@@ -11529,10 +11545,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tweenjs/tween.js@npm:^23.1.1":
-  version: 23.1.3
-  resolution: "@tweenjs/tween.js@npm:23.1.3"
-  checksum: 10c0/811b30f5f0e7409fb41833401c501c2d6f600eb5f43039dd9067a7f70aff6dad5f5ce1233848e13f0b33a269a160d9c133f344d986cbff4f1f6b72ddecd06c89
+"@tweenjs/tween.js@npm:^25.0.0":
+  version: 25.0.0
+  resolution: "@tweenjs/tween.js@npm:25.0.0"
+  checksum: 10c0/372a85913ad088b8d2720e4a5e90469e411e0757b5f3a52da6a7403f1722236b853bc9c78d9437b1f30db61199efe45e7ec40484def2ab1fe7c2334de0673ef3
   languageName: node
   linkType: hard
 
@@ -13889,13 +13905,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cesium@npm:1.118.0":
-  version: 1.118.0
-  resolution: "cesium@npm:1.118.0"
+"cesium@npm:1.130.1":
+  version: 1.130.1
+  resolution: "cesium@npm:1.130.1"
   dependencies:
-    "@cesium/engine": "npm:^9.2.0"
-    "@cesium/widgets": "npm:^6.1.0"
-  checksum: 10c0/d4be4906029eabda011004d363d422db615e824b1826cd308e399570aefd4997ab785d01c721f0ba111ad28dfc3811fa9ed6059e05685883c02b40bb9d4fef73
+    "@cesium/engine": "npm:^18.2.0"
+    "@cesium/widgets": "npm:^12.2.0"
+  checksum: 10c0/88c8ca83a0b71e257869f69d15d38b30d999e35545ec9c9208f042e4fcf2f4eef03a5e8132121c4f720e43189d9f5b99c30b9c43c0db35d6faa8e04de2f614ab
   languageName: node
   linkType: hard
 
@@ -15655,10 +15671,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"earcut@npm:^2.0.0, earcut@npm:^2.2.4":
+"earcut@npm:^2.0.0":
   version: 2.2.4
   resolution: "earcut@npm:2.2.4"
   checksum: 10c0/01ca51830edd2787819f904ae580087d37351f6048b4565e7add4b3da8a86b7bc19262ab2aa7fdc64129ab03af2d9cec8cccee4d230c82275f97ef285c79aafb
+  languageName: node
+  linkType: hard
+
+"earcut@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "earcut@npm:3.0.1"
+  checksum: 10c0/cc1d3ed87a08db1a601b3b836bfb2fe22c8f923dfcfcd7419c64a5d4c270ac6d966d8d1e673cc699f8d69dc32bce84fd6d87136c49431fa35057bd7141627769
   languageName: node
   linkType: hard
 
@@ -19548,10 +19571,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ktx-parse@npm:^0.7.0":
-  version: 0.7.1
-  resolution: "ktx-parse@npm:0.7.1"
-  checksum: 10c0/07c0870a0d0fe0bd412b430ac58afd721136a1ca76db83a066b6d20810878822822cbe3b8c8507c15ae8680be0988675b4f5c3d1243262284f161b52c59d09e9
+"ktx-parse@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "ktx-parse@npm:1.0.1"
+  checksum: 10c0/458aebe0b56bd610269df9e1d417822fef997daa211e4dc2352ab3b6a941f74a169cbfd1daecac53c1b6abf24930b9c495c3d5382d85e144c5c3e2ab6efbf47d
   languageName: node
   linkType: hard
 
@@ -20444,10 +20467,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"meshoptimizer@npm:^0.20.0":
-  version: 0.20.0
-  resolution: "meshoptimizer@npm:0.20.0"
-  checksum: 10c0/a4ef1a0e6c0454c2faf69602ba45f8aa87102c53de987c711348a73b2faed6627732704bc21c0791ab99494d9fd07b2038abd68754d4e5805c5b2b3f481f8bc3
+"meshoptimizer@npm:^0.23.0":
+  version: 0.23.0
+  resolution: "meshoptimizer@npm:0.23.0"
+  checksum: 10c0/3543239301f4c1f00b72d44f01178398d20af45e56a9386b9d655f520349ace0fe76acff71f993ebd1aea7bad39e639f897d31cddd3a420ed5716e3960c13cc4
   languageName: node
   linkType: hard
 
@@ -22657,6 +22680,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"quickselect@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "quickselect@npm:3.0.0"
+  checksum: 10c0/3a0d33b0ec06841d953accdfd735aa3d8b7922cddd12970544a2c4b0278871280d8f5ba496803600693c1e7b7b2fb57c31d2b14d99132f478888006a1be6e6b7
+  languageName: node
+  linkType: hard
+
 "raf-schd@npm:^4.0.2":
   version: 4.0.3
   resolution: "raf-schd@npm:4.0.3"
@@ -22705,6 +22735,15 @@ __metadata:
   dependencies:
     quickselect: "npm:^2.0.0"
   checksum: 10c0/55311586c30cdedaa2220de6f1da45fe1fa806263afbf7b6f4c0078983830c2abc7771187896d68bfc9078cb279079fb4c84971831da4b74384aab2c2c417758
+  languageName: node
+  linkType: hard
+
+"rbush@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "rbush@npm:4.0.1"
+  dependencies:
+    quickselect: "npm:^3.0.0"
+  checksum: 10c0/1d3c2e2c8b8111a6bcac0b36348ef55c977bc533a7a7bef44c423e24de531e43749bcf5b939008de69d97d3c6e7cf0e9040cecb4492358e6d562ea85165a1620
   languageName: node
   linkType: hard
 
