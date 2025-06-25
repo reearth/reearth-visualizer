@@ -49,7 +49,7 @@ export default function useHook({
   onClick?: () => void;
   onAutoResized?: () => void;
 } = {}): {
-  ref: RefObject<HTMLIFrameElement | null>;
+  ref: RefObject<HTMLIFrameElement>;
   props: IframeHTMLAttributes<HTMLIFrameElement>;
   srcDoc: string;
   onLoad?: () => void;

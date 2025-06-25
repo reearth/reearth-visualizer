@@ -81,12 +81,12 @@ const RadioLabel = styled("div")<{ disabled?: boolean }>(
   })
 );
 
-const RadioInput = styled("input")({
+const RadioInput = styled("input")(() => ({
   position: "absolute",
   opacity: 0,
   width: 0,
   height: 0
-});
+}));
 
 const RadioButton = styled("div")<{ checked?: boolean; disabled?: boolean }>(
   ({ checked, disabled, theme }) => ({

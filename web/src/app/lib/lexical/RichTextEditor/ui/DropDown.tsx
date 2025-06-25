@@ -11,7 +11,7 @@ import {
 import { createPortal } from "react-dom";
 
 type DropDownContextType = {
-  registerItem: (ref: React.RefObject<HTMLButtonElement | null>) => void;
+  registerItem: (ref: React.RefObject<HTMLButtonElement>) => void;
 };
 
 const DropDownContext = createContext<DropDownContextType | null>(null);
@@ -67,12 +67,12 @@ function DropDownItems({
   dropDownRef: React.Ref<HTMLDivElement>;
   onClose: () => void;
 }) {
-  const [items, setItems] = useState<React.RefObject<HTMLButtonElement | null>[]>();
+  const [items, setItems] = useState<React.RefObject<HTMLButtonElement>[]>();
   const [highlightedItem, setHighlightedItem] =
-    useState<React.RefObject<HTMLButtonElement | null>>();
+    useState<React.RefObject<HTMLButtonElement>>();
 
   const registerItem = useCallback(
-    (itemRef: React.RefObject<HTMLButtonElement | null>) => {
+    (itemRef: React.RefObject<HTMLButtonElement>) => {
       setItems((prev) => (prev ? [...prev, itemRef] : [itemRef]));
     },
     [setItems]
@@ -141,7 +141,7 @@ export default function DropDown({
   stopCloseOnClickSelf
 }: {
   disabled?: boolean;
-  containerRef?: React.RefObject<HTMLDivElement | null>;
+  containerRef?: React.RefObject<HTMLDivElement>;
   scrollableContainerId?: string;
   buttonAriaLabel?: string;
   buttonClassName: string;

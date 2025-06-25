@@ -21,7 +21,7 @@ export type PluginPopupInfo = {
   id?: string;
   position?: PopupPosition;
   offset?: number | AxesOffsets;
-  ref?: RefObject<HTMLIFrameElement | null>;
+  ref?: RefObject<HTMLIFrameElement>;
 };
 
 type Props = {

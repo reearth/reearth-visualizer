@@ -337,14 +337,14 @@ const Wrapper = styled("div")<{ storyPanelPosition?: Position }>(
   })
 );
 
-const StoryWrapper = styled("div")({
+const StoryWrapper = styled("div")(() => ({
   display: "flex",
   position: "relative",
   flexShrink: 0,
   height: "100%"
-});
+}));
 
-const CoreWrapper = styled("div")({
+const CoreWrapper = styled("div")(() => ({
   position: "relative",
   flex: 1
-});
+}));

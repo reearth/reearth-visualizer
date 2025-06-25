@@ -158,14 +158,14 @@ const SubMenu = styled("div")(({ theme }) => ({
   gap: theme.spacing.smallest
 }));
 
-export const SidebarWrapper = styled("div")({
+export const SidebarWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
   flex: 1,
   justifyContent: "space-between",
   maxHeight: "100vh",
   minHeight: 542
-});
+}));
 
 export const SidebarButtonsWrapper = styled("div")(({ theme }) => ({
   display: "flex",

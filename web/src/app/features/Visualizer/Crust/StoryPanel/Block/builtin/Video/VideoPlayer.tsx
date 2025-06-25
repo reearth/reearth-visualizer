@@ -26,13 +26,13 @@ const VideoPlayer: FC<Props> = ({ isSelected, src, inEditor }) => {
 
 export default VideoPlayer;
 
-const StyledWrapper = styled("div")({
+const StyledWrapper = styled("div")(() => ({
   width: "100%",
   position: "relative"
-});
+}));
 
-const Overlay = styled("div")({
+const Overlay = styled("div")(() => ({
   width: "100%",
   height: "100%",
   position: "absolute"
-});
+}));

@@ -7,7 +7,7 @@ import { CodeInput } from "./index";
 vi.mock("@monaco-editor/react", () => {
   return {
     __esModule: true,
-    default: vi.fn(({ onChange, value, loading }) => {
+    default: vi.fn(({ _onMount, onChange, value, loading }) => {
       return (
         <div data-testid="monaco-editor">
           <textarea
@@ -73,7 +73,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         language: "javascript"
       }),
-      undefined
+      expect.anything()
     );
   });
 
@@ -86,7 +86,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         language: "json"
       }),
-      undefined
+      expect.anything()
     );
   });
 
@@ -101,7 +101,7 @@ describe("CodeInput", () => {
           readOnly: true
         })
       }),
-      undefined
+      expect.anything()
     );
   });
 
@@ -116,7 +116,7 @@ describe("CodeInput", () => {
           lineNumbers: "off"
         })
       }),
-      undefined
+      expect.anything()
     );
   });
 
@@ -165,7 +165,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         value: "new value"
       }),
-      undefined
+      expect.anything()
     );
   });
 
@@ -229,7 +229,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         height: 500
       }),
-      undefined
+      expect.anything()
     );
   });
 });

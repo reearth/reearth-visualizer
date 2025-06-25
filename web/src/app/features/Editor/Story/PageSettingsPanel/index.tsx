@@ -118,11 +118,11 @@ const Wrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing.smallest
 }));
 
-const LayerWrapper = styled("div")({
+const LayerWrapper = styled("div")(() => ({
   width: "100%",
   display: "flex",
   flexDirection: "column"
-});
+}));
 
 const AllLayers = styled("div")(({ theme }) => ({
   display: "flex",
@@ -133,14 +133,14 @@ const AllLayers = styled("div")(({ theme }) => ({
   gap: theme.spacing.small
 }));
 
-const LayerList = styled("div")({
+const LayerList = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
   height: "352px",
   overflowY: "auto",
   overflowX: "hidden",
   width: "100%"
-});
+}));
 
 const Layer = styled("div")(() => ({
   display: "flex",

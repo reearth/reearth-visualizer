@@ -272,10 +272,10 @@ const PlayButton = styled("div")<{ isPlaying?: boolean; isClicked?: boolean }>(
   })
 );
 
-const InputWrapper = styled("div")({
+const InputWrapper = styled("div")(() => ({
   position: "relative",
   cursor: "pointer"
-});
+}));
 
 const ArrowIcon = styled(Icon)<{ open: boolean }>(({ open, theme }) => ({
   position: "absolute",
@@ -341,7 +341,7 @@ const TimelineSliderIcon = styled("div")<{ isPlaying: boolean }>(
   })
 );
 
-const ScaleList = styled("div")({
+const ScaleList = styled("div")(() => ({
   display: "flex",
   height: "38px",
   alignItems: "flex-end",
@@ -349,13 +349,13 @@ const ScaleList = styled("div")({
   left: "18px",
   right: "-12px",
   cursor: "pointer"
-});
+}));
 
-const IconWrapper = styled("div")({
+const IconWrapper = styled("div")(() => ({
   position: "absolute",
   top: "4px",
   cursor: "pointer"
-});
+}));
 
 const Scale = styled("div")(({ theme }) => ({
   height: "5px",

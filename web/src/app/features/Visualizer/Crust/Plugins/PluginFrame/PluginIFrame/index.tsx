@@ -25,7 +25,7 @@ export type Props = {
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   renderPlaceholder?: ReactNode;
   container?: HTMLElement | DocumentFragment;
-  externalRef?: RefObject<HTMLIFrameElement | null>;
+  externalRef?: RefObject<HTMLIFrameElement>;
   onRender?: (type: string) => void;
   onClick?: () => void;
   onMessage?: (message: any) => void;

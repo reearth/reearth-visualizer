@@ -74,7 +74,7 @@ export const useTimeline = ({
     setIsOpened(false);
   }, [widgetId, onExtend]);
 
-  const lastTime = useRef<number>(undefined);
+  const lastTime = useRef<number>();
   const switchCurrentTimeToStart = useCallback(
     (t: number, isRangeChanged: boolean) => {
       const cur = isRangeChanged
@@ -210,7 +210,7 @@ export const useTimeline = ({
     range.end
   ]);
 
-  const onTimeChangeRef = useRef<typeof onTimeChange>(undefined);
+  const onTimeChangeRef = useRef<typeof onTimeChange>();
 
   useEffect(() => {
     onTimeChangeRef.current = onTimeChange;
