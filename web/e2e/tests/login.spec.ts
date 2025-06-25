@@ -30,9 +30,6 @@ test.describe("Login Page Tests", () => {
     loginPage = new LoginPage(page);
     dashBoardPage = new DashBoardPage(page);
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
-    console.log(`Navigated to ${REEARTH_WEB_E2E_BASEURL}`);
-    console.log("username:", REEARTH_E2E_EMAIL);
-    console.log("password:", REEARTH_E2E_PASSWORD);
   });
 
   test.afterEach(async ({}, testInfo) => {
