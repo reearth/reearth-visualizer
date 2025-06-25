@@ -42,8 +42,14 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
-    actionTimeout: 10000, // optional: increase action timeout
-    navigationTimeout: 20000 // optional: increase navigation timeout
+    actionTimeout: 10000,
+    navigationTimeout: 20000,
+
+    // Add video recording configuration
+    video: {
+      mode: "retain-on-failure",
+      size: { width: 1280, height: 720 }
+    }
   },
 
   /* Configure projects for major browsers */
@@ -56,6 +62,11 @@ export default defineConfig({
         headless: true,
         launchOptions: {
           slowMo: 400
+        },
+        // Add additional video settings for this project if needed
+        video: {
+          mode: "retain-on-failure",
+          size: { width: 1280, height: 720 }
         }
       }
     }
