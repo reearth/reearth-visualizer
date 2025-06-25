@@ -7,7 +7,7 @@ import { CodeInput } from "./index";
 vi.mock("@monaco-editor/react", () => {
   return {
     __esModule: true,
-    default: vi.fn(({ onMount, onChange, value, loading }) => {
+    default: vi.fn(({ onChange, value, loading }) => {
       return (
         <div data-testid="monaco-editor">
           <textarea
