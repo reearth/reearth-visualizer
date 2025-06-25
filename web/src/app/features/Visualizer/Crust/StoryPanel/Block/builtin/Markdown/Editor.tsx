@@ -65,7 +65,7 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
   );
 };
 
-const StyledTextArea = styled("textarea")(() => ({
+const StyledTextArea = styled("textarea")({
   width: "100%",
   resize: "none",
   overflow: "hidden",
@@ -74,9 +74,9 @@ const StyledTextArea = styled("textarea")(() => ({
   fontSize: "14px",
   padding: 0,
   outline: "none"
-}));
+});
 
-const MarkdownWrapper = styled("div")(() => ({
+const MarkdownWrapper = styled("div")({
   "@media (prefers-color-scheme: dark)": {
     all: "unset"
   },
@@ -86,6 +86,6 @@ const MarkdownWrapper = styled("div")(() => ({
   "& ol": {
     listStyleType: "decimal"
   }
-}));
+});
 
 export default MdBlockEditor;
