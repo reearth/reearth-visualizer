@@ -1,26 +1,26 @@
-import RootPage from "@reearth/beta/pages/RootPage";
+import RootPage from "@reearth/app/pages/RootPage";
 import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-const Dashboard = lazy(() => import("@reearth/beta/pages/Dashboard"));
-const Editor = lazy(() => import("@reearth/beta/pages/EditorPage"));
+const Dashboard = lazy(() => import("@reearth/app/pages/Dashboard"));
+const Editor = lazy(() => import("@reearth/app/pages/EditorPage"));
 const ProjectSettings = lazy(
-  () => import("@reearth/beta/pages/ProjectSettingsPage")
+  () => import("@reearth/app/pages/ProjectSettingsPage")
 );
 const AccountSettingPage = lazy(
-  () => import("@reearth/beta/pages/AccountSettingsPage")
+  () => import("@reearth/app/pages/AccountSettingsPage")
 );
 const WorkspaceSettingPage = lazy(
-  () => import("@reearth/beta/pages/WorkspaceSettingPage")
+  () => import("@reearth/app/pages/WorkspaceSettingPage")
 );
 const PluginPlaygroundPage = lazy(
-  () => import("@reearth/beta/pages/PluginPlaygroundPage")
+  () => import("@reearth/app/pages/PluginPlaygroundPage")
 );
-const NotFoundPage = lazy(() => import("@reearth/beta/pages/NotFound"));
+const NotFoundPage = lazy(() => import("@reearth/app/pages/NotFound"));
 
 const GraphQLPlayground = lazy(
-  () => import("@reearth/beta/pages/GraphQLPlayground")
+  () => import("@reearth/app/pages/GraphQLPlayground")
 );
 
 export const AppRoutes = () => {

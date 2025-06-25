@@ -642,7 +642,7 @@ export default () => {
 
       const responses = await parallelUpload(chunkIndices);
       lastResponse = responses.at(-1);
-      
+
       return lastResponse || { status: "chunk_received" };
     },
     [axios, setNotification, t]

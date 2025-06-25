@@ -5,8 +5,8 @@ export default {
   darkMode: ["class"],
   prefix: "tw-",
   content: [
-    "./src/beta/lib/reearth-widget-ui/**/*.{ts,tsx}",
-    "./src/beta/features/Visualizer/Crust/**/*.{ts,tsx}"
+    "./src/app/lib/reearth-widget-ui/**/*.{ts,tsx}",
+    "./src/app/features/Visualizer/Crust/**/*.{ts,tsx}"
   ],
   theme: {
     extend: {

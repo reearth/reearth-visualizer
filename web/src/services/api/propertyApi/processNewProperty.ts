@@ -1,4 +1,4 @@
-import { valueFromGQL, valueTypeFromGQL } from "@reearth/beta/utils/value";
+import { valueFromGQL, valueTypeFromGQL } from "@reearth/app/utils/value";
 import { toUi } from "@reearth/services/api/propertyApi/utils";
 import {
   PropertyFieldFragmentFragment,
