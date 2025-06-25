@@ -28,9 +28,14 @@ type ContainerConfig struct {
 	PublishedIndexURL  *url.URL
 }
 
-func NewContainer(r *repo.Container, g *gateway.Container,
-	ar *accountrepo.Container, ag *accountgateway.Container,
-	config ContainerConfig) interfaces.Container {
+func NewContainer(
+	r *repo.Container,
+	g *gateway.Container,
+	ar *accountrepo.Container,
+	ag *accountgateway.Container,
+	config ContainerConfig,
+) interfaces.Container {
+
 	var published interfaces.Published
 	if config.PublishedIndexURL != nil && config.PublishedIndexURL.String() != "" {
 		published = NewPublishedWithURL(r.Project, r.Storytelling, g.File, config.PublishedIndexURL)
@@ -39,18 +44,19 @@ func NewContainer(r *repo.Container, g *gateway.Container,
 	}
 
 	return interfaces.Container{
-		Asset:        NewAsset(r, g),
-		NLSLayer:     NewNLSLayer(r, g),
-		Style:        NewStyle(r),
-		Plugin:       NewPlugin(r, g),
-		Policy:       NewPolicy(r),
-		Project:      NewProject(r, g),
-		Property:     NewProperty(r, g),
-		Published:    published,
-		Scene:        NewScene(r, g),
-		StoryTelling: NewStorytelling(r, g),
-		Workspace:    accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
-		User:         accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
+		Asset:           NewAsset(r, g),
+		NLSLayer:        NewNLSLayer(r, g),
+		Style:           NewStyle(r),
+		Plugin:          NewPlugin(r, g),
+		Policy:          NewPolicy(r),
+		Project:         NewProject(r, g),
+		ProjectMetadata: NewProjectMetadata(r, g),
+		Property:        NewProperty(r, g),
+		Published:       published,
+		Scene:           NewScene(r, g),
+		StoryTelling:    NewStorytelling(r, g),
+		Workspace:       accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
+		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
 	}
 }
 
@@ -215,9 +221,10 @@ func (d SceneDeleter) Delete(ctx context.Context, s *scene.Scene, force bool) er
 
 type ProjectDeleter struct {
 	SceneDeleter
-	File    gateway.File
-	Project repo.Project
-	Asset   repo.Asset
+	File            gateway.File
+	Project         repo.Project
+	ProjectMetadata repo.ProjectMetadata
+	Asset           repo.Asset
 }
 
 func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force bool, operator *usecase.Operator) error {
@@ -250,6 +257,11 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 
 	// Delete project
 	if err := d.Project.Remove(ctx, prj.ID()); err != nil {
+		return err
+	}
+
+	// Delete project metadata
+	if err := d.ProjectMetadata.Remove(ctx, prj.ID()); err != nil {
 		return err
 	}
 

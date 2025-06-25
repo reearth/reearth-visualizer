@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   workflow_call:
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
 jobs:
   deploy_test:
@@ -13,13 +13,13 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: google-github-actions/auth@v2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: google-github-actions/auth@ba79af03959ebeac9769e648f473a284504d9193 # v2.1.10
         with:
           service_account: ${{ secrets.GC_SA_EMAIL }}
           workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
       - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
+        uses: google-github-actions/setup-gcloud@77e7a554d41e2ee56fc945c52dfd3f33d12def9a # v2.1.4
       - name: Configure docker
         run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
       - name: docker push
@@ -28,9 +28,10 @@ jobs:
           docker tag ${{ secrets.WEB_IMAGE }} ${{ secrets.WEB_IMAGE_GC }}
           docker push ${{ secrets.WEB_IMAGE_GC }}
       - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy reearth-visualizer-web \
-            --image ${{ secrets.WEB_IMAGE_GC }} \
-            --region ${{ secrets.GC_REGION }} \
-            --platform managed \
-            --quiet
+        uses: google-github-actions/deploy-cloudrun@9c5864eab7354d2e132307e685a2272655932799 # v2.7.3
+        with:
+          service: reearth-visualizer-web
+          skip_default_labels: true
+          image: ${{ secrets.WEB_IMAGE_GC }}
+          region: ${{ secrets.GC_REGION }}
+          revision_traffic: 'LATEST=100'

@@ -127,6 +127,20 @@ export function exposedReearth({
               startEventLoop?.();
               return result;
             };
+          },
+          get getCurrentLocationAsync() {
+            return async (options?: {
+              enableHighAccuracy?: boolean;
+              timeout?: number;
+              maximumAge?: number;
+            }) => {
+              const result =
+                await commonReearth?.viewer?.tools?.getCurrentLocationAsync?.(
+                  options
+                );
+              startEventLoop?.();
+              return result;
+            };
           }
         }),
         on: viewerEventsOn,

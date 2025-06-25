@@ -150,6 +150,70 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	return r.find(ctx, filter)
 }
 
+func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+	prj, err := r.findOne(ctx, bson.M{
+		"id":      id.String(),
+		"deleted": false,
+	}, true)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
+}
+
+func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+	var filter bson.M
+
+	if authenticated {
+
+		// All workspace project
+		filter = bson.M{
+			"team": id.String(),
+		}
+
+	} else {
+
+		if isWorkspaceOwner {
+
+			// All workspace project
+			filter = bson.M{
+				"team": id.String(),
+			}
+
+		} else {
+
+			isWorkspaceMember := r.f.Readable.Has(id)
+
+			if isWorkspaceMember {
+
+				// public and private
+				filter = bson.M{
+					"team":    id.String(),
+					"deleted": false,
+				}
+
+			} else {
+
+				// public only
+				filter = bson.M{
+					"team":       id.String(),
+					"deleted":    false,
+					"visibility": "public",
+				}
+
+			}
+		}
+
+	}
+
+	return r.find(ctx, filter)
+}
+
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound
@@ -289,9 +353,9 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 }
 
 // func (r *Project) readFilter(filter interface{}) interface{} {
-// 	return applyWorkspaceFilter(filter, r.f.Readable)
+// 	return applyTeamFilter(filter, r.f.Readable)
 // }
 
 func (r *Project) writeFilter(filter interface{}) interface{} {
-	return applyWorkspaceFilter(filter, r.f.Writable)
+	return applyTeamFilter(filter, r.f.Writable)
 }

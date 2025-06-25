@@ -35,11 +35,16 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 
   const theme = useTheme();
   return (
-    <Wrapper>
+    <Wrapper data-testid="czml-layer-creator">
       <ContentWrapper>
-        <Warning>
-          <IconWrapper icon="flask" color={theme.warning.main} size="normal" />
-          <TextWrapper>
+        <Warning data-testid="czml-warning">
+          <IconWrapper
+            icon="flask"
+            color={theme.warning.main}
+            size="normal"
+            data-testid="czml-warning-icon"
+          />
+          <TextWrapper data-testid="czml-warning-text">
             {t(
               "Support for the CZML format is currently experimental and remains somewhat unstable, with certain features not yet fully supported. We advise using it with caution."
             )}
@@ -50,6 +55,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             value={sourceType}
             options={dataSourceTypeOptions}
             onChange={handleDataSourceTypeChange}
+            data-testid="czml-source-type"
           />
         </InputGroup>
 
@@ -61,6 +67,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
               value={value}
               assetsTypes={["czml"]}
               onChange={handleValueChange}
+              data-testid="czml-asset-field"
             />
           </InputsWrapper>
         )}
@@ -71,6 +78,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 placeholder={t("Input Text")}
                 value={value}
                 onChange={handleValueChange}
+                data-testid="czml-url-input"
               />
             </InputsWrapper>
           </InputGroup>
@@ -83,6 +91,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
                 rows={8}
                 value={value}
                 onChange={handleValueChange}
+                data-testid="czml-value-input"
               />
             </InputsWrapper>
           </InputGroup>
@@ -94,6 +103,7 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
           appearance="primary"
           onClick={handleSubmit}
           disabled={!value}
+          data-testid="czml-submit-button"
         />
       </SubmitWrapper>
     </Wrapper>

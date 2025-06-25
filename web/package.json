@@ -1,6 +1,6 @@
 {
   "name": "@reearth/visualizer",
-  "version": "1.0.0-beta.6.0",
+  "version": "1.0.0-beta.7.0",
   "repository": "https://github.com/reearth/reearth-visualizer.git",
   "author": "Re:Earth contributors <community@reearth.io>",
   "license": "Apache-2.0",
@@ -129,7 +129,7 @@
     "@monaco-editor/react": "4.6.0",
     "@popperjs/core": "2.11.8",
     "@radix-ui/react-slot": "1.1.0",
-    "@reearth/core": "0.0.7-alpha.34",
+    "@reearth/core": "0.0.7-alpha.38",
     "@rot1024/use-transition": "1.0.0",
     "@sentry/browser": "7.77.0",
     "@seznam/compose-react-refs": "1.0.6",

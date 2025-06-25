@@ -1,0 +1,382 @@
+# Protocol Documentation
+<a name="top"></a>
+
+## Table of Contents
+
+- [schemas/internalapi/v1/schema.proto](#schemas_internalapi_v1_schema-proto)
+    - [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest)
+    - [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse)
+    - [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest)
+    - [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse)
+    - [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest)
+    - [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse)
+    - [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest)
+    - [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse)
+    - [Project](#reearth-visualizer-v1-Project)
+    - [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata)
+    - [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest)
+    - [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse)
+    - [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest)
+    - [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse)
+  
+    - [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus)
+    - [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus)
+    - [Visualizer](#reearth-visualizer-v1-Visualizer)
+  
+    - [ReEarthVisualizer](#reearth-visualizer-v1-ReEarthVisualizer)
+  
+- [Scalar Value Types](#scalar-value-types)
+
+
+
+<a name="schemas_internalapi_v1_schema-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## schemas/internalapi/v1/schema.proto
+
+
+
+<a name="reearth-visualizer-v1-CreateProjectRequest"></a>
+
+### CreateProjectRequest
+Creates a new project.
+Cannot be created under a team the user does not belong to.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| workspace_id | [string](#string) |  | Workspace ID |
+| visualizer | [Visualizer](#reearth-visualizer-v1-Visualizer) |  | Specify VISUALIZER_CESIUM |
+| name | [string](#string) | optional | Project title |
+| description | [string](#string) | optional | Project description |
+| core_support | [bool](#bool) | optional | Set to true |
+| visibility | [string](#string) | optional | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-CreateProjectResponse"></a>
+
+### CreateProjectResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-DeleteProjectRequest"></a>
+
+### DeleteProjectRequest
+Deletes a project.
+This is a physical deletion, not a logical deletion. Data cannot be restored.
+Only the project owner can operate this
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-DeleteProjectResponse"></a>
+
+### DeleteProjectResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectListRequest"></a>
+
+### GetProjectListRequest
+If the authenticated flag is true, private items will also be included in the
+response. However, deleted items are excluded.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| workspace_id | [string](#string) |  | Workspace ID |
+| authenticated | [bool](#bool) |  | Authenticated Flag |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectListResponse"></a>
+
+### GetProjectListResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| projects | [Project](#reearth-visualizer-v1-Project) | repeated | Project List |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectRequest"></a>
+
+### GetProjectRequest
+Retrieves a project regardless of authentication.
+Note: Call this only if the user is allowed to view the project.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectResponse"></a>
+
+### GetProjectResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-Project"></a>
+
+### Project
+Core Project messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Project ID |
+| workspace_id | [string](#string) |  | Workspace ID |
+| scene_id | [string](#string) |  | Scene ID |
+| name | [string](#string) |  | Project title |
+| description | [string](#string) |  | Project description |
+| image_url | [string](#string) | optional | Project image (URL link) |
+| visualizer | [Visualizer](#reearth-visualizer-v1-Visualizer) |  | Type of visualizer (e.g., Cesium) |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Creation date |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | Last updated date |
+| is_archived | [bool](#bool) |  | Currently unused |
+| core_support | [bool](#bool) |  | Indicates whether it&#39;s a classic or visualizer project type |
+| starred | [bool](#bool) |  | Whether the project is marked as a favorite |
+| is_deleted | [bool](#bool) |  | Whether the project is in the trash |
+| visibility | [string](#string) |  | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+| metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) | optional | Project metadata |
+| alias | [string](#string) |  | Publishment value |
+| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Publishment value |
+| published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | Publishment value |
+| public_title | [string](#string) |  | Publishment value |
+| public_description | [string](#string) |  | Publishment value |
+| public_image | [string](#string) |  | Publishment value |
+| public_no_index | [bool](#bool) |  | Publishment value |
+| is_basic_auth_active | [bool](#bool) |  | Publishment value |
+| basic_auth_username | [string](#string) |  | Publishment value |
+| basic_auth_password | [string](#string) |  | Publishment value |
+| enable_ga | [bool](#bool) |  | Publishment value |
+| tracking_id | [string](#string) |  | Publishment value |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ProjectMetadata"></a>
+
+### ProjectMetadata
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | ProjectMetadata id |
+| project_id | [string](#string) |  | Project id |
+| workspace_id | [string](#string) |  | Workspace id |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+| import_status | [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus) |  | Project import status — if PROCESSING, data should not be retrieved |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata created date |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata updated date |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectMetadataRequest"></a>
+
+### UpdateProjectMetadataRequest
+Updates a new project metadata.
+Cannot be updated under a team the user does not belong to.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectMetadataResponse"></a>
+
+### UpdateProjectMetadataResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) |  | Project metadata |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectVisibilityRequest"></a>
+
+### UpdateProjectVisibilityRequest
+Update project visibility.
+Only the project owner can operate this
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+| visibility | [string](#string) | optional | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectVisibilityResponse"></a>
+
+### UpdateProjectVisibilityResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+ 
+
+
+<a name="reearth-visualizer-v1-ProjectImportStatus"></a>
+
+### ProjectImportStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| NONE | 0 |  |
+| PROCESSING | 1 |  |
+| FAIL | 2 |  |
+| SUCCESS | 3 |  |
+
+
+
+<a name="reearth-visualizer-v1-PublishmentStatus"></a>
+
+### PublishmentStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PUBLISHMENT_STATUS_UNSPECIFIED | 0 |  |
+| PUBLISHMENT_STATUS_PUBLIC | 1 | The project is published and publicly accessible. |
+| PUBLISHMENT_STATUS_LIMITED | 2 | The project is published with limited access. |
+| PUBLISHMENT_STATUS_PRIVATE | 3 | The project is unpublished (web files have been deleted). |
+
+
+
+<a name="reearth-visualizer-v1-Visualizer"></a>
+
+### Visualizer
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| VISUALIZER_UNSPECIFIED | 0 |  |
+| VISUALIZER_CESIUM | 1 |  |
+| VISUALIZER_CESIUM_BETA | 2 |  |
+
+
+ 
+
+ 
+
+
+<a name="reearth-visualizer-v1-ReEarthVisualizer"></a>
+
+### ReEarthVisualizer
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | Retrieves the list of projects the user can access. Request headers: user-id: &lt;User ID&gt; |
+| GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) | Retrieves a specific project regardless of authentication. Request headers: user-id: &lt;User ID&gt; |
+| CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
+| UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified team. Request headers: user-id: &lt;User ID&gt; |
+| UpdateProjectVisibility | [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest) | [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse) | Update the visibility a project. Request headers: user-id: &lt;User ID&gt; |
+| DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
+
+ 
+
+
+
+## Scalar Value Types
+
+| .proto Type | Notes | C++ | Java | Python | Go | C# | PHP | Ruby |
+| ----------- | ----- | --- | ---- | ------ | -- | -- | --- | ---- |
+| <a name="double" /> double |  | double | double | float | float64 | double | float | Float |
+| <a name="float" /> float |  | float | float | float | float32 | float | float | Float |
+| <a name="int32" /> int32 | Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint32 instead. | int32 | int | int | int32 | int | integer | Bignum or Fixnum (as required) |
+| <a name="int64" /> int64 | Uses variable-length encoding. Inefficient for encoding negative numbers – if your field is likely to have negative values, use sint64 instead. | int64 | long | int/long | int64 | long | integer/string | Bignum |
+| <a name="uint32" /> uint32 | Uses variable-length encoding. | uint32 | int | int/long | uint32 | uint | integer | Bignum or Fixnum (as required) |
+| <a name="uint64" /> uint64 | Uses variable-length encoding. | uint64 | long | int/long | uint64 | ulong | integer/string | Bignum or Fixnum (as required) |
+| <a name="sint32" /> sint32 | Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int32s. | int32 | int | int | int32 | int | integer | Bignum or Fixnum (as required) |
+| <a name="sint64" /> sint64 | Uses variable-length encoding. Signed int value. These more efficiently encode negative numbers than regular int64s. | int64 | long | int/long | int64 | long | integer/string | Bignum |
+| <a name="fixed32" /> fixed32 | Always four bytes. More efficient than uint32 if values are often greater than 2^28. | uint32 | int | int | uint32 | uint | integer | Bignum or Fixnum (as required) |
+| <a name="fixed64" /> fixed64 | Always eight bytes. More efficient than uint64 if values are often greater than 2^56. | uint64 | long | int/long | uint64 | ulong | integer/string | Bignum |
+| <a name="sfixed32" /> sfixed32 | Always four bytes. | int32 | int | int | int32 | int | integer | Bignum or Fixnum (as required) |
+| <a name="sfixed64" /> sfixed64 | Always eight bytes. | int64 | long | int/long | int64 | long | integer/string | Bignum |
+| <a name="bool" /> bool |  | bool | boolean | boolean | bool | bool | boolean | TrueClass/FalseClass |
+| <a name="string" /> string | A string must always contain UTF-8 encoded or 7-bit ASCII text. | string | String | str/unicode | string | string | string | String (UTF-8) |
+| <a name="bytes" /> bytes | May contain any arbitrary sequence of bytes. | string | ByteString | str | []byte | ByteString | string | String (ASCII-8BIT) |
+

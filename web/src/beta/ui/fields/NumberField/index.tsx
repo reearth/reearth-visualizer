@@ -33,12 +33,17 @@ const NumberField: FC<NumberFieldProps> = ({
     onChange?.(newValue);
   };
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="numberfield-commonfield"
+    >
       <NumberInput
         {...props}
         value={currentValue}
         onBlur={handleChangeComplete}
         onChange={handleChange}
+        dataTestid="numberfield-input"
       />
     </CommonField>
   );

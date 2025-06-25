@@ -3,6 +3,7 @@
 package gqlmodel
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/url"
@@ -349,15 +350,6 @@ type GeometryCollection struct {
 
 func (GeometryCollection) IsGeometry() {}
 
-type ImportProjectInput struct {
-	TeamID ID             `json:"teamId"`
-	File   graphql.Upload `json:"file"`
-}
-
-type ImportProjectPayload struct {
-	ProjectData JSON `json:"projectData"`
-}
-
 type InfoboxBlock struct {
 	ID          ID               `json:"id"`
 	SceneID     ID               `json:"sceneId"`
@@ -681,32 +673,33 @@ func (Polygon) IsGeometry() {}
 
 type Project struct {
 	ID                ID                `json:"id"`
-	IsArchived        bool              `json:"isArchived"`
-	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
-	BasicAuthUsername string            `json:"basicAuthUsername"`
-	BasicAuthPassword string            `json:"basicAuthPassword"`
-	CreatedAt         time.Time         `json:"createdAt"`
-	UpdatedAt         time.Time         `json:"updatedAt"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
+	TeamID            ID                `json:"teamId"`
+	Team              *Team             `json:"team,omitempty"`
+	Scene             *Scene            `json:"scene,omitempty"`
 	Name              string            `json:"name"`
 	Description       string            `json:"description"`
+	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
+	Visualizer        Visualizer        `json:"visualizer"`
+	IsArchived        bool              `json:"isArchived"`
+	CoreSupport       bool              `json:"coreSupport"`
+	Starred           bool              `json:"starred"`
+	IsDeleted         bool              `json:"isDeleted"`
+	Visibility        string            `json:"visibility"`
+	Metadata          *ProjectMetadata  `json:"metadata,omitempty"`
 	Alias             string            `json:"alias"`
+	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
+	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
 	PublicTitle       string            `json:"publicTitle"`
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
-	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
-	TeamID            ID                `json:"teamId"`
-	Visualizer        Visualizer        `json:"visualizer"`
-	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
-	Team              *Team             `json:"team,omitempty"`
-	Scene             *Scene            `json:"scene,omitempty"`
-	CoreSupport       bool              `json:"coreSupport"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
-	Starred           bool              `json:"starred"`
-	IsDeleted         bool              `json:"isDeleted"`
-	Visibility        string            `json:"visibility"`
 }
 
 func (Project) IsNode()        {}
@@ -727,6 +720,21 @@ type ProjectConnection struct {
 type ProjectEdge struct {
 	Cursor usecasex.Cursor `json:"cursor"`
 	Node   *Project        `json:"node,omitempty"`
+}
+
+type ProjectMetadata struct {
+	ID           ID                   `json:"id"`
+	Project      ID                   `json:"project"`
+	Workspace    ID                   `json:"workspace"`
+	Readme       *string              `json:"readme,omitempty"`
+	License      *string              `json:"license,omitempty"`
+	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
+	CreatedAt    *time.Time           `json:"createdAt,omitempty"`
+	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
+}
+
+type ProjectMetadataPayload struct {
+	Metadata *ProjectMetadata `json:"metadata"`
 }
 
 type ProjectPayload struct {
@@ -1052,26 +1060,26 @@ type Spacing struct {
 
 type Story struct {
 	ID                ID                `json:"id"`
+	SceneID           ID                `json:"sceneId"`
+	Scene             *Scene            `json:"scene,omitempty"`
 	Title             string            `json:"title"`
-	Alias             string            `json:"alias"`
+	BgColor           *string           `json:"bgColor,omitempty"`
+	PanelPosition     Position          `json:"panelPosition"`
+	CreatedAt         time.Time         `json:"createdAt"`
+	UpdatedAt         time.Time         `json:"updatedAt"`
 	PropertyID        ID                `json:"propertyId"`
 	Property          *Property         `json:"property,omitempty"`
 	Pages             []*StoryPage      `json:"pages"`
+	Alias             string            `json:"alias"`
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
-	CreatedAt         time.Time         `json:"createdAt"`
-	UpdatedAt         time.Time         `json:"updatedAt"`
 	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
-	SceneID           ID                `json:"sceneId"`
-	Scene             *Scene            `json:"scene,omitempty"`
-	PanelPosition     Position          `json:"panelPosition"`
-	BgColor           *string           `json:"bgColor,omitempty"`
-	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
-	BasicAuthUsername string            `json:"basicAuthUsername"`
-	BasicAuthPassword string            `json:"basicAuthPassword"`
 	PublicTitle       string            `json:"publicTitle"`
 	PublicDescription string            `json:"publicDescription"`
 	PublicImage       string            `json:"publicImage"`
 	PublicNoIndex     bool              `json:"publicNoIndex"`
+	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
+	BasicAuthUsername string            `json:"basicAuthUsername"`
+	BasicAuthPassword string            `json:"basicAuthPassword"`
 	EnableGa          bool              `json:"enableGa"`
 	TrackingID        string            `json:"trackingId"`
 }
@@ -1255,22 +1263,28 @@ type UpdateProjectInput struct {
 	Name              *string  `json:"name,omitempty"`
 	Description       *string  `json:"description,omitempty"`
 	Archived          *bool    `json:"archived,omitempty"`
-	IsBasicAuthActive *bool    `json:"isBasicAuthActive,omitempty"`
-	BasicAuthUsername *string  `json:"basicAuthUsername,omitempty"`
-	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
 	ImageURL          *url.URL `json:"imageUrl,omitempty"`
-	PublicTitle       *string  `json:"publicTitle,omitempty"`
-	PublicDescription *string  `json:"publicDescription,omitempty"`
-	PublicImage       *string  `json:"publicImage,omitempty"`
-	PublicNoIndex     *bool    `json:"publicNoIndex,omitempty"`
 	DeleteImageURL    *bool    `json:"deleteImageUrl,omitempty"`
-	DeletePublicImage *bool    `json:"deletePublicImage,omitempty"`
-	EnableGa          *bool    `json:"enableGa,omitempty"`
-	TrackingID        *string  `json:"trackingId,omitempty"`
 	SceneID           *ID      `json:"sceneId,omitempty"`
 	Starred           *bool    `json:"starred,omitempty"`
 	Deleted           *bool    `json:"deleted,omitempty"`
 	Visibility        *string  `json:"visibility,omitempty"`
+	PublicTitle       *string  `json:"publicTitle,omitempty"`
+	PublicDescription *string  `json:"publicDescription,omitempty"`
+	PublicImage       *string  `json:"publicImage,omitempty"`
+	PublicNoIndex     *bool    `json:"publicNoIndex,omitempty"`
+	DeletePublicImage *bool    `json:"deletePublicImage,omitempty"`
+	IsBasicAuthActive *bool    `json:"isBasicAuthActive,omitempty"`
+	BasicAuthUsername *string  `json:"basicAuthUsername,omitempty"`
+	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
+	EnableGa          *bool    `json:"enableGa,omitempty"`
+	TrackingID        *string  `json:"trackingId,omitempty"`
+}
+
+type UpdateProjectMetadataInput struct {
+	Project ID      `json:"project"`
+	Readme  *string `json:"readme,omitempty"`
+	License *string `json:"license,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
@@ -1303,14 +1317,14 @@ type UpdateStoryInput struct {
 	Index             *int      `json:"index,omitempty"`
 	PanelPosition     *Position `json:"panelPosition,omitempty"`
 	BgColor           *string   `json:"bgColor,omitempty"`
-	IsBasicAuthActive *bool     `json:"isBasicAuthActive,omitempty"`
-	BasicAuthUsername *string   `json:"basicAuthUsername,omitempty"`
-	BasicAuthPassword *string   `json:"basicAuthPassword,omitempty"`
 	PublicTitle       *string   `json:"publicTitle,omitempty"`
 	PublicDescription *string   `json:"publicDescription,omitempty"`
 	PublicImage       *string   `json:"publicImage,omitempty"`
 	PublicNoIndex     *bool     `json:"publicNoIndex,omitempty"`
 	DeletePublicImage *bool     `json:"deletePublicImage,omitempty"`
+	IsBasicAuthActive *bool     `json:"isBasicAuthActive,omitempty"`
+	BasicAuthUsername *string   `json:"basicAuthUsername,omitempty"`
+	BasicAuthPassword *string   `json:"basicAuthPassword,omitempty"`
 	EnableGa          *bool     `json:"enableGa,omitempty"`
 	TrackingID        *string   `json:"trackingId,omitempty"`
 }
@@ -1521,6 +1535,20 @@ func (e AssetSortField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *AssetSortField) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e AssetSortField) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type ListOperation string
 
 const (
@@ -1562,6 +1590,20 @@ func (e *ListOperation) UnmarshalGQL(v any) error {
 
 func (e ListOperation) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ListOperation) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ListOperation) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type NodeType string
@@ -1621,6 +1663,20 @@ func (e NodeType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *NodeType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e NodeType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type PluginExtensionType string
 
 const (
@@ -1678,6 +1734,20 @@ func (e PluginExtensionType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *PluginExtensionType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e PluginExtensionType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type Position string
 
 const (
@@ -1717,6 +1787,79 @@ func (e *Position) UnmarshalGQL(v any) error {
 
 func (e Position) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Position) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Position) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type ProjectImportStatus string
+
+const (
+	ProjectImportStatusNone       ProjectImportStatus = "NONE"
+	ProjectImportStatusProcessing ProjectImportStatus = "PROCESSING"
+	ProjectImportStatusFailed     ProjectImportStatus = "FAILED"
+	ProjectImportStatusSuccess    ProjectImportStatus = "SUCCESS"
+)
+
+var AllProjectImportStatus = []ProjectImportStatus{
+	ProjectImportStatusNone,
+	ProjectImportStatusProcessing,
+	ProjectImportStatusFailed,
+	ProjectImportStatusSuccess,
+}
+
+func (e ProjectImportStatus) IsValid() bool {
+	switch e {
+	case ProjectImportStatusNone, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
+		return true
+	}
+	return false
+}
+
+func (e ProjectImportStatus) String() string {
+	return string(e)
+}
+
+func (e *ProjectImportStatus) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = ProjectImportStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid ProjectImportStatus", str)
+	}
+	return nil
+}
+
+func (e ProjectImportStatus) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ProjectImportStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ProjectImportStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type ProjectSortField string
@@ -1760,6 +1903,20 @@ func (e *ProjectSortField) UnmarshalGQL(v any) error {
 
 func (e ProjectSortField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ProjectSortField) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ProjectSortField) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type PropertySchemaFieldUI string
@@ -1829,6 +1986,20 @@ func (e PropertySchemaFieldUI) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *PropertySchemaFieldUI) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e PropertySchemaFieldUI) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type PublishmentStatus string
 
 const (
@@ -1870,6 +2041,20 @@ func (e *PublishmentStatus) UnmarshalGQL(v any) error {
 
 func (e PublishmentStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *PublishmentStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e PublishmentStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type Role string
@@ -1917,6 +2102,20 @@ func (e Role) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *Role) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Role) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type SortDirection string
 
 const (
@@ -1956,6 +2155,20 @@ func (e *SortDirection) UnmarshalGQL(v any) error {
 
 func (e SortDirection) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *SortDirection) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e SortDirection) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type TextAlign string
@@ -2005,6 +2218,20 @@ func (e TextAlign) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *TextAlign) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e TextAlign) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type Theme string
 
 const (
@@ -2046,6 +2273,20 @@ func (e *Theme) UnmarshalGQL(v any) error {
 
 func (e Theme) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Theme) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Theme) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type ValueType string
@@ -2115,6 +2356,20 @@ func (e ValueType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *ValueType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ValueType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type Visualizer string
 
 const (
@@ -2152,6 +2407,20 @@ func (e *Visualizer) UnmarshalGQL(v any) error {
 
 func (e Visualizer) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Visualizer) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Visualizer) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type WidgetAreaAlign string
@@ -2197,6 +2466,20 @@ func (e WidgetAreaAlign) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *WidgetAreaAlign) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetAreaAlign) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type WidgetAreaType string
 
 const (
@@ -2238,6 +2521,20 @@ func (e *WidgetAreaType) UnmarshalGQL(v any) error {
 
 func (e WidgetAreaType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *WidgetAreaType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetAreaType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type WidgetSectionType string
@@ -2283,6 +2580,20 @@ func (e WidgetSectionType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *WidgetSectionType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetSectionType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type WidgetZoneType string
 
 const (
@@ -2322,4 +2633,18 @@ func (e *WidgetZoneType) UnmarshalGQL(v any) error {
 
 func (e WidgetZoneType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *WidgetZoneType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetZoneType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

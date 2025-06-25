@@ -12,30 +12,31 @@ import (
 )
 
 type ProjectDocument struct {
-	ID                string
-	Archived          bool
-	IsBasicAuthActive bool
-	BasicAuthUsername string
-	BasicAuthPassword string
-	UpdatedAt         time.Time
-	PublishedAt       time.Time
-	Name              string
-	Description       string
+	ID          string
+	Team        string // DON'T CHANGE NAME'
+	Name        string
+	Description string
+	ImageURL    string
+	UpdatedAt   time.Time
+	Visualizer  string
+	Archived    bool
+	CoreSupport bool
+	Starred     bool
+	Deleted     bool
+	Visibility  string
+	// publishment
 	Alias             string
-	ImageURL          string
+	PublishmentStatus string
+	PublishedAt       time.Time
 	PublicTitle       string
 	PublicDescription string
 	PublicImage       string
 	PublicNoIndex     bool
-	Team              string // DON'T CHANGE NAME'
-	Visualizer        string
-	PublishmentStatus string
-	CoreSupport       bool
+	IsBasicAuthActive bool
+	BasicAuthUsername string
+	BasicAuthPassword string
 	EnableGA          bool
 	TrackingID        string
-	Starred           bool
-	Deleted           bool
-	Visibility        string
 }
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
@@ -46,39 +47,40 @@ func NewProjectConsumer(workspaces []accountdomain.WorkspaceID) *ProjectConsumer
 	})
 }
 
-func NewProject(project *project.Project) (*ProjectDocument, string) {
-	pid := project.ID().String()
+func NewProject(p *project.Project) (*ProjectDocument, string) {
+	pid := p.ID().String()
 
 	imageURL := ""
-	if u := project.ImageURL(); u != nil {
+	if u := p.ImageURL(); u != nil {
 		imageURL = u.String()
 	}
 
 	return &ProjectDocument{
-		ID:                pid,
-		Archived:          project.IsArchived(),
-		IsBasicAuthActive: project.IsBasicAuthActive(),
-		BasicAuthUsername: project.BasicAuthUsername(),
-		BasicAuthPassword: project.BasicAuthPassword(),
-		UpdatedAt:         project.UpdatedAt(),
-		PublishedAt:       project.PublishedAt(),
-		Name:              project.Name(),
-		Description:       project.Description(),
-		Alias:             project.Alias(),
-		ImageURL:          imageURL,
-		PublicTitle:       project.PublicTitle(),
-		PublicDescription: project.PublicDescription(),
-		PublicImage:       project.PublicImage(),
-		PublicNoIndex:     project.PublicNoIndex(),
-		Team:              project.Workspace().String(),
-		Visualizer:        string(project.Visualizer()),
-		PublishmentStatus: string(project.PublishmentStatus()),
-		CoreSupport:       project.CoreSupport(),
-		EnableGA:          project.EnableGA(),
-		TrackingID:        project.TrackingID(),
-		Starred:           project.Starred(),
-		Deleted:           project.IsDeleted(),
-		Visibility:        project.Visibility(),
+		ID:          pid,
+		Team:        p.Workspace().String(),
+		Name:        p.Name(),
+		Description: p.Description(),
+		ImageURL:    imageURL,
+		UpdatedAt:   p.UpdatedAt(),
+		Visualizer:  string(p.Visualizer()),
+		Archived:    p.IsArchived(),
+		CoreSupport: p.CoreSupport(),
+		Starred:     p.Starred(),
+		Deleted:     p.IsDeleted(),
+		Visibility:  p.Visibility(),
+		// publishment
+		Alias:             p.Alias(),
+		PublishmentStatus: string(p.PublishmentStatus()),
+		PublishedAt:       p.PublishedAt(),
+		PublicTitle:       p.PublicTitle(),
+		PublicDescription: p.PublicDescription(),
+		PublicImage:       p.PublicImage(),
+		PublicNoIndex:     p.PublicNoIndex(),
+		IsBasicAuthActive: p.IsBasicAuthActive(),
+		BasicAuthUsername: p.BasicAuthUsername(),
+		BasicAuthPassword: p.BasicAuthPassword(),
+		EnableGA:          p.EnableGA(),
+		TrackingID:        p.TrackingID(),
 	}, pid
 }
 
@@ -106,28 +108,29 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 
 	return project.New().
 		ID(pid).
-		IsArchived(d.Archived).
-		IsBasicAuthActive(d.IsBasicAuthActive).
-		BasicAuthUsername(d.BasicAuthUsername).
-		BasicAuthPassword(d.BasicAuthPassword).
-		UpdatedAt(d.UpdatedAt).
-		PublishedAt(d.PublishedAt).
+		Workspace(tid).
 		Name(d.Name).
 		Description(d.Description).
-		Alias(d.Alias).
 		ImageURL(imageURL).
+		UpdatedAt(d.UpdatedAt).
+		Visualizer(visualizer.Visualizer(d.Visualizer)).
+		IsArchived(d.Archived).
+		CoreSupport(d.CoreSupport).
+		Starred(d.Starred).
+		Deleted(d.Deleted).
+		Visibility(d.Visibility).
+		// publishment
+		Alias(d.Alias).
+		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
+		PublishedAt(d.PublishedAt).
 		PublicTitle(d.PublicTitle).
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).
 		PublicNoIndex(d.PublicNoIndex).
-		Workspace(tid).
-		Visualizer(visualizer.Visualizer(d.Visualizer)).
-		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
-		CoreSupport(d.CoreSupport).
+		IsBasicAuthActive(d.IsBasicAuthActive).
+		BasicAuthUsername(d.BasicAuthUsername).
+		BasicAuthPassword(d.BasicAuthPassword).
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
-		Starred(d.Starred).
-		Deleted(d.Deleted).
-		Visibility(d.Visibility).
 		Build()
 }

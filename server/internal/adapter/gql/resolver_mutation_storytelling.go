@@ -2,7 +2,9 @@ package gql
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -22,6 +24,12 @@ func (r *mutationResolver) CreateStory(ctx context.Context, input gqlmodel.Creat
 		Index:   input.Index,
 	}
 
+	b, err := json.MarshalIndent(inp, "", "  ")
+	if err != nil {
+		fmt.Println("JSON Marshal error:", err)
+
+	}
+	fmt.Println(string(b))
 	res, err := usecases(ctx).StoryTelling.Create(ctx, inp, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -46,14 +54,15 @@ func (r *mutationResolver) UpdateStory(ctx context.Context, input gqlmodel.Updat
 		PanelPosition: gqlmodel.FromStoryPositionRef(input.PanelPosition),
 		BgColor:       input.BgColor,
 
-		IsBasicAuthActive: input.IsBasicAuthActive,
-		BasicAuthUsername: input.BasicAuthUsername,
-		BasicAuthPassword: input.BasicAuthPassword,
+		// publishment
 		PublicTitle:       input.PublicTitle,
 		PublicDescription: input.PublicDescription,
 		PublicImage:       input.PublicImage,
 		PublicNoIndex:     input.PublicNoIndex,
 		DeletePublicImage: input.DeletePublicImage,
+		IsBasicAuthActive: input.IsBasicAuthActive,
+		BasicAuthUsername: input.BasicAuthUsername,
+		BasicAuthPassword: input.BasicAuthPassword,
 		EnableGa:          input.EnableGa,
 		TrackingID:        input.TrackingID,
 	}

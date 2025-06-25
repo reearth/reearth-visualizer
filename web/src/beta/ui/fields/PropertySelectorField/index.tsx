@@ -10,7 +10,6 @@ import CommonField, {
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useState } from "react";
 
-
 export type PropertySelectorProps = CommonFieldProps &
   Pick<
     TextInputProps,
@@ -54,18 +53,26 @@ const PropertySelectorField: FC<PropertySelectorProps> = ({
   };
 
   return (
-    <CommonField title={title} description={description}>
-      <FieldsWrapper>
-        <InputWrapper>
+    <CommonField
+      title={title}
+      description={description}
+      data-testid="propertyselectorfield-commonfield"
+    >
+      <FieldsWrapper data-testid="propertyselectorfield-fieldswrapper">
+        <InputWrapper data-testid="propertyselectorfield-inputwrapper">
           <TextInput
             placeholder={placeholder}
             onBlur={handleOnBlur}
             onChange={setInputValue}
             value={inputValue}
+            data-testid="propertyselectorfield-input"
           />
         </InputWrapper>
 
-        <SelectWrapper displayWidth={displayWidth}>
+        <SelectWrapper
+          displayWidth={displayWidth}
+          data-testid="propertyselectorfield-selectwrapper"
+        >
           <Selector
             // Note: value will not match since the input will have ${} but it's okey
             value={inputValue}
@@ -73,6 +80,7 @@ const PropertySelectorField: FC<PropertySelectorProps> = ({
             displayLabel={displayLabel}
             onChange={handleOnChangeSelect}
             menuWidth={menuWidth}
+            data-testid="propertyselectorfield-selector"
           />
         </SelectWrapper>
       </FieldsWrapper>

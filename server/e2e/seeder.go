@@ -34,10 +34,25 @@ import (
 )
 
 var (
+
+	// ---------------- user1
 	uID    = user.NewID()
 	uEmail = "e2e@e2e.com"
 	uName  = "e2e"
 	wID    = accountdomain.NewWorkspaceID()
+
+	// ---------------- user2
+	uID2    = user.NewID()
+	wID2    = accountdomain.NewWorkspaceID()
+	uEmail2 = "e3e@e3e.com"
+	uName2  = "e3e"
+
+	// ---------------- user3
+	uID3    = user.NewID()
+	wID3    = accountdomain.NewWorkspaceID()
+	uEmail3 = "e4e@e4e.com"
+	uName3  = "e4e"
+
 	pID    = id.NewProjectID()
 	pName  = "p1"
 	pDesc  = pName + " desc"
@@ -54,26 +69,95 @@ var (
 func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 	defer util.MockNow(now)()
 
+	metadata := user.NewMetadata()
 	u := user.New().
 		ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
+		Metadata(metadata).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
 	}
-	return baseSetup(ctx, r, u, f)
+	u2 := user.New().
+		ID(uID2).
+		Workspace(wID2).
+		Name(uName2).
+		Email(uEmail2).
+		Metadata(metadata).
+		MustBuild()
+	if err := r.User.Save(ctx, u2); err != nil {
+		return err
+	}
+
+	u3 := user.New().
+		ID(uID3).
+		Workspace(wID3).
+		Name(uName3).
+		Email(uEmail3).
+		Metadata(metadata).
+		MustBuild()
+	if err := r.User.Save(ctx, u3); err != nil {
+		return err
+	}
+
+	if err := baseSetup(ctx, r, u, f); err != nil {
+		return err
+	}
+
+	// assign user3 to user1's workspace
+	if err := JoinMembers(ctx, r, wID, u3, workspace.RoleReader, uID); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func JoinMembers(ctx context.Context, r *repo.Container,
+	targetWorkspace workspace.ID,
+	newUser *user.User,
+	grantRole workspace.Role,
+	invitedUserId workspace.UserID,
+) error {
+	w, err := r.Workspace.FindByID(ctx, targetWorkspace)
+	if err != nil {
+		return err
+	}
+	members := w.Members()
+	err = members.Join(newUser, grantRole, invitedUserId)
+	if err != nil {
+		return err
+	}
+	newMembers := make(map[workspace.UserID]workspace.Member)
+	for k, v := range members.Users() {
+		newMembers[k] = v
+	}
+	metadata := workspace.NewMetadata()
+	w2 := workspace.New().
+		ID(w.ID()).
+		Name(w.Name()).
+		Personal(w.IsPersonal()).
+		Members(newMembers).
+		Metadata(metadata).
+		MustBuild()
+	if err := r.Workspace.Save(ctx, w2); err != nil {
+		return err
+	}
+	return nil
 }
 
 func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, lang language.Tag) error {
 	defer util.MockNow(now)()
 
+	metadata := user.NewMetadata()
+	metadata.SetLang(lang)
+
 	u := user.New().ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
-		Lang(lang).
+		Metadata(metadata).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
@@ -82,14 +166,15 @@ func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, 
 }
 
 func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.File) error {
-
 	m := workspace.Member{
 		Role: workspace.RoleOwner,
 	}
+	wMetadata := workspace.NewMetadata()
 	w := workspace.New().ID(wID).
 		Name("e2e").
 		Personal(false).
 		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Metadata(wMetadata).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err
@@ -107,6 +192,7 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		Workspace(w.ID()).
 		Alias(pAlias).
 		Visualizer(visualizer.VisualizerCesiumBeta).
+		Visibility("private").
 		CoreSupport(true).
 		Starred(false).
 		Deleted(false).
@@ -115,6 +201,21 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		return err
 	}
 
+	st := project.ProjectImportStatusNone
+	metadata, err := project.NewProjectMetadata().
+		NewID().
+		Workspace(w.ID()).
+		Project(pID).
+		ImportStatus(&st).
+		Build()
+	if err != nil {
+		return err
+	}
+
+	err = r.ProjectMetadata.Save(ctx, metadata)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -164,10 +265,12 @@ func addAsset(path string, ctx context.Context, r *repo.Container, gf gateway.Fi
 
 func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 	defer util.MockNow(now)()
+	metadata := user.NewMetadata()
 	u := user.New().ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
+		Metadata(metadata).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err

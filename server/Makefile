@@ -114,6 +114,17 @@ deep-copy:
 error-msg:
 	go generate ./pkg/i18n/...
 
+grpc:
+	protoc --go_out=./internal/adapter/internalapi/ --go_opt=paths=source_relative \
+      --go-grpc_out=./internal/adapter/internalapi/ --go-grpc_opt=paths=source_relative  \
+        ./schemas/internalapi/v1/schema.proto
+
+grpc-doc:
+	protoc -I . \
+	  --doc_out=schemas/internalapi/docs \
+	  --doc_opt=markdown,schema.md \
+	  schemas/internalapi/v1/schema.proto
+
 # =======================
 # Tools
 # =======================

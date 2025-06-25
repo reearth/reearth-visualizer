@@ -32,6 +32,48 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 	return PublishmentStatus("")
 }
 
+func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus {
+	switch v {
+	case ProjectImportStatusProcessing:
+		return project.ProjectImportStatusProcessing
+	case ProjectImportStatusFailed:
+		return project.ProjectImportStatusFailed
+	case ProjectImportStatusSuccess:
+		return project.ProjectImportStatusSuccess
+	}
+	return project.ProjectImportStatusNone
+}
+
+func ToProjectImportStatus(v project.ProjectImportStatus) ProjectImportStatus {
+	switch v {
+	case project.ProjectImportStatusProcessing:
+		return ProjectImportStatusProcessing
+	case project.ProjectImportStatusFailed:
+		return ProjectImportStatusFailed
+	case project.ProjectImportStatusSuccess:
+		return ProjectImportStatusSuccess
+	}
+	return ProjectImportStatusNone
+}
+
+func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
+	if pm == nil {
+		return nil
+	}
+	importStatus := ToProjectImportStatus(*pm.ImportStatus())
+
+	return &ProjectMetadata{
+		ID:           IDFrom(pm.ID()),
+		Workspace:    IDFrom(pm.Workspace()),
+		Project:      IDFrom(pm.Project()),
+		Readme:       pm.Readme(),
+		License:      pm.License(),
+		ImportStatus: &importStatus,
+		CreatedAt:    pm.CreatedAt(),
+		UpdatedAt:    pm.UpdatedAt(),
+	}
+}
+
 func ToProject(p *project.Project) *Project {
 	if p == nil {
 		return nil
@@ -43,31 +85,33 @@ func ToProject(p *project.Project) *Project {
 	}
 
 	return &Project{
-		ID:                IDFrom(p.ID()),
-		CreatedAt:         p.CreatedAt(),
-		IsArchived:        p.IsArchived(),
-		IsBasicAuthActive: p.IsBasicAuthActive(),
-		BasicAuthUsername: p.BasicAuthUsername(),
-		BasicAuthPassword: p.BasicAuthPassword(),
+		ID:          IDFrom(p.ID()),
+		TeamID:      IDFrom(p.Workspace()),
+		Name:        p.Name(),
+		Description: p.Description(),
+		ImageURL:    p.ImageURL(),
+		CreatedAt:   p.CreatedAt(),
+		UpdatedAt:   p.UpdatedAt(),
+		Visualizer:  Visualizer(p.Visualizer()),
+		IsArchived:  p.IsArchived(),
+		CoreSupport: p.CoreSupport(),
+		Starred:     p.Starred(),
+		IsDeleted:   p.IsDeleted(),
+		Visibility:  p.Visibility(),
+		Metadata:    ToProjectMetadata(p.Metadata()),
+		// publishment
 		Alias:             p.Alias(),
-		Name:              p.Name(),
-		Description:       p.Description(),
-		ImageURL:          p.ImageURL(),
-		PublishedAt:       publishedAtRes,
-		UpdatedAt:         p.UpdatedAt(),
-		Visualizer:        Visualizer(p.Visualizer()),
-		TeamID:            IDFrom(p.Workspace()),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
+		PublishedAt:       publishedAtRes,
 		PublicTitle:       p.PublicTitle(),
 		PublicDescription: p.PublicDescription(),
 		PublicImage:       p.PublicImage(),
 		PublicNoIndex:     p.PublicNoIndex(),
-		CoreSupport:       p.CoreSupport(),
+		IsBasicAuthActive: p.IsBasicAuthActive(),
+		BasicAuthUsername: p.BasicAuthUsername(),
+		BasicAuthPassword: p.BasicAuthPassword(),
 		EnableGa:          p.EnableGA(),
 		TrackingID:        p.TrackingID(),
-		Starred:           p.Starred(),
-		IsDeleted:         p.IsDeleted(),
-		Visibility:        p.Visibility(),
 	}
 }
 

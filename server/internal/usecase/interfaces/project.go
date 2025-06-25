@@ -19,35 +19,45 @@ import (
 )
 
 type CreateProjectParam struct {
-	WorkspaceID accountdomain.WorkspaceID
-	Visualizer  visualizer.Visualizer
-	Name        *string
-	Description *string
-	CoreSupport *bool
-	Visibility  *string
+	WorkspaceID  accountdomain.WorkspaceID
+	Visualizer   visualizer.Visualizer
+	Name         *string
+	Description  *string
+	CoreSupport  *bool
+	Visibility   *string
+	ImportStatus project.ProjectImportStatus
 }
 
 type UpdateProjectParam struct {
-	ID                id.ProjectID
-	Name              *string
-	Description       *string
-	Archived          *bool
-	IsBasicAuthActive *bool
-	BasicAuthUsername *string
-	BasicAuthPassword *string
-	ImageURL          *url.URL
+	ID             id.ProjectID
+	Name           *string
+	Description    *string
+	Archived       *bool
+	ImageURL       *url.URL
+	DeleteImageURL bool
+	ImportStatus   project.ProjectImportStatus
+	SceneID        *id.SceneID
+	Starred        *bool
+	Deleted        *bool
+	Visibility     *string
+
+	// publishment
 	PublicTitle       *string
 	PublicDescription *string
 	PublicImage       *string
 	PublicNoIndex     *bool
 	DeletePublicImage bool
-	DeleteImageURL    bool
+	IsBasicAuthActive *bool
+	BasicAuthUsername *string
+	BasicAuthPassword *string
 	EnableGa          *bool
 	TrackingID        *string
-	SceneID           *id.SceneID
-	Starred           *bool
-	Deleted           *bool
-	Visibility        *string
+}
+
+type UpdateProjectMetadataParam struct {
+	ID      id.ProjectID
+	Readme  *string
+	License *string
 }
 
 type PublishProjectParam struct {
@@ -72,6 +82,10 @@ type Project interface {
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 
+	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
+	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator) ([]*project.Project, error)
+	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
+
 	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)
 	Update(context.Context, UpdateProjectParam, *usecase.Operator) (*project.Project, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
@@ -80,6 +94,7 @@ type Project interface {
 	CheckAlias(context.Context, string, *id.ProjectID) (bool, error)
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
-	ImportProjectData(context.Context, string, *[]byte, *usecase.Operator) (*project.Project, error)
+	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
+	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *usecase.Operator) (*project.ProjectMetadata, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }

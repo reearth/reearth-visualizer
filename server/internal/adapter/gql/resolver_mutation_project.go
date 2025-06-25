@@ -2,7 +2,6 @@ package gql
 
 import (
 	"archive/zip"
-	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -14,9 +13,8 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/spf13/afero"
@@ -29,12 +27,13 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 	}
 
 	res, err := usecases(ctx).Project.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: tid,
-		Visualizer:  visualizer.Visualizer(input.Visualizer),
-		Name:        input.Name,
-		Description: input.Description,
-		CoreSupport: input.CoreSupport,
-		Visibility:  input.Visibility,
+		WorkspaceID:  tid,
+		Visualizer:   visualizer.Visualizer(input.Visualizer),
+		Name:         input.Name,
+		Description:  input.Description,
+		CoreSupport:  input.CoreSupport,
+		Visibility:   input.Visibility,
+		ImportStatus: project.ProjectImportStatusNone,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -60,32 +59,52 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 	}
 
 	res, err := usecases(ctx).Project.Update(ctx, interfaces.UpdateProjectParam{
-		ID:                pid,
-		Name:              input.Name,
-		Description:       input.Description,
-		ImageURL:          input.ImageURL,
-		Archived:          input.Archived,
-		IsBasicAuthActive: input.IsBasicAuthActive,
-		BasicAuthUsername: input.BasicAuthUsername,
-		BasicAuthPassword: input.BasicAuthPassword,
+		ID:             pid,
+		Name:           input.Name,
+		Description:    input.Description,
+		ImageURL:       input.ImageURL,
+		Archived:       input.Archived,
+		DeleteImageURL: deleteImageURL,
+		Starred:        input.Starred,
+		Deleted:        input.Deleted,
+		SceneID:        gqlmodel.ToIDRef[id.Scene](input.SceneID),
+		Visibility:     input.Visibility,
+
+		// publishment
 		PublicTitle:       input.PublicTitle,
 		PublicDescription: input.PublicDescription,
 		PublicImage:       input.PublicImage,
 		PublicNoIndex:     input.PublicNoIndex,
 		DeletePublicImage: deletePublicImage,
-		DeleteImageURL:    deleteImageURL,
+		IsBasicAuthActive: input.IsBasicAuthActive,
+		BasicAuthUsername: input.BasicAuthUsername,
+		BasicAuthPassword: input.BasicAuthPassword,
 		EnableGa:          input.EnableGa,
 		TrackingID:        input.TrackingID,
-		Starred:           input.Starred,
-		Deleted:           input.Deleted,
-		SceneID:           gqlmodel.ToIDRef[id.Scene](input.SceneID),
-		Visibility:        input.Visibility,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
 
 	return &gqlmodel.ProjectPayload{Project: gqlmodel.ToProject(res)}, nil
+}
+
+func (r *mutationResolver) UpdateProjectMetadata(ctx context.Context, input gqlmodel.UpdateProjectMetadataInput) (*gqlmodel.ProjectMetadataPayload, error) {
+	pid, err := gqlmodel.ToID[id.Project](input.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).ProjectMetadata.Update(ctx, interfaces.UpdateProjectMetadataParam{
+		ID:      pid,
+		Readme:  input.Readme,
+		License: input.License,
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.ProjectMetadataPayload{Metadata: gqlmodel.ToProjectMetadata(res)}, nil
 }
 
 func (r *mutationResolver) PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error) {
@@ -188,93 +207,4 @@ func Normalize(data any) map[string]any {
 		}
 	}
 	return nil
-}
-
-func (r *mutationResolver) ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error) {
-
-	importData, assetsZip, pluginsZip, err := file.UncompressExportZip(adapter.CurrentHost(ctx), input.File.File)
-	if err != nil {
-		return nil, errors.New("Fail UncompressExportZip :" + err.Error())
-	}
-
-	// First, create the project. A project associated with the asset is required.
-	newProject, err := usecases(ctx).Project.ImportProjectData(ctx, string(input.TeamID), importData, getOperator(ctx))
-	if err != nil {
-		return nil, errors.New("Fail Import ProjectData :" + err.Error())
-	}
-
-	importData, err = usecases(ctx).Asset.ImportAssetFiles(ctx, assetsZip, importData, newProject)
-	if err != nil {
-		return nil, errors.New("Fail Import AssetFiles :" + err.Error())
-	}
-
-	newScene, err := usecases(ctx).Scene.Create(ctx, newProject.ID(), false, getOperator(ctx))
-	if err != nil {
-		return nil, errors.New("Fail Create Scene :" + err.Error())
-	}
-
-	oldSceneID, err := replaceOldSceneID(importData, newScene)
-	if err != nil {
-		return nil, errors.New("Fail Get OldSceneID :" + err.Error())
-	}
-
-	plugins, pss, err := usecases(ctx).Plugin.ImportPlugins(ctx, pluginsZip, oldSceneID, newScene, importData)
-	if err != nil {
-		return nil, errors.New("Fail ImportPlugins :" + err.Error())
-	}
-
-	//　The following is the saving of sceneJSON. -----------------------
-
-	// Scene data save
-	newScene, err = usecases(ctx).Scene.ImportScene(ctx, newScene, importData)
-	if err != nil {
-		return nil, errors.New("Fail sceneJSON ImportScene :" + err.Error())
-	}
-
-	// Styles data save
-	styleList, err := usecases(ctx).Style.ImportStyles(ctx, newScene.ID(), importData)
-	if err != nil {
-		return nil, errors.New("Fail sceneJSON ImportStyles :" + err.Error())
-	}
-
-	// NLSLayers data save
-	nlayers, err := usecases(ctx).NLSLayer.ImportNLSLayers(ctx, newScene.ID(), importData)
-	if err != nil {
-		return nil, errors.New("Fail sceneJSON ImportNLSLayers :" + err.Error())
-	}
-
-	// Story data save
-	st, err := usecases(ctx).StoryTelling.ImportStory(ctx, newScene.ID(), importData)
-	if err != nil {
-		return nil, errors.New("Fail sceneJSON ImportStory :" + err.Error())
-	}
-
-	return &gqlmodel.ImportProjectPayload{
-		ProjectData: map[string]any{
-			"project":  gqlmodel.ToProject(newProject),
-			"plugins":  gqlmodel.ToPlugins(plugins),
-			"schemas":  gqlmodel.ToPropertySchemas(pss),
-			"scene":    gqlmodel.ToScene(newScene),
-			"nlsLayer": gqlmodel.ToNLSLayers(nlayers, nil),
-			"style":    gqlmodel.ToStyles(styleList),
-			"story":    gqlmodel.ToStory(st),
-		},
-	}, nil
-
-}
-
-func replaceOldSceneID(data *[]byte, newScene *scene.Scene) (string, error) {
-	var d map[string]any
-	if err := json.Unmarshal(*data, &d); err != nil {
-		return "", err
-	}
-	if s, ok := d["scene"].(map[string]any); ok {
-		if oldSceneID, ok := s["id"].(string); ok {
-
-			// Replace new scene id
-			*data = bytes.Replace(*data, []byte(oldSceneID), []byte(newScene.ID().String()), -1)
-			return oldSceneID, nil
-		}
-	}
-	return "", errors.New("scene id not found")
 }

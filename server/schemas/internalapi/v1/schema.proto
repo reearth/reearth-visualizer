@@ -1,0 +1,275 @@
+syntax = "proto3";
+
+package reearth.visualizer.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/v1";
+
+service ReEarthVisualizer {
+  // Retrieves the list of projects the user can access.
+  // Request headers: user-id: <User ID>
+  rpc GetProjectList(GetProjectListRequest) returns (GetProjectListResponse) {}
+
+  // Retrieves a specific project regardless of authentication.
+  // Request headers: user-id: <User ID>
+  rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
+
+  // Creates a new project in the specified team.
+  // Request headers: user-id: <User ID>
+  rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
+
+  // Update  a project.
+  // Request headers: user-id: <User ID>
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
+
+  // Updates a new project metadata in the specified team.
+  // Request headers: user-id: <User ID>
+  rpc UpdateProjectMetadata(UpdateProjectMetadataRequest)
+      returns (UpdateProjectMetadataResponse) {}
+
+  // Deletes a project.
+  // Request headers: user-id: <User ID>
+  rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
+}
+
+// Core Project messages
+message Project {
+  // Project ID
+  string id = 1;
+
+  // Workspace ID
+  string workspace_id = 2;
+
+  // Scene ID
+  string scene_id = 3;
+
+  // Project title
+  string name = 4;
+
+  // Project description
+  string description = 5;
+
+  // Project image (URL link)
+  optional string image_url = 6;
+
+  // Type of visualizer (e.g., Cesium)
+  Visualizer visualizer = 7;
+
+  // Creation date
+  google.protobuf.Timestamp created_at = 8;
+
+  // Last updated date
+  google.protobuf.Timestamp updated_at = 9;
+
+  // Currently unused
+  bool is_archived = 10;
+
+  // Indicates whether it's a classic or visualizer project type
+  bool core_support = 11;
+
+  // Whether the project is marked as a favorite
+  bool starred = 12;
+
+  // Whether the project is in the trash
+  bool is_deleted = 13;
+
+  // Visibility of the project (e.g., "public", "private")
+  string visibility = 14;
+
+  // Project metadata
+  optional ProjectMetadata metadata = 15;
+
+  // Publishment value
+  string alias = 16;
+  // Publishment value
+  PublishmentStatus publishment_status = 17;
+  // Publishment value
+  optional google.protobuf.Timestamp published_at = 18;
+  // Publishment value
+  string public_title = 19;
+  // Publishment value
+  string public_description = 20;
+  // Publishment value
+  string public_image = 21;
+  // Publishment value
+  bool public_no_index = 22;
+  // Publishment value
+  bool is_basic_auth_active = 23;
+  // Publishment value
+  string basic_auth_username = 24;
+  // Publishment value
+  string basic_auth_password = 25;
+  // Publishment value
+  bool enable_ga = 26;
+  // Publishment value
+  string tracking_id = 27;
+}
+
+message ProjectMetadata {
+  // ProjectMetadata id
+  string id = 1;
+  // Project id
+  string project_id = 2;
+  // Workspace id
+  string workspace_id = 3;
+  // Project readme
+  optional string readme = 4;
+  // Project license
+  optional string license = 5;
+  // Project import status — if PROCESSING, data should not be retrieved
+  ProjectImportStatus import_status = 6;
+  // ProjectMetadata created date
+  google.protobuf.Timestamp created_at = 7;
+  // ProjectMetadata updated date
+  google.protobuf.Timestamp updated_at = 8;
+}
+
+enum Visualizer {
+  VISUALIZER_UNSPECIFIED = 0;
+  VISUALIZER_CESIUM = 1;
+  VISUALIZER_CESIUM_BETA = 2;
+}
+
+enum ProjectImportStatus {
+  NONE = 0;
+  PROCESSING = 1;
+  FAIL = 2;
+  SUCCESS = 3;
+}
+
+enum PublishmentStatus {
+  PUBLISHMENT_STATUS_UNSPECIFIED = 0;
+
+  // The project is published and publicly accessible.
+  PUBLISHMENT_STATUS_PUBLIC = 1;
+
+  // The project is published with limited access.
+  PUBLISHMENT_STATUS_LIMITED = 2;
+
+  // The project is unpublished (web files have been deleted).
+  PUBLISHMENT_STATUS_PRIVATE = 3;
+}
+
+// If the authenticated flag is true, private items will also be included in the
+// response. However, deleted items are excluded.
+message GetProjectListRequest {
+  // Workspace ID
+  string workspace_id = 1;
+  // Authenticated Flag
+  bool authenticated = 2;
+}
+
+// Retrieves a project regardless of authentication.
+// Note: Call this only if the user is allowed to view the project.
+message GetProjectRequest {
+  // Project ID
+  string project_id = 1;
+}
+
+// Creates a new project.
+// Cannot be created under a team the user does not belong to.
+message CreateProjectRequest {
+  // Workspace ID
+  string workspace_id = 1;
+
+  // Specify VISUALIZER_CESIUM
+  Visualizer visualizer = 2;
+
+  // Project title
+  optional string name = 3;
+
+  // Project description
+  optional string description = 4;
+
+  // Set to true
+  optional bool core_support = 5;
+
+  // Visibility of the project (e.g., "public", "private")
+  optional string visibility = 6;
+}
+
+// Update project fields.
+// Only the project owner can operate this
+message UpdateProjectRequest {
+  // Project ID (required)
+  string project_id = 1;
+
+  // Project basic info (optional)
+  optional string name = 2;
+  optional string description = 3;
+  optional bool archived = 4;
+  optional string image_url = 5;
+  optional bool delete_image_url = 6;
+  optional string scene_id = 7;
+  optional bool starred = 8;
+  optional bool deleted = 9;
+  optional string visibility = 10;
+
+  // Publishment settings (optional)
+  optional string public_title = 11;
+  optional string public_description = 12;
+  optional string public_image = 13;
+  optional bool public_no_index = 14;
+  optional bool delete_public_image = 15;
+  optional bool is_basic_auth_active = 16;
+  optional string basic_auth_username = 17;
+  optional string basic_auth_password = 18;
+  optional bool enable_ga = 19;
+  optional string tracking_id = 20;
+}
+
+// Updates a new project metadata.
+// Cannot be updated under a team the user does not belong to.
+message UpdateProjectMetadataRequest {
+  // Project ID
+  string project_id = 1;
+  // Project readme
+  optional string readme = 4;
+  // Project license
+  optional string license = 5;
+}
+
+// Deletes a project.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
+message DeleteProjectRequest {
+  // Project ID
+  string project_id = 1;
+}
+
+// Response messages
+message GetProjectResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message GetProjectListResponse {
+  // Project List
+  repeated Project projects = 1;
+}
+
+// Response messages
+message CreateProjectResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateProjectResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateProjectMetadataResponse {
+  // Project metadata
+  ProjectMetadata metadata = 1;
+}
+
+// Response messages
+message DeleteProjectResponse {
+  // Project ID
+  string project_id = 1;
+}

@@ -23,7 +23,7 @@ export default [
     ignores: [
       "bin/pluginDoc.ts",
       // e2e playwright-tests is a nested project, eslint will be managed independently
-      "e2e/playwright-tests"
+      "e2e/"
     ]
   }
 ];

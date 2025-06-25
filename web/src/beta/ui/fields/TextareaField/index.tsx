@@ -35,12 +35,17 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
   };
 
   return (
-    <CommonField title={title} description={description}>
+    <CommonField
+      title={title}
+      description={description}
+      dataTestId="textareafield-commonfield"
+    >
       <TextArea
         {...props}
         value={internalValue}
         onChange={handleChange}
         onBlur={handleChangeComplete}
+        dataTestid="textareafield-input"
       />
     </CommonField>
   );

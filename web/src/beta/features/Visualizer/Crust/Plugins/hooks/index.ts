@@ -58,6 +58,7 @@ export default function ({
     transformByOffsetOnScreen,
     isPositionVisibleOnGlobe,
     getGeoidHeight,
+    getCurrentLocationAsync,
     viewerEventsOn,
     viewerEventsOff,
     viewerEvents,
@@ -191,6 +192,7 @@ export default function ({
         transformByOffsetOnScreen,
         isPositionVisibleOnGlobe,
         getGeoidHeight,
+        getCurrentLocationAsync,
         // viewer events
         viewerEventsOn,
         viewerEventsOff,
@@ -285,6 +287,7 @@ export default function ({
       transformByOffsetOnScreen,
       isPositionVisibleOnGlobe,
       getGeoidHeight,
+      getCurrentLocationAsync,
       viewerEventsOn,
       viewerEventsOff,
       getCameraPosition,

@@ -77,7 +77,7 @@ export const Tabs: FC<TabsProps> = ({
       position={position}
       flexHeight={flexHeight}
       background={background}
-      data-testid={dataTestid}
+      data-testid={dataTestid || "tabs-wrapper"}
     >
       <TabsMenu
         position={position}
@@ -86,6 +86,7 @@ export const Tabs: FC<TabsProps> = ({
         background={background}
         edgeGap={menuEdgeGap}
         role="tablist"
+        data-testid="tabs-menu"
       >
         {tabs.map(({ id, icon, name, tooltipText, placement }) => (
           <Tab
@@ -96,6 +97,7 @@ export const Tabs: FC<TabsProps> = ({
             tabStyle={tabStyle}
             role="tab"
             aria-selected={id === activeTab}
+            data-testid={`tab-${id}`}
           >
             {icon && (
               <Icon
@@ -106,6 +108,7 @@ export const Tabs: FC<TabsProps> = ({
                 color={
                   id === activeTab ? theme.content.main : theme.content.weak
                 }
+                data-testid={`tab-icon-${id}`}
               />
             )}
             {name && (
@@ -115,6 +118,7 @@ export const Tabs: FC<TabsProps> = ({
                 color={
                   id === activeTab ? theme.content.main : theme.content.weak
                 }
+                data-testid={`tab-name-${id}`}
               >
                 {name}
               </Typography>
@@ -122,7 +126,12 @@ export const Tabs: FC<TabsProps> = ({
           </Tab>
         ))}
       </TabsMenu>
-      <Content noPadding={noPadding} noOverflowY={noOverflowY} role="tabpanel">
+      <Content
+        noPadding={noPadding}
+        noOverflowY={noOverflowY}
+        role="tabpanel"
+        data-testid="tabs-content"
+      >
         {selectedTabItem ? selectedTabItem.children : null}
       </Content>
     </Wrapper>

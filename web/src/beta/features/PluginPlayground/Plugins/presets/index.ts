@@ -14,8 +14,14 @@ import { addCzml } from "./layers/add-czml";
 import { addGeojson } from "./layers/add-geojson";
 import { addGooglePhotorealistic3dTiles } from "./layers/add-google-photorealistic-3d-tiles";
 import { addKml } from "./layers/add-kml";
+import { addLargeGeojson } from "./layers/add-large-geojson";
 import { addOsm3dTiles } from "./layers/add-OSM-3DTiles";
+import { addPhotogrammetric3dModel } from "./layers/add-photogrammetric-3D-model";
+import { addPointCloud } from "./layers/add-point-cloud";
 import { addWms } from "./layers/add-wms";
+import { addInfoboxAllProperties } from "./layers/addInfoboxAllProperties";
+import { addInfoboxRichBlocks } from "./layers/addInfoboxRichBlocks";
+import { addInfoboxSpecificProperties } from "./layers/addInfoboxSpecificProperties";
 import { hideFlyToDeleteLayer } from "./layers/hideFlyToDeleteLayer";
 import { overrideLayerData } from "./layers/overrideLayerData";
 import { showFeaturesInfo } from "./layers/showSelectedFeaturesInformation";
@@ -35,6 +41,7 @@ import { responsivePanel } from "./ui/responsivePanel";
 import { sidebar } from "./ui/sidebar";
 import { enableShadowStyle } from "./viewer/enableShadowStyle";
 import { enableTerrain } from "./viewer/enableTerrain";
+import { getCurrentLocation } from "./viewer/getCurrentLocation";
 import { mouseEvents } from "./viewer/mouseEvent";
 // import { showLabel } from "./viewer/showLabel";
 import { takeScreenshot } from "./viewer/takeScreenshot";
@@ -70,23 +77,30 @@ export const presetPlugins: PresetPlugins = [
       enableTerrain,
       // showLabel, NOTE: ommitting this plugin as could cause issue with client requesting for the feature in another plugin
       takeScreenshot,
-      mouseEvents
+      mouseEvents,
+      getCurrentLocation
     ]
   },
   {
     id: "layers",
     plugins: [
       addGeojson,
+      addLargeGeojson,
       addCzml,
       addKml,
       addCsv,
       add3dTiles,
+      addPhotogrammetric3dModel,
+      addPointCloud,
       addOsm3dTiles,
       addWms,
       addGooglePhotorealistic3dTiles,
       hideFlyToDeleteLayer,
       overrideLayerData,
-      showFeaturesInfo
+      showFeaturesInfo,
+      addInfoboxAllProperties,
+      addInfoboxSpecificProperties,
+      addInfoboxRichBlocks
     ]
   },
   {

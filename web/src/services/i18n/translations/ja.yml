@@ -60,6 +60,7 @@ MAINTAINER: 管理者
 OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
+Successfully imported project!: プロジェクトのインポートに成功しました！
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -344,13 +345,20 @@ Enable Terrain: 3D地形を有効にする
 Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
 Mouse Events: マウスイベント
-Add Geojson: Geojsonを追加
+Get Current Location: 現在位置を取得
+Add GeoJSON: GeoJSONを追加
+Add Large Geojson: 大容量のGeoJSONを追加
 Add CSV: CSVを追加
 Add KML: KMLを追加
 Add WMS: WMSを追加
 Add CZML: CZMLを追加
 Add 3D Tiles: 3Dタイルを追加
+Add Photogrammetric 3D model: フォトグラメトリ3Dモデルを追加
+Add Point Cloud: 点群データを追加
 Add Google Photorealistic 3D Tiles: Google Photorealistic 3D Tilesを追加
+Add infobox to show all properties: 全てのプロパティを表示するインフォボックスを追加
+Add infobox to show specific properties: 特定のプロパティを表示するインフォボックスを追加
+Add infobox to show rich blocks: リッチブロックを表示するインフォボックスを追加
 Add OSM 3D Tiles: OSM 3D Tilesを追加
 Hide Fly To Delete Layer: カメラ移動とレイヤーの削除
 Override Layer Data: レイヤーデータの上書き
@@ -404,7 +412,7 @@ Edit Alias: エイリアスを編集
 You are about to change the alias for your story. Only alphanumeric characters and hyphens are allows.: ストーリーのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 You are about to change the alias for your project. Only alphanumeric characters and hyphens are allows.: プロジェクトのエイリアスを変更しようとしています。英数字とハイフンのみが使用可能です。
 Your Alias: あなたのエイリアス'
-clean: ''
+Reset: リセット
 Public Info: 公開情報
 Published page settings: 公開ページ設定
 This section's settings are mainly applied to the Open Graph Protocol settings in the header of the published page.: このセクションの設定は、主に公開ページのヘッダーにあるOpen Graph Protocolの設定に適用されます。
@@ -602,8 +610,8 @@ Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to upload chunk 0.: ''
 Failed to import project.: プロジェクトのインポートに失敗しました。
-Successfully imported project!: プロジェクトのインポートに成功しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
 Failed to create story.: ストーリーの作成に失敗しました。

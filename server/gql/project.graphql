@@ -1,31 +1,53 @@
 type Project implements Node {
   id: ID!
-  isArchived: Boolean!
-  isBasicAuthActive: Boolean!
-  basicAuthUsername: String!
-  basicAuthPassword: String!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  publishedAt: DateTime
+  teamId: ID!
+  team: Team
+  scene: Scene
   name: String!
   description: String!
+  imageUrl: URL
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  visualizer: Visualizer!
+  isArchived: Boolean!
+  coreSupport: Boolean!
+  starred: Boolean!
+  isDeleted: Boolean!
+  visibility: String!
+
+  metadata: ProjectMetadata
+
+  # publishment
   alias: String!
+  publishmentStatus: PublishmentStatus!
+  publishedAt: DateTime
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
   publicNoIndex: Boolean!
-  imageUrl: URL
-  teamId: ID!
-  visualizer: Visualizer!
-  publishmentStatus: PublishmentStatus!
-  team: Team
-  scene: Scene
-  coreSupport: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
-  starred: Boolean!
-  isDeleted: Boolean!
-  visibility: String!
+}
+
+type ProjectMetadata {
+  id: ID!
+  project: ID!
+  workspace: ID!
+  readme: String
+  license: String
+  importStatus: ProjectImportStatus
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+enum ProjectImportStatus {
+  NONE
+  PROCESSING
+  FAILED
+  SUCCESS
 }
 
 enum Visualizer {
@@ -60,22 +82,30 @@ input UpdateProjectInput {
   name: String
   description: String
   archived: Boolean
-  isBasicAuthActive: Boolean
-  basicAuthUsername: String
-  basicAuthPassword: String
   imageUrl: URL
-  publicTitle: String
-  publicDescription: String
-  publicImage: String
-  publicNoIndex: Boolean
   deleteImageUrl: Boolean
-  deletePublicImage: Boolean
-  enableGa: Boolean
-  trackingId: String
   sceneId: ID
   starred: Boolean
   deleted: Boolean
   visibility: String
+
+  # publishment
+  publicTitle: String
+  publicDescription: String
+  publicImage: String
+  publicNoIndex: Boolean
+  deletePublicImage: Boolean
+  isBasicAuthActive: Boolean
+  basicAuthUsername: String
+  basicAuthPassword: String
+  enableGa: Boolean
+  trackingId: String
+}
+
+input UpdateProjectMetadataInput {
+  project: ID!
+  readme: String
+  license: String
 }
 
 input PublishProjectInput {
@@ -97,11 +127,6 @@ input ExportProjectInput {
   projectId: ID!
 }
 
-input ImportProjectInput {
-  teamId: ID!
-  file: Upload!
-}
-
 # Payload
 
 type ProjectPayload {
@@ -116,13 +141,13 @@ type ExportProjectPayload {
   projectDataPath: String!
 }
 
-type ImportProjectPayload {
-  projectData: JSON!
-}
-
 type ProjectAliasAvailability {
   alias: String!
   available: Boolean!
+}
+
+type ProjectMetadataPayload {
+  metadata: ProjectMetadata!
 }
 
 # Connection
@@ -157,5 +182,7 @@ extend type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
-  importProject(input: ImportProjectInput!): ImportProjectPayload
+  updateProjectMetadata(
+    input: UpdateProjectMetadataInput!
+  ): ProjectMetadataPayload
 }

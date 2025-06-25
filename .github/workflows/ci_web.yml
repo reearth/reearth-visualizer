@@ -3,7 +3,7 @@ on:
   workflow_call:
 jobs:
   validate-nginx-config:
-    uses: reearth/actions/.github/workflows/validate-nginx-config.yml@dd85721d9bf22ec466ec9446e7b939eb22de900a
+    uses: reearth/actions/.github/workflows/validate-nginx-config.yml@b63f7da8796f4514712947e1a4902994be29e3d9
     with:
       template_directory: docker
       template_values: '{"PORT": 8080, "REAL_IP_HEADER": "X-Forwarded-For"}'
@@ -15,8 +15,8 @@ jobs:
       run:
         working-directory: web
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: lts/*
       - name: Install Yarn
@@ -26,7 +26,7 @@ jobs:
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v4
+      - uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -42,7 +42,7 @@ jobs:
       - name: Check
         run: yarn run coverage
       - name: Send coverage report
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: web,web-beta,web-classic,web-utils

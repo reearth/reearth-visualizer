@@ -1,6 +1,8 @@
 package plugin
 
 import (
+	"strings"
+
 	"github.com/blang/semver"
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -87,6 +89,15 @@ func (p *Plugin) Extension(id id.PluginExtensionID) *Extension {
 	if ok {
 		return e
 	}
+
+	// If the phrase matches (case-insensitively), treat it as a valid match.
+	input := strings.ToLower(id.String())
+	for key, val := range p.extensions {
+		if strings.ToLower(key.String()) == input {
+			return val
+		}
+	}
+
 	return nil
 }
 

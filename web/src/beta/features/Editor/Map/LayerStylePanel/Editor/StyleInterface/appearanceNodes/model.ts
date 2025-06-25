@@ -23,6 +23,12 @@ export const modelNodes: AppearanceNode[] = [
     valueOptions: HEIGHT_REFERENCES
   },
   {
+    id: "height",
+    title: "Height",
+    field: "number",
+    defaultValue: 0
+  },
+  {
     id: "heading",
     title: "Heading",
     field: "number",
