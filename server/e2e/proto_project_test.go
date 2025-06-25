@@ -193,7 +193,7 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, m, "id")
 	assert.Contains(t, m, "workspaceId")
 	assert.Contains(t, m, "sceneId")
-	assert.Contains(t, m, "storyId")
+	assert.Contains(t, m, "stories")
 	assert.Contains(t, m, "name")
 	assert.Contains(t, m, "description")
 	assert.Contains(t, m, "visualizer")
@@ -204,7 +204,6 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, m, "starred")
 	assert.Contains(t, m, "isDeleted")
 	assert.Contains(t, m, "visibility")
-
 	assert.Contains(t, m, "editorUrl")
 
 	// metadata
@@ -220,16 +219,23 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, meta, "createdAt")
 	assert.Contains(t, meta, "updatedAt")
 
-	// Scene publishment field
+	// Scene publishment fields
 	assert.Contains(t, m, "alias")
 	assert.Contains(t, m, "publishmentStatus")
 	assert.Contains(t, m, "publishedUrl")
 
-	// Story publishment fields
-	assert.Contains(t, m, "storyAlias")
-	assert.Contains(t, m, "storyPublishmentStatus")
-	assert.Contains(t, m, "storyPublishedUrl")
+	// Stories array
+	stories, ok := m["stories"].([]any)
+	assert.True(t, ok, "stories should be an array")
+	assert.Greater(t, len(stories), 0, "stories array should not be empty")
 
+	// Check first story fields
+	story, ok := stories[0].(map[string]any)
+	assert.True(t, ok, "first story should be a map")
+	assert.Contains(t, story, "id")
+	assert.Contains(t, story, "storyAlias")
+	assert.Contains(t, story, "storyPublishmentStatus")
+	assert.Contains(t, story, "storyPublishedUrl")
 }
 
 func PbDump(m proto.Message) {
