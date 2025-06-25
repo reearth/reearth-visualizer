@@ -84,10 +84,10 @@ const Wrapper = styled("div")<{ selected?: boolean }>(
   })
 );
 
-const ThumbnailWrapper = styled("div")(() => ({
+const ThumbnailWrapper = styled("div")({
   position: "relative",
   paddingBottom: "62.5%"
-}));
+});
 
 const Thumbnail = styled("div")(({ theme }) => ({
   position: "absolute",
@@ -115,11 +115,11 @@ const IconWrapper = styled("div")(() => ({
   width: "100%"
 }));
 
-const AssetName = styled("div")(() => ({
+const AssetName = styled("div")({
   textAlign: "center",
   wordBreak: "break-word",
   whiteSpace: "nowrap",
   overflow: "hidden",
   textOverflow: "ellipsis",
   padding: "1px 0"
-}));
+});

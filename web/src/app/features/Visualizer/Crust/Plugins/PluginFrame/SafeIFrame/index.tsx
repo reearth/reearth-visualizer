@@ -20,7 +20,7 @@ export type Props = {
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   width?: string | number;
   height?: string | number;
-  externalRef?: RefObject<HTMLIFrameElement>;
+  externalRef?: RefObject<HTMLIFrameElement | null>;
   onLoad?: () => void;
   onMessage?: (message: any) => void;
   onClick?: () => void;

@@ -224,12 +224,12 @@ const Wrapper = styled("div")(({ theme }) => ({
   ...theme.scrollBar
 }));
 
-const MainSection = styled("div")(() => ({
+const MainSection = styled("div")({
   display: "flex",
   flex: 1,
   overflow: "auto",
   position: "relative"
-}));
+});
 
 const LeftSidePanel = styled("div")(({ theme }) => ({
   width: DEFAULT_SIDEBAR_WIDTH,

@@ -168,7 +168,7 @@ function BlockFormatDropDown({
   blockType,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   blockTypeToBlockName: Record<string, string>;
   blockType: keyof typeof blockTypeToBlockName;
@@ -308,7 +308,7 @@ function FontDropDown({
   style,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   editor: LexicalEditor;
   value: string;
@@ -372,7 +372,7 @@ function LineHeightDropDown({
   style,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   editor: LexicalEditor;
   value: string;
@@ -422,7 +422,7 @@ function ElementFormatDropdown({
   isRTL,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   editor: LexicalEditor;
   value: ElementFormatType;
@@ -526,7 +526,7 @@ export default function ToolbarPlugin({
   containerRef,
   scrollableContainerId
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();

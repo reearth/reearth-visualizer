@@ -105,12 +105,12 @@ const ScaleContainer = styled("div")(({ theme }) => ({
   }
 }));
 
-const LabeledScale = styled("div")(() => ({
+const LabeledScale = styled("div")({
   display: "flex",
   alignItems: "flex-end",
   position: "relative",
   height: "100%"
-}));
+});
 
 const ScaleLabel = styled(Typography)<StyledColorProps>(
   ({ publishedTheme, theme }) => ({

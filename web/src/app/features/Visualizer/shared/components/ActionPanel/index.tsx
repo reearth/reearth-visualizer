@@ -281,10 +281,10 @@ const OptionIconWrapper = styled("div")<{ border?: boolean }>(
   })
 );
 
-const SettingsContent = styled("div")(() => ({
+const SettingsContent = styled("div")({
   minHeight: "120px",
   boxSizing: "border-box"
-}));
+});
 
 const DndHandle = styled("div")(() => ({
   height: "100%",

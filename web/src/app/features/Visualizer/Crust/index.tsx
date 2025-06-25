@@ -65,7 +65,7 @@ export type Props = {
   isEditable?: boolean;
   inEditor?: boolean;
   isBuilt?: boolean;
-  mapRef?: RefObject<MapRef>;
+  mapRef?: RefObject<MapRef | null>;
   mapAPIReady?: boolean;
   layers?: Layer[];
   camera?: Camera;
@@ -135,8 +135,8 @@ export type Props = {
   ) => Promise<void>;
   // Story
   showStoryPanel?: boolean;
-  storyPanelRef?: RefObject<StoryPanelRef>;
-  storyWrapperRef?: RefObject<HTMLDivElement>;
+  storyPanelRef?: RefObject<StoryPanelRef | null>;
+  storyWrapperRef?: RefObject<HTMLDivElement | null>;
   selectedStory?: Story;
   installableStoryBlocks?: InstallableStoryBlock[];
   onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
