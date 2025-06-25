@@ -30,6 +30,7 @@ test.describe("Login Page Tests", () => {
     loginPage = new LoginPage(page);
     dashBoardPage = new DashBoardPage(page);
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
+    console.log(`Navigated to ${REEARTH_WEB_E2E_BASEURL}`);
   });
 
   test.afterEach(async ({}, testInfo) => {

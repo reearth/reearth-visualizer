@@ -19,16 +19,16 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 export default defineConfig({
   expect: {
-    timeout: 10_000
+    timeout: 10000 // 10 seconds for expect assertions
   },
-  timeout: 90000, // 60 seconds per test
+  timeout: 10000, // 10 seconds per test
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: false,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 0 : 0,
   /* Opt out of parallel tests on CI. */
   // workers: process.env.CI ? 1 : undefined,
   workers: 2, // Set to 2 workers
@@ -42,8 +42,8 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
-    actionTimeout: 60000, // optional: increase action timeout
-    navigationTimeout: 60000 // optional: increase navigation timeout
+    actionTimeout: 10000, // optional: increase action timeout
+    navigationTimeout: 20000 // optional: increase navigation timeout
   },
 
   /* Configure projects for major browsers */
