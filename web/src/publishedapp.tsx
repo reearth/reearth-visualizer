@@ -1,4 +1,4 @@
-import PublishedPage from "@reearth/beta/pages/PublishedPage";
+import PublishedPage from "@reearth/app/pages/PublishedPage";
 
 import { PublishedProvider as I18nProvider } from "./services/i18n";
 import { PublishedAppProvider as ThemeProvider } from "./services/theme";

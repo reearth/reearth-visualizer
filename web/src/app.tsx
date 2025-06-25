@@ -1,9 +1,9 @@
-import GlobalModal from "@reearth/beta/features/GlobalModal";
-import NotificationBanner from "@reearth/beta/features/Notification";
+import GlobalModal from "@reearth/app/features/GlobalModal";
+import NotificationBanner from "@reearth/app/features/Notification";
+import { Loading } from "@reearth/app/lib/reearth-ui";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
 import { Suspense } from "react";
 
-import { Loading } from "./beta/lib/reearth-ui";
 import { AuthProvider } from "./services/auth";
 import { Provider as GqlProvider } from "./services/gql";
 import { RestfulProvider } from "./services/restful";

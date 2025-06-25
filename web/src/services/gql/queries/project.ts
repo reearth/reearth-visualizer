@@ -141,7 +141,6 @@ export const UPDATE_PROJECT_BASIC_AUTH = gql(`
   }
 `);
 
-
 export const PUBLISH_PROJECT = gql(`
  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
   publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
@@ -196,7 +195,6 @@ export const EXPORT_PROJECT = gql(`
     }
   }
 `);
-
 
 export const GET_DELETED_PROJECTS = gql(`
   query GetDeletedProjects($teamId: ID!) {

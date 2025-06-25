@@ -18,7 +18,7 @@ export default mergeConfig(
           "src/**/*.d.ts",
           "src/**/*.cy.tsx",
           "src/**/*.stories.tsx",
-          "src/beta/services/gql/__gen__/**/*",
+          "src/app/services/gql/__gen__/**/*",
           "src/test/**/*",
           "src/**/*.test.{ts,tsx}"
         ],

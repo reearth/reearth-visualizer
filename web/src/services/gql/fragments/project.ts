@@ -36,12 +36,12 @@ export const projectFragment = gql`
 
 export const projectMetadataFragment = gql`
   fragment ProjectMetadataFragment on ProjectMetadata {
-  project
-  workspace
-  readme
-  license
-  importStatus
-  createdAt
-  updatedAt
-}
-`
+    project
+    workspace
+    readme
+    license
+    importStatus
+    createdAt
+    updatedAt
+  }
+`;

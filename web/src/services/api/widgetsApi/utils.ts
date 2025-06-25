@@ -1,4 +1,4 @@
-import { IconName } from "@reearth/beta/lib/reearth-ui";
+import { IconName } from "@reearth/app/lib/reearth-ui";
 
 import { GetSceneQuery, PluginExtensionType } from "../../gql";
 import { Item, convert } from "../propertyApi/utils";

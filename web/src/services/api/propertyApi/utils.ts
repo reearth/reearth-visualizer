@@ -3,7 +3,7 @@ import {
   ValueTypes,
   valueFromGQL,
   valueTypeFromGQL
-} from "@reearth/beta/utils/value";
+} from "@reearth/app/utils/value";
 
 import {
   Maybe,

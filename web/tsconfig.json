@@ -29,7 +29,7 @@
         "src/*"
       ],
       "@reearth-widget-ui/*": [
-        "src/beta/lib/reearth-widget-ui/*"
+        "src/app/lib/reearth-widget-ui/*"
       ]
     },
     "plugins": [
@@ -39,7 +39,7 @@
     ]
   },
   "exclude": [
-    "src/beta/lib/unsafeBuiltinPlugins",
+    "src/app/lib/unsafeBuiltinPlugins",
     "dist"
   ],
   "include": [
