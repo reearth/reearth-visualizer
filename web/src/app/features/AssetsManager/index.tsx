@@ -215,14 +215,14 @@ const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(
   })
 );
 
-const AssetsWrapper = styled("div")({
+const AssetsWrapper = styled("div")(() => ({
   position: "relative",
   display: "flex",
   flexDirection: "column",
   flex: 1,
   height: 0,
   overflow: "auto"
-});
+}));
 
 const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
   ({ theme, size }) => ({
@@ -235,12 +235,12 @@ const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
   })
 );
 
-const LayoutWrapper = styled("div")({
+const LayoutWrapper = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
   flex: 1,
   height: 0
-});
+}));
 
 const AssetsGroup = styled("div")<{
   layout: ManagerLayout;

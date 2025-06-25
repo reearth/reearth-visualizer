@@ -112,11 +112,11 @@ const AccountSetting: FC = () => {
 };
 export default AccountSetting;
 
-const PasswordWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
+const PasswordWrapper = styled("div")(() => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "100%"
+}));
 
 const PasswordInputWrapper = styled("div")(({ theme }) => ({
   display: "flex",

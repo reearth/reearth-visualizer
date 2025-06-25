@@ -252,13 +252,13 @@ const ContentWrapper = styled("div")(({ theme }) => ({
   height: 0
 }));
 
-const ProjectsWrapper = styled("div")({
+const ProjectsWrapper = styled("div")(() => ({
   position: "relative",
   display: "flex",
   flexDirection: "column",
   flex: 1,
   overflow: "auto"
-});
+}));
 
 const BreadcrumbContainer = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.largest}px`

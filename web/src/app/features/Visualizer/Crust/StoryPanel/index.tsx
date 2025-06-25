@@ -24,7 +24,7 @@ export type InstallableStoryBlock = InstallableBlock & {
 };
 
 export type StoryPanelProps = {
-  storyWrapperRef?: RefObject<HTMLDivElement | null>;
+  storyWrapperRef?: RefObject<HTMLDivElement>;
   selectedStory?: Story;
   isEditable?: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];

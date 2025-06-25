@@ -36,7 +36,7 @@ export type ExternalPluginProps = Pick<
 >;
 
 export type Props = {
-  mapRef?: RefObject<MapRef | null>;
+  mapRef?: RefObject<MapRef>;
   className?: string;
   sourceCode?: string;
   pluginId?: string;

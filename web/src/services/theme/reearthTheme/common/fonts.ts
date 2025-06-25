@@ -178,7 +178,7 @@ export const FootnoteRegular = styled.p`
 
 type Typography = {
   [key in FontSize]: {
-    [key in FontWeight | UniqueTraits]?: React.ComponentType<
+    [key in FontWeight | UniqueTraits]?: React.FC<
       React.HTMLAttributes<HTMLParagraphElement>
     >;
   };

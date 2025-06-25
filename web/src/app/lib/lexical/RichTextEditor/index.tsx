@@ -37,7 +37,7 @@ const RichTextEditor: React.FC<Props> = ({
   onChange
 }) => {
   const t = useT();
-  const editorStateJSONStringRef = useRef<EditorStateJSONString>(undefined);
+  const editorStateJSONStringRef = useRef<EditorStateJSONString>();
 
   const editorConfig = useMemo(
     () => ({

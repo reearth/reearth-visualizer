@@ -76,8 +76,8 @@ export default function useHook({
   onDispose,
   onMessage: rawOnMessage
 }: Options = {}) {
-  const arena = useRef<Arena | undefined>(undefined);
-  const eventLoop = useRef<number>(undefined);
+  const arena = useRef<Arena | undefined>();
+  const eventLoop = useRef<number>();
   const [loaded, setLoaded] = useState(false);
   const [code, setCode] = useState("");
 

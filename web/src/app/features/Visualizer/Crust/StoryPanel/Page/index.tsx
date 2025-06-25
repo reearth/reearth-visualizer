@@ -310,6 +310,6 @@ const StoryPanel: FC<Props> = ({
 
 export default StoryPanel;
 
-const PageTitleWrapper = styled("div")({
+const PageTitleWrapper = styled("div")(() => ({
   position: "relative"
-});
+}));

@@ -28,7 +28,7 @@ export function widgetContextFromMapRef({
   initialCamera,
   timelineManagerRef
 }: {
-  mapRef?: RefObject<MapRef | null>;
+  mapRef?: RefObject<MapRef>;
   selectedLayerId?: {
     layerId?: string;
     featureId?: string;

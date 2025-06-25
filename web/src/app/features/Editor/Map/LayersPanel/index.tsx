@@ -134,12 +134,12 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "100%"
 }));
 
-const LayersContainer = styled("div")({
+const LayersContainer = styled("div")(() => ({
   flex: 1,
   overflowY: "auto",
   display: "flex",
   flexDirection: "column"
-});
+}));
 
 const EmptySpace = styled("div")(() => ({
   flex: 1,
