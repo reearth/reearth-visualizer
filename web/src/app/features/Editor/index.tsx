@@ -148,18 +148,18 @@ const Wrapper = styled("div")(({ theme }) => ({
   color: theme.content.main
 }));
 
-const Content = styled("div")(() => ({
+const Content = styled("div")({
   position: "relative",
   flexGrow: 1,
   height: 0
-}));
+});
 
-const Workbench = styled("div")(() => ({
+const Workbench = styled("div")({
   position: "absolute",
   width: "100%",
   height: "100%",
   pointerEvents: "none"
-}));
+});
 
 const VisualizerArea = styled("div")(({ theme }) => ({
   position: "absolute",

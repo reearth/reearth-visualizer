@@ -116,14 +116,14 @@ const Thumbnail = styled("div")(() => ({
   flexShrink: 0
 }));
 
-const AssetName = styled("div")(() => ({
+const AssetName = styled("div")({
   wordBreak: "break-word",
   overflow: "hidden",
   textOverflow: "ellipsis",
   width: "100%",
   flexGrow: 0,
   flexShrink: 0
-}));
+});
 
 const Col = styled("div")<{
   width: number;

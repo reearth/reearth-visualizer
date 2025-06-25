@@ -2,7 +2,7 @@ import { RefObject, useCallback, useEffect, useRef } from "react";
 
 import type { Ref } from "../SafeIFrame";
 
-export function usePostMessage(iFrameRef: RefObject<Ref>, pending?: boolean) {
+export function usePostMessage(iFrameRef: RefObject<Ref | null>, pending?: boolean) {
   const messageQueue = useRef<any[]>([]);
   const available = typeof pending !== "boolean" || !pending;
   const availableRef = useRef(available);

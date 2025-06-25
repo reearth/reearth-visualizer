@@ -2,11 +2,11 @@
 
 ## Project Overview
 
-Re:Earth Visualizer is a web-based GIS (Geographic Information System) application built with React 18, TypeScript, and Vite. It provides geospatial data visualization capabilities with 3D mapping using Cesium.
+Re:Earth Visualizer is a web-based GIS (Geographic Information System) application built with React 19, TypeScript, and Vite. It provides geospatial data visualization capabilities with 3D mapping using Cesium.
 
 ## Key Technologies
 
-- **Frontend**: React 18 + TypeScript + Vite
+- **Frontend**: React 19 + TypeScript + Vite
 - **3D Engine**: Cesium (3D globes and maps)
 - **State Management**: Jotai
 - **GraphQL**: Apollo Client with code generation

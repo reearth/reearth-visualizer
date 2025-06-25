@@ -45,9 +45,9 @@ const ImageBlock: FC<BlockProps<InfoboxBlock>> = ({
 
 export default ImageBlock;
 
-const Image = styled("img")(() => ({
+const Image = styled("img")({
   width: "100%",
   height: "100%",
   objectFit: "contain",
   objectPosition: "center"
-}));
+});

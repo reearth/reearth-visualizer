@@ -26,12 +26,12 @@ export default function useHook({
   mapRef,
   pluginBaseUrl,
   pluginProperty
-}: { mapRef?: RefObject<MapRef> } & ExternalPluginProps) {
+}: { mapRef?: RefObject<MapRef | null> } & ExternalPluginProps) {
   const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
-  const pluginModalContainerRef = useRef<HTMLDivElement>();
+  const pluginModalContainerRef = useRef<HTMLDivElement>(undefined);
 
   const [shownPluginPopupInfo, onPluginPopupShow] = useState<PluginPopupInfo>();
-  const pluginPopupContainerRef = useRef<HTMLDivElement>();
+  const pluginPopupContainerRef = useRef<HTMLDivElement>(undefined);
 
   const commonPluginProps = useMemo(
     () => ({
@@ -85,7 +85,7 @@ export default function useHook({
 }
 
 const Widget: FC<{
-  mapRef?: RefObject<MapRef>;
+  mapRef?: RefObject<MapRef | null>;
   commonPluginProps: CommonPluginProps;
   widgetProps: WidgetProps;
 }> = ({ mapRef, commonPluginProps, widgetProps }) => {
