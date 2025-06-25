@@ -42,7 +42,7 @@ vitest.mock("@reearth/services/state", () => ({
   useAddWorkspaceModal: () => [false, vitest.fn()]
 }));
 
-vitest.mock("@reearth/beta/ui/fields/CommonField", () => ({
+vitest.mock("@reearth/app/ui/fields/CommonField", () => ({
   default: ({
     children,
     title,

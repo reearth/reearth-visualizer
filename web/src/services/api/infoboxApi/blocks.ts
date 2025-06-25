@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { AVAILABLE_INFOBOX_BLOCK_IDS } from "@reearth/beta/features/Visualizer/Crust/Infobox/constants";
+import { AVAILABLE_INFOBOX_BLOCK_IDS } from "@reearth/app/features/Visualizer/Crust/Infobox/constants";
 import {
   AddNlsInfoboxBlockInput,
   AddNlsInfoboxBlockMutation,
