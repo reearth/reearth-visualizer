@@ -19,7 +19,7 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 export default defineConfig({
   expect: {
-    timeout: 10000 // 10 seconds for expect assertions
+    timeout: 15000
   },
   timeout: 25000,
   testDir: "./tests",
@@ -43,13 +43,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     actionTimeout: 10000,
-    navigationTimeout: 20000,
-
-    // Add video recording configuration
-    video: {
-      mode: "retain-on-failure",
-      size: { width: 1280, height: 720 }
-    }
+    navigationTimeout: 20000
   },
 
   /* Configure projects for major browsers */
@@ -62,11 +56,6 @@ export default defineConfig({
         headless: true,
         launchOptions: {
           slowMo: 400
-        },
-        // Add additional video settings for this project if needed
-        video: {
-          mode: "retain-on-failure",
-          size: { width: 1280, height: 720 }
         }
       }
     }

@@ -58,34 +58,35 @@ test.describe("Login Page Tests", () => {
     );
   });
 
-  // test("should show error message for empty username", async () => {
-  //   await loginPage.login("", REEARTH_E2E_PASSWORD);
-  //   await expect(loginPage.errorMessagePassword).toBeVisible();
-  //   await expect(loginPage.errorMessagePassword).toHaveText(
-  //     "Username can't be blank"
-  //   );
-  // });
+  test("should show error message for empty username", async () => {
+    await loginPage.login("", REEARTH_E2E_PASSWORD);
+    await expect(loginPage.errorMessagePassword).toBeVisible();
+    await expect(loginPage.errorMessagePassword).toHaveText(
+      "Username can't be blank"
+    );
+  });
 
-  // test("should show error message for empty password", async () => {
-  //   await loginPage.login(REEARTH_E2E_EMAIL, "");
-  //   await expect(loginPage.forgotPasswordError).toBeVisible();
-  //   await expect(loginPage.forgotPasswordError).toHaveText(
-  //     "Password can't be blank"
-  //   );
-  // });
+  test("should show error message for empty password", async () => {
+    await loginPage.login(REEARTH_E2E_EMAIL, "");
+    await expect(loginPage.forgotPasswordError).toBeVisible();
+    await expect(loginPage.forgotPasswordError).toHaveText(
+      "Password can't be blank"
+    );
+  });
 
-  // test("should show error message for invalid credentials", async () => {
-  //   await loginPage.login(faker.internet.email(), faker.internet.password());
-  //   await expect(loginPage.loginErrorMessage).toBeVisible();
-  //   await expect(loginPage.loginErrorMessage).toHaveText(
-  //     "Wrong username or password."
-  //   );
-  // });
+  test("should show error message for invalid credentials", async () => {
+    await loginPage.login(faker.internet.email(), faker.internet.password());
+    await expect(loginPage.loginErrorMessage).toBeVisible();
+    await expect(loginPage.loginErrorMessage).toHaveText(
+      "Wrong username or password."
+    );
+  });
 
   test("should login to the system and verify dashboard, logout and verify login page again", async () => {
     await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
+    await page.waitForURL(/\/dashboard\/.+/, { timeout: 30000 });
+    const currentURL = page.url();
     // await expect(dashBoardPage.projects).toBeVisible();
-    await page.waitForTimeout(10000); // Wait for the dashboard to load
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
     await expect(dashBoardPage.documentation).toBeVisible();
@@ -93,6 +94,7 @@ test.describe("Login Page Tests", () => {
     await expect(loginPage.appTitle).toBeVisible();
     await expect(loginPage.emailInput).toBeVisible();
     // Try accessing dashboard again
+    await page.goto(currentURL);
     await expect(loginPage.appTitle).toBeVisible();
   });
 });
