@@ -85,6 +85,7 @@ test.describe("Login Page Tests", () => {
   test("should login to the system and verify dashboard, logout and verify login page again", async () => {
     await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
     // await expect(dashBoardPage.projects).toBeVisible();
+    await page.waitForTimeout(3000); // Wait for the dashboard to load
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
     await expect(dashBoardPage.documentation).toBeVisible();
