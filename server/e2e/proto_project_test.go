@@ -193,7 +193,6 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, m, "id")
 	assert.Contains(t, m, "workspaceId")
 	assert.Contains(t, m, "sceneId")
-	assert.Contains(t, m, "storyId")
 	assert.Contains(t, m, "name")
 	assert.Contains(t, m, "description")
 	assert.Contains(t, m, "visualizer")
@@ -226,10 +225,17 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, m, "publishedUrl")
 
 	// Story publishment fields
-	assert.Contains(t, m, "storyAlias")
-	assert.Contains(t, m, "storyPublishmentStatus")
-	assert.Contains(t, m, "storyPublishedUrl")
+	assert.Contains(t, m, "stories")
+	stories, ok := m["stories"].([]any)
+	assert.True(t, ok, "stories should be an array")
 
+	if len(stories) > 0 {
+		story, ok := stories[0].(map[string]any)
+		assert.True(t, ok, "story should be a map")
+		assert.Contains(t, story, "storyAlias")
+		assert.Contains(t, story, "storyPublishmentStatus")
+		assert.Contains(t, story, "storyPublishedUrl")
+	}
 }
 
 func PbDump(m proto.Message) {
