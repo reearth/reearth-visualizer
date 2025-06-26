@@ -131,23 +131,12 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	var err error
 
 	if cfg.Visualizer.InternalApi.Active {
-		l, err = net.Listen("tcp", ":8080")
+		l, err = net.Listen("tcp", ":"+cfg.Visualizer.InternalApi.Port)
 		if err != nil {
 			t.Fatalf("server failed to listen: %v", err)
 		}
 		go func() {
 			if err := srv.ServeGRPC(l); err != http.ErrServerClosed {
-				ch <- err
-			}
-			close(ch)
-		}()
-	} else {
-		l, err = net.Listen("tcp", ":0")
-		if err != nil {
-			t.Fatalf("server failed to listen: %v", err)
-		}
-		go func() {
-			if err := srv.Serve(l); err != http.ErrServerClosed {
 				ch <- err
 			}
 			close(ch)
