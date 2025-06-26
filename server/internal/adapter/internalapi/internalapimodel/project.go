@@ -80,6 +80,7 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		WorkspaceId:  p.Workspace().String(),
 		Readme:       p.Readme(),
 		License:      p.License(),
+		Topics:       p.Topics(),
 		ImportStatus: importStatus,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,
