@@ -174,10 +174,10 @@ const ItemContainer = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body
 }));
 
-const UserInfo = styled("div")(() => ({
+const UserInfo = styled("div")({
   display: "flex",
   flexDirection: "column"
-}));
+});
 
 const Warning = styled("div")(({ theme }) => ({
   display: "flex",

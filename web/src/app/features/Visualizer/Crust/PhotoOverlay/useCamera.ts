@@ -16,7 +16,7 @@ export default ({
 }: {
   value: PhotoOverlayValue | undefined;
   isPreview: boolean;
-  mapRef: RefObject<MapRef> | undefined;
+  mapRef: RefObject<MapRef | null> | undefined;
   currentCameraRef?: RefObject<Camera | undefined>;
   cameraDurationRef: RefObject<number>;
   onFlyEnd?: () => void;
