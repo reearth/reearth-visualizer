@@ -73,6 +73,27 @@ func (r *Storytelling) FindByScene(ctx context.Context, id id.SceneID) (*storyte
 	})
 }
 
+func (r *Storytelling) FindByScenes(ctx context.Context, ids []id.SceneID) (*storytelling.StoryList, error) {
+	if len(ids) == 0 {
+		return &storytelling.StoryList{}, nil
+	}
+
+	var readableIds []string
+	for _, id := range ids {
+		if r.f.CanRead(id) {
+			readableIds = append(readableIds, id.String())
+		}
+	}
+
+	if len(readableIds) == 0 {
+		return &storytelling.StoryList{}, nil
+	}
+
+	return r.find(ctx, bson.M{
+		"scene": bson.M{"$in": readableIds},
+	})
+}
+
 func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*storytelling.Story, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound

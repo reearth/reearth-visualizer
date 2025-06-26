@@ -81,6 +81,29 @@ func (r *Scene) FindByProject(ctx context.Context, id id.ProjectID) (*scene.Scen
 	return nil, rerror.ErrNotFound
 }
 
+func (r *Scene) FindByProjects(ctx context.Context, ids []id.ProjectID) ([]*scene.Scene, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	if len(ids) == 0 {
+		return []*scene.Scene{}, nil
+	}
+
+	idMap := make(map[id.ProjectID]bool, len(ids))
+	for _, id := range ids {
+		idMap[id] = true
+	}
+
+	var results []*scene.Scene
+	for _, d := range r.data {
+		if idMap[d.Project()] && r.f.CanRead(d.Workspace()) {
+			results = append(results, d)
+		}
+	}
+
+	return results, nil
+}
+
 func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
