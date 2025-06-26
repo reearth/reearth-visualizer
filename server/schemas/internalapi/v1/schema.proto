@@ -15,11 +15,21 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
 
+  // Find a project by alias.
+  // Request headers: user-id: <User ID>
+  rpc GetProjectByAlias(GetProjectByAliasRequest)
+      returns (GetProjectByAliasResponse) {}
+
+  // Determines if an alias is valid.
+  // Request headers: user-id: <User ID>
+  rpc ValidateProjectAlias(ValidateProjectAliasRequest)
+      returns (ValidateProjectAliasResponse) {}
+
   // Creates a new project in the specified team.
   // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
 
-  // Update  a project.
+  // Update a project.
   // Request headers: user-id: <User ID>
   rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
 
@@ -173,6 +183,20 @@ message GetProjectRequest {
   string project_id = 1;
 }
 
+// Find a project by alias.
+message GetProjectByAliasRequest {
+  // Scene alias
+  string alias = 1;
+}
+
+// Determines if an alias is valid.
+message ValidateProjectAliasRequest {
+  // Project ID
+  optional string project_id = 1;
+  // Scene alias
+  string alias = 2;
+}
+
 // Creates a new project.
 // Cannot be created under a team the user does not belong to.
 message CreateProjectRequest {
@@ -292,4 +316,20 @@ message DeleteProjectResponse {
 message ExportProjectResponse {
   // Project Export zip file download url
   string project_data_path = 1;
+}
+
+// Response messages
+message GetProjectByAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message ValidateProjectAliasResponse {
+  // Project ID
+  optional string project_id = 1;
+  // Scene alias available
+  bool available = 2;
+  // Error message
+  optional string error_message = 3;
 }

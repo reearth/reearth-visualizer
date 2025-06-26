@@ -19,7 +19,7 @@ func TestInternalAPI_private(t *testing.T) {
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create default Project -> private
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -31,7 +31,7 @@ func TestInternalAPI_private(t *testing.T) {
 			})
 
 		// create private Project
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -77,7 +77,7 @@ func TestInternalAPI_public(t *testing.T) {
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
@@ -89,7 +89,7 @@ func TestInternalAPI_public(t *testing.T) {
 			})
 
 		// create private Project
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
 				WorkspaceId: wID.String(),
