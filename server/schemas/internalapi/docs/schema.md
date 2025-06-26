@@ -10,6 +10,8 @@
     - [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse)
     - [ExportProjectRequest](#reearth-visualizer-v1-ExportProjectRequest)
     - [ExportProjectResponse](#reearth-visualizer-v1-ExportProjectResponse)
+    - [GetProjectByAliasRequest](#reearth-visualizer-v1-GetProjectByAliasRequest)
+    - [GetProjectByAliasResponse](#reearth-visualizer-v1-GetProjectByAliasResponse)
     - [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest)
     - [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse)
     - [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest)
@@ -21,6 +23,8 @@
     - [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse)
     - [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest)
     - [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse)
+    - [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest)
+    - [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse)
   
     - [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus)
     - [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus)
@@ -131,6 +135,36 @@ Response messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | project_data_path | [string](#string) |  | Project Export zip file download url |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectByAliasRequest"></a>
+
+### GetProjectByAliasRequest
+Find a project by alias.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| alias | [string](#string) |  | Scene alias |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectByAliasResponse"></a>
+
+### GetProjectByAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
 
 
 
@@ -358,6 +392,39 @@ Response messages
 
 
 
+
+<a name="reearth-visualizer-v1-ValidateProjectAliasRequest"></a>
+
+### ValidateProjectAliasRequest
+Determines if an alias is valid.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) | optional | Project ID |
+| alias | [string](#string) |  | Scene alias |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ValidateProjectAliasResponse"></a>
+
+### ValidateProjectAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) | optional | Project ID |
+| available | [bool](#bool) |  | Scene alias available |
+| error_message | [string](#string) | optional | Error message |
+
+
+
+
+
  
 
 
@@ -415,6 +482,8 @@ Response messages
 | ----------- | ------------ | ------------- | ------------|
 | GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | Retrieves the list of projects the user can access. Request headers: user-id: &lt;User ID&gt; |
 | GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) | Retrieves a specific project regardless of authentication. Request headers: user-id: &lt;User ID&gt; |
+| GetProjectByAlias | [GetProjectByAliasRequest](#reearth-visualizer-v1-GetProjectByAliasRequest) | [GetProjectByAliasResponse](#reearth-visualizer-v1-GetProjectByAliasResponse) | Find a project by alias. Request headers: user-id: &lt;User ID&gt; |
+| ValidateProjectAlias | [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest) | [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse) | Determines if an alias is valid. Request headers: user-id: &lt;User ID&gt; |
 | CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
 | UpdateProject | [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest) | [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse) | Update a project. Request headers: user-id: &lt;User ID&gt; |
 | UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified team. Request headers: user-id: &lt;User ID&gt; |

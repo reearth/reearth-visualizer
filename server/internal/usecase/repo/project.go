@@ -25,6 +25,7 @@ type Project interface {
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindActiveById(context.Context, id.ProjectID) (*project.Project, error)
+	FindActiveByAlias(context.Context, string) (*project.Project, error)
 	FindVisibilityByWorkspace(context.Context, bool, bool, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	CheckAliasUnique(context.Context, string) error

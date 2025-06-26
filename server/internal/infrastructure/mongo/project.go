@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -166,6 +167,22 @@ func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project
 	return prj, nil
 }
 
+func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project.Project, error) {
+	prj, err := r.findOne(ctx, bson.M{
+		"alias":   alias,
+		"deleted": false,
+	}, true)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
+}
+
 func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
 	var filter bson.M
 
@@ -232,21 +249,122 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return r.findOne(ctx, f, false)
 }
 
-// [TODO] This function is not used when scene alias migration is completed
-func (r *Project) CheckAliasUnique(ctx context.Context, name string) error {
-	filter := bson.M{
-		"$or": []bson.M{
-			// {"id": name},
-			{"alias": name},
+func (r *Project) CheckAliasUnique(ctx context.Context, newAlias string) error {
+	sceneId := newAlias
+	if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
+		sceneId = newAlias[2:]
+	}
+
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{"alias": newAlias},
+		},
+		{
+			"$unionWith": bson.M{
+				"coll": "scene",
+				"pipeline": []bson.M{
+					{"$match": bson.M{"id": sceneId}},
+				},
+			},
+		},
+		{
+			"$limit": 1,
+		},
+		{
+			"$count": "exists",
 		},
 	}
-	count, err := r.count(ctx, filter)
+
+	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
 	if err != nil {
 		return err
 	}
-	if count > 0 {
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
 		return alias.ErrExistsProjectAlias
 	}
+
+	return nil
+}
+
+func (r *Project) CheckAliasUniqueWithFacet(ctx context.Context, newAlias string) error {
+	sceneId := newAlias
+	if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
+		sceneId = newAlias[2:]
+	}
+
+	pipeline := []bson.M{
+		{
+			"$limit": 1,
+		},
+		{
+			"$facet": bson.M{
+				"projectMatch": []bson.M{
+					{
+						"$lookup": bson.M{
+							"from":     "project",
+							"pipeline": []bson.M{{"$match": bson.M{"alias": newAlias}}},
+							"as":       "projects",
+						},
+					},
+					{
+						"$project": bson.M{
+							"count": bson.M{"$size": "$projects"},
+						},
+					},
+				},
+				"sceneMatch": []bson.M{
+					{
+						"$lookup": bson.M{
+							"from":     "scene",
+							"pipeline": []bson.M{{"$match": bson.M{"id": sceneId}}},
+							"as":       "scenes",
+						},
+					},
+					{
+						"$project": bson.M{
+							"count": bson.M{"$size": "$scenes"},
+						},
+					},
+				},
+			},
+		},
+		{
+			"$project": bson.M{
+				"exists": bson.M{
+					"$gt": []any{
+						bson.M{
+							"$add": []any{
+								bson.M{"$arrayElemAt": []any{"$projectMatch.count", 0}},
+								bson.M{"$arrayElemAt": []any{"$sceneMatch.count", 0}},
+							},
+						},
+						0,
+					},
+				},
+			},
+		},
+	}
+
+	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
+	if err != nil {
+		return err
+	}
+	defer cursor.Close(ctx)
+
+	if cursor.Next(ctx) {
+		var result struct {
+			Exists bool `bson:"exists"`
+		}
+		if err := cursor.Decode(&result); err != nil {
+			return err
+		}
+		if result.Exists {
+			return alias.ErrExistsProjectAlias
+		}
+	}
+
 	return nil
 }
 
