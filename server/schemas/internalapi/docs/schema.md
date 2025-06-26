@@ -18,6 +18,7 @@
     - [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse)
     - [Project](#reearth-visualizer-v1-Project)
     - [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata)
+    - [Story](#reearth-visualizer-v1-Story)
     - [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest)
     - [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse)
     - [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest)
@@ -244,7 +245,7 @@ Core Project messages
 | id | [string](#string) |  | Project ID |
 | workspace_id | [string](#string) |  | Workspace ID |
 | scene_id | [string](#string) |  | Scene ID |
-| story_id | [string](#string) |  | Story ID |
+| stories | [Story](#reearth-visualizer-v1-Story) | repeated | Story |
 | name | [string](#string) |  | Project title |
 | description | [string](#string) |  | Project description |
 | image_url | [string](#string) | optional | Project image (URL link) |
@@ -261,9 +262,6 @@ Core Project messages
 | alias | [string](#string) |  | Scene Publishment value |
 | publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Scene Publishment value |
 | published_url | [string](#string) | optional | Scene Publishment value |
-| story_alias | [string](#string) |  | Story Publishment value |
-| story_publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Story Publishment value |
-| story_published_url | [string](#string) | optional | Story Publishment value |
 
 
 
@@ -287,6 +285,24 @@ Core Project messages
 | import_status | [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus) |  | Project import status — if PROCESSING, data should not be retrieved |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata created date |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata updated date |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-Story"></a>
+
+### Story
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Story ID |
+| story_alias | [string](#string) |  | Story Publishment value |
+| story_publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Story Publishment value |
+| story_published_url | [string](#string) | optional | Story Publishment value |
 
 
 

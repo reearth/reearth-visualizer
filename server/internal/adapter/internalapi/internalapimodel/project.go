@@ -12,9 +12,23 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.Story) *pb.Project {
+func ToInternalProject(ctx context.Context, p *project.Project, storytellings *storytelling.StoryList) *pb.Project {
 	if p == nil {
 		return nil
+	}
+
+	stories := []*pb.Story{}
+	if storytellings != nil {
+		for _, st := range *storytellings {
+			storyPublishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
+			s := &pb.Story{
+				Id:                     st.Id().String(),
+				StoryAlias:             st.Alias(),
+				StoryPublishmentStatus: ToStoryPublishmentStatus(st.PublishmentStatus()),
+				StoryPublishedUrl:      &storyPublishedUrl,
+			}
+			stories = append(stories, s)
+		}
 	}
 
 	var imageURL *string
@@ -29,6 +43,9 @@ func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.
 	project := &pb.Project{
 		Id:          p.ID().String(),
 		WorkspaceId: p.Workspace().String(),
+		SceneId:     p.Scene().String(),
+
+		Stories: stories,
 
 		Name:        p.Name(),
 		Description: p.Description(),
@@ -49,21 +66,6 @@ func ToInternalProject(ctx context.Context, p *project.Project, s *storytelling.
 		Alias:             p.Alias(),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
 		PublishedUrl:      &publishedUrl,
-	}
-
-	if s != nil {
-		project.SceneId = s.Scene().String()
-		project.StoryId = s.Id().String()
-		storyPublishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
-
-		// Story publishment
-		project.StoryAlias = s.Alias()
-		project.StoryPublishmentStatus = ToStoryPublishmentStatus(s.PublishmentStatus())
-		project.StoryPublishedUrl = &storyPublishedUrl
-
-	} else {
-		project.SceneId = p.Scene().String()
-		project.StoryId = ""
 	}
 
 	return project

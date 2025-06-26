@@ -60,8 +60,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		for _, sc := range scenes {
 			if pj.ID() == sc.Project() {
 				pj.UpdateSceneID(sc.ID())
-				st := findMatchStory(sc.ID(), storytellings)
-				projects = append(projects, internalapimodel.ToInternalProject(ctx, pj, st))
+				projects = append(projects, internalapimodel.ToInternalProject(ctx, pj, storytellings))
 			}
 		}
 	}
@@ -69,17 +68,6 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 	return &pb.GetProjectListResponse{
 		Projects: projects,
 	}, nil
-}
-
-func findMatchStory(sid id.SceneID, storytellings *storytelling.StoryList) *storytelling.Story {
-	if storytellings != nil {
-		for _, st := range *storytellings {
-			if sid == st.Scene() {
-				return st
-			}
-		}
-	}
-	return nil
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
@@ -91,11 +79,6 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 	}
 
 	pj, err := uc.Project.FindActiveById(ctx, pId, op)
-	if err != nil {
-		return nil, err
-	}
-
-	st, err := s.findStoryTelling(ctx, pj)
 	if err != nil {
 		return nil, err
 	}
@@ -112,13 +95,8 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 		return nil, err
 	}
 
-	if sts == nil || len(*sts) == 0 {
-		return nil, fmt.Errorf("no stories found for scene %v", pj.Scene())
-	}
-	st = (*sts)[0]
-
 	return &pb.GetProjectResponse{
-		Project: internalapimodel.ToInternalProject(ctx, pj, st),
+		Project: internalapimodel.ToInternalProject(ctx, pj, sts),
 	}, nil
 }
 
@@ -140,7 +118,7 @@ func (s server) GetProjectByAlias(ctx context.Context, req *pb.GetProjectByAlias
 	}, nil
 }
 
-func (s server) findStoryTelling(ctx context.Context, pj *project.Project) (*storytelling.Story, error) {
+func (s server) findStoryTelling(ctx context.Context, pj *project.Project) (*storytelling.StoryList, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
 	sc, err := uc.Scene.FindByProject(ctx, pj.ID(), op)
@@ -159,7 +137,7 @@ func (s server) findStoryTelling(ctx context.Context, pj *project.Project) (*sto
 		return nil, fmt.Errorf("no stories found for scene %v", pj.Scene())
 	}
 
-	return (*sts)[0], nil
+	return sts, nil
 }
 
 func (s server) ValidateProjectAlias(ctx context.Context, req *pb.ValidateProjectAliasRequest) (*pb.ValidateProjectAliasResponse, error) {
@@ -234,13 +212,16 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		SwipeableLayers: &[]id.NLSLayerID{},
 		Index:           &index,
 	}
-	_, _, err = uc.StoryTelling.CreatePage(ctx, pageParam, op)
+
+	st, _, err = uc.StoryTelling.CreatePage(ctx, pageParam, op)
 	if err != nil {
 		return nil, err
 	}
+	storytellings := make(storytelling.StoryList, 0, 1)
+	storytellings = append(storytellings, st)
 
 	return &pb.CreateProjectResponse{
-		Project: internalapimodel.ToInternalProject(ctx, pj, st),
+		Project: internalapimodel.ToInternalProject(ctx, pj, &storytellings),
 	}, nil
 }
 
@@ -320,13 +301,8 @@ func (s server) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest)
 	sc := scenes[0]
 	pj.UpdateSceneID(sc.ID())
 
-	var st *storytelling.Story
-	if storytellings != nil && len(*storytellings) > 0 {
-		st = (*storytellings)[0]
-	}
-
 	return &pb.UpdateProjectResponse{
-		Project: internalapimodel.ToInternalProject(ctx, pj, st),
+		Project: internalapimodel.ToInternalProject(ctx, pj, storytellings),
 	}, nil
 
 }

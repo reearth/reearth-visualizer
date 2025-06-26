@@ -46,6 +46,7 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
 }
+
 // Core Project messages
 message Project {
   // Project ID
@@ -57,8 +58,8 @@ message Project {
   // Scene ID
   string scene_id = 3;
 
-  // Story ID
-  string story_id = 4;
+  // Story
+  repeated Story stories = 4;
 
   // Project title
   string name = 5;
@@ -105,13 +106,17 @@ message Project {
   PublishmentStatus publishment_status = 19;
   // Scene Publishment value
   optional string published_url = 20;
+}
 
+message Story {
+  // Story ID
+  string id = 1;
   // Story Publishment value
-  string story_alias = 21;
+  string story_alias = 2;
   // Story Publishment value
-  PublishmentStatus story_publishment_status = 22;
+  PublishmentStatus story_publishment_status = 3;
   // Story Publishment value
-  optional string story_published_url = 23;
+  optional string story_published_url = 4;
 }
 
 message ProjectMetadata {
