@@ -201,12 +201,19 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		return err
 	}
 
+	readme := "xxx readme"
+	license := "yyy license"
+	topics := "zzz topics"
+
 	st := project.ProjectImportStatusNone
 	metadata, err := project.NewProjectMetadata().
 		NewID().
 		Workspace(w.ID()).
 		Project(pID).
 		ImportStatus(&st).
+		Readme(&readme).
+		License(&license).
+		Topics(&topics).
 		Build()
 	if err != nil {
 		return err
