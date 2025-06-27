@@ -253,7 +253,8 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"user-id": userID,
+		"authorization": fmt.Sprintf("Bearer %s", "token"),
+		"user-id":       userID,
 	}))
 
 	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
