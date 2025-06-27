@@ -68,7 +68,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 	w.appServer = initEcho(ctx, cfg)
 
 	if cfg.Config.Visualizer.InternalApi.Active {
-		w.internalPort = ":" + cfg.Config.Port
+		w.internalPort = ":" + cfg.Config.Visualizer.InternalApi.Port
 		w.internalServer = initGrpc(cfg)
 	}
 	return w

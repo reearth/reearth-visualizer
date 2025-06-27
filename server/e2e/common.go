@@ -50,6 +50,8 @@ var (
 		Visualizer: config.VisualizerConfig{
 			InternalApi: config.InternalApiConfig{
 				Active: true,
+				Port:   "50051",
+				Token:  "token",
 			},
 		},
 	}
@@ -131,7 +133,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	var err error
 
 	if cfg.Visualizer.InternalApi.Active {
-		l, err = net.Listen("tcp", ":8080")
+		l, err = net.Listen("tcp", ":"+cfg.Visualizer.InternalApi.Port)
 		if err != nil {
 			t.Fatalf("server failed to listen: %v", err)
 		}

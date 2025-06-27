@@ -27,7 +27,7 @@ func initGrpc(cfg *ServerConfig) *grpc.Server {
 
 	ui := grpc.ChainUnaryInterceptor(
 		unaryLogInterceptor(cfg),
-		// unaryAuthInterceptor(cfg), // TODO: When using M2M token
+		unaryAuthInterceptor(cfg),
 		unaryAttachOperatorInterceptor(cfg),
 		unaryAttachUsecaseInterceptor(cfg),
 	)
@@ -62,28 +62,28 @@ func unaryLogInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	}
 }
 
-// func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
-// 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-// 		md, ok := metadata.FromIncomingContext(ctx)
-// 		if !ok {
-// 			log.Errorf("unaryAuthInterceptor: no metadata found")
-// 			return nil, errors.New("unauthorized")
-// 		}
+func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			log.Errorf("unaryAuthInterceptor: no metadata found")
+			return nil, errors.New("unauthorized")
+		}
 
-// 		token := tokenFromGrpcMetadata(md)
-// 		if token == "" {
-// 			log.Errorf("unaryAuthInterceptor: no token found")
-// 			return nil, errors.New("unauthorized")
-// 		}
+		token := tokenFromGrpcMetadata(md)
+		if token == "" {
+			log.Errorf("unaryAuthInterceptor: no token found")
+			return nil, errors.New("unauthorized")
+		}
 
-// 		if token != cfg.Config.InternalApi.Token {
-// 			log.Errorf("unaryAuthInterceptor: invalid token")
-// 			return nil, errors.New("unauthorized")
-// 		}
+		if token != cfg.Config.Visualizer.InternalApi.Token {
+			log.Errorf("unaryAuthInterceptor: invalid token")
+			return nil, errors.New("unauthorized")
+		}
 
-// 		return handler(ctx, req)
-// 	}
-// }
+		return handler(ctx, req)
+	}
+}
 
 func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
@@ -154,19 +154,19 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 	}
 }
 
-// func tokenFromGrpcMetadata(md metadata.MD) string {
-// 	// The keys within metadata.MD are normalized to lowercase.
-// 	// See: https://godoc.org/google.golang.org/grpc/metadata#New
-// 	if len(md["m2m-token"]) < 1 {
-// 		return ""
-// 	}
-// 	token := md["m2m-token"][0]
-// 	if !strings.HasPrefix(token, "Bearer ") {
-// 		return ""
-// 	}
-// 	token = strings.TrimPrefix(md["m2m-token"][0], "Bearer ")
-// 	if token == "" {
-// 		return ""
-// 	}
-// 	return token
-// }
+func tokenFromGrpcMetadata(md metadata.MD) string {
+	// The keys within metadata.MD are normalized to lowercase.
+	// See: https://godoc.org/google.golang.org/grpc/metadata#New
+	if len(md["authorization"]) < 1 {
+		return ""
+	}
+	token := md["authorization"][0]
+	if !strings.HasPrefix(token, "Bearer ") {
+		return ""
+	}
+	token = strings.TrimPrefix(md["authorization"][0], "Bearer ")
+	if token == "" {
+		return ""
+	}
+	return token
+}
