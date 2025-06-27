@@ -27,7 +27,7 @@ func initGrpc(cfg *ServerConfig) *grpc.Server {
 
 	ui := grpc.ChainUnaryInterceptor(
 		unaryLogInterceptor(cfg),
-		unaryAuthInterceptor(cfg), // TODO: When using M2M token
+		unaryAuthInterceptor(cfg),
 		unaryAttachOperatorInterceptor(cfg),
 		unaryAttachUsecaseInterceptor(cfg),
 	)
