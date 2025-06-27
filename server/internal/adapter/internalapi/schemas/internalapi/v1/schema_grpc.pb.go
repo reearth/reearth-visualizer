@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	ReEarthVisualizer_GetProjectList_FullMethodName        = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectList"
 	ReEarthVisualizer_GetProject_FullMethodName            = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
+	ReEarthVisualizer_GetProjectByAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByAlias"
+	ReEarthVisualizer_ValidateProjectAlias_FullMethodName  = "/reearth.visualizer.v1.ReEarthVisualizer/ValidateProjectAlias"
 	ReEarthVisualizer_CreateProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/CreateProject"
 	ReEarthVisualizer_UpdateProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProject"
 	ReEarthVisualizer_UpdateProjectMetadata_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectMetadata"
@@ -38,10 +40,16 @@ type ReEarthVisualizerClient interface {
 	// Retrieves a specific project regardless of authentication.
 	// Request headers: user-id: <User ID>
 	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectResponse, error)
+	// Find a project by alias.
+	// Request headers: user-id: <User ID>
+	GetProjectByAlias(ctx context.Context, in *GetProjectByAliasRequest, opts ...grpc.CallOption) (*GetProjectByAliasResponse, error)
+	// Determines if an alias is valid.
+	// Request headers: user-id: <User ID>
+	ValidateProjectAlias(ctx context.Context, in *ValidateProjectAliasRequest, opts ...grpc.CallOption) (*ValidateProjectAliasResponse, error)
 	// Creates a new project in the specified team.
 	// Request headers: user-id: <User ID>
 	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectResponse, error)
-	// Update  a project.
+	// Update a project.
 	// Request headers: user-id: <User ID>
 	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*UpdateProjectResponse, error)
 	// Updates a new project metadata in the specified team.
@@ -77,6 +85,26 @@ func (c *reEarthVisualizerClient) GetProject(ctx context.Context, in *GetProject
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProjectResponse)
 	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reEarthVisualizerClient) GetProjectByAlias(ctx context.Context, in *GetProjectByAliasRequest, opts ...grpc.CallOption) (*GetProjectByAliasResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProjectByAliasResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetProjectByAlias_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reEarthVisualizerClient) ValidateProjectAlias(ctx context.Context, in *ValidateProjectAliasRequest, opts ...grpc.CallOption) (*ValidateProjectAliasResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ValidateProjectAliasResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_ValidateProjectAlias_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -143,10 +171,16 @@ type ReEarthVisualizerServer interface {
 	// Retrieves a specific project regardless of authentication.
 	// Request headers: user-id: <User ID>
 	GetProject(context.Context, *GetProjectRequest) (*GetProjectResponse, error)
+	// Find a project by alias.
+	// Request headers: user-id: <User ID>
+	GetProjectByAlias(context.Context, *GetProjectByAliasRequest) (*GetProjectByAliasResponse, error)
+	// Determines if an alias is valid.
+	// Request headers: user-id: <User ID>
+	ValidateProjectAlias(context.Context, *ValidateProjectAliasRequest) (*ValidateProjectAliasResponse, error)
 	// Creates a new project in the specified team.
 	// Request headers: user-id: <User ID>
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectResponse, error)
-	// Update  a project.
+	// Update a project.
 	// Request headers: user-id: <User ID>
 	UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectResponse, error)
 	// Updates a new project metadata in the specified team.
@@ -173,6 +207,12 @@ func (UnimplementedReEarthVisualizerServer) GetProjectList(context.Context, *Get
 }
 func (UnimplementedReEarthVisualizerServer) GetProject(context.Context, *GetProjectRequest) (*GetProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProject not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) GetProjectByAlias(context.Context, *GetProjectByAliasRequest) (*GetProjectByAliasResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProjectByAlias not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) ValidateProjectAlias(context.Context, *ValidateProjectAliasRequest) (*ValidateProjectAliasResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValidateProjectAlias not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateProject not implemented")
@@ -242,6 +282,42 @@ func _ReEarthVisualizer_GetProject_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ReEarthVisualizerServer).GetProject(ctx, req.(*GetProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReEarthVisualizer_GetProjectByAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProjectByAliasRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).GetProjectByAlias(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_GetProjectByAlias_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).GetProjectByAlias(ctx, req.(*GetProjectByAliasRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReEarthVisualizer_ValidateProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ValidateProjectAliasRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).ValidateProjectAlias(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_ValidateProjectAlias_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).ValidateProjectAlias(ctx, req.(*ValidateProjectAliasRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -350,6 +426,14 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetProject",
 			Handler:    _ReEarthVisualizer_GetProject_Handler,
+		},
+		{
+			MethodName: "GetProjectByAlias",
+			Handler:    _ReEarthVisualizer_GetProjectByAlias_Handler,
+		},
+		{
+			MethodName: "ValidateProjectAlias",
+			Handler:    _ReEarthVisualizer_ValidateProjectAlias_Handler,
 		},
 		{
 			MethodName: "CreateProject",
