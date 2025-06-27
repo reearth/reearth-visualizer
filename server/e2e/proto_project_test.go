@@ -253,7 +253,7 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"authorization": fmt.Sprintf("Bearer %s", "token"),
+		"authorization": fmt.Sprintf("Bearer %s", internalApiConfig.Visualizer.InternalApi.Token),
 		"user-id":       userID,
 	}))
 
