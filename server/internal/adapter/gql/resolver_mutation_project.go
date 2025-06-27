@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -99,6 +98,7 @@ func (r *mutationResolver) UpdateProjectMetadata(ctx context.Context, input gqlm
 		ID:      pid,
 		Readme:  input.Readme,
 		License: input.License,
+		Topics:  input.Topics,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -139,9 +139,16 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, input gqlmodel.Del
 }
 
 func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+
 	fs := afero.NewOsFs()
 
-	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", strings.ToLower(string(input.ProjectID))))
+	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
 	if err != nil {
 		return nil, errors.New("Fail Zip Create :" + err.Error())
 	}
@@ -154,6 +161,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 			err = cerr
 		}
 	}()
+
 	zipWriter := zip.NewWriter(zipFile)
 	defer func() {
 		if cerr := zipWriter.Close(); cerr != nil && err == nil {
@@ -161,21 +169,17 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		}
 	}()
 
-	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
-	if err != nil {
-		return nil, err
-	}
-	prj, err := usecases(ctx).Project.ExportProjectData(ctx, pid, zipWriter, getOperator(ctx))
+	prj, err := uc.Project.ExportProjectData(ctx, pid, zipWriter, op)
 	if err != nil {
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, exportData, err := usecases(ctx).Scene.ExportScene(ctx, prj)
+	sce, exportData, err := uc.Scene.ExportScene(ctx, prj)
 	if err != nil {
 		return nil, errors.New("Fail ExportScene :" + err.Error())
 	}
 
-	plugins, schemas, err := usecases(ctx).Plugin.ExportPlugins(ctx, sce, zipWriter)
+	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)
 	if err != nil {
 		return nil, errors.New("Fail ExportPlugins :" + err.Error())
 	}
@@ -189,7 +193,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
 
-	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
 	if err != nil {
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}

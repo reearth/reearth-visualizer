@@ -38,6 +38,7 @@ type ProjectMetadata {
   workspace: ID!
   readme: String
   license: String
+  topics: String
   importStatus: ProjectImportStatus
   createdAt: DateTime
   updatedAt: DateTime
@@ -106,6 +107,7 @@ input UpdateProjectMetadataInput {
   project: ID!
   readme: String
   license: String
+  topics: String
 }
 
 input PublishProjectInput {
