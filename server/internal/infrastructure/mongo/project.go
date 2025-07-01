@@ -257,45 +257,6 @@ func (r *Project) CheckAliasUnique(ctx context.Context, newAlias string) error {
 
 	pipeline := []bson.M{
 		{
-			"$match": bson.M{"alias": newAlias},
-		},
-		{
-			"$unionWith": bson.M{
-				"coll": "scene",
-				"pipeline": []bson.M{
-					{"$match": bson.M{"id": sceneId}},
-				},
-			},
-		},
-		{
-			"$limit": 1,
-		},
-		{
-			"$count": "exists",
-		},
-	}
-
-	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
-	if err != nil {
-		return err
-	}
-	defer cursor.Close(ctx)
-
-	if cursor.Next(ctx) {
-		return alias.ErrExistsProjectAlias
-	}
-
-	return nil
-}
-
-func (r *Project) CheckAliasUniqueWithFacet(ctx context.Context, newAlias string) error {
-	sceneId := newAlias
-	if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
-		sceneId = newAlias[2:]
-	}
-
-	pipeline := []bson.M{
-		{
 			"$limit": 1,
 		},
 		{
