@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	ReservedReearthPrefixProject = "c-"
+	ReservedReearthPrefixScene = "c-"
 
 	ReservedReearthPrefixStory = "s-"
 

@@ -136,7 +136,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 	sceneID := id.NewSceneID()
 
 	if prj.Alias() == "" {
-		prj.UpdateAlias(alias.ReservedReearthPrefixProject + sceneID.String())
+		prj.UpdateAlias(alias.ReservedReearthPrefixScene + sceneID.String())
 		if err := i.projectRepo.Save(ctx, prj); err != nil {
 			return nil, err
 		}

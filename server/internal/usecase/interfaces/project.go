@@ -84,6 +84,7 @@ type Project interface {
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
+	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
 	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator) ([]*project.Project, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
 
