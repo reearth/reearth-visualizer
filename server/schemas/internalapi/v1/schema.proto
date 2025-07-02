@@ -33,6 +33,10 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
 
+  // Publish a project.
+  // Request headers: user-id: <User ID>
+  rpc PublishProject(PublishProjectRequest) returns (PublishProjectResponse) {}
+
   // Updates a new project metadata in the specified team.
   // Request headers: user-id: <User ID>
   rpc UpdateProjectMetadata(UpdateProjectMetadataRequest)
@@ -167,13 +171,52 @@ enum PublishmentStatus {
   PUBLISHMENT_STATUS_PRIVATE = 3;
 }
 
+// Pagination
+message Pagination {
+  optional int32 first = 1;
+  optional int32 last = 2;
+  optional string after = 3;
+  optional string before = 4;
+}
+
+enum ProjectSortField {
+  PROJECT_SORT_FIELD_UNSPECIFIED = 0;
+  UPDATEDAT = 1;
+  NAME = 2;
+}
+
+enum SortDirection {
+  SORT_DIRECTION_UNSPECIFIED = 0;
+  ASC = 1;
+  DESC = 2;
+}
+
+message ProjectSort {
+  ProjectSortField field = 1;
+  SortDirection direction = 2;
+}
+
+message PageInfo {
+  int64 total_count = 1;
+  optional string start_cursor = 2;
+  optional string end_cursor = 3;
+  bool has_next_page = 4;
+  bool has_previous_page = 5;
+}
+
 // If the authenticated flag is true, private items will also be included in the
 // response. However, deleted items are excluded.
 message GetProjectListRequest {
   // Workspace ID
-  string workspace_id = 1;
+  optional string workspace_id = 1;
   // Authenticated Flag
   bool authenticated = 2;
+  // Keyword search
+  optional string keyword = 3;
+  // Sort options
+  optional ProjectSort sort = 4;
+  // Pagination info
+  optional Pagination pagination = 5;
 }
 
 // Retrieves a project regardless of authentication.
@@ -249,6 +292,17 @@ message UpdateProjectRequest {
   optional string tracking_id = 20;
 }
 
+// Update project publish fields.
+// Only the project owner can operate this
+message PublishProjectRequest {
+  // Project ID (required)
+  string project_id = 1;
+  // Scene Publishment alias
+  optional string alias = 2;
+  // Scene Publishment status
+  PublishmentStatus publishment_status = 3;
+}
+
 // Updates a new project metadata.
 // Cannot be updated under a team the user does not belong to.
 message UpdateProjectMetadataRequest {
@@ -286,6 +340,10 @@ message GetProjectResponse {
 message GetProjectListResponse {
   // Project List
   repeated Project projects = 1;
+  // PageInfo
+  PageInfo page_info = 2;
+  // TotalCount
+  int32 total_count = 3;
 }
 
 // Response messages
@@ -296,6 +354,12 @@ message CreateProjectResponse {
 
 // Response messages
 message UpdateProjectResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message PublishProjectResponse {
   // Project
   Project project = 1;
 }

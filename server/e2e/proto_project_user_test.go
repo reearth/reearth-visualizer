@@ -11,6 +11,7 @@ import (
 
 func TestInternalAPI_private(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
 
 	// user1: workspaceId: wID   userId: uID
 	// user2: workspaceId: wID2  userId: uID2
@@ -22,7 +23,7 @@ func TestInternalAPI_private(t *testing.T) {
 		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -34,7 +35,7 @@ func TestInternalAPI_private(t *testing.T) {
 		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -47,7 +48,8 @@ func TestInternalAPI_private(t *testing.T) {
 
 		// get list size 3
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res3.Projects))
@@ -60,16 +62,18 @@ func TestInternalAPI_private(t *testing.T) {
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// get list size 0
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace, // not wID2
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 0, len(res4.Projects))
+		assert.Equal(t, 2, len(res4.Projects))
 	})
 
 }
 
 func TestInternalAPI_public(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
 
 	var publicProjectId string
 
@@ -80,7 +84,7 @@ func TestInternalAPI_public(t *testing.T) {
 		createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -92,7 +96,7 @@ func TestInternalAPI_public(t *testing.T) {
 		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -105,12 +109,13 @@ func TestInternalAPI_public(t *testing.T) {
 
 		// get list size 3
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res3.Projects))
-		assert.Equal(t, "public", res3.Projects[0].Visibility)
-		assert.Equal(t, "private", res3.Projects[1].Visibility)
+		assert.Equal(t, "private", res3.Projects[0].Visibility)
+		assert.Equal(t, "public", res3.Projects[1].Visibility)
 
 		publicProjectId = res3.Projects[0].Id
 
@@ -120,10 +125,11 @@ func TestInternalAPI_public(t *testing.T) {
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// get list size 1
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace, // not wID2
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res4.Projects))
+		assert.Equal(t, 2, len(res4.Projects))
 
 		// test DeleteProject
 		res5, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
@@ -149,12 +155,12 @@ func TestInternalAPI_public(t *testing.T) {
 	// user2 call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
-		// get list size 0
 		res7, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace, // not wID2
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 0, len(res7.Projects))
+		assert.Equal(t, 1, len(res7.Projects))
 
 	})
 

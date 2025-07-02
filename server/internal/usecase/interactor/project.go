@@ -12,6 +12,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -169,19 +172,65 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) FindVisibilityByUser(ctx context.Context, u *user.User, authenticated bool, operator *usecase.Operator, keyword *string, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 
-	isWorkspaceOwner := false
-
-	if len(operator.AcOperator.OwningWorkspaces) > 0 {
-		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == aid
+	pFilter := repo.ProjectFilter{
+		Keyword:    keyword,
+		Sort:       sort,
+		Pagination: pagination,
 	}
 
-	pList, err := i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, aid)
+	wss, err := i.workspaceRepo.FindByUser(ctx, u.ID())
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
+	wList := make(accountdomain.WorkspaceIDList, 0, len(wss))
+	for _, ws := range wss {
+		wsid, err := workspace.IDFrom(ws.ID().String())
+		if err != nil {
+			return nil, nil, err
+		}
+		wList = append(wList, wsid)
+	}
+
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, operator.AcOperator.OwningWorkspaces, wList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, pList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, err
+}
+
+func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator, keyword *string, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	pFilter := repo.ProjectFilter{
+		Keyword:    keyword,
+		Sort:       sort,
+		Pagination: pagination,
+	}
+
+	wList := accountdomain.WorkspaceIDList{aid}
+
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, operator.AcOperator.OwningWorkspaces, wList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, pList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, err
+}
+
+func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]*project.Project, error) {
 	ids := make(id.ProjectIDList, 0, len(pList))
 	for _, p := range pList {
 		ids = append(ids, p.ID())
