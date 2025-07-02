@@ -28,6 +28,7 @@ import (
 
 func TestInternalAPI(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
 
 	// user1 call api
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
@@ -36,7 +37,7 @@ func TestInternalAPI(t *testing.T) {
 		pid1 := createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -48,7 +49,7 @@ func TestInternalAPI(t *testing.T) {
 		pid2 := createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -60,7 +61,7 @@ func TestInternalAPI(t *testing.T) {
 		createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -71,7 +72,7 @@ func TestInternalAPI(t *testing.T) {
 		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -82,14 +83,15 @@ func TestInternalAPI(t *testing.T) {
 		logicalDeleteProject(t, ctx, r, pid1)
 		logicalDeleteProject(t, ctx, r, pid2)
 
-		// 0: creante public  => public   delete => true !!
-		// 1: creante private => private  delete => true !!
+		// 0: creante public  => public   delete => true
+		// 1: creante private => private  delete => true
 		// 2: creante public  => public   delete => false
 		// 3: creante private => private  delete => false
 
 		// get list size 5
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
 		assert.Equal(t, 4, len(res3.Projects))
@@ -100,28 +102,29 @@ func TestInternalAPI(t *testing.T) {
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// get list size 1
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: false,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(res3.Projects))
 		// 3: creante public  => public   delete => false
 
-		// Authenticated => get list size 5
+		// Authenticated => get list size 1
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId:   wID.String(),
 			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 4, len(res4.Projects))
+		assert.Equal(t, 2, len(res4.Projects))
 
 	})
 
 	// user3 call api (menber)
 	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
-		// get list size 3
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
 		assert.Equal(t, 2, len(res3.Projects))
@@ -133,15 +136,15 @@ func TestInternalAPI(t *testing.T) {
 }
 
 func TestInternalAPI_unit(t *testing.T) {
-
 	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
 
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// Create Project
 		pid := createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -158,7 +161,8 @@ func TestInternalAPI_unit(t *testing.T) {
 			},
 		)
 		res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
 		assert.Equal(t, 1, len(res.Projects))
@@ -238,14 +242,16 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	}
 }
 
-func PbDump(m proto.Message) {
+func PbDump(m proto.Message) string {
 	jsonBytes, _ := protojson.MarshalOptions{
 		Multiline:       true,
 		Indent:          "  ",
 		UseProtoNames:   true,
 		EmitUnpopulated: true,
 	}.Marshal(m)
-	fmt.Println(string(jsonBytes))
+	res := string(jsonBytes)
+	fmt.Println(res)
+	return res
 }
 
 func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {

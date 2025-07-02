@@ -3,9 +3,13 @@ package mongo
 import (
 	"context"
 	"fmt"
+	"log"
 	"regexp"
+	"slices"
 	"strings"
+	"time"
 
+	"github.com/reearth/reearth/server/internal/adapter/internalapi/internalapimodel"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/alias"
@@ -88,6 +92,295 @@ func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*proje
 		return nil, err
 	}
 	return filterProjects(ids, res), nil
+}
+
+func decodeProjectCursor(cursor usecasex.Cursor) (id string, key string) {
+
+	parts := strings.SplitN(string(cursor), ":", 2)
+	id = parts[0]
+	if len(parts) > 1 {
+		key = parts[1]
+	}
+	return
+}
+
+func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor usecasex.Cursor) {
+
+	var suffix string
+
+	if sort == nil {
+		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
+	} else {
+
+		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
+		if sort.Key == "id" {
+			suffix = ""
+		}
+		if sort.Key == "name" {
+			suffix = ":" + p.Name()
+		}
+		if sort.Key == "updatedat" {
+			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
+		}
+
+	}
+
+	cursor = usecasex.Cursor(p.ID().String() + suffix)
+	return
+}
+
+func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) bson.M {
+
+	// target Workspace
+	var idStrings []string
+	for _, id := range wList {
+		idStrings = append(idStrings, id.String())
+	}
+
+	var filter bson.M
+
+	if !authenticated { // public only
+		filter = bson.M{
+			"team": bson.M{
+				"$in": idStrings,
+			},
+			"deleted":    false,
+			"visibility": "public",
+		}
+		if keyword != nil {
+			keywordRegex := primitive.Regex{
+				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*keyword)),
+				Options: "i",
+			}
+			filter["name"] = bson.M{"$regex": keywordRegex}
+		}
+		return filter
+	}
+
+	var owningWorkspaceStrings []string
+	for _, id := range owningWorkspaces {
+		owningWorkspaceStrings = append(owningWorkspaceStrings, id.String())
+	}
+
+	var ownedWorkspaces []string
+	var memberWorkspaces []string
+
+	for _, wsID := range idStrings {
+		if slices.Contains(owningWorkspaceStrings, wsID) {
+			ownedWorkspaces = append(ownedWorkspaces, wsID)
+		} else {
+			memberWorkspaces = append(memberWorkspaces, wsID)
+		}
+	}
+
+	var conditions []bson.M
+
+	// OwnedWorkspaces
+	if len(ownedWorkspaces) > 0 {
+		conditions = append(conditions, bson.M{
+			"team": bson.M{
+				"$in": ownedWorkspaces,
+			},
+		})
+	}
+
+	// MemberWorkspaces
+	if len(memberWorkspaces) > 0 {
+		conditions = append(conditions, bson.M{
+			"team": bson.M{
+				"$in": memberWorkspaces,
+			},
+			"deleted": false,
+			// "visibility": "public",
+		})
+	}
+
+	if len(conditions) > 0 {
+		if len(conditions) == 1 {
+			filter = conditions[0]
+		} else {
+			filter = bson.M{
+				"$or": conditions,
+			}
+		}
+	} else {
+		filter = bson.M{
+			"_id": bson.M{
+				"$exists": false,
+			},
+		}
+	}
+
+	if keyword != nil {
+		keywordRegex := primitive.Regex{
+			Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*keyword)),
+			Options: "i",
+		}
+		filter["name"] = bson.M{"$regex": keywordRegex}
+	}
+
+	return filter
+}
+
+func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.SortType, cursor *usecasex.CursorPagination) (bson.M, *options.FindOptions, int64, int) {
+
+	// default connfig
+	limit := int64(10)
+	sortOrder := -1 // DESC
+	sortKey := internalapimodel.ProjectSortField_UPDATEDAT
+
+	if sort != nil {
+		if !sort.Desc {
+			sortOrder = 1
+		}
+		sortKey = sort.Key
+	}
+
+	if cursor != nil && cursor.First != nil {
+		limit = *cursor.First
+	} else if cursor != nil && cursor.Last != nil {
+		limit = *cursor.Last
+	}
+
+	limit = limit + 1
+
+	sortConfig := bson.D{
+		{Key: sortKey, Value: sortOrder},
+		{Key: "id", Value: sortOrder},
+	}
+
+	if cursor != nil && cursor.After != nil {
+
+		cursor := *cursor.After
+		afterID, afterKey := decodeProjectCursor(cursor)
+
+		var keyValue any = afterKey
+		if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
+			keyValue = t
+		}
+
+		if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+			if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
+				keyValue = t
+			}
+		}
+
+		absoluteFilter["$or"] = bson.A{
+			bson.M{sortKey: bson.M{"$gt": keyValue}},
+			bson.M{
+				sortKey: keyValue,
+				"id":    bson.M{"$gt": afterID},
+			},
+		}
+
+	} else if cursor != nil && cursor.Before != nil {
+
+		cursor := *cursor.Before
+		beforeID, beforeKey := decodeProjectCursor(cursor)
+
+		var keyValue any = beforeKey
+		if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
+			keyValue = t
+		}
+
+		if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+			if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
+				keyValue = t
+			}
+		}
+
+		absoluteFilter["$or"] = bson.A{
+			bson.M{sortKey: bson.M{"$lt": keyValue}},
+			bson.M{
+				sortKey: keyValue,
+				"id":    bson.M{"$lt": beforeID},
+			},
+		}
+
+	}
+
+	findOptions := options.Find().
+		SetSort(sortConfig).
+		SetLimit(limit)
+
+	return absoluteFilter, findOptions, limit, sortOrder
+}
+
+func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFilter repo.ProjectFilter, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	absoluteFilter := r.ProjectAbsoluteFilter(authenticated, pFilter.Keyword, owningWorkspaces, wList)
+
+	// --- Find Query (absoluteFilter for totalCount)
+	totalCount, err := r.client.Client().CountDocuments(ctx, absoluteFilter)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var paginationSortilter bson.M
+	var findOptions *options.FindOptions
+	var limit int64
+	var sortOrder int
+
+	if pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil {
+		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, pFilter.Pagination.Cursor)
+	} else {
+		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, nil)
+	}
+
+	// --- Find Query (paginationSortilter)
+	cursor, err := r.client.Client().Find(ctx, paginationSortilter, findOptions)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	defer func() {
+		if cerr := cursor.Close(ctx); cerr != nil {
+			log.Printf("failed to close cursor: %v", cerr)
+		}
+	}()
+
+	consumer := mongodoc.NewProjectConsumer(r.f.Readable)
+
+	for cursor.Next(ctx) {
+		raw := cursor.Current
+		if err := consumer.Consume(raw); err != nil {
+			return nil, nil, err
+		}
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	items := consumer.Result
+	resultCount := int64(len(items))
+
+	hasNextPage := false
+	hasPreviousPage := false
+
+	if resultCount == limit {
+		switch sortOrder {
+		case 1:
+			hasNextPage = true
+		case -1:
+			hasPreviousPage = true
+		}
+		if len(items) > 0 {
+			items = items[:len(items)-1]
+		}
+	}
+
+	var startCursor, endCursor *usecasex.Cursor
+	if len(items) > 0 {
+		start := encodeProjectCursor(items[0], pFilter.Sort)
+		end := encodeProjectCursor(items[len(items)-1], pFilter.Sort)
+		startCursor = &start
+		endCursor = &end
+	}
+
+	pageInfo := usecasex.NewPageInfo(totalCount, startCursor, endCursor, hasNextPage, hasPreviousPage)
+
+	return items, pageInfo, nil
+
 }
 
 func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
@@ -181,54 +474,6 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	}
 
 	return prj, nil
-}
-
-func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
-	var filter bson.M
-
-	if authenticated {
-
-		// All workspace project
-		filter = bson.M{
-			"team": id.String(),
-		}
-
-	} else {
-
-		if isWorkspaceOwner {
-
-			// All workspace project
-			filter = bson.M{
-				"team": id.String(),
-			}
-
-		} else {
-
-			isWorkspaceMember := r.f.Readable.Has(id)
-
-			if isWorkspaceMember {
-
-				// public and private
-				filter = bson.M{
-					"team":    id.String(),
-					"deleted": false,
-				}
-
-			} else {
-
-				// public only
-				filter = bson.M{
-					"team":       id.String(),
-					"deleted":    false,
-					"visibility": "public",
-				}
-
-			}
-		}
-
-	}
-
-	return r.find(ctx, filter)
 }
 
 func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.Project, error) {
