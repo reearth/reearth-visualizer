@@ -1,6 +1,8 @@
 import EventTarget from "@ungap/event-target";
 import { useEffect } from "react";
 
+import { getFunctionFingerprintString } from "./fingerprint";
+
 export type EventCallback<T extends any[] = any[]> = (...args: T) => void;
 export type EventEmitter<
   E extends { [P in string]: any[] } = { [P in string]: any[] }
@@ -27,34 +29,35 @@ export function events<
   E extends { [P in string]: any[] } = { [P in string]: any[] }
 >(): [Events<E>, EventEmitter<E>] {
   const e = new EventTarget();
-  const callbacks = new Map<
-    keyof E,
-    Map<EventCallback<E[keyof E]>, (e: Event) => void>
-  >();
+  const callbacks = new Map<keyof E, Map<string, (e: Event) => void>>();
+
   const getEventCallback = <T extends keyof E>(
     type: T,
     cb: EventCallback<E[T]>
   ): ((e: Event) => void) => {
+    const fingerprint = getFunctionFingerprintString(cb);
     let ecbs = callbacks.get(type);
     if (!ecbs) {
       ecbs = new Map();
       callbacks.set(type, ecbs);
     }
 
-    let ecb = ecbs.get(cb as EventCallback);
+    let ecb = ecbs.get(fingerprint);
     if (!ecb) {
       ecb = (e: Event): void => {
         cb(...(e as CustomEvent).detail);
       };
-      ecbs.set(cb as EventCallback, ecb);
+      ecbs.set(fingerprint, ecb);
     }
 
     return ecb;
   };
+
   const deleteEventCallback = (type: keyof E, cb: EventCallback): void => {
     const ecbs = callbacks.get(type);
+    const fingerprint = getFunctionFingerprintString(cb);
     if (ecbs) {
-      ecbs.delete(cb);
+      ecbs.delete(fingerprint);
       if (ecbs.size === 0) {
         callbacks.delete(type);
       }
