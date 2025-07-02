@@ -475,22 +475,22 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 
 }
 
-func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
+func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, *scene.Scene, string, string, error) {
 
 	prj, err := i.projectRepo.FindByID(ctx, *pid)
 	if err != nil {
-		return nil, "", "", err
+		return nil, nil, "", "", err
 	}
 
 	sce, err := i.sceneRepo.FindByProject(ctx, *pid)
 	if err != nil {
-		return nil, "", "", err
+		return nil, nil, "", "", err
 	}
 
 	dedicatedID1 := alias.ReservedReearthPrefixScene + sce.ID().String()
 	dedicatedID2 := sce.ID().String()
 
-	return prj, dedicatedID1, dedicatedID2, err
+	return prj, sce, dedicatedID1, dedicatedID2, err
 }
 
 func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
@@ -513,7 +513,7 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 
 	} else {
 
-		prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, pid)
+		prj, _, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, pid)
 		if err != nil {
 			return false, err
 		}
@@ -563,7 +563,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 	}()
 
-	prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
+	prj, sce, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -640,7 +640,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
 		// changed private to public/limited
 		new := prevStatus == project.PublishmentStatusPrivate
-		if err := i.uploadPublishScene(ctx, prj, new, op); err != nil {
+		if err := i.uploadPublishScene(ctx, prj, sce, new, op); err != nil {
 			return nil, err
 		}
 
@@ -694,55 +694,54 @@ func (i *Project) checkCustomDomainPolicy(ctx context.Context, prj *project.Proj
 	return nil
 }
 
-func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, new bool, op *usecase.Operator) (*scene.Scene, error) {
+func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, new bool, op *usecase.Operator) error {
 
 	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if new {
 		if policyID := op.Policy(ws.Policy()); policyID != nil {
 			p, err := i.policyRepo.FindByID(ctx, *policyID)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			scCont, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			ws2, err := accountdomain.WorkspaceIDFrom(ws.ID().String())
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			slist, err := i.sceneRepo.FindByWorkspace(ctx, ws2)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			stCount, err := i.storytellingRepo.CountPublicByScenes(ctx, slist)
 			if err != nil {
-				return nil, err
+				return err
 			}
 
 			if err := p.EnforcePublishableCount(scCont + stCount + 1); err != nil {
-				return nil, err
+				return err
 			}
 		}
 	}
 
-	return nil, nil
+	return nil
 
 }
 
-func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, new bool, op *usecase.Operator) error {
+func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s *scene.Scene, new bool, op *usecase.Operator) error {
 
 	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, p, new, op)
-	if err != nil {
+	if err := i.checkPublishPolicy(ctx, p, new, op); err != nil {
 		return err
 	}
 

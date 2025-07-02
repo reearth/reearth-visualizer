@@ -94,7 +94,8 @@ func TestPlugin_Upload_New(t *testing.T) {
 	repos := memory.New()
 	work, err := workspace.New().ID(ws).Build()
 	assert.NoError(t, err)
-	repos.Workspace.Save(ctx, work)
+	err = repos.Workspace.Save(ctx, work)
+	assert.NoError(t, err)
 
 	mfs := mockFS(nil)
 	files, err := fs.NewFile(mfs, "")
@@ -157,6 +158,11 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	wid1 := id.NewWidgetID()
 
 	repos := memory.New()
+	work, err := workspace.New().ID(ws).Build()
+	assert.NoError(t, err)
+	err = repos.Workspace.Save(ctx, work)
+	assert.NoError(t, err)
+
 	mfs := mockFS(map[string]string{
 		"plugins/" + pid.String() + "/hogehoge": "foobar",
 	})
@@ -184,6 +190,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
+		workspaceRepo:      repos.Workspace,
 		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,
@@ -254,6 +261,12 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	wid := id.NewWidgetID()
 
 	repos := memory.New()
+
+	work, err := workspace.New().ID(ws).Build()
+	assert.NoError(t, err)
+	err = repos.Workspace.Save(ctx, work)
+	assert.NoError(t, err)
+
 	mfs := mockFS(map[string]string{
 		"plugins/" + oldpid.String() + "/hogehoge": "foobar",
 	})

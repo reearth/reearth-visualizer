@@ -28,7 +28,7 @@ func ToVisibility(visibility string) Visibility {
 	if visibility == "public" {
 		return VisibilityPublic
 	}
-	return VisibilityPublic
+	return VisibilityPrivate
 }
 
 func (b *Builder) Build() (*Project, error) {
