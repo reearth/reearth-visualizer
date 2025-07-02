@@ -94,7 +94,8 @@ func TestPlugin_Upload_New(t *testing.T) {
 	repos := memory.New()
 	work, err := workspace.New().ID(ws).Build()
 	assert.NoError(t, err)
-	repos.Workspace.Save(ctx, work)
+	err = repos.Workspace.Save(ctx, work)
+	assert.NoError(t, err)
 
 	mfs := mockFS(nil)
 	files, err := fs.NewFile(mfs, "")
