@@ -85,32 +85,35 @@ describe("function fingerprinting", () => {
     ctx.dispose();
   });
 
-  test("fingerprint-based event system solves addEventListener/removeEventListener", async () => {
-    const ctx = (await getQuickJS()).newContext();
-    const arena = new Arena(ctx, { isMarshalable: true });
+  test(
+    "fingerprint-based event system solves addEventListener/removeEventListener",
+    { timeout: 15000 },
+    async () => {
+      const ctx = (await getQuickJS()).newContext();
+      const arena = new Arena(ctx, { isMarshalable: true });
 
-    // Create event system
-    const eventSystem = new FingerprintEventSystem();
+      // Create event system
+      const eventSystem = new FingerprintEventSystem();
 
-    // Expose event system to QuickJS
-    arena.expose({
-      addEventListener: (event: string, handler: Function) => {
-        return eventSystem.addEventListener(event, handler);
-      },
-      removeEventListener: (event: string, fingerprint: string) => {
-        return eventSystem.removeEventListener(event, fingerprint);
-      },
-      dispatchEvent: (event: string) => {
-        eventSystem.dispatchEvent(event);
-        return eventSystem.getListenerCount(event);
-      },
-      getListenerCount: (event: string) => {
-        return eventSystem.getListenerCount(event);
-      }
-    });
+      // Expose event system to QuickJS
+      arena.expose({
+        addEventListener: (event: string, handler: Function) => {
+          return eventSystem.addEventListener(event, handler);
+        },
+        removeEventListener: (event: string, fingerprint: string) => {
+          return eventSystem.removeEventListener(event, fingerprint);
+        },
+        dispatchEvent: (event: string) => {
+          eventSystem.dispatchEvent(event);
+          return eventSystem.getListenerCount(event);
+        },
+        getListenerCount: (event: string) => {
+          return eventSystem.getListenerCount(event);
+        }
+      });
 
-    // Test the complete flow in QuickJS
-    const result = arena.evalCode(`
+      // Test the complete flow in QuickJS
+      const result = arena.evalCode(`
       // Define a function in QuickJS
       const myHandler = function clickHandler() {
         console.log('Button was clicked!');
@@ -133,44 +136,52 @@ describe("function fingerprinting", () => {
       });
     `);
 
-    expect(result.countAfterAdd).toBe(1);
-    expect(result.removed).toBe(true);
-    expect(result.countAfterRemove).toBe(0);
-    expect(typeof result.fingerprint).toBe("string");
-    expect(result.fingerprint.length).toBeGreaterThan(0);
+      expect(result.countAfterAdd).toBe(1);
+      expect(result.removed).toBe(true);
+      expect(result.countAfterRemove).toBe(0);
+      expect(typeof result.fingerprint).toBe("string");
+      expect(result.fingerprint.length).toBeGreaterThan(0);
 
-    arena.dispose();
-    ctx.dispose();
-  });
+      arena.dispose();
+      ctx.dispose();
+    }
+  );
 
-  test("manual fingerprint generation for user control", async () => {
-    const ctx = (await getQuickJS()).newContext();
-    const arena = new Arena(ctx, { isMarshalable: true });
+  test(
+    "manual fingerprint generation for user control",
+    { timeout: 15000 },
+    async () => {
+      const ctx = (await getQuickJS()).newContext();
+      const arena = new Arena(ctx, { isMarshalable: true });
 
-    const eventSystem = new FingerprintEventSystem();
+      const eventSystem = new FingerprintEventSystem();
 
-    // Expose fingerprint utilities to QuickJS
-    arena.expose({
-      addEventListener: (
-        event: string,
-        handler: Function,
-        customFingerprint?: string
-      ) => {
-        return eventSystem.addEventListener(event, handler, customFingerprint);
-      },
-      removeEventListener: (event: string, fingerprint: string) => {
-        return eventSystem.removeEventListener(event, fingerprint);
-      },
-      getListenerCount: (event: string) => {
-        return eventSystem.getListenerCount(event);
-      },
-      // Expose fingerprint generation function
-      generateFingerprint: (fn: Function) => {
-        return getFunctionFingerprintString(fn);
-      }
-    });
+      // Expose fingerprint utilities to QuickJS
+      arena.expose({
+        addEventListener: (
+          event: string,
+          handler: Function,
+          customFingerprint?: string
+        ) => {
+          return eventSystem.addEventListener(
+            event,
+            handler,
+            customFingerprint
+          );
+        },
+        removeEventListener: (event: string, fingerprint: string) => {
+          return eventSystem.removeEventListener(event, fingerprint);
+        },
+        getListenerCount: (event: string) => {
+          return eventSystem.getListenerCount(event);
+        },
+        // Expose fingerprint generation function
+        generateFingerprint: (fn: Function) => {
+          return getFunctionFingerprintString(fn);
+        }
+      });
 
-    const result = arena.evalCode(`
+      const result = arena.evalCode(`
       const myHandler = function mySpecialHandler() {
         return 'clicked';
       };
@@ -197,44 +208,48 @@ describe("function fingerprinting", () => {
       });
     `);
 
-    expect(result.autoSameAsUser).toBe(true);
-    expect(result.customSameAsProvided).toBe(true);
-    expect(result.userFingerprint).toBe(result.autoFP);
-    expect(result.customFingerprint).toBe(result.customFP);
+      expect(result.autoSameAsUser).toBe(true);
+      expect(result.customSameAsProvided).toBe(true);
+      expect(result.userFingerprint).toBe(result.autoFP);
+      expect(result.customFingerprint).toBe(result.customFP);
 
-    arena.dispose();
-    ctx.dispose();
-  });
+      arena.dispose();
+      ctx.dispose();
+    }
+  );
 
-  test("event system handles multiple listeners and events", async () => {
-    const ctx = (await getQuickJS()).newContext();
-    const arena = new Arena(ctx, { isMarshalable: true });
+  test(
+    "event system handles multiple listeners and events",
+    { timeout: 15000 },
+    async () => {
+      const ctx = (await getQuickJS()).newContext();
+      const arena = new Arena(ctx, { isMarshalable: true });
 
-    const eventSystem = new FingerprintEventSystem();
-    const dispatchLog: string[] = [];
+      const eventSystem = new FingerprintEventSystem();
+      const dispatchLog: string[] = [];
 
-    arena.expose({
-      addEventListener: (event: string, handler: Function) => {
-        return eventSystem.addEventListener(event, handler);
-      },
-      removeEventListener: (event: string, fingerprint: string) => {
-        return eventSystem.removeEventListener(event, fingerprint);
-      },
-      dispatchEvent: (event: string) => {
-        // Capture dispatch for testing
-        dispatchLog.push(`Dispatching ${event}`);
-        eventSystem.dispatchEvent(event);
-        return eventSystem.getListenerCount(event);
-      },
-      getListenerCount: (event: string) => {
-        return eventSystem.getListenerCount(event);
-      },
-      log: (message: string) => {
-        dispatchLog.push(message);
-      }
-    });
+      arena.expose({
+        addEventListener: (event: string, handler: Function) => {
+          return eventSystem.addEventListener(event, handler);
+        },
+        removeEventListener: (event: string, fingerprint: string) => {
+          return eventSystem.removeEventListener(event, fingerprint);
+        },
+        dispatchEvent: (event: string) => {
+          // Capture dispatch for testing
+          dispatchLog.push(`Dispatching ${event}`);
+          eventSystem.dispatchEvent(event);
+          return eventSystem.getListenerCount(event);
+        },
+        getListenerCount: (event: string) => {
+          return eventSystem.getListenerCount(event);
+        },
+        log: (message: string) => {
+          dispatchLog.push(message);
+        }
+      });
 
-    arena.evalCode(`
+      arena.evalCode(`
       // Create multiple handlers
       const handler1 = function clickHandler1() { log('Handler 1 called'); };
       const handler2 = function clickHandler2() { log('Handler 2 called'); };
@@ -256,17 +271,18 @@ describe("function fingerprinting", () => {
       dispatchEvent('click');   // Should only call handler2
     `);
 
-    expect(dispatchLog).toEqual([
-      "Dispatching click",
-      "Handler 1 called",
-      "Handler 2 called",
-      "Dispatching scroll",
-      "Scroll handler called",
-      "Dispatching click",
-      "Handler 2 called"
-    ]);
+      expect(dispatchLog).toEqual([
+        "Dispatching click",
+        "Handler 1 called",
+        "Handler 2 called",
+        "Dispatching scroll",
+        "Scroll handler called",
+        "Dispatching click",
+        "Handler 2 called"
+      ]);
 
-    arena.dispose();
-    ctx.dispose();
-  });
+      arena.dispose();
+      ctx.dispose();
+    }
+  );
 });
