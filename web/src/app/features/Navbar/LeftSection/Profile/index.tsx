@@ -57,7 +57,6 @@ const HeaderProfile: React.FC<Props> = ({
       {
         icon: "exit",
         id: "logOut",
-        hasBorderBottom: true,
         onClick: onSignOut,
         title: t("Log out")
       }

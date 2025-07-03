@@ -55,7 +55,8 @@ export type Config = {
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
   multiTenant?: Record<string, AuthInfo>;
   devPluginUrls?: string[];
-  disableWorkspaceManagement?: boolean;
+  platformUrl?: string;
+  saasMode?: boolean;
 } & AuthInfo;
 
 declare global {

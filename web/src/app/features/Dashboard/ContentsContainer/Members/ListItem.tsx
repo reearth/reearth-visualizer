@@ -63,7 +63,7 @@ const ListItem: FC<{
       </TypographyWrapper>
 
       <TypographyWrapper>
-        {!config()?.disableWorkspaceManagement && meRole && (
+        {!config()?.saasMode && meRole && (
           <PopupMenu
             label={
               <Button icon="dotsThreeVertical" iconButton appearance="simple" />

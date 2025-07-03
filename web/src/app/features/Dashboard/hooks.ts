@@ -1,5 +1,6 @@
 import { useMeFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
+import { config } from "@reearth/services/config";
 import { useWorkspace } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -33,7 +34,9 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const topTabs = useMemo(
     () =>
       topTabItems
-        .filter((tab) => !(isPersonal && tab.id === "members"))
+        .filter(
+          (tab) => !((isPersonal || config()?.saasMode) && tab.id === "members")
+        )
         .map((tab) => ({
           ...tab,
           path:
