@@ -23,6 +23,7 @@ describe("useWorkspaceManagementMenu", () => {
   const mockSetAddWorkspaceModal = vi.fn();
 
   beforeEach(() => {
+    vi.clearAllMocks();
     (useNavigate as Mock).mockReturnValue(mockNavigate);
     (useAddWorkspaceModal as Mock).mockReturnValue([
       false,
@@ -41,17 +42,33 @@ describe("useWorkspaceManagementMenu", () => {
     expect(result.current.workspaceManagementMenu).toEqual([]);
   });
 
-  it("should return empty menu when workspace management is disabled", () => {
-    (config as Mock).mockReturnValue({ disableWorkspaceManagement: true });
+  it("should return menu items for SaaS mode", () => {
+    (config as Mock).mockReturnValue({ 
+      saasMode: true, 
+      platformUrl: "https://example.com" 
+    });
 
+    const workspaceId = "workspace-123";
     const { result } = renderHook(() =>
-      useWorkspaceManagementMenu({ workspaceId: "workspace-123" })
+      useWorkspaceManagementMenu({ workspaceId })
     );
 
-    expect(result.current.workspaceManagementMenu).toEqual([]);
+    expect(result.current.workspaceManagementMenu.length).toBe(1);
+
+    expect(result.current.workspaceManagementMenu[0]).toEqual({
+      id: "accountSettings",
+      title: "Account settings",
+      icon: "user",
+      dataTestid: "account-settings",
+      onClick: expect.any(Function)
+    });
   });
 
-  it("should return menu items when workspaceId is provided and management is enabled", () => {
+  it("should return full menu items for non-SaaS mode", () => {
+    (config as Mock).mockReturnValue({ 
+      saasMode: false
+    });
+
     const workspaceId = "workspace-123";
     const { result } = renderHook(() =>
       useWorkspaceManagementMenu({ workspaceId })
@@ -83,7 +100,75 @@ describe("useWorkspaceManagementMenu", () => {
       dataTestid: "account-settings",
       onClick: expect.any(Function)
     });
+  });
 
-    expect(result.current.workspaceManagementMenu[0].onClick).toBeDefined();
+  it("should navigate to platform URL for account settings in SaaS mode", () => {
+    const platformUrl = "https://example.com";
+    (config as Mock).mockReturnValue({ 
+      saasMode: true, 
+      platformUrl 
+    });
+
+    const workspaceId = "workspace-123";
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({ workspaceId })
+    );
+
+    result.current.workspaceManagementMenu[0].onClick?.("accountSettings");
+
+    expect(mockNavigate).toHaveBeenCalledWith(`${platformUrl}/settings/profile`);
+  });
+
+  it("should navigate to local account settings in non-SaaS mode", () => {
+    (config as Mock).mockReturnValue({ 
+      saasMode: false
+    });
+
+    const workspaceId = "workspace-123";
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({ workspaceId })
+    );
+
+    result.current.workspaceManagementMenu[2].onClick?.("accountSettings");
+
+    expect(mockNavigate).toHaveBeenCalledWith("/settings/account");
+  });
+
+  it("should navigate to workspace settings in non-SaaS mode", () => {
+    (config as Mock).mockReturnValue({ 
+      saasMode: false
+    });
+
+    const workspaceId = "workspace-123";
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({ workspaceId })
+    );
+
+    result.current.workspaceManagementMenu[0].onClick?.("workspaceSettings");
+
+    expect(mockNavigate).toHaveBeenCalledWith(`/settings/workspaces/${workspaceId}`);
+  });
+
+  it("should have add workspace menu item with correct properties in non-SaaS mode", () => {
+    (config as Mock).mockReturnValue({ 
+      saasMode: false
+    });
+
+    const workspaceId = "workspace-123";
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({ workspaceId })
+    );
+
+    expect(result.current.workspaceManagementMenu).toHaveLength(3);
+    
+    const addWorkspaceItem = result.current.workspaceManagementMenu[1];
+    expect(addWorkspaceItem).toEqual({
+      id: "addWorkspace",
+      dataTestid: "add-workspace",
+      title: "New workspace",
+      icon: "newWorkspace",
+      hasBorderBottom: true,
+      onClick: expect.any(Function)
+    });
   });
 });
