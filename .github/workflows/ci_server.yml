@@ -2,7 +2,7 @@ name: ci-server
 on:
   workflow_call:
 env:
-  GO_VERSION: "1.24"
+  GO_VERSION: "1.24.2"
 
 jobs:
   ci-server-lint:
