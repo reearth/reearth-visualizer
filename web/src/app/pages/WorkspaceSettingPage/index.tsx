@@ -12,7 +12,7 @@ type WorkspaceSettingPageProps = {
 
 const WorkspaceSettingPage: FC<WorkspaceSettingPageProps> = ({ tab }) => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
-  const disabled = useMemo(() => config()?.disableWorkspaceManagement, []);
+  const disabled = useMemo(() => config()?.saasMode, []);
   return (
     <Page
       workspaceId={workspaceId}

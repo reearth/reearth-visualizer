@@ -67,6 +67,8 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
     );
   }, [filteredMembers]);
 
+  const saasMode = config()?.saasMode;
+
   return (
     <Wrapper>
       <HeaderWrapper>
@@ -79,16 +81,14 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           />
         </Search>
         <div>
-          {meRole &&
-            PermissionService.canInvite(meRole) &&
-            !config()?.disableWorkspaceManagement && (
-              <Button
-                title={t("invite user")}
-                appearance="primary"
-                icon="memberAdd"
-                onClick={() => setAddMemberModalVisible(true)}
-              />
-            )}
+          {meRole && PermissionService.canInvite(meRole) && !saasMode && (
+            <Button
+              title={t("invite user")}
+              appearance="primary"
+              icon="memberAdd"
+              onClick={() => setAddMemberModalVisible(true)}
+            />
+          )}
         </div>
       </HeaderWrapper>
       <Table>
@@ -128,7 +128,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           meRole={meRole}
         />
       )}
-      {deleteMemerModalVisible && !config()?.disableWorkspaceManagement && (
+      {deleteMemerModalVisible && !saasMode && (
         <DeleteMemberWarningModal
           workspace={workspace}
           member={selectedMember}
@@ -136,7 +136,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           onClose={() => setDeleteMemerModalVisible(false)}
         />
       )}
-      {addMemberModalVisible && !config()?.disableWorkspaceManagement && (
+      {addMemberModalVisible && !saasMode && (
         <AddMemberModal
           workspace={workspace}
           visible

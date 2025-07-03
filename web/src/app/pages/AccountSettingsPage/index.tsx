@@ -6,7 +6,7 @@ import { FC, useMemo } from "react";
 import Page from "../Page";
 
 const AccountSettingPage: FC = () => {
-  const disabled = useMemo(() => config()?.disableWorkspaceManagement, []);
+  const disabled = useMemo(() => config()?.saasMode, []);
   return (
     <Page renderItem={() => (disabled ? <NotFound /> : <AccountSetting />)} />
   );
