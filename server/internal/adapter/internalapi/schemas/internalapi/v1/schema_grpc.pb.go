@@ -25,6 +25,7 @@ const (
 	ReEarthVisualizer_ValidateProjectAlias_FullMethodName  = "/reearth.visualizer.v1.ReEarthVisualizer/ValidateProjectAlias"
 	ReEarthVisualizer_CreateProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/CreateProject"
 	ReEarthVisualizer_UpdateProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProject"
+	ReEarthVisualizer_PublishProject_FullMethodName        = "/reearth.visualizer.v1.ReEarthVisualizer/PublishProject"
 	ReEarthVisualizer_UpdateProjectMetadata_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectMetadata"
 	ReEarthVisualizer_DeleteProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProject"
 	ReEarthVisualizer_ExportProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject"
@@ -52,6 +53,9 @@ type ReEarthVisualizerClient interface {
 	// Update a project.
 	// Request headers: user-id: <User ID>
 	UpdateProject(ctx context.Context, in *UpdateProjectRequest, opts ...grpc.CallOption) (*UpdateProjectResponse, error)
+	// Publish a project.
+	// Request headers: user-id: <User ID>
+	PublishProject(ctx context.Context, in *PublishProjectRequest, opts ...grpc.CallOption) (*PublishProjectResponse, error)
 	// Updates a new project metadata in the specified team.
 	// Request headers: user-id: <User ID>
 	UpdateProjectMetadata(ctx context.Context, in *UpdateProjectMetadataRequest, opts ...grpc.CallOption) (*UpdateProjectMetadataResponse, error)
@@ -131,6 +135,16 @@ func (c *reEarthVisualizerClient) UpdateProject(ctx context.Context, in *UpdateP
 	return out, nil
 }
 
+func (c *reEarthVisualizerClient) PublishProject(ctx context.Context, in *PublishProjectRequest, opts ...grpc.CallOption) (*PublishProjectResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PublishProjectResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_PublishProject_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *reEarthVisualizerClient) UpdateProjectMetadata(ctx context.Context, in *UpdateProjectMetadataRequest, opts ...grpc.CallOption) (*UpdateProjectMetadataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UpdateProjectMetadataResponse)
@@ -183,6 +197,9 @@ type ReEarthVisualizerServer interface {
 	// Update a project.
 	// Request headers: user-id: <User ID>
 	UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectResponse, error)
+	// Publish a project.
+	// Request headers: user-id: <User ID>
+	PublishProject(context.Context, *PublishProjectRequest) (*PublishProjectResponse, error)
 	// Updates a new project metadata in the specified team.
 	// Request headers: user-id: <User ID>
 	UpdateProjectMetadata(context.Context, *UpdateProjectMetadataRequest) (*UpdateProjectMetadataResponse, error)
@@ -219,6 +236,9 @@ func (UnimplementedReEarthVisualizerServer) CreateProject(context.Context, *Crea
 }
 func (UnimplementedReEarthVisualizerServer) UpdateProject(context.Context, *UpdateProjectRequest) (*UpdateProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProject not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) PublishProject(context.Context, *PublishProjectRequest) (*PublishProjectResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PublishProject not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) UpdateProjectMetadata(context.Context, *UpdateProjectMetadataRequest) (*UpdateProjectMetadataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateProjectMetadata not implemented")
@@ -358,6 +378,24 @@ func _ReEarthVisualizer_UpdateProject_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReEarthVisualizer_PublishProject_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublishProjectRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).PublishProject(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_PublishProject_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).PublishProject(ctx, req.(*PublishProjectRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ReEarthVisualizer_UpdateProjectMetadata_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateProjectMetadataRequest)
 	if err := dec(in); err != nil {
@@ -442,6 +480,10 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateProject",
 			Handler:    _ReEarthVisualizer_UpdateProject_Handler,
+		},
+		{
+			MethodName: "PublishProject",
+			Handler:    _ReEarthVisualizer_PublishProject_Handler,
 		},
 		{
 			MethodName: "UpdateProjectMetadata",

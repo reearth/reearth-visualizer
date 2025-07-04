@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
 
@@ -35,38 +36,41 @@ func NewServer() pb.ReEarthVisualizerServer {
 func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListRequest) (*pb.GetProjectListResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	wId, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
-	if err != nil {
-		return nil, err
-	}
+	sort := internalapimodel.ToProjectSortType(req.Sort)
+	pagination := internalapimodel.ToProjectPagination(req.Pagination)
 
-	res, err := uc.Project.FindVisibilityByWorkspace(ctx, wId, req.Authenticated, op)
-	if err != nil {
-		return nil, err
-	}
+	var res []*project.Project
+	var info *usecasex.PageInfo
+	if req.WorkspaceId == nil {
 
-	var pids []id.ProjectID
-	for _, pj := range res {
-		pids = append(pids, pj.ID())
-	}
-
-	scenes, storytellings, err := uc.Scene.FindByProjectsWithStory(ctx, pids, op)
-	if err != nil {
-		return nil, err
-	}
-
-	projects := make([]*pb.Project, 0, len(res))
-	for _, pj := range res {
-		for _, sc := range scenes {
-			if pj.ID() == sc.Project() {
-				pj.UpdateSceneID(sc.ID())
-				projects = append(projects, internalapimodel.ToInternalProject(ctx, pj, storytellings))
-			}
+		var err error
+		res, info, err = uc.Project.FindVisibilityByUser(ctx, adapter.User(ctx), req.Authenticated, op, req.Keyword, sort, pagination)
+		if err != nil {
+			return nil, err
 		}
+
+	} else {
+
+		wId, err := accountdomain.WorkspaceIDFrom(*req.WorkspaceId)
+		if err != nil {
+			return nil, err
+		}
+
+		res, info, err = uc.Project.FindVisibilityByWorkspace(ctx, wId, req.Authenticated, op, req.Keyword, sort, pagination)
+		if err != nil {
+			return nil, err
+		}
+
+	}
+
+	projects, err := s.getScenesAndStorytellings(ctx, res)
+	if err != nil {
+		return nil, err
 	}
 
 	return &pb.GetProjectListResponse{
 		Projects: projects,
+		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
 }
 
@@ -83,20 +87,13 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 		return nil, err
 	}
 
-	sc, err := uc.Scene.FindByProject(ctx, pj.ID(), op)
-	if err != nil {
-		return nil, err
-	}
-
-	pj.UpdateSceneID(sc.ID())
-
-	sts, err := uc.StoryTelling.FetchByScene(ctx, pj.Scene(), op)
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.GetProjectResponse{
-		Project: internalapimodel.ToInternalProject(ctx, pj, sts),
+		Project: prj,
 	}, nil
 }
 
@@ -108,36 +105,14 @@ func (s server) GetProjectByAlias(ctx context.Context, req *pb.GetProjectByAlias
 		return nil, err
 	}
 
-	st, err := s.findStoryTelling(ctx, pj)
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
 	if err != nil {
 		return nil, err
 	}
 
 	return &pb.GetProjectByAliasResponse{
-		Project: internalapimodel.ToInternalProject(ctx, pj, st),
+		Project: prj,
 	}, nil
-}
-
-func (s server) findStoryTelling(ctx context.Context, pj *project.Project) (*storytelling.StoryList, error) {
-	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
-
-	sc, err := uc.Scene.FindByProject(ctx, pj.ID(), op)
-	if err != nil {
-		return nil, err
-	}
-
-	pj.UpdateSceneID(sc.ID())
-
-	sts, err := uc.StoryTelling.FetchByScene(ctx, pj.Scene(), op)
-	if err != nil {
-		return nil, err
-	}
-
-	if sts == nil || len(*sts) == 0 {
-		return nil, fmt.Errorf("no stories found for scene %v", pj.Scene())
-	}
-
-	return sts, nil
 }
 
 func (s server) ValidateProjectAlias(ctx context.Context, req *pb.ValidateProjectAliasRequest) (*pb.ValidateProjectAliasResponse, error) {
@@ -293,16 +268,43 @@ func (s server) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest)
 		return nil, err
 	}
 
-	scenes, storytellings, err := uc.Scene.FindByProjectsWithStory(ctx, []id.ProjectID{pj.ID()}, op)
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
 	if err != nil {
 		return nil, err
 	}
 
-	sc := scenes[0]
-	pj.UpdateSceneID(sc.ID())
-
 	return &pb.UpdateProjectResponse{
-		Project: internalapimodel.ToInternalProject(ctx, pj, storytellings),
+		Project: prj,
+	}, nil
+
+}
+
+func (s server) PublishProject(ctx context.Context, req *pb.PublishProjectRequest) (*pb.PublishProjectResponse, error) {
+
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pId, err := id.ProjectIDFrom(req.ProjectId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	pj, err := uc.Project.Publish(ctx, interfaces.PublishProjectParam{
+		ID:     pId,
+		Alias:  req.Alias,
+		Status: gqlmodel.FromPublishmentStatus(gqlmodel.PublishmentStatus(req.PublishmentStatus.String())),
+	}, op)
+	if err != nil {
+		return nil, err
+	}
+
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.PublishProjectResponse{
+		Project: prj,
 	}, nil
 
 }
@@ -398,4 +400,48 @@ func Normalize(data any) map[string]any {
 		}
 	}
 	return nil
+}
+
+func (s server) getScenesAndStorytellings(ctx context.Context, res []*project.Project) ([]*pb.Project, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	var pids []id.ProjectID
+	for _, pj := range res {
+		pids = append(pids, pj.ID())
+	}
+
+	scenes, storytellings, err := uc.Scene.FindByProjectsWithStory(ctx, pids, op)
+	if err != nil {
+		return nil, err
+	}
+
+	projects := make([]*pb.Project, 0, len(res))
+	for _, pj := range res {
+		for _, sc := range scenes {
+			if pj.ID() == sc.Project() {
+				pj.UpdateSceneID(sc.ID())
+				projects = append(projects, internalapimodel.ToInternalProject(ctx, pj, storytellings))
+			}
+		}
+	}
+
+	return projects, nil
+}
+
+func (s server) getSceneAndStorytelling(ctx context.Context, pj *project.Project) (*pb.Project, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	sc, err := uc.Scene.FindByProject(ctx, pj.ID(), op)
+	if err != nil {
+		return nil, err
+	}
+
+	pj.UpdateSceneID(sc.ID())
+
+	sts, err := uc.StoryTelling.FetchByScene(ctx, pj.Scene(), op)
+	if err != nil {
+		return nil, err
+	}
+
+	return internalapimodel.ToInternalProject(ctx, pj, sts), nil
 }

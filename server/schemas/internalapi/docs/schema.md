@@ -16,8 +16,13 @@
     - [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse)
     - [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest)
     - [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse)
+    - [PageInfo](#reearth-visualizer-v1-PageInfo)
+    - [Pagination](#reearth-visualizer-v1-Pagination)
     - [Project](#reearth-visualizer-v1-Project)
     - [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata)
+    - [ProjectSort](#reearth-visualizer-v1-ProjectSort)
+    - [PublishProjectRequest](#reearth-visualizer-v1-PublishProjectRequest)
+    - [PublishProjectResponse](#reearth-visualizer-v1-PublishProjectResponse)
     - [Story](#reearth-visualizer-v1-Story)
     - [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest)
     - [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse)
@@ -27,7 +32,9 @@
     - [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse)
   
     - [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus)
+    - [ProjectSortField](#reearth-visualizer-v1-ProjectSortField)
     - [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus)
+    - [SortDirection](#reearth-visualizer-v1-SortDirection)
     - [Visualizer](#reearth-visualizer-v1-Visualizer)
   
     - [ReEarthVisualizer](#reearth-visualizer-v1-ReEarthVisualizer)
@@ -180,8 +187,11 @@ response. However, deleted items are excluded.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| workspace_id | [string](#string) |  | Workspace ID |
+| workspace_id | [string](#string) | optional | Workspace ID |
 | authenticated | [bool](#bool) |  | Authenticated Flag |
+| keyword | [string](#string) | optional | Keyword search |
+| sort | [ProjectSort](#reearth-visualizer-v1-ProjectSort) | optional | Sort options |
+| pagination | [Pagination](#reearth-visualizer-v1-Pagination) | optional | Pagination info |
 
 
 
@@ -228,6 +238,44 @@ Response messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+| page_info | [PageInfo](#reearth-visualizer-v1-PageInfo) |  | PageInfo |
+| total_count | [int32](#int32) |  | TotalCount |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-PageInfo"></a>
+
+### PageInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| start_cursor | [string](#string) | optional |  |
+| end_cursor | [string](#string) | optional |  |
+| has_next_page | [bool](#bool) |  |  |
+| has_previous_page | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-Pagination"></a>
+
+### Pagination
+Pagination
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| first | [int32](#int32) | optional |  |
+| last | [int32](#int32) | optional |  |
+| after | [string](#string) | optional |  |
+| before | [string](#string) | optional |  |
 
 
 
@@ -285,6 +333,55 @@ Core Project messages
 | import_status | [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus) |  | Project import status — if PROCESSING, data should not be retrieved |
 | created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata created date |
 | updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata updated date |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ProjectSort"></a>
+
+### ProjectSort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [ProjectSortField](#reearth-visualizer-v1-ProjectSortField) |  |  |
+| direction | [SortDirection](#reearth-visualizer-v1-SortDirection) |  |  |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-PublishProjectRequest"></a>
+
+### PublishProjectRequest
+Update project publish fields.
+Only the project owner can operate this
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID (required) |
+| alias | [string](#string) | optional | Scene Publishment alias |
+| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Scene Publishment status |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-PublishProjectResponse"></a>
+
+### PublishProjectResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
 
 
 
@@ -442,6 +539,19 @@ Response messages
 
 
 
+<a name="reearth-visualizer-v1-ProjectSortField"></a>
+
+### ProjectSortField
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PROJECT_SORT_FIELD_UNSPECIFIED | 0 |  |
+| UPDATEDAT | 1 |  |
+| NAME | 2 |  |
+
+
+
 <a name="reearth-visualizer-v1-PublishmentStatus"></a>
 
 ### PublishmentStatus
@@ -453,6 +563,19 @@ Response messages
 | PUBLISHMENT_STATUS_PUBLIC | 1 | The project is published and publicly accessible. |
 | PUBLISHMENT_STATUS_LIMITED | 2 | The project is published with limited access. |
 | PUBLISHMENT_STATUS_PRIVATE | 3 | The project is unpublished (web files have been deleted). |
+
+
+
+<a name="reearth-visualizer-v1-SortDirection"></a>
+
+### SortDirection
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| SORT_DIRECTION_UNSPECIFIED | 0 |  |
+| ASC | 1 |  |
+| DESC | 2 |  |
 
 
 
@@ -486,6 +609,7 @@ Response messages
 | ValidateProjectAlias | [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest) | [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse) | Determines if an alias is valid. Request headers: user-id: &lt;User ID&gt; |
 | CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
 | UpdateProject | [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest) | [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse) | Update a project. Request headers: user-id: &lt;User ID&gt; |
+| PublishProject | [PublishProjectRequest](#reearth-visualizer-v1-PublishProjectRequest) | [PublishProjectResponse](#reearth-visualizer-v1-PublishProjectResponse) | Publish a project. Request headers: user-id: &lt;User ID&gt; |
 | UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified team. Request headers: user-id: &lt;User ID&gt; |
 | DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
 | ExportProject | [ExportProjectRequest](#reearth-visualizer-v1-ExportProjectRequest) | [ExportProjectResponse](#reearth-visualizer-v1-ExportProjectResponse) | Export a project. Request headers: user-id: &lt;User ID&gt; |

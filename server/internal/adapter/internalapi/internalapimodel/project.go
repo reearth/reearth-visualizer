@@ -8,9 +8,82 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
+
+const (
+	ProjectSortField_PROJECT_SORT_FIELD_UNSPECIFIED = "id"
+	ProjectSortField_UPDATEDAT                      = "updatedat"
+	ProjectSortField_NAME                           = "name"
+)
+
+func ToProjectSortType(sort *pb.ProjectSort) *project.SortType {
+	if sort == nil {
+		return nil
+	}
+
+	var key string
+	switch sort.Field {
+	case pb.ProjectSortField_PROJECT_SORT_FIELD_UNSPECIFIED:
+		key = ProjectSortField_PROJECT_SORT_FIELD_UNSPECIFIED
+	case pb.ProjectSortField_UPDATEDAT:
+		key = ProjectSortField_UPDATEDAT
+	case pb.ProjectSortField_NAME:
+		key = ProjectSortField_NAME
+	default:
+		key = ProjectSortField_UPDATEDAT
+	}
+
+	var desc bool
+	switch sort.Direction {
+	case pb.SortDirection_SORT_DIRECTION_UNSPECIFIED:
+		desc = true
+	case pb.SortDirection_ASC:
+		desc = false
+	case pb.SortDirection_DESC:
+		desc = true
+	default:
+		desc = true
+	}
+
+	return &project.SortType{
+		Key:  key,
+		Desc: desc,
+	}
+}
+
+func ToProjectPagination(pagination *pb.Pagination) *usecasex.Pagination {
+	if pagination == nil {
+		return nil
+	}
+
+	return usecasex.CursorPagination{
+		Before: usecasex.CursorFromRef(pagination.Before),
+		After:  usecasex.CursorFromRef(pagination.After),
+		First:  int32ToInt64(pagination.First),
+		Last:   int32ToInt64(pagination.Last),
+	}.Wrap()
+}
+
+func int32ToInt64(i *int32) *int64 {
+	if i == nil {
+		return nil
+	}
+	return lo.ToPtr(int64(*i))
+}
+
+func ToProjectPageInfo(info *usecasex.PageInfo) *pb.PageInfo {
+	return &pb.PageInfo{
+		TotalCount:      info.TotalCount,
+		StartCursor:     info.EndCursor.StringRef(),
+		EndCursor:       info.EndCursor.StringRef(),
+		HasNextPage:     info.HasNextPage,
+		HasPreviousPage: info.HasPreviousPage,
+	}
+}
 
 func ToInternalProject(ctx context.Context, p *project.Project, storytellings *storytelling.StoryList) *pb.Project {
 	if p == nil {
