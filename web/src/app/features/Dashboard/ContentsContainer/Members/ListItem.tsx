@@ -131,6 +131,6 @@ const UserWrapper = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.small}px`
 }));
 
-const TypographyOfMember = styled(Typography)(() => ({
+const TypographyOfMember = styled(Typography)({
   textTransform: "capitalize"
-}));
+});

@@ -89,14 +89,14 @@ const RecycleBinItem: FC<Prop> = ({
 
 export default RecycleBinItem;
 
-const Card = styled("div")(() => ({
+const Card = styled("div")({
   display: "flex",
   flexDirection: "column",
   height: "220px",
   "@media (max-width: 567px)": {
     height: "171px"
   }
-}));
+});
 
 const CardImage = styled("div")<{
   backgroundImage?: string | null;
