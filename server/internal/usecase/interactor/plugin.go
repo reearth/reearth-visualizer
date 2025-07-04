@@ -22,11 +22,14 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/usecasex"
 )
 
 type Plugin struct {
 	common
+	workspaceRepo      accountrepo.Workspace
+	policyRepo         repo.Policy
 	sceneRepo          repo.Scene
 	pluginRepo         repo.Plugin
 	propertySchemaRepo repo.PropertySchema
@@ -38,6 +41,8 @@ type Plugin struct {
 
 func NewPlugin(r *repo.Container, gr *gateway.Container) interfaces.Plugin {
 	return &Plugin{
+		workspaceRepo:      r.Workspace,
+		policyRepo:         r.Policy,
 		sceneRepo:          r.Scene,
 		pluginRepo:         r.Plugin,
 		propertySchemaRepo: r.PropertySchema,

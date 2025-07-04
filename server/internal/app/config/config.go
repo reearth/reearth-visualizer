@@ -77,6 +77,8 @@ type Config struct {
 	HealthCheck HealthCheckConfig `pp:",omitempty"`
 
 	Visualizer VisualizerConfig `pp:",omitempty"`
+
+	Dashboard DashboardConfig `pp:",omitempty"`
 }
 
 type HealthCheckConfig struct {
@@ -92,6 +94,10 @@ type InternalApiConfig struct {
 	Active bool   `default:"false" pp:",omitempty"`
 	Port   string `default:"50051" pp:",omitempty"`
 	Token  string `default:"" pp:",omitempty"`
+}
+
+type DashboardConfig struct {
+	Api string `pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
