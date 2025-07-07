@@ -31,7 +31,7 @@ This project is a Playwright framework setup that follows the Page Object Design
 1. **Clone the repository:**
 
    ```
-   cd reearth-visualizer/web/e2e
+   cd e2e
    ```
 
 2. **Install dependencies:**
