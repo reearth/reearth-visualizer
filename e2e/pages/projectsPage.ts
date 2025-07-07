@@ -1,5 +1,3 @@
-import path from "path";
-
 import { Locator, Page, expect } from "@playwright/test";
 
 export class ProjectsPage {

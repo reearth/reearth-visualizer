@@ -25,7 +25,7 @@ jobs:
       BASE_URL: ${{ inputs.url || secrets.REEARTH_WEB_E2E_BASEURL }}
     defaults:
       run:
-        working-directory: web/e2e
+        working-directory: e2e
 
     steps:
       - name: Checkout code

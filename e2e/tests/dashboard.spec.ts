@@ -46,7 +46,7 @@ test.describe("DASHBOARD - Test cases", () => {
     projectScreenPage = new ProjectScreenPage(page);
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
   });
-
+  // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
     const videoPath = await page.video()?.path();
     if (videoPath) {
@@ -61,7 +61,8 @@ test.describe("DASHBOARD - Test cases", () => {
     await context.close();
   });
 
-  test("Login with valid credentials", async ({ page }) => {
+  // eslint-disable-next-line no-empty-pattern
+  test("Login with valid credentials", async ({}) => {
     await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
@@ -183,8 +184,6 @@ test.describe("DASHBOARD - Test cases", () => {
     let loginPage: LoginPage;
     let dashBoardPage: DashBoardPage;
     let projectsPage: ProjectsPage;
-    let recycleBinPage: RecycleBinPage;
-    let projectScreenPage: ProjectScreenPage;
     test.beforeAll(async ({ browser }) => {
       test.setTimeout(20000);
       context = await browser.newContext({
@@ -197,11 +196,10 @@ test.describe("DASHBOARD - Test cases", () => {
       loginPage = new LoginPage(page);
       dashBoardPage = new DashBoardPage(page);
       projectsPage = new ProjectsPage(page);
-      recycleBinPage = new RecycleBinPage(page);
-      projectScreenPage = new ProjectScreenPage(page);
       await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
     });
 
+    // eslint-disable-next-line no-empty-pattern
     test.afterEach(async ({}, testInfo) => {
       const videoPath = await page.video()?.path();
       if (videoPath) {
@@ -215,7 +213,8 @@ test.describe("DASHBOARD - Test cases", () => {
     test.afterAll(async () => {
       await context.close();
     });
-    test("Login with valid credentials", async ({ page }) => {
+    // eslint-disable-next-line no-empty-pattern
+    test("Login with valid credentials", async ({}) => {
       await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
       await expect(dashBoardPage.projects).toBeVisible();
       await expect(dashBoardPage.recycleBin).toBeVisible();
