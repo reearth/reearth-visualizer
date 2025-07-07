@@ -31,7 +31,7 @@ test.describe("Login Page Tests", () => {
     dashBoardPage = new DashBoardPage(page);
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
   });
-
+  // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
     const videoPath = await page.video()?.path();
     if (videoPath) {

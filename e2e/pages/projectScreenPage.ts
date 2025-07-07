@@ -1,4 +1,4 @@
-import { FrameLocator, Locator, Page, expect } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 
 export class ProjectScreenPage {
   constructor(private page: Page) {}
