@@ -52,8 +52,8 @@ export default function ({ sceneId }: Props) {
   );
 
   const handleStoryPageDuplicate = useCallback(async (pageId: string) => {
-    console.log("onPageDuplicate", pageId);
-    alert("not implemented");
+    // TODO: Implement page duplication functionality
+    console.warn("Story page duplication not yet implemented for page:", pageId);
   }, []);
 
   const handleStoryPageDelete = useCallback(

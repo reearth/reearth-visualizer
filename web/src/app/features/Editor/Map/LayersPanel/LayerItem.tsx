@@ -50,17 +50,33 @@ const LayerItem: FC<LayerItemProps> = ({
   const [showDeleteLayerConfirmModal, setShowDeleteLayerConfirmModal] =
     useState(false);
 
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   const handleZoomToLayer = useCallback(() => {
     handleFlyTo?.(layer.id, { duration: 0 });
     // issue: https://github.com/CesiumGS/cesium/issues/4327
     // delay 800ms to trigger a second flyTo,
     // time could be related with internet speed, not a stable solution
     if (["geojson", "kml"].includes(layer.config?.data?.type)) {
-      setTimeout(() => {
+      // Clear any existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
         handleFlyTo?.(layer.id, { duration: 0 });
+        timeoutRef.current = null;
       }, 800);
     }
   }, [layer, handleFlyTo]);
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   const handleToggleLayerVisibility = useCallback(() => {
     handleLayerVisibilityUpdate({ layerId: layer.id, visible: !layer.visible });
