@@ -614,6 +614,8 @@ Successfully archive project!: プロジェクトのアーカイブに成功し�
 Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
 Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
+Failed to update project metadata.: プロジェクトのメタデータの更新に失敗しました。
+Successfully updated project metadata!: プロジェクトのメタデータを正常に更新しました！
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
 Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。

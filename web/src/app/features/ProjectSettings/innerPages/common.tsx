@@ -142,14 +142,14 @@ const CommonLayoutWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
   gap: theme.spacing.largest,
   width: "100%",
-  padding: theme.spacing.large,
+  padding: theme.spacing.large
 }));
 
-const TabContainer = styled("div")(({theme}) => ({
+const TabContainer = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  gap: theme.spacing.small,
+  gap: theme.spacing.small
 }));
 
 const TabGroup = styled("div")(({ theme }) => ({
@@ -173,14 +173,26 @@ const Tab = styled("div")<{ active?: boolean }>(({ active, theme }) => ({
 }));
 
 export const PreviewWrapper = styled("div")(({ theme }) => ({
-  padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
+  padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  "@media (prefers-color-scheme: dark)": {
+    backgroundColor: "transparent",
+    color: "inherit"
+  },
+
+  "& ul": {
+    listStyleType: "initial"
+  },
+
+  "& ol": {
+    listStyleType: "decimal"
+  }
 }));
 
-const ContentArea = styled("div")(({theme}) => ({
+const ContentArea = styled("div")(({ theme }) => ({
   border: `1px solid ${theme.outline.weak}`,
-  borderRadius: theme.radius.small ,
+  borderRadius: theme.radius.small,
   minHeight: 500,
-  boxShadow: theme.shadow.input,
+  boxShadow: theme.shadow.input
 }));
 
 type CommonLayoutProps = {
@@ -203,9 +215,9 @@ const CommonLayout: FC<CommonLayoutProps> = ({
   return (
     <InnerPage wide>
       <CommonLayoutWrapper>
-          <TitleWrapper size="body" weight="bold">
-            {title}
-          </TitleWrapper>
+        <TitleWrapper size="body" weight="bold">
+          {title}
+        </TitleWrapper>
 
         <TabContainer>
           <TabGroup>

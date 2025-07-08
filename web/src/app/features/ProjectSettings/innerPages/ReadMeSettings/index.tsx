@@ -1,30 +1,38 @@
+import { Project } from "@reearth/app/features/Dashboard/type";
 import { Button, TextArea } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import { useState } from "react";
+import { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 import CommonLayout, { PreviewWrapper } from "../common";
 
-const ReadMeSettings = () => {
-  const [activeTab, setActiveTab] = useState("edit");
-  const [content, setContent] = useState(`# test project
----
+type Props = {
+  project?: Project;
+  onUpdateProjectMetadata?: (metadata: { readme?: string }) => void;
+};
 
-## Feature
----
+const DEFAULT_README = `# Test project
+
+## Features
 
 ## Data Sources
----
 
-## Plugins
----`);
+## plugins
+`;
+
+const ReadMeSettings: FC<Props> = ({ project, onUpdateProjectMetadata }) => {
+  const t = useT();
+
+  const [activeTab, setActiveTab] = useState("edit");
+  const [content, setContent] = useState(
+    project?.metadata?.readme || DEFAULT_README
+  );
 
   const tabs = [
-    { id: "edit", label: "Edit" },
-    { id: "preview", label: "Preview" }
+    { id: "edit", label: t("Edit") },
+    { id: "preview", label: t("Preview") }
   ];
-
-  const t = useT();
 
   return (
     <CommonLayout
@@ -32,7 +40,17 @@ const ReadMeSettings = () => {
       activeTab={activeTab}
       tabs={tabs}
       onTabChange={setActiveTab}
-      actions={<Button appearance="primary" title={t("Save README")} />}
+      actions={
+        <Button
+          appearance="primary"
+          title={t("Save README")}
+          onClick={() => onUpdateProjectMetadata?.({ readme: content })}
+          disabled={
+            content.trim() ===
+            (project?.metadata?.readme || DEFAULT_README).trim()
+          }
+        />
+      }
     >
       {activeTab === "edit" ? (
         <TextArea
@@ -42,8 +60,8 @@ const ReadMeSettings = () => {
           onChange={setContent}
         />
       ) : (
-        <PreviewWrapper>
-          <ReactMarkdown>{content}</ReactMarkdown>
+        <PreviewWrapper className="markdown-body">
+          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
         </PreviewWrapper>
       )}
     </CommonLayout>

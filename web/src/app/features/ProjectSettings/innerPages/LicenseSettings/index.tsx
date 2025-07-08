@@ -1,20 +1,25 @@
+import { Project } from "@reearth/app/features/Dashboard/type";
 import { Button, TextArea } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
 import CommonLayout, { PreviewWrapper } from "../common";
 
-const LicenseSettings = () => {
+type Props = {
+  project?: Project;
+  onUpdateProjectMetadata?: (metadata: { license?: string }) => void;
+};
+
+const LicenseSettings: FC<Props> = ({ project, onUpdateProjectMetadata }) => {
   const [activeTab, setActiveTab] = useState("edit");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(project?.metadata?.license || "");
+  const t = useT();
 
   const tabs = [
     { id: "edit", label: "Edit" },
     { id: "preview", label: "Preview" }
   ];
-
-  const t = useT();
 
   return (
     <CommonLayout
@@ -25,7 +30,14 @@ const LicenseSettings = () => {
       actions={
         <>
           <Button appearance="primary" title={t("Choose a template")} />
-          <Button appearance="primary" title={t("Save License")} />
+          <Button
+            appearance="primary"
+            title={t("Save License")}
+            onClick={() => onUpdateProjectMetadata?.({ license: content })}
+            disabled={
+              content.trim() === project?.metadata?.license?.trim() || false
+            }
+          />
         </>
       }
     >
@@ -38,7 +50,7 @@ const LicenseSettings = () => {
           placeholder={t("Write down your license")}
         />
       ) : (
-        <PreviewWrapper>
+        <PreviewWrapper className="markdown-body">
           <ReactMarkdown>{content}</ReactMarkdown>
         </PreviewWrapper>
       )}

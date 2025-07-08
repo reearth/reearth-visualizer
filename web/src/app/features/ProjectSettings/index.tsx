@@ -62,7 +62,8 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
     handleUpdateStory,
-    handleUpdateStoryAlias
+    handleUpdateStoryAlias,
+    handleUpdateProjectMetadata
   } = useHooks({
     projectId,
     subId,
@@ -181,8 +182,20 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
               disabled={disabled}
             />
           )}
-          {tab === "readme" && project && <ReadMeSettings />}
-          {tab === "license" && project && <LicenseSettings />}
+          {tab === "readme" && project && (
+            <ReadMeSettings
+              data-testid="project-settings-readme"
+              project={project}
+              onUpdateProjectMetadata={handleUpdateProjectMetadata}
+            />
+          )}
+          {tab === "license" && project && (
+            <LicenseSettings
+              data-testid="project-settings-license"
+              project={project}
+              onUpdateProjectMetadata={handleUpdateProjectMetadata}
+            />
+          )}
           {tab === "story" && currentStory && (
             <StorySettings
               data-testid="project-settings-story"
