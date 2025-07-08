@@ -179,6 +179,8 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 		return nil, echo.NewHTTPError(http.StatusInternalServerError, "Failed to update upload session")
 	}
 
+	currentHost := adapter.CurrentHost(ctx)
+
 	if completed {
 		// Import process, this process will take some time
 		go func(session *UploadSession) {
@@ -209,7 +211,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 			}
 			defer closeWithError(f, &err)
 
-			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(adapter.CurrentHost(bgctx), f)
+			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(currentHost, f)
 			if err != nil {
 				log.Printf("fail UncompressExportZip: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)

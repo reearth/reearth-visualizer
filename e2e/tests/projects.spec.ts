@@ -1,5 +1,3 @@
-import path from "path";
-
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
@@ -41,7 +39,7 @@ test.describe("Project Management", () => {
 
     await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
   });
-
+  // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
     const videoPath = await page.video()?.path();
     if (videoPath) {
@@ -56,7 +54,8 @@ test.describe("Project Management", () => {
     await context.close();
   });
 
-  test("Login with valid credentials", async ({ page }) => {
+  // eslint-disable-next-line no-empty-pattern
+  test("Login with valid credentials", async ({}) => {
     await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();

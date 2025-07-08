@@ -48,8 +48,7 @@ export const convertToStyleNodes = (
 };
 
 export const checkExpressionAndConditions = (
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  v: any
+  v: unknown
 ): StyleValueType => {
   if (
     typeof v === "string" ||
@@ -61,6 +60,7 @@ export const checkExpressionAndConditions = (
 
   if (
     typeof v === "object" &&
+    v !== null &&
     "expression" in v &&
     typeof v.expression === "string"
   ) {
@@ -69,8 +69,10 @@ export const checkExpressionAndConditions = (
 
   if (
     typeof v === "object" &&
+    v !== null &&
     "expression" in v &&
     typeof v.expression === "object" &&
+    v.expression !== null &&
     "conditions" in v.expression
   ) {
     return "conditions";
@@ -78,18 +80,21 @@ export const checkExpressionAndConditions = (
 
   // only check one level deep
   let hasDeepExpression = false;
-  if (typeof v === "object" && !("expression" in v)) {
-    for (const key in v) {
+  if (typeof v === "object" && v !== null && !("expression" in v)) {
+    const obj = v as Record<string, unknown>;
+    for (const key in obj) {
+      const value = obj[key];
       if (
-        typeof v[key] === "object" &&
-        v[key] !== null &&
-        "expression" in v[key]
+        typeof value === "object" &&
+        value !== null &&
+        "expression" in value
       ) {
         hasDeepExpression = true;
+        const valueWithExpression = value as { expression: unknown };
         if (
-          typeof v[key].expression === "object" &&
-          v[key].expression !== null &&
-          "conditions" in v[key].expression
+          typeof valueWithExpression.expression === "object" &&
+          valueWithExpression.expression !== null &&
+          "conditions" in valueWithExpression.expression
         ) {
           return "deepConditions";
         }

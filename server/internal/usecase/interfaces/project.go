@@ -6,6 +6,8 @@ import (
 	"errors"
 	"net/url"
 
+	"github.com/reearth/reearthx/account/accountdomain/user"
+
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
@@ -85,7 +87,8 @@ type Project interface {
 
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
-	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator) ([]*project.Project, error)
+	FindVisibilityByUser(context.Context, *user.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
+	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
 
 	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)

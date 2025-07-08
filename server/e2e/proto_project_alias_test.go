@@ -7,16 +7,13 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
-
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI_alias ./e2e/...
 
 func TestInternalAPI_alias(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 
-	// create public Project
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		//-------------------------------------
@@ -141,6 +138,48 @@ func TestInternalAPI_alias(t *testing.T) {
 		})
 		require.Nil(t, err)
 		require.Equal(t, forbiddenRes.Available, false)
+
+	})
+}
+
+// export REEARTH_DB=mongodb://localhost
+// go test -v -run TestInternalAPI_publish ./e2e/...
+
+func TestInternalAPI_publish(t *testing.T) {
+	GRPCServer(t, baseSeeder)
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		// create public Project
+		res1, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId: wID.String(),
+			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+			Name:        lo.ToPtr("Test Project1"),
+			Description: lo.ToPtr("Test Description1"),
+			CoreSupport: lo.ToPtr(true),
+			Visibility:  lo.ToPtr("public"),
+		})
+		require.Nil(t, err)
+
+		pj1 := res1.GetProject()
+
+		res2, err := client.PublishProject(ctx, &pb.PublishProjectRequest{
+			ProjectId:         pj1.Id,
+			Alias:             nil,
+			PublishmentStatus: pb.PublishmentStatus_PUBLISHMENT_STATUS_PUBLIC,
+		})
+		require.Nil(t, err)
+		assert.Equal(t, pb.PublishmentStatus_PUBLISHMENT_STATUS_UNSPECIFIED, res2.Project.PublishmentStatus)
+
+		testAlias := "xxxxxxxxx"
+
+		res3, err := client.PublishProject(ctx, &pb.PublishProjectRequest{
+			ProjectId:         pj1.Id,
+			Alias:             &testAlias,
+			PublishmentStatus: pb.PublishmentStatus_PUBLISHMENT_STATUS_PUBLIC,
+		})
+		require.Nil(t, err)
+		assert.Equal(t, testAlias, res3.Project.Alias)
 
 	})
 }

@@ -33,14 +33,14 @@ export type FeatureProps = {
   layerId: string;
   type: string;
   geometry?: Geometry;
-  properties?: any;
+  properties?: Record<string, unknown>;
 };
 
 export type GeoJsonFeatureUpdateProps = {
   featureId: string;
   geometry: Geometry | undefined;
   layerId: string;
-  properties?: any;
+  properties?: Record<string, unknown>;
 };
 
 export type GeoJsonFeatureDeleteProps = {
@@ -143,7 +143,7 @@ export default ({
     }
     // Workaround: we can't get an notice from core after nlsLayers got updated.
     // Therefore we need to get and select the latest sketch feature manually delayed.
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       if (pendingSketchSelectionRef.current) {
         const { layerId, featureId } = pendingSketchSelectionRef.current;
         visualizerRef?.current?.layers.selectFeature(layerId, featureId);
@@ -151,6 +151,8 @@ export default ({
         ignoreCoreLayerUnselect.current = false;
       }
     }, 100);
+
+    return () => clearTimeout(timeoutId);
   }, [
     nlsLayers,
     pendingSketchSelectionRef,
@@ -173,7 +175,7 @@ export default ({
 
       pendingSketchSelectionRef.current = {
         layerId: inp.layerId,
-        featureId: inp.properties?.id
+        featureId: inp.properties?.id as string
       };
     },
     [useUpdateGeoJSONFeature]
