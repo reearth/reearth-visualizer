@@ -102,12 +102,15 @@ export default ({
   const [tempDisableTerrain, setTempDisableTerrain] = useState(true);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       setTempDisableTerrain(false);
     }, 0);
+    
+    return () => clearTimeout(timeoutId);
   }, []);
 
   const prevFOV = useRef<number | undefined>(undefined);
+  const fovTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const { viewerProperty, cesiumIonAccessToken } = useMemo(() => {
     const sceneProperty = processProperty(scene?.property);
@@ -126,13 +129,19 @@ export default ({
       setInitialCamera(initialCamera);
     }
 
-    setTimeout(() => {
+    // Clear previous timeout
+    if (fovTimeoutRef.current) {
+      clearTimeout(fovTimeoutRef.current);
+    }
+
+    fovTimeoutRef.current = setTimeout(() => {
       if (initialCamera?.fov && initialCamera.fov !== prevFOV.current) {
         prevFOV.current = initialCamera.fov;
         setCurrentCamera((c) =>
           !c ? undefined : { ...c, fov: initialCamera.fov }
         );
       }
+      fovTimeoutRef.current = null;
     }, 0);
 
     const viewerProperty = sceneProperty
@@ -156,6 +165,15 @@ export default ({
       cesiumIonAccessToken
     };
   }, [scene?.property, tempDisableTerrain, setCurrentCamera]);
+
+  // Cleanup fovTimeoutRef on unmount
+  useEffect(() => {
+    return () => {
+      if (fovTimeoutRef.current) {
+        clearTimeout(fovTimeoutRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isInitialized.current) return;
@@ -252,7 +270,7 @@ export default ({
   // Plugin
   const pluginProperty = useMemo(
     () =>
-      scene?.plugins.reduce<Record<string, any>>((a, b) => {
+      scene?.plugins.reduce<Record<string, unknown>>((a, b) => {
         a[b.pluginId] = processProperty(b.property);
         return a;
       }, {}),
@@ -339,8 +357,8 @@ export default ({
       schemaItemId?: string,
       fieldId?: string,
       itemId?: string,
-      vt?: any,
-      v?: any
+      vt?: unknown,
+      v?: unknown
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
       await useUpdatePropertyValue(
@@ -349,8 +367,8 @@ export default ({
         itemId,
         fieldId,
         "en",
-        v,
-        vt
+        v as string | number | boolean | unknown[] | undefined,
+        vt as keyof import("@reearth/core").ValueTypes
       );
     },
     [useUpdatePropertyValue]

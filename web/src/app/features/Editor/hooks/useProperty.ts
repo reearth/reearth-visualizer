@@ -9,8 +9,8 @@ export default () => {
       schemaItemId?: string,
       fieldId?: string,
       itemId?: string,
-      vt?: any,
-      v?: any
+      vt?: unknown,
+      v?: unknown
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
       await useUpdatePropertyValue(
@@ -19,8 +19,8 @@ export default () => {
         itemId,
         fieldId,
         "en",
-        v,
-        vt
+        v as string | number | boolean | unknown[] | undefined,
+        vt as keyof import("@reearth/core").ValueTypes
       );
     },
     [useUpdatePropertyValue]
