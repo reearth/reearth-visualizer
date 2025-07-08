@@ -385,13 +385,19 @@ Plugin link copied to clipboard: プラグインのリンクがクリップボ�
 Show Story Panel: ストーリーパネルを表示
 UI Language: UI言語
 General: 一般
+README: 読み取り専用
+License: ライセンス
 Public: 公開
+Preview: プレビュー
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
+Choose a template: テンプレートを選択
+Save License: ライセンスを保存
+Write down your license: ライセンスを書き込む
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -432,6 +438,7 @@ Username: ユーザー名
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
+Save README: READMEを保存
 Left: 左
 Right: 右
 Story Panel settings: ストーリーパネル設定
@@ -468,9 +475,9 @@ Please make sure you don't have any projects in the workspace before continuing.
 Workspace: ワークスペース
 Workspace Name: ワークスペース名
 This process will delete this workspace: この操作により、このワークスペースが削除されます
+Account settings: アカウント設定
 Workspace settings: ワークスペース設定
 New workspace: ワークスペース作成
-Account settings: アカウント設定
 Write your story :): ストーリーを書く :)
 Normal: 通常
 Heading 1: 見出し1
@@ -583,7 +590,7 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Successfully checked alias!: ''
+Successfully checked alias!: エイリアスを正常に確認しました！
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
@@ -609,7 +616,7 @@ Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to upload chunk 0.: ''
+Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
 Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
