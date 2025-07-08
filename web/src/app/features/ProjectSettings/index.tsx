@@ -185,14 +185,14 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
           {tab === "readme" && project && (
             <ReadMeSettings
               data-testid="project-settings-readme"
-              project={project}
+              projectMetadata={project.metadata}
               onUpdateProjectMetadata={handleUpdateProjectMetadata}
             />
           )}
           {tab === "license" && project && (
             <LicenseSettings
               data-testid="project-settings-license"
-              project={project}
+              projectMetadata={project.metadata}
               onUpdateProjectMetadata={handleUpdateProjectMetadata}
             />
           )}

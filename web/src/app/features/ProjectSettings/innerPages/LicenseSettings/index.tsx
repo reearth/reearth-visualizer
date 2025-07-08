@@ -1,19 +1,22 @@
-import { Project } from "@reearth/app/features/Dashboard/type";
 import { Button, TextArea } from "@reearth/app/lib/reearth-ui";
+import { ProjectMetadata } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
 import CommonLayout, { PreviewWrapper } from "../common";
 
 type Props = {
-  project?: Project;
+  projectMetadata?: ProjectMetadata | null;
   onUpdateProjectMetadata?: (metadata: { license?: string }) => void;
 };
 
-const LicenseSettings: FC<Props> = ({ project, onUpdateProjectMetadata }) => {
+const LicenseSettings: FC<Props> = ({
+  projectMetadata,
+  onUpdateProjectMetadata
+}) => {
   const [activeTab, setActiveTab] = useState("edit");
-  const [content, setContent] = useState(project?.metadata?.license || "");
+  const [content, setContent] = useState(projectMetadata?.license || "");
   const t = useT();
 
   const tabs = [
@@ -35,7 +38,7 @@ const LicenseSettings: FC<Props> = ({ project, onUpdateProjectMetadata }) => {
             title={t("Save License")}
             onClick={() => onUpdateProjectMetadata?.({ license: content })}
             disabled={
-              content.trim() === project?.metadata?.license?.trim() || false
+              content.trim() === projectMetadata?.license?.trim() || false
             }
           />
         </>

@@ -1,5 +1,5 @@
-import { Project } from "@reearth/app/features/Dashboard/type";
 import { Button, TextArea } from "@reearth/app/lib/reearth-ui";
+import { ProjectMetadata } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -8,7 +8,7 @@ import remarkGfm from "remark-gfm";
 import CommonLayout, { PreviewWrapper } from "../common";
 
 type Props = {
-  project?: Project;
+  projectMetadata?: ProjectMetadata | null;
   onUpdateProjectMetadata?: (metadata: { readme?: string }) => void;
 };
 
@@ -21,12 +21,12 @@ const DEFAULT_README = `# Test project
 ## plugins
 `;
 
-const ReadMeSettings: FC<Props> = ({ project, onUpdateProjectMetadata }) => {
+const ReadMeSettings: FC<Props> = ({ projectMetadata, onUpdateProjectMetadata }) => {
   const t = useT();
 
   const [activeTab, setActiveTab] = useState("edit");
   const [content, setContent] = useState(
-    project?.metadata?.readme || DEFAULT_README
+    projectMetadata?.readme || DEFAULT_README
   );
 
   const tabs = [
@@ -46,8 +46,7 @@ const ReadMeSettings: FC<Props> = ({ project, onUpdateProjectMetadata }) => {
           title={t("Save README")}
           onClick={() => onUpdateProjectMetadata?.({ readme: content })}
           disabled={
-            content.trim() ===
-            (project?.metadata?.readme || DEFAULT_README).trim()
+            content.trim() === (projectMetadata?.readme || DEFAULT_README).trim()
           }
         />
       }
