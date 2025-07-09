@@ -57,6 +57,7 @@ export type Config = {
   devPluginUrls?: string[];
   platformUrl?: string;
   saasMode?: boolean;
+  saasPlatformUrl?: string;
 } & AuthInfo;
 
 declare global {
@@ -70,8 +71,6 @@ declare global {
   }
 }
 
-const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
-
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
@@ -79,11 +78,6 @@ export default async function loadConfig() {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json())
   };
-
-  const cesiumIonToken = await loadCesiumIonToken();
-  if (cesiumIonToken) {
-    config.cesiumIonAccessToken = cesiumIonToken;
-  }
 
   const authInfo = getAuthInfo(config);
   if (authInfo?.cognito && authInfo.authProvider === "cognito") {
@@ -108,18 +102,6 @@ export default async function loadConfig() {
   }
 
   window.REEARTH_CONFIG = config;
-}
-
-async function loadCesiumIonToken(): Promise<string> {
-  // updating config JSON by CI/CD sometimes can break the config file, so separate files
-  try {
-    const res = await fetch("/cesium_ion_token.txt");
-    const token = (await res.text()).trim();
-    return token.length === DEFAULT_CESIUM_ION_TOKEN_LENGTH ? token : "";
-  } catch (_e) {
-    // ignore
-    return "";
-  }
 }
 
 export function config(): Config | undefined {
