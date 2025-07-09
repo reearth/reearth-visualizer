@@ -221,11 +221,11 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 
 	wList := accountdomain.WorkspaceIDList{aid}
 
-	var owingWsList accountdomain.WorkspaceIDList
+	var owningWsLis accountdomain.WorkspaceIDList
 	if operator != nil {
-		owingWsList = operator.AcOperator.OwningWorkspaces
+		owningWsLis = operator.AcOperator.OwningWorkspaces
 	}
-	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, owingWsList, wList)
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, owningWsLis, wList)
 	if err != nil {
 		return nil, nil, err
 	}
