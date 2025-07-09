@@ -22,9 +22,6 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@reearth/e2e/*": [
-        "e2e/*"
-      ],
       "@reearth/*": [
         "src/*"
       ],

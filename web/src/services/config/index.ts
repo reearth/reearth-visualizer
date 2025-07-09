@@ -1,5 +1,4 @@
-import { type Viewer } from "cesium";
-
+import { loadAppFeatureConfig } from "./appFeatureConfig";
 import { type AuthInfo, getAuthInfo } from "./authInfo";
 import { configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
@@ -55,9 +54,8 @@ export type Config = {
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
   multiTenant?: Record<string, AuthInfo>;
   devPluginUrls?: string[];
+  featureCollection?: string;
   platformUrl?: string;
-  saasMode?: boolean;
-  saasPlatformUrl?: string;
 } & AuthInfo;
 
 declare global {
@@ -65,8 +63,6 @@ declare global {
   let __REEARTH_COMMIT_HASH__: string;
   interface Window {
     REEARTH_CONFIG?: Config;
-    REEARTH_E2E_ACCESS_TOKEN?: string;
-    REEARTH_E2E_CESIUM_VIEWER?: any;
     REEARTH_COMMIT_HASH?: string;
   }
 }
@@ -102,20 +98,10 @@ export default async function loadConfig() {
   }
 
   window.REEARTH_CONFIG = config;
+
+  loadAppFeatureConfig();
 }
 
 export function config(): Config | undefined {
   return window.REEARTH_CONFIG;
-}
-
-export function e2eAccessToken(): string | undefined {
-  return window.REEARTH_E2E_ACCESS_TOKEN;
-}
-
-export function setE2ECesiumViewer(viewer: Viewer | undefined) {
-  if (viewer) {
-    window.REEARTH_E2E_CESIUM_VIEWER = viewer;
-  } else {
-    delete window.REEARTH_E2E_CESIUM_VIEWER;
-  }
 }
