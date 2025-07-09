@@ -41,15 +41,15 @@ func TestDefaultAlias(t *testing.T) {
 		node := edge.Object().Value("node").Object()
 		id := node.Value("id").Raw().(string)
 		if id == projectId {
-			node.Value("alias").IsEqual("c-" + sceneId)
+			node.Value("alias").IsEqual("c-" + sceneId) // sceneId
 		}
 	}
 	r := getScene(e, sceneId, language.English.String())
-	r.Object().Value("alias").IsEqual("c-" + storyId)
+	r.Object().Value("alias").IsEqual("c-" + sceneId) // sceneId
 
 	// Story alias
 	r = r.Path("$.stories[0]")
-	r.Object().Value("alias").IsEqual("s-" + storyId)
+	r.Object().Value("alias").IsEqual("s-" + storyId) // storyId
 
 }
 
