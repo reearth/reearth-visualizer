@@ -1,5 +1,4 @@
 import { useAuth } from "@reearth/services/auth";
-import { e2eAccessToken } from "@reearth/services/config";
 import axios, { AxiosInstance } from "axios";
 import { createContext, FC, ReactNode, useContext, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
@@ -26,7 +25,7 @@ export const RestfulProvider: FC<{ children?: ReactNode }> = ({ children }) => {
 
     instance.interceptors.request.use(
       async (config) => {
-        const token = e2eAccessToken() || (await getAccessToken());
+        const token = await getAccessToken();
         if (token && config.headers) {
           config.headers["Authorization"] = `Bearer ${token}`;
         }
