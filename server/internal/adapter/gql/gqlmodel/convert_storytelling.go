@@ -9,17 +9,20 @@ func ToStory(s *storytelling.Story) *Story {
 	if s == nil {
 		return nil
 	}
+
 	return &Story{
 		ID:            IDFrom(s.Id()),
+		ProjectID:     IDFrom(s.Project()),
+		SceneID:       IDFrom(s.Scene()),
 		Title:         s.Title(),
-		PropertyID:    IDFrom(s.Property()),
-		Property:      nil,
-		Pages:         ToPages(s.Pages()),
+		BgColor:       ToStoryBgColor(s.BgColor()),
+		PanelPosition: ToStoryPosition(s.PanelPosition()),
 		CreatedAt:     s.Id().Timestamp(),
 		UpdatedAt:     s.UpdatedAt(),
-		SceneID:       IDFrom(s.Scene()),
-		PanelPosition: ToStoryPosition(s.PanelPosition()),
-		BgColor:       ToStoryBgColor(s.BgColor()),
+
+		PropertyID: IDFrom(s.Property()),
+		Property:   nil,
+		Pages:      ToPages(s.Pages()),
 
 		// publishment
 		Alias:             s.Alias(),

@@ -8,7 +8,50 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"golang.org/x/text/language"
 )
+
+// go test -v -run TestDefaultAlias ./e2e/...
+
+func TestDefaultAlias(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	projectId, sceneId, storyId := createProjectSet(e)
+
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
+		Variables: map[string]any{
+			"teamId": wID.String(),
+			"pagination": map[string]any{
+				"first": 16,
+			},
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC",
+			},
+		},
+	}
+
+	edges := Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+
+	// Project/Scene alias
+	for _, edge := range edges.Iter() {
+		node := edge.Object().Value("node").Object()
+		id := node.Value("id").Raw().(string)
+		if id == projectId {
+			node.Value("alias").IsEqual("c-" + sceneId)
+		}
+	}
+	r := getScene(e, sceneId, language.English.String())
+	r.Object().Value("alias").IsEqual("c-" + storyId)
+
+	// Story alias
+	r = r.Path("$.stories[0]")
+	r.Object().Value("alias").IsEqual("s-" + storyId)
+
+}
 
 /////// TestPublish Project ///////
 
