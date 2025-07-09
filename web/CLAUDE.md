@@ -12,7 +12,7 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 - **GraphQL**: Apollo Client with code generation
 - **UI Components**: Custom components with Emotion styling
 - **Auth**: Auth0 + AWS Cognito
-- **Testing**: Vitest + Playwright (E2E)
+- **Testing**: Vitest
 - **Package Manager**: Yarn 4.6.0
 
 ## Development Commands
@@ -22,7 +22,6 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 - `yarn start` - Start development server (<http://localhost:3000>)
 - `yarn build` - Build for production
 - `yarn test` - Run unit tests with Vitest
-- `yarn e2e` - Run Playwright E2E tests
 
 ### Code Quality
 
@@ -46,7 +45,6 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 - `src/` - Main application source code
 - `src/app/` - New features and components
 - `src/services/` - API services, auth, config, GraphQL
-- `e2e/` - End-to-end tests with Playwright
 - `dist/` - Build output
 - `coverage/` - Test coverage reports
 
@@ -85,7 +83,6 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 ### Testing Strategy
 
 - Unit tests: Vitest with React Testing Library
-- E2E tests: Playwright with custom page objects
 - Storybook for component development and testing
 - Coverage reporting with c8
 

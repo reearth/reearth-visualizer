@@ -152,7 +152,6 @@ import { useEditorState } from "./hooks";
 - Unit tests for utilities and hooks
 - Component tests for UI components
 - Integration tests for features
-- E2E tests for complete user workflows
 
 ## Key Integrations
 
