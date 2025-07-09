@@ -17,6 +17,13 @@ func New() *Builder {
 	return &Builder{p: &Project{publishmentStatus: PublishmentStatusPrivate}}
 }
 
+type Visibility string
+
+const (
+	VisibilityPublic  Visibility = "public"
+	VisibilityPrivate Visibility = "private"
+)
+
 func (b *Builder) Build() (*Project, error) {
 	if b.p.id.IsNil() {
 		return nil, id.ErrInvalidID
@@ -106,8 +113,8 @@ func (b *Builder) Deleted(deleted bool) *Builder {
 	return b
 }
 
-func (b *Builder) Visibility(visibility string) *Builder {
-	b.p.visibility = visibility
+func (b *Builder) Visibility(visibility Visibility) *Builder {
+	b.p.visibility = string(visibility)
 	return b
 }
 
