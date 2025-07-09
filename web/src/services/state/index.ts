@@ -57,6 +57,7 @@ export type Workspace = {
   personal?: boolean;
   policyId?: string | null;
   policy?: Policy | null;
+  alias?: string;
 };
 
 const widgetAlignEditor = atom<boolean | undefined>(undefined);

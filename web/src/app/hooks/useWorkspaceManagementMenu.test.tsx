@@ -1,4 +1,4 @@
-import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useAddWorkspaceModal } from "@reearth/services/state";
 import { renderHook } from "@reearth/test/utils";
 import { useNavigate } from "react-router-dom";
@@ -11,11 +11,15 @@ vi.mock("react-router-dom", () => ({
 }));
 
 vi.mock("@reearth/services/state", () => ({
-  useAddWorkspaceModal: vi.fn(() => [false, vi.fn()])
+  useAddWorkspaceModal: vi.fn()
 }));
 
-vi.mock("@reearth/services/config", () => ({
-  config: vi.fn()
+vi.mock("@reearth/services/config/appFeatureConfig", () => ({
+  appFeature: vi.fn()
+}));
+
+vi.mock("@reearth/services/i18n", () => ({
+  useT: () => (key: string) => key
 }));
 
 describe("useWorkspaceManagementMenu", () => {
@@ -29,23 +33,40 @@ describe("useWorkspaceManagementMenu", () => {
       false,
       mockSetAddWorkspaceModal
     ]);
-    (config as Mock).mockReturnValue({});
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: true,
+      workspaceManagement: true,
+      accountManagement: true,
+      externalAccountManagementUrl: undefined
+    });
+    
+    // Reset the mock function call count
+    mockSetAddWorkspaceModal.mockClear();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should return empty menu when workspaceId is not provided", () => {
+  it("should return empty menu when all features are disabled", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: false,
+      workspaceManagement: false,
+      accountManagement: false,
+      externalAccountManagementUrl: undefined
+    });
+
     const { result } = renderHook(() => useWorkspaceManagementMenu({}));
 
     expect(result.current.workspaceManagementMenu).toEqual([]);
   });
 
-  it("should return menu items for SaaS mode", () => {
-    (config as Mock).mockReturnValue({ 
-      saasMode: true, 
-      platformUrl: "https://example.com" 
+  it("should return only account settings when only account management is enabled", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: false,
+      workspaceManagement: false,
+      accountManagement: true,
+      externalAccountManagementUrl: undefined
     });
 
     const workspaceId = "workspace-123";
@@ -64,9 +85,12 @@ describe("useWorkspaceManagementMenu", () => {
     });
   });
 
-  it("should return full menu items for non-SaaS mode", () => {
-    (config as Mock).mockReturnValue({ 
-      saasMode: false
+  it("should return full menu items when all features are enabled", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: true,
+      workspaceManagement: true,
+      accountManagement: true,
+      externalAccountManagementUrl: undefined
     });
 
     const workspaceId = "workspace-123";
@@ -102,11 +126,19 @@ describe("useWorkspaceManagementMenu", () => {
     });
   });
 
-  it("should navigate to platform URL for account settings in SaaS mode", () => {
-    const platformUrl = "https://example.com";
-    (config as Mock).mockReturnValue({ 
-      saasMode: true, 
-      platformUrl 
+  it("should open external URL when externalAccountManagementUrl is provided", () => {
+    const externalUrl = "https://external-platform.com/account";
+    const mockWindowOpen = vi.fn();
+    Object.defineProperty(window, 'open', {
+      value: mockWindowOpen,
+      writable: true
+    });
+
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: false,
+      workspaceManagement: false,
+      accountManagement: false,
+      externalAccountManagementUrl: externalUrl
     });
 
     const workspaceId = "workspace-123";
@@ -114,14 +146,17 @@ describe("useWorkspaceManagementMenu", () => {
       useWorkspaceManagementMenu({ workspaceId })
     );
 
-    result.current.workspaceManagementMenu[0].onClick?.("accountSettings");
+    result.current.workspaceManagementMenu[0].onClick?.(result.current.workspaceManagementMenu[0].id);
 
-    expect(mockNavigate).toHaveBeenCalledWith(`${platformUrl}/settings/profile`);
+    expect(mockWindowOpen).toHaveBeenCalledWith(externalUrl, "_blank");
   });
 
-  it("should navigate to local account settings in non-SaaS mode", () => {
-    (config as Mock).mockReturnValue({ 
-      saasMode: false
+  it("should navigate to local account settings when no external URL is provided", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: true,
+      workspaceManagement: true,
+      accountManagement: true,
+      externalAccountManagementUrl: undefined
     });
 
     const workspaceId = "workspace-123";
@@ -129,14 +164,17 @@ describe("useWorkspaceManagementMenu", () => {
       useWorkspaceManagementMenu({ workspaceId })
     );
 
-    result.current.workspaceManagementMenu[2].onClick?.("accountSettings");
+    result.current.workspaceManagementMenu[2].onClick?.(result.current.workspaceManagementMenu[2].id);
 
     expect(mockNavigate).toHaveBeenCalledWith("/settings/account");
   });
 
-  it("should navigate to workspace settings in non-SaaS mode", () => {
-    (config as Mock).mockReturnValue({ 
-      saasMode: false
+  it("should navigate to workspace settings when workspace management is enabled", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: false,
+      workspaceManagement: true,
+      accountManagement: false,
+      externalAccountManagementUrl: undefined
     });
 
     const workspaceId = "workspace-123";
@@ -144,14 +182,17 @@ describe("useWorkspaceManagementMenu", () => {
       useWorkspaceManagementMenu({ workspaceId })
     );
 
-    result.current.workspaceManagementMenu[0].onClick?.("workspaceSettings");
+    result.current.workspaceManagementMenu[0].onClick?.(result.current.workspaceManagementMenu[0].id);
 
     expect(mockNavigate).toHaveBeenCalledWith(`/settings/workspaces/${workspaceId}`);
   });
 
-  it("should have add workspace menu item with correct properties in non-SaaS mode", () => {
-    (config as Mock).mockReturnValue({ 
-      saasMode: false
+  it("should show add workspace item when workspace creation is enabled", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: true,
+      workspaceManagement: false,
+      accountManagement: false,
+      externalAccountManagementUrl: undefined
     });
 
     const workspaceId = "workspace-123";
@@ -159,10 +200,8 @@ describe("useWorkspaceManagementMenu", () => {
       useWorkspaceManagementMenu({ workspaceId })
     );
 
-    expect(result.current.workspaceManagementMenu).toHaveLength(3);
-    
-    const addWorkspaceItem = result.current.workspaceManagementMenu[1];
-    expect(addWorkspaceItem).toEqual({
+    expect(result.current.workspaceManagementMenu).toHaveLength(1);
+    expect(result.current.workspaceManagementMenu[0]).toEqual({
       id: "addWorkspace",
       dataTestid: "add-workspace",
       title: "New workspace",
@@ -170,5 +209,22 @@ describe("useWorkspaceManagementMenu", () => {
       hasBorderBottom: true,
       onClick: expect.any(Function)
     });
+  });
+
+  it("should only show workspace settings when only workspace management is enabled", () => {
+    (appFeature as Mock).mockReturnValue({
+      workspaceCreation: false,
+      workspaceManagement: true,
+      accountManagement: false,
+      externalAccountManagementUrl: undefined
+    });
+
+    const workspaceId = "workspace-123";
+    const { result } = renderHook(() =>
+      useWorkspaceManagementMenu({ workspaceId })
+    );
+
+    expect(result.current.workspaceManagementMenu).toHaveLength(1);
+    expect(result.current.workspaceManagementMenu[0].id).toBe("workspaceSettings");
   });
 });

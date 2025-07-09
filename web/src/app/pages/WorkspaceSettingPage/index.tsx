@@ -1,6 +1,6 @@
 import NotFound from "@reearth/app/features/NotFound";
 import WorkspaceSetting from "@reearth/app/features/WorkspaceSetting";
-import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { FC, useMemo } from "react";
 import { useParams } from "react-router-dom";
 
@@ -12,7 +12,7 @@ type WorkspaceSettingPageProps = {
 
 const WorkspaceSettingPage: FC<WorkspaceSettingPageProps> = ({ tab }) => {
   const { workspaceId } = useParams<{ workspaceId: string }>();
-  const disabled = useMemo(() => config()?.saasMode, []);
+  const disabled = useMemo(() => !appFeature().workspaceManagement, []);
   return (
     <Page
       workspaceId={workspaceId}

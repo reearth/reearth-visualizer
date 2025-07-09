@@ -1,6 +1,6 @@
 import { useMeFetcher } from "@reearth/services/api";
 import { useAuth } from "@reearth/services/auth";
-import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useWorkspace } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -31,11 +31,17 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   }>();
   const currentTab = useMemo(() => tab ?? "projects", [tab]);
 
+  const { membersManagementOnDashboard } = appFeature();
+
   const topTabs = useMemo(
     () =>
       topTabItems
         .filter(
-          (tab) => !((isPersonal || config()?.saasMode) && tab.id === "members")
+          (tab) =>
+            !(
+              (isPersonal || !membersManagementOnDashboard) &&
+              tab.id === "members"
+            )
         )
         .map((tab) => ({
           ...tab,
@@ -43,7 +49,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
             tab.path ||
             `/dashboard/${workspaceId}/${tab.id === "project" ? "" : tab.id}`
         })),
-    [topTabItems, isPersonal, workspaceId]
+    [topTabItems, isPersonal, workspaceId, membersManagementOnDashboard]
   );
 
   const bottomTabs = useMemo(() => bottomTabsItems, [bottomTabsItems]);
