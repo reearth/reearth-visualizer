@@ -1,3 +1,4 @@
+import { loadAppFeatureConfig } from "./appFeatureConfig";
 import { type AuthInfo, getAuthInfo } from "./authInfo";
 import { configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
@@ -53,9 +54,8 @@ export type Config = {
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
   multiTenant?: Record<string, AuthInfo>;
   devPluginUrls?: string[];
+  featureCollection?: string;
   platformUrl?: string;
-  saasMode?: boolean;
-  saasPlatformUrl?: string;
 } & AuthInfo;
 
 declare global {
@@ -98,6 +98,8 @@ export default async function loadConfig() {
   }
 
   window.REEARTH_CONFIG = config;
+
+  loadAppFeatureConfig();
 }
 
 export function config(): Config | undefined {
