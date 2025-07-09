@@ -1,5 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { e2eAccessToken, logOutFromTenant } from "@reearth/services/config";
+import { logOutFromTenant } from "@reearth/services/config";
 import { useEffect } from "react";
 
 import type { AuthHook } from "./authHook";
@@ -34,7 +34,7 @@ export const useAuth0Auth = (): AuthHook => {
   }, []);
 
   return {
-    isAuthenticated: !!e2eAccessToken() || (isAuthenticated && !error),
+    isAuthenticated: isAuthenticated && !error,
     isLoading,
     error: error?.message ?? null,
     getAccessToken: () => getAccessTokenSilently(),
