@@ -36,7 +36,7 @@ const ReadMeSettings: FC<Props> = ({ projectMetadata, onUpdateProjectMetadata })
 
   return (
     <CommonLayout
-      title="README Editing"
+      title={t("README Editing")}
       activeTab={activeTab}
       tabs={tabs}
       onTabChange={setActiveTab}
@@ -46,7 +46,8 @@ const ReadMeSettings: FC<Props> = ({ projectMetadata, onUpdateProjectMetadata })
           title={t("Save README")}
           onClick={() => onUpdateProjectMetadata?.({ readme: content })}
           disabled={
-            content.trim() === (projectMetadata?.readme || DEFAULT_README).trim()
+            content.trim() ===
+            (projectMetadata?.readme || DEFAULT_README).trim()
           }
         />
       }

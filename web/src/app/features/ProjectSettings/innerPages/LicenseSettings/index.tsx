@@ -56,9 +56,6 @@ const LicenseSettings: FC<Props> = ({
     (l) => l.value === selectedLicense
   );
 
-  console.log("content", content)
-    console.log(projectMetadata?.license);
-
   return (
     <>
       <CommonLayout
