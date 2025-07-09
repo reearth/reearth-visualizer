@@ -3,59 +3,6 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
 
-// type Props = {
-//   actions?: ReactNode;
-//   title?: string;
-// };
-
-// export const EditPageWrapper = styled("div")(({ theme }) => ({
-//   border: `1px solid ${theme.outline.weaker}`
-// }));
-
-// export const HeaderWrapper = styled("div")(({ theme }) => ({
-//   display: "flex",
-//   gap: theme.spacing.normal
-// }));
-
-// export const EditAndPreviewLayout: FC<Props> = ({ title, actions }) => {
-//   const t = useT();
-//   return (
-//     <InnerPage wide>
-//       <SettingsWrapper>
-//         <SettingsFields>
-//           <TitleWrapper size="body" weight="bold">
-//             {title}
-//           </TitleWrapper>
-//           <HeaderWrapper>
-//             <Tabs
-//               tabStyle="separated"
-//               hasBorder
-//               tabs={[
-//                 {
-//                   id: "edit",
-//                   name: t("Edit")
-//                 },
-//                 {
-//                   id: "preview",
-//                   name: t("Preview"),
-//                   children: (
-//                     <Typography size="body" color="weak">
-//                       {t("Preview is not available in this page.")}
-//                     </Typography>
-//                   )
-//                 }
-//               ]}
-//             />
-//             {actions && <ButtonWrapper>{actions}</ButtonWrapper>}
-//           </HeaderWrapper>
-//         </SettingsFields>
-//       </SettingsWrapper>
-//     </InnerPage>
-//   );
-// };
-
-// CommonLayout.jsx
-
 export const InnerPage = styled("div")<{
   wide?: boolean;
   transparent?: boolean;
