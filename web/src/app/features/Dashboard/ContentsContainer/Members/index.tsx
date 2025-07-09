@@ -1,6 +1,6 @@
 import { Button, TextInput, Typography } from "@reearth/app/lib/reearth-ui";
 import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
-import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -67,7 +67,9 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
     );
   }, [filteredMembers]);
 
-  const saasMode = config()?.saasMode;
+  const { membersManagementOnDashboard } = appFeature();
+
+  if (!membersManagementOnDashboard) return null;
 
   return (
     <Wrapper>
@@ -81,7 +83,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           />
         </Search>
         <div>
-          {meRole && PermissionService.canInvite(meRole) && !saasMode && (
+          {meRole && PermissionService.canInvite(meRole) && (
             <Button
               title={t("invite user")}
               appearance="primary"
@@ -128,7 +130,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           meRole={meRole}
         />
       )}
-      {deleteMemerModalVisible && !saasMode && (
+      {deleteMemerModalVisible && (
         <DeleteMemberWarningModal
           workspace={workspace}
           member={selectedMember}
@@ -136,7 +138,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
           onClose={() => setDeleteMemerModalVisible(false)}
         />
       )}
-      {addMemberModalVisible && !saasMode && (
+      {addMemberModalVisible && (
         <AddMemberModal
           workspace={workspace}
           visible

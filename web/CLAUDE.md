@@ -61,8 +61,60 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 - `api/` - API layer for different resources
 - `gql/` - GraphQL queries, mutations, and generated types
 - `auth/` - Authentication providers (Auth0, Cognito)
-- `config/` - Application configuration
+- `config/` - Application configuration and feature flags
 - `i18n/` - Internationalization setup
+
+#### Configuration System (src/services/config/)
+
+The configuration system manages application-wide settings and feature flags:
+
+- **`index.ts`** - Main configuration loader and global config management
+- **`appFeatureConfig.ts`** - Application feature flags and external URL generation
+- **`authInfo.ts`** - Authentication configuration
+- **`extensions.ts`** - Plugin and extension configuration
+- **`passwordPolicy.ts`** - Password validation rules
+
+##### App Feature Configuration
+
+The `appFeatureConfig.ts` module controls application features and external integrations:
+
+**Feature Flags:**
+- `membersManagementOnDashboard` - Controls member management UI visibility
+- `workspaceCreation` - Enables/disables workspace creation functionality  
+- `workspaceManagement` - Controls workspace management features
+- `accountManagement` - Enables/disables account management UI
+- `externalAccountManagementUrl` - URL for external account management system
+
+**Key Functions:**
+- `loadAppFeatureConfig()` - Loads configuration during app initialization
+- `generateExternalUrl()` - Generates URLs with workspace/project/user context
+- `appFeature()` - Returns current feature configuration
+
+**Usage Example:**
+```typescript
+// Load configuration (called during app startup)
+loadAppFeatureConfig();
+
+// Check feature availability
+const features = appFeature();
+if (features.membersManagementOnDashboard) {
+  // Show members management UI
+}
+
+// Generate external URLs with context
+const managementUrl = generateExternalUrl({
+  url: "https://platform.example.com/manage/[WORKSPACE_ALIAS]",
+  workspace: { alias: "my-workspace" },
+  project: { alias: "my-project" },
+  me: { alias: "user123" }
+});
+```
+
+**Security Features:**
+- Input validation for all URL parameters
+- Character sanitization to prevent injection attacks
+- URL validation before returning generated URLs
+- Safe handling of missing/undefined values
 
 ## Development Guidelines
 
@@ -122,6 +174,49 @@ Re:Earth Visualizer is a web-based GIS (Geographic Information System) applicati
 3. Update GraphQL queries if needed
 4. Add tests and stories
 5. Update i18n translations
+
+### Working with Feature Configuration
+
+#### Adding New Feature Flags
+
+1. **Update AppFeatureConfig type** in `src/services/config/appFeatureConfig.ts`:
+   ```typescript
+   export type AppFeatureConfig = {
+     // existing flags...
+     newFeature?: boolean;
+   };
+   ```
+
+2. **Add default value** in `DEFAULT_APP_FEATURE_CONFIG`:
+   ```typescript
+   const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
+     // existing defaults...
+     newFeature: true, // or false
+   };
+   ```
+
+3. **Use in components**:
+   ```typescript
+   import { appFeature } from "@reearth/services/config/appFeatureConfig";
+   
+   const features = appFeature();
+   if (features.newFeature) {
+     // Render feature UI
+   }
+   ```
+
+#### Adding External URL Configuration
+
+1. **Add URL field** to `AppFeatureConfig` type
+2. **Update EE configuration** in `src/ee/featureConfig.ts` if needed
+3. **Use generateExternalUrl()** for dynamic URL generation with context
+
+#### Testing Feature Configuration
+
+- Feature flags should have corresponding unit tests
+- Test both enabled and disabled states
+- Verify external URL generation with various inputs
+- Test error handling for invalid configurations
 
 ### Working with 3D Maps
 

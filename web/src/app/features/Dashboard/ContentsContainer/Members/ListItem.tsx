@@ -1,5 +1,4 @@
 import { Button, PopupMenu, Typography } from "@reearth/app/lib/reearth-ui";
-import { config } from "@reearth/services/config";
 import { Role, TeamMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -63,7 +62,7 @@ const ListItem: FC<{
       </TypographyWrapper>
 
       <TypographyWrapper>
-        {!config()?.saasMode && meRole && (
+        {meRole && (
           <PopupMenu
             label={
               <Button icon="dotsThreeVertical" iconButton appearance="simple" />
