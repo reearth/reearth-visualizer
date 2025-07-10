@@ -21,6 +21,7 @@ type SceneDocument struct {
 	Plugins     []ScenePluginDocument
 	UpdateAt    time.Time
 	Property    string
+	Alias       string
 }
 
 type SceneWidgetDocument struct {
@@ -105,6 +106,9 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		AlignSystem: NewWidgetAlignSystem(scene.Widgets().Alignment()),
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
+
+		// publishment ---------------------
+		Alias: scene.Alias(),
 	}, id
 }
 
@@ -172,6 +176,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).
 		Property(prid).
+		Alias(d.Alias).
 		Build()
 }
 

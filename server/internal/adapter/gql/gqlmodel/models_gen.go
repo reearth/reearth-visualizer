@@ -1010,6 +1010,7 @@ type Scene struct {
 	NewLayers         []NLSLayer         `json:"newLayers"`
 	Stories           []*Story           `json:"stories"`
 	Styles            []*Style           `json:"styles"`
+	Alias             string             `json:"alias"`
 }
 
 func (Scene) IsNode()        {}
@@ -1061,6 +1062,7 @@ type Spacing struct {
 
 type Story struct {
 	ID                ID                `json:"id"`
+	ProjectID         ID                `json:"projectId"`
 	SceneID           ID                `json:"sceneId"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	Title             string            `json:"title"`

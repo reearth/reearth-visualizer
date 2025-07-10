@@ -94,8 +94,14 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		return nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
 	builder := storytelling.NewStory().
 		NewID().
+		Project(sc.Project()).
 		Title(inp.Title).
 		Scene(inp.SceneID).
 		Property(prop.ID()).

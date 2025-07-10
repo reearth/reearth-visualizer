@@ -22,13 +22,6 @@ func (r *mutationResolver) CreateScene(ctx context.Context, input gqlmodel.Creat
 		return nil, err
 	}
 
-	// _, err = usecases(ctx).Project.Update(ctx, interfaces.UpdateProjectParam{
-	// 	ID:      pid,
-	// 	SceneID: res.ID().Ref()}, getOperator(ctx))
-	// if err != nil {
-	// 	return nil, err
-	// }
-
 	return &gqlmodel.CreateScenePayload{
 		Scene: gqlmodel.ToScene(res),
 	}, nil

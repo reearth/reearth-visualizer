@@ -86,3 +86,10 @@ func (b *Builder) Styles(sl *StyleList) *Builder {
 	b.scene.styles = sl
 	return b
 }
+
+// publishment ---------------------
+
+func (b *Builder) Alias(alias string) *Builder {
+	b.scene.alias = alias
+	return b
+}
