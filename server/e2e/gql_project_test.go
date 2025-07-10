@@ -31,6 +31,7 @@ fragment ProjectFragment on Project {
   starred
   isDeleted
   visibility
+  projectAlias
   metadata {
     id
     ...ProjectMetadataFragment
@@ -118,6 +119,7 @@ mutation CreateProject(
   $description: String
   $coreSupport: Boolean
   $visibility: String
+  $projectAlias: String
 ) {
   createProject(
     input: {
@@ -127,6 +129,7 @@ mutation CreateProject(
       description: $description
       coreSupport: $coreSupport
 	  visibility: $visibility
+	  projectAlias: $projectAlias
     }
   ) {
     project {
@@ -180,8 +183,90 @@ func updateProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[s
 		Path("$.data.updateProject.project")
 }
 
+func updateProject2(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "UpdateProject",
+		Query:         UpdateProjectMutation,
+		Variables:     variables,
+	}
+	return Request(e, u.String(), requestBody)
+}
+
 // export REEARTH_DB=mongodb://localhost
-// go test -v -run TestCreateAndGetProject ./e2e/...
+// go test -v -run TestCreateUpdateProject ./e2e/...
+
+func TestCreateUpdateProject(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	// cerate
+	res := Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"teamId":       wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "test-xxxxxx",
+		},
+	})
+	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
+	projectID := res.Path("$.data.createProject.project.id").Raw().(string)
+
+	// cerate
+	res = Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"teamId":       wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "test-xxxxxx", // Already Exists
+		},
+	})
+	res.Path("$.errors[0].message").IsEqual("The alias is already in use within the workspace. Please try a different value.")
+
+	// update
+	res = updateProject(e, uID, map[string]any{
+		"input": map[string]any{
+			"projectId":    projectID,
+			"projectAlias": "test-yyyyy",
+		},
+	})
+	res.Object().Value("projectAlias").IsEqual("test-yyyyy")
+
+	// cerate
+	res = Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"teamId":       wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "test-xxxxxx",
+		},
+	})
+	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
+	projectID = res.Path("$.data.createProject.project.id").Raw().(string)
+
+	// update
+	res = updateProject2(e, uID, map[string]any{
+		"input": map[string]any{
+			"projectId":    projectID,
+			"projectAlias": "test-yyyyy", // Already Exists
+		},
+	})
+	res.Path("$.errors[0].message").IsEqual("The alias is already in use within the workspace. Please try a different value.")
+
+}
 
 func TestCreateAndGetProject(t *testing.T) {
 	e := Server(t, baseSeeder)

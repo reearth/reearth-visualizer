@@ -11,20 +11,22 @@ import (
 )
 
 type Project struct {
-	id          id.ProjectID
-	workspace   accountdomain.WorkspaceID
-	sceneId     id.SceneID
-	name        string
-	description string
-	imageURL    *url.URL
-	updatedAt   time.Time
-	visualizer  visualizer.Visualizer
-	isArchived  bool
-	coreSupport bool
-	starred     bool
-	isDeleted   bool
-	visibility  string
-	metadata    *ProjectMetadata
+	id           id.ProjectID
+	workspace    accountdomain.WorkspaceID
+	sceneId      id.SceneID
+	name         string
+	description  string
+	imageURL     *url.URL
+	updatedAt    time.Time
+	visualizer   visualizer.Visualizer
+	isArchived   bool
+	coreSupport  bool
+	starred      bool
+	isDeleted    bool
+	visibility   string
+	metadata     *ProjectMetadata
+	projectAlias string
+
 	// publishment
 	alias             string
 	publishmentStatus PublishmentStatus
@@ -107,6 +109,10 @@ func (p *Project) Metadata() *ProjectMetadata {
 	return p.metadata
 }
 
+func (p *Project) ProjectAlias() string {
+	return p.projectAlias
+}
+
 // setter ---------------------
 
 func (p *Project) UpdateWorkspace(workspace accountdomain.WorkspaceID) {
@@ -182,6 +188,10 @@ func (p *Project) MatchWithPublicName(name string) bool {
 		return true
 	}
 	return false
+}
+
+func (p *Project) UpdateProjectAlias(projectAlias string) {
+	p.projectAlias = projectAlias
 }
 
 // publishment ---------------------

@@ -11,6 +11,7 @@ const (
 	ErrKeyPkgProjectInvalidAlias message.ErrKey = "pkg.project.invalid_alias"
 	ErrKeyPkgProjectInvalidPrefixAlias message.ErrKey = "pkg.project.invalid_prefix_alias"
 	ErrKeyPkgProjectInvalidReservedAlias message.ErrKey = "pkg.project.invalid_reserved_alias"
+	ErrKeyPkgProjectProjectAliasAlreadyExists message.ErrKey = "pkg.project.project_alias_already_exists"
 	ErrKeyPkgStorytellingAliasAlreadyExists message.ErrKey = "pkg.storytelling.alias_already_exists"
 	ErrKeyPkgStorytellingInvalidAlias message.ErrKey = "pkg.storytelling.invalid_alias"
 	ErrKeyPkgStorytellingInvalidPrefixAlias message.ErrKey = "pkg.storytelling.invalid_prefix_alias"
@@ -56,6 +57,12 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "予約済みのエイリアス名は使用できません: {{.aliasName}}",
 			Description: "次のようなエイリアス名は予約されており、使用できません: administrator,development",
+		},
+	},
+	ErrKeyPkgProjectProjectAliasAlreadyExists: {
+		language.English: {
+			Message:     "The alias is already in use within the workspace. Please try a different value.",
+			Description: "Project aliases must be unique within a workspace.",
 		},
 	},
 	ErrKeyPkgStorytellingAliasAlreadyExists: {

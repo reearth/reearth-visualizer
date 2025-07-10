@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // go test -v -run TestInternalAPI_update ./e2e/...
@@ -47,6 +48,7 @@ func TestInternalAPI_update(t *testing.T) {
 		basicAuthPassword := "pass"
 		enableGa := true
 		trackingId := "GA-XXXX"
+		projectAlias := "test-xxxxxx"
 
 		res, err := client.UpdateProject(ctx, &pb.UpdateProjectRequest{
 			ProjectId:         pid1.String(),
@@ -66,6 +68,7 @@ func TestInternalAPI_update(t *testing.T) {
 			BasicAuthPassword: &basicAuthPassword,
 			EnableGa:          &enableGa,
 			TrackingId:        &trackingId,
+			ProjectAlias:      &projectAlias,
 		})
 		assert.Nil(t, err)
 		assert.Equal(t, visibility, res.Project.Visibility)
@@ -75,6 +78,7 @@ func TestInternalAPI_update(t *testing.T) {
 		assert.Equal(t, imageUrl, *res.Project.ImageUrl)
 		assert.Equal(t, starred, res.Project.Starred)
 		assert.Equal(t, deleted, res.Project.IsDeleted)
+		assert.Equal(t, projectAlias, res.Project.ProjectAlias)
 
 		deleteImageUrl := true
 		deletePublicImage := true
@@ -90,6 +94,31 @@ func TestInternalAPI_update(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Nil(t, res2.Project.ImageUrl)
 
+		// projectAlias update => OK
+		res, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
+			ProjectId:    pid1.String(),
+			ProjectAlias: &projectAlias,
+		})
+		assert.Nil(t, err)
+
+		pid2 := createProjectInternal(
+			t, ctx, r, client, "public",
+			&pb.CreateProjectRequest{
+				WorkspaceId: wID.String(),
+				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+				Name:        lo.ToPtr("Test Project1"),
+				Description: lo.ToPtr("Test Description1"),
+				CoreSupport: lo.ToPtr(true),
+				Visibility:  lo.ToPtr("public"),
+			})
+
+		// projectAlias update => NG
+		res, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
+			ProjectId:    pid2.String(),
+			ProjectAlias: &projectAlias, // Already Exists
+		})
+		require.NotNil(t, err)
+		assert.Equal(t, "rpc error: code = Unknown desc = The alias is already in use within the workspace. Please try a different value.", err.Error())
 	})
 
 	// user2 call api

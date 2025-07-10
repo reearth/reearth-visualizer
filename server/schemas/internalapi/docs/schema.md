@@ -65,6 +65,7 @@ Cannot be created under a team the user does not belong to.
 | description | [string](#string) | optional | Project description |
 | core_support | [bool](#bool) | optional | Set to true |
 | visibility | [string](#string) | optional | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+| project_alias | [string](#string) | optional | Project alias |
 
 
 
@@ -207,6 +208,8 @@ Response messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | projects | [Project](#reearth-visualizer-v1-Project) | repeated | Project List |
+| page_info | [PageInfo](#reearth-visualizer-v1-PageInfo) |  | PageInfo |
+| total_count | [int32](#int32) |  | TotalCount |
 
 
 
@@ -238,8 +241,6 @@ Response messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | project | [Project](#reearth-visualizer-v1-Project) |  | Project |
-| page_info | [PageInfo](#reearth-visualizer-v1-PageInfo) |  | PageInfo |
-| total_count | [int32](#int32) |  | TotalCount |
 
 
 
@@ -254,6 +255,7 @@ Response messages
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| total_count | [int64](#int64) |  |  |
 | start_cursor | [string](#string) | optional |  |
 | end_cursor | [string](#string) | optional |  |
 | has_next_page | [bool](#bool) |  |  |
@@ -307,6 +309,7 @@ Core Project messages
 | visibility | [string](#string) |  | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
 | editor_url | [string](#string) |  | URL to visualizer project |
 | metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) | optional | Project metadata |
+| project_alias | [string](#string) |  | Project alias |
 | alias | [string](#string) |  | Scene Publishment value |
 | publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Scene Publishment value |
 | published_url | [string](#string) | optional | Scene Publishment value |
@@ -469,6 +472,7 @@ Only the project owner can operate this
 | basic_auth_password | [string](#string) | optional |  |
 | enable_ga | [bool](#bool) | optional |  |
 | tracking_id | [string](#string) | optional |  |
+| project_alias | [string](#string) | optional |  |
 
 
 

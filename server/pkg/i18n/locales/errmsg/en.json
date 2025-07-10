@@ -5,6 +5,10 @@
         "message": "Invalid alias name: {{.aliasName}}",
         "description": "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}."
       },
+      "project_alias_already_exists": {
+        "message": "The alias is already in use within the workspace. Please try a different value.",
+        "description": "Project aliases must be unique within a workspace."
+      },
       "alias_already_exists": {
         "message": "This alias is already in use. Please try another one.",
         "description": "Each alias must be unique across projects and stories."

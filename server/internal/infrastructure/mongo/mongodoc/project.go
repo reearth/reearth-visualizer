@@ -12,18 +12,19 @@ import (
 )
 
 type ProjectDocument struct {
-	ID          string
-	Team        string // DON'T CHANGE NAME'
-	Name        string
-	Description string
-	ImageURL    string
-	UpdatedAt   time.Time
-	Visualizer  string
-	Archived    bool
-	CoreSupport bool
-	Starred     bool
-	Deleted     bool
-	Visibility  string
+	ID           string
+	Team         string // DON'T CHANGE NAME'
+	Name         string
+	Description  string
+	ImageURL     string
+	UpdatedAt    time.Time
+	Visualizer   string
+	Archived     bool
+	CoreSupport  bool
+	Starred      bool
+	Deleted      bool
+	Visibility   string
+	ProjectAlias string
 	// publishment
 	Alias             string
 	PublishmentStatus string
@@ -56,18 +57,19 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 	}
 
 	return &ProjectDocument{
-		ID:          pid,
-		Team:        p.Workspace().String(),
-		Name:        p.Name(),
-		Description: p.Description(),
-		ImageURL:    imageURL,
-		UpdatedAt:   p.UpdatedAt(),
-		Visualizer:  string(p.Visualizer()),
-		Archived:    p.IsArchived(),
-		CoreSupport: p.CoreSupport(),
-		Starred:     p.Starred(),
-		Deleted:     p.IsDeleted(),
-		Visibility:  p.Visibility(),
+		ID:           pid,
+		Team:         p.Workspace().String(),
+		Name:         p.Name(),
+		Description:  p.Description(),
+		ImageURL:     imageURL,
+		UpdatedAt:    p.UpdatedAt(),
+		Visualizer:   string(p.Visualizer()),
+		Archived:     p.IsArchived(),
+		CoreSupport:  p.CoreSupport(),
+		Starred:      p.Starred(),
+		Deleted:      p.IsDeleted(),
+		Visibility:   p.Visibility(),
+		ProjectAlias: p.ProjectAlias(),
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: string(p.PublishmentStatus()),
@@ -119,6 +121,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		Starred(d.Starred).
 		Deleted(d.Deleted).
 		Visibility(project.Visibility(d.Visibility)).
+		ProjectAlias(d.ProjectAlias).
 		// publishment
 		Alias(d.Alias).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).

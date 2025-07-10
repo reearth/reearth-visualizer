@@ -541,6 +541,7 @@ type ComplexityRoot struct {
 		IsDeleted         func(childComplexity int) int
 		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
+		ProjectAlias      func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
 		PublicNoIndex     func(childComplexity int) int
@@ -3822,6 +3823,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Project.Name(childComplexity), true
 
+	case "Project.projectAlias":
+		if e.complexity.Project.ProjectAlias == nil {
+			break
+		}
+
+		return e.complexity.Project.ProjectAlias(childComplexity), true
+
 	case "Project.publicDescription":
 		if e.complexity.Project.PublicDescription == nil {
 			break
@@ -6896,6 +6904,8 @@ extend type Mutation {
 
   metadata: ProjectMetadata
 
+  projectAlias: String!
+
   # publishment
   alias: String!
   publishmentStatus: PublishmentStatus!
@@ -6955,6 +6965,7 @@ input CreateProjectInput {
   description: String
   coreSupport: Boolean
   visibility: String
+  projectAlias: String
 }
 
 input UpdateProjectInput {
@@ -6968,6 +6979,7 @@ input UpdateProjectInput {
   starred: Boolean
   deleted: Boolean
   visibility: String
+  projectAlias: String
 
   # publishment
   publicTitle: String
@@ -27359,6 +27371,50 @@ func (ec *executionContext) fieldContext_Project_metadata(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_projectAlias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_projectAlias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectAlias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_projectAlias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_alias(ctx, field)
 	if err != nil {
@@ -28093,6 +28149,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_visibility(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -28334,6 +28392,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_visibility(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -28878,6 +28938,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_visibility(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -35254,6 +35316,8 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_visibility(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -45349,7 +45413,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility", "projectAlias"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -45398,6 +45462,13 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Visibility = data
+		case "projectAlias":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectAlias"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProjectAlias = data
 		}
 	}
 
@@ -47287,7 +47358,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "projectAlias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -47364,6 +47435,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Visibility = data
+		case "projectAlias":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectAlias"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProjectAlias = data
 		case "publicTitle":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicTitle"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -52613,6 +52691,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "metadata":
 			out.Values[i] = ec._Project_metadata(ctx, field, obj)
+		case "projectAlias":
+			out.Values[i] = ec._Project_projectAlias(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "alias":
 			out.Values[i] = ec._Project_alias(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

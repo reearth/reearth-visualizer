@@ -298,6 +298,7 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 		CoreSupport:  input.CoreSupport,
 		Visibility:   input.Visibility,
 		ImportStatus: input.ImportStatus,
+		ProjectAlias: input.ProjectAlias,
 	}, operator)
 }
 
@@ -399,6 +400,14 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		if err := prj.UpdateVisibility(*p.Visibility); err != nil {
 			return nil, err
 		}
+	}
+
+	if p.ProjectAlias != nil {
+		err := i.projectRepo.CheckProjectAliasUnique(ctx, prj.Workspace(), *p.ProjectAlias, prj.ID().Ref())
+		if err != nil {
+			return nil, err
+		}
+		prj.UpdateProjectAlias(*p.ProjectAlias)
 	}
 
 	if !adapter.IsInternal(ctx) {
@@ -1005,6 +1014,7 @@ type createProjectInput struct {
 	Archived     *bool
 	CoreSupport  *bool
 	Visibility   *string
+	ProjectAlias *string
 }
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -1078,6 +1088,16 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		Workspace(input.WorkspaceID).
 		Visualizer(input.Visualizer).
 		Metadata(metadata)
+
+	newProjectAlias := alias.ReservedReearthPrefixProject + prjID.String()
+	if input.ProjectAlias != nil {
+		newProjectAlias = *input.ProjectAlias
+	}
+	err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
+	if err != nil {
+		return nil, err
+	}
+	prj.ProjectAlias(newProjectAlias)
 
 	if input.Archived != nil {
 		prj = prj.IsArchived(*input.Archived)
