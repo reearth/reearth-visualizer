@@ -117,17 +117,17 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
   );
 });
 
-const Container = styled("div")(() => ({
+const Container = styled("div")({
   display: "inline-flex",
   flexDirection: "column",
   alignItems: "center"
-}));
+});
 
-const CompassContainer = styled("div")(() => ({
+const CompassContainer = styled("div")({
   display: "inline-grid",
   position: "relative",
   placeItems: "center"
-}));
+});
 
 const Help = styled("button")(({ theme }) => ({
   position: "absolute",
@@ -140,14 +140,14 @@ const Help = styled("button")(({ theme }) => ({
   userSelect: "none"
 }));
 
-const Compass = styled("div")(() => ({
+const Compass = styled("div")({
   position: "relative",
   display: "inline-grid",
   placeItems: "center",
   width: 64,
   height: 64,
   cursor: "pointer"
-}));
+});
 
 const CompassIconWrapper = styled(Icon)<{ compassDegree: number }>(
   ({ compassDegree }) => ({
@@ -172,14 +172,14 @@ const CompassIcon = styled("div")<{ publishedTheme?: Theme }>(
   })
 );
 
-const CompassFocusIcon = styled("div")(() => ({
+const CompassFocusIcon = styled("div")({
   position: "absolute",
   top: 0,
   left: 0,
   opacity: 0.8,
   width: 64,
   height: 64
-}));
+});
 
 const AngleIcon = styled("div")<{ publishedTheme?: Theme }>(
   ({ theme, publishedTheme }) => ({

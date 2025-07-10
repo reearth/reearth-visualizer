@@ -64,11 +64,11 @@ export const LayerWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small
 }));
 
-export const LayerNameListWrapper = styled("div")(() => ({
+export const LayerNameListWrapper = styled("div")({
   maxHeight: "250px",
   overflowY: "auto",
   width: "100%"
-}));
+});
 
 export const LayerNameList = styled("div")(({ theme }) => ({
   display: "flex",

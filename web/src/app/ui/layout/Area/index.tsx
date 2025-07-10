@@ -33,7 +33,7 @@ export type AreaProps = {
   backgroundColor?: string;
   resizableEdge?: ResizableEdge;
   resizeHandleColor?: string;
-  windowRef?: RefObject<HTMLDivElement>;
+  windowRef?: RefObject<HTMLDivElement | null>;
   asWrapper?: boolean;
   storageId?: string;
   passive?: boolean;
