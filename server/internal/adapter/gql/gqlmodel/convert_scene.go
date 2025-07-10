@@ -38,9 +38,9 @@ func ToScene(scene *scene.Scene) *Scene {
 
 	return &Scene{
 		ID:                IDFrom(scene.ID()),
+		WorkspaceID:       IDFrom(scene.Workspace()),
 		ProjectID:         IDFrom(scene.Project()),
 		PropertyID:        IDFrom(scene.Property()),
-		TeamID:            IDFrom(scene.Workspace()),
 		CreatedAt:         scene.CreatedAt(),
 		UpdatedAt:         scene.UpdatedAt(),
 		Plugins:           util.Map(scene.Plugins().Plugins(), ToScenePlugin),

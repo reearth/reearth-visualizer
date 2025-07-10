@@ -148,10 +148,6 @@ func (r *Scene) findOne(ctx context.Context, filter any) (*scene.Scene, error) {
 	return c.Result[0], nil
 }
 
-// func (r *Scene) readFilter(filter any) any {
-// 	return applyTeamFilter(filter, r.f.Readable)
-// }
-
 func (r *Scene) writeFilter(filter any) any {
-	return applyTeamFilter(filter, r.f.Writable)
+	return applyWorkspaceFilter(filter, r.f.Writable)
 }

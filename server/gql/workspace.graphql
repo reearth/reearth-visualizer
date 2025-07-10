@@ -58,55 +58,55 @@ input CreateTeamInput {
 }
 
 input UpdateTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   name: String!
 }
 
 input AddMemberToTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
 input RemoveMemberFromTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   userId: ID!
 }
 
 input UpdateMemberOfTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
 input DeleteTeamInput {
-  teamId: ID!
+  workspaceId: ID!
 }
 
 # Payload
 
 type CreateTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type UpdateTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type AddMemberToTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type RemoveMemberFromTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type UpdateMemberOfTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type DeleteTeamPayload {
-  teamId: ID!
+  workspaceId: ID!
 }
 
 #extend type Query{ }
