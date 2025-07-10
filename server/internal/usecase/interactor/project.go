@@ -148,6 +148,10 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 		return nil, err
 	}
 
+	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
+		return nil, errors.New("project is private")
+	}
+
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
 	if err != nil {
 		return nil, err
@@ -217,7 +221,11 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 
 	wList := accountdomain.WorkspaceIDList{aid}
 
-	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, operator.AcOperator.OwningWorkspaces, wList)
+	var owningWsLis accountdomain.WorkspaceIDList
+	if operator != nil {
+		owningWsLis = operator.AcOperator.OwningWorkspaces
+	}
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, owningWsLis, wList)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -1055,9 +1063,9 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	}
 
 	if input.Visibility != nil {
-		prj = prj.Visibility(*input.Visibility)
+		prj = prj.Visibility(project.Visibility(*input.Visibility))
 	} else {
-		prj = prj.Visibility("private")
+		prj = prj.Visibility(project.VisibilityPrivate)
 	}
 
 	proj, err := prj.Build()

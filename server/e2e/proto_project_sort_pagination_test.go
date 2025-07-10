@@ -360,7 +360,7 @@ func AddProjectSceneStorytelling(t *testing.T, ctx context.Context, r *repo.Cont
 		Description(conf.name + " Description").
 		CoreSupport(conf.coreSupport).
 		Deleted(conf.isDeleted).
-		Visibility(conf.visibility).
+		Visibility(project.Visibility(conf.visibility)).
 		UpdatedAt(conf.updatedAt).
 		MustBuild()
 	err := r.Project.Save(ctx, pj)
