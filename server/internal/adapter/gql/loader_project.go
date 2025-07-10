@@ -131,7 +131,7 @@ func (c *ProjectLoader) VisibilityByWorkspace(ctx context.Context, wsID gqlmodel
 		return nil, err
 	}
 
-	res, _, err := c.usecase.FindVisibilityByWorkspace(ctx, tid, authenticated, getOperator(ctx), nil, nil, nil)
+	res, _, err := c.usecase.FindVisibilityByWorkspace(ctx, tid, authenticated, getOperator(ctx), nil, nil, nil, nil)
 	if err != nil {
 		return nil, err
 	}

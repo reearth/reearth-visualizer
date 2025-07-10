@@ -364,7 +364,7 @@ func TestProject_FindVisibilityByWorkspace(t *testing.T) {
 			AcOperator: &accountusecase.Operator{
 				WritableWorkspaces: workspace.IDList{ws.ID()},
 			},
-		}, nil, nil, nil)
+		}, nil, nil, nil, nil)
 		assert.NoError(t, err)
 		assert.Equal(t, pj.ID(), result[0].ID())
 	})
@@ -377,8 +377,114 @@ func TestProject_FindVisibilityByWorkspace(t *testing.T) {
 			AcOperator: &accountusecase.Operator{
 				WritableWorkspaces: workspace.IDList{ws.ID()},
 			},
-		}, nil, nil, nil)
+		}, nil, nil, nil, nil)
 		assert.NoError(t, err)
 		assert.Equal(t, 0, len(result))
+	})
+}
+
+func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace(func(w *workspace.Builder) {
+		w.Members(map[accountdomain.UserID]workspace.Member{
+			us.ID(): {
+				Role:      workspace.RoleOwner,
+				Disabled:  false,
+				InvitedBy: workspace.UserID(us.ID()),
+				Host:      "",
+			},
+		})
+	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	// Create 15 test projects
+	projects := make([]*project.Project, 15)
+	for i := 0; i < 15; i++ {
+		pj := factory.NewProject(func(p *project.Builder) {
+			p.Workspace(ws.ID()).
+				Visibility(project.VisibilityPublic)
+		})
+		_ = uc.projectRepo.Save(ctx, pj)
+		projects[i] = pj
+
+		meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
+			m.Project(pj.ID())
+			m.Workspace(ws.ID())
+		})
+		_ = uc.projectMetadataRepo.Save(ctx, meta)
+	}
+
+	operator := &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	}
+
+	t.Run("First page with offset pagination", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(0)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 5, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.True(t, pageInfo.HasNextPage)
+		assert.False(t, pageInfo.HasPreviousPage)
+	})
+
+	t.Run("Middle page with offset pagination", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(5)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 5, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.True(t, pageInfo.HasNextPage)
+		assert.True(t, pageInfo.HasPreviousPage)
+	})
+
+	t.Run("Last page with offset pagination", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(10)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 5, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.False(t, pageInfo.HasNextPage)
+		assert.True(t, pageInfo.HasPreviousPage)
+	})
+
+	t.Run("Offset beyond total count", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(20)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 0, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.False(t, pageInfo.HasNextPage)
+		assert.True(t, pageInfo.HasPreviousPage)
 	})
 }
