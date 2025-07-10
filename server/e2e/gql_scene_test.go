@@ -185,6 +185,7 @@ query GetScene($sceneId: ID!, $lang: Lang) {
         ...NLSLayerStyle
         __typename
       }
+      alias
       __typename
     }
     __typename
@@ -462,6 +463,8 @@ fragment WidgetAlignSystemFragment on WidgetAlignSystem {
 }
 fragment StoryFragment on Story {
   id
+  projectId
+  sceneId
   title
   panelPosition
   bgColor
