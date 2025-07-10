@@ -2,19 +2,19 @@
 package errmsg
 
 import (
-	"golang.org/x/text/language"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
+	"golang.org/x/text/language"
 )
 
 const (
-	ErrKeyPkgProjectAliasAlreadyExists message.ErrKey = "pkg.project.alias_already_exists"
-	ErrKeyPkgProjectInvalidAlias message.ErrKey = "pkg.project.invalid_alias"
-	ErrKeyPkgProjectInvalidPrefixAlias message.ErrKey = "pkg.project.invalid_prefix_alias"
-	ErrKeyPkgProjectInvalidReservedAlias message.ErrKey = "pkg.project.invalid_reserved_alias"
+	ErrKeyPkgProjectAliasAlreadyExists        message.ErrKey = "pkg.project.alias_already_exists"
+	ErrKeyPkgProjectInvalidAlias              message.ErrKey = "pkg.project.invalid_alias"
+	ErrKeyPkgProjectInvalidPrefixAlias        message.ErrKey = "pkg.project.invalid_prefix_alias"
+	ErrKeyPkgProjectInvalidReservedAlias      message.ErrKey = "pkg.project.invalid_reserved_alias"
 	ErrKeyPkgProjectProjectAliasAlreadyExists message.ErrKey = "pkg.project.project_alias_already_exists"
-	ErrKeyPkgStorytellingAliasAlreadyExists message.ErrKey = "pkg.storytelling.alias_already_exists"
-	ErrKeyPkgStorytellingInvalidAlias message.ErrKey = "pkg.storytelling.invalid_alias"
-	ErrKeyPkgStorytellingInvalidPrefixAlias message.ErrKey = "pkg.storytelling.invalid_prefix_alias"
+	ErrKeyPkgStorytellingAliasAlreadyExists   message.ErrKey = "pkg.storytelling.alias_already_exists"
+	ErrKeyPkgStorytellingInvalidAlias         message.ErrKey = "pkg.storytelling.invalid_alias"
+	ErrKeyPkgStorytellingInvalidPrefixAlias   message.ErrKey = "pkg.storytelling.invalid_prefix_alias"
 	ErrKeyPkgStorytellingInvalidReservedAlias message.ErrKey = "pkg.storytelling.invalid_reserved_alias"
 )
 
