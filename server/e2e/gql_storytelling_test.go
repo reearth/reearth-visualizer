@@ -503,13 +503,18 @@ func createStory(e *httpexpect.Expect, variables map[string]any) string {
 			createStory( input: {sceneId: $sceneId, title: $title, index: $index} ) { 
 				story { 
 					id
+					projectId
+					sceneId
 				} 
 			}
 		}`,
 		Variables: variables,
 	}
 	res := Request(e, uID.String(), requestBody)
-	return res.Path("$.data.createStory.story.id").Raw().(string)
+	st := res.Path("$.data.createStory.story")
+	st.Object().Value("projectId").IsString()
+	st.Object().Value("sceneId").IsString()
+	return st.Path("$.id").Raw().(string)
 }
 
 func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *httpexpect.Value) {

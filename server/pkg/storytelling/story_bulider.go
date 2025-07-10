@@ -55,6 +55,11 @@ func (b *StoryBuilder) Property(property id.PropertyID) *StoryBuilder {
 	return b
 }
 
+func (b *StoryBuilder) Project(project id.ProjectID) *StoryBuilder {
+	b.s.project = project
+	return b
+}
+
 func (b *StoryBuilder) Scene(scene id.SceneID) *StoryBuilder {
 	b.s.scene = scene
 	return b
