@@ -233,16 +233,24 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 		sortKey = sort.Key
 	}
 
-	// For offset-based pagination, prioritize pFilter.Limit over cursor limits
-	if limit != nil && *limit > 0 {
+	// Prioritize offset-based pagination when offset is provided
+	if offset != nil && limit != nil && *limit > 0 {
 		// Use provided limit for offset pagination
 	} else if cursor != nil && cursor.First != nil {
+		if limit == nil {
+			limit = new(int64)
+		}
 		*limit = *cursor.First
 	} else if cursor != nil && cursor.Last != nil {
+		if limit == nil {
+			limit = new(int64)
+		}
 		*limit = *cursor.Last
-	} else if limit == nil {
+	} else {
 		// default
-		limit = new(int64)
+		if limit == nil {
+			limit = new(int64)
+		}
 		*limit = 10
 	}
 

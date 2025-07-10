@@ -41,8 +41,17 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 
 	var res []*project.Project
 	var info *usecasex.PageInfo
-	if req.WorkspaceId == nil {
+	var param *interfaces.ProjectListParam
+	if req.Pagination != nil {
+		if req.Pagination.Offset != nil && req.Pagination.Limit != nil {
+			param = &interfaces.ProjectListParam{
+				Offset: req.Pagination.Offset,
+				Limit:  req.Pagination.Limit,
+			}
+		}
+	}
 
+	if req.WorkspaceId == nil {
 		var err error
 		res, info, err = uc.Project.FindVisibilityByUser(
 			ctx, adapter.User(ctx),
@@ -51,10 +60,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 			req.Keyword,
 			sort,
 			pagination,
-			&interfaces.ProjectListParam{
-				Limit:  req.Pagination.Limit,
-				Offset: req.Pagination.Offset,
-			},
+			param,
 		)
 		if err != nil {
 			return nil, err

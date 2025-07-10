@@ -224,13 +224,12 @@ func TestProject_FindDeletedByWorkspace(t *testing.T) {
 
 }
 
-
 func TestProject_FindByWorkspaces_OffsetPagination(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	
+
 	wid := accountdomain.NewWorkspaceID()
-	
+
 	// Create 25 test projects
 	docs := make([]any, 25)
 	for i := 0; i < 25; i++ {
@@ -243,77 +242,77 @@ func TestProject_FindByWorkspaces_OffsetPagination(t *testing.T) {
 			"deleted":    false,
 		}
 	}
-	
+
 	_, err := c.Collection("project").InsertMany(ctx, docs)
 	assert.NoError(t, err)
-	
+
 	r := NewProject(mongox.NewClientWithDatabase(c))
-	
+
 	t.Run("First page with offset pagination", func(t *testing.T) {
 		offset := int64(0)
 		limit := int64(10)
-		
+
 		pFilter := repo.ProjectFilter{
 			Offset: &offset,
 			Limit:  &limit,
 		}
-		
+
 		projects, pageInfo, err := r.FindByWorkspaces(ctx, true, pFilter, accountdomain.WorkspaceIDList{wid}, accountdomain.WorkspaceIDList{wid})
-		
+
 		assert.NoError(t, err)
 		assert.Equal(t, 10, len(projects))
 		assert.Equal(t, int64(25), pageInfo.TotalCount)
 		assert.True(t, pageInfo.HasNextPage)
 		assert.False(t, pageInfo.HasPreviousPage)
 	})
-	
+
 	t.Run("Middle page with offset pagination", func(t *testing.T) {
 		offset := int64(10)
 		limit := int64(10)
-		
+
 		pFilter := repo.ProjectFilter{
 			Offset: &offset,
 			Limit:  &limit,
 		}
-		
+
 		projects, pageInfo, err := r.FindByWorkspaces(ctx, true, pFilter, accountdomain.WorkspaceIDList{wid}, accountdomain.WorkspaceIDList{wid})
-		
+
 		assert.NoError(t, err)
 		assert.Equal(t, 10, len(projects))
 		assert.Equal(t, int64(25), pageInfo.TotalCount)
 		assert.True(t, pageInfo.HasNextPage)
 		assert.True(t, pageInfo.HasPreviousPage)
 	})
-	
+
 	t.Run("Last page with offset pagination", func(t *testing.T) {
 		offset := int64(20)
 		limit := int64(10)
-		
+
 		pFilter := repo.ProjectFilter{
 			Offset: &offset,
 			Limit:  &limit,
 		}
-		
+
 		projects, pageInfo, err := r.FindByWorkspaces(ctx, true, pFilter, accountdomain.WorkspaceIDList{wid}, accountdomain.WorkspaceIDList{wid})
-		
+
 		assert.NoError(t, err)
 		assert.Equal(t, 5, len(projects)) // Only 5 remaining projects
 		assert.Equal(t, int64(25), pageInfo.TotalCount)
 		assert.False(t, pageInfo.HasNextPage)
 		assert.True(t, pageInfo.HasPreviousPage)
 	})
-	
+
 	t.Run("Offset beyond total count", func(t *testing.T) {
 		offset := int64(30)
 		limit := int64(10)
-		
+
 		pFilter := repo.ProjectFilter{
 			Offset: &offset,
 			Limit:  &limit,
 		}
-		
+
 		projects, pageInfo, err := r.FindByWorkspaces(ctx, true, pFilter, accountdomain.WorkspaceIDList{wid}, accountdomain.WorkspaceIDList{wid})
-		
+
 		assert.NoError(t, err)
 		assert.Equal(t, 0, len(projects))
 		assert.Equal(t, int64(25), pageInfo.TotalCount)

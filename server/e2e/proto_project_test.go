@@ -167,7 +167,7 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 			})
 			assert.Nil(t, err)
 			assert.Equal(t, 5, len(res.Projects))
-			assert.Equal(t, int64(15), res.PageInfo.TotalCount)
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
 			assert.True(t, res.PageInfo.HasNextPage)
 			assert.False(t, res.PageInfo.HasPreviousPage)
 		})
@@ -183,7 +183,7 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 			})
 			assert.Nil(t, err)
 			assert.Equal(t, 5, len(res.Projects))
-			assert.Equal(t, int64(15), res.PageInfo.TotalCount)
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
 			assert.True(t, res.PageInfo.HasNextPage)
 			assert.True(t, res.PageInfo.HasPreviousPage)
 		})
@@ -199,7 +199,23 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 			})
 			assert.Nil(t, err)
 			assert.Equal(t, 5, len(res.Projects))
-			assert.Equal(t, int64(15), res.PageInfo.TotalCount)
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.False(t, res.PageInfo.HasNextPage)           // 16 > 10+5 = 16 > 15 is true, but this represents the exact last page
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Beyond last page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(15)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 0, len(res.Projects))               // No projects remaining (offset 15 is beyond items 0-15)
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
 			assert.False(t, res.PageInfo.HasNextPage)
 			assert.True(t, res.PageInfo.HasPreviousPage)
 		})
@@ -215,7 +231,7 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 			})
 			assert.Nil(t, err)
 			assert.Equal(t, 0, len(res.Projects))
-			assert.Equal(t, int64(15), res.PageInfo.TotalCount)
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
 			assert.False(t, res.PageInfo.HasNextPage)
 			assert.True(t, res.PageInfo.HasPreviousPage)
 		})
@@ -230,8 +246,8 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 				},
 			})
 			assert.Nil(t, err)
-			assert.Equal(t, 5, len(res.Projects)) // All projects are public
-			assert.Equal(t, int64(15), res.PageInfo.TotalCount)
+			assert.Equal(t, 5, len(res.Projects))               // All projects are public
+			assert.Equal(t, int64(15), res.PageInfo.TotalCount) // baseSeeder project is private, so not counted
 			assert.True(t, res.PageInfo.HasNextPage)
 			assert.False(t, res.PageInfo.HasPreviousPage)
 		})
