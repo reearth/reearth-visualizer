@@ -364,7 +364,7 @@ func TestProject_FindVisibilityByWorkspace(t *testing.T) {
 			AcOperator: &accountusecase.Operator{
 				WritableWorkspaces: workspace.IDList{ws.ID()},
 			},
-		}, nil, nil, nil)
+		}, nil, nil, nil, nil)
 		assert.NoError(t, err)
 		assert.Equal(t, pj.ID(), result[0].ID())
 	})
@@ -377,7 +377,7 @@ func TestProject_FindVisibilityByWorkspace(t *testing.T) {
 			AcOperator: &accountusecase.Operator{
 				WritableWorkspaces: workspace.IDList{ws.ID()},
 			},
-		}, nil, nil, nil)
+		}, nil, nil, nil, nil)
 		assert.NoError(t, err)
 		assert.Equal(t, 0, len(result))
 	})

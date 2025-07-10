@@ -222,7 +222,7 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 	return filter
 }
 
-func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.SortType, cursor *usecasex.CursorPagination) (bson.M, *options.FindOptions, int64, int) {
+func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.SortType, cursor *usecasex.CursorPagination, offset *int64) (bson.M, *options.FindOptions, int64, int) {
 
 	// default connfig
 	limit := int64(10)
@@ -249,59 +249,61 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 		{Key: "id", Value: sortOrder},
 	}
 
-	if cursor != nil && cursor.After != nil {
-
-		cursor := *cursor.After
-		afterID, afterKey := decodeProjectCursor(cursor)
-
-		var keyValue any = afterKey
-		if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
-			keyValue = t
-		}
-
-		if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
-			if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
-				keyValue = t
-			}
-		}
-
-		absoluteFilter["$or"] = bson.A{
-			bson.M{sortKey: bson.M{"$gt": keyValue}},
-			bson.M{
-				sortKey: keyValue,
-				"id":    bson.M{"$gt": afterID},
-			},
-		}
-
-	} else if cursor != nil && cursor.Before != nil {
-
-		cursor := *cursor.Before
-		beforeID, beforeKey := decodeProjectCursor(cursor)
-
-		var keyValue any = beforeKey
-		if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
-			keyValue = t
-		}
-
-		if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
-			if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
-				keyValue = t
-			}
-		}
-
-		absoluteFilter["$or"] = bson.A{
-			bson.M{sortKey: bson.M{"$lt": keyValue}},
-			bson.M{
-				sortKey: keyValue,
-				"id":    bson.M{"$lt": beforeID},
-			},
-		}
-
-	}
-
 	findOptions := options.Find().
 		SetSort(sortConfig).
 		SetLimit(limit)
+
+	if offset != nil {
+		findOptions = findOptions.SetSkip(*offset)
+	} else {
+		if cursor != nil && cursor.After != nil {
+			cursor := *cursor.After
+			afterID, afterKey := decodeProjectCursor(cursor)
+
+			var keyValue any = afterKey
+			if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
+				keyValue = t
+			}
+
+			if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+				if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
+					keyValue = t
+				}
+			}
+
+			absoluteFilter["$or"] = bson.A{
+				bson.M{sortKey: bson.M{"$gt": keyValue}},
+				bson.M{
+					sortKey: keyValue,
+					"id":    bson.M{"$gt": afterID},
+				},
+			}
+
+		} else if cursor != nil && cursor.Before != nil {
+
+			cursor := *cursor.Before
+			beforeID, beforeKey := decodeProjectCursor(cursor)
+
+			var keyValue any = beforeKey
+			if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
+				keyValue = t
+			}
+
+			if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+				if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
+					keyValue = t
+				}
+			}
+
+			absoluteFilter["$or"] = bson.A{
+				bson.M{sortKey: bson.M{"$lt": keyValue}},
+				bson.M{
+					sortKey: keyValue,
+					"id":    bson.M{"$lt": beforeID},
+				},
+			}
+		}
+	}
 
 	return absoluteFilter, findOptions, limit, sortOrder
 }
@@ -322,9 +324,9 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 	var sortOrder int
 
 	if pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil {
-		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, pFilter.Pagination.Cursor)
+		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, pFilter.Pagination.Cursor, pFilter.Offset)
 	} else {
-		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, nil)
+		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, nil, pFilter.Offset)
 	}
 
 	// --- Find Query (paginationSortilter)
