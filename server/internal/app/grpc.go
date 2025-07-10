@@ -64,6 +64,11 @@ func unaryLogInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 
 func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		// Check if this is a read-only GET method that should be allowed without auth
+		if isReadOnlyMethod(info.FullMethod) {
+			return handler(ctx, req)
+		}
+
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
 			log.Errorf("unaryAuthInterceptor: no metadata found")
@@ -89,10 +94,20 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
+			// For read-only methods, we can proceed without metadata
+			if isReadOnlyMethod(info.FullMethod) {
+				ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+				return handler(ctx, req)
+			}
 			log.Errorf("unaryAttachOperatorInterceptor: no metadata found")
 			return nil, errors.New("unauthorized")
 		}
 		if len(md["user-id"]) < 1 {
+			// For read-only methods, we can proceed without user-id
+			if isReadOnlyMethod(info.FullMethod) {
+				ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+				return handler(ctx, req)
+			}
 			log.Errorf("unaryAttachOperatorInterceptor: no user id found")
 			return nil, errors.New("unauthorized")
 		}
@@ -152,6 +167,21 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 		ctx = adapter.AttachInternal(ctx, true)
 		return handler(ctx, req)
 	}
+}
+
+func isReadOnlyMethod(method string) bool {
+	readOnlyMethods := []string{
+		"v1.ReEarthVisualizer/GetProjectList",
+		"v1.ReEarthVisualizer/GetProject",
+		"v1.ReEarthVisualizer/GetProjectByAlias",
+	}
+
+	for _, readOnlyMethod := range readOnlyMethods {
+		if strings.Contains(method, readOnlyMethod) {
+			return true
+		}
+	}
+	return false
 }
 
 func tokenFromGrpcMetadata(md metadata.MD) string {

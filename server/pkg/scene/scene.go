@@ -19,6 +19,8 @@ type Scene struct {
 	updatedAt time.Time
 	property  id.PropertyID
 	styles    *StyleList
+	// publishment
+	alias string
 }
 
 func (s *Scene) ID() id.SceneID {
@@ -110,4 +112,14 @@ func (s *Scene) Properties() []id.PropertyID {
 	ids = append(ids, s.plugins.Properties()...)
 	ids = append(ids, s.widgets.Properties()...)
 	return ids
+}
+
+// publishment ---------------------
+
+func (s *Scene) Alias() string {
+	return s.alias
+}
+
+func (s *Scene) UpdateAlias(alias string) {
+	s.alias = alias
 }

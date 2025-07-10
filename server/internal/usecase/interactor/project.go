@@ -148,6 +148,10 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 		return nil, err
 	}
 
+	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
+		return nil, errors.New("project is private")
+	}
+
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
 	if err != nil {
 		return nil, err
@@ -217,7 +221,11 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 
 	wList := accountdomain.WorkspaceIDList{aid}
 
-	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, operator.AcOperator.OwningWorkspaces, wList)
+	var owningWsLis accountdomain.WorkspaceIDList
+	if operator != nil {
+		owningWsLis = operator.AcOperator.OwningWorkspaces
+	}
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, owningWsLis, wList)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -527,6 +535,11 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByProject(ctx, prj.ID())
+	if err != nil {
+		return nil, err
+	}
+
 	prevAlias := prj.Alias()
 
 	// if ProjectID is not specified
@@ -576,7 +589,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	// publish
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-		if err := i.uploadPublishScene(ctx, prj, op); err != nil {
+		if err := i.uploadPublishScene(ctx, prj, sc, op); err != nil {
 			return nil, err
 		}
 		prj.SetPublishedAt(time.Now())
@@ -594,27 +607,33 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
+	sc.UpdateAlias(prj.Alias())
+
+	if err := i.sceneRepo.Save(ctx, sc); err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return prj, nil
 }
 
-func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) (*scene.Scene, error) {
+func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) error {
 
 	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if policyID := op.Policy(ws.Policy()); policyID != nil {
 
 		p, err := i.policyRepo.FindByID(ctx, *policyID)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// newrly published
@@ -623,22 +642,20 @@ func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, 
 		}
 
 		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return i.sceneRepo.FindByProject(ctx, prj.ID())
+	return nil
 }
 
-func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, op *usecase.Operator) error {
+func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s *scene.Scene, op *usecase.Operator) error {
 
 	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, p, op)
-	if err != nil {
+	if err := i.checkPublishPolicy(ctx, p, op); err != nil {
 		return err
 	}
 
-	// Lock
 	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
 		return err
 	}
@@ -1055,9 +1072,9 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	}
 
 	if input.Visibility != nil {
-		prj = prj.Visibility(*input.Visibility)
+		prj = prj.Visibility(project.Visibility(*input.Visibility))
 	} else {
-		prj = prj.Visibility("private")
+		prj = prj.Visibility(project.VisibilityPrivate)
 	}
 
 	proj, err := prj.Build()

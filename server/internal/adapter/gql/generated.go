@@ -774,6 +774,7 @@ type ComplexityRoot struct {
 	}
 
 	Scene struct {
+		Alias             func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		ID                func(childComplexity int) int
 		NewLayers         func(childComplexity int) int
@@ -838,6 +839,7 @@ type ComplexityRoot struct {
 		IsBasicAuthActive func(childComplexity int) int
 		Pages             func(childComplexity int) int
 		PanelPosition     func(childComplexity int) int
+		ProjectID         func(childComplexity int) int
 		Property          func(childComplexity int) int
 		PropertyID        func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
@@ -4916,6 +4918,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.RemoveWidgetPayload.WidgetID(childComplexity), true
 
+	case "Scene.alias":
+		if e.complexity.Scene.Alias == nil {
+			break
+		}
+
+		return e.complexity.Scene.Alias(childComplexity), true
+
 	case "Scene.createdAt":
 		if e.complexity.Scene.CreatedAt == nil {
 			break
@@ -5237,6 +5246,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Story.PanelPosition(childComplexity), true
+
+	case "Story.projectId":
+		if e.complexity.Story.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.Story.ProjectID(childComplexity), true
 
 	case "Story.property":
 		if e.complexity.Story.Property == nil {
@@ -7350,6 +7366,7 @@ extend type Mutation {
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
+  alias: String!
 }
 
 type SceneWidget {
@@ -7393,6 +7410,7 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "../../../gql/storytelling.graphql", Input: `type Story implements Node {
   id: ID!
+  projectId: ID!
   sceneId: ID!
   scene: Scene
 
@@ -11813,6 +11831,8 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -13188,6 +13208,8 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -13364,6 +13386,8 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(_ context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -13738,6 +13762,8 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(_ context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -14915,6 +14941,8 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -14991,6 +15019,8 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -17373,6 +17403,8 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(_ context.C
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -17621,6 +17653,8 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(_ context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -17845,6 +17879,8 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(_ context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -22603,6 +22639,8 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -23178,6 +23216,8 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -23756,6 +23796,8 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -24149,6 +24191,8 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -24962,6 +25006,8 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -26762,6 +26808,8 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -33500,6 +33548,8 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -34488,6 +34538,8 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(_ context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -34652,6 +34704,8 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -35428,6 +35482,8 @@ func (ec *executionContext) fieldContext_Scene_stories(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -35530,6 +35586,50 @@ func (ec *executionContext) fieldContext_Scene_styles(_ context.Context, field g
 				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -36641,6 +36741,50 @@ func (ec *executionContext) fieldContext_Story_id(_ context.Context, field graph
 	return fc, nil
 }
 
+func (ec *executionContext) _Story_projectId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_projectId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_projectId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Story_sceneId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Story_sceneId(ctx, field)
 	if err != nil {
@@ -36751,6 +36895,8 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -38662,6 +38808,8 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -38778,6 +38926,8 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -38870,6 +39020,8 @@ func (ec *executionContext) fieldContext_StoryPayload_story(_ context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -39163,6 +39315,8 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40291,6 +40445,8 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40784,6 +40940,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40860,6 +41018,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -41000,6 +41160,8 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -41208,6 +41370,8 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -55096,6 +55260,11 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "alias":
+			out.Values[i] = ec._Scene_alias(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -55538,6 +55707,11 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = graphql.MarshalString("Story")
 		case "id":
 			out.Values[i] = ec._Story_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "projectId":
+			out.Values[i] = ec._Story_projectId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

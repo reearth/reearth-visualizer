@@ -118,7 +118,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		CoreSupport(d.CoreSupport).
 		Starred(d.Starred).
 		Deleted(d.Deleted).
-		Visibility(d.Visibility).
+		Visibility(project.Visibility(d.Visibility)).
 		// publishment
 		Alias(d.Alias).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
