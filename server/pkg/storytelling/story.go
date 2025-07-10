@@ -19,6 +19,7 @@ var (
 type Story struct {
 	id            id.StoryID
 	property      id.PropertyID
+	project       id.ProjectID
 	scene         id.SceneID
 	title         string
 	pages         *PageList
@@ -48,6 +49,10 @@ func (s *Story) Id() id.StoryID {
 
 func (s *Story) Property() id.PropertyID {
 	return s.property
+}
+
+func (s *Story) Project() id.ProjectID {
+	return s.project
 }
 
 func (s *Story) Scene() id.SceneID {

@@ -135,11 +135,9 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 
 	sceneID := id.NewSceneID()
 
-	if prj.Alias() == "" {
-		prj.UpdateAlias(alias.ReservedReearthPrefixScene + sceneID.String())
-		if err := i.projectRepo.Save(ctx, prj); err != nil {
-			return nil, err
-		}
+	prj.UpdateAlias(alias.ReservedReearthPrefixScene + sceneID.String())
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, err
 	}
 
 	prop, err := i.addDefaultVisualizerTilesProperty(ctx, sceneID, prj.CoreSupport())
@@ -157,6 +155,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 		Workspace(ws).
 		Property(prop.ID()).
 		Plugins(officialPlugins).
+		Alias(alias.ReservedReearthPrefixScene + sceneID.String()).
 		Build()
 	if err != nil {
 		return nil, err
