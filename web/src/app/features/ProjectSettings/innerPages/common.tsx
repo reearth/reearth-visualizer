@@ -121,6 +121,7 @@ const Tab = styled("div")<{ active?: boolean }>(({ active, theme }) => ({
 
 export const PreviewWrapper = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
+  fontSize: theme.fonts.sizes.body,
   "@media (prefers-color-scheme: dark)": {
     backgroundColor: "transparent",
     color: "inherit"

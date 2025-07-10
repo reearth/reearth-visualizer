@@ -67,7 +67,7 @@ const LicenseSettings: FC<Props> = ({
           <>
             <Button
               appearance="primary"
-              title={t("Choose a license template")}
+              title={t("Choose a template")}
               onClick={() => setOpen(true)}
             />
             <Button
@@ -99,7 +99,7 @@ const LicenseSettings: FC<Props> = ({
         <Modal visible={true} size="small">
           <ModalPanel
             onCancel={handleCloseModal}
-            title={t("Choose a license template")}
+            title={t("Choose a template")}
             actions={[
               <Button
                 key="cancel"
@@ -118,12 +118,18 @@ const LicenseSettings: FC<Props> = ({
             data-testid="project-licence-modal-edit"
           >
             <ContentWrapper>
-              <Typography size="body" color={theme.content.weak}>
+              <Typography size="body">
                 {t(
-                  "You can select a license from the following templates to apply to your current project. Once selected, it will replace the current license setting. Please make sure you understand the implications of the new license."
+                  "You can select a license from the following templates to apply to your current project."
+                )}
+              </Typography>
+              <Typography size="body" color={theme.warning.main}>
+                {t(
+                  "Once selected, it will replace the current license setting. Please make sure you understand the implications of the new license."
                 )}
               </Typography>
               <SelectField
+                title={"Choose a license"}
                 value={selectedLicense}
                 onChange={(value) => setSelectedLicense(value as string)}
                 placeholder={t("Select a license")}
