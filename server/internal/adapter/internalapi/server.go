@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -169,9 +170,19 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		return nil, err
 	}
 
+	var vis visualizer.Visualizer
+	switch req.Visualizer {
+	case pb.Visualizer_VISUALIZER_CESIUM:
+		vis = visualizer.VisualizerCesium
+	case pb.Visualizer_VISUALIZER_CESIUM_BETA:
+		vis = visualizer.VisualizerCesiumBeta
+	default:
+		vis = visualizer.VisualizerCesium
+	}
+
 	pj, err := uc.Project.Create(ctx, interfaces.CreateProjectParam{
 		WorkspaceID: wId,
-		Visualizer:  visualizer.Visualizer(req.Visualizer),
+		Visualizer:  visualizer.Visualizer(strings.ToUpper(string(vis))),
 		Name:        req.Name,
 		Description: req.Description,
 		CoreSupport: req.CoreSupport,
