@@ -64,6 +64,10 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 			Message:     "The alias is already in use within the workspace. Please try a different value.",
 			Description: "Project aliases must be unique within a workspace.",
 		},
+		language.Japanese: {
+			Message:     "そのエイリアスはワークスペース内で既に使用されています。別の値を試してください",
+			Description: "ワークスペース内でプロジェクトのエイリアスは一意である必要があります。",
+		},
 	},
 	ErrKeyPkgStorytellingAliasAlreadyExists: {
 		language.English: {
