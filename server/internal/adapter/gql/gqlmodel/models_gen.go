@@ -193,12 +193,13 @@ type CreateNLSPhotoOverlayPayload struct {
 }
 
 type CreateProjectInput struct {
-	TeamID      ID         `json:"teamId"`
-	Visualizer  Visualizer `json:"visualizer"`
-	Name        *string    `json:"name,omitempty"`
-	Description *string    `json:"description,omitempty"`
-	CoreSupport *bool      `json:"coreSupport,omitempty"`
-	Visibility  *string    `json:"visibility,omitempty"`
+	TeamID       ID         `json:"teamId"`
+	Visualizer   Visualizer `json:"visualizer"`
+	Name         *string    `json:"name,omitempty"`
+	Description  *string    `json:"description,omitempty"`
+	CoreSupport  *bool      `json:"coreSupport,omitempty"`
+	Visibility   *string    `json:"visibility,omitempty"`
+	ProjectAlias *string    `json:"projectAlias,omitempty"`
 }
 
 type CreateSceneInput struct {
@@ -688,6 +689,7 @@ type Project struct {
 	IsDeleted         bool              `json:"isDeleted"`
 	Visibility        string            `json:"visibility"`
 	Metadata          *ProjectMetadata  `json:"metadata,omitempty"`
+	ProjectAlias      string            `json:"projectAlias"`
 	Alias             string            `json:"alias"`
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
@@ -1272,6 +1274,7 @@ type UpdateProjectInput struct {
 	Starred           *bool    `json:"starred,omitempty"`
 	Deleted           *bool    `json:"deleted,omitempty"`
 	Visibility        *string  `json:"visibility,omitempty"`
+	ProjectAlias      *string  `json:"projectAlias,omitempty"`
 	PublicTitle       *string  `json:"publicTitle,omitempty"`
 	PublicDescription *string  `json:"publicDescription,omitempty"`
 	PublicImage       *string  `json:"publicImage,omitempty"`

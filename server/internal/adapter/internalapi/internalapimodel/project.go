@@ -120,16 +120,17 @@ func ToInternalProject(ctx context.Context, p *project.Project, storytellings *s
 
 		Stories: stories,
 
-		Name:        p.Name(),
-		Description: p.Description(),
-		ImageUrl:    imageURL,
-		UpdatedAt:   timestamppb.New(p.UpdatedAt()),
-		Visualizer:  ToVisualizer(p.Visualizer()),
-		IsArchived:  p.IsArchived(),
-		CoreSupport: p.CoreSupport(),
-		Starred:     p.Starred(),
-		IsDeleted:   p.IsDeleted(),
-		Visibility:  p.Visibility(),
+		Name:         p.Name(),
+		Description:  p.Description(),
+		ImageUrl:     imageURL,
+		UpdatedAt:    timestamppb.New(p.UpdatedAt()),
+		Visualizer:   ToVisualizer(p.Visualizer()),
+		IsArchived:   p.IsArchived(),
+		CoreSupport:  p.CoreSupport(),
+		Starred:      p.Starred(),
+		IsDeleted:    p.IsDeleted(),
+		Visibility:   p.Visibility(),
+		ProjectAlias: p.ProjectAlias(),
 
 		EditorUrl: editorUrl,
 

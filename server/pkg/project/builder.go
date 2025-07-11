@@ -123,6 +123,11 @@ func (b *Builder) Metadata(metadata *ProjectMetadata) *Builder {
 	return b
 }
 
+func (b *Builder) ProjectAlias(projectAlias string) *Builder {
+	b.p.projectAlias = projectAlias
+	return b
+}
+
 // publishment ---------------------
 
 func (b *Builder) Alias(alias string) *Builder {

@@ -170,12 +170,13 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 	}
 
 	pj, err := uc.Project.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID: wId,
-		Visualizer:  visualizer.Visualizer(req.Visualizer),
-		Name:        req.Name,
-		Description: req.Description,
-		CoreSupport: req.CoreSupport,
-		Visibility:  req.Visibility,
+		WorkspaceID:  wId,
+		Visualizer:   visualizer.Visualizer(req.Visualizer),
+		Name:         req.Name,
+		Description:  req.Description,
+		CoreSupport:  req.CoreSupport,
+		Visibility:   req.Visibility,
+		ProjectAlias: req.ProjectAlias,
 	}, op)
 	if err != nil {
 		return nil, err
@@ -277,6 +278,7 @@ func (s server) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest)
 		Starred:        req.Starred,
 		Deleted:        req.Deleted,
 		Visibility:     req.Visibility,
+		ProjectAlias:   req.ProjectAlias,
 
 		// publishment
 		PublicTitle:       req.PublicTitle,

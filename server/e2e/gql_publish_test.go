@@ -41,7 +41,8 @@ func TestDefaultAlias(t *testing.T) {
 		node := edge.Object().Value("node").Object()
 		id := node.Value("id").Raw().(string)
 		if id == projectId {
-			node.Value("alias").IsEqual("c-" + sceneId) // sceneId
+			node.Value("projectAlias").IsEqual("p-" + projectId) // projectId
+			node.Value("alias").IsEqual("c-" + sceneId)          // sceneId
 		}
 	}
 	r := getScene(e, sceneId, language.English.String())

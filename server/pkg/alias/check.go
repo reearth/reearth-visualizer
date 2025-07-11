@@ -12,6 +12,8 @@ import (
 )
 
 var (
+	ReservedReearthPrefixProject = "p-"
+
 	ReservedReearthPrefixScene = "c-"
 
 	ReservedReearthPrefixStory = "s-"
@@ -83,6 +85,13 @@ var (
 				return entitymsg.GetLocalizedEntityMessage(entitymsg.EntityKeyPkgProjectAliasAllowedChars, locale)
 			},
 		}),
+		nil,
+	)
+
+	ErrExistsProjectAliasAlreadyExists = verror.NewVError(
+		errmsg.ErrKeyPkgProjectProjectAliasAlreadyExists,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectProjectAliasAlreadyExists],
+		nil,
 		nil,
 	)
 

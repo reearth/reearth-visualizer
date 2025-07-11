@@ -25,4 +25,5 @@ var migrations = migration.Migrations[DBClient]{
   250530154721: AddProjectMetadata,
   250709132207: SetProjectIdStorytelling,
   250709145819: SetProjectAlias,
+  250711143148: AddProjectAlias,
 }

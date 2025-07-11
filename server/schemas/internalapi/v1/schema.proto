@@ -104,12 +104,15 @@ message Project {
   // Project metadata
   optional ProjectMetadata metadata = 17;
 
+  // Project alias
+  string project_alias = 18;
+
   // Scene Publishment value
-  string alias = 18;
+  string alias = 19;
   // Scene Publishment value
-  PublishmentStatus publishment_status = 19;
+  PublishmentStatus publishment_status = 20;
   // Scene Publishment value
-  optional string published_url = 20;
+  optional string published_url = 21;
 }
 
 message Story {
@@ -264,6 +267,9 @@ message CreateProjectRequest {
 
   // Visibility of the project (e.g., "public", "private")
   optional string visibility = 6;
+
+  // Project alias
+  optional string project_alias = 7;
 }
 
 // Update project fields.
@@ -294,6 +300,8 @@ message UpdateProjectRequest {
   optional string basic_auth_password = 18;
   optional bool enable_ga = 19;
   optional string tracking_id = 20;
+
+  optional string project_alias = 21;
 }
 
 // Update project publish fields.

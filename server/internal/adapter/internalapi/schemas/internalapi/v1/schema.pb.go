@@ -313,12 +313,14 @@ type Project struct {
 	EditorUrl string `protobuf:"bytes,16,opt,name=editor_url,json=editorUrl,proto3" json:"editor_url,omitempty"`
 	// Project metadata
 	Metadata *ProjectMetadata `protobuf:"bytes,17,opt,name=metadata,proto3,oneof" json:"metadata,omitempty"`
+	// Project alias
+	ProjectAlias string `protobuf:"bytes,18,opt,name=project_alias,json=projectAlias,proto3" json:"project_alias,omitempty"`
 	// Scene Publishment value
-	Alias string `protobuf:"bytes,18,opt,name=alias,proto3" json:"alias,omitempty"`
+	Alias string `protobuf:"bytes,19,opt,name=alias,proto3" json:"alias,omitempty"`
 	// Scene Publishment value
-	PublishmentStatus PublishmentStatus `protobuf:"varint,19,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
+	PublishmentStatus PublishmentStatus `protobuf:"varint,20,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
 	// Scene Publishment value
-	PublishedUrl  *string `protobuf:"bytes,20,opt,name=published_url,json=publishedUrl,proto3,oneof" json:"published_url,omitempty"`
+	PublishedUrl  *string `protobuf:"bytes,21,opt,name=published_url,json=publishedUrl,proto3,oneof" json:"published_url,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -470,6 +472,13 @@ func (x *Project) GetMetadata() *ProjectMetadata {
 		return x.Metadata
 	}
 	return nil
+}
+
+func (x *Project) GetProjectAlias() string {
+	if x != nil {
+		return x.ProjectAlias
+	}
+	return ""
 }
 
 func (x *Project) GetAlias() string {
@@ -1141,7 +1150,9 @@ type CreateProjectRequest struct {
 	// Set to true
 	CoreSupport *bool `protobuf:"varint,5,opt,name=core_support,json=coreSupport,proto3,oneof" json:"core_support,omitempty"`
 	// Visibility of the project (e.g., "public", "private")
-	Visibility    *string `protobuf:"bytes,6,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
+	Visibility *string `protobuf:"bytes,6,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
+	// Project alias
+	ProjectAlias  *string `protobuf:"bytes,7,opt,name=project_alias,json=projectAlias,proto3,oneof" json:"project_alias,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1218,6 +1229,13 @@ func (x *CreateProjectRequest) GetVisibility() string {
 	return ""
 }
 
+func (x *CreateProjectRequest) GetProjectAlias() string {
+	if x != nil && x.ProjectAlias != nil {
+		return *x.ProjectAlias
+	}
+	return ""
+}
+
 // Update project fields.
 // Only the project owner can operate this
 type UpdateProjectRequest struct {
@@ -1245,6 +1263,7 @@ type UpdateProjectRequest struct {
 	BasicAuthPassword *string `protobuf:"bytes,18,opt,name=basic_auth_password,json=basicAuthPassword,proto3,oneof" json:"basic_auth_password,omitempty"`
 	EnableGa          *bool   `protobuf:"varint,19,opt,name=enable_ga,json=enableGa,proto3,oneof" json:"enable_ga,omitempty"`
 	TrackingId        *string `protobuf:"bytes,20,opt,name=tracking_id,json=trackingId,proto3,oneof" json:"tracking_id,omitempty"`
+	ProjectAlias      *string `protobuf:"bytes,21,opt,name=project_alias,json=projectAlias,proto3,oneof" json:"project_alias,omitempty"`
 	unknownFields     protoimpl.UnknownFields
 	sizeCache         protoimpl.SizeCache
 }
@@ -1415,6 +1434,13 @@ func (x *UpdateProjectRequest) GetEnableGa() bool {
 func (x *UpdateProjectRequest) GetTrackingId() string {
 	if x != nil && x.TrackingId != nil {
 		return *x.TrackingId
+	}
+	return ""
+}
+
+func (x *UpdateProjectRequest) GetProjectAlias() string {
+	if x != nil && x.ProjectAlias != nil {
+		return *x.ProjectAlias
 	}
 	return ""
 }
@@ -2152,7 +2178,7 @@ var File_schemas_internalapi_v1_schema_proto protoreflect.FileDescriptor
 
 const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
-	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xeb\x06\n" +
+	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x90\a\n" +
 	"\aProject\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fworkspace_id\x18\x02 \x01(\tR\vworkspaceId\x12\x19\n" +
@@ -2180,10 +2206,11 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"visibility\x12\x1d\n" +
 	"\n" +
 	"editor_url\x18\x10 \x01(\tR\teditorUrl\x12G\n" +
-	"\bmetadata\x18\x11 \x01(\v2&.reearth.visualizer.v1.ProjectMetadataH\x01R\bmetadata\x88\x01\x01\x12\x14\n" +
-	"\x05alias\x18\x12 \x01(\tR\x05alias\x12W\n" +
-	"\x12publishment_status\x18\x13 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12(\n" +
-	"\rpublished_url\x18\x14 \x01(\tH\x02R\fpublishedUrl\x88\x01\x01B\f\n" +
+	"\bmetadata\x18\x11 \x01(\v2&.reearth.visualizer.v1.ProjectMetadataH\x01R\bmetadata\x88\x01\x01\x12#\n" +
+	"\rproject_alias\x18\x12 \x01(\tR\fprojectAlias\x12\x14\n" +
+	"\x05alias\x18\x13 \x01(\tR\x05alias\x12W\n" +
+	"\x12publishment_status\x18\x14 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12(\n" +
+	"\rpublished_url\x18\x15 \x01(\tH\x02R\fpublishedUrl\x88\x01\x01B\f\n" +
 	"\n" +
 	"_image_urlB\v\n" +
 	"\t_metadataB\x10\n" +
@@ -2261,7 +2288,7 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tH\x00R\tprojectId\x88\x01\x01\x12\x14\n" +
 	"\x05alias\x18\x02 \x01(\tR\x05aliasB\r\n" +
-	"\v_project_id\"\xc2\x02\n" +
+	"\v_project_id\"\xfe\x02\n" +
 	"\x14CreateProjectRequest\x12!\n" +
 	"\fworkspace_id\x18\x01 \x01(\tR\vworkspaceId\x12A\n" +
 	"\n" +
@@ -2272,11 +2299,13 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\fcore_support\x18\x05 \x01(\bH\x02R\vcoreSupport\x88\x01\x01\x12#\n" +
 	"\n" +
 	"visibility\x18\x06 \x01(\tH\x03R\n" +
-	"visibility\x88\x01\x01B\a\n" +
+	"visibility\x88\x01\x01\x12(\n" +
+	"\rproject_alias\x18\a \x01(\tH\x04R\fprojectAlias\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_core_supportB\r\n" +
-	"\v_visibility\"\x81\t\n" +
+	"\v_visibilityB\x10\n" +
+	"\x0e_project_alias\"\xbd\t\n" +
 	"\x14UpdateProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x17\n" +
@@ -2303,7 +2332,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x13basic_auth_password\x18\x12 \x01(\tH\x10R\x11basicAuthPassword\x88\x01\x01\x12 \n" +
 	"\tenable_ga\x18\x13 \x01(\bH\x11R\benableGa\x88\x01\x01\x12$\n" +
 	"\vtracking_id\x18\x14 \x01(\tH\x12R\n" +
-	"trackingId\x88\x01\x01B\a\n" +
+	"trackingId\x88\x01\x01\x12(\n" +
+	"\rproject_alias\x18\x15 \x01(\tH\x13R\fprojectAlias\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\v\n" +
 	"\t_archivedB\f\n" +
@@ -2326,7 +2356,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x14_basic_auth_passwordB\f\n" +
 	"\n" +
 	"_enable_gaB\x0e\n" +
-	"\f_tracking_id\"\xb4\x01\n" +
+	"\f_tracking_idB\x10\n" +
+	"\x0e_project_alias\"\xb4\x01\n" +
 	"\x15PublishProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x19\n" +

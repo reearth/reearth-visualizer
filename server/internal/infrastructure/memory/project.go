@@ -218,6 +218,10 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return nil, rerror.ErrNotFound
 }
 
+func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
+	return nil
+}
+
 func (r *Project) CheckAliasUnique(ctx context.Context, name string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()

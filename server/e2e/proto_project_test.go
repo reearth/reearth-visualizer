@@ -142,7 +142,7 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// Create 15 test projects for pagination testing
 		projectIDs := make([]id.ProjectID, 15)
-		for i := 0; i < 15; i++ {
+		for i := range [15]int{} {
 			pid := createProjectInternal(
 				t, ctx, r, client, "public",
 				&pb.CreateProjectRequest{
@@ -254,6 +254,57 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 	})
 }
 
+func TestInternalAPI_create(t *testing.T) {
+	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+		res, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId: testWorkspace,
+			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+			Name:        lo.ToPtr("Test Project1"),
+			Description: lo.ToPtr("Test Description1"),
+			CoreSupport: lo.ToPtr(true),
+			Visibility:  lo.ToPtr("public"),
+		})
+		require.Nil(t, err)
+		require.NotNil(t, res.GetProject())
+		pid, err := id.ProjectIDFrom(res.GetProject().Id)
+		assert.Nil(t, err)
+		prj, err := r.Project.FindByID(ctx, pid)
+		assert.Nil(t, err)
+		assert.Equal(t, "p-"+pid.String(), prj.ProjectAlias())
+
+		res, err = client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId:  testWorkspace,
+			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
+			Name:         lo.ToPtr("Test Project1"),
+			Description:  lo.ToPtr("Test Description1"),
+			CoreSupport:  lo.ToPtr(true),
+			Visibility:   lo.ToPtr("public"),
+			ProjectAlias: lo.ToPtr("test-xxxxxxx"),
+		})
+		require.Nil(t, err)
+		require.NotNil(t, res.GetProject())
+		pid, err = id.ProjectIDFrom(res.GetProject().Id)
+		assert.Nil(t, err)
+		prj, err = r.Project.FindByID(ctx, pid)
+		assert.Nil(t, err)
+		assert.Equal(t, "test-xxxxxxx", prj.ProjectAlias())
+
+		_, err = client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId:  testWorkspace,
+			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
+			Name:         lo.ToPtr("Test Project1"),
+			Description:  lo.ToPtr("Test Description1"),
+			CoreSupport:  lo.ToPtr(true),
+			ProjectAlias: lo.ToPtr("test-xxxxxxx"), // Already Exists
+		})
+		require.NotNil(t, err)
+		assert.Equal(t, "rpc error: code = Unknown desc = The alias is already in use within the workspace. Please try a different value.", err.Error())
+	})
+}
+
 func TestInternalAPI_unit(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 	testWorkspace := wID.String()
@@ -326,6 +377,7 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, m, "starred")
 	assert.Contains(t, m, "isDeleted")
 	assert.Contains(t, m, "visibility")
+	assert.Contains(t, m, "projectAlias")
 
 	assert.Contains(t, m, "editorUrl")
 

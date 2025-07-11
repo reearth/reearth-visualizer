@@ -24,7 +24,6 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 	if err != nil {
 		return nil, err
 	}
-
 	res, err := usecases(ctx).Project.Create(ctx, interfaces.CreateProjectParam{
 		WorkspaceID:  tid,
 		Visualizer:   visualizer.Visualizer(input.Visualizer),
@@ -33,6 +32,7 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		CoreSupport:  input.CoreSupport,
 		Visibility:   input.Visibility,
 		ImportStatus: project.ProjectImportStatusNone,
+		ProjectAlias: input.ProjectAlias,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err
@@ -68,6 +68,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		Deleted:        input.Deleted,
 		SceneID:        gqlmodel.ToIDRef[id.Scene](input.SceneID),
 		Visibility:     input.Visibility,
+		ProjectAlias:   input.ProjectAlias,
 
 		// publishment
 		PublicTitle:       input.PublicTitle,

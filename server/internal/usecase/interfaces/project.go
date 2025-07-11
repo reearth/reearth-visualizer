@@ -28,6 +28,7 @@ type CreateProjectParam struct {
 	CoreSupport  *bool
 	Visibility   *string
 	ImportStatus project.ProjectImportStatus
+	ProjectAlias *string
 }
 
 type UpdateProjectParam struct {
@@ -42,6 +43,7 @@ type UpdateProjectParam struct {
 	Starred        *bool
 	Deleted        *bool
 	Visibility     *string
+	ProjectAlias   *string
 
 	// publishment
 	PublicTitle       *string
