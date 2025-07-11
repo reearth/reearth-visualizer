@@ -177,6 +177,10 @@ message Pagination {
   optional int32 last = 2;
   optional string after = 3;
   optional string before = 4;
+
+
+  optional int64 limit = 6;
+  optional int64 offset = 7;
 }
 
 enum ProjectSortField {
