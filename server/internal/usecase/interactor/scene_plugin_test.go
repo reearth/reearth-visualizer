@@ -100,7 +100,8 @@ func TestScene_InstallPlugin(t *testing.T) {
 			repos := memory.New()
 			tid := accountdomain.NewWorkspaceID()
 			work := workspace.New().ID(tid).MustBuild()
-			repos.Workspace.Save(ctx, work)
+			err := repos.Workspace.Save(ctx, work)
+			assert.NotNil(t, err)
 
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			for _, p := range tt.installedScenePlugins {
