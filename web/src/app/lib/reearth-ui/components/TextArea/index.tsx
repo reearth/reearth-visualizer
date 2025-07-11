@@ -5,7 +5,7 @@ export type TextAreaProps = {
   value?: string;
   placeholder?: string;
   resizable?: "none" | "height";
-  appearance?: "readonly";
+  appearance?: "readonly" | "present";
   disabled?: boolean;
   rows?: number;
   counter?: boolean;
@@ -94,12 +94,14 @@ const Wrapper = styled("div")(() => ({
 
 const TextAreaWrapper = styled("div")<{
   status: "default" | "active";
-  appearance?: "readonly";
+  appearance?: "readonly" | "present";
 }>(({ appearance, theme, status }) => ({
   border:
-    status === "default" || appearance === "readonly"
-      ? `1px solid ${theme.outline.weak}`
-      : `1px solid ${theme.select.main}`,
+    appearance === "present"
+      ? `1px solid transparent`
+      : status === "default" || appearance === "readonly"
+        ? `1px solid ${theme.outline.weak}`
+        : `1px solid ${theme.select.main}`,
   borderRadius: theme.radius.small,
   background: "transparent",
   display: "flex",
@@ -109,7 +111,7 @@ const TextAreaWrapper = styled("div")<{
 const StyledTextArea = styled.textarea<{
   resizable?: "none" | "height";
   disabled?: boolean;
-  appearance?: "readonly";
+  appearance?: "readonly" | "present";
 }>(({ theme, resizable, disabled, appearance }) => ({
   outline: "none",
   border: "none",

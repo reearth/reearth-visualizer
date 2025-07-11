@@ -30,6 +30,7 @@ import Check from "./Icons/Check.svg?react";
 import Checked from "./Icons/Checked.svg?react";
 import Circle from "./Icons/Circle.svg?react";
 import CirclesThreePlus from "./Icons/CirclesThreePlus.svg?react";
+import ClipBoard from "./Icons/ClipBoard.svg?react";
 import Clock from "./Icons/Clock.svg?react";
 import ClockAfternoon from "./Icons/ClockAfternoon.svg?react";
 import ClockClockwise from "./Icons/ClockClockwise.svg?react";
@@ -38,6 +39,7 @@ import Close from "./Icons/Close.svg?react";
 import Compass from "./Icons/Compass.svg?react";
 import CompassFocus from "./Icons/CompassFocus.svg?react";
 import Copy from "./Icons/Copy.svg?react";
+import Copyright from "./Icons/Copyright.svg?react";
 import Crosshair from "./Icons/Crosshair.svg?react";
 import Cube from "./Icons/Cube.svg?react";
 import Cursor from "./Icons/Cursor.svg?react";
@@ -203,6 +205,7 @@ export default {
   checked: Checked,
   circle: Circle,
   circlesThreePlus: CirclesThreePlus,
+  clipBoard: ClipBoard,
   clock: Clock,
   clockFilled: ClockFilled,
   clockAfternoon: ClockAfternoon,
@@ -211,6 +214,7 @@ export default {
   compass: Compass,
   compassFocus: CompassFocus,
   copy: Copy,
+  copyright: Copyright,
   crosshair: Crosshair,
   cube: Cube,
   cursor: Cursor,

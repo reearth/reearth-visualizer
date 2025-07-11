@@ -16,8 +16,10 @@ import CursorStatus from "../CursorStatus";
 import useHooks from "./hooks";
 import Assets from "./innerPages/AssetSetting";
 import GeneralSettings from "./innerPages/GeneralSettings";
+import LicenseSettings from "./innerPages/LicenseSettings";
 import PluginSettings from "./innerPages/PluginSettings";
 import PublicSettings from "./innerPages/PublicSettings";
+import ReadMeSettings from "./innerPages/ReadMeSettings";
 import StorySettings from "./innerPages/StorySettings";
 
 export const projectSettingsTabs = [
@@ -25,7 +27,9 @@ export const projectSettingsTabs = [
   "story",
   "public",
   "plugins",
-  "assets"
+  "assets",
+  "readme",
+  "license"
 ] as const;
 
 export type ProjectSettingsTab = (typeof projectSettingsTabs)[number];
@@ -58,7 +62,8 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
     handleUpdateStory,
-    handleUpdateStoryAlias
+    handleUpdateStoryAlias,
+    handleUpdateProjectMetadata
   } = useHooks({
     projectId,
     subId,
@@ -73,6 +78,20 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
         icon: "setting" as const,
         path: `/settings/projects/${projectId}/`,
         active: tab === "general"
+      },
+      {
+        id: "readme",
+        text: t("README"),
+        icon: "clipBoard" as const,
+        path: `/settings/projects/${projectId}/readme`,
+        active: tab === "readme"
+      },
+      {
+        id: "license",
+        text: t("License"),
+        icon: "copyright" as const,
+        path: `/settings/projects/${projectId}/license`,
+        active: tab === "license"
       },
       {
         id: "story",
@@ -161,6 +180,20 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
               onUpdateProject={handleUpdateProject}
               onProjectRemove={handleProjectRemove}
               disabled={disabled}
+            />
+          )}
+          {tab === "readme" && project && (
+            <ReadMeSettings
+              data-testid="project-settings-readme"
+              projectMetadata={project.metadata}
+              onUpdateProjectMetadata={handleUpdateProjectMetadata}
+            />
+          )}
+          {tab === "license" && project && (
+            <LicenseSettings
+              data-testid="project-settings-license"
+              projectMetadata={project.metadata}
+              onUpdateProjectMetadata={handleUpdateProjectMetadata}
             />
           )}
           {tab === "story" && currentStory && (

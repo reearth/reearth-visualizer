@@ -525,6 +525,32 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return r.findOne(ctx, f, false)
 }
 
+func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
+	if !r.f.CanRead(ws) {
+		return repo.ErrOperationDenied
+	}
+
+	filter := bson.M{
+		"team":         ws.String(),
+		"projectalias": newAlias,
+	}
+
+	if excludeSelfProjectID != nil {
+		filter["id"] = bson.M{"$ne": excludeSelfProjectID.String()}
+	}
+
+	count, err := r.client.Count(ctx, filter)
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		return alias.ErrExistsProjectAliasAlreadyExists
+	}
+
+	return nil
+}
+
 func (r *Project) CheckAliasUnique(ctx context.Context, newAlias string) error {
 	sceneId := newAlias
 	if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {

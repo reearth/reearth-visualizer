@@ -385,6 +385,8 @@ Plugin link copied to clipboard: プラグインのリンクがクリップボ�
 Show Story Panel: ストーリーパネルを表示
 UI Language: UI言語
 General: 一般
+README: 読み取り専用
+License: ライセンス
 Public: 公開
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
@@ -392,6 +394,13 @@ Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
+Preview: プレビュー
+Choose a template: テンプレートを選択してください
+Save License: ライセンスを保存
+Write down your license: ライセンスを書き込む
+You can select a license from the following templates to apply to your current project.: 以下のテンプレートからライセンスを選択して、現在のプロジェクトに適用できます。
+Once selected, it will replace the current license setting. Please make sure you understand the implications of the new license.: 選択すると、現在のライセンス設定が置き換えられます。新しいライセンスの影響を十分に理解していることを確認してください。
+Select a license: ライセンスを選択してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -432,6 +441,8 @@ Username: ユーザー名
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
+README Editing: READMEの編集
+Save README: READMEを保存
 Left: 左
 Right: 右
 Story Panel settings: ストーリーパネル設定
@@ -583,7 +594,7 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Successfully checked alias!: ''
+Successfully checked alias!: エイリアスを正常に確認しました！
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
@@ -607,9 +618,11 @@ Successfully archive project!: プロジェクトのアーカイブに成功し�
 Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
 Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
+Failed to update project metadata.: プロジェクトのメタデータの更新に失敗しました。
+Successfully updated project metadata!: プロジェクトのメタデータを正常に更新しました！
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to upload chunk 0.: ''
+Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
 Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！

@@ -31,7 +31,8 @@ export default ({ projectId }: ProjectSettingsProps) => {
     useUpdateProjectBasicAuth,
     useUpdateProjectRemove,
     usePublishProject,
-    useUpdatePublishProject
+    useUpdatePublishProject,
+    useUpdateProjectMetadata
   } = useProjectFetcher();
   const { useSceneQuery } = useSceneFetcher();
   const {
@@ -50,7 +51,9 @@ export default ({ projectId }: ProjectSettingsProps) => {
   const workspaceId = useMemo(() => scene?.workspaceId, [scene?.workspaceId]);
 
   const handleUpdateProject = useCallback(
-    async (settings: GeneralSettingsType & PublicSettingsType) => {
+    async (
+      settings: GeneralSettingsType & PublicSettingsType
+    ) => {
       await useUpdateProject({ projectId, ...settings });
     },
     [projectId, useUpdateProject]
@@ -197,6 +200,18 @@ export default ({ projectId }: ProjectSettingsProps) => {
     []
   );
 
+  const handleUpdateProjectMetadata = useCallback(
+    async (
+      metadata: {
+        readme?: string;
+        license?: string;
+      } 
+    ) => {
+      await useUpdateProjectMetadata({ project: projectId, ...metadata });
+    },
+    [projectId, useUpdateProjectMetadata]
+  );
+
   return {
     sceneId: scene?.id,
     workspaceId,
@@ -213,7 +228,8 @@ export default ({ projectId }: ProjectSettingsProps) => {
     handleUpdateProjectAlias,
     handleUpdateProjectGA,
     handleUpdateStory,
-    handleUpdateStoryAlias
+    handleUpdateStoryAlias,
+    handleUpdateProjectMetadata
   };
 };
 

@@ -15,7 +15,8 @@ import {
   Visualizer,
   DeleteProjectInput,
   ArchiveProjectMutationVariables,
-  UpdateProjectBasicAuthMutationVariables
+  UpdateProjectBasicAuthMutationVariables,
+  UpdateProjectMetadataInput
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -29,7 +30,8 @@ import {
   UPDATE_PROJECT,
   UPDATE_PROJECT_BASIC_AUTH,
   EXPORT_PROJECT,
-  GET_DELETED_PROJECTS
+  GET_DELETED_PROJECTS,
+  UPDATE_PROJECT_METADATA
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -509,6 +511,36 @@ export default () => {
     [updateProjectBasicAuthMutation, t, setNotification]
   );
 
+  const [updateProjectMetadataMutation] = useMutation(UPDATE_PROJECT_METADATA, {
+    refetchQueries: ["GetProject"]
+  });
+  const useUpdateProjectMetadata = useCallback(
+    async (input: UpdateProjectMetadataInput) => {
+      if (!input.project) return { status: "error" };
+
+      const { data, errors } = await updateProjectMetadataMutation({
+        variables: { ...input }
+      });
+
+      if (errors || !data?.updateProjectMetadata) {
+        console.log("GraphQL: Failed to update project metadata", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to update project metadata.")
+        });
+
+        return { status: "error" };
+      }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully updated project metadata!")
+      });
+      return { data: data?.updateProjectMetadata?.metadata, status: "success" };
+    },
+    [updateProjectMetadataMutation, setNotification, t]
+  );
+
   const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
 
   const getBackendUrl = useCallback(() => {
@@ -664,6 +696,7 @@ export default () => {
     useExportProject,
     useUpdateProjectRemove,
     useDeletedProjectsQuery,
-    useImportProject
+    useImportProject,
+    useUpdateProjectMetadata
   };
 };

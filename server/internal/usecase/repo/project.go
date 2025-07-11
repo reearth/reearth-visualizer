@@ -30,6 +30,7 @@ type Project interface {
 	FindActiveById(context.Context, id.ProjectID) (*project.Project, error)
 	FindActiveByAlias(context.Context, string) (*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
+	CheckProjectAliasUnique(context.Context, accountdomain.WorkspaceID, string, *id.ProjectID) error
 	CheckAliasUnique(context.Context, string) error
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
