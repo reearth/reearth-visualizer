@@ -87,7 +87,6 @@ export default function useHook({
         return;
       if (ev.data?.[autoResizeMessageKey]) {
         const { width, height } = ev.data[autoResizeMessageKey];
-        console.log("Received auto resize message:", { width, height });
         if (typeof width !== "number" || typeof height !== "number") return;
         setIFrameSize([width + "px", height + "px"]);
         onAutoResized?.();
