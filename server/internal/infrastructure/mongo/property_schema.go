@@ -147,10 +147,6 @@ func (r *PropertySchema) findOne(ctx context.Context, filter any) (*property.Sch
 	return c.Result[0], nil
 }
 
-// func (r *PropertySchema) readFilter(filter any) any {
-// 	return applyOptionalSceneFilter(filter, r.f.Readable)
-// }
-
 func (r *PropertySchema) writeFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Writable)
 }

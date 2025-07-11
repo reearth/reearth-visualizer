@@ -148,10 +148,6 @@ func (r *Plugin) findOne(ctx context.Context, filter any) (*plugin.Plugin, error
 	return c.Result[0], nil
 }
 
-// func (r *Plugin) readFilter(filter any) any {
-// 	return applyOptionalSceneFilter(filter, r.f.Readable)
-// }
-
 func (r *Plugin) writeFilter(filter any) any {
 	return applyOptionalSceneFilter(filter, r.f.Writable)
 }

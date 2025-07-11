@@ -26,7 +26,7 @@ func (r *sceneResolver) Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlm
 }
 
 func (r *sceneResolver) Team(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Team, error) {
-	return dataloaders(ctx).Workspace.Load(obj.TeamID)
+	return dataloaders(ctx).Workspace.Load(obj.WorkspaceID)
 }
 
 func (r *sceneResolver) Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error) {

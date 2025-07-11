@@ -217,10 +217,6 @@ func filterProperties(ids []id.PropertyID, rows property.List) property.List {
 	return res
 }
 
-// func (r *Property) readFilter(filter any) any {
-// 	return applySceneFilter(filter, r.f.Readable)
-// }
-
 func (r *Property) writeFilter(filter any) any {
 	return applySceneFilter(filter, r.f.Writable)
 }

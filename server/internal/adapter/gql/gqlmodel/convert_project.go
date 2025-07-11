@@ -87,7 +87,7 @@ func ToProject(p *project.Project) *Project {
 
 	return &Project{
 		ID:          IDFrom(p.ID()),
-		TeamID:      IDFrom(p.Workspace()),
+		WorkspaceID: IDFrom(p.Workspace()),
 		Name:        p.Name(),
 		Description: p.Description(),
 		ImageURL:    p.ImageURL(),

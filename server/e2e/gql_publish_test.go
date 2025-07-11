@@ -858,7 +858,7 @@ func createProjectSet(e *httpexpect.Expect) (string, string, string) {
 	projectId := createProject(e, uID, map[string]any{
 		"name":        "test project",
 		"description": "test description",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})

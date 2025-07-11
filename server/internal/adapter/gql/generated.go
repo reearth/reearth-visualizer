@@ -81,7 +81,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	AddMemberToTeamPayload struct {
-		Team func(childComplexity int) int
+		Workspace func(childComplexity int) int
 	}
 
 	AddNLSInfoboxBlockPayload struct {
@@ -111,8 +111,8 @@ type ComplexityRoot struct {
 		ProjectID   func(childComplexity int) int
 		Size        func(childComplexity int) int
 		Team        func(childComplexity int) int
-		TeamID      func(childComplexity int) int
 		URL         func(childComplexity int) int
+		WorkspaceID func(childComplexity int) int
 	}
 
 	AssetConnection struct {
@@ -161,7 +161,7 @@ type ComplexityRoot struct {
 	}
 
 	CreateTeamPayload struct {
-		Team func(childComplexity int) int
+		Workspace func(childComplexity int) int
 	}
 
 	DeleteGeoJSONFeaturePayload struct {
@@ -186,7 +186,7 @@ type ComplexityRoot struct {
 	}
 
 	DeleteTeamPayload struct {
-		TeamID func(childComplexity int) int
+		WorkspaceID func(childComplexity int) int
 	}
 
 	DuplicateNLSLayerPayload struct {
@@ -253,15 +253,15 @@ type ComplexityRoot struct {
 	}
 
 	Me struct {
-		Auths    func(childComplexity int) int
-		Email    func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Lang     func(childComplexity int) int
-		MyTeam   func(childComplexity int) int
-		MyTeamID func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Teams    func(childComplexity int) int
-		Theme    func(childComplexity int) int
+		Auths         func(childComplexity int) int
+		Email         func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Lang          func(childComplexity int) int
+		MyTeam        func(childComplexity int) int
+		MyWorkspaceID func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Teams         func(childComplexity int) int
+		Theme         func(childComplexity int) int
 	}
 
 	MergedProperty struct {
@@ -549,12 +549,12 @@ type ComplexityRoot struct {
 		PublishmentStatus func(childComplexity int) int
 		Scene             func(childComplexity int) int
 		Starred           func(childComplexity int) int
-		Team              func(childComplexity int) int
-		TeamID            func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		Visibility        func(childComplexity int) int
 		Visualizer        func(childComplexity int) int
+		Workspace         func(childComplexity int) int
+		WorkspaceID       func(childComplexity int) int
 	}
 
 	ProjectAliasAvailability struct {
@@ -709,21 +709,21 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Assets            func(childComplexity int, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
+		Assets            func(childComplexity int, workspaceID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
 		CheckProjectAlias func(childComplexity int, alias string, projectID *gqlmodel.ID) int
 		CheckStoryAlias   func(childComplexity int, alias string, storyID *gqlmodel.ID) int
-		DeletedProjects   func(childComplexity int, teamID gqlmodel.ID) int
+		DeletedProjects   func(childComplexity int, workspaceID gqlmodel.ID) int
 		Me                func(childComplexity int) int
 		Node              func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Nodes             func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Plugin            func(childComplexity int, id gqlmodel.ID) int
 		Plugins           func(childComplexity int, id []gqlmodel.ID) int
-		Projects          func(childComplexity int, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
+		Projects          func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
 		PropertySchema    func(childComplexity int, id gqlmodel.ID) int
 		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
 		Scene             func(childComplexity int, projectID gqlmodel.ID) int
 		SearchUser        func(childComplexity int, nameOrEmail string) int
-		StarredProjects   func(childComplexity int, teamID gqlmodel.ID) int
+		StarredProjects   func(childComplexity int, workspaceID gqlmodel.ID) int
 	}
 
 	Rect struct {
@@ -738,7 +738,7 @@ type ComplexityRoot struct {
 	}
 
 	RemoveMemberFromTeamPayload struct {
-		Team func(childComplexity int) int
+		Workspace func(childComplexity int) int
 	}
 
 	RemoveNLSInfoboxBlockPayload struct {
@@ -785,11 +785,11 @@ type ComplexityRoot struct {
 		PropertyID        func(childComplexity int) int
 		Stories           func(childComplexity int) int
 		Styles            func(childComplexity int) int
-		Team              func(childComplexity int) int
-		TeamID            func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		WidgetAlignSystem func(childComplexity int) int
 		Widgets           func(childComplexity int) int
+		Workspace         func(childComplexity int) int
+		WorkspaceID       func(childComplexity int) int
 	}
 
 	ScenePlugin struct {
@@ -812,8 +812,8 @@ type ComplexityRoot struct {
 	}
 
 	SignupPayload struct {
-		Team func(childComplexity int) int
-		User func(childComplexity int) int
+		User      func(childComplexity int) int
+		Workspace func(childComplexity int) int
 	}
 
 	SketchInfo struct {
@@ -950,7 +950,7 @@ type ComplexityRoot struct {
 	}
 
 	UpdateMemberOfTeamPayload struct {
-		Team func(childComplexity int) int
+		Workspace func(childComplexity int) int
 	}
 
 	UpdateNLSLayerPayload struct {
@@ -966,7 +966,7 @@ type ComplexityRoot struct {
 	}
 
 	UpdateTeamPayload struct {
-		Team func(childComplexity int) int
+		Workspace func(childComplexity int) int
 	}
 
 	UpdateWidgetAlignSystemPayload struct {
@@ -1182,7 +1182,6 @@ type PluginExtensionResolver interface {
 	TranslatedDescription(ctx context.Context, obj *gqlmodel.PluginExtension, lang *language.Tag) (string, error)
 }
 type ProjectResolver interface {
-	Team(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Team, error)
 	Scene(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Scene, error)
 }
 type PropertyResolver interface {
@@ -1222,13 +1221,13 @@ type PropertySchemaGroupResolver interface {
 type QueryResolver interface {
 	Node(ctx context.Context, id gqlmodel.ID, typeArg gqlmodel.NodeType) (gqlmodel.Node, error)
 	Nodes(ctx context.Context, id []gqlmodel.ID, typeArg gqlmodel.NodeType) ([]gqlmodel.Node, error)
-	Assets(ctx context.Context, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error)
+	Assets(ctx context.Context, workspaceID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error)
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
-	Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
+	Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
 	CheckProjectAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
-	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
-	DeletedProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	StarredProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	DeletedProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -1238,7 +1237,7 @@ type QueryResolver interface {
 }
 type SceneResolver interface {
 	Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error)
-	Team(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Team, error)
+
 	Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error)
 	NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error)
 	Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error)
@@ -1299,12 +1298,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 	_ = ec
 	switch typeName + "." + field {
 
-	case "AddMemberToTeamPayload.team":
-		if e.complexity.AddMemberToTeamPayload.Team == nil {
+	case "AddMemberToTeamPayload.workspace":
+		if e.complexity.AddMemberToTeamPayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.AddMemberToTeamPayload.Team(childComplexity), true
+		return e.complexity.AddMemberToTeamPayload.Workspace(childComplexity), true
 
 	case "AddNLSInfoboxBlockPayload.infoboxBlock":
 		if e.complexity.AddNLSInfoboxBlockPayload.InfoboxBlock == nil {
@@ -1404,19 +1403,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Asset.Team(childComplexity), true
 
-	case "Asset.teamId":
-		if e.complexity.Asset.TeamID == nil {
-			break
-		}
-
-		return e.complexity.Asset.TeamID(childComplexity), true
-
 	case "Asset.url":
 		if e.complexity.Asset.URL == nil {
 			break
 		}
 
 		return e.complexity.Asset.URL(childComplexity), true
+
+	case "Asset.workspaceId":
+		if e.complexity.Asset.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.Asset.WorkspaceID(childComplexity), true
 
 	case "AssetConnection.edges":
 		if e.complexity.AssetConnection.Edges == nil {
@@ -1565,12 +1564,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.CreateStoryBlockPayload.Story(childComplexity), true
 
-	case "CreateTeamPayload.team":
-		if e.complexity.CreateTeamPayload.Team == nil {
+	case "CreateTeamPayload.workspace":
+		if e.complexity.CreateTeamPayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.CreateTeamPayload.Team(childComplexity), true
+		return e.complexity.CreateTeamPayload.Workspace(childComplexity), true
 
 	case "DeleteGeoJSONFeaturePayload.deletedFeatureId":
 		if e.complexity.DeleteGeoJSONFeaturePayload.DeletedFeatureID == nil {
@@ -1614,12 +1613,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.DeleteStoryPayload.StoryID(childComplexity), true
 
-	case "DeleteTeamPayload.teamId":
-		if e.complexity.DeleteTeamPayload.TeamID == nil {
+	case "DeleteTeamPayload.workspaceId":
+		if e.complexity.DeleteTeamPayload.WorkspaceID == nil {
 			break
 		}
 
-		return e.complexity.DeleteTeamPayload.TeamID(childComplexity), true
+		return e.complexity.DeleteTeamPayload.WorkspaceID(childComplexity), true
 
 	case "DuplicateNLSLayerPayload.layer":
 		if e.complexity.DuplicateNLSLayerPayload.Layer == nil {
@@ -1866,12 +1865,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Me.MyTeam(childComplexity), true
 
-	case "Me.myTeamId":
-		if e.complexity.Me.MyTeamID == nil {
+	case "Me.myWorkspaceId":
+		if e.complexity.Me.MyWorkspaceID == nil {
 			break
 		}
 
-		return e.complexity.Me.MyTeamID(childComplexity), true
+		return e.complexity.Me.MyWorkspaceID(childComplexity), true
 
 	case "Me.name":
 		if e.complexity.Me.Name == nil {
@@ -3878,20 +3877,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Project.Starred(childComplexity), true
 
-	case "Project.team":
-		if e.complexity.Project.Team == nil {
-			break
-		}
-
-		return e.complexity.Project.Team(childComplexity), true
-
-	case "Project.teamId":
-		if e.complexity.Project.TeamID == nil {
-			break
-		}
-
-		return e.complexity.Project.TeamID(childComplexity), true
-
 	case "Project.trackingId":
 		if e.complexity.Project.TrackingID == nil {
 			break
@@ -3919,6 +3904,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Project.Visualizer(childComplexity), true
+
+	case "Project.workspace":
+		if e.complexity.Project.Workspace == nil {
+			break
+		}
+
+		return e.complexity.Project.Workspace(childComplexity), true
+
+	case "Project.workspaceId":
+		if e.complexity.Project.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.Project.WorkspaceID(childComplexity), true
 
 	case "ProjectAliasAvailability.alias":
 		if e.complexity.ProjectAliasAvailability.Alias == nil {
@@ -4634,7 +4633,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Assets(childComplexity, args["teamId"].(gqlmodel.ID), args["projectId"].(*gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.AssetSort)), true
+		return e.complexity.Query.Assets(childComplexity, args["workspaceId"].(gqlmodel.ID), args["projectId"].(*gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.AssetSort)), true
 
 	case "Query.checkProjectAlias":
 		if e.complexity.Query.CheckProjectAlias == nil {
@@ -4670,7 +4669,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.DeletedProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
+		return e.complexity.Query.DeletedProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
 
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
@@ -4737,7 +4736,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort)), true
+		return e.complexity.Query.Projects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort)), true
 
 	case "Query.propertySchema":
 		if e.complexity.Query.PropertySchema == nil {
@@ -4797,7 +4796,7 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.StarredProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
+		return e.complexity.Query.StarredProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
 
 	case "Rect.east":
 		if e.complexity.Rect.East == nil {
@@ -4834,12 +4833,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.RemoveAssetPayload.AssetID(childComplexity), true
 
-	case "RemoveMemberFromTeamPayload.team":
-		if e.complexity.RemoveMemberFromTeamPayload.Team == nil {
+	case "RemoveMemberFromTeamPayload.workspace":
+		if e.complexity.RemoveMemberFromTeamPayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.RemoveMemberFromTeamPayload.Team(childComplexity), true
+		return e.complexity.RemoveMemberFromTeamPayload.Workspace(childComplexity), true
 
 	case "RemoveNLSInfoboxBlockPayload.infoboxBlockId":
 		if e.complexity.RemoveNLSInfoboxBlockPayload.InfoboxBlockID == nil {
@@ -4995,20 +4994,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Scene.Styles(childComplexity), true
 
-	case "Scene.team":
-		if e.complexity.Scene.Team == nil {
-			break
-		}
-
-		return e.complexity.Scene.Team(childComplexity), true
-
-	case "Scene.teamId":
-		if e.complexity.Scene.TeamID == nil {
-			break
-		}
-
-		return e.complexity.Scene.TeamID(childComplexity), true
-
 	case "Scene.updatedAt":
 		if e.complexity.Scene.UpdatedAt == nil {
 			break
@@ -5029,6 +5014,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Scene.Widgets(childComplexity), true
+
+	case "Scene.workspace":
+		if e.complexity.Scene.Workspace == nil {
+			break
+		}
+
+		return e.complexity.Scene.Workspace(childComplexity), true
+
+	case "Scene.workspaceId":
+		if e.complexity.Scene.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.Scene.WorkspaceID(childComplexity), true
 
 	case "ScenePlugin.plugin":
 		if e.complexity.ScenePlugin.Plugin == nil {
@@ -5121,19 +5120,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.SceneWidget.PropertyID(childComplexity), true
 
-	case "SignupPayload.team":
-		if e.complexity.SignupPayload.Team == nil {
-			break
-		}
-
-		return e.complexity.SignupPayload.Team(childComplexity), true
-
 	case "SignupPayload.user":
 		if e.complexity.SignupPayload.User == nil {
 			break
 		}
 
 		return e.complexity.SignupPayload.User(childComplexity), true
+
+	case "SignupPayload.workspace":
+		if e.complexity.SignupPayload.Workspace == nil {
+			break
+		}
+
+		return e.complexity.SignupPayload.Workspace(childComplexity), true
 
 	case "SketchInfo.customPropertySchema":
 		if e.complexity.SketchInfo.CustomPropertySchema == nil {
@@ -5740,12 +5739,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.UpdateMePayload.Me(childComplexity), true
 
-	case "UpdateMemberOfTeamPayload.team":
-		if e.complexity.UpdateMemberOfTeamPayload.Team == nil {
+	case "UpdateMemberOfTeamPayload.workspace":
+		if e.complexity.UpdateMemberOfTeamPayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.UpdateMemberOfTeamPayload.Team(childComplexity), true
+		return e.complexity.UpdateMemberOfTeamPayload.Workspace(childComplexity), true
 
 	case "UpdateNLSLayerPayload.layer":
 		if e.complexity.UpdateNLSLayerPayload.Layer == nil {
@@ -5768,12 +5767,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.UpdateStylePayload.Style(childComplexity), true
 
-	case "UpdateTeamPayload.team":
-		if e.complexity.UpdateTeamPayload.Team == nil {
+	case "UpdateTeamPayload.workspace":
+		if e.complexity.UpdateTeamPayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.UpdateTeamPayload.Team(childComplexity), true
+		return e.complexity.UpdateTeamPayload.Workspace(childComplexity), true
 
 	case "UpdateWidgetAlignSystemPayload.scene":
 		if e.complexity.UpdateWidgetAlignSystemPayload.Scene == nil {
@@ -6360,14 +6359,14 @@ schema {
 `, BuiltIn: false},
 	{Name: "../../../gql/asset.graphql", Input: `type Asset implements Node {
   id: ID!
-  createdAt: DateTime!
-  teamId: ID!
+  workspaceId: ID!
+  team: Team
   projectId: ID
   name: String!
   size: FileSize!
   url: String!
   contentType: String!
-  team: Team
+  createdAt: DateTime!
   coreSupport: Boolean!
 }
 
@@ -6380,7 +6379,7 @@ enum AssetSortField {
 # InputType
 
 input CreateAssetInput {
-  teamId: ID!
+  workspaceId: ID!
   projectId: ID
   coreSupport: Boolean!
   file: Upload!
@@ -6431,7 +6430,7 @@ type AssetEdge {
 
 extend type Query {
   assets(
-    teamId: ID!
+    workspaceId: ID!
     projectId: ID
     pagination: Pagination
     keyword: String
@@ -6879,8 +6878,8 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "../../../gql/project.graphql", Input: `type Project implements Node {
   id: ID!
-  teamId: ID!
-  team: Team
+  workspaceId: ID!
+  workspace: Team
   scene: Scene
   name: String!
   description: String!
@@ -6949,7 +6948,7 @@ enum ProjectSortField {
 # InputType
 
 input CreateProjectInput {
-  teamId: ID!
+  workspaceId: ID!
   visualizer: Visualizer!
   name: String
   description: String
@@ -7047,14 +7046,14 @@ type ProjectEdge {
 
 extend type Query {
   projects(
-    teamId: ID!
+    workspaceId: ID!
     pagination: Pagination
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
   checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
-  starredProjects(teamId: ID!): ProjectConnection!
-  deletedProjects(teamId: ID!): ProjectConnection!
+  starredProjects(workspaceId: ID!): ProjectConnection!
+  deletedProjects(workspaceId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -7352,8 +7351,8 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "../../../gql/scene.graphql", Input: `type Scene implements Node {
   id: ID!
+  workspaceId: ID!
   projectId: ID!
-  teamId: ID!
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -7361,7 +7360,7 @@ extend type Mutation {
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
   project: Project
-  team: Team
+  workspace: Team
   property: Property
   newLayers: [NLSLayer!]!
   stories: [Story!]!
@@ -7734,7 +7733,7 @@ type Me {
   email: String!
   lang: Lang!
   theme: Theme!
-  myTeamId: ID!
+  myWorkspaceId: ID!
   auths: [String!]!
   teams: [Team!]!
   myTeam: Team
@@ -7752,7 +7751,7 @@ input SignupInput {
   lang: Lang
   theme: Theme
   userId: ID
-  teamId: ID
+  workspaceId: ID
   secret: String
 }
 
@@ -7781,7 +7780,7 @@ type UpdateMePayload {
 
 type SignupPayload {
   user: User!
-  team: Team!
+  workspace: Team!
 }
 
 type DeleteMePayload {
@@ -8008,55 +8007,55 @@ input CreateTeamInput {
 }
 
 input UpdateTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   name: String!
 }
 
 input AddMemberToTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
 input RemoveMemberFromTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   userId: ID!
 }
 
 input UpdateMemberOfTeamInput {
-  teamId: ID!
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
 input DeleteTeamInput {
-  teamId: ID!
+  workspaceId: ID!
 }
 
 # Payload
 
 type CreateTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type UpdateTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type AddMemberToTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type RemoveMemberFromTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type UpdateMemberOfTeamPayload {
-  team: Team!
+  workspace: Team!
 }
 
 type DeleteTeamPayload {
-  teamId: ID!
+  workspaceId: ID!
 }
 
 #extend type Query{ }
@@ -10462,11 +10461,11 @@ func (ec *executionContext) field_Query___type_argsName(
 func (ec *executionContext) field_Query_assets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_assets_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_assets_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	arg1, err := ec.field_Query_assets_argsProjectID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
@@ -10489,17 +10488,17 @@ func (ec *executionContext) field_Query_assets_args(ctx context.Context, rawArgs
 	args["sort"] = arg4
 	return args, nil
 }
-func (ec *executionContext) field_Query_assets_argsTeamID(
+func (ec *executionContext) field_Query_assets_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -10684,24 +10683,24 @@ func (ec *executionContext) field_Query_checkStoryAlias_argsStoryID(
 func (ec *executionContext) field_Query_deletedProjects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_deletedProjects_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_deletedProjects_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_deletedProjects_argsTeamID(
+func (ec *executionContext) field_Query_deletedProjects_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -10870,11 +10869,11 @@ func (ec *executionContext) field_Query_plugins_argsID(
 func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_projects_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_projects_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	arg1, err := ec.field_Query_projects_argsPagination(ctx, rawArgs)
 	if err != nil {
 		return nil, err
@@ -10892,17 +10891,17 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 	args["sort"] = arg3
 	return args, nil
 }
-func (ec *executionContext) field_Query_projects_argsTeamID(
+func (ec *executionContext) field_Query_projects_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -11079,24 +11078,24 @@ func (ec *executionContext) field_Query_searchUser_argsNameOrEmail(
 func (ec *executionContext) field_Query_starredProjects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_starredProjects_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_starredProjects_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_starredProjects_argsTeamID(
+func (ec *executionContext) field_Query_starredProjects_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -11464,8 +11463,8 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _AddMemberToTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddMemberToTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AddMemberToTeamPayload_team(ctx, field)
+func (ec *executionContext) _AddMemberToTeamPayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddMemberToTeamPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AddMemberToTeamPayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11478,7 +11477,7 @@ func (ec *executionContext) _AddMemberToTeamPayload_team(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11495,7 +11494,7 @@ func (ec *executionContext) _AddMemberToTeamPayload_team(ctx context.Context, fi
 	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_AddMemberToTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_AddMemberToTeamPayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "AddMemberToTeamPayload",
 		Field:      field,
@@ -11803,10 +11802,10 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -11821,8 +11820,8 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -11948,8 +11947,8 @@ func (ec *executionContext) fieldContext_Asset_id(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Asset_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Asset_createdAt(ctx, field)
+func (ec *executionContext) _Asset_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_workspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11962,51 +11961,7 @@ func (ec *executionContext) _Asset_createdAt(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Asset_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Asset",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Asset_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Asset_teamId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
+		return obj.WorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12023,7 +11978,7 @@ func (ec *executionContext) _Asset_teamId(ctx context.Context, field graphql.Col
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Asset_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Asset_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Asset",
 		Field:      field,
@@ -12031,6 +11986,65 @@ func (ec *executionContext) fieldContext_Asset_teamId(_ context.Context, field g
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Asset_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_team(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Asset().Team(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Team)
+	fc.Result = res
+	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Asset_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Asset",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Team_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Team_name(ctx, field)
+			case "members":
+				return ec.fieldContext_Team_members(ctx, field)
+			case "personal":
+				return ec.fieldContext_Team_personal(ctx, field)
+			case "policyId":
+				return ec.fieldContext_Team_policyId(ctx, field)
+			case "policy":
+				return ec.fieldContext_Team_policy(ctx, field)
+			case "assets":
+				return ec.fieldContext_Team_assets(ctx, field)
+			case "projects":
+				return ec.fieldContext_Team_projects(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
 	}
 	return fc, nil
@@ -12253,8 +12267,8 @@ func (ec *executionContext) fieldContext_Asset_contentType(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Asset_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Asset_team(ctx, field)
+func (ec *executionContext) _Asset_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12267,46 +12281,31 @@ func (ec *executionContext) _Asset_team(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Asset().Team(rctx, obj)
+		return obj.CreatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Asset_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Asset_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Asset",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
-			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
-			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
-			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
-			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12447,10 +12446,10 @@ func (ec *executionContext) fieldContext_AssetConnection_nodes(_ context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Asset_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Asset_createdAt(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Asset_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Asset_workspaceId(ctx, field)
+			case "team":
+				return ec.fieldContext_Asset_team(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Asset_projectId(ctx, field)
 			case "name":
@@ -12461,8 +12460,8 @@ func (ec *executionContext) fieldContext_AssetConnection_nodes(_ context.Context
 				return ec.fieldContext_Asset_url(ctx, field)
 			case "contentType":
 				return ec.fieldContext_Asset_contentType(ctx, field)
-			case "team":
-				return ec.fieldContext_Asset_team(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Asset_createdAt(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
@@ -12652,10 +12651,10 @@ func (ec *executionContext) fieldContext_AssetEdge_node(_ context.Context, field
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Asset_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Asset_createdAt(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Asset_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Asset_workspaceId(ctx, field)
+			case "team":
+				return ec.fieldContext_Asset_team(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Asset_projectId(ctx, field)
 			case "name":
@@ -12666,8 +12665,8 @@ func (ec *executionContext) fieldContext_AssetEdge_node(_ context.Context, field
 				return ec.fieldContext_Asset_url(ctx, field)
 			case "contentType":
 				return ec.fieldContext_Asset_contentType(ctx, field)
-			case "team":
-				return ec.fieldContext_Asset_team(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Asset_createdAt(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
@@ -13026,10 +13025,10 @@ func (ec *executionContext) fieldContext_CreateAssetPayload_asset(_ context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Asset_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Asset_createdAt(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Asset_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Asset_workspaceId(ctx, field)
+			case "team":
+				return ec.fieldContext_Asset_team(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Asset_projectId(ctx, field)
 			case "name":
@@ -13040,8 +13039,8 @@ func (ec *executionContext) fieldContext_CreateAssetPayload_asset(_ context.Cont
 				return ec.fieldContext_Asset_url(ctx, field)
 			case "contentType":
 				return ec.fieldContext_Asset_contentType(ctx, field)
-			case "team":
-				return ec.fieldContext_Asset_team(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Asset_createdAt(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
@@ -13180,10 +13179,10 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -13198,8 +13197,8 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -13483,8 +13482,8 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_index(_ context
 	return fc, nil
 }
 
-func (ec *executionContext) _CreateTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CreateTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CreateTeamPayload_team(ctx, field)
+func (ec *executionContext) _CreateTeamPayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CreateTeamPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateTeamPayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13497,7 +13496,7 @@ func (ec *executionContext) _CreateTeamPayload_team(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13514,7 +13513,7 @@ func (ec *executionContext) _CreateTeamPayload_team(ctx context.Context, field g
 	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_CreateTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CreateTeamPayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CreateTeamPayload",
 		Field:      field,
@@ -13859,8 +13858,8 @@ func (ec *executionContext) fieldContext_DeleteStoryPayload_storyId(_ context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _DeleteTeamPayload_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeleteTeamPayload_teamId(ctx, field)
+func (ec *executionContext) _DeleteTeamPayload_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteTeamPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteTeamPayload_workspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13873,7 +13872,7 @@ func (ec *executionContext) _DeleteTeamPayload_teamId(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
+		return obj.WorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13890,7 +13889,7 @@ func (ec *executionContext) _DeleteTeamPayload_teamId(ctx context.Context, field
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_DeleteTeamPayload_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeleteTeamPayload_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "DeleteTeamPayload",
 		Field:      field,
@@ -14913,10 +14912,10 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -14931,8 +14930,8 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -14991,10 +14990,10 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -15009,8 +15008,8 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -15610,8 +15609,8 @@ func (ec *executionContext) fieldContext_Me_theme(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Me_myTeamId(ctx, field)
+func (ec *executionContext) _Me_myWorkspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Me_myWorkspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15624,7 +15623,7 @@ func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MyTeamID, nil
+		return obj.MyWorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15641,7 +15640,7 @@ func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Me_myTeamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Me_myWorkspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Me",
 		Field:      field,
@@ -21524,8 +21523,8 @@ func (ec *executionContext) fieldContext_Mutation_signup(ctx context.Context, fi
 			switch field.Name {
 			case "user":
 				return ec.fieldContext_SignupPayload_user(ctx, field)
-			case "team":
-				return ec.fieldContext_SignupPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_SignupPayload_workspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SignupPayload", field.Name)
 		},
@@ -21978,8 +21977,8 @@ func (ec *executionContext) fieldContext_Mutation_createTeam(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_CreateTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_CreateTeamPayload_workspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type CreateTeamPayload", field.Name)
 		},
@@ -22034,8 +22033,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteTeam(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "teamId":
-				return ec.fieldContext_DeleteTeamPayload_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_DeleteTeamPayload_workspaceId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DeleteTeamPayload", field.Name)
 		},
@@ -22090,8 +22089,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTeam(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_UpdateTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_UpdateTeamPayload_workspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UpdateTeamPayload", field.Name)
 		},
@@ -22146,8 +22145,8 @@ func (ec *executionContext) fieldContext_Mutation_addMemberToTeam(ctx context.Co
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_AddMemberToTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_AddMemberToTeamPayload_workspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type AddMemberToTeamPayload", field.Name)
 		},
@@ -22202,8 +22201,8 @@ func (ec *executionContext) fieldContext_Mutation_removeMemberFromTeam(ctx conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_RemoveMemberFromTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_RemoveMemberFromTeamPayload_workspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type RemoveMemberFromTeamPayload", field.Name)
 		},
@@ -22258,8 +22257,8 @@ func (ec *executionContext) fieldContext_Mutation_updateMemberOfTeam(ctx context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_UpdateMemberOfTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_UpdateMemberOfTeamPayload_workspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type UpdateMemberOfTeamPayload", field.Name)
 		},
@@ -22611,10 +22610,10 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -22629,8 +22628,8 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -23188,10 +23187,10 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -23206,8 +23205,8 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -23768,10 +23767,10 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -23786,8 +23785,8 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -24163,10 +24162,10 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -24181,8 +24180,8 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -24978,10 +24977,10 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -24996,8 +24995,8 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -26639,8 +26638,8 @@ func (ec *executionContext) fieldContext_Project_id(_ context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_teamId(ctx, field)
+func (ec *executionContext) _Project_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_workspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26653,7 +26652,7 @@ func (ec *executionContext) _Project_teamId(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
+		return obj.WorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26670,7 +26669,7 @@ func (ec *executionContext) _Project_teamId(ctx context.Context, field graphql.C
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -26683,8 +26682,8 @@ func (ec *executionContext) fieldContext_Project_teamId(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_team(ctx, field)
+func (ec *executionContext) _Project_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26697,7 +26696,7 @@ func (ec *executionContext) _Project_team(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().Team(rctx, obj)
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26711,12 +26710,12 @@ func (ec *executionContext) _Project_team(ctx context.Context, field graphql.Col
 	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -26780,10 +26779,10 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -26798,8 +26797,8 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -28063,10 +28062,10 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -28304,10 +28303,10 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -28848,10 +28847,10 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -32877,7 +32876,7 @@ func (ec *executionContext) _Query_assets(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Assets(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["projectId"].(*gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.AssetSort))
+		return ec.resolvers.Query().Assets(rctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["projectId"].(*gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.AssetSort))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33117,7 +33116,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort))
+		return ec.resolvers.Query().Projects(rctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33243,7 +33242,7 @@ func (ec *executionContext) _Query_starredProjects(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().StarredProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+		return ec.resolvers.Query().StarredProjects(rctx, fc.Args["workspaceId"].(gqlmodel.ID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33308,7 +33307,7 @@ func (ec *executionContext) _Query_deletedProjects(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().DeletedProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+		return ec.resolvers.Query().DeletedProjects(rctx, fc.Args["workspaceId"].(gqlmodel.ID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33520,10 +33519,10 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -33538,8 +33537,8 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -33675,8 +33674,8 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_Me_lang(ctx, field)
 			case "theme":
 				return ec.fieldContext_Me_theme(ctx, field)
-			case "myTeamId":
-				return ec.fieldContext_Me_myTeamId(ctx, field)
+			case "myWorkspaceId":
+				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
 				return ec.fieldContext_Me_auths(ctx, field)
 			case "teams":
@@ -34103,8 +34102,8 @@ func (ec *executionContext) fieldContext_RemoveAssetPayload_assetId(_ context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _RemoveMemberFromTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveMemberFromTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RemoveMemberFromTeamPayload_team(ctx, field)
+func (ec *executionContext) _RemoveMemberFromTeamPayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveMemberFromTeamPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RemoveMemberFromTeamPayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34117,7 +34116,7 @@ func (ec *executionContext) _RemoveMemberFromTeamPayload_team(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34134,7 +34133,7 @@ func (ec *executionContext) _RemoveMemberFromTeamPayload_team(ctx context.Contex
 	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RemoveMemberFromTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RemoveMemberFromTeamPayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RemoveMemberFromTeamPayload",
 		Field:      field,
@@ -34676,10 +34675,10 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -34694,8 +34693,8 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -34801,6 +34800,50 @@ func (ec *executionContext) fieldContext_Scene_id(_ context.Context, field graph
 	return fc, nil
 }
 
+func (ec *executionContext) _Scene_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_workspaceId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkspaceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Scene_projectId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Scene_projectId(ctx, field)
 	if err != nil {
@@ -34833,50 +34876,6 @@ func (ec *executionContext) _Scene_projectId(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_Scene_projectId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_teamId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Scene",
 		Field:      field,
@@ -35224,10 +35223,10 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -35285,8 +35284,8 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Scene_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_team(ctx, field)
+func (ec *executionContext) _Scene_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -35299,7 +35298,7 @@ func (ec *executionContext) _Scene_team(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Scene().Team(rctx, obj)
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35313,12 +35312,12 @@ func (ec *executionContext) _Scene_team(ctx context.Context, field graphql.Colle
 	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Scene_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Scene_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Scene",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
@@ -36371,8 +36370,8 @@ func (ec *executionContext) fieldContext_SignupPayload_user(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _SignupPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SignupPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SignupPayload_team(ctx, field)
+func (ec *executionContext) _SignupPayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SignupPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SignupPayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -36385,7 +36384,7 @@ func (ec *executionContext) _SignupPayload_team(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -36402,7 +36401,7 @@ func (ec *executionContext) _SignupPayload_team(ctx context.Context, field graph
 	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SignupPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SignupPayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SignupPayload",
 		Field:      field,
@@ -36867,10 +36866,10 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -36885,8 +36884,8 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -38780,10 +38779,10 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -38798,8 +38797,8 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -39287,10 +39286,10 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -39305,8 +39304,8 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -40417,10 +40416,10 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -40435,8 +40434,8 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -40588,8 +40587,8 @@ func (ec *executionContext) fieldContext_UpdateMePayload_me(_ context.Context, f
 				return ec.fieldContext_Me_lang(ctx, field)
 			case "theme":
 				return ec.fieldContext_Me_theme(ctx, field)
-			case "myTeamId":
-				return ec.fieldContext_Me_myTeamId(ctx, field)
+			case "myWorkspaceId":
+				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
 				return ec.fieldContext_Me_auths(ctx, field)
 			case "teams":
@@ -40603,8 +40602,8 @@ func (ec *executionContext) fieldContext_UpdateMePayload_me(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateMemberOfTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateMemberOfTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateMemberOfTeamPayload_team(ctx, field)
+func (ec *executionContext) _UpdateMemberOfTeamPayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateMemberOfTeamPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateMemberOfTeamPayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -40617,7 +40616,7 @@ func (ec *executionContext) _UpdateMemberOfTeamPayload_team(ctx context.Context,
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -40634,7 +40633,7 @@ func (ec *executionContext) _UpdateMemberOfTeamPayload_team(ctx context.Context,
 	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UpdateMemberOfTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateMemberOfTeamPayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UpdateMemberOfTeamPayload",
 		Field:      field,
@@ -40809,8 +40808,8 @@ func (ec *executionContext) fieldContext_UpdateStylePayload_style(_ context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateTeamPayload_team(ctx, field)
+func (ec *executionContext) _UpdateTeamPayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateTeamPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateTeamPayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -40823,7 +40822,7 @@ func (ec *executionContext) _UpdateTeamPayload_team(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -40840,7 +40839,7 @@ func (ec *executionContext) _UpdateTeamPayload_team(ctx context.Context, field g
 	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UpdateTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateTeamPayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "UpdateTeamPayload",
 		Field:      field,
@@ -40912,10 +40911,10 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -40930,8 +40929,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -40990,10 +40989,10 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -41008,8 +41007,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -41132,10 +41131,10 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -41150,8 +41149,8 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -41342,10 +41341,10 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -41360,8 +41359,8 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -44870,20 +44869,20 @@ func (ec *executionContext) unmarshalInputAddMemberToTeamInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "userId", "role"}
+	fieldsInOrder := [...]string{"workspaceId", "userId", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "userId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -45247,20 +45246,20 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "projectId", "coreSupport", "file"}
+	fieldsInOrder := [...]string{"workspaceId", "projectId", "coreSupport", "file"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "projectId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
 			data, err := ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -45349,20 +45348,20 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility"}
+	fieldsInOrder := [...]string{"workspaceId", "visualizer", "name", "description", "coreSupport", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "visualizer":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visualizer"))
 			data, err := ec.unmarshalNVisualizer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, v)
@@ -45793,20 +45792,20 @@ func (ec *executionContext) unmarshalInputDeleteTeamInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId"}
+	fieldsInOrder := [...]string{"workspaceId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		}
 	}
 
@@ -46482,20 +46481,20 @@ func (ec *executionContext) unmarshalInputRemoveMemberFromTeamInput(ctx context.
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "userId"}
+	fieldsInOrder := [...]string{"workspaceId", "userId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "userId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -46849,7 +46848,7 @@ func (ec *executionContext) unmarshalInputSignupInput(ctx context.Context, obj a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"lang", "theme", "userId", "teamId", "secret"}
+	fieldsInOrder := [...]string{"lang", "theme", "userId", "workspaceId", "secret"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46877,13 +46876,13 @@ func (ec *executionContext) unmarshalInputSignupInput(ctx context.Context, obj a
 				return it, err
 			}
 			it.UserID = data
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "secret":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secret"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -47164,20 +47163,20 @@ func (ec *executionContext) unmarshalInputUpdateMemberOfTeamInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "userId", "role"}
+	fieldsInOrder := [...]string{"workspaceId", "userId", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "userId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -47902,20 +47901,20 @@ func (ec *executionContext) unmarshalInputUpdateTeamInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "name"}
+	fieldsInOrder := [...]string{"workspaceId", "name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -48467,8 +48466,8 @@ func (ec *executionContext) _AddMemberToTeamPayload(ctx context.Context, sel ast
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("AddMemberToTeamPayload")
-		case "team":
-			out.Values[i] = ec._AddMemberToTeamPayload_team(ctx, field, obj)
+		case "workspace":
+			out.Values[i] = ec._AddMemberToTeamPayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -48677,35 +48676,8 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "createdAt":
-			out.Values[i] = ec._Asset_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "teamId":
-			out.Values[i] = ec._Asset_teamId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "projectId":
-			out.Values[i] = ec._Asset_projectId(ctx, field, obj)
-		case "name":
-			out.Values[i] = ec._Asset_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "size":
-			out.Values[i] = ec._Asset_size(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "url":
-			out.Values[i] = ec._Asset_url(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "contentType":
-			out.Values[i] = ec._Asset_contentType(ctx, field, obj)
+		case "workspaceId":
+			out.Values[i] = ec._Asset_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -48742,6 +48714,33 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "projectId":
+			out.Values[i] = ec._Asset_projectId(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._Asset_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "size":
+			out.Values[i] = ec._Asset_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "url":
+			out.Values[i] = ec._Asset_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "contentType":
+			out.Values[i] = ec._Asset_contentType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createdAt":
+			out.Values[i] = ec._Asset_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "coreSupport":
 			out.Values[i] = ec._Asset_coreSupport(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -49155,8 +49154,8 @@ func (ec *executionContext) _CreateTeamPayload(ctx context.Context, sel ast.Sele
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("CreateTeamPayload")
-		case "team":
-			out.Values[i] = ec._CreateTeamPayload_team(ctx, field, obj)
+		case "workspace":
+			out.Values[i] = ec._CreateTeamPayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -49394,8 +49393,8 @@ func (ec *executionContext) _DeleteTeamPayload(ctx context.Context, sel ast.Sele
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("DeleteTeamPayload")
-		case "teamId":
-			out.Values[i] = ec._DeleteTeamPayload_teamId(ctx, field, obj)
+		case "workspaceId":
+			out.Values[i] = ec._DeleteTeamPayload_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -50060,8 +50059,8 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "myTeamId":
-			out.Values[i] = ec._Me_myTeamId(ctx, field, obj)
+		case "myWorkspaceId":
+			out.Values[i] = ec._Me_myWorkspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -52488,44 +52487,13 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "teamId":
-			out.Values[i] = ec._Project_teamId(ctx, field, obj)
+		case "workspaceId":
+			out.Values[i] = ec._Project_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "team":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Project_team(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "workspace":
+			out.Values[i] = ec._Project_workspace(ctx, field, obj)
 		case "scene":
 			field := field
 
@@ -54679,8 +54647,8 @@ func (ec *executionContext) _RemoveMemberFromTeamPayload(ctx context.Context, se
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("RemoveMemberFromTeamPayload")
-		case "team":
-			out.Values[i] = ec._RemoveMemberFromTeamPayload_team(ctx, field, obj)
+		case "workspace":
+			out.Values[i] = ec._RemoveMemberFromTeamPayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -55016,13 +54984,13 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "projectId":
-			out.Values[i] = ec._Scene_projectId(ctx, field, obj)
+		case "workspaceId":
+			out.Values[i] = ec._Scene_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "teamId":
-			out.Values[i] = ec._Scene_teamId(ctx, field, obj)
+		case "projectId":
+			out.Values[i] = ec._Scene_projectId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -55086,39 +55054,8 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "team":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Scene_team(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "workspace":
+			out.Values[i] = ec._Scene_workspace(ctx, field, obj)
 		case "property":
 			field := field
 
@@ -55574,8 +55511,8 @@ func (ec *executionContext) _SignupPayload(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "team":
-			out.Values[i] = ec._SignupPayload_team(ctx, field, obj)
+		case "workspace":
+			out.Values[i] = ec._SignupPayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -56839,8 +56776,8 @@ func (ec *executionContext) _UpdateMemberOfTeamPayload(ctx context.Context, sel 
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UpdateMemberOfTeamPayload")
-		case "team":
-			out.Values[i] = ec._UpdateMemberOfTeamPayload_team(ctx, field, obj)
+		case "workspace":
+			out.Values[i] = ec._UpdateMemberOfTeamPayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -56995,8 +56932,8 @@ func (ec *executionContext) _UpdateTeamPayload(ctx context.Context, sel ast.Sele
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("UpdateTeamPayload")
-		case "team":
-			out.Values[i] = ec._UpdateTeamPayload_team(ctx, field, obj)
+		case "workspace":
+			out.Values[i] = ec._UpdateTeamPayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -1,13 +1,13 @@
 type Asset implements Node {
   id: ID!
-  createdAt: DateTime!
-  teamId: ID!
+  workspaceId: ID!
+  team: Team
   projectId: ID
   name: String!
   size: FileSize!
   url: String!
   contentType: String!
-  team: Team
+  createdAt: DateTime!
   coreSupport: Boolean!
 }
 
@@ -20,7 +20,7 @@ enum AssetSortField {
 # InputType
 
 input CreateAssetInput {
-  teamId: ID!
+  workspaceId: ID!
   projectId: ID
   coreSupport: Boolean!
   file: Upload!
@@ -71,7 +71,7 @@ type AssetEdge {
 
 extend type Query {
   assets(
-    teamId: ID!
+    workspaceId: ID!
     projectId: ID
     pagination: Pagination
     keyword: String
