@@ -148,9 +148,11 @@ export default function useHook({
     return `<script id="_reearth_resize">
       if ("ResizeObserver" in window) {         
         new window.ResizeObserver(entries => {
-          const body = document.body;
-          const width = body.offsetWidth;
-          const height = body.offsetHeight;
+          const width = Math.max(
+            document.body.scrollWidth,
+            document.documentElement.scrollWidth
+          );
+          const height = document.body.scrollHeight;
           if(parent){
             parent.postMessage({
               [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
