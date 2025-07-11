@@ -209,3 +209,27 @@ export const GET_DELETED_PROJECTS = gql(`
 		}
   }
 `);
+
+export const UPDATE_PROJECT_METADATA = gql(`
+  mutation UpdateProjectMetadata(
+    $project: ID!
+    $readme: String
+    $license: String
+    $topics: String
+  ) {
+    updateProjectMetadata(
+      input: {
+        project: $project
+        readme: $readme
+        license: $license
+        topics: $topics
+      }
+    ) {
+      metadata {
+        id
+      ...ProjectMetadataFragment
+      }
+    }
+  }
+`);
+
