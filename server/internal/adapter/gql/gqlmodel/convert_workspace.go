@@ -63,15 +63,18 @@ func ToPolicy(p *policy.Policy) *Policy {
 
 	o := p.Option()
 	return &Policy{
-		ID:                    ID(o.ID),
-		Name:                  o.Name,
-		ProjectCount:          o.ProjectCount,
-		MemberCount:           o.MemberCount,
-		PublishedProjectCount: o.PublishedProjectCount,
-		LayerCount:            o.LayerCount,
-		AssetStorageSize:      o.AssetStorageSize,
-		NlsLayersCount:        o.NLSLayersCount,
-		PageCount:             o.PageCount,
-		BlocksCount:           o.BlocksCount,
+		ID:                       ID(o.ID),
+		Name:                     o.Name,
+		MemberCount:              o.MemberCount,
+		ProjectCount:             o.ProjectCount,
+		PrivateProject:           o.PrivateProject,
+		CustomDomainCount:        o.CustomDomainCount,
+		PublishableCount:         o.PublishableCount,
+		AssetStorageSize:         o.AssetStorageSize,
+		MaximumSizePerAsset:      o.MaximumSizePerAsset,
+		ProjectImportingTimeout:  o.ProjectImportingTimeout,
+		MaximumProjectExportSize: o.MaximumProjectExportSize,
+		InstallPluginCount:       o.InstallPluginCount,
+		NlsLayersCount:           o.NLSLayersCount,
 	}
 }
