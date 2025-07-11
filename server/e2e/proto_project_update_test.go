@@ -95,7 +95,7 @@ func TestInternalAPI_update(t *testing.T) {
 		assert.Nil(t, res2.Project.ImageUrl)
 
 		// projectAlias update => OK
-		res, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
+		_, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
 			ProjectId:    pid1.String(),
 			ProjectAlias: &projectAlias,
 		})
@@ -113,7 +113,7 @@ func TestInternalAPI_update(t *testing.T) {
 			})
 
 		// projectAlias update => NG
-		res, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
+		_, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
 			ProjectId:    pid2.String(),
 			ProjectAlias: &projectAlias, // Already Exists
 		})

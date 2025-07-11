@@ -292,7 +292,7 @@ func TestInternalAPI_create(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, "test-xxxxxxx", prj.ProjectAlias())
 
-		res, err = client.CreateProject(ctx, &pb.CreateProjectRequest{
+		_, err = client.CreateProject(ctx, &pb.CreateProjectRequest{
 			WorkspaceId:  testWorkspace,
 			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
 			Name:         lo.ToPtr("Test Project1"),
