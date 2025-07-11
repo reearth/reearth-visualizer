@@ -87,6 +87,7 @@ export default function useHook({
         return;
       if (ev.data?.[autoResizeMessageKey]) {
         const { width, height } = ev.data[autoResizeMessageKey];
+        console.log("Received auto resize message:", { width, height });
         if (typeof width !== "number" || typeof height !== "number") return;
         setIFrameSize([width + "px", height + "px"]);
         onAutoResized?.();
@@ -148,19 +149,15 @@ export default function useHook({
     return `<script id="_reearth_resize">
       if ("ResizeObserver" in window) {         
         new window.ResizeObserver(entries => {
-          const win = document.defaultView;
-          const html = document.body.parentElement;
-          const st = win.getComputedStyle(html, "");
-          horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
-          verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
-          const width = html.offsetWidth + horizontalMargin;
-          const height = html.offsetHeight + verticalMargin;
+          const body = document.body;
+          const width = body.offsetWidth;
+          const height = body.offsetHeight;
           if(parent){
             parent.postMessage({
               [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
             }, "*")
           }
-        }).observe(document.body.parentElement);
+        }).observe(document.body);
       }
     </script>`;
   }, [autoResizeMessageKey]);
