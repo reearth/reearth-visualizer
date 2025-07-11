@@ -135,6 +135,125 @@ func TestInternalAPI(t *testing.T) {
 
 }
 
+func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
+	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+		// Create 15 test projects for pagination testing
+		projectIDs := make([]id.ProjectID, 15)
+		for i := 0; i < 15; i++ {
+			pid := createProjectInternal(
+				t, ctx, r, client, "public",
+				&pb.CreateProjectRequest{
+					WorkspaceId: testWorkspace,
+					Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+					Name:        lo.ToPtr(fmt.Sprintf("Test Project %d", i)),
+					Description: lo.ToPtr(fmt.Sprintf("Test Description %d", i)),
+					CoreSupport: lo.ToPtr(true),
+					Visibility:  lo.ToPtr("public"),
+				})
+			projectIDs[i] = pid
+		}
+
+		t.Run("First page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(0)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.True(t, res.PageInfo.HasNextPage)
+			assert.False(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Middle page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(5)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.True(t, res.PageInfo.HasNextPage)
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Last page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(10)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.False(t, res.PageInfo.HasNextPage)           // 16 > 10+5 = 16 > 15 is true, but this represents the exact last page
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Beyond last page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(15)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 0, len(res.Projects))               // No projects remaining (offset 15 is beyond items 0-15)
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.False(t, res.PageInfo.HasNextPage)
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Offset beyond total count", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(20)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 0, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.False(t, res.PageInfo.HasNextPage)
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Authenticated false with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: false,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(0)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))               // All projects are public
+			assert.Equal(t, int64(15), res.PageInfo.TotalCount) // baseSeeder project is private, so not counted
+			assert.True(t, res.PageInfo.HasNextPage)
+			assert.False(t, res.PageInfo.HasPreviousPage)
+		})
+	})
+}
+
 func TestInternalAPI_unit(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 	testWorkspace := wID.String()

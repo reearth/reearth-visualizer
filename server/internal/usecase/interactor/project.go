@@ -176,12 +176,26 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
-func (i *Project) FindVisibilityByUser(ctx context.Context, u *user.User, authenticated bool, operator *usecase.Operator, keyword *string, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindVisibilityByUser(
+	ctx context.Context,
+	u *user.User,
+	authenticated bool,
+	operator *usecase.Operator,
+	keyword *string,
+	sort *project.SortType,
+	pagination *usecasex.Pagination,
+	param *interfaces.ProjectListParam,
+) ([]*project.Project, *usecasex.PageInfo, error) {
 
 	pFilter := repo.ProjectFilter{
 		Keyword:    keyword,
 		Sort:       sort,
 		Pagination: pagination,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
 	}
 
 	wss, err := i.workspaceRepo.FindByUser(ctx, u.ID())
@@ -211,12 +225,26 @@ func (i *Project) FindVisibilityByUser(ctx context.Context, u *user.User, authen
 	return result, pInfo, err
 }
 
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator, keyword *string, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindVisibilityByWorkspace(
+	ctx context.Context,
+	aid accountdomain.WorkspaceID,
+	authenticated bool,
+	operator *usecase.Operator,
+	keyword *string,
+	sort *project.SortType,
+	pagination *usecasex.Pagination,
+	param *interfaces.ProjectListParam,
+) ([]*project.Project, *usecasex.PageInfo, error) {
 
 	pFilter := repo.ProjectFilter{
 		Keyword:    keyword,
 		Sort:       sort,
 		Pagination: pagination,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
 	}
 
 	wList := accountdomain.WorkspaceIDList{aid}

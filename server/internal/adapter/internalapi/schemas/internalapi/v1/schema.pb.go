@@ -689,6 +689,8 @@ type Pagination struct {
 	Last          *int32                 `protobuf:"varint,2,opt,name=last,proto3,oneof" json:"last,omitempty"`
 	After         *string                `protobuf:"bytes,3,opt,name=after,proto3,oneof" json:"after,omitempty"`
 	Before        *string                `protobuf:"bytes,4,opt,name=before,proto3,oneof" json:"before,omitempty"`
+	Limit         *int64                 `protobuf:"varint,6,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
+	Offset        *int64                 `protobuf:"varint,7,opt,name=offset,proto3,oneof" json:"offset,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -749,6 +751,20 @@ func (x *Pagination) GetBefore() string {
 		return *x.Before
 	}
 	return ""
+}
+
+func (x *Pagination) GetLimit() int64 {
+	if x != nil && x.Limit != nil {
+		return *x.Limit
+	}
+	return 0
+}
+
+func (x *Pagination) GetOffset() int64 {
+	if x != nil && x.Offset != nil {
+		return *x.Offset
+	}
+	return 0
 }
 
 type ProjectSort struct {
@@ -2195,17 +2211,21 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\a_readmeB\n" +
 	"\n" +
 	"\b_licenseB\t\n" +
-	"\a_topics\"\xa0\x01\n" +
+	"\a_topics\"\xed\x01\n" +
 	"\n" +
 	"Pagination\x12\x19\n" +
 	"\x05first\x18\x01 \x01(\x05H\x00R\x05first\x88\x01\x01\x12\x17\n" +
 	"\x04last\x18\x02 \x01(\x05H\x01R\x04last\x88\x01\x01\x12\x19\n" +
 	"\x05after\x18\x03 \x01(\tH\x02R\x05after\x88\x01\x01\x12\x1b\n" +
-	"\x06before\x18\x04 \x01(\tH\x03R\x06before\x88\x01\x01B\b\n" +
+	"\x06before\x18\x04 \x01(\tH\x03R\x06before\x88\x01\x01\x12\x19\n" +
+	"\x05limit\x18\x06 \x01(\x03H\x04R\x05limit\x88\x01\x01\x12\x1b\n" +
+	"\x06offset\x18\a \x01(\x03H\x05R\x06offset\x88\x01\x01B\b\n" +
 	"\x06_firstB\a\n" +
 	"\x05_lastB\b\n" +
 	"\x06_afterB\t\n" +
-	"\a_before\"\x90\x01\n" +
+	"\a_beforeB\b\n" +
+	"\x06_limitB\t\n" +
+	"\a_offset\"\x90\x01\n" +
 	"\vProjectSort\x12=\n" +
 	"\x05field\x18\x01 \x01(\x0e2'.reearth.visualizer.v1.ProjectSortFieldR\x05field\x12B\n" +
 	"\tdirection\x18\x02 \x01(\x0e2$.reearth.visualizer.v1.SortDirectionR\tdirection\"\xe7\x01\n" +

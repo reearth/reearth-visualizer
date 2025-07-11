@@ -222,10 +222,7 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 	return filter
 }
 
-func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.SortType, cursor *usecasex.CursorPagination) (bson.M, *options.FindOptions, int64, int) {
-
-	// default connfig
-	limit := int64(10)
+func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.SortType, cursor *usecasex.CursorPagination, offset *int64, limit *int64) (bson.M, *options.FindOptions, int64, int) {
 	sortOrder := -1 // DESC
 	sortKey := internalapimodel.ProjectSortField_UPDATEDAT
 
@@ -236,74 +233,91 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 		sortKey = sort.Key
 	}
 
-	if cursor != nil && cursor.First != nil {
-		limit = *cursor.First
+	// Prioritize offset-based pagination when offset is provided
+	if offset != nil && limit != nil && *limit > 0 {
+		// Use provided limit for offset pagination
+	} else if cursor != nil && cursor.First != nil {
+		if limit == nil {
+			limit = new(int64)
+		}
+		*limit = *cursor.First
 	} else if cursor != nil && cursor.Last != nil {
-		limit = *cursor.Last
+		if limit == nil {
+			limit = new(int64)
+		}
+		*limit = *cursor.Last
+	} else {
+		// default
+		if limit == nil {
+			limit = new(int64)
+		}
+		*limit = 10
 	}
 
-	limit = limit + 1
+	*limit = *limit + 1
 
 	sortConfig := bson.D{
 		{Key: sortKey, Value: sortOrder},
 		{Key: "id", Value: sortOrder},
 	}
 
-	if cursor != nil && cursor.After != nil {
+	findOptions := options.Find().
+		SetSort(sortConfig).
+		SetLimit(*limit)
 
-		cursor := *cursor.After
-		afterID, afterKey := decodeProjectCursor(cursor)
+	if offset != nil {
+		findOptions = findOptions.SetSkip(*offset)
+	} else {
+		if cursor != nil && cursor.After != nil {
+			cursor := *cursor.After
+			afterID, afterKey := decodeProjectCursor(cursor)
 
-		var keyValue any = afterKey
-		if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
-			keyValue = t
-		}
-
-		if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+			var keyValue any = afterKey
 			if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
 				keyValue = t
 			}
-		}
 
-		absoluteFilter["$or"] = bson.A{
-			bson.M{sortKey: bson.M{"$gt": keyValue}},
-			bson.M{
-				sortKey: keyValue,
-				"id":    bson.M{"$gt": afterID},
-			},
-		}
+			if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+				if t, err := time.Parse(time.RFC3339Nano, afterKey); err == nil {
+					keyValue = t
+				}
+			}
 
-	} else if cursor != nil && cursor.Before != nil {
+			absoluteFilter["$or"] = bson.A{
+				bson.M{sortKey: bson.M{"$gt": keyValue}},
+				bson.M{
+					sortKey: keyValue,
+					"id":    bson.M{"$gt": afterID},
+				},
+			}
 
-		cursor := *cursor.Before
-		beforeID, beforeKey := decodeProjectCursor(cursor)
+		} else if cursor != nil && cursor.Before != nil {
 
-		var keyValue any = beforeKey
-		if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
-			keyValue = t
-		}
+			cursor := *cursor.Before
+			beforeID, beforeKey := decodeProjectCursor(cursor)
 
-		if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+			var keyValue any = beforeKey
 			if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
 				keyValue = t
 			}
-		}
 
-		absoluteFilter["$or"] = bson.A{
-			bson.M{sortKey: bson.M{"$lt": keyValue}},
-			bson.M{
-				sortKey: keyValue,
-				"id":    bson.M{"$lt": beforeID},
-			},
-		}
+			if sortKey == internalapimodel.ProjectSortField_UPDATEDAT {
+				if t, err := time.Parse(time.RFC3339Nano, beforeKey); err == nil {
+					keyValue = t
+				}
+			}
 
+			absoluteFilter["$or"] = bson.A{
+				bson.M{sortKey: bson.M{"$lt": keyValue}},
+				bson.M{
+					sortKey: keyValue,
+					"id":    bson.M{"$lt": beforeID},
+				},
+			}
+		}
 	}
 
-	findOptions := options.Find().
-		SetSort(sortConfig).
-		SetLimit(limit)
-
-	return absoluteFilter, findOptions, limit, sortOrder
+	return absoluteFilter, findOptions, *limit, sortOrder
 }
 
 func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFilter repo.ProjectFilter, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) ([]*project.Project, *usecasex.PageInfo, error) {
@@ -322,9 +336,9 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 	var sortOrder int
 
 	if pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil {
-		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, pFilter.Pagination.Cursor)
+		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, pFilter.Pagination.Cursor, pFilter.Offset, pFilter.Limit)
 	} else {
-		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, nil)
+		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, nil, pFilter.Offset, pFilter.Limit)
 	}
 
 	// --- Find Query (paginationSortilter)
@@ -357,15 +371,32 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 	hasNextPage := false
 	hasPreviousPage := false
 
-	if resultCount == limit {
-		switch sortOrder {
-		case 1:
-			hasNextPage = true
-		case -1:
-			hasPreviousPage = true
+	// Handle offset-based pagination differently
+	if pFilter.Offset != nil {
+		// For offset pagination, calculate based on totalCount and offset
+		currentOffset := *pFilter.Offset
+		currentLimit := int64(10) // default limit
+		if pFilter.Limit != nil {
+			currentLimit = *pFilter.Limit
 		}
-		if len(items) > 0 {
+
+		hasNextPage = totalCount > currentOffset+currentLimit
+		hasPreviousPage = currentOffset > 0
+
+		if resultCount == limit && len(items) > 0 {
 			items = items[:len(items)-1]
+		}
+	} else {
+		if resultCount == limit {
+			switch sortOrder {
+			case 1:
+				hasNextPage = true
+			case -1:
+				hasPreviousPage = true
+			}
+			if len(items) > 0 {
+				items = items[:len(items)-1]
+			}
 		}
 	}
 
