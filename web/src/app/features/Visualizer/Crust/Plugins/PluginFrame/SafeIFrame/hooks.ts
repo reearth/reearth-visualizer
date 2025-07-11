@@ -148,19 +148,17 @@ export default function useHook({
     return `<script id="_reearth_resize">
       if ("ResizeObserver" in window) {         
         new window.ResizeObserver(entries => {
-          const win = document.defaultView;
-          const html = document.body.parentElement;
-          const st = win.getComputedStyle(html, "");
-          horizontalMargin = parseInt(st.getPropertyValue("margin-left"), 10) + parseInt(st.getPropertyValue("margin-right"), 10);
-          verticalMargin = parseInt(st.getPropertyValue("margin-top"), 10) + parseInt(st.getPropertyValue("margin-bottom"), 10);
-          const width = html.offsetWidth + horizontalMargin;
-          const height = html.offsetHeight + verticalMargin;
+          const width = Math.max(
+            document.body.scrollWidth,
+            document.documentElement.scrollWidth
+          );
+          const height = document.body.scrollHeight;
           if(parent){
             parent.postMessage({
               [${JSON.stringify(autoResizeMessageKey)}]: { width, height }
             }, "*")
           }
-        }).observe(document.body.parentElement);
+        }).observe(document.body);
       }
     </script>`;
   }, [autoResizeMessageKey]);
