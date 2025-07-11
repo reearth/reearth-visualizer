@@ -303,6 +303,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	_ = repos.Scene.Save(ctx, scene)
 
 	uc := &Plugin{
+		workspaceRepo:      repos.Workspace,
 		sceneRepo:          repos.Scene,
 		pluginRepo:         repos.Plugin,
 		propertySchemaRepo: repos.PropertySchema,
