@@ -17,6 +17,7 @@ import { ProjectProps } from "./types";
 const ProjectListViewItem: FC<ProjectProps> = ({
   project,
   selectedProjectId,
+  projectVisibility,
   onProjectOpen,
   onProjectSelect,
   onProjectUpdate,
@@ -124,6 +125,19 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             />
           )}
         </ProjectNameCol>
+        {!projectVisibility && (
+          <VisibilityCol
+            data-testid={`project-list-item-visibility-col-${project.name}`}
+          >
+            <VisibilityButton
+              visibility={project?.visibility}
+              data-testid={`project-list-item-visibility-button-${project.name}`}
+            >
+              {project?.visibility}
+            </VisibilityButton>
+          </VisibilityCol>
+        )}
+
         <TimeCol data-testid={`project-list-item-updated-col-${project.name}`}>
           <Typography
             size="body"
@@ -228,7 +242,12 @@ const PublishStatus = styled("div")<{ status?: boolean }>(
 );
 
 const TimeCol = styled("div")(() => ({
-  flex: "0 0 20%",
+  flex: "0 0 15%",
+  flexShrink: 0
+}));
+
+const VisibilityCol = styled("div")(() => ({
+  flex: "0 0 15%",
   flexShrink: 0
 }));
 
@@ -256,3 +275,16 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   overflow: "hidden",
   textOverflow: "ellipsis"
 }));
+
+const VisibilityButton = styled("div")<{ visibility?: string }>(
+  ({ theme, visibility }) => ({
+    background: theme.bg[0],
+    color: visibility === "public" ? "#B1B1B1" : "#535353",
+    borderRadius: theme.radius.normal,
+    padding: `${theme.spacing.micro}px ${theme.spacing.small}px`,
+    border: visibility === "public" ? `1px solid #B1B1B1` : `1px solid #535353`,
+    fontSize: theme.fonts.sizes.body,
+    height: "25px",
+    width: "fit-content"
+  })
+);

@@ -22,6 +22,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { getImportStatus, ImportStatus, Project } from "../../type";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
@@ -47,6 +48,7 @@ export default (workspaceId?: string) => {
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
+  const { projectVisibility } = appFeature();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -94,7 +96,8 @@ export default (workspaceId?: string) => {
               isPublished:
                 project.publishmentStatus === "PUBLIC" ||
                 project.publishmentStatus === "LIMITED",
-              metadata: project?.metadata
+              metadata: project?.metadata,
+              visibility: project.visibility
             }
           : undefined
       )
@@ -341,6 +344,7 @@ export default (workspaceId?: string) => {
     contentWidth,
     starredProjects,
     importStatus,
+    projectVisibility,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,

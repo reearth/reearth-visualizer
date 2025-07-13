@@ -70,6 +70,7 @@ Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
 Project Name: プロジェクト名
+Visibility: 表示・非表示切り替え
 Updated At: 更新日時
 Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
@@ -185,7 +186,6 @@ Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
-Visibility: 表示・非表示切り替え
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース

@@ -9,6 +9,8 @@ export const getFeatureConfig = (): AppFeatureConfig => {
     workspaceCreation: false,
     workspaceManagement: false,
     accountManagement: false,
+    projectCreation: false,
+    projectVisibility: false,
     externalAccountManagementUrl: `${c?.platformUrl}/settings/profile`
   };
 };
