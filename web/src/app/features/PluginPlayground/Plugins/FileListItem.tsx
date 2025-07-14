@@ -29,8 +29,10 @@ const FileListItem: FC<Props> = ({
 
   const handleInputConfirm = useCallback(
     (value: string) => {
-      confirmFileTitle(value, file.id);
-      setIsEditing(false);
+      if (value) {
+        confirmFileTitle(value, file.id);
+        setIsEditing(false);
+      }
     },
     [confirmFileTitle, file.id]
   );
