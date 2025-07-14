@@ -299,6 +299,9 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 		Visibility:   input.Visibility,
 		ImportStatus: input.ImportStatus,
 		ProjectAlias: input.ProjectAlias,
+		Readme:       input.Readme,
+		License:      input.License,
+		Topics:       input.Topics,
 	}, operator)
 }
 
@@ -964,6 +967,9 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		Alias:        &alias,
 		Archived:     &archived,
 		CoreSupport:  &coreSupport,
+		Readme:       nil,
+		License:      nil,
+		Topics:       nil,
 	}, op)
 	if err != nil {
 		return nil, err
@@ -1015,6 +1021,11 @@ type createProjectInput struct {
 	CoreSupport  *bool
 	Visibility   *string
 	ProjectAlias *string
+
+	// metadata
+	Readme  *string
+	License *string
+	Topics  *string
 }
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -1081,6 +1092,16 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	if input.Readme != nil {
+		metadata.SetReadme(input.Readme)
+	}
+	if input.License != nil {
+		metadata.SetLicense(input.License)
+	}
+	if input.Topics != nil {
+		metadata.SetTopics(input.Topics)
 	}
 
 	prj := project.New().

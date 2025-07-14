@@ -79,6 +79,11 @@ input CreateProjectInput {
   coreSupport: Boolean
   visibility: String
   projectAlias: String
+
+  # metadata
+  readme: String
+  license: String
+  topics: String
 }
 
 input UpdateProjectInput {

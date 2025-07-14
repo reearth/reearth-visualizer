@@ -444,6 +444,36 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 	testFunc(client, ctx)
 }
 
+func TestCreateProjectForInternal(t *testing.T) {
+
+	GRPCServer(t, baseSeeder)
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		res, err := client.CreateProject(ctx,
+			&pb.CreateProjectRequest{
+				WorkspaceId: wID.String(),
+				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+				Name:        lo.ToPtr("Test Project1"),
+				Description: lo.ToPtr("Test Description1"),
+				CoreSupport: lo.ToPtr(true),
+				Visibility:  lo.ToPtr("public"),
+				Readme:      lo.ToPtr("readme-xxxxxxxxxxx"),
+				License:     lo.ToPtr("license-xxxxxxxxxxx"),
+				Topics:      lo.ToPtr("topics-xxxxxxxxxxx"),
+			})
+		require.Nil(t, err)
+
+		prj := res.GetProject()
+		metadata := prj.GetMetadata()
+		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
+		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
+		assert.Equal(t, "topics-xxxxxxxxxxx", *metadata.Topics)
+
+	})
+
+}
+
 func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container, client pb.ReEarthVisualizerClient, visibility string, req *pb.CreateProjectRequest) id.ProjectID {
 	// test CreateProject
 	res, err := client.CreateProject(ctx, req)

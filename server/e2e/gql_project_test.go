@@ -120,6 +120,9 @@ mutation CreateProject(
   $coreSupport: Boolean
   $visibility: String
   $projectAlias: String
+  $readme: String
+  $license: String
+  $topics: String
 ) {
   createProject(
     input: {
@@ -130,6 +133,9 @@ mutation CreateProject(
       coreSupport: $coreSupport
 	  visibility: $visibility
 	  projectAlias: $projectAlias
+	  readme: $readme
+	  license: $license
+	  topics: $topics
     }
   ) {
     project {
@@ -210,8 +216,17 @@ func TestCreateUpdateProject(t *testing.T) {
 			"coreSupport":  true,
 			"visibility":   "public",
 			"projectAlias": "test-xxxxxx",
+
+			"readme":  "readme-xxxxxx",
+			"license": "license-xxxxxx",
+			"topics":  "topics-xxxxxx",
 		},
 	})
+
+	res.Path("$.data.createProject.project.metadata.readme").IsEqual("readme-xxxxxx")
+	res.Path("$.data.createProject.project.metadata.license").IsEqual("license-xxxxxx")
+	res.Path("$.data.createProject.project.metadata.topics").IsEqual("topics-xxxxxx")
+
 	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
 	projectID := res.Path("$.data.createProject.project.id").Raw().(string)
 
