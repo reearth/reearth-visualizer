@@ -56,6 +56,7 @@ const LicenseSettings: FC<Props> = ({
     (l) => l.value === selectedLicense
   );
 
+  console.log("selectedLicense", selectedLicense);
   return (
     <>
       <CommonLayout

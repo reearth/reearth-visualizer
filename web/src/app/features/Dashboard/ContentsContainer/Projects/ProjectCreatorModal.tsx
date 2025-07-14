@@ -1,4 +1,7 @@
-import { license_options } from "@reearth/app/features/ProjectSettings/innerPages/LicenseSettings/content";
+import {
+  license_content,
+  license_options
+} from "@reearth/app/features/ProjectSettings/innerPages/LicenseSettings/content";
 import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
 import {
   InputField,
@@ -55,7 +58,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     ],
     [t]
   );
-  
+
   const handleOnChange = useCallback(
     (field: keyof FormState, newValue: string) => {
       setFormState((prev) => ({ ...prev, [field]: newValue }));
@@ -63,13 +66,18 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     []
   );
 
+  const getLicenseContent = (value?: string): string => {
+    return license_content[value as keyof typeof license_content];
+  };
+
   const onSubmit = useCallback(() => {
+    const license = getLicenseContent(formState?.license);
     onProjectCreate({
       name: formState.projectName,
       description: formState.description,
       projectAlias: formState.projectAlias,
       visibility: formState.visibility,
-      license: formState.license
+      license,
     });
     onClose?.();
   }, [formState, onClose, onProjectCreate]);
