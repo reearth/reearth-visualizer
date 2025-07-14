@@ -175,7 +175,10 @@ export default () => {
       coreSupport: boolean,
       projectAlias?: string,
       visibility?: string,
-      description?: string
+      description?: string,
+      license?: string,
+      readme?: string,
+      topics?: string
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
@@ -186,7 +189,10 @@ export default () => {
             description: description ?? "",
             coreSupport: !!coreSupport,
             projectAlias: projectAlias ?? "",
-            visibility: visibility ? visibility : "private"
+            visibility: visibility ? visibility : "private",
+            license: license ?? "",
+            readme: readme ?? "",
+            topics: topics ?? ""
           }
         });
       if (projectErrors || !projectResults?.createProject) {

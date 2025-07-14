@@ -17,7 +17,10 @@ type ProjectCreatorModalProps = {
   visible: boolean;
   onClose?: () => void;
   onProjectCreate: (
-    data: Pick<Project, "name" | "description" | "projectAlias" | "visibility">
+    data: Pick<
+      Project,
+      "name" | "description" | "projectAlias" | "visibility"
+    > & { license?: string }
   ) => void;
 };
 
@@ -65,7 +68,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
       name: formState.projectName,
       description: formState.description,
       projectAlias: formState.projectAlias,
-      visibility: formState.visibility
+      visibility: formState.visibility,
+      license: formState.license
     });
     onClose?.();
   }, [formState, onClose, onProjectCreate]);

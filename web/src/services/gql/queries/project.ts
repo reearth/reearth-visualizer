@@ -55,6 +55,9 @@ export const CREATE_PROJECT = gql(`
     $coreSupport: Boolean
     $visibility: String
     $projectAlias: String
+    $readme: String
+    $license: String
+    $topics: String
   ) {
     createProject(
       input: {
@@ -65,6 +68,9 @@ export const CREATE_PROJECT = gql(`
         coreSupport: $coreSupport
         visibility: $visibility
 	      projectAlias: $projectAlias
+        readme: $readme
+        license: $license
+        topics: $topics
       }
     ) {
       project {
@@ -240,4 +246,3 @@ export const UPDATE_PROJECT_METADATA = gql(`
     }
   }
 `);
-
