@@ -1152,7 +1152,13 @@ type CreateProjectRequest struct {
 	// Visibility of the project (e.g., "public", "private")
 	Visibility *string `protobuf:"bytes,6,opt,name=visibility,proto3,oneof" json:"visibility,omitempty"`
 	// Project alias
-	ProjectAlias  *string `protobuf:"bytes,7,opt,name=project_alias,json=projectAlias,proto3,oneof" json:"project_alias,omitempty"`
+	ProjectAlias *string `protobuf:"bytes,7,opt,name=project_alias,json=projectAlias,proto3,oneof" json:"project_alias,omitempty"`
+	// Project readme
+	Readme *string `protobuf:"bytes,8,opt,name=readme,proto3,oneof" json:"readme,omitempty"`
+	// Project license
+	License *string `protobuf:"bytes,9,opt,name=license,proto3,oneof" json:"license,omitempty"`
+	// Project topics
+	Topics        *string `protobuf:"bytes,10,opt,name=topics,proto3,oneof" json:"topics,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1232,6 +1238,27 @@ func (x *CreateProjectRequest) GetVisibility() string {
 func (x *CreateProjectRequest) GetProjectAlias() string {
 	if x != nil && x.ProjectAlias != nil {
 		return *x.ProjectAlias
+	}
+	return ""
+}
+
+func (x *CreateProjectRequest) GetReadme() string {
+	if x != nil && x.Readme != nil {
+		return *x.Readme
+	}
+	return ""
+}
+
+func (x *CreateProjectRequest) GetLicense() string {
+	if x != nil && x.License != nil {
+		return *x.License
+	}
+	return ""
+}
+
+func (x *CreateProjectRequest) GetTopics() string {
+	if x != nil && x.Topics != nil {
+		return *x.Topics
 	}
 	return ""
 }
@@ -2288,7 +2315,7 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tH\x00R\tprojectId\x88\x01\x01\x12\x14\n" +
 	"\x05alias\x18\x02 \x01(\tR\x05aliasB\r\n" +
-	"\v_project_id\"\xfe\x02\n" +
+	"\v_project_id\"\xf9\x03\n" +
 	"\x14CreateProjectRequest\x12!\n" +
 	"\fworkspace_id\x18\x01 \x01(\tR\vworkspaceId\x12A\n" +
 	"\n" +
@@ -2300,12 +2327,20 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
 	"visibility\x18\x06 \x01(\tH\x03R\n" +
 	"visibility\x88\x01\x01\x12(\n" +
-	"\rproject_alias\x18\a \x01(\tH\x04R\fprojectAlias\x88\x01\x01B\a\n" +
+	"\rproject_alias\x18\a \x01(\tH\x04R\fprojectAlias\x88\x01\x01\x12\x1b\n" +
+	"\x06readme\x18\b \x01(\tH\x05R\x06readme\x88\x01\x01\x12\x1d\n" +
+	"\alicense\x18\t \x01(\tH\x06R\alicense\x88\x01\x01\x12\x1b\n" +
+	"\x06topics\x18\n" +
+	" \x01(\tH\aR\x06topics\x88\x01\x01B\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_core_supportB\r\n" +
 	"\v_visibilityB\x10\n" +
-	"\x0e_project_alias\"\xbd\t\n" +
+	"\x0e_project_aliasB\t\n" +
+	"\a_readmeB\n" +
+	"\n" +
+	"\b_licenseB\t\n" +
+	"\a_topics\"\xbd\t\n" +
 	"\x14UpdateProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x17\n" +

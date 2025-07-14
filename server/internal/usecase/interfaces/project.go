@@ -29,6 +29,11 @@ type CreateProjectParam struct {
 	Visibility   *string
 	ImportStatus project.ProjectImportStatus
 	ProjectAlias *string
+
+	// metadata
+	Readme  *string
+	License *string
+	Topics  *string
 }
 
 type UpdateProjectParam struct {
