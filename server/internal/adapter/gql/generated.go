@@ -6966,6 +6966,11 @@ input CreateProjectInput {
   coreSupport: Boolean
   visibility: String
   projectAlias: String
+
+  # metadata
+  readme: String
+  license: String
+  topics: String
 }
 
 input UpdateProjectInput {
@@ -45413,7 +45418,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility", "projectAlias"}
+	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility", "projectAlias", "readme", "license", "topics"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -45469,6 +45474,27 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.ProjectAlias = data
+		case "readme":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("readme"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Readme = data
+		case "license":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("license"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.License = data
+		case "topics":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Topics = data
 		}
 	}
 

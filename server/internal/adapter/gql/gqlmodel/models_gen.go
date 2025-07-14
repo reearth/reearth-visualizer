@@ -200,6 +200,9 @@ type CreateProjectInput struct {
 	CoreSupport  *bool      `json:"coreSupport,omitempty"`
 	Visibility   *string    `json:"visibility,omitempty"`
 	ProjectAlias *string    `json:"projectAlias,omitempty"`
+	Readme       *string    `json:"readme,omitempty"`
+	License      *string    `json:"license,omitempty"`
+	Topics       *string    `json:"topics,omitempty"`
 }
 
 type CreateSceneInput struct {

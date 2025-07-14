@@ -181,7 +181,6 @@ message Pagination {
   optional string after = 3;
   optional string before = 4;
 
-
   optional int64 limit = 6;
   optional int64 offset = 7;
 }
@@ -270,6 +269,15 @@ message CreateProjectRequest {
 
   // Project alias
   optional string project_alias = 7;
+
+  // Project readme
+  optional string readme = 8;
+
+  // Project license
+  optional string license = 9;
+
+  // Project topics
+  optional string topics = 10;
 }
 
 // Update project fields.
