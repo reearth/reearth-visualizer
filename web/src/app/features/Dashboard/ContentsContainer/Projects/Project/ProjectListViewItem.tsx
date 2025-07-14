@@ -125,7 +125,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
             />
           )}
         </ProjectNameCol>
-        {!projectVisibility && (
+        {projectVisibility && (
           <VisibilityCol
             data-testid={`project-list-item-visibility-col-${project.name}`}
           >

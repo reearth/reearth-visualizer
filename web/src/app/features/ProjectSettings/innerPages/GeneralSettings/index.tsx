@@ -1,8 +1,10 @@
 import { IMAGE_TYPES } from "@reearth/app/features/AssetsManager/constants";
 import ProjectRemoveModal from "@reearth/app/features/Dashboard/ContentsContainer/Projects/ProjectRemoveModal";
+import ProjectVisibilityModal from "@reearth/app/features/Dashboard/ContentsContainer/Projects/ProjectVisibilityModal";
 import { Button, Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useCallback, useState, FC } from "react";
@@ -23,6 +25,8 @@ export type GeneralSettingsType = {
   name?: string;
   description?: string;
   imageUrl?: string;
+  projectAlias?: string;
+  visibility?: string;
 };
 
 type Props = {
@@ -32,6 +36,8 @@ type Props = {
     description: string;
     imageUrl?: string | null;
     isArchived: boolean;
+    projectAlias: string;
+    visibility?: string;
   };
   disabled?: boolean;
   onUpdateProject: (settings: GeneralSettingsType) => void;
@@ -45,12 +51,23 @@ const GeneralSettings: FC<Props> = ({
   onProjectRemove
 }) => {
   const t = useT();
+  const { projectVisibility } = appFeature();
 
   const handleNameUpdate = useCallback(
     (name: string) => {
       if (!project) return;
       onUpdateProject({
         name
+      });
+    },
+    [project, onUpdateProject]
+  );
+
+  const handleProjectAliasUpdate = useCallback(
+    (projectAlias: string) => {
+      if (!project) return;
+      onUpdateProject({
+        projectAlias
       });
     },
     [project, onUpdateProject]
@@ -83,6 +100,23 @@ const GeneralSettings: FC<Props> = ({
     setProjectRemoveModalVisible(value);
   }, []);
 
+  const [projectVisibilityModal, setProjectVisibilityModal] = useState(false);
+
+  const handleProjectVisibilityModal = useCallback(() => {
+    setProjectVisibilityModal(false);
+  }, []);
+
+  const handleProjectVisibiltyUpdate = useCallback(
+    (visibility: string) => {
+      if (!project) return;
+      onUpdateProject({
+        visibility
+      });
+      handleProjectVisibilityModal();
+    },
+    [handleProjectVisibilityModal, onUpdateProject, project]
+  );
+
   return project ? (
     <InnerPage wide>
       <SettingsWrapper>
@@ -102,6 +136,15 @@ const GeneralSettings: FC<Props> = ({
               value={project.name}
               onChangeComplete={handleNameUpdate}
               data-testid="project-name-input"
+            />
+            <InputField
+              title={t("Project alias")}
+              value={project.projectAlias}
+              onChangeComplete={handleProjectAliasUpdate}
+              data-testid="project-alias-input"
+              description={t(
+                "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+              )}
             />
             <TextareaField
               title={t("Description")}
@@ -140,6 +183,53 @@ const GeneralSettings: FC<Props> = ({
           </TitleWrapper>
 
           <DangerItem data-testid="danger-zone-item">
+            {projectVisibility && (
+              <>
+                <Typography
+                  size="body"
+                  weight="bold"
+                  data-testid="change-project-visibily-title"
+                >
+                  {t("Change project visibility")}
+                </Typography>
+                <DescriptionWrapper data-testid="chanage-project-visibility-description">
+                  <Typography size="body">
+                    {t(
+                      "You can choose whether your project is Public or Private."
+                    )}
+                  </Typography>
+                  <ListWrapper>
+                    <li>
+                      <Typography size="body">
+                        {t(
+                          "Public projects are visible to everyone and can be discovered by others."
+                        )}
+                      </Typography>
+                    </li>
+                    <li>
+                      <Typography size="body">
+                        {t(
+                          "Private projects are only accessible to members of the workspace and are available only for workspaces on a paid plan."
+                        )}
+                      </Typography>
+                    </li>
+                  </ListWrapper>
+                  <Typography size="body">
+                    {t(
+                      "This setting helps you control who can view and collaborate on your project. You can change the visibility at any time."
+                    )}
+                  </Typography>
+                </DescriptionWrapper>
+                <ButtonWrapper>
+                  <Button
+                    title={t("Change visibility")}
+                    appearance="dangerous"
+                    onClick={() => setProjectVisibilityModal(true)}
+                    data-testid="move-to-recycle-bin-button"
+                  />
+                </ButtonWrapper>
+              </>
+            )}
             <Typography
               size="body"
               weight="bold"
@@ -170,6 +260,13 @@ const GeneralSettings: FC<Props> = ({
           data-testid="project-remove-modal"
         />
       )}
+      {projectVisibilityModal && (
+        <ProjectVisibilityModal
+          visibility={project.visibility || "public"}
+          onProjectVisibilityChange={handleProjectVisibiltyUpdate}
+          onClose={handleProjectVisibilityModal}
+        />
+      )}
     </InnerPage>
   ) : null;
 };
@@ -180,4 +277,15 @@ const DangerItem = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large
+}));
+
+const DescriptionWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest
+}));
+
+const ListWrapper = styled("ul")(({ theme }) => ({
+  listStyleType: "disc",
+  paddingLeft: theme.spacing.super
 }));

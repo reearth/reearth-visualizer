@@ -63,7 +63,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           <ButtonWrapper
             data-testid={`project-grid-item-btn-wrapper-${project.name}`}
           >
-            {!projectVisibility && (
+            {projectVisibility && (
               <VisibilityButton
                 visibility={project?.visibility}
                 data-testid={`project-grid-item-visibility-btn-${project.name}`}

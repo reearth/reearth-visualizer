@@ -35,7 +35,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   onProjectCreate
 }) => {
   const t = useT();
-  const { projectCreation } = appFeature();
+  const { projectVisibility } = appFeature();
 
   const [formState, setFormState] = useState<FormState>({
     projectName: "",
@@ -52,6 +52,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     ],
     [t]
   );
+  
   const handleOnChange = useCallback(
     (field: keyof FormState, newValue: string) => {
       setFormState((prev) => ({ ...prev, [field]: newValue }));
@@ -117,7 +118,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 )}
               />
             </FormInputWrapper>
-            {!projectCreation && (
+            {projectVisibility && (
               <FormInputWrapper data-testid="project-creator-project-visibility-wrapper">
                 <RadioGroupField
                   title={t("Project Visibility *")}

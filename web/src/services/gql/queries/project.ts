@@ -92,6 +92,8 @@ export const UPDATE_PROJECT = gql(`
     $trackingId: String
     $starred:Boolean
     $deleted: Boolean
+    $projectAlias: String
+    $visibility: String
   ) {
     updateProject(
       input: {
@@ -108,6 +110,8 @@ export const UPDATE_PROJECT = gql(`
         trackingId: $trackingId
         starred: $starred
         deleted: $deleted
+        projectAlias: $projectAlias
+        visibility: $visibility
       }
     ) {
       project {

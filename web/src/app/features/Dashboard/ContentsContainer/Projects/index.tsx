@@ -154,7 +154,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                     {t("Project Name")}
                   </Typography>
                 </ProjectNameCol>
-                {!projectVisibility && (
+                {projectVisibility && (
                   <VisibilityCol>
                     <Typography size="body" color={theme.content.weak}>
                       {t("Visibility")}
