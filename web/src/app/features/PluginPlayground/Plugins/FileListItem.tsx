@@ -29,7 +29,7 @@ const FileListItem: FC<Props> = ({
 
   const handleInputConfirm = useCallback(
     (value: string) => {
-      if (value) {
+      if (value.trim()) {
         confirmFileTitle(value, file.id);
         setIsEditing(false);
       }
