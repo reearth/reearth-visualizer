@@ -50,7 +50,7 @@ type ReEarthVisualizerClient interface {
 	// Determines if an alias is valid.
 	// Request headers: user-id: <User ID>
 	ValidateProjectAlias(ctx context.Context, in *ValidateProjectAliasRequest, opts ...grpc.CallOption) (*ValidateProjectAliasResponse, error)
-	// Creates a new project in the specified team.
+	// Creates a new project in the specified workspace.
 	// Request headers: user-id: <User ID>
 	CreateProject(ctx context.Context, in *CreateProjectRequest, opts ...grpc.CallOption) (*CreateProjectResponse, error)
 	// Update a project.
@@ -59,7 +59,7 @@ type ReEarthVisualizerClient interface {
 	// Publish a project.
 	// Request headers: user-id: <User ID>
 	PublishProject(ctx context.Context, in *PublishProjectRequest, opts ...grpc.CallOption) (*PublishProjectResponse, error)
-	// Updates a new project metadata in the specified team.
+	// Updates a new project metadata in the specified workspace.
 	// Request headers: user-id: <User ID>
 	UpdateProjectMetadata(ctx context.Context, in *UpdateProjectMetadataRequest, opts ...grpc.CallOption) (*UpdateProjectMetadataResponse, error)
 	// Deletes a project.
@@ -233,7 +233,7 @@ type ReEarthVisualizerServer interface {
 	// Determines if an alias is valid.
 	// Request headers: user-id: <User ID>
 	ValidateProjectAlias(context.Context, *ValidateProjectAliasRequest) (*ValidateProjectAliasResponse, error)
-	// Creates a new project in the specified team.
+	// Creates a new project in the specified workspace.
 	// Request headers: user-id: <User ID>
 	CreateProject(context.Context, *CreateProjectRequest) (*CreateProjectResponse, error)
 	// Update a project.
@@ -242,7 +242,7 @@ type ReEarthVisualizerServer interface {
 	// Publish a project.
 	// Request headers: user-id: <User ID>
 	PublishProject(context.Context, *PublishProjectRequest) (*PublishProjectResponse, error)
-	// Updates a new project metadata in the specified team.
+	// Updates a new project metadata in the specified workspace.
 	// Request headers: user-id: <User ID>
 	UpdateProjectMetadata(context.Context, *UpdateProjectMetadataRequest) (*UpdateProjectMetadataResponse, error)
 	// Deletes a project.

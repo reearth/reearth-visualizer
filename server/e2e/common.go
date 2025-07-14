@@ -321,6 +321,12 @@ func RequestDump(requestBody GraphQLRequest) {
 	}
 }
 
+func ArrayDump(arrayVal *httpexpect.Array) {
+	for _, val := range arrayVal.Iter() {
+		ValueDump(&val)
+	}
+}
+
 func ValueDump(val *httpexpect.Value) {
 	raw := val.Raw()
 	switch data := raw.(type) {

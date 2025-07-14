@@ -50,7 +50,7 @@ describe("useProjectApi - useImportProject", () => {
 
   it("handles successful upload of a single-chunk file", async () => {
     const file = new File(["test"], "test.zip", { type: "application/zip" });
-    const teamId = "team-123";
+    const workspaceId = "team-123";
 
     mockAxiosPost.mockResolvedValueOnce({ data: { status: "chunk_received" } });
 
@@ -58,7 +58,7 @@ describe("useProjectApi - useImportProject", () => {
 
     let res;
     await act(async () => {
-      res = await result.current.useImportProject(file, teamId);
+      res = await result.current.useImportProject(file, workspaceId);
     });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(1);
@@ -71,7 +71,7 @@ describe("useProjectApi - useImportProject", () => {
     const file = new File([buffer], "large.zip", {
       type: "application/zip"
     });
-    const teamId = "team-123";
+    const workspaceId = "team-123";
 
     mockAxiosPost
       .mockResolvedValueOnce({ data: { status: "processing" } })
@@ -82,7 +82,7 @@ describe("useProjectApi - useImportProject", () => {
 
     let res;
     await act(async () => {
-      res = await result.current.useImportProject(file, teamId);
+      res = await result.current.useImportProject(file, workspaceId);
     });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(3);
@@ -95,7 +95,7 @@ describe("useProjectApi - useImportProject", () => {
     const file = new File([buffer], "fail-in-middle.zip", {
       type: "application/zip"
     });
-    const teamId = "team-123";
+    const workspaceId = "team-123";
 
     mockAxiosPost.mockImplementation((_url, formData) => {
       const chunkNum = formData.get("chunk_num");
@@ -110,7 +110,7 @@ describe("useProjectApi - useImportProject", () => {
 
     let res;
     await act(async () => {
-      res = await result.current.useImportProject(file, teamId);
+      res = await result.current.useImportProject(file, workspaceId);
     });
 
     expect(mockAxiosPost).toHaveBeenCalledTimes(3);
@@ -123,7 +123,7 @@ describe("useProjectApi - useImportProject", () => {
 
   it("handles failure during upload", async () => {
     const file = new File(["data"], "fail.zip", { type: "application/zip" });
-    const teamId = "team-123";
+    const workspaceId = "team-123";
 
     mockAxiosPost.mockRejectedValueOnce({
       error: "Error by purpose: Network error"
@@ -133,7 +133,7 @@ describe("useProjectApi - useImportProject", () => {
 
     let res;
     await act(async () => {
-      res = await result.current.useImportProject(file, teamId);
+      res = await result.current.useImportProject(file, workspaceId);
     });
 
     expect(mockNotification).toHaveBeenCalledWith(
@@ -148,7 +148,7 @@ describe("useProjectApi - useImportProject", () => {
 
   it("handles empty files", async () => {
     const file = new File([""], "empty.zip", { type: "application/zip" });
-    const teamId = "team-123";
+    const workspaceId = "team-123";
 
     mockAxiosPost.mockResolvedValueOnce({ data: { status: "chunk_received" } });
 
@@ -156,7 +156,7 @@ describe("useProjectApi - useImportProject", () => {
 
     let res;
     await act(async () => {
-      res = await result.current.useImportProject(file, teamId);
+      res = await result.current.useImportProject(file, workspaceId);
     });
     expect(res).toEqual({ status: "chunk_received" });
   });

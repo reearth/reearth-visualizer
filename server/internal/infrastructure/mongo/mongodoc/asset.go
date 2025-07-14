@@ -13,7 +13,7 @@ import (
 type AssetDocument struct {
 	ID          string
 	CreatedAt   time.Time
-	Team        string // DON'T CHANGE NAME'
+	Workspace   string
 	Project     *string
 	Name        string
 	Size        int64
@@ -42,7 +42,7 @@ func NewAsset(asset *asset.Asset) (*AssetDocument, string) {
 	return &AssetDocument{
 		ID:          aid,
 		CreatedAt:   asset.CreatedAt(),
-		Team:        asset.Workspace().String(),
+		Workspace:   asset.Workspace().String(),
 		Project:     pid,
 		Name:        asset.Name(),
 		Size:        asset.Size(),
@@ -57,7 +57,7 @@ func (d *AssetDocument) Model() (*asset.Asset, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
+	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}

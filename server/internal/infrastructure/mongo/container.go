@@ -123,13 +123,6 @@ func Init(r *repo.Container) error {
 	)
 }
 
-func applyTeamFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
-	if ids == nil {
-		return filter
-	}
-	return mongox.And(filter, "team", bson.M{"$in": ids.Strings()})
-}
-
 func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
 	if ids == nil {
 		return filter

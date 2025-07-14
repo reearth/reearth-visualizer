@@ -150,7 +150,7 @@ func TestStyleCRUD(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})

@@ -11,10 +11,10 @@ type Me {
   email: String!
   lang: Lang!
   theme: Theme!
-  myTeamId: ID!
+  myWorkspaceId: ID!
   auths: [String!]!
-  teams: [Team!]!
-  myTeam: Team
+  workspaces: [Workspace!]!
+  myWorkspace: Workspace
 }
 
 enum Theme {
@@ -29,7 +29,7 @@ input SignupInput {
   lang: Lang
   theme: Theme
   userId: ID
-  teamId: ID
+  workspaceId: ID
   secret: String
 }
 
@@ -58,7 +58,7 @@ type UpdateMePayload {
 
 type SignupPayload {
   user: User!
-  team: Team!
+  workspace: Workspace!
 }
 
 type DeleteMePayload {

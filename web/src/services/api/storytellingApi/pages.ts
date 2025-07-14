@@ -3,7 +3,7 @@ import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryPageInput,
   CreateStoryPageMutation,
-  CreateTeamPayload,
+  CreateWorkspacePayload,
   DeleteStoryPageInput,
   DeleteStoryPageMutation,
   MoveStoryPageInput,
@@ -26,7 +26,7 @@ import { useCallback } from "react";
 
 import { useNotification } from "../../state";
 
-export type Team = CreateTeamPayload["team"];
+export type Team = CreateWorkspacePayload["team"];
 
 export default () => {
   const [, setNotification] = useNotification();

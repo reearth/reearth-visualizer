@@ -74,9 +74,9 @@ func TestAsset_TotalSizeByWorkspace(t *testing.T) {
 	wid := accountdomain.NewWorkspaceID()
 	wid2 := accountdomain.NewWorkspaceID()
 	_, _ = c.Collection("asset").InsertMany(ctx, []any{
-		bson.M{"id": "x", "team": wid.String(), "size": 10000000},
-		bson.M{"id": "y", "team": wid.String(), "size": 1},
-		bson.M{"id": "z", "team": "x", "size": 1},
+		bson.M{"id": "x", "workspace": wid.String(), "size": 10000000},
+		bson.M{"id": "y", "workspace": wid.String(), "size": 1},
+		bson.M{"id": "z", "workspace": "x", "size": 1},
 	})
 
 	r := NewAsset(mongox.NewClientWithDatabase(c))
