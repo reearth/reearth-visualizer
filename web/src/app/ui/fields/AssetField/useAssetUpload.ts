@@ -47,7 +47,7 @@ export default ({
       if (!files) return;
       try {
         const result = await useCreateAssets({
-          teamId: workspaceId ?? "",
+          workspaceId: workspaceId ?? "",
           projectId,
           file: files,
           coreSupport: true

@@ -66,7 +66,7 @@ func TestGetSceneNLSLayer(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -87,7 +87,7 @@ func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"teamId":      wID.String(),
+			"workspaceId": wID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": true,
 		},
@@ -137,7 +137,7 @@ query GetScene($sceneId: ID!, $lang: Lang) {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
-      teamId
+      workspaceId
       projectId
       property {
         id

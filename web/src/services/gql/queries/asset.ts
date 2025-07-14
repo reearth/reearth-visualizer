@@ -1,13 +1,13 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
 export const GET_ASSETS = gql(`
-  query GetAssets($teamId: ID!, $projectId: ID, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
-    assets(teamId: $teamId, projectId: $projectId, pagination: $pagination, keyword: $keyword, sort: $sort) {
+  query GetAssets($workspaceId: ID!, $projectId: ID, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
+    assets(workspaceId: $workspaceId, projectId: $projectId, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         cursor
         node {
           id
-          teamId
+          workspaceId
           projectId
           name
           size
@@ -19,7 +19,7 @@ export const GET_ASSETS = gql(`
       }
       nodes {
         id
-        teamId
+        workspaceId
         projectId
         name
         size
@@ -40,11 +40,11 @@ export const GET_ASSETS = gql(`
 `);
 
 export const CREATE_ASSET = gql(`
-  mutation CreateAsset($teamId: ID!, $projectId: ID, $file: Upload!, $coreSupport: Boolean!)  {
-    createAsset(input: { teamId: $teamId, projectId: $projectId, file: $file, coreSupport: $coreSupport }) {
+  mutation CreateAsset($workspaceId: ID!, $projectId: ID, $file: Upload!, $coreSupport: Boolean!)  {
+    createAsset(input: { workspaceId: $workspaceId, projectId: $projectId, file: $file, coreSupport: $coreSupport }) {
       asset {
         id
-        teamId
+        workspaceId
         projectId
         name
         size

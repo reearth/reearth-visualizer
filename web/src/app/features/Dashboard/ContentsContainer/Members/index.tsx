@@ -1,7 +1,7 @@
 import { Button, TextInput, Typography } from "@reearth/app/lib/reearth-ui";
 import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { TeamMember } from "@reearth/services/gql";
+import { WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useMemo, useState } from "react";
@@ -35,7 +35,7 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
     Workspace["members"] | null
   >(null);
 
-  const [selectedMember, setSelectedMember] = useState<TeamMember>();
+  const [selectedMember, setSelectedMember] = useState<WorkspaceMember>();
   const [addMemberModalVisible, setAddMemberModalVisible] = useState(false);
   const [updateRoleModalVisible, setUpdateRoleModalVisible] = useState(false);
   const [deleteMemerModalVisible, setDeleteMemerModalVisible] = useState(false);

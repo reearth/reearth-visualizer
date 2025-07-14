@@ -1,4 +1,4 @@
-import { useGetTeamsQuery } from "@reearth/services/api/teams";
+import { useGetWorkspacesQuery } from "@reearth/services/api/teams";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
@@ -32,13 +32,13 @@ export default () => {
 
   const { externalAuth0Signup } = appFeature();
 
-  const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
+  const { data, loading } = useGetWorkspacesQuery({ skip: !isAuthenticated });
 
   if (isAuthenticated && !currentUserId) {
     setCurrentUserId(data?.me?.id);
   }
 
-  const workspaceId = currentWorkspace?.id || data?.me?.myTeam?.id;
+  const workspaceId = currentWorkspace?.id || data?.me?.myWorkspace?.id;
 
   const verifySignup = useCallback(
     async (token: string) => {
@@ -89,7 +89,7 @@ export default () => {
     } else {
       if (!data?.me) return;
       setCurrentUserId(data?.me?.id);
-      setCurrentWorkspace(data.me?.myTeam ?? undefined);
+      setCurrentWorkspace(data.me?.myWorkspace ?? undefined);
       navigate(`/dashboard${workspaceId ? "/" + workspaceId : ""}`);
     }
   }, [

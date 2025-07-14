@@ -12,10 +12,10 @@ func (r *Resolver) Me() MeResolver {
 
 type meResolver struct{ *Resolver }
 
-func (r *meResolver) MyTeam(ctx context.Context, obj *gqlmodel.Me) (*gqlmodel.Team, error) {
-	return dataloaders(ctx).Workspace.Load(obj.MyTeamID)
+func (r *meResolver) MyWorkspace(ctx context.Context, obj *gqlmodel.Me) (*gqlmodel.Workspace, error) {
+	return dataloaders(ctx).Workspace.Load(obj.MyWorkspaceID)
 }
 
-func (r *meResolver) Teams(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Team, error) {
+func (r *meResolver) Workspaces(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Workspace, error) {
 	return loaders(ctx).Workspace.FindByUser(ctx, obj.ID)
 }

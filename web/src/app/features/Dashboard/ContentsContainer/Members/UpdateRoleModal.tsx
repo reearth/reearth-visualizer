@@ -1,7 +1,7 @@
 import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
 import { InputField, SelectField } from "@reearth/app/ui/fields";
 import { useWorkspaceFetcher } from "@reearth/services/api";
-import { Role, TeamMember } from "@reearth/services/gql";
+import { Role, WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -10,7 +10,7 @@ import { PermissionService } from "./PermissionService";
 
 type UpdateRoleModalProps = {
   workspace: Workspace | undefined;
-  member: TeamMember;
+  member: WorkspaceMember;
   visible: boolean;
   onClose: () => void;
   meRole: Role | undefined;
@@ -37,7 +37,7 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
   const handleUpdateRole = useCallback(async () => {
     if (!workspace?.id || !member.user?.id || !localRole) return;
     await updateMember({
-      teamId: workspace.id,
+      workspaceId: workspace.id,
       userId: member.user.id,
       role: localRole
     });

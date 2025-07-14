@@ -1,6 +1,6 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
 import { PublishStatus } from "@reearth/services/api/publishTypes";
-import { ProjectImportStatus, TeamMember } from "@reearth/services/gql";
+import { ProjectImportStatus, WorkspaceMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
 
@@ -20,7 +20,7 @@ export type ProjectMetadata = {
 export type Project = {
   id: string;
   name: string;
-  teamId: string;
+  workspaceId: string;
   imageUrl?: string | null;
   status?: PublishStatus;
   isArchived?: boolean;
@@ -69,7 +69,7 @@ export type Member = {
 export type Workspace = {
   id: string;
   name: string;
-  members?: TeamMember[];
+  members?: WorkspaceMember[];
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
   personal?: boolean;

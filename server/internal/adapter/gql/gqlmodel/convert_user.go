@@ -37,12 +37,12 @@ func ToMe(u *user.User) *Me {
 	}
 
 	return &Me{
-		ID:       IDFrom(u.ID()),
-		Name:     u.Name(),
-		Email:    u.Email(),
-		Lang:     u.Metadata().Lang(),
-		Theme:    Theme(u.Metadata().Theme()),
-		MyTeamID: IDFrom(u.Workspace()),
+		ID:            IDFrom(u.ID()),
+		Name:          u.Name(),
+		Email:         u.Email(),
+		Lang:          u.Metadata().Lang(),
+		Theme:         Theme(u.Metadata().Theme()),
+		MyWorkspaceID: IDFrom(u.Workspace()),
 		Auths: util.Map(u.Auths(), func(a user.Auth) string {
 			return a.Provider
 		}),

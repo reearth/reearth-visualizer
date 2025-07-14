@@ -13,7 +13,7 @@ func TestUpdateCustomProperties(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -110,7 +110,7 @@ func TestChangeCustomPropertyTitle(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -237,7 +237,7 @@ func TestRemoveCustomProperty(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -366,7 +366,7 @@ func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
-      teamId
+      workspaceId
       projectId
       property {
         id

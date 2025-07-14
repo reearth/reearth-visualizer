@@ -15,8 +15,8 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
-    projects(teamId: $teamId, pagination: $pagination, keyword: $keyword, sort: $sort) {
+  query GetProjects($workspaceId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+    projects(workspaceId: $workspaceId, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         node {
           id
@@ -48,7 +48,7 @@ export const CHECK_PROJECT_ALIAS = gql(`
 
 export const CREATE_PROJECT = gql(`
   mutation CreateProject(
-    $teamId: ID!
+    $workspaceId: ID!
     $visualizer: Visualizer!
     $name: String!
     $description: String!
@@ -61,7 +61,7 @@ export const CREATE_PROJECT = gql(`
   ) {
     createProject(
       input: {
-        teamId: $teamId
+        workspaceId: $workspaceId
         visualizer: $visualizer
         name: $name
         description: $description
@@ -187,8 +187,8 @@ export const DELETE_PROJECT = gql(`
 `);
 
 export const GET_STARRED_PROJECTS = gql(`
-  query GetStarredProjects($teamId: ID!) {
-    starredProjects(teamId: $teamId) {
+  query GetStarredProjects($workspaceId: ID!) {
+    starredProjects(workspaceId: $workspaceId) {
 				nodes {
 					id
 					name
@@ -211,8 +211,8 @@ export const EXPORT_PROJECT = gql(`
 `);
 
 export const GET_DELETED_PROJECTS = gql(`
-  query GetDeletedProjects($teamId: ID!) {
-    deletedProjects(teamId: $teamId) {
+  query GetDeletedProjects($workspaceId: ID!) {
+    deletedProjects(workspaceId: $workspaceId) {
 			nodes {
 				id
 				name

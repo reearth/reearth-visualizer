@@ -94,7 +94,7 @@ func serveUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to parse multipart form")
 			}
 
-			teamID := c.FormValue("team_id")
+			workspaceID := c.FormValue("workspace_id")
 
 			fileID := c.FormValue("file_id")
 
@@ -118,20 +118,20 @@ func serveUploadFiles(
 				}
 			}()
 
-			return uploadManager.handleChunkedUpload(ctx, usecases, op, teamID, fileID, chunkNum, totalChunks, f)
+			return uploadManager.handleChunkedUpload(ctx, usecases, op, workspaceID, fileID, chunkNum, totalChunks, f)
 		}),
 	)
 
 }
 
-func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, teamId string) (*project.Project, error) {
+func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId string) (*project.Project, error) {
 
 	visibility := "private"
 	coreSupport := true
 	unknown := "It's importing now..."
-	workspaceID, err := accountdomain.WorkspaceIDFrom(teamId)
+	workspaceID, err := accountdomain.WorkspaceIDFrom(wsId)
 	if err != nil {
-		return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid team id")
+		return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid workspace id")
 	}
 
 	prj, err := usecases.Project.Create(ctx, interfaces.CreateProjectParam{
@@ -158,7 +158,7 @@ func UpdateImportStatus(ctx context.Context, usecases *interfaces.Container, op 
 	}
 }
 
-func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, teamId, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
+func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
 	// chunkPath, err := m.SaveChunk(fileID, chunkNum, file)
 	_, err := m.SaveChunk(fileID, chunkNum, file)
@@ -168,7 +168,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 
 	var prj *project.Project
 	if chunkNum == 0 {
-		prj, err = CreateProcessingProject(ctx, usecases, op, teamId)
+		prj, err = CreateProcessingProject(ctx, usecases, op, wsId)
 		if err != nil {
 			return nil, err
 		}
@@ -218,7 +218,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 				return
 			}
 
-			newProject, err := usecases.Project.ImportProjectData(bgctx, teamId, &session.ProjectID, importData, op)
+			newProject, err := usecases.Project.ImportProjectData(bgctx, wsId, &session.ProjectID, importData, op)
 			if err != nil {
 				log.Printf("fail Import ProjectData: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)

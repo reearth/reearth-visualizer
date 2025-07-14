@@ -27,7 +27,7 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
     (name: string) => {
       if (!workspace?.id) return;
       updateWorkspace({
-        teamId: workspace.id,
+        workspaceId: workspace.id,
         name
       });
     },
@@ -36,7 +36,7 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
 
   const { useProjectsQuery } = useProjectFetcher();
   const { projects } = useProjectsQuery({
-    teamId: workspace?.id ?? "",
+    workspaceId: workspace?.id ?? "",
     pagination: { first: 1 } // we only need to check where there are projects or not
   });
   const hasProject = useMemo(
