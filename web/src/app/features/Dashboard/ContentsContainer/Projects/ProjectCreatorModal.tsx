@@ -1,21 +1,32 @@
+import { license_options } from "@reearth/app/features/ProjectSettings/innerPages/LicenseSettings/content";
+import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
 import {
-  Button,
-  Modal,
-  ModalPanel,
-  TextArea,
-  TextInput,
-  Typography
-} from "@reearth/app/lib/reearth-ui";
+  InputField,
+  RadioGroupField,
+  SelectField
+} from "@reearth/app/ui/fields";
+import TextAreaField from "@reearth/app/ui/fields/TextareaField";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { Project } from "../../type";
 
 type ProjectCreatorModalProps = {
   visible: boolean;
   onClose?: () => void;
-  onProjectCreate: (data: Pick<Project, "name" | "description">) => void;
+  onProjectCreate: (
+    data: Pick<Project, "name" | "description" | "projectAlias" | "visibility">
+  ) => void;
+};
+
+type FormState = {
+  projectName: string;
+  projectAlias: string;
+  description: string;
+  visibility?: string;
+  license?: string;
 };
 
 const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
@@ -24,25 +35,39 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   onProjectCreate
 }) => {
   const t = useT();
-  const [projectName, setProjectName] = useState("");
-  const [description, setDescription] = useState("");
+  const { projectCreation } = appFeature();
 
-  const handleOnChange = useCallback((field: string, newValue: string) => {
-    if (field === "projectName") {
-      setProjectName(newValue);
-    } else if (field === "description") {
-      setDescription(newValue);
-    }
-  }, []);
+  const [formState, setFormState] = useState<FormState>({
+    projectName: "",
+    projectAlias: "",
+    description: "",
+    visibility: "public",
+    license: ""
+  });
+
+  const projectVisibilityOptions = useMemo(
+    () => [
+      { value: "public", label: t("Public") },
+      { value: "private", label: t("Private") }
+    ],
+    [t]
+  );
+  const handleOnChange = useCallback(
+    (field: keyof FormState, newValue: string) => {
+      setFormState((prev) => ({ ...prev, [field]: newValue }));
+    },
+    []
+  );
 
   const onSubmit = useCallback(() => {
-    const data = {
-      name: projectName,
-      description
-    };
-    onProjectCreate(data);
+    onProjectCreate({
+      name: formState.projectName,
+      description: formState.description,
+      projectAlias: formState.projectAlias,
+      visibility: formState.visibility
+    });
     onClose?.();
-  }, [description, onClose, onProjectCreate, projectName]);
+  }, [formState, onClose, onProjectCreate]);
 
   return (
     <Modal visible={visible} size="small" data-testid="project-creator-modal">
@@ -62,7 +87,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               title={t("Apply")}
               appearance="primary"
               onClick={onSubmit}
-              disabled={!projectName}
+              disabled={!formState.projectName}
               data-testid="project-creator-apply-btn"
             />
           </>
@@ -72,36 +97,67 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
         <ContentWrapper data-testid="project-creator-content-wrapper">
           <Form data-testid="project-creator-form">
             <FormInputWrapper data-testid="project-creator-name-wrapper">
-              <Label>
-                <Typography
-                  size="body"
-                  data-testid="project-creator-name-label"
-                >
-                  {t("Project Name *")}
-                </Typography>
-              </Label>
-              <TextInput
-                value={projectName}
+              <InputField
+                title={t("Project Name *")}
+                value={formState.projectName}
                 placeholder={t("Text")}
                 onChange={(value) => handleOnChange("projectName", value)}
                 data-testid="project-creator-name-input"
               />
             </FormInputWrapper>
+            <FormInputWrapper data-testid="project-creator-project-alias-wrapper">
+              <InputField
+                title={t("Project Alias *")}
+                value={formState.projectAlias}
+                placeholder={t("Text")}
+                onChange={(value) => handleOnChange("projectAlias", value)}
+                data-testid="project-creator-project-alias-input"
+                description={t(
+                  "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+                )}
+              />
+            </FormInputWrapper>
+            {!projectCreation && (
+              <FormInputWrapper data-testid="project-creator-project-visibility-wrapper">
+                <RadioGroupField
+                  title={t("Project Visibility *")}
+                  value={formState.visibility}
+                  options={projectVisibilityOptions}
+                  layout="vertical"
+                  onChange={(value) => handleOnChange("visibility", value)}
+                  data-testid="project-creator-project-visibility-input"
+                  description={t(
+                    "For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it."
+                  )}
+                />
+              </FormInputWrapper>
+            )}
             <FormInputWrapper data-testid="project-creator-description-wrapper">
-              <Label>
-                <Typography
-                  size="body"
-                  data-testid="project-creator-description-label"
-                >
-                  {t("Description")}
-                </Typography>
-              </Label>
-              <TextArea
-                value={description}
+              <TextAreaField
+                title={t("Description")}
+                value={formState.description}
                 placeholder={t("Write down your content")}
                 rows={4}
                 onChange={(value) => handleOnChange("description", value)}
                 data-testid="project-creator-description-input"
+                description={t(
+                  "Provide a short summary (within 200 characters) describing the purpose or key features of this project."
+                )}
+              />
+            </FormInputWrapper>
+            <FormInputWrapper data-testid="project-creator-project-alias-wrapper">
+              <SelectField
+                title={"Choose a license"}
+                value={formState.license}
+                onChange={(value) => handleOnChange("license", value as string)}
+                data-testid="project-creator-project-license-input"
+                options={license_options.map((license) => ({
+                  value: license.value,
+                  label: license.label
+                }))}
+                description={t(
+                  "We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator."
+                )}
               />
             </FormInputWrapper>
           </Form>
@@ -132,5 +188,3 @@ const FormInputWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.smallest,
   width: "100%"
 }));
-
-const Label = styled("div")(() => ({}));

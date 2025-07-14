@@ -3,6 +3,7 @@ import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
 import { useProjectFetcher } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import {
   ProjectSortField,
   SortDirection,
@@ -22,7 +23,6 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { getImportStatus, ImportStatus, Project } from "../../type";
-import { appFeature } from "@reearth/services/config/appFeatureConfig";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
@@ -159,13 +159,15 @@ export default (workspaceId?: string) => {
   }, []);
 
   const handleProjectCreate = useCallback(
-    async (data: Pick<Project, "name" | "description">) => {
+    async (data: Pick<Project, "name" | "description"| "projectAlias" | "visibility">) => {
       if (!workspaceId) return;
       await useCreateProject(
         workspaceId,
         Visualizer.Cesium,
         data.name,
         true,
+        data.projectAlias,
+        data.visibility,
         data.description
       );
     },

@@ -173,6 +173,8 @@ export default () => {
       visualizer: Visualizer,
       name: string,
       coreSupport: boolean,
+      projectAlias?: string,
+      visibility?: string,
       description?: string
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
@@ -182,7 +184,9 @@ export default () => {
             visualizer,
             name,
             description: description ?? "",
-            coreSupport: !!coreSupport
+            coreSupport: !!coreSupport,
+            projectAlias: projectAlias ?? "",
+            visibility: visibility ? visibility : "private"
           }
         });
       if (projectErrors || !projectResults?.createProject) {

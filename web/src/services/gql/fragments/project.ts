@@ -31,6 +31,7 @@ export const projectFragment = gql`
     }
     visualizer
     visibility
+    projectAlias
   }
 `;
 

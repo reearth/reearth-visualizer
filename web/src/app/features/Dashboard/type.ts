@@ -33,7 +33,8 @@ export type Project = {
   isDeleted?: boolean;
   isPublished?: boolean;
   metadata?: ProjectMetadata | null;
-  visibility?: string
+  visibility?: string;
+  projectAlias?: string;
 };
 
 export type DeletedProject = {

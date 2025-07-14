@@ -53,6 +53,8 @@ export const CREATE_PROJECT = gql(`
     $name: String!
     $description: String!
     $coreSupport: Boolean
+    $visibility: String
+    $projectAlias: String
   ) {
     createProject(
       input: {
@@ -61,6 +63,8 @@ export const CREATE_PROJECT = gql(`
         name: $name
         description: $description
         coreSupport: $coreSupport
+        visibility: $visibility
+	      projectAlias: $projectAlias
       }
     ) {
       project {
