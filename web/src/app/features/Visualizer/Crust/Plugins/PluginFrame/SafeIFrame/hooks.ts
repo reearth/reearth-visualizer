@@ -148,10 +148,7 @@ export default function useHook({
     return `<script id="_reearth_resize">
       if ("ResizeObserver" in window) {         
         new window.ResizeObserver(entries => {
-          const width = Math.max(
-            document.body.scrollWidth,
-            document.documentElement.scrollWidth
-          );
+          const width = document.body.scrollWidth
           const height = document.body.scrollHeight;
           if(parent){
             parent.postMessage({
