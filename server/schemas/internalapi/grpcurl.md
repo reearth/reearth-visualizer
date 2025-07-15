@@ -1,4 +1,16 @@
-# ReEarthVisualizer gRPC Commands
+# ReEarth Visualizer gRPC Commands Example
+
+## Setup gRPC server
+
+```bash
+# 1. Add the following to .env
+REEARTH_VISUALIZER_INTERNALAPI_ACTIVE=true
+REEARTH_VISUALIZER_INTERNALAPI_PORT=50051
+REEARTH_VISUALIZER_INTERNALAPI_TOKEN=test-abc-123
+
+# 2. start gRPC
+make run-app
+```
 
 ## Basic Configuration
 
@@ -94,6 +106,7 @@ grpcurl -plaintext \
 ```bash
 grpcurl -plaintext \
   -H "user-id: ${USER_ID}" \
+  -H "authorization: Bearer test-abc-123" \
   -d '{
     "workspace_id": "???Workspace-ID???",
     "visualizer": "VISUALIZER_CESIUM",
@@ -117,6 +130,7 @@ grpcurl -plaintext \
 ```bash
 grpcurl -plaintext \
   -H "user-id: ${USER_ID}" \
+  -H "authorization: Bearer test-abc-123" \
   -d '{
     "project_id": "???project-ID???",
     "name": "Updated Project Name",
@@ -137,6 +151,7 @@ grpcurl -plaintext \
 # Publish project
 grpcurl -plaintext \
   -H "user-id: ${USER_ID}" \
+  -H "authorization: Bearer test-abc-123" \
   -d '{
     "project_id": "???project-ID???",
     "alias": "published-project",
@@ -150,6 +165,7 @@ grpcurl -plaintext \
 # Unpublish project
 grpcurl -plaintext \
   -H "user-id: ${USER_ID}" \
+  -H "authorization: Bearer test-abc-123" \
   -d '{
     "project_id": "???project-ID???",
     "publishment_status": "PUBLISHMENT_STATUS_PRIVATE"
@@ -165,6 +181,7 @@ grpcurl -plaintext \
 ```bash
 grpcurl -plaintext \
   -H "user-id: ${USER_ID}" \
+  -H "authorization: Bearer test-abc-123" \
   -d '{
     "project_id": "???project-ID???",
     "readme": "# Updated README\n\nThis is new content.",
@@ -182,6 +199,7 @@ grpcurl -plaintext \
 ```bash
 grpcurl -plaintext \
   -H "user-id: ${USER_ID}" \
+  -H "authorization: Bearer test-abc-123" \
   -d '{
     "project_id": "???project-ID???"
   }' \
@@ -196,6 +214,7 @@ grpcurl -plaintext \
 ```bash
 grpcurl -plaintext \
   -H "user-id: ${USER_ID}" \
+  -H "authorization: Bearer test-abc-123" \
   -d '{
     "project_id": "???project-ID???"
   }' \
