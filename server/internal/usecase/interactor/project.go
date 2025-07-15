@@ -1087,11 +1087,6 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		if err != nil {
 			return nil, err
 		}
-
-		err = i.projectMetadataRepo.Save(ctx, metadata)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	if input.Readme != nil {
@@ -1102,6 +1097,11 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	}
 	if input.Topics != nil {
 		metadata.SetTopics(input.Topics)
+	}
+
+	err = i.projectMetadataRepo.Save(ctx, metadata)
+	if err != nil {
+		return nil, err
 	}
 
 	prj := project.New().

@@ -230,6 +230,31 @@ func TestCreateUpdateProject(t *testing.T) {
 	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
 	projectID := res.Path("$.data.createProject.project.id").Raw().(string)
 
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
+		Variables: map[string]any{
+			"teamId": wID.String(),
+			"pagination": map[string]any{
+				"first": 16,
+			},
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC",
+			},
+		},
+	}
+	edges := Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+
+	for _, edge := range edges.Iter() {
+		if edge.Path("$.node.id").Raw().(string) == projectID {
+			edge.Path("$.node.metadata.readme").IsEqual("readme-xxxxxx")
+			edge.Path("$.node.metadata.license").IsEqual("license-xxxxxx")
+			edge.Path("$.node.metadata.topics").IsEqual("topics-xxxxxx")
+		}
+	}
+
 	// cerate
 	res = Request(e, uID.String(), GraphQLRequest{
 		OperationName: "CreateProject",
