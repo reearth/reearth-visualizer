@@ -188,6 +188,9 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		CoreSupport:  req.CoreSupport,
 		Visibility:   req.Visibility,
 		ProjectAlias: req.ProjectAlias,
+		Readme:       req.Readme,
+		License:      req.License,
+		Topics:       req.Topics,
 	}, op)
 	if err != nil {
 		return nil, err

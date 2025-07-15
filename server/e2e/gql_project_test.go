@@ -120,6 +120,9 @@ mutation CreateProject(
   $coreSupport: Boolean
   $visibility: String
   $projectAlias: String
+  $readme: String
+  $license: String
+  $topics: String
 ) {
   createProject(
     input: {
@@ -130,6 +133,9 @@ mutation CreateProject(
       coreSupport: $coreSupport
 	  visibility: $visibility
 	  projectAlias: $projectAlias
+	  readme: $readme
+	  license: $license
+	  topics: $topics
     }
   ) {
     project {
@@ -210,10 +216,44 @@ func TestCreateUpdateProject(t *testing.T) {
 			"coreSupport":  true,
 			"visibility":   "public",
 			"projectAlias": "test-xxxxxx",
+
+			"readme":  "readme-xxxxxx",
+			"license": "license-xxxxxx",
+			"topics":  "topics-xxxxxx",
 		},
 	})
+
+	res.Path("$.data.createProject.project.metadata.readme").IsEqual("readme-xxxxxx")
+	res.Path("$.data.createProject.project.metadata.license").IsEqual("license-xxxxxx")
+	res.Path("$.data.createProject.project.metadata.topics").IsEqual("topics-xxxxxx")
+
 	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
 	projectID := res.Path("$.data.createProject.project.id").Raw().(string)
+
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
+		Variables: map[string]any{
+			"teamId": wID.String(),
+			"pagination": map[string]any{
+				"first": 16,
+			},
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC",
+			},
+		},
+	}
+	edges := Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+
+	for _, edge := range edges.Iter() {
+		if edge.Path("$.node.id").Raw().(string) == projectID {
+			edge.Path("$.node.metadata.readme").IsEqual("readme-xxxxxx")
+			edge.Path("$.node.metadata.license").IsEqual("license-xxxxxx")
+			edge.Path("$.node.metadata.topics").IsEqual("topics-xxxxxx")
+		}
+	}
 
 	// cerate
 	res = Request(e, uID.String(), GraphQLRequest{

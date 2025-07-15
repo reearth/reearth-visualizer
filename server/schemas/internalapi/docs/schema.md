@@ -66,6 +66,9 @@ Cannot be created under a team the user does not belong to.
 | core_support | [bool](#bool) | optional | Set to true |
 | visibility | [string](#string) | optional | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
 | project_alias | [string](#string) | optional | Project alias |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+| topics | [string](#string) | optional | Project topics |
 
 
 
@@ -278,6 +281,8 @@ Pagination
 | last | [int32](#int32) | optional |  |
 | after | [string](#string) | optional |  |
 | before | [string](#string) | optional |  |
+| limit | [int64](#int64) | optional |  |
+| offset | [int64](#int64) | optional |  |
 
 
 
