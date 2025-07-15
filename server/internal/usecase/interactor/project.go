@@ -176,6 +176,21 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
+func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindByProjectAlias(ctx, alias)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
 func (i *Project) FindVisibilityByUser(
 	ctx context.Context,
 	u *user.User,
