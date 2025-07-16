@@ -1,6 +1,10 @@
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { withAuthenticator } from "@aws-amplify/ui-react";
+import Welcome from "@reearth/ee/features/Welcome";
 import { ReactNode } from "react";
+
+import { config } from "../config";
+import { appFeature } from "../config/appFeatureConfig";
 
 import { useAuthenticationRequired } from "./useAuth";
 
@@ -10,22 +14,31 @@ export { useAuth, useCleanUrl, useAuthenticationRequired } from "./useAuth";
 const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({
   children
 }) => {
-  const [isAuthenticated] = useAuthenticationRequired(); // TODO: show error
-  return isAuthenticated && children ? <>{children}</> : null;
+  const [isAuthenticated] = useAuthenticationRequired();
+  const authProvider = config()?.authProvider;
+  const { externalAuth0Signup } = appFeature();
+  return isAuthenticated && children ? (
+    <>{children}</>
+  ) : authProvider === "auth0" && externalAuth0Signup ? (
+    <Welcome />
+  ) : null;
 };
 
-const withAuthorisation = (): ((props: any) => React.FC<any>) => {
-  const authProvider = window.REEARTH_CONFIG?.authProvider;
+export const AuthenticatedPage: React.FC<{ children?: ReactNode }> = ({
+  children
+}) => {
+  const authProvider = config()?.authProvider;
+  const { externalAuth0Signup } = appFeature();
+
   if (authProvider === "cognito") {
-    return withAuthenticator as unknown as (props: any) => React.FC<any>;
-  } else if (authProvider === "auth0") {
-    return withAuthenticationRequired as unknown as (
-      props: any
-    ) => React.FC<any>;
+    const WrappedComponent = withAuthenticator(AuthenticationRequiredPage);
+    return <WrappedComponent>{children}</WrappedComponent>;
+  } else if (authProvider === "auth0" && !externalAuth0Signup) {
+    const WrappedComponent = withAuthenticationRequired(
+      AuthenticationRequiredPage
+    );
+    return <WrappedComponent>{children}</WrappedComponent>;
   }
-  return (props: any) => props;
-};
 
-export const AuthenticatedPage = withAuthorisation()(
-  AuthenticationRequiredPage
-);
+  return <AuthenticationRequiredPage>{children}</AuthenticationRequiredPage>;
+};

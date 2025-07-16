@@ -1,5 +1,7 @@
 import { useGetTeamsQuery } from "@reearth/services/api/teams";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
+import { config } from "@reearth/services/config";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import {
   useWorkspace,
@@ -7,7 +9,7 @@ import {
   useUserId
 } from "@reearth/services/state";
 import axios from "axios";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export type Mode = "layer" | "widget";
@@ -26,6 +28,9 @@ export default () => {
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
   const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
+  const [showExternalAuth0Signup, setShowExternalAuth0Signup] = useState(false);
+
+  const { externalAuth0Signup } = appFeature();
 
   const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
 
@@ -75,7 +80,12 @@ export default () => {
         navigate(`/password-reset/?token=${searchParam[1]}`);
       }
     } else if (!isAuthenticated && !isLoading) {
-      login();
+      // External Auth0 signup
+      if (config()?.authProvider === "auth0" && externalAuth0Signup) {
+        setShowExternalAuth0Signup(true);
+      } else {
+        login();
+      }
     } else {
       if (!data?.me) return;
       setCurrentUserId(data?.me?.id);
@@ -94,7 +104,8 @@ export default () => {
     verifySignup,
     navigate,
     setCurrentUserId,
-    setCurrentWorkspace
+    setCurrentWorkspace,
+    externalAuth0Signup
   ]);
 
   useEffect(() => {
@@ -118,6 +129,7 @@ export default () => {
   return {
     error,
     isLoading,
-    isAuthenticated
+    isAuthenticated,
+    showExternalAuth0Signup
   };
 };

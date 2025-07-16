@@ -55,6 +55,7 @@ export type AppFeatureConfig = {
   workspaceManagement?: boolean;
   accountManagement?: boolean;
   externalAccountManagementUrl?: string;
+  externalAuth0Signup?: boolean;
 };
 
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
@@ -62,7 +63,8 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   workspaceCreation: true,
   workspaceManagement: true,
   accountManagement: true,
-  externalAccountManagementUrl: undefined
+  externalAccountManagementUrl: undefined,
+  externalAuth0Signup: false
 };
 
 let appFeatureConfig: AppFeatureConfig = {

@@ -1,11 +1,18 @@
 import { Icon, Typography } from "@reearth/app/lib/reearth-ui";
+import { useAuth } from "@reearth/services/auth";
+import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
-const NonAuth: FC = () => {
+const Welcome: FC = () => {
+  const { login } = useAuth();
   const t = useT();
   const theme = useTheme();
+  const currentUrl = window.location.href;
+  const linkDisabled = !config()?.platformUrl;
+  const platformUrl = `${config()?.platformUrl}`;
+  const signupUrl = `${config()?.platformUrl}/login?from=${currentUrl}`;
 
   return (
     <Wrapper>
@@ -23,25 +30,37 @@ const NonAuth: FC = () => {
         <DescriptionWrapper>
           <Description>
             <Typography size="h5">{t("Visualizer is part of the")}</Typography>
-            <Typography size="h5" color={theme.primary.main}>
-              {t("Re:Earth product ecosystem")}
-            </Typography>
+            <a
+              href={linkDisabled ? "" : platformUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Typography size="h5" color={theme.primary.main}>
+                {t("Re:Earth product ecosystem")}
+              </Typography>
+            </a>
           </Description>
           <Typography size="h5">
             {t("To continue, please log in with your Re:Earth account.")}
           </Typography>
         </DescriptionWrapper>
 
-        <LoginButton>
+        <LoginButton onClick={login}>
           <Typography size="h5" weight="bold">
             {t("Log In")}
           </Typography>
         </LoginButton>
         <DescriptionWrapper>
           <Typography size="h5">{t("Don't have an account?")}</Typography>
-          <Typography size="h5" color={theme.primary.main}>
-            👉 {t("Sign up on Re:Earth")}
-          </Typography>
+          <a
+            href={linkDisabled ? "" : signupUrl}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Typography size="h5" color={theme.primary.main}>
+              👉 {t("Sign up on Re:Earth")}
+            </Typography>
+          </a>
         </DescriptionWrapper>
       </ContentWrapper>
     </Wrapper>
@@ -99,4 +118,4 @@ const LoginButton = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.small}px ${theme.spacing.large}px`
 }));
 
-export default NonAuth;
+export default Welcome;
