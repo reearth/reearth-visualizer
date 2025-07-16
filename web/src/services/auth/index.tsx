@@ -24,23 +24,21 @@ const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({
   ) : null;
 };
 
-const withAuthorisation = (): ((props: any) => React.FC<any>) => {
+export const AuthenticatedPage: React.FC<{ children?: ReactNode }> = ({
+  children
+}) => {
   const authProvider = config()?.authProvider;
   const { externalAuth0Signup } = appFeature();
 
   if (authProvider === "cognito") {
-    return withAuthenticator as unknown as (props: any) => React.FC<any>;
+    const WrappedComponent = withAuthenticator(AuthenticationRequiredPage);
+    return <WrappedComponent>{children}</WrappedComponent>;
   } else if (authProvider === "auth0" && !externalAuth0Signup) {
-    return withAuthenticationRequired as unknown as (
-      props: any
-    ) => React.FC<any>;
+    const WrappedComponent = withAuthenticationRequired(
+      AuthenticationRequiredPage
+    );
+    return <WrappedComponent>{children}</WrappedComponent>;
   }
-  return (props: any) => props;
-};
 
-export const AuthenticatedPage: React.FC<{ children?: ReactNode }> = ({
-  children
-}) => {
-  const WrappedComponent = withAuthorisation()(AuthenticationRequiredPage);
-  return <WrappedComponent>{children}</WrappedComponent>;
+  return <AuthenticationRequiredPage>{children}</AuthenticationRequiredPage>;
 };
