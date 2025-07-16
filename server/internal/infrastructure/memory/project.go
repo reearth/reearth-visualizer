@@ -150,6 +150,15 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	return nil, nil
 }
 
+func (r *Project) FindByProjectAlias(ctx context.Context, projectAlias string) (*project.Project, error) {
+	for _, p := range r.data {
+		if p.ProjectAlias() == projectAlias {
+			return p, nil
+		}
+	}
+	return nil, nil
+}
+
 func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []id.ProjectID, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()

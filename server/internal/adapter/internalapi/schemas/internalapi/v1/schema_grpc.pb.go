@@ -19,16 +19,19 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	ReEarthVisualizer_GetProjectList_FullMethodName        = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectList"
-	ReEarthVisualizer_GetProject_FullMethodName            = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
-	ReEarthVisualizer_GetProjectByAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByAlias"
-	ReEarthVisualizer_ValidateProjectAlias_FullMethodName  = "/reearth.visualizer.v1.ReEarthVisualizer/ValidateProjectAlias"
-	ReEarthVisualizer_CreateProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/CreateProject"
-	ReEarthVisualizer_UpdateProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProject"
-	ReEarthVisualizer_PublishProject_FullMethodName        = "/reearth.visualizer.v1.ReEarthVisualizer/PublishProject"
-	ReEarthVisualizer_UpdateProjectMetadata_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectMetadata"
-	ReEarthVisualizer_DeleteProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProject"
-	ReEarthVisualizer_ExportProject_FullMethodName         = "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject"
+	ReEarthVisualizer_GetProjectList_FullMethodName           = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectList"
+	ReEarthVisualizer_GetProject_FullMethodName               = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
+	ReEarthVisualizer_GetProjectByAlias_FullMethodName        = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByAlias"
+	ReEarthVisualizer_ValidateProjectAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/ValidateProjectAlias"
+	ReEarthVisualizer_CreateProject_FullMethodName            = "/reearth.visualizer.v1.ReEarthVisualizer/CreateProject"
+	ReEarthVisualizer_UpdateProject_FullMethodName            = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProject"
+	ReEarthVisualizer_PublishProject_FullMethodName           = "/reearth.visualizer.v1.ReEarthVisualizer/PublishProject"
+	ReEarthVisualizer_UpdateProjectMetadata_FullMethodName    = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectMetadata"
+	ReEarthVisualizer_DeleteProject_FullMethodName            = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProject"
+	ReEarthVisualizer_ExportProject_FullMethodName            = "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject"
+	ReEarthVisualizer_GetProjectByProjectAlias_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByProjectAlias"
+	ReEarthVisualizer_UpdateByProjectAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateByProjectAlias"
+	ReEarthVisualizer_DeleteByProjectAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteByProjectAlias"
 )
 
 // ReEarthVisualizerClient is the client API for ReEarthVisualizer service.
@@ -65,6 +68,15 @@ type ReEarthVisualizerClient interface {
 	// Export a project.
 	// Request headers: user-id: <User ID>
 	ExportProject(ctx context.Context, in *ExportProjectRequest, opts ...grpc.CallOption) (*ExportProjectResponse, error)
+	// Find a project by project alias.
+	// Request headers: user-id: <User ID>
+	GetProjectByProjectAlias(ctx context.Context, in *GetProjectByProjectAliasRequest, opts ...grpc.CallOption) (*GetProjectByProjectAliasResponse, error)
+	// Update a project by project alias.
+	// Request headers: user-id: <User ID>
+	UpdateByProjectAlias(ctx context.Context, in *UpdateByProjectAliasRequest, opts ...grpc.CallOption) (*UpdateByProjectAliasResponse, error)
+	// Deletes a project by project alias.
+	// Request headers: user-id: <User ID>
+	DeleteByProjectAlias(ctx context.Context, in *DeleteByProjectAliasRequest, opts ...grpc.CallOption) (*DeleteByProjectAliasResponse, error)
 }
 
 type reEarthVisualizerClient struct {
@@ -175,6 +187,36 @@ func (c *reEarthVisualizerClient) ExportProject(ctx context.Context, in *ExportP
 	return out, nil
 }
 
+func (c *reEarthVisualizerClient) GetProjectByProjectAlias(ctx context.Context, in *GetProjectByProjectAliasRequest, opts ...grpc.CallOption) (*GetProjectByProjectAliasResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetProjectByProjectAliasResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetProjectByProjectAlias_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reEarthVisualizerClient) UpdateByProjectAlias(ctx context.Context, in *UpdateByProjectAliasRequest, opts ...grpc.CallOption) (*UpdateByProjectAliasResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateByProjectAliasResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_UpdateByProjectAlias_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *reEarthVisualizerClient) DeleteByProjectAlias(ctx context.Context, in *DeleteByProjectAliasRequest, opts ...grpc.CallOption) (*DeleteByProjectAliasResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteByProjectAliasResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_DeleteByProjectAlias_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReEarthVisualizerServer is the server API for ReEarthVisualizer service.
 // All implementations must embed UnimplementedReEarthVisualizerServer
 // for forward compatibility.
@@ -209,6 +251,15 @@ type ReEarthVisualizerServer interface {
 	// Export a project.
 	// Request headers: user-id: <User ID>
 	ExportProject(context.Context, *ExportProjectRequest) (*ExportProjectResponse, error)
+	// Find a project by project alias.
+	// Request headers: user-id: <User ID>
+	GetProjectByProjectAlias(context.Context, *GetProjectByProjectAliasRequest) (*GetProjectByProjectAliasResponse, error)
+	// Update a project by project alias.
+	// Request headers: user-id: <User ID>
+	UpdateByProjectAlias(context.Context, *UpdateByProjectAliasRequest) (*UpdateByProjectAliasResponse, error)
+	// Deletes a project by project alias.
+	// Request headers: user-id: <User ID>
+	DeleteByProjectAlias(context.Context, *DeleteByProjectAliasRequest) (*DeleteByProjectAliasResponse, error)
 	mustEmbedUnimplementedReEarthVisualizerServer()
 }
 
@@ -248,6 +299,15 @@ func (UnimplementedReEarthVisualizerServer) DeleteProject(context.Context, *Dele
 }
 func (UnimplementedReEarthVisualizerServer) ExportProject(context.Context, *ExportProjectRequest) (*ExportProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportProject not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) GetProjectByProjectAlias(context.Context, *GetProjectByProjectAliasRequest) (*GetProjectByProjectAliasResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetProjectByProjectAlias not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) UpdateByProjectAlias(context.Context, *UpdateByProjectAliasRequest) (*UpdateByProjectAliasResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateByProjectAlias not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) DeleteByProjectAlias(context.Context, *DeleteByProjectAliasRequest) (*DeleteByProjectAliasResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteByProjectAlias not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) mustEmbedUnimplementedReEarthVisualizerServer() {}
 func (UnimplementedReEarthVisualizerServer) testEmbeddedByValue()                           {}
@@ -450,6 +510,60 @@ func _ReEarthVisualizer_ExportProject_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReEarthVisualizer_GetProjectByProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetProjectByProjectAliasRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).GetProjectByProjectAlias(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_GetProjectByProjectAlias_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).GetProjectByProjectAlias(ctx, req.(*GetProjectByProjectAliasRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReEarthVisualizer_UpdateByProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateByProjectAliasRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).UpdateByProjectAlias(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_UpdateByProjectAlias_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).UpdateByProjectAlias(ctx, req.(*UpdateByProjectAliasRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ReEarthVisualizer_DeleteByProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteByProjectAliasRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).DeleteByProjectAlias(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_DeleteByProjectAlias_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).DeleteByProjectAlias(ctx, req.(*DeleteByProjectAliasRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReEarthVisualizer_ServiceDesc is the grpc.ServiceDesc for ReEarthVisualizer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -496,6 +610,18 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ExportProject",
 			Handler:    _ReEarthVisualizer_ExportProject_Handler,
+		},
+		{
+			MethodName: "GetProjectByProjectAlias",
+			Handler:    _ReEarthVisualizer_GetProjectByProjectAlias_Handler,
+		},
+		{
+			MethodName: "UpdateByProjectAlias",
+			Handler:    _ReEarthVisualizer_UpdateByProjectAlias_Handler,
+		},
+		{
+			MethodName: "DeleteByProjectAlias",
+			Handler:    _ReEarthVisualizer_DeleteByProjectAlias_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
