@@ -83,7 +83,7 @@ const LeftSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Icon icon="logo" size={30} />
+      <Icon icon="logo" color="#E8373D" size={30} />
       <StyledLink
         to={`/dashboard/${currentWorkspace?.id}`}
         disabled={!currentWorkspace?.id}
