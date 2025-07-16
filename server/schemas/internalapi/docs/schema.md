@@ -228,7 +228,7 @@ Find a project by project alias.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| project_alias | [string](#string) |  | Scene alias |
+| project_alias | [string](#string) |  | Project alias |
 
 
 

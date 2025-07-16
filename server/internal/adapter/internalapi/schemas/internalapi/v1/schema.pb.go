@@ -1662,7 +1662,7 @@ func (x *DeleteProjectRequest) GetProjectId() string {
 // Find a project by project alias.
 type GetProjectByProjectAliasRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Scene alias
+	// Project alias
 	ProjectAlias  string `protobuf:"bytes,1,opt,name=project_alias,json=projectAlias,proto3" json:"project_alias,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

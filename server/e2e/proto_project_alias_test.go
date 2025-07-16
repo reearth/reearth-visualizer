@@ -234,6 +234,7 @@ func TestInternalAPI_ProjectAlias_CRUD(t *testing.T) {
 		res5, err := client.DeleteByProjectAlias(ctx, &pb.DeleteByProjectAliasRequest{
 			ProjectAlias: newProjectAlias,
 		})
+		require.Nil(t, err)
 		require.Equal(t, newProjectAlias, res5.GetProjectAlias())
 
 		res6, err := client.GetProjectByProjectAlias(ctx, &pb.GetProjectByProjectAliasRequest{

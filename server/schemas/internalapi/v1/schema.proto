@@ -361,7 +361,7 @@ message DeleteProjectRequest {
 
 // Find a project by project alias.
 message GetProjectByProjectAliasRequest {
-  // Scene alias
+  // Project alias
   string project_alias = 1;
 }
 
