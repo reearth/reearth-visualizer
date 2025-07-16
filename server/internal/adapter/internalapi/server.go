@@ -480,7 +480,7 @@ func (s server) UpdateByProjectAlias(ctx context.Context, req *pb.UpdateByProjec
 		Starred:        req.Starred,
 		Deleted:        req.Deleted,
 		Visibility:     req.Visibility,
-		ProjectAlias:   &req.ProjectAlias,
+		ProjectAlias:   req.NewProjectAlias,
 
 		// publishment
 		PublicTitle:       req.PublicTitle,
