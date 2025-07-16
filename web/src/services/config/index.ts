@@ -68,6 +68,7 @@ declare global {
 }
 
 export default async function loadConfig() {
+  console.log("Loading REEARTH_CONFIG...", window.REEARTH_CONFIG);
   if (window.REEARTH_CONFIG) return;
   window.REEARTH_CONFIG = defaultConfig;
   const config: Config = {
@@ -98,6 +99,7 @@ export default async function loadConfig() {
   }
 
   window.REEARTH_CONFIG = config;
+  console.log("REEARTH_CONFIG", window.REEARTH_CONFIG);
 
   loadAppFeatureConfig();
 }
