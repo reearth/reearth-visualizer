@@ -48,3 +48,10 @@ func (r *Policy) FindByIDs(_ context.Context, ids []policy.ID) ([]*policy.Policy
 	})
 	return util.Map(policies, func(p *policy.Policy) *policy.Policy { return p.Clone() }), nil
 }
+
+func (r *Policy) Save(ctx context.Context, po *policy.Policy) error {
+	// r.lock.Lock()
+	// defer r.lock.Unlock()
+	// r.data[po.ID()] = po
+	return nil
+}

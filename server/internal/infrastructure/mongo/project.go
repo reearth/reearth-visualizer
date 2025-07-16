@@ -657,6 +657,60 @@ func (r *Project) CountByWorkspace(ctx context.Context, ws accountdomain.Workspa
 	return int(count), err
 }
 
+func (r *Project) CountCustomDomainByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
+	if !r.f.CanRead(ws) {
+		return 0, repo.ErrOperationDenied
+	}
+
+	pipeline := []bson.M{
+		{"$match": bson.M{"team": ws.String()}},
+		{"$lookup": bson.M{
+			"from":         "scene",
+			"localField":   "id",
+			"foreignField": "project",
+			"as":           "scenes",
+		}},
+		{"$match": bson.M{
+			"$and": []bson.M{
+				{"alias": bson.M{"$exists": true}},
+				{"alias": bson.M{"$ne": nil}},
+				{"alias": bson.M{"$ne": ""}},
+				{"alias": bson.M{"$not": bson.M{"$regex": "^(c-|s-)"}}},
+			},
+		}},
+	}
+	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
+	if err != nil {
+		return 0, err
+	}
+	defer cursor.Close(ctx)
+
+	var results []bson.M
+	if err := cursor.All(ctx, &results); err != nil {
+		return 0, err
+	}
+
+	count := 0
+	for _, result := range results {
+		aliasStr, _ := result["alias"].(string)
+		exclude := false
+		if scenes, ok := result["scenes"].(bson.A); ok {
+			for _, scene := range scenes {
+				if sceneMap, ok := scene.(bson.M); ok {
+					if sceneID, ok := sceneMap["id"].(string); ok && sceneID == aliasStr {
+						exclude = true
+						break
+					}
+				}
+			}
+		}
+		if !exclude {
+			count++
+		}
+	}
+	return count, nil
+}
+
 func (r *Project) CountPublicByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
 	if !r.f.CanRead(ws) {
 		return 0, repo.ErrOperationDenied

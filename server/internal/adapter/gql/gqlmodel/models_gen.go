@@ -656,16 +656,19 @@ type Point struct {
 func (Point) IsGeometry() {}
 
 type Policy struct {
-	ID                    ID     `json:"id"`
-	Name                  string `json:"name"`
-	ProjectCount          *int   `json:"projectCount,omitempty"`
-	MemberCount           *int   `json:"memberCount,omitempty"`
-	PublishedProjectCount *int   `json:"publishedProjectCount,omitempty"`
-	LayerCount            *int   `json:"layerCount,omitempty"`
-	AssetStorageSize      *int64 `json:"assetStorageSize,omitempty"`
-	NlsLayersCount        *int   `json:"nlsLayersCount,omitempty"`
-	PageCount             *int   `json:"pageCount,omitempty"`
-	BlocksCount           *int   `json:"blocksCount,omitempty"`
+	ID                       ID     `json:"id"`
+	Name                     string `json:"name"`
+	MemberCount              *int   `json:"memberCount,omitempty"`
+	ProjectCount             *int   `json:"projectCount,omitempty"`
+	PrivateProject           *bool  `json:"privateProject,omitempty"`
+	CustomDomainCount        *int   `json:"customDomainCount,omitempty"`
+	PublishableCount         *int   `json:"publishableCount,omitempty"`
+	AssetStorageSize         *int64 `json:"assetStorageSize,omitempty"`
+	MaximumSizePerAsset      *int64 `json:"maximumSizePerAsset,omitempty"`
+	ProjectImportingTimeout  *int   `json:"projectImportingTimeout,omitempty"`
+	MaximumProjectExportSize *int64 `json:"maximumProjectExportSize,omitempty"`
+	InstallPluginCount       *int   `json:"installPluginCount,omitempty"`
+	NlsLayersCount           *int   `json:"nlsLayersCount,omitempty"`
 }
 
 type Polygon struct {
