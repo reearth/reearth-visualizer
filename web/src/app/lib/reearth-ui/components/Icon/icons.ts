@@ -96,7 +96,8 @@ import List from "./Icons/List.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
 import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
 import Lock from "./Icons/Lock.svg?react";
-import Logo from "./Icons/logo.svg?react";
+import Logo from "./Icons/Logo.svg?react";
+import LogoFullColor from "./Icons/LogoFullColor.svg?react";
 import LToS from "./Icons/LToS.svg?react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass.svg?react";
 import MapPin from "./Icons/MapPin.svg?react";
@@ -272,6 +273,7 @@ export default {
   list: List,
   lock: Lock,
   logo: Logo,
+  logoFullColor: LogoFullColor,
   lToS: LToS,
   magnifyingGlass: MagnifyingGlass,
   mapPin: MapPin,

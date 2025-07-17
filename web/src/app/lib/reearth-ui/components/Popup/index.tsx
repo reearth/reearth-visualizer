@@ -89,7 +89,7 @@ const Content = forwardRef<
 
   return (
     <FloatingPortal>
-      <FloatingFocusManager context={floatingContext}>
+      <FloatingFocusManager context={floatingContext} initialFocus={-1}>
         <ContentWrapper
           ref={ref}
           style={{

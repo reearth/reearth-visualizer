@@ -116,6 +116,69 @@ const managementUrl = generateExternalUrl({
 - URL validation before returning generated URLs
 - Safe handling of missing/undefined values
 
+#### Using appFeature() Function
+
+The `appFeature()` function provides access to runtime feature configuration. **CRITICAL**: It must only be called after configuration is loaded to avoid accessing stale/default values.
+
+**✅ Safe Usage Patterns:**
+
+1. **Inside React Components**:
+   ```typescript
+   const Component = () => {
+     const { membersManagementOnDashboard } = appFeature();
+     if (!membersManagementOnDashboard) return null;
+     return <MembersUI />;
+   };
+   ```
+
+2. **In React Hooks**:
+   ```typescript
+   const useWorkspaceMenu = () => {
+     const { workspaceCreation, workspaceManagement } = appFeature();
+     return useMemo(() => buildMenu(workspaceCreation, workspaceManagement), [workspaceCreation, workspaceManagement]);
+   };
+   ```
+
+3. **With useMemo for Performance**:
+   ```typescript
+   const Component = () => {
+     const disabled = useMemo(() => !appFeature().accountManagement, []);
+     return <Button disabled={disabled} />;
+   };
+   ```
+
+**❌ Anti-patterns to Avoid:**
+
+1. **Module-Level Execution**:
+   ```typescript
+   // WRONG: Executes during module load, before config is ready
+   const { externalAuth0Signup } = appFeature();
+   
+   const authFunction = () => {
+     // May use stale feature flag values
+   };
+   ```
+
+2. **Function Definition Level**:
+   ```typescript
+   // WRONG: Called during function definition
+   const getAuthConfig = () => appFeature().authSettings;
+   ```
+
+**Available Feature Flags:**
+- `membersManagementOnDashboard` - Controls member management UI visibility
+- `workspaceCreation` - Enables/disables workspace creation functionality  
+- `workspaceManagement` - Controls workspace management features
+- `accountManagement` - Enables/disables account management UI
+- `externalAccountManagementUrl` - URL for external account management system
+- `externalAuth0Signup` - Controls Auth0 external signup flow
+
+**Best Practices:**
+- Always call `appFeature()` at runtime (in components/hooks), never at module level
+- Use with `useMemo` when feature flags control expensive operations
+- Test both enabled and disabled states of feature flags
+- Validate feature flags before conditional rendering
+
 ## Development Guidelines
 
 ### Environment Setup

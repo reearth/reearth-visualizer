@@ -434,6 +434,98 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	}, nil
 }
 
+func (s server) GetProjectByProjectAlias(ctx context.Context, req *pb.GetProjectByProjectAliasRequest) (*pb.GetProjectByProjectAliasResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetProjectByProjectAliasResponse{
+		Project: prj,
+	}, nil
+}
+
+func (s server) UpdateByProjectAlias(ctx context.Context, req *pb.UpdateByProjectAliasRequest) (*pb.UpdateByProjectAliasResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	var imageURL *url.URL
+	if req.ImageUrl != nil {
+		parsedURL, err := url.Parse(*req.ImageUrl)
+		if err != nil {
+			return nil, fmt.Errorf("invalid image_url: %w", err)
+		}
+		imageURL = parsedURL
+	}
+
+	pj, err = uc.Project.Update(ctx, interfaces.UpdateProjectParam{
+		ID:             pj.ID(),
+		Name:           req.Name,
+		Description:    req.Description,
+		Archived:       req.Archived,
+		ImageURL:       imageURL,
+		DeleteImageURL: req.DeleteImageUrl != nil && *req.DeleteImageUrl,
+		SceneID:        id.SceneIDFromRef(req.SceneId),
+		Starred:        req.Starred,
+		Deleted:        req.Deleted,
+		Visibility:     req.Visibility,
+		ProjectAlias:   req.NewProjectAlias,
+
+		// publishment
+		PublicTitle:       req.PublicTitle,
+		PublicDescription: req.PublicDescription,
+		PublicImage:       req.PublicImage,
+		PublicNoIndex:     req.PublicNoIndex,
+		DeletePublicImage: req.DeletePublicImage != nil && *req.DeletePublicImage,
+		IsBasicAuthActive: req.IsBasicAuthActive,
+		BasicAuthUsername: req.BasicAuthUsername,
+		BasicAuthPassword: req.BasicAuthPassword,
+		EnableGa:          req.EnableGa,
+		TrackingID:        req.TrackingId,
+	}, op)
+	if err != nil {
+		return nil, err
+	}
+
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdateByProjectAliasResponse{
+		Project: prj,
+	}, nil
+}
+
+func (s server) DeleteByProjectAlias(ctx context.Context, req *pb.DeleteByProjectAliasRequest) (*pb.DeleteByProjectAliasResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := uc.Project.Delete(ctx, pj.ID(), op); err != nil {
+		return nil, err
+	}
+
+	return &pb.DeleteByProjectAliasResponse{
+		ProjectAlias: req.ProjectAlias,
+	}, nil
+
+}
+
 func Normalize(data any) map[string]any {
 	if b, err := json.Marshal(data); err == nil {
 		var result map[string]any

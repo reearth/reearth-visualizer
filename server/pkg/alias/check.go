@@ -95,6 +95,13 @@ var (
 		nil,
 	)
 
+	ErrProjectInvalidProjectAlias = verror.NewVError(
+		errmsg.ErrKeyPkgProjectInvalidProjectAlias,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidProjectAlias],
+		nil,
+		nil,
+	)
+
 	ErrExistsProjectAlias = verror.NewVError(
 		errmsg.ErrKeyPkgProjectAliasAlreadyExists,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectAliasAlreadyExists],

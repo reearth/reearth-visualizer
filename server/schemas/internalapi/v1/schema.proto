@@ -49,6 +49,21 @@ service ReEarthVisualizer {
   // Export a project.
   // Request headers: user-id: <User ID>
   rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
+
+  // Find a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc GetProjectByProjectAlias(GetProjectByProjectAliasRequest)
+      returns (GetProjectByProjectAliasResponse) {}
+
+  // Update a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc UpdateByProjectAlias(UpdateByProjectAliasRequest)
+      returns (UpdateByProjectAliasResponse) {}
+
+  // Deletes a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
+      returns (DeleteByProjectAliasResponse) {}
 }
 
 // Core Project messages
@@ -344,6 +359,52 @@ message DeleteProjectRequest {
   string project_id = 1;
 }
 
+// Find a project by project alias.
+message GetProjectByProjectAliasRequest {
+  // Project alias
+  string project_alias = 1;
+}
+
+// Update project fields.
+// Only the project owner can operate this
+message UpdateByProjectAliasRequest {
+  // Project alias (required)
+  string project_alias = 1;
+
+  // Project basic info (optional)
+  optional string name = 2;
+  optional string description = 3;
+  optional bool archived = 4;
+  optional string image_url = 5;
+  optional bool delete_image_url = 6;
+  optional string scene_id = 7;
+  optional bool starred = 8;
+  optional bool deleted = 9;
+  optional string visibility = 10;
+
+  // Publishment settings (optional)
+  optional string public_title = 11;
+  optional string public_description = 12;
+  optional string public_image = 13;
+  optional bool public_no_index = 14;
+  optional bool delete_public_image = 15;
+  optional bool is_basic_auth_active = 16;
+  optional string basic_auth_username = 17;
+  optional string basic_auth_password = 18;
+  optional bool enable_ga = 19;
+  optional string tracking_id = 20;
+
+  optional string new_project_alias = 21;
+}
+
+// Deletes a project.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
+message DeleteByProjectAliasRequest {
+  // Project alias
+  string project_alias = 1;
+}
+
 // Export a project.
 message ExportProjectRequest {
   // Project ID
@@ -416,4 +477,22 @@ message ValidateProjectAliasResponse {
   bool available = 2;
   // Error message
   optional string error_message = 3;
+}
+
+// Response messages
+message GetProjectByProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateByProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message DeleteByProjectAliasResponse {
+  // Project alias
+  string project_alias = 1;
 }

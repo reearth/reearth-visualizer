@@ -76,7 +76,7 @@ const EditPanel: FC<PanelProps> = ({
         <InputWrapper>
           <Typography size="body">{t("Height")}</Typography>
           <NumberInput
-            unit={"km"}
+            unit="m"
             value={newCamera?.height}
             onChange={(value) => handleFieldChange("height", value)}
             onBlur={(value) => handleFieldBlur("height", value)}

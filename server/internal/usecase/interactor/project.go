@@ -14,6 +14,7 @@ import (
 
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/util"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -163,6 +164,21 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 
 func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
 	pj, err := i.projectRepo.FindActiveByAlias(ctx, alias)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindByProjectAlias(ctx, alias)
 	if err != nil {
 		return nil, err
 	}
@@ -1117,6 +1133,10 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
 	if err != nil {
 		return nil, err
+	}
+	ok := util.IsSafePathName(newProjectAlias)
+	if !ok {
+		return nil, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newProjectAlias)
 	}
 	prj.ProjectAlias(newProjectAlias)
 
