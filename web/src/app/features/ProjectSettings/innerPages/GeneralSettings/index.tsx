@@ -4,9 +4,10 @@ import ProjectVisibilityModal from "@reearth/app/features/Dashboard/ContentsCont
 import { Button, Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
+import { useProjectFetcher } from "@reearth/services/api";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { useCallback, useState, FC } from "react";
 
 import {
@@ -51,7 +52,12 @@ const GeneralSettings: FC<Props> = ({
   onProjectRemove
 }) => {
   const t = useT();
+  const theme = useTheme();
+
   const { projectVisibility } = appFeature();
+  const { checkProjectAlias } = useProjectFetcher();
+  const [localAlias, setLocalAlias] = useState(project?.projectAlias || "");
+  const [warning, setWarning] = useState<string>("");
 
   const handleNameUpdate = useCallback(
     (name: string) => {
@@ -63,14 +69,33 @@ const GeneralSettings: FC<Props> = ({
     [project, onUpdateProject]
   );
 
+    const handleProjectAliasChange = useCallback(
+      (value:string) => {
+        setLocalAlias(value);
+        setWarning("");
+      },
+      []
+    );
+  
   const handleProjectAliasUpdate = useCallback(
-    (projectAlias: string) => {
+    async (projectAlias: string) => {
       if (!project) return;
-      onUpdateProject({
-        projectAlias
-      });
+      const result = await checkProjectAlias?.(localAlias, project?.id);
+
+      if (!result?.available) {
+        const description = result?.errors?.find(
+          (e) => e?.extensions?.description
+        )?.extensions?.description;
+
+        setWarning(description as string);
+      } else {
+        setWarning("");
+        onUpdateProject({
+          projectAlias
+        });
+      }
     },
-    [project, onUpdateProject]
+    [project, checkProjectAlias, localAlias, onUpdateProject]
   );
 
   const handleDescriptionUpdate = useCallback(
@@ -140,11 +165,20 @@ const GeneralSettings: FC<Props> = ({
             <InputField
               title={t("Project alias")}
               value={project.projectAlias}
+              onChange={handleProjectAliasChange}
               onChangeComplete={handleProjectAliasUpdate}
               data-testid="project-alias-input"
-              description={t(
-                "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
-              )}
+              description={
+                warning ? (
+                  <Typography size="footnote" color={theme.dangerous.main}>
+                    {warning}
+                  </Typography>
+                ) : (
+                  t(
+                    "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+                  )
+                )
+              }
             />
             <TextareaField
               title={t("Description")}

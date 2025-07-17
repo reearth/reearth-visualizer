@@ -2,16 +2,22 @@ import {
   license_content,
   license_options
 } from "@reearth/app/features/ProjectSettings/innerPages/LicenseSettings/content";
-import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
+import {
+  Button,
+  Modal,
+  ModalPanel,
+  Typography
+} from "@reearth/app/lib/reearth-ui";
 import {
   InputField,
   RadioGroupField,
   SelectField
 } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
+import { useProjectFetcher } from "@reearth/services/api";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { Project } from "../../type";
@@ -35,13 +41,20 @@ type FormState = {
   license?: string;
 };
 
+const getLicenseContent = (value?: string): string => {
+  return license_content[value as keyof typeof license_content];
+};
+
 const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   visible,
   onClose,
   onProjectCreate
 }) => {
   const t = useT();
+  const theme = useTheme();
+
   const { projectVisibility } = appFeature();
+  const { checkProjectAlias } = useProjectFetcher();
 
   const [formState, setFormState] = useState<FormState>({
     projectName: "",
@@ -50,6 +63,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     visibility: "public",
     license: ""
   });
+  const [warning, setWarning] = useState<string>("");
 
   const projectVisibilityOptions = useMemo(
     () => [
@@ -66,9 +80,20 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     []
   );
 
-  const getLicenseContent = (value?: string): string => {
-    return license_content[value as keyof typeof license_content];
-  };
+  const handleProjectAliasCheck = useCallback(
+    async (value: string) => {
+      handleOnChange("projectAlias", value);
+      const result = await checkProjectAlias?.(value);
+      if (!result?.available) {
+        const description = result?.errors?.find(
+          (e) => e?.extensions?.description
+        )?.extensions?.description;
+
+        setWarning(description as string);
+      } else setWarning("");
+    },
+    [checkProjectAlias, handleOnChange]
+  );
 
   const onSubmit = useCallback(() => {
     const license = getLicenseContent(formState?.license);
@@ -77,7 +102,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
       description: formState.description,
       projectAlias: formState.projectAlias,
       visibility: formState.visibility,
-      license,
+      license
     });
     onClose?.();
   }, [formState, onClose, onProjectCreate]);
@@ -100,7 +125,9 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               title={t("Apply")}
               appearance="primary"
               onClick={onSubmit}
-              disabled={!formState.projectName}
+              disabled={
+                !formState.projectName || !formState.projectAlias || !!warning
+              }
               data-testid="project-creator-apply-btn"
             />
           </>
@@ -123,11 +150,19 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 title={t("Project Alias *")}
                 value={formState.projectAlias}
                 placeholder={t("Text")}
-                onChange={(value) => handleOnChange("projectAlias", value)}
+                onChangeComplete={handleProjectAliasCheck}
                 data-testid="project-creator-project-alias-input"
-                description={t(
-                  "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
-                )}
+                description={
+                  warning ? (
+                    <Typography size="footnote" color={theme.dangerous.main}>
+                      {warning}
+                    </Typography>
+                  ) : (
+                    t(
+                      "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+                    )
+                  )
+                }
               />
             </FormInputWrapper>
             {projectVisibility && (

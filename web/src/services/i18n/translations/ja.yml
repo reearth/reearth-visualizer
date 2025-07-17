@@ -86,7 +86,9 @@ Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
 Project Alias *: プロジェクト別名 *
-'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': 'プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例: https://reearth.io/team-alias/project-alias'
+'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': >-
+  プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例:
+  https://reearth.io/team-alias/project-alias
 Project Visibility *: プロジェクトの可視性 *
 For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
 Description: 説明
@@ -314,13 +316,6 @@ Editor: エディタ
 Unknown: 不明
 Map: マップ
 Widgets: ウィジェット
-Re:Earth: Re:Earth
-Visualizer is part of the: VisualizerはRe:Earthの一部です
-Re:Earth product ecosystem: Re:Earth製品エコシステム
-To continue, please log in with your Re:Earth account.: 続行するには、Re:Earthアカウントでログインしてください。
-Log In: ログイン
-Don't have an account?: アカウントをお持ちでないですか？
-Sign up on Re:Earth: Re:Earthにサインアップ
 Re:Earth Visualizer: Re:Earthビジュアライザー
 Oops, Page Not Found!: おっと、ページが見つかりません！
 Go to Dashboard: ダッシュボードへ移動
@@ -576,6 +571,13 @@ Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
 Zoom Level Editor: ズームレベルエディター
+Re:Earth: Re:Earth
+Visualizer is part of the: VisualizerはRe:Earthの一部です
+Re:Earth product ecosystem: Re:Earth製品エコシステム
+To continue, please log in with your Re:Earth account.: 続行するには、Re:Earthアカウントでログインしてください。
+Log In: ログイン
+Don't have an account?: アカウントをお持ちでないですか？
+Sign up on Re:Earth: Re:Earthにサインアップ
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。
