@@ -26,7 +26,7 @@ import { useCallback } from "react";
 
 import { useNotification } from "../../state";
 
-export type Team = CreateWorkspacePayload["team"];
+export type Team = CreateWorkspacePayload["workspace"];
 
 export default () => {
   const [, setNotification] = useNotification();
