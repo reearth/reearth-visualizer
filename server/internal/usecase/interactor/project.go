@@ -14,6 +14,7 @@ import (
 
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/util"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -1132,6 +1133,10 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
 	if err != nil {
 		return nil, err
+	}
+	ok := util.IsSafePathName(newProjectAlias)
+	if !ok {
+		return nil, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newProjectAlias)
 	}
 	prj.ProjectAlias(newProjectAlias)
 

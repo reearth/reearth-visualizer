@@ -10,6 +10,7 @@ const (
 	ErrKeyPkgProjectAliasAlreadyExists message.ErrKey = "pkg.project.alias_already_exists"
 	ErrKeyPkgProjectInvalidAlias message.ErrKey = "pkg.project.invalid_alias"
 	ErrKeyPkgProjectInvalidPrefixAlias message.ErrKey = "pkg.project.invalid_prefix_alias"
+	ErrKeyPkgProjectInvalidProjectAlias message.ErrKey = "pkg.project.invalid_project_alias"
 	ErrKeyPkgProjectInvalidReservedAlias message.ErrKey = "pkg.project.invalid_reserved_alias"
 	ErrKeyPkgProjectProjectAliasAlreadyExists message.ErrKey = "pkg.project.project_alias_already_exists"
 	ErrKeyPkgStorytellingAliasAlreadyExists message.ErrKey = "pkg.storytelling.alias_already_exists"
@@ -47,6 +48,16 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "'c-'や's-'から始まるエイリアス名は使用できません: {{.aliasName}}",
 			Description: "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。",
+		},
+	},
+	ErrKeyPkgProjectInvalidProjectAlias: {
+		language.English: {
+			Message:     "Invalid alias name: {{.aliasName}}",
+			Description: "The entered alias contains characters that are not allowed.",
+		},
+		language.Japanese: {
+			Message:     "不正なエイリアス名です: {{.aliasName}}",
+			Description: "入力されたエイリアスに使用できない文字が含まれています。",
 		},
 	},
 	ErrKeyPkgProjectInvalidReservedAlias: {
