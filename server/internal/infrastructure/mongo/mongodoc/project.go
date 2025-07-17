@@ -13,7 +13,7 @@ import (
 
 type ProjectDocument struct {
 	ID           string
-	Team         string // DON'T CHANGE NAME'
+	Workspace    string
 	Name         string
 	Description  string
 	ImageURL     string
@@ -58,7 +58,7 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 
 	return &ProjectDocument{
 		ID:           pid,
-		Team:         p.Workspace().String(),
+		Workspace:    p.Workspace().String(),
 		Name:         p.Name(),
 		Description:  p.Description(),
 		ImageURL:     imageURL,
@@ -91,7 +91,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
+	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}

@@ -1,16 +1,19 @@
 import * as Apollo from "@apollo/client";
 import {
-  GetTeamsQuery,
-  GetTeamsQueryVariables
+  GetWorkspacesQuery,
+  GetWorkspacesQueryVariables
 } from "@reearth/services/gql/__gen__/graphql";
-import { GetTeamsDocument } from "@reearth/services/gql/queries/teams";
+import { GetWorkspacesDocument } from "@reearth/services/gql/queries/teams";
 
-export function useGetTeamsQuery(
-  baseOptions?: Apollo.QueryHookOptions<GetTeamsQuery, GetTeamsQueryVariables>
+export function useGetWorkspacesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetWorkspacesQuery,
+    GetWorkspacesQueryVariables
+  >
 ) {
   const options = { ...baseOptions };
-  return Apollo.useQuery<GetTeamsQuery, GetTeamsQueryVariables>(
-    GetTeamsDocument,
+  return Apollo.useQuery<GetWorkspacesQuery, GetWorkspacesQueryVariables>(
+    GetWorkspacesDocument,
     options
   );
 }

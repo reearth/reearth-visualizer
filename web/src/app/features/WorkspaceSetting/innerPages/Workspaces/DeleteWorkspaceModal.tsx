@@ -32,7 +32,7 @@ const DeleteWorkspaceModal: FC<DeleteWorkspaceModalProps> = ({
 
   const handleDeleteWorkspace = useCallback(async () => {
     if (!workspace?.id) return;
-    await deleteWorkspace({ teamId: workspace.id });
+    await deleteWorkspace({ workspaceId: workspace.id });
     onClose();
     setWorkspace(undefined);
     navigate(`/`);

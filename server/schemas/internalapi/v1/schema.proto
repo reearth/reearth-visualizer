@@ -25,7 +25,7 @@ service ReEarthVisualizer {
   rpc ValidateProjectAlias(ValidateProjectAliasRequest)
       returns (ValidateProjectAliasResponse) {}
 
-  // Creates a new project in the specified team.
+  // Creates a new project in the specified workspace.
   // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
 
@@ -37,7 +37,7 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc PublishProject(PublishProjectRequest) returns (PublishProjectResponse) {}
 
-  // Updates a new project metadata in the specified team.
+  // Updates a new project metadata in the specified workspace.
   // Request headers: user-id: <User ID>
   rpc UpdateProjectMetadata(UpdateProjectMetadataRequest)
       returns (UpdateProjectMetadataResponse) {}
@@ -262,7 +262,7 @@ message ValidateProjectAliasRequest {
 }
 
 // Creates a new project.
-// Cannot be created under a team the user does not belong to.
+// Cannot be created under a workspace the user does not belong to.
 message CreateProjectRequest {
   // Workspace ID
   string workspace_id = 1;
@@ -339,7 +339,7 @@ message PublishProjectRequest {
 }
 
 // Updates a new project metadata.
-// Cannot be updated under a team the user does not belong to.
+// Cannot be updated under a workspace the user does not belong to.
 message UpdateProjectMetadataRequest {
   // Project ID
   string project_id = 1;

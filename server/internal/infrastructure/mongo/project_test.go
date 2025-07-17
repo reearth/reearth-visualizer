@@ -27,8 +27,8 @@ func TestProject_FindByIDs(t *testing.T) {
 	wid := accountdomain.NewWorkspaceID()
 	wid2 := accountdomain.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid.String(), "team": wid.String()},
-		bson.M{"id": pid2.String(), "team": wid2.String()},
+		bson.M{"id": pid.String(), "workspace": wid.String()},
+		bson.M{"id": pid2.String(), "workspace": wid2.String()},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -53,10 +53,10 @@ func TestProject_CountByWorkspace(t *testing.T) {
 	wid := accountdomain.NewWorkspaceID()
 	wid2 := accountdomain.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": "a", "team": wid.String(), "publishmentstatus": "public"},
-		bson.M{"id": "b", "team": wid.String(), "publishmentstatus": "limited"},
-		bson.M{"id": "c", "team": wid.String()},
-		bson.M{"id": "d", "team": "x", "publishmentstatus": "public"},
+		bson.M{"id": "a", "workspace": wid.String(), "publishmentstatus": "public"},
+		bson.M{"id": "b", "workspace": wid.String(), "publishmentstatus": "limited"},
+		bson.M{"id": "c", "workspace": wid.String()},
+		bson.M{"id": "d", "workspace": "x", "publishmentstatus": "public"},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -78,10 +78,10 @@ func TestProject_CountPublicByWorkspace(t *testing.T) {
 	wid := accountdomain.NewWorkspaceID()
 	wid2 := accountdomain.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": "a", "team": wid.String(), "publishmentstatus": "public"},
-		bson.M{"id": "b", "team": wid.String(), "publishmentstatus": "limited"},
-		bson.M{"id": "c", "team": wid.String()},
-		bson.M{"id": "d", "team": "x", "publishmentstatus": "public"},
+		bson.M{"id": "a", "workspace": wid.String(), "publishmentstatus": "public"},
+		bson.M{"id": "b", "workspace": wid.String(), "publishmentstatus": "limited"},
+		bson.M{"id": "c", "workspace": wid.String()},
+		bson.M{"id": "d", "workspace": "x", "publishmentstatus": "public"},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -155,11 +155,11 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	pid5 := id.NewProjectID()
 
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid1.String(), "team": wid.String(), "name": "Project 1", "starred": true, "coresupport": true},
-		bson.M{"id": pid2.String(), "team": wid.String(), "name": "Project 2", "starred": true, "coresupport": true},
-		bson.M{"id": pid3.String(), "team": wid.String(), "name": "Project 3", "starred": false, "coresupport": true},
-		bson.M{"id": pid4.String(), "team": wid2.String(), "name": "Project 4", "starred": true, "coresupport": true},
-		bson.M{"id": pid5.String(), "team": wid2.String(), "name": "Project 5", "starred": true, "coresupport": false},
+		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Project 1", "starred": true, "coresupport": true},
+		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Project 2", "starred": true, "coresupport": true},
+		bson.M{"id": pid3.String(), "workspace": wid.String(), "name": "Project 3", "starred": false, "coresupport": true},
+		bson.M{"id": pid4.String(), "workspace": wid2.String(), "name": "Project 4", "starred": true, "coresupport": true},
+		bson.M{"id": pid5.String(), "workspace": wid2.String(), "name": "Project 5", "starred": true, "coresupport": false},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -208,10 +208,10 @@ func TestProject_FindDeletedByWorkspace(t *testing.T) {
 	pid4 := id.NewProjectID()
 
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
-		bson.M{"id": pid1.String(), "team": wid.String(), "name": "Project 1", "deleted": false, "coresupport": true},
-		bson.M{"id": pid2.String(), "team": wid.String(), "name": "Project 2", "deleted": true, "coresupport": true},
-		bson.M{"id": pid3.String(), "team": wid2.String(), "name": "Project 3", "deleted": false, "coresupport": true},
-		bson.M{"id": pid4.String(), "team": wid2.String(), "name": "Project 4", "deleted": true, "coresupport": true},
+		bson.M{"id": pid1.String(), "workspace": wid.String(), "name": "Project 1", "deleted": false, "coresupport": true},
+		bson.M{"id": pid2.String(), "workspace": wid.String(), "name": "Project 2", "deleted": true, "coresupport": true},
+		bson.M{"id": pid3.String(), "workspace": wid2.String(), "name": "Project 3", "deleted": false, "coresupport": true},
+		bson.M{"id": pid4.String(), "workspace": wid2.String(), "name": "Project 4", "deleted": true, "coresupport": true},
 	})
 
 	r := NewProject(mongox.NewClientWithDatabase(c))
@@ -236,7 +236,7 @@ func TestProject_FindByWorkspaces_OffsetPagination(t *testing.T) {
 		pid := id.NewProjectID()
 		docs[i] = bson.M{
 			"id":         pid.String(),
-			"team":       wid.String(),
+			"workspace":  wid.String(),
 			"name":       fmt.Sprintf("Project %d", i),
 			"visibility": "public",
 			"deleted":    false,

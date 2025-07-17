@@ -16,7 +16,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 	projectID := createProject(e, uID, map[string]any{
 		"name":        "project1-test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -34,7 +34,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 		OperationName: "GetProjects",
 		Query:         GetProjectsQuery,
 		Variables: map[string]any{
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"pagination": map[string]any{
 				"first": 16,
 			},

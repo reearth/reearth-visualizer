@@ -62,7 +62,7 @@ export default (workspaceId?: string) => {
     fetchMore,
     refetch
   } = useProjectsQuery({
-    teamId: workspaceId || "",
+    workspaceId: workspaceId || "",
     pagination: {
       first: pagination(sortValue).first
     },
@@ -81,7 +81,7 @@ export default (workspaceId?: string) => {
               id: project.id,
               description: project.description,
               name: project.name,
-              teamId: project.teamId,
+              workspaceId: project.workspaceId,
               imageUrl: project.imageUrl,
               isArchived: project.isArchived,
               status: toPublishmentStatus(project.publishmentStatus),

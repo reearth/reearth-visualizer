@@ -22,7 +22,7 @@ func TestDefaultAlias(t *testing.T) {
 		OperationName: "GetProjects",
 		Query:         GetProjectsQuery,
 		Variables: map[string]any{
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"pagination": map[string]any{
 				"first": 16,
 			},
@@ -859,7 +859,7 @@ func createProjectSet(e *httpexpect.Expect) (string, string, string) {
 	projectId := createProject(e, uID, map[string]any{
 		"name":        "test project",
 		"description": "test description",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
