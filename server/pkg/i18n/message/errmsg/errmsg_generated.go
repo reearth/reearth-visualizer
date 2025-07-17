@@ -52,11 +52,11 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 	},
 	ErrKeyPkgProjectInvalidProjectAlias: {
 		language.English: {
-			Message:     "Invalid alias name: {{.aliasName}}",
+			Message:     "Invalid alias name",
 			Description: "The entered alias contains characters that are not allowed.",
 		},
 		language.Japanese: {
-			Message:     "不正なエイリアス名です: {{.aliasName}}",
+			Message:     "不正なエイリアス名です",
 			Description: "入力されたエイリアスに使用できない文字が含まれています。",
 		},
 	},

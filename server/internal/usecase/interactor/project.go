@@ -422,10 +422,12 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.ProjectAlias != nil {
-		err := i.projectRepo.CheckProjectAliasUnique(ctx, prj.Workspace(), *p.ProjectAlias, prj.ID().Ref())
+
+		_, err = i.CheckProjectAlias(ctx, *p.ProjectAlias, prj.Workspace(), prj.ID().Ref())
 		if err != nil {
 			return nil, err
 		}
+
 		prj.UpdateProjectAlias(*p.ProjectAlias)
 	}
 
@@ -512,17 +514,47 @@ func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.
 	return prj, dedicatedID1, dedicatedID2, err
 }
 
-func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
+func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid accountdomain.WorkspaceID, pid *id.ProjectID) (bool, error) {
+
+	if pid != nil {
+		if alias.ReservedReearthPrefixProject+pid.String() == newAlias || pid.String() == newAlias {
+			return true, nil
+		}
+
+		prj, err := i.projectRepo.FindByID(ctx, *pid)
+		if err != nil {
+			return false, err
+		}
+
+		if prj.ProjectAlias() == newAlias {
+			return true, nil
+		}
+	}
+
+	ok := util.IsSafePathName(newAlias)
+	if !ok {
+		return false, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", "")
+	}
+
+	err := i.projectRepo.CheckProjectAliasUnique(ctx, wsid, newAlias, pid)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (i *Project) CheckSceneAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
 	aliasName := strings.ToLower(newAlias)
 	if pid == nil {
 
-		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+		if err := alias.CheckAliasPatternScene(aliasName); err != nil {
 			return false, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
-		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
 			return false, err
 		}
 
@@ -554,13 +586,13 @@ func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.Proje
 			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		}
 
-		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
+		if err := alias.CheckAliasPatternScene(aliasName); err != nil {
 			return false, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
-		if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err = i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
 			return false, err
 		}
 
@@ -627,13 +659,13 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 			}
 
-			if err := alias.CheckProjectAliasPattern(newAlias); err != nil {
+			if err := alias.CheckAliasPatternScene(newAlias); err != nil {
 				return nil, err
 			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, newAlias); err != nil {
+			if err := i.projectRepo.CheckSceneAliasUnique(ctx, newAlias); err != nil {
 				return nil, err
 			}
-			if err = i.storytellingRepo.CheckAliasUnique(ctx, newAlias); err != nil {
+			if err = i.storytellingRepo.CheckStorytellingAlias(ctx, newAlias); err != nil {
 				return nil, err
 			}
 		}
@@ -1130,14 +1162,12 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	if input.ProjectAlias != nil {
 		newProjectAlias = *input.ProjectAlias
 	}
-	err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
+
+	_, err = i.CheckProjectAlias(ctx, newProjectAlias, input.WorkspaceID, nil)
 	if err != nil {
 		return nil, err
 	}
-	ok := util.IsSafePathName(newProjectAlias)
-	if !ok {
-		return nil, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newProjectAlias)
-	}
+
 	prj.ProjectAlias(newProjectAlias)
 
 	if input.Archived != nil {

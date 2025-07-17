@@ -157,6 +157,11 @@ type ProjectAliasAvailability {
   available: Boolean!
 }
 
+type SceneAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
 type ProjectMetadataPayload {
   metadata: ProjectMetadata!
 }
@@ -182,7 +187,12 @@ extend type Query {
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
+  checkProjectAlias(
+    alias: String!
+    workspaceId: ID!
+    projectId: ID
+  ): ProjectAliasAvailability!
+  checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
 }

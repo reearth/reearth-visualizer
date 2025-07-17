@@ -1021,6 +1021,11 @@ type Scene struct {
 func (Scene) IsNode()        {}
 func (this Scene) GetID() ID { return this.ID }
 
+type SceneAliasAvailability struct {
+	Alias     string `json:"alias"`
+	Available bool   `json:"available"`
+}
+
 type ScenePlugin struct {
 	PluginID   ID        `json:"pluginId"`
 	PropertyID *ID       `json:"propertyId,omitempty"`
@@ -1148,14 +1153,15 @@ type Style struct {
 }
 
 type Team struct {
-	ID       ID                 `json:"id"`
-	Name     string             `json:"name"`
-	Members  []*TeamMember      `json:"members"`
-	Personal bool               `json:"personal"`
-	PolicyID *ID                `json:"policyId,omitempty"`
-	Policy   *Policy            `json:"policy,omitempty"`
-	Assets   *AssetConnection   `json:"assets"`
-	Projects *ProjectConnection `json:"projects"`
+	ID                           ID                 `json:"id"`
+	Name                         string             `json:"name"`
+	Members                      []*TeamMember      `json:"members"`
+	Personal                     bool               `json:"personal"`
+	PolicyID                     *ID                `json:"policyId,omitempty"`
+	Policy                       *Policy            `json:"policy,omitempty"`
+	Assets                       *AssetConnection   `json:"assets"`
+	Projects                     *ProjectConnection `json:"projects"`
+	EnableToCreatePrivateProject bool               `json:"enableToCreatePrivateProject"`
 }
 
 func (Team) IsNode()        {}

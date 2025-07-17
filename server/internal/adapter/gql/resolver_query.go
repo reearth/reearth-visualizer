@@ -171,12 +171,16 @@ func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gq
 	return loaders(ctx).User.SearchUser(ctx, nameOrEmail)
 }
 
-func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string, projectId *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
-	return loaders(ctx).Project.CheckAlias(ctx, alias, projectId)
+func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string, workspaceId gqlmodel.ID, projectId *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
+	return loaders(ctx).Project.CheckProjectAlias(ctx, alias, workspaceId, projectId)
+}
+
+func (r *queryResolver) CheckSceneAlias(ctx context.Context, alias string, projectId *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error) {
+	return loaders(ctx).Project.CheckSceneAlias(ctx, alias, projectId)
 }
 
 func (r *queryResolver) CheckStoryAlias(ctx context.Context, alias string, storyId *gqlmodel.ID) (*gqlmodel.StoryAliasAvailability, error) {
-	return loaders(ctx).Story.CheckAlias(ctx, alias, storyId)
+	return loaders(ctx).Story.CheckStorytellingAlias(ctx, alias, storyId)
 }
 
 func (r *queryResolver) StarredProjects(ctx context.Context, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
