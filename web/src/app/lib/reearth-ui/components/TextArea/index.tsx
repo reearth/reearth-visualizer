@@ -87,10 +87,10 @@ export const TextArea: FC<TextAreaProps> = ({
   );
 };
 
-const Wrapper = styled("div")(() => ({
+const Wrapper = styled("div")({
   display: "flex",
   flexDirection: "column"
-}));
+});
 
 const TextAreaWrapper = styled("div")<{
   status: "default" | "active";

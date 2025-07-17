@@ -130,11 +130,11 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.small}px`
 }));
 
-const NodeListScrollArea = styled("div")(() => ({
+const NodeListScrollArea = styled("div")({
   minHeight: 0,
   flex: 1,
   overflowY: "auto"
-}));
+});
 
 const NodeList = styled("div")(({ theme }) => ({
   display: "flex",

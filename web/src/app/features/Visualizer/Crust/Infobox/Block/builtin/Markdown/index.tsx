@@ -73,16 +73,16 @@ const MarkdownBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
 
 export default MarkdownBlock;
 
-const Wrapper = styled("div")(() => ({
+const Wrapper = styled("div")({
   width: "100%",
   position: "relative",
   ["*"]: {
     maxWidth: "100%",
     height: "auto"
   }
-}));
+});
 
-const MarkdownWrapper = styled("div")(() => ({
+const MarkdownWrapper = styled("div")({
   "@media (prefers-color-scheme: dark)": {
     all: "unset"
   },
@@ -92,4 +92,4 @@ const MarkdownWrapper = styled("div")(() => ({
   "& ol": {
     listStyleType: "decimal"
   }
-}));
+});

@@ -42,7 +42,7 @@ const convertPositionToTime = (e: MouseEvent, { start, end }: Range) => {
 type InteractionOption = {
   range: Range;
   zoom: number;
-  scaleElement: RefObject<HTMLDivElement>;
+  scaleElement: RefObject<HTMLDivElement | null>;
   setScaleWidth: React.Dispatch<React.SetStateAction<number>>;
   setZoom: React.Dispatch<React.SetStateAction<number>>;
   onClick?: TimeEventHandler;

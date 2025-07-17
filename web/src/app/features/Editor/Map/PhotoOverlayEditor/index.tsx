@@ -296,9 +296,9 @@ const Wrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.small
 }));
 
-const InteractiveWrapper = styled("div")(() => ({
+const InteractiveWrapper = styled("div")({
   pointerEvents: "all"
-}));
+});
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
