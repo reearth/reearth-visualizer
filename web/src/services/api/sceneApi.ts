@@ -53,7 +53,7 @@ export type Scene = Omit<
   | "workspaceId"
   | "propertyId"
   | "project"
-  | "team"
+  | "workspace"
   | "rootLayer"
   | "__typename"
 > & {

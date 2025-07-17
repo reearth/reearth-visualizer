@@ -20,11 +20,11 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const { logout } = useAuth();
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 
-  const workspaces = (data?.teams as Workspace[]) ?? [];
+  const workspaces = (data?.workspaces as Workspace[]) ?? [];
   const workspace = workspaces.find(
     (workspace) => workspace.id === workspaceId
   );
-  const isPersonal = !!workspaceId && workspaceId === data?.myTeam?.id;
+  const isPersonal = !!workspaceId && workspaceId === data?.myWorkspace?.id;
 
   const { tab } = useParams<{
     tab?: string;
