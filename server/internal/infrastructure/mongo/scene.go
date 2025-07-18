@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -97,23 +96,6 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 		return nil, err
 	}
 	return res, nil
-}
-
-func (r *Scene) CheckAliasUnique(ctx context.Context, name string) error {
-	filter := bson.M{
-		"$or": []bson.M{
-			{"id": name},
-			{"alias": name},
-		},
-	}
-	count, err := r.count(ctx, filter)
-	if err != nil {
-		return err
-	}
-	if count > 0 {
-		return alias.ErrExistsProjectAlias
-	}
-	return nil
 }
 
 func (r *Scene) Save(ctx context.Context, scene *scene.Scene) error {

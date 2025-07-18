@@ -15,7 +15,6 @@ type Scene interface {
 	FindByWorkspace(context.Context, ...accountdomain.WorkspaceID) (scene.List, error)
 	FindByProject(context.Context, id.ProjectID) (*scene.Scene, error)
 	FindByProjects(context.Context, []id.ProjectID) ([]*scene.Scene, error)
-	CheckAliasUnique(context.Context, string) error
 	Save(context.Context, *scene.Scene) error
 	Remove(context.Context, id.SceneID) error
 }

@@ -20,10 +20,15 @@ service ReEarthVisualizer {
   rpc GetProjectByAlias(GetProjectByAliasRequest)
       returns (GetProjectByAliasResponse) {}
 
-  // Determines if an alias is valid.
+  // Determines if an project alias is valid.
   // Request headers: user-id: <User ID>
   rpc ValidateProjectAlias(ValidateProjectAliasRequest)
       returns (ValidateProjectAliasResponse) {}
+
+  // Determines if an scene alias is valid.
+  // Request headers: user-id: <User ID>
+  rpc ValidateSceneAlias(ValidateSceneAliasRequest)
+      returns (ValidateSceneAliasResponse) {}
 
   // Creates a new project in the specified team.
   // Request headers: user-id: <User ID>
@@ -255,6 +260,16 @@ message GetProjectByAliasRequest {
 
 // Determines if an alias is valid.
 message ValidateProjectAliasRequest {
+  // Workspace ID
+  string workspace_id = 1;
+  // Scene alias
+  string alias = 2;
+  // Project ID
+  optional string project_id = 3;
+}
+
+// Determines if an alias is valid.
+message ValidateSceneAliasRequest {
   // Project ID
   optional string project_id = 1;
   // Scene alias
@@ -471,6 +486,16 @@ message GetProjectByAliasResponse {
 
 // Response messages
 message ValidateProjectAliasResponse {
+  // Workspace ID
+  string workspace_id = 1;
+  // Scene alias available
+  bool available = 2;
+  // Error message
+  optional string error_message = 3;
+}
+
+// Response messages
+message ValidateSceneAliasResponse {
   // Project ID
   optional string project_id = 1;
   // Scene alias available

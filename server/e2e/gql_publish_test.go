@@ -223,9 +223,9 @@ func TestPublishProjectUniqueAlias(t *testing.T) {
 		alias  string
 		expect func(res *httpexpect.Value, err *httpexpect.Value)
 	}{
-		{"self storyId", storyId1, checkProjectAliasAlreadyExists},
-		{"other projectId", sceneId2, checkProjectAliasAlreadyExists},
-		{"other storyId", storyId2, checkProjectAliasAlreadyExists},
+		{"self storyId", storyId1, checkSceneAliasAlreadyExists},
+		{"other projectId", sceneId2, checkSceneAliasAlreadyExists},
+		{"other storyId", storyId2, checkSceneAliasAlreadyExists},
 	}
 
 	for _, tc := range testCases {
@@ -240,7 +240,7 @@ func TestPublishProjectUniqueAlias(t *testing.T) {
 	}
 }
 
-func checkProjectAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) {
+func checkSceneAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) {
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
 		{
@@ -562,9 +562,9 @@ func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *h
 	})
 }
 
-/////// Test CheckProjectAlias ///////
+/////// Test CheckSceneAlias ///////
 
-func TestCheckProjectAlias(t *testing.T) {
+func TestCheckSceneAlias(t *testing.T) {
 	e := Server(t, baseSeeder)
 	projectId, sceneID, _ := createProjectSet(e)
 
@@ -601,7 +601,7 @@ func TestCheckProjectAlias(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt // capture
 		t.Run(tt.name, func(t *testing.T) {
-			res := checkProjectAlias(e, uID, map[string]any{
+			res := checkSceneAlias(e, uID, map[string]any{
 				"alias":     tt.args.alias,
 				"projectId": tt.args.projectId,
 			})
@@ -618,7 +618,7 @@ func TestCheckProjectAlias(t *testing.T) {
 		"alias":     "test-xxxxxx",
 		"status":    "LIMITED",
 	})
-	res := checkProjectAlias(e, uID, map[string]any{
+	res := checkSceneAlias(e, uID, map[string]any{
 		"alias":     "test-xxxxxx", // current self alias
 		"projectId": projectId,
 	})
@@ -629,7 +629,7 @@ func TestCheckProjectAlias(t *testing.T) {
 
 }
 
-func TestCheckProjectAliasError(t *testing.T) {
+func TestCheckSceneAliasError(t *testing.T) {
 	e := Server(t, baseSeeder)
 	projectId, sceneId, storyId := createProjectSet(e)
 
@@ -671,7 +671,7 @@ func TestCheckProjectAliasError(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt // capture loop var
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := checkProjectAliasError(e, uID, map[string]any{
+			res, err := checkSceneAliasError(e, uID, map[string]any{
 				"alias":     tt.args.alias,
 				"projectId": tt.args.projectId,
 			})
@@ -839,9 +839,9 @@ mutation PublishStory(
   }
 }`
 
-const CheckProjectAliasQuery = `
-query CheckProjectAlias($alias: String!, $projectId: ID) {
-  checkProjectAlias(alias: $alias, projectId: $projectId) {
+const CheckSceneAliasQuery = `
+query CheckSceneAlias($alias: String!, $projectId: ID) {
+  checkSceneAlias(alias: $alias, projectId: $projectId) {
     alias
     available
   }
@@ -913,20 +913,20 @@ func publishStoryErrors(e *httpexpect.Expect, u accountdomain.UserID, variables 
 	return res.Path("$.data"), res.Path("$.errors")
 }
 
-func checkProjectAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func checkSceneAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
-		OperationName: "CheckProjectAlias",
-		Query:         CheckProjectAliasQuery,
+		OperationName: "CheckSceneAlias",
+		Query:         CheckSceneAliasQuery,
 		Variables:     variables,
 	}
 	res := Request(e, u.String(), requestBody)
-	return res.Path("$.data.checkProjectAlias")
+	return res.Path("$.data.checkSceneAlias")
 }
 
-func checkProjectAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func checkSceneAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
-		OperationName: "CheckProjectAlias",
-		Query:         CheckProjectAliasQuery,
+		OperationName: "CheckSceneAlias",
+		Query:         CheckSceneAliasQuery,
 		Variables:     variables,
 	}
 	res := Request(e, u.String(), requestBody)

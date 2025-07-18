@@ -240,7 +240,7 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 	return &inp.StoryID, nil
 }
 
-func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.StoryID) (bool, error) {
+func (i *Storytelling) CheckStorytellingAlias(ctx context.Context, newAlias string, sid *id.StoryID) (bool, error) {
 	aliasName := strings.ToLower(newAlias)
 
 	if sid == nil {
@@ -248,13 +248,10 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 		if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
 			return false, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
-		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
 			return false, err
 		}
 		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixScene) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
@@ -291,13 +288,10 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 			if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
 				return false, err
 			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
 				return false, err
 			}
-			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			if err = i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
 				return false, err
 			}
 		}
@@ -362,13 +356,10 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		if err := alias.CheckAliasPatternStorytelling(story.Alias()); err != nil {
 			return nil, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, story.Alias()); err != nil {
 			return nil, err
 		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
-			return nil, err
-		}
-		if err = i.storytellingRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+		if err = i.storytellingRepo.CheckStorytellingAlias(ctx, story.Alias()); err != nil {
 			return nil, err
 		}
 	}

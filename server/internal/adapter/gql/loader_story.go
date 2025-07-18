@@ -16,9 +16,9 @@ func NewStoryLoader(usecase interfaces.Storytelling) *StoryLoader {
 	return &StoryLoader{usecase: usecase}
 }
 
-func (c *StoryLoader) CheckAlias(ctx context.Context, alias string, storyID *gqlmodel.ID) (*gqlmodel.StoryAliasAvailability, error) {
+func (c *StoryLoader) CheckStorytellingAlias(ctx context.Context, alias string, storyID *gqlmodel.ID) (*gqlmodel.StoryAliasAvailability, error) {
 	sid := gqlmodel.ToIDRef[id.Story](storyID)
-	ok, err := c.usecase.CheckAlias(ctx, alias, sid)
+	ok, err := c.usecase.CheckStorytellingAlias(ctx, alias, sid)
 	if err != nil {
 		return nil, err
 	}
