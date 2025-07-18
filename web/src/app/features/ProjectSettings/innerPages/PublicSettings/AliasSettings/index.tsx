@@ -6,7 +6,7 @@ import {
 import { Button, Icon } from "@reearth/app/lib/reearth-ui";
 import CommonField from "@reearth/app/ui/fields/CommonField";
 import {
-  useProjectFetcher,
+  useSceneFetcher,
   useStorytellingFetcher
 } from "@reearth/services/api";
 import { config } from "@reearth/services/config";
@@ -39,7 +39,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
   onUpdateAlias
 }) => {
   const t = useT();
-  const { checkProjectAlias } = useProjectFetcher();
+  const { checkSceneAlias } = useSceneFetcher();
   const { checkStoryAlias } = useStorytellingFetcher();
 
   const [, setNotification] = useNotification();
@@ -86,18 +86,11 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
     const data = isStory
       ? await checkStoryAlias(alias, settingsItem?.id)
-      : await checkProjectAlias(alias, settingsItem?.id);
+      : await checkSceneAlias(alias, settingsItem?.id);
     if (data?.available) {
       handleSubmitAlias(alias);
     }
-  }, [
-    checkProjectAlias,
-    checkStoryAlias,
-    handleSubmitAlias,
-    isStory,
-    settingsItem?.id,
-    sceneId
-  ]);
+  }, [isStory, settingsItem?.id, sceneId, checkStoryAlias, checkSceneAlias, handleSubmitAlias]);
 
   const isDisabled = useMemo(
     () =>

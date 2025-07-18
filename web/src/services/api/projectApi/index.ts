@@ -131,11 +131,11 @@ export default () => {
   });
 
   const checkProjectAlias = useCallback(
-    async (alias: string, projectId?: string) => {
+    async (alias: string, workspaceId: string, projectId?: string) => {
       if (!alias) return null;
 
       const { data, errors } = await fetchCheckProjectAlias({
-        variables: { alias, projectId },
+        variables: { alias, workspaceId, projectId },
         errorPolicy: "all",
         context: {
           headers: {
@@ -173,7 +173,12 @@ export default () => {
       visualizer: Visualizer,
       name: string,
       coreSupport: boolean,
-      description?: string
+      projectAlias?: string,
+      visibility?: string,
+      description?: string,
+      license?: string,
+      readme?: string,
+      topics?: string
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
@@ -182,7 +187,12 @@ export default () => {
             visualizer,
             name,
             description: description ?? "",
-            coreSupport: !!coreSupport
+            coreSupport: !!coreSupport,
+            projectAlias: projectAlias ?? "",
+            visibility: visibility ? visibility : "private",
+            license: license ?? "",
+            readme: readme ?? "",
+            topics: topics ?? ""
           }
         });
       if (projectErrors || !projectResults?.createProject) {

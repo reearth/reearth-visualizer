@@ -38,8 +38,8 @@ export const GET_PROJECTS = gql(`
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`
-  query CheckProjectAlias($alias: String!, $projectId: ID) {
-    checkProjectAlias(alias: $alias, projectId: $projectId) {
+  query CheckProjectAlias($alias: String!, $workspaceId: ID!, $projectId: ID) {
+    checkProjectAlias(alias: $alias, workspaceId:$workspaceId, projectId: $projectId) {
       alias
       available
     }
@@ -53,6 +53,11 @@ export const CREATE_PROJECT = gql(`
     $name: String!
     $description: String!
     $coreSupport: Boolean
+    $visibility: String
+    $projectAlias: String
+    $readme: String
+    $license: String
+    $topics: String
   ) {
     createProject(
       input: {
@@ -61,6 +66,11 @@ export const CREATE_PROJECT = gql(`
         name: $name
         description: $description
         coreSupport: $coreSupport
+        visibility: $visibility
+	      projectAlias: $projectAlias
+        readme: $readme
+        license: $license
+        topics: $topics
       }
     ) {
       project {
@@ -88,6 +98,8 @@ export const UPDATE_PROJECT = gql(`
     $trackingId: String
     $starred:Boolean
     $deleted: Boolean
+    $projectAlias: String
+    $visibility: String
   ) {
     updateProject(
       input: {
@@ -104,6 +116,8 @@ export const UPDATE_PROJECT = gql(`
         trackingId: $trackingId
         starred: $starred
         deleted: $deleted
+        projectAlias: $projectAlias
+        visibility: $visibility
       }
     ) {
       project {
@@ -232,4 +246,3 @@ export const UPDATE_PROJECT_METADATA = gql(`
     }
   }
 `);
-

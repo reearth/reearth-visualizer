@@ -1,10 +1,13 @@
 import { IMAGE_TYPES } from "@reearth/app/features/AssetsManager/constants";
 import ProjectRemoveModal from "@reearth/app/features/Dashboard/ContentsContainer/Projects/ProjectRemoveModal";
+import ProjectVisibilityModal from "@reearth/app/features/Dashboard/ContentsContainer/Projects/ProjectVisibilityModal";
 import { Button, Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
+import { useProjectFetcher } from "@reearth/services/api";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
-import { styled } from "@reearth/services/theme";
+import { styled, useTheme } from "@reearth/services/theme";
 import { useCallback, useState, FC } from "react";
 
 import {
@@ -23,6 +26,8 @@ export type GeneralSettingsType = {
   name?: string;
   description?: string;
   imageUrl?: string;
+  projectAlias?: string;
+  visibility?: string;
 };
 
 type Props = {
@@ -32,8 +37,11 @@ type Props = {
     description: string;
     imageUrl?: string | null;
     isArchived: boolean;
+    projectAlias: string;
+    visibility?: string;
   };
   disabled?: boolean;
+  workspaceId: string;
   onUpdateProject: (settings: GeneralSettingsType) => void;
   onProjectRemove: () => void;
 };
@@ -41,10 +49,17 @@ type Props = {
 const GeneralSettings: FC<Props> = ({
   project,
   disabled,
+  workspaceId,
   onUpdateProject,
   onProjectRemove
 }) => {
   const t = useT();
+  const theme = useTheme();
+
+  const { projectVisibility } = appFeature();
+  const { checkProjectAlias } = useProjectFetcher();
+  const [localAlias, setLocalAlias] = useState(project?.projectAlias || "");
+  const [warning, setWarning] = useState<string>("");
 
   const handleNameUpdate = useCallback(
     (name: string) => {
@@ -54,6 +69,35 @@ const GeneralSettings: FC<Props> = ({
       });
     },
     [project, onUpdateProject]
+  );
+
+    const handleProjectAliasChange = useCallback(
+      (value: string) => {
+        setLocalAlias(value);
+        setWarning("");
+      },
+      []
+    );
+  
+  const handleProjectAliasUpdate = useCallback(
+    async (projectAlias: string) => {
+      if (!project) return;
+      const result = await checkProjectAlias?.(localAlias, workspaceId, project?.id);
+
+      if (!result?.available) {
+        const description = result?.errors?.find(
+          (e) => e?.extensions?.description
+        )?.extensions?.description;
+
+        setWarning(description as string);
+      } else {
+        setWarning("");
+        onUpdateProject({
+          projectAlias
+        });
+      }
+    },
+    [project, checkProjectAlias, localAlias, workspaceId, onUpdateProject]
   );
 
   const handleDescriptionUpdate = useCallback(
@@ -83,6 +127,23 @@ const GeneralSettings: FC<Props> = ({
     setProjectRemoveModalVisible(value);
   }, []);
 
+  const [projectVisibilityModal, setProjectVisibilityModal] = useState(false);
+
+  const handleProjectVisibilityModal = useCallback(() => {
+    setProjectVisibilityModal(false);
+  }, []);
+
+  const handleProjectVisibiltyUpdate = useCallback(
+    (visibility: string) => {
+      if (!project) return;
+      onUpdateProject({
+        visibility
+      });
+      handleProjectVisibilityModal();
+    },
+    [handleProjectVisibilityModal, onUpdateProject, project]
+  );
+
   return project ? (
     <InnerPage wide>
       <SettingsWrapper>
@@ -102,6 +163,24 @@ const GeneralSettings: FC<Props> = ({
               value={project.name}
               onChangeComplete={handleNameUpdate}
               data-testid="project-name-input"
+            />
+            <InputField
+              title={t("Project Alias *")}
+              value={project.projectAlias}
+              onChange={handleProjectAliasChange}
+              onChangeComplete={handleProjectAliasUpdate}
+              data-testid="project-alias-input"
+              description={
+                warning ? (
+                  <Typography size="footnote" color={theme.dangerous.main}>
+                    {warning}
+                  </Typography>
+                ) : (
+                  t(
+                    "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+                  )
+                )
+              }
             />
             <TextareaField
               title={t("Description")}
@@ -140,6 +219,53 @@ const GeneralSettings: FC<Props> = ({
           </TitleWrapper>
 
           <DangerItem data-testid="danger-zone-item">
+            {projectVisibility && (
+              <>
+                <Typography
+                  size="body"
+                  weight="bold"
+                  data-testid="change-project-visibily-title"
+                >
+                  {t("Change project visibility")}
+                </Typography>
+                <DescriptionWrapper data-testid="chanage-project-visibility-description">
+                  <Typography size="body">
+                    {t(
+                      "You can choose whether your project is Public or Private."
+                    )}
+                  </Typography>
+                  <ListWrapper>
+                    <li>
+                      <Typography size="body">
+                        {t(
+                          "Public projects are visible to everyone and can be discovered by others."
+                        )}
+                      </Typography>
+                    </li>
+                    <li>
+                      <Typography size="body">
+                        {t(
+                          "Private projects are only accessible to members of the workspace and are available only for workspaces on a paid plan."
+                        )}
+                      </Typography>
+                    </li>
+                  </ListWrapper>
+                  <Typography size="body">
+                    {t(
+                      "This setting helps you control who can view and collaborate on your project. You can change the visibility at any time."
+                    )}
+                  </Typography>
+                </DescriptionWrapper>
+                <ButtonWrapper>
+                  <Button
+                    title={t("Change visibility")}
+                    appearance="dangerous"
+                    onClick={() => setProjectVisibilityModal(true)}
+                    data-testid="move-to-recycle-bin-button"
+                  />
+                </ButtonWrapper>
+              </>
+            )}
             <Typography
               size="body"
               weight="bold"
@@ -170,6 +296,13 @@ const GeneralSettings: FC<Props> = ({
           data-testid="project-remove-modal"
         />
       )}
+      {projectVisibilityModal && (
+        <ProjectVisibilityModal
+          visibility={project.visibility || "public"}
+          onProjectVisibilityChange={handleProjectVisibiltyUpdate}
+          onClose={handleProjectVisibilityModal}
+        />
+      )}
     </InnerPage>
   ) : null;
 };
@@ -180,4 +313,15 @@ const DangerItem = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.large
+}));
+
+const DescriptionWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing.smallest
+}));
+
+const ListWrapper = styled("ul")(({ theme }) => ({
+  listStyleType: "disc",
+  paddingLeft: theme.spacing.super
 }));

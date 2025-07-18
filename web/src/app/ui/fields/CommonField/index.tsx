@@ -4,7 +4,7 @@ import { FC, ReactNode } from "react";
 
 export interface CommonFieldProps {
   title?: string;
-  description?: string;
+  description?: string | ReactNode;
   dataTestId?: string;
 }
 
@@ -23,7 +23,7 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
         </Typography>
       )}
       {children}
-      {description && (
+      {typeof description === "string" ? (
         <Typography
           size="footnote"
           color={theme.content.weak}
@@ -31,6 +31,8 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
         >
           {description}
         </Typography>
+      ) : (
+        description
       )}
     </Wrapper>
   );

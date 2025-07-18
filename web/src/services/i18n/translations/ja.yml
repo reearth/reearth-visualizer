@@ -70,6 +70,7 @@ Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
 Project Name: プロジェクト名
+Visibility: 表示・非表示切り替え
 Updated At: 更新日時
 Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
@@ -78,14 +79,28 @@ Project Setting: プロジェクト設定
 Project Assets: プロジェクトアセット
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
+Public: 公開
+Private: 非公開
 Create new project: 新しいプロジェクトを作成
 Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
+Project Alias *: プロジェクト別名 *
+'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': >-
+  プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例:
+  https://reearth.io/team-alias/project-alias
+Project Visibility *: プロジェクトの可視性 *
+For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
 Description: 説明
 Write down your content: 内容を書き込む
+Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
+We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
+Change Visibility: 表示を変更する
+Confirm visibility: 表示を確認する
+Project Visibility: プロジェクトの可視性
+Private projects are only available on paid plans. Please upgrade your plan.: 非公開プロジェクトは有料プランでのみ利用可能です。プランをアップグレードしてください。
 Starred: スター付き
 No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
 Recover: 復元
@@ -185,7 +200,6 @@ Add Sketch Layer: スケッチレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
-Visibility: 表示・非表示切り替え
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
@@ -302,13 +316,6 @@ Editor: エディタ
 Unknown: 不明
 Map: マップ
 Widgets: ウィジェット
-Re:Earth: Re:Earth
-Visualizer is part of the: VisualizerはRe:Earthの一部です
-Re:Earth product ecosystem: Re:Earth製品エコシステム
-To continue, please log in with your Re:Earth account.: 続行するには、Re:Earthアカウントでログインしてください。
-Log In: ログイン
-Don't have an account?: アカウントをお持ちでないですか？
-Sign up on Re:Earth: Re:Earthにサインアップ
 Re:Earth Visualizer: Re:Earthビジュアライザー
 Oops, Page Not Found!: おっと、ページが見つかりません！
 Go to Dashboard: ダッシュボードへ移動
@@ -394,11 +401,16 @@ UI Language: UI言語
 General: 一般
 README: 読み取り専用
 License: ライセンス
-Public: 公開
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
+Change project visibility: プロジェクトの可視性を変更
+You can choose whether your project is Public or Private.: あなたのプロジェクトを公開または非公開にすることができます。
+Public projects are visible to everyone and can be discovered by others.: 公開プロジェクトは誰でも閲覧可能で、他の人に発見されることがあります。
+Private projects are only accessible to members of the workspace and are available only for workspaces on a paid plan.: 非公開プロジェクトはワークスペースのメンバーのみがアクセスでき、有料プランのワークスペースでのみ利用可能です。
+This setting helps you control who can view and collaborate on your project. You can change the visibility at any time.: この設定により、プロジェクトを閲覧および共同作業できる人を制御できます。表示はいつでも変更可能です。
+Change visibility: 表示を変更する
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
 Preview: プレビュー
@@ -558,6 +570,13 @@ Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
 Zoom Level Editor: ズームレベルエディター
+Re:Earth: Re:Earth
+Visualizer is part of the: VisualizerはRe:Earthの一部です
+Re:Earth product ecosystem: Re:Earth製品エコシステム
+To continue, please log in with your Re:Earth account.: 続行するには、Re:Earthアカウントでログインしてください。
+Log In: ログイン
+Don't have an account?: アカウントをお持ちでないですか？
+Sign up on Re:Earth: Re:Earthにサインアップ
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。

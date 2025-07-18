@@ -57,3 +57,12 @@ export const CREATE_SCENE = gql(`
     }
   }
 `);
+
+export const CHECK_SCENE_ALIAS = gql(`
+  query CheckSceneAlias($alias: String!, $projectId: ID){
+    checkSceneAlias(alias: $alias, projectId: $projectId) {
+      alias
+      available
+    }
+  }
+`);

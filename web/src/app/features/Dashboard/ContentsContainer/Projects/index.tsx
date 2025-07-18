@@ -30,6 +30,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     searchTerm,
     sortValue,
     importStatus,
+    projectVisibility,
     showProjectCreator,
     closeProjectCreator,
     handleProjectUpdate,
@@ -153,6 +154,13 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                     {t("Project Name")}
                   </Typography>
                 </ProjectNameCol>
+                {projectVisibility && (
+                  <VisibilityCol>
+                    <Typography size="body" color={theme.content.weak}>
+                      {t("Visibility")}
+                    </Typography>
+                  </VisibilityCol>
+                )}
                 <TimeCol data-testid="projects-list-updated-col">
                   <Typography size="body" color={theme.content.weak}>
                     {t("Updated At")}
@@ -196,6 +204,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                         onProjectRemove={() => handleProjectRemove(project)}
                         data-testid={`project-grid-item-${project.id}`}
+                        projectVisibility={projectVisibility}
                       />
                     ) : (
                       <ProjectListViewItem
@@ -207,6 +216,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                         onProjectOpen={() => handleProjectOpen(project.sceneId)}
                         onProjectRemove={() => handleProjectRemove(project)}
                         data-testid={`project-list-item-${project.id}`}
+                        projectVisibility={projectVisibility}
                       />
                     )
                   )}
@@ -320,7 +330,12 @@ const ProjectNameCol = styled("div")(() => ({
 }));
 
 const TimeCol = styled("div")(() => ({
-  flex: "0 0 20%",
+  flex: "0 0 15%",
+  flexShrink: 0
+}));
+
+const VisibilityCol = styled("div")(() => ({
+  flex: "0 0 15%",
   flexShrink: 0
 }));
 
