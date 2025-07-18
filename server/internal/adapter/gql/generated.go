@@ -711,7 +711,8 @@ type ComplexityRoot struct {
 
 	Query struct {
 		Assets            func(childComplexity int, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
-		CheckProjectAlias func(childComplexity int, alias string, projectID *gqlmodel.ID) int
+		CheckProjectAlias func(childComplexity int, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) int
+		CheckSceneAlias   func(childComplexity int, alias string, projectID *gqlmodel.ID) int
 		CheckStoryAlias   func(childComplexity int, alias string, storyID *gqlmodel.ID) int
 		DeletedProjects   func(childComplexity int, teamID gqlmodel.ID) int
 		Me                func(childComplexity int) int
@@ -791,6 +792,11 @@ type ComplexityRoot struct {
 		UpdatedAt         func(childComplexity int) int
 		WidgetAlignSystem func(childComplexity int) int
 		Widgets           func(childComplexity int) int
+	}
+
+	SceneAliasAvailability struct {
+		Alias     func(childComplexity int) int
+		Available func(childComplexity int) int
 	}
 
 	ScenePlugin struct {
@@ -903,14 +909,15 @@ type ComplexityRoot struct {
 	}
 
 	Team struct {
-		Assets   func(childComplexity int, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		ID       func(childComplexity int) int
-		Members  func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Personal func(childComplexity int) int
-		Policy   func(childComplexity int) int
-		PolicyID func(childComplexity int) int
-		Projects func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		Assets                       func(childComplexity int, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		EnableToCreatePrivateProject func(childComplexity int) int
+		ID                           func(childComplexity int) int
+		Members                      func(childComplexity int) int
+		Name                         func(childComplexity int) int
+		Personal                     func(childComplexity int) int
+		Policy                       func(childComplexity int) int
+		PolicyID                     func(childComplexity int) int
+		Projects                     func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 	}
 
 	TeamMember struct {
@@ -1227,7 +1234,8 @@ type QueryResolver interface {
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
 	Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
-	CheckProjectAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
+	CheckProjectAlias(ctx context.Context, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
+	CheckSceneAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error)
 	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	DeletedProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
@@ -4654,7 +4662,19 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 			return 0, false
 		}
 
-		return e.complexity.Query.CheckProjectAlias(childComplexity, args["alias"].(string), args["projectId"].(*gqlmodel.ID)), true
+		return e.complexity.Query.CheckProjectAlias(childComplexity, args["alias"].(string), args["workspaceId"].(gqlmodel.ID), args["projectId"].(*gqlmodel.ID)), true
+
+	case "Query.checkSceneAlias":
+		if e.complexity.Query.CheckSceneAlias == nil {
+			break
+		}
+
+		args, err := ec.field_Query_checkSceneAlias_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CheckSceneAlias(childComplexity, args["alias"].(string), args["projectId"].(*gqlmodel.ID)), true
 
 	case "Query.checkStoryAlias":
 		if e.complexity.Query.CheckStoryAlias == nil {
@@ -5037,6 +5057,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Scene.Widgets(childComplexity), true
+
+	case "SceneAliasAvailability.alias":
+		if e.complexity.SceneAliasAvailability.Alias == nil {
+			break
+		}
+
+		return e.complexity.SceneAliasAvailability.Alias(childComplexity), true
+
+	case "SceneAliasAvailability.available":
+		if e.complexity.SceneAliasAvailability.Available == nil {
+			break
+		}
+
+		return e.complexity.SceneAliasAvailability.Available(childComplexity), true
 
 	case "ScenePlugin.plugin":
 		if e.complexity.ScenePlugin.Plugin == nil {
@@ -5560,6 +5594,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Team.Assets(childComplexity, args["projectId"].(*gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
+
+	case "Team.enableToCreatePrivateProject":
+		if e.complexity.Team.EnableToCreatePrivateProject == nil {
+			break
+		}
+
+		return e.complexity.Team.EnableToCreatePrivateProject(childComplexity), true
 
 	case "Team.id":
 		if e.complexity.Team.ID == nil {
@@ -7044,6 +7085,11 @@ type ProjectAliasAvailability {
   available: Boolean!
 }
 
+type SceneAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
 type ProjectMetadataPayload {
   metadata: ProjectMetadata!
 }
@@ -7069,7 +7115,12 @@ extend type Query {
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
+  checkProjectAlias(
+    alias: String!
+    workspaceId: ID!
+    projectId: ID
+  ): ProjectAliasAvailability!
+  checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
   starredProjects(teamId: ID!): ProjectConnection!
   deletedProjects(teamId: ID!): ProjectConnection!
 }
@@ -7986,6 +8037,7 @@ extend type Mutation {
     after: Cursor
     before: Cursor
   ): ProjectConnection!
+  enableToCreatePrivateProject: Boolean!
 }
 
 type TeamMember {
@@ -10604,11 +10656,16 @@ func (ec *executionContext) field_Query_checkProjectAlias_args(ctx context.Conte
 		return nil, err
 	}
 	args["alias"] = arg0
-	arg1, err := ec.field_Query_checkProjectAlias_argsProjectID(ctx, rawArgs)
+	arg1, err := ec.field_Query_checkProjectAlias_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["projectId"] = arg1
+	args["workspaceId"] = arg1
+	arg2, err := ec.field_Query_checkProjectAlias_argsProjectID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["projectId"] = arg2
 	return args, nil
 }
 func (ec *executionContext) field_Query_checkProjectAlias_argsAlias(
@@ -10629,7 +10686,76 @@ func (ec *executionContext) field_Query_checkProjectAlias_argsAlias(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_checkProjectAlias_argsWorkspaceID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.ID, error) {
+	if _, ok := rawArgs["workspaceId"]; !ok {
+		var zeroVal gqlmodel.ID
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
+		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.ID
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_checkProjectAlias_argsProjectID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*gqlmodel.ID, error) {
+	if _, ok := rawArgs["projectId"]; !ok {
+		var zeroVal *gqlmodel.ID
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
+	if tmp, ok := rawArgs["projectId"]; ok {
+		return ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+	}
+
+	var zeroVal *gqlmodel.ID
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_checkSceneAlias_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_checkSceneAlias_argsAlias(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["alias"] = arg0
+	arg1, err := ec.field_Query_checkSceneAlias_argsProjectID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["projectId"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_checkSceneAlias_argsAlias(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["alias"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
+	if tmp, ok := rawArgs["alias"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_checkSceneAlias_argsProjectID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*gqlmodel.ID, error) {
@@ -11536,6 +11662,8 @@ func (ec *executionContext) fieldContext_AddMemberToTeamPayload_team(_ context.C
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -12322,6 +12450,8 @@ func (ec *executionContext) fieldContext_Asset_team(_ context.Context, field gra
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -13555,6 +13685,8 @@ func (ec *executionContext) fieldContext_CreateTeamPayload_team(_ context.Contex
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -15770,6 +15902,8 @@ func (ec *executionContext) fieldContext_Me_teams(_ context.Context, field graph
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -15829,6 +15963,8 @@ func (ec *executionContext) fieldContext_Me_myTeam(_ context.Context, field grap
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -26752,6 +26888,8 @@ func (ec *executionContext) fieldContext_Project_team(_ context.Context, field g
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -33249,7 +33387,7 @@ func (ec *executionContext) _Query_checkProjectAlias(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string), fc.Args["projectId"].(*gqlmodel.ID))
+		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string), fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["projectId"].(*gqlmodel.ID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33290,6 +33428,67 @@ func (ec *executionContext) fieldContext_Query_checkProjectAlias(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_checkProjectAlias_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_checkSceneAlias(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_checkSceneAlias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CheckSceneAlias(rctx, fc.Args["alias"].(string), fc.Args["projectId"].(*gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SceneAliasAvailability)
+	fc.Result = res
+	return ec.marshalNSceneAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSceneAliasAvailability(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_checkSceneAlias(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "alias":
+				return ec.fieldContext_SceneAliasAvailability_alias(ctx, field)
+			case "available":
+				return ec.fieldContext_SceneAliasAvailability_available(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SceneAliasAvailability", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_checkSceneAlias_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -34225,6 +34424,8 @@ func (ec *executionContext) fieldContext_RemoveMemberFromTeamPayload_team(_ cont
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -35406,6 +35607,8 @@ func (ec *executionContext) fieldContext_Scene_team(_ context.Context, field gra
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -35699,6 +35902,94 @@ func (ec *executionContext) fieldContext_Scene_alias(_ context.Context, field gr
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SceneAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SceneAliasAvailability) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SceneAliasAvailability_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SceneAliasAvailability_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SceneAliasAvailability",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SceneAliasAvailability_available(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SceneAliasAvailability) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SceneAliasAvailability_available(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Available, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SceneAliasAvailability_available(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SceneAliasAvailability",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -36495,6 +36786,8 @@ func (ec *executionContext) fieldContext_SignupPayload_team(_ context.Context, f
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -39811,6 +40104,50 @@ func (ec *executionContext) fieldContext_Team_projects(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Team_enableToCreatePrivateProject(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableToCreatePrivateProject, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Team_enableToCreatePrivateProject(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Team",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _TeamMember_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.TeamMember) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_TeamMember_userId(ctx, field)
 	if err != nil {
@@ -40727,6 +41064,8 @@ func (ec *executionContext) fieldContext_UpdateMemberOfTeamPayload_team(_ contex
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -40933,6 +41272,8 @@ func (ec *executionContext) fieldContext_UpdateTeamPayload_team(_ context.Contex
 				return ec.fieldContext_Team_assets(ctx, field)
 			case "projects":
 				return ec.fieldContext_Team_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Team_enableToCreatePrivateProject(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
 		},
@@ -54489,6 +54830,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "checkSceneAlias":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_checkSceneAlias(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "starredProjects":
 			field := field
 
@@ -55373,6 +55736,50 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Scene_alias(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var sceneAliasAvailabilityImplementors = []string{"SceneAliasAvailability"}
+
+func (ec *executionContext) _SceneAliasAvailability(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SceneAliasAvailability) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sceneAliasAvailabilityImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SceneAliasAvailability")
+		case "alias":
+			out.Values[i] = ec._SceneAliasAvailability_alias(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "available":
+			out.Values[i] = ec._SceneAliasAvailability_available(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -56623,6 +57030,11 @@ func (ec *executionContext) _Team(ctx context.Context, sel ast.SelectionSet, obj
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "enableToCreatePrivateProject":
+			out.Values[i] = ec._Team_enableToCreatePrivateProject(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -60005,6 +60417,20 @@ func (ec *executionContext) marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋ
 		return graphql.Null
 	}
 	return ec._Scene(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSceneAliasAvailability2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSceneAliasAvailability(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SceneAliasAvailability) graphql.Marshaler {
+	return ec._SceneAliasAvailability(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSceneAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSceneAliasAvailability(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SceneAliasAvailability) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SceneAliasAvailability(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNScenePlugin2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScenePluginᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.ScenePlugin) graphql.Marshaler {

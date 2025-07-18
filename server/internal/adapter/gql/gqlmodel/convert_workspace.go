@@ -20,11 +20,12 @@ func ToWorkspace(t *workspace.Workspace) *Team {
 	}
 
 	return &Team{
-		ID:       IDFrom(t.ID()),
-		Name:     t.Name(),
-		Personal: t.IsPersonal(),
-		PolicyID: (*ID)(t.Policy()),
-		Members:  members,
+		ID:                           IDFrom(t.ID()),
+		Name:                         t.Name(),
+		Personal:                     t.IsPersonal(),
+		PolicyID:                     (*ID)(t.Policy()),
+		Members:                      members,
+		EnableToCreatePrivateProject: false,
 	}
 }
 

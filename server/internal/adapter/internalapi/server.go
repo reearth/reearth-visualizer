@@ -145,18 +145,41 @@ func (s server) GetProjectByAlias(ctx context.Context, req *pb.GetProjectByAlias
 func (s server) ValidateProjectAlias(ctx context.Context, req *pb.ValidateProjectAliasRequest) (*pb.ValidateProjectAliasResponse, error) {
 	uc := adapter.Usecases(ctx)
 
-	pid := id.ProjectIDFromRef(req.ProjectId)
-	available, err := uc.Project.CheckAlias(ctx, req.Alias, pid)
+	wsid, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	available, err := uc.Project.CheckProjectAlias(ctx, req.Alias, wsid, id.ProjectIDFromRef(req.ProjectId))
 	if err != nil {
 		errorMessage := err.Error()
 		return &pb.ValidateProjectAliasResponse{
-			ProjectId:    req.ProjectId,
+			WorkspaceId:  req.WorkspaceId,
 			Available:    available,
 			ErrorMessage: &errorMessage,
 		}, nil
 	}
 
 	return &pb.ValidateProjectAliasResponse{
+		WorkspaceId: req.WorkspaceId,
+		Available:   available,
+	}, nil
+}
+
+func (s server) ValidateSceneAlias(ctx context.Context, req *pb.ValidateSceneAliasRequest) (*pb.ValidateSceneAliasResponse, error) {
+	uc := adapter.Usecases(ctx)
+
+	available, err := uc.Project.CheckSceneAlias(ctx, req.Alias, id.ProjectIDFromRef(req.ProjectId))
+	if err != nil {
+		errorMessage := err.Error()
+		return &pb.ValidateSceneAliasResponse{
+			ProjectId:    req.ProjectId,
+			Available:    available,
+			ErrorMessage: &errorMessage,
+		}, nil
+	}
+
+	return &pb.ValidateSceneAliasResponse{
 		ProjectId: req.ProjectId,
 		Available: available,
 	}, nil

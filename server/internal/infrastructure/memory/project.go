@@ -228,10 +228,19 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 }
 
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, p := range r.data {
+		if p.ProjectAlias() == newAlias {
+			return alias.ErrExistsStorytellingAlias
+		}
+	}
+
 	return nil
 }
 
-func (r *Project) CheckAliasUnique(ctx context.Context, name string) error {
+func (r *Project) CheckSceneAliasUnique(ctx context.Context, name string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

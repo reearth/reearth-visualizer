@@ -11,7 +11,54 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestInternalAPI_alias(t *testing.T) {
+// export REEARTH_DB=mongodb://localhost
+// go test -v -run TestInternalAPI_projectAlias ./e2e/...
+
+func TestInternalAPI_projectAlias(t *testing.T) {
+	// _, r, _ :=
+	GRPCServer(t, baseSeeder)
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		res, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId:  wID.String(),
+			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
+			Name:         lo.ToPtr("Test Project1"),
+			Description:  lo.ToPtr("Test Description1"),
+			CoreSupport:  lo.ToPtr(true),
+			Visibility:   lo.ToPtr("public"),
+			ProjectAlias: lo.ToPtr("xxxx"),
+		})
+		require.Nil(t, err)
+
+		pj := res.GetProject()
+
+		res2, err := client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+			WorkspaceId: wID.String(),
+			Alias:       "xxxx",
+			ProjectId:   &pj.Id,
+		})
+		require.Nil(t, err)
+		require.Equal(t, res2.Available, true)
+
+		res2, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+			WorkspaceId: wID.String(),
+			Alias:       "xxxx",
+		})
+		require.Nil(t, err)
+		require.Equal(t, *res2.ErrorMessage, "The alias is already in use within the workspace. Please try a different value.")
+
+		res2, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+			WorkspaceId: wID.String(),
+			Alias:       "test/xxxx",
+			ProjectId:   &pj.Id,
+		})
+		require.Nil(t, err)
+		require.Equal(t, *res2.ErrorMessage, "Invalid alias name: {{.aliasName}}")
+	})
+}
+
+func TestInternalAPI_sceneAlias(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
@@ -33,21 +80,21 @@ func TestInternalAPI_alias(t *testing.T) {
 
 		// allow case
 		//----------------------------
-		allowRes, err := client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		allowRes, err := client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj1.Id,
 			Alias:     pj1.SceneId, // self SceneId => OK
 		})
 		require.Nil(t, err)
 		require.Equal(t, allowRes.Available, true)
 
-		allowRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		allowRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj1.Id,
 			Alias:     res1.Project.Alias, // self Alias => OK
 		})
 		require.Nil(t, err)
 		require.Equal(t, allowRes.Available, true)
 
-		allowRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		allowRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj1.Id,
 			Alias:     "xxxxxxxxxx", // uniq Alias => OK
 		})
@@ -56,14 +103,14 @@ func TestInternalAPI_alias(t *testing.T) {
 
 		// forbidden case
 		//----------------------------
-		forbiddenRes, err := client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		forbiddenRes, err := client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj1.Id,
 			Alias:     "c-xxxxxxx", // NG
 		})
 		require.Nil(t, err)
 		require.Equal(t, forbiddenRes.Available, false)
 
-		forbiddenRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		forbiddenRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj1.Id,
 			Alias:     "s-xxxxxxx", // NG
 		})
@@ -72,7 +119,7 @@ func TestInternalAPI_alias(t *testing.T) {
 
 		// forbidden case (anonymous)
 		//----------------------------
-		forbiddenRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		forbiddenRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: nil,
 			Alias:     pj1.SceneId, // NG
 		})
@@ -97,14 +144,14 @@ func TestInternalAPI_alias(t *testing.T) {
 
 		// forbidden case
 		//----------------------------
-		forbiddenRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		forbiddenRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj2.Id,
 			Alias:     pj1.SceneId, // NG
 		})
 		require.Nil(t, err)
 		require.Equal(t, forbiddenRes.Available, false)
 
-		forbiddenRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		forbiddenRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj2.Id,
 			Alias:     res1.Project.Alias, // NG
 		})
@@ -125,14 +172,14 @@ func TestInternalAPI_alias(t *testing.T) {
 		require.Nil(t, err)
 		require.Equal(t, "xxxxxxxxxx", pj.Alias())
 
-		allowRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		allowRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj1.Id,
 			Alias:     "xxxxxxxxxx", // project1 xxxxxxxxxx => OK
 		})
 		require.Nil(t, err)
 		require.Equal(t, allowRes.Available, true)
 
-		forbiddenRes, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
+		forbiddenRes, err = client.ValidateSceneAlias(ctx, &pb.ValidateSceneAliasRequest{
 			ProjectId: &pj2.Id,
 			Alias:     "xxxxxxxxxx", // project2 xxxxxxxxxx => NG
 		})

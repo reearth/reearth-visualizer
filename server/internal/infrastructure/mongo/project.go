@@ -566,7 +566,7 @@ func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.
 	return nil
 }
 
-func (r *Project) CheckAliasUnique(ctx context.Context, newAlias string) error {
+func (r *Project) CheckSceneAliasUnique(ctx context.Context, newAlias string) error {
 	sceneId := newAlias
 	if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
 		sceneId = newAlias[2:]

@@ -34,7 +34,7 @@ func TestCheckAliasPattern(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			err := alias.CheckProjectAliasPattern(tt.alias)
+			err := alias.CheckAliasPatternScene(tt.alias)
 			if tt.expected {
 				assert.NoError(t, err)
 			} else {
