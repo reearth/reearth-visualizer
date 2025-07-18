@@ -533,7 +533,7 @@ func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid a
 
 	ok := util.IsSafePathName(newAlias)
 	if !ok {
-		return false, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", "")
+		return false, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
 	}
 
 	err := i.projectRepo.CheckProjectAliasUnique(ctx, wsid, newAlias, pid)

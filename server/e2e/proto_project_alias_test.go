@@ -54,7 +54,7 @@ func TestInternalAPI_projectAlias(t *testing.T) {
 			ProjectId:   &pj.Id,
 		})
 		require.Nil(t, err)
-		require.Equal(t, *res2.ErrorMessage, "Invalid alias name")
+		require.Equal(t, *res2.ErrorMessage, "Invalid alias name: {{.aliasName}}")
 	})
 }
 
