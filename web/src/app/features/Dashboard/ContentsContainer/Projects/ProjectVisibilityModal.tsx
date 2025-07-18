@@ -44,7 +44,7 @@ const ProjectVisibilityModal: FC<Props> = ({
               size="normal"
               title={t("Confirm visibility")}
               appearance="primary"
-              disabled={projectVisibility === visibility|| projectVisibility === "private"}
+              disabled={projectVisibility === visibility || projectVisibility === "private"}
               onClick={() => onProjectVisibilityChange(projectVisibility)}
             />
           </>

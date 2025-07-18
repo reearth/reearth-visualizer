@@ -42,7 +42,7 @@ type FormState = {
   license?: string;
 };
 
-const getLicenseContent = (value?: string): string => {
+const getLicenseContent = (value?: string): string | undefined => {
   return license_content[value as keyof typeof license_content];
 };
 

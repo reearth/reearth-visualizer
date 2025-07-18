@@ -72,7 +72,7 @@ const GeneralSettings: FC<Props> = ({
   );
 
     const handleProjectAliasChange = useCallback(
-      (value:string) => {
+      (value: string) => {
         setLocalAlias(value);
         setWarning("");
       },
