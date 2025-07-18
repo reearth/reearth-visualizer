@@ -17,6 +17,7 @@ import TextAreaField from "@reearth/app/ui/fields/TextareaField";
 import { useProjectFetcher } from "@reearth/services/api";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
+import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
@@ -55,6 +56,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 
   const { projectVisibility } = appFeature();
   const { checkProjectAlias } = useProjectFetcher();
+  const [currentWorkspace] = useWorkspace();
 
   const [formState, setFormState] = useState<FormState>({
     projectName: "",
@@ -68,9 +70,13 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   const projectVisibilityOptions = useMemo(
     () => [
       { value: "public", label: t("Public") },
-      { value: "private", label: t("Private") }
+      {
+        value: "private",
+        label: t("Private"),
+        disabled: !currentWorkspace?.enableToCreatePrivateProject
+      }
     ],
-    [t]
+    [t, currentWorkspace?.enableToCreatePrivateProject]
   );
 
   const handleOnChange = useCallback(
@@ -81,9 +87,14 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   );
 
   const handleProjectAliasCheck = useCallback(
-    async (value: string) => {
-      handleOnChange("projectAlias", value);
-      const result = await checkProjectAlias?.(value);
+    async (alias: string) => {
+      if (!currentWorkspace) return;
+      handleOnChange("projectAlias", alias);
+      const result = await checkProjectAlias?.(
+        alias,
+        currentWorkspace?.id,
+        undefined
+      );
       if (!result?.available) {
         const description = result?.errors?.find(
           (e) => e?.extensions?.description
@@ -92,7 +103,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
         setWarning(description as string);
       } else setWarning("");
     },
-    [checkProjectAlias, handleOnChange]
+    [checkProjectAlias, currentWorkspace, handleOnChange]
   );
 
   const onSubmit = useCallback(() => {

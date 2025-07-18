@@ -38,8 +38,8 @@ export const GET_PROJECTS = gql(`
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`
-  query CheckProjectAlias($alias: String!, $projectId: ID) {
-    checkProjectAlias(alias: $alias, projectId: $projectId) {
+  query CheckProjectAlias($alias: String!, $workspaceId: ID!, $projectId: ID) {
+    checkProjectAlias(alias: $alias, workspaceId:$workspaceId, projectId: $projectId) {
       alias
       available
     }

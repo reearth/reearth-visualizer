@@ -5,7 +5,12 @@ import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 export type RadioGroupProps = {
   layout?: "vertical" | "horizontal";
   value?: string;
-  options?: { value: string; label?: string; children?: ReactNode }[];
+  options?: {
+    value: string;
+    label?: string;
+    children?: ReactNode;
+    disabled?: boolean;
+  }[];
   onChange?: (value: string) => void;
   ariaLabelledby?: string;
   dataTestid?: string;
@@ -46,6 +51,7 @@ export const RadioGroup: FC<RadioGroupProps> = ({
           key={index}
           value={option.value}
           label={option.label}
+          disabled={option.disabled}
           checked={option.value === currentValue}
           content={option.children}
           onChange={handleValueChange}

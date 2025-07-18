@@ -1,9 +1,16 @@
-import { useQuery } from "@apollo/client";
-import { GET_SCENE } from "@reearth/services/gql/queries/scene";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import {
+  CHECK_SCENE_ALIAS,
+  GET_SCENE
+} from "@reearth/services/gql/queries/scene";
 import { useCallback, useMemo } from "react";
 
-import { Scene as GqlScene } from "../gql";
-import { useLang } from "../i18n";
+import {
+  Scene as GqlScene,
+  HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION
+} from "../gql";
+import { useLang, useT } from "../i18n";
+import { useNotification } from "../state";
 
 import { PluginExtensionType } from "./pluginsApi";
 
@@ -55,6 +62,8 @@ export type Scene = Omit<
 
 export default () => {
   const lang = useLang();
+  const t = useT();
+  const [, setNotification] = useNotification();
 
   const useSceneQuery = useCallback(
     ({ sceneId }: SceneQueryProps) => {
@@ -85,7 +94,43 @@ export default () => {
     [lang]
   );
 
+  const [fetchCheckSceneAlias] = useLazyQuery(CHECK_SCENE_ALIAS, {
+    fetchPolicy: "network-only" // Disable caching for this query
+  });
+
+  const checkSceneAlias = useCallback(
+    async (alias: string, projectId?: string) => {
+      if (!alias) return null;
+
+      const { data, errors } = await fetchCheckSceneAlias({
+        variables: { alias, projectId },
+        errorPolicy: "all",
+        context: {
+          headers: {
+            [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
+          }
+        }
+      });
+
+      if (errors || !data?.checkSceneAlias) {
+        return { status: "error", errors };
+      }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully checked alias!")
+      });
+      return {
+        available: data?.checkSceneAlias.available,
+        alias: data?.checkSceneAlias.alias,
+        status: "success"
+      };
+    },
+    [fetchCheckSceneAlias, setNotification, t]
+  );
+
   return {
-    useSceneQuery
+    useSceneQuery,
+    checkSceneAlias
   };
 };

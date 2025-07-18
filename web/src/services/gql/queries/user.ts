@@ -31,6 +31,7 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
+        enableToCreatePrivateProject
       }
       teams {
         id
@@ -55,6 +56,7 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
+      enableToCreatePrivateProject
       }
       auths
     }

@@ -41,6 +41,7 @@ type Props = {
     visibility?: string;
   };
   disabled?: boolean;
+  workspaceId: string;
   onUpdateProject: (settings: GeneralSettingsType) => void;
   onProjectRemove: () => void;
 };
@@ -48,6 +49,7 @@ type Props = {
 const GeneralSettings: FC<Props> = ({
   project,
   disabled,
+  workspaceId,
   onUpdateProject,
   onProjectRemove
 }) => {
@@ -80,7 +82,7 @@ const GeneralSettings: FC<Props> = ({
   const handleProjectAliasUpdate = useCallback(
     async (projectAlias: string) => {
       if (!project) return;
-      const result = await checkProjectAlias?.(localAlias, project?.id);
+      const result = await checkProjectAlias?.(localAlias, workspaceId, project?.id);
 
       if (!result?.available) {
         const description = result?.errors?.find(
@@ -95,7 +97,7 @@ const GeneralSettings: FC<Props> = ({
         });
       }
     },
-    [project, checkProjectAlias, localAlias, onUpdateProject]
+    [project, checkProjectAlias, localAlias, workspaceId, onUpdateProject]
   );
 
   const handleDescriptionUpdate = useCallback(
@@ -163,7 +165,7 @@ const GeneralSettings: FC<Props> = ({
               data-testid="project-name-input"
             />
             <InputField
-              title={t("Project alias")}
+              title={t("Project Alias *")}
               value={project.projectAlias}
               onChange={handleProjectAliasChange}
               onChangeComplete={handleProjectAliasUpdate}

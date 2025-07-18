@@ -79,7 +79,7 @@ const ZoomLevelField: FC<ZoomLevelFieldProps> = ({
           {open && (
             <EditPanel
               value={value}
-              description={description}
+              description={description as string}
               onClose={handleClose}
               onSave={onChange}
               {...props}

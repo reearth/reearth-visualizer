@@ -131,11 +131,11 @@ export default () => {
   });
 
   const checkProjectAlias = useCallback(
-    async (alias: string, projectId?: string) => {
+    async (alias: string, workspaceId: string, projectId?: string) => {
       if (!alias) return null;
 
       const { data, errors } = await fetchCheckProjectAlias({
-        variables: { alias, projectId },
+        variables: { alias, workspaceId, projectId },
         errorPolicy: "all",
         context: {
           headers: {
