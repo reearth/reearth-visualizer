@@ -7,6 +7,7 @@ export const GET_SCENE = gql(`
       ... on Scene {
         teamId
         projectId
+        alias
         property {
           id
           ...PropertyFragment

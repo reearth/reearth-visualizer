@@ -8,6 +8,7 @@ export const GET_PROJECT = gql(`
         ...ProjectFragment
         scene {
           id
+          alias
         }
       }
     }
@@ -23,6 +24,7 @@ export const GET_PROJECTS = gql(`
           ...ProjectFragment
           scene {
             id
+            alias
           }
         }
       }
