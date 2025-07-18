@@ -26,6 +26,7 @@ query GetMe {
         assetStorageSize
         __typename
       }
+      enableToCreatePrivateProject
       __typename
     }
     teams {
@@ -82,6 +83,8 @@ func TestMe(t *testing.T) {
 	me.Object().HasValue("email", uEmail)
 	me.Object().HasValue("id", uID.String())
 	me.Object().HasValue("name", uName)
+
+	me.Path("$.myTeam.enableToCreatePrivateProject").IsEqual(false)
 
 	me.Path("$.teams[0].enableToCreatePrivateProject").IsEqual(false)
 
