@@ -6,7 +6,7 @@
         "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
       },
       "invalid_project_alias": {
-        "message": "不正なエイリアス名です",
+        "message": "不正なエイリアス名です: {{.aliasName}}",
         "description": "入力されたエイリアスに使用できない文字が含まれています。"
       },
       "project_alias_already_exists": {

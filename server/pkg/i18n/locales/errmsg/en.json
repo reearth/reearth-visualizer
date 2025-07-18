@@ -6,7 +6,7 @@
         "description": "The alias '{{.aliasName}}' must be {{.minLength}}-{{.maxLength}} characters long and can only contain {{.allowedChars}}."
       },
       "invalid_project_alias": {
-        "message": "Invalid alias name",
+        "message": "Invalid alias name: {{.aliasName}}",
         "description": "The entered alias contains characters that are not allowed."
       },
       "project_alias_already_exists": {
