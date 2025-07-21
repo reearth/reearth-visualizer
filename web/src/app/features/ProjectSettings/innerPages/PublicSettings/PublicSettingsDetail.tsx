@@ -93,6 +93,16 @@ const PublicSettingsDetail: React.FC<Props> = ({
       ...localBasicAuthorization
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
+  const handleBasicAuthEnableChange = useCallback(
+    (isBasicAuthActive: boolean) => {
+      setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
+      onUpdateBasicAuth({
+        ...localBasicAuthorization,
+        isBasicAuthActive
+      });
+    },
+    [localBasicAuthorization, onUpdateBasicAuth]
+  );
 
   const [localGA, setLocalGA] = useState<PublicGASettingsType>({
     enableGa: settingsItem.enableGa,
@@ -100,9 +110,9 @@ const PublicSettingsDetail: React.FC<Props> = ({
   });
 
   //TODO: Removed after investigation
-  const hideGASettings = true;
+  const hideGASettings = false;
 
-  const handleSubmitGA = useCallback(() => {
+  const handleTrackingIdChange = useCallback(() => {
     if (onUpdateGA) {
       onUpdateGA({
         enableGa: localGA.enableGa,
@@ -110,6 +120,19 @@ const PublicSettingsDetail: React.FC<Props> = ({
       });
     }
   }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
+
+  const handleGAEnableChange = useCallback(
+    (enableGa: boolean) => {
+      setLocalGA((s) => ({ ...s, enableGa }));
+      if (onUpdateGA) {
+        onUpdateGA({
+          enableGa,
+          trackingId: localGA.trackingId
+        });
+      }
+    },
+    [localGA.trackingId, onUpdateGA]
+  );
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -284,9 +307,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         <SwitchField
           title={t("Enable Basic Authorization")}
           value={localBasicAuthorization.isBasicAuthActive}
-          onChange={(isBasicAuthActive) => {
-            setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
-          }}
+          onChange={handleBasicAuthEnableChange}
         />
         {localBasicAuthorization.isBasicAuthActive && (
           <>
@@ -319,9 +340,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <SwitchField
             title={t("Enable Google Analytics")}
             value={localGA.enableGa ?? false}
-            onChange={(enableGa: boolean) => {
-              setLocalGA((s) => ({ ...s, enableGa }));
-            }}
+            onChange={handleGAEnableChange}
           />
           {localGA.enableGa && (
             <InputField
@@ -330,7 +349,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
               onChange={(trackingId: string) => {
                 setLocalGA((s) => ({ ...s, trackingId }));
               }}
-              onChangeComplete={handleSubmitGA}
+              onChangeComplete={handleTrackingIdChange}
             />
           )}
         </SettingsFields>
