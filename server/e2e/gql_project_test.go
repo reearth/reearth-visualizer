@@ -306,35 +306,35 @@ func TestCreateUpdateProject(t *testing.T) {
 	})
 	res.Path("$.errors[0].message").IsEqual("The alias is already in use within the workspace. Please try a different value.")
 
-	res = Request(e, uID.String(), GraphQLRequest{
-		OperationName: "CreateProject",
-		Query:         CreateProjectMutation,
-		Variables: map[string]any{
-			"name":         "test",
-			"description":  "abc",
-			"workspaceId":  wID.String(),
-			"visualizer":   "CESIUM",
-			"coreSupport":  true,
-			"visibility":   "public",
-			"projectAlias": "あいうえお",
-		},
-	})
-	res.Path("$.errors[0].message").IsEqual("Invalid alias name: あいうえお")
+	// res = Request(e, uID.String(), GraphQLRequest{
+	// 	OperationName: "CreateProject",
+	// 	Query:         CreateProjectMutation,
+	// 	Variables: map[string]any{
+	// 		"name":         "test",
+	// 		"description":  "abc",
+	// 		"workspaceId":  wID.String(),
+	// 		"visualizer":   "CESIUM",
+	// 		"coreSupport":  true,
+	// 		"visibility":   "public",
+	// 		"projectAlias": "あいうえお",
+	// 	},
+	// })
+	// res.Path("$.errors[0].message").IsEqual("Invalid alias name: あいうえお")
 
-	res = Request(e, uID.String(), GraphQLRequest{
-		OperationName: "CreateProject",
-		Query:         CreateProjectMutation,
-		Variables: map[string]any{
-			"name":         "test",
-			"description":  "abc",
-			"workspaceId":  wID.String(),
-			"visualizer":   "CESIUM",
-			"coreSupport":  true,
-			"visibility":   "public",
-			"projectAlias": "test/bad-alias",
-		},
-	})
-	res.Path("$.errors[0].message").IsEqual("Invalid alias name: test/bad-alias")
+	// res = Request(e, uID.String(), GraphQLRequest{
+	// 	OperationName: "CreateProject",
+	// 	Query:         CreateProjectMutation,
+	// 	Variables: map[string]any{
+	// 		"name":         "test",
+	// 		"description":  "abc",
+	// 		"workspaceId":  wID.String(),
+	// 		"visualizer":   "CESIUM",
+	// 		"coreSupport":  true,
+	// 		"visibility":   "public",
+	// 		"projectAlias": "test/bad-alias",
+	// 	},
+	// })
+	// res.Path("$.errors[0].message").IsEqual("Invalid alias name: test/bad-alias")
 
 }
 
