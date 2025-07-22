@@ -1160,18 +1160,12 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	newProjectAlias := alias.ReservedReearthPrefixProject + prjID.String()
 	if input.ProjectAlias != nil {
-
 		newProjectAlias = *input.ProjectAlias
+	}
 
-		err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
-		if err != nil {
-			return nil, err
-		}
-
-		ok := util.IsSafePathName(newProjectAlias)
-		if !ok {
-			return nil, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newProjectAlias)
-		}
+	err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
+	if err != nil {
+		return nil, err
 	}
 
 	prj.ProjectAlias(newProjectAlias)
