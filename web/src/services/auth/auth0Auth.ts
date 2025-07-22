@@ -2,6 +2,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { logOutFromTenant } from "@reearth/services/config";
 import { useEffect } from "react";
 
+import { appFeature } from "../config/appFeatureConfig";
+
 import type { AuthHook } from "./authHook";
 
 export const errorKey = "reeartherror";
@@ -40,7 +42,15 @@ export const useAuth0Auth = (): AuthHook => {
     getAccessToken: () => getAccessTokenSilently(),
     login: () => {
       logOutFromTenant();
-      return loginWithRedirect();
+      const authorizationParams = appFeature().externalAuth0Signup
+        ? {}
+        : {
+            authorizationParams: {
+              screen_hint: "login"
+            }
+          };
+
+      return loginWithRedirect(authorizationParams);
     },
     logout: () => {
       logOutFromTenant();

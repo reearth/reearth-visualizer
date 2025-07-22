@@ -12,7 +12,7 @@ const Welcome: FC = () => {
   const currentUrl = window.location.href;
   const linkDisabled = !config()?.platformUrl;
   const platformUrl = `${config()?.platformUrl}`;
-  const signupUrl = `${config()?.platformUrl}/login?from=${currentUrl}`;
+  const signupUrl = `${config()?.platformUrl}/login?from=${currentUrl}&action=signup`;
 
   return (
     <Wrapper>
