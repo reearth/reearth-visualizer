@@ -42,15 +42,15 @@ export const useAuth0Auth = (): AuthHook => {
     getAccessToken: () => getAccessTokenSilently(),
     login: () => {
       logOutFromTenant();
-      return loginWithRedirect({
-        ...(appFeature().externalAuth0Signup
-          ? {}
-          : {
-              authorizationParams: {
-                screen_hint: "login"
-              }
-            })
-      });
+      const authorizationParams = appFeature().externalAuth0Signup
+        ? {}
+        : {
+            authorizationParams: {
+              screen_hint: "login"
+            }
+          };
+
+      return loginWithRedirect(authorizationParams);
     },
     logout: () => {
       logOutFromTenant();
