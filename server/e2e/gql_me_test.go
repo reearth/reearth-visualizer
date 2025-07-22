@@ -12,7 +12,7 @@ query GetMe {
     email
     lang
     theme
-    myTeam {
+    myWorkspace {
       id
       name
       policyId
@@ -29,7 +29,7 @@ query GetMe {
       enableToCreatePrivateProject
       __typename
     }
-    teams {
+    workspaces {
       id
       name
       personal
@@ -84,8 +84,8 @@ func TestMe(t *testing.T) {
 	me.Object().HasValue("id", uID.String())
 	me.Object().HasValue("name", uName)
 
-	me.Path("$.myTeam.enableToCreatePrivateProject").IsEqual(false)
+	me.Path("$.myWorkspace.enableToCreatePrivateProject").IsEqual(false)
 
-	me.Path("$.teams[0].enableToCreatePrivateProject").IsEqual(false)
+	me.Path("$.workspaces[0].enableToCreatePrivateProject").IsEqual(false)
 
 }
