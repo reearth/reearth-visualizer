@@ -5,6 +5,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
+// TODO: REMOVE THIS FILE later
+
 const Welcome: FC = () => {
   const { login } = useAuth();
   const t = useT();
