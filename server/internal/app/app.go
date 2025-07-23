@@ -232,6 +232,9 @@ func errorMessage(err error, log func(string, ...interface{})) (int, string) {
 
 func privateCache(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
+		if next == nil {
+			return echo.NewHTTPError(http.StatusInternalServerError, "middleware chain broken: next is nil")
+		}
 		c.Response().Header().Set(echo.HeaderCacheControl, "private, no-store, no-cache, must-revalidate")
 		return next(c)
 	}
