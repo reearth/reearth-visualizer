@@ -321,6 +321,16 @@ func TestInternalAPI_unit(t *testing.T) {
 				CoreSupport: lo.ToPtr(true),
 				Visibility:  lo.ToPtr("public"),
 			})
+		createProjectInternal(
+			t, ctx, r, client, "public",
+			&pb.CreateProjectRequest{
+				WorkspaceId: testWorkspace,
+				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+				Name:        lo.ToPtr("Test Project1"),
+				Description: lo.ToPtr("Test Description1"),
+				CoreSupport: lo.ToPtr(true),
+				Visibility:  lo.ToPtr("public"),
+			})
 		UpdateProjectMetadata(
 			t, ctx, r, client,
 			&pb.UpdateProjectMetadataRequest{
@@ -335,11 +345,12 @@ func TestInternalAPI_unit(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res.Projects))
+		assert.Equal(t, 2, len(res.Projects))
 
 		for _, pj := range res.Projects {
-			checkProjectFields(t, pj)
-			// PbDump(pj)
+			if pj.Id == pid.String() {
+				checkProjectFields(t, pj)
+			}
 		}
 
 		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
@@ -403,6 +414,8 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	assert.Contains(t, m, "stories")
 	stories, ok := m["stories"].([]any)
 	assert.True(t, ok, "stories should be an array")
+
+	assert.Equal(t, 1, len(stories))
 
 	if len(stories) > 0 {
 		story, ok := stories[0].(map[string]any)

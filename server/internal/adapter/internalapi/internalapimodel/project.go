@@ -94,13 +94,15 @@ func ToInternalProject(ctx context.Context, p *project.Project, storytellings *s
 	if storytellings != nil {
 		for _, st := range *storytellings {
 			storyPublishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
-			s := &pb.Story{
-				Id:                     st.Id().String(),
-				StoryAlias:             st.Alias(),
-				StoryPublishmentStatus: ToStoryPublishmentStatus(st.PublishmentStatus()),
-				StoryPublishedUrl:      &storyPublishedUrl,
+			if p.Scene().String() == st.Scene().String() {
+				s := &pb.Story{
+					Id:                     st.Id().String(),
+					StoryAlias:             st.Alias(),
+					StoryPublishmentStatus: ToStoryPublishmentStatus(st.PublishmentStatus()),
+					StoryPublishedUrl:      &storyPublishedUrl,
+				}
+				stories = append(stories, s)
 			}
-			stories = append(stories, s)
 		}
 	}
 
