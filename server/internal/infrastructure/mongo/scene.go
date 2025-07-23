@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	sceneIndexes       = []string{"project", "team"}
+	sceneIndexes       = []string{"project", "workspace"}
 	sceneUniqueIndexes = []string{"id"}
 )
 
@@ -90,7 +90,7 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}
 	res, err := r.find(ctx, bson.M{
-		"team": bson.M{"$in": user.WorkspaceIDList(workspaces2).Strings()},
+		"workspace": bson.M{"$in": user.WorkspaceIDList(workspaces2).Strings()},
 	})
 	if err != nil && err != mongo.ErrNilDocument && err != mongo.ErrNoDocuments {
 		return nil, err
@@ -107,7 +107,11 @@ func (r *Scene) Save(ctx context.Context, scene *scene.Scene) error {
 }
 
 func (r *Scene) Remove(ctx context.Context, id id.SceneID) error {
-	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
+	writeFilter := applyWorkspaceFilter(bson.M{
+		"id": id.String(),
+	}, r.f.Writable)
+
+	return r.client.RemoveOne(ctx, writeFilter)
 }
 
 func (r *Scene) count(ctx context.Context, filter interface{}) (int64, error) {
@@ -128,12 +132,4 @@ func (r *Scene) findOne(ctx context.Context, filter any) (*scene.Scene, error) {
 		return nil, err
 	}
 	return c.Result[0], nil
-}
-
-// func (r *Scene) readFilter(filter any) any {
-// 	return applyTeamFilter(filter, r.f.Readable)
-// }
-
-func (r *Scene) writeFilter(filter any) any {
-	return applyTeamFilter(filter, r.f.Writable)
 }

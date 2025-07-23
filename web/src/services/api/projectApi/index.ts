@@ -71,7 +71,7 @@ export default () => {
   const useProjectsQuery = useCallback((input: GetProjectsQueryVariables) => {
     const { data, networkStatus, ...rest } = useQuery(GET_PROJECTS, {
       variables: input,
-      skip: !input.teamId,
+      skip: !input.workspaceId,
       notifyOnNetworkStatusChange: true
     });
 
@@ -98,10 +98,10 @@ export default () => {
     return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
   }, []);
 
-  const useStarredProjectsQuery = useCallback((teamId?: string) => {
+  const useStarredProjectsQuery = useCallback((workspaceId?: string) => {
     const { data, ...rest } = useQuery(GET_STARRED_PROJECTS, {
-      variables: { teamId: teamId ?? "" },
-      skip: !teamId
+      variables: { workspaceId: workspaceId ?? "" },
+      skip: !workspaceId
     });
 
     const starredProjects = useMemo(
@@ -112,10 +112,10 @@ export default () => {
     return { starredProjects, ...rest };
   }, []);
 
-  const useDeletedProjectsQuery = useCallback((teamId?: string) => {
+  const useDeletedProjectsQuery = useCallback((workspaceId?: string) => {
     const { data, ...rest } = useQuery(GET_DELETED_PROJECTS, {
-      variables: { teamId: teamId ?? "" },
-      skip: !teamId
+      variables: { workspaceId: workspaceId ?? "" },
+      skip: !workspaceId
     });
 
     const deletedProjects = useMemo(
@@ -183,7 +183,7 @@ export default () => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
           variables: {
-            teamId: workspaceId,
+            workspaceId: workspaceId,
             visualizer,
             name,
             description: description ?? "",
@@ -621,7 +621,7 @@ export default () => {
   );
 
   const useImportProject = useCallback(
-    async (file: File, teamId: string) => {
+    async (file: File, workspaceId: string) => {
       const CHUNK_CONCURRENCY = 4;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
       const fileId = uuidv4();
@@ -635,7 +635,7 @@ export default () => {
         const formData = new FormData();
         formData.append("file", chunk, `${file.name}.part${chunkNum}`);
         formData.append("file_id", fileId);
-        formData.append("team_id", teamId);
+        formData.append("workspace_id", workspaceId);
         formData.append("chunk_num", chunkNum.toString());
         formData.append("total_chunks", totalChunks.toString());
 

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
-export const GetTeamsDocument = gql`
-  fragment Team on Team {
+export const GetWorkspacesDocument = gql`
+  fragment Workspace on Workspace {
     id
     name
     members {
@@ -26,17 +26,17 @@ export const GetTeamsDocument = gql`
     }
   }
 
-  query GetTeams {
+  query GetWorkspaces {
     me {
       id
       name
-      myTeam {
+      myWorkspace {
         id
-        ...Team
+        ...Workspace
       }
-      teams {
+      workspaces {
         id
-        ...Team
+        ...Workspace
       }
     }
   }

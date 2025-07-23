@@ -50,10 +50,10 @@ export type Scene = Omit<
   | "tags"
   | "tagIds"
   | "updatedAt"
-  | "teamId"
+  | "workspaceId"
   | "propertyId"
   | "project"
-  | "team"
+  | "workspace"
   | "rootLayer"
   | "__typename"
 > & {
@@ -82,7 +82,7 @@ export default () => {
               newLayers: data.node.newLayers,
               stories: data.node.stories,
               styles: data.node.styles,
-              workspaceId: data.node.teamId,
+              workspaceId: data.node.workspaceId,
               widgetAlignSystem: data.node.widgetAlignSystem,
               widgets: data.node.widgets
             } as Scene)

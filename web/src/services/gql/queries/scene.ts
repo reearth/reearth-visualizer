@@ -5,7 +5,7 @@ export const GET_SCENE = gql(`
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
-        teamId
+        workspaceId
         projectId
         property {
           id

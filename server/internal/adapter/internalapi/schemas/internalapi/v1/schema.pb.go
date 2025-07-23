@@ -1200,7 +1200,7 @@ func (x *ValidateSceneAliasRequest) GetAlias() string {
 }
 
 // Creates a new project.
-// Cannot be created under a team the user does not belong to.
+// Cannot be created under a workspace the user does not belong to.
 type CreateProjectRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Workspace ID
@@ -1602,7 +1602,7 @@ func (x *PublishProjectRequest) GetPublishmentStatus() PublishmentStatus {
 }
 
 // Updates a new project metadata.
-// Cannot be updated under a team the user does not belong to.
+// Cannot be updated under a workspace the user does not belong to.
 type UpdateProjectMetadataRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Project ID

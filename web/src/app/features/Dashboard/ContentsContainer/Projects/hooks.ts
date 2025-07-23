@@ -64,7 +64,7 @@ export default (workspaceId?: string) => {
     fetchMore,
     refetch
   } = useProjectsQuery({
-    teamId: workspaceId || "",
+    workspaceId: workspaceId || "",
     pagination: {
       first: pagination(sortValue).first
     },
@@ -80,25 +80,24 @@ export default (workspaceId?: string) => {
       .map<Project | undefined>((project) =>
         project
           ? {
-            id: project.id,
-            description: project.description,
-            name: project.name,
-            teamId: project.teamId,
-            imageUrl: project.imageUrl,
-            isArchived: project.isArchived,
-            status: toPublishmentStatus(project.publishmentStatus),
-            sceneId: project.scene?.id,
-            updatedAt: new Date(project.updatedAt),
-            createdAt: new Date(project.createdAt),
-            coreSupport: project.coreSupport,
-            starred: project.starred,
-            isDeleted: project.isDeleted,
-            isPublished:
-              project.publishmentStatus === "PUBLIC" ||
-              project.publishmentStatus === "LIMITED",
-            metadata: project?.metadata,
-            visibility: project.visibility
-          }
+              id: project.id,
+              description: project.description,
+              name: project.name,
+              workspaceId: project.workspaceId,
+              imageUrl: project.imageUrl,
+              isArchived: project.isArchived,
+              status: toPublishmentStatus(project.publishmentStatus),
+              sceneId: project.scene?.id,
+              updatedAt: new Date(project.updatedAt),
+              createdAt: new Date(project.createdAt),
+              coreSupport: project.coreSupport,
+              starred: project.starred,
+              isDeleted: project.isDeleted,
+              isPublished:
+                project.publishmentStatus === "PUBLIC" ||
+                project.publishmentStatus === "LIMITED",
+              metadata: project?.metadata
+            }
           : undefined
       )
       .filter((project): project is Project => !!project);

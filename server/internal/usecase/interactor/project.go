@@ -1163,7 +1163,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		newProjectAlias = *input.ProjectAlias
 	}
 
-	_, err = i.CheckProjectAlias(ctx, newProjectAlias, input.WorkspaceID, nil)
+	err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
 	if err != nil {
 		return nil, err
 	}

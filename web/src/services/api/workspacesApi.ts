@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import {
   AddMemberToWorkspaceMutationVariables,
-  CreateTeamPayload,
+  CreateWorkspacePayload,
   CreateWorkspaceMutationVariables,
   DeleteWorkspaceMutationVariables,
   RemoveMemberFromWorkspaceMutationVariables,
@@ -24,7 +24,7 @@ import { useNotification } from "../state";
 
 import { MutationReturn } from "./types";
 
-export type Team = CreateTeamPayload["team"];
+export type Workspace = CreateWorkspacePayload["workspace"];
 
 export default () => {
   const t = useT();
@@ -32,7 +32,7 @@ export default () => {
 
   const useWorkspaceQuery = useCallback((workspaceId?: string) => {
     const { data, ...rest } = useQuery(GET_ME);
-    const workspace = data?.me?.teams.find((t) => t.id === workspaceId);
+    const workspace = data?.me?.workspaces.find((t) => t.id === workspaceId);
 
     return { workspace, ...rest };
   }, []);
@@ -40,7 +40,7 @@ export default () => {
   const useWorkspacesQuery = useCallback(() => {
     const { data, ...rest } = useQuery(GET_ME);
 
-    return { workspaces: data?.me?.teams, ...rest };
+    return { workspaces: data?.me?.workspaces, ...rest };
   }, []);
 
   const [createWorkspaceMutation] = useMutation(CREATE_WORKSPACE, {
@@ -49,11 +49,11 @@ export default () => {
   const useCreateWorkspace = useCallback(
     async (
       props: CreateWorkspaceMutationVariables
-    ): Promise<MutationReturn<Partial<Team>>> => {
+    ): Promise<MutationReturn<Partial<Workspace>>> => {
       const { data, errors } = await createWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.createTeam) {
+      if (errors || !data?.createWorkspace) {
         console.log("GraphQL: Failed to create workspace", errors);
         setNotification({
           type: "error",
@@ -67,7 +67,7 @@ export default () => {
         type: "success",
         text: t("Successfully created workspace!")
       });
-      return { data: data.createTeam.team, status: "success" };
+      return { data: data.createWorkspace.workspace, status: "success" };
     },
     [createWorkspaceMutation, setNotification, t]
   );
@@ -82,7 +82,7 @@ export default () => {
       const { data, errors } = await deleteWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.deleteTeam) {
+      if (errors || !data?.deleteWorkspace) {
         console.log("GraphQL: Failed to delete workspace", errors);
         setNotification({
           type: "error",
@@ -107,11 +107,11 @@ export default () => {
   const useUpdateWorkspace = useCallback(
     async (
       props: UpdateWorkspaceMutationVariables
-    ): Promise<MutationReturn<Partial<Team>>> => {
+    ): Promise<MutationReturn<Partial<Workspace>>> => {
       const { data, errors } = await updateWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.updateTeam) {
+      if (errors || !data?.updateWorkspace) {
         console.log("GraphQL: Failed to update workspace", errors);
         setNotification({
           type: "error",
@@ -125,7 +125,7 @@ export default () => {
         type: "success",
         text: t("Successfully updated workspace!")
       });
-      return { data: data.updateTeam.team, status: "success" };
+      return { data: data.updateWorkspace.workspace, status: "success" };
     },
     [updateWorkspaceMutation, setNotification, t]
   );
@@ -136,11 +136,11 @@ export default () => {
   const useAddMemberToWorkspace = useCallback(
     async (
       props: AddMemberToWorkspaceMutationVariables
-    ): Promise<MutationReturn<Partial<Team>>> => {
+    ): Promise<MutationReturn<Partial<Workspace>>> => {
       const { data, errors } = await addMemberToWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.addMemberToTeam) {
+      if (errors || !data?.addMemberToWorkspace) {
         console.log("GraphQL: Failed to add member to workspace", errors);
         setNotification({
           type: "error",
@@ -154,7 +154,7 @@ export default () => {
         type: "success",
         text: t("Successfully added member to workspace!")
       });
-      return { data: data.addMemberToTeam.team, status: "success" };
+      return { data: data.addMemberToWorkspace.workspace, status: "success" };
     },
     [addMemberToWorkspaceMutation, setNotification, t]
   );
@@ -168,11 +168,11 @@ export default () => {
   const useRemoveMemberFromWorkspace = useCallback(
     async (
       props: RemoveMemberFromWorkspaceMutationVariables
-    ): Promise<MutationReturn<Partial<Team>>> => {
+    ): Promise<MutationReturn<Partial<Workspace>>> => {
       const { data, errors } = await removeMemberFromWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.removeMemberFromTeam) {
+      if (errors || !data?.removeMemberFromWorkspace) {
         console.log("GraphQL: Failed to remove member from workspace", errors);
         setNotification({
           type: "error",
@@ -186,7 +186,10 @@ export default () => {
         type: "success",
         text: t("Successfully removed member from workspace!")
       });
-      return { data: data.removeMemberFromTeam.team, status: "success" };
+      return {
+        data: data.removeMemberFromWorkspace.workspace,
+        status: "success"
+      };
     },
     [removeMemberFromWorkspaceMutation, setNotification, t]
   );
@@ -200,11 +203,11 @@ export default () => {
   const useUpdateMemberOfWorkspace = useCallback(
     async (
       props: UpdateMemberOfWorkspaceMutationVariables
-    ): Promise<MutationReturn<Partial<Team>>> => {
+    ): Promise<MutationReturn<Partial<Workspace>>> => {
       const { data, errors } = await updateMemberOfWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.updateMemberOfTeam) {
+      if (errors || !data?.updateMemberOfWorkspace) {
         console.log("GraphQL: Failed to update member in workspace", errors);
         setNotification({
           type: "error",
@@ -218,7 +221,10 @@ export default () => {
         type: "success",
         text: t("Successfully updated member in workspace!")
       });
-      return { data: data.updateMemberOfTeam.team, status: "success" };
+      return {
+        data: data.updateMemberOfWorkspace.workspace,
+        status: "success"
+      };
     },
     [updateMemberOfWorkspaceMutation, setNotification, t]
   );

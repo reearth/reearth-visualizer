@@ -6,7 +6,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { useWorkspaceFetcher } from "@reearth/services/api";
-import { TeamMember } from "@reearth/services/gql";
+import { WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -16,7 +16,7 @@ type DeleteMemberWarningModalProps = {
   visible: boolean;
   onClose: () => void;
   workspace: Workspace | undefined;
-  member: TeamMember | undefined;
+  member: WorkspaceMember | undefined;
 };
 
 const DeleteMemberWarningModal: FC<DeleteMemberWarningModalProps> = ({
@@ -31,7 +31,7 @@ const DeleteMemberWarningModal: FC<DeleteMemberWarningModalProps> = ({
   const onRemoveMember = useCallback(
     (userId: string) => {
       if (!userId || !workspace?.id) return;
-      removeMember({ teamId: workspace?.id, userId });
+      removeMember({ workspaceId: workspace?.id, userId });
     },
     [workspace?.id, removeMember]
   );
