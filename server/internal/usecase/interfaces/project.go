@@ -70,11 +70,11 @@ type UpdateProjectMetadataParam struct {
 	Topics  *string
 }
 
-type PublishProjectParam struct {
-	ID     id.ProjectID
-	Alias  *string
-	Status project.PublishmentStatus
-}
+// type PublishProjectParam struct {
+// 	ID     id.ProjectID
+// 	Alias  *string
+// 	Status project.PublishmentStatus
+// }
 
 var (
 	ErrProjectAliasIsNotSet    error = errors.New("project alias is not set")

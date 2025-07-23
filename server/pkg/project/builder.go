@@ -14,7 +14,7 @@ type Builder struct {
 }
 
 func New() *Builder {
-	return &Builder{p: &Project{publishmentStatus: PublishmentStatusPrivate}}
+	return &Builder{p: &Project{}}
 }
 
 type Visibility string
@@ -128,64 +128,64 @@ func (b *Builder) ProjectAlias(projectAlias string) *Builder {
 	return b
 }
 
-// publishment ---------------------
+// // publishment ---------------------
 
-func (b *Builder) Alias(alias string) *Builder {
-	b.p.alias = alias
-	return b
-}
+// func (b *Builder) Alias(alias string) *Builder {
+// 	b.p.alias = alias
+// 	return b
+// }
 
-func (b *Builder) PublishmentStatus(publishmentStatus PublishmentStatus) *Builder {
-	b.p.publishmentStatus = publishmentStatus
-	return b
-}
+// func (b *Builder) PublishmentStatus(publishmentStatus PublishmentStatus) *Builder {
+// 	b.p.publishmentStatus = publishmentStatus
+// 	return b
+// }
 
-func (b *Builder) PublishedAt(publishedAt time.Time) *Builder {
-	b.p.publishedAt = publishedAt
-	return b
-}
+// func (b *Builder) PublishedAt(publishedAt time.Time) *Builder {
+// 	b.p.publishedAt = publishedAt
+// 	return b
+// }
 
-func (b *Builder) PublicTitle(publicTitle string) *Builder {
-	b.p.publicTitle = publicTitle
-	return b
-}
+// func (b *Builder) PublicTitle(publicTitle string) *Builder {
+// 	b.p.publicTitle = publicTitle
+// 	return b
+// }
 
-func (b *Builder) PublicDescription(publicDescription string) *Builder {
-	b.p.publicDescription = publicDescription
-	return b
-}
+// func (b *Builder) PublicDescription(publicDescription string) *Builder {
+// 	b.p.publicDescription = publicDescription
+// 	return b
+// }
 
-func (b *Builder) PublicImage(publicImage string) *Builder {
-	b.p.publicImage = publicImage
-	return b
-}
+// func (b *Builder) PublicImage(publicImage string) *Builder {
+// 	b.p.publicImage = publicImage
+// 	return b
+// }
 
-func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
-	b.p.publicNoIndex = publicNoIndex
-	return b
-}
+// func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
+// 	b.p.publicNoIndex = publicNoIndex
+// 	return b
+// }
 
-func (b *Builder) IsBasicAuthActive(isBasicAuthActive bool) *Builder {
-	b.p.isBasicAuthActive = isBasicAuthActive
-	return b
-}
+// func (b *Builder) IsBasicAuthActive(isBasicAuthActive bool) *Builder {
+// 	b.p.isBasicAuthActive = isBasicAuthActive
+// 	return b
+// }
 
-func (b *Builder) BasicAuthUsername(basicAuthUsername string) *Builder {
-	b.p.basicAuthUsername = basicAuthUsername
-	return b
-}
+// func (b *Builder) BasicAuthUsername(basicAuthUsername string) *Builder {
+// 	b.p.basicAuthUsername = basicAuthUsername
+// 	return b
+// }
 
-func (b *Builder) BasicAuthPassword(basicAuthPassword string) *Builder {
-	b.p.basicAuthPassword = basicAuthPassword
-	return b
-}
+// func (b *Builder) BasicAuthPassword(basicAuthPassword string) *Builder {
+// 	b.p.basicAuthPassword = basicAuthPassword
+// 	return b
+// }
 
-func (b *Builder) EnableGA(enableGa bool) *Builder {
-	b.p.enableGa = enableGa
-	return b
-}
+// func (b *Builder) EnableGA(enableGa bool) *Builder {
+// 	b.p.enableGa = enableGa
+// 	return b
+// }
 
-func (b *Builder) TrackingID(trackingId string) *Builder {
-	b.p.trackingId = trackingId
-	return b
-}
+// func (b *Builder) TrackingID(trackingId string) *Builder {
+// 	b.p.trackingId = trackingId
+// 	return b
+// }

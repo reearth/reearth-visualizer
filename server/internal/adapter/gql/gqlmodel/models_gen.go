@@ -676,35 +676,23 @@ type Polygon struct {
 func (Polygon) IsGeometry() {}
 
 type Project struct {
-	ID                ID                `json:"id"`
-	TeamID            ID                `json:"teamId"`
-	Team              *Team             `json:"team,omitempty"`
-	Scene             *Scene            `json:"scene,omitempty"`
-	Name              string            `json:"name"`
-	Description       string            `json:"description"`
-	ImageURL          *url.URL          `json:"imageUrl,omitempty"`
-	CreatedAt         time.Time         `json:"createdAt"`
-	UpdatedAt         time.Time         `json:"updatedAt"`
-	Visualizer        Visualizer        `json:"visualizer"`
-	IsArchived        bool              `json:"isArchived"`
-	CoreSupport       bool              `json:"coreSupport"`
-	Starred           bool              `json:"starred"`
-	IsDeleted         bool              `json:"isDeleted"`
-	Visibility        string            `json:"visibility"`
-	Metadata          *ProjectMetadata  `json:"metadata,omitempty"`
-	ProjectAlias      string            `json:"projectAlias"`
-	Alias             string            `json:"alias"`
-	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
-	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
-	PublicTitle       string            `json:"publicTitle"`
-	PublicDescription string            `json:"publicDescription"`
-	PublicImage       string            `json:"publicImage"`
-	PublicNoIndex     bool              `json:"publicNoIndex"`
-	IsBasicAuthActive bool              `json:"isBasicAuthActive"`
-	BasicAuthUsername string            `json:"basicAuthUsername"`
-	BasicAuthPassword string            `json:"basicAuthPassword"`
-	EnableGa          bool              `json:"enableGa"`
-	TrackingID        string            `json:"trackingId"`
+	ID           ID               `json:"id"`
+	TeamID       ID               `json:"teamId"`
+	Team         *Team            `json:"team,omitempty"`
+	Scene        *Scene           `json:"scene,omitempty"`
+	Name         string           `json:"name"`
+	Description  string           `json:"description"`
+	ImageURL     *url.URL         `json:"imageUrl,omitempty"`
+	CreatedAt    time.Time        `json:"createdAt"`
+	UpdatedAt    time.Time        `json:"updatedAt"`
+	Visualizer   Visualizer       `json:"visualizer"`
+	IsArchived   bool             `json:"isArchived"`
+	CoreSupport  bool             `json:"coreSupport"`
+	Starred      bool             `json:"starred"`
+	IsDeleted    bool             `json:"isDeleted"`
+	Visibility   string           `json:"visibility"`
+	Metadata     *ProjectMetadata `json:"metadata,omitempty"`
+	ProjectAlias string           `json:"projectAlias"`
 }
 
 func (Project) IsNode()        {}
@@ -873,10 +861,10 @@ type PropertySchemaGroup struct {
 	TranslatedTitle       string                 `json:"translatedTitle"`
 }
 
-type PublishProjectInput struct {
-	ProjectID ID                `json:"projectId"`
-	Alias     *string           `json:"alias,omitempty"`
-	Status    PublishmentStatus `json:"status"`
+type PublishSceneInput struct {
+	ID     ID                `json:"id"`
+	Alias  *string           `json:"alias,omitempty"`
+	Status PublishmentStatus `json:"status"`
 }
 
 type PublishStoryInput struct {
@@ -1016,6 +1004,17 @@ type Scene struct {
 	Stories           []*Story           `json:"stories"`
 	Styles            []*Style           `json:"styles"`
 	Alias             string             `json:"alias"`
+	PublishmentStatus PublishmentStatus  `json:"publishmentStatus"`
+	PublishedAt       *time.Time         `json:"publishedAt,omitempty"`
+	PublicTitle       string             `json:"publicTitle"`
+	PublicDescription string             `json:"publicDescription"`
+	PublicImage       string             `json:"publicImage"`
+	PublicNoIndex     bool               `json:"publicNoIndex"`
+	IsBasicAuthActive bool               `json:"isBasicAuthActive"`
+	BasicAuthUsername string             `json:"basicAuthUsername"`
+	BasicAuthPassword string             `json:"basicAuthPassword"`
+	EnableGa          bool               `json:"enableGa"`
+	TrackingID        string             `json:"trackingId"`
 }
 
 func (Scene) IsNode()        {}
@@ -1024,6 +1023,10 @@ func (this Scene) GetID() ID { return this.ID }
 type SceneAliasAvailability struct {
 	Alias     string `json:"alias"`
 	Available bool   `json:"available"`
+}
+
+type ScenePayload struct {
+	Scene *Scene `json:"scene"`
 }
 
 type ScenePlugin struct {

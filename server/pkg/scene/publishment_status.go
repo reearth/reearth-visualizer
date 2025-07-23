@@ -1,4 +1,4 @@
-package project
+package scene
 
 type PublishmentStatus string
 

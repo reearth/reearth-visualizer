@@ -20,18 +20,19 @@ type Project implements Node {
   projectAlias: String!
 
   # publishment
-  alias: String!
-  publishmentStatus: PublishmentStatus!
-  publishedAt: DateTime
-  publicTitle: String!
-  publicDescription: String!
-  publicImage: String!
-  publicNoIndex: Boolean!
-  isBasicAuthActive: Boolean!
-  basicAuthUsername: String!
-  basicAuthPassword: String!
-  enableGa: Boolean!
-  trackingId: String!
+
+  # alias: String!
+  # publishmentStatus: PublishmentStatus!
+  # publishedAt: DateTime
+  # publicTitle: String!
+  # publicDescription: String!
+  # publicImage: String!
+  # publicNoIndex: Boolean!
+  # isBasicAuthActive: Boolean!
+  # basicAuthUsername: String!
+  # basicAuthPassword: String!
+  # enableGa: Boolean!
+  # trackingId: String!
 }
 
 type ProjectMetadata {
@@ -119,11 +120,11 @@ input UpdateProjectMetadataInput {
   topics: String
 }
 
-input PublishProjectInput {
-  projectId: ID!
-  alias: String
-  status: PublishmentStatus!
-}
+# input PublishProjectInput {
+#   projectId: ID!
+#   alias: String
+#   status: PublishmentStatus!
+# }
 
 input DeleteProjectInput {
   projectId: ID!
@@ -200,7 +201,7 @@ extend type Query {
 extend type Mutation {
   createProject(input: CreateProjectInput!): ProjectPayload
   updateProject(input: UpdateProjectInput!): ProjectPayload
-  publishProject(input: PublishProjectInput!): ProjectPayload
+  # publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
   updateProjectMetadata(

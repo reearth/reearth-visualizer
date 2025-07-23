@@ -14,7 +14,26 @@ type Scene implements Node {
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
+
+  # publishment
   alias: String!
+  publishmentStatus: PublishmentStatus!
+  publishedAt: DateTime
+  publicTitle: String!
+  publicDescription: String!
+  publicImage: String!
+  publicNoIndex: Boolean!
+  isBasicAuthActive: Boolean!
+  basicAuthUsername: String!
+  basicAuthPassword: String!
+  enableGa: Boolean!
+  trackingId: String!
+}
+
+input PublishSceneInput {
+  id: ID!
+  alias: String
+  status: PublishmentStatus!
 }
 
 type SceneWidget {
@@ -44,6 +63,10 @@ input CreateSceneInput {
 
 # Payload
 
+type ScenePayload {
+  scene: Scene!
+}
+
 type CreateScenePayload {
   scene: Scene!
 }
@@ -54,4 +77,5 @@ extend type Query {
 
 extend type Mutation {
   createScene(input: CreateSceneInput!): CreateScenePayload
+  publishScene(input: PublishSceneInput!): ScenePayload
 }

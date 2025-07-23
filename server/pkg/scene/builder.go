@@ -93,3 +93,58 @@ func (b *Builder) Alias(alias string) *Builder {
 	b.scene.alias = alias
 	return b
 }
+
+func (b *Builder) PublishmentStatus(publishmentStatus PublishmentStatus) *Builder {
+	b.scene.publishmentStatus = publishmentStatus
+	return b
+}
+
+func (b *Builder) PublishedAt(publishedAt time.Time) *Builder {
+	b.scene.publishedAt = publishedAt
+	return b
+}
+
+func (b *Builder) PublicTitle(publicTitle string) *Builder {
+	b.scene.publicTitle = publicTitle
+	return b
+}
+
+func (b *Builder) PublicDescription(publicDescription string) *Builder {
+	b.scene.publicDescription = publicDescription
+	return b
+}
+
+func (b *Builder) PublicImage(publicImage string) *Builder {
+	b.scene.publicImage = publicImage
+	return b
+}
+
+func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
+	b.scene.publicNoIndex = publicNoIndex
+	return b
+}
+
+func (b *Builder) IsBasicAuthActive(isBasicAuthActive bool) *Builder {
+	b.scene.isBasicAuthActive = isBasicAuthActive
+	return b
+}
+
+func (b *Builder) BasicAuthUsername(basicAuthUsername string) *Builder {
+	b.scene.basicAuthUsername = basicAuthUsername
+	return b
+}
+
+func (b *Builder) BasicAuthPassword(basicAuthPassword string) *Builder {
+	b.scene.basicAuthPassword = basicAuthPassword
+	return b
+}
+
+func (b *Builder) EnableGA(enableGa bool) *Builder {
+	b.scene.enableGa = enableGa
+	return b
+}
+
+func (b *Builder) TrackingID(trackingId string) *Builder {
+	b.scene.trackingId = trackingId
+	return b
+}

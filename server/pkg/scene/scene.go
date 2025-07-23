@@ -19,8 +19,20 @@ type Scene struct {
 	updatedAt time.Time
 	property  id.PropertyID
 	styles    *StyleList
+
 	// publishment
-	alias string
+	alias             string
+	publishmentStatus PublishmentStatus
+	publishedAt       time.Time
+	publicTitle       string
+	publicDescription string
+	publicImage       string
+	publicNoIndex     bool
+	isBasicAuthActive bool
+	basicAuthUsername string
+	basicAuthPassword string
+	enableGa          bool
+	trackingId        string
 }
 
 func (s *Scene) ID() id.SceneID {
@@ -120,6 +132,94 @@ func (s *Scene) Alias() string {
 	return s.alias
 }
 
+func (s *Scene) PublishmentStatus() PublishmentStatus {
+	return s.publishmentStatus
+}
+
+func (s *Scene) PublishedAt() time.Time {
+	return s.publishedAt
+}
+
+func (s *Scene) PublicTitle() string {
+	return s.publicTitle
+}
+
+func (s *Scene) PublicDescription() string {
+	return s.publicDescription
+}
+
+func (s *Scene) PublicImage() string {
+	return s.publicImage
+}
+
+func (s *Scene) PublicNoIndex() bool {
+	return s.publicNoIndex
+}
+
+func (s *Scene) IsBasicAuthActive() bool {
+	return s.isBasicAuthActive
+}
+
+func (s *Scene) BasicAuthUsername() string {
+	return s.basicAuthUsername
+}
+
+func (s *Scene) BasicAuthPassword() string {
+	return s.basicAuthPassword
+}
+
+func (s *Scene) EnableGA() bool {
+	return s.enableGa
+}
+
+func (s *Scene) TrackingID() string {
+	return s.trackingId
+}
+
 func (s *Scene) UpdateAlias(alias string) {
 	s.alias = alias
+}
+
+func (s *Scene) UpdatePublishmentStatus(publishmentStatus PublishmentStatus) {
+	s.publishmentStatus = publishmentStatus
+}
+
+func (s *Scene) SetPublishedAt(publishedAt time.Time) {
+	s.publishedAt = publishedAt
+}
+
+func (s *Scene) UpdatePublicTitle(publicTitle string) {
+	s.publicTitle = publicTitle
+}
+
+func (s *Scene) UpdatePublicDescription(publicDescription string) {
+	s.publicDescription = publicDescription
+}
+
+func (s *Scene) UpdatePublicImage(publicImage string) {
+	s.publicImage = publicImage
+}
+
+func (s *Scene) UpdatePublicNoIndex(publicNoIndex bool) {
+	s.publicNoIndex = publicNoIndex
+}
+
+func (s *Scene) SetIsBasicAuthActive(isBasicAuthActive bool) {
+	s.isBasicAuthActive = isBasicAuthActive
+}
+
+func (s *Scene) SetBasicAuthUsername(basicAuthUsername string) {
+	s.basicAuthUsername = basicAuthUsername
+}
+
+func (s *Scene) SetBasicAuthPassword(basicAuthPassword string) {
+	s.basicAuthPassword = basicAuthPassword
+}
+
+func (s *Scene) UpdateEnableGA(enableGa bool) {
+	s.enableGa = enableGa
+}
+
+func (s *Scene) UpdateTrackingID(trackingId string) {
+	s.trackingId = trackingId
 }

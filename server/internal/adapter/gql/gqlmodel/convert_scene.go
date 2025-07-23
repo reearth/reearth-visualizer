@@ -1,9 +1,35 @@
 package gqlmodel
 
 import (
+	"time"
+
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/util"
 )
+
+func FromPublishmentStatus(v PublishmentStatus) scene.PublishmentStatus {
+	switch v {
+	case PublishmentStatusPublic:
+		return scene.PublishmentStatusPublic
+	case PublishmentStatusLimited:
+		return scene.PublishmentStatusLimited
+	case PublishmentStatusPrivate:
+		return scene.PublishmentStatusPrivate
+	}
+	return scene.PublishmentStatus("")
+}
+
+func ToPublishmentStatus(v scene.PublishmentStatus) PublishmentStatus {
+	switch v {
+	case scene.PublishmentStatusPublic:
+		return PublishmentStatusPublic
+	case scene.PublishmentStatusLimited:
+		return PublishmentStatusLimited
+	case scene.PublishmentStatusPrivate:
+		return PublishmentStatusPrivate
+	}
+	return PublishmentStatus("")
+}
 
 func ToSceneWidget(w *scene.Widget) *SceneWidget {
 	if w == nil {
@@ -36,6 +62,11 @@ func ToScene(scene *scene.Scene) *Scene {
 		return nil
 	}
 
+	var publishedAtRes *time.Time
+	if publishedAt := scene.PublishedAt(); !publishedAt.IsZero() {
+		publishedAtRes = &publishedAt
+	}
+
 	return &Scene{
 		ID:                IDFrom(scene.ID()),
 		ProjectID:         IDFrom(scene.Project()),
@@ -48,7 +79,18 @@ func ToScene(scene *scene.Scene) *Scene {
 		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
 
 		// publishment ---------------------
-		Alias: scene.Alias(),
+		Alias:             scene.Alias(),
+		PublishmentStatus: ToPublishmentStatus(scene.PublishmentStatus()),
+		PublishedAt:       publishedAtRes,
+		PublicTitle:       scene.PublicTitle(),
+		PublicDescription: scene.PublicDescription(),
+		PublicImage:       scene.PublicImage(),
+		PublicNoIndex:     scene.PublicNoIndex(),
+		IsBasicAuthActive: scene.IsBasicAuthActive(),
+		BasicAuthUsername: scene.BasicAuthUsername(),
+		BasicAuthPassword: scene.BasicAuthPassword(),
+		EnableGa:          scene.EnableGA(),
+		TrackingID:        scene.TrackingID(),
 	}
 }
 

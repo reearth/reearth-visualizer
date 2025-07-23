@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -179,6 +180,119 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 	operator.AddNewScene(ws, sceneID)
 	tx.Commit()
 	return res, nil
+}
+
+func (i *Scene) dedicatedID(ctx context.Context, sid *id.SceneID) (*scene.Scene, string, string, error) {
+
+	sce, err := i.sceneRepo.FindByID(ctx, *sid)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	dedicatedID1 := alias.ReservedReearthPrefixScene + sce.ID().String()
+	dedicatedID2 := sce.ID().String()
+
+	return sce, dedicatedID1, dedicatedID2, err
+}
+
+func (i *Scene) Publish(ctx context.Context, params interfaces.PublishSceneParam, operator *usecase.Operator) (_ *scene.Scene, err error) {
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return
+	}
+
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	sc, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := i.CanWriteWorkspace(sc.Workspace(), operator); err != nil {
+		return nil, err
+	}
+
+	prevAlias := sc.Alias()
+
+	// if ProjectID is not specified
+	if params.Alias == nil || *params.Alias == "" {
+		// if you don't have an alias, set it to default alias
+		if sc.Alias() == "" {
+			sc.UpdateAlias(dedicatedID1)
+		}
+		// if anything is set, do nothing
+	} else {
+
+		newAlias := strings.ToLower(*params.Alias)
+
+		if newAlias == dedicatedID1 || newAlias == dedicatedID2 || prevAlias == newAlias {
+
+			// allow self sceneId or current alias
+
+		} else {
+
+			// story prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixStory); found {
+				// error 's-' prefix
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			// scene prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixScene); found {
+				// error 'c-' prefix
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			if err := alias.CheckAliasPatternScene(newAlias); err != nil {
+				return nil, err
+			}
+			if err := i.projectRepo.CheckSceneAliasUnique(ctx, newAlias); err != nil {
+				return nil, err
+			}
+			if err = i.storytellingRepo.CheckStorytellingAlias(ctx, newAlias); err != nil {
+				return nil, err
+			}
+		}
+
+		sc.UpdateAlias(newAlias)
+	}
+
+	// prj.UpdatePublishmentStatus(params.Status)
+
+	// // publish
+	// if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
+	// 	if err := i.uploadPublishScene(ctx, prj, sc, op); err != nil {
+	// 		return nil, err
+	// 	}
+	// 	prj.SetPublishedAt(time.Now())
+	// }
+
+	// // unpublish
+	// if prj.PublishmentStatus() == project.PublishmentStatusPrivate || prevAlias != prj.Alias() {
+	// 	// always delete previous aliase
+	// 	if err = i.file.RemoveBuiltScene(ctx, prevAlias); err != nil {
+	// 		return prj, err
+	// 	}
+	// }
+
+	// if err := i.projectRepo.Save(ctx, prj); err != nil {
+	// 	return nil, err
+	// }
+
+	// sc.UpdateAlias(prj.Alias())
+
+	// if err := i.sceneRepo.Save(ctx, sc); err != nil {
+	// 	return nil, err
+	// }
+
+	tx.Commit()
+	return sc, nil
 }
 
 func (i *Scene) addDefaultVisualizerTilesProperty(ctx context.Context, sceneID id.SceneID, coreSupport bool) (*property.Property, error) {

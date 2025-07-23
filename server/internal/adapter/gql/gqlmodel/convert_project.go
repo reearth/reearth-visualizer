@@ -3,34 +3,33 @@ package gqlmodel
 import (
 	"encoding/json"
 	"net/url"
-	"time"
 
 	"github.com/reearth/reearth/server/pkg/project"
 )
 
-func FromPublishmentStatus(v PublishmentStatus) project.PublishmentStatus {
-	switch v {
-	case PublishmentStatusPublic:
-		return project.PublishmentStatusPublic
-	case PublishmentStatusLimited:
-		return project.PublishmentStatusLimited
-	case PublishmentStatusPrivate:
-		return project.PublishmentStatusPrivate
-	}
-	return project.PublishmentStatus("")
-}
+// func FromPublishmentStatus(v PublishmentStatus) project.PublishmentStatus {
+// 	switch v {
+// 	case PublishmentStatusPublic:
+// 		return project.PublishmentStatusPublic
+// 	case PublishmentStatusLimited:
+// 		return project.PublishmentStatusLimited
+// 	case PublishmentStatusPrivate:
+// 		return project.PublishmentStatusPrivate
+// 	}
+// 	return project.PublishmentStatus("")
+// }
 
-func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
-	switch v {
-	case project.PublishmentStatusPublic:
-		return PublishmentStatusPublic
-	case project.PublishmentStatusLimited:
-		return PublishmentStatusLimited
-	case project.PublishmentStatusPrivate:
-		return PublishmentStatusPrivate
-	}
-	return PublishmentStatus("")
-}
+// func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
+// 	switch v {
+// 	case project.PublishmentStatusPublic:
+// 		return PublishmentStatusPublic
+// 	case project.PublishmentStatusLimited:
+// 		return PublishmentStatusLimited
+// 	case project.PublishmentStatusPrivate:
+// 		return PublishmentStatusPrivate
+// 	}
+// 	return PublishmentStatus("")
+// }
 
 func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus {
 	switch v {
@@ -80,10 +79,10 @@ func ToProject(p *project.Project) *Project {
 		return nil
 	}
 
-	var publishedAtRes *time.Time
-	if publishedAt := p.PublishedAt(); !publishedAt.IsZero() {
-		publishedAtRes = &publishedAt
-	}
+	// var publishedAtRes *time.Time
+	// if publishedAt := p.PublishedAt(); !publishedAt.IsZero() {
+	// 	publishedAtRes = &publishedAt
+	// }
 
 	return &Project{
 		ID:           IDFrom(p.ID()),
@@ -102,18 +101,18 @@ func ToProject(p *project.Project) *Project {
 		Metadata:     ToProjectMetadata(p.Metadata()),
 		ProjectAlias: p.ProjectAlias(),
 		// publishment
-		Alias:             p.Alias(),
-		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
-		PublishedAt:       publishedAtRes,
-		PublicTitle:       p.PublicTitle(),
-		PublicDescription: p.PublicDescription(),
-		PublicImage:       p.PublicImage(),
-		PublicNoIndex:     p.PublicNoIndex(),
-		IsBasicAuthActive: p.IsBasicAuthActive(),
-		BasicAuthUsername: p.BasicAuthUsername(),
-		BasicAuthPassword: p.BasicAuthPassword(),
-		EnableGa:          p.EnableGA(),
-		TrackingID:        p.TrackingID(),
+		// Alias:             p.Alias(),
+		// PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
+		// PublishedAt:       publishedAtRes,
+		// PublicTitle:       p.PublicTitle(),
+		// PublicDescription: p.PublicDescription(),
+		// PublicImage:       p.PublicImage(),
+		// PublicNoIndex:     p.PublicNoIndex(),
+		// IsBasicAuthActive: p.IsBasicAuthActive(),
+		// BasicAuthUsername: p.BasicAuthUsername(),
+		// BasicAuthPassword: p.BasicAuthPassword(),
+		// EnableGa:          p.EnableGA(),
+		// TrackingID:        p.TrackingID(),
 	}
 }
 
