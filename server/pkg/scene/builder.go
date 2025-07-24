@@ -1,6 +1,7 @@
 package scene
 
 import (
+	"errors"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
@@ -17,10 +18,10 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Scene, error) {
 	if b.scene.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID scene.id")
 	}
 	if b.scene.workspace.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID scene.workspace")
 	}
 	if b.scene.widgets == nil {
 		b.scene.widgets = NewWidgets(nil, nil)

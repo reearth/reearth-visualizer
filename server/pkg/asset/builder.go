@@ -1,6 +1,7 @@
 package asset
 
 import (
+	"errors"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
@@ -17,7 +18,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Asset, error) {
 	if b.a.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID asset.ID ")
 	}
 	if b.a.workspace.IsNil() {
 		return nil, ErrEmptyWorkspaceID

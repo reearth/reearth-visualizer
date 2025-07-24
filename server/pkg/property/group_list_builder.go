@@ -28,10 +28,10 @@ func InitGroupListFrom(g *SchemaGroup) *GroupList {
 
 func (b *GroupListBuilder) Build() (*GroupList, error) {
 	if b.p.itemBase.ID.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID itemBase.ID ")
 	}
 	if b.p.itemBase.SchemaGroup == "" {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID itemBase.SchemaGroup ")
 	}
 	for _, g := range b.p.groups {
 		if g.SchemaGroup() != b.p.SchemaGroup() {
