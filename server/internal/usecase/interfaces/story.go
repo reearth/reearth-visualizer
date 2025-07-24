@@ -139,7 +139,7 @@ type Storytelling interface {
 	Move(context.Context, MoveStoryInput, *usecase.Operator) (*id.StoryID, int, error)
 
 	Publish(context.Context, PublishStoryInput, *usecase.Operator) (*storytelling.Story, error)
-	CheckAlias(context.Context, string, *id.StoryID) (bool, error)
+	CheckStorytellingAlias(context.Context, string, *id.StoryID) (bool, error)
 
 	CreatePage(context.Context, CreatePageParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
 	UpdatePage(context.Context, UpdatePageParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)

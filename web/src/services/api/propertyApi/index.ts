@@ -4,7 +4,7 @@ import {
   ValueTypes,
   valueToGQL,
   valueTypeToGQL
-} from "@reearth/beta/utils/value";
+} from "@reearth/app/utils/value";
 import { PropertyItemPayload } from "@reearth/services/gql";
 import {
   UPDATE_PROPERTY_VALUE,

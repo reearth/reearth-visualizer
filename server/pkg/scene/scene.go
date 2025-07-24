@@ -4,7 +4,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
 )
@@ -20,6 +19,8 @@ type Scene struct {
 	updatedAt time.Time
 	property  id.PropertyID
 	styles    *StyleList
+	// publishment
+	alias string
 }
 
 func (s *Scene) ID() id.SceneID {
@@ -113,6 +114,12 @@ func (s *Scene) Properties() []id.PropertyID {
 	return ids
 }
 
-func (s *Scene) DefaultAlias() string {
-	return alias.ReservedReearthPrefixProject + s.ID().String()
+// publishment ---------------------
+
+func (s *Scene) Alias() string {
+	return s.alias
+}
+
+func (s *Scene) UpdateAlias(alias string) {
+	s.alias = alias
 }

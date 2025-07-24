@@ -15,7 +15,8 @@ import {
   Visualizer,
   DeleteProjectInput,
   ArchiveProjectMutationVariables,
-  UpdateProjectBasicAuthMutationVariables
+  UpdateProjectBasicAuthMutationVariables,
+  UpdateProjectMetadataInput
 } from "@reearth/services/gql/__gen__/graphql";
 import {
   ARCHIVE_PROJECT,
@@ -29,7 +30,8 @@ import {
   UPDATE_PROJECT,
   UPDATE_PROJECT_BASIC_AUTH,
   EXPORT_PROJECT,
-  GET_DELETED_PROJECTS
+  GET_DELETED_PROJECTS,
+  UPDATE_PROJECT_METADATA
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
 import { useT } from "@reearth/services/i18n";
@@ -69,7 +71,7 @@ export default () => {
   const useProjectsQuery = useCallback((input: GetProjectsQueryVariables) => {
     const { data, networkStatus, ...rest } = useQuery(GET_PROJECTS, {
       variables: input,
-      skip: !input.teamId,
+      skip: !input.workspaceId,
       notifyOnNetworkStatusChange: true
     });
 
@@ -96,10 +98,10 @@ export default () => {
     return { projects, hasMoreProjects, isRefetching, endCursor, ...rest };
   }, []);
 
-  const useStarredProjectsQuery = useCallback((teamId?: string) => {
+  const useStarredProjectsQuery = useCallback((workspaceId?: string) => {
     const { data, ...rest } = useQuery(GET_STARRED_PROJECTS, {
-      variables: { teamId: teamId ?? "" },
-      skip: !teamId
+      variables: { workspaceId: workspaceId ?? "" },
+      skip: !workspaceId
     });
 
     const starredProjects = useMemo(
@@ -110,10 +112,10 @@ export default () => {
     return { starredProjects, ...rest };
   }, []);
 
-  const useDeletedProjectsQuery = useCallback((teamId?: string) => {
+  const useDeletedProjectsQuery = useCallback((workspaceId?: string) => {
     const { data, ...rest } = useQuery(GET_DELETED_PROJECTS, {
-      variables: { teamId: teamId ?? "" },
-      skip: !teamId
+      variables: { workspaceId: workspaceId ?? "" },
+      skip: !workspaceId
     });
 
     const deletedProjects = useMemo(
@@ -129,11 +131,11 @@ export default () => {
   });
 
   const checkProjectAlias = useCallback(
-    async (alias: string, projectId?: string) => {
+    async (alias: string, workspaceId: string, projectId?: string) => {
       if (!alias) return null;
 
       const { data, errors } = await fetchCheckProjectAlias({
-        variables: { alias, projectId },
+        variables: { alias, workspaceId, projectId },
         errorPolicy: "all",
         context: {
           headers: {
@@ -171,16 +173,26 @@ export default () => {
       visualizer: Visualizer,
       name: string,
       coreSupport: boolean,
-      description?: string
+      projectAlias?: string,
+      visibility?: string,
+      description?: string,
+      license?: string,
+      readme?: string,
+      topics?: string
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
           variables: {
-            teamId: workspaceId,
+            workspaceId: workspaceId,
             visualizer,
             name,
             description: description ?? "",
-            coreSupport: !!coreSupport
+            coreSupport: !!coreSupport,
+            projectAlias: projectAlias ?? "",
+            visibility: visibility ? visibility : "private",
+            license: license ?? "",
+            readme: readme ?? "",
+            topics: topics ?? ""
           }
         });
       if (projectErrors || !projectResults?.createProject) {
@@ -509,6 +521,36 @@ export default () => {
     [updateProjectBasicAuthMutation, t, setNotification]
   );
 
+  const [updateProjectMetadataMutation] = useMutation(UPDATE_PROJECT_METADATA, {
+    refetchQueries: ["GetProject"]
+  });
+  const useUpdateProjectMetadata = useCallback(
+    async (input: UpdateProjectMetadataInput) => {
+      if (!input.project) return { status: "error" };
+
+      const { data, errors } = await updateProjectMetadataMutation({
+        variables: { ...input }
+      });
+
+      if (errors || !data?.updateProjectMetadata) {
+        console.log("GraphQL: Failed to update project metadata", errors);
+        setNotification({
+          type: "error",
+          text: t("Failed to update project metadata.")
+        });
+
+        return { status: "error" };
+      }
+
+      setNotification({
+        type: "success",
+        text: t("Successfully updated project metadata!")
+      });
+      return { data: data?.updateProjectMetadata?.metadata, status: "success" };
+    },
+    [updateProjectMetadataMutation, setNotification, t]
+  );
+
   const [exportProjectMutation] = useMutation(EXPORT_PROJECT);
 
   const getBackendUrl = useCallback(() => {
@@ -579,7 +621,7 @@ export default () => {
   );
 
   const useImportProject = useCallback(
-    async (file: File, teamId: string) => {
+    async (file: File, workspaceId: string) => {
       const CHUNK_CONCURRENCY = 4;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
       const fileId = uuidv4();
@@ -593,7 +635,7 @@ export default () => {
         const formData = new FormData();
         formData.append("file", chunk, `${file.name}.part${chunkNum}`);
         formData.append("file_id", fileId);
-        formData.append("team_id", teamId);
+        formData.append("workspace_id", workspaceId);
         formData.append("chunk_num", chunkNum.toString());
         formData.append("total_chunks", totalChunks.toString());
 
@@ -605,8 +647,25 @@ export default () => {
 
       const parallelUpload = async (indices: number[]): Promise<any[]> => {
         const results = [];
-        for (let i = 0; i < indices.length; i += CHUNK_CONCURRENCY) {
-          const batch = indices.slice(i, i + CHUNK_CONCURRENCY);
+
+        // 1. Always upload chunk 0 first
+        try {
+          const firstChunkResponse = await uploadChunk(0);
+          results.push(firstChunkResponse);
+        } catch (error) {
+          setNotification({
+            type: "error",
+            text: t("Failed to upload chunk 0.")
+          });
+          console.error("Failed chunk 0:", error);
+          return [{ status: "error" }];
+        }
+
+        // 2. Upload remaining chunks in parallel (excluding 0)
+        const remaining = indices.slice(1);
+
+        for (let i = 0; i < remaining.length; i += CHUNK_CONCURRENCY) {
+          const batch = remaining.slice(i, i + CHUNK_CONCURRENCY);
           try {
             const responses = await Promise.all(batch.map(uploadChunk));
             results.push(...responses);
@@ -619,16 +678,13 @@ export default () => {
             return [{ status: "error" }];
           }
         }
+
         return results;
       };
 
       const responses = await parallelUpload(chunkIndices);
-      lastResponse = responses[responses.length - 1];
+      lastResponse = responses.at(-1);
 
-      setNotification({
-        type: "success",
-        text: t("Successfully imported project!")
-      });
       return lastResponse || { status: "chunk_received" };
     },
     [axios, setNotification, t]
@@ -650,6 +706,7 @@ export default () => {
     useExportProject,
     useUpdateProjectRemove,
     useDeletedProjectsQuery,
-    useImportProject
+    useImportProject,
+    useUpdateProjectMetadata
   };
 };

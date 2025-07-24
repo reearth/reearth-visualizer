@@ -1,7 +1,7 @@
-type Team implements Node {
+type Workspace implements Node {
   id: ID!
   name: String!
-  members: [TeamMember!]!
+  members: [WorkspaceMember!]!
   personal: Boolean!
   policyId: ID
   policy: Policy
@@ -19,9 +19,10 @@ type Team implements Node {
     after: Cursor
     before: Cursor
   ): ProjectConnection!
+  enableToCreatePrivateProject: Boolean!
 }
 
-type TeamMember {
+type WorkspaceMember {
   userId: ID!
   role: Role!
   user: User
@@ -53,71 +54,71 @@ enum Role {
 
 # InputType
 
-input CreateTeamInput {
+input CreateWorkspaceInput {
   name: String!
 }
 
-input UpdateTeamInput {
-  teamId: ID!
+input UpdateWorkspaceInput {
+  workspaceId: ID!
   name: String!
 }
 
-input AddMemberToTeamInput {
-  teamId: ID!
+input AddMemberToWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
-input RemoveMemberFromTeamInput {
-  teamId: ID!
+input RemoveMemberFromWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
 }
 
-input UpdateMemberOfTeamInput {
-  teamId: ID!
+input UpdateMemberOfWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
-input DeleteTeamInput {
-  teamId: ID!
+input DeleteWorkspaceInput {
+  workspaceId: ID!
 }
 
 # Payload
 
-type CreateTeamPayload {
-  team: Team!
+type CreateWorkspacePayload {
+  workspace: Workspace!
 }
 
-type UpdateTeamPayload {
-  team: Team!
+type UpdateWorkspacePayload {
+  workspace: Workspace!
 }
 
-type AddMemberToTeamPayload {
-  team: Team!
+type AddMemberToWorkspacePayload {
+  workspace: Workspace!
 }
 
-type RemoveMemberFromTeamPayload {
-  team: Team!
+type RemoveMemberFromWorkspacePayload {
+  workspace: Workspace!
 }
 
-type UpdateMemberOfTeamPayload {
-  team: Team!
+type UpdateMemberOfWorkspacePayload {
+  workspace: Workspace!
 }
 
-type DeleteTeamPayload {
-  teamId: ID!
+type DeleteWorkspacePayload {
+  workspaceId: ID!
 }
 
 #extend type Query{ }
 
 extend type Mutation {
-  createTeam(input: CreateTeamInput!): CreateTeamPayload
-  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
-  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
-  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
-  removeMemberFromTeam(
-    input: RemoveMemberFromTeamInput!
-  ): RemoveMemberFromTeamPayload
-  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
+  createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
+  deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
+  updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
+  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
+  removeMemberFromWorkspace(
+    input: RemoveMemberFromWorkspaceInput!
+  ): RemoveMemberFromWorkspacePayload
+  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
 }

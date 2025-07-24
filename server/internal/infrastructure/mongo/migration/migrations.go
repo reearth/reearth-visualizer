@@ -22,4 +22,10 @@ var migrations = migration.Migrations[DBClient]{
   250417160823: SetProjectVisibility,
   250507125156: UpdateAlias,
   250514185337: DeleteJunkData,
+  250530154721: AddProjectMetadata,
+  250709132207: SetProjectIdStorytelling,
+  250709145819: SetProjectAlias,
+  250711143148: AddProjectAlias,
+  250716145417: TeamToWorkspace,
+  250724121006: SetVisibilityPublic,
 }

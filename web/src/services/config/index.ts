@@ -1,5 +1,4 @@
-import { type Viewer } from "cesium";
-
+import { loadAppFeatureConfig } from "./appFeatureConfig";
 import { type AuthInfo, getAuthInfo } from "./authInfo";
 import { configureCognito } from "./aws";
 import { defaultConfig } from "./defaultConfig";
@@ -55,7 +54,8 @@ export type Config = {
   unsafeBuiltinPlugins?: UnsafeBuiltinPlugin[];
   multiTenant?: Record<string, AuthInfo>;
   devPluginUrls?: string[];
-  disableWorkspaceManagement?: boolean;
+  featureCollection?: string;
+  platformUrl?: string;
 } & AuthInfo;
 
 declare global {
@@ -63,13 +63,9 @@ declare global {
   let __REEARTH_COMMIT_HASH__: string;
   interface Window {
     REEARTH_CONFIG?: Config;
-    REEARTH_E2E_ACCESS_TOKEN?: string;
-    REEARTH_E2E_CESIUM_VIEWER?: any;
     REEARTH_COMMIT_HASH?: string;
   }
 }
-
-const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
 
 export default async function loadConfig() {
   if (window.REEARTH_CONFIG) return;
@@ -78,11 +74,6 @@ export default async function loadConfig() {
     ...defaultConfig,
     ...(await (await fetch("/reearth_config.json")).json())
   };
-
-  const cesiumIonToken = await loadCesiumIonToken();
-  if (cesiumIonToken) {
-    config.cesiumIonAccessToken = cesiumIonToken;
-  }
 
   const authInfo = getAuthInfo(config);
   if (authInfo?.cognito && authInfo.authProvider === "cognito") {
@@ -107,32 +98,10 @@ export default async function loadConfig() {
   }
 
   window.REEARTH_CONFIG = config;
-}
 
-async function loadCesiumIonToken(): Promise<string> {
-  // updating config JSON by CI/CD sometimes can break the config file, so separate files
-  try {
-    const res = await fetch("/cesium_ion_token.txt");
-    const token = (await res.text()).trim();
-    return token.length === DEFAULT_CESIUM_ION_TOKEN_LENGTH ? token : "";
-  } catch (_e) {
-    // ignore
-    return "";
-  }
+  loadAppFeatureConfig();
 }
 
 export function config(): Config | undefined {
   return window.REEARTH_CONFIG;
-}
-
-export function e2eAccessToken(): string | undefined {
-  return window.REEARTH_E2E_ACCESS_TOKEN;
-}
-
-export function setE2ECesiumViewer(viewer: Viewer | undefined) {
-  if (viewer) {
-    window.REEARTH_E2E_CESIUM_VIEWER = viewer;
-  } else {
-    delete window.REEARTH_E2E_CESIUM_VIEWER;
-  }
 }

@@ -14,6 +14,8 @@ type ProjectFilter struct {
 	Sort       *project.SortType
 	Keyword    *string
 	Pagination *usecasex.Pagination
+	Limit      *int64
+	Offset     *int64
 }
 
 type Project interface {
@@ -22,12 +24,15 @@ type Project interface {
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
 	FindByScene(context.Context, id.SceneID) (*project.Project, error)
 	FindByWorkspace(context.Context, accountdomain.WorkspaceID, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
+	FindByWorkspaces(context.Context, bool, ProjectFilter, accountdomain.WorkspaceIDList, accountdomain.WorkspaceIDList) ([]*project.Project, *usecasex.PageInfo, error)
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindActiveById(context.Context, id.ProjectID) (*project.Project, error)
-	FindVisibilityByWorkspace(context.Context, bool, bool, accountdomain.WorkspaceID) ([]*project.Project, error)
+	FindActiveByAlias(context.Context, string) (*project.Project, error)
+	FindByProjectAlias(context.Context, string) (*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
-	CheckAliasUnique(context.Context, string) error
+	CheckProjectAliasUnique(context.Context, accountdomain.WorkspaceID, string, *id.ProjectID) error
+	CheckSceneAliasUnique(context.Context, string) error
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error

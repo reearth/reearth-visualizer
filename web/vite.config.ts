@@ -16,7 +16,6 @@ import tsconfigPaths from "vite-tsconfig-paths";
 import pkg from "./package.json";
 
 const NO_MINIFY = !!process.env.NO_MINIFY;
-const DEFAULT_CESIUM_ION_TOKEN_LENGTH = 177;
 
 let commitHash = "";
 try {
@@ -106,31 +105,15 @@ function config(): Plugin {
       const remoteReearthConfig = envs.REEARTH_WEB_CONFIG_URL
         ? await (await fetch(envs.REEARTH_WEB_CONFIG_URL)).json()
         : {};
-      const remoteCesiumIonTokenResponseText =
-        envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL
-          ? await (await fetch(envs.REEARTH_WEB_CESIUM_ION_TOKEN_URL)).text()
-          : undefined;
-      const remoteCesiumIonToken =
-        remoteCesiumIonTokenResponseText?.length ===
-        DEFAULT_CESIUM_ION_TOKEN_LENGTH
-          ? remoteCesiumIonTokenResponseText
-          : "";
       const configRes = JSON.stringify(
         {
           ...remoteReearthConfig,
           api: "http://localhost:8080/api",
           published: "/published.html?alias={}",
-          ...(remoteCesiumIonToken
-            ? { cesiumIonAccessToken: remoteCesiumIonToken }
-            : {}),
-          // Set the Ion token as an environment variables here.
-          // ex: `REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN="ION_TOKEN" yarn start`
-          ...(envs.REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN
-            ? { cesiumIonAccessToken: envs.REEARTH_WEB_CESIUM_ION_ACCESS_TOKEN }
-            : {}),
           ...readEnv("REEARTH_WEB", {
             source: envs
           }),
+          // Override config with local reearth-config.json if it exists
           ...loadJSON("./reearth-config.json")
         },
         null,

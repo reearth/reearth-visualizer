@@ -84,6 +84,10 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	), nil
 }
 
+func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFilter repo.ProjectFilter, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) ([]*project.Project, *usecasex.PageInfo, error) {
+	return nil, nil, nil
+}
+
 func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
@@ -137,39 +141,22 @@ func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project
 	return nil, nil
 }
 
-func (r *Project) FindVisibilityByWorkspace(ctx context.Context, authenticated bool, isWorkspaceOwner bool, id accountdomain.WorkspaceID) ([]*project.Project, error) {
-	r.lock.Lock()
-	defer r.lock.Unlock()
-
-	var result []*project.Project
-
-	if authenticated {
-		for _, p := range r.data {
-			if p.Workspace() == id {
-				result = append(result, p)
-			}
-		}
-	} else {
-		if isWorkspaceOwner {
-			for _, p := range r.data {
-				if p.Workspace() == id && !p.IsDeleted() {
-					result = append(result, p)
-				}
-			}
-		} else {
-			for _, p := range r.data {
-				if p.Workspace() == id && !p.IsDeleted() && p.Visibility() == "public" {
-					result = append(result, p)
-				}
-			}
+func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project.Project, error) {
+	for _, p := range r.data {
+		if p.Alias() == alias && !p.IsDeleted() {
+			return p, nil
 		}
 	}
+	return nil, nil
+}
 
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].UpdatedAt().After(result[j].UpdatedAt())
-	})
-
-	return result, nil
+func (r *Project) FindByProjectAlias(ctx context.Context, projectAlias string) (*project.Project, error) {
+	for _, p := range r.data {
+		if p.ProjectAlias() == projectAlias {
+			return p, nil
+		}
+	}
+	return nil, nil
 }
 
 func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []id.ProjectID, _ error) {
@@ -240,7 +227,20 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Project) CheckAliasUnique(ctx context.Context, name string) error {
+func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	for _, p := range r.data {
+		if p.ProjectAlias() == newAlias {
+			return alias.ErrExistsStorytellingAlias
+		}
+	}
+
+	return nil
+}
+
+func (r *Project) CheckSceneAliasUnique(ctx context.Context, name string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

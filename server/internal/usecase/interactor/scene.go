@@ -92,6 +92,26 @@ func (i *Scene) FindByProject(ctx context.Context, id id.ProjectID, operator *us
 	return s, nil
 }
 
+func (i *Scene) FindByProjectsWithStory(ctx context.Context, ids []id.ProjectID, operator *usecase.Operator) ([]*scene.Scene, *storytelling.StoryList, error) {
+	scenes, err := i.sceneRepo.FindByProjects(ctx, ids)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	var sids []id.SceneID
+	for _, s := range scenes {
+		injectExtensionsToScene(s, i.extensions)
+		sids = append(sids, s.ID())
+	}
+
+	storytellings, err := i.storytellingRepo.FindByScenes(ctx, sids)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return scenes, storytellings, nil
+}
+
 func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWidget bool, operator *usecase.Operator) (_ *scene.Scene, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
@@ -115,11 +135,9 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 
 	sceneID := id.NewSceneID()
 
-	if prj.Alias() == "" {
-		prj.UpdateAlias(alias.ReservedReearthPrefixProject + sceneID.String())
-		if err := i.projectRepo.Save(ctx, prj); err != nil {
-			return nil, err
-		}
+	prj.UpdateAlias(alias.ReservedReearthPrefixScene + sceneID.String())
+	if err := i.projectRepo.Save(ctx, prj); err != nil {
+		return nil, err
 	}
 
 	prop, err := i.addDefaultVisualizerTilesProperty(ctx, sceneID, prj.CoreSupport())
@@ -137,6 +155,7 @@ func (i *Scene) Create(ctx context.Context, pid id.ProjectID, defaultExtensionWi
 		Workspace(ws).
 		Property(prop.ID()).
 		Plugins(officialPlugins).
+		Alias(alias.ReservedReearthPrefixScene + sceneID.String()).
 		Build()
 	if err != nil {
 		return nil, err

@@ -6,18 +6,43 @@
 - [schemas/internalapi/v1/schema.proto](#schemas_internalapi_v1_schema-proto)
     - [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest)
     - [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse)
+    - [DeleteByProjectAliasRequest](#reearth-visualizer-v1-DeleteByProjectAliasRequest)
+    - [DeleteByProjectAliasResponse](#reearth-visualizer-v1-DeleteByProjectAliasResponse)
     - [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest)
     - [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse)
+    - [ExportProjectRequest](#reearth-visualizer-v1-ExportProjectRequest)
+    - [ExportProjectResponse](#reearth-visualizer-v1-ExportProjectResponse)
+    - [GetProjectByAliasRequest](#reearth-visualizer-v1-GetProjectByAliasRequest)
+    - [GetProjectByAliasResponse](#reearth-visualizer-v1-GetProjectByAliasResponse)
+    - [GetProjectByProjectAliasRequest](#reearth-visualizer-v1-GetProjectByProjectAliasRequest)
+    - [GetProjectByProjectAliasResponse](#reearth-visualizer-v1-GetProjectByProjectAliasResponse)
     - [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest)
     - [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse)
     - [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest)
     - [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse)
+    - [PageInfo](#reearth-visualizer-v1-PageInfo)
+    - [Pagination](#reearth-visualizer-v1-Pagination)
     - [Project](#reearth-visualizer-v1-Project)
-    - [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest)
-    - [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse)
+    - [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata)
+    - [ProjectSort](#reearth-visualizer-v1-ProjectSort)
+    - [PublishProjectRequest](#reearth-visualizer-v1-PublishProjectRequest)
+    - [PublishProjectResponse](#reearth-visualizer-v1-PublishProjectResponse)
+    - [Story](#reearth-visualizer-v1-Story)
+    - [UpdateByProjectAliasRequest](#reearth-visualizer-v1-UpdateByProjectAliasRequest)
+    - [UpdateByProjectAliasResponse](#reearth-visualizer-v1-UpdateByProjectAliasResponse)
+    - [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest)
+    - [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse)
+    - [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest)
+    - [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse)
+    - [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest)
+    - [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse)
+    - [ValidateSceneAliasRequest](#reearth-visualizer-v1-ValidateSceneAliasRequest)
+    - [ValidateSceneAliasResponse](#reearth-visualizer-v1-ValidateSceneAliasResponse)
   
     - [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus)
+    - [ProjectSortField](#reearth-visualizer-v1-ProjectSortField)
     - [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus)
+    - [SortDirection](#reearth-visualizer-v1-SortDirection)
     - [Visualizer](#reearth-visualizer-v1-Visualizer)
   
     - [ReEarthVisualizer](#reearth-visualizer-v1-ReEarthVisualizer)
@@ -37,7 +62,7 @@
 
 ### CreateProjectRequest
 Creates a new project.
-Cannot be created under a team the user does not belong to.
+Cannot be created under a workspace the user does not belong to.
 
 
 | Field | Type | Label | Description |
@@ -48,6 +73,10 @@ Cannot be created under a team the user does not belong to.
 | description | [string](#string) | optional | Project description |
 | core_support | [bool](#bool) | optional | Set to true |
 | visibility | [string](#string) | optional | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+| project_alias | [string](#string) | optional | Project alias |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+| topics | [string](#string) | optional | Project topics |
 
 
 
@@ -63,6 +92,38 @@ Response messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-DeleteByProjectAliasRequest"></a>
+
+### DeleteByProjectAliasRequest
+Deletes a project.
+This is a physical deletion, not a logical deletion. Data cannot be restored.
+Only the project owner can operate this
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_alias | [string](#string) |  | Project alias |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-DeleteByProjectAliasResponse"></a>
+
+### DeleteByProjectAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_alias | [string](#string) |  | Project alias |
 
 
 
@@ -101,6 +162,96 @@ Response messages
 
 
 
+<a name="reearth-visualizer-v1-ExportProjectRequest"></a>
+
+### ExportProjectRequest
+Export a project.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ExportProjectResponse"></a>
+
+### ExportProjectResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_data_path | [string](#string) |  | Project Export zip file download url |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectByAliasRequest"></a>
+
+### GetProjectByAliasRequest
+Find a project by alias.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| alias | [string](#string) |  | Scene alias |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectByAliasResponse"></a>
+
+### GetProjectByAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectByProjectAliasRequest"></a>
+
+### GetProjectByProjectAliasRequest
+Find a project by project alias.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_alias | [string](#string) |  | Project alias |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-GetProjectByProjectAliasResponse"></a>
+
+### GetProjectByProjectAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
 <a name="reearth-visualizer-v1-GetProjectListRequest"></a>
 
 ### GetProjectListRequest
@@ -110,8 +261,11 @@ response. However, deleted items are excluded.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| workspace_id | [string](#string) |  | Workspace ID |
+| workspace_id | [string](#string) | optional | Workspace ID |
 | authenticated | [bool](#bool) |  | Authenticated Flag |
+| keyword | [string](#string) | optional | Keyword search |
+| sort | [ProjectSort](#reearth-visualizer-v1-ProjectSort) | optional | Sort options |
+| pagination | [Pagination](#reearth-visualizer-v1-Pagination) | optional | Pagination info |
 
 
 
@@ -127,6 +281,8 @@ Response messages
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | projects | [Project](#reearth-visualizer-v1-Project) | repeated | Project List |
+| page_info | [PageInfo](#reearth-visualizer-v1-PageInfo) |  | PageInfo |
+| total_count | [int32](#int32) |  | TotalCount |
 
 
 
@@ -164,6 +320,45 @@ Response messages
 
 
 
+<a name="reearth-visualizer-v1-PageInfo"></a>
+
+### PageInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| total_count | [int64](#int64) |  |  |
+| start_cursor | [string](#string) | optional |  |
+| end_cursor | [string](#string) | optional |  |
+| has_next_page | [bool](#bool) |  |  |
+| has_previous_page | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-Pagination"></a>
+
+### Pagination
+Pagination
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| first | [int32](#int32) | optional |  |
+| last | [int32](#int32) | optional |  |
+| after | [string](#string) | optional |  |
+| before | [string](#string) | optional |  |
+| limit | [int64](#int64) | optional |  |
+| offset | [int64](#int64) | optional |  |
+
+
+
+
+
+
 <a name="reearth-visualizer-v1-Project"></a>
 
 ### Project
@@ -175,6 +370,7 @@ Core Project messages
 | id | [string](#string) |  | Project ID |
 | workspace_id | [string](#string) |  | Workspace ID |
 | scene_id | [string](#string) |  | Scene ID |
+| stories | [Story](#reearth-visualizer-v1-Story) | repeated | Story |
 | name | [string](#string) |  | Project title |
 | description | [string](#string) |  | Project description |
 | image_url | [string](#string) | optional | Project image (URL link) |
@@ -186,50 +382,305 @@ Core Project messages
 | starred | [bool](#bool) |  | Whether the project is marked as a favorite |
 | is_deleted | [bool](#bool) |  | Whether the project is in the trash |
 | visibility | [string](#string) |  | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
-| alias | [string](#string) |  | Publishment value |
-| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Publishment value |
-| published_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) | optional | Publishment value |
-| public_title | [string](#string) |  | Publishment value |
-| public_description | [string](#string) |  | Publishment value |
-| public_image | [string](#string) |  | Publishment value |
-| public_no_index | [bool](#bool) |  | Publishment value |
-| is_basic_auth_active | [bool](#bool) |  | Publishment value |
-| basic_auth_username | [string](#string) |  | Publishment value |
-| basic_auth_password | [string](#string) |  | Publishment value |
-| enable_ga | [bool](#bool) |  | Publishment value |
-| tracking_id | [string](#string) |  | Publishment value |
+| editor_url | [string](#string) |  | URL to visualizer project |
+| metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) | optional | Project metadata |
+| project_alias | [string](#string) |  | Project alias |
+| alias | [string](#string) |  | Scene Publishment value |
+| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Scene Publishment value |
+| published_url | [string](#string) | optional | Scene Publishment value |
 
 
 
 
 
 
-<a name="reearth-visualizer-v1-UpdateProjectVisibilityRequest"></a>
+<a name="reearth-visualizer-v1-ProjectMetadata"></a>
 
-### UpdateProjectVisibilityRequest
-Update project visibility.
+### ProjectMetadata
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | ProjectMetadata id |
+| project_id | [string](#string) |  | Project id |
+| workspace_id | [string](#string) |  | Workspace id |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+| topics | [string](#string) | optional | Project topics |
+| import_status | [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus) |  | Project import status — if PROCESSING, data should not be retrieved |
+| created_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata created date |
+| updated_at | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  | ProjectMetadata updated date |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ProjectSort"></a>
+
+### ProjectSort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field | [ProjectSortField](#reearth-visualizer-v1-ProjectSortField) |  |  |
+| direction | [SortDirection](#reearth-visualizer-v1-SortDirection) |  |  |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-PublishProjectRequest"></a>
+
+### PublishProjectRequest
+Update project publish fields.
 Only the project owner can operate this
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| project_id | [string](#string) |  | Project ID |
-| visibility | [string](#string) | optional | Visibility of the project (e.g., &#34;public&#34;, &#34;private&#34;) |
+| project_id | [string](#string) |  | Project ID (required) |
+| alias | [string](#string) | optional | Scene Publishment alias |
+| publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Scene Publishment status |
 
 
 
 
 
 
-<a name="reearth-visualizer-v1-UpdateProjectVisibilityResponse"></a>
+<a name="reearth-visualizer-v1-PublishProjectResponse"></a>
 
-### UpdateProjectVisibilityResponse
+### PublishProjectResponse
 Response messages
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-Story"></a>
+
+### Story
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  | Story ID |
+| story_alias | [string](#string) |  | Story Publishment value |
+| story_publishment_status | [PublishmentStatus](#reearth-visualizer-v1-PublishmentStatus) |  | Story Publishment value |
+| story_published_url | [string](#string) | optional | Story Publishment value |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateByProjectAliasRequest"></a>
+
+### UpdateByProjectAliasRequest
+Update project fields.
+Only the project owner can operate this
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_alias | [string](#string) |  | Project alias (required) |
+| name | [string](#string) | optional | Project basic info (optional) |
+| description | [string](#string) | optional |  |
+| archived | [bool](#bool) | optional |  |
+| image_url | [string](#string) | optional |  |
+| delete_image_url | [bool](#bool) | optional |  |
+| scene_id | [string](#string) | optional |  |
+| starred | [bool](#bool) | optional |  |
+| deleted | [bool](#bool) | optional |  |
+| visibility | [string](#string) | optional |  |
+| public_title | [string](#string) | optional | Publishment settings (optional) |
+| public_description | [string](#string) | optional |  |
+| public_image | [string](#string) | optional |  |
+| public_no_index | [bool](#bool) | optional |  |
+| delete_public_image | [bool](#bool) | optional |  |
+| is_basic_auth_active | [bool](#bool) | optional |  |
+| basic_auth_username | [string](#string) | optional |  |
+| basic_auth_password | [string](#string) | optional |  |
+| enable_ga | [bool](#bool) | optional |  |
+| tracking_id | [string](#string) | optional |  |
+| new_project_alias | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateByProjectAliasResponse"></a>
+
+### UpdateByProjectAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectMetadataRequest"></a>
+
+### UpdateProjectMetadataRequest
+Updates a new project metadata.
+Cannot be updated under a workspace the user does not belong to.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID |
+| readme | [string](#string) | optional | Project readme |
+| license | [string](#string) | optional | Project license |
+| topics | [string](#string) | optional | Project topics |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectMetadataResponse"></a>
+
+### UpdateProjectMetadataResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| metadata | [ProjectMetadata](#reearth-visualizer-v1-ProjectMetadata) |  | Project metadata |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectRequest"></a>
+
+### UpdateProjectRequest
+Update project fields.
+Only the project owner can operate this
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) |  | Project ID (required) |
+| name | [string](#string) | optional | Project basic info (optional) |
+| description | [string](#string) | optional |  |
+| archived | [bool](#bool) | optional |  |
+| image_url | [string](#string) | optional |  |
+| delete_image_url | [bool](#bool) | optional |  |
+| scene_id | [string](#string) | optional |  |
+| starred | [bool](#bool) | optional |  |
+| deleted | [bool](#bool) | optional |  |
+| visibility | [string](#string) | optional |  |
+| public_title | [string](#string) | optional | Publishment settings (optional) |
+| public_description | [string](#string) | optional |  |
+| public_image | [string](#string) | optional |  |
+| public_no_index | [bool](#bool) | optional |  |
+| delete_public_image | [bool](#bool) | optional |  |
+| is_basic_auth_active | [bool](#bool) | optional |  |
+| basic_auth_username | [string](#string) | optional |  |
+| basic_auth_password | [string](#string) | optional |  |
+| enable_ga | [bool](#bool) | optional |  |
+| tracking_id | [string](#string) | optional |  |
+| project_alias | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-UpdateProjectResponse"></a>
+
+### UpdateProjectResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project | [Project](#reearth-visualizer-v1-Project) |  | Project |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ValidateProjectAliasRequest"></a>
+
+### ValidateProjectAliasRequest
+Determines if an alias is valid.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| workspace_id | [string](#string) |  | Workspace ID |
+| alias | [string](#string) |  | Scene alias |
+| project_id | [string](#string) | optional | Project ID |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ValidateProjectAliasResponse"></a>
+
+### ValidateProjectAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| workspace_id | [string](#string) |  | Workspace ID |
+| available | [bool](#bool) |  | Scene alias available |
+| error_message | [string](#string) | optional | Error message |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ValidateSceneAliasRequest"></a>
+
+### ValidateSceneAliasRequest
+Determines if an alias is valid.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) | optional | Project ID |
+| alias | [string](#string) |  | Scene alias |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ValidateSceneAliasResponse"></a>
+
+### ValidateSceneAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) | optional | Project ID |
+| available | [bool](#bool) |  | Scene alias available |
+| error_message | [string](#string) | optional | Error message |
 
 
 
@@ -252,6 +703,19 @@ Response messages
 
 
 
+<a name="reearth-visualizer-v1-ProjectSortField"></a>
+
+### ProjectSortField
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| PROJECT_SORT_FIELD_UNSPECIFIED | 0 |  |
+| UPDATEDAT | 1 |  |
+| NAME | 2 |  |
+
+
+
 <a name="reearth-visualizer-v1-PublishmentStatus"></a>
 
 ### PublishmentStatus
@@ -263,6 +727,19 @@ Response messages
 | PUBLISHMENT_STATUS_PUBLIC | 1 | The project is published and publicly accessible. |
 | PUBLISHMENT_STATUS_LIMITED | 2 | The project is published with limited access. |
 | PUBLISHMENT_STATUS_PRIVATE | 3 | The project is unpublished (web files have been deleted). |
+
+
+
+<a name="reearth-visualizer-v1-SortDirection"></a>
+
+### SortDirection
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| SORT_DIRECTION_UNSPECIFIED | 0 |  |
+| ASC | 1 |  |
+| DESC | 2 |  |
 
 
 
@@ -292,9 +769,18 @@ Response messages
 | ----------- | ------------ | ------------- | ------------|
 | GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | Retrieves the list of projects the user can access. Request headers: user-id: &lt;User ID&gt; |
 | GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) | Retrieves a specific project regardless of authentication. Request headers: user-id: &lt;User ID&gt; |
-| CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
-| UpdateProjectVisibility | [UpdateProjectVisibilityRequest](#reearth-visualizer-v1-UpdateProjectVisibilityRequest) | [UpdateProjectVisibilityResponse](#reearth-visualizer-v1-UpdateProjectVisibilityResponse) | Update the visibility a project. Request headers: user-id: &lt;User ID&gt; |
+| GetProjectByAlias | [GetProjectByAliasRequest](#reearth-visualizer-v1-GetProjectByAliasRequest) | [GetProjectByAliasResponse](#reearth-visualizer-v1-GetProjectByAliasResponse) | Find a project by alias. Request headers: user-id: &lt;User ID&gt; |
+| ValidateProjectAlias | [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest) | [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse) | Determines if an project alias is valid. Request headers: user-id: &lt;User ID&gt; |
+| ValidateSceneAlias | [ValidateSceneAliasRequest](#reearth-visualizer-v1-ValidateSceneAliasRequest) | [ValidateSceneAliasResponse](#reearth-visualizer-v1-ValidateSceneAliasResponse) | Determines if an scene alias is valid. Request headers: user-id: &lt;User ID&gt; |
+| CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified workspace. Request headers: user-id: &lt;User ID&gt; |
+| UpdateProject | [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest) | [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse) | Update a project. Request headers: user-id: &lt;User ID&gt; |
+| PublishProject | [PublishProjectRequest](#reearth-visualizer-v1-PublishProjectRequest) | [PublishProjectResponse](#reearth-visualizer-v1-PublishProjectResponse) | Publish a project. Request headers: user-id: &lt;User ID&gt; |
+| UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified workspace. Request headers: user-id: &lt;User ID&gt; |
 | DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
+| ExportProject | [ExportProjectRequest](#reearth-visualizer-v1-ExportProjectRequest) | [ExportProjectResponse](#reearth-visualizer-v1-ExportProjectResponse) | Export a project. Request headers: user-id: &lt;User ID&gt; |
+| GetProjectByProjectAlias | [GetProjectByProjectAliasRequest](#reearth-visualizer-v1-GetProjectByProjectAliasRequest) | [GetProjectByProjectAliasResponse](#reearth-visualizer-v1-GetProjectByProjectAliasResponse) | Find a project by project alias. Request headers: user-id: &lt;User ID&gt; |
+| UpdateByProjectAlias | [UpdateByProjectAliasRequest](#reearth-visualizer-v1-UpdateByProjectAliasRequest) | [UpdateByProjectAliasResponse](#reearth-visualizer-v1-UpdateByProjectAliasResponse) | Update a project by project alias. Request headers: user-id: &lt;User ID&gt; |
+| DeleteByProjectAlias | [DeleteByProjectAliasRequest](#reearth-visualizer-v1-DeleteByProjectAliasRequest) | [DeleteByProjectAliasResponse](#reearth-visualizer-v1-DeleteByProjectAliasResponse) | Deletes a project by project alias. Request headers: user-id: &lt;User ID&gt; |
 
  
 

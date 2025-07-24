@@ -21,6 +21,7 @@ const (
 	contextMockAuth    ContextKey = "mockauth"
 	contextCurrentHost ContextKey = "currenthost"
 	contextLang        ContextKey = "lang"
+	contextInternal    ContextKey = "Internal"
 )
 
 var defaultLang = language.English
@@ -57,6 +58,10 @@ func AttachMockAuth(ctx context.Context, mockAuth bool) context.Context {
 
 func AttachCurrentHost(ctx context.Context, currentHost string) context.Context {
 	return context.WithValue(ctx, contextCurrentHost, currentHost)
+}
+
+func AttachInternal(ctx context.Context, isInternal bool) context.Context {
+	return context.WithValue(ctx, contextInternal, isInternal)
 }
 
 func User(ctx context.Context) *user.User {
@@ -128,6 +133,13 @@ func IsMockAuth(ctx context.Context) bool {
 		if mockAuth, ok := v.(bool); ok {
 			return mockAuth
 		}
+	}
+	return false
+}
+
+func IsInternal(ctx context.Context) bool {
+	if v := ctx.Value(contextInternal); v != nil {
+		return v.(bool)
 	}
 	return false
 }

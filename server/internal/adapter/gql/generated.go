@@ -72,16 +72,16 @@ type ResolverRoot interface {
 	StoryBlock() StoryBlockResolver
 	StoryPage() StoryPageResolver
 	Style() StyleResolver
-	Team() TeamResolver
-	TeamMember() TeamMemberResolver
+	Workspace() WorkspaceResolver
+	WorkspaceMember() WorkspaceMemberResolver
 }
 
 type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	AddMemberToTeamPayload struct {
-		Team func(childComplexity int) int
+	AddMemberToWorkspacePayload struct {
+		Workspace func(childComplexity int) int
 	}
 
 	AddNLSInfoboxBlockPayload struct {
@@ -110,9 +110,9 @@ type ComplexityRoot struct {
 		Name        func(childComplexity int) int
 		ProjectID   func(childComplexity int) int
 		Size        func(childComplexity int) int
-		Team        func(childComplexity int) int
-		TeamID      func(childComplexity int) int
 		URL         func(childComplexity int) int
+		Workspace   func(childComplexity int) int
+		WorkspaceID func(childComplexity int) int
 	}
 
 	AssetConnection struct {
@@ -160,8 +160,8 @@ type ComplexityRoot struct {
 		Story func(childComplexity int) int
 	}
 
-	CreateTeamPayload struct {
-		Team func(childComplexity int) int
+	CreateWorkspacePayload struct {
+		Workspace func(childComplexity int) int
 	}
 
 	DeleteGeoJSONFeaturePayload struct {
@@ -185,8 +185,8 @@ type ComplexityRoot struct {
 		StoryID func(childComplexity int) int
 	}
 
-	DeleteTeamPayload struct {
-		TeamID func(childComplexity int) int
+	DeleteWorkspacePayload struct {
+		WorkspaceID func(childComplexity int) int
 	}
 
 	DuplicateNLSLayerPayload struct {
@@ -216,10 +216,6 @@ type ComplexityRoot struct {
 	GeometryCollection struct {
 		Geometries func(childComplexity int) int
 		Type       func(childComplexity int) int
-	}
-
-	ImportProjectPayload struct {
-		ProjectData func(childComplexity int) int
 	}
 
 	InfoboxBlock struct {
@@ -257,15 +253,15 @@ type ComplexityRoot struct {
 	}
 
 	Me struct {
-		Auths    func(childComplexity int) int
-		Email    func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Lang     func(childComplexity int) int
-		MyTeam   func(childComplexity int) int
-		MyTeamID func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Teams    func(childComplexity int) int
-		Theme    func(childComplexity int) int
+		Auths         func(childComplexity int) int
+		Email         func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Lang          func(childComplexity int) int
+		MyWorkspace   func(childComplexity int) int
+		MyWorkspaceID func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Theme         func(childComplexity int) int
+		Workspaces    func(childComplexity int) int
 	}
 
 	MergedProperty struct {
@@ -336,7 +332,7 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		AddGeoJSONFeature         func(childComplexity int, input gqlmodel.AddGeoJSONFeatureInput) int
-		AddMemberToTeam           func(childComplexity int, input gqlmodel.AddMemberToTeamInput) int
+		AddMemberToWorkspace      func(childComplexity int, input gqlmodel.AddMemberToWorkspaceInput) int
 		AddNLSInfoboxBlock        func(childComplexity int, input gqlmodel.AddNLSInfoboxBlockInput) int
 		AddNLSLayerSimple         func(childComplexity int, input gqlmodel.AddNLSLayerSimpleInput) int
 		AddPageLayer              func(childComplexity int, input gqlmodel.PageLayerInput) int
@@ -352,17 +348,16 @@ type ComplexityRoot struct {
 		CreateStory               func(childComplexity int, input gqlmodel.CreateStoryInput) int
 		CreateStoryBlock          func(childComplexity int, input gqlmodel.CreateStoryBlockInput) int
 		CreateStoryPage           func(childComplexity int, input gqlmodel.CreateStoryPageInput) int
-		CreateTeam                func(childComplexity int, input gqlmodel.CreateTeamInput) int
+		CreateWorkspace           func(childComplexity int, input gqlmodel.CreateWorkspaceInput) int
 		DeleteGeoJSONFeature      func(childComplexity int, input gqlmodel.DeleteGeoJSONFeatureInput) int
 		DeleteMe                  func(childComplexity int, input gqlmodel.DeleteMeInput) int
 		DeleteProject             func(childComplexity int, input gqlmodel.DeleteProjectInput) int
 		DeleteStory               func(childComplexity int, input gqlmodel.DeleteStoryInput) int
-		DeleteTeam                func(childComplexity int, input gqlmodel.DeleteTeamInput) int
+		DeleteWorkspace           func(childComplexity int, input gqlmodel.DeleteWorkspaceInput) int
 		DuplicateNLSLayer         func(childComplexity int, input gqlmodel.DuplicateNLSLayerInput) int
 		DuplicateStoryPage        func(childComplexity int, input gqlmodel.DuplicateStoryPageInput) int
 		DuplicateStyle            func(childComplexity int, input gqlmodel.DuplicateStyleInput) int
 		ExportProject             func(childComplexity int, input gqlmodel.ExportProjectInput) int
-		ImportProject             func(childComplexity int, input gqlmodel.ImportProjectInput) int
 		InstallPlugin             func(childComplexity int, input gqlmodel.InstallPluginInput) int
 		MoveNLSInfoboxBlock       func(childComplexity int, input gqlmodel.MoveNLSInfoboxBlockInput) int
 		MovePropertyItem          func(childComplexity int, input gqlmodel.MovePropertyItemInput) int
@@ -373,7 +368,7 @@ type ComplexityRoot struct {
 		PublishStory              func(childComplexity int, input gqlmodel.PublishStoryInput) int
 		RemoveAsset               func(childComplexity int, input gqlmodel.RemoveAssetInput) int
 		RemoveCustomProperty      func(childComplexity int, input gqlmodel.RemoveCustomPropertyInput) int
-		RemoveMemberFromTeam      func(childComplexity int, input gqlmodel.RemoveMemberFromTeamInput) int
+		RemoveMemberFromWorkspace func(childComplexity int, input gqlmodel.RemoveMemberFromWorkspaceInput) int
 		RemoveMyAuth              func(childComplexity int, input gqlmodel.RemoveMyAuthInput) int
 		RemoveNLSInfobox          func(childComplexity int, input gqlmodel.RemoveNLSInfoboxInput) int
 		RemoveNLSInfoboxBlock     func(childComplexity int, input gqlmodel.RemoveNLSInfoboxBlockInput) int
@@ -393,18 +388,19 @@ type ComplexityRoot struct {
 		UpdateCustomProperties    func(childComplexity int, input gqlmodel.UpdateCustomPropertySchemaInput) int
 		UpdateGeoJSONFeature      func(childComplexity int, input gqlmodel.UpdateGeoJSONFeatureInput) int
 		UpdateMe                  func(childComplexity int, input gqlmodel.UpdateMeInput) int
-		UpdateMemberOfTeam        func(childComplexity int, input gqlmodel.UpdateMemberOfTeamInput) int
+		UpdateMemberOfWorkspace   func(childComplexity int, input gqlmodel.UpdateMemberOfWorkspaceInput) int
 		UpdateNLSLayer            func(childComplexity int, input gqlmodel.UpdateNLSLayerInput) int
 		UpdateNLSLayers           func(childComplexity int, input gqlmodel.UpdateNLSLayersInput) int
 		UpdateProject             func(childComplexity int, input gqlmodel.UpdateProjectInput) int
+		UpdateProjectMetadata     func(childComplexity int, input gqlmodel.UpdateProjectMetadataInput) int
 		UpdatePropertyItems       func(childComplexity int, input gqlmodel.UpdatePropertyItemInput) int
 		UpdatePropertyValue       func(childComplexity int, input gqlmodel.UpdatePropertyValueInput) int
 		UpdateStory               func(childComplexity int, input gqlmodel.UpdateStoryInput) int
 		UpdateStoryPage           func(childComplexity int, input gqlmodel.UpdateStoryPageInput) int
 		UpdateStyle               func(childComplexity int, input gqlmodel.UpdateStyleInput) int
-		UpdateTeam                func(childComplexity int, input gqlmodel.UpdateTeamInput) int
 		UpdateWidget              func(childComplexity int, input gqlmodel.UpdateWidgetInput) int
 		UpdateWidgetAlignSystem   func(childComplexity int, input gqlmodel.UpdateWidgetAlignSystemInput) int
+		UpdateWorkspace           func(childComplexity int, input gqlmodel.UpdateWorkspaceInput) int
 		UpgradePlugin             func(childComplexity int, input gqlmodel.UpgradePluginInput) int
 		UploadFileToProperty      func(childComplexity int, input gqlmodel.UploadFileToPropertyInput) int
 		UploadPlugin              func(childComplexity int, input gqlmodel.UploadPluginInput) int
@@ -543,7 +539,9 @@ type ComplexityRoot struct {
 		IsArchived        func(childComplexity int) int
 		IsBasicAuthActive func(childComplexity int) int
 		IsDeleted         func(childComplexity int) int
+		Metadata          func(childComplexity int) int
 		Name              func(childComplexity int) int
+		ProjectAlias      func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
 		PublicNoIndex     func(childComplexity int) int
@@ -552,12 +550,12 @@ type ComplexityRoot struct {
 		PublishmentStatus func(childComplexity int) int
 		Scene             func(childComplexity int) int
 		Starred           func(childComplexity int) int
-		Team              func(childComplexity int) int
-		TeamID            func(childComplexity int) int
 		TrackingID        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		Visibility        func(childComplexity int) int
 		Visualizer        func(childComplexity int) int
+		Workspace         func(childComplexity int) int
+		WorkspaceID       func(childComplexity int) int
 	}
 
 	ProjectAliasAvailability struct {
@@ -575,6 +573,22 @@ type ComplexityRoot struct {
 	ProjectEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
+	}
+
+	ProjectMetadata struct {
+		CreatedAt    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		ImportStatus func(childComplexity int) int
+		License      func(childComplexity int) int
+		Project      func(childComplexity int) int
+		Readme       func(childComplexity int) int
+		Topics       func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		Workspace    func(childComplexity int) int
+	}
+
+	ProjectMetadataPayload struct {
+		Metadata func(childComplexity int) int
 	}
 
 	ProjectPayload struct {
@@ -696,21 +710,22 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Assets            func(childComplexity int, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
-		CheckProjectAlias func(childComplexity int, alias string, projectID *gqlmodel.ID) int
+		Assets            func(childComplexity int, workspaceID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
+		CheckProjectAlias func(childComplexity int, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) int
+		CheckSceneAlias   func(childComplexity int, alias string, projectID *gqlmodel.ID) int
 		CheckStoryAlias   func(childComplexity int, alias string, storyID *gqlmodel.ID) int
-		DeletedProjects   func(childComplexity int, teamID gqlmodel.ID) int
+		DeletedProjects   func(childComplexity int, workspaceID gqlmodel.ID) int
 		Me                func(childComplexity int) int
 		Node              func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Nodes             func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
 		Plugin            func(childComplexity int, id gqlmodel.ID) int
 		Plugins           func(childComplexity int, id []gqlmodel.ID) int
-		Projects          func(childComplexity int, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
+		Projects          func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
 		PropertySchema    func(childComplexity int, id gqlmodel.ID) int
 		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
 		Scene             func(childComplexity int, projectID gqlmodel.ID) int
 		SearchUser        func(childComplexity int, nameOrEmail string) int
-		StarredProjects   func(childComplexity int, teamID gqlmodel.ID) int
+		StarredProjects   func(childComplexity int, workspaceID gqlmodel.ID) int
 	}
 
 	Rect struct {
@@ -724,8 +739,8 @@ type ComplexityRoot struct {
 		AssetID func(childComplexity int) int
 	}
 
-	RemoveMemberFromTeamPayload struct {
-		Team func(childComplexity int) int
+	RemoveMemberFromWorkspacePayload struct {
+		Workspace func(childComplexity int) int
 	}
 
 	RemoveNLSInfoboxBlockPayload struct {
@@ -761,6 +776,7 @@ type ComplexityRoot struct {
 	}
 
 	Scene struct {
+		Alias             func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		ID                func(childComplexity int) int
 		NewLayers         func(childComplexity int) int
@@ -771,11 +787,16 @@ type ComplexityRoot struct {
 		PropertyID        func(childComplexity int) int
 		Stories           func(childComplexity int) int
 		Styles            func(childComplexity int) int
-		Team              func(childComplexity int) int
-		TeamID            func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
 		WidgetAlignSystem func(childComplexity int) int
 		Widgets           func(childComplexity int) int
+		Workspace         func(childComplexity int) int
+		WorkspaceID       func(childComplexity int) int
+	}
+
+	SceneAliasAvailability struct {
+		Alias     func(childComplexity int) int
+		Available func(childComplexity int) int
 	}
 
 	ScenePlugin struct {
@@ -798,8 +819,8 @@ type ComplexityRoot struct {
 	}
 
 	SignupPayload struct {
-		Team func(childComplexity int) int
-		User func(childComplexity int) int
+		User      func(childComplexity int) int
+		Workspace func(childComplexity int) int
 	}
 
 	SketchInfo struct {
@@ -825,6 +846,7 @@ type ComplexityRoot struct {
 		IsBasicAuthActive func(childComplexity int) int
 		Pages             func(childComplexity int) int
 		PanelPosition     func(childComplexity int) int
+		ProjectID         func(childComplexity int) int
 		Property          func(childComplexity int) int
 		PropertyID        func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
@@ -886,23 +908,6 @@ type ComplexityRoot struct {
 		Value   func(childComplexity int) int
 	}
 
-	Team struct {
-		Assets   func(childComplexity int, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-		ID       func(childComplexity int) int
-		Members  func(childComplexity int) int
-		Name     func(childComplexity int) int
-		Personal func(childComplexity int) int
-		Policy   func(childComplexity int) int
-		PolicyID func(childComplexity int) int
-		Projects func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
-	}
-
-	TeamMember struct {
-		Role   func(childComplexity int) int
-		User   func(childComplexity int) int
-		UserID func(childComplexity int) int
-	}
-
 	Timeline struct {
 		CurrentTime func(childComplexity int) int
 		EndTime     func(childComplexity int) int
@@ -934,8 +939,8 @@ type ComplexityRoot struct {
 		Me func(childComplexity int) int
 	}
 
-	UpdateMemberOfTeamPayload struct {
-		Team func(childComplexity int) int
+	UpdateMemberOfWorkspacePayload struct {
+		Workspace func(childComplexity int) int
 	}
 
 	UpdateNLSLayerPayload struct {
@@ -950,10 +955,6 @@ type ComplexityRoot struct {
 		Style func(childComplexity int) int
 	}
 
-	UpdateTeamPayload struct {
-		Team func(childComplexity int) int
-	}
-
 	UpdateWidgetAlignSystemPayload struct {
 		Scene func(childComplexity int) int
 	}
@@ -961,6 +962,10 @@ type ComplexityRoot struct {
 	UpdateWidgetPayload struct {
 		Scene       func(childComplexity int) int
 		SceneWidget func(childComplexity int) int
+	}
+
+	UpdateWorkspacePayload struct {
+		Workspace func(childComplexity int) int
 	}
 
 	UpgradePluginPayload struct {
@@ -1031,10 +1036,28 @@ type ComplexityRoot struct {
 		Left   func(childComplexity int) int
 		Right  func(childComplexity int) int
 	}
+
+	Workspace struct {
+		Assets                       func(childComplexity int, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+		EnableToCreatePrivateProject func(childComplexity int) int
+		ID                           func(childComplexity int) int
+		Members                      func(childComplexity int) int
+		Name                         func(childComplexity int) int
+		Personal                     func(childComplexity int) int
+		Policy                       func(childComplexity int) int
+		PolicyID                     func(childComplexity int) int
+		Projects                     func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
+	}
+
+	WorkspaceMember struct {
+		Role   func(childComplexity int) int
+		User   func(childComplexity int) int
+		UserID func(childComplexity int) int
+	}
 }
 
 type AssetResolver interface {
-	Team(ctx context.Context, obj *gqlmodel.Asset) (*gqlmodel.Team, error)
+	Workspace(ctx context.Context, obj *gqlmodel.Asset) (*gqlmodel.Workspace, error)
 }
 type InfoboxBlockResolver interface {
 	Property(ctx context.Context, obj *gqlmodel.InfoboxBlock) (*gqlmodel.Property, error)
@@ -1044,8 +1067,8 @@ type InfoboxBlockResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.InfoboxBlock) (*gqlmodel.Scene, error)
 }
 type MeResolver interface {
-	Teams(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Team, error)
-	MyTeam(ctx context.Context, obj *gqlmodel.Me) (*gqlmodel.Team, error)
+	Workspaces(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Workspace, error)
+	MyWorkspace(ctx context.Context, obj *gqlmodel.Me) (*gqlmodel.Workspace, error)
 }
 type MergedPropertyResolver interface {
 	Original(ctx context.Context, obj *gqlmodel.MergedProperty) (*gqlmodel.Property, error)
@@ -1095,7 +1118,7 @@ type MutationResolver interface {
 	PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error)
 	DeleteProject(ctx context.Context, input gqlmodel.DeleteProjectInput) (*gqlmodel.DeleteProjectPayload, error)
 	ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error)
-	ImportProject(ctx context.Context, input gqlmodel.ImportProjectInput) (*gqlmodel.ImportProjectPayload, error)
+	UpdateProjectMetadata(ctx context.Context, input gqlmodel.UpdateProjectMetadataInput) (*gqlmodel.ProjectMetadataPayload, error)
 	UpdatePropertyValue(ctx context.Context, input gqlmodel.UpdatePropertyValueInput) (*gqlmodel.PropertyFieldPayload, error)
 	RemovePropertyField(ctx context.Context, input gqlmodel.RemovePropertyFieldInput) (*gqlmodel.PropertyFieldPayload, error)
 	UploadFileToProperty(ctx context.Context, input gqlmodel.UploadFileToPropertyInput) (*gqlmodel.PropertyFieldPayload, error)
@@ -1132,12 +1155,12 @@ type MutationResolver interface {
 	UpdateWidget(ctx context.Context, input gqlmodel.UpdateWidgetInput) (*gqlmodel.UpdateWidgetPayload, error)
 	UpdateWidgetAlignSystem(ctx context.Context, input gqlmodel.UpdateWidgetAlignSystemInput) (*gqlmodel.UpdateWidgetAlignSystemPayload, error)
 	RemoveWidget(ctx context.Context, input gqlmodel.RemoveWidgetInput) (*gqlmodel.RemoveWidgetPayload, error)
-	CreateTeam(ctx context.Context, input gqlmodel.CreateTeamInput) (*gqlmodel.CreateTeamPayload, error)
-	DeleteTeam(ctx context.Context, input gqlmodel.DeleteTeamInput) (*gqlmodel.DeleteTeamPayload, error)
-	UpdateTeam(ctx context.Context, input gqlmodel.UpdateTeamInput) (*gqlmodel.UpdateTeamPayload, error)
-	AddMemberToTeam(ctx context.Context, input gqlmodel.AddMemberToTeamInput) (*gqlmodel.AddMemberToTeamPayload, error)
-	RemoveMemberFromTeam(ctx context.Context, input gqlmodel.RemoveMemberFromTeamInput) (*gqlmodel.RemoveMemberFromTeamPayload, error)
-	UpdateMemberOfTeam(ctx context.Context, input gqlmodel.UpdateMemberOfTeamInput) (*gqlmodel.UpdateMemberOfTeamPayload, error)
+	CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error)
+	DeleteWorkspace(ctx context.Context, input gqlmodel.DeleteWorkspaceInput) (*gqlmodel.DeleteWorkspacePayload, error)
+	UpdateWorkspace(ctx context.Context, input gqlmodel.UpdateWorkspaceInput) (*gqlmodel.UpdateWorkspacePayload, error)
+	AddMemberToWorkspace(ctx context.Context, input gqlmodel.AddMemberToWorkspaceInput) (*gqlmodel.AddMemberToWorkspacePayload, error)
+	RemoveMemberFromWorkspace(ctx context.Context, input gqlmodel.RemoveMemberFromWorkspaceInput) (*gqlmodel.RemoveMemberFromWorkspacePayload, error)
+	UpdateMemberOfWorkspace(ctx context.Context, input gqlmodel.UpdateMemberOfWorkspaceInput) (*gqlmodel.UpdateMemberOfWorkspacePayload, error)
 }
 type NLSInfoboxResolver interface {
 	Property(ctx context.Context, obj *gqlmodel.NLSInfobox) (*gqlmodel.Property, error)
@@ -1167,7 +1190,7 @@ type PluginExtensionResolver interface {
 	TranslatedDescription(ctx context.Context, obj *gqlmodel.PluginExtension, lang *language.Tag) (string, error)
 }
 type ProjectResolver interface {
-	Team(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Team, error)
+	Workspace(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Workspace, error)
 	Scene(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Scene, error)
 }
 type PropertyResolver interface {
@@ -1207,13 +1230,14 @@ type PropertySchemaGroupResolver interface {
 type QueryResolver interface {
 	Node(ctx context.Context, id gqlmodel.ID, typeArg gqlmodel.NodeType) (gqlmodel.Node, error)
 	Nodes(ctx context.Context, id []gqlmodel.ID, typeArg gqlmodel.NodeType) ([]gqlmodel.Node, error)
-	Assets(ctx context.Context, teamID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error)
+	Assets(ctx context.Context, workspaceID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error)
 	Plugin(ctx context.Context, id gqlmodel.ID) (*gqlmodel.Plugin, error)
 	Plugins(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.Plugin, error)
-	Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
-	CheckProjectAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
-	StarredProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
-	DeletedProjects(ctx context.Context, teamID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error)
+	CheckProjectAlias(ctx context.Context, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error)
+	CheckSceneAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error)
+	StarredProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
+	DeletedProjects(ctx context.Context, workspaceID gqlmodel.ID) (*gqlmodel.ProjectConnection, error)
 	PropertySchema(ctx context.Context, id gqlmodel.ID) (*gqlmodel.PropertySchema, error)
 	PropertySchemas(ctx context.Context, id []gqlmodel.ID) ([]*gqlmodel.PropertySchema, error)
 	Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlmodel.Scene, error)
@@ -1223,7 +1247,7 @@ type QueryResolver interface {
 }
 type SceneResolver interface {
 	Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error)
-	Team(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Team, error)
+	Workspace(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Workspace, error)
 	Property(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Property, error)
 	NewLayers(ctx context.Context, obj *gqlmodel.Scene) ([]gqlmodel.NLSLayer, error)
 	Stories(ctx context.Context, obj *gqlmodel.Scene) ([]*gqlmodel.Story, error)
@@ -1256,13 +1280,13 @@ type StoryPageResolver interface {
 type StyleResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.Style) (*gqlmodel.Scene, error)
 }
-type TeamResolver interface {
-	Policy(ctx context.Context, obj *gqlmodel.Team) (*gqlmodel.Policy, error)
-	Assets(ctx context.Context, obj *gqlmodel.Team, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.AssetConnection, error)
-	Projects(ctx context.Context, obj *gqlmodel.Team, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
+type WorkspaceResolver interface {
+	Policy(ctx context.Context, obj *gqlmodel.Workspace) (*gqlmodel.Policy, error)
+	Assets(ctx context.Context, obj *gqlmodel.Workspace, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.AssetConnection, error)
+	Projects(ctx context.Context, obj *gqlmodel.Workspace, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
 }
-type TeamMemberResolver interface {
-	User(ctx context.Context, obj *gqlmodel.TeamMember) (*gqlmodel.User, error)
+type WorkspaceMemberResolver interface {
+	User(ctx context.Context, obj *gqlmodel.WorkspaceMember) (*gqlmodel.User, error)
 }
 
 type executableSchema struct {
@@ -1279,17 +1303,17 @@ func (e *executableSchema) Schema() *ast.Schema {
 	return parsedSchema
 }
 
-func (e *executableSchema) Complexity(typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
+func (e *executableSchema) Complexity(ctx context.Context, typeName, field string, childComplexity int, rawArgs map[string]any) (int, bool) {
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
 
-	case "AddMemberToTeamPayload.team":
-		if e.complexity.AddMemberToTeamPayload.Team == nil {
+	case "AddMemberToWorkspacePayload.workspace":
+		if e.complexity.AddMemberToWorkspacePayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.AddMemberToTeamPayload.Team(childComplexity), true
+		return e.complexity.AddMemberToWorkspacePayload.Workspace(childComplexity), true
 
 	case "AddNLSInfoboxBlockPayload.infoboxBlock":
 		if e.complexity.AddNLSInfoboxBlockPayload.InfoboxBlock == nil {
@@ -1382,26 +1406,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Asset.Size(childComplexity), true
 
-	case "Asset.team":
-		if e.complexity.Asset.Team == nil {
-			break
-		}
-
-		return e.complexity.Asset.Team(childComplexity), true
-
-	case "Asset.teamId":
-		if e.complexity.Asset.TeamID == nil {
-			break
-		}
-
-		return e.complexity.Asset.TeamID(childComplexity), true
-
 	case "Asset.url":
 		if e.complexity.Asset.URL == nil {
 			break
 		}
 
 		return e.complexity.Asset.URL(childComplexity), true
+
+	case "Asset.workspace":
+		if e.complexity.Asset.Workspace == nil {
+			break
+		}
+
+		return e.complexity.Asset.Workspace(childComplexity), true
+
+	case "Asset.workspaceId":
+		if e.complexity.Asset.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.Asset.WorkspaceID(childComplexity), true
 
 	case "AssetConnection.edges":
 		if e.complexity.AssetConnection.Edges == nil {
@@ -1550,12 +1574,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CreateStoryBlockPayload.Story(childComplexity), true
 
-	case "CreateTeamPayload.team":
-		if e.complexity.CreateTeamPayload.Team == nil {
+	case "CreateWorkspacePayload.workspace":
+		if e.complexity.CreateWorkspacePayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.CreateTeamPayload.Team(childComplexity), true
+		return e.complexity.CreateWorkspacePayload.Workspace(childComplexity), true
 
 	case "DeleteGeoJSONFeaturePayload.deletedFeatureId":
 		if e.complexity.DeleteGeoJSONFeaturePayload.DeletedFeatureID == nil {
@@ -1599,12 +1623,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DeleteStoryPayload.StoryID(childComplexity), true
 
-	case "DeleteTeamPayload.teamId":
-		if e.complexity.DeleteTeamPayload.TeamID == nil {
+	case "DeleteWorkspacePayload.workspaceId":
+		if e.complexity.DeleteWorkspacePayload.WorkspaceID == nil {
 			break
 		}
 
-		return e.complexity.DeleteTeamPayload.TeamID(childComplexity), true
+		return e.complexity.DeleteWorkspacePayload.WorkspaceID(childComplexity), true
 
 	case "DuplicateNLSLayerPayload.layer":
 		if e.complexity.DuplicateNLSLayerPayload.Layer == nil {
@@ -1682,13 +1706,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.GeometryCollection.Type(childComplexity), true
-
-	case "ImportProjectPayload.projectData":
-		if e.complexity.ImportProjectPayload.ProjectData == nil {
-			break
-		}
-
-		return e.complexity.ImportProjectPayload.ProjectData(childComplexity), true
 
 	case "InfoboxBlock.extension":
 		if e.complexity.InfoboxBlock.Extension == nil {
@@ -1851,19 +1868,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Me.Lang(childComplexity), true
 
-	case "Me.myTeam":
-		if e.complexity.Me.MyTeam == nil {
+	case "Me.myWorkspace":
+		if e.complexity.Me.MyWorkspace == nil {
 			break
 		}
 
-		return e.complexity.Me.MyTeam(childComplexity), true
+		return e.complexity.Me.MyWorkspace(childComplexity), true
 
-	case "Me.myTeamId":
-		if e.complexity.Me.MyTeamID == nil {
+	case "Me.myWorkspaceId":
+		if e.complexity.Me.MyWorkspaceID == nil {
 			break
 		}
 
-		return e.complexity.Me.MyTeamID(childComplexity), true
+		return e.complexity.Me.MyWorkspaceID(childComplexity), true
 
 	case "Me.name":
 		if e.complexity.Me.Name == nil {
@@ -1872,19 +1889,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Me.Name(childComplexity), true
 
-	case "Me.teams":
-		if e.complexity.Me.Teams == nil {
-			break
-		}
-
-		return e.complexity.Me.Teams(childComplexity), true
-
 	case "Me.theme":
 		if e.complexity.Me.Theme == nil {
 			break
 		}
 
 		return e.complexity.Me.Theme(childComplexity), true
+
+	case "Me.workspaces":
+		if e.complexity.Me.Workspaces == nil {
+			break
+		}
+
+		return e.complexity.Me.Workspaces(childComplexity), true
 
 	case "MergedProperty.groups":
 		if e.complexity.MergedProperty.Groups == nil {
@@ -2185,31 +2202,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addGeoJSONFeature_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addGeoJSONFeature_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.AddGeoJSONFeature(childComplexity, args["input"].(gqlmodel.AddGeoJSONFeatureInput)), true
 
-	case "Mutation.addMemberToTeam":
-		if e.complexity.Mutation.AddMemberToTeam == nil {
+	case "Mutation.addMemberToWorkspace":
+		if e.complexity.Mutation.AddMemberToWorkspace == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_addMemberToTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addMemberToWorkspace_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AddMemberToTeam(childComplexity, args["input"].(gqlmodel.AddMemberToTeamInput)), true
+		return e.complexity.Mutation.AddMemberToWorkspace(childComplexity, args["input"].(gqlmodel.AddMemberToWorkspaceInput)), true
 
 	case "Mutation.addNLSInfoboxBlock":
 		if e.complexity.Mutation.AddNLSInfoboxBlock == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_addNLSInfoboxBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addNLSInfoboxBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2221,7 +2238,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addNLSLayerSimple_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addNLSLayerSimple_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2233,7 +2250,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addPageLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addPageLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2245,7 +2262,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addPropertyItem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addPropertyItem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2257,7 +2274,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2269,7 +2286,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_addWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_addWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2281,7 +2298,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_changeCustomPropertyTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_changeCustomPropertyTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2293,7 +2310,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createAsset_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createAsset_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2305,7 +2322,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createNLSInfobox_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createNLSInfobox_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2317,7 +2334,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createNLSPhotoOverlay_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createNLSPhotoOverlay_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2329,7 +2346,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2341,7 +2358,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createScene_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createScene_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2353,7 +2370,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2365,7 +2382,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createStoryBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createStoryBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2377,31 +2394,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_createStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.CreateStoryPage(childComplexity, args["input"].(gqlmodel.CreateStoryPageInput)), true
 
-	case "Mutation.createTeam":
-		if e.complexity.Mutation.CreateTeam == nil {
+	case "Mutation.createWorkspace":
+		if e.complexity.Mutation.CreateWorkspace == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_createWorkspace_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTeam(childComplexity, args["input"].(gqlmodel.CreateTeamInput)), true
+		return e.complexity.Mutation.CreateWorkspace(childComplexity, args["input"].(gqlmodel.CreateWorkspaceInput)), true
 
 	case "Mutation.deleteGeoJSONFeature":
 		if e.complexity.Mutation.DeleteGeoJSONFeature == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteGeoJSONFeature_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteGeoJSONFeature_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2413,7 +2430,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteMe_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteMe_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2425,7 +2442,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2437,31 +2454,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.DeleteStory(childComplexity, args["input"].(gqlmodel.DeleteStoryInput)), true
 
-	case "Mutation.deleteTeam":
-		if e.complexity.Mutation.DeleteTeam == nil {
+	case "Mutation.deleteWorkspace":
+		if e.complexity.Mutation.DeleteWorkspace == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_deleteTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_deleteWorkspace_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteTeam(childComplexity, args["input"].(gqlmodel.DeleteTeamInput)), true
+		return e.complexity.Mutation.DeleteWorkspace(childComplexity, args["input"].(gqlmodel.DeleteWorkspaceInput)), true
 
 	case "Mutation.duplicateNLSLayer":
 		if e.complexity.Mutation.DuplicateNLSLayer == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_duplicateNLSLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_duplicateNLSLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2473,7 +2490,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_duplicateStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_duplicateStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2485,7 +2502,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_duplicateStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_duplicateStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2497,31 +2514,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_exportProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_exportProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.ExportProject(childComplexity, args["input"].(gqlmodel.ExportProjectInput)), true
 
-	case "Mutation.importProject":
-		if e.complexity.Mutation.ImportProject == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_importProject_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.ImportProject(childComplexity, args["input"].(gqlmodel.ImportProjectInput)), true
-
 	case "Mutation.installPlugin":
 		if e.complexity.Mutation.InstallPlugin == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_installPlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_installPlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2533,7 +2538,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveNLSInfoboxBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveNLSInfoboxBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2545,7 +2550,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_movePropertyItem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_movePropertyItem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2557,7 +2562,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2569,7 +2574,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveStoryBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveStoryBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2581,7 +2586,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_moveStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_moveStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2593,7 +2598,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_publishProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_publishProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2605,7 +2610,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_publishStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_publishStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2617,7 +2622,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeAsset_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeAsset_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2629,31 +2634,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeCustomProperty_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeCustomProperty_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.RemoveCustomProperty(childComplexity, args["input"].(gqlmodel.RemoveCustomPropertyInput)), true
 
-	case "Mutation.removeMemberFromTeam":
-		if e.complexity.Mutation.RemoveMemberFromTeam == nil {
+	case "Mutation.removeMemberFromWorkspace":
+		if e.complexity.Mutation.RemoveMemberFromWorkspace == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_removeMemberFromTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeMemberFromWorkspace_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.RemoveMemberFromTeam(childComplexity, args["input"].(gqlmodel.RemoveMemberFromTeamInput)), true
+		return e.complexity.Mutation.RemoveMemberFromWorkspace(childComplexity, args["input"].(gqlmodel.RemoveMemberFromWorkspaceInput)), true
 
 	case "Mutation.removeMyAuth":
 		if e.complexity.Mutation.RemoveMyAuth == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_removeMyAuth_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeMyAuth_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2665,7 +2670,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSInfobox_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSInfobox_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2677,7 +2682,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSInfoboxBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSInfoboxBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2689,7 +2694,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2701,7 +2706,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeNLSPhotoOverlay_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeNLSPhotoOverlay_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2713,7 +2718,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removePageLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removePageLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2725,7 +2730,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removePropertyField_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removePropertyField_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2737,7 +2742,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removePropertyItem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removePropertyItem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2749,7 +2754,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeStoryBlock_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeStoryBlock_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2761,7 +2766,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2773,7 +2778,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2785,7 +2790,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_removeWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_removeWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2797,7 +2802,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_signup_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_signup_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2809,7 +2814,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_uninstallPlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uninstallPlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2821,7 +2826,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_unlinkPropertyValue_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_unlinkPropertyValue_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2833,7 +2838,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateAsset_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateAsset_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2845,7 +2850,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateCustomProperties_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateCustomProperties_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2857,7 +2862,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateGeoJSONFeature_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateGeoJSONFeature_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2869,31 +2874,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateMe_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateMe_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.UpdateMe(childComplexity, args["input"].(gqlmodel.UpdateMeInput)), true
 
-	case "Mutation.updateMemberOfTeam":
-		if e.complexity.Mutation.UpdateMemberOfTeam == nil {
+	case "Mutation.updateMemberOfWorkspace":
+		if e.complexity.Mutation.UpdateMemberOfWorkspace == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateMemberOfTeam_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateMemberOfWorkspace_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateMemberOfTeam(childComplexity, args["input"].(gqlmodel.UpdateMemberOfTeamInput)), true
+		return e.complexity.Mutation.UpdateMemberOfWorkspace(childComplexity, args["input"].(gqlmodel.UpdateMemberOfWorkspaceInput)), true
 
 	case "Mutation.updateNLSLayer":
 		if e.complexity.Mutation.UpdateNLSLayer == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateNLSLayer_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateNLSLayer_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2905,7 +2910,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateNLSLayers_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateNLSLayers_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2917,19 +2922,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateProject_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateProject_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.UpdateProject(childComplexity, args["input"].(gqlmodel.UpdateProjectInput)), true
 
+	case "Mutation.updateProjectMetadata":
+		if e.complexity.Mutation.UpdateProjectMetadata == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateProjectMetadata_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateProjectMetadata(childComplexity, args["input"].(gqlmodel.UpdateProjectMetadataInput)), true
+
 	case "Mutation.updatePropertyItems":
 		if e.complexity.Mutation.UpdatePropertyItems == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updatePropertyItems_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updatePropertyItems_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2941,7 +2958,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updatePropertyValue_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updatePropertyValue_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2953,7 +2970,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateStory_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateStory_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2965,7 +2982,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateStoryPage_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateStoryPage_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -2977,31 +2994,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateStyle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateStyle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.UpdateStyle(childComplexity, args["input"].(gqlmodel.UpdateStyleInput)), true
 
-	case "Mutation.updateTeam":
-		if e.complexity.Mutation.UpdateTeam == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateTeam_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateTeam(childComplexity, args["input"].(gqlmodel.UpdateTeamInput)), true
-
 	case "Mutation.updateWidget":
 		if e.complexity.Mutation.UpdateWidget == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3013,19 +3018,31 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_updateWidgetAlignSystem_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateWidgetAlignSystem_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
 		return e.complexity.Mutation.UpdateWidgetAlignSystem(childComplexity, args["input"].(gqlmodel.UpdateWidgetAlignSystemInput)), true
 
+	case "Mutation.updateWorkspace":
+		if e.complexity.Mutation.UpdateWorkspace == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateWorkspace_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateWorkspace(childComplexity, args["input"].(gqlmodel.UpdateWorkspaceInput)), true
+
 	case "Mutation.upgradePlugin":
 		if e.complexity.Mutation.UpgradePlugin == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_upgradePlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_upgradePlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3037,7 +3054,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_uploadFileToProperty_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uploadFileToProperty_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3049,7 +3066,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Mutation_uploadPlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uploadPlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3446,7 +3463,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Plugin_scenePlugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Plugin_scenePlugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3458,7 +3475,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Plugin_translatedDescription_args(context.TODO(), rawArgs)
+		args, err := ec.field_Plugin_translatedDescription_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3470,7 +3487,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Plugin_translatedName_args(context.TODO(), rawArgs)
+		args, err := ec.field_Plugin_translatedName_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3559,7 +3576,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PluginExtension_sceneWidget_args(context.TODO(), rawArgs)
+		args, err := ec.field_PluginExtension_sceneWidget_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3578,7 +3595,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PluginExtension_translatedDescription_args(context.TODO(), rawArgs)
+		args, err := ec.field_PluginExtension_translatedDescription_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3590,7 +3607,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PluginExtension_translatedName_args(context.TODO(), rawArgs)
+		args, err := ec.field_PluginExtension_translatedName_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -3800,12 +3817,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.IsDeleted(childComplexity), true
 
+	case "Project.metadata":
+		if e.complexity.Project.Metadata == nil {
+			break
+		}
+
+		return e.complexity.Project.Metadata(childComplexity), true
+
 	case "Project.name":
 		if e.complexity.Project.Name == nil {
 			break
 		}
 
 		return e.complexity.Project.Name(childComplexity), true
+
+	case "Project.projectAlias":
+		if e.complexity.Project.ProjectAlias == nil {
+			break
+		}
+
+		return e.complexity.Project.ProjectAlias(childComplexity), true
 
 	case "Project.publicDescription":
 		if e.complexity.Project.PublicDescription == nil {
@@ -3863,20 +3894,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.Starred(childComplexity), true
 
-	case "Project.team":
-		if e.complexity.Project.Team == nil {
-			break
-		}
-
-		return e.complexity.Project.Team(childComplexity), true
-
-	case "Project.teamId":
-		if e.complexity.Project.TeamID == nil {
-			break
-		}
-
-		return e.complexity.Project.TeamID(childComplexity), true
-
 	case "Project.trackingId":
 		if e.complexity.Project.TrackingID == nil {
 			break
@@ -3904,6 +3921,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.Visualizer(childComplexity), true
+
+	case "Project.workspace":
+		if e.complexity.Project.Workspace == nil {
+			break
+		}
+
+		return e.complexity.Project.Workspace(childComplexity), true
+
+	case "Project.workspaceId":
+		if e.complexity.Project.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.Project.WorkspaceID(childComplexity), true
 
 	case "ProjectAliasAvailability.alias":
 		if e.complexity.ProjectAliasAvailability.Alias == nil {
@@ -3960,6 +3991,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ProjectEdge.Node(childComplexity), true
+
+	case "ProjectMetadata.createdAt":
+		if e.complexity.ProjectMetadata.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.CreatedAt(childComplexity), true
+
+	case "ProjectMetadata.id":
+		if e.complexity.ProjectMetadata.ID == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.ID(childComplexity), true
+
+	case "ProjectMetadata.importStatus":
+		if e.complexity.ProjectMetadata.ImportStatus == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.ImportStatus(childComplexity), true
+
+	case "ProjectMetadata.license":
+		if e.complexity.ProjectMetadata.License == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.License(childComplexity), true
+
+	case "ProjectMetadata.project":
+		if e.complexity.ProjectMetadata.Project == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Project(childComplexity), true
+
+	case "ProjectMetadata.readme":
+		if e.complexity.ProjectMetadata.Readme == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Readme(childComplexity), true
+
+	case "ProjectMetadata.topics":
+		if e.complexity.ProjectMetadata.Topics == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Topics(childComplexity), true
+
+	case "ProjectMetadata.updatedAt":
+		if e.complexity.ProjectMetadata.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.UpdatedAt(childComplexity), true
+
+	case "ProjectMetadata.workspace":
+		if e.complexity.ProjectMetadata.Workspace == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.Workspace(childComplexity), true
+
+	case "ProjectMetadataPayload.metadata":
+		if e.complexity.ProjectMetadataPayload.Metadata == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadataPayload.Metadata(childComplexity), true
 
 	case "ProjectPayload.project":
 		if e.complexity.ProjectPayload.Project == nil {
@@ -4365,7 +4466,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaField_translatedDescription_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaField_translatedDescription_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4377,7 +4478,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaField_translatedPlaceholder_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaField_translatedPlaceholder_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4389,7 +4490,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaField_translatedTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaField_translatedTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4443,7 +4544,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaFieldChoice_translatedTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaFieldChoice_translatedTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4532,7 +4633,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_PropertySchemaGroup_translatedTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_PropertySchemaGroup_translatedTitle_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4544,31 +4645,43 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_assets_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_assets_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Assets(childComplexity, args["teamId"].(gqlmodel.ID), args["projectId"].(*gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.AssetSort)), true
+		return e.complexity.Query.Assets(childComplexity, args["workspaceId"].(gqlmodel.ID), args["projectId"].(*gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.AssetSort)), true
 
 	case "Query.checkProjectAlias":
 		if e.complexity.Query.CheckProjectAlias == nil {
 			break
 		}
 
-		args, err := ec.field_Query_checkProjectAlias_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_checkProjectAlias_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.CheckProjectAlias(childComplexity, args["alias"].(string), args["projectId"].(*gqlmodel.ID)), true
+		return e.complexity.Query.CheckProjectAlias(childComplexity, args["alias"].(string), args["workspaceId"].(gqlmodel.ID), args["projectId"].(*gqlmodel.ID)), true
+
+	case "Query.checkSceneAlias":
+		if e.complexity.Query.CheckSceneAlias == nil {
+			break
+		}
+
+		args, err := ec.field_Query_checkSceneAlias_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CheckSceneAlias(childComplexity, args["alias"].(string), args["projectId"].(*gqlmodel.ID)), true
 
 	case "Query.checkStoryAlias":
 		if e.complexity.Query.CheckStoryAlias == nil {
 			break
 		}
 
-		args, err := ec.field_Query_checkStoryAlias_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_checkStoryAlias_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4580,12 +4693,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_deletedProjects_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_deletedProjects_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.DeletedProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
+		return e.complexity.Query.DeletedProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
 
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
@@ -4599,7 +4712,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_node_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_node_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4611,7 +4724,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_nodes_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_nodes_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4623,7 +4736,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_plugin_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_plugin_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4635,7 +4748,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_plugins_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_plugins_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4647,19 +4760,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_projects_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_projects_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.Projects(childComplexity, args["teamId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort)), true
+		return e.complexity.Query.Projects(childComplexity, args["workspaceId"].(gqlmodel.ID), args["pagination"].(*gqlmodel.Pagination), args["keyword"].(*string), args["sort"].(*gqlmodel.ProjectSort)), true
 
 	case "Query.propertySchema":
 		if e.complexity.Query.PropertySchema == nil {
 			break
 		}
 
-		args, err := ec.field_Query_propertySchema_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_propertySchema_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4671,7 +4784,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_propertySchemas_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_propertySchemas_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4683,7 +4796,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_scene_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_scene_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4695,7 +4808,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_searchUser_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_searchUser_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
@@ -4707,12 +4820,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_starredProjects_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_starredProjects_args(ctx, rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.StarredProjects(childComplexity, args["teamId"].(gqlmodel.ID)), true
+		return e.complexity.Query.StarredProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
 
 	case "Rect.east":
 		if e.complexity.Rect.East == nil {
@@ -4749,12 +4862,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RemoveAssetPayload.AssetID(childComplexity), true
 
-	case "RemoveMemberFromTeamPayload.team":
-		if e.complexity.RemoveMemberFromTeamPayload.Team == nil {
+	case "RemoveMemberFromWorkspacePayload.workspace":
+		if e.complexity.RemoveMemberFromWorkspacePayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.RemoveMemberFromTeamPayload.Team(childComplexity), true
+		return e.complexity.RemoveMemberFromWorkspacePayload.Workspace(childComplexity), true
 
 	case "RemoveNLSInfoboxBlockPayload.infoboxBlockId":
 		if e.complexity.RemoveNLSInfoboxBlockPayload.InfoboxBlockID == nil {
@@ -4833,6 +4946,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.RemoveWidgetPayload.WidgetID(childComplexity), true
 
+	case "Scene.alias":
+		if e.complexity.Scene.Alias == nil {
+			break
+		}
+
+		return e.complexity.Scene.Alias(childComplexity), true
+
 	case "Scene.createdAt":
 		if e.complexity.Scene.CreatedAt == nil {
 			break
@@ -4903,20 +5023,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Scene.Styles(childComplexity), true
 
-	case "Scene.team":
-		if e.complexity.Scene.Team == nil {
-			break
-		}
-
-		return e.complexity.Scene.Team(childComplexity), true
-
-	case "Scene.teamId":
-		if e.complexity.Scene.TeamID == nil {
-			break
-		}
-
-		return e.complexity.Scene.TeamID(childComplexity), true
-
 	case "Scene.updatedAt":
 		if e.complexity.Scene.UpdatedAt == nil {
 			break
@@ -4937,6 +5043,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Scene.Widgets(childComplexity), true
+
+	case "Scene.workspace":
+		if e.complexity.Scene.Workspace == nil {
+			break
+		}
+
+		return e.complexity.Scene.Workspace(childComplexity), true
+
+	case "Scene.workspaceId":
+		if e.complexity.Scene.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.Scene.WorkspaceID(childComplexity), true
+
+	case "SceneAliasAvailability.alias":
+		if e.complexity.SceneAliasAvailability.Alias == nil {
+			break
+		}
+
+		return e.complexity.SceneAliasAvailability.Alias(childComplexity), true
+
+	case "SceneAliasAvailability.available":
+		if e.complexity.SceneAliasAvailability.Available == nil {
+			break
+		}
+
+		return e.complexity.SceneAliasAvailability.Available(childComplexity), true
 
 	case "ScenePlugin.plugin":
 		if e.complexity.ScenePlugin.Plugin == nil {
@@ -5029,19 +5163,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SceneWidget.PropertyID(childComplexity), true
 
-	case "SignupPayload.team":
-		if e.complexity.SignupPayload.Team == nil {
-			break
-		}
-
-		return e.complexity.SignupPayload.Team(childComplexity), true
-
 	case "SignupPayload.user":
 		if e.complexity.SignupPayload.User == nil {
 			break
 		}
 
 		return e.complexity.SignupPayload.User(childComplexity), true
+
+	case "SignupPayload.workspace":
+		if e.complexity.SignupPayload.Workspace == nil {
+			break
+		}
+
+		return e.complexity.SignupPayload.Workspace(childComplexity), true
 
 	case "SketchInfo.customPropertySchema":
 		if e.complexity.SketchInfo.CustomPropertySchema == nil {
@@ -5154,6 +5288,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Story.PanelPosition(childComplexity), true
+
+	case "Story.projectId":
+		if e.complexity.Story.ProjectID == nil {
+			break
+		}
+
+		return e.complexity.Story.ProjectID(childComplexity), true
 
 	case "Story.property":
 		if e.complexity.Story.Property == nil {
@@ -5442,93 +5583,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Style.Value(childComplexity), true
 
-	case "Team.assets":
-		if e.complexity.Team.Assets == nil {
-			break
-		}
-
-		args, err := ec.field_Team_assets_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Team.Assets(childComplexity, args["projectId"].(*gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
-
-	case "Team.id":
-		if e.complexity.Team.ID == nil {
-			break
-		}
-
-		return e.complexity.Team.ID(childComplexity), true
-
-	case "Team.members":
-		if e.complexity.Team.Members == nil {
-			break
-		}
-
-		return e.complexity.Team.Members(childComplexity), true
-
-	case "Team.name":
-		if e.complexity.Team.Name == nil {
-			break
-		}
-
-		return e.complexity.Team.Name(childComplexity), true
-
-	case "Team.personal":
-		if e.complexity.Team.Personal == nil {
-			break
-		}
-
-		return e.complexity.Team.Personal(childComplexity), true
-
-	case "Team.policy":
-		if e.complexity.Team.Policy == nil {
-			break
-		}
-
-		return e.complexity.Team.Policy(childComplexity), true
-
-	case "Team.policyId":
-		if e.complexity.Team.PolicyID == nil {
-			break
-		}
-
-		return e.complexity.Team.PolicyID(childComplexity), true
-
-	case "Team.projects":
-		if e.complexity.Team.Projects == nil {
-			break
-		}
-
-		args, err := ec.field_Team_projects_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Team.Projects(childComplexity, args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
-
-	case "TeamMember.role":
-		if e.complexity.TeamMember.Role == nil {
-			break
-		}
-
-		return e.complexity.TeamMember.Role(childComplexity), true
-
-	case "TeamMember.user":
-		if e.complexity.TeamMember.User == nil {
-			break
-		}
-
-		return e.complexity.TeamMember.User(childComplexity), true
-
-	case "TeamMember.userId":
-		if e.complexity.TeamMember.UserID == nil {
-			break
-		}
-
-		return e.complexity.TeamMember.UserID(childComplexity), true
-
 	case "Timeline.currentTime":
 		if e.complexity.Timeline.CurrentTime == nil {
 			break
@@ -5641,12 +5695,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UpdateMePayload.Me(childComplexity), true
 
-	case "UpdateMemberOfTeamPayload.team":
-		if e.complexity.UpdateMemberOfTeamPayload.Team == nil {
+	case "UpdateMemberOfWorkspacePayload.workspace":
+		if e.complexity.UpdateMemberOfWorkspacePayload.Workspace == nil {
 			break
 		}
 
-		return e.complexity.UpdateMemberOfTeamPayload.Team(childComplexity), true
+		return e.complexity.UpdateMemberOfWorkspacePayload.Workspace(childComplexity), true
 
 	case "UpdateNLSLayerPayload.layer":
 		if e.complexity.UpdateNLSLayerPayload.Layer == nil {
@@ -5669,13 +5723,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UpdateStylePayload.Style(childComplexity), true
 
-	case "UpdateTeamPayload.team":
-		if e.complexity.UpdateTeamPayload.Team == nil {
-			break
-		}
-
-		return e.complexity.UpdateTeamPayload.Team(childComplexity), true
-
 	case "UpdateWidgetAlignSystemPayload.scene":
 		if e.complexity.UpdateWidgetAlignSystemPayload.Scene == nil {
 			break
@@ -5696,6 +5743,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.UpdateWidgetPayload.SceneWidget(childComplexity), true
+
+	case "UpdateWorkspacePayload.workspace":
+		if e.complexity.UpdateWorkspacePayload.Workspace == nil {
+			break
+		}
+
+		return e.complexity.UpdateWorkspacePayload.Workspace(childComplexity), true
 
 	case "UpgradePluginPayload.scene":
 		if e.complexity.UpgradePluginPayload.Scene == nil {
@@ -5949,6 +6003,100 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WidgetZone.Right(childComplexity), true
 
+	case "Workspace.assets":
+		if e.complexity.Workspace.Assets == nil {
+			break
+		}
+
+		args, err := ec.field_Workspace_assets_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Workspace.Assets(childComplexity, args["projectId"].(*gqlmodel.ID), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
+
+	case "Workspace.enableToCreatePrivateProject":
+		if e.complexity.Workspace.EnableToCreatePrivateProject == nil {
+			break
+		}
+
+		return e.complexity.Workspace.EnableToCreatePrivateProject(childComplexity), true
+
+	case "Workspace.id":
+		if e.complexity.Workspace.ID == nil {
+			break
+		}
+
+		return e.complexity.Workspace.ID(childComplexity), true
+
+	case "Workspace.members":
+		if e.complexity.Workspace.Members == nil {
+			break
+		}
+
+		return e.complexity.Workspace.Members(childComplexity), true
+
+	case "Workspace.name":
+		if e.complexity.Workspace.Name == nil {
+			break
+		}
+
+		return e.complexity.Workspace.Name(childComplexity), true
+
+	case "Workspace.personal":
+		if e.complexity.Workspace.Personal == nil {
+			break
+		}
+
+		return e.complexity.Workspace.Personal(childComplexity), true
+
+	case "Workspace.policy":
+		if e.complexity.Workspace.Policy == nil {
+			break
+		}
+
+		return e.complexity.Workspace.Policy(childComplexity), true
+
+	case "Workspace.policyId":
+		if e.complexity.Workspace.PolicyID == nil {
+			break
+		}
+
+		return e.complexity.Workspace.PolicyID(childComplexity), true
+
+	case "Workspace.projects":
+		if e.complexity.Workspace.Projects == nil {
+			break
+		}
+
+		args, err := ec.field_Workspace_projects_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Workspace.Projects(childComplexity, args["includeArchived"].(*bool), args["first"].(*int), args["last"].(*int), args["after"].(*usecasex.Cursor), args["before"].(*usecasex.Cursor)), true
+
+	case "WorkspaceMember.role":
+		if e.complexity.WorkspaceMember.Role == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceMember.Role(childComplexity), true
+
+	case "WorkspaceMember.user":
+		if e.complexity.WorkspaceMember.User == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceMember.User(childComplexity), true
+
+	case "WorkspaceMember.userId":
+		if e.complexity.WorkspaceMember.UserID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceMember.UserID(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -5958,7 +6106,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAddGeoJSONFeatureInput,
-		ec.unmarshalInputAddMemberToTeamInput,
+		ec.unmarshalInputAddMemberToWorkspaceInput,
 		ec.unmarshalInputAddNLSInfoboxBlockInput,
 		ec.unmarshalInputAddNLSLayerSimpleInput,
 		ec.unmarshalInputAddPropertyItemInput,
@@ -5974,18 +6122,17 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateStoryBlockInput,
 		ec.unmarshalInputCreateStoryInput,
 		ec.unmarshalInputCreateStoryPageInput,
-		ec.unmarshalInputCreateTeamInput,
+		ec.unmarshalInputCreateWorkspaceInput,
 		ec.unmarshalInputDeleteGeoJSONFeatureInput,
 		ec.unmarshalInputDeleteMeInput,
 		ec.unmarshalInputDeleteProjectInput,
 		ec.unmarshalInputDeleteStoryInput,
 		ec.unmarshalInputDeleteStoryPageInput,
-		ec.unmarshalInputDeleteTeamInput,
+		ec.unmarshalInputDeleteWorkspaceInput,
 		ec.unmarshalInputDuplicateNLSLayerInput,
 		ec.unmarshalInputDuplicateStoryPageInput,
 		ec.unmarshalInputDuplicateStyleInput,
 		ec.unmarshalInputExportProjectInput,
-		ec.unmarshalInputImportProjectInput,
 		ec.unmarshalInputInstallPluginInput,
 		ec.unmarshalInputMoveNLSInfoboxBlockInput,
 		ec.unmarshalInputMovePropertyItemInput,
@@ -5999,7 +6146,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPublishStoryInput,
 		ec.unmarshalInputRemoveAssetInput,
 		ec.unmarshalInputRemoveCustomPropertyInput,
-		ec.unmarshalInputRemoveMemberFromTeamInput,
+		ec.unmarshalInputRemoveMemberFromWorkspaceInput,
 		ec.unmarshalInputRemoveMyAuthInput,
 		ec.unmarshalInputRemoveNLSInfoboxBlockInput,
 		ec.unmarshalInputRemoveNLSInfoboxInput,
@@ -6017,19 +6164,20 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdateCustomPropertySchemaInput,
 		ec.unmarshalInputUpdateGeoJSONFeatureInput,
 		ec.unmarshalInputUpdateMeInput,
-		ec.unmarshalInputUpdateMemberOfTeamInput,
+		ec.unmarshalInputUpdateMemberOfWorkspaceInput,
 		ec.unmarshalInputUpdateNLSLayerInput,
 		ec.unmarshalInputUpdateNLSLayersInput,
 		ec.unmarshalInputUpdateProjectInput,
+		ec.unmarshalInputUpdateProjectMetadataInput,
 		ec.unmarshalInputUpdatePropertyItemInput,
 		ec.unmarshalInputUpdatePropertyItemOperationInput,
 		ec.unmarshalInputUpdatePropertyValueInput,
 		ec.unmarshalInputUpdateStoryInput,
 		ec.unmarshalInputUpdateStoryPageInput,
 		ec.unmarshalInputUpdateStyleInput,
-		ec.unmarshalInputUpdateTeamInput,
 		ec.unmarshalInputUpdateWidgetAlignSystemInput,
 		ec.unmarshalInputUpdateWidgetInput,
+		ec.unmarshalInputUpdateWorkspaceInput,
 		ec.unmarshalInputUpgradePluginInput,
 		ec.unmarshalInputUploadFileToPropertyInput,
 		ec.unmarshalInputUploadPluginInput,
@@ -6152,7 +6300,7 @@ interface Node {
 enum NodeType {
   ASSET
   USER
-  TEAM
+  WORKSPACE
   PROJECT
   PLUGIN
   SCENE
@@ -6261,14 +6409,14 @@ schema {
 `, BuiltIn: false},
 	{Name: "../../../gql/asset.graphql", Input: `type Asset implements Node {
   id: ID!
-  createdAt: DateTime!
-  teamId: ID!
+  workspaceId: ID!
+  workspace: Workspace
   projectId: ID
   name: String!
   size: FileSize!
   url: String!
   contentType: String!
-  team: Team
+  createdAt: DateTime!
   coreSupport: Boolean!
 }
 
@@ -6281,7 +6429,7 @@ enum AssetSortField {
 # InputType
 
 input CreateAssetInput {
-  teamId: ID!
+  workspaceId: ID!
   projectId: ID
   coreSupport: Boolean!
   file: Upload!
@@ -6332,7 +6480,7 @@ type AssetEdge {
 
 extend type Query {
   assets(
-    teamId: ID!
+    workspaceId: ID!
     projectId: ID
     pagination: Pagination
     keyword: String
@@ -6780,22 +6928,24 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "../../../gql/project.graphql", Input: `type Project implements Node {
   id: ID!
-  teamId: ID!
-  team: Team
+  workspaceId: ID!
+  workspace: Workspace
   scene: Scene
-
   name: String!
   description: String!
   imageUrl: URL
-  visualizer: Visualizer!
   createdAt: DateTime!
   updatedAt: DateTime!
-
+  visualizer: Visualizer!
   isArchived: Boolean!
   coreSupport: Boolean!
   starred: Boolean!
   isDeleted: Boolean!
   visibility: String!
+
+  metadata: ProjectMetadata
+
+  projectAlias: String!
 
   # publishment
   alias: String!
@@ -6810,6 +6960,25 @@ extend type Mutation {
   basicAuthPassword: String!
   enableGa: Boolean!
   trackingId: String!
+}
+
+type ProjectMetadata {
+  id: ID!
+  project: ID!
+  workspace: ID!
+  readme: String
+  license: String
+  topics: String
+  importStatus: ProjectImportStatus
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+enum ProjectImportStatus {
+  NONE
+  PROCESSING
+  FAILED
+  SUCCESS
 }
 
 enum Visualizer {
@@ -6831,12 +7000,18 @@ enum ProjectSortField {
 # InputType
 
 input CreateProjectInput {
-  teamId: ID!
+  workspaceId: ID!
   visualizer: Visualizer!
   name: String
   description: String
   coreSupport: Boolean
   visibility: String
+  projectAlias: String
+
+  # metadata
+  readme: String
+  license: String
+  topics: String
 }
 
 input UpdateProjectInput {
@@ -6850,6 +7025,7 @@ input UpdateProjectInput {
   starred: Boolean
   deleted: Boolean
   visibility: String
+  projectAlias: String
 
   # publishment
   publicTitle: String
@@ -6862,6 +7038,13 @@ input UpdateProjectInput {
   basicAuthPassword: String
   enableGa: Boolean
   trackingId: String
+}
+
+input UpdateProjectMetadataInput {
+  project: ID!
+  readme: String
+  license: String
+  topics: String
 }
 
 input PublishProjectInput {
@@ -6883,11 +7066,6 @@ input ExportProjectInput {
   projectId: ID!
 }
 
-input ImportProjectInput {
-  teamId: ID!
-  file: Upload!
-}
-
 # Payload
 
 type ProjectPayload {
@@ -6902,13 +7080,18 @@ type ExportProjectPayload {
   projectDataPath: String!
 }
 
-type ImportProjectPayload {
-  projectData: JSON!
-}
-
 type ProjectAliasAvailability {
   alias: String!
   available: Boolean!
+}
+
+type SceneAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+type ProjectMetadataPayload {
+  metadata: ProjectMetadata!
 }
 
 # Connection
@@ -6927,14 +7110,19 @@ type ProjectEdge {
 
 extend type Query {
   projects(
-    teamId: ID!
+    workspaceId: ID!
     pagination: Pagination
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
-  starredProjects(teamId: ID!): ProjectConnection!
-  deletedProjects(teamId: ID!): ProjectConnection!
+  checkProjectAlias(
+    alias: String!
+    workspaceId: ID!
+    projectId: ID
+  ): ProjectAliasAvailability!
+  checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
+  starredProjects(workspaceId: ID!): ProjectConnection!
+  deletedProjects(workspaceId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -6943,7 +7131,9 @@ extend type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
-  importProject(input: ImportProjectInput!): ImportProjectPayload
+  updateProjectMetadata(
+    input: UpdateProjectMetadataInput!
+  ): ProjectMetadataPayload
 }
 `, BuiltIn: false},
 	{Name: "../../../gql/property.graphql", Input: `type PropertySchema {
@@ -7230,8 +7420,8 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "../../../gql/scene.graphql", Input: `type Scene implements Node {
   id: ID!
+  workspaceId: ID!
   projectId: ID!
-  teamId: ID!
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -7239,11 +7429,12 @@ extend type Mutation {
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
   project: Project
-  team: Team
+  workspace: Workspace
   property: Property
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
+  alias: String!
 }
 
 type SceneWidget {
@@ -7287,6 +7478,7 @@ extend type Mutation {
 `, BuiltIn: false},
 	{Name: "../../../gql/storytelling.graphql", Input: `type Story implements Node {
   id: ID!
+  projectId: ID!
   sceneId: ID!
   scene: Scene
 
@@ -7610,10 +7802,10 @@ type Me {
   email: String!
   lang: Lang!
   theme: Theme!
-  myTeamId: ID!
+  myWorkspaceId: ID!
   auths: [String!]!
-  teams: [Team!]!
-  myTeam: Team
+  workspaces: [Workspace!]!
+  myWorkspace: Workspace
 }
 
 enum Theme {
@@ -7628,7 +7820,7 @@ input SignupInput {
   lang: Lang
   theme: Theme
   userId: ID
-  teamId: ID
+  workspaceId: ID
   secret: String
 }
 
@@ -7657,7 +7849,7 @@ type UpdateMePayload {
 
 type SignupPayload {
   user: User!
-  team: Team!
+  workspace: Workspace!
 }
 
 type DeleteMePayload {
@@ -7824,10 +8016,10 @@ extend type Mutation {
   updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
 }`, BuiltIn: false},
-	{Name: "../../../gql/workspace.graphql", Input: `type Team implements Node {
+	{Name: "../../../gql/workspace.graphql", Input: `type Workspace implements Node {
   id: ID!
   name: String!
-  members: [TeamMember!]!
+  members: [WorkspaceMember!]!
   personal: Boolean!
   policyId: ID
   policy: Policy
@@ -7845,9 +8037,10 @@ extend type Mutation {
     after: Cursor
     before: Cursor
   ): ProjectConnection!
+  enableToCreatePrivateProject: Boolean!
 }
 
-type TeamMember {
+type WorkspaceMember {
   userId: ID!
   role: Role!
   user: User
@@ -7879,73 +8072,73 @@ enum Role {
 
 # InputType
 
-input CreateTeamInput {
+input CreateWorkspaceInput {
   name: String!
 }
 
-input UpdateTeamInput {
-  teamId: ID!
+input UpdateWorkspaceInput {
+  workspaceId: ID!
   name: String!
 }
 
-input AddMemberToTeamInput {
-  teamId: ID!
+input AddMemberToWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
-input RemoveMemberFromTeamInput {
-  teamId: ID!
+input RemoveMemberFromWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
 }
 
-input UpdateMemberOfTeamInput {
-  teamId: ID!
+input UpdateMemberOfWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
-input DeleteTeamInput {
-  teamId: ID!
+input DeleteWorkspaceInput {
+  workspaceId: ID!
 }
 
 # Payload
 
-type CreateTeamPayload {
-  team: Team!
+type CreateWorkspacePayload {
+  workspace: Workspace!
 }
 
-type UpdateTeamPayload {
-  team: Team!
+type UpdateWorkspacePayload {
+  workspace: Workspace!
 }
 
-type AddMemberToTeamPayload {
-  team: Team!
+type AddMemberToWorkspacePayload {
+  workspace: Workspace!
 }
 
-type RemoveMemberFromTeamPayload {
-  team: Team!
+type RemoveMemberFromWorkspacePayload {
+  workspace: Workspace!
 }
 
-type UpdateMemberOfTeamPayload {
-  team: Team!
+type UpdateMemberOfWorkspacePayload {
+  workspace: Workspace!
 }
 
-type DeleteTeamPayload {
-  teamId: ID!
+type DeleteWorkspacePayload {
+  workspaceId: ID!
 }
 
 #extend type Query{ }
 
 extend type Mutation {
-  createTeam(input: CreateTeamInput!): CreateTeamPayload
-  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
-  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
-  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
-  removeMemberFromTeam(
-    input: RemoveMemberFromTeamInput!
-  ): RemoveMemberFromTeamPayload
-  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
+  createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
+  deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
+  updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
+  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
+  removeMemberFromWorkspace(
+    input: RemoveMemberFromWorkspaceInput!
+  ): RemoveMemberFromWorkspacePayload
+  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
 }
 `, BuiltIn: false},
 }
@@ -7983,31 +8176,31 @@ func (ec *executionContext) field_Mutation_addGeoJSONFeature_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_addMemberToTeam_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_addMemberToWorkspace_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_addMemberToTeam_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_addMemberToWorkspace_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_addMemberToTeam_argsInput(
+func (ec *executionContext) field_Mutation_addMemberToWorkspace_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (gqlmodel.AddMemberToTeamInput, error) {
+) (gqlmodel.AddMemberToWorkspaceInput, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.AddMemberToTeamInput
+		var zeroVal gqlmodel.AddMemberToWorkspaceInput
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNAddMemberToTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToTeamInput(ctx, tmp)
+		return ec.unmarshalNAddMemberToWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToWorkspaceInput(ctx, tmp)
 	}
 
-	var zeroVal gqlmodel.AddMemberToTeamInput
+	var zeroVal gqlmodel.AddMemberToWorkspaceInput
 	return zeroVal, nil
 }
 
@@ -8431,31 +8624,31 @@ func (ec *executionContext) field_Mutation_createStory_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_createTeam_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_createWorkspace_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_createTeam_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_createWorkspace_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_createTeam_argsInput(
+func (ec *executionContext) field_Mutation_createWorkspace_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (gqlmodel.CreateTeamInput, error) {
+) (gqlmodel.CreateWorkspaceInput, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.CreateTeamInput
+		var zeroVal gqlmodel.CreateWorkspaceInput
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNCreateTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTeamInput(ctx, tmp)
+		return ec.unmarshalNCreateWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateWorkspaceInput(ctx, tmp)
 	}
 
-	var zeroVal gqlmodel.CreateTeamInput
+	var zeroVal gqlmodel.CreateWorkspaceInput
 	return zeroVal, nil
 }
 
@@ -8571,31 +8764,31 @@ func (ec *executionContext) field_Mutation_deleteStory_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_deleteTeam_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_deleteWorkspace_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_deleteTeam_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_deleteWorkspace_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_deleteTeam_argsInput(
+func (ec *executionContext) field_Mutation_deleteWorkspace_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (gqlmodel.DeleteTeamInput, error) {
+) (gqlmodel.DeleteWorkspaceInput, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.DeleteTeamInput
+		var zeroVal gqlmodel.DeleteWorkspaceInput
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNDeleteTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteTeamInput(ctx, tmp)
+		return ec.unmarshalNDeleteWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteWorkspaceInput(ctx, tmp)
 	}
 
-	var zeroVal gqlmodel.DeleteTeamInput
+	var zeroVal gqlmodel.DeleteWorkspaceInput
 	return zeroVal, nil
 }
 
@@ -8708,34 +8901,6 @@ func (ec *executionContext) field_Mutation_exportProject_argsInput(
 	}
 
 	var zeroVal gqlmodel.ExportProjectInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_importProject_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Mutation_importProject_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_importProject_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (gqlmodel.ImportProjectInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.ImportProjectInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNImportProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectInput(ctx, tmp)
-	}
-
-	var zeroVal gqlmodel.ImportProjectInput
 	return zeroVal, nil
 }
 
@@ -9019,31 +9184,31 @@ func (ec *executionContext) field_Mutation_removeCustomProperty_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_removeMemberFromTeam_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_removeMemberFromWorkspace_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_removeMemberFromTeam_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_removeMemberFromWorkspace_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_removeMemberFromTeam_argsInput(
+func (ec *executionContext) field_Mutation_removeMemberFromWorkspace_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (gqlmodel.RemoveMemberFromTeamInput, error) {
+) (gqlmodel.RemoveMemberFromWorkspaceInput, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.RemoveMemberFromTeamInput
+		var zeroVal gqlmodel.RemoveMemberFromWorkspaceInput
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNRemoveMemberFromTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromTeamInput(ctx, tmp)
+		return ec.unmarshalNRemoveMemberFromWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromWorkspaceInput(ctx, tmp)
 	}
 
-	var zeroVal gqlmodel.RemoveMemberFromTeamInput
+	var zeroVal gqlmodel.RemoveMemberFromWorkspaceInput
 	return zeroVal, nil
 }
 
@@ -9579,31 +9744,31 @@ func (ec *executionContext) field_Mutation_updateMe_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_updateMemberOfTeam_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_updateMemberOfWorkspace_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_updateMemberOfTeam_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_updateMemberOfWorkspace_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_updateMemberOfTeam_argsInput(
+func (ec *executionContext) field_Mutation_updateMemberOfWorkspace_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (gqlmodel.UpdateMemberOfTeamInput, error) {
+) (gqlmodel.UpdateMemberOfWorkspaceInput, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.UpdateMemberOfTeamInput
+		var zeroVal gqlmodel.UpdateMemberOfWorkspaceInput
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNUpdateMemberOfTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfTeamInput(ctx, tmp)
+		return ec.unmarshalNUpdateMemberOfWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfWorkspaceInput(ctx, tmp)
 	}
 
-	var zeroVal gqlmodel.UpdateMemberOfTeamInput
+	var zeroVal gqlmodel.UpdateMemberOfWorkspaceInput
 	return zeroVal, nil
 }
 
@@ -9660,6 +9825,34 @@ func (ec *executionContext) field_Mutation_updateNLSLayers_argsInput(
 	}
 
 	var zeroVal gqlmodel.UpdateNLSLayersInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateProjectMetadata_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateProjectMetadata_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateProjectMetadata_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.UpdateProjectMetadataInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal gqlmodel.UpdateProjectMetadataInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateProjectMetadataInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateProjectMetadataInput(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.UpdateProjectMetadataInput
 	return zeroVal, nil
 }
 
@@ -9831,34 +10024,6 @@ func (ec *executionContext) field_Mutation_updateStyle_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_updateTeam_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
-	var err error
-	args := map[string]any{}
-	arg0, err := ec.field_Mutation_updateTeam_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_updateTeam_argsInput(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (gqlmodel.UpdateTeamInput, error) {
-	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal gqlmodel.UpdateTeamInput
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNUpdateTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateTeamInput(ctx, tmp)
-	}
-
-	var zeroVal gqlmodel.UpdateTeamInput
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Mutation_updateWidgetAlignSystem_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
@@ -9912,6 +10077,34 @@ func (ec *executionContext) field_Mutation_updateWidget_argsInput(
 	}
 
 	var zeroVal gqlmodel.UpdateWidgetInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateWorkspace_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateWorkspace_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateWorkspace_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.UpdateWorkspaceInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal gqlmodel.UpdateWorkspaceInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWorkspaceInput(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.UpdateWorkspaceInput
 	return zeroVal, nil
 }
 
@@ -10338,11 +10531,11 @@ func (ec *executionContext) field_Query___type_argsName(
 func (ec *executionContext) field_Query_assets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_assets_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_assets_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	arg1, err := ec.field_Query_assets_argsProjectID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
@@ -10365,17 +10558,17 @@ func (ec *executionContext) field_Query_assets_args(ctx context.Context, rawArgs
 	args["sort"] = arg4
 	return args, nil
 }
-func (ec *executionContext) field_Query_assets_argsTeamID(
+func (ec *executionContext) field_Query_assets_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -10463,11 +10656,16 @@ func (ec *executionContext) field_Query_checkProjectAlias_args(ctx context.Conte
 		return nil, err
 	}
 	args["alias"] = arg0
-	arg1, err := ec.field_Query_checkProjectAlias_argsProjectID(ctx, rawArgs)
+	arg1, err := ec.field_Query_checkProjectAlias_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["projectId"] = arg1
+	args["workspaceId"] = arg1
+	arg2, err := ec.field_Query_checkProjectAlias_argsProjectID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["projectId"] = arg2
 	return args, nil
 }
 func (ec *executionContext) field_Query_checkProjectAlias_argsAlias(
@@ -10488,7 +10686,76 @@ func (ec *executionContext) field_Query_checkProjectAlias_argsAlias(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_checkProjectAlias_argsWorkspaceID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.ID, error) {
+	if _, ok := rawArgs["workspaceId"]; !ok {
+		var zeroVal gqlmodel.ID
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
+		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.ID
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_checkProjectAlias_argsProjectID(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (*gqlmodel.ID, error) {
+	if _, ok := rawArgs["projectId"]; !ok {
+		var zeroVal *gqlmodel.ID
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
+	if tmp, ok := rawArgs["projectId"]; ok {
+		return ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+	}
+
+	var zeroVal *gqlmodel.ID
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_checkSceneAlias_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_checkSceneAlias_argsAlias(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["alias"] = arg0
+	arg1, err := ec.field_Query_checkSceneAlias_argsProjectID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["projectId"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_checkSceneAlias_argsAlias(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (string, error) {
+	if _, ok := rawArgs["alias"]; !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
+	if tmp, ok := rawArgs["alias"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_checkSceneAlias_argsProjectID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*gqlmodel.ID, error) {
@@ -10560,24 +10827,24 @@ func (ec *executionContext) field_Query_checkStoryAlias_argsStoryID(
 func (ec *executionContext) field_Query_deletedProjects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_deletedProjects_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_deletedProjects_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_deletedProjects_argsTeamID(
+func (ec *executionContext) field_Query_deletedProjects_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -10746,11 +11013,11 @@ func (ec *executionContext) field_Query_plugins_argsID(
 func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_projects_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_projects_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	arg1, err := ec.field_Query_projects_argsPagination(ctx, rawArgs)
 	if err != nil {
 		return nil, err
@@ -10768,17 +11035,17 @@ func (ec *executionContext) field_Query_projects_args(ctx context.Context, rawAr
 	args["sort"] = arg3
 	return args, nil
 }
-func (ec *executionContext) field_Query_projects_argsTeamID(
+func (ec *executionContext) field_Query_projects_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -10955,24 +11222,24 @@ func (ec *executionContext) field_Query_searchUser_argsNameOrEmail(
 func (ec *executionContext) field_Query_starredProjects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_starredProjects_argsTeamID(ctx, rawArgs)
+	arg0, err := ec.field_Query_starredProjects_argsWorkspaceID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["teamId"] = arg0
+	args["workspaceId"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_starredProjects_argsTeamID(
+func (ec *executionContext) field_Query_starredProjects_argsWorkspaceID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (gqlmodel.ID, error) {
-	if _, ok := rawArgs["teamId"]; !ok {
+	if _, ok := rawArgs["workspaceId"]; !ok {
 		var zeroVal gqlmodel.ID
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-	if tmp, ok := rawArgs["teamId"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+	if tmp, ok := rawArgs["workspaceId"]; ok {
 		return ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
 	}
 
@@ -10980,37 +11247,37 @@ func (ec *executionContext) field_Query_starredProjects_argsTeamID(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_assets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Workspace_assets_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Team_assets_argsProjectID(ctx, rawArgs)
+	arg0, err := ec.field_Workspace_assets_argsProjectID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["projectId"] = arg0
-	arg1, err := ec.field_Team_assets_argsFirst(ctx, rawArgs)
+	arg1, err := ec.field_Workspace_assets_argsFirst(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["first"] = arg1
-	arg2, err := ec.field_Team_assets_argsLast(ctx, rawArgs)
+	arg2, err := ec.field_Workspace_assets_argsLast(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["last"] = arg2
-	arg3, err := ec.field_Team_assets_argsAfter(ctx, rawArgs)
+	arg3, err := ec.field_Workspace_assets_argsAfter(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["after"] = arg3
-	arg4, err := ec.field_Team_assets_argsBefore(ctx, rawArgs)
+	arg4, err := ec.field_Workspace_assets_argsBefore(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["before"] = arg4
 	return args, nil
 }
-func (ec *executionContext) field_Team_assets_argsProjectID(
+func (ec *executionContext) field_Workspace_assets_argsProjectID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*gqlmodel.ID, error) {
@@ -11028,7 +11295,7 @@ func (ec *executionContext) field_Team_assets_argsProjectID(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_assets_argsFirst(
+func (ec *executionContext) field_Workspace_assets_argsFirst(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*int, error) {
@@ -11046,7 +11313,7 @@ func (ec *executionContext) field_Team_assets_argsFirst(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_assets_argsLast(
+func (ec *executionContext) field_Workspace_assets_argsLast(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*int, error) {
@@ -11064,7 +11331,7 @@ func (ec *executionContext) field_Team_assets_argsLast(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_assets_argsAfter(
+func (ec *executionContext) field_Workspace_assets_argsAfter(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*usecasex.Cursor, error) {
@@ -11082,7 +11349,7 @@ func (ec *executionContext) field_Team_assets_argsAfter(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_assets_argsBefore(
+func (ec *executionContext) field_Workspace_assets_argsBefore(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*usecasex.Cursor, error) {
@@ -11100,37 +11367,37 @@ func (ec *executionContext) field_Team_assets_argsBefore(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_projects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Workspace_projects_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Team_projects_argsIncludeArchived(ctx, rawArgs)
+	arg0, err := ec.field_Workspace_projects_argsIncludeArchived(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["includeArchived"] = arg0
-	arg1, err := ec.field_Team_projects_argsFirst(ctx, rawArgs)
+	arg1, err := ec.field_Workspace_projects_argsFirst(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["first"] = arg1
-	arg2, err := ec.field_Team_projects_argsLast(ctx, rawArgs)
+	arg2, err := ec.field_Workspace_projects_argsLast(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["last"] = arg2
-	arg3, err := ec.field_Team_projects_argsAfter(ctx, rawArgs)
+	arg3, err := ec.field_Workspace_projects_argsAfter(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["after"] = arg3
-	arg4, err := ec.field_Team_projects_argsBefore(ctx, rawArgs)
+	arg4, err := ec.field_Workspace_projects_argsBefore(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["before"] = arg4
 	return args, nil
 }
-func (ec *executionContext) field_Team_projects_argsIncludeArchived(
+func (ec *executionContext) field_Workspace_projects_argsIncludeArchived(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*bool, error) {
@@ -11148,7 +11415,7 @@ func (ec *executionContext) field_Team_projects_argsIncludeArchived(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_projects_argsFirst(
+func (ec *executionContext) field_Workspace_projects_argsFirst(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*int, error) {
@@ -11166,7 +11433,7 @@ func (ec *executionContext) field_Team_projects_argsFirst(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_projects_argsLast(
+func (ec *executionContext) field_Workspace_projects_argsLast(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*int, error) {
@@ -11184,7 +11451,7 @@ func (ec *executionContext) field_Team_projects_argsLast(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_projects_argsAfter(
+func (ec *executionContext) field_Workspace_projects_argsAfter(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*usecasex.Cursor, error) {
@@ -11202,7 +11469,7 @@ func (ec *executionContext) field_Team_projects_argsAfter(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Team_projects_argsBefore(
+func (ec *executionContext) field_Workspace_projects_argsBefore(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (*usecasex.Cursor, error) {
@@ -11340,8 +11607,8 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _AddMemberToTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddMemberToTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_AddMemberToTeamPayload_team(ctx, field)
+func (ec *executionContext) _AddMemberToWorkspacePayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AddMemberToWorkspacePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AddMemberToWorkspacePayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11354,7 +11621,7 @@ func (ec *executionContext) _AddMemberToTeamPayload_team(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11366,37 +11633,39 @@ func (ec *executionContext) _AddMemberToTeamPayload_team(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_AddMemberToTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_AddMemberToWorkspacePayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "AddMemberToTeamPayload",
+		Object:     "AddMemberToWorkspacePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -11679,10 +11948,10 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -11697,8 +11966,8 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -11707,6 +11976,8 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -11822,8 +12093,8 @@ func (ec *executionContext) fieldContext_Asset_id(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Asset_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Asset_createdAt(ctx, field)
+func (ec *executionContext) _Asset_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_workspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -11836,51 +12107,7 @@ func (ec *executionContext) _Asset_createdAt(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Asset_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Asset",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type DateTime does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Asset_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Asset_teamId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
+		return obj.WorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -11897,7 +12124,7 @@ func (ec *executionContext) _Asset_teamId(ctx context.Context, field graphql.Col
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Asset_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Asset_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Asset",
 		Field:      field,
@@ -11905,6 +12132,67 @@ func (ec *executionContext) fieldContext_Asset_teamId(_ context.Context, field g
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Asset_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_workspace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Asset().Workspace(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Workspace)
+	fc.Result = res
+	return ec.marshalOWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Asset_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Asset",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Workspace_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Workspace_name(ctx, field)
+			case "members":
+				return ec.fieldContext_Workspace_members(ctx, field)
+			case "personal":
+				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "policyId":
+				return ec.fieldContext_Workspace_policyId(ctx, field)
+			case "policy":
+				return ec.fieldContext_Workspace_policy(ctx, field)
+			case "assets":
+				return ec.fieldContext_Workspace_assets(ctx, field)
+			case "projects":
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -12127,8 +12415,8 @@ func (ec *executionContext) fieldContext_Asset_contentType(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Asset_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Asset_team(ctx, field)
+func (ec *executionContext) _Asset_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Asset) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Asset_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12141,46 +12429,31 @@ func (ec *executionContext) _Asset_team(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Asset().Team(rctx, obj)
+		return obj.CreatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(time.Time)
 	fc.Result = res
-	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalNDateTime2timeᚐTime(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Asset_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Asset_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Asset",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
-			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
-			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
-			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
-			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, errors.New("field of type DateTime does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12321,10 +12594,10 @@ func (ec *executionContext) fieldContext_AssetConnection_nodes(_ context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Asset_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Asset_createdAt(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Asset_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Asset_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Asset_workspace(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Asset_projectId(ctx, field)
 			case "name":
@@ -12335,8 +12608,8 @@ func (ec *executionContext) fieldContext_AssetConnection_nodes(_ context.Context
 				return ec.fieldContext_Asset_url(ctx, field)
 			case "contentType":
 				return ec.fieldContext_Asset_contentType(ctx, field)
-			case "team":
-				return ec.fieldContext_Asset_team(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Asset_createdAt(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
@@ -12526,10 +12799,10 @@ func (ec *executionContext) fieldContext_AssetEdge_node(_ context.Context, field
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Asset_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Asset_createdAt(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Asset_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Asset_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Asset_workspace(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Asset_projectId(ctx, field)
 			case "name":
@@ -12540,8 +12813,8 @@ func (ec *executionContext) fieldContext_AssetEdge_node(_ context.Context, field
 				return ec.fieldContext_Asset_url(ctx, field)
 			case "contentType":
 				return ec.fieldContext_Asset_contentType(ctx, field)
-			case "team":
-				return ec.fieldContext_Asset_team(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Asset_createdAt(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
@@ -12900,10 +13173,10 @@ func (ec *executionContext) fieldContext_CreateAssetPayload_asset(_ context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Asset_id(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Asset_createdAt(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Asset_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Asset_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Asset_workspace(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Asset_projectId(ctx, field)
 			case "name":
@@ -12914,8 +13187,8 @@ func (ec *executionContext) fieldContext_CreateAssetPayload_asset(_ context.Cont
 				return ec.fieldContext_Asset_url(ctx, field)
 			case "contentType":
 				return ec.fieldContext_Asset_contentType(ctx, field)
-			case "team":
-				return ec.fieldContext_Asset_team(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Asset_createdAt(ctx, field)
 			case "coreSupport":
 				return ec.fieldContext_Asset_coreSupport(ctx, field)
 			}
@@ -13054,10 +13327,10 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -13072,8 +13345,8 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -13082,6 +13355,8 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -13258,6 +13533,8 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(_ context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -13353,8 +13630,8 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_index(_ context
 	return fc, nil
 }
 
-func (ec *executionContext) _CreateTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CreateTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CreateTeamPayload_team(ctx, field)
+func (ec *executionContext) _CreateWorkspacePayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.CreateWorkspacePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateWorkspacePayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13367,7 +13644,7 @@ func (ec *executionContext) _CreateTeamPayload_team(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13379,37 +13656,39 @@ func (ec *executionContext) _CreateTeamPayload_team(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_CreateTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CreateWorkspacePayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "CreateTeamPayload",
+		Object:     "CreateWorkspacePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -13632,6 +13911,8 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(_ context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -13727,8 +14008,8 @@ func (ec *executionContext) fieldContext_DeleteStoryPayload_storyId(_ context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _DeleteTeamPayload_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_DeleteTeamPayload_teamId(ctx, field)
+func (ec *executionContext) _DeleteWorkspacePayload_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DeleteWorkspacePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteWorkspacePayload_workspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -13741,7 +14022,7 @@ func (ec *executionContext) _DeleteTeamPayload_teamId(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
+		return obj.WorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13758,9 +14039,9 @@ func (ec *executionContext) _DeleteTeamPayload_teamId(ctx context.Context, field
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_DeleteTeamPayload_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_DeleteWorkspacePayload_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "DeleteTeamPayload",
+		Object:     "DeleteWorkspacePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -14274,50 +14555,6 @@ func (ec *executionContext) fieldContext_GeometryCollection_geometries(_ context
 	return fc, nil
 }
 
-func (ec *executionContext) _ImportProjectPayload_projectData(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ImportProjectPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ImportProjectPayload_projectData(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectData, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.JSON)
-	fc.Result = res
-	return ec.marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ImportProjectPayload_projectData(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ImportProjectPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type JSON does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _InfoboxBlock_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.InfoboxBlock) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_InfoboxBlock_id(ctx, field)
 	if err != nil {
@@ -14825,10 +15062,10 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -14843,8 +15080,8 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -14853,6 +15090,8 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -14901,10 +15140,10 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -14919,8 +15158,8 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -14929,6 +15168,8 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -15518,8 +15759,8 @@ func (ec *executionContext) fieldContext_Me_theme(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Me_myTeamId(ctx, field)
+func (ec *executionContext) _Me_myWorkspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Me_myWorkspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15532,7 +15773,7 @@ func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MyTeamID, nil
+		return obj.MyWorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15549,7 +15790,7 @@ func (ec *executionContext) _Me_myTeamId(ctx context.Context, field graphql.Coll
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Me_myTeamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Me_myWorkspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Me",
 		Field:      field,
@@ -15606,8 +15847,8 @@ func (ec *executionContext) fieldContext_Me_auths(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Me_teams(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Me_teams(ctx, field)
+func (ec *executionContext) _Me_workspaces(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Me_workspaces(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15620,7 +15861,7 @@ func (ec *executionContext) _Me_teams(ctx context.Context, field graphql.Collect
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Me().Teams(rctx, obj)
+		return ec.resolvers.Me().Workspaces(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15632,12 +15873,12 @@ func (ec *executionContext) _Me_teams(ctx context.Context, field graphql.Collect
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*gqlmodel.Team)
+	res := resTmp.([]*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalNTeam2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeamᚄ(ctx, field.Selections, res)
+	return ec.marshalNWorkspace2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspaceᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Me_teams(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Me_workspaces(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Me",
 		Field:      field,
@@ -15646,30 +15887,32 @@ func (ec *executionContext) fieldContext_Me_teams(_ context.Context, field graph
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Me_myTeam(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Me_myTeam(ctx, field)
+func (ec *executionContext) _Me_myWorkspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Me_myWorkspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -15682,7 +15925,7 @@ func (ec *executionContext) _Me_myTeam(ctx context.Context, field graphql.Collec
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Me().MyTeam(rctx, obj)
+		return ec.resolvers.Me().MyWorkspace(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -15691,12 +15934,12 @@ func (ec *executionContext) _Me_myTeam(ctx context.Context, field graphql.Collec
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalOWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Me_myTeam(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Me_myWorkspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Me",
 		Field:      field,
@@ -15705,23 +15948,25 @@ func (ec *executionContext) fieldContext_Me_myTeam(_ context.Context, field grap
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -17311,6 +17556,8 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(_ context.C
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -17559,6 +17806,8 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(_ context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -17783,6 +18032,8 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(_ context.Cont
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -19667,8 +19918,8 @@ func (ec *executionContext) fieldContext_Mutation_exportProject(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_importProject(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_importProject(ctx, field)
+func (ec *executionContext) _Mutation_updateProjectMetadata(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateProjectMetadata(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -19681,7 +19932,7 @@ func (ec *executionContext) _Mutation_importProject(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().ImportProject(rctx, fc.Args["input"].(gqlmodel.ImportProjectInput))
+		return ec.resolvers.Mutation().UpdateProjectMetadata(rctx, fc.Args["input"].(gqlmodel.UpdateProjectMetadataInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -19690,12 +19941,12 @@ func (ec *executionContext) _Mutation_importProject(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.ImportProjectPayload)
+	res := resTmp.(*gqlmodel.ProjectMetadataPayload)
 	fc.Result = res
-	return ec.marshalOImportProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectPayload(ctx, field.Selections, res)
+	return ec.marshalOProjectMetadataPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadataPayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_importProject(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateProjectMetadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -19703,10 +19954,10 @@ func (ec *executionContext) fieldContext_Mutation_importProject(ctx context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "projectData":
-				return ec.fieldContext_ImportProjectPayload_projectData(ctx, field)
+			case "metadata":
+				return ec.fieldContext_ProjectMetadataPayload_metadata(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type ImportProjectPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type ProjectMetadataPayload", field.Name)
 		},
 	}
 	defer func() {
@@ -19716,7 +19967,7 @@ func (ec *executionContext) fieldContext_Mutation_importProject(ctx context.Cont
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_importProject_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateProjectMetadata_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -21426,8 +21677,8 @@ func (ec *executionContext) fieldContext_Mutation_signup(ctx context.Context, fi
 			switch field.Name {
 			case "user":
 				return ec.fieldContext_SignupPayload_user(ctx, field)
-			case "team":
-				return ec.fieldContext_SignupPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_SignupPayload_workspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SignupPayload", field.Name)
 		},
@@ -21844,8 +22095,8 @@ func (ec *executionContext) fieldContext_Mutation_removeWidget(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createTeam(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTeam(ctx, field)
+func (ec *executionContext) _Mutation_createWorkspace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createWorkspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -21858,7 +22109,7 @@ func (ec *executionContext) _Mutation_createTeam(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTeam(rctx, fc.Args["input"].(gqlmodel.CreateTeamInput))
+		return ec.resolvers.Mutation().CreateWorkspace(rctx, fc.Args["input"].(gqlmodel.CreateWorkspaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21867,12 +22118,12 @@ func (ec *executionContext) _Mutation_createTeam(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.CreateTeamPayload)
+	res := resTmp.(*gqlmodel.CreateWorkspacePayload)
 	fc.Result = res
-	return ec.marshalOCreateTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTeamPayload(ctx, field.Selections, res)
+	return ec.marshalOCreateWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateWorkspacePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createTeam(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_createWorkspace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -21880,10 +22131,10 @@ func (ec *executionContext) fieldContext_Mutation_createTeam(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_CreateTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_CreateWorkspacePayload_workspace(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type CreateTeamPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateWorkspacePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -21893,15 +22144,15 @@ func (ec *executionContext) fieldContext_Mutation_createTeam(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTeam_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_createWorkspace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_deleteTeam(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_deleteTeam(ctx, field)
+func (ec *executionContext) _Mutation_deleteWorkspace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deleteWorkspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -21914,7 +22165,7 @@ func (ec *executionContext) _Mutation_deleteTeam(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteTeam(rctx, fc.Args["input"].(gqlmodel.DeleteTeamInput))
+		return ec.resolvers.Mutation().DeleteWorkspace(rctx, fc.Args["input"].(gqlmodel.DeleteWorkspaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21923,12 +22174,12 @@ func (ec *executionContext) _Mutation_deleteTeam(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.DeleteTeamPayload)
+	res := resTmp.(*gqlmodel.DeleteWorkspacePayload)
 	fc.Result = res
-	return ec.marshalODeleteTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteTeamPayload(ctx, field.Selections, res)
+	return ec.marshalODeleteWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteWorkspacePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_deleteTeam(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_deleteWorkspace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -21936,10 +22187,10 @@ func (ec *executionContext) fieldContext_Mutation_deleteTeam(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "teamId":
-				return ec.fieldContext_DeleteTeamPayload_teamId(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_DeleteWorkspacePayload_workspaceId(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type DeleteTeamPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type DeleteWorkspacePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -21949,15 +22200,15 @@ func (ec *executionContext) fieldContext_Mutation_deleteTeam(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_deleteTeam_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_deleteWorkspace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateTeam(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateTeam(ctx, field)
+func (ec *executionContext) _Mutation_updateWorkspace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateWorkspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -21970,7 +22221,7 @@ func (ec *executionContext) _Mutation_updateTeam(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTeam(rctx, fc.Args["input"].(gqlmodel.UpdateTeamInput))
+		return ec.resolvers.Mutation().UpdateWorkspace(rctx, fc.Args["input"].(gqlmodel.UpdateWorkspaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21979,12 +22230,12 @@ func (ec *executionContext) _Mutation_updateTeam(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.UpdateTeamPayload)
+	res := resTmp.(*gqlmodel.UpdateWorkspacePayload)
 	fc.Result = res
-	return ec.marshalOUpdateTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateTeamPayload(ctx, field.Selections, res)
+	return ec.marshalOUpdateWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWorkspacePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateTeam(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateWorkspace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -21992,10 +22243,10 @@ func (ec *executionContext) fieldContext_Mutation_updateTeam(ctx context.Context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_UpdateTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_UpdateWorkspacePayload_workspace(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateTeamPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UpdateWorkspacePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -22005,15 +22256,15 @@ func (ec *executionContext) fieldContext_Mutation_updateTeam(ctx context.Context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateTeam_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateWorkspace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_addMemberToTeam(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_addMemberToTeam(ctx, field)
+func (ec *executionContext) _Mutation_addMemberToWorkspace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_addMemberToWorkspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22026,7 +22277,7 @@ func (ec *executionContext) _Mutation_addMemberToTeam(ctx context.Context, field
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AddMemberToTeam(rctx, fc.Args["input"].(gqlmodel.AddMemberToTeamInput))
+		return ec.resolvers.Mutation().AddMemberToWorkspace(rctx, fc.Args["input"].(gqlmodel.AddMemberToWorkspaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22035,12 +22286,12 @@ func (ec *executionContext) _Mutation_addMemberToTeam(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.AddMemberToTeamPayload)
+	res := resTmp.(*gqlmodel.AddMemberToWorkspacePayload)
 	fc.Result = res
-	return ec.marshalOAddMemberToTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToTeamPayload(ctx, field.Selections, res)
+	return ec.marshalOAddMemberToWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToWorkspacePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_addMemberToTeam(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_addMemberToWorkspace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -22048,10 +22299,10 @@ func (ec *executionContext) fieldContext_Mutation_addMemberToTeam(ctx context.Co
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_AddMemberToTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_AddMemberToWorkspacePayload_workspace(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type AddMemberToTeamPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type AddMemberToWorkspacePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -22061,15 +22312,15 @@ func (ec *executionContext) fieldContext_Mutation_addMemberToTeam(ctx context.Co
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_addMemberToTeam_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_addMemberToWorkspace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_removeMemberFromTeam(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_removeMemberFromTeam(ctx, field)
+func (ec *executionContext) _Mutation_removeMemberFromWorkspace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_removeMemberFromWorkspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22082,7 +22333,7 @@ func (ec *executionContext) _Mutation_removeMemberFromTeam(ctx context.Context, 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().RemoveMemberFromTeam(rctx, fc.Args["input"].(gqlmodel.RemoveMemberFromTeamInput))
+		return ec.resolvers.Mutation().RemoveMemberFromWorkspace(rctx, fc.Args["input"].(gqlmodel.RemoveMemberFromWorkspaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22091,12 +22342,12 @@ func (ec *executionContext) _Mutation_removeMemberFromTeam(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.RemoveMemberFromTeamPayload)
+	res := resTmp.(*gqlmodel.RemoveMemberFromWorkspacePayload)
 	fc.Result = res
-	return ec.marshalORemoveMemberFromTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromTeamPayload(ctx, field.Selections, res)
+	return ec.marshalORemoveMemberFromWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromWorkspacePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_removeMemberFromTeam(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_removeMemberFromWorkspace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -22104,10 +22355,10 @@ func (ec *executionContext) fieldContext_Mutation_removeMemberFromTeam(ctx conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_RemoveMemberFromTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_RemoveMemberFromWorkspacePayload_workspace(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type RemoveMemberFromTeamPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type RemoveMemberFromWorkspacePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -22117,15 +22368,15 @@ func (ec *executionContext) fieldContext_Mutation_removeMemberFromTeam(ctx conte
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_removeMemberFromTeam_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_removeMemberFromWorkspace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateMemberOfTeam(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateMemberOfTeam(ctx, field)
+func (ec *executionContext) _Mutation_updateMemberOfWorkspace(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateMemberOfWorkspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -22138,7 +22389,7 @@ func (ec *executionContext) _Mutation_updateMemberOfTeam(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateMemberOfTeam(rctx, fc.Args["input"].(gqlmodel.UpdateMemberOfTeamInput))
+		return ec.resolvers.Mutation().UpdateMemberOfWorkspace(rctx, fc.Args["input"].(gqlmodel.UpdateMemberOfWorkspaceInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -22147,12 +22398,12 @@ func (ec *executionContext) _Mutation_updateMemberOfTeam(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.UpdateMemberOfTeamPayload)
+	res := resTmp.(*gqlmodel.UpdateMemberOfWorkspacePayload)
 	fc.Result = res
-	return ec.marshalOUpdateMemberOfTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfTeamPayload(ctx, field.Selections, res)
+	return ec.marshalOUpdateMemberOfWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfWorkspacePayload(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateMemberOfTeam(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateMemberOfWorkspace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -22160,10 +22411,10 @@ func (ec *executionContext) fieldContext_Mutation_updateMemberOfTeam(ctx context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "team":
-				return ec.fieldContext_UpdateMemberOfTeamPayload_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_UpdateMemberOfWorkspacePayload_workspace(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UpdateMemberOfTeamPayload", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UpdateMemberOfWorkspacePayload", field.Name)
 		},
 	}
 	defer func() {
@@ -22173,7 +22424,7 @@ func (ec *executionContext) fieldContext_Mutation_updateMemberOfTeam(ctx context
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateMemberOfTeam_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateMemberOfWorkspace_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -22513,10 +22764,10 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -22531,8 +22782,8 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -22541,6 +22792,8 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -23088,10 +23341,10 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -23106,8 +23359,8 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -23116,6 +23369,8 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -23666,10 +23921,10 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -23684,8 +23939,8 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -23694,6 +23949,8 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -24059,10 +24316,10 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -24077,8 +24334,8 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -24087,6 +24344,8 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -24872,10 +25131,10 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -24890,8 +25149,8 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -24900,6 +25159,8 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -26531,8 +26792,8 @@ func (ec *executionContext) fieldContext_Project_id(_ context.Context, field gra
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_teamId(ctx, field)
+func (ec *executionContext) _Project_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_workspaceId(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26545,7 +26806,7 @@ func (ec *executionContext) _Project_teamId(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
+		return obj.WorkspaceID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26562,7 +26823,7 @@ func (ec *executionContext) _Project_teamId(ctx context.Context, field graphql.C
 	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -26575,8 +26836,8 @@ func (ec *executionContext) fieldContext_Project_teamId(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_team(ctx, field)
+func (ec *executionContext) _Project_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -26589,7 +26850,7 @@ func (ec *executionContext) _Project_team(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Project().Team(rctx, obj)
+		return ec.resolvers.Project().Workspace(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -26598,12 +26859,12 @@ func (ec *executionContext) _Project_team(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalOWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Project_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Project_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -26612,23 +26873,25 @@ func (ec *executionContext) fieldContext_Project_team(_ context.Context, field g
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -26672,10 +26935,10 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -26690,8 +26953,8 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -26700,6 +26963,8 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -26836,50 +27101,6 @@ func (ec *executionContext) fieldContext_Project_imageUrl(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Project_visualizer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Project_visualizer(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Visualizer, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.Visualizer)
-	fc.Result = res
-	return ec.marshalNVisualizer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Project_visualizer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Project",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Visualizer does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Project_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_createdAt(ctx, field)
 	if err != nil {
@@ -26963,6 +27184,50 @@ func (ec *executionContext) fieldContext_Project_updatedAt(_ context.Context, fi
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_visualizer(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_visualizer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Visualizer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.Visualizer)
+	fc.Result = res
+	return ec.marshalNVisualizer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_visualizer(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Visualizer does not have child fields")
 		},
 	}
 	return fc, nil
@@ -27176,6 +27441,111 @@ func (ec *executionContext) _Project_visibility(ctx context.Context, field graph
 }
 
 func (ec *executionContext) fieldContext_Project_visibility(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_metadata(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectMetadata)
+	fc.Result = res
+	return ec.marshalOProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ProjectMetadata_id(ctx, field)
+			case "project":
+				return ec.fieldContext_ProjectMetadata_project(ctx, field)
+			case "workspace":
+				return ec.fieldContext_ProjectMetadata_workspace(ctx, field)
+			case "readme":
+				return ec.fieldContext_ProjectMetadata_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_ProjectMetadata_license(ctx, field)
+			case "topics":
+				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
+			case "importStatus":
+				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_ProjectMetadata_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectMetadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_projectAlias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_projectAlias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectAlias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_projectAlias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Project",
 		Field:      field,
@@ -27892,10 +28262,10 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -27904,12 +28274,12 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -27920,6 +28290,10 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -28131,10 +28505,10 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -28143,12 +28517,12 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -28159,6 +28533,10 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -28185,6 +28563,448 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_trackingId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Project", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_project(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_project(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Project, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_project(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_workspace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Workspace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_readme(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_readme(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Readme, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_readme(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_license(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_license(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.License, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_license(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_topics(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_topics(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Topics, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_topics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_importStatus(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImportStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectImportStatus)
+	fc.Result = res
+	return ec.marshalOProjectImportStatus2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_importStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ProjectImportStatus does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_createdAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalODateTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_updatedAt(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*time.Time)
+	fc.Result = res
+	return ec.marshalODateTime2ᚖtimeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type DateTime does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadataPayload_metadata(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadataPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadataPayload_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectMetadata)
+	fc.Result = res
+	return ec.marshalNProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadataPayload_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadataPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_ProjectMetadata_id(ctx, field)
+			case "project":
+				return ec.fieldContext_ProjectMetadata_project(ctx, field)
+			case "workspace":
+				return ec.fieldContext_ProjectMetadata_workspace(ctx, field)
+			case "readme":
+				return ec.fieldContext_ProjectMetadata_readme(ctx, field)
+			case "license":
+				return ec.fieldContext_ProjectMetadata_license(ctx, field)
+			case "topics":
+				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
+			case "importStatus":
+				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_ProjectMetadata_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectMetadata", field.Name)
 		},
 	}
 	return fc, nil
@@ -28231,10 +29051,10 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -28243,12 +29063,12 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -28259,6 +29079,10 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -32258,7 +33082,7 @@ func (ec *executionContext) _Query_assets(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Assets(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["projectId"].(*gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.AssetSort))
+		return ec.resolvers.Query().Assets(rctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["projectId"].(*gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.AssetSort))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32498,7 +33322,7 @@ func (ec *executionContext) _Query_projects(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Projects(rctx, fc.Args["teamId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort))
+		return ec.resolvers.Query().Projects(rctx, fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["pagination"].(*gqlmodel.Pagination), fc.Args["keyword"].(*string), fc.Args["sort"].(*gqlmodel.ProjectSort))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32563,7 +33387,7 @@ func (ec *executionContext) _Query_checkProjectAlias(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string), fc.Args["projectId"].(*gqlmodel.ID))
+		return ec.resolvers.Query().CheckProjectAlias(rctx, fc.Args["alias"].(string), fc.Args["workspaceId"].(gqlmodel.ID), fc.Args["projectId"].(*gqlmodel.ID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32610,6 +33434,67 @@ func (ec *executionContext) fieldContext_Query_checkProjectAlias(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_checkSceneAlias(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_checkSceneAlias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().CheckSceneAlias(rctx, fc.Args["alias"].(string), fc.Args["projectId"].(*gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.SceneAliasAvailability)
+	fc.Result = res
+	return ec.marshalNSceneAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSceneAliasAvailability(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_checkSceneAlias(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "alias":
+				return ec.fieldContext_SceneAliasAvailability_alias(ctx, field)
+			case "available":
+				return ec.fieldContext_SceneAliasAvailability_available(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SceneAliasAvailability", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_checkSceneAlias_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_starredProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_starredProjects(ctx, field)
 	if err != nil {
@@ -32624,7 +33509,7 @@ func (ec *executionContext) _Query_starredProjects(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().StarredProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+		return ec.resolvers.Query().StarredProjects(rctx, fc.Args["workspaceId"].(gqlmodel.ID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32689,7 +33574,7 @@ func (ec *executionContext) _Query_deletedProjects(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().DeletedProjects(rctx, fc.Args["teamId"].(gqlmodel.ID))
+		return ec.resolvers.Query().DeletedProjects(rctx, fc.Args["workspaceId"].(gqlmodel.ID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -32901,10 +33786,10 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -32919,8 +33804,8 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -32929,6 +33814,8 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -33054,14 +33941,14 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_Me_lang(ctx, field)
 			case "theme":
 				return ec.fieldContext_Me_theme(ctx, field)
-			case "myTeamId":
-				return ec.fieldContext_Me_myTeamId(ctx, field)
+			case "myWorkspaceId":
+				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
 				return ec.fieldContext_Me_auths(ctx, field)
-			case "teams":
-				return ec.fieldContext_Me_teams(ctx, field)
-			case "myTeam":
-				return ec.fieldContext_Me_myTeam(ctx, field)
+			case "workspaces":
+				return ec.fieldContext_Me_workspaces(ctx, field)
+			case "myWorkspace":
+				return ec.fieldContext_Me_myWorkspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Me", field.Name)
 		},
@@ -33173,6 +34060,8 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -33185,8 +34074,6 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -33482,8 +34369,8 @@ func (ec *executionContext) fieldContext_RemoveAssetPayload_assetId(_ context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _RemoveMemberFromTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveMemberFromTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RemoveMemberFromTeamPayload_team(ctx, field)
+func (ec *executionContext) _RemoveMemberFromWorkspacePayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.RemoveMemberFromWorkspacePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RemoveMemberFromWorkspacePayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -33496,7 +34383,7 @@ func (ec *executionContext) _RemoveMemberFromTeamPayload_team(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33508,37 +34395,39 @@ func (ec *executionContext) _RemoveMemberFromTeamPayload_team(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RemoveMemberFromTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RemoveMemberFromWorkspacePayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "RemoveMemberFromTeamPayload",
+		Object:     "RemoveMemberFromWorkspacePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -33917,6 +34806,8 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(_ context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -34053,10 +34944,10 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -34071,8 +34962,8 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -34081,6 +34972,8 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -34176,6 +35069,50 @@ func (ec *executionContext) fieldContext_Scene_id(_ context.Context, field graph
 	return fc, nil
 }
 
+func (ec *executionContext) _Scene_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_workspaceId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkspaceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Scene_projectId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Scene_projectId(ctx, field)
 	if err != nil {
@@ -34208,50 +35145,6 @@ func (ec *executionContext) _Scene_projectId(ctx context.Context, field graphql.
 }
 
 func (ec *executionContext) fieldContext_Scene_projectId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Scene",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Scene_teamId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_teamId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TeamID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Scene_teamId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Scene",
 		Field:      field,
@@ -34599,10 +35492,10 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Project_id(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Project_teamId(ctx, field)
-			case "team":
-				return ec.fieldContext_Project_team(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Project_workspaceId(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Project_workspace(ctx, field)
 			case "scene":
 				return ec.fieldContext_Project_scene(ctx, field)
 			case "name":
@@ -34611,12 +35504,12 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_description(ctx, field)
 			case "imageUrl":
 				return ec.fieldContext_Project_imageUrl(ctx, field)
-			case "visualizer":
-				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_Project_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Project_updatedAt(ctx, field)
+			case "visualizer":
+				return ec.fieldContext_Project_visualizer(ctx, field)
 			case "isArchived":
 				return ec.fieldContext_Project_isArchived(ctx, field)
 			case "coreSupport":
@@ -34627,6 +35520,10 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_isDeleted(ctx, field)
 			case "visibility":
 				return ec.fieldContext_Project_visibility(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Project_metadata(ctx, field)
+			case "projectAlias":
+				return ec.fieldContext_Project_projectAlias(ctx, field)
 			case "alias":
 				return ec.fieldContext_Project_alias(ctx, field)
 			case "publishmentStatus":
@@ -34658,8 +35555,8 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Scene_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_team(ctx, field)
+func (ec *executionContext) _Scene_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -34672,7 +35569,7 @@ func (ec *executionContext) _Scene_team(ctx context.Context, field graphql.Colle
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Scene().Team(rctx, obj)
+		return ec.resolvers.Scene().Workspace(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -34681,12 +35578,12 @@ func (ec *executionContext) _Scene_team(ctx context.Context, field graphql.Colle
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalOWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Scene_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Scene_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Scene",
 		Field:      field,
@@ -34695,23 +35592,25 @@ func (ec *executionContext) fieldContext_Scene_team(_ context.Context, field gra
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -34855,6 +35754,8 @@ func (ec *executionContext) fieldContext_Scene_stories(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -34957,6 +35858,138 @@ func (ec *executionContext) fieldContext_Scene_styles(_ context.Context, field g
 				return ec.fieldContext_Style_scene(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Style", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Scene_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Scene_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Scene",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SceneAliasAvailability_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SceneAliasAvailability) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SceneAliasAvailability_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SceneAliasAvailability_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SceneAliasAvailability",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SceneAliasAvailability_available(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SceneAliasAvailability) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SceneAliasAvailability_available(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Available, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SceneAliasAvailability_available(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SceneAliasAvailability",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -35698,8 +36731,8 @@ func (ec *executionContext) fieldContext_SignupPayload_user(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _SignupPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SignupPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SignupPayload_team(ctx, field)
+func (ec *executionContext) _SignupPayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.SignupPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SignupPayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -35712,7 +36745,7 @@ func (ec *executionContext) _SignupPayload_team(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -35724,12 +36757,12 @@ func (ec *executionContext) _SignupPayload_team(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SignupPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SignupPayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SignupPayload",
 		Field:      field,
@@ -35738,23 +36771,25 @@ func (ec *executionContext) fieldContext_SignupPayload_team(_ context.Context, f
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -36068,6 +37103,50 @@ func (ec *executionContext) fieldContext_Story_id(_ context.Context, field graph
 	return fc, nil
 }
 
+func (ec *executionContext) _Story_projectId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Story_projectId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Story_projectId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Story_sceneId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Story_sceneId(ctx, field)
 	if err != nil {
@@ -36150,10 +37229,10 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -36168,8 +37247,8 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -36178,6 +37257,8 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -38061,10 +39142,10 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -38079,8 +39160,8 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -38089,6 +39170,8 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -38205,6 +39288,8 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(_ context.Contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -38297,6 +39382,8 @@ func (ec *executionContext) fieldContext_StoryPayload_story(_ context.Context, f
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Story_id(ctx, field)
+			case "projectId":
+				return ec.fieldContext_Story_projectId(ctx, field)
 			case "sceneId":
 				return ec.fieldContext_Story_sceneId(ctx, field)
 			case "scene":
@@ -38562,10 +39649,10 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -38580,8 +39667,8 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -38590,565 +39677,10 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_name(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_members(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_members(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Members, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*gqlmodel.TeamMember)
-	fc.Result = res
-	return ec.marshalNTeamMember2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeamMemberᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_members(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "userId":
-				return ec.fieldContext_TeamMember_userId(ctx, field)
-			case "role":
-				return ec.fieldContext_TeamMember_role(ctx, field)
-			case "user":
-				return ec.fieldContext_TeamMember_user(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type TeamMember", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_personal(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_personal(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Personal, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_personal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_policyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_policyId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PolicyID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_policyId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_policy(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_policy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Team().Policy(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Policy)
-	fc.Result = res
-	return ec.marshalOPolicy2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicy(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_policy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Policy_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Policy_name(ctx, field)
-			case "projectCount":
-				return ec.fieldContext_Policy_projectCount(ctx, field)
-			case "memberCount":
-				return ec.fieldContext_Policy_memberCount(ctx, field)
-			case "publishedProjectCount":
-				return ec.fieldContext_Policy_publishedProjectCount(ctx, field)
-			case "layerCount":
-				return ec.fieldContext_Policy_layerCount(ctx, field)
-			case "assetStorageSize":
-				return ec.fieldContext_Policy_assetStorageSize(ctx, field)
-			case "nlsLayersCount":
-				return ec.fieldContext_Policy_nlsLayersCount(ctx, field)
-			case "pageCount":
-				return ec.fieldContext_Policy_pageCount(ctx, field)
-			case "blocksCount":
-				return ec.fieldContext_Policy_blocksCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Policy", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_assets(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_assets(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Team().Assets(rctx, obj, fc.Args["projectId"].(*gqlmodel.ID), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.AssetConnection)
-	fc.Result = res
-	return ec.marshalNAssetConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAssetConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_assets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_AssetConnection_edges(ctx, field)
-			case "nodes":
-				return ec.fieldContext_AssetConnection_nodes(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_AssetConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_AssetConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type AssetConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Team_assets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Team_projects(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Team) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Team_projects(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Team().Projects(rctx, obj, fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.ProjectConnection)
-	fc.Result = res
-	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Team_projects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Team",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_ProjectConnection_edges(ctx, field)
-			case "nodes":
-				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Team_projects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TeamMember_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.TeamMember) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TeamMember_userId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UserID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TeamMember_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TeamMember",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TeamMember_role(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.TeamMember) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TeamMember_role(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Role, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(gqlmodel.Role)
-	fc.Result = res
-	return ec.marshalNRole2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRole(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TeamMember_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TeamMember",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Role does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _TeamMember_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.TeamMember) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_TeamMember_user(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.TeamMember().User(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.User)
-	fc.Result = res
-	return ec.marshalOUser2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_TeamMember_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "TeamMember",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "name":
-				return ec.fieldContext_User_name(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "host":
-				return ec.fieldContext_User_host(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
 		},
 	}
 	return fc, nil
@@ -39690,10 +40222,10 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -39708,8 +40240,8 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -39718,6 +40250,8 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -39859,14 +40393,14 @@ func (ec *executionContext) fieldContext_UpdateMePayload_me(_ context.Context, f
 				return ec.fieldContext_Me_lang(ctx, field)
 			case "theme":
 				return ec.fieldContext_Me_theme(ctx, field)
-			case "myTeamId":
-				return ec.fieldContext_Me_myTeamId(ctx, field)
+			case "myWorkspaceId":
+				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
 				return ec.fieldContext_Me_auths(ctx, field)
-			case "teams":
-				return ec.fieldContext_Me_teams(ctx, field)
-			case "myTeam":
-				return ec.fieldContext_Me_myTeam(ctx, field)
+			case "workspaces":
+				return ec.fieldContext_Me_workspaces(ctx, field)
+			case "myWorkspace":
+				return ec.fieldContext_Me_myWorkspace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Me", field.Name)
 		},
@@ -39874,8 +40408,8 @@ func (ec *executionContext) fieldContext_UpdateMePayload_me(_ context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateMemberOfTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateMemberOfTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateMemberOfTeamPayload_team(ctx, field)
+func (ec *executionContext) _UpdateMemberOfWorkspacePayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateMemberOfWorkspacePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateMemberOfWorkspacePayload_workspace(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -39888,7 +40422,7 @@ func (ec *executionContext) _UpdateMemberOfTeamPayload_team(ctx context.Context,
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
+		return obj.Workspace, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -39900,37 +40434,39 @@ func (ec *executionContext) _UpdateMemberOfTeamPayload_team(ctx context.Context,
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.Team)
+	res := resTmp.(*gqlmodel.Workspace)
 	fc.Result = res
-	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
+	return ec.marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UpdateMemberOfTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateMemberOfWorkspacePayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UpdateMemberOfTeamPayload",
+		Object:     "UpdateMemberOfWorkspacePayload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
+				return ec.fieldContext_Workspace_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
+				return ec.fieldContext_Workspace_name(ctx, field)
 			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
+				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
+				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
+				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
+				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
+				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
 	}
 	return fc, nil
@@ -40080,68 +40616,6 @@ func (ec *executionContext) fieldContext_UpdateStylePayload_style(_ context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _UpdateTeamPayload_team(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateTeamPayload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UpdateTeamPayload_team(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Team, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.Team)
-	fc.Result = res
-	return ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_UpdateTeamPayload_team(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "UpdateTeamPayload",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Team_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Team_name(ctx, field)
-			case "members":
-				return ec.fieldContext_Team_members(ctx, field)
-			case "personal":
-				return ec.fieldContext_Team_personal(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Team_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Team_policy(ctx, field)
-			case "assets":
-				return ec.fieldContext_Team_assets(ctx, field)
-			case "projects":
-				return ec.fieldContext_Team_projects(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Team", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _UpdateWidgetAlignSystemPayload_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateWidgetAlignSystemPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UpdateWidgetAlignSystemPayload_scene(ctx, field)
 	if err != nil {
@@ -40183,10 +40657,10 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -40201,8 +40675,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -40211,6 +40685,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40259,10 +40735,10 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -40277,8 +40753,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -40287,6 +40763,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40358,6 +40836,70 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_sceneWidget(_ conte
 	return fc, nil
 }
 
+func (ec *executionContext) _UpdateWorkspacePayload_workspace(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpdateWorkspacePayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateWorkspacePayload_workspace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Workspace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Workspace)
+	fc.Result = res
+	return ec.marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateWorkspacePayload_workspace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateWorkspacePayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Workspace_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Workspace_name(ctx, field)
+			case "members":
+				return ec.fieldContext_Workspace_members(ctx, field)
+			case "personal":
+				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "policyId":
+				return ec.fieldContext_Workspace_policyId(ctx, field)
+			case "policy":
+				return ec.fieldContext_Workspace_policy(ctx, field)
+			case "assets":
+				return ec.fieldContext_Workspace_assets(ctx, field)
+			case "projects":
+				return ec.fieldContext_Workspace_projects(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _UpgradePluginPayload_scene(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UpgradePluginPayload) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_UpgradePluginPayload_scene(ctx, field)
 	if err != nil {
@@ -40399,10 +40941,10 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -40417,8 +40959,8 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -40427,6 +40969,8 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -40607,10 +41151,10 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Scene_id(ctx, field)
+			case "workspaceId":
+				return ec.fieldContext_Scene_workspaceId(ctx, field)
 			case "projectId":
 				return ec.fieldContext_Scene_projectId(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Scene_teamId(ctx, field)
 			case "propertyId":
 				return ec.fieldContext_Scene_propertyId(ctx, field)
 			case "createdAt":
@@ -40625,8 +41169,8 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
-			case "team":
-				return ec.fieldContext_Scene_team(ctx, field)
+			case "workspace":
+				return ec.fieldContext_Scene_workspace(ctx, field)
 			case "property":
 				return ec.fieldContext_Scene_property(ctx, field)
 			case "newLayers":
@@ -40635,6 +41179,8 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_stories(ctx, field)
 			case "styles":
 				return ec.fieldContext_Scene_styles(ctx, field)
+			case "alias":
+				return ec.fieldContext_Scene_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Scene", field.Name)
 		},
@@ -42127,6 +42673,607 @@ func (ec *executionContext) fieldContext_WidgetZone_right(_ context.Context, fie
 	return fc, nil
 }
 
+func (ec *executionContext) _Workspace_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_name(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_members(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_members(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Members, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*gqlmodel.WorkspaceMember)
+	fc.Result = res
+	return ec.marshalNWorkspaceMember2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspaceMemberᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_members(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userId":
+				return ec.fieldContext_WorkspaceMember_userId(ctx, field)
+			case "role":
+				return ec.fieldContext_WorkspaceMember_role(ctx, field)
+			case "user":
+				return ec.fieldContext_WorkspaceMember_user(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WorkspaceMember", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_personal(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_personal(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Personal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_personal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_policyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_policyId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PolicyID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_policyId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_policy(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_policy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Workspace().Policy(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.Policy)
+	fc.Result = res
+	return ec.marshalOPolicy2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_policy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Policy_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Policy_name(ctx, field)
+			case "projectCount":
+				return ec.fieldContext_Policy_projectCount(ctx, field)
+			case "memberCount":
+				return ec.fieldContext_Policy_memberCount(ctx, field)
+			case "publishedProjectCount":
+				return ec.fieldContext_Policy_publishedProjectCount(ctx, field)
+			case "layerCount":
+				return ec.fieldContext_Policy_layerCount(ctx, field)
+			case "assetStorageSize":
+				return ec.fieldContext_Policy_assetStorageSize(ctx, field)
+			case "nlsLayersCount":
+				return ec.fieldContext_Policy_nlsLayersCount(ctx, field)
+			case "pageCount":
+				return ec.fieldContext_Policy_pageCount(ctx, field)
+			case "blocksCount":
+				return ec.fieldContext_Policy_blocksCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Policy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_assets(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_assets(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Workspace().Assets(rctx, obj, fc.Args["projectId"].(*gqlmodel.ID), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.AssetConnection)
+	fc.Result = res
+	return ec.marshalNAssetConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAssetConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_assets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_AssetConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_AssetConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_AssetConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_AssetConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AssetConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Workspace_assets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_projects(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_projects(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Workspace().Projects(rctx, obj, fc.Args["includeArchived"].(*bool), fc.Args["first"].(*int), fc.Args["last"].(*int), fc.Args["after"].(*usecasex.Cursor), fc.Args["before"].(*usecasex.Cursor))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ProjectConnection)
+	fc.Result = res
+	return ec.marshalNProjectConnection2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_projects(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ProjectConnection_edges(ctx, field)
+			case "nodes":
+				return ec.fieldContext_ProjectConnection_nodes(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ProjectConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ProjectConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ProjectConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Workspace_projects_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_enableToCreatePrivateProject(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableToCreatePrivateProject, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_enableToCreatePrivateProject(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WorkspaceMember_userId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WorkspaceMember) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WorkspaceMember_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WorkspaceMember_userId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WorkspaceMember",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WorkspaceMember_role(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WorkspaceMember) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WorkspaceMember_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.Role)
+	fc.Result = res
+	return ec.marshalNRole2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRole(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WorkspaceMember_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WorkspaceMember",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Role does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WorkspaceMember_user(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WorkspaceMember) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WorkspaceMember_user(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.WorkspaceMember().User(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.User)
+	fc.Result = res
+	return ec.marshalOUser2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WorkspaceMember_user(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WorkspaceMember",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "name":
+				return ec.fieldContext_User_name(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "host":
+				return ec.fieldContext_User_host(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Directive_name(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext___Directive_name(ctx, field)
 	if err != nil {
@@ -42207,6 +43354,50 @@ func (ec *executionContext) fieldContext___Directive_description(_ context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext___Directive_isRepeatable(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsRepeatable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Directive",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -42321,50 +43512,6 @@ func (ec *executionContext) fieldContext___Directive_args(ctx context.Context, f
 	if fc.Args, err = ec.field___Directive_args_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) ___Directive_isRepeatable(ctx context.Context, field graphql.CollectedField, obj *introspection.Directive) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext___Directive_isRepeatable(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.IsRepeatable, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext___Directive_isRepeatable(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "__Directive",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
 	}
 	return fc, nil
 }
@@ -42738,6 +43885,8 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -42750,8 +43899,6 @@ func (ec *executionContext) fieldContext___Field_type(_ context.Context, field g
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -42976,6 +44123,8 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -42988,8 +44137,6 @@ func (ec *executionContext) fieldContext___InputValue_type(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43211,6 +44358,8 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43223,8 +44372,6 @@ func (ec *executionContext) fieldContext___Schema_types(_ context.Context, field
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43279,6 +44426,8 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43291,8 +44440,6 @@ func (ec *executionContext) fieldContext___Schema_queryType(_ context.Context, f
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43344,6 +44491,8 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43356,8 +44505,6 @@ func (ec *executionContext) fieldContext___Schema_mutationType(_ context.Context
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43409,6 +44556,8 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43421,8 +44570,6 @@ func (ec *executionContext) fieldContext___Schema_subscriptionType(_ context.Con
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43475,12 +44622,12 @@ func (ec *executionContext) fieldContext___Schema_directives(_ context.Context, 
 				return ec.fieldContext___Directive_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Directive_description(ctx, field)
+			case "isRepeatable":
+				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			case "locations":
 				return ec.fieldContext___Directive_locations(ctx, field)
 			case "args":
 				return ec.fieldContext___Directive_args(ctx, field)
-			case "isRepeatable":
-				return ec.fieldContext___Directive_isRepeatable(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Directive", field.Name)
 		},
@@ -43614,6 +44761,47 @@ func (ec *executionContext) fieldContext___Type_description(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext___Type_specifiedByURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SpecifiedByURL(), nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "__Type",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) ___Type_fields(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext___Type_fields(ctx, field)
 	if err != nil {
@@ -43722,6 +44910,8 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43734,8 +44924,6 @@ func (ec *executionContext) fieldContext___Type_interfaces(_ context.Context, fi
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43787,6 +44975,8 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43799,8 +44989,6 @@ func (ec *executionContext) fieldContext___Type_possibleTypes(_ context.Context,
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
@@ -43969,6 +45157,8 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_name(ctx, field)
 			case "description":
 				return ec.fieldContext___Type_description(ctx, field)
+			case "specifiedByURL":
+				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "fields":
 				return ec.fieldContext___Type_fields(ctx, field)
 			case "interfaces":
@@ -43981,53 +45171,10 @@ func (ec *executionContext) fieldContext___Type_ofType(_ context.Context, field 
 				return ec.fieldContext___Type_inputFields(ctx, field)
 			case "ofType":
 				return ec.fieldContext___Type_ofType(ctx, field)
-			case "specifiedByURL":
-				return ec.fieldContext___Type_specifiedByURL(ctx, field)
 			case "isOneOf":
 				return ec.fieldContext___Type_isOneOf(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Type", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) ___Type_specifiedByURL(ctx context.Context, field graphql.CollectedField, obj *introspection.Type) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext___Type_specifiedByURL(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SpecifiedByURL(), nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "__Type",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -44126,27 +45273,27 @@ func (ec *executionContext) unmarshalInputAddGeoJSONFeatureInput(ctx context.Con
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputAddMemberToTeamInput(ctx context.Context, obj any) (gqlmodel.AddMemberToTeamInput, error) {
-	var it gqlmodel.AddMemberToTeamInput
+func (ec *executionContext) unmarshalInputAddMemberToWorkspaceInput(ctx context.Context, obj any) (gqlmodel.AddMemberToWorkspaceInput, error) {
+	var it gqlmodel.AddMemberToWorkspaceInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "userId", "role"}
+	fieldsInOrder := [...]string{"workspaceId", "userId", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "userId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -44510,20 +45657,20 @@ func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "projectId", "coreSupport", "file"}
+	fieldsInOrder := [...]string{"workspaceId", "projectId", "coreSupport", "file"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "projectId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectId"))
 			data, err := ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -44612,20 +45759,20 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "visualizer", "name", "description", "coreSupport", "visibility"}
+	fieldsInOrder := [...]string{"workspaceId", "visualizer", "name", "description", "coreSupport", "visibility", "projectAlias", "readme", "license", "topics"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "visualizer":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visualizer"))
 			data, err := ec.unmarshalNVisualizer2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐVisualizer(ctx, v)
@@ -44661,6 +45808,34 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Visibility = data
+		case "projectAlias":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectAlias"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProjectAlias = data
+		case "readme":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("readme"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Readme = data
+		case "license":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("license"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.License = data
+		case "topics":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Topics = data
 		}
 	}
 
@@ -44859,8 +46034,8 @@ func (ec *executionContext) unmarshalInputCreateStoryPageInput(ctx context.Conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateTeamInput(ctx context.Context, obj any) (gqlmodel.CreateTeamInput, error) {
-	var it gqlmodel.CreateTeamInput
+func (ec *executionContext) unmarshalInputCreateWorkspaceInput(ctx context.Context, obj any) (gqlmodel.CreateWorkspaceInput, error) {
+	var it gqlmodel.CreateWorkspaceInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
@@ -45049,27 +46224,27 @@ func (ec *executionContext) unmarshalInputDeleteStoryPageInput(ctx context.Conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputDeleteTeamInput(ctx context.Context, obj any) (gqlmodel.DeleteTeamInput, error) {
-	var it gqlmodel.DeleteTeamInput
+func (ec *executionContext) unmarshalInputDeleteWorkspaceInput(ctx context.Context, obj any) (gqlmodel.DeleteWorkspaceInput, error) {
+	var it gqlmodel.DeleteWorkspaceInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId"}
+	fieldsInOrder := [...]string{"workspaceId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		}
 	}
 
@@ -45192,40 +46367,6 @@ func (ec *executionContext) unmarshalInputExportProjectInput(ctx context.Context
 				return it, err
 			}
 			it.ProjectID = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputImportProjectInput(ctx context.Context, obj any) (gqlmodel.ImportProjectInput, error) {
-	var it gqlmodel.ImportProjectInput
-	asMap := map[string]any{}
-	for k, v := range obj.(map[string]any) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"teamId", "file"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TeamID = data
-		case "file":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("file"))
-			data, err := ec.unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.File = data
 		}
 	}
 
@@ -45772,27 +46913,27 @@ func (ec *executionContext) unmarshalInputRemoveCustomPropertyInput(ctx context.
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputRemoveMemberFromTeamInput(ctx context.Context, obj any) (gqlmodel.RemoveMemberFromTeamInput, error) {
-	var it gqlmodel.RemoveMemberFromTeamInput
+func (ec *executionContext) unmarshalInputRemoveMemberFromWorkspaceInput(ctx context.Context, obj any) (gqlmodel.RemoveMemberFromWorkspaceInput, error) {
+	var it gqlmodel.RemoveMemberFromWorkspaceInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "userId"}
+	fieldsInOrder := [...]string{"workspaceId", "userId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "userId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -46146,7 +47287,7 @@ func (ec *executionContext) unmarshalInputSignupInput(ctx context.Context, obj a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"lang", "theme", "userId", "teamId", "secret"}
+	fieldsInOrder := [...]string{"lang", "theme", "userId", "workspaceId", "secret"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46174,13 +47315,13 @@ func (ec *executionContext) unmarshalInputSignupInput(ctx context.Context, obj a
 				return it, err
 			}
 			it.UserID = data
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "secret":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("secret"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -46454,27 +47595,27 @@ func (ec *executionContext) unmarshalInputUpdateMeInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateMemberOfTeamInput(ctx context.Context, obj any) (gqlmodel.UpdateMemberOfTeamInput, error) {
-	var it gqlmodel.UpdateMemberOfTeamInput
+func (ec *executionContext) unmarshalInputUpdateMemberOfWorkspaceInput(ctx context.Context, obj any) (gqlmodel.UpdateMemberOfWorkspaceInput, error) {
+	var it gqlmodel.UpdateMemberOfWorkspaceInput
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"teamId", "userId", "role"}
+	fieldsInOrder := [...]string{"workspaceId", "userId", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.TeamID = data
+			it.WorkspaceID = data
 		case "userId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -46584,7 +47725,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "projectAlias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46661,6 +47802,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.Visibility = data
+		case "projectAlias":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectAlias"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ProjectAlias = data
 		case "publicTitle":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicTitle"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -46731,6 +47879,54 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.TrackingID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context.Context, obj any) (gqlmodel.UpdateProjectMetadataInput, error) {
+	var it gqlmodel.UpdateProjectMetadataInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"project", "readme", "license", "topics"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "project":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("project"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Project = data
+		case "readme":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("readme"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Readme = data
+		case "license":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("license"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.License = data
+		case "topics":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Topics = data
 		}
 	}
 
@@ -47144,40 +48340,6 @@ func (ec *executionContext) unmarshalInputUpdateStyleInput(ctx context.Context, 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateTeamInput(ctx context.Context, obj any) (gqlmodel.UpdateTeamInput, error) {
-	var it gqlmodel.UpdateTeamInput
-	asMap := map[string]any{}
-	for k, v := range obj.(map[string]any) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"teamId", "name"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TeamID = data
-		case "name":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Name = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputUpdateWidgetAlignSystemInput(ctx context.Context, obj any) (gqlmodel.UpdateWidgetAlignSystemInput, error) {
 	var it gqlmodel.UpdateWidgetAlignSystemInput
 	asMap := map[string]any{}
@@ -47303,6 +48465,40 @@ func (ec *executionContext) unmarshalInputUpdateWidgetInput(ctx context.Context,
 				return it, err
 			}
 			it.Index = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateWorkspaceInput(ctx context.Context, obj any) (gqlmodel.UpdateWorkspaceInput, error) {
+	var it gqlmodel.UpdateWorkspaceInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"workspaceId", "name"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WorkspaceID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
 		}
 	}
 
@@ -47543,20 +48739,6 @@ func (ec *executionContext) _Geometry(ctx context.Context, sel ast.SelectionSet,
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case gqlmodel.Point:
-		return ec._Point(ctx, sel, &obj)
-	case *gqlmodel.Point:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Point(ctx, sel, obj)
-	case gqlmodel.LineString:
-		return ec._LineString(ctx, sel, &obj)
-	case *gqlmodel.LineString:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._LineString(ctx, sel, obj)
 	case gqlmodel.Polygon:
 		return ec._Polygon(ctx, sel, &obj)
 	case *gqlmodel.Polygon:
@@ -47564,6 +48746,13 @@ func (ec *executionContext) _Geometry(ctx context.Context, sel ast.SelectionSet,
 			return graphql.Null
 		}
 		return ec._Polygon(ctx, sel, obj)
+	case gqlmodel.Point:
+		return ec._Point(ctx, sel, &obj)
+	case *gqlmodel.Point:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Point(ctx, sel, obj)
 	case gqlmodel.MultiPolygon:
 		return ec._MultiPolygon(ctx, sel, &obj)
 	case *gqlmodel.MultiPolygon:
@@ -47571,6 +48760,13 @@ func (ec *executionContext) _Geometry(ctx context.Context, sel ast.SelectionSet,
 			return graphql.Null
 		}
 		return ec._MultiPolygon(ctx, sel, obj)
+	case gqlmodel.LineString:
+		return ec._LineString(ctx, sel, &obj)
+	case *gqlmodel.LineString:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._LineString(ctx, sel, obj)
 	case gqlmodel.GeometryCollection:
 		return ec._GeometryCollection(ctx, sel, &obj)
 	case *gqlmodel.GeometryCollection:
@@ -47610,41 +48806,20 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case gqlmodel.Asset:
-		return ec._Asset(ctx, sel, &obj)
-	case *gqlmodel.Asset:
+	case gqlmodel.Workspace:
+		return ec._Workspace(ctx, sel, &obj)
+	case *gqlmodel.Workspace:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._Asset(ctx, sel, obj)
-	case gqlmodel.Project:
-		return ec._Project(ctx, sel, &obj)
-	case *gqlmodel.Project:
+		return ec._Workspace(ctx, sel, obj)
+	case gqlmodel.User:
+		return ec._User(ctx, sel, &obj)
+	case *gqlmodel.User:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._Project(ctx, sel, obj)
-	case gqlmodel.Property:
-		return ec._Property(ctx, sel, &obj)
-	case *gqlmodel.Property:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Property(ctx, sel, obj)
-	case gqlmodel.Scene:
-		return ec._Scene(ctx, sel, &obj)
-	case *gqlmodel.Scene:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Scene(ctx, sel, obj)
-	case gqlmodel.Story:
-		return ec._Story(ctx, sel, &obj)
-	case *gqlmodel.Story:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Story(ctx, sel, obj)
+		return ec._User(ctx, sel, obj)
 	case gqlmodel.StoryPage:
 		return ec._StoryPage(ctx, sel, &obj)
 	case *gqlmodel.StoryPage:
@@ -47659,20 +48834,41 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._StoryBlock(ctx, sel, obj)
-	case gqlmodel.User:
-		return ec._User(ctx, sel, &obj)
-	case *gqlmodel.User:
+	case gqlmodel.Story:
+		return ec._Story(ctx, sel, &obj)
+	case *gqlmodel.Story:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._User(ctx, sel, obj)
-	case gqlmodel.Team:
-		return ec._Team(ctx, sel, &obj)
-	case *gqlmodel.Team:
+		return ec._Story(ctx, sel, obj)
+	case gqlmodel.Scene:
+		return ec._Scene(ctx, sel, &obj)
+	case *gqlmodel.Scene:
 		if obj == nil {
 			return graphql.Null
 		}
-		return ec._Team(ctx, sel, obj)
+		return ec._Scene(ctx, sel, obj)
+	case gqlmodel.Property:
+		return ec._Property(ctx, sel, &obj)
+	case *gqlmodel.Property:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Property(ctx, sel, obj)
+	case gqlmodel.Project:
+		return ec._Project(ctx, sel, &obj)
+	case *gqlmodel.Project:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Project(ctx, sel, obj)
+	case gqlmodel.Asset:
+		return ec._Asset(ctx, sel, &obj)
+	case *gqlmodel.Asset:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Asset(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -47682,13 +48878,6 @@ func (ec *executionContext) _PropertyItem(ctx context.Context, sel ast.Selection
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case gqlmodel.PropertyGroup:
-		return ec._PropertyGroup(ctx, sel, &obj)
-	case *gqlmodel.PropertyGroup:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._PropertyGroup(ctx, sel, obj)
 	case gqlmodel.PropertyGroupList:
 		return ec._PropertyGroupList(ctx, sel, &obj)
 	case *gqlmodel.PropertyGroupList:
@@ -47696,6 +48885,13 @@ func (ec *executionContext) _PropertyItem(ctx context.Context, sel ast.Selection
 			return graphql.Null
 		}
 		return ec._PropertyGroupList(ctx, sel, obj)
+	case gqlmodel.PropertyGroup:
+		return ec._PropertyGroup(ctx, sel, &obj)
+	case *gqlmodel.PropertyGroup:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._PropertyGroup(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -47705,19 +48901,19 @@ func (ec *executionContext) _PropertyItem(ctx context.Context, sel ast.Selection
 
 // region    **************************** object.gotpl ****************************
 
-var addMemberToTeamPayloadImplementors = []string{"AddMemberToTeamPayload"}
+var addMemberToWorkspacePayloadImplementors = []string{"AddMemberToWorkspacePayload"}
 
-func (ec *executionContext) _AddMemberToTeamPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.AddMemberToTeamPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, addMemberToTeamPayloadImplementors)
+func (ec *executionContext) _AddMemberToWorkspacePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.AddMemberToWorkspacePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, addMemberToWorkspacePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("AddMemberToTeamPayload")
-		case "team":
-			out.Values[i] = ec._AddMemberToTeamPayload_team(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("AddMemberToWorkspacePayload")
+		case "workspace":
+			out.Values[i] = ec._AddMemberToWorkspacePayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -47926,39 +49122,12 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "createdAt":
-			out.Values[i] = ec._Asset_createdAt(ctx, field, obj)
+		case "workspaceId":
+			out.Values[i] = ec._Asset_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "teamId":
-			out.Values[i] = ec._Asset_teamId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "projectId":
-			out.Values[i] = ec._Asset_projectId(ctx, field, obj)
-		case "name":
-			out.Values[i] = ec._Asset_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "size":
-			out.Values[i] = ec._Asset_size(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "url":
-			out.Values[i] = ec._Asset_url(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "contentType":
-			out.Values[i] = ec._Asset_contentType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "team":
+		case "workspace":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -47967,7 +49136,7 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Asset_team(ctx, field, obj)
+				res = ec._Asset_workspace(ctx, field, obj)
 				return res
 			}
 
@@ -47991,6 +49160,33 @@ func (ec *executionContext) _Asset(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "projectId":
+			out.Values[i] = ec._Asset_projectId(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._Asset_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "size":
+			out.Values[i] = ec._Asset_size(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "url":
+			out.Values[i] = ec._Asset_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "contentType":
+			out.Values[i] = ec._Asset_contentType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createdAt":
+			out.Values[i] = ec._Asset_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "coreSupport":
 			out.Values[i] = ec._Asset_coreSupport(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -48393,19 +49589,19 @@ func (ec *executionContext) _CreateStoryBlockPayload(ctx context.Context, sel as
 	return out
 }
 
-var createTeamPayloadImplementors = []string{"CreateTeamPayload"}
+var createWorkspacePayloadImplementors = []string{"CreateWorkspacePayload"}
 
-func (ec *executionContext) _CreateTeamPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CreateTeamPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, createTeamPayloadImplementors)
+func (ec *executionContext) _CreateWorkspacePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.CreateWorkspacePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createWorkspacePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("CreateTeamPayload")
-		case "team":
-			out.Values[i] = ec._CreateTeamPayload_team(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("CreateWorkspacePayload")
+		case "workspace":
+			out.Values[i] = ec._CreateWorkspacePayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -48632,19 +49828,19 @@ func (ec *executionContext) _DeleteStoryPayload(ctx context.Context, sel ast.Sel
 	return out
 }
 
-var deleteTeamPayloadImplementors = []string{"DeleteTeamPayload"}
+var deleteWorkspacePayloadImplementors = []string{"DeleteWorkspacePayload"}
 
-func (ec *executionContext) _DeleteTeamPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteTeamPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, deleteTeamPayloadImplementors)
+func (ec *executionContext) _DeleteWorkspacePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.DeleteWorkspacePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteWorkspacePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("DeleteTeamPayload")
-		case "teamId":
-			out.Values[i] = ec._DeleteTeamPayload_teamId(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("DeleteWorkspacePayload")
+		case "workspaceId":
+			out.Values[i] = ec._DeleteWorkspacePayload_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -48901,45 +50097,6 @@ func (ec *executionContext) _GeometryCollection(ctx context.Context, sel ast.Sel
 			}
 		case "geometries":
 			out.Values[i] = ec._GeometryCollection_geometries(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var importProjectPayloadImplementors = []string{"ImportProjectPayload"}
-
-func (ec *executionContext) _ImportProjectPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ImportProjectPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, importProjectPayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("ImportProjectPayload")
-		case "projectData":
-			out.Values[i] = ec._ImportProjectPayload_projectData(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -49348,8 +50505,8 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "myTeamId":
-			out.Values[i] = ec._Me_myTeamId(ctx, field, obj)
+		case "myWorkspaceId":
+			out.Values[i] = ec._Me_myWorkspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -49358,7 +50515,7 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "teams":
+		case "workspaces":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -49367,7 +50524,7 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Me_teams(ctx, field, obj)
+				res = ec._Me_workspaces(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -49394,7 +50551,7 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "myTeam":
+		case "myWorkspace":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -49403,7 +50560,7 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Me_myTeam(ctx, field, obj)
+				res = ec._Me_myWorkspace(ctx, field, obj)
 				return res
 			}
 
@@ -50388,9 +51545,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_exportProject(ctx, field)
 			})
-		case "importProject":
+		case "updateProjectMetadata":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_importProject(ctx, field)
+				return ec._Mutation_updateProjectMetadata(ctx, field)
 			})
 		case "updatePropertyValue":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -50581,29 +51738,29 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_removeWidget(ctx, field)
 			})
-		case "createTeam":
+		case "createWorkspace":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTeam(ctx, field)
+				return ec._Mutation_createWorkspace(ctx, field)
 			})
-		case "deleteTeam":
+		case "deleteWorkspace":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_deleteTeam(ctx, field)
+				return ec._Mutation_deleteWorkspace(ctx, field)
 			})
-		case "updateTeam":
+		case "updateWorkspace":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateTeam(ctx, field)
+				return ec._Mutation_updateWorkspace(ctx, field)
 			})
-		case "addMemberToTeam":
+		case "addMemberToWorkspace":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_addMemberToTeam(ctx, field)
+				return ec._Mutation_addMemberToWorkspace(ctx, field)
 			})
-		case "removeMemberFromTeam":
+		case "removeMemberFromWorkspace":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_removeMemberFromTeam(ctx, field)
+				return ec._Mutation_removeMemberFromWorkspace(ctx, field)
 			})
-		case "updateMemberOfTeam":
+		case "updateMemberOfWorkspace":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateMemberOfTeam(ctx, field)
+				return ec._Mutation_updateMemberOfWorkspace(ctx, field)
 			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -51776,12 +52933,12 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "teamId":
-			out.Values[i] = ec._Project_teamId(ctx, field, obj)
+		case "workspaceId":
+			out.Values[i] = ec._Project_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "team":
+		case "workspace":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -51790,7 +52947,7 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Project_team(ctx, field, obj)
+				res = ec._Project_workspace(ctx, field, obj)
 				return res
 			}
 
@@ -51859,11 +53016,6 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "imageUrl":
 			out.Values[i] = ec._Project_imageUrl(ctx, field, obj)
-		case "visualizer":
-			out.Values[i] = ec._Project_visualizer(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "createdAt":
 			out.Values[i] = ec._Project_createdAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -51871,6 +53023,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "updatedAt":
 			out.Values[i] = ec._Project_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "visualizer":
+			out.Values[i] = ec._Project_visualizer(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -51896,6 +53053,13 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "visibility":
 			out.Values[i] = ec._Project_visibility(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "metadata":
+			out.Values[i] = ec._Project_metadata(ctx, field, obj)
+		case "projectAlias":
+			out.Values[i] = ec._Project_projectAlias(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -52095,6 +53259,106 @@ func (ec *executionContext) _ProjectEdge(ctx context.Context, sel ast.SelectionS
 			}
 		case "node":
 			out.Values[i] = ec._ProjectEdge_node(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectMetadataImplementors = []string{"ProjectMetadata"}
+
+func (ec *executionContext) _ProjectMetadata(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ProjectMetadata) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectMetadataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectMetadata")
+		case "id":
+			out.Values[i] = ec._ProjectMetadata_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "project":
+			out.Values[i] = ec._ProjectMetadata_project(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "workspace":
+			out.Values[i] = ec._ProjectMetadata_workspace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "readme":
+			out.Values[i] = ec._ProjectMetadata_readme(ctx, field, obj)
+		case "license":
+			out.Values[i] = ec._ProjectMetadata_license(ctx, field, obj)
+		case "topics":
+			out.Values[i] = ec._ProjectMetadata_topics(ctx, field, obj)
+		case "importStatus":
+			out.Values[i] = ec._ProjectMetadata_importStatus(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._ProjectMetadata_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._ProjectMetadata_updatedAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var projectMetadataPayloadImplementors = []string{"ProjectMetadataPayload"}
+
+func (ec *executionContext) _ProjectMetadataPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ProjectMetadataPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, projectMetadataPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ProjectMetadataPayload")
+		case "metadata":
+			out.Values[i] = ec._ProjectMetadataPayload_metadata(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -53566,6 +54830,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "checkSceneAlias":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_checkSceneAlias(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "starredProjects":
 			field := field
 
@@ -53854,19 +55140,19 @@ func (ec *executionContext) _RemoveAssetPayload(ctx context.Context, sel ast.Sel
 	return out
 }
 
-var removeMemberFromTeamPayloadImplementors = []string{"RemoveMemberFromTeamPayload"}
+var removeMemberFromWorkspacePayloadImplementors = []string{"RemoveMemberFromWorkspacePayload"}
 
-func (ec *executionContext) _RemoveMemberFromTeamPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.RemoveMemberFromTeamPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, removeMemberFromTeamPayloadImplementors)
+func (ec *executionContext) _RemoveMemberFromWorkspacePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.RemoveMemberFromWorkspacePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, removeMemberFromWorkspacePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("RemoveMemberFromTeamPayload")
-		case "team":
-			out.Values[i] = ec._RemoveMemberFromTeamPayload_team(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("RemoveMemberFromWorkspacePayload")
+		case "workspace":
+			out.Values[i] = ec._RemoveMemberFromWorkspacePayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -54202,13 +55488,13 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "projectId":
-			out.Values[i] = ec._Scene_projectId(ctx, field, obj)
+		case "workspaceId":
+			out.Values[i] = ec._Scene_workspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "teamId":
-			out.Values[i] = ec._Scene_teamId(ctx, field, obj)
+		case "projectId":
+			out.Values[i] = ec._Scene_projectId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -54272,7 +55558,7 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "team":
+		case "workspace":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -54281,7 +55567,7 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Scene_team(ctx, field, obj)
+				res = ec._Scene_workspace(ctx, field, obj)
 				return res
 			}
 
@@ -54446,6 +55732,55 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "alias":
+			out.Values[i] = ec._Scene_alias(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var sceneAliasAvailabilityImplementors = []string{"SceneAliasAvailability"}
+
+func (ec *executionContext) _SceneAliasAvailability(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.SceneAliasAvailability) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, sceneAliasAvailabilityImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("SceneAliasAvailability")
+		case "alias":
+			out.Values[i] = ec._SceneAliasAvailability_alias(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "available":
+			out.Values[i] = ec._SceneAliasAvailability_available(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -54755,8 +56090,8 @@ func (ec *executionContext) _SignupPayload(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "team":
-			out.Values[i] = ec._SignupPayload_team(ctx, field, obj)
+		case "workspace":
+			out.Values[i] = ec._SignupPayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -54888,6 +56223,11 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = graphql.MarshalString("Story")
 		case "id":
 			out.Values[i] = ec._Story_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "projectId":
+			out.Values[i] = ec._Story_projectId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -55552,244 +56892,6 @@ func (ec *executionContext) _Style(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var teamImplementors = []string{"Team", "Node"}
-
-func (ec *executionContext) _Team(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Team) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, teamImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Team")
-		case "id":
-			out.Values[i] = ec._Team_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "name":
-			out.Values[i] = ec._Team_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "members":
-			out.Values[i] = ec._Team_members(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "personal":
-			out.Values[i] = ec._Team_personal(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "policyId":
-			out.Values[i] = ec._Team_policyId(ctx, field, obj)
-		case "policy":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Team_policy(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "assets":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Team_assets(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "projects":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Team_projects(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var teamMemberImplementors = []string{"TeamMember"}
-
-func (ec *executionContext) _TeamMember(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.TeamMember) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, teamMemberImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("TeamMember")
-		case "userId":
-			out.Values[i] = ec._TeamMember_userId(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "role":
-			out.Values[i] = ec._TeamMember_role(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "user":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._TeamMember_user(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var timelineImplementors = []string{"Timeline"}
 
 func (ec *executionContext) _Timeline(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Timeline) graphql.Marshaler {
@@ -56004,19 +57106,19 @@ func (ec *executionContext) _UpdateMePayload(ctx context.Context, sel ast.Select
 	return out
 }
 
-var updateMemberOfTeamPayloadImplementors = []string{"UpdateMemberOfTeamPayload"}
+var updateMemberOfWorkspacePayloadImplementors = []string{"UpdateMemberOfWorkspacePayload"}
 
-func (ec *executionContext) _UpdateMemberOfTeamPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateMemberOfTeamPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, updateMemberOfTeamPayloadImplementors)
+func (ec *executionContext) _UpdateMemberOfWorkspacePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateMemberOfWorkspacePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateMemberOfWorkspacePayloadImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UpdateMemberOfTeamPayload")
-		case "team":
-			out.Values[i] = ec._UpdateMemberOfTeamPayload_team(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("UpdateMemberOfWorkspacePayload")
+		case "workspace":
+			out.Values[i] = ec._UpdateMemberOfWorkspacePayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -56160,45 +57262,6 @@ func (ec *executionContext) _UpdateStylePayload(ctx context.Context, sel ast.Sel
 	return out
 }
 
-var updateTeamPayloadImplementors = []string{"UpdateTeamPayload"}
-
-func (ec *executionContext) _UpdateTeamPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateTeamPayload) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, updateTeamPayloadImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("UpdateTeamPayload")
-		case "team":
-			out.Values[i] = ec._UpdateTeamPayload_team(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var updateWidgetAlignSystemPayloadImplementors = []string{"UpdateWidgetAlignSystemPayload"}
 
 func (ec *executionContext) _UpdateWidgetAlignSystemPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateWidgetAlignSystemPayload) graphql.Marshaler {
@@ -56256,6 +57319,45 @@ func (ec *executionContext) _UpdateWidgetPayload(ctx context.Context, sel ast.Se
 			}
 		case "sceneWidget":
 			out.Values[i] = ec._UpdateWidgetPayload_sceneWidget(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var updateWorkspacePayloadImplementors = []string{"UpdateWorkspacePayload"}
+
+func (ec *executionContext) _UpdateWorkspacePayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UpdateWorkspacePayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateWorkspacePayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UpdateWorkspacePayload")
+		case "workspace":
+			out.Values[i] = ec._UpdateWorkspacePayload_workspace(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -56797,6 +57899,249 @@ func (ec *executionContext) _WidgetZone(ctx context.Context, sel ast.SelectionSe
 	return out
 }
 
+var workspaceImplementors = []string{"Workspace", "Node"}
+
+func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Workspace) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workspaceImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Workspace")
+		case "id":
+			out.Values[i] = ec._Workspace_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "name":
+			out.Values[i] = ec._Workspace_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "members":
+			out.Values[i] = ec._Workspace_members(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "personal":
+			out.Values[i] = ec._Workspace_personal(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "policyId":
+			out.Values[i] = ec._Workspace_policyId(ctx, field, obj)
+		case "policy":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Workspace_policy(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "assets":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Workspace_assets(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "projects":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Workspace_projects(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "enableToCreatePrivateProject":
+			out.Values[i] = ec._Workspace_enableToCreatePrivateProject(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var workspaceMemberImplementors = []string{"WorkspaceMember"}
+
+func (ec *executionContext) _WorkspaceMember(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.WorkspaceMember) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, workspaceMemberImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WorkspaceMember")
+		case "userId":
+			out.Values[i] = ec._WorkspaceMember_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "role":
+			out.Values[i] = ec._WorkspaceMember_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "user":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._WorkspaceMember_user(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var __DirectiveImplementors = []string{"__Directive"}
 
 func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionSet, obj *introspection.Directive) graphql.Marshaler {
@@ -56815,6 +58160,11 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "description":
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
+		case "isRepeatable":
+			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "locations":
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -56822,11 +58172,6 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 			}
 		case "args":
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "isRepeatable":
-			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -57089,6 +58434,8 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_name(ctx, field, obj)
 		case "description":
 			out.Values[i] = ec.___Type_description(ctx, field, obj)
+		case "specifiedByURL":
+			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
 		case "fields":
 			out.Values[i] = ec.___Type_fields(ctx, field, obj)
 		case "interfaces":
@@ -57101,8 +58448,6 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec.___Type_inputFields(ctx, field, obj)
 		case "ofType":
 			out.Values[i] = ec.___Type_ofType(ctx, field, obj)
-		case "specifiedByURL":
-			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
 		case "isOneOf":
 			out.Values[i] = ec.___Type_isOneOf(ctx, field, obj)
 		default:
@@ -57137,8 +58482,8 @@ func (ec *executionContext) unmarshalNAddGeoJSONFeatureInput2githubᚗcomᚋreea
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNAddMemberToTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToTeamInput(ctx context.Context, v any) (gqlmodel.AddMemberToTeamInput, error) {
-	res, err := ec.unmarshalInputAddMemberToTeamInput(ctx, v)
+func (ec *executionContext) unmarshalNAddMemberToWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToWorkspaceInput(ctx context.Context, v any) (gqlmodel.AddMemberToWorkspaceInput, error) {
+	res, err := ec.unmarshalInputAddMemberToWorkspaceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -57313,6 +58658,7 @@ func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (
 }
 
 func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalBoolean(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57381,8 +58727,8 @@ func (ec *executionContext) unmarshalNCreateStoryPageInput2githubᚗcomᚋreeart
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTeamInput(ctx context.Context, v any) (gqlmodel.CreateTeamInput, error) {
-	res, err := ec.unmarshalInputCreateTeamInput(ctx, v)
+func (ec *executionContext) unmarshalNCreateWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateWorkspaceInput(ctx context.Context, v any) (gqlmodel.CreateWorkspaceInput, error) {
+	res, err := ec.unmarshalInputCreateWorkspaceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -57392,6 +58738,7 @@ func (ec *executionContext) unmarshalNCursor2githubᚗcomᚋreearthᚋreearthx�
 }
 
 func (ec *executionContext) marshalNCursor2githubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx context.Context, sel ast.SelectionSet, v usecasex.Cursor) graphql.Marshaler {
+	_ = sel
 	res := gqlmodel.MarshalCursor(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57407,6 +58754,7 @@ func (ec *executionContext) unmarshalNDateTime2timeᚐTime(ctx context.Context, 
 }
 
 func (ec *executionContext) marshalNDateTime2timeᚐTime(ctx context.Context, sel ast.SelectionSet, v time.Time) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalTime(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57483,8 +58831,8 @@ func (ec *executionContext) marshalNDeleteStoryPayload2ᚖgithubᚗcomᚋreearth
 	return ec._DeleteStoryPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNDeleteTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteTeamInput(ctx context.Context, v any) (gqlmodel.DeleteTeamInput, error) {
-	res, err := ec.unmarshalInputDeleteTeamInput(ctx, v)
+func (ec *executionContext) unmarshalNDeleteWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteWorkspaceInput(ctx context.Context, v any) (gqlmodel.DeleteWorkspaceInput, error) {
+	res, err := ec.unmarshalInputDeleteWorkspaceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -57586,6 +58934,7 @@ func (ec *executionContext) unmarshalNFileSize2int64(ctx context.Context, v any)
 }
 
 func (ec *executionContext) marshalNFileSize2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalInt64(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57601,6 +58950,7 @@ func (ec *executionContext) unmarshalNFloat2float64(ctx context.Context, v any) 
 }
 
 func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.SelectionSet, v float64) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalFloatContext(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57612,9 +58962,7 @@ func (ec *executionContext) marshalNFloat2float64(ctx context.Context, sel ast.S
 
 func (ec *executionContext) unmarshalNFloat2ᚕfloat64ᚄ(ctx context.Context, v any) ([]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]float64, len(vSlice))
 	for i := range vSlice {
@@ -57644,9 +58992,7 @@ func (ec *executionContext) marshalNFloat2ᚕfloat64ᚄ(ctx context.Context, sel
 
 func (ec *executionContext) unmarshalNFloat2ᚕᚕfloat64ᚄ(ctx context.Context, v any) ([][]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([][]float64, len(vSlice))
 	for i := range vSlice {
@@ -57676,9 +59022,7 @@ func (ec *executionContext) marshalNFloat2ᚕᚕfloat64ᚄ(ctx context.Context, 
 
 func (ec *executionContext) unmarshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx context.Context, v any) ([][][]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([][][]float64, len(vSlice))
 	for i := range vSlice {
@@ -57708,9 +59052,7 @@ func (ec *executionContext) marshalNFloat2ᚕᚕᚕfloat64ᚄ(ctx context.Contex
 
 func (ec *executionContext) unmarshalNFloat2ᚕᚕᚕᚕfloat64ᚄ(ctx context.Context, v any) ([][][][]float64, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([][][][]float64, len(vSlice))
 	for i := range vSlice {
@@ -57799,6 +59141,7 @@ func (ec *executionContext) unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserv
 }
 
 func (ec *executionContext) marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx context.Context, sel ast.SelectionSet, v gqlmodel.ID) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(string(v))
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57810,9 +59153,7 @@ func (ec *executionContext) marshalNID2githubᚗcomᚋreearthᚋreearthᚋserver
 
 func (ec *executionContext) unmarshalNID2ᚕgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐIDᚄ(ctx context.Context, v any) ([]gqlmodel.ID, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]gqlmodel.ID, len(vSlice))
 	for i := range vSlice {
@@ -57838,11 +59179,6 @@ func (ec *executionContext) marshalNID2ᚕgithubᚗcomᚋreearthᚋreearthᚋser
 	}
 
 	return ret
-}
-
-func (ec *executionContext) unmarshalNImportProjectInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectInput(ctx context.Context, v any) (gqlmodel.ImportProjectInput, error) {
-	res, err := ec.unmarshalInputImportProjectInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNInfoboxBlock2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐInfoboxBlockᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.InfoboxBlock) graphql.Marshaler {
@@ -57910,6 +59246,7 @@ func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v any) (int, 
 }
 
 func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57931,6 +59268,7 @@ func (ec *executionContext) marshalNJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 		}
 		return graphql.Null
 	}
+	_ = sel
 	res := gqlmodel.MarshalJSON(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -57946,6 +59284,7 @@ func (ec *executionContext) unmarshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐ
 }
 
 func (ec *executionContext) marshalNLang2golangᚗorgᚋxᚋtextᚋlanguageᚐTag(ctx context.Context, sel ast.SelectionSet, v language.Tag) graphql.Marshaler {
+	_ = sel
 	res := gqlmodel.MarshalLang(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -58573,6 +59912,16 @@ func (ec *executionContext) marshalNProjectEdge2ᚖgithubᚗcomᚋreearthᚋreea
 	return ec._ProjectEdge(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectMetadata) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ProjectMetadata(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNProjectSortField2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectSortField(ctx context.Context, v any) (gqlmodel.ProjectSortField, error) {
 	var res gqlmodel.ProjectSortField
 	err := res.UnmarshalGQL(v)
@@ -58967,8 +60316,8 @@ func (ec *executionContext) unmarshalNRemoveCustomPropertyInput2githubᚗcomᚋr
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNRemoveMemberFromTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromTeamInput(ctx context.Context, v any) (gqlmodel.RemoveMemberFromTeamInput, error) {
-	res, err := ec.unmarshalInputRemoveMemberFromTeamInput(ctx, v)
+func (ec *executionContext) unmarshalNRemoveMemberFromWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromWorkspaceInput(ctx context.Context, v any) (gqlmodel.RemoveMemberFromWorkspaceInput, error) {
+	res, err := ec.unmarshalInputRemoveMemberFromWorkspaceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -59068,6 +60417,20 @@ func (ec *executionContext) marshalNScene2ᚖgithubᚗcomᚋreearthᚋreearthᚋ
 		return graphql.Null
 	}
 	return ec._Scene(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNSceneAliasAvailability2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSceneAliasAvailability(ctx context.Context, sel ast.SelectionSet, v gqlmodel.SceneAliasAvailability) graphql.Marshaler {
+	return ec._SceneAliasAvailability(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSceneAliasAvailability2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐSceneAliasAvailability(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.SceneAliasAvailability) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SceneAliasAvailability(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNScenePlugin2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐScenePluginᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.ScenePlugin) graphql.Marshaler {
@@ -59403,6 +60766,7 @@ func (ec *executionContext) unmarshalNString2string(ctx context.Context, v any) 
 }
 
 func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -59414,9 +60778,7 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 
 func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]string, len(vSlice))
 	for i := range vSlice {
@@ -59498,114 +60860,6 @@ func (ec *executionContext) marshalNStyle2ᚖgithubᚗcomᚋreearthᚋreearthᚋ
 	return ec._Style(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNTeam2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeamᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Team) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Team) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Team(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNTeamMember2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeamMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.TeamMember) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNTeamMember2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeamMember(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNTeamMember2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeamMember(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.TeamMember) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._TeamMember(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalNTheme2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTheme(ctx context.Context, v any) (gqlmodel.Theme, error) {
 	var res gqlmodel.Theme
 	err := res.UnmarshalGQL(v)
@@ -59646,8 +60900,8 @@ func (ec *executionContext) unmarshalNUpdateMeInput2githubᚗcomᚋreearthᚋree
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateMemberOfTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfTeamInput(ctx context.Context, v any) (gqlmodel.UpdateMemberOfTeamInput, error) {
-	res, err := ec.unmarshalInputUpdateMemberOfTeamInput(ctx, v)
+func (ec *executionContext) unmarshalNUpdateMemberOfWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfWorkspaceInput(ctx context.Context, v any) (gqlmodel.UpdateMemberOfWorkspaceInput, error) {
+	res, err := ec.unmarshalInputUpdateMemberOfWorkspaceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -59658,9 +60912,7 @@ func (ec *executionContext) unmarshalNUpdateNLSLayerInput2githubᚗcomᚋreearth
 
 func (ec *executionContext) unmarshalNUpdateNLSLayerInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateNLSLayerInputᚄ(ctx context.Context, v any) ([]*gqlmodel.UpdateNLSLayerInput, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]*gqlmodel.UpdateNLSLayerInput, len(vSlice))
 	for i := range vSlice {
@@ -59716,6 +60968,11 @@ func (ec *executionContext) unmarshalNUpdateProjectInput2githubᚗcomᚋreearth�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNUpdateProjectMetadataInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateProjectMetadataInput(ctx context.Context, v any) (gqlmodel.UpdateProjectMetadataInput, error) {
+	res, err := ec.unmarshalInputUpdateProjectMetadataInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNUpdatePropertyItemInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdatePropertyItemInput(ctx context.Context, v any) (gqlmodel.UpdatePropertyItemInput, error) {
 	res, err := ec.unmarshalInputUpdatePropertyItemInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -59723,9 +60980,7 @@ func (ec *executionContext) unmarshalNUpdatePropertyItemInput2githubᚗcomᚋree
 
 func (ec *executionContext) unmarshalNUpdatePropertyItemOperationInput2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdatePropertyItemOperationInputᚄ(ctx context.Context, v any) ([]*gqlmodel.UpdatePropertyItemOperationInput, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]*gqlmodel.UpdatePropertyItemOperationInput, len(vSlice))
 	for i := range vSlice {
@@ -59763,11 +61018,6 @@ func (ec *executionContext) unmarshalNUpdateStyleInput2githubᚗcomᚋreearthᚋ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNUpdateTeamInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateTeamInput(ctx context.Context, v any) (gqlmodel.UpdateTeamInput, error) {
-	res, err := ec.unmarshalInputUpdateTeamInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNUpdateWidgetAlignSystemInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWidgetAlignSystemInput(ctx context.Context, v any) (gqlmodel.UpdateWidgetAlignSystemInput, error) {
 	res, err := ec.unmarshalInputUpdateWidgetAlignSystemInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -59775,6 +61025,11 @@ func (ec *executionContext) unmarshalNUpdateWidgetAlignSystemInput2githubᚗcom�
 
 func (ec *executionContext) unmarshalNUpdateWidgetInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWidgetInput(ctx context.Context, v any) (gqlmodel.UpdateWidgetInput, error) {
 	res, err := ec.unmarshalInputUpdateWidgetInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateWorkspaceInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWorkspaceInput(ctx context.Context, v any) (gqlmodel.UpdateWorkspaceInput, error) {
+	res, err := ec.unmarshalInputUpdateWorkspaceInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -59789,6 +61044,7 @@ func (ec *executionContext) unmarshalNUpload2githubᚗcomᚋ99designsᚋgqlgen�
 }
 
 func (ec *executionContext) marshalNUpload2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚐUpload(ctx context.Context, sel ast.SelectionSet, v graphql.Upload) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalUpload(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -59893,6 +61149,114 @@ func (ec *executionContext) marshalNWidgetZoneType2githubᚗcomᚋreearthᚋreea
 	return v
 }
 
+func (ec *executionContext) marshalNWorkspace2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspaceᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.Workspace) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Workspace) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Workspace(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNWorkspaceMember2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspaceMemberᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.WorkspaceMember) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWorkspaceMember2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspaceMember(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNWorkspaceMember2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspaceMember(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WorkspaceMember) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WorkspaceMember(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalN__Directive2githubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐDirective(ctx context.Context, sel ast.SelectionSet, v introspection.Directive) graphql.Marshaler {
 	return ec.___Directive(ctx, sel, &v)
 }
@@ -59947,6 +61311,7 @@ func (ec *executionContext) unmarshalN__DirectiveLocation2string(ctx context.Con
 }
 
 func (ec *executionContext) marshalN__DirectiveLocation2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -59958,9 +61323,7 @@ func (ec *executionContext) marshalN__DirectiveLocation2string(ctx context.Conte
 
 func (ec *executionContext) unmarshalN__DirectiveLocation2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]string, len(vSlice))
 	for i := range vSlice {
@@ -60137,6 +61500,7 @@ func (ec *executionContext) unmarshalN__TypeKind2string(ctx context.Context, v a
 }
 
 func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	_ = sel
 	res := graphql.MarshalString(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -60146,11 +61510,11 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOAddMemberToTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToTeamPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddMemberToTeamPayload) graphql.Marshaler {
+func (ec *executionContext) marshalOAddMemberToWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddMemberToWorkspacePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddMemberToWorkspacePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._AddMemberToTeamPayload(ctx, sel, v)
+	return ec._AddMemberToWorkspacePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOAddNLSInfoboxBlockPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAddNLSInfoboxBlockPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AddNLSInfoboxBlockPayload) graphql.Marshaler {
@@ -60186,6 +61550,8 @@ func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.S
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalAny(v)
 	return res
 }
@@ -60211,6 +61577,8 @@ func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (
 }
 
 func (ec *executionContext) marshalOBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalBoolean(v)
 	return res
 }
@@ -60227,6 +61595,8 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalBoolean(*v)
 	return res
 }
@@ -60259,11 +61629,11 @@ func (ec *executionContext) marshalOCreateScenePayload2ᚖgithubᚗcomᚋreearth
 	return ec._CreateScenePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOCreateTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateTeamPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CreateTeamPayload) graphql.Marshaler {
+func (ec *executionContext) marshalOCreateWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐCreateWorkspacePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.CreateWorkspacePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._CreateTeamPayload(ctx, sel, v)
+	return ec._CreateWorkspacePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthxᚋusecasexᚐCursor(ctx context.Context, v any) (*usecasex.Cursor, error) {
@@ -60278,6 +61648,8 @@ func (ec *executionContext) marshalOCursor2ᚖgithubᚗcomᚋreearthᚋreearthx�
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalCursor(*v)
 	return res
 }
@@ -60294,6 +61666,8 @@ func (ec *executionContext) marshalODateTime2ᚖtimeᚐTime(ctx context.Context,
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalTime(*v)
 	return res
 }
@@ -60312,11 +61686,11 @@ func (ec *executionContext) marshalODeleteProjectPayload2ᚖgithubᚗcomᚋreear
 	return ec._DeleteProjectPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalODeleteTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteTeamPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DeleteTeamPayload) graphql.Marshaler {
+func (ec *executionContext) marshalODeleteWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDeleteWorkspacePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DeleteWorkspacePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._DeleteTeamPayload(ctx, sel, v)
+	return ec._DeleteWorkspacePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalODuplicateStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDuplicateStylePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.DuplicateStylePayload) graphql.Marshaler {
@@ -60352,6 +61726,8 @@ func (ec *executionContext) marshalOFileSize2ᚖint64(ctx context.Context, sel a
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalInt64(*v)
 	return res
 }
@@ -60368,6 +61744,7 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
 	res := graphql.MarshalFloatContext(*v)
 	return graphql.WrapContextMarshaler(ctx, res)
 }
@@ -60377,9 +61754,7 @@ func (ec *executionContext) unmarshalOID2ᚕgithubᚗcomᚋreearthᚋreearthᚋs
 		return nil, nil
 	}
 	var vSlice []any
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
+	vSlice = graphql.CoerceList(v)
 	var err error
 	res := make([]gqlmodel.ID, len(vSlice))
 	for i := range vSlice {
@@ -60423,15 +61798,10 @@ func (ec *executionContext) marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋser
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalString(string(*v))
 	return res
-}
-
-func (ec *executionContext) marshalOImportProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportProjectPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ImportProjectPayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._ImportProjectPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOInstallPluginPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐInstallPluginPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.InstallPluginPayload) graphql.Marshaler {
@@ -60453,6 +61823,8 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalInt(*v)
 	return res
 }
@@ -60469,6 +61841,8 @@ func (ec *executionContext) marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserv
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalJSON(v)
 	return res
 }
@@ -60485,6 +61859,8 @@ func (ec *executionContext) marshalOLang2ᚖgolangᚗorgᚋxᚋtextᚋlanguage�
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalLang(*v)
 	return res
 }
@@ -60588,6 +61964,36 @@ func (ec *executionContext) marshalOProject2ᚖgithubᚗcomᚋreearthᚋreearth�
 		return graphql.Null
 	}
 	return ec._Project(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOProjectImportStatus2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx context.Context, v any) (*gqlmodel.ProjectImportStatus, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(gqlmodel.ProjectImportStatus)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOProjectImportStatus2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectImportStatus(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectImportStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) marshalOProjectMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadata(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectMetadata) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectMetadata(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOProjectMetadataPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectMetadataPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectMetadataPayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ProjectMetadataPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOProjectPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐProjectPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ProjectPayload) graphql.Marshaler {
@@ -60745,11 +62151,11 @@ func (ec *executionContext) marshalORemoveAssetPayload2ᚖgithubᚗcomᚋreearth
 	return ec._RemoveAssetPayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalORemoveMemberFromTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromTeamPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveMemberFromTeamPayload) graphql.Marshaler {
+func (ec *executionContext) marshalORemoveMemberFromWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveMemberFromWorkspacePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveMemberFromWorkspacePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._RemoveMemberFromTeamPayload(ctx, sel, v)
+	return ec._RemoveMemberFromWorkspacePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalORemoveNLSInfoboxBlockPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐRemoveNLSInfoboxBlockPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.RemoveNLSInfoboxBlockPayload) graphql.Marshaler {
@@ -60834,15 +62240,10 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalString(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOTeam2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTeam(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Team) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Team(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOTextAlign2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐTextAlign(ctx context.Context, v any) (*gqlmodel.TextAlign, error) {
@@ -60889,6 +62290,8 @@ func (ec *executionContext) marshalOTranslatedString2map(ctx context.Context, se
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalMap(v)
 	return res
 }
@@ -60905,6 +62308,8 @@ func (ec *executionContext) marshalOURL2ᚖnetᚋurlᚐURL(ctx context.Context, 
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := gqlmodel.MarshalURL(*v)
 	return res
 }
@@ -60930,11 +62335,11 @@ func (ec *executionContext) marshalOUpdateMePayload2ᚖgithubᚗcomᚋreearthᚋ
 	return ec._UpdateMePayload(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOUpdateMemberOfTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfTeamPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateMemberOfTeamPayload) graphql.Marshaler {
+func (ec *executionContext) marshalOUpdateMemberOfWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateMemberOfWorkspacePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateMemberOfWorkspacePayload) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._UpdateMemberOfTeamPayload(ctx, sel, v)
+	return ec._UpdateMemberOfWorkspacePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOUpdateStylePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateStylePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateStylePayload) graphql.Marshaler {
@@ -60942,13 +62347,6 @@ func (ec *executionContext) marshalOUpdateStylePayload2ᚖgithubᚗcomᚋreearth
 		return graphql.Null
 	}
 	return ec._UpdateStylePayload(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOUpdateTeamPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateTeamPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateTeamPayload) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._UpdateTeamPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOUpdateWidgetAlignSystemPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWidgetAlignSystemPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateWidgetAlignSystemPayload) graphql.Marshaler {
@@ -60963,6 +62361,13 @@ func (ec *executionContext) marshalOUpdateWidgetPayload2ᚖgithubᚗcomᚋreeart
 		return graphql.Null
 	}
 	return ec._UpdateWidgetPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOUpdateWorkspacePayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpdateWorkspacePayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpdateWorkspacePayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UpdateWorkspacePayload(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOUpgradePluginPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUpgradePluginPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UpgradePluginPayload) graphql.Marshaler {
@@ -60984,6 +62389,8 @@ func (ec *executionContext) marshalOUpload2ᚖgithubᚗcomᚋ99designsᚋgqlgen�
 	if v == nil {
 		return graphql.Null
 	}
+	_ = sel
+	_ = ctx
 	res := graphql.MarshalUpload(*v)
 	return res
 }
@@ -61113,6 +62520,13 @@ func (ec *executionContext) marshalOWidgetZone2ᚖgithubᚗcomᚋreearthᚋreear
 		return graphql.Null
 	}
 	return ec._WidgetZone(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWorkspace2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWorkspace(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Workspace) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Workspace(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

@@ -19,8 +19,8 @@
       "Story",
       "StoryBlock",
       "StoryPage",
-      "Team",
-      "User"
+      "User",
+      "Workspace"
     ],
     "PropertyItem": [
       "PropertyGroup",

@@ -12,7 +12,9 @@ import (
 )
 
 var (
-	ReservedReearthPrefixProject = "c-"
+	ReservedReearthPrefixProject = "p-"
+
+	ReservedReearthPrefixScene = "c-"
 
 	ReservedReearthPrefixStory = "s-"
 
@@ -86,6 +88,20 @@ var (
 		nil,
 	)
 
+	ErrExistsProjectAliasAlreadyExists = verror.NewVError(
+		errmsg.ErrKeyPkgProjectProjectAliasAlreadyExists,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectProjectAliasAlreadyExists],
+		nil,
+		nil,
+	)
+
+	ErrProjectInvalidProjectAlias = verror.NewVError(
+		errmsg.ErrKeyPkgProjectInvalidProjectAlias,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidProjectAlias],
+		nil,
+		nil,
+	)
+
 	ErrExistsProjectAlias = verror.NewVError(
 		errmsg.ErrKeyPkgProjectAliasAlreadyExists,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectAliasAlreadyExists],
@@ -142,7 +158,7 @@ var (
 	)
 )
 
-func CheckProjectAliasPattern(alias string) error {
+func CheckAliasPatternScene(alias string) error {
 	if alias != "" && !subdomainRegex.Match([]byte(alias)) {
 		return ErrInvalidProjectAlias.AddTemplateData("aliasName", alias)
 	}

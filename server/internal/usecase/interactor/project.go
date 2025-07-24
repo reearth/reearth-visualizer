@@ -12,6 +12,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/util"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -28,6 +32,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -35,52 +40,99 @@ import (
 type Project struct {
 	common
 	commonSceneLock
-	assetRepo          repo.Asset
-	projectRepo        repo.Project
-	storytellingRepo   repo.Storytelling
-	userRepo           accountrepo.User
-	workspaceRepo      accountrepo.Workspace
-	sceneRepo          repo.Scene
-	propertyRepo       repo.Property
-	propertySchemaRepo repo.PropertySchema
-	transaction        usecasex.Transaction
-	policyRepo         repo.Policy
-	file               gateway.File
-	nlsLayerRepo       repo.NLSLayer
-	layerStyles        repo.Style
-	pluginRepo         repo.Plugin
+	assetRepo           repo.Asset
+	projectRepo         repo.Project
+	projectMetadataRepo repo.ProjectMetadata
+	storytellingRepo    repo.Storytelling
+	userRepo            accountrepo.User
+	workspaceRepo       accountrepo.Workspace
+	sceneRepo           repo.Scene
+	propertyRepo        repo.Property
+	propertySchemaRepo  repo.PropertySchema
+	transaction         usecasex.Transaction
+	policyRepo          repo.Policy
+	file                gateway.File
+	nlsLayerRepo        repo.NLSLayer
+	layerStyles         repo.Style
+	pluginRepo          repo.Plugin
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
-		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
-		assetRepo:          r.Asset,
-		projectRepo:        r.Project,
-		storytellingRepo:   r.Storytelling,
-		userRepo:           r.User,
-		workspaceRepo:      r.Workspace,
-		sceneRepo:          r.Scene,
-		propertyRepo:       r.Property,
-		transaction:        r.Transaction,
-		policyRepo:         r.Policy,
-		file:               gr.File,
-		nlsLayerRepo:       r.NLSLayer,
-		layerStyles:        r.Style,
-		pluginRepo:         r.Plugin,
-		propertySchemaRepo: r.PropertySchema,
+		commonSceneLock:     commonSceneLock{sceneLockRepo: r.SceneLock},
+		assetRepo:           r.Asset,
+		projectRepo:         r.Project,
+		projectMetadataRepo: r.ProjectMetadata,
+		storytellingRepo:    r.Storytelling,
+		userRepo:            r.User,
+		workspaceRepo:       r.Workspace,
+		sceneRepo:           r.Scene,
+		propertyRepo:        r.Property,
+		transaction:         r.Transaction,
+		policyRepo:          r.Policy,
+		file:                gr.File,
+		nlsLayerRepo:        r.NLSLayer,
+		layerStyles:         r.Style,
+		pluginRepo:          r.Plugin,
+		propertySchemaRepo:  r.PropertySchema,
 	}
 }
 
 func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Operator) ([]*project.Project, error) {
-	return i.projectRepo.FindByIDs(ctx, ids)
+
+	projects, err := i.projectRepo.FindByIDs(ctx, ids)
+	if err != nil {
+		return []*project.Project{}, err
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return []*project.Project{}, err
+	}
+
+	for _, project := range projects {
+		for _, metadata := range metadatas {
+			if project.ID() == metadata.Project() {
+				project.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return projects, nil
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
-	return i.projectRepo.FindByWorkspace(ctx, id, repo.ProjectFilter{
+func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	pList, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
 		Pagination: p,
 		Sort:       sort,
 		Keyword:    keyword,
 	})
+	if err != nil {
+		return pList, pInfo, err
+	}
+
+	ids := make(id.ProjectIDList, 0, len(pList))
+	for _, p := range pList {
+		ids = append(ids, p.ID())
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	for _, p := range pList {
+		for _, metadata := range metadatas {
+			if p.ID() == metadata.Project() {
+				p.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return pList, pInfo, err
 }
 
 func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
@@ -92,28 +144,180 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 }
 
 func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
-	return i.projectRepo.FindActiveById(ctx, pid)
-}
-
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
-
-	isWorkspaceOwner := false
-
-	if len(operator.AcOperator.OwningWorkspaces) > 0 {
-		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == id
+	pj, err := i.projectRepo.FindActiveById(ctx, pid)
+	if err != nil {
+		return nil, err
 	}
 
-	return i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, id)
+	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
+		return nil, errors.New("project is private")
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindActiveByAlias(ctx, alias)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindByProjectAlias(ctx, alias)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) FindVisibilityByUser(
+	ctx context.Context,
+	u *user.User,
+	authenticated bool,
+	operator *usecase.Operator,
+	keyword *string,
+	sort *project.SortType,
+	pagination *usecasex.Pagination,
+	param *interfaces.ProjectListParam,
+) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	pFilter := repo.ProjectFilter{
+		Keyword:    keyword,
+		Sort:       sort,
+		Pagination: pagination,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
+	}
+
+	wss, err := i.workspaceRepo.FindByUser(ctx, u.ID())
+	if err != nil {
+		return nil, nil, err
+	}
+
+	wList := make(accountdomain.WorkspaceIDList, 0, len(wss))
+	for _, ws := range wss {
+		wsid, err := workspace.IDFrom(ws.ID().String())
+		if err != nil {
+			return nil, nil, err
+		}
+		wList = append(wList, wsid)
+	}
+
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, operator.AcOperator.OwningWorkspaces, wList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, pList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, err
+}
+
+func (i *Project) FindVisibilityByWorkspace(
+	ctx context.Context,
+	aid accountdomain.WorkspaceID,
+	authenticated bool,
+	operator *usecase.Operator,
+	keyword *string,
+	sort *project.SortType,
+	pagination *usecasex.Pagination,
+	param *interfaces.ProjectListParam,
+) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	pFilter := repo.ProjectFilter{
+		Keyword:    keyword,
+		Sort:       sort,
+		Pagination: pagination,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
+	}
+
+	wList := accountdomain.WorkspaceIDList{aid}
+
+	var owningWsLis accountdomain.WorkspaceIDList
+	if operator != nil {
+		owningWsLis = operator.AcOperator.OwningWorkspaces
+	}
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, owningWsLis, wList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, pList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, err
+}
+
+func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]*project.Project, error) {
+	ids := make(id.ProjectIDList, 0, len(pList))
+	for _, p := range pList {
+		ids = append(ids, p.ID())
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range pList {
+		for _, metadata := range metadatas {
+			if p.ID() == metadata.Project() {
+				p.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return pList, err
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	return i.createProject(ctx, createProjectInput{
-		WorkspaceID: input.WorkspaceID,
-		Visualizer:  input.Visualizer,
-		Name:        input.Name,
-		Description: input.Description,
-		CoreSupport: input.CoreSupport,
-		Visibility:  input.Visibility,
+		WorkspaceID:  input.WorkspaceID,
+		Visualizer:   input.Visualizer,
+		Name:         input.Name,
+		Description:  input.Description,
+		CoreSupport:  input.CoreSupport,
+		Visibility:   input.Visibility,
+		ImportStatus: input.ImportStatus,
+		ProjectAlias: input.ProjectAlias,
+		Readme:       input.Readme,
+		License:      input.License,
+		Topics:       input.Topics,
 	}, operator)
 }
 
@@ -217,8 +421,20 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		}
 	}
 
-	if len(graphql.GetErrors(ctx)) > 0 {
-		return prj, nil
+	if p.ProjectAlias != nil {
+
+		_, err = i.CheckProjectAlias(ctx, *p.ProjectAlias, prj.Workspace(), prj.ID().Ref())
+		if err != nil {
+			return nil, err
+		}
+
+		prj.UpdateProjectAlias(*p.ProjectAlias)
+	}
+
+	if !adapter.IsInternal(ctx) {
+		if errs := graphql.GetErrors(ctx); len(errs) > 0 {
+			return prj, nil
+		}
 	}
 
 	currentTime := time.Now().UTC()
@@ -238,6 +454,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err != nil {
 		return nil, err
 	}
+
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
@@ -249,7 +466,6 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err := prj.UpdateVisibility(visibility); err != nil {
 		return nil, err
 	}
-
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
 
@@ -260,73 +476,126 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 }
 
-func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
-	aliasName := strings.ToLower(newAlias)
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 
-	if pid == nil {
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
+	if err != nil {
+		return nil, err
+	}
 
-		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
-			return false, err
-		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
-		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
+	if meta != nil {
+		currentTime := time.Now().UTC()
+		meta.SetImportStatus(&importStatus)
+		meta.SetUpdatedAt(&currentTime)
+	}
 
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
-			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-		}
+	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
+		return nil, err
+	}
+	return meta, nil
 
-	} else {
+}
+
+func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
+
+	prj, err := i.projectRepo.FindByID(ctx, *pid)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	sce, err := i.sceneRepo.FindByProject(ctx, *pid)
+	if err != nil {
+		return nil, "", "", err
+	}
+
+	dedicatedID1 := alias.ReservedReearthPrefixScene + sce.ID().String()
+	dedicatedID2 := sce.ID().String()
+
+	return prj, dedicatedID1, dedicatedID2, err
+}
+
+func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid accountdomain.WorkspaceID, pid *id.ProjectID) (bool, error) {
+
+	if pid != nil {
+		if alias.ReservedReearthPrefixProject+pid.String() == newAlias || pid.String() == newAlias {
+			return true, nil
+		}
 
 		prj, err := i.projectRepo.FindByID(ctx, *pid)
 		if err != nil {
 			return false, err
 		}
 
-		if aliasName == prj.Alias() {
-			// current alias
+		if prj.ProjectAlias() == newAlias {
 			return true, nil
 		}
+	}
 
-		sce, err := i.sceneRepo.FindByProject(ctx, *pid)
+	ok := util.IsSafePathName(newAlias)
+	if !ok {
+		return false, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
+	}
+
+	err := i.projectRepo.CheckProjectAliasUnique(ctx, wsid, newAlias, pid)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (i *Project) CheckSceneAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
+	aliasName := strings.ToLower(newAlias)
+	if pid == nil {
+
+		if err := alias.CheckAliasPatternScene(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err := i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
+			return false, err
+		}
+
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixScene) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+	} else {
+
+		prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, pid)
 		if err != nil {
 			return false, err
 		}
 
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
-			// error 's-' prefix
-			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixProject)
-			// only allow self ID
-			if id != sce.ID().String() {
-				// error 'c-' prefix
-				return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-			}
+		if aliasName == dedicatedID1 || aliasName == dedicatedID2 || aliasName == prj.Alias() {
+			// allow self sceneId or current alias
+			return true, nil
 		}
 
-		if sce.ID().String() == aliasName || sce.DefaultAlias() == aliasName {
-			// allow self ProjectID
-		} else {
-			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
-				return false, err
-			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
+		// story prefix check
+		if _, found := strings.CutPrefix(aliasName, alias.ReservedReearthPrefixStory); found {
+			// error 's-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		}
+
+		// scene prefix check
+		if _, found := strings.CutPrefix(aliasName, alias.ReservedReearthPrefixScene); found {
+			// error 'c-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+		if err := alias.CheckAliasPatternScene(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err = i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
+			return false, err
+		}
+
 	}
 
 	return true, nil
@@ -345,17 +614,17 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 	}()
 
-	prj, err := i.projectRepo.FindByID(ctx, params.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	sce, err := i.sceneRepo.FindByProject(ctx, params.ID)
+	prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
 	if err != nil {
 		return nil, err
 	}
 
 	if err := i.CanWriteWorkspace(prj.Workspace(), op); err != nil {
+		return nil, err
+	}
+
+	sc, err := i.sceneRepo.FindByProject(ctx, prj.ID())
+	if err != nil {
 		return nil, err
 	}
 
@@ -365,49 +634,50 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if params.Alias == nil || *params.Alias == "" {
 		// if you don't have an alias, set it to default alias
 		if prj.Alias() == "" {
-			prj.UpdateAlias(sce.DefaultAlias())
+			prj.UpdateAlias(dedicatedID1)
 		}
 		// if anything is set, do nothing
 	} else {
+
 		newAlias := strings.ToLower(*params.Alias)
 
-		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
-			// error 's-' prefix
-			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
-		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
-			// only allow self ID
-			if id != sce.ID().String() {
+		if newAlias == dedicatedID1 || newAlias == dedicatedID2 || prevAlias == newAlias {
+
+			// allow self sceneId or current alias
+
+		} else {
+
+			// story prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixStory); found {
+				// error 's-' prefix
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			// scene prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixScene); found {
 				// error 'c-' prefix
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			if err := alias.CheckAliasPatternScene(newAlias); err != nil {
+				return nil, err
+			}
+			if err := i.projectRepo.CheckSceneAliasUnique(ctx, newAlias); err != nil {
+				return nil, err
+			}
+			if err = i.storytellingRepo.CheckStorytellingAlias(ctx, newAlias); err != nil {
+				return nil, err
 			}
 		}
 
 		prj.UpdateAlias(newAlias)
 	}
 
-	if prevAlias == prj.Alias() || sce.ID().String() == prj.Alias() || sce.DefaultAlias() == prj.Alias() {
-		// if do not change alias or self ProjectID, do nothing
-	} else {
-		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err = i.storytellingRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-	}
-
 	prj.UpdatePublishmentStatus(params.Status)
 
 	// publish
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-		if err := i.uploadPublishScene(ctx, prj, op); err != nil {
+		if err := i.uploadPublishScene(ctx, prj, sc, op); err != nil {
 			return nil, err
 		}
 		prj.SetPublishedAt(time.Now())
@@ -425,27 +695,33 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
+	sc.UpdateAlias(prj.Alias())
+
+	if err := i.sceneRepo.Save(ctx, sc); err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return prj, nil
 }
 
-func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) (*scene.Scene, error) {
+func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) error {
 
 	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if policyID := op.Policy(ws.Policy()); policyID != nil {
 
 		p, err := i.policyRepo.FindByID(ctx, *policyID)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		// newrly published
@@ -454,22 +730,20 @@ func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, 
 		}
 
 		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return i.sceneRepo.FindByProject(ctx, prj.ID())
+	return nil
 }
 
-func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, op *usecase.Operator) error {
+func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s *scene.Scene, op *usecase.Operator) error {
 
 	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, p, op)
-	if err != nil {
+	if err := i.checkPublishPolicy(ctx, p, op); err != nil {
 		return err
 	}
 
-	// Lock
 	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
 		return err
 	}
@@ -552,9 +826,10 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 			PropertySchema: i.propertySchemaRepo,
 			File:           i.file,
 		},
-		File:    i.file,
-		Project: i.projectRepo,
-		Asset:   i.assetRepo,
+		File:            i.file,
+		Project:         i.projectRepo,
+		ProjectMetadata: i.projectMetadataRepo,
+		Asset:           i.assetRepo,
 	}
 	if err := deleter.Delete(ctx, prj, true, operator); err != nil {
 		return err
@@ -564,18 +839,27 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
-	prj, err := i.projectRepo.FindByID(ctx, projectID)
+	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, errors.New("project " + err.Error())
 	}
+
 	if prj.IsDeleted() {
 		fmt.Printf("Error Deleted project: %v\n", prj.ID())
 		return nil, errors.New("This project is deleted")
 	}
 
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
+	if err != nil {
+		return nil, errors.New("project metadate " + err.Error())
+	}
+
+	prj.SetMetadata(meta)
+
 	return prj, nil
+
 }
 
 func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
@@ -697,7 +981,7 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 	return nil
 }
 
-func (i *Project) ImportProjectData(ctx context.Context, workspace string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+func (i *Project) ImportProjectData(ctx context.Context, workspace string, projectId *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
@@ -709,7 +993,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, data 
 		return nil, errors.New("project parse error")
 	}
 
-	var input = jsonmodel.ToProjectExportFromJSON(projectData)
+	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
 
 	alias := ""
 	archived := false
@@ -721,14 +1005,19 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, data 
 	}
 
 	result, err := i.createProject(ctx, createProjectInput{
-		WorkspaceID: workspaceId,
-		Visualizer:  visualizer.Visualizer(input.Visualizer),
-		Name:        &input.Name,
-		Description: &input.Description,
-		ImageURL:    input.ImageURL,
-		Alias:       &alias,
-		Archived:    &archived,
-		CoreSupport: &coreSupport,
+		WorkspaceID:  workspaceId,
+		ProjectID:    projectId,
+		Visualizer:   visualizer.Visualizer(input.Visualizer),
+		ImportStatus: project.ProjectImportStatusProcessing,
+		Name:         &input.Name,
+		Description:  &input.Description,
+		ImageURL:     input.ImageURL,
+		Alias:        &alias,
+		Archived:     &archived,
+		CoreSupport:  &coreSupport,
+		Readme:       nil,
+		License:      nil,
+		Topics:       nil,
 	}, op)
 	if err != nil {
 		return nil, err
@@ -768,15 +1057,23 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 type createProjectInput struct {
-	WorkspaceID accountdomain.WorkspaceID
-	Visualizer  visualizer.Visualizer
-	Name        *string
-	Description *string
-	ImageURL    *url.URL
-	Alias       *string
-	Archived    *bool
-	CoreSupport *bool
-	Visibility  *string
+	WorkspaceID  accountdomain.WorkspaceID
+	ProjectID    *string
+	Visualizer   visualizer.Visualizer
+	ImportStatus project.ProjectImportStatus
+	Name         *string
+	Description  *string
+	ImageURL     *url.URL
+	Alias        *string
+	Archived     *bool
+	CoreSupport  *bool
+	Visibility   *string
+	ProjectAlias *string
+
+	// metadata
+	Readme  *string
+	License *string
+	Topics  *string
 }
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
@@ -817,11 +1114,61 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		}
 	}
 
-	prjID := id.NewProjectID()
+	var prjID idx.ID[id.Project]
+	if input.ProjectID != nil {
+		prjID, err = id.ProjectIDFrom(*input.ProjectID)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		prjID = id.NewProjectID()
+	}
+
+	metadata, err := i.projectMetadataRepo.FindByProjectID(ctx, prjID)
+	if metadata == nil || err != nil { // if not found
+		metadata, err = project.NewProjectMetadata().
+			NewID().
+			Workspace(input.WorkspaceID).
+			Project(prjID).
+			ImportStatus(&input.ImportStatus).
+			Build()
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if input.Readme != nil {
+		metadata.SetReadme(input.Readme)
+	}
+	if input.License != nil {
+		metadata.SetLicense(input.License)
+	}
+	if input.Topics != nil {
+		metadata.SetTopics(input.Topics)
+	}
+
+	err = i.projectMetadataRepo.Save(ctx, metadata)
+	if err != nil {
+		return nil, err
+	}
+
 	prj := project.New().
 		ID(prjID).
 		Workspace(input.WorkspaceID).
-		Visualizer(input.Visualizer)
+		Visualizer(input.Visualizer).
+		Metadata(metadata)
+
+	newProjectAlias := alias.ReservedReearthPrefixProject + prjID.String()
+	if input.ProjectAlias != nil {
+		newProjectAlias = *input.ProjectAlias
+	}
+
+	err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	prj.ProjectAlias(newProjectAlias)
 
 	if input.Archived != nil {
 		prj = prj.IsArchived(*input.Archived)
@@ -844,9 +1191,9 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	}
 
 	if input.Visibility != nil {
-		prj = prj.Visibility(*input.Visibility)
+		prj = prj.Visibility(project.Visibility(*input.Visibility))
 	} else {
-		prj = prj.Visibility("private")
+		prj = prj.Visibility(project.VisibilityPrivate)
 	}
 
 	proj, err := prj.Build()

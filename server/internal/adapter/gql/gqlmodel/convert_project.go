@@ -32,6 +32,49 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 	return PublishmentStatus("")
 }
 
+func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus {
+	switch v {
+	case ProjectImportStatusProcessing:
+		return project.ProjectImportStatusProcessing
+	case ProjectImportStatusFailed:
+		return project.ProjectImportStatusFailed
+	case ProjectImportStatusSuccess:
+		return project.ProjectImportStatusSuccess
+	}
+	return project.ProjectImportStatusNone
+}
+
+func ToProjectImportStatus(v project.ProjectImportStatus) ProjectImportStatus {
+	switch v {
+	case project.ProjectImportStatusProcessing:
+		return ProjectImportStatusProcessing
+	case project.ProjectImportStatusFailed:
+		return ProjectImportStatusFailed
+	case project.ProjectImportStatusSuccess:
+		return ProjectImportStatusSuccess
+	}
+	return ProjectImportStatusNone
+}
+
+func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
+	if pm == nil {
+		return nil
+	}
+	importStatus := ToProjectImportStatus(*pm.ImportStatus())
+
+	return &ProjectMetadata{
+		ID:           IDFrom(pm.ID()),
+		Workspace:    IDFrom(pm.Workspace()),
+		Project:      IDFrom(pm.Project()),
+		Readme:       pm.Readme(),
+		License:      pm.License(),
+		Topics:       pm.Topics(),
+		ImportStatus: &importStatus,
+		CreatedAt:    pm.CreatedAt(),
+		UpdatedAt:    pm.UpdatedAt(),
+	}
+}
+
 func ToProject(p *project.Project) *Project {
 	if p == nil {
 		return nil
@@ -43,20 +86,21 @@ func ToProject(p *project.Project) *Project {
 	}
 
 	return &Project{
-		ID:          IDFrom(p.ID()),
-		CreatedAt:   p.CreatedAt(),
-		IsArchived:  p.IsArchived(),
-		Name:        p.Name(),
-		Description: p.Description(),
-		ImageURL:    p.ImageURL(),
-		UpdatedAt:   p.UpdatedAt(),
-		Visualizer:  Visualizer(p.Visualizer()),
-		TeamID:      IDFrom(p.Workspace()),
-		Starred:     p.Starred(),
-		IsDeleted:   p.IsDeleted(),
-		Visibility:  p.Visibility(),
-		CoreSupport: p.CoreSupport(),
-
+		ID:           IDFrom(p.ID()),
+		WorkspaceID:  IDFrom(p.Workspace()),
+		Name:         p.Name(),
+		Description:  p.Description(),
+		ImageURL:     p.ImageURL(),
+		CreatedAt:    p.CreatedAt(),
+		UpdatedAt:    p.UpdatedAt(),
+		Visualizer:   Visualizer(p.Visualizer()),
+		IsArchived:   p.IsArchived(),
+		CoreSupport:  p.CoreSupport(),
+		Starred:      p.Starred(),
+		IsDeleted:    p.IsDeleted(),
+		Visibility:   p.Visibility(),
+		Metadata:     ToProjectMetadata(p.Metadata()),
+		ProjectAlias: p.ProjectAlias(),
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
@@ -113,21 +157,34 @@ type ProjectExport struct {
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	ImageURL    *url.URL   `json:"imageUrl,omitempty"`
+
+	License *string `json:"readme,omitempty"`
+	Readme  *string `json:"license,omitempty"`
+	Topics  *string `json:"topics,omitempty"`
 }
 
 func ToProjectExport(p *project.Project) *ProjectExport {
 	if p == nil {
 		return nil
 	}
-	return &ProjectExport{
+
+	export := &ProjectExport{
 		Visualizer:  Visualizer(p.Visualizer()),
 		Name:        p.Name(),
 		Description: p.Description(),
 		ImageURL:    p.ImageURL(),
 	}
+
+	if pm := p.Metadata(); pm != nil {
+		export.License = pm.License()
+		export.Readme = pm.Readme()
+		export.Topics = pm.Topics()
+	}
+
+	return export
 }
 
-func ToProjectExportFromJSON(data map[string]any) *ProjectExport {
+func ToProjectExportDataFromJSON(data map[string]any) *ProjectExport {
 	var p ProjectExport
 	bytes, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {

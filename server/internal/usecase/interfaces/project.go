@@ -6,6 +6,8 @@ import (
 	"errors"
 	"net/url"
 
+	"github.com/reearth/reearthx/account/accountdomain/user"
+
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
@@ -19,12 +21,19 @@ import (
 )
 
 type CreateProjectParam struct {
-	WorkspaceID accountdomain.WorkspaceID
-	Visualizer  visualizer.Visualizer
-	Name        *string
-	Description *string
-	CoreSupport *bool
-	Visibility  *string
+	WorkspaceID  accountdomain.WorkspaceID
+	Visualizer   visualizer.Visualizer
+	Name         *string
+	Description  *string
+	CoreSupport  *bool
+	Visibility   *string
+	ImportStatus project.ProjectImportStatus
+	ProjectAlias *string
+
+	// metadata
+	Readme  *string
+	License *string
+	Topics  *string
 }
 
 type UpdateProjectParam struct {
@@ -34,10 +43,12 @@ type UpdateProjectParam struct {
 	Archived       *bool
 	ImageURL       *url.URL
 	DeleteImageURL bool
+	ImportStatus   project.ProjectImportStatus
 	SceneID        *id.SceneID
 	Starred        *bool
 	Deleted        *bool
 	Visibility     *string
+	ProjectAlias   *string
 
 	// publishment
 	PublicTitle       *string
@@ -50,6 +61,13 @@ type UpdateProjectParam struct {
 	BasicAuthPassword *string
 	EnableGa          *bool
 	TrackingID        *string
+}
+
+type UpdateProjectMetadataParam struct {
+	ID      id.ProjectID
+	Readme  *string
+	License *string
+	Topics  *string
 }
 
 type PublishProjectParam struct {
@@ -68,6 +86,11 @@ var (
 	)
 )
 
+type ProjectListParam struct {
+	Limit  *int64
+	Offset *int64
+}
+
 type Project interface {
 	Fetch(context.Context, []id.ProjectID, *usecase.Operator) ([]*project.Project, error)
 	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
@@ -75,7 +98,11 @@ type Project interface {
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
-	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator) ([]*project.Project, error)
+	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
+	FindByProjectAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
+
+	FindVisibilityByUser(context.Context, *user.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
+	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
 
 	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)
@@ -83,9 +110,11 @@ type Project interface {
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
-	CheckAlias(context.Context, string, *id.ProjectID) (bool, error)
+	CheckProjectAlias(context.Context, string, accountdomain.WorkspaceID, *id.ProjectID) (bool, error)
+	CheckSceneAlias(context.Context, string, *id.ProjectID) (bool, error)
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
-	ImportProjectData(context.Context, string, *[]byte, *usecase.Operator) (*project.Project, error)
+	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
+	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *usecase.Operator) (*project.ProjectMetadata, error)
 	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }

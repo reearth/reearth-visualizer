@@ -18,7 +18,7 @@ export const GET_ME = gql(`
       email
       lang
       theme
-      myTeam {
+      myWorkspace {
         id
         name
         policyId
@@ -31,8 +31,9 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
+        enableToCreatePrivateProject
       }
-      teams {
+      workspaces {
         id
         name
         personal
@@ -55,6 +56,7 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
+      enableToCreatePrivateProject
       }
       auths
     }
@@ -86,7 +88,7 @@ export const UPDATE_ME = gql(`
         email
         lang
         theme
-        myTeam {
+        myWorkspace {
           id
           name
         }

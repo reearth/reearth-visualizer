@@ -15,8 +15,8 @@ export const GET_PROJECT = gql(`
 `);
 
 export const GET_PROJECTS = gql(`
-  query GetProjects($teamId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
-    projects(teamId: $teamId, pagination: $pagination, keyword: $keyword, sort: $sort) {
+  query GetProjects($workspaceId: ID!, $pagination: Pagination, $keyword: String, $sort: ProjectSort) {
+    projects(workspaceId: $workspaceId, pagination: $pagination, keyword: $keyword, sort: $sort) {
       edges {
         node {
           id
@@ -38,8 +38,8 @@ export const GET_PROJECTS = gql(`
 `);
 
 export const CHECK_PROJECT_ALIAS = gql(`
-  query CheckProjectAlias($alias: String!, $projectId: ID) {
-    checkProjectAlias(alias: $alias, projectId: $projectId) {
+  query CheckProjectAlias($alias: String!, $workspaceId: ID!, $projectId: ID) {
+    checkProjectAlias(alias: $alias, workspaceId:$workspaceId, projectId: $projectId) {
       alias
       available
     }
@@ -48,19 +48,29 @@ export const CHECK_PROJECT_ALIAS = gql(`
 
 export const CREATE_PROJECT = gql(`
   mutation CreateProject(
-    $teamId: ID!
+    $workspaceId: ID!
     $visualizer: Visualizer!
     $name: String!
     $description: String!
     $coreSupport: Boolean
+    $visibility: String
+    $projectAlias: String
+    $readme: String
+    $license: String
+    $topics: String
   ) {
     createProject(
       input: {
-        teamId: $teamId
+        workspaceId: $workspaceId
         visualizer: $visualizer
         name: $name
         description: $description
         coreSupport: $coreSupport
+        visibility: $visibility
+	      projectAlias: $projectAlias
+        readme: $readme
+        license: $license
+        topics: $topics
       }
     ) {
       project {
@@ -88,6 +98,8 @@ export const UPDATE_PROJECT = gql(`
     $trackingId: String
     $starred:Boolean
     $deleted: Boolean
+    $projectAlias: String
+    $visibility: String
   ) {
     updateProject(
       input: {
@@ -104,6 +116,8 @@ export const UPDATE_PROJECT = gql(`
         trackingId: $trackingId
         starred: $starred
         deleted: $deleted
+        projectAlias: $projectAlias
+        visibility: $visibility
       }
     ) {
       project {
@@ -141,7 +155,6 @@ export const UPDATE_PROJECT_BASIC_AUTH = gql(`
   }
 `);
 
-
 export const PUBLISH_PROJECT = gql(`
  mutation PublishProject($projectId: ID!, $alias: String, $status: PublishmentStatus!) {
   publishProject(input: { projectId: $projectId, alias: $alias, status: $status }) {
@@ -174,8 +187,8 @@ export const DELETE_PROJECT = gql(`
 `);
 
 export const GET_STARRED_PROJECTS = gql(`
-  query GetStarredProjects($teamId: ID!) {
-    starredProjects(teamId: $teamId) {
+  query GetStarredProjects($workspaceId: ID!) {
+    starredProjects(workspaceId: $workspaceId) {
 				nodes {
 					id
 					name
@@ -197,10 +210,9 @@ export const EXPORT_PROJECT = gql(`
   }
 `);
 
-
 export const GET_DELETED_PROJECTS = gql(`
-  query GetDeletedProjects($teamId: ID!) {
-    deletedProjects(teamId: $teamId) {
+  query GetDeletedProjects($workspaceId: ID!) {
+    deletedProjects(workspaceId: $workspaceId) {
 			nodes {
 				id
 				name
@@ -209,5 +221,28 @@ export const GET_DELETED_PROJECTS = gql(`
 				}
 			totalCount
 		}
+  }
+`);
+
+export const UPDATE_PROJECT_METADATA = gql(`
+  mutation UpdateProjectMetadata(
+    $project: ID!
+    $readme: String
+    $license: String
+    $topics: String
+  ) {
+    updateProjectMetadata(
+      input: {
+        project: $project
+        readme: $readme
+        license: $license
+        topics: $topics
+      }
+    ) {
+      metadata {
+        id
+      ...ProjectMetadataFragment
+      }
+    }
   }
 `);

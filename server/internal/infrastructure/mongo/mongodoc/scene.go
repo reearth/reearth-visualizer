@@ -15,12 +15,13 @@ import (
 type SceneDocument struct {
 	ID          string
 	Project     string
-	Team        string // DON'T CHANGE NAME'
+	Workspace   string
 	Widgets     []SceneWidgetDocument
 	AlignSystem *WidgetAlignSystemDocument
 	Plugins     []ScenePluginDocument
 	UpdateAt    time.Time
 	Property    string
+	Alias       string
 }
 
 type SceneWidgetDocument struct {
@@ -99,12 +100,15 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 	return &SceneDocument{
 		ID:          id,
 		Project:     scene.Project().String(),
-		Team:        scene.Workspace().String(),
+		Workspace:   scene.Workspace().String(),
 		Widgets:     widgetsDoc,
 		Plugins:     pluginsDoc,
 		AlignSystem: NewWidgetAlignSystem(scene.Widgets().Alignment()),
 		UpdateAt:    scene.UpdatedAt(),
 		Property:    scene.Property().String(),
+
+		// publishment ---------------------
+		Alias: scene.Alias(),
 	}, id
 }
 
@@ -121,7 +125,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
+	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -172,6 +176,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).
 		Property(prid).
+		Alias(d.Alias).
 		Build()
 }
 

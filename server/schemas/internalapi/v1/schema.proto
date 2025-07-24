@@ -15,18 +15,60 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
 
-  // Creates a new project in the specified team.
+  // Find a project by alias.
+  // Request headers: user-id: <User ID>
+  rpc GetProjectByAlias(GetProjectByAliasRequest)
+      returns (GetProjectByAliasResponse) {}
+
+  // Determines if an project alias is valid.
+  // Request headers: user-id: <User ID>
+  rpc ValidateProjectAlias(ValidateProjectAliasRequest)
+      returns (ValidateProjectAliasResponse) {}
+
+  // Determines if an scene alias is valid.
+  // Request headers: user-id: <User ID>
+  rpc ValidateSceneAlias(ValidateSceneAliasRequest)
+      returns (ValidateSceneAliasResponse) {}
+
+  // Creates a new project in the specified workspace.
   // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
 
-  // Update the visibility a project.
+  // Update a project.
   // Request headers: user-id: <User ID>
-  rpc UpdateProjectVisibility(UpdateProjectVisibilityRequest)
-      returns (UpdateProjectVisibilityResponse) {}
+  rpc UpdateProject(UpdateProjectRequest) returns (UpdateProjectResponse) {}
+
+  // Publish a project.
+  // Request headers: user-id: <User ID>
+  rpc PublishProject(PublishProjectRequest) returns (PublishProjectResponse) {}
+
+  // Updates a new project metadata in the specified workspace.
+  // Request headers: user-id: <User ID>
+  rpc UpdateProjectMetadata(UpdateProjectMetadataRequest)
+      returns (UpdateProjectMetadataResponse) {}
 
   // Deletes a project.
   // Request headers: user-id: <User ID>
   rpc DeleteProject(DeleteProjectRequest) returns (DeleteProjectResponse) {}
+
+  // Export a project.
+  // Request headers: user-id: <User ID>
+  rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
+
+  // Find a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc GetProjectByProjectAlias(GetProjectByProjectAliasRequest)
+      returns (GetProjectByProjectAliasResponse) {}
+
+  // Update a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc UpdateByProjectAlias(UpdateByProjectAliasRequest)
+      returns (UpdateByProjectAliasResponse) {}
+
+  // Deletes a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
+      returns (DeleteByProjectAliasResponse) {}
 }
 
 // Core Project messages
@@ -40,72 +82,90 @@ message Project {
   // Scene ID
   string scene_id = 3;
 
+  // Story
+  repeated Story stories = 4;
+
   // Project title
-  string name = 4;
+  string name = 5;
 
   // Project description
-  string description = 5;
-
-  // Project readme
-  // string readme = 6;
-
-  // Project license
-  // string license = 7;
+  string description = 6;
 
   // Project image (URL link)
-  optional string image_url = 8;
+  optional string image_url = 7;
 
   // Type of visualizer (e.g., Cesium)
-  Visualizer visualizer = 9;
+  Visualizer visualizer = 8;
 
   // Creation date
-  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp created_at = 9;
 
   // Last updated date
-  google.protobuf.Timestamp updated_at = 11;
+  google.protobuf.Timestamp updated_at = 10;
 
   // Currently unused
-  bool is_archived = 12;
+  bool is_archived = 11;
 
   // Indicates whether it's a classic or visualizer project type
-  bool core_support = 13;
+  bool core_support = 12;
 
   // Whether the project is marked as a favorite
-  bool starred = 14;
+  bool starred = 13;
 
   // Whether the project is in the trash
-  bool is_deleted = 15;
+  bool is_deleted = 14;
 
   // Visibility of the project (e.g., "public", "private")
-  string visibility = 16;
+  string visibility = 15;
+
+  // URL to visualizer project
+  string editor_url = 16;
+
+  // Project metadata
+  optional ProjectMetadata metadata = 17;
+
+  // Project alias
+  string project_alias = 18;
+
+  // Scene Publishment value
+  string alias = 19;
+  // Scene Publishment value
+  PublishmentStatus publishment_status = 20;
+  // Scene Publishment value
+  optional string published_url = 21;
+}
+
+message Story {
+  // Story ID
+  string id = 1;
+  // Story Publishment value
+  string story_alias = 2;
+  // Story Publishment value
+  PublishmentStatus story_publishment_status = 3;
+  // Story Publishment value
+  optional string story_published_url = 4;
+}
+
+message ProjectMetadata {
+  // ProjectMetadata id
+  string id = 1;
+  // Project id
+  string project_id = 2;
+  // Workspace id
+  string workspace_id = 3;
+  // Project readme
+  optional string readme = 4;
+  // Project license
+  optional string license = 5;
+  // Project topics
+  optional string topics = 6;
 
   // Project import status — if PROCESSING, data should not be retrieved
-  // ProjectImportStatus import_status = 17;
-
-  // Publishment value
-  string alias = 18;
-  // Publishment value
-  PublishmentStatus publishment_status = 19;
-  // Publishment value
-  optional google.protobuf.Timestamp published_at = 20;
-  // Publishment value
-  string public_title = 21;
-  // Publishment value
-  string public_description = 22;
-  // Publishment value
-  string public_image = 23;
-  // Publishment value
-  bool public_no_index = 24;
-  // Publishment value
-  bool is_basic_auth_active = 25;
-  // Publishment value
-  string basic_auth_username = 26;
-  // Publishment value
-  string basic_auth_password = 27;
-  // Publishment value
-  bool enable_ga = 28;
-  // Publishment value
-  string tracking_id = 29;
+  ProjectImportStatus import_status = 7;
+  // ProjectMetadata created date
+  google.protobuf.Timestamp created_at = 8;
+  // ProjectMetadata updated date
+  google.protobuf.Timestamp updated_at = 9;
 }
 
 enum Visualizer {
@@ -134,13 +194,55 @@ enum PublishmentStatus {
   PUBLISHMENT_STATUS_PRIVATE = 3;
 }
 
+// Pagination
+message Pagination {
+  optional int32 first = 1;
+  optional int32 last = 2;
+  optional string after = 3;
+  optional string before = 4;
+
+  optional int64 limit = 6;
+  optional int64 offset = 7;
+}
+
+enum ProjectSortField {
+  PROJECT_SORT_FIELD_UNSPECIFIED = 0;
+  UPDATEDAT = 1;
+  NAME = 2;
+}
+
+enum SortDirection {
+  SORT_DIRECTION_UNSPECIFIED = 0;
+  ASC = 1;
+  DESC = 2;
+}
+
+message ProjectSort {
+  ProjectSortField field = 1;
+  SortDirection direction = 2;
+}
+
+message PageInfo {
+  int64 total_count = 1;
+  optional string start_cursor = 2;
+  optional string end_cursor = 3;
+  bool has_next_page = 4;
+  bool has_previous_page = 5;
+}
+
 // If the authenticated flag is true, private items will also be included in the
 // response. However, deleted items are excluded.
 message GetProjectListRequest {
   // Workspace ID
-  string workspace_id = 1;
+  optional string workspace_id = 1;
   // Authenticated Flag
   bool authenticated = 2;
+  // Keyword search
+  optional string keyword = 3;
+  // Sort options
+  optional ProjectSort sort = 4;
+  // Pagination info
+  optional Pagination pagination = 5;
 }
 
 // Retrieves a project regardless of authentication.
@@ -150,8 +252,32 @@ message GetProjectRequest {
   string project_id = 1;
 }
 
+// Find a project by alias.
+message GetProjectByAliasRequest {
+  // Scene alias
+  string alias = 1;
+}
+
+// Determines if an alias is valid.
+message ValidateProjectAliasRequest {
+  // Workspace ID
+  string workspace_id = 1;
+  // Scene alias
+  string alias = 2;
+  // Project ID
+  optional string project_id = 3;
+}
+
+// Determines if an alias is valid.
+message ValidateSceneAliasRequest {
+  // Project ID
+  optional string project_id = 1;
+  // Scene alias
+  string alias = 2;
+}
+
 // Creates a new project.
-// Cannot be created under a team the user does not belong to.
+// Cannot be created under a workspace the user does not belong to.
 message CreateProjectRequest {
   // Workspace ID
   string workspace_id = 1;
@@ -170,21 +296,132 @@ message CreateProjectRequest {
 
   // Visibility of the project (e.g., "public", "private")
   optional string visibility = 6;
+
+  // Project alias
+  optional string project_alias = 7;
+
+  // Project readme
+  optional string readme = 8;
+
+  // Project license
+  optional string license = 9;
+
+  // Project topics
+  optional string topics = 10;
 }
 
-// Update project visibility.
+// Update project fields.
 // Only the project owner can operate this
-message UpdateProjectVisibilityRequest {
+message UpdateProjectRequest {
+  // Project ID (required)
+  string project_id = 1;
+
+  // Project basic info (optional)
+  optional string name = 2;
+  optional string description = 3;
+  optional bool archived = 4;
+  optional string image_url = 5;
+  optional bool delete_image_url = 6;
+  optional string scene_id = 7;
+  optional bool starred = 8;
+  optional bool deleted = 9;
+  optional string visibility = 10;
+
+  // Publishment settings (optional)
+  optional string public_title = 11;
+  optional string public_description = 12;
+  optional string public_image = 13;
+  optional bool public_no_index = 14;
+  optional bool delete_public_image = 15;
+  optional bool is_basic_auth_active = 16;
+  optional string basic_auth_username = 17;
+  optional string basic_auth_password = 18;
+  optional bool enable_ga = 19;
+  optional string tracking_id = 20;
+
+  optional string project_alias = 21;
+}
+
+// Update project publish fields.
+// Only the project owner can operate this
+message PublishProjectRequest {
+  // Project ID (required)
+  string project_id = 1;
+  // Scene Publishment alias
+  optional string alias = 2;
+  // Scene Publishment status
+  PublishmentStatus publishment_status = 3;
+}
+
+// Updates a new project metadata.
+// Cannot be updated under a workspace the user does not belong to.
+message UpdateProjectMetadataRequest {
   // Project ID
   string project_id = 1;
-  // Visibility of the project (e.g., "public", "private")
-  optional string visibility = 2;
+  // Project readme
+  optional string readme = 2;
+  // Project license
+  optional string license = 3;
+  // Project topics
+  optional string topics = 4;
 }
 
 // Deletes a project.
 // This is a physical deletion, not a logical deletion. Data cannot be restored.
 // Only the project owner can operate this
 message DeleteProjectRequest {
+  // Project ID
+  string project_id = 1;
+}
+
+// Find a project by project alias.
+message GetProjectByProjectAliasRequest {
+  // Project alias
+  string project_alias = 1;
+}
+
+// Update project fields.
+// Only the project owner can operate this
+message UpdateByProjectAliasRequest {
+  // Project alias (required)
+  string project_alias = 1;
+
+  // Project basic info (optional)
+  optional string name = 2;
+  optional string description = 3;
+  optional bool archived = 4;
+  optional string image_url = 5;
+  optional bool delete_image_url = 6;
+  optional string scene_id = 7;
+  optional bool starred = 8;
+  optional bool deleted = 9;
+  optional string visibility = 10;
+
+  // Publishment settings (optional)
+  optional string public_title = 11;
+  optional string public_description = 12;
+  optional string public_image = 13;
+  optional bool public_no_index = 14;
+  optional bool delete_public_image = 15;
+  optional bool is_basic_auth_active = 16;
+  optional string basic_auth_username = 17;
+  optional string basic_auth_password = 18;
+  optional bool enable_ga = 19;
+  optional string tracking_id = 20;
+
+  optional string new_project_alias = 21;
+}
+
+// Deletes a project.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
+message DeleteByProjectAliasRequest {
+  // Project alias
+  string project_alias = 1;
+}
+
+// Export a project.
+message ExportProjectRequest {
   // Project ID
   string project_id = 1;
 }
@@ -199,6 +436,10 @@ message GetProjectResponse {
 message GetProjectListResponse {
   // Project List
   repeated Project projects = 1;
+  // PageInfo
+  PageInfo page_info = 2;
+  // TotalCount
+  int32 total_count = 3;
 }
 
 // Response messages
@@ -208,13 +449,75 @@ message CreateProjectResponse {
 }
 
 // Response messages
-message UpdateProjectVisibilityResponse {
+message UpdateProjectResponse {
   // Project
   Project project = 1;
+}
+
+// Response messages
+message PublishProjectResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateProjectMetadataResponse {
+  // Project metadata
+  ProjectMetadata metadata = 1;
 }
 
 // Response messages
 message DeleteProjectResponse {
   // Project ID
   string project_id = 1;
+}
+
+// Response messages
+message ExportProjectResponse {
+  // Project Export zip file download url
+  string project_data_path = 1;
+}
+
+// Response messages
+message GetProjectByAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message ValidateProjectAliasResponse {
+  // Workspace ID
+  string workspace_id = 1;
+  // Scene alias available
+  bool available = 2;
+  // Error message
+  optional string error_message = 3;
+}
+
+// Response messages
+message ValidateSceneAliasResponse {
+  // Project ID
+  optional string project_id = 1;
+  // Scene alias available
+  bool available = 2;
+  // Error message
+  optional string error_message = 3;
+}
+
+// Response messages
+message GetProjectByProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateByProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message DeleteByProjectAliasResponse {
+  // Project alias
+  string project_alias = 1;
 }
