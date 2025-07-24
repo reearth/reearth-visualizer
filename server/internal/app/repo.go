@@ -10,6 +10,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
 	"github.com/reearth/reearth/server/internal/infrastructure/marketplace"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
+	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/infrastructure/s3"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -79,6 +80,27 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 
 	// File
 	gateways.File = initFile(ctx, conf)
+
+	// Policy Checker - configurable via environment
+	var policyChecker gateway.PolicyChecker
+	switch conf.Policy_Checker.Type {
+	case "http":
+		if conf.Policy_Checker.Endpoint == "" {
+			log.Fatalf("policy checker HTTP endpoint is required")
+		}
+		policyChecker = policy.NewHTTPPolicyChecker(
+			conf.Policy_Checker.Endpoint,
+			conf.Policy_Checker.Token,
+			conf.Policy_Checker.Timeout,
+		)
+		log.Infof("policy checker: using HTTP checker with endpoint: %s", conf.Policy_Checker.Endpoint)
+	case "permissive":
+		fallthrough
+	default:
+		policyChecker = policy.NewPermissiveChecker()
+		log.Infof("policy checker: using permissive checker (OSS mode)")
+	}
+	gateways.PolicyChecker = policyChecker
 
 	// Auth0
 	auth0 := auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)

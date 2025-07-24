@@ -688,3 +688,6 @@ Failed to remove member from workspace.: ワークスペースからメンバー
 Successfully removed member from workspace!: ワークスペースからメンバーの削除に成功しました！
 Failed to update member in workspace.: ワークスペースのメンバー更新に失敗しました。
 Successfully updated member in workspace!: ワークスペースのメンバー更新に成功しました！
+asset upload size limit exceeded: 'アセットのアップロードサイズ制限を超えています!'
+policy check failed: 'ポリシーチェックに失敗しました!'
+project creation limit exceeded: 'プロジェクト作成数の上限に達しました!'
