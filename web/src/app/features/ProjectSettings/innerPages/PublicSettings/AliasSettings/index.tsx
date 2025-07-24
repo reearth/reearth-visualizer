@@ -52,7 +52,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
     return settingsItem?.type === "project" && "scene" in settingsItem
       ? settingsItem.scene?.alias
       : settingsItem?.alias;
-  }, [settingsItem])
+  }, [settingsItem]);
   
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
