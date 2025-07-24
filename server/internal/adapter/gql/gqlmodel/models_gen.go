@@ -50,14 +50,14 @@ type AddGeoJSONFeatureInput struct {
 	LayerID    ID     `json:"layerId"`
 }
 
-type AddMemberToTeamInput struct {
-	TeamID ID   `json:"teamId"`
-	UserID ID   `json:"userId"`
-	Role   Role `json:"role"`
+type AddMemberToWorkspaceInput struct {
+	WorkspaceID ID   `json:"workspaceId"`
+	UserID      ID   `json:"userId"`
+	Role        Role `json:"role"`
 }
 
-type AddMemberToTeamPayload struct {
-	Team *Team `json:"team"`
+type AddMemberToWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type AddNLSInfoboxBlockInput struct {
@@ -116,16 +116,16 @@ type AddWidgetPayload struct {
 }
 
 type Asset struct {
-	ID          ID        `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	TeamID      ID        `json:"teamId"`
-	ProjectID   *ID       `json:"projectId,omitempty"`
-	Name        string    `json:"name"`
-	Size        int64     `json:"size"`
-	URL         string    `json:"url"`
-	ContentType string    `json:"contentType"`
-	Team        *Team     `json:"team,omitempty"`
-	CoreSupport bool      `json:"coreSupport"`
+	ID          ID         `json:"id"`
+	WorkspaceID ID         `json:"workspaceId"`
+	Workspace   *Workspace `json:"workspace,omitempty"`
+	ProjectID   *ID        `json:"projectId,omitempty"`
+	Name        string     `json:"name"`
+	Size        int64      `json:"size"`
+	URL         string     `json:"url"`
+	ContentType string     `json:"contentType"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	CoreSupport bool       `json:"coreSupport"`
 }
 
 func (Asset) IsNode()        {}
@@ -166,7 +166,7 @@ type ChangeCustomPropertyTitleInput struct {
 }
 
 type CreateAssetInput struct {
-	TeamID      ID             `json:"teamId"`
+	WorkspaceID ID             `json:"workspaceId"`
 	ProjectID   *ID            `json:"projectId,omitempty"`
 	CoreSupport bool           `json:"coreSupport"`
 	File        graphql.Upload `json:"file"`
@@ -193,7 +193,7 @@ type CreateNLSPhotoOverlayPayload struct {
 }
 
 type CreateProjectInput struct {
-	TeamID       ID         `json:"teamId"`
+	WorkspaceID  ID         `json:"workspaceId"`
 	Visualizer   Visualizer `json:"visualizer"`
 	Name         *string    `json:"name,omitempty"`
 	Description  *string    `json:"description,omitempty"`
@@ -244,12 +244,12 @@ type CreateStoryPageInput struct {
 	Index           *int    `json:"index,omitempty"`
 }
 
-type CreateTeamInput struct {
+type CreateWorkspaceInput struct {
 	Name string `json:"name"`
 }
 
-type CreateTeamPayload struct {
-	Team *Team `json:"team"`
+type CreateWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type DeleteGeoJSONFeatureInput struct {
@@ -297,12 +297,12 @@ type DeleteStoryPayload struct {
 	StoryID ID `json:"storyId"`
 }
 
-type DeleteTeamInput struct {
-	TeamID ID `json:"teamId"`
+type DeleteWorkspaceInput struct {
+	WorkspaceID ID `json:"workspaceId"`
 }
 
-type DeleteTeamPayload struct {
-	TeamID ID `json:"teamId"`
+type DeleteWorkspacePayload struct {
+	WorkspaceID ID `json:"workspaceId"`
 }
 
 type DuplicateNLSLayerInput struct {
@@ -396,15 +396,15 @@ type LineString struct {
 func (LineString) IsGeometry() {}
 
 type Me struct {
-	ID       ID           `json:"id"`
-	Name     string       `json:"name"`
-	Email    string       `json:"email"`
-	Lang     language.Tag `json:"lang"`
-	Theme    Theme        `json:"theme"`
-	MyTeamID ID           `json:"myTeamId"`
-	Auths    []string     `json:"auths"`
-	Teams    []*Team      `json:"teams"`
-	MyTeam   *Team        `json:"myTeam,omitempty"`
+	ID            ID           `json:"id"`
+	Name          string       `json:"name"`
+	Email         string       `json:"email"`
+	Lang          language.Tag `json:"lang"`
+	Theme         Theme        `json:"theme"`
+	MyWorkspaceID ID           `json:"myWorkspaceId"`
+	Auths         []string     `json:"auths"`
+	Workspaces    []*Workspace `json:"workspaces"`
+	MyWorkspace   *Workspace   `json:"myWorkspace,omitempty"`
 }
 
 type MergedProperty struct {
@@ -677,8 +677,8 @@ func (Polygon) IsGeometry() {}
 
 type Project struct {
 	ID                ID                `json:"id"`
-	TeamID            ID                `json:"teamId"`
-	Team              *Team             `json:"team,omitempty"`
+	WorkspaceID       ID                `json:"workspaceId"`
+	Workspace         *Workspace        `json:"workspace,omitempty"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	Name              string            `json:"name"`
 	Description       string            `json:"description"`
@@ -909,13 +909,13 @@ type RemoveCustomPropertyInput struct {
 	RemovedTitle string `json:"removedTitle"`
 }
 
-type RemoveMemberFromTeamInput struct {
-	TeamID ID `json:"teamId"`
-	UserID ID `json:"userId"`
+type RemoveMemberFromWorkspaceInput struct {
+	WorkspaceID ID `json:"workspaceId"`
+	UserID      ID `json:"userId"`
 }
 
-type RemoveMemberFromTeamPayload struct {
-	Team *Team `json:"team"`
+type RemoveMemberFromWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type RemoveMyAuthInput struct {
@@ -1001,8 +1001,8 @@ type RemoveWidgetPayload struct {
 
 type Scene struct {
 	ID                ID                 `json:"id"`
+	WorkspaceID       ID                 `json:"workspaceId"`
 	ProjectID         ID                 `json:"projectId"`
-	TeamID            ID                 `json:"teamId"`
 	PropertyID        ID                 `json:"propertyId"`
 	CreatedAt         time.Time          `json:"createdAt"`
 	UpdatedAt         time.Time          `json:"updatedAt"`
@@ -1010,7 +1010,7 @@ type Scene struct {
 	Plugins           []*ScenePlugin     `json:"plugins"`
 	WidgetAlignSystem *WidgetAlignSystem `json:"widgetAlignSystem,omitempty"`
 	Project           *Project           `json:"project,omitempty"`
-	Team              *Team              `json:"team,omitempty"`
+	Workspace         *Workspace         `json:"workspace,omitempty"`
 	Property          *Property          `json:"property,omitempty"`
 	NewLayers         []NLSLayer         `json:"newLayers"`
 	Stories           []*Story           `json:"stories"`
@@ -1020,6 +1020,11 @@ type Scene struct {
 
 func (Scene) IsNode()        {}
 func (this Scene) GetID() ID { return this.ID }
+
+type SceneAliasAvailability struct {
+	Alias     string `json:"alias"`
+	Available bool   `json:"available"`
+}
 
 type ScenePlugin struct {
 	PluginID   ID        `json:"pluginId"`
@@ -1041,16 +1046,16 @@ type SceneWidget struct {
 }
 
 type SignupInput struct {
-	Lang   *language.Tag `json:"lang,omitempty"`
-	Theme  *Theme        `json:"theme,omitempty"`
-	UserID *ID           `json:"userId,omitempty"`
-	TeamID *ID           `json:"teamId,omitempty"`
-	Secret *string       `json:"secret,omitempty"`
+	Lang        *language.Tag `json:"lang,omitempty"`
+	Theme       *Theme        `json:"theme,omitempty"`
+	UserID      *ID           `json:"userId,omitempty"`
+	WorkspaceID *ID           `json:"workspaceId,omitempty"`
+	Secret      *string       `json:"secret,omitempty"`
 }
 
 type SignupPayload struct {
-	User *User `json:"user"`
-	Team *Team `json:"team"`
+	User      *User      `json:"user"`
+	Workspace *Workspace `json:"workspace"`
 }
 
 type SketchInfo struct {
@@ -1147,26 +1152,6 @@ type Style struct {
 	Scene   *Scene `json:"scene,omitempty"`
 }
 
-type Team struct {
-	ID       ID                 `json:"id"`
-	Name     string             `json:"name"`
-	Members  []*TeamMember      `json:"members"`
-	Personal bool               `json:"personal"`
-	PolicyID *ID                `json:"policyId,omitempty"`
-	Policy   *Policy            `json:"policy,omitempty"`
-	Assets   *AssetConnection   `json:"assets"`
-	Projects *ProjectConnection `json:"projects"`
-}
-
-func (Team) IsNode()        {}
-func (this Team) GetID() ID { return this.ID }
-
-type TeamMember struct {
-	UserID ID    `json:"userId"`
-	Role   Role  `json:"role"`
-	User   *User `json:"user,omitempty"`
-}
-
 type Timeline struct {
 	CurrentTime *string `json:"currentTime,omitempty"`
 	StartTime   *string `json:"startTime,omitempty"`
@@ -1236,14 +1221,14 @@ type UpdateMePayload struct {
 	Me *Me `json:"me"`
 }
 
-type UpdateMemberOfTeamInput struct {
-	TeamID ID   `json:"teamId"`
-	UserID ID   `json:"userId"`
-	Role   Role `json:"role"`
+type UpdateMemberOfWorkspaceInput struct {
+	WorkspaceID ID   `json:"workspaceId"`
+	UserID      ID   `json:"userId"`
+	Role        Role `json:"role"`
 }
 
-type UpdateMemberOfTeamPayload struct {
-	Team *Team `json:"team"`
+type UpdateMemberOfWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type UpdateNLSLayerInput struct {
@@ -1360,15 +1345,6 @@ type UpdateStylePayload struct {
 	Style *Style `json:"style"`
 }
 
-type UpdateTeamInput struct {
-	TeamID ID     `json:"teamId"`
-	Name   string `json:"name"`
-}
-
-type UpdateTeamPayload struct {
-	Team *Team `json:"team"`
-}
-
 type UpdateWidgetAlignSystemInput struct {
 	SceneID    ID                      `json:"sceneId"`
 	Location   *WidgetLocationInput    `json:"location"`
@@ -1395,6 +1371,15 @@ type UpdateWidgetInput struct {
 type UpdateWidgetPayload struct {
 	Scene       *Scene       `json:"scene"`
 	SceneWidget *SceneWidget `json:"sceneWidget"`
+}
+
+type UpdateWorkspaceInput struct {
+	WorkspaceID ID     `json:"workspaceId"`
+	Name        string `json:"name"`
+}
+
+type UpdateWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type UpgradePluginInput struct {
@@ -1500,6 +1485,27 @@ type WidgetZone struct {
 	Left   *WidgetSection `json:"left,omitempty"`
 	Center *WidgetSection `json:"center,omitempty"`
 	Right  *WidgetSection `json:"right,omitempty"`
+}
+
+type Workspace struct {
+	ID                           ID                 `json:"id"`
+	Name                         string             `json:"name"`
+	Members                      []*WorkspaceMember `json:"members"`
+	Personal                     bool               `json:"personal"`
+	PolicyID                     *ID                `json:"policyId,omitempty"`
+	Policy                       *Policy            `json:"policy,omitempty"`
+	Assets                       *AssetConnection   `json:"assets"`
+	Projects                     *ProjectConnection `json:"projects"`
+	EnableToCreatePrivateProject bool               `json:"enableToCreatePrivateProject"`
+}
+
+func (Workspace) IsNode()        {}
+func (this Workspace) GetID() ID { return this.ID }
+
+type WorkspaceMember struct {
+	UserID ID    `json:"userId"`
+	Role   Role  `json:"role"`
+	User   *User `json:"user,omitempty"`
 }
 
 type AssetSortField string
@@ -1621,7 +1627,7 @@ type NodeType string
 const (
 	NodeTypeAsset          NodeType = "ASSET"
 	NodeTypeUser           NodeType = "USER"
-	NodeTypeTeam           NodeType = "TEAM"
+	NodeTypeWorkspace      NodeType = "WORKSPACE"
 	NodeTypeProject        NodeType = "PROJECT"
 	NodeTypePlugin         NodeType = "PLUGIN"
 	NodeTypeScene          NodeType = "SCENE"
@@ -1634,7 +1640,7 @@ const (
 var AllNodeType = []NodeType{
 	NodeTypeAsset,
 	NodeTypeUser,
-	NodeTypeTeam,
+	NodeTypeWorkspace,
 	NodeTypeProject,
 	NodeTypePlugin,
 	NodeTypeScene,
@@ -1646,7 +1652,7 @@ var AllNodeType = []NodeType{
 
 func (e NodeType) IsValid() bool {
 	switch e {
-	case NodeTypeAsset, NodeTypeUser, NodeTypeTeam, NodeTypeProject, NodeTypePlugin, NodeTypeScene, NodeTypePropertySchema, NodeTypeProperty, NodeTypeLayerGroup, NodeTypeLayerItem:
+	case NodeTypeAsset, NodeTypeUser, NodeTypeWorkspace, NodeTypeProject, NodeTypePlugin, NodeTypeScene, NodeTypePropertySchema, NodeTypeProperty, NodeTypeLayerGroup, NodeTypeLayerItem:
 		return true
 	}
 	return false

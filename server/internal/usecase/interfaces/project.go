@@ -110,7 +110,8 @@ type Project interface {
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
-	CheckAlias(context.Context, string, *id.ProjectID) (bool, error)
+	CheckProjectAlias(context.Context, string, accountdomain.WorkspaceID, *id.ProjectID) (bool, error)
+	CheckSceneAlias(context.Context, string, *id.ProjectID) (bool, error)
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)

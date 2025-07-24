@@ -7,10 +7,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { CommonField } from "@reearth/app/ui/fields";
-import {
-  useProjectFetcher,
-  useStorytellingFetcher
-} from "@reearth/services/api";
+import { useSceneFetcher, useStorytellingFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -36,7 +33,7 @@ const EditPanel: FC<Prop> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const { checkProjectAlias } = useProjectFetcher();
+  const { checkSceneAlias } = useSceneFetcher();
   const { checkStoryAlias } = useStorytellingFetcher();
 
   const [prefix, suffix] = useMemo(
@@ -58,7 +55,7 @@ const EditPanel: FC<Prop> = ({
     const alias = localAlias as string;
     const result = isStory
       ? await checkStoryAlias(alias, itemId)
-      : await checkProjectAlias?.(alias, itemId);
+      : await checkSceneAlias?.(alias, itemId);
 
     if (!result?.available) {
       const description = result?.errors?.find(
@@ -71,7 +68,7 @@ const EditPanel: FC<Prop> = ({
       setWaring("");
       setIsAliasValid(true);
     }
-  }, [checkProjectAlias, checkStoryAlias, isStory, itemId, localAlias]);
+  }, [checkSceneAlias, checkStoryAlias, isStory, itemId, localAlias]);
 
   const isDisabled = useMemo(
     () => !!warning || localAlias === alias || !isAliasValid,

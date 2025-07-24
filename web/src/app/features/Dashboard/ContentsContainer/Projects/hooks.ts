@@ -3,6 +3,7 @@ import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
 import { useProjectFetcher } from "@reearth/services/api";
 import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import {
   ProjectSortField,
   SortDirection,
@@ -47,6 +48,7 @@ export default (workspaceId?: string) => {
   } = useProjectFetcher();
   const navigate = useNavigate();
   const client = useApolloClient();
+  const { projectVisibility } = appFeature();
 
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
@@ -62,7 +64,7 @@ export default (workspaceId?: string) => {
     fetchMore,
     refetch
   } = useProjectsQuery({
-    teamId: workspaceId || "",
+    workspaceId: workspaceId || "",
     pagination: {
       first: pagination(sortValue).first
     },
@@ -81,7 +83,7 @@ export default (workspaceId?: string) => {
               id: project.id,
               description: project.description,
               name: project.name,
-              teamId: project.teamId,
+              workspaceId: project.workspaceId,
               imageUrl: project.imageUrl,
               isArchived: project.isArchived,
               status: toPublishmentStatus(project.publishmentStatus),
@@ -91,6 +93,7 @@ export default (workspaceId?: string) => {
               coreSupport: project.coreSupport,
               starred: project.starred,
               isDeleted: project.isDeleted,
+              visibility: project.visibility,
               isPublished:
                 project.publishmentStatus === "PUBLIC" ||
                 project.publishmentStatus === "LIMITED",
@@ -156,14 +159,22 @@ export default (workspaceId?: string) => {
   }, []);
 
   const handleProjectCreate = useCallback(
-    async (data: Pick<Project, "name" | "description">) => {
+    async (
+      data: Pick<
+        Project,
+        "name" | "description" | "projectAlias" | "visibility"
+      > & { license?: string }
+    ) => {
       if (!workspaceId) return;
       await useCreateProject(
         workspaceId,
         Visualizer.Cesium,
         data.name,
         true,
-        data.description
+        data.projectAlias,
+        data.visibility,
+        data.description,
+        data?.license
       );
     },
     [useCreateProject, workspaceId]
@@ -341,6 +352,7 @@ export default (workspaceId?: string) => {
     contentWidth,
     starredProjects,
     importStatus,
+    projectVisibility,
     showProjectCreator,
     closeProjectCreator,
     handleGetMoreProjects,

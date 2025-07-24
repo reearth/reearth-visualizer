@@ -5,6 +5,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 
+// TODO: REMOVE THIS FILE later
+
 const Welcome: FC = () => {
   const { login } = useAuth();
   const t = useT();
@@ -12,7 +14,7 @@ const Welcome: FC = () => {
   const currentUrl = window.location.href;
   const linkDisabled = !config()?.platformUrl;
   const platformUrl = `${config()?.platformUrl}`;
-  const signupUrl = `${config()?.platformUrl}/login?from=${currentUrl}`;
+  const signupUrl = `${config()?.platformUrl}/login?from=${currentUrl}&action=signup`;
 
   return (
     <Wrapper>

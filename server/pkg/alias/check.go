@@ -158,7 +158,7 @@ var (
 	)
 )
 
-func CheckProjectAliasPattern(alias string) error {
+func CheckAliasPatternScene(alias string) error {
 	if alias != "" && !subdomainRegex.Match([]byte(alias)) {
 		return ErrInvalidProjectAlias.AddTemplateData("aliasName", alias)
 	}

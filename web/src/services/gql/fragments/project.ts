@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 export const projectFragment = gql`
   fragment ProjectFragment on Project {
     id
-    teamId
+    workspaceId
     name
     description
     imageUrl
@@ -31,6 +31,7 @@ export const projectFragment = gql`
     }
     visualizer
     visibility
+    projectAlias
   }
 `;
 

@@ -120,7 +120,7 @@ func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*stor
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Storytelling) CheckAliasUnique(ctx context.Context, name string) error {
+func (r *Storytelling) CheckStorytellingAlias(ctx context.Context, name string) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 

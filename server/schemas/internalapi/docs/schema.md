@@ -36,6 +36,8 @@
     - [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse)
     - [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest)
     - [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse)
+    - [ValidateSceneAliasRequest](#reearth-visualizer-v1-ValidateSceneAliasRequest)
+    - [ValidateSceneAliasResponse](#reearth-visualizer-v1-ValidateSceneAliasResponse)
   
     - [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus)
     - [ProjectSortField](#reearth-visualizer-v1-ProjectSortField)
@@ -60,7 +62,7 @@
 
 ### CreateProjectRequest
 Creates a new project.
-Cannot be created under a team the user does not belong to.
+Cannot be created under a workspace the user does not belong to.
 
 
 | Field | Type | Label | Description |
@@ -537,7 +539,7 @@ Response messages
 
 ### UpdateProjectMetadataRequest
 Updates a new project metadata.
-Cannot be updated under a team the user does not belong to.
+Cannot be updated under a workspace the user does not belong to.
 
 
 | Field | Type | Label | Description |
@@ -626,8 +628,9 @@ Determines if an alias is valid.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| project_id | [string](#string) | optional | Project ID |
+| workspace_id | [string](#string) |  | Workspace ID |
 | alias | [string](#string) |  | Scene alias |
+| project_id | [string](#string) | optional | Project ID |
 
 
 
@@ -637,6 +640,39 @@ Determines if an alias is valid.
 <a name="reearth-visualizer-v1-ValidateProjectAliasResponse"></a>
 
 ### ValidateProjectAliasResponse
+Response messages
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| workspace_id | [string](#string) |  | Workspace ID |
+| available | [bool](#bool) |  | Scene alias available |
+| error_message | [string](#string) | optional | Error message |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ValidateSceneAliasRequest"></a>
+
+### ValidateSceneAliasRequest
+Determines if an alias is valid.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| project_id | [string](#string) | optional | Project ID |
+| alias | [string](#string) |  | Scene alias |
+
+
+
+
+
+
+<a name="reearth-visualizer-v1-ValidateSceneAliasResponse"></a>
+
+### ValidateSceneAliasResponse
 Response messages
 
 
@@ -734,11 +770,12 @@ Response messages
 | GetProjectList | [GetProjectListRequest](#reearth-visualizer-v1-GetProjectListRequest) | [GetProjectListResponse](#reearth-visualizer-v1-GetProjectListResponse) | Retrieves the list of projects the user can access. Request headers: user-id: &lt;User ID&gt; |
 | GetProject | [GetProjectRequest](#reearth-visualizer-v1-GetProjectRequest) | [GetProjectResponse](#reearth-visualizer-v1-GetProjectResponse) | Retrieves a specific project regardless of authentication. Request headers: user-id: &lt;User ID&gt; |
 | GetProjectByAlias | [GetProjectByAliasRequest](#reearth-visualizer-v1-GetProjectByAliasRequest) | [GetProjectByAliasResponse](#reearth-visualizer-v1-GetProjectByAliasResponse) | Find a project by alias. Request headers: user-id: &lt;User ID&gt; |
-| ValidateProjectAlias | [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest) | [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse) | Determines if an alias is valid. Request headers: user-id: &lt;User ID&gt; |
-| CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified team. Request headers: user-id: &lt;User ID&gt; |
+| ValidateProjectAlias | [ValidateProjectAliasRequest](#reearth-visualizer-v1-ValidateProjectAliasRequest) | [ValidateProjectAliasResponse](#reearth-visualizer-v1-ValidateProjectAliasResponse) | Determines if an project alias is valid. Request headers: user-id: &lt;User ID&gt; |
+| ValidateSceneAlias | [ValidateSceneAliasRequest](#reearth-visualizer-v1-ValidateSceneAliasRequest) | [ValidateSceneAliasResponse](#reearth-visualizer-v1-ValidateSceneAliasResponse) | Determines if an scene alias is valid. Request headers: user-id: &lt;User ID&gt; |
+| CreateProject | [CreateProjectRequest](#reearth-visualizer-v1-CreateProjectRequest) | [CreateProjectResponse](#reearth-visualizer-v1-CreateProjectResponse) | Creates a new project in the specified workspace. Request headers: user-id: &lt;User ID&gt; |
 | UpdateProject | [UpdateProjectRequest](#reearth-visualizer-v1-UpdateProjectRequest) | [UpdateProjectResponse](#reearth-visualizer-v1-UpdateProjectResponse) | Update a project. Request headers: user-id: &lt;User ID&gt; |
 | PublishProject | [PublishProjectRequest](#reearth-visualizer-v1-PublishProjectRequest) | [PublishProjectResponse](#reearth-visualizer-v1-PublishProjectResponse) | Publish a project. Request headers: user-id: &lt;User ID&gt; |
-| UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified team. Request headers: user-id: &lt;User ID&gt; |
+| UpdateProjectMetadata | [UpdateProjectMetadataRequest](#reearth-visualizer-v1-UpdateProjectMetadataRequest) | [UpdateProjectMetadataResponse](#reearth-visualizer-v1-UpdateProjectMetadataResponse) | Updates a new project metadata in the specified workspace. Request headers: user-id: &lt;User ID&gt; |
 | DeleteProject | [DeleteProjectRequest](#reearth-visualizer-v1-DeleteProjectRequest) | [DeleteProjectResponse](#reearth-visualizer-v1-DeleteProjectResponse) | Deletes a project. Request headers: user-id: &lt;User ID&gt; |
 | ExportProject | [ExportProjectRequest](#reearth-visualizer-v1-ExportProjectRequest) | [ExportProjectResponse](#reearth-visualizer-v1-ExportProjectResponse) | Export a project. Request headers: user-id: &lt;User ID&gt; |
 | GetProjectByProjectAlias | [GetProjectByProjectAliasRequest](#reearth-visualizer-v1-GetProjectByProjectAliasRequest) | [GetProjectByProjectAliasResponse](#reearth-visualizer-v1-GetProjectByProjectAliasResponse) | Find a project by project alias. Request headers: user-id: &lt;User ID&gt; |

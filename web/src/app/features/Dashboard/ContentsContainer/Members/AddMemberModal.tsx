@@ -87,7 +87,7 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
     if (searchResult.length === 0 || !workspace?.id) return;
     for (const user of searchResult) {
       await addMember({
-        teamId: workspace.id,
+        workspaceId: workspace.id,
         userId: user.id,
         role: Role.Reader
       });

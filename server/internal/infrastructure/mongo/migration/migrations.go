@@ -26,4 +26,6 @@ var migrations = migration.Migrations[DBClient]{
   250709132207: SetProjectIdStorytelling,
   250709145819: SetProjectAlias,
   250711143148: AddProjectAlias,
+  250716145417: TeamToWorkspace,
+  250724121006: SetVisibilityPublic,
 }
