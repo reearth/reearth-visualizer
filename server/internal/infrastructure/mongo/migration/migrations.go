@@ -29,4 +29,6 @@ var migrations = migration.Migrations[DBClient]{
 	250716145417: TeamToWorkspace,
 	250724121006: SetVisibilityPublic,
 	250724145417: CopyWorkspaceToTeam,
+	250724184601: ConvertProjectMetadataId,
+	250724191400: CopyTeamToWorkspace,
 }
