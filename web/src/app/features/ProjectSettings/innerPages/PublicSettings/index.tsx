@@ -41,6 +41,10 @@ export type SettingsProject = {
   basicAuthUsername: string;
   basicAuthPassword: string;
   alias: string;
+  scene?: {
+    id: string;
+    alias: string;
+  } | null;
   publishmentStatus: string;
   isArchived: boolean;
   enableGa: boolean;

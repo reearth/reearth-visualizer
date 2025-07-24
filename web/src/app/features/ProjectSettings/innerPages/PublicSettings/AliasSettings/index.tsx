@@ -48,24 +48,30 @@ const AliasSetting: FC<AliasSettingProps> = ({
   const handleOpen = useCallback(() => setOpen(true), []);
   const handleClose = useCallback(() => setOpen(false), []);
 
+  const settingItemAlias = useMemo(() => {
+    return settingsItem?.type === "project" && "scene" in settingsItem
+      ? settingsItem.scene?.alias
+      : settingsItem?.alias;
+  }, [settingsItem])
+  
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
     if (!publishedConfig || !settingsItem) return "";
     const [prefix, suffix] = extractPrefixSuffix(publishedConfig);
 
-    const sanitizedAlias = settingsItem.alias?.replace(/^\/+|\/+$/g, "") ?? "";
+    const sanitizedAlias = settingItemAlias?.replace(/^\/+|\/+$/g, "") ?? "";
     return `${prefix}${sanitizedAlias}${suffix}`;
-  }, [settingsItem]);
+  }, [settingItemAlias, settingsItem]);
 
   const handleIconClick = useCallback(() => {
-    if (!settingsItem?.alias) return;
+    if (!settingItemAlias) return;
 
     navigator.clipboard.writeText(publicUrl);
     setNotification({
       type: "success",
       text: t("Resource URL copied to clipboard")
     });
-  }, [publicUrl, setNotification, settingsItem?.alias, t]);
+  }, [publicUrl, setNotification, settingItemAlias, t]);
 
   const handleSubmitAlias = useCallback(
     (alias?: string) => {
@@ -95,9 +101,9 @@ const AliasSetting: FC<AliasSettingProps> = ({
   const isDisabled = useMemo(
     () =>
       (!isStory && !sceneId) ||
-      settingsItem?.alias === `c-${sceneId}` ||
-      settingsItem?.alias === `s-${settingsItem?.id}`,
-    [settingsItem?.alias, settingsItem?.id, sceneId, isStory]
+      settingItemAlias === `c-${sceneId}` ||
+      settingItemAlias === `s-${settingsItem?.id}`,
+    [isStory, sceneId, settingItemAlias, settingsItem?.id]
   );
 
   return (
@@ -133,7 +139,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
 
         {open && (
           <EditPanel
-            alias={settingsItem?.alias}
+            alias={settingItemAlias}
             isStory={isStory}
             itemId={settingsItem?.id}
             publicUrl={publicUrl}
