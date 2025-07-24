@@ -1,6 +1,7 @@
 package project
 
 import (
+	"errors"
 	"net/url"
 	"time"
 
@@ -26,7 +27,7 @@ const (
 
 func (b *Builder) Build() (*Project, error) {
 	if b.p.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID project.ID ")
 	}
 	if b.p.updatedAt.IsZero() {
 		b.p.updatedAt = b.p.CreatedAt()

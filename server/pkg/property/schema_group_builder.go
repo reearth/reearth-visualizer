@@ -1,6 +1,8 @@
 package property
 
 import (
+	"errors"
+
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 )
@@ -17,7 +19,7 @@ func NewSchemaGroup() *SchemaGroupBuilder {
 
 func (b *SchemaGroupBuilder) Build() (*SchemaGroup, error) {
 	if b.p.id == "" {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID SchemaGroupBuilder.id ")
 	}
 	return b.p, nil
 }
