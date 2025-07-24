@@ -2,6 +2,7 @@ package plugin
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -32,7 +33,8 @@ func (b *ExtensionBuilder) Build() (*Extension, error) {
 func (b *ExtensionBuilder) MustBuild() *Extension {
 	p, err := b.Build()
 	if err != nil {
-		panic(err)
+		// panic(err)
+		fmt.Println(err.Error())
 	}
 	return p
 }

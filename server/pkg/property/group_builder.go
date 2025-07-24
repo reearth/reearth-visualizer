@@ -2,6 +2,7 @@ package property
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/id"
 )
@@ -37,7 +38,8 @@ func (b *GroupBuilder) Build() (*Group, error) {
 func (b *GroupBuilder) MustBuild() *Group {
 	p, err := b.Build()
 	if err != nil {
-		panic(err)
+		fmt.Println(err.Error())
+		// panic(err)
 	}
 	return p
 }

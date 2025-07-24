@@ -2,6 +2,7 @@ package id
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -50,7 +51,8 @@ func PropertySchemaIDFromRef(id *string) *PropertySchemaID {
 func MustPropertySchemaID(id string) PropertySchemaID {
 	did, err := PropertySchemaIDFrom(id)
 	if err != nil {
-		panic(err)
+		// panic(err)
+		fmt.Println(err.Error())
 	}
 	return did
 }
