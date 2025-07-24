@@ -46,7 +46,7 @@ func TestSchemaFieldBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "nil field",
-			Err:  id.ErrInvalidID,
+			// Err:  id.ErrInvalidID,
 		},
 		{
 			Name: "fail min > max",

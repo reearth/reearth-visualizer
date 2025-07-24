@@ -19,7 +19,7 @@ func NewExtension() *ExtensionBuilder {
 
 func (b *ExtensionBuilder) Build() (*Extension, error) {
 	if string(b.p.id) == "" {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID ExtensionBuilder.id ")
 	}
 	if !b.s {
 		if b.p.extensionType == ExtensionTypeVisualizer || b.p.extensionType == ExtensionTypeInfobox {

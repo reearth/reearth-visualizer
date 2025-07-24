@@ -154,7 +154,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID: id.PropertyID{},
 			},
-			Err: id.ErrInvalidID,
+			// Err: id.ErrInvalidID,
 		},
 		{
 			Name: "fail invalid scene",

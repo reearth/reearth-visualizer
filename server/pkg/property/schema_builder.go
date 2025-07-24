@@ -24,7 +24,7 @@ func NewSchema() *SchemaBuilder {
 
 func (b *SchemaBuilder) Build() (*Schema, error) {
 	if b.p.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID SchemaBuilder.id ")
 	}
 	if !b.p.linkable.Validate(b.p) {
 		return nil, ErrInvalidPropertyLinkableField

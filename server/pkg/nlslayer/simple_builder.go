@@ -1,6 +1,10 @@
 package nlslayer
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"errors"
+
+	"github.com/reearth/reearth/server/pkg/id"
+)
 
 func NLSLayerSimpleFromLayer(l NLSLayer) *NLSLayerSimple {
 	li, ok := l.(*NLSLayerSimple)
@@ -31,7 +35,7 @@ func NewNLSLayerSimple() *NLSLayerSimpleBuilder {
 
 func (b *NLSLayerSimpleBuilder) Build() (*NLSLayerSimple, error) {
 	if b.l.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, errors.New("invalid ID NLSLayerSimpleBuilder ")
 	}
 	return b.l, nil
 }

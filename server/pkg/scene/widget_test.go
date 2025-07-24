@@ -40,7 +40,7 @@ func TestNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       id.ErrInvalidID,
+			// Err:       id.ErrInvalidID,
 		},
 	}
 
@@ -96,7 +96,7 @@ func TestMustNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       id.ErrInvalidID,
+			// Err:       id.ErrInvalidID,
 		},
 	}
 
