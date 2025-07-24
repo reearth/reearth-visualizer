@@ -93,6 +93,7 @@ export default (workspaceId?: string) => {
               coreSupport: project.coreSupport,
               starred: project.starred,
               isDeleted: project.isDeleted,
+              visibility: project.visibility,
               isPublished:
                 project.publishmentStatus === "PUBLIC" ||
                 project.publishmentStatus === "LIMITED",
