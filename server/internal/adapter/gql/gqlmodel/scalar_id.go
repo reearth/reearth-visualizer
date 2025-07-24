@@ -3,9 +3,11 @@ package gqlmodel
 import (
 	"errors"
 	"io"
+	"reflect"
 	"strconv"
 
 	"github.com/99designs/gqlgen/graphql"
+	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/idx"
 )
@@ -14,7 +16,10 @@ type ID string
 
 func MarshalPropertyFieldID(t id.PropertyFieldID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		_, _ = io.WriteString(w, strconv.Quote(t.String()))
+		_, err := io.WriteString(w, strconv.Quote(t.String()))
+		if err != nil {
+			log.Errorf("MarshalPropertyFieldID error: %s", err.Error())
+		}
 	})
 }
 
@@ -22,25 +27,39 @@ func UnmarshalPropertyFieldID(v interface{}) (id.PropertyFieldID, error) {
 	if tmpStr, ok := v.(string); ok {
 		return id.PropertyFieldID(tmpStr), nil
 	}
-	return id.PropertyFieldID(""), errors.New("invalid ID")
+	err := errors.New("UnmarshalPropertyFieldID invalid ID")
+	log.Errorf("UnmarshalPropertyFieldID error: %v", err)
+	return id.PropertyFieldID(""), err
 }
 
 func MarshalPluginID(t id.PluginID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		_, _ = io.WriteString(w, strconv.Quote(t.String()))
+		_, err := io.WriteString(w, strconv.Quote(t.String()))
+		if err != nil {
+			log.Errorf("MarshalPluginID error: %s", err.Error())
+		}
 	})
 }
 
 func UnmarshalPluginID(v interface{}) (id.PluginID, error) {
 	if tmpStr, ok := v.(string); ok {
-		return id.PluginIDFrom(tmpStr)
+		pluginID, err := id.PluginIDFrom(tmpStr)
+		if err != nil {
+			log.Errorf("UnmarshalPluginID id.PluginIDFrom error: %s, input: %s", err.Error(), tmpStr)
+		}
+		return pluginID, err
 	}
-	return id.PluginID{}, errors.New("invalid ID")
+	err := errors.New("UnmarshalPluginID invalid ID")
+	log.Errorf("UnmarshalPluginID error: %v", err)
+	return id.PluginID{}, err
 }
 
 func MarshalPluginExtensionID(t id.PluginExtensionID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		_, _ = io.WriteString(w, strconv.Quote(t.String()))
+		_, err := io.WriteString(w, strconv.Quote(t.String()))
+		if err != nil {
+			log.Errorf("MarshalPluginExtensionID error: %s", err.Error())
+		}
 	})
 }
 
@@ -48,25 +67,39 @@ func UnmarshalPluginExtensionID(v interface{}) (id.PluginExtensionID, error) {
 	if tmpStr, ok := v.(string); ok {
 		return id.PluginExtensionID(tmpStr), nil
 	}
-	return id.PluginExtensionID(""), errors.New("invalid ID")
+	err := errors.New("UnmarshalPluginExtensionID invalid ID")
+	log.Errorf("UnmarshalPluginExtensionID error: %v", err)
+	return id.PluginExtensionID(""), err
 }
 
 func MarshalPropertySchemaID(t id.PropertySchemaID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		_, _ = io.WriteString(w, strconv.Quote(t.String()))
+		_, err := io.WriteString(w, strconv.Quote(t.String()))
+		if err != nil {
+			log.Errorf("MarshalPropertySchemaID error: %s", err.Error())
+		}
 	})
 }
 
 func UnmarshalPropertySchemaID(v interface{}) (id.PropertySchemaID, error) {
 	if tmpStr, ok := v.(string); ok {
-		return id.PropertySchemaIDFrom(tmpStr)
+		schemaID, err := id.PropertySchemaIDFrom(tmpStr)
+		if err != nil {
+			log.Errorf("UnmarshalPropertySchemaID id.PropertySchemaIDFrom error: %s, input: %s", err.Error(), tmpStr)
+		}
+		return schemaID, err
 	}
-	return id.PropertySchemaID{}, errors.New("invalid ID")
+	err := errors.New("UnmarshalPropertySchemaID invalid ID")
+	log.Errorf("UnmarshalPropertySchemaID error: %v", err)
+	return id.PropertySchemaID{}, err
 }
 
 func MarshalPropertySchemaGroupID(t id.PropertySchemaGroupID) graphql.Marshaler {
 	return graphql.WriterFunc(func(w io.Writer) {
-		_, _ = io.WriteString(w, strconv.Quote(t.String()))
+		_, err := io.WriteString(w, strconv.Quote(t.String()))
+		if err != nil {
+			log.Errorf("MarshalPropertySchemaGroupID error: %s", err.Error())
+		}
 	})
 }
 
@@ -74,7 +107,9 @@ func UnmarshalPropertySchemaGroupID(v interface{}) (id.PropertySchemaGroupID, er
 	if tmpStr, ok := v.(string); ok {
 		return id.PropertySchemaGroupID(tmpStr), nil
 	}
-	return id.PropertySchemaGroupID(""), errors.New("invalid ID")
+	err := errors.New("UnmarshalPropertySchemaGroupID invalid ID")
+	log.Errorf("UnmarshalPropertySchemaGroupID error: %v", err)
+	return id.PropertySchemaGroupID(""), err
 }
 
 func IDFrom[T idx.Type](i idx.ID[T]) ID {
@@ -121,7 +156,13 @@ func IDFromPropertySchemaIDRef(i *id.PropertySchemaID) *ID {
 }
 
 func ToID[A idx.Type](a ID) (idx.ID[A], error) {
-	return idx.From[A](string(a))
+	id, err := idx.From[A](string(a))
+	if err != nil {
+		var zero A
+		typeName := reflect.TypeOf(zero).String()
+		log.Errorf("ToID error: type=%s, input=%s, error=%s", typeName, string(a), err.Error())
+	}
+	return id, err
 }
 
 func ToIDs[A idx.Type](a []ID) (*[]idx.ID[A], error) {
@@ -132,6 +173,9 @@ func ToIDs[A idx.Type](a []ID) (*[]idx.ID[A], error) {
 	for i, v := range a {
 		r, err := ToID[A](v)
 		if err != nil {
+			var zero A
+			typeName := reflect.TypeOf(zero).String()
+			log.Errorf("ToIDs error: type=%s, index=%d, input=%s, error=%s", typeName, i, string(v), err.Error())
 			return nil, err
 		}
 		res[i] = r
@@ -175,15 +219,23 @@ func ToStringIDRef[T idx.Type](a *ID) *idx.StringID[T] {
 }
 
 func ToPropertySchemaID(a ID) (id.PropertySchemaID, error) {
-	return id.PropertySchemaIDFrom((string)(a))
+	schemaID, err := id.PropertySchemaIDFrom((string)(a))
+	if err != nil {
+		log.Errorf("ToPropertySchemaID error: input=%s, error=%s", string(a), err.Error())
+	}
+	return schemaID, err
 }
 
 func ToPluginID(a ID) (id.PluginID, error) {
-	return id.PluginIDFrom((string)(a))
+	pluginID, err := id.PluginIDFrom((string)(a))
+	if err != nil {
+		log.Errorf("ToPluginID error: input=%s, error=%s", string(a), err.Error())
+	}
+	return pluginID, err
 }
 
 func ToPluginID2(a, b ID) (ai id.PluginID, bi id.PluginID, err error) {
-	ai, err = id.PluginIDFrom((string)(a))
+	ai, err = ToPluginID(a)
 	if err != nil {
 		return
 	}
