@@ -33,7 +33,8 @@ export function events<
 
   const getEventCallback = <T extends keyof E>(
     type: T,
-    cb: EventCallback<E[T]>
+    cb: EventCallback<E[T]>,
+    ignoreExisting = false
   ): ((e: Event) => void) => {
     const fingerprint = getFunctionFingerprintString(cb);
     let ecbs = callbacks.get(type);
@@ -43,7 +44,7 @@ export function events<
     }
 
     let ecb = ecbs.get(fingerprint);
-    if (!ecb) {
+    if (!ecb || ignoreExisting) {
       ecb = (e: Event): void => {
         cb(...(e as CustomEvent).detail);
       };
@@ -65,7 +66,7 @@ export function events<
   };
 
   const on = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback);
+    const ecb = getEventCallback(type, callback, true);
     e.addEventListener(String(type), ecb);
   };
   const off = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
@@ -74,7 +75,7 @@ export function events<
     deleteEventCallback(type, ecb);
   };
   const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback);
+    const ecb = getEventCallback(type, callback, true);
     e.addEventListener(String(type), ecb, { once: true });
   };
 
