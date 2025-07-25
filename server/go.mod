@@ -57,7 +57,6 @@ require (
 
 require (
 	github.com/go-playground/validator/v10 v10.27.0
-	github.com/labstack/gommon v0.4.2
 	github.com/reearth/reearthx v0.0.0-20250711044138-418475ad1421
 )
 
@@ -131,6 +130,7 @@ require (
 	github.com/hpcloud/tail v1.0.0 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
+	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/maruel/panicparse/v2 v2.5.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
