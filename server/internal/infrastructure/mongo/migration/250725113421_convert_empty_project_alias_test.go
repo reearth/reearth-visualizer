@@ -12,9 +12,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// go test -v -run TestConverEmptyProjectAlias ./internal/infrastructure/mongo/migration/...
+// go test -v -run TestConvertEmptyProjectAlias ./internal/infrastructure/mongo/migration/...
 
-func TestConverEmptyProjectAlias(t *testing.T) {
+func TestConvertEmptyProjectAlias(t *testing.T) {
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
 	ctx := context.Background()
@@ -87,7 +87,7 @@ func TestConverEmptyProjectAlias(t *testing.T) {
 	})
 
 	t.Run("execute migration", func(t *testing.T) {
-		err := ConverEmptyProjectAlias(ctx, client)
+		err := ConvertEmptyProjectAlias(ctx, client)
 		require.NoError(t, err)
 	})
 
@@ -127,7 +127,7 @@ func TestConverEmptyProjectAlias(t *testing.T) {
 	t.Run("duplicate migration", func(t *testing.T) {
 		// Run migration again to ensure idempotency
 		require.NoError(t, err)
-		err := ConverEmptyProjectAlias(ctx, client)
+		err := ConvertEmptyProjectAlias(ctx, client)
 
 		// Verify that existing aliases are not changed
 		var doc1 bson.M
@@ -181,7 +181,7 @@ func TestConverEmptyProjectAlias(t *testing.T) {
 	})
 }
 
-func TestConverEmptyProjectAlias_EdgeCases(t *testing.T) {
+func TestConvertEmptyProjectAlias_EdgeCases(t *testing.T) {
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
 	ctx := context.Background()
@@ -199,7 +199,7 @@ func TestConverEmptyProjectAlias_EdgeCases(t *testing.T) {
 		_, err := projectCollection.InsertOne(ctx, invalidDoc)
 		require.NoError(t, err)
 
-		err = ConverEmptyProjectAlias(ctx, client)
+		err = ConvertEmptyProjectAlias(ctx, client)
 		assert.NoError(t, err, "migration should not fail with non-string id")
 
 		// Verify the document was not updated
@@ -223,7 +223,7 @@ func TestConverEmptyProjectAlias_EdgeCases(t *testing.T) {
 		_, err := projectCollection.InsertOne(ctx, docWithNil)
 		require.NoError(t, err)
 
-		err = ConverEmptyProjectAlias(ctx, client)
+		err = ConvertEmptyProjectAlias(ctx, client)
 		require.NoError(t, err)
 
 		// Verify the document was updated
@@ -241,7 +241,7 @@ func TestConverEmptyProjectAlias_EdgeCases(t *testing.T) {
 		require.NoError(t, err)
 
 		// Run migration on empty collection
-		err = ConverEmptyProjectAlias(ctx, client)
+		err = ConvertEmptyProjectAlias(ctx, client)
 		assert.NoError(t, err, "migration should not fail on empty collection")
 	})
 }

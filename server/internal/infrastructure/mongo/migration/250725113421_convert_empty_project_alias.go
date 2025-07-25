@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func ConverEmptyProjectAlias(ctx context.Context, c DBClient) error {
+func ConvertEmptyProjectAlias(ctx context.Context, c DBClient) error {
 	col := c.WithCollection("project").Client()
 
 	cursor, err := col.Find(ctx, bson.M{})
