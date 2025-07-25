@@ -132,6 +132,11 @@ func TestConvertNonValidProjectAliases(t *testing.T) {
 		err = projectCollection.FindOne(ctx, bson.M{"id": "project3"}).Decode(&project3)
 		require.NoError(t, err)
 		assert.Equal(t, "test.alias", project3["projectalias"])
+
+		var project4 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project4"}).Decode(&project4)
+		require.NoError(t, err)
+		assert.Equal(t, "test@alias", project4["projectalias"])
 	})
 
 	t.Run("success: handle email addresses", func(t *testing.T) {
@@ -161,20 +166,18 @@ func TestConvertNonValidProjectAliases(t *testing.T) {
 		err = ConvertNonValidProjectAliases(ctx, c)
 		assert.NoError(t, err)
 
-		// Verify email addresses are replaced with random strings
+		// Verify email addresses are replaced with p-{id} format
 		var project1 bson.M
 		err = projectCollection.FindOne(ctx, bson.M{"id": "project1"}).Decode(&project1)
 		require.NoError(t, err)
 		alias1 := project1["projectalias"].(string)
-		assert.Len(t, alias1, 10)
-		assert.Regexp(t, "^[a-z]{10}$", alias1)
+		assert.Equal(t, "p-project1", alias1)
 
 		var project2 bson.M
 		err = projectCollection.FindOne(ctx, bson.M{"id": "project2"}).Decode(&project2)
 		require.NoError(t, err)
 		alias2 := project2["projectalias"].(string)
-		assert.Len(t, alias2, 10)
-		assert.Regexp(t, "^[a-z]{10}$", alias2)
+		assert.Equal(t, "p-project2", alias2)
 	})
 
 	t.Run("success: handle regex non-matching aliases", func(t *testing.T) {
@@ -216,19 +219,26 @@ func TestConvertNonValidProjectAliases(t *testing.T) {
 		err = ConvertNonValidProjectAliases(ctx, c)
 		assert.NoError(t, err)
 
-		// Verify all aliases are replaced with random strings
-		cursor, err := projectCollection.Find(ctx, bson.M{})
+		// Verify all aliases are replaced appropriately
+		var project1 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project1"}).Decode(&project1)
 		require.NoError(t, err)
-		defer cursor.Close(ctx)
+		assert.Equal(t, "uppercase", project1["projectalias"])
 
-		nameRegex := regexp.MustCompile(`^[a-z0-9](?:[a-z0-9-_@.]{0,61}[a-z0-9])?$`)
-		for cursor.Next(ctx) {
-			var project bson.M
-			err := cursor.Decode(&project)
-			require.NoError(t, err)
-			alias := project["projectalias"].(string)
-			assert.True(t, nameRegex.MatchString(alias), "alias %s should match regex", alias)
-		}
+		var project2 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project2"}).Decode(&project2)
+		require.NoError(t, err)
+		assert.Equal(t, "p-project2", project2["projectalias"])
+
+		var project3 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project3"}).Decode(&project3)
+		require.NoError(t, err)
+		assert.Equal(t, "p-project3", project3["projectalias"])
+
+		var project4 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project4"}).Decode(&project4)
+		require.NoError(t, err)
+		assert.Equal(t, "p-project4", project4["projectalias"])
 	})
 
 	t.Run("success: handle validation failures", func(t *testing.T) {
@@ -252,13 +262,12 @@ func TestConvertNonValidProjectAliases(t *testing.T) {
 		err = ConvertNonValidProjectAliases(ctx, c)
 		assert.NoError(t, err)
 
-		// Verify alias is replaced with random string
+		// Verify alias is replaced with p-{id} format
 		var project1 bson.M
 		err = projectCollection.FindOne(ctx, bson.M{"id": "project1"}).Decode(&project1)
 		require.NoError(t, err)
 		alias1 := project1["projectalias"].(string)
-		assert.Len(t, alias1, 10)
-		assert.Regexp(t, "^[a-z]{10}$", alias1)
+		assert.Equal(t, "p-project1", alias1)
 
 		// Verify the alias passes validation
 		var tempAlias TempProjectAlias
@@ -288,13 +297,12 @@ func TestConvertNonValidProjectAliases(t *testing.T) {
 		err = ConvertNonValidProjectAliases(ctx, c)
 		assert.NoError(t, err)
 
-		// Verify a valid alias is generated
+		// Verify a valid alias is generated using p-{id} format
 		var project1 bson.M
 		err = projectCollection.FindOne(ctx, bson.M{"id": "project1"}).Decode(&project1)
 		require.NoError(t, err)
 		alias1 := project1["projectalias"].(string)
-		assert.Len(t, alias1, 10)
-		assert.Regexp(t, "^[a-z]{10}$", alias1)
+		assert.Equal(t, "p-project1", alias1)
 	})
 
 	t.Run("success: handle empty projectalias field", func(t *testing.T) {
@@ -318,13 +326,12 @@ func TestConvertNonValidProjectAliases(t *testing.T) {
 		err = ConvertNonValidProjectAliases(ctx, c)
 		assert.NoError(t, err)
 
-		// Verify a valid alias is generated
+		// Verify a valid alias is generated using p-{id} format
 		var project1 bson.M
 		err = projectCollection.FindOne(ctx, bson.M{"id": "project1"}).Decode(&project1)
 		require.NoError(t, err)
 		alias1 := project1["projectalias"].(string)
-		assert.Len(t, alias1, 10)
-		assert.Regexp(t, "^[a-z]{10}$", alias1)
+		assert.Equal(t, "p-project1", alias1)
 	})
 
 	t.Run("success: handle mixed case and special characters", func(t *testing.T) {
@@ -456,26 +463,21 @@ func TestConvertNonValidProjectAliases(t *testing.T) {
 		err = ConvertNonValidProjectAliases(ctx, c)
 		assert.NoError(t, err)
 
-		// Verify all Japanese characters are replaced with random strings
-		cursor, err := projectCollection.Find(ctx, bson.M{})
+		// Verify all Japanese characters are replaced with p-{id} format
+		var project1 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project1"}).Decode(&project1)
 		require.NoError(t, err)
-		defer cursor.Close(ctx)
+		assert.Equal(t, "p-project1", project1["projectalias"])
 
-		for cursor.Next(ctx) {
-			var project bson.M
-			err := cursor.Decode(&project)
-			require.NoError(t, err)
-			alias := project["projectalias"].(string)
+		var project2 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project2"}).Decode(&project2)
+		require.NoError(t, err)
+		assert.Equal(t, "p-project2", project2["projectalias"])
 
-			// Should be random generated string (10 lowercase letters)
-			assert.Len(t, alias, 10)
-			assert.Regexp(t, "^[a-z]{10}$", alias)
-
-			// Should not contain any Japanese characters
-			assert.NotContains(t, alias, "プロジェクト")
-			assert.NotContains(t, alias, "テスト")
-			assert.NotContains(t, alias, "マイ")
-		}
+		var project3 bson.M
+		err = projectCollection.FindOne(ctx, bson.M{"id": "project3"}).Decode(&project3)
+		require.NoError(t, err)
+		assert.Equal(t, "p-project3", project3["projectalias"])
 	})
 
 	t.Run("success: handle already valid aliases", func(t *testing.T) {
@@ -556,19 +558,25 @@ func setupTestDataWithInvalidAliases(t *testing.T, ctx context.Context, db *mong
 }
 
 func verifyAllAliasesValid(t *testing.T, ctx context.Context, db *mongo.Database) {
-	cursor, err := db.Collection("project").Find(ctx, bson.M{})
-	require.NoError(t, err)
-	defer cursor.Close(ctx)
+	// Verify specific expected aliases based on the test data
+	expectedAliases := map[string]string{
+		"project1": "my-project-name",
+		"project2": "test-alias",
+		"project3": "p-project3",
+		"project4": "uppercase",
+		"project5": "p-project5",
+	}
 
 	nameRegex := regexp.MustCompile(`^[a-z0-9](?:[a-z0-9-_@.]{0,61}[a-z0-9])?$`)
 	validate := validator.New()
 
-	for cursor.Next(ctx) {
+	for projectID, expectedAlias := range expectedAliases {
 		var project bson.M
-		err := cursor.Decode(&project)
+		err := db.Collection("project").FindOne(ctx, bson.M{"id": projectID}).Decode(&project)
 		require.NoError(t, err)
 
 		alias := project["projectalias"].(string)
+		assert.Equal(t, expectedAlias, alias, "project %s should have alias %s", projectID, expectedAlias)
 
 		// Test regex validation
 		assert.True(t, nameRegex.MatchString(alias), "alias %s should match regex", alias)

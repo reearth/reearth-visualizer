@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/labstack/gommon/random"
 	"github.com/reearth/reearthx/log"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -39,7 +38,7 @@ func ConvertNonValidProjectAliases(ctx context.Context, c DBClient) error {
 			continue
 		}
 
-		_, ok := doc["id"].(string)
+		id, ok := doc["id"].(string)
 		if !ok {
 			log.Printf("document missing id field or id is not string: %v", doc["_id"])
 			continue
@@ -59,12 +58,12 @@ func ConvertNonValidProjectAliases(ctx context.Context, c DBClient) error {
 
 		// email address check
 		if strings.Contains(projectAlias, "@") && strings.Contains(projectAlias, ".") {
-			projectAlias = random.String(10, random.Lowercase)
+			projectAlias = "p-" + id
 		}
 
 		// validate alias against regex
 		if !nameRegex.MatchString(projectAlias) {
-			projectAlias = random.String(10, random.Lowercase)
+			projectAlias = "p-" + id
 		}
 
 		var tempAlias TempProjectAlias
@@ -77,7 +76,7 @@ func ConvertNonValidProjectAliases(ctx context.Context, c DBClient) error {
 				return err
 			}
 
-			projectAlias = random.String(10, random.Lowercase)
+			projectAlias = "p-" + id
 		}
 
 		filter := bson.M{"_id": doc["_id"]}
