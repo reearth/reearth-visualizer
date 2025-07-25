@@ -35,8 +35,12 @@ func TestMetadataUpdate(t *testing.T) {
 
 	t.Run("records with existing workspace should not be updated", func(t *testing.T) {
 		// Cleanup
-		projectCollection.Drop(ctx)
-		projectmetadataCollection.Drop(ctx)
+		if err := projectCollection.Drop(ctx); err != nil {
+			t.Fatalf("failed to drop project collection: %v", err)
+		}
+		if err := projectmetadataCollection.Drop(ctx); err != nil {
+			t.Fatalf("failed to drop projectmetadata collection: %v", err)
+		}
 
 		// Setup test data with existing workspace
 		setupTestDataWithWorkspace(t, ctx, db)
@@ -54,8 +58,12 @@ func TestMetadataUpdate(t *testing.T) {
 
 	t.Run("error when related project does not exist", func(t *testing.T) {
 		// Cleanup
-		projectCollection.Drop(ctx)
-		projectmetadataCollection.Drop(ctx)
+		if err := projectCollection.Drop(ctx); err != nil {
+			t.Fatalf("failed to drop project collection: %v", err)
+		}
+		if err := projectmetadataCollection.Drop(ctx); err != nil {
+			t.Fatalf("failed to drop projectmetadata collection: %v", err)
+		}
 
 		// Create only projectmetadata without related project
 		_, err := projectmetadataCollection.InsertOne(ctx, bson.M{
@@ -73,8 +81,12 @@ func TestMetadataUpdate(t *testing.T) {
 
 	t.Run("error when project has no workspace field", func(t *testing.T) {
 		// Cleanup
-		projectCollection.Drop(ctx)
-		projectmetadataCollection.Drop(ctx)
+		if err := projectCollection.Drop(ctx); err != nil {
+			t.Fatalf("failed to drop project collection: %v", err)
+		}
+		if err := projectmetadataCollection.Drop(ctx); err != nil {
+			t.Fatalf("failed to drop projectmetadata collection: %v", err)
+		}
 
 		// Create project without workspace field
 		_, err := projectCollection.InsertOne(ctx, bson.M{
