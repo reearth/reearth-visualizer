@@ -31,5 +31,7 @@ var migrations = migration.Migrations[DBClient]{
 	250724145417: CopyWorkspaceToTeam,
 	250724184601: ConvertProjectMetadataId,
 	250724191400: CopyTeamToWorkspace,
+	250725111952: AddProjectAlias2,
+	250725112722: MetadataUpdate,
 	250725113421: ConverEmptyProjectAlias,
 }
