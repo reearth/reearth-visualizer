@@ -34,4 +34,5 @@ var migrations = migration.Migrations[DBClient]{
 	250725111952: AddProjectAlias2,
 	250725112722: MetadataUpdate,
 	250725133631: SetPhotoOverlayDefault,
+	250725145932: ConvertNonValidProjectAliases,
 }
