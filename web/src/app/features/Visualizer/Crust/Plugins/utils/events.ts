@@ -29,36 +29,69 @@ export function events<
   E extends { [P in string]: any[] } = { [P in string]: any[] }
 >(): [Events<E>, EventEmitter<E>] {
   const e = new EventTarget();
-  const callbacks = new Map<keyof E, Map<string, (e: Event) => void>>();
+  const callbacks = new Map<
+    keyof E,
+    Map<
+      EventCallback<E[keyof E]>,
+      { fn: (e: Event) => void; fingerprint: string }
+    >
+  >();
 
   const getEventCallback = <T extends keyof E>(
     type: T,
     cb: EventCallback<E[T]>,
-    ignoreExisting = false
+    fingerprint: string,
+    checkFingerprint = false
   ): ((e: Event) => void) => {
-    const fingerprint = getFunctionFingerprintString(cb);
     let ecbs = callbacks.get(type);
     if (!ecbs) {
       ecbs = new Map();
       callbacks.set(type, ecbs);
     }
 
-    let ecb = ecbs.get(fingerprint);
-    if (!ecb || ignoreExisting) {
-      ecb = (e: Event): void => {
-        cb(...(e as CustomEvent).detail);
-      };
-      ecbs.set(fingerprint, ecb);
+    let ecb = ecbs.get(cb as EventCallback);
+
+    if (checkFingerprint && !ecb) {
+      // try get by fingerprint
+      for (const [_key, value] of ecbs.entries()) {
+        if (value.fingerprint === fingerprint) {
+          ecb = value;
+          break;
+        }
+      }
     }
 
-    return ecb;
+    if (!ecb) {
+      ecb = {
+        fn: (e: Event): void => {
+          cb(...(e as CustomEvent).detail);
+        },
+        fingerprint
+      };
+      ecbs.set(cb as EventCallback, ecb);
+    }
+
+    return ecb.fn;
   };
 
-  const deleteEventCallback = (type: keyof E, cb: EventCallback): void => {
+  const deleteEventCallback = (
+    type: keyof E,
+    cb: EventCallback,
+    fingerprint: string
+  ): void => {
     const ecbs = callbacks.get(type);
-    const fingerprint = getFunctionFingerprintString(cb);
     if (ecbs) {
-      ecbs.delete(fingerprint);
+      if (ecbs.has(cb)) {
+        ecbs.delete(cb);
+      } else {
+        // try delete by fingerprint
+        for (const [_key, value] of ecbs.entries()) {
+          if (value.fingerprint === fingerprint) {
+            ecbs.delete(_key);
+            break;
+          }
+        }
+      }
       if (ecbs.size === 0) {
         callbacks.delete(type);
       }
@@ -66,16 +99,23 @@ export function events<
   };
 
   const on = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback, true);
+    const fingerprint = getFunctionFingerprintString(callback);
+    // Note: when binding callbacks, we don't check fingerprint,
+    // because the previous one could be out of lifecycle but with the same fingerprint.
+    const ecb = getEventCallback(type, callback, fingerprint);
     e.addEventListener(String(type), ecb);
   };
   const off = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback);
+    const fingerprint = getFunctionFingerprintString(callback);
+    const ecb = getEventCallback(type, callback, fingerprint, true);
+    // Note: we check fingerprint here to ensure we remove the correct callback.
+    // because the same callback becomes different after synchronization, but the fingerprint remains the same.
     e.removeEventListener(String(type), ecb);
-    deleteEventCallback(type, ecb);
+    deleteEventCallback(type, ecb, fingerprint);
   };
   const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
-    const ecb = getEventCallback(type, callback, true);
+    const fingerprint = getFunctionFingerprintString(callback);
+    const ecb = getEventCallback(type, callback, fingerprint);
     e.addEventListener(String(type), ecb, { once: true });
   };
 
