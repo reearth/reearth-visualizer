@@ -85,9 +85,9 @@ export function events<
         ecbs.delete(cb);
       } else {
         // try delete by fingerprint
-        for (const [_key, value] of ecbs.entries()) {
+        for (const [key, value] of ecbs.entries()) {
           if (value.fingerprint === fingerprint) {
-            ecbs.delete(_key);
+            ecbs.delete(key);
             break;
           }
         }
@@ -102,21 +102,21 @@ export function events<
     const fingerprint = getFunctionFingerprintString(callback);
     // Note: when binding callbacks, we don't check fingerprint,
     // because the previous one could be out of lifecycle but with the same fingerprint.
-    const ecb = getEventCallback(type, callback, fingerprint);
-    e.addEventListener(String(type), ecb);
+    const ecbFn = getEventCallback(type, callback, fingerprint);
+    e.addEventListener(String(type), ecbFn);
   };
   const off = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
     const fingerprint = getFunctionFingerprintString(callback);
-    const ecb = getEventCallback(type, callback, fingerprint, true);
+    const ecbFn = getEventCallback(type, callback, fingerprint, true);
     // Note: we check fingerprint here to ensure we remove the correct callback.
     // because the same callback becomes different after synchronization, but the fingerprint remains the same.
-    e.removeEventListener(String(type), ecb);
-    deleteEventCallback(type, ecb, fingerprint);
+    e.removeEventListener(String(type), ecbFn);
+    deleteEventCallback(type, ecbFn, fingerprint);
   };
   const once = <T extends keyof E>(type: T, callback: EventCallback<E[T]>) => {
     const fingerprint = getFunctionFingerprintString(callback);
-    const ecb = getEventCallback(type, callback, fingerprint);
-    e.addEventListener(String(type), ecb, { once: true });
+    const ecbFn = getEventCallback(type, callback, fingerprint);
+    e.addEventListener(String(type), ecbFn, { once: true });
   };
 
   const events = {
