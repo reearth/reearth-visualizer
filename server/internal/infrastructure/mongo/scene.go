@@ -75,9 +75,16 @@ func (r *Scene) FindByProjects(ctx context.Context, ids []id.ProjectID) ([]*scen
 		projectIds = append(projectIds, id.String())
 	}
 
-	return r.find(ctx, bson.M{
+	filter := bson.M{
 		"project": bson.M{"$in": projectIds},
-	})
+	}
+
+	c := mongodoc.NewSceneConsumer(nil)
+
+	if err := r.client.Find(ctx, filter, c); err != nil {
+		return nil, err
+	}
+	return c.Result, nil
 }
 
 func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
