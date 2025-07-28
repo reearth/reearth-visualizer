@@ -1,8 +1,6 @@
 package plugin
 
 import (
-	"errors"
-
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 )
@@ -17,7 +15,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Plugin, error) {
 	if b.p.id.IsNil() {
-		return nil, errors.New("invalid ID plugin.id ")
+		return nil, id.ErrInvalidID
 	}
 	return b.p, nil
 }

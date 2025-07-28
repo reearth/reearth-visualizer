@@ -1,10 +1,6 @@
 package scene
 
-import (
-	"errors"
-
-	"github.com/reearth/reearth/server/pkg/id"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type StyleBuilder struct {
 	s *Style
@@ -16,7 +12,7 @@ func NewStyle() *StyleBuilder {
 
 func (b *StyleBuilder) Build() (*Style, error) {
 	if b.s.id.IsNil() {
-		return nil, errors.New("invalid ID StyleBuilder")
+		return nil, id.ErrInvalidID
 	}
 	return b.s, nil
 }

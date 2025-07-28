@@ -1,11 +1,6 @@
 package property
 
-import (
-	"errors"
-	"fmt"
-
-	"github.com/reearth/reearth/server/pkg/id"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type GroupBuilder struct {
 	p *Group
@@ -27,10 +22,10 @@ func InitGroupFrom(g *SchemaGroup) *Group {
 
 func (b *GroupBuilder) Build() (*Group, error) {
 	if b.p.itemBase.ID.IsNil() {
-		return nil, errors.New("invalid ID itemBase.ID ")
+		return nil, id.ErrInvalidID
 	}
 	if b.p.itemBase.SchemaGroup == "" {
-		return nil, errors.New("invalid ID itemBase.SchemaGroup ")
+		return nil, id.ErrInvalidID
 	}
 	return b.p, nil
 }
@@ -38,8 +33,7 @@ func (b *GroupBuilder) Build() (*Group, error) {
 func (b *GroupBuilder) MustBuild() *Group {
 	p, err := b.Build()
 	if err != nil {
-		fmt.Println(err.Error())
-		// panic(err)
+		panic(err)
 	}
 	return p
 }

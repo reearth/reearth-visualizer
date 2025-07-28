@@ -730,7 +730,7 @@ func TestPluginIDsFrom(t *testing.T) {
 				"Test",
 			},
 			expected: nil,
-			// err:      ErrInvalidID,
+			err:      ErrInvalidID,
 		},
 	}
 
@@ -745,7 +745,7 @@ func TestPluginIDsFrom(t *testing.T) {
 				assert.Equal(t, tt.err, err)
 			} else {
 				assert.Equal(t, tt.expected, res)
-				// assert.Nil(t, err)
+				assert.Nil(t, err)
 			}
 		})
 	}

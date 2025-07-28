@@ -97,7 +97,7 @@ func TestBuilder_Build(t *testing.T) {
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			// err: id.ErrInvalidID,
+			err: id.ErrInvalidID,
 		},
 	}
 
@@ -116,7 +116,7 @@ func TestBuilder_Build(t *testing.T) {
 				Build()
 			if tt.err == nil {
 				assert.Equal(t, tt.expected, res)
-				// assert.Nil(t, err)
+				assert.Nil(t, err)
 			} else {
 				assert.Nil(t, res)
 				assert.Equal(t, tt.err, err)
@@ -213,7 +213,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			// err: id.ErrInvalidID,
+			err: id.ErrInvalidID,
 		},
 	}
 
@@ -238,7 +238,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			if tt.err != nil {
 				assert.PanicsWithValue(t, tt.err, func() { _ = build() })
 			} else {
-				// assert.Equal(t, tt.expected, build())
+				assert.Equal(t, tt.expected, build())
 			}
 		})
 	}

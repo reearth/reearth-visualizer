@@ -49,7 +49,7 @@ func TestGroupListBuilder_Build(t *testing.T) {
 		},
 		{
 			Name: "fail invalid id",
-			// Err:  id.ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 	}
 
@@ -118,7 +118,7 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 		},
 		{
 			Name: "fail invalid id",
-			// Err:  id.ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 	}
 
@@ -139,7 +139,7 @@ func TestGroupListBuilder_MustBuild(t *testing.T) {
 			if tc.Err != nil {
 				assert.PanicsWithValue(t, tc.Err, func() { _ = build() })
 			} else {
-				// assert.Equal(t, tc.Expected, build())
+				assert.Equal(t, tc.Expected, build())
 			}
 		})
 	}

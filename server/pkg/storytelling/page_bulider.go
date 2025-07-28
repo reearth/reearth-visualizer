@@ -1,10 +1,6 @@
 package storytelling
 
-import (
-	"errors"
-
-	"github.com/reearth/reearth/server/pkg/id"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type PageBuilder struct {
 	page *Page
@@ -16,7 +12,7 @@ func NewPage() *PageBuilder {
 
 func (b *PageBuilder) Build() (*Page, error) {
 	if b.page.id.IsEmpty() {
-		return nil, errors.New("invalid ID PageBuilder")
+		return nil, id.ErrInvalidID
 	}
 	return b.page, nil
 }

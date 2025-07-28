@@ -32,7 +32,7 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "fail: invalid id",
-			// Err:  id.ErrInvalidID,
+			Err:  id.ErrInvalidID,
 		},
 		{
 			Name:   "success",

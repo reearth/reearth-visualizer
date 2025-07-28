@@ -154,7 +154,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID: id.PropertyID{},
 			},
-			// Err: id.ErrInvalidID,
+			Err: id.ErrInvalidID,
 		},
 		{
 			Name: "fail invalid scene",
@@ -184,7 +184,7 @@ func TestBuilder_Build(t *testing.T) {
 				Schema(tt.Args.Schema).
 				Build()
 			if tt.Err == nil {
-				// assert.Nil(t, err)
+				assert.Nil(t, err)
 				assert.Equal(t, tt.Expected, res)
 			} else {
 				assert.Nil(t, res)

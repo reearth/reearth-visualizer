@@ -1,7 +1,6 @@
 package project
 
 import (
-	"errors"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
@@ -18,7 +17,7 @@ func NewProjectMetadata() *MetadataBuilder {
 
 func (b *MetadataBuilder) Build() (*ProjectMetadata, error) {
 	if b.r.id.IsNil() {
-		return nil, errors.New("invalid ID MetadataBuilder.ID ")
+		return nil, id.ErrInvalidID
 	}
 	if b.r.updatedAt == nil || b.r.updatedAt.IsZero() {
 		b.r.updatedAt = b.r.UpdatedAt()

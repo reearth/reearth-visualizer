@@ -68,8 +68,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}}, //  err: ErrInvalidID
-
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 		{
 			name:  "fail 2",
@@ -77,8 +76,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}}, //  err: ErrInvalidID
-
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 		{
 			name:  "fail 3",
@@ -86,8 +84,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}}, // err: ErrInvalidID
-
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 		{
 			name:  "fail 4",
@@ -95,8 +92,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}}, //  err: ErrInvalidID
-
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 	}
 
@@ -110,7 +106,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 				assert.Equal(t, tt.expected.err, err)
 			} else {
 				assert.Equal(t, tt.expected.result, result)
-				// assert.Nil(t, err)
+				assert.Nil(t, err)
 			}
 		})
 	}
@@ -145,8 +141,7 @@ func TestMustPropertySchemaID(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}}, //  err: ErrInvalidID
-
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 		{
 			name:  "fail:invalid name",
@@ -154,8 +149,7 @@ func TestMustPropertySchemaID(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}}, // err: ErrInvalidID
-
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 		{
 			name:  "fail:invalid name",
@@ -163,8 +157,7 @@ func TestMustPropertySchemaID(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}}, // err: ErrInvalidID
-
+			}{result: PropertySchemaID{}, err: ErrInvalidID},
 		},
 	}
 
@@ -408,7 +401,7 @@ func TestPropertySchemaIDsFrom(t *testing.T) {
 				"Test~1.0.1/test",
 				"Test~1.0.2",
 			},
-			// err: ErrInvalidID,
+			err: ErrInvalidID,
 		},
 	}
 
@@ -423,7 +416,7 @@ func TestPropertySchemaIDsFrom(t *testing.T) {
 				assert.Equal(t, tt.err, err)
 			} else {
 				assert.Equal(t, tt.expected, res)
-				// assert.Nil(t, err)
+				assert.Nil(t, err)
 			}
 		})
 	}
