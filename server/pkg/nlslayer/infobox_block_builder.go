@@ -1,10 +1,6 @@
 package nlslayer
 
-import (
-	"errors"
-
-	"github.com/reearth/reearth/server/pkg/id"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type InfoboxBlockBuilder struct {
 	i *InfoboxBlock
@@ -16,7 +12,7 @@ func NewInfoboxBlock() *InfoboxBlockBuilder {
 
 func (b *InfoboxBlockBuilder) Build() (*InfoboxBlock, error) {
 	if b.i.id.IsNil() || b.i.property.IsNil() {
-		return nil, errors.New("invalid ID InfoboxBlockBuilder ")
+		return nil, id.ErrInvalidID
 	}
 	return b.i, nil
 }

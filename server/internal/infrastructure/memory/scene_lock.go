@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"errors"
 	"sync"
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -20,7 +19,7 @@ func NewSceneLock() repo.SceneLock {
 
 func (r *sceneLock) GetLock(ctx context.Context, sceneID id.SceneID) (scene.LockMode, error) {
 	if sceneID.IsNil() {
-		return "", errors.New("invalid ID memory SceneLock ")
+		return "", id.ErrInvalidID
 	}
 	if v, ok := r.lock.Load(sceneID); ok {
 		if v2, ok2 := v.(scene.LockMode); ok2 {
@@ -34,7 +33,7 @@ func (r *sceneLock) GetAllLock(ctx context.Context, sceneID id.SceneIDList) ([]s
 	res := make([]scene.LockMode, 0, len(sceneID))
 	for _, si := range sceneID {
 		if si.IsNil() {
-			return nil, errors.New("invalid ID memory SceneLock ")
+			return nil, id.ErrInvalidID
 		}
 		if v, ok := r.lock.Load(si); ok {
 			if v2, ok2 := v.(scene.LockMode); ok2 {

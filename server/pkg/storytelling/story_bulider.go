@@ -1,7 +1,6 @@
 package storytelling
 
 import (
-	"errors"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/alias"
@@ -18,7 +17,7 @@ func NewStory() *StoryBuilder {
 
 func (b *StoryBuilder) Build() (*Story, error) {
 	if b.s.id.IsNil() {
-		return nil, errors.New("invalid ID StoryBuilder")
+		return nil, id.ErrInvalidID
 	}
 	if b.s.alias == "" {
 		b.s.alias = alias.ReservedReearthPrefixStory + b.s.id.String()

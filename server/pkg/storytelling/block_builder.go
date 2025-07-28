@@ -1,10 +1,6 @@
 package storytelling
 
-import (
-	"errors"
-
-	"github.com/reearth/reearth/server/pkg/id"
-)
+import "github.com/reearth/reearth/server/pkg/id"
 
 type BlockBuilder struct {
 	block *Block
@@ -16,7 +12,7 @@ func NewBlock() *BlockBuilder {
 
 func (b *BlockBuilder) Build() (*Block, error) {
 	if b.block.id.IsNil() || string(b.block.extension) == "" || b.block.property.IsNil() || b.block.plugin.IsNil() {
-		return nil, errors.New("invalid ID BlockBuilder")
+		return nil, id.ErrInvalidID
 	}
 	return b.block, nil
 }

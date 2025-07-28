@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
@@ -20,7 +19,7 @@ func NewExtension() *ExtensionBuilder {
 
 func (b *ExtensionBuilder) Build() (*Extension, error) {
 	if string(b.p.id) == "" {
-		return nil, errors.New("invalid ID ExtensionBuilder.id ")
+		return nil, id.ErrInvalidID
 	}
 	if !b.s {
 		if b.p.extensionType == ExtensionTypeVisualizer || b.p.extensionType == ExtensionTypeInfobox {
@@ -33,8 +32,7 @@ func (b *ExtensionBuilder) Build() (*Extension, error) {
 func (b *ExtensionBuilder) MustBuild() *Extension {
 	p, err := b.Build()
 	if err != nil {
-		// panic(err)
-		fmt.Println(err.Error())
+		panic(err)
 	}
 	return p
 }

@@ -1,8 +1,6 @@
 package id
 
 import (
-	"errors"
-	"fmt"
 	"regexp"
 	"strings"
 )
@@ -26,11 +24,11 @@ func NewPropertySchemaID(p PluginID, name string) PropertySchemaID {
 func PropertySchemaIDFrom(id string) (PropertySchemaID, error) {
 	ids := strings.SplitN(id, "/", 2)
 	if len(ids) < 2 || !propertySchemaIDRe.MatchString(ids[len(ids)-1]) {
-		return PropertySchemaID{}, errors.New("invalid ID PropertySchema.ID ")
+		return PropertySchemaID{}, ErrInvalidID
 	}
 	pid, err := PluginIDFrom(ids[0])
 	if err != nil {
-		return PropertySchemaID{}, errors.New("invalid ID PropertySchema.ID ")
+		return PropertySchemaID{}, ErrInvalidID
 	}
 	return PropertySchemaID{plugin: pid, id: ids[1]}, nil
 }
@@ -51,8 +49,7 @@ func PropertySchemaIDFromRef(id *string) *PropertySchemaID {
 func MustPropertySchemaID(id string) PropertySchemaID {
 	did, err := PropertySchemaIDFrom(id)
 	if err != nil {
-		// panic(err)
-		fmt.Println(err.Error())
+		panic(err)
 	}
 	return did
 }

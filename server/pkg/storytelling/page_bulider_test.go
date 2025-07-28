@@ -12,9 +12,9 @@ func TestPageBuilder(t *testing.T) {
 	b := NewPage()
 	assert.Equal(t, &PageBuilder{page: &Page{}}, b)
 
-	// assert.PanicsWithError(t, id.ErrInvalidID.Error(), func() {
-	// 	b.MustBuild()
-	// })
+	assert.PanicsWithError(t, id.ErrInvalidID.Error(), func() {
+		b.MustBuild()
+	})
 
 	b = b.NewID()
 	assert.False(t, b.page.id.IsEmpty())

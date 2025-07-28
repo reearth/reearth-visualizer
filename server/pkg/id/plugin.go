@@ -1,7 +1,6 @@
 package id
 
 import (
-	"errors"
 	"regexp"
 	"strings"
 
@@ -40,11 +39,11 @@ func NewPluginID(name string, version string, scene *SceneID) (PluginID, error) 
 	}
 
 	if !validatePluginName(name) {
-		return PluginID{}, errors.New("invalid ID Plugin.ID ")
+		return PluginID{}, ErrInvalidID
 	}
 
 	if _, err := semver.Parse(version); err != nil {
-		return PluginID{}, errors.New("invalid ID Plugin.ID ")
+		return PluginID{}, ErrInvalidID
 	}
 
 	return PluginID{
@@ -72,13 +71,13 @@ func PluginIDFrom(id string) (PluginID, error) {
 	case 3:
 		sceneID2, err := SceneIDFrom(ids[0])
 		if err != nil {
-			return PluginID{}, errors.New("invalid ID PluginID ")
+			return PluginID{}, ErrInvalidID
 		}
 		sceneID = &sceneID2
 		name = ids[1]
 		version = ids[2]
 	default:
-		return PluginID{}, errors.New("invalid ID PluginID ")
+		return PluginID{}, ErrInvalidID
 	}
 
 	return NewPluginID(name, version, sceneID)
