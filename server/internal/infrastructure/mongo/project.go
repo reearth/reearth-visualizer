@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"regexp"
@@ -72,9 +73,19 @@ func (r *Project) FindByScene(ctx context.Context, id id.SceneID) (*project.Proj
 	if !r.s.CanRead(id) {
 		return nil, nil
 	}
-	return r.findOne(ctx, bson.M{
+
+	prj, err := r.findOne(ctx, bson.M{
 		"scene": id.String(),
 	}, true)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
 }
 
 func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
@@ -508,6 +519,7 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 }
 
 func (r *Project) FindByProjectAlias(ctx context.Context, alias string) (*project.Project, error) {
+
 	prj, err := r.findOne(ctx, bson.M{
 		"projectalias": alias,
 	}, true)
@@ -707,6 +719,14 @@ func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bo
 	c := mongodoc.NewProjectConsumer(f)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
+	}
+	if len(c.Result) == 0 {
+		if b, err := json.MarshalIndent(filter, "", "  "); err == nil {
+			log.Println("Empty result for filter:\n", string(b))
+		} else {
+			log.Println("Empty result; failed to marshal filter:", err)
+		}
+		return nil, mongo.ErrNoDocuments
 	}
 	return c.Result[0], nil
 }
