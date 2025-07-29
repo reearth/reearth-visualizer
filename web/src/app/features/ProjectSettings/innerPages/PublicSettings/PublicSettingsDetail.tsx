@@ -17,7 +17,7 @@ import {
 } from "@reearth/services/state";
 import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { SettingsFields, SettingsWrapper, TitleWrapper } from "../common";
 
@@ -55,7 +55,7 @@ type ExtensionComponentProps = (
   typename: string;
 };
 
-const PublicSettingsDetail: React.FC<Props> = ({
+const PublicSettingsDetail: FC<Props> = ({
   settingsItem,
   sceneId,
   isStory,
@@ -273,7 +273,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 {...(settingsItem.type === "project"
                   ? {
                       projectId: settingsItem.id,
-                      projectAlias: settingsItem.alias
+                      projectAlias: "scene" in settingsItem ? settingsItem.scene?.alias : undefined
                     }
                   : {
                       storyId: settingsItem.id,

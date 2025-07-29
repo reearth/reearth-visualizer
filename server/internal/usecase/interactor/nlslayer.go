@@ -15,6 +15,7 @@ import (
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -26,8 +27,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 )
 
 var (
@@ -458,6 +461,30 @@ func (i *NLSLayer) CreateNLSPhotoOverlay(ctx context.Context, lid id.NLSLayerID,
 	if err != nil {
 		return nil, err
 	}
+
+	prop, err := i.propertyRepo.FindByID(ctx, property.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	DefaultSchemaGroup := idx.StringIDFromRef[id.PropertySchemaGroup](lo.ToPtr("default"))
+	EnabledField := idx.StringIDFromRef[id.PropertyField](lo.ToPtr("enabled"))
+	BoolTrue := gqlmodel.FromPropertyValueAndType(true, gqlmodel.ValueTypeBool)
+	CameraDurationField := idx.StringIDFromRef[id.PropertyField](lo.ToPtr("cameraDuration"))
+	NumberOne := gqlmodel.FromPropertyValueAndType(1, gqlmodel.ValueTypeNumber)
+	_, _, _, err = prop.UpdateValue(schema, gqlmodel.FromPointer(DefaultSchemaGroup, nil, EnabledField), BoolTrue)
+	if err != nil {
+		return nil, err
+	}
+	_, _, _, err = prop.UpdateValue(schema, gqlmodel.FromPointer(DefaultSchemaGroup, nil, CameraDurationField), NumberOne)
+	if err != nil {
+		return nil, err
+	}
+	err = i.propertyRepo.Save(ctx, prop)
+	if err != nil {
+		return nil, err
+	}
+
 	err = i.nlslayerRepo.Save(ctx, l)
 	if err != nil {
 		return nil, err

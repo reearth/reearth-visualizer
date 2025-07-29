@@ -109,7 +109,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 		}.Wrap(),
 	})
 	assert.Nil(t, err)
-	assert.Equal(t, len(as), 4)
+	assert.Equal(t, len(as), 5)
 
 	res = getAssets(e, workspaceId, nil)
 	assets := res.Path("$.data.assets.nodes").Array().Iter()
@@ -166,7 +166,7 @@ func TestAssociateProjectGetAssets(t *testing.T) {
 	// Get none project(Workspace) >>> test.png, test.csv
 	res = getAssets(e, workspaceId, nil)
 	assets = res.Path("$.data.assets.nodes").Array()
-	assets.Length().IsEqual(3)
+	assets.Length().IsEqual(4)
 	assets.Value(0).Object().HasValue("name", "test.csv")
 	assets.Value(1).Object().HasValue("name", "test.png")
 
@@ -193,7 +193,7 @@ func TestAssociateProjectGetAssets(t *testing.T) {
 
 	res = getAssets(e, workspaceId, nil)
 	assets = res.Path("$.data.assets.nodes").Array()
-	assets.Length().IsEqual(1)
+	assets.Length().IsEqual(2)
 }
 
 const CreateAssetMutation = `mutation CreateAsset($workspaceId: ID!, $projectId: ID, $file: Upload!, $coreSupport: Boolean!) {

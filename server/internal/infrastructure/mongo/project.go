@@ -56,7 +56,7 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
 	prj, err := r.findOne(ctx, bson.M{
 		"id": id.String(),
-	}, true)
+	}, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -72,9 +72,19 @@ func (r *Project) FindByScene(ctx context.Context, id id.SceneID) (*project.Proj
 	if !r.s.CanRead(id) {
 		return nil, nil
 	}
-	return r.findOne(ctx, bson.M{
+
+	prj, err := r.findOne(ctx, bson.M{
 		"scene": id.String(),
-	}, true)
+	}, false)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
 }
 
 func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
@@ -190,8 +200,8 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 			"workspace": bson.M{
 				"$in": memberWorkspaces,
 			},
-			"deleted": false,
-			// "visibility": "public",
+			"deleted":    false,
+			"visibility": "public",
 		})
 	}
 
@@ -353,8 +363,7 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 		}
 	}()
 
-	consumer := mongodoc.NewProjectConsumer(r.f.Readable)
-
+	consumer := mongodoc.NewProjectConsumer(nil)
 	for cursor.Next(ctx) {
 		raw := cursor.Current
 		if err := consumer.Consume(raw); err != nil {
@@ -479,7 +488,7 @@ func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project
 	prj, err := r.findOne(ctx, bson.M{
 		"id":      id.String(),
 		"deleted": false,
-	}, true)
+	}, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -495,7 +504,7 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	prj, err := r.findOne(ctx, bson.M{
 		"alias":   alias,
 		"deleted": false,
-	}, true)
+	}, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -508,9 +517,10 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 }
 
 func (r *Project) FindByProjectAlias(ctx context.Context, alias string) (*project.Project, error) {
+
 	prj, err := r.findOne(ctx, bson.M{
 		"projectalias": alias,
-	}, true)
+	}, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {

@@ -1,7 +1,7 @@
 import {
-  license_content,
-  license_options
-} from "@reearth/app/features/ProjectSettings/innerPages/LicenseSettings/content";
+  visualizerProjectLicensesOptions,
+  licenseContent
+} from "@reearth/app/lib/license";
 import {
   Button,
   Modal,
@@ -43,7 +43,7 @@ type FormState = {
 };
 
 const getLicenseContent = (value?: string): string | undefined => {
-  return license_content[value as keyof typeof license_content];
+  return licenseContent[value as keyof typeof licenseContent];
 };
 
 const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
@@ -210,7 +210,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 value={formState.license}
                 onChange={(value) => handleOnChange("license", value as string)}
                 data-testid="project-creator-project-license-input"
-                options={license_options.map((license) => ({
+                options={visualizerProjectLicensesOptions.map((license) => ({
                   value: license.value,
                   label: license.label
                 }))}
