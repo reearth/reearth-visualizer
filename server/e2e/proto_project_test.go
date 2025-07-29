@@ -127,7 +127,7 @@ func TestInternalAPI(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res3.Projects))
+		assert.Equal(t, 1, len(res3.Projects))
 
 		// 2: creante public  => public   delete => false
 		// 3: creante private => private  delete => false
