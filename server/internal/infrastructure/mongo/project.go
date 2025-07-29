@@ -200,8 +200,8 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 			"workspace": bson.M{
 				"$in": memberWorkspaces,
 			},
-			"deleted": false,
-			// "visibility": "public",
+			"deleted":    false,
+			"visibility": "public",
 		})
 	}
 
@@ -363,8 +363,7 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 		}
 	}()
 
-	consumer := mongodoc.NewProjectConsumer(r.f.Readable)
-
+	consumer := mongodoc.NewProjectConsumer(nil)
 	for cursor.Next(ctx) {
 		raw := cursor.Current
 		if err := consumer.Consume(raw); err != nil {
