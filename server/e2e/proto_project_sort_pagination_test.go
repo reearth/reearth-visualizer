@@ -25,91 +25,135 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 
 	testDataCount := 20
-	testWorkspace := wID2.String()
+	testWorkspace2 := wID2.String()
 	limit := 5
 
+	// user2 call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
 
 		// ASC UpdateAt
-		checkGetProjectsASC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_UPDATEDAT,
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// ASC Name
-		checkGetProjectsASC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_NAME,
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// DESC UpdateAt
-		checkGetProjectsDESC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_UPDATEDAT,
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// DESC Name
-		checkGetProjectsDESC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_NAME,
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// keyword search
 		keyword := "2"
-		checkGetProjectsASCWithKeyword(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsASCWithKeyword(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_UPDATEDAT,
 				Direction: pb.SortDirection_ASC,
 			},
 			&keyword,
 			limit,
-			22,
+			26,
 		)
 
 	})
+
+	// user1 call api
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		// ASC UpdateAt
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount, // public and not deleted only
+		)
+
+		// ASC Name
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount, // public and not deleted only
+		)
+
+		// DESC UpdateAt
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount, // public and not deleted only
+		)
+
+		// DESC Name
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount, // public and not deleted only
+		)
+
+		// keyword search
+		keyword := "2"
+		checkGetProjectsASCWithKeyword(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			&keyword,
+			limit,
+			20,
+		)
+
+	})
+
 }
 
 func checkGetProjectsASC(
@@ -125,7 +169,13 @@ func checkGetProjectsASC(
 	var endCursor *string
 	limit_int32 := int32(limit)
 
-	for i := 0; i < testDataCount/limit; i++ {
+	loop := testDataCount / limit
+	if testDataCount%limit != 0 {
+		loop++
+	}
+	// fmt.Println("============== loop:", loop, " testDataCount:", testDataCount, " limit:", limit)
+
+	for i := 0; i < loop; i++ {
 
 		var pagination *pb.Pagination
 		if i == 0 {
@@ -154,14 +204,14 @@ func checkGetProjectsASC(
 		// }
 		// PbDump(res.PageInfo)
 
-		if i < testDataCount/limit-1 {
-			assert.Equal(t, limit, len(res.Projects))
-			assert.Equal(t, true, res.PageInfo.HasNextPage)
+		if i == loop {
+			// last loop
+			assert.Equal(t, false, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 			endCursor = res.PageInfo.EndCursor
 		} else {
-			// last loop
-			assert.Equal(t, false, res.PageInfo.HasNextPage)
+			assert.Equal(t, limit, len(res.Projects))
+			assert.Equal(t, true, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 		}
 	}
@@ -182,7 +232,13 @@ func checkGetProjectsASCWithKeyword(
 	var endCursor *string
 	limit_int32 := int32(limit)
 
-	for i := 0; i < testDataCount/limit; i++ {
+	loop := testDataCount / limit
+	if testDataCount%limit != 0 {
+		loop++
+	}
+	// fmt.Println("============== loop:", loop, " testDataCount:", testDataCount, " limit:", limit)
+
+	for i := 0; i < loop; i++ {
 
 		var pagination *pb.Pagination
 		if i == 0 {
@@ -211,15 +267,16 @@ func checkGetProjectsASCWithKeyword(
 		// 	fmt.Println("==============", v.Id, v.Name)
 		// }
 		// PbDump(res.PageInfo)
+		// fmt.Println("============== i:", i, " HasNextPage:", res.PageInfo.HasNextPage, " HasPreviousPage:", res.PageInfo.HasPreviousPage)
 
-		if i < testDataCount/limit {
-			assert.Equal(t, limit, len(res.Projects))
-			assert.Equal(t, true, res.PageInfo.HasNextPage)
+		if i == loop {
+			// last loop
+			assert.Equal(t, false, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 			endCursor = res.PageInfo.EndCursor
 		} else {
-			// last loop
-			assert.Equal(t, false, res.PageInfo.HasNextPage)
+			assert.Equal(t, limit, len(res.Projects))
+			assert.Equal(t, true, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 		}
 	}
@@ -239,7 +296,14 @@ func checkGetProjectsDESC(
 	var startCursor *string
 	limit_int32 := int32(limit)
 
-	for i := 0; i < testDataCount/limit; i++ {
+	loop := testDataCount / limit
+	if testDataCount%limit != 0 {
+		loop++
+	}
+
+	// fmt.Println("============== loop:", loop, " testDataCount:", testDataCount, " limit:", limit)
+
+	for i := 0; i < loop; i++ {
 
 		var pagination *pb.Pagination
 		if i == 0 {
@@ -268,15 +332,15 @@ func checkGetProjectsDESC(
 		// }
 		// PbDump(res.PageInfo)
 
-		if i < testDataCount/limit-1 {
-			assert.Equal(t, limit, len(res.Projects))
-			assert.Equal(t, false, res.PageInfo.HasNextPage)
-			assert.Equal(t, true, res.PageInfo.HasPreviousPage)
-			startCursor = res.PageInfo.StartCursor
-		} else {
+		if i == loop {
 			// last loop
 			assert.Equal(t, false, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
+			startCursor = res.PageInfo.StartCursor
+		} else {
+			assert.Equal(t, limit, len(res.Projects))
+			assert.Equal(t, false, res.PageInfo.HasNextPage)
+			assert.Equal(t, true, res.PageInfo.HasPreviousPage)
 		}
 	}
 }
