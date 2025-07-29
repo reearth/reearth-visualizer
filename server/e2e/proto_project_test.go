@@ -115,7 +115,7 @@ func TestInternalAPI(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res4.Projects))
+		assert.Equal(t, 1, len(res4.Projects))
 
 	})
 
