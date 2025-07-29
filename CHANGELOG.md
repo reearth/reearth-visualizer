@@ -2,6 +2,164 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.8.0 - 2025-07-29
+
+### Web
+
+#### 🚀 Features
+
+- Support SaaS features for projects [VIZ-1970] ([#1711](https://github.com/reearth/reearth-visualizer/pull/1711)) [`a14f8a`](https://github.com/reearth/reearth-visualizer/commit/a14f8a)
+- Implement ui for visitor&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s branding page [VIZ-1965] ([#1710](https://github.com/reearth/reearth-visualizer/pull/1710)) [`5f346e`](https://github.com/reearth/reearth-visualizer/commit/5f346e)
+- Improve project settings&[#39](https://github.com/reearth/reearth-visualizer/pull/39); page ui ([#1700](https://github.com/reearth/reearth-visualizer/pull/1700)) [`0cfe00`](https://github.com/reearth/reearth-visualizer/commit/0cfe00)
+- Introduce app feature config ([#1699](https://github.com/reearth/reearth-visualizer/pull/1699)) [`7b1041`](https://github.com/reearth/reearth-visualizer/commit/7b1041)
+- Add env variable for SaaS mode and update members page &amp; drop down menu ([#1688](https://github.com/reearth/reearth-visualizer/pull/1688)) [`242615`](https://github.com/reearth/reearth-visualizer/commit/242615)
+- Add getCurrentLocation example in playground ([#1664](https://github.com/reearth/reearth-visualizer/pull/1664)) [`fef7b9`](https://github.com/reearth/reearth-visualizer/commit/fef7b9)
+- Add plugin api of getting current location ([#1662](https://github.com/reearth/reearth-visualizer/pull/1662)) [`9a1574`](https://github.com/reearth/reearth-visualizer/commit/9a1574)
+- Support height for 3d model [VIZ-1597] ([#1631](https://github.com/reearth/reearth-visualizer/pull/1631)) [`dec766`](https://github.com/reearth/reearth-visualizer/commit/dec766)
+- Initially hidden the two preset layers in playground ([#1615](https://github.com/reearth/reearth-visualizer/pull/1615)) [`f753c7`](https://github.com/reearth/reearth-visualizer/commit/f753c7)
+- Support close infobox with button [VIZ-1674] ([#1617](https://github.com/reearth/reearth-visualizer/pull/1617)) [`51796c`](https://github.com/reearth/reearth-visualizer/commit/51796c)
+- Update csv and 3d tiles example in playground ([#1597](https://github.com/reearth/reearth-visualizer/pull/1597)) [`98480b`](https://github.com/reearth/reearth-visualizer/commit/98480b)
+- Update geojson example in playground ([#1547](https://github.com/reearth/reearth-visualizer/pull/1547)) [`8b41d8`](https://github.com/reearth/reearth-visualizer/commit/8b41d8)
+- Add infobox example in playground ([#1608](https://github.com/reearth/reearth-visualizer/pull/1608)) [`686813`](https://github.com/reearth/reearth-visualizer/commit/686813)
+
+#### 🔧 Bug Fixes
+
+- Allow ignoring existing event callbacks in getEventCallback ([#1743](https://github.com/reearth/reearth-visualizer/pull/1743)) [`8cd40b`](https://github.com/reearth/reearth-visualizer/commit/8cd40b)
+- Missing project visibility in project convert ([#1732](https://github.com/reearth/reearth-visualizer/pull/1732)) [`e59e27`](https://github.com/reearth/reearth-visualizer/commit/e59e27)
+- Refactor read me translation ([#1729](https://github.com/reearth/reearth-visualizer/pull/1729)) [`0aebbf`](https://github.com/reearth/reearth-visualizer/commit/0aebbf)
+- Change camera height unit ([#1720](https://github.com/reearth/reearth-visualizer/pull/1720)) [`e53e94`](https://github.com/reearth/reearth-visualizer/commit/e53e94)
+- Missing logo color on header ([#1717](https://github.com/reearth/reearth-visualizer/pull/1717)) [`41059f`](https://github.com/reearth/reearth-visualizer/commit/41059f)
+- Plugin playground new file input lost focus unexpectly [VIZ-2016] ([#1713](https://github.com/reearth/reearth-visualizer/pull/1713)) [`f2a591`](https://github.com/reearth/reearth-visualizer/commit/f2a591)
+- Plugin API event off not working ([#1687](https://github.com/reearth/reearth-visualizer/pull/1687)) [`578ac3`](https://github.com/reearth/reearth-visualizer/commit/578ac3)
+- Revert &quot;refactor(web): upgrade to react 19&quot; ([#1679](https://github.com/reearth/reearth-visualizer/pull/1679)) [`316c97`](https://github.com/reearth/reearth-visualizer/commit/316c97)
+- Updating workspace name setting ([#1646](https://github.com/reearth/reearth-visualizer/pull/1646)) [`4d1d11`](https://github.com/reearth/reearth-visualizer/commit/4d1d11)
+
+#### ✨ Refactor
+
+- Enhance event callback management with fingerprint support ([#1745](https://github.com/reearth/reearth-visualizer/pull/1745)) [`343322`](https://github.com/reearth/reearth-visualizer/commit/343322)
+- Use scene alias on publish scene ([#1738](https://github.com/reearth/reearth-visualizer/pull/1738)) [`91bc0f`](https://github.com/reearth/reearth-visualizer/commit/91bc0f)
+- Update license list ([#1744](https://github.com/reearth/reearth-visualizer/pull/1744)) [`c32657`](https://github.com/reearth/reearth-visualizer/commit/c32657)
+- Remove externalAuth0Signup feature flag and related logic ([#1728](https://github.com/reearth/reearth-visualizer/pull/1728)) [`516983`](https://github.com/reearth/reearth-visualizer/commit/516983)
+- Migrate from react-ga to react-ga4 and remove unused GA files ([#1724](https://github.com/reearth/reearth-visualizer/pull/1724)) [`0dfa0b`](https://github.com/reearth/reearth-visualizer/commit/0dfa0b)
+- Show login only when use external signup flow ([#1723](https://github.com/reearth/reearth-visualizer/pull/1723)) [`598111`](https://github.com/reearth/reearth-visualizer/commit/598111)
+- Enable GA settings &amp; fix update settings from switcher ([#1722](https://github.com/reearth/reearth-visualizer/pull/1722)) [`a66a5a`](https://github.com/reearth/reearth-visualizer/commit/a66a5a)
+- External auth0 sign-up flow for ee ([#1716](https://github.com/reearth/reearth-visualizer/pull/1716)) [`43e798`](https://github.com/reearth/reearth-visualizer/commit/43e798)
+- Enhance configuration options ([#1696](https://github.com/reearth/reearth-visualizer/pull/1696)) [`8fa980`](https://github.com/reearth/reearth-visualizer/commit/8fa980)
+- Improve type safety and cleanup timeout handling in various hooks and components ([#1694](https://github.com/reearth/reearth-visualizer/pull/1694)) [`bc9e07`](https://github.com/reearth/reearth-visualizer/commit/bc9e07)
+- Upgrade to react 19 ([#1678](https://github.com/reearth/reearth-visualizer/pull/1678)) [`63a0fa`](https://github.com/reearth/reearth-visualizer/commit/63a0fa)
+- Init CLAUDE.md for web &amp; rename beta as app ([#1676](https://github.com/reearth/reearth-visualizer/pull/1676)) [`4bffc2`](https://github.com/reearth/reearth-visualizer/commit/4bffc2)
+- Add label to filter feature by style sample ([#1610](https://github.com/reearth/reearth-visualizer/pull/1610)) [`c202b1`](https://github.com/reearth/reearth-visualizer/commit/c202b1)
+- Improve import project [VIZ-1774] ([#1669](https://github.com/reearth/reearth-visualizer/pull/1669)) [`7ca72a`](https://github.com/reearth/reearth-visualizer/commit/7ca72a)
+- Builtin widget Data Attribution ([#1641](https://github.com/reearth/reearth-visualizer/pull/1641)) [`e8480e`](https://github.com/reearth/reearth-visualizer/commit/e8480e)
+- Hide GA settings on project [VIZ-1722] ([#1638](https://github.com/reearth/reearth-visualizer/pull/1638)) [`bfa84e`](https://github.com/reearth/reearth-visualizer/commit/bfa84e)
+- Improve buttons for alias setting [VIZ-1653] ([#1612](https://github.com/reearth/reearth-visualizer/pull/1612)) [`4e08d5`](https://github.com/reearth/reearth-visualizer/commit/4e08d5)
+- Remove asset page from dashboard ([#1606](https://github.com/reearth/reearth-visualizer/pull/1606)) [`7b979e`](https://github.com/reearth/reearth-visualizer/commit/7b979e)
+
+#### 🧪 Testing
+
+- Exvlude e2e test from the CI until we fix the issue with user account [`4dc429`](https://github.com/reearth/reearth-visualizer/commit/4dc429)
+- Move e2e tests from web project to separate e2e project ([#1693](https://github.com/reearth/reearth-visualizer/pull/1693)) [`6a6f10`](https://github.com/reearth/reearth-visualizer/commit/6a6f10)
+- Fix playwright config and login test ([#1677](https://github.com/reearth/reearth-visualizer/pull/1677)) [`b0b4ff`](https://github.com/reearth/reearth-visualizer/commit/b0b4ff)
+- Refactor component on FE ([#1672](https://github.com/reearth/reearth-visualizer/pull/1672)) [`61f093`](https://github.com/reearth/reearth-visualizer/commit/61f093)
+- Project test cases and data-testod ([#1665](https://github.com/reearth/reearth-visualizer/pull/1665)) [`6bb074`](https://github.com/reearth/reearth-visualizer/commit/6bb074)
+- Added data-testids and fix the failed tests ([#1609](https://github.com/reearth/reearth-visualizer/pull/1609)) [`aa3dea`](https://github.com/reearth/reearth-visualizer/commit/aa3dea)
+- Project tests fix ([#1605](https://github.com/reearth/reearth-visualizer/pull/1605)) [`a4ed25`](https://github.com/reearth/reearth-visualizer/commit/a4ed25)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.8.0 ([#1751](https://github.com/reearth/reearth-visualizer/pull/1751)) [`2f1f52`](https://github.com/reearth/reearth-visualizer/commit/2f1f52)
+- Remove Playwright E2E testing setup and related configurations ([#1695](https://github.com/reearth/reearth-visualizer/pull/1695)) [`877c1f`](https://github.com/reearth/reearth-visualizer/commit/877c1f)
+- Update @reearth&#x2F;core to version 0.0.7-alpha.39 ([#1689](https://github.com/reearth/reearth-visualizer/pull/1689)) [`053f9b`](https://github.com/reearth/reearth-visualizer/commit/053f9b)
+- Remove asset link [VIZ-1925] ([#1683](https://github.com/reearth/reearth-visualizer/pull/1683)) [`15a369`](https://github.com/reearth/reearth-visualizer/commit/15a369)
+- Update package version to 1.0.0-beta.7.0 ([#1648](https://github.com/reearth/reearth-visualizer/pull/1648)) [`131873`](https://github.com/reearth/reearth-visualizer/commit/131873)
+- Update core version to 0.0.7-alpha.37 ([#1639](https://github.com/reearth/reearth-visualizer/pull/1639)) [`83a292`](https://github.com/reearth/reearth-visualizer/commit/83a292)
+- Clean up ref url ([#1632](https://github.com/reearth/reearth-visualizer/pull/1632)) [`3a2a38`](https://github.com/reearth/reearth-visualizer/commit/3a2a38)
+
+### Server
+
+#### 🚀 Features
+
+- Set PhotoOverlay ([#1737](https://github.com/reearth/reearth-visualizer/pull/1737)) [`d49c9f`](https://github.com/reearth/reearth-visualizer/commit/d49c9f)
+- Project Data Maintenance ([#1739](https://github.com/reearth/reearth-visualizer/pull/1739)) [`6f5db7`](https://github.com/reearth/reearth-visualizer/commit/6f5db7)
+- Remove ErrInvalidID ([#1733](https://github.com/reearth/reearth-visualizer/pull/1733)) [`868e7b`](https://github.com/reearth/reearth-visualizer/commit/868e7b)
+- Set visibility public ([#1731](https://github.com/reearth/reearth-visualizer/pull/1731)) [`0b5134`](https://github.com/reearth/reearth-visualizer/commit/0b5134)
+- Modify alias validate [VIZ-2047] ([#1721](https://github.com/reearth/reearth-visualizer/pull/1721)) [`790645`](https://github.com/reearth/reearth-visualizer/commit/790645)
+- Validate project alias [VIZ-2047] ([#1718](https://github.com/reearth/reearth-visualizer/pull/1718)) [`afe870`](https://github.com/reearth/reearth-visualizer/commit/afe870)
+- Update internal api by projectalias [VIZ-2037] ([#1715](https://github.com/reearth/reearth-visualizer/pull/1715)) [`ec874c`](https://github.com/reearth/reearth-visualizer/commit/ec874c)
+- Add metadata for create project [VIZ-2026] ([#1708](https://github.com/reearth/reearth-visualizer/pull/1708)) [`27f2ee`](https://github.com/reearth/reearth-visualizer/commit/27f2ee)
+- Add projectAlias [VIZ-2025] ([#1705](https://github.com/reearth/reearth-visualizer/pull/1705)) [`3255cf`](https://github.com/reearth/reearth-visualizer/commit/3255cf)
+- Add projectid for story ([#1697](https://github.com/reearth/reearth-visualizer/pull/1697)) [`635302`](https://github.com/reearth/reearth-visualizer/commit/635302)
+- Enable to access internal api to get project data without auth ([#1698](https://github.com/reearth/reearth-visualizer/pull/1698)) [`1e7d9b`](https://github.com/reearth/reearth-visualizer/commit/1e7d9b)
+- Update intanal project api [VIZ-1962,VIZ-1961] ([#1691](https://github.com/reearth/reearth-visualizer/pull/1691)) [`2af027`](https://github.com/reearth/reearth-visualizer/commit/2af027)
+- Update project api alias [VIZ-1849] ([#1681](https://github.com/reearth/reearth-visualizer/pull/1681)) [`3de034`](https://github.com/reearth/reearth-visualizer/commit/3de034)
+- Add export project for internal [VIZ-1757] ([#1666](https://github.com/reearth/reearth-visualizer/pull/1666)) [`1b7672`](https://github.com/reearth/reearth-visualizer/commit/1b7672)
+- Add topics for metadata [VIZ-1758] ([#1660](https://github.com/reearth/reearth-visualizer/pull/1660)) [`9dbe77`](https://github.com/reearth/reearth-visualizer/commit/9dbe77)
+- Import bug fix ([#1673](https://github.com/reearth/reearth-visualizer/pull/1673)) [`f0cc8f`](https://github.com/reearth/reearth-visualizer/commit/f0cc8f)
+- Update project for internal [VIZ-1756] ([#1659](https://github.com/reearth/reearth-visualizer/pull/1659)) [`fa30d3`](https://github.com/reearth/reearth-visualizer/commit/fa30d3)
+- Add readme license api [VIZ-1656] ([#1658](https://github.com/reearth/reearth-visualizer/pull/1658)) [`e63c85`](https://github.com/reearth/reearth-visualizer/commit/e63c85)
+- Add ProjectImportStatus[VIZ-1641] ([#1640](https://github.com/reearth/reearth-visualizer/pull/1640)) [`f8654d`](https://github.com/reearth/reearth-visualizer/commit/f8654d)
+- Remove h2c for cloudrun grpc [VIZ-1734] ([#1649](https://github.com/reearth/reearth-visualizer/pull/1649)) [`1325e1`](https://github.com/reearth/reearth-visualizer/commit/1325e1)
+- Add healthcheck path ([#1611](https://github.com/reearth/reearth-visualizer/pull/1611)) [`7f5234`](https://github.com/reearth/reearth-visualizer/commit/7f5234)
+- Add visualizer internal api [VIZ-1517, VIZ-1604] ([#1574](https://github.com/reearth/reearth-visualizer/pull/1574)) [`7254d8`](https://github.com/reearth/reearth-visualizer/commit/7254d8)
+- Threading the file upload process [VIZ-1556] ([#1594](https://github.com/reearth/reearth-visualizer/pull/1594)) [`79c886`](https://github.com/reearth/reearth-visualizer/commit/79c886)
+
+#### 🔧 Bug Fixes
+
+- Fix filtering bug ([#1750](https://github.com/reearth/reearth-visualizer/pull/1750)) [`d44552`](https://github.com/reearth/reearth-visualizer/commit/d44552)
+- Revert &quot;feat(server): remove ErrInvalidID&quot; ([#1749](https://github.com/reearth/reearth-visualizer/pull/1749)) [`32b577`](https://github.com/reearth/reearth-visualizer/commit/32b577)
+- Cannot access a workspace ([#1748](https://github.com/reearth/reearth-visualizer/pull/1748)) [`cdf3dd`](https://github.com/reearth/reearth-visualizer/commit/cdf3dd)
+- Fix import error ([#1730](https://github.com/reearth/reearth-visualizer/pull/1730)) [`404179`](https://github.com/reearth/reearth-visualizer/commit/404179)
+- Copy team to workspace ([#1736](https://github.com/reearth/reearth-visualizer/pull/1736)) [`25170c`](https://github.com/reearth/reearth-visualizer/commit/25170c)
+- Migrate projectmetadata id ([#1735](https://github.com/reearth/reearth-visualizer/pull/1735)) [`8e7864`](https://github.com/reearth/reearth-visualizer/commit/8e7864)
+- Stories not filtered ([#1727](https://github.com/reearth/reearth-visualizer/pull/1727)) [`080710`](https://github.com/reearth/reearth-visualizer/commit/080710)
+- Save point change ([#1712](https://github.com/reearth/reearth-visualizer/pull/1712)) [`aa9c50`](https://github.com/reearth/reearth-visualizer/commit/aa9c50)
+- Internal api cesium value [VIZ-2027] ([#1706](https://github.com/reearth/reearth-visualizer/pull/1706)) [`16b898`](https://github.com/reearth/reearth-visualizer/commit/16b898)
+- Force attach host ([#1704](https://github.com/reearth/reearth-visualizer/pull/1704)) [`d4e9e1`](https://github.com/reearth/reearth-visualizer/commit/d4e9e1)
+- Enable to set offset on project pgFilter ([#1701](https://github.com/reearth/reearth-visualizer/pull/1701)) [`8e18d8`](https://github.com/reearth/reearth-visualizer/commit/8e18d8)
+- For project import [VIZ-1945] ([#1692](https://github.com/reearth/reearth-visualizer/pull/1692)) [`9c214d`](https://github.com/reearth/reearth-visualizer/commit/9c214d)
+- Save status from project to project metadata ([#1667](https://github.com/reearth/reearth-visualizer/pull/1667)) [`63f488`](https://github.com/reearth/reearth-visualizer/commit/63f488)
+
+#### ✨ Refactor
+
+- Getproject internalapi [VIZ-1819] ([#1668](https://github.com/reearth/reearth-visualizer/pull/1668)) [`096af6`](https://github.com/reearth/reearth-visualizer/commit/096af6)
+
+#### Miscellaneous Tasks
+
+- Added non valid project alias migration ([#1742](https://github.com/reearth/reearth-visualizer/pull/1742)) [`807005`](https://github.com/reearth/reearth-visualizer/commit/807005)
+- Team to workspace [VIZ-1997] ([#1719](https://github.com/reearth/reearth-visualizer/pull/1719)) [`a9e534`](https://github.com/reearth/reearth-visualizer/commit/a9e534)
+- Activated internal api [VIZ-1922] ([#1682](https://github.com/reearth/reearth-visualizer/pull/1682)) [`87e10b`](https://github.com/reearth/reearth-visualizer/commit/87e10b)
+- Update to latest reearthx [VIZ-1840] ([#1671](https://github.com/reearth/reearth-visualizer/pull/1671)) [`2a7d42`](https://github.com/reearth/reearth-visualizer/commit/2a7d42)
+- Publishment refactoring ([#1607](https://github.com/reearth/reearth-visualizer/pull/1607)) [`5c19ab`](https://github.com/reearth/reearth-visualizer/commit/5c19ab)
+- Delete junk data [VIZ-1396] ([#1527](https://github.com/reearth/reearth-visualizer/pull/1527)) [`964095`](https://github.com/reearth/reearth-visualizer/commit/964095)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update step-security&#x2F;changed-files action to v46 ([#1657](https://github.com/reearth/reearth-visualizer/pull/1657)) [`fa0e5c`](https://github.com/reearth/reearth-visualizer/commit/fa0e5c)
+- Update docker&#x2F;login-action action to v3 ([#1655](https://github.com/reearth/reearth-visualizer/pull/1655)) [`3bf751`](https://github.com/reearth/reearth-visualizer/commit/3bf751)
+- Update reearth&#x2F;actions digest to b63f7da ([#1624](https://github.com/reearth/reearth-visualizer/pull/1624)) [`2891c7`](https://github.com/reearth/reearth-visualizer/commit/2891c7)
+
+### migrate
+
+#### 🔧 Bug Fixes
+
+- Copy workspace to team ([#1734](https://github.com/reearth/reearth-visualizer/pull/1734)) [`acd78b`](https://github.com/reearth/reearth-visualizer/commit/acd78b)
+
+### migration
+
+
+### test,web
+
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update step-security&#x2F;changed-files action to v46 ([#1657](https://github.com/reearth/reearth-visualizer/pull/1657)) [`fa0e5c`](https://github.com/reearth/reearth-visualizer/commit/fa0e5c)
+- Update docker&#x2F;login-action action to v3 ([#1655](https://github.com/reearth/reearth-visualizer/pull/1655)) [`3bf751`](https://github.com/reearth/reearth-visualizer/commit/3bf751)
+- Update reearth&#x2F;actions digest to b63f7da ([#1624](https://github.com/reearth/reearth-visualizer/pull/1624)) [`2891c7`](https://github.com/reearth/reearth-visualizer/commit/2891c7)
+
 ## 1.0.0-beta.6.0 - 2025-05-13
 
 ### Web
