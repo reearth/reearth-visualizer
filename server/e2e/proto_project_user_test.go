@@ -69,12 +69,15 @@ func TestInternalAPI_private(t *testing.T) {
 
 		assert.Equal(t, "Test User1 Public Project3", res.Projects[0].Name)
 		assert.Equal(t, "public", res.Projects[0].Visibility)
+		assert.Equal(t, res.Projects[0].Id, res.Projects[0].Metadata.ProjectId)
 
 		assert.Equal(t, "Test User1 Private Project2", res.Projects[1].Name)
 		assert.Equal(t, "private", res.Projects[1].Visibility)
+		assert.Equal(t, res.Projects[1].Id, res.Projects[1].Metadata.ProjectId)
 
 		assert.Equal(t, "Test User1 Default Project1", res.Projects[2].Name)
 		assert.Equal(t, "private", res.Projects[2].Visibility)
+		assert.Equal(t, res.Projects[2].Id, res.Projects[2].Metadata.ProjectId)
 	})
 
 	// ------------------------------------------
@@ -128,12 +131,15 @@ func TestInternalAPI_private(t *testing.T) {
 
 		assert.Equal(t, "Test User2 Public Project3", res.Projects[0].Name)
 		assert.Equal(t, "public", res.Projects[0].Visibility)
+		assert.Equal(t, res.Projects[0].Id, res.Projects[0].Metadata.ProjectId)
 
 		assert.Equal(t, "Test User2 Private Project2", res.Projects[1].Name)
 		assert.Equal(t, "private", res.Projects[1].Visibility)
+		assert.Equal(t, res.Projects[1].Id, res.Projects[1].Metadata.ProjectId)
 
 		assert.Equal(t, "Test User2 Default Project1", res.Projects[2].Name)
 		assert.Equal(t, "private", res.Projects[2].Visibility)
+		assert.Equal(t, res.Projects[2].Id, res.Projects[2].Metadata.ProjectId)
 
 		// get User1 Workspace => list size 1 public only
 		res, err = client.GetProjectList(ctx, &pb.GetProjectListRequest{
@@ -146,6 +152,7 @@ func TestInternalAPI_private(t *testing.T) {
 
 		assert.Equal(t, "Test User1 Public Project3", res.Projects[0].Name)
 		assert.Equal(t, "public", res.Projects[0].Visibility)
+		assert.Equal(t, res.Projects[0].Id, res.Projects[0].Metadata.ProjectId)
 
 	})
 
@@ -164,6 +171,7 @@ func TestInternalAPI_private(t *testing.T) {
 
 		assert.Equal(t, "Test User2 Public Project3", res.Projects[0].Name)
 		assert.Equal(t, "public", res.Projects[0].Visibility)
+		assert.Equal(t, res.Projects[0].Id, res.Projects[0].Metadata.ProjectId)
 
 		res2, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
 			ProjectId: user1PublicProjectId.String(), // public delete
