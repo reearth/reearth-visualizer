@@ -11,9 +11,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/internalapi"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"google.golang.org/grpc"
@@ -143,23 +141,6 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 		g := cfg.Gateways
 		ar := cfg.AccountRepos
 		ag := cfg.AccountGateways
-
-		if op := adapter.Operator(ctx); op != nil {
-
-			ws := repo.WorkspaceFilterFromOperator(op)
-			sc := repo.SceneFilterFromOperator(op)
-
-			// apply filters to repos
-			r = r.Filtered(
-				ws,
-				sc,
-			)
-		}
-
-		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
-			// apply filters to repos
-			ar = ar.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
-		}
 
 		uc := interactor.NewContainer(r, g, ar, ag, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
