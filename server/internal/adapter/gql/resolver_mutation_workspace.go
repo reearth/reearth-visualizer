@@ -9,7 +9,7 @@ import (
 )
 
 func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error) {
-	res, err := usecases(ctx).Workspace.Create(ctx, input.Name, getUser(ctx).ID(), getAcOperator(ctx))
+	res, err := usecases(ctx).Workspace.Create(ctx, input.Name, getUser(ctx).ID(), input.Alias, getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (r *mutationResolver) UpdateWorkspace(ctx context.Context, input gqlmodel.U
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.Update(ctx, tid, input.Name, getAcOperator(ctx))
+	res, err := usecases(ctx).Workspace.Update(ctx, tid, input.Name, input.Alias, getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

@@ -13,6 +13,7 @@ require (
 	github.com/gavv/httpexpect/v2 v2.16.0
 	github.com/globusdigital/deep-copy v0.5.4
 	github.com/go-faker/faker/v4 v4.6.0
+	github.com/go-playground/validator/v10 v10.27.0
 	github.com/goccy/go-yaml v1.17.1
 	github.com/google/uuid v1.6.0
 	github.com/hellofresh/health-go/v5 v5.5.4
@@ -29,6 +30,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.17.0
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
+	github.com/reearth/reearthx v0.0.0-20250731060631-7ef9d9421c39
 	github.com/samber/lo v1.50.0
 	github.com/spf13/afero v1.14.0
 	github.com/square/mongo-lock v0.0.0-20230808145049-cfcf499f6bf0
@@ -53,11 +55,6 @@ require (
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gopkg.in/square/go-jose.v2 v2.6.0
-)
-
-require (
-	github.com/go-playground/validator/v10 v10.27.0
-	github.com/reearth/reearthx v0.0.0-20250711044138-418475ad1421
 )
 
 require (

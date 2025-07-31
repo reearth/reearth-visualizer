@@ -5,12 +5,12 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
-func ToWorkspace(t *workspace.Workspace) *Workspace {
-	if t == nil {
+func ToWorkspace(w *workspace.Workspace) *Workspace {
+	if w == nil {
 		return nil
 	}
 
-	memberMap := t.Members().Users()
+	memberMap := w.Members().Users()
 	members := make([]*WorkspaceMember, 0, len(memberMap))
 	for u, r := range memberMap {
 		members = append(members, &WorkspaceMember{
@@ -20,11 +20,12 @@ func ToWorkspace(t *workspace.Workspace) *Workspace {
 	}
 
 	return &Workspace{
-		ID:       IDFrom(t.ID()),
-		Name:     t.Name(),
-		Personal: t.IsPersonal(),
-		PolicyID: (*ID)(t.Policy()),
+		ID:       IDFrom(w.ID()),
+		Name:     w.Name(),
+		Personal: w.IsPersonal(),
+		PolicyID: (*ID)(w.Policy()),
 		Members:  members,
+		Alias:    w.Alias(),
 	}
 }
 
