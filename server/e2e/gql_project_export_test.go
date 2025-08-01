@@ -20,17 +20,31 @@ mutation ExportProject($projectId: ID!) {
 func TestProjectExport(t *testing.T) {
 	e := Server(t, fullSeeder)
 
-	requestBody := GraphQLRequest{
+	projectId, _, _ := createProjectSet(e)
+	updateProjectMetadata(e, uID, map[string]any{
+		"input": map[string]any{
+			"project": projectId,
+			"readme":  "readme test",
+			"license": "license test",
+			"topics":  "topics test",
+		},
+	})
+
+	projectDataPath := Request(e, uID.String(), GraphQLRequest{
 		OperationName: "ExportProject",
 		Query:         ExportProjectMutation,
 		Variables: map[string]any{
-			"projectId": pID.String(),
+			"projectId": projectId,
 		},
-	}
-
-	projectDataPath := Request(e, uID.String(), requestBody).
-		Path("$.data.exportProject.projectDataPath").String()
+	}).Path("$.data.exportProject.projectDataPath").String()
 
 	assert.NotNil(t, projectDataPath)
 
+	resp := e.GET(projectDataPath.Raw()).
+		Expect().
+		Status(200)
+
+	resp.Header("Content-Type").Contains("application/zip")
+	body := resp.Body().Raw()
+	assert.Greater(t, len(body), 0)
 }
