@@ -20,7 +20,7 @@ mutation ExportProject($projectId: ID!) {
 func TestProjectExport(t *testing.T) {
 	e := Server(t, fullSeeder)
 
-	projectId, _, _ := createProjectSet(e)
+	projectId, sceneId, _ := createProjectSet(e)
 	updateProjectMetadata(e, uID, map[string]any{
 		"input": map[string]any{
 			"project": projectId,
@@ -29,6 +29,9 @@ func TestProjectExport(t *testing.T) {
 			"topics":  "topics test",
 		},
 	})
+	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1)
+	// _, _, _, propertyId :=
+	createPhotoOverlay(e, layerId)
 
 	projectDataPath := Request(e, uID.String(), GraphQLRequest{
 		OperationName: "ExportProject",
