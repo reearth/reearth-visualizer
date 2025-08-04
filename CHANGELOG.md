@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.8.1 - 2025-08-04
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.8.1 ([#1756](https://github.com/reearth/reearth-visualizer/pull/1756)) [`4794d7`](https://github.com/reearth/reearth-visualizer/commit/4794d7)
+
+### Server
+
+#### 🚀 Features
+
+- Remove filtering for internal API ([#1754](https://github.com/reearth/reearth-visualizer/pull/1754)) [`7c4698`](https://github.com/reearth/reearth-visualizer/commit/7c4698)
+- Add workspace alias [VIZ-2081] ([#1753](https://github.com/reearth/reearth-visualizer/pull/1753)) [`608656`](https://github.com/reearth/reearth-visualizer/commit/608656)
+
+#### 🔧 Bug Fixes
+
+- Project metadata filtering error ([#1752](https://github.com/reearth/reearth-visualizer/pull/1752)) [`3cc88b`](https://github.com/reearth/reearth-visualizer/commit/3cc88b)
+
 ## 1.0.0-beta.8.0 - 2025-07-29
 
 ### Web
