@@ -1038,6 +1038,7 @@ type ComplexityRoot struct {
 	}
 
 	Workspace struct {
+		Alias                        func(childComplexity int) int
 		Assets                       func(childComplexity int, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		EnableToCreatePrivateProject func(childComplexity int) int
 		ID                           func(childComplexity int) int
@@ -6003,6 +6004,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.WidgetZone.Right(childComplexity), true
 
+	case "Workspace.alias":
+		if e.complexity.Workspace.Alias == nil {
+			break
+		}
+
+		return e.complexity.Workspace.Alias(childComplexity), true
+
 	case "Workspace.assets":
 		if e.complexity.Workspace.Assets == nil {
 			break
@@ -8038,6 +8046,7 @@ extend type Mutation {
     before: Cursor
   ): ProjectConnection!
   enableToCreatePrivateProject: Boolean!
+  alias: String!
 }
 
 type WorkspaceMember {
@@ -8074,11 +8083,13 @@ enum Role {
 
 input CreateWorkspaceInput {
   name: String!
+  alias: String
 }
 
 input UpdateWorkspaceInput {
   workspaceId: ID!
   name: String!
+  alias: String
 }
 
 input AddMemberToWorkspaceInput {
@@ -8134,11 +8145,15 @@ extend type Mutation {
   createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
   deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
   updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
-  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
+  addMemberToWorkspace(
+    input: AddMemberToWorkspaceInput!
+  ): AddMemberToWorkspacePayload
   removeMemberFromWorkspace(
     input: RemoveMemberFromWorkspaceInput!
   ): RemoveMemberFromWorkspacePayload
-  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
+  updateMemberOfWorkspace(
+    input: UpdateMemberOfWorkspaceInput!
+  ): UpdateMemberOfWorkspacePayload
 }
 `, BuiltIn: false},
 }
@@ -11664,6 +11679,8 @@ func (ec *executionContext) fieldContext_AddMemberToWorkspacePayload_workspace(_
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -12191,6 +12208,8 @@ func (ec *executionContext) fieldContext_Asset_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -13687,6 +13706,8 @@ func (ec *executionContext) fieldContext_CreateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -15904,6 +15925,8 @@ func (ec *executionContext) fieldContext_Me_workspaces(_ context.Context, field 
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -15965,6 +15988,8 @@ func (ec *executionContext) fieldContext_Me_myWorkspace(_ context.Context, field
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -26890,6 +26915,8 @@ func (ec *executionContext) fieldContext_Project_workspace(_ context.Context, fi
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -34426,6 +34453,8 @@ func (ec *executionContext) fieldContext_RemoveMemberFromWorkspacePayload_worksp
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -35609,6 +35638,8 @@ func (ec *executionContext) fieldContext_Scene_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -36788,6 +36819,8 @@ func (ec *executionContext) fieldContext_SignupPayload_workspace(_ context.Conte
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -40465,6 +40498,8 @@ func (ec *executionContext) fieldContext_UpdateMemberOfWorkspacePayload_workspac
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -40893,6 +40928,8 @@ func (ec *executionContext) fieldContext_UpdateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_projects(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_Workspace_enableToCreatePrivateProject(ctx, field)
+			case "alias":
+				return ec.fieldContext_Workspace_alias(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workspace", field.Name)
 		},
@@ -43130,6 +43167,50 @@ func (ec *executionContext) fieldContext_Workspace_enableToCreatePrivateProject(
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_alias(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_alias(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Alias, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_alias(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -46041,7 +46122,7 @@ func (ec *executionContext) unmarshalInputCreateWorkspaceInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name"}
+	fieldsInOrder := [...]string{"name", "alias"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -46055,6 +46136,13 @@ func (ec *executionContext) unmarshalInputCreateWorkspaceInput(ctx context.Conte
 				return it, err
 			}
 			it.Name = data
+		case "alias":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Alias = data
 		}
 	}
 
@@ -48478,7 +48566,7 @@ func (ec *executionContext) unmarshalInputUpdateWorkspaceInput(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"workspaceId", "name"}
+	fieldsInOrder := [...]string{"workspaceId", "name", "alias"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -48499,6 +48587,13 @@ func (ec *executionContext) unmarshalInputUpdateWorkspaceInput(ctx context.Conte
 				return it, err
 			}
 			it.Name = data
+		case "alias":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("alias"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Alias = data
 		}
 	}
 
@@ -58039,6 +58134,11 @@ func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "enableToCreatePrivateProject":
 			out.Values[i] = ec._Workspace_enableToCreatePrivateProject(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "alias":
+			out.Values[i] = ec._Workspace_alias(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

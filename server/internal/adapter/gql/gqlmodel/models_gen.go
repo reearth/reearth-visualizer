@@ -245,7 +245,8 @@ type CreateStoryPageInput struct {
 }
 
 type CreateWorkspaceInput struct {
-	Name string `json:"name"`
+	Name  string  `json:"name"`
+	Alias *string `json:"alias,omitempty"`
 }
 
 type CreateWorkspacePayload struct {
@@ -1374,8 +1375,9 @@ type UpdateWidgetPayload struct {
 }
 
 type UpdateWorkspaceInput struct {
-	WorkspaceID ID     `json:"workspaceId"`
-	Name        string `json:"name"`
+	WorkspaceID ID      `json:"workspaceId"`
+	Name        string  `json:"name"`
+	Alias       *string `json:"alias,omitempty"`
 }
 
 type UpdateWorkspacePayload struct {
@@ -1497,6 +1499,7 @@ type Workspace struct {
 	Assets                       *AssetConnection   `json:"assets"`
 	Projects                     *ProjectConnection `json:"projects"`
 	EnableToCreatePrivateProject bool               `json:"enableToCreatePrivateProject"`
+	Alias                        string             `json:"alias"`
 }
 
 func (Workspace) IsNode()        {}

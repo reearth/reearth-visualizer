@@ -20,6 +20,7 @@ type Workspace implements Node {
     before: Cursor
   ): ProjectConnection!
   enableToCreatePrivateProject: Boolean!
+  alias: String!
 }
 
 type WorkspaceMember {
@@ -56,11 +57,13 @@ enum Role {
 
 input CreateWorkspaceInput {
   name: String!
+  alias: String
 }
 
 input UpdateWorkspaceInput {
   workspaceId: ID!
   name: String!
+  alias: String
 }
 
 input AddMemberToWorkspaceInput {
@@ -116,9 +119,13 @@ extend type Mutation {
   createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
   deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
   updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
-  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
+  addMemberToWorkspace(
+    input: AddMemberToWorkspaceInput!
+  ): AddMemberToWorkspacePayload
   removeMemberFromWorkspace(
     input: RemoveMemberFromWorkspaceInput!
   ): RemoveMemberFromWorkspacePayload
-  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
+  updateMemberOfWorkspace(
+    input: UpdateMemberOfWorkspaceInput!
+  ): UpdateMemberOfWorkspacePayload
 }
