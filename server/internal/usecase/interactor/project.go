@@ -1120,27 +1120,6 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		}
 	}()
 
-	// ws, err := i.workspaceRepo.FindByID(txCtx, input.WorkspaceID)
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	// if policyID := operator.Policy(ws.Policy()); policyID != nil {
-	// 	p, err := i.policyRepo.FindByID(txCtx, *policyID)
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-
-	// 	projectCount, err := i.projectRepo.CountByWorkspace(txCtx, ws.ID())
-	// 	if err != nil {
-	// 		return nil, err
-	// 	}
-
-	// 	if err := p.EnforceProjectCount(projectCount + 1); err != nil {
-	// 		return nil, err
-	// 	}
-	// }
-
 	var prjID idx.ID[id.Project]
 	if input.ProjectID != nil {
 		prjID, err = id.ProjectIDFrom(*input.ProjectID)

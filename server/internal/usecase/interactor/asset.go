@@ -224,18 +224,6 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.W
 		return nil, nil, err
 	}
 
-	// enforce policy
-	// if p != nil {
-	// 	s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
-	// 	if err != nil {
-	// 		return nil, nil, err
-	// 	}
-	// 	if err := p.EnforceAssetStorageSize(s + size); err != nil {
-	// 		_ = i.gateways.File.RemoveAsset(ctx, u)
-	// 		return nil, nil, err
-	// 	}
-	// }
-
 	if i.gateways != nil && i.gateways.PolicyChecker != nil {
 		policyReq := gateway.PolicyCheckRequest{
 			WorkspaceID: ws.ID(),
