@@ -1004,6 +1004,19 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		return nil, err
 	}
 
+	var readme *string
+	if ret, ok := projectData["readme"].(string); ok {
+		readme = &ret
+	}
+	var license *string
+	if ret, ok := projectData["license"].(string); ok {
+		license = &ret
+	}
+	var topics *string
+	if ret, ok := projectData["topics"].(string); ok {
+		topics = &ret
+	}
+
 	result, err := i.createProject(ctx, createProjectInput{
 		WorkspaceID:  workspaceId,
 		ProjectID:    projectId,
@@ -1015,9 +1028,9 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		Alias:        &alias,
 		Archived:     &archived,
 		CoreSupport:  &coreSupport,
-		Readme:       nil,
-		License:      nil,
-		Topics:       nil,
+		Readme:       readme,
+		License:      license,
+		Topics:       topics,
 	}, op)
 	if err != nil {
 		return nil, err
