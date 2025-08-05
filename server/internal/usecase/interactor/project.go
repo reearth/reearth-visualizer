@@ -311,30 +311,25 @@ func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator, isImport bool) (_ *project.Project, err error) {
 
-	// Default to VisibilityPrivate if not specified
-	visibility := project.VisibilityPrivate
+	// Default to VisibilityPublic if not specified
+	visibility := project.VisibilityPublic
 	if input.Visibility != nil {
 		visibility = project.Visibility(*input.Visibility)
 	}
 
 	if i.policyChecker != nil {
 
-		if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
-			// If this is an import, try the opposite visibility as a fallback
-			if isImport {
-				switch visibility {
-				case project.VisibilityPrivate:
-					visibility = project.VisibilityPublic
-				case project.VisibilityPublic:
-					visibility = project.VisibilityPrivate
-				default:
-					return nil, err
-				}
-				// Retry policy check with the new visibility
-				if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
-					return nil, err
-				}
+		if isImport {
+			// Try checking if user can create private project
+			errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
+			if errPrivate == nil {
+				visibility = project.VisibilityPrivate
 			} else {
+				visibility = project.VisibilityPublic
+			}
+		} else {
+			// Not import: use given visibility
+			if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
 				return nil, err
 			}
 		}
