@@ -1,5 +1,48 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
+export const GET_WORKSPACES = gql(`
+  fragment Workspace on Workspace {
+    id
+    name
+    alias
+    members {
+      user {
+        id
+        name
+        email
+      }
+      userId
+      role
+    }
+    personal
+    policyId
+    policy {
+      id
+      name
+      projectCount
+      memberCount
+      publishedProjectCount
+      layerCount
+      assetStorageSize
+    }
+  }
+
+  query GetWorkspaces {
+    me {
+      id
+      name
+      myWorkspace {
+        id
+        ...Workspace
+      }
+      workspaces {
+        id
+        ...Workspace
+      }
+    }
+  }
+`);
+
 export const CREATE_WORKSPACE = gql(`
   mutation CreateWorkspace($name: String!) {
     createWorkspace(input: { name: $name }) {

@@ -40,7 +40,8 @@ export const Profile: FC<ProfileProp> = ({
   const theme = useTheme();
 
   const { workspaceManagementMenu } = useWorkspaceManagementMenu({
-    workspaceId: currentWorkspace?.id
+    workspaceId: currentWorkspace?.id,
+    workspaceAlias: currentWorkspace?.alias
   });
 
   const popupMenu: PopupMenuItem[] = useMemo(

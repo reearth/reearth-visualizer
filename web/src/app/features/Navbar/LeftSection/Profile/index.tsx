@@ -29,7 +29,8 @@ const HeaderProfile: React.FC<Props> = ({
   );
 
   const { workspaceManagementMenu } = useWorkspaceManagementMenu({
-    workspaceId: currentWorkspace?.id
+    workspaceId: currentWorkspace?.id,
+    workspaceAlias: currentWorkspace?.alias
   });
 
   const popupMenu: PopupMenuItem[] = useMemo(

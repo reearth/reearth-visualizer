@@ -32,7 +32,7 @@ export default () => {
 
   const useWorkspaceQuery = useCallback((workspaceId?: string) => {
     const { data, ...rest } = useQuery(GET_ME);
-    const workspace = data?.me?.workspaces.find((t) => t.id === workspaceId);
+    const workspace = data?.me?.workspaces.find((w) => w.id === workspaceId);
 
     return { workspace, ...rest };
   }, []);
@@ -40,7 +40,7 @@ export default () => {
   const useWorkspacesQuery = useCallback(() => {
     const { data, ...rest } = useQuery(GET_ME);
 
-    return { workspaces: data?.me?.workspaces, ...rest };
+    return { workspaces: data?.me?.workspaces, data, ...rest };
   }, []);
 
   const [createWorkspaceMutation] = useMutation(CREATE_WORKSPACE, {
