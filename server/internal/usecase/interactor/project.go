@@ -322,11 +322,12 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 		if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
 			// If this is an import, try the opposite visibility as a fallback
 			if isImport {
-				if visibility == project.VisibilityPrivate {
+				switch visibility {
+				case project.VisibilityPrivate:
 					visibility = project.VisibilityPublic
-				} else if visibility == project.VisibilityPublic {
+				case project.VisibilityPublic:
 					visibility = project.VisibilityPrivate
-				} else {
+				default:
 					return nil, err
 				}
 				// Retry policy check with the new visibility
