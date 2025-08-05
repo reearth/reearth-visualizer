@@ -214,7 +214,10 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		Readme:       req.Readme,
 		License:      req.License,
 		Topics:       req.Topics,
-	}, op)
+	},
+		op,
+		false, // isImport
+	)
 	if err != nil {
 		return nil, err
 	}

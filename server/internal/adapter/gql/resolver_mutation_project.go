@@ -37,7 +37,10 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		Readme:       input.Readme,
 		License:      input.License,
 		Topics:       input.Topics,
-	}, getOperator(ctx))
+	},
+		getOperator(ctx),
+		false, // isImport
+	)
 	if err != nil {
 		return nil, err
 	}
