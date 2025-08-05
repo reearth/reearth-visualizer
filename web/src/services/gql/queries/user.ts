@@ -21,6 +21,7 @@ export const GET_ME = gql(`
       myWorkspace {
         id
         name
+        alias
         policyId
         policy {
           id
@@ -36,6 +37,7 @@ export const GET_ME = gql(`
       workspaces {
         id
         name
+        alias
         personal
         members {
           user {
