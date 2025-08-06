@@ -573,10 +573,10 @@ func TestFindVisibilityProjects(t *testing.T) {
 		},
 	}
 
-	// default private
+	// default public
 	edges := Request(e, uID.String(), requestBody).
 		Path("$.data.projects.edges").Array()
-	edges.Value(1).Path("$.node.visibility").IsEqual("private")
+	edges.Value(1).Path("$.node.visibility").IsEqual("public")
 
 	// update public
 	updateVisibilityProject(e, project1ID)
