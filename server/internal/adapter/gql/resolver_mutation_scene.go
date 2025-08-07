@@ -37,9 +37,10 @@ func (r *mutationResolver) AddWidget(ctx context.Context, input gqlmodel.AddWidg
 	if err != nil {
 		return nil, err
 	}
-
+	// Type       scene.WidgetAlignSystemType
 	scene, widget, err := usecases(ctx).Scene.AddWidget(
 		ctx,
+		gqlmodel.FromWidgetAlignSystemType(input.Type),
 		sid,
 		pid,
 		id.PluginExtensionID(input.ExtensionID),
@@ -62,6 +63,7 @@ func (r *mutationResolver) UpdateWidget(ctx context.Context, input gqlmodel.Upda
 	}
 
 	scene, widget, err := usecases(ctx).Scene.UpdateWidget(ctx, interfaces.UpdateWidgetParam{
+		Type:     gqlmodel.FromWidgetAlignSystemType(input.Type),
 		SceneID:  sid,
 		WidgetID: wid,
 		Enabled:  input.Enabled,
@@ -85,7 +87,9 @@ func (r *mutationResolver) RemoveWidget(ctx context.Context, input gqlmodel.Remo
 		return nil, err
 	}
 
-	scene, err := usecases(ctx).Scene.RemoveWidget(ctx,
+	scene, err := usecases(ctx).Scene.RemoveWidget(
+		ctx,
+		gqlmodel.FromWidgetAlignSystemType(input.Type),
 		sid,
 		wid,
 		getOperator(ctx),
@@ -107,6 +111,7 @@ func (r *mutationResolver) UpdateWidgetAlignSystem(ctx context.Context, input gq
 	}
 
 	scene, err := usecases(ctx).Scene.UpdateWidgetAlignSystem(ctx, interfaces.UpdateWidgetAlignSystemParam{
+		Type:       gqlmodel.FromWidgetAlignSystemType(input.Type),
 		SceneID:    sid,
 		Location:   *gqlmodel.FromSceneWidgetLocation(input.Location),
 		Align:      gqlmodel.FromWidgetAlignType(input.Align),
