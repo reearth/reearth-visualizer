@@ -6,6 +6,7 @@ import (
 )
 
 type WidgetAlignSystemDocument struct {
+	Type  string
 	Inner *WidgetZoneDocument
 	Outer *WidgetZoneDocument
 }
@@ -34,20 +35,24 @@ type WidgetAreaPaddingDocument struct {
 	Top, Bottom, Left, Right int
 }
 
-func NewWidgetAlignSystem(was *scene.WidgetAlignSystem) *WidgetAlignSystemDocument {
+func NewWidgetAlignSystems(was []*scene.WidgetAlignSystem) []*WidgetAlignSystemDocument {
 	if was == nil {
 		return nil
 	}
 
-	d := &WidgetAlignSystemDocument{
-		Inner: NewWidgetZone(was.Zone(scene.WidgetZoneInner)),
-		Outer: NewWidgetZone(was.Zone(scene.WidgetZoneOuter)),
+	ret := make([]*WidgetAlignSystemDocument, 0, len(was))
+	for _, wa := range was {
+		d := &WidgetAlignSystemDocument{
+			Type:  string(wa.Type),
+			Inner: NewWidgetZone(wa.Zone(scene.WidgetZoneInner)),
+			Outer: NewWidgetZone(wa.Zone(scene.WidgetZoneOuter)),
+		}
+		if d.Inner == nil && d.Outer == nil {
+			return nil
+		}
 	}
 
-	if d.Inner == nil && d.Outer == nil {
-		return nil
-	}
-	return d
+	return ret
 }
 
 func NewWidgetZone(z *scene.WidgetZone) *WidgetZoneDocument {

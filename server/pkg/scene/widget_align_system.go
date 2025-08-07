@@ -16,8 +16,16 @@ func (l WidgetLocation) Vertical() bool {
 	return l.Area == WidgetAreaMiddle
 }
 
+type WidgetAlignSystemType string
+
+const (
+	WidgetAlignSystemTypeDesktop WidgetAlignSystemType = "desktop"
+	WidgetAlignSystemTypeMobile  WidgetAlignSystemType = "mobile"
+)
+
 // WidgetAlignSystem is the layout structure of any enabled widgets that will be displayed over the scene.
 type WidgetAlignSystem struct {
+	Type  WidgetAlignSystemType
 	inner *WidgetZone
 	outer *WidgetZone
 }

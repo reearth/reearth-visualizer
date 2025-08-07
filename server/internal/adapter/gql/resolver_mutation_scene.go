@@ -107,6 +107,7 @@ func (r *mutationResolver) UpdateWidgetAlignSystem(ctx context.Context, input gq
 	}
 
 	scene, err := usecases(ctx).Scene.UpdateWidgetAlignSystem(ctx, interfaces.UpdateWidgetAlignSystemParam{
+		Type:       gqlmodel.FromWidgetAlignSystemType(input.Type),
 		SceneID:    sid,
 		Location:   *gqlmodel.FromSceneWidgetLocation(input.Location),
 		Align:      gqlmodel.FromWidgetAlignType(input.Align),

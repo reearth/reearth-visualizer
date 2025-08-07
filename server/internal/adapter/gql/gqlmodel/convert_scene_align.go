@@ -6,12 +6,35 @@ import (
 	"github.com/reearth/reearthx/util"
 )
 
-func ToWidgetAlignSystem(sas *scene.WidgetAlignSystem) *WidgetAlignSystem {
+func ToWidgetAlignSystemType(t scene.WidgetAlignSystemType) WidgetAlignSystemType {
+	switch t {
+	case scene.WidgetAlignSystemTypeDesktop:
+		return WidgetAlignSystemTypeDesktop
+	case scene.WidgetAlignSystemTypeMobile:
+		return WidgetAlignSystemTypeMobile
+	}
+	return ""
+}
+
+func FromWidgetAlignSystemType(t WidgetAlignSystemType) scene.WidgetAlignSystemType {
+	switch t {
+	case WidgetAlignSystemTypeDesktop:
+		return scene.WidgetAlignSystemTypeDesktop
+	case WidgetAlignSystemTypeMobile:
+		return scene.WidgetAlignSystemTypeMobile
+	}
+	return ""
+}
+
+func ToWidgetAlignSystem(sas *scene.WidgetAlignSystem) []*WidgetAlignSystem {
+
 	widgetAlignDoc := WidgetAlignSystem{
+		Type:  ToWidgetAlignSystemType(sas.Type),
 		Inner: ToWidgetZone(sas.Zone(scene.WidgetZoneInner)),
 		Outer: ToWidgetZone(sas.Zone(scene.WidgetZoneOuter)),
 	}
-	return &widgetAlignDoc
+
+	return []*WidgetAlignSystem{&widgetAlignDoc}
 }
 
 func ToWidgetZone(z *scene.WidgetZone) *WidgetZone {

@@ -44,6 +44,7 @@ type UpdateWidgetParam struct {
 }
 
 type UpdateWidgetAlignSystemParam struct {
+	Type       scene.WidgetAlignSystemType
 	SceneID    id.SceneID
 	Location   scene.WidgetLocation
 	Align      *scene.WidgetAlignType

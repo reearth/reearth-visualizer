@@ -776,22 +776,22 @@ type ComplexityRoot struct {
 	}
 
 	Scene struct {
-		Alias             func(childComplexity int) int
-		CreatedAt         func(childComplexity int) int
-		ID                func(childComplexity int) int
-		NewLayers         func(childComplexity int) int
-		Plugins           func(childComplexity int) int
-		Project           func(childComplexity int) int
-		ProjectID         func(childComplexity int) int
-		Property          func(childComplexity int) int
-		PropertyID        func(childComplexity int) int
-		Stories           func(childComplexity int) int
-		Styles            func(childComplexity int) int
-		UpdatedAt         func(childComplexity int) int
-		WidgetAlignSystem func(childComplexity int) int
-		Widgets           func(childComplexity int) int
-		Workspace         func(childComplexity int) int
-		WorkspaceID       func(childComplexity int) int
+		Alias              func(childComplexity int) int
+		CreatedAt          func(childComplexity int) int
+		ID                 func(childComplexity int) int
+		NewLayers          func(childComplexity int) int
+		Plugins            func(childComplexity int) int
+		Project            func(childComplexity int) int
+		ProjectID          func(childComplexity int) int
+		Property           func(childComplexity int) int
+		PropertyID         func(childComplexity int) int
+		Stories            func(childComplexity int) int
+		Styles             func(childComplexity int) int
+		UpdatedAt          func(childComplexity int) int
+		WidgetAlignSystems func(childComplexity int) int
+		Widgets            func(childComplexity int) int
+		Workspace          func(childComplexity int) int
+		WorkspaceID        func(childComplexity int) int
 	}
 
 	SceneAliasAvailability struct {
@@ -989,6 +989,7 @@ type ComplexityRoot struct {
 	WidgetAlignSystem struct {
 		Inner func(childComplexity int) int
 		Outer func(childComplexity int) int
+		Type  func(childComplexity int) int
 	}
 
 	WidgetArea struct {
@@ -5031,12 +5032,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Scene.UpdatedAt(childComplexity), true
 
-	case "Scene.widgetAlignSystem":
-		if e.complexity.Scene.WidgetAlignSystem == nil {
+	case "Scene.widgetAlignSystems":
+		if e.complexity.Scene.WidgetAlignSystems == nil {
 			break
 		}
 
-		return e.complexity.Scene.WidgetAlignSystem(childComplexity), true
+		return e.complexity.Scene.WidgetAlignSystems(childComplexity), true
 
 	case "Scene.widgets":
 		if e.complexity.Scene.Widgets == nil {
@@ -5828,6 +5829,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.WidgetAlignSystem.Outer(childComplexity), true
+
+	case "WidgetAlignSystem.Type":
+		if e.complexity.WidgetAlignSystem.Type == nil {
+			break
+		}
+
+		return e.complexity.WidgetAlignSystem.Type(childComplexity), true
 
 	case "WidgetArea.align":
 		if e.complexity.WidgetArea.Align == nil {
@@ -7435,7 +7443,7 @@ extend type Mutation {
   updatedAt: DateTime!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystem
+  widgetAlignSystems: [WidgetAlignSystem!]!
   project: Project
   workspace: Workspace
   property: Property
@@ -7876,7 +7884,13 @@ extend type Mutation {
   deleteMe(input: DeleteMeInput!): DeleteMePayload
 }
 `, BuiltIn: false},
-	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystem {
+	{Name: "../../../gql/was.graphql", Input: `enum WidgetAlignSystemType {
+  DESKTOP
+  MOBILE
+}
+
+type WidgetAlignSystem {
+  Type: WidgetAlignSystemType!
   inner: WidgetZone
   outer: WidgetZone
 }
@@ -7974,6 +7988,7 @@ input UpdateWidgetInput {
 }
 
 input UpdateWidgetAlignSystemInput {
+  Type: WidgetAlignSystemType!
   sceneId: ID!
   location: WidgetLocationInput!
   align: WidgetAreaAlign
@@ -8021,9 +8036,12 @@ type RemoveWidgetPayload {
 extend type Mutation {
   addWidget(input: AddWidgetInput!): AddWidgetPayload
   updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
-  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
+  updateWidgetAlignSystem(
+    input: UpdateWidgetAlignSystemInput!
+  ): UpdateWidgetAlignSystemPayload
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/workspace.graphql", Input: `type Workspace implements Node {
   id: ID!
   name: String!
@@ -11979,8 +11997,8 @@ func (ec *executionContext) fieldContext_AddWidgetPayload_scene(_ context.Contex
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -13360,8 +13378,8 @@ func (ec *executionContext) fieldContext_CreateScenePayload_scene(_ context.Cont
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -15097,8 +15115,8 @@ func (ec *executionContext) fieldContext_InfoboxBlock_scene(_ context.Context, f
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -15175,8 +15193,8 @@ func (ec *executionContext) fieldContext_InstallPluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -22803,8 +22821,8 @@ func (ec *executionContext) fieldContext_NLSInfobox_scene(_ context.Context, fie
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -23380,8 +23398,8 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_scene(_ context.Context, 
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -23960,8 +23978,8 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_scene(_ context.Context,
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -24355,8 +24373,8 @@ func (ec *executionContext) fieldContext_NLSPhotoOverlay_scene(_ context.Context
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -25170,8 +25188,8 @@ func (ec *executionContext) fieldContext_Plugin_scene(_ context.Context, field g
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -26976,8 +26994,8 @@ func (ec *executionContext) fieldContext_Project_scene(_ context.Context, field 
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -33827,8 +33845,8 @@ func (ec *executionContext) fieldContext_Query_scene(ctx context.Context, field 
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -34987,8 +35005,8 @@ func (ec *executionContext) fieldContext_RemoveWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -35436,8 +35454,8 @@ func (ec *executionContext) fieldContext_Scene_plugins(_ context.Context, field 
 	return fc, nil
 }
 
-func (ec *executionContext) _Scene_widgetAlignSystem(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+func (ec *executionContext) _Scene_widgetAlignSystems(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Scene) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -35450,21 +35468,24 @@ func (ec *executionContext) _Scene_widgetAlignSystem(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.WidgetAlignSystem, nil
+		return obj.WidgetAlignSystems, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.WidgetAlignSystem)
+	res := resTmp.([]*gqlmodel.WidgetAlignSystem)
 	fc.Result = res
-	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
+	return ec.marshalNWidgetAlignSystem2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Scene_widgetAlignSystems(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Scene",
 		Field:      field,
@@ -35472,6 +35493,8 @@ func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(_ context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "Type":
+				return ec.fieldContext_WidgetAlignSystem_Type(ctx, field)
 			case "inner":
 				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
 			case "outer":
@@ -37276,8 +37299,8 @@ func (ec *executionContext) fieldContext_Story_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -39189,8 +39212,8 @@ func (ec *executionContext) fieldContext_StoryPage_scene(_ context.Context, fiel
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -39696,8 +39719,8 @@ func (ec *executionContext) fieldContext_Style_scene(_ context.Context, field gr
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -40269,8 +40292,8 @@ func (ec *executionContext) fieldContext_UninstallPluginPayload_scene(_ context.
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -40706,8 +40729,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetAlignSystemPayload_scene(_ 
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -40784,8 +40807,8 @@ func (ec *executionContext) fieldContext_UpdateWidgetPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -40992,8 +41015,8 @@ func (ec *executionContext) fieldContext_UpgradePluginPayload_scene(_ context.Co
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -41202,8 +41225,8 @@ func (ec *executionContext) fieldContext_UploadPluginPayload_scene(_ context.Con
 				return ec.fieldContext_Scene_widgets(ctx, field)
 			case "plugins":
 				return ec.fieldContext_Scene_plugins(ctx, field)
-			case "widgetAlignSystem":
-				return ec.fieldContext_Scene_widgetAlignSystem(ctx, field)
+			case "widgetAlignSystems":
+				return ec.fieldContext_Scene_widgetAlignSystems(ctx, field)
 			case "project":
 				return ec.fieldContext_Scene_project(ctx, field)
 			case "workspace":
@@ -41447,6 +41470,50 @@ func (ec *executionContext) fieldContext_User_host(_ context.Context, field grap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WidgetAlignSystem_Type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAlignSystem) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WidgetAlignSystem_Type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.WidgetAlignSystemType)
+	fc.Result = res
+	return ec.marshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WidgetAlignSystem_Type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WidgetAlignSystem",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type WidgetAlignSystemType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -48435,13 +48502,20 @@ func (ec *executionContext) unmarshalInputUpdateWidgetAlignSystemInput(ctx conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "location", "align", "padding", "gap", "centered", "background"}
+	fieldsInOrder := [...]string{"Type", "sceneId", "location", "align", "padding", "gap", "centered", "background"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "Type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Type"))
+			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -55618,8 +55692,11 @@ func (ec *executionContext) _Scene(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "widgetAlignSystem":
-			out.Values[i] = ec._Scene_widgetAlignSystem(ctx, field, obj)
+		case "widgetAlignSystems":
+			out.Values[i] = ec._Scene_widgetAlignSystems(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "project":
 			field := field
 
@@ -57634,6 +57711,11 @@ func (ec *executionContext) _WidgetAlignSystem(ctx context.Context, sel ast.Sele
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("WidgetAlignSystem")
+		case "Type":
+			out.Values[i] = ec._WidgetAlignSystem_Type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "inner":
 			out.Values[i] = ec._WidgetAlignSystem_inner(ctx, field, obj)
 		case "outer":
@@ -61194,6 +61276,70 @@ func (ec *executionContext) marshalNVisualizer2githubᚗcomᚋreearthᚋreearth�
 	return v
 }
 
+func (ec *executionContext) marshalNWidgetAlignSystem2ᚕᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemᚄ(ctx context.Context, sel ast.SelectionSet, v []*gqlmodel.WidgetAlignSystem) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAlignSystem) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._WidgetAlignSystem(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx context.Context, v any) (gqlmodel.WidgetAlignSystemType, error) {
+	var res gqlmodel.WidgetAlignSystemType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx context.Context, sel ast.SelectionSet, v gqlmodel.WidgetAlignSystemType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNWidgetAreaAlign2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaAlign(ctx context.Context, v any) (gqlmodel.WidgetAreaAlign, error) {
 	var res gqlmodel.WidgetAreaAlign
 	err := res.UnmarshalGQL(v)
@@ -62539,13 +62685,6 @@ func (ec *executionContext) marshalOVisualizer2ᚖgithubᚗcomᚋreearthᚋreear
 		return graphql.Null
 	}
 	return v
-}
-
-func (ec *executionContext) marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAlignSystem) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._WidgetAlignSystem(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOWidgetArea2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetArea(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetArea) graphql.Marshaler {

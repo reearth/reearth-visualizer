@@ -37,15 +37,15 @@ func ToScene(scene *scene.Scene) *Scene {
 	}
 
 	return &Scene{
-		ID:                IDFrom(scene.ID()),
-		ProjectID:         IDFrom(scene.Project()),
-		PropertyID:        IDFrom(scene.Property()),
-		WorkspaceID:       IDFrom(scene.Workspace()),
-		CreatedAt:         scene.CreatedAt(),
-		UpdatedAt:         scene.UpdatedAt(),
-		Plugins:           util.Map(scene.Plugins().Plugins(), ToScenePlugin),
-		Widgets:           util.Map(scene.Widgets().Widgets(), ToSceneWidget),
-		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
+		ID:                 IDFrom(scene.ID()),
+		ProjectID:          IDFrom(scene.Project()),
+		PropertyID:         IDFrom(scene.Property()),
+		WorkspaceID:        IDFrom(scene.Workspace()),
+		CreatedAt:          scene.CreatedAt(),
+		UpdatedAt:          scene.UpdatedAt(),
+		Plugins:            util.Map(scene.Plugins().Plugins(), ToScenePlugin),
+		Widgets:            util.Map(scene.Widgets().Widgets(), ToSceneWidget),
+		WidgetAlignSystems: ToWidgetAlignSystem(scene.Widgets().Alignment()),
 
 		// publishment ---------------------
 		Alias: scene.Alias(),
