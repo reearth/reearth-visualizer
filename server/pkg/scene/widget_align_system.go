@@ -38,8 +38,11 @@ const (
 )
 
 // NewWidgetAlignSystem returns a new widget align system.
-func NewWidgetAlignSystem() *WidgetAlignSystem {
-	return &WidgetAlignSystem{}
+func NewWidgetAlignSystems() []*WidgetAlignSystem {
+	return []*WidgetAlignSystem{
+		&WidgetAlignSystem{Type: WidgetAlignSystemTypeDesktop},
+		&WidgetAlignSystem{Type: WidgetAlignSystemTypeMobile},
+	}
 }
 
 // Zone will return a specific zone in the align system.

@@ -122,7 +122,7 @@ func (d *WidgetAlignSystemDocument) Model() *scene.WidgetAlignSystem {
 		return nil
 	}
 
-	was := scene.NewWidgetAlignSystem()
+	was := scene.NewWidgetAlignSystems()
 	was.SetZone(scene.WidgetZoneInner, d.Inner.Model())
 	was.SetZone(scene.WidgetZoneOuter, d.Outer.Model())
 	return was

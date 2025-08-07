@@ -103,7 +103,7 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 		Workspace:    scene.Workspace().String(),
 		Widgets:      widgetsDoc,
 		Plugins:      pluginsDoc,
-		AlignSystems: NewWidgetAlignSystem(scene.Widgets().Alignment()),
+		AlignSystems: NewWidgetAlignSystems(scene.Widgets().Alignmens()),
 		UpdateAt:     scene.UpdatedAt(),
 		Property:     scene.Property().String(),
 
@@ -168,11 +168,16 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		ps = append(ps, scene.NewPlugin(pid, id.PropertyIDFromRef(p.Property)))
 	}
 
+	a := []*scene.WidgetAlignSystem{}
+	for _, ad := range d.AlignSystems {
+		a = append(a, ad.Model())
+	}
+
 	return scene.New().
 		ID(sid).
 		Project(projectID).
 		Workspace(tid).
-		Widgets(scene.NewWidgets(ws, d.AlignSystem.Model())).
+		Widgets(scene.NewWidgets(ws, a)).
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).
 		Property(prid).
