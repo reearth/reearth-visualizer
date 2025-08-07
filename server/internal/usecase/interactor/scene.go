@@ -257,13 +257,14 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 				Area:    scene.WidgetAreaTop,
 			}
 		}
-		res.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
+		res.Widgets().Alignment().System(scene.WidgetAlignSystemTypeDesktop).Area(loc).Add(widget.ID(), -1)
+		res.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(loc).Add(widget.ID(), -1)
 	}
 
 	return nil
 }
 
-func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, widget *scene.Widget, err error) {
+func (i *Scene) AddWidget(ctx context.Context, _type scene.WidgetAlignSystemType, sid id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, widget *scene.Widget, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -332,7 +333,7 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 				Area:    scene.WidgetAreaTop,
 			}
 		}
-		s.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
+		s.Widgets().Alignment().System(_type).Area(loc).Add(widget.ID(), -1)
 	}
 
 	err = i.sceneRepo.Save(ctx, s)
@@ -374,7 +375,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	if widget == nil {
 		return nil, nil, rerror.ErrNotFound
 	}
-	_, location := scene.Widgets().Alignment().Find(param.WidgetID)
+	_, location := scene.Widgets().Alignment().System(param.Type).Find(param.WidgetID)
 
 	extension, err := i.getWidgePlugin(ctx, widget.Plugin(), widget.Extension(), nil)
 	if err != nil {
@@ -393,7 +394,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		if param.Index != nil {
 			index = *param.Index
 		}
-		scene.Widgets().Alignment().Move(widget.ID(), location, index)
+		scene.Widgets().Alignment().System(param.Type).Move(widget.ID(), location, index)
 	}
 
 	if param.Extended != nil {
@@ -447,7 +448,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		return nil, err
 	}
 
-	area := s.Widgets().Alignment().Area(param.Location)
+	area := s.Widgets().Alignment().System(param.Type).Area(param.Location)
 
 	if area == nil {
 		return nil, errors.New("invalid location")
@@ -483,7 +484,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 	return s, nil
 }
 
-func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
+func (i *Scene) RemoveWidget(ctx context.Context, _type scene.WidgetAlignSystemType, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -512,7 +513,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	}
 
 	ws.Remove(wid)
-	scene.Widgets().Alignment().Remove(wid)
+	scene.Widgets().Alignment().System(_type).Remove(wid)
 
 	err2 = i.propertyRepo.Remove(ctx, widget.Property())
 	if err2 != nil {
