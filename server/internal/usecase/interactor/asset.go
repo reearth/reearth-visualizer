@@ -22,6 +22,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -210,6 +212,10 @@ func (i *Asset) updateProjectImage(ctx context.Context, newProject *project.Proj
 	return nil
 }
 
+var (
+	ErrAssetUploadSizeLimitExceeded error = rerror.NewE(i18n.T("asset upload size limit exceeded"))
+)
+
 func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, p *policy.Policy, coreSupport bool) (*asset.Asset, *url.URL, error) {
 
 	// upload
@@ -218,15 +224,18 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.W
 		return nil, nil, err
 	}
 
-	// enforce policy
-	if p != nil {
-		s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, nil, err
+	if i.gateways != nil && i.gateways.PolicyChecker != nil {
+		policyReq := gateway.PolicyCheckRequest{
+			WorkspaceID: ws.ID(),
+			CheckType:   gateway.PolicyCheckUploadAssetsSize,
+			Value:       size,
 		}
-		if err := p.EnforceAssetStorageSize(s + size); err != nil {
-			_ = i.gateways.File.RemoveAsset(ctx, u)
-			return nil, nil, err
+		policyResp, err := i.gateways.PolicyChecker.CheckPolicy(ctx, policyReq)
+		if err != nil {
+			return nil, nil, rerror.NewE(i18n.T("policy check failed"))
+		}
+		if !policyResp.Allowed {
+			return nil, nil, ErrAssetUploadSizeLimitExceeded
 		}
 	}
 
