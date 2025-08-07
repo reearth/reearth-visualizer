@@ -47,9 +47,7 @@ export const convertToStyleNodes = (
   }, {} as StyleNodes);
 };
 
-export const checkExpressionAndConditions = (
-  v: unknown
-): StyleValueType => {
+export const checkExpressionAndConditions = (v: unknown): StyleValueType => {
   if (
     typeof v === "string" ||
     typeof v === "number" ||
@@ -169,11 +167,30 @@ export const parseConditions = (
   conditions: [string, string][]
 ): StyleCondition[] => {
   const operatorRegex = new RegExp(
-    `(${styleConditionOperators.map((op) => op.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`
+    `(${styleConditionOperators
+      .map((op) => {
+        if (op === "startsWith") {
+          return "startsWith";
+        }
+        return op.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      })
+      .join("|")})`
   );
 
   return conditions
     .map(([condition, applyValue]) => {
+      if (condition.startsWith("startsWith(")) {
+        const match = condition.match(/^startsWith\((.+),\s*(.+)\)$/);
+        if (match) {
+          return {
+            variable: match[1].trim(),
+            operator: "startsWith" as StyleConditionOperator,
+            value: match[2].trim(),
+            applyValue: unwrapConditionAppliedValue(field, applyValue)
+          };
+        }
+      }
+
       const match = condition.match(operatorRegex);
 
       if (match) {
@@ -200,8 +217,15 @@ export const generateConditions = (
 ): [string, string][] => {
   if (!conditions) return [];
   return conditions.map((c) => {
+    let conditionExpression: string;
+    if (c.operator === "startsWith") {
+      conditionExpression = `startsWith(${c.variable}, ${c.value})`;
+    } else {
+      conditionExpression = `${c.variable} ${c.operator} ${c.value}`;
+    }
+
     return [
-      `${c.variable} ${c.operator} ${c.value}`,
+      conditionExpression,
       wrapConditionApplyValue((c.applyValue ?? "").toString(), field)
     ];
   });
