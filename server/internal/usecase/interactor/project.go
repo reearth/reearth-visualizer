@@ -14,6 +14,9 @@ import (
 
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -32,7 +35,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -40,41 +42,43 @@ import (
 type Project struct {
 	common
 	commonSceneLock
+	transaction         usecasex.Transaction
+	userRepo            accountrepo.User
+	workspaceRepo       accountrepo.Workspace
 	assetRepo           repo.Asset
 	projectRepo         repo.Project
 	projectMetadataRepo repo.ProjectMetadata
 	storytellingRepo    repo.Storytelling
-	userRepo            accountrepo.User
-	workspaceRepo       accountrepo.Workspace
 	sceneRepo           repo.Scene
 	propertyRepo        repo.Property
 	propertySchemaRepo  repo.PropertySchema
-	transaction         usecasex.Transaction
 	policyRepo          repo.Policy
-	file                gateway.File
 	nlsLayerRepo        repo.NLSLayer
 	layerStyles         repo.Style
 	pluginRepo          repo.Plugin
+	file                gateway.File
+	policyChecker       gateway.PolicyChecker
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
 		commonSceneLock:     commonSceneLock{sceneLockRepo: r.SceneLock},
+		userRepo:            r.User,
+		workspaceRepo:       r.Workspace,
 		assetRepo:           r.Asset,
 		projectRepo:         r.Project,
 		projectMetadataRepo: r.ProjectMetadata,
 		storytellingRepo:    r.Storytelling,
-		userRepo:            r.User,
-		workspaceRepo:       r.Workspace,
 		sceneRepo:           r.Scene,
 		propertyRepo:        r.Property,
 		transaction:         r.Transaction,
 		policyRepo:          r.Policy,
-		file:                gr.File,
 		nlsLayerRepo:        r.NLSLayer,
 		layerStyles:         r.Style,
 		pluginRepo:          r.Plugin,
 		propertySchemaRepo:  r.PropertySchema,
+		file:                gr.File,
+		policyChecker:       gr.PolicyChecker,
 	}
 }
 
@@ -466,6 +470,12 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err := prj.UpdateVisibility(visibility); err != nil {
 		return nil, err
 	}
+	if i.policyChecker != nil {
+		if err = i.checkGeneralPolicy(ctx, prj.Workspace(), project.Visibility(visibility)); err != nil {
+			return nil, err
+		}
+	}
+
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
 
@@ -1089,6 +1099,10 @@ type createProjectInput struct {
 	Topics  *string
 }
 
+var (
+	ErrProjectCreationLimitExceeded error = rerror.NewE(i18n.T("project creation limit exceeded"))
+)
+
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
 	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
 		return nil, err
@@ -1105,27 +1119,6 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 			err = err2
 		}
 	}()
-
-	ws, err := i.workspaceRepo.FindByID(txCtx, input.WorkspaceID)
-	if err != nil {
-		return nil, err
-	}
-
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(txCtx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-
-		projectCount, err := i.projectRepo.CountByWorkspace(txCtx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-
-		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
-			return nil, err
-		}
-	}
 
 	var prjID idx.ID[id.Project]
 	if input.ProjectID != nil {
@@ -1209,11 +1202,18 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		prj = prj.Name(*input.Name)
 	}
 
+	visibility := project.VisibilityPrivate
 	if input.Visibility != nil {
-		prj = prj.Visibility(project.Visibility(*input.Visibility))
-	} else {
-		prj = prj.Visibility(project.VisibilityPrivate)
+		visibility = project.Visibility(*input.Visibility)
 	}
+
+	if i.policyChecker != nil {
+		if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
+			return nil, err
+		}
+	}
+
+	prj = prj.Visibility(visibility)
 
 	proj, err := prj.Build()
 	if err != nil {
@@ -1228,4 +1228,29 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	tx.Commit()
 
 	return proj, nil
+}
+
+func (i *Project) checkGeneralPolicy(ctx context.Context, workspaceID accountdomain.WorkspaceID, visibility project.Visibility) error {
+
+	var checkType gateway.PolicyCheckType
+	if visibility == project.VisibilityPublic {
+		checkType = gateway.PolicyCheckGeneralPublicProjectCreation
+	} else {
+		checkType = gateway.PolicyCheckGeneralPrivateProjectCreation
+	}
+
+	policyReq := gateway.PolicyCheckRequest{
+		WorkspaceID: workspaceID,
+		CheckType:   checkType,
+		Value:       1,
+	}
+
+	policyResp, err := i.policyChecker.CheckPolicy(ctx, policyReq)
+	if err != nil {
+		return err
+	}
+	if !policyResp.Allowed {
+		return ErrProjectCreationLimitExceeded
+	}
+	return nil
 }
