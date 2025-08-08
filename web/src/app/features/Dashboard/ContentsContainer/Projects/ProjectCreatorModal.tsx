@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client/react/hooks/useQuery";
 import {
   visualizerProjectLicensesOptions,
   licenseContent
@@ -16,6 +17,7 @@ import {
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
 import { useProjectFetcher } from "@reearth/services/api";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
+import { WORKSPACE_POLICY_CHECK } from "@reearth/services/gql/queries/workspace";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -57,6 +59,12 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   const { projectVisibility } = appFeature();
   const { checkProjectAlias } = useProjectFetcher();
   const [currentWorkspace] = useWorkspace();
+  const { data } = useQuery(WORKSPACE_POLICY_CHECK, {
+    variables: { workspaceId: currentWorkspace?.id ?? "" },
+    skip: !currentWorkspace?.id
+  });
+  const enableToCreatePrivateProject =
+    data?.workspacePolicyCheck?.enableToCreatePrivateProject;
 
   const [formState, setFormState] = useState<FormState>({
     projectName: "",
@@ -73,10 +81,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
       {
         value: "private",
         label: t("Private"),
-        disabled: !currentWorkspace?.enableToCreatePrivateProject
+        disabled: !enableToCreatePrivateProject
       }
     ],
-    [t, currentWorkspace?.enableToCreatePrivateProject]
+    [t, enableToCreatePrivateProject]
   );
 
   const handleOnChange = useCallback(
