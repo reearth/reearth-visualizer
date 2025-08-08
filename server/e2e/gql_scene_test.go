@@ -169,8 +169,12 @@ query GetScene($sceneId: ID!, $lang: Lang) {
         __typename
       }
       widgetAlignSystem {
-        ...WidgetAlignSystemFragment
-        __typename
+        desktop {
+          ...WidgetAlignSystemFragment
+        }
+        mobile {
+          ...WidgetAlignSystemFragment
+        }
       }
       stories {
         ...StoryFragment
