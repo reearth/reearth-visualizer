@@ -521,6 +521,11 @@ type ComplexityRoot struct {
 		PublishedProjectCount func(childComplexity int) int
 	}
 
+	PolicyCheckPayload struct {
+		EnableToCreatePrivateProject func(childComplexity int) int
+		WorkspaceID                  func(childComplexity int) int
+	}
+
 	Polygon struct {
 		PolygonCoordinates func(childComplexity int) int
 		Type               func(childComplexity int) int
@@ -710,22 +715,23 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Assets            func(childComplexity int, workspaceID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
-		CheckProjectAlias func(childComplexity int, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) int
-		CheckSceneAlias   func(childComplexity int, alias string, projectID *gqlmodel.ID) int
-		CheckStoryAlias   func(childComplexity int, alias string, storyID *gqlmodel.ID) int
-		DeletedProjects   func(childComplexity int, workspaceID gqlmodel.ID) int
-		Me                func(childComplexity int) int
-		Node              func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
-		Nodes             func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
-		Plugin            func(childComplexity int, id gqlmodel.ID) int
-		Plugins           func(childComplexity int, id []gqlmodel.ID) int
-		Projects          func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
-		PropertySchema    func(childComplexity int, id gqlmodel.ID) int
-		PropertySchemas   func(childComplexity int, id []gqlmodel.ID) int
-		Scene             func(childComplexity int, projectID gqlmodel.ID) int
-		SearchUser        func(childComplexity int, nameOrEmail string) int
-		StarredProjects   func(childComplexity int, workspaceID gqlmodel.ID) int
+		Assets               func(childComplexity int, workspaceID gqlmodel.ID, projectID *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.AssetSort) int
+		CheckProjectAlias    func(childComplexity int, alias string, workspaceID gqlmodel.ID, projectID *gqlmodel.ID) int
+		CheckSceneAlias      func(childComplexity int, alias string, projectID *gqlmodel.ID) int
+		CheckStoryAlias      func(childComplexity int, alias string, storyID *gqlmodel.ID) int
+		DeletedProjects      func(childComplexity int, workspaceID gqlmodel.ID) int
+		Me                   func(childComplexity int) int
+		Node                 func(childComplexity int, id gqlmodel.ID, typeArg gqlmodel.NodeType) int
+		Nodes                func(childComplexity int, id []gqlmodel.ID, typeArg gqlmodel.NodeType) int
+		Plugin               func(childComplexity int, id gqlmodel.ID) int
+		Plugins              func(childComplexity int, id []gqlmodel.ID) int
+		Projects             func(childComplexity int, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sort *gqlmodel.ProjectSort) int
+		PropertySchema       func(childComplexity int, id gqlmodel.ID) int
+		PropertySchemas      func(childComplexity int, id []gqlmodel.ID) int
+		Scene                func(childComplexity int, projectID gqlmodel.ID) int
+		SearchUser           func(childComplexity int, nameOrEmail string) int
+		StarredProjects      func(childComplexity int, workspaceID gqlmodel.ID) int
+		WorkspacePolicyCheck func(childComplexity int, input gqlmodel.PolicyCheckInput) int
 	}
 
 	Rect struct {
@@ -1245,6 +1251,7 @@ type QueryResolver interface {
 	CheckStoryAlias(ctx context.Context, alias string, storyID *gqlmodel.ID) (*gqlmodel.StoryAliasAvailability, error)
 	Me(ctx context.Context) (*gqlmodel.Me, error)
 	SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error)
+	WorkspacePolicyCheck(ctx context.Context, input gqlmodel.PolicyCheckInput) (*gqlmodel.PolicyCheckPayload, error)
 }
 type SceneResolver interface {
 	Project(ctx context.Context, obj *gqlmodel.Scene) (*gqlmodel.Project, error)
@@ -3720,6 +3727,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Policy.PublishedProjectCount(childComplexity), true
 
+	case "PolicyCheckPayload.enableToCreatePrivateProject":
+		if e.complexity.PolicyCheckPayload.EnableToCreatePrivateProject == nil {
+			break
+		}
+
+		return e.complexity.PolicyCheckPayload.EnableToCreatePrivateProject(childComplexity), true
+
+	case "PolicyCheckPayload.workspaceId":
+		if e.complexity.PolicyCheckPayload.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.PolicyCheckPayload.WorkspaceID(childComplexity), true
+
 	case "Polygon.polygonCoordinates":
 		if e.complexity.Polygon.PolygonCoordinates == nil {
 			break
@@ -4827,6 +4848,18 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Query.StarredProjects(childComplexity, args["workspaceId"].(gqlmodel.ID)), true
+
+	case "Query.workspacePolicyCheck":
+		if e.complexity.Query.WorkspacePolicyCheck == nil {
+			break
+		}
+
+		args, err := ec.field_Query_workspacePolicyCheck_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WorkspacePolicyCheck(childComplexity, args["input"].(gqlmodel.PolicyCheckInput)), true
 
 	case "Rect.east":
 		if e.complexity.Rect.East == nil {
@@ -6149,6 +6182,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputMoveStoryPageInput,
 		ec.unmarshalInputPageLayerInput,
 		ec.unmarshalInputPagination,
+		ec.unmarshalInputPolicyCheckInput,
 		ec.unmarshalInputProjectSort,
 		ec.unmarshalInputPublishProjectInput,
 		ec.unmarshalInputPublishStoryInput,
@@ -8086,6 +8120,10 @@ input CreateWorkspaceInput {
   alias: String
 }
 
+input PolicyCheckInput {
+  workspaceId: ID!
+}
+
 input UpdateWorkspaceInput {
   workspaceId: ID!
   name: String!
@@ -8119,6 +8157,11 @@ type CreateWorkspacePayload {
   workspace: Workspace!
 }
 
+type PolicyCheckPayload {
+  workspaceId: ID!
+  enableToCreatePrivateProject: Boolean!
+}
+
 type UpdateWorkspacePayload {
   workspace: Workspace!
 }
@@ -8139,7 +8182,9 @@ type DeleteWorkspacePayload {
   workspaceId: ID!
 }
 
-#extend type Query{ }
+extend type Query {
+  workspacePolicyCheck(input: PolicyCheckInput!): PolicyCheckPayload
+}
 
 extend type Mutation {
   createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
@@ -11259,6 +11304,34 @@ func (ec *executionContext) field_Query_starredProjects_argsWorkspaceID(
 	}
 
 	var zeroVal gqlmodel.ID
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_workspacePolicyCheck_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Query_workspacePolicyCheck_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_workspacePolicyCheck_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (gqlmodel.PolicyCheckInput, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal gqlmodel.PolicyCheckInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNPolicyCheckInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicyCheckInput(ctx, tmp)
+	}
+
+	var zeroVal gqlmodel.PolicyCheckInput
 	return zeroVal, nil
 }
 
@@ -26685,6 +26758,94 @@ func (ec *executionContext) fieldContext_Policy_blocksCount(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _PolicyCheckPayload_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PolicyCheckPayload_workspaceId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.WorkspaceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PolicyCheckPayload_workspaceId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PolicyCheckPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PolicyCheckPayload_enableToCreatePrivateProject(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PolicyCheckPayload_enableToCreatePrivateProject(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnableToCreatePrivateProject, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PolicyCheckPayload_enableToCreatePrivateProject(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PolicyCheckPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Polygon_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Polygon_type(ctx, field)
 	if err != nil {
@@ -34039,6 +34200,64 @@ func (ec *executionContext) fieldContext_Query_searchUser(ctx context.Context, f
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_searchUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_workspacePolicyCheck(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_workspacePolicyCheck(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().WorkspacePolicyCheck(rctx, fc.Args["input"].(gqlmodel.PolicyCheckInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.PolicyCheckPayload)
+	fc.Result = res
+	return ec.marshalOPolicyCheckPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicyCheckPayload(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_workspacePolicyCheck(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "workspaceId":
+				return ec.fieldContext_PolicyCheckPayload_workspaceId(ctx, field)
+			case "enableToCreatePrivateProject":
+				return ec.fieldContext_PolicyCheckPayload_enableToCreatePrivateProject(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PolicyCheckPayload", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_workspacePolicyCheck_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -46817,6 +47036,33 @@ func (ec *executionContext) unmarshalInputPagination(ctx context.Context, obj an
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputPolicyCheckInput(ctx context.Context, obj any) (gqlmodel.PolicyCheckInput, error) {
+	var it gqlmodel.PolicyCheckInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"workspaceId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "workspaceId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceId"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WorkspaceID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputProjectSort(ctx context.Context, obj any) (gqlmodel.ProjectSort, error) {
 	var it gqlmodel.ProjectSort
 	asMap := map[string]any{}
@@ -52968,6 +53214,50 @@ func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var policyCheckPayloadImplementors = []string{"PolicyCheckPayload"}
+
+func (ec *executionContext) _PolicyCheckPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.PolicyCheckPayload) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, policyCheckPayloadImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PolicyCheckPayload")
+		case "workspaceId":
+			out.Values[i] = ec._PolicyCheckPayload_workspaceId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "enableToCreatePrivateProject":
+			out.Values[i] = ec._PolicyCheckPayload_enableToCreatePrivateProject(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var polygonImplementors = []string{"Polygon", "Geometry"}
 
 func (ec *executionContext) _Polygon(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Polygon) graphql.Marshaler {
@@ -55102,6 +55392,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_searchUser(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "workspacePolicyCheck":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_workspacePolicyCheck(ctx, field)
 				return res
 			}
 
@@ -59872,6 +60181,11 @@ func (ec *executionContext) marshalNPluginExtensionType2githubᚗcomᚋreearth�
 	return v
 }
 
+func (ec *executionContext) unmarshalNPolicyCheckInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicyCheckInput(ctx context.Context, v any) (gqlmodel.PolicyCheckInput, error) {
+	res, err := ec.unmarshalInputPolicyCheckInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNPosition2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx context.Context, v any) (gqlmodel.Position, error) {
 	var res gqlmodel.Position
 	err := res.UnmarshalGQL(v)
@@ -62041,6 +62355,13 @@ func (ec *executionContext) marshalOPolicy2ᚖgithubᚗcomᚋreearthᚋreearth�
 		return graphql.Null
 	}
 	return ec._Policy(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPolicyCheckPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicyCheckPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PolicyCheckPayload) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PolicyCheckPayload(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOPosition2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPosition(ctx context.Context, v any) (*gqlmodel.Position, error) {

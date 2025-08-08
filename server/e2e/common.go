@@ -19,6 +19,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
+	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
@@ -89,11 +90,13 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 func initGateway() *gateway.Container {
 	if fr == nil {
 		return &gateway.Container{
-			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
+			File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
+			PolicyChecker: policy.NewPermissiveChecker(),
 		}
 	}
 	return &gateway.Container{
-		File: *fr,
+		File:          *fr,
+		PolicyChecker: policy.NewPermissiveChecker(),
 	}
 }
 

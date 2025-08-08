@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -193,4 +194,20 @@ func (r *queryResolver) DeletedProjects(ctx context.Context, workspaceId gqlmode
 
 func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bool, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.VisibilityByWorkspace(ctx, workspaceId, authenticated)
+}
+
+func (r *queryResolver) WorkspacePolicyCheck(ctx context.Context, input gqlmodel.PolicyCheckInput) (*gqlmodel.PolicyCheckPayload, error) {
+	wid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	policy, err := usecases(ctx).Policy.GetWorkspacePolicy(ctx, wid)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.PolicyCheckPayload{
+		WorkspaceID:                  input.WorkspaceID,
+		EnableToCreatePrivateProject: policy.EnableToCreatePrivateProject,
+	}, nil
 }
