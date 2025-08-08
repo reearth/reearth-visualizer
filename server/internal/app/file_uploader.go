@@ -142,7 +142,10 @@ func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container
 		CoreSupport:  &coreSupport,
 		Visibility:   &visibility,
 		ImportStatus: project.ProjectImportStatusProcessing, // PROCESSING
-	}, op)
+	},
+		op,
+		true, // isImport
+	)
 	if err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to create project")
 	}

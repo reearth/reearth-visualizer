@@ -309,14 +309,41 @@ func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]
 	return pList, err
 }
 
-func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator, isImport bool) (_ *project.Project, err error) {
+
+	// Default to VisibilityPublic if not specified
+	visibility := project.VisibilityPublic
+	if input.Visibility != nil {
+		visibility = project.Visibility(*input.Visibility)
+	}
+
+	if i.policyChecker != nil {
+
+		if isImport {
+			// Try checking if user can create private project
+			errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
+			if errPrivate == nil {
+				visibility = project.VisibilityPrivate
+			} else {
+				visibility = project.VisibilityPublic
+			}
+		} else {
+			// Not import: use given visibility
+			if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
+				return nil, err
+			}
+		}
+
+	}
+
+	// project.Visibility(input.Visibility),
 	return i.createProject(ctx, createProjectInput{
 		WorkspaceID:  input.WorkspaceID,
 		Visualizer:   input.Visualizer,
 		Name:         input.Name,
 		Description:  input.Description,
 		CoreSupport:  input.CoreSupport,
-		Visibility:   input.Visibility,
+		Visibility:   &visibility,
 		ImportStatus: input.ImportStatus,
 		ProjectAlias: input.ProjectAlias,
 		Readme:       input.Readme,
@@ -420,9 +447,24 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.Visibility != nil {
+
+		visibility := project.Visibility(*p.Visibility)
+
+		if i.policyChecker != nil {
+
+			// If the visibility is going to change
+			if !strings.EqualFold(*p.Visibility, prj.Visibility()) {
+				if err = i.checkGeneralPolicy(ctx, prj.Workspace(), visibility); err != nil {
+					return nil, err
+				}
+			}
+
+		}
+
 		if err := prj.UpdateVisibility(*p.Visibility); err != nil {
 			return nil, err
 		}
+
 	}
 
 	if p.ProjectAlias != nil {
@@ -1041,6 +1083,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		Readme:       readme,
 		License:      license,
 		Topics:       topics,
+		// skip Visibility
 	}, op)
 	if err != nil {
 		return nil, err
@@ -1090,7 +1133,7 @@ type createProjectInput struct {
 	Alias        *string
 	Archived     *bool
 	CoreSupport  *bool
-	Visibility   *string
+	Visibility   *project.Visibility
 	ProjectAlias *string
 
 	// metadata
@@ -1202,18 +1245,9 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		prj = prj.Name(*input.Name)
 	}
 
-	visibility := project.VisibilityPrivate
 	if input.Visibility != nil {
-		visibility = project.Visibility(*input.Visibility)
+		prj = prj.Visibility(*input.Visibility)
 	}
-
-	if i.policyChecker != nil {
-		if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
-			return nil, err
-		}
-	}
-
-	prj = prj.Visibility(visibility)
 
 	proj, err := prj.Build()
 	if err != nil {

@@ -26,8 +26,8 @@ func TestInternalAPI_private(t *testing.T) {
 	// user1 call api
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
-		// create default Project -> private
-		createProjectInternal(t, ctx, r, client, "private", &pb.CreateProjectRequest{
+		// create default Project -> public
+		createProjectInternal(t, ctx, r, client, "public", &pb.CreateProjectRequest{
 			WorkspaceId: testWorkspace1,
 			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 			Name:        lo.ToPtr("Test User1 Default Project1"),
@@ -76,7 +76,7 @@ func TestInternalAPI_private(t *testing.T) {
 		assert.Equal(t, res.Projects[1].Id, res.Projects[1].Metadata.ProjectId)
 
 		assert.Equal(t, "Test User1 Default Project1", res.Projects[2].Name)
-		assert.Equal(t, "private", res.Projects[2].Visibility)
+		assert.Equal(t, "public", res.Projects[2].Visibility)
 		assert.Equal(t, res.Projects[2].Id, res.Projects[2].Metadata.ProjectId)
 	})
 
@@ -88,8 +88,8 @@ func TestInternalAPI_private(t *testing.T) {
 	// user2 call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
-		// create default Project -> private
-		createProjectInternal(t, ctx, r, client, "private", &pb.CreateProjectRequest{
+		// create default Project -> public
+		createProjectInternal(t, ctx, r, client, "public", &pb.CreateProjectRequest{
 			WorkspaceId: testWorkspace2,
 			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 			Name:        lo.ToPtr("Test User2 Default Project1"),
@@ -138,7 +138,7 @@ func TestInternalAPI_private(t *testing.T) {
 		assert.Equal(t, res.Projects[1].Id, res.Projects[1].Metadata.ProjectId)
 
 		assert.Equal(t, "Test User2 Default Project1", res.Projects[2].Name)
-		assert.Equal(t, "private", res.Projects[2].Visibility)
+		assert.Equal(t, "public", res.Projects[2].Visibility)
 		assert.Equal(t, res.Projects[2].Id, res.Projects[2].Metadata.ProjectId)
 
 		// get User1 Workspace => list size 1 public only
@@ -148,7 +148,7 @@ func TestInternalAPI_private(t *testing.T) {
 		})
 
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res.Projects))
+		assert.Equal(t, 2, len(res.Projects))
 
 		assert.Equal(t, "Test User1 Public Project3", res.Projects[0].Name)
 		assert.Equal(t, "public", res.Projects[0].Visibility)
@@ -167,7 +167,7 @@ func TestInternalAPI_private(t *testing.T) {
 			WorkspaceId:   &testWorkspace2, // User2 Workspace
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res.Projects))
+		assert.Equal(t, 2, len(res.Projects))
 
 		assert.Equal(t, "Test User2 Public Project3", res.Projects[0].Name)
 		assert.Equal(t, "public", res.Projects[0].Visibility)
@@ -192,7 +192,7 @@ func TestInternalAPI_private(t *testing.T) {
 		})
 
 		assert.Nil(t, err)
-		assert.Equal(t, 0, len(res.Projects)) // Enmpty!
+		assert.Equal(t, 1, len(res.Projects))
 
 	})
 }

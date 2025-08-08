@@ -573,10 +573,10 @@ func TestFindVisibilityProjects(t *testing.T) {
 		},
 	}
 
-	// default private
+	// default public
 	edges := Request(e, uID.String(), requestBody).
 		Path("$.data.projects.edges").Array()
-	edges.Value(1).Path("$.node.visibility").IsEqual("private")
+	edges.Value(1).Path("$.node.visibility").IsEqual("public")
 
 	// update public
 	updateVisibilityProject(e, project1ID)
@@ -732,10 +732,10 @@ func testData(e *httpexpect.Expect) {
 		"visualizer":  "CESIUM",
 	}).Object().
 		HasValue("name", "test1-1").
-		HasValue("coreSupport", false).   //default(=false)
-		HasValue("visibility", "private") //default(=private)
+		HasValue("coreSupport", false).  //default(=false)
+		HasValue("visibility", "public") //default(=private)
 
-	// create coreSupport default(=false) visibility default(=private) `delete` project
+	// create coreSupport default(=false) visibility default(=public) `delete` project
 	id := createProject2(e, uID, map[string]any{
 		"name":        "test1-2",
 		"description": "abc",
@@ -743,8 +743,8 @@ func testData(e *httpexpect.Expect) {
 		"visualizer":  "CESIUM",
 	}).Object().
 		HasValue("name", "test1-2").
-		HasValue("coreSupport", false).    //default(=false)
-		HasValue("visibility", "private"). //default(=private)
+		HasValue("coreSupport", false).   //default(=false)
+		HasValue("visibility", "public"). //default(=public)
 		Value("id").Raw().(string)
 
 	deleteProject(e, id) // delete
