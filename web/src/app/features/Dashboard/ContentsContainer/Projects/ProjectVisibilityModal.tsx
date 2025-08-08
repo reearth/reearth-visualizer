@@ -1,3 +1,4 @@
+import { useQuery } from "@apollo/client/react/hooks/useQuery";
 import {
   Button,
   Modal,
@@ -5,6 +6,8 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { SelectField } from "@reearth/app/ui/fields";
+import { Workspace } from "@reearth/services/gql";
+import { WORKSPACE_POLICY_CHECK } from "@reearth/services/gql/queries/workspace";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useState } from "react";
@@ -13,24 +16,36 @@ type Props = {
   visibility: string;
   onClose: () => void;
   onProjectVisibilityChange: (value: string) => void;
+  workspaceId: Workspace["id"];
 };
 
 const ProjectVisibilityModal: FC<Props> = ({
   visibility,
   onClose,
-  onProjectVisibilityChange
+  onProjectVisibilityChange,
+  workspaceId
 }) => {
   const t = useT();
   const theme = useTheme();
-  
+  const { data } = useQuery(WORKSPACE_POLICY_CHECK, {
+    variables: { workspaceId },
+    skip: !workspaceId
+  });
+  const enableToCreatePrivateProject =
+    data?.workspacePolicyCheck?.enableToCreatePrivateProject ?? false;
+
   const [projectVisibility, setProjectVisibility] = useState(visibility);
 
   const projectVisibilityOptions = useMemo(
     () => [
       { value: "public", label: t("Public") },
-      { value: "private", label: t("Private") }
+      {
+        value: "private",
+        label: t("Private"),
+        disabled: !enableToCreatePrivateProject
+      }
     ],
-    [t]
+    [t, enableToCreatePrivateProject]
   );
   return (
     <Modal size="small" visible={true}>
@@ -44,7 +59,9 @@ const ProjectVisibilityModal: FC<Props> = ({
               size="normal"
               title={t("Confirm visibility")}
               appearance="primary"
-              disabled={projectVisibility === visibility || projectVisibility === "private"}
+              disabled={
+                !enableToCreatePrivateProject && projectVisibility === "private"
+              }
               onClick={() => onProjectVisibilityChange(projectVisibility)}
             />
           </>

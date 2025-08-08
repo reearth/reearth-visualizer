@@ -64,7 +64,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     skip: !currentWorkspace?.id
   });
   const enableToCreatePrivateProject =
-    data?.workspacePolicyCheck?.enableToCreatePrivateProject;
+    data?.workspacePolicyCheck?.enableToCreatePrivateProject ?? false;
 
   const [formState, setFormState] = useState<FormState>({
     projectName: "",
