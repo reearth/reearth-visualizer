@@ -218,6 +218,51 @@ describe("parseConditions", () => {
       }
     ]);
   });
+
+  it("should parse startsWith function call format correctly", () => {
+    const conditions = parseConditions("color", [
+      ["startsWith(${gml_id}, 'bldg')", "color('red')"]
+    ]);
+
+    expect(conditions).toEqual([
+      {
+        variable: "${gml_id}",
+        operator: "startsWith",
+        value: "'bldg'",
+        applyValue: "red"
+      }
+    ]);
+  });
+
+  it("should parse startsWith operator format correctly", () => {
+    const conditions = parseConditions("color", [
+      ["${gml_id} startsWith 'bldg'", "color('red')"]
+    ]);
+
+    expect(conditions).toEqual([
+      {
+        variable: "${gml_id}",
+        operator: "startsWith",
+        value: "'bldg'",
+        applyValue: "red"
+      }
+    ]);
+  });
+
+  it("should handle startsWith with different field types", () => {
+    const conditions = parseConditions("text", [
+      ["startsWith(${name}, 'test')", "'example'"]
+    ]);
+
+    expect(conditions).toEqual([
+      {
+        variable: "${name}",
+        operator: "startsWith",
+        value: "'test'",
+        applyValue: "example"
+      }
+    ]);
+  });
 });
 
 it("should parse conditions with URL values correctly", () => {
@@ -253,6 +298,58 @@ describe("generateConditions", () => {
     expect(conditions).toEqual([
       ["${marker-size} === 'small'", "8"],
       ["${marker-size} === 'medium'", "12"]
+    ]);
+  });
+
+  it("should generate startsWith in function call format", () => {
+    const startsWithConditions = generateConditions("color", [
+      {
+        variable: "${gml_id}",
+        operator: "startsWith",
+        value: "'bldg'",
+        applyValue: "#FF0000"
+      }
+    ]);
+
+    expect(startsWithConditions).toEqual([
+      ["startsWith(${gml_id}, 'bldg')", "color('#FF0000')"]
+    ]);
+  });
+
+  it("should generate other operators in standard format", () => {
+    const mixedConditions = generateConditions("color", [
+      {
+        variable: "${gml_id}",
+        operator: "startsWith",
+        value: "'bldg'",
+        applyValue: "#FF0000"
+      },
+      {
+        variable: "${type}",
+        operator: "===",
+        value: "'building'",
+        applyValue: "#00FF00"
+      }
+    ]);
+
+    expect(mixedConditions).toEqual([
+      ["startsWith(${gml_id}, 'bldg')", "color('#FF0000')"],
+      ["${type} === 'building'", "color('#00FF00')"]
+    ]);
+  });
+
+  it("should handle startsWith with different field types", () => {
+    const textConditions = generateConditions("text", [
+      {
+        variable: "${name}",
+        operator: "startsWith",
+        value: "'test'",
+        applyValue: "example"
+      }
+    ]);
+
+    expect(textConditions).toEqual([
+      ["startsWith(${name}, 'test')", "'example'"]
     ]);
   });
 });
