@@ -32,7 +32,6 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
-        enableToCreatePrivateProject
       }
       workspaces {
         id
@@ -58,7 +57,6 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
-      enableToCreatePrivateProject
       }
       auths
     }

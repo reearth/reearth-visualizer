@@ -58,7 +58,6 @@ export type Workspace = {
   policyId?: string | null;
   policy?: Policy | null;
   alias?: string;
-  enableToCreatePrivateProject?: boolean;
 };
 
 const widgetAlignEditor = atom<boolean | undefined>(undefined);
