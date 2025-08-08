@@ -3,6 +3,7 @@ package gateway
 import (
 	"context"
 
+	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
 )
 
@@ -35,4 +36,19 @@ type PolicyCheckResponse struct {
 
 type PolicyChecker interface {
 	CheckPolicy(ctx context.Context, req PolicyCheckRequest) (*PolicyCheckResponse, error)
+}
+
+func CreateGeneralPolicyCheckRequest(workspaceID accountdomain.WorkspaceID, visibility project.Visibility) PolicyCheckRequest {
+	var checkType PolicyCheckType
+	if visibility == project.VisibilityPublic {
+		checkType = PolicyCheckGeneralPublicProjectCreation
+	} else {
+		checkType = PolicyCheckGeneralPrivateProjectCreation
+	}
+
+	return PolicyCheckRequest{
+		WorkspaceID: workspaceID,
+		CheckType:   checkType,
+		Value:       1,
+	}
 }

@@ -60,6 +60,10 @@ input CreateWorkspaceInput {
   alias: String
 }
 
+input PolicyCheckInput {
+  workspaceId: ID!
+}
+
 input UpdateWorkspaceInput {
   workspaceId: ID!
   name: String!
@@ -93,6 +97,11 @@ type CreateWorkspacePayload {
   workspace: Workspace!
 }
 
+type PolicyCheckPayload {
+  workspaceId: ID!
+  enableToCreatePrivateProject: Boolean!
+}
+
 type UpdateWorkspacePayload {
   workspace: Workspace!
 }
@@ -113,7 +122,9 @@ type DeleteWorkspacePayload {
   workspaceId: ID!
 }
 
-#extend type Query{ }
+extend type Query {
+  workspacePolicyCheck(input: PolicyCheckInput!): PolicyCheckPayload
+}
 
 extend type Mutation {
   createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
