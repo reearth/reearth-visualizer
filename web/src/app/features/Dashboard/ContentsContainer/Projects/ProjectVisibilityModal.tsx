@@ -60,7 +60,9 @@ const ProjectVisibilityModal: FC<Props> = ({
               title={t("Confirm visibility")}
               appearance="primary"
               disabled={
-                !enableToCreatePrivateProject && projectVisibility === "private"
+                projectVisibility === visibility ||
+                (projectVisibility === "private" &&
+                  !enableToCreatePrivateProject)
               }
               onClick={() => onProjectVisibilityChange(projectVisibility)}
             />
