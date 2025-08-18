@@ -1,4 +1,3 @@
-import { useQuery } from "@apollo/client/react/hooks/useQuery";
 import {
   Button,
   Modal,
@@ -6,8 +5,8 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { SelectField } from "@reearth/app/ui/fields";
+import { useWorkspaceFetcher } from "@reearth/services/api";
 import { Workspace } from "@reearth/services/gql";
-import { WORKSPACE_POLICY_CHECK } from "@reearth/services/gql/queries/workspace";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useState } from "react";
@@ -27,10 +26,8 @@ const ProjectVisibilityModal: FC<Props> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const { data } = useQuery(WORKSPACE_POLICY_CHECK, {
-    variables: { workspaceId },
-    skip: !workspaceId
-  });
+  const { useWorkspacePolicyCheck } = useWorkspaceFetcher();
+  const data = useWorkspacePolicyCheck(workspaceId);
   const enableToCreatePrivateProject =
     data?.workspacePolicyCheck?.enableToCreatePrivateProject ?? false;
 
