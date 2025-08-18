@@ -14,7 +14,7 @@ import {
   SelectField
 } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
-import { useProjectFetcher } from "@reearth/services/api";
+import { useProjectFetcher, useWorkspaceFetcher } from "@reearth/services/api";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
@@ -57,6 +57,11 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   const { projectVisibility } = appFeature();
   const { checkProjectAlias } = useProjectFetcher();
   const [currentWorkspace] = useWorkspace();
+  const { useWorkspacePolicyCheck } = useWorkspaceFetcher();
+
+  const data = useWorkspacePolicyCheck(currentWorkspace?.id as string);
+  const enableToCreatePrivateProject =
+    data?.workspacePolicyCheck?.enableToCreatePrivateProject ?? false;
 
   const [formState, setFormState] = useState<FormState>({
     projectName: "",
@@ -73,10 +78,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
       {
         value: "private",
         label: t("Private"),
-        disabled: !currentWorkspace?.enableToCreatePrivateProject
+        disabled: !enableToCreatePrivateProject
       }
     ],
-    [t, currentWorkspace?.enableToCreatePrivateProject]
+    [t, enableToCreatePrivateProject]
   );
 
   const handleOnChange = useCallback(
