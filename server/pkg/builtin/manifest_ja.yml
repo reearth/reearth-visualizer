@@ -26,7 +26,6 @@ extensions:
               default_label: ラベル付き地図
               default_road: 道路地図
               open_street_map: OpenStreetMap
-              esri_world_topo: ESRI Topography
               black_marble: Black Marble
               japan_gsi_standard: 地理院地図 標準地図
               url: URL
