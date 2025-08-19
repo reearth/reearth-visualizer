@@ -4,18 +4,16 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect } from "react";
 
+import { useDevice } from "../../atoms";
 import { useWidgetsPage } from "../context";
 
 import Devices from "./Devices";
 
 const WASToolsPanel: FC = () => {
-  const {
-    showWASEditor,
-    selectedDevice = "desktop",
-    handleShowWASEditorToggle,
-    handleDeviceChange,
-    selectWidgetArea
-  } = useWidgetsPage();
+  const { showWASEditor, handleShowWASEditorToggle, selectWidgetArea } =
+    useWidgetsPage();
+
+  const [device, setDevice] = useDevice();
 
   const t = useT();
 
@@ -28,11 +26,13 @@ const WASToolsPanel: FC = () => {
   return (
     <Panel extend data-testid="was-tools-panel">
       <StyledSecondaryNav data-testid="was-secondary-nav">
+        <Spacer />
         <Devices
-          selectedDevice={selectedDevice}
-          onDeviceChange={handleDeviceChange}
+          selectedDevice={device}
+          onDeviceChange={setDevice}
           data-testid="was-devices"
         />
+        <Spacer />
         <AlignSystem data-testid="was-align-system">
           <Typography size="body" data-testid="was-align-system-label">
             {t("Align System")}
@@ -61,5 +61,11 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
 
 const AlignSystem = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: theme.spacing.small + 2
+  alignItems: "center",
+  gap: theme.spacing.small + 2,
+  float: "right"
+}));
+
+const Spacer = styled("div")(() => ({
+  flex: 1
 }));

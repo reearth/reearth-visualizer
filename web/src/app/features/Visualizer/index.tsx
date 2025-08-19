@@ -22,7 +22,7 @@ import {
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
-import { FC, MutableRefObject, SetStateAction } from "react";
+import { FC, MutableRefObject, SetStateAction, useRef } from "react";
 
 import { VISUALIZER_CORE_DOM_ID } from "./constaints";
 import Crust from "./Crust";
@@ -39,6 +39,7 @@ import {
 } from "./Crust/Widgets";
 import type { Location } from "./Crust/Widgets";
 import useHooks from "./hooks";
+import useViewport from "./hooks/useViewport";
 
 type VisualizerProps = {
   engine?: EngineType;
@@ -104,6 +105,7 @@ type VisualizerProps = {
   selectWidgetArea?: (
     update?: SetStateAction<WidgetAreaState | undefined>
   ) => void;
+  forceDevice?: "mobile" | "desktop" | undefined;
   // infobox
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   handleInfoboxBlockCreate?: (
@@ -202,6 +204,7 @@ const Visualizer: FC<VisualizerProps> = ({
   handleWidgetUpdate,
   handleWidgetAlignSystemUpdate,
   selectWidgetArea,
+  forceDevice,
   // infobox
   installableInfoboxBlocks,
   handleInfoboxBlockCreate,
@@ -235,10 +238,16 @@ const Visualizer: FC<VisualizerProps> = ({
     handleCoreAPIReady
   });
 
+  const coreWrapperRef = useRef<HTMLDivElement>(null);
+  const { viewport } = useViewport({
+    wrapperRef: coreWrapperRef,
+    forceDevice
+  });
+
   return (
     <Wrapper storyPanelPosition={story?.position}>
       <StoryWrapper ref={storyWrapperRef} />
-      <CoreWrapper id={VISUALIZER_CORE_DOM_ID}>
+      <CoreWrapper id={VISUALIZER_CORE_DOM_ID} ref={coreWrapperRef}>
         <CoreVisualizer
           ref={visualizerRef}
           engine={engine}
@@ -272,6 +281,7 @@ const Visualizer: FC<VisualizerProps> = ({
             mapAPIReady={mapAPIReady}
             layers={layers}
             // Viewer
+            viewport={viewport}
             viewerProperty={overriddenViewerProperty}
             overrideViewerProperty={overrideViewerProperty}
             // Plugin

@@ -4,6 +4,7 @@ import { FC } from "react";
 import CursorStatus from "../CursorStatus";
 import Navbar, { Tab } from "../Navbar";
 
+import { useDevice } from "./atoms";
 import useHooks from "./hooks";
 import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
@@ -56,6 +57,8 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleCoreAPIReady
   } = useHooks({ sceneId, tab, projectId });
 
+  const [device] = useDevice();
+
   return (
     <Wrapper data-testid="editor-wrapper">
       <Navbar
@@ -72,6 +75,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
         >
           <EditorVisualizer
             inEditor={tab !== "publish"}
+            forceDevice={tab === "widgets" ? device : undefined}
             selectedLayer={selectedLayer}
             visualizerRef={visualizerRef}
             storyPanelRef={storyPanelRef}
