@@ -71,18 +71,19 @@ const GeneralSettings: FC<Props> = ({
     [project, onUpdateProject]
   );
 
-    const handleProjectAliasChange = useCallback(
-      (value: string) => {
-        setLocalAlias(value);
-        setWarning("");
-      },
-      []
-    );
-  
+  const handleProjectAliasChange = useCallback((value: string) => {
+    setLocalAlias(value);
+    setWarning("");
+  }, []);
+
   const handleProjectAliasUpdate = useCallback(
     async (projectAlias: string) => {
       if (!project) return;
-      const result = await checkProjectAlias?.(localAlias, workspaceId, project?.id);
+      const result = await checkProjectAlias?.(
+        localAlias,
+        workspaceId,
+        project?.id
+      );
 
       if (!result?.available) {
         const description = result?.errors?.find(
@@ -298,6 +299,7 @@ const GeneralSettings: FC<Props> = ({
       )}
       {projectVisibilityModal && (
         <ProjectVisibilityModal
+          workspaceId={workspaceId}
           visibility={project.visibility || "public"}
           onProjectVisibilityChange={handleProjectVisibiltyUpdate}
           onClose={handleProjectVisibilityModal}

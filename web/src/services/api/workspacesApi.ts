@@ -15,7 +15,8 @@ import {
   DELETE_WORKSPACE,
   REMOVE_MEMBER_FROM_WORKSPACE,
   UPDATE_MEMBER_OF_WORKSPACE,
-  UPDATE_WORKSPACE
+  UPDATE_WORKSPACE,
+  WORKSPACE_POLICY_CHECK
 } from "@reearth/services/gql/queries/workspace";
 import { useT } from "@reearth/services/i18n";
 import { useCallback } from "react";
@@ -229,7 +230,17 @@ export default () => {
     [updateMemberOfWorkspaceMutation, setNotification, t]
   );
 
+  const useWorkspacePolicyCheck = useCallback((workspaceId: string) => {
+    const { data } = useQuery(WORKSPACE_POLICY_CHECK, {
+      variables: { workspaceId },
+      skip: !workspaceId
+    });
+
+    return data;
+  }, []);
+
   return {
+    useWorkspacePolicyCheck,
     useWorkspaceQuery,
     useWorkspacesQuery,
     useCreateWorkspace,
