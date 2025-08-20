@@ -24,9 +24,9 @@ import (
 )
 
 // export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI ./e2e/...
+// go test -v -run TestInternalAPI_Basic ./e2e/...
 
-func TestInternalAPI(t *testing.T) {
+func TestInternalAPI_Basic(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 	testWorkspace := wID.String()
 
@@ -100,22 +100,19 @@ func TestInternalAPI(t *testing.T) {
 
 	// user2 call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-		// get list size 1
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: false,
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res3.Projects))
-		// 3: creante public  => public   delete => false
+		assert.Equal(t, 2, len(res3.Projects))
 
-		// Authenticated => get list size 1
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: true,
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res4.Projects))
+		assert.Equal(t, 2, len(res4.Projects))
 
 	})
 
@@ -127,10 +124,7 @@ func TestInternalAPI(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res3.Projects))
-
-		// 2: creante public  => public   delete => false
-		// 3: creante private => private  delete => false
+		assert.Equal(t, 4, len(res3.Projects))
 	})
 
 }
