@@ -5,16 +5,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 )
 
-type WidgetAlignSystemsDocument struct {
-	Desktop *WidgetAlignSystemDocument
-	Mobile  *WidgetAlignSystemDocument
-}
-
 type WidgetAlignSystemDocument struct {
 	Inner *WidgetZoneDocument
 	Outer *WidgetZoneDocument
 }
-
 type WidgetZoneDocument struct {
 	Left   *WidgetSectionDocument
 	Center *WidgetSectionDocument
@@ -38,22 +32,6 @@ type WidgetAreaDocument struct {
 
 type WidgetAreaPaddingDocument struct {
 	Top, Bottom, Left, Right int
-}
-
-func NewWidgetAlignSystems(wass *scene.WidgetAlignSystems) *WidgetAlignSystemsDocument {
-	if wass == nil {
-		return nil
-	}
-
-	d := &WidgetAlignSystemsDocument{
-		Desktop: NewWidgetAlignSystem(wass.System(scene.WidgetAlignSystemTypeDesktop)),
-		Mobile:  NewWidgetAlignSystem(wass.System(scene.WidgetAlignSystemTypeMobile)),
-	}
-
-	if d.Desktop == nil && d.Mobile == nil {
-		return nil
-	}
-	return d
 }
 
 func NewWidgetAlignSystem(was *scene.WidgetAlignSystem) *WidgetAlignSystemDocument {
@@ -132,16 +110,6 @@ func NewWidgetAreaPadding(p *scene.WidgetAreaPadding) *WidgetAreaPaddingDocument
 		Left:   p.Left(),
 		Right:  p.Right(),
 	}
-}
-
-func (d *WidgetAlignSystemsDocument) Model() *scene.WidgetAlignSystems {
-	if d == nil {
-		return nil
-	}
-	wass := scene.NewWidgetAlignSystems()
-	wass.SetSystem(scene.WidgetAlignSystemTypeDesktop, d.Desktop.Model())
-	wass.SetSystem(scene.WidgetAlignSystemTypeMobile, d.Mobile.Model())
-	return wass
 }
 
 func (d *WidgetAlignSystemDocument) Model() *scene.WidgetAlignSystem {

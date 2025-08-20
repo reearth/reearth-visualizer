@@ -231,18 +231,16 @@ type GraphQLRequest struct {
 }
 
 func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {
-	response := e.POST("/api/graphql").
+	// RequestDump(requestBody)
+	return e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", user).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(requestBody).
-		Expect()
-	if response.Raw().StatusCode != http.StatusOK {
-		RequestDump(requestBody)
-	}
-
-	return response.Status(http.StatusOK).JSON()
+		Expect().
+		Status(http.StatusOK).
+		JSON()
 }
 
 func RequestQuery(t *testing.T, e *httpexpect.Expect, query string, user string) *httpexpect.Value {

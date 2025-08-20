@@ -399,12 +399,8 @@ func getNewLayersOfScene(e *httpexpect.Expect, sId string) *httpexpect.Object {
         __typename
       }
       widgetAlignSystem {
-        desktop {
-          ...WidgetAlignSystemFragment
-        }
-        mobile {
-          ...WidgetAlignSystemFragment
-        }
+        ...WidgetAlignSystemFragment
+        __typename
       }
       stories {
         ...StoryFragment

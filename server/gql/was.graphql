@@ -1,8 +1,3 @@
-type WidgetAlignSystems {
-  desktop: WidgetAlignSystem
-  mobile: WidgetAlignSystem
-}
-
 type WidgetAlignSystem {
   inner: WidgetZone
   outer: WidgetZone
@@ -54,11 +49,6 @@ type WidgetLayout {
   defaultLocation: WidgetLocation
 }
 
-enum WidgetAlignSystemType {
-  DESKTOP
-  MOBILE
-}
-
 enum WidgetAreaAlign {
   START
   CENTERED
@@ -91,14 +81,12 @@ input WidgetLocationInput {
 }
 
 input AddWidgetInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   pluginId: ID!
   extensionId: ID!
 }
 
 input UpdateWidgetInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   widgetId: ID!
   enabled: Boolean
@@ -108,7 +96,6 @@ input UpdateWidgetInput {
 }
 
 input UpdateWidgetAlignSystemInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   location: WidgetLocationInput!
   align: WidgetAreaAlign
@@ -126,7 +113,6 @@ input WidgetAreaPaddingInput {
 }
 
 input RemoveWidgetInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   widgetId: ID!
 }
@@ -157,8 +143,6 @@ type RemoveWidgetPayload {
 extend type Mutation {
   addWidget(input: AddWidgetInput!): AddWidgetPayload
   updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
-  updateWidgetAlignSystem(
-    input: UpdateWidgetAlignSystemInput!
-  ): UpdateWidgetAlignSystemPayload
+  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
 }

@@ -997,11 +997,6 @@ type ComplexityRoot struct {
 		Outer func(childComplexity int) int
 	}
 
-	WidgetAlignSystems struct {
-		Desktop func(childComplexity int) int
-		Mobile  func(childComplexity int) int
-	}
-
 	WidgetArea struct {
 		Align      func(childComplexity int) int
 		Background func(childComplexity int) int
@@ -5867,20 +5862,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.WidgetAlignSystem.Outer(childComplexity), true
 
-	case "WidgetAlignSystems.desktop":
-		if e.complexity.WidgetAlignSystems.Desktop == nil {
-			break
-		}
-
-		return e.complexity.WidgetAlignSystems.Desktop(childComplexity), true
-
-	case "WidgetAlignSystems.mobile":
-		if e.complexity.WidgetAlignSystems.Mobile == nil {
-			break
-		}
-
-		return e.complexity.WidgetAlignSystems.Mobile(childComplexity), true
-
 	case "WidgetArea.align":
 		if e.complexity.WidgetArea.Align == nil {
 			break
@@ -7488,7 +7469,7 @@ extend type Mutation {
   updatedAt: DateTime!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystems
+  widgetAlignSystem: WidgetAlignSystem
   project: Project
   workspace: Workspace
   property: Property
@@ -7929,12 +7910,7 @@ extend type Mutation {
   deleteMe(input: DeleteMeInput!): DeleteMePayload
 }
 `, BuiltIn: false},
-	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystems {
-  desktop: WidgetAlignSystem
-  mobile: WidgetAlignSystem
-}
-
-type WidgetAlignSystem {
+	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystem {
   inner: WidgetZone
   outer: WidgetZone
 }
@@ -7985,11 +7961,6 @@ type WidgetLayout {
   defaultLocation: WidgetLocation
 }
 
-enum WidgetAlignSystemType {
-  DESKTOP
-  MOBILE
-}
-
 enum WidgetAreaAlign {
   START
   CENTERED
@@ -8022,14 +7993,12 @@ input WidgetLocationInput {
 }
 
 input AddWidgetInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   pluginId: ID!
   extensionId: ID!
 }
 
 input UpdateWidgetInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   widgetId: ID!
   enabled: Boolean
@@ -8039,7 +8008,6 @@ input UpdateWidgetInput {
 }
 
 input UpdateWidgetAlignSystemInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   location: WidgetLocationInput!
   align: WidgetAreaAlign
@@ -8057,7 +8025,6 @@ input WidgetAreaPaddingInput {
 }
 
 input RemoveWidgetInput {
-  type: WidgetAlignSystemType!
   sceneId: ID!
   widgetId: ID!
 }
@@ -8088,12 +8055,9 @@ type RemoveWidgetPayload {
 extend type Mutation {
   addWidget(input: AddWidgetInput!): AddWidgetPayload
   updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
-  updateWidgetAlignSystem(
-    input: UpdateWidgetAlignSystemInput!
-  ): UpdateWidgetAlignSystemPayload
+  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
-}
-`, BuiltIn: false},
+}`, BuiltIn: false},
 	{Name: "../../../gql/workspace.graphql", Input: `type Workspace implements Node {
   id: ID!
   name: String!
@@ -35714,9 +35678,9 @@ func (ec *executionContext) _Scene_widgetAlignSystem(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.WidgetAlignSystems)
+	res := resTmp.(*gqlmodel.WidgetAlignSystem)
 	fc.Result = res
-	return ec.marshalOWidgetAlignSystems2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystems(ctx, field.Selections, res)
+	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -35727,12 +35691,12 @@ func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(_ context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "desktop":
-				return ec.fieldContext_WidgetAlignSystems_desktop(ctx, field)
-			case "mobile":
-				return ec.fieldContext_WidgetAlignSystems_mobile(ctx, field)
+			case "inner":
+				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
+			case "outer":
+				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystems", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
 		},
 	}
 	return fc, nil
@@ -41805,100 +41769,6 @@ func (ec *executionContext) fieldContext_WidgetAlignSystem_outer(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _WidgetAlignSystems_desktop(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAlignSystems) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WidgetAlignSystems_desktop(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Desktop, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.WidgetAlignSystem)
-	fc.Result = res
-	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_WidgetAlignSystems_desktop(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "WidgetAlignSystems",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "inner":
-				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
-			case "outer":
-				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _WidgetAlignSystems_mobile(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAlignSystems) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_WidgetAlignSystems_mobile(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Mobile, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*gqlmodel.WidgetAlignSystem)
-	fc.Result = res
-	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_WidgetAlignSystems_mobile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "WidgetAlignSystems",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "inner":
-				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
-			case "outer":
-				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _WidgetArea_widgetIds(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetArea) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_WidgetArea_widgetIds(ctx, field)
 	if err != nil {
@@ -45964,20 +45834,13 @@ func (ec *executionContext) unmarshalInputAddWidgetInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"type", "sceneId", "pluginId", "extensionId"}
+	fieldsInOrder := [...]string{"sceneId", "pluginId", "extensionId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -47724,20 +47587,13 @@ func (ec *executionContext) unmarshalInputRemoveWidgetInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"type", "sceneId", "widgetId"}
+	fieldsInOrder := [...]string{"sceneId", "widgetId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -48825,20 +48681,13 @@ func (ec *executionContext) unmarshalInputUpdateWidgetAlignSystemInput(ctx conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"type", "sceneId", "location", "align", "padding", "gap", "centered", "background"}
+	fieldsInOrder := [...]string{"sceneId", "location", "align", "padding", "gap", "centered", "background"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -48901,20 +48750,13 @@ func (ec *executionContext) unmarshalInputUpdateWidgetInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"type", "sceneId", "widgetId", "enabled", "location", "extended", "index"}
+	fieldsInOrder := [...]string{"sceneId", "widgetId", "enabled", "location", "extended", "index"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -58128,44 +57970,6 @@ func (ec *executionContext) _WidgetAlignSystem(ctx context.Context, sel ast.Sele
 	return out
 }
 
-var widgetAlignSystemsImplementors = []string{"WidgetAlignSystems"}
-
-func (ec *executionContext) _WidgetAlignSystems(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.WidgetAlignSystems) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, widgetAlignSystemsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("WidgetAlignSystems")
-		case "desktop":
-			out.Values[i] = ec._WidgetAlignSystems_desktop(ctx, field, obj)
-		case "mobile":
-			out.Values[i] = ec._WidgetAlignSystems_mobile(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var widgetAreaImplementors = []string{"WidgetArea"}
 
 func (ec *executionContext) _WidgetArea(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.WidgetArea) graphql.Marshaler {
@@ -61704,16 +61508,6 @@ func (ec *executionContext) marshalNVisualizer2githubᚗcomᚋreearthᚋreearth�
 	return v
 }
 
-func (ec *executionContext) unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx context.Context, v any) (gqlmodel.WidgetAlignSystemType, error) {
-	var res gqlmodel.WidgetAlignSystemType
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx context.Context, sel ast.SelectionSet, v gqlmodel.WidgetAlignSystemType) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNWidgetAreaAlign2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaAlign(ctx context.Context, v any) (gqlmodel.WidgetAreaAlign, error) {
 	var res gqlmodel.WidgetAreaAlign
 	err := res.UnmarshalGQL(v)
@@ -63073,13 +62867,6 @@ func (ec *executionContext) marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearth�
 		return graphql.Null
 	}
 	return ec._WidgetAlignSystem(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOWidgetAlignSystems2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystems(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAlignSystems) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._WidgetAlignSystems(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOWidgetArea2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetArea(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetArea) graphql.Marshaler {
