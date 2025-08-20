@@ -105,6 +105,7 @@ import MapPin from "./Icons/MapPin.svg?react";
 import MapTrifold from "./Icons/MapTrifold.svg?react";
 import MemberAdd from "./Icons/MemberAdd.svg?react";
 import Minus from "./Icons/Minus.svg?react";
+import Mobile from "./Icons/Mobile.svg?react";
 import More from "./Icons/More.svg?react";
 import NavigatorAngle from "./Icons/NavigatorAngle.svg?react";
 import NewWorkspace from "./Icons/NewWorkspace.svg?react";
@@ -282,6 +283,7 @@ export default {
   mapTrifold: MapTrifold,
   memberAdd: MemberAdd,
   minus: Minus,
+  mobile: Mobile,
   more: More,
   navigatorAngle: NavigatorAngle,
   newWorkspace: NewWorkspace,
