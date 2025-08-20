@@ -3,7 +3,7 @@ import { FlyTo, MapRef } from "@reearth/core";
 import { useCallback, useRef, useState } from "react";
 
 import { Tab } from "../../Navbar";
-import { useDevice } from "../atoms";
+import { useWidgetsViewDevice, usePublishViewDevice } from "../atoms";
 
 export default ({ tab }: { tab: Tab }) => {
   const visualizerRef = useRef<MapRef | null>(null);
@@ -15,7 +15,8 @@ export default ({ tab }: { tab: Tab }) => {
     [setIsVisualizerReady]
   );
 
-  const [device] = useDevice();
+  const [widgetsViewDevice] = useWidgetsViewDevice();
+  const [publishViewDevice] = usePublishViewDevice();
 
   // Visualizer Size
   const [visualizerSize, setVisualizerSize] = useState({
@@ -28,8 +29,15 @@ export default ({ tab }: { tab: Tab }) => {
 
   const handleVisualizerResize = useCallback(
     (size: AreaSize) => {
+      const device =
+        tab === "widgets"
+          ? widgetsViewDevice
+          : tab === "publish"
+            ? publishViewDevice
+            : "desktop";
+
       const deviceSize =
-        device === "desktop" || tab !== "widgets"
+        device === "desktop"
           ? {
               left: size.left + 1,
               top: size.top + 1,
@@ -48,7 +56,7 @@ export default ({ tab }: { tab: Tab }) => {
         isVisualizerResizing.current = false;
       });
     },
-    [device, tab]
+    [widgetsViewDevice, publishViewDevice, tab]
   );
 
   const handleFlyTo: FlyTo = useCallback(

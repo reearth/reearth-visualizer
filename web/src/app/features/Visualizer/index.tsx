@@ -245,7 +245,10 @@ const Visualizer: FC<VisualizerProps> = ({
   });
 
   return (
-    <Wrapper storyPanelPosition={story?.position}>
+    <Wrapper
+      storyPanelPosition={story?.position}
+      isMobile={!!viewport.isMobile}
+    >
       <StoryWrapper ref={storyWrapperRef} />
       <CoreWrapper id={VISUALIZER_CORE_DOM_ID} ref={coreWrapperRef}>
         <CoreVisualizer
@@ -335,26 +338,31 @@ const Visualizer: FC<VisualizerProps> = ({
 
 export default Visualizer;
 
-const Wrapper = styled("div")<{ storyPanelPosition?: Position }>(
-  ({ storyPanelPosition, theme }) => ({
-    display: "flex",
-    position: "relative",
-    flexDirection: storyPanelPosition === "right" ? "row-reverse" : "row",
-    background: theme.bg[0],
-    width: "100%",
-    height: "100%",
-    overflow: "hidden"
-  })
-);
+const Wrapper = styled("div")<{
+  storyPanelPosition?: Position;
+  isMobile: boolean;
+}>(({ storyPanelPosition, isMobile, theme }) => ({
+  display: "flex",
+  position: "relative",
+  flexDirection: isMobile
+    ? "column-reverse"
+    : storyPanelPosition === "right"
+      ? "row-reverse"
+      : "row",
+  background: theme.bg[0],
+  width: "100%",
+  height: "100%",
+  overflow: "hidden"
+}));
 
 const StoryWrapper = styled("div")(() => ({
   display: "flex",
   position: "relative",
-  flexShrink: 0,
-  height: "100%"
+  flexShrink: 0
 }));
 
 const CoreWrapper = styled("div")(() => ({
   position: "relative",
+  minHeight: 0,
   flex: 1
 }));

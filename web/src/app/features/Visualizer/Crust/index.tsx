@@ -390,6 +390,7 @@ export default function Crust({
         <StoryPanel
           ref={storyPanelRef}
           storyWrapperRef={storyWrapperRef}
+          isMobile={viewport?.isMobile}
           selectedStory={selectedStory}
           installableStoryBlocks={installableStoryBlocks}
           isEditable={!!inEditor}
