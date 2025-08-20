@@ -23,7 +23,7 @@ const Widgets: FC = () => {
           asWrapper
           data-testid="widgets-left-area"
         >
-          <Area initialHeight={34} data-testid="widgets-tools-area">
+          <Area initialHeight={42} data-testid="widgets-tools-area">
             <WASToolsPanel />
           </Area>
           <Area

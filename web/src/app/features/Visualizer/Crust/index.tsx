@@ -14,6 +14,8 @@ import {
 import { NLSLayer } from "@reearth/services/api/layersApi/utils";
 import { useMemo, type RefObject, useContext, useCallback } from "react";
 
+import { Viewport } from "../hooks/useViewport";
+
 import { useWidgetContext } from "./context";
 import useHooks from "./hooks";
 import Infobox, { InstallableInfoboxBlock } from "./Infobox";
@@ -71,6 +73,7 @@ export type Props = {
   camera?: Camera;
   selectedFeatureInfo?: SelectedFeatureInfo;
   // viewer
+  viewport: Viewport;
   viewerProperty?: ViewerProperty;
   overrideViewerProperty?: (pluginId: string, property: ViewerProperty) => void;
   // widgets
@@ -178,6 +181,7 @@ export default function Crust({
   externalPlugin,
   layers,
   // Viewer
+  viewport,
   viewerProperty,
   overrideViewerProperty,
   // Widget
@@ -223,7 +227,6 @@ export default function Crust({
     interactionMode,
     selectedLayer,
     selectedComputedFeature,
-    viewport,
     handleCameraForceHorizontalRollChange,
     onLayerEdit,
     handleInteractionModeChange,
@@ -387,6 +390,7 @@ export default function Crust({
         <StoryPanel
           ref={storyPanelRef}
           storyWrapperRef={storyWrapperRef}
+          isMobile={viewport?.isMobile}
           selectedStory={selectedStory}
           installableStoryBlocks={installableStoryBlocks}
           isEditable={!!inEditor}

@@ -1,5 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode } from "react";
 import { GridWrapper } from "react-align";
 
 import useHooks from "./hooks";
@@ -12,7 +12,6 @@ import type {
   Theme,
   WidgetProps
 } from "./types";
-import { filterSections } from "./utils";
 import ZoneComponent, { WidgetAreaType } from "./Zone";
 
 export type { WidgetAreaType };
@@ -73,13 +72,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
   });
   const Zone = isMobile ? MobileZone : ZoneComponent;
 
-  const hasInner = useMemo(() => {
-    if (!alignSystem?.inner) {
-      return;
-    }
-    return !!filterSections(alignSystem?.inner, invisibleWidgetIDs).length;
-  }, [alignSystem, invisibleWidgetIDs]);
-
   return (
     <WidetAlignSystemWrapper editorMode={editing}>
       <GridWrapper
@@ -100,19 +92,17 @@ const WidgetAlignSystem: React.FC<Props> = ({
           renderWidget={renderWidget}
           onWidgetAreaSelect={onWidgetAreaSelect}
         >
-          {(!isMobile || hasInner) && (
-            <ZoneComponent
-              zoneName="inner"
-              selectedWidgetArea={selectedWidgetArea}
-              invisibleWidgetIDs={invisibleWidgetIDs}
-              zone={alignSystem?.inner}
-              layoutConstraint={layoutConstraint}
-              built={built}
-              isMobile={isMobile}
-              renderWidget={renderWidget}
-              onWidgetAreaSelect={onWidgetAreaSelect}
-            />
-          )}
+          <ZoneComponent
+            zoneName="inner"
+            selectedWidgetArea={selectedWidgetArea}
+            invisibleWidgetIDs={invisibleWidgetIDs}
+            zone={alignSystem?.inner}
+            layoutConstraint={layoutConstraint}
+            built={built}
+            isMobile={isMobile}
+            renderWidget={renderWidget}
+            onWidgetAreaSelect={onWidgetAreaSelect}
+          />
         </Zone>
       </GridWrapper>
     </WidetAlignSystemWrapper>
