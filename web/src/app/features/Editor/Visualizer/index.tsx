@@ -19,6 +19,7 @@ export type Props = {
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
+  forceDevice?: "mobile" | "desktop" | undefined;
   interactionMode?: InteractionModeType;
   isVisualizerResizing?: MutableRefObject<boolean>;
   // story
@@ -47,6 +48,7 @@ const EditorVisualizer: React.FC<Props> = ({
   sceneId,
   isBuilt,
   inEditor,
+  forceDevice,
   interactionMode,
   isVisualizerResizing,
   storyPanelRef,
@@ -137,6 +139,7 @@ const EditorVisualizer: React.FC<Props> = ({
       handleSketchFeatureUpdate={onSketchFeatureUpdate}
       handleMount={handleMount}
       handleCoreAPIReady={onCoreAPIReady}
+      forceDevice={forceDevice}
       // story
       showStoryPanel={showStoryPanel}
       storyPanelRef={storyPanelRef}
