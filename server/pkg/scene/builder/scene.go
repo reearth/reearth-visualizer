@@ -16,7 +16,7 @@ type sceneJSON struct {
 	Property          propertyJSON            `json:"property"`
 	Plugins           map[string]propertyJSON `json:"plugins"`
 	Widgets           []*widgetJSON           `json:"widgets"`
-	WidgetAlignSystem *widgetAlignSystemsJSON `json:"widgetAlignSystem"`
+	WidgetAlignSystem *widgetAlignSystemJSON  `json:"widgetAlignSystem"`
 	Story             *storyJSON              `json:"story,omitempty"`
 	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
 	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
@@ -33,7 +33,7 @@ func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, p []*pro
 		Property:          b.property(ctx, findProperty(p, b.scene.Property())),
 		Plugins:           b.plugins(ctx, p),
 		Widgets:           b.widgets(ctx, p),
-		WidgetAlignSystem: buildWidgetAlignSystems(b.scene.Widgets().Alignment()),
+		WidgetAlignSystem: buildWidgetAlignSystem(b.scene.Widgets().Alignment()),
 		CoreSupport:       coreSupport,
 		EnableGA:          enableGa,
 		TrackingID:        trackingId,
@@ -96,20 +96,6 @@ func toString(wids []id.WidgetID) []string {
 		docids = append(docids, wid.String())
 	}
 	return docids
-}
-
-func buildWidgetAlignSystems(ss *scene.WidgetAlignSystems) *widgetAlignSystemsJSON {
-	if ss == nil {
-		return nil
-	}
-	wass := widgetAlignSystemsJSON{
-		Desktop: buildWidgetAlignSystem(ss.System(scene.WidgetAlignSystemTypeDesktop)),
-		Mobile:  buildWidgetAlignSystem(ss.System(scene.WidgetAlignSystemTypeMobile)),
-	}
-	if wass.Desktop == nil && wass.Mobile == nil {
-		return nil
-	}
-	return &wass
 }
 
 func buildWidgetAlignSystem(s *scene.WidgetAlignSystem) *widgetAlignSystemJSON {

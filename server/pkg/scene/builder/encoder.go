@@ -2,11 +2,6 @@ package builder
 
 type propertyJSON = map[string]interface{}
 
-type widgetAlignSystemsJSON struct {
-	Desktop *widgetAlignSystemJSON `json:"desktop"`
-	Mobile  *widgetAlignSystemJSON `json:"mobile"`
-}
-
 type widgetAlignSystemJSON struct {
 	Inner *widgetZoneJSON `json:"inner"`
 	Outer *widgetZoneJSON `json:"outer"`

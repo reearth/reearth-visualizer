@@ -40,29 +40,19 @@ func ParseSceneJSONByByte(data *[]byte) (*sceneJSON, error) {
 	return ParseSceneJSON(sceneData)
 }
 
-func ParserWidgetAlignSystem(data *[]byte) (*scene.WidgetAlignSystems, error) {
+func ParserWidgetAlignSystem(data *[]byte) (*scene.WidgetAlignSystem, error) {
 	sceneJSON, err := ParseSceneJSONByByte(data)
 	if err != nil {
 		return nil, err
 	}
-	widgetAlignSystemsJSON := sceneJSON.WidgetAlignSystem
-	if widgetAlignSystemsJSON == nil {
-		return nil, nil
-	}
-	wass := scene.NewWidgetAlignSystems()
-	wass.SetSystem(scene.WidgetAlignSystemTypeDesktop, parserWidgetAlignSystem(widgetAlignSystemsJSON.Desktop))
-	wass.SetSystem(scene.WidgetAlignSystemTypeMobile, parserWidgetAlignSystem(widgetAlignSystemsJSON.Mobile))
-	return wass, nil
-}
-
-func parserWidgetAlignSystem(widgetAlignSystemJSON *widgetAlignSystemJSON) *scene.WidgetAlignSystem {
+	widgetAlignSystemJSON := sceneJSON.WidgetAlignSystem
 	if widgetAlignSystemJSON == nil {
-		return nil
+		return nil, nil
 	}
 	was := scene.NewWidgetAlignSystem()
 	was.SetZone(scene.WidgetZoneInner, parseWidgetZone(widgetAlignSystemJSON.Inner))
 	was.SetZone(scene.WidgetZoneOuter, parseWidgetZone(widgetAlignSystemJSON.Outer))
-	return was
+	return was, nil
 }
 
 func parseWidgetZone(widgetZoneJSON *widgetZoneJSON) *scene.WidgetZone {

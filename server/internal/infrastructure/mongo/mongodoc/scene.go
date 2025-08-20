@@ -13,15 +13,15 @@ import (
 )
 
 type SceneDocument struct {
-	ID           string
-	Project      string
-	Workspace    string
-	Widgets      []SceneWidgetDocument
-	AlignSystems *WidgetAlignSystemsDocument
-	Plugins      []ScenePluginDocument
-	UpdateAt     time.Time
-	Property     string
-	Alias        string
+	ID          string
+	Project     string
+	Workspace   string
+	Widgets     []SceneWidgetDocument
+	AlignSystem *WidgetAlignSystemDocument
+	Plugins     []ScenePluginDocument
+	UpdateAt    time.Time
+	Property    string
+	Alias       string
 }
 
 type SceneWidgetDocument struct {
@@ -98,14 +98,14 @@ func NewScene(scene *scene.Scene) (*SceneDocument, string) {
 
 	id := scene.ID().String()
 	return &SceneDocument{
-		ID:           id,
-		Project:      scene.Project().String(),
-		Workspace:    scene.Workspace().String(),
-		Widgets:      widgetsDoc,
-		Plugins:      pluginsDoc,
-		AlignSystems: NewWidgetAlignSystems(scene.Widgets().Alignment()),
-		UpdateAt:     scene.UpdatedAt(),
-		Property:     scene.Property().String(),
+		ID:          id,
+		Project:     scene.Project().String(),
+		Workspace:   scene.Workspace().String(),
+		Widgets:     widgetsDoc,
+		Plugins:     pluginsDoc,
+		AlignSystem: NewWidgetAlignSystem(scene.Widgets().Alignment()),
+		UpdateAt:    scene.UpdatedAt(),
+		Property:    scene.Property().String(),
 
 		// publishment ---------------------
 		Alias: scene.Alias(),
@@ -172,7 +172,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 		ID(sid).
 		Project(projectID).
 		Workspace(tid).
-		Widgets(scene.NewWidgets(ws, d.AlignSystems.Model())).
+		Widgets(scene.NewWidgets(ws, d.AlignSystem.Model())).
 		Plugins(scene.NewPlugins(ps)).
 		UpdatedAt(d.UpdateAt).
 		Property(prid).

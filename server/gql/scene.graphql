@@ -7,7 +7,7 @@ type Scene implements Node {
   updatedAt: DateTime!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystems
+  widgetAlignSystem: WidgetAlignSystem
   project: Project
   workspace: Workspace
   property: Property
