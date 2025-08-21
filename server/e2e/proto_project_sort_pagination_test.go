@@ -16,22 +16,26 @@ import (
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/stretchr/testify/assert"
 )
 
-// go test -v -run TestInternalAPI_GetProjectList ./e2e/...
+// go test -v -run TestInternalAPI_GetProjectList_Owner ./e2e/...
 
-func TestInternalAPI_GetProjectList(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
+func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
+	_, r, _, _ := GRPCServeWithCtx(t, baseSeeder)
 
 	testDataCount := 20
 	testWorkspace2 := wID2.String()
 	limit := 5
 
-	// user2 call api
+	// user2(Owner) call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
+		//####################################
+		// Add TestData for user2 workspace
 		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		//####################################
 
 		// ASC UpdateAt
 		checkGetProjectsASC(t, client, ctx, true,
@@ -92,7 +96,32 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 
 	})
 
-	// user1 call api
+}
+
+// go test -v -run TestInternalAPI_GetProjectList_Member ./e2e/...
+func TestInternalAPI_GetProjectList_Member(t *testing.T) {
+	_, r, _, ctx := GRPCServeWithCtx(t, baseSeeder)
+
+	testDataCount := 20
+	testWorkspace2 := wID2.String()
+	limit := 5
+
+	// user2(Owner) call api
+	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		//####################################
+		// Add TestData for user2 workspace
+		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		//####################################
+
+	})
+
+	// add user1 to workspace2(user2)
+	user1, err := r.User.FindByID(ctx, uID)
+	assert.Nil(t, err)
+	assert.Nil(t, JoinMembers(ctx, r, wID2, user1, workspace.RoleReader, uID2))
+
+	// user1(Member) call api
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// ASC UpdateAt
@@ -103,7 +132,7 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount, // public and not deleted only
+			testDataCount*4, // all project
 		)
 
 		// ASC Name
@@ -114,7 +143,7 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount, // public and not deleted only
+			testDataCount*4, // all project
 		)
 
 		// DESC UpdateAt
@@ -125,7 +154,7 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount, // public and not deleted only
+			testDataCount*4, // all project
 		)
 
 		// DESC Name
@@ -136,7 +165,7 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount, // public and not deleted only
+			testDataCount*4, // all project
 		)
 
 		// keyword search
@@ -149,7 +178,89 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 			},
 			&keyword,
 			limit,
-			20,
+			26,
+		)
+
+	})
+
+}
+
+// go test -v -run TestInternalAPI_GetProjectList_Anonymous ./e2e/...
+func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
+	_, r, _, _ := GRPCServeWithCtx(t, baseSeeder)
+
+	testDataCount := 20
+	testWorkspace2 := wID2.String()
+	limit := 5
+
+	// user2(Owner) call api
+	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		//####################################
+		// Add TestData for user2 workspace
+		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		//####################################
+
+	})
+
+	// user3(Anonymous) call api
+	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		// ASC UpdateAt
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// ASC Name
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// DESC UpdateAt
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// DESC Name
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// keyword search
+		keyword := "2"
+		checkGetProjectsASCWithKeyword(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			&keyword,
+			limit,
+			22,
 		)
 
 	})
