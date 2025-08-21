@@ -58,7 +58,6 @@ const GeneralSettings: FC<Props> = ({
 
   const { projectVisibility } = appFeature();
   const { checkProjectAlias } = useProjectFetcher();
-  const [localAlias, setLocalAlias] = useState(project?.projectAlias || "");
   const [warning, setWarning] = useState<string>("");
 
   const handleNameUpdate = useCallback(
@@ -71,16 +70,16 @@ const GeneralSettings: FC<Props> = ({
     [project, onUpdateProject]
   );
 
-  const handleProjectAliasChange = useCallback((value: string) => {
-    setLocalAlias(value);
+  const handleProjectAliasChange = useCallback(() => {
     setWarning("");
   }, []);
 
   const handleProjectAliasUpdate = useCallback(
     async (projectAlias: string) => {
-      if (!project) return;
+      const trimmedAlias = projectAlias.trim();
+      if (!project || project.projectAlias === trimmedAlias) return;
       const result = await checkProjectAlias?.(
-        localAlias,
+        trimmedAlias,
         workspaceId,
         project?.id
       );
@@ -94,11 +93,11 @@ const GeneralSettings: FC<Props> = ({
       } else {
         setWarning("");
         onUpdateProject({
-          projectAlias
+          projectAlias: trimmedAlias
         });
       }
     },
-    [project, checkProjectAlias, localAlias, workspaceId, onUpdateProject]
+    [project, checkProjectAlias, workspaceId, onUpdateProject]
   );
 
   const handleDescriptionUpdate = useCallback(
