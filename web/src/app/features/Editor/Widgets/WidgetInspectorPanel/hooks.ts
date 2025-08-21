@@ -2,6 +2,7 @@ import { filterVisibleItems } from "@reearth/app/ui/fields/utils";
 import { useWidgetsFetcher } from "@reearth/services/api";
 import { useMemo } from "react";
 
+import { useWidgetsViewDevice } from "../../atoms";
 import { SelectedWidget } from "../../hooks/useWidgets";
 
 type Props = {
@@ -10,9 +11,13 @@ type Props = {
 };
 
 export default ({ sceneId, selectedWidget }: Props) => {
-  const { useInstalledWidgetsQuery } = useWidgetsFetcher();
+  const { useInstalledWidgets } = useWidgetsFetcher();
 
-  const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
+  const [widgetsViewDevice] = useWidgetsViewDevice();
+  const { installedWidgets } = useInstalledWidgets({
+    sceneId,
+    type: widgetsViewDevice
+  });
 
   const visibleItems = useMemo(
     () =>

@@ -1,6 +1,11 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
+import { DeviceType } from "@reearth/app/utils/device";
 
-import { GetSceneQuery, PluginExtensionType } from "../../gql";
+import {
+  GetSceneQuery,
+  PluginExtensionType,
+  WidgetAlignSystem
+} from "../../gql";
 import { Item, convert } from "../propertyApi/utils";
 
 export const BUTTON_BUILTIN_WIDGET_ID = "reearth/button";
@@ -40,9 +45,49 @@ export type InstalledWidget = {
   };
 };
 
-export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
+const getWidgetIdsFromWAS = (
+  was: WidgetAlignSystem | null | undefined
+): string[] => {
+  if (!was) return [];
+
+  const widgetIds: string[] = [];
+
+  const zones = [was.outer, was.inner].filter(Boolean);
+
+  zones.forEach((zone) => {
+    const sections = [zone?.left, zone?.center, zone?.right].filter(Boolean);
+
+    sections.forEach((section) => {
+      const areas = [section?.top, section?.middle, section?.bottom].filter(
+        Boolean
+      );
+
+      areas.forEach((area) => {
+        if (area?.widgetIds) {
+          widgetIds.push(...area.widgetIds);
+        }
+      });
+    });
+  });
+
+  return widgetIds;
+};
+
+export const getInstallableWidgets = (
+  rawScene: GetSceneQuery | undefined,
+  type: DeviceType
+) => {
   const scene =
     rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
+
+  const installedWidgetIds = getWidgetIdsFromWAS(
+    scene?.widgetAlignSystem?.[type]
+  );
+
+  const installedWidgetExtensionIds = scene?.widgets
+    ?.filter((w) => installedWidgetIds.includes(w.id))
+    .map((w) => w.extensionId)
+    .filter(Boolean);
 
   return scene?.plugins
     ?.map((p) => {
@@ -66,9 +111,7 @@ export const getInstallableWidgets = (rawScene?: GetSceneQuery) => {
               "plugin",
             disabled:
               (e.singleOnly &&
-                !!scene?.widgets?.find(
-                  (w) => w.extensionId === e.extensionId
-                )) ??
+                installedWidgetExtensionIds?.includes(e.extensionId)) ??
               undefined
           };
         })
@@ -99,30 +142,40 @@ function getBuiltinExtensionIcon(
 }
 
 export const getInstalledWidgets = (
-  rawScene?: GetSceneQuery
+  rawScene: GetSceneQuery | undefined,
+  type: DeviceType
 ): InstalledWidget[] | undefined => {
   const scene =
     rawScene?.node?.__typename === "Scene" ? rawScene.node : undefined;
 
-  return scene?.widgets?.map((w) => {
-    const e = getInstallableWidgets(rawScene)?.find(
-      (e) => e.extensionId === w.extensionId
-    );
+  const installedWidgetIds = getWidgetIdsFromWAS(
+    scene?.widgetAlignSystem?.[type]
+  );
 
-    return {
-      id: w.id,
-      pluginId: w.pluginId,
-      extensionId: w.extensionId,
-      propertyId: w.property?.id,
-      enabled: w.enabled,
-      extended: w.extended,
-      title: e?.title || "",
-      description: e?.description,
-      icon: e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
-      property: {
-        id: w.property?.id ?? "",
-        items: convert(w.property, null)
-      }
-    };
-  });
+  const installableWidgets = getInstallableWidgets(rawScene, type);
+
+  return scene?.widgets
+    .filter((w) => installedWidgetIds.includes(w.id))
+    .map((w) => {
+      const e = installableWidgets?.find(
+        (e) => e.extensionId === w.extensionId
+      );
+
+      return {
+        id: w.id,
+        pluginId: w.pluginId,
+        extensionId: w.extensionId,
+        propertyId: w.property?.id,
+        enabled: w.enabled,
+        extended: w.extended,
+        title: e?.title || "",
+        description: e?.description,
+        icon:
+          e?.icon || (w.pluginId === "reearth" && w.extensionId) || "plugin",
+        property: {
+          id: w.property?.id ?? "",
+          items: convert(w.property, null)
+        }
+      };
+    });
 };

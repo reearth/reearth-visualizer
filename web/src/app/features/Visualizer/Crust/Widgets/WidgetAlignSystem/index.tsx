@@ -3,7 +3,6 @@ import React, { ReactNode } from "react";
 import { GridWrapper } from "react-align";
 
 import useHooks from "./hooks";
-import MobileZone from "./MobileZone";
 import type {
   WidgetAlignSystem as WidgetAlignSystemType,
   Alignment,
@@ -35,7 +34,6 @@ export type Props = {
   selectedWidgetArea?: WidgetAreaType;
   invisibleWidgetIDs?: string[];
   editing?: boolean;
-  built?: boolean;
   layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   isMobile?: boolean;
   theme?: Theme;
@@ -57,10 +55,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
   selectedWidgetArea,
   invisibleWidgetIDs,
   editing,
-  built,
   isMobile,
   layoutConstraint,
-  theme,
   renderWidget,
   onWidgetAreaSelect,
   onWidgetLayoutUpdate: onWidgetLayoutUpdate,
@@ -70,7 +66,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
     onWidgetLayoutUpdate,
     onAlignmentUpdate
   });
-  const Zone = isMobile ? MobileZone : ZoneComponent;
 
   return (
     <WidetAlignSystemWrapper editorMode={editing}>
@@ -80,14 +75,12 @@ const WidgetAlignSystem: React.FC<Props> = ({
         onAlignChange={handleAlignmentChange}
         onExtend={handleExtend}
       >
-        <Zone
+        <ZoneComponent
           zoneName="outer"
           selectedWidgetArea={selectedWidgetArea}
           zone={alignSystem?.outer}
           layoutConstraint={layoutConstraint}
           invisibleWidgetIDs={invisibleWidgetIDs}
-          theme={theme}
-          built={built}
           isMobile={isMobile}
           renderWidget={renderWidget}
           onWidgetAreaSelect={onWidgetAreaSelect}
@@ -98,12 +91,11 @@ const WidgetAlignSystem: React.FC<Props> = ({
             invisibleWidgetIDs={invisibleWidgetIDs}
             zone={alignSystem?.inner}
             layoutConstraint={layoutConstraint}
-            built={built}
             isMobile={isMobile}
             renderWidget={renderWidget}
             onWidgetAreaSelect={onWidgetAreaSelect}
           />
-        </Zone>
+        </ZoneComponent>
       </GridWrapper>
     </WidetAlignSystemWrapper>
   );

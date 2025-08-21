@@ -1,17 +1,16 @@
 import { RadioButton } from "@reearth/app/lib/reearth-ui";
+import { DeviceType } from "@reearth/app/utils/device";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-export type Device = "desktop" | "mobile";
-
 export type Devices = {
-  [key in Device]: string | number;
+  [key in DeviceType]: string | number;
 };
 
 type Props = {
-  selectedDevice?: Device;
-  onDeviceChange: (device: Device) => void;
+  selectedDevice?: DeviceType;
+  onDeviceChange: (device: DeviceType) => void;
 };
 
 const Devices: FC<Props> = ({ selectedDevice, onDeviceChange }) => {
@@ -19,7 +18,7 @@ const Devices: FC<Props> = ({ selectedDevice, onDeviceChange }) => {
 
   const handleDeviceChange = (device: string) => {
     if (selectedDevice !== device) {
-      onDeviceChange(device as Device);
+      onDeviceChange(device as DeviceType);
     }
   };
 
