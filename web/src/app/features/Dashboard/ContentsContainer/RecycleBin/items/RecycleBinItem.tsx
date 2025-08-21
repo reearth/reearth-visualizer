@@ -5,6 +5,7 @@ import {
   PopupMenuItem
 } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
@@ -26,6 +27,7 @@ const RecycleBinItem: FC<Prop> = ({
 }) => {
   const t = useT();
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const { projectVisibility } = appFeature();
   const theme = useTheme();
 
   const handleDeleteModalClose = useCallback(() => {
@@ -56,7 +58,7 @@ const RecycleBinItem: FC<Prop> = ({
         <ButtonWrapper
           data-testid={`recycle-bin-item-btn-wrapper-${project.name}`}
         >
-          {!!project.visibility && (
+          {projectVisibility && !!project.visibility && (
             <VisibilityButton
               visibility={project.visibility}
               data-testid={`recycle-bin-item-visibility-btn-${project.name}`}
