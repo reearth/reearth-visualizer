@@ -71,7 +71,7 @@ func TestPermissiveChecker_CheckPolicy(t *testing.T) {
 			},
 		},
 		{
-			name: "model count per project check",
+			name: "custom domain count check",
 			req: gateway.PolicyCheckRequest{
 				WorkspaceID: wid,
 				CheckType:   gateway.PolicyCheckCustomDomainCount,
