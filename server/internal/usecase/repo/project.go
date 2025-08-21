@@ -24,7 +24,7 @@ type Project interface {
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
 	FindByScene(context.Context, id.SceneID) (*project.Project, error)
 	FindByWorkspace(context.Context, accountdomain.WorkspaceID, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
-	FindByWorkspaces(context.Context, bool, ProjectFilter, accountdomain.WorkspaceIDList, accountdomain.WorkspaceIDList) ([]*project.Project, *usecasex.PageInfo, error)
+	FindByWorkspaces(context.Context, bool, ProjectFilter, []string, []string, []string) ([]*project.Project, *usecasex.PageInfo, error)
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindActiveById(context.Context, id.ProjectID) (*project.Project, error)

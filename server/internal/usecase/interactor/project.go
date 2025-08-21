@@ -196,6 +196,37 @@ func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator
 	return pj, nil
 }
 
+func (i *Project) memberWorkspaces(ctx context.Context, uId accountdomain.UserID) (wsList workspace.List, ownedWorkspaces []string, memberWorkspaces []string) {
+	wsList, err := i.workspaceRepo.FindByUser(ctx, uId)
+	if err != nil {
+		return nil, nil, nil
+	}
+	ownedWorkspaces = []string{}
+	memberWorkspaces = []string{}
+	for _, ws := range wsList {
+		for userId, member := range ws.Members().Users() {
+			if uId.String() == userId.String() {
+				if member.Role == workspace.RoleOwner {
+					ownedWorkspaces = append(ownedWorkspaces, ws.ID().String())
+				}
+				if member.Role == workspace.RoleWriter || member.Role == workspace.RoleReader || member.Role == workspace.RoleMaintainer {
+					memberWorkspaces = append(memberWorkspaces, ws.ID().String())
+
+				}
+			}
+		}
+	}
+	return
+}
+
+func toIdStrings(wsList accountdomain.WorkspaceIDList) []string {
+	var ret []string
+	for _, wsID := range wsList {
+		ret = append(ret, wsID.String())
+	}
+	return ret
+}
+
 func (i *Project) FindVisibilityByUser(
 	ctx context.Context,
 	u *user.User,
@@ -218,26 +249,23 @@ func (i *Project) FindVisibilityByUser(
 		pFilter.Offset = param.Offset
 	}
 
-	wss, err := i.workspaceRepo.FindByUser(ctx, u.ID())
-	if err != nil {
-		return nil, nil, err
-	}
+	wsList, ownedWorkspaces, memberWorkspaces := i.memberWorkspaces(ctx, u.ID())
 
-	wList := make(accountdomain.WorkspaceIDList, 0, len(wss))
-	for _, ws := range wss {
-		wsid, err := workspace.IDFrom(ws.ID().String())
+	targetWsList := make(accountdomain.WorkspaceIDList, 0, len(wsList))
+	for _, ws := range wsList {
+		wsId, err := workspace.IDFrom(ws.ID().String())
 		if err != nil {
 			return nil, nil, err
 		}
-		wList = append(wList, wsid)
+		targetWsList = append(targetWsList, wsId)
 	}
 
-	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, operator.AcOperator.OwningWorkspaces, wList)
+	prjList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWorkspaces, memberWorkspaces, toIdStrings(targetWsList))
 	if err != nil {
 		return nil, nil, err
 	}
 
-	result, err := i.getMetadata(ctx, pList)
+	result, err := i.getMetadata(ctx, prjList)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -267,13 +295,11 @@ func (i *Project) FindVisibilityByWorkspace(
 		pFilter.Offset = param.Offset
 	}
 
-	wList := accountdomain.WorkspaceIDList{aid}
+	_, ownedWorkspaces, memberWorkspaces := i.memberWorkspaces(ctx, *operator.AcOperator.User)
 
-	var owningWsLis accountdomain.WorkspaceIDList
-	if operator != nil {
-		owningWsLis = operator.AcOperator.OwningWorkspaces
-	}
-	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, owningWsLis, wList)
+	targetWsList := accountdomain.WorkspaceIDList{aid}
+
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWorkspaces, memberWorkspaces, toIdStrings(targetWsList))
 	if err != nil {
 		return nil, nil, err
 	}
