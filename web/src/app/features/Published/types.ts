@@ -34,7 +34,10 @@ export type PublishedData = {
   nlsLayers?: PublishedNLSLayer[];
   layerStyles?: LayerStyle[];
   widgets?: Widget[];
-  widgetAlignSystem?: WidgetAlignSystem;
+  widgetAlignSystem?: {
+    desktop?: WidgetAlignSystem;
+    mobile?: WidgetAlignSystem;
+  };
   story?: Story;
   enableGa?: boolean;
   trackingId?: string;

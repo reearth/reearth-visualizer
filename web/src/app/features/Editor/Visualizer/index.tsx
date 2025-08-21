@@ -4,6 +4,7 @@ import {
   StoryPanelRef,
   type InstallableStoryBlock
 } from "@reearth/app/features/Visualizer/Crust/StoryPanel";
+import { DeviceType } from "@reearth/app/utils/device";
 import { SketchFeature, SketchType } from "@reearth/core";
 import type { MapRef } from "@reearth/core";
 import type { Story } from "@reearth/services/api/storytelling";
@@ -19,7 +20,7 @@ export type Props = {
   sceneId?: string;
   isBuilt?: boolean;
   inEditor?: boolean;
-  forceDevice?: "mobile" | "desktop" | undefined;
+  forceDevice?: DeviceType | undefined;
   interactionMode?: InteractionModeType;
   isVisualizerResizing?: MutableRefObject<boolean>;
   // story
@@ -98,7 +99,8 @@ const EditorVisualizer: React.FC<Props> = ({
     handlePropertyItemDelete,
     handlePropertyItemMove,
     handleMount,
-    zoomToLayer
+    zoomToLayer,
+    handleDeviceChange
   } = useHooks({
     sceneId,
     isBuilt,
@@ -108,7 +110,8 @@ const EditorVisualizer: React.FC<Props> = ({
     isVisualizerResizing,
     onCoreLayerSelect,
     onVisualizerReady,
-    setSelectedStoryPageId
+    setSelectedStoryPageId,
+    forceDevice
   });
 
   return (
@@ -140,6 +143,7 @@ const EditorVisualizer: React.FC<Props> = ({
       handleMount={handleMount}
       handleCoreAPIReady={onCoreAPIReady}
       forceDevice={forceDevice}
+      onDeviceChange={handleDeviceChange}
       // story
       showStoryPanel={showStoryPanel}
       storyPanelRef={storyPanelRef}
