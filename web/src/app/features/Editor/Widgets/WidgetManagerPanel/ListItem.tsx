@@ -1,5 +1,5 @@
 import { EntryItem } from "@reearth/app/ui/components";
-import { InstalledWidget } from "@reearth/services/api/widgetsApi/utils";
+import { InstalledWidget, DATA_ATTRIBUTION_WIDGET_ID } from "@reearth/services/api/widgetsApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
@@ -24,6 +24,7 @@ const ListItem: FC<ListItemProps> = ({
         id: "delete",
         title: t("Delete"),
         icon: "trash" as const,
+        disabled: item.id === DATA_ATTRIBUTION_WIDGET_ID,
         onClick: () => onItemDelete?.(item.id)
       }
     ],
