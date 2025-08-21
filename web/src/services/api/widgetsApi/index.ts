@@ -1,6 +1,8 @@
 import { useMutation, useQuery } from "@apollo/client";
+import { DeviceType } from "@reearth/app/utils/device";
 import {
   SceneWidget,
+  WidgetAlignSystemType,
   WidgetAreaAlign,
   WidgetAreaType,
   WidgetSectionType,
@@ -17,7 +19,6 @@ import { useLang, useT } from "@reearth/services/i18n";
 import { WidgetAreaState, useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 
-import { SceneQueryProps } from "../sceneApi";
 import { MutationReturn } from "../types";
 
 import { getInstallableWidgets, getInstalledWidgets } from "./utils";
@@ -49,23 +50,21 @@ export type Widget<P = any> = {
   layout?: WidgetLayout;
 };
 
-export type WidgetQueryProps = SceneQueryProps;
-
 export default () => {
   const t = useT();
   const lang = useLang();
   const [, setNotification] = useNotification();
 
-  const useInstallableWidgetsQuery = useCallback(
-    ({ sceneId }: WidgetQueryProps) => {
+  const useInstallableWidgets = useCallback(
+    ({ sceneId, type }: { sceneId?: string; type: DeviceType }) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId
       });
 
       const installableWidgets = useMemo(
-        () => getInstallableWidgets(data),
-        [data]
+        () => getInstallableWidgets(data, type),
+        [data, type]
       );
 
       return { installableWidgets, ...rest };
@@ -73,14 +72,17 @@ export default () => {
     [lang]
   );
 
-  const useInstalledWidgetsQuery = useCallback(
-    ({ sceneId }: WidgetQueryProps) => {
+  const useInstalledWidgets = useCallback(
+    ({ sceneId, type }: { sceneId?: string; type: DeviceType }) => {
       const { data, ...rest } = useQuery(GET_SCENE, {
         variables: { sceneId: sceneId ?? "", lang },
         skip: !sceneId
       });
 
-      const installedWidgets = useMemo(() => getInstalledWidgets(data), [data]);
+      const installedWidgets = useMemo(
+        () => getInstalledWidgets(data, type),
+        [data, type]
+      );
 
       return { installedWidgets, ...rest };
     },
@@ -94,16 +96,17 @@ export default () => {
   const useAddWidget = useCallback(
     async (
       sceneId?: string,
-      id?: string
+      id?: string,
+      type?: WidgetAlignSystemType
     ): Promise<MutationReturn<Partial<Widget>>> => {
-      if (!sceneId || !id)
+      if (!sceneId || !id || !type)
         return {
           status: "error"
         };
 
       const [pluginId, extensionId] = id.split("/");
       const { data, errors } = await addWidgetMutation({
-        variables: { sceneId: sceneId ?? "", pluginId, extensionId }
+        variables: { sceneId: sceneId ?? "", pluginId, extensionId, type }
       });
 
       if (errors || !data?.addWidget) {
@@ -129,11 +132,12 @@ export default () => {
     async (
       id: string,
       update: { location?: WidgetLocation; extended?: boolean; index?: number },
-      sceneId?: string
+      sceneId?: string,
+      type?: WidgetAlignSystemType
     ) => {
-      if (!sceneId) {
+      if (!sceneId || !type) {
         console.log(
-          "GraphQL: Failed to update widget because there is no sceneId provided"
+          "GraphQL: Failed to update widget because there is no sceneId or type provided"
         );
         setNotification({ type: "error", text: t("Failed to update widget.") });
         return {
@@ -143,6 +147,7 @@ export default () => {
 
       const { data, errors } = await updateWidget({
         variables: {
+          type,
           sceneId,
           widgetId: id,
           enabled: true,
@@ -181,11 +186,12 @@ export default () => {
   const useRemoveWidget = useCallback(
     async (
       sceneId?: string,
-      widgetId?: string
+      widgetId?: string,
+      type?: WidgetAlignSystemType
     ): Promise<MutationReturn<Partial<SceneWidget>[]>> => {
-      if (!sceneId || !widgetId) {
+      if (!sceneId || !widgetId || !type) {
         console.log(
-          "GraphQL: Failed to remove widget because there is either no sceneId or widgetId provided"
+          "GraphQL: Failed to remove widget because there is either no sceneId, widgetId or type provided"
         );
         setNotification({ type: "error", text: t("Failed to update widget.") });
         return {
@@ -194,7 +200,7 @@ export default () => {
       }
 
       const { data, errors } = await removeWidget({
-        variables: { sceneId: sceneId ?? "", widgetId }
+        variables: { sceneId: sceneId ?? "", widgetId, type }
       });
 
       if (errors || !data?.removeWidget) {
@@ -217,10 +223,14 @@ export default () => {
   });
 
   const useUpdateWidgetAlignSystem = useCallback(
-    async (widgetAreaState: WidgetAreaState, sceneId?: string) => {
-      if (!sceneId) {
+    async (
+      widgetAreaState: WidgetAreaState,
+      sceneId?: string,
+      type?: WidgetAlignSystemType
+    ) => {
+      if (!sceneId || !type) {
         console.log(
-          "GraphQL: Failed to update the widget align system because there is no sceneId provided"
+          "GraphQL: Failed to update the widget align system because there is no sceneId or type provided"
         );
         setNotification({
           type: "error",
@@ -243,7 +253,8 @@ export default () => {
           background: widgetAreaState.background,
           padding: widgetAreaState.padding,
           centered: widgetAreaState.centered,
-          gap: widgetAreaState.gap
+          gap: widgetAreaState.gap,
+          type
         }
       });
 
@@ -269,8 +280,8 @@ export default () => {
   );
 
   return {
-    useInstallableWidgetsQuery,
-    useInstalledWidgetsQuery,
+    useInstallableWidgets,
+    useInstalledWidgets,
     useAddWidget,
     useUpdateWidget,
     useUpdateWidgetAlignSystem,

@@ -106,6 +106,7 @@ type VisualizerProps = {
     update?: SetStateAction<WidgetAreaState | undefined>
   ) => void;
   forceDevice?: "mobile" | "desktop" | undefined;
+  onDeviceChange?: (device: "mobile" | "desktop") => void;
   // infobox
   installableInfoboxBlocks?: InstallableInfoboxBlock[];
   handleInfoboxBlockCreate?: (
@@ -205,6 +206,7 @@ const Visualizer: FC<VisualizerProps> = ({
   handleWidgetAlignSystemUpdate,
   selectWidgetArea,
   forceDevice,
+  onDeviceChange,
   // infobox
   installableInfoboxBlocks,
   handleInfoboxBlockCreate,
@@ -241,7 +243,8 @@ const Visualizer: FC<VisualizerProps> = ({
   const coreWrapperRef = useRef<HTMLDivElement>(null);
   const { viewport } = useViewport({
     wrapperRef: coreWrapperRef,
-    forceDevice
+    forceDevice,
+    onDeviceChange
   });
 
   return (

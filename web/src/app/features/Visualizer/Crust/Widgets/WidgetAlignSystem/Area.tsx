@@ -37,7 +37,6 @@ type Props = {
   backgroundColor?: string;
   gap?: number;
   centered?: boolean;
-  built?: boolean;
   widgets?: InternalWidget[];
   isMobile?: boolean;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
@@ -56,7 +55,6 @@ export default function Area({
   backgroundColor,
   gap,
   centered,
-  built,
   widgets,
   layoutConstraint,
   isMobile,
@@ -122,7 +120,7 @@ export default function Area({
         gap: gap,
         alignItems: centered ? "center" : "unset",
         borderRadius: 0,
-        transition: built ? "none" : undefined
+        transition: "none"
       }}
       editorStyle={{
         flexWrap: "wrap",

@@ -214,7 +214,7 @@ const PanelWrapper = styled("div")<{ bgColor?: string; isMobile?: boolean }>(
     ...(isMobile && {
       flex: "0 0 auto",
       width: "100%",
-      height: "30vh"
+      height: "34vh"
     })
   })
 );

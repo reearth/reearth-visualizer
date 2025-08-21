@@ -33,7 +33,12 @@ export const GET_SCENE = gql(`
           }
         }
         widgetAlignSystem {
-          ...WidgetAlignSystemFragment
+          desktop {
+            ...WidgetAlignSystemFragment
+          }
+          mobile {
+            ...WidgetAlignSystemFragment
+          }
         }
         stories {
           ...StoryFragment

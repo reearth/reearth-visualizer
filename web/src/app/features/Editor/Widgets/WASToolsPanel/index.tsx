@@ -61,7 +61,8 @@ const StyledSecondaryNav = styled("div")(({ theme }) => ({
 const AlignSystem = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: theme.spacing.small + 2
+  gap: theme.spacing.small + 2,
+  zIndex: 1
 }));
 
 const CenterWrapper = styled("div")(() => ({
