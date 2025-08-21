@@ -71,15 +71,15 @@ func TestPermissiveChecker_CheckPolicy(t *testing.T) {
 			},
 		},
 		{
-			name: "model count per project check",
+			name: "custom domain count check",
 			req: gateway.PolicyCheckRequest{
 				WorkspaceID: wid,
-				CheckType:   gateway.PolicyCheckModelCountPerProject,
+				CheckType:   gateway.PolicyCheckCustomDomainCount,
 				Value:       100,
 			},
 			want: &gateway.PolicyCheckResponse{
 				Allowed:      true,
-				CheckType:    gateway.PolicyCheckModelCountPerProject,
+				CheckType:    gateway.PolicyCheckCustomDomainCount,
 				CurrentLimit: "unlimited",
 				Message:      "No restrictions in OSS version",
 				Value:        100,
@@ -89,12 +89,12 @@ func TestPermissiveChecker_CheckPolicy(t *testing.T) {
 			name: "private data transfer upload check",
 			req: gateway.PolicyCheckRequest{
 				WorkspaceID: wid,
-				CheckType:   gateway.PolicyCheckPrivateDataTransferUpload,
+				CheckType:   gateway.PolicyCheckUploadAssetsSize,
 				Value:       1024 * 1024 * 1024 * 10, // 10GB
 			},
 			want: &gateway.PolicyCheckResponse{
 				Allowed:      true,
-				CheckType:    gateway.PolicyCheckPrivateDataTransferUpload,
+				CheckType:    gateway.PolicyCheckUploadAssetsSize,
 				CurrentLimit: "unlimited",
 				Message:      "No restrictions in OSS version",
 				Value:        1024 * 1024 * 1024 * 10,
