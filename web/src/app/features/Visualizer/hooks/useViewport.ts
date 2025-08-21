@@ -1,6 +1,6 @@
-import { useState, useEffect, RefObject, useMemo } from "react";
+import { useState, useEffect, RefObject, useMemo, useRef } from "react";
 
-import { isMobileDevice } from "../utils/device";
+import { getDeviceType } from "../../../utils/device";
 
 export type Viewport = {
   width: number | undefined;
@@ -9,12 +9,15 @@ export type Viewport = {
   query: Record<string, string>;
 };
 
+export type Device = "mobile" | "desktop";
+
 type Props = {
   wrapperRef: RefObject<HTMLDivElement>;
-  forceDevice?: "mobile" | "desktop" | undefined;
+  forceDevice?: Device | undefined;
+  onDeviceChange?: (device: Device) => void;
 };
 
-export default ({ wrapperRef, forceDevice }: Props) => {
+export default ({ wrapperRef, forceDevice, onDeviceChange }: Props) => {
   const query = useMemo(
     () => paramsToObject(new URLSearchParams(window.location.search)),
     []
@@ -25,6 +28,9 @@ export default ({ wrapperRef, forceDevice }: Props) => {
     isMobile: undefined,
     query
   });
+
+  const onDeviceChangeRef = useRef(onDeviceChange);
+  onDeviceChangeRef.current = onDeviceChange;
 
   useEffect(() => {
     const viewportResizeObserver = new ResizeObserver((entries) => {
@@ -47,14 +53,14 @@ export default ({ wrapperRef, forceDevice }: Props) => {
         height = wrapperRef.current?.clientHeight;
       }
 
+      const device = forceDevice !== undefined ? forceDevice : getDeviceType();
+      onDeviceChangeRef.current?.(device);
+
       setViewport((viewport) => {
         return {
           width,
           height,
-          isMobile:
-            forceDevice !== undefined
-              ? forceDevice === "mobile"
-              : isMobileDevice(),
+          isMobile: device === "mobile",
           query: viewport.query
         };
       });
