@@ -27,7 +27,7 @@ const ListItem: FC<ListItemProps> = ({
         id: "delete",
         title: t("Delete"),
         icon: "trash" as const,
-        disabled: item.extensionId === "dataAttribution",
+        disabled: `${item.pluginId}/${item.extensionId}` === DATA_ATTRIBUTION_WIDGET_ID,
         onClick: () => onItemDelete?.(item.id)
       }
     ],
