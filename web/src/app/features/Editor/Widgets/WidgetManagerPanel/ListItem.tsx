@@ -33,7 +33,6 @@ const ListItem: FC<ListItemProps> = ({
     ],
     [item.extensionId, item.id, onItemDelete, t]
   );
-  console.log(item);
 
   return (
     <Wrapper data-testid={`installed-widget-list-item-${item.id}`}>
