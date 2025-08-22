@@ -164,3 +164,12 @@ export const UPDATE_MEMBER_OF_WORKSPACE = gql(`
     }
   }
 `);
+
+export const WORKSPACE_POLICY_CHECK = gql(`
+  query WorkspacePolicyCheck($workspaceId: ID!) {
+    workspacePolicyCheck(input: { workspaceId: $workspaceId }) {
+      workspaceId
+      enableToCreatePrivateProject
+    }
+  }
+`);

@@ -105,7 +105,7 @@ type Project interface {
 	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
 
-	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)
+	Create(context.Context, CreateProjectParam, *usecase.Operator, bool) (*project.Project, error)
 	Update(context.Context, UpdateProjectParam, *usecase.Operator) (*project.Project, error)
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 

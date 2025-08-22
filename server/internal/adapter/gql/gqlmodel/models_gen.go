@@ -669,6 +669,15 @@ type Policy struct {
 	BlocksCount           *int   `json:"blocksCount,omitempty"`
 }
 
+type PolicyCheckInput struct {
+	WorkspaceID ID `json:"workspaceId"`
+}
+
+type PolicyCheckPayload struct {
+	WorkspaceID                  ID   `json:"workspaceId"`
+	EnableToCreatePrivateProject bool `json:"enableToCreatePrivateProject"`
+}
+
 type Polygon struct {
 	Type               string        `json:"type"`
 	PolygonCoordinates [][][]float64 `json:"polygonCoordinates"`

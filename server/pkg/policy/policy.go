@@ -11,6 +11,11 @@ type ID = workspace.PolicyID
 
 var ErrPolicyViolation = errors.New("policy violation")
 
+type WorkspacePolicy struct {
+	WorkspaceID                  workspace.ID
+	EnableToCreatePrivateProject bool
+}
+
 type Policy struct {
 	opts Option
 }

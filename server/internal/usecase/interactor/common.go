@@ -48,7 +48,7 @@ func NewContainer(
 		NLSLayer:        NewNLSLayer(r, g),
 		Style:           NewStyle(r),
 		Plugin:          NewPlugin(r, g),
-		Policy:          NewPolicy(r),
+		Policy:          NewPolicy(r, g.PolicyChecker),
 		Project:         NewProject(r, g),
 		ProjectMetadata: NewProjectMetadata(r, g),
 		Property:        NewProperty(r, g),

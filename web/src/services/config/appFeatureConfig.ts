@@ -24,9 +24,9 @@
  * // Generate external URLs with context
  * const managementUrl = generateExternalUrl({
  *   url: "https://example.com/manage/[WORKSPACE_ALIAS]",
- *   workspace: { alias: "my-workspace" },
- *   project: { alias: "my-project" },
- *   me: { alias: "user123" }
+ *   workspaceAlias: "my-workspace",
+ *   projectAlias: "my-project",
+ *   meAlias: "user123"
  * });
  * ```
  *
@@ -43,16 +43,13 @@
 
 import { getFeatureConfig } from "@reearth/ee/featureConfig";
 
-import { Project } from "../api/projectApi";
-import { Me } from "../gql";
-import { Workspace } from "../state";
-
 import { config } from ".";
 
 export type AppFeatureConfig = {
   membersManagementOnDashboard?: boolean;
   workspaceCreation?: boolean;
   workspaceManagement?: boolean;
+  externalWorkspaceManagementUrl?: string;
   accountManagement?: boolean;
   externalAccountManagementUrl?: string;
   projectVisibility?: boolean;
@@ -62,6 +59,7 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   membersManagementOnDashboard: true,
   workspaceCreation: true,
   workspaceManagement: true,
+  externalWorkspaceManagementUrl: undefined,
   accountManagement: true,
   projectVisibility: false,
   externalAccountManagementUrl: undefined
@@ -103,22 +101,16 @@ const isValidUrl = (url: string): boolean => {
   }
 };
 
-const sanitizeAlias = (alias: string | undefined): string => {
-  if (!alias) return "";
-  // Remove potentially dangerous characters and encode for URL safety
-  return encodeURIComponent(alias.replace(/[<>"`{}|\\^~[\]]/g, ""));
-};
-
 export const generateExternalUrl = ({
   url,
-  workspace,
-  project,
-  me
+  workspaceAlias,
+  projectAlias,
+  meAlias
 }: {
   url: string;
-  workspace?: Workspace; // TODO: remove this after BE update type
-  project?: Project;
-  me?: Me & { alias?: string }; // TODO: remove this after BE update type
+  workspaceAlias?: string;
+  projectAlias?: string;
+  meAlias?: string;
 }): string => {
   // Validate input URL
   if (!url || typeof url !== "string") {
@@ -126,18 +118,13 @@ export const generateExternalUrl = ({
     return "";
   }
 
-  // Sanitize alias values
-  const sanitizedWorkspaceAlias = sanitizeAlias(workspace?.alias);
-  const sanitizedProjectAlias = sanitizeAlias(project?.alias);
-  const sanitizedUserAlias = sanitizeAlias(me?.alias);
-
   // Replace [WORKSPACE_ALIAS] with workspace.alias if it exists
   // Replace [PROJECT_ALIAS] with project?.alias if it exists
   // Replace [USER_ALIAS] with me?.alias if it exists
   const processedUrl = url
-    .replace(/\[WORKSPACE_ALIAS\]/g, sanitizedWorkspaceAlias)
-    .replace(/\[PROJECT_ALIAS\]/g, sanitizedProjectAlias)
-    .replace(/\[USER_ALIAS\]/g, sanitizedUserAlias);
+    .replace(/\[WORKSPACE_ALIAS\]/g, workspaceAlias ?? "")
+    .replace(/\[PROJECT_ALIAS\]/g, projectAlias ?? "")
+    .replace(/\[USER_ALIAS\]/g, meAlias ?? "");
 
   // Validate the resulting URL
   if (!isValidUrl(processedUrl)) {

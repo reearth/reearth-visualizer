@@ -52,10 +52,12 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		}
 	}
 
+	var err error
 	if req.WorkspaceId == nil {
-		var err error
+
 		res, info, err = uc.Project.FindVisibilityByUser(
-			ctx, adapter.User(ctx),
+			ctx,
+			adapter.User(ctx),
 			req.Authenticated,
 			op,
 			req.Keyword,
@@ -79,11 +81,17 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 			param.Limit = req.Pagination.Limit
 			param.Offset = req.Pagination.Offset
 		}
+
 		res, info, err = uc.Project.FindVisibilityByWorkspace(
-			ctx, wId, req.Authenticated, op, req.Keyword, sort, pagination,
+			ctx,
+			wId,
+			req.Authenticated,
+			op,
+			req.Keyword,
+			sort,
+			pagination,
 			param,
 		)
-
 		if err != nil {
 			return nil, err
 		}
@@ -99,6 +107,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		Projects: projects,
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
+
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
@@ -214,7 +223,10 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		Readme:       req.Readme,
 		License:      req.License,
 		Topics:       req.Topics,
-	}, op)
+	},
+		op,
+		false, // isImport
+	)
 	if err != nil {
 		return nil, err
 	}

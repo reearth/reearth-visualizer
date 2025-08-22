@@ -86,6 +86,20 @@ type HealthCheckConfig struct {
 
 type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
+
+	// Policy Checker Configuration
+	Policy Policy `pp:",omitempty"`
+}
+
+type Policy struct {
+	Checker CheckerConfig
+}
+
+type CheckerConfig struct {
+	Type     string `default:"permissive"`
+	Endpoint string
+	Token    string
+	Timeout  int `default:"30"`
 }
 
 type InternalApiConfig struct {

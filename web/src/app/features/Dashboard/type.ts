@@ -69,6 +69,7 @@ export type Member = {
 export type Workspace = {
   id: string;
   name: string;
+  alias?: string;
   members?: WorkspaceMember[];
   policyId?: string | null;
   policy?: { id: string; name: string } | null;

@@ -21,6 +21,7 @@ export const GET_ME = gql(`
       myWorkspace {
         id
         name
+        alias
         policyId
         policy {
           id
@@ -31,11 +32,11 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
-        enableToCreatePrivateProject
       }
       workspaces {
         id
         name
+        alias
         personal
         members {
           user {
@@ -56,7 +57,6 @@ export const GET_ME = gql(`
           layerCount
           assetStorageSize
         }
-      enableToCreatePrivateProject
       }
       auths
     }
