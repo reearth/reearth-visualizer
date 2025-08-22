@@ -343,8 +343,12 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 		visibility = project.Visibility(*input.Visibility)
 	}
 
-	if i.policyChecker != nil {
+	// override visibility to public if it's an import
+	if isImport {
+		visibility = project.VisibilityPublic
+	}
 
+	if i.policyChecker != nil {
 		if isImport {
 			// Try checking if user can create private project
 			errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
@@ -362,7 +366,6 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 
 	}
 
-	// project.Visibility(input.Visibility),
 	return i.createProject(ctx, createProjectInput{
 		WorkspaceID:  input.WorkspaceID,
 		Visualizer:   input.Visualizer,
@@ -1095,6 +1098,12 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		topics = &ret
 	}
 
+	visibility := project.VisibilityPublic
+	if ret, ok := projectData["visibility"].(string); ok {
+		vis := project.Visibility(ret)
+		visibility = vis
+	}
+
 	result, err := i.createProject(ctx, createProjectInput{
 		WorkspaceID:  workspaceId,
 		ProjectID:    projectId,
@@ -1109,7 +1118,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		Readme:       readme,
 		License:      license,
 		Topics:       topics,
-		// skip Visibility
+		Visibility:   &visibility,
 	}, op)
 	if err != nil {
 		return nil, err
