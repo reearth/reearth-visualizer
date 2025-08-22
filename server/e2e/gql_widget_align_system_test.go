@@ -71,6 +71,7 @@ func TestWidgetAlignSystemDesktop(t *testing.T) {
 }
 
 // go test -v -run TestWidgetAlignSystemMobile ./e2e/...
+
 func TestWidgetAlignSystemMobile(t *testing.T) {
 	e := Server(t, baseSeeder)
 	_, sceneId, _ := createProjectSet(e)

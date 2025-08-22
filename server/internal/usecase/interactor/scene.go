@@ -258,8 +258,33 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 			}
 		}
 		res.Widgets().Alignment().System(scene.WidgetAlignSystemTypeDesktop).Area(loc).Add(widget.ID(), -1)
-		res.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(loc).Add(widget.ID(), -1)
 	}
+
+	propMobile, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
+	if err != nil {
+		return err
+	}
+
+	widgetMobile, err := scene.NewWidget(
+		id.NewWidgetID(),
+		*pluginID,
+		*extensionID,
+		propMobile.ID(),
+		true,
+		extended,
+	)
+	if err != nil {
+		return err
+	}
+
+	mobileDefaultWidgetLocation := scene.WidgetLocation{
+		Zone:    scene.WidgetZoneOuter,
+		Section: scene.WidgetSectionLeft,
+		Area:    scene.WidgetAreaTop,
+	}
+
+	res.Widgets().Add(widgetMobile)
+	res.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(mobileDefaultWidgetLocation).Add(widgetMobile.ID(), -1)
 
 	return nil
 }

@@ -58,8 +58,6 @@ func TestGetScenePlaceholderJapanese(t *testing.T) {
 	}
 }
 
-// go test -v -run TestGetScene ./e2e/...
-
 func TestGetSceneNLSLayer(t *testing.T) {
 	e := Server(t, baseSeeder)
 	pId := createProject(e, uID, map[string]any{
