@@ -21,18 +21,21 @@ const ListItem: FC<ListItemProps> = ({
   onItemSelect
 }) => {
   const t = useT();
-  const optionsMenu = useMemo(
-    () => [
+  const optionsMenu = useMemo(() => {
+    // If this is the data attribution widget, don't show any menu
+    if (`${item.pluginId}/${item.extensionId}` === DATA_ATTRIBUTION_WIDGET_ID) {
+      return undefined;
+    }
+
+    return [
       {
         id: "delete",
         title: t("Delete"),
         icon: "trash" as const,
-        disabled: `${item.pluginId}/${item.extensionId}` === DATA_ATTRIBUTION_WIDGET_ID,
         onClick: () => onItemDelete?.(item.id)
       }
-    ],
-    [item.extensionId, item.id, onItemDelete, t]
-  );
+    ];
+  }, [item.extensionId, item.id, item.pluginId, onItemDelete, t]);
 
   return (
     <Wrapper data-testid={`installed-widget-list-item-${item.id}`}>
