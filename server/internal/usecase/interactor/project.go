@@ -336,11 +336,8 @@ func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-	// Default to VisibilityPublic if not specified
 	visibility := project.VisibilityPublic
 
-	// if policy checker is not nil, check if the user can create a private project
-	// if user don't have permission to create a private project, set visibility to public
 	if i.policyChecker != nil {
 		errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
 		if errPrivate != nil {
