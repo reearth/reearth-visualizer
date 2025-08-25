@@ -335,35 +335,18 @@ func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]
 	return pList, err
 }
 
-func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator, isImport bool) (_ *project.Project, err error) {
-
-	// Default to VisibilityPublic if not specified
+func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	visibility := project.VisibilityPublic
-	if input.Visibility != nil {
-		visibility = project.Visibility(*input.Visibility)
-	}
-
-	// override visibility to public if it's an import
-	if isImport {
-		visibility = project.VisibilityPublic
-	}
 
 	if i.policyChecker != nil {
-		if isImport {
-			// Try checking if user can create private project
-			errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
-			if errPrivate == nil {
-				visibility = project.VisibilityPrivate
-			} else {
-				visibility = project.VisibilityPublic
-			}
+		errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
+		if errPrivate != nil {
+			visibility = project.VisibilityPublic
 		} else {
-			// Not import: use given visibility
-			if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
-				return nil, err
+			if input.Visibility != nil {
+				visibility = project.Visibility(*input.Visibility)
 			}
 		}
-
 	}
 
 	return i.createProject(ctx, createProjectInput{
@@ -1099,9 +1082,16 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	}
 
 	visibility := project.VisibilityPublic
-	if ret, ok := projectData["visibility"].(string); ok {
-		vis := project.Visibility(ret)
-		visibility = vis
+	if i.policyChecker != nil {
+		errPrivate := i.checkGeneralPolicy(ctx, workspaceId, project.VisibilityPrivate)
+		if errPrivate == nil {
+			if ret, ok := projectData["visibility"].(string); ok {
+				vis := project.Visibility(ret)
+				visibility = vis
+			}
+		} else {
+			visibility = project.VisibilityPublic
+		}
 	}
 
 	result, err := i.createProject(ctx, createProjectInput{
