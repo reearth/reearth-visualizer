@@ -41,7 +41,7 @@ const DataAttribution = ({
     };
   }, [getCredits, visible]);
 
-  const { cesiumCredit, otherCredits } = useDataAttribution({
+  const { cesiumCredit, otherCredits, googleCredit } = useDataAttribution({
     credits: visualizerCredits,
     widget
   });
@@ -56,6 +56,11 @@ const DataAttribution = ({
         >
           <img src={cesiumCredit.logo} title={cesiumCredit.description} />
         </CesiumLink>
+      )}
+      {googleCredit && (
+        <GoogleLink target="_blank" rel="noreferrer">
+          <img src={googleCredit.logo} title={googleCredit.description} />
+        </GoogleLink>
       )}
       <DataLink onClick={handleModalOpen}>{t("Data Attribution")}</DataLink>
       <Modal size="small" visible={visible}>
@@ -88,6 +93,10 @@ const DataLink = styled("div")(({ theme }) => ({
 
 const CesiumLink = styled("a")(() => ({
   height: 33
+}));
+
+const GoogleLink = styled("a")(() => ({
+  height: 18
 }));
 
 export default DataAttribution;
