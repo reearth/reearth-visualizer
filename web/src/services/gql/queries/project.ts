@@ -220,7 +220,9 @@ export const GET_DELETED_PROJECTS = gql(`
 				name
 				isDeleted
         imageUrl
-				}
+        visibility
+        starred
+			}
 			totalCount
 		}
   }

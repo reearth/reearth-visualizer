@@ -13,25 +13,14 @@ export default (workspaceId?: string) => {
   const client = useApolloClient();
 
   const filteredDeletedProjects = useMemo(
-    () =>
-      (deletedProjects ?? [])
-        .map((project) => {
-          if (!project) return undefined;
-          return {
-            id: project.id,
-            name: project.name,
-            imageUrl: project.imageUrl,
-            isDeleted: project.isDeleted
-          };
-        })
-        .filter(Boolean),
+    () => (deletedProjects ?? []).filter(Boolean),
     [deletedProjects]
   );
 
   const isLoading = useMemo(() => loading, [loading]);
 
   const handleProjectRecovery = useCallback(
-    async (project?: DeletedProject) => {
+    async (project?: DeletedProject | null) => {
       if (!project) return;
       const updatedProject = {
         projectId: project.id,

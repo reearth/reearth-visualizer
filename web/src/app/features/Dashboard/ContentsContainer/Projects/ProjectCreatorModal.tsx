@@ -24,7 +24,6 @@ import { FC, useCallback, useMemo, useState } from "react";
 import { Project } from "../../type";
 
 type ProjectCreatorModalProps = {
-  visible: boolean;
   onClose?: () => void;
   onProjectCreate: (
     data: Pick<
@@ -47,7 +46,6 @@ const getLicenseContent = (value?: string): string | undefined => {
 };
 
 const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
-  visible,
   onClose,
   onProjectCreate
 }) => {
@@ -70,7 +68,6 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     visibility: "public",
     license: ""
   });
-  const [warning, setWarning] = useState<string>("");
 
   const projectVisibilityOptions = useMemo(
     () => [
@@ -84,31 +81,43 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     [t, enableToCreatePrivateProject]
   );
 
-  const handleOnChange = useCallback(
+  const handleFieldChange = useCallback(
     (field: keyof FormState, newValue: string) => {
       setFormState((prev) => ({ ...prev, [field]: newValue }));
     },
     []
   );
 
+  const [aliasValid, setAliasValid] = useState<boolean>(false);
+  const [aliasWarning, setAliasWarning] = useState<string>("");
+  const handleAliasChange = useCallback(() => {
+    setAliasValid(false);
+    setAliasWarning("");
+  }, []);
+
   const handleProjectAliasCheck = useCallback(
     async (alias: string) => {
       if (!currentWorkspace) return;
-      handleOnChange("projectAlias", alias);
+      handleFieldChange("projectAlias", alias);
+      setAliasValid(false);
+
       const result = await checkProjectAlias?.(
-        alias,
+        alias.trim(),
         currentWorkspace?.id,
         undefined
       );
-      if (!result?.available) {
-        const description = result?.errors?.find(
-          (e) => e?.extensions?.description
-        )?.extensions?.description;
 
-        setWarning(description as string);
-      } else setWarning("");
+      if (result?.available) {
+        setAliasValid(true);
+        setAliasWarning("");
+      } else {
+        setAliasValid(false);
+        setAliasWarning(
+          (result?.errors?.[0]?.extensions?.description as string) ?? ""
+        );
+      }
     },
-    [checkProjectAlias, currentWorkspace, handleOnChange]
+    [checkProjectAlias, currentWorkspace, handleFieldChange]
   );
 
   const onSubmit = useCallback(() => {
@@ -116,7 +125,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
     onProjectCreate({
       name: formState.projectName,
       description: formState.description,
-      projectAlias: formState.projectAlias,
+      projectAlias: formState.projectAlias.trim(),
       visibility: formState.visibility,
       license
     });
@@ -124,7 +133,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   }, [formState, onClose, onProjectCreate]);
 
   return (
-    <Modal visible={visible} size="small" data-testid="project-creator-modal">
+    <Modal visible size="small" data-testid="project-creator-modal">
       <ModalPanel
         title={t("Create new project")}
         onCancel={onClose}
@@ -142,7 +151,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               appearance="primary"
               onClick={onSubmit}
               disabled={
-                !formState.projectName || !formState.projectAlias || !!warning
+                !formState.projectName || !formState.projectAlias || !aliasValid
               }
               data-testid="project-creator-apply-btn"
             />
@@ -157,7 +166,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 title={t("Project Name *")}
                 value={formState.projectName}
                 placeholder={t("Text")}
-                onChange={(value) => handleOnChange("projectName", value)}
+                onChange={(value) => handleFieldChange("projectName", value)}
                 data-testid="project-creator-name-input"
               />
             </FormInputWrapper>
@@ -166,12 +175,13 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 title={t("Project Alias *")}
                 value={formState.projectAlias}
                 placeholder={t("Text")}
+                onChange={handleAliasChange}
                 onChangeComplete={handleProjectAliasCheck}
                 data-testid="project-creator-project-alias-input"
                 description={
-                  warning ? (
+                  aliasWarning ? (
                     <Typography size="footnote" color={theme.dangerous.main}>
-                      {warning}
+                      {aliasWarning}
                     </Typography>
                   ) : (
                     t(
@@ -188,7 +198,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                   value={formState.visibility}
                   options={projectVisibilityOptions}
                   layout="vertical"
-                  onChange={(value) => handleOnChange("visibility", value)}
+                  onChange={(value) => handleFieldChange("visibility", value)}
                   data-testid="project-creator-project-visibility-input"
                   description={t(
                     "For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it."
@@ -202,7 +212,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 value={formState.description}
                 placeholder={t("Write down your content")}
                 rows={4}
-                onChange={(value) => handleOnChange("description", value)}
+                onChange={(value) => handleFieldChange("description", value)}
                 data-testid="project-creator-description-input"
                 description={t(
                   "Provide a short summary (within 200 characters) describing the purpose or key features of this project."
@@ -213,7 +223,9 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
               <SelectField
                 title={"Choose a license"}
                 value={formState.license}
-                onChange={(value) => handleOnChange("license", value as string)}
+                onChange={(value) =>
+                  handleFieldChange("license", value as string)
+                }
                 data-testid="project-creator-project-license-input"
                 options={visualizerProjectLicensesOptions.map((license) => ({
                   value: license.value,
