@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.9.0 - 2025-08-25
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Update japanese translations for project visibility terminology [VIZ-2153] ([#1775](https://github.com/reearth/reearth-visualizer/pull/1775)) [`b3b4e9`](https://github.com/reearth/reearth-visualizer/commit/b3b4e9)
+- Use query to check if private project can be created for given workspace [VIZ-2145] ([#1763](https://github.com/reearth/reearth-visualizer/pull/1763)) [`ead0f9`](https://github.com/reearth/reearth-visualizer/commit/ead0f9)
+- 3dtiles feature color update incorrectly when apply new style on selected feature ([#1762](https://github.com/reearth/reearth-visualizer/pull/1762)) [`99a3cb`](https://github.com/reearth/reearth-visualizer/commit/99a3cb)
+- Layer style expression startsWith doesn’t work[VIZ-2094] ([#1759](https://github.com/reearth/reearth-visualizer/pull/1759)) [`323854`](https://github.com/reearth/reearth-visualizer/commit/323854)
+
+#### ✨ Refactor
+
+- Support link to external workspace settings page ([#1758](https://github.com/reearth/reearth-visualizer/pull/1758)) [`37af2c`](https://github.com/reearth/reearth-visualizer/commit/37af2c)
+
+#### Miscellaneous Tasks
+
+- Bump up version 1.0.0-beta.9.0 ([#1779](https://github.com/reearth/reearth-visualizer/pull/1779)) [`5e5dcc`](https://github.com/reearth/reearth-visualizer/commit/5e5dcc)
+
+### Server
+
+#### 🚀 Features
+
+- Change project filter [VIZ-2160] ([#1770](https://github.com/reearth/reearth-visualizer/pull/1770)) [`69e0de`](https://github.com/reearth/reearth-visualizer/commit/69e0de)
+- Multiple WidgetAlignSystems [VIZ-2135] ([#1761](https://github.com/reearth/reearth-visualizer/pull/1761)) [`a61c23`](https://github.com/reearth/reearth-visualizer/commit/a61c23)
+- Adjust visibility handling [VIZ-2110] ([#1757](https://github.com/reearth/reearth-visualizer/pull/1757)) [`970618`](https://github.com/reearth/reearth-visualizer/commit/970618)
+- Policy check query ([#1760](https://github.com/reearth/reearth-visualizer/pull/1760)) [`fc755b`](https://github.com/reearth/reearth-visualizer/commit/fc755b)
+- Policy checker [VIZ-1818] ([#1746](https://github.com/reearth/reearth-visualizer/pull/1746)) [`7040de`](https://github.com/reearth/reearth-visualizer/commit/7040de)
+
+#### 🔧 Bug Fixes
+
+- Import project data don&[#39](https://github.com/reearth/reearth-visualizer/pull/39);t set visibility correctly ([#1778](https://github.com/reearth/reearth-visualizer/pull/1778)) [`ff8506`](https://github.com/reearth/reearth-visualizer/commit/ff8506)
+- Fix bug that visibility become empty when project import ([#1777](https://github.com/reearth/reearth-visualizer/pull/1777)) [`4d6085`](https://github.com/reearth/reearth-visualizer/commit/4d6085)
+- Policy check enum ([#1774](https://github.com/reearth/reearth-visualizer/pull/1774)) [`1643da`](https://github.com/reearth/reearth-visualizer/commit/1643da)
+- Revert Multiple WidgetAlignSystems [VIZ-2135] ([#1766](https://github.com/reearth/reearth-visualizer/pull/1766)) [`24098e`](https://github.com/reearth/reearth-visualizer/commit/24098e)
+- Update project import export ([#1755](https://github.com/reearth/reearth-visualizer/pull/1755)) [`192fee`](https://github.com/reearth/reearth-visualizer/commit/192fee)
+
+### Misc
+
+#### 🔧 Bug Fixes
+
+- Use query to check private project can be created for given workspace [`a9d0f8`](https://github.com/reearth/reearth-visualizer/commit/a9d0f8)
+
+#### 
+
+- Standardizes &quot;Markdown Text&quot; terminology in manifests [`37c59e`](https://github.com/reearth/reearth-visualizer/commit/37c59e)
+- Update Japanese translations for project visibility terminology [`0b504e`](https://github.com/reearth/reearth-visualizer/commit/0b504e)
+- Refactors workspace policy check to use custom hook [`d09f6d`](https://github.com/reearth/reearth-visualizer/commit/d09f6d)
+- Fixes disabled button logic for project visibility changes [`5f1d24`](https://github.com/reearth/reearth-visualizer/commit/5f1d24)
+- Improve private project creation handling and visibility checks [`0fbdbc`](https://github.com/reearth/reearth-visualizer/commit/0fbdbc)
+
+### 
+
+#### 🔧 Bug Fixes
+
+- Use query to check private project can be created for given workspace [`a9d0f8`](https://github.com/reearth/reearth-visualizer/commit/a9d0f8)
+
+#### 
+
+- Standardizes &quot;Markdown Text&quot; terminology in manifests [`37c59e`](https://github.com/reearth/reearth-visualizer/commit/37c59e)
+- Update Japanese translations for project visibility terminology [`0b504e`](https://github.com/reearth/reearth-visualizer/commit/0b504e)
+- Refactors workspace policy check to use custom hook [`d09f6d`](https://github.com/reearth/reearth-visualizer/commit/d09f6d)
+- Fixes disabled button logic for project visibility changes [`5f1d24`](https://github.com/reearth/reearth-visualizer/commit/5f1d24)
+- Improve private project creation handling and visibility checks [`0fbdbc`](https://github.com/reearth/reearth-visualizer/commit/0fbdbc)
+
 ## 1.0.0-beta.8.1 - 2025-08-04
 
 ### Web
