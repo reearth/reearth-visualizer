@@ -208,26 +208,55 @@ func (i *Scene) addDefaultVisualizerTilesProperty(ctx context.Context, sceneID i
 	return prop, nil
 }
 
-func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
+func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, sce *scene.Scene) error {
+
+	widget, location, err := i.buidDataAttribution(ctx, sceneID)
+	if err != nil {
+		return err
+	}
+	// Type Desktop Attribution
+	sce.Widgets().Add(widget)
+
+	if location != nil {
+		// Type Desktop Location
+		sce.Widgets().Alignment().System(scene.WidgetAlignSystemTypeDesktop).Area(*location).Add(widget.ID(), -1)
+	}
+
+	widget, location, err = i.buidDataAttribution(ctx, sceneID)
+	if err != nil {
+		return err
+	}
+	// Type Mobile Attribution
+	sce.Widgets().Add(widget)
+
+	if location != nil {
+		// Type Mobile Location
+		sce.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(*location).Add(widget.ID(), -1)
+	}
+
+	return nil
+}
+
+func (i *Scene) buidDataAttribution(ctx context.Context, sceneID id.SceneID) (*scene.Widget, *scene.WidgetLocation, error) {
 	filter := Filter(sceneID)
 
 	pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, "reearth", "dataAttribution", &filter)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	prop, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	extended := false
 	floating := false
-	var location *plugin.WidgetLocation
+	var specifiedLocation *plugin.WidgetLocation
 	if widgetLayout := extension.WidgetLayout(); widgetLayout != nil {
 		extended = widgetLayout.Extended()
 		floating = widgetLayout.Floating()
-		location = widgetLayout.DefaultLocation()
+		specifiedLocation = widgetLayout.DefaultLocation()
 	}
 
 	widget, err := scene.NewWidget(
@@ -239,30 +268,27 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 		extended,
 	)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	res.Widgets().Add(widget)
+	var location *scene.WidgetLocation
 	if !floating {
-		var loc scene.WidgetLocation
-		if location != nil {
-			loc = scene.WidgetLocation{
-				Zone:    scene.WidgetZoneType(location.Zone),
-				Section: scene.WidgetSectionType(location.Section),
-				Area:    scene.WidgetAreaType(location.Area),
+		if specifiedLocation != nil {
+			location = &scene.WidgetLocation{
+				Zone:    scene.WidgetZoneType(specifiedLocation.Zone),
+				Section: scene.WidgetSectionType(specifiedLocation.Section),
+				Area:    scene.WidgetAreaType(specifiedLocation.Area),
 			}
 		} else {
-			loc = scene.WidgetLocation{
+			location = &scene.WidgetLocation{
 				Zone:    scene.WidgetZoneOuter,
 				Section: scene.WidgetSectionLeft,
 				Area:    scene.WidgetAreaTop,
 			}
 		}
-		res.Widgets().Alignment().System(scene.WidgetAlignSystemTypeDesktop).Area(loc).Add(widget.ID(), -1)
-		res.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(loc).Add(widget.ID(), -1)
 	}
 
-	return nil
+	return widget, location, nil
 }
 
 func (i *Scene) AddWidget(ctx context.Context, _type scene.WidgetAlignSystemType, sid id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, widget *scene.Widget, err error) {

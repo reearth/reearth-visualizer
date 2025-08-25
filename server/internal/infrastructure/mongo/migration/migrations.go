@@ -37,5 +37,6 @@ var migrations = migration.Migrations[DBClient]{
 	250725145932: ConvertNonValidProjectAliases,
 	250820113009: ChangeEsriToDefault,
 	250820145437: MultipleWidgetAlignSystems,
+	250822121249: AddDefaultDataAttributionForMobile,
 	250925135245: AddProjectMetadataFields,
 }
