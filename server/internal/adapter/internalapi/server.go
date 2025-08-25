@@ -225,7 +225,6 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		Topics:       req.Topics,
 	},
 		op,
-		false, // isImport
 	)
 	if err != nil {
 		return nil, err
