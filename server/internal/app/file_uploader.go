@@ -126,7 +126,7 @@ func serveUploadFiles(
 
 func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId string) (*project.Project, error) {
 
-	visibility := "private"
+	visibility := string(project.VisibilityPrivate)
 	coreSupport := true
 	unknown := "It's importing now..."
 	workspaceID, err := accountdomain.WorkspaceIDFrom(wsId)
