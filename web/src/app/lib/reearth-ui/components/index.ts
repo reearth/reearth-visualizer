@@ -24,6 +24,7 @@ export * from "./PopupMenu";
 export * from "./DragAndDropList";
 export * from "./Tabs";
 export * from "./Radio";
+export * from "./RadioButton";
 export * from "./RadioGroup";
 export * from "./CheckBox";
 export * from "./Markdown";

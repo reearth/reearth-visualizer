@@ -1,9 +1,9 @@
 import { gql } from "@reearth/services/gql/__gen__";
 
 export const ADD_WIDGET =
-  gql(` mutation AddWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang) {
+  gql(` mutation AddWidget($sceneId: ID!, $pluginId: ID!, $extensionId: ID!, $lang: Lang, $type: WidgetAlignSystemType!) {
     addWidget(
-      input: {sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId}
+      input: {type: $type, sceneId: $sceneId, pluginId: $pluginId, extensionId: $extensionId}
     ) {
       scene {
         id
@@ -30,6 +30,7 @@ export const ADD_WIDGET =
 
 export const UPDATE_WIDGET = gql(`
   mutation UpdateWidget(
+    $type: WidgetAlignSystemType!
     $sceneId: ID!
     $widgetId: ID!
     $enabled: Boolean
@@ -39,6 +40,7 @@ export const UPDATE_WIDGET = gql(`
   ) {
     updateWidget(
       input: {
+        type: $type
         sceneId: $sceneId
         widgetId: $widgetId
         enabled: $enabled
@@ -63,8 +65,8 @@ export const UPDATE_WIDGET = gql(`
 `);
 
 export const REMOVE_WIDGET = gql(`
-  mutation RemoveWidget($sceneId: ID!, $widgetId: ID!) {
-    removeWidget(input: { sceneId: $sceneId, widgetId: $widgetId }) {
+  mutation RemoveWidget($sceneId: ID!, $widgetId: ID!, $type: WidgetAlignSystemType!) {
+    removeWidget(input: { type: $type, sceneId: $sceneId, widgetId: $widgetId }) {
       scene {
         id
         widgets {
@@ -81,6 +83,7 @@ export const REMOVE_WIDGET = gql(`
 
 export const UPDATE_WIDGET_ALIGN_SYSTEM = gql(`
   mutation UpdateWidgetAlignSystem(
+    $type: WidgetAlignSystemType!
     $sceneId: ID!
     $location: WidgetLocationInput!
     $align: WidgetAreaAlign
@@ -91,6 +94,7 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql(`
   ) {
     updateWidgetAlignSystem(
       input: {
+        type: $type
         sceneId: $sceneId
         location: $location
         align: $align
@@ -110,7 +114,12 @@ export const UPDATE_WIDGET_ALIGN_SYSTEM = gql(`
           propertyId
         }
         widgetAlignSystem {
-          ...WidgetAlignSystemFragment
+          desktop {
+            ...WidgetAlignSystemFragment
+          }
+          mobile {
+            ...WidgetAlignSystemFragment
+          }
         }
       }
     }

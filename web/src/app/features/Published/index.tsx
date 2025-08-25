@@ -22,7 +22,8 @@ export default function Published({ alias }: Props) {
     visualizerRef,
     currentCamera,
     initialCamera,
-    setCurrentCamera
+    setCurrentCamera,
+    handleDeviceChange
   } = useHooks(alias);
 
   return error ? (
@@ -45,6 +46,7 @@ export default function Published({ alias }: Props) {
       currentCamera={currentCamera}
       initialCamera={initialCamera}
       onCameraChange={setCurrentCamera}
+      onDeviceChange={handleDeviceChange}
     />
   );
 }

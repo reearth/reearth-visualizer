@@ -2,7 +2,6 @@ import { SketchType } from "@reearth/core";
 import { useCallback, useEffect, useState } from "react";
 
 import { Tab } from "../../Navbar";
-import { Device } from "../Widgets/WASToolsPanel/Devices";
 
 import { LayerSelectProps } from "./useLayers";
 
@@ -154,17 +153,6 @@ export default ({
     []
   );
 
-  // devices - not in use
-  const [selectedDevice, setDevice] = useState<Device>("desktop");
-  const handleDeviceChange = useCallback(
-    (newDevice: Device) => setDevice(newDevice),
-    []
-  );
-  // const visualizerWidth = useMemo(
-  //   () => (tab === "widgets" ? devices[selectedDevice] : "100%"),
-  //   [tab, selectedDevice],
-  // );
-
   return {
     activeSubProject,
     handleActiveSubProjectChange,
@@ -176,8 +164,6 @@ export default ({
     closeDataSourceLayerCreator,
     sketchLayerCreatorShown,
     openSketchLayerCreator,
-    closeSketchLayerCreator,
-    selectedDevice,
-    handleDeviceChange
+    closeSketchLayerCreator
   };
 };
