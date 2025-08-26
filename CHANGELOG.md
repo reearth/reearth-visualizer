@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.9.1 - 2025-08-26
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up version 1.0.0-beta.9.1 ([#1782](https://github.com/reearth/reearth-visualizer/pull/1782)) [`07976c`](https://github.com/reearth/reearth-visualizer/commit/07976c)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Get project list internal api has error when user is not authenticated ([#1781](https://github.com/reearth/reearth-visualizer/pull/1781)) [`d9a603`](https://github.com/reearth/reearth-visualizer/commit/d9a603)
+
+#### Miscellaneous Tasks
+
+- Error due to Project Export Failure ([#1780](https://github.com/reearth/reearth-visualizer/pull/1780)) [`ad5732`](https://github.com/reearth/reearth-visualizer/commit/ad5732)
+
 ## 1.0.0-beta.9.0 - 2025-08-25
 
 ### Web
