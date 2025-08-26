@@ -199,8 +199,15 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		"project":   prj.ID().String(),
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
-
-	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	b, err := json.Marshal(exportData)
+	if err != nil {
+		return nil, fmt.Errorf("Fail normalize export data marshal: %w", err)
+	}
+	var data map[string]any
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, fmt.Errorf("Fail normalize export data unmarshal: %w", err)
+	}
+	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}
@@ -208,14 +215,4 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	return &gqlmodel.ExportProjectPayload{
 		ProjectDataPath: "/export/" + zipFile.Name(),
 	}, nil
-}
-
-func Normalize(data any) map[string]any {
-	if b, err := json.Marshal(data); err == nil {
-		var result map[string]any
-		if err := json.Unmarshal(b, &result); err == nil {
-			return result
-		}
-	}
-	return nil
 }
