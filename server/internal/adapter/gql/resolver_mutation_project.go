@@ -201,11 +201,11 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	}
 	b, err := json.Marshal(exportData)
 	if err != nil {
-		return nil, fmt.Errorf("Fail normalize export data marshal: %w", err)
+		return nil, errors.New("failed normalize export data marshal: " + err.Error())
 	}
 	var data map[string]any
 	if err := json.Unmarshal(b, &data); err != nil {
-		return nil, fmt.Errorf("Fail normalize export data unmarshal: %w", err)
+		return nil, errors.New("failed normalize export data unmarshal: " + err.Error())
 	}
 	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
