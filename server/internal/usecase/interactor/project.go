@@ -298,7 +298,7 @@ func (i *Project) FindVisibilityByWorkspace(
 	ownedWorkspaces := []string{}
 	memberWorkspaces := []string{}
 
-	if operator != nil {
+	if operator != nil && operator.AcOperator != nil {
 		_, ownedWorkspaces, memberWorkspaces = i.memberWorkspaces(ctx, *operator.AcOperator.User)
 	}
 
