@@ -295,7 +295,12 @@ func (i *Project) FindVisibilityByWorkspace(
 		pFilter.Offset = param.Offset
 	}
 
-	_, ownedWorkspaces, memberWorkspaces := i.memberWorkspaces(ctx, *operator.AcOperator.User)
+	ownedWorkspaces := []string{}
+	memberWorkspaces := []string{}
+
+	if operator != nil && operator.AcOperator != nil {
+		_, ownedWorkspaces, memberWorkspaces = i.memberWorkspaces(ctx, *operator.AcOperator.User)
+	}
 
 	targetWsList := accountdomain.WorkspaceIDList{aid}
 
@@ -335,34 +340,20 @@ func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]
 	return pList, err
 }
 
-func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator, isImport bool) (_ *project.Project, err error) {
-
-	// Default to VisibilityPublic if not specified
+func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
 	visibility := project.VisibilityPublic
-	if input.Visibility != nil {
-		visibility = project.Visibility(*input.Visibility)
-	}
 
 	if i.policyChecker != nil {
-
-		if isImport {
-			// Try checking if user can create private project
-			errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
-			if errPrivate == nil {
-				visibility = project.VisibilityPrivate
-			} else {
-				visibility = project.VisibilityPublic
-			}
+		errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
+		if errPrivate != nil {
+			visibility = project.VisibilityPublic
 		} else {
-			// Not import: use given visibility
-			if err = i.checkGeneralPolicy(ctx, input.WorkspaceID, visibility); err != nil {
-				return nil, err
+			if input.Visibility != nil {
+				visibility = project.Visibility(*input.Visibility)
 			}
 		}
-
 	}
 
-	// project.Visibility(input.Visibility),
 	return i.createProject(ctx, createProjectInput{
 		WorkspaceID:  input.WorkspaceID,
 		Visualizer:   input.Visualizer,
@@ -1095,6 +1086,19 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		topics = &ret
 	}
 
+	visibility := project.VisibilityPublic
+	if i.policyChecker != nil {
+		errPrivate := i.checkGeneralPolicy(ctx, workspaceId, project.VisibilityPrivate)
+		if errPrivate == nil {
+			if ret, ok := projectData["visibility"].(string); ok {
+				vis := project.Visibility(ret)
+				visibility = vis
+			}
+		} else {
+			visibility = project.VisibilityPublic
+		}
+	}
+
 	result, err := i.createProject(ctx, createProjectInput{
 		WorkspaceID:  workspaceId,
 		ProjectID:    projectId,
@@ -1109,7 +1113,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		Readme:       readme,
 		License:      license,
 		Topics:       topics,
-		// skip Visibility
+		Visibility:   &visibility,
 	}, op)
 	if err != nil {
 		return nil, err
