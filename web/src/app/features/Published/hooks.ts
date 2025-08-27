@@ -11,10 +11,11 @@ import {
   convertData,
   sceneProperty2ViewerPropertyMapping
 } from "@reearth/app/utils/convert-object";
+import { DeviceType } from "@reearth/app/utils/device";
 import type { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
 import { config } from "@reearth/services/config";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
@@ -40,6 +41,17 @@ export default (alias?: string) => {
   );
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
     undefined
+  );
+
+  // Device for WAS
+  // Published project relies on Visualizer's device detection
+  const [detectedDevice, setDetectedDevice] = useState<DeviceType>("desktop");
+
+  const handleDeviceChange = useCallback(
+    (device: DeviceType) => {
+      setDetectedDevice(device);
+    },
+    [setDetectedDevice]
   );
 
   const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } =
@@ -99,12 +111,13 @@ export default (alias?: string) => {
     if (!data?.widgets) return undefined;
 
     const widgetsInWas = new Set<string>();
-    if (data.widgetAlignSystem) {
+    if (data.widgetAlignSystem?.[detectedDevice]) {
       for (const z of ["inner", "outer"] as const) {
         for (const s of ["left", "center", "right"] as const) {
           for (const a of ["top", "middle", "bottom"] as const) {
-            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ??
-              []) {
+            for (const w of data.widgetAlignSystem[detectedDevice]?.[z]?.[s]?.[
+              a
+            ]?.widgetIds ?? []) {
               widgetsInWas.add(w);
             }
           }
@@ -190,13 +203,13 @@ export default (alias?: string) => {
       floating: floatingWidgets,
       alignSystem: data.widgetAlignSystem
         ? {
-            outer: widgetZone(data.widgetAlignSystem.outer),
-            inner: widgetZone(data.widgetAlignSystem.inner)
+            outer: widgetZone(data.widgetAlignSystem[detectedDevice]?.outer),
+            inner: widgetZone(data.widgetAlignSystem[detectedDevice]?.inner)
           }
         : undefined,
       ownBuiltinWidgets
     };
-  }, [data]);
+  }, [data, detectedDevice]);
 
   const actualAlias = useMemo(
     () =>
@@ -324,7 +337,8 @@ export default (alias?: string) => {
     visualizerRef,
     currentCamera,
     initialCamera,
-    setCurrentCamera
+    setCurrentCamera,
+    handleDeviceChange
   };
 };
 

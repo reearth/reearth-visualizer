@@ -23,10 +23,10 @@ type Scene interface {
 	FindByProject(context.Context, id.ProjectID, *usecase.Operator) (*scene.Scene, error)
 	FindByProjectsWithStory(context.Context, []id.ProjectID, *usecase.Operator) ([]*scene.Scene, *storytelling.StoryList, error)
 	Create(context.Context, id.ProjectID, bool, *usecase.Operator) (*scene.Scene, error)
-	AddWidget(context.Context, id.SceneID, id.PluginID, id.PluginExtensionID, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
+	AddWidget(context.Context, scene.WidgetAlignSystemType, id.SceneID, id.PluginID, id.PluginExtensionID, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
 	UpdateWidget(context.Context, UpdateWidgetParam, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
 	UpdateWidgetAlignSystem(context.Context, UpdateWidgetAlignSystemParam, *usecase.Operator) (*scene.Scene, error)
-	RemoveWidget(context.Context, id.SceneID, id.WidgetID, *usecase.Operator) (*scene.Scene, error)
+	RemoveWidget(context.Context, scene.WidgetAlignSystemType, id.SceneID, id.WidgetID, *usecase.Operator) (*scene.Scene, error)
 	InstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, *id.PropertyID, error)
 	UninstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
 	UpgradePlugin(context.Context, id.SceneID, id.PluginID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
@@ -35,6 +35,7 @@ type Scene interface {
 }
 
 type UpdateWidgetParam struct {
+	Type     scene.WidgetAlignSystemType
 	SceneID  id.SceneID
 	WidgetID id.WidgetID
 	Enabled  *bool
@@ -44,6 +45,7 @@ type UpdateWidgetParam struct {
 }
 
 type UpdateWidgetAlignSystemParam struct {
+	Type       scene.WidgetAlignSystemType
 	SceneID    id.SceneID
 	Location   scene.WidgetLocation
 	Align      *scene.WidgetAlignType

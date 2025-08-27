@@ -6,7 +6,8 @@ import {
   convertData,
   sceneProperty2ViewerPropertyMapping
 } from "@reearth/app/utils/convert-object";
-import { Camera } from "@reearth/app/utils/value";
+import { DeviceType } from "@reearth/app/utils/device";
+import { Camera, toWidgetAlignSystemType } from "@reearth/app/utils/value";
 import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
   useLayersFetcher,
@@ -48,7 +49,8 @@ export default ({
   isVisualizerResizing,
   onCoreLayerSelect,
   onVisualizerReady,
-  setSelectedStoryPageId
+  setSelectedStoryPageId,
+  forceDevice
 }: {
   sceneId?: string;
   storyId?: string;
@@ -59,6 +61,7 @@ export default ({
   onCoreLayerSelect: (props: LayerSelectProps) => void;
   onVisualizerReady: (value: boolean) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
+  forceDevice?: DeviceType;
 }) => {
   const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
   const { useGetLayersQuery } = useLayersFetcher();
@@ -105,7 +108,7 @@ export default ({
     const timeoutId = setTimeout(() => {
       setTempDisableTerrain(false);
     }, 0);
-    
+
     return () => clearTimeout(timeoutId);
   }, []);
 
@@ -239,21 +242,35 @@ export default ({
     []
   );
 
+  // Device for WAS
+  const [detectedDevice, setDetectedDevice] = useState<DeviceType>("desktop");
+
+  const handleDeviceChange = useCallback(
+    (device: DeviceType) => {
+      setDetectedDevice(device);
+    },
+    [setDetectedDevice]
+  );
+
+  const device = forceDevice !== undefined ? forceDevice : detectedDevice;
+
   // Widgets
-  const widgets = useMemo(() => convertWidgets(scene), [scene]);
+  const widgets = useMemo(() => convertWidgets(scene, device), [scene, device]);
 
   const handleWidgetUpdate = useCallback(
     async (
       id: string,
       update: { location?: Location; extended?: boolean; index?: number }
     ) => {
-      await useUpdateWidget(id, update, sceneId);
+      const type = toWidgetAlignSystemType(device);
+      await useUpdateWidget(id, update, sceneId, type);
     },
-    [sceneId, useUpdateWidget]
+    [sceneId, useUpdateWidget, device]
   );
 
   const handleWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
+      const type = toWidgetAlignSystemType(device);
       await useUpdateWidgetAlignSystem(
         {
           zone: location.zone,
@@ -261,10 +278,11 @@ export default ({
           area: location.area,
           align
         },
-        sceneId
+        sceneId,
+        type
       );
     },
-    [sceneId, useUpdateWidgetAlignSystem]
+    [sceneId, useUpdateWidgetAlignSystem, device]
   );
 
   // Plugin
@@ -462,6 +480,7 @@ export default ({
     handlePropertyItemDelete,
     handlePropertyItemMove,
     handleMount,
-    zoomToLayer
+    zoomToLayer,
+    handleDeviceChange
   };
 };

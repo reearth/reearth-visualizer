@@ -274,8 +274,7 @@ func TestStoryPublishing(t *testing.T) {
 	rc, err := g.File.ReadStoryFile(context.Background(), "test-alias")
 	assert.NoError(t, err)
 
-	expected := fmt.Sprintf(`
-{
+	expected := fmt.Sprintf(`{
   "coreSupport": true,
   "enableGa": false,
   "id": "%s",
@@ -391,24 +390,47 @@ func TestStoryPublishing(t *testing.T) {
   },
   "trackingId": "",
   "widgetAlignSystem": {
-    "inner": null,
-    "outer": {
-      "center": null,
-      "left": {
-        "bottom": {
-          "align": "start",
-          "background": null,
-          "centered": false,
-          "gap": null,
-          "padding": null,
-          "widgetIds": [
-            ".*"
-          ]
+    "desktop": {
+      "inner": null,
+      "outer": {
+        "center": null,
+        "left": {
+          "bottom": {
+            "align": "start",
+            "background": null,
+            "centered": false,
+            "gap": null,
+            "padding": null,
+            "widgetIds": [
+              ".*"
+            ]
+          },
+          "middle": null,
+          "top": null
         },
-        "middle": null,
-        "top": null
-      },
-      "right": null
+        "right": null
+      }
+    },
+    "mobile": {
+      "inner": null,
+      "outer": {
+        "center": null,
+        "left": {
+          "bottom": {
+            "align": "start",
+            "background": null,
+            "centered": false,
+            "gap": null,
+            "padding": null,
+            "widgetIds": [
+              ".*"
+            ]
+          },
+          "middle": null,
+          "top": null
+        },
+        "right": null
+      }
     }
   },
   "widgets": [
@@ -421,8 +443,7 @@ func TestStoryPublishing(t *testing.T) {
       "property": {}
     }
   ]
-}
-`, sceneID, storyID1, blockID1, pageID1)
+}`, sceneID, storyID1, blockID1, pageID1)
 
 	RegexpJSONEReadCloser(t, rc, expected)
 

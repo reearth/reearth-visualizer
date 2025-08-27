@@ -1,9 +1,8 @@
 import { styled } from "@reearth/services/theme";
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode } from "react";
 import { GridWrapper } from "react-align";
 
 import useHooks from "./hooks";
-import MobileZone from "./MobileZone";
 import type {
   WidgetAlignSystem as WidgetAlignSystemType,
   Alignment,
@@ -12,7 +11,6 @@ import type {
   Theme,
   WidgetProps
 } from "./types";
-import { filterSections } from "./utils";
 import ZoneComponent, { WidgetAreaType } from "./Zone";
 
 export type { WidgetAreaType };
@@ -36,7 +34,6 @@ export type Props = {
   selectedWidgetArea?: WidgetAreaType;
   invisibleWidgetIDs?: string[];
   editing?: boolean;
-  built?: boolean;
   layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   isMobile?: boolean;
   theme?: Theme;
@@ -58,10 +55,8 @@ const WidgetAlignSystem: React.FC<Props> = ({
   selectedWidgetArea,
   invisibleWidgetIDs,
   editing,
-  built,
   isMobile,
   layoutConstraint,
-  theme,
   renderWidget,
   onWidgetAreaSelect,
   onWidgetLayoutUpdate: onWidgetLayoutUpdate,
@@ -71,14 +66,6 @@ const WidgetAlignSystem: React.FC<Props> = ({
     onWidgetLayoutUpdate,
     onAlignmentUpdate
   });
-  const Zone = isMobile ? MobileZone : ZoneComponent;
-
-  const hasInner = useMemo(() => {
-    if (!alignSystem?.inner) {
-      return;
-    }
-    return !!filterSections(alignSystem?.inner, invisibleWidgetIDs).length;
-  }, [alignSystem, invisibleWidgetIDs]);
 
   return (
     <WidetAlignSystemWrapper editorMode={editing}>
@@ -88,32 +75,27 @@ const WidgetAlignSystem: React.FC<Props> = ({
         onAlignChange={handleAlignmentChange}
         onExtend={handleExtend}
       >
-        <Zone
+        <ZoneComponent
           zoneName="outer"
           selectedWidgetArea={selectedWidgetArea}
           zone={alignSystem?.outer}
           layoutConstraint={layoutConstraint}
           invisibleWidgetIDs={invisibleWidgetIDs}
-          theme={theme}
-          built={built}
           isMobile={isMobile}
           renderWidget={renderWidget}
           onWidgetAreaSelect={onWidgetAreaSelect}
         >
-          {(!isMobile || hasInner) && (
-            <ZoneComponent
-              zoneName="inner"
-              selectedWidgetArea={selectedWidgetArea}
-              invisibleWidgetIDs={invisibleWidgetIDs}
-              zone={alignSystem?.inner}
-              layoutConstraint={layoutConstraint}
-              built={built}
-              isMobile={isMobile}
-              renderWidget={renderWidget}
-              onWidgetAreaSelect={onWidgetAreaSelect}
-            />
-          )}
-        </Zone>
+          <ZoneComponent
+            zoneName="inner"
+            selectedWidgetArea={selectedWidgetArea}
+            invisibleWidgetIDs={invisibleWidgetIDs}
+            zone={alignSystem?.inner}
+            layoutConstraint={layoutConstraint}
+            isMobile={isMobile}
+            renderWidget={renderWidget}
+            onWidgetAreaSelect={onWidgetAreaSelect}
+          />
+        </ZoneComponent>
       </GridWrapper>
     </WidetAlignSystemWrapper>
   );
