@@ -42,6 +42,8 @@ export type DeletedProject = {
   name: string;
   imageUrl?: string | null;
   isDeleted?: boolean;
+  visibility?: string;
+  starred?: boolean;
 };
 
 export type TabItems = {
