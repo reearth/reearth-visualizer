@@ -105,11 +105,29 @@ func TestChangeEsriToDefault(t *testing.T) {
 			},
 		},
 		{
+			name: "Document with null groups should be skipped",
+			setupData: []bson.M{
+				createDocumentWithNullGroups("68a52fe741e1bd57f944890e"),
+			},
+			expectedUpdates: 0,
+			expectedError:   false,
+			verify: func(t *testing.T) {
+				var result bson.M
+				err := collection.FindOne(ctx, bson.M{"id": "test-null-groups"}).Decode(&result)
+				assert.NoError(t, err)
+
+				items := result["items"].(bson.A)
+				item := items[0].(bson.M)
+				groups := item["groups"]
+				assert.Nil(t, groups, "Groups should remain null")
+			},
+		},
+		{
 			name: "Mixed document types should only update esri_world_topo",
 			setupData: []bson.M{
-				createTestDocument("68a52fe741e1bd57f944890e"),
-				createDocumentWithoutEsri("68a52fe741e1bd57f944890f"),
-				createDocumentWithMultipleEsri("68a52fe741e1bd57f9448910"),
+				createTestDocument("68a52fe741e1bd57f944890f"),
+				createDocumentWithoutEsri("68a52fe741e1bd57f9448910"),
+				createDocumentWithMultipleEsri("68a52fe741e1bd57f9448911"),
 			},
 			expectedUpdates: 2,
 			expectedError:   false,
@@ -276,6 +294,26 @@ func createDocumentWithoutEsri(objectIdHex string) bson.M {
 						},
 					},
 				},
+			},
+		},
+	}
+}
+
+func createDocumentWithNullGroups(objectIdHex string) bson.M {
+	objId, _ := primitive.ObjectIDFromHex(objectIdHex)
+	return bson.M{
+		"_id":          objId,
+		"id":           "test-null-groups",
+		"scene":        "01k32m686309y999aeer53x5y3",
+		"schemaplugin": "reearth",
+		"schemaname":   "cesium-beta",
+		"items": bson.A{
+			bson.M{
+				"type":        "grouplist",
+				"id":          "01k32mq1c5e9tb607evn4qhw67",
+				"schemagroup": "tiles",
+				"groups":      nil, // Explicitly null groups
+				"fields":      nil,
 			},
 		},
 	}
