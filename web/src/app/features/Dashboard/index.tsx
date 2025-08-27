@@ -21,7 +21,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   const t = useT();
   const { useMeQuery } = useMeFetcher();
   const { me } = useMeQuery();
-  const { lang } = me;
+  const lang = me?.lang ?? "en";
 
   const topTabItems: Omit<TabItems[], "active"> = useMemo(
     () => [
