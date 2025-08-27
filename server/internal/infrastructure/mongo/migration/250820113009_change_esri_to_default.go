@@ -33,11 +33,14 @@ func ChangeEsriToDefault(ctx context.Context, c DBClient) error {
 
 	update := bson.M{
 		"$set": bson.M{
-			"items.$[].groups.$[].fields.$[f].value": "default",
+			"items.$[i].groups.$[g].fields.$[f].value": "default",
 		},
 	}
+
 	arrayFilters := options.ArrayFilters{
 		Filters: []interface{}{
+			bson.M{"i.groups": bson.M{"$type": "array"}},
+			bson.M{"g.fields": bson.M{"$type": "array"}},
 			bson.M{"f.field": "tile_type", "f.value": "esri_world_topo"},
 		},
 	}
@@ -55,6 +58,6 @@ func ChangeEsriToDefault(ctx context.Context, c DBClient) error {
 		return fmt.Errorf("update failed: %w", err)
 	}
 
-	fmt.Printf("[migration] Migration completed. Updated %d documents.\n", res.ModifiedCount)
+	fmt.Printf("[migration] Migration completed. Matched %d, Modified %d documents.\n", res.MatchedCount, res.ModifiedCount)
 	return nil
 }
