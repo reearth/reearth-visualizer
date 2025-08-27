@@ -1,6 +1,5 @@
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/app/ui/components/Sidebar";
-import { useMeFetcher } from "@reearth/services/api";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
@@ -18,9 +17,7 @@ export type DashboardProps = {
 
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   const t = useT();
-  const { useMeQuery } = useMeFetcher();
-  const { me } = useMeQuery();
-  const lang = me?.lang ?? "en";
+  const lang = useLang();
 
   const topTabItems: Omit<TabItems[], "active"> = useMemo(
     () => [
