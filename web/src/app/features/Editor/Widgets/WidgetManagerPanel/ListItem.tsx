@@ -1,5 +1,8 @@
 import { EntryItem } from "@reearth/app/ui/components";
-import { InstalledWidget } from "@reearth/services/api/widgetsApi/utils";
+import {
+  InstalledWidget,
+  DATA_ATTRIBUTION_WIDGET_ID
+} from "@reearth/services/api/widgetsApi/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
@@ -18,17 +21,21 @@ const ListItem: FC<ListItemProps> = ({
   onItemSelect
 }) => {
   const t = useT();
-  const optionsMenu = useMemo(
-    () => [
+  const optionsMenu = useMemo(() => {
+    // If this is the data attribution widget, don't show any menu
+    if (`${item.pluginId}/${item.extensionId}` === DATA_ATTRIBUTION_WIDGET_ID) {
+      return undefined;
+    }
+
+    return [
       {
         id: "delete",
         title: t("Delete"),
         icon: "trash" as const,
         onClick: () => onItemDelete?.(item.id)
       }
-    ],
-    [item.id, onItemDelete, t]
-  );
+    ];
+  }, [item.extensionId, item.id, item.pluginId, onItemDelete, t]);
 
   return (
     <Wrapper data-testid={`installed-widget-list-item-${item.id}`}>
