@@ -295,7 +295,12 @@ func (i *Project) FindVisibilityByWorkspace(
 		pFilter.Offset = param.Offset
 	}
 
-	_, ownedWorkspaces, memberWorkspaces := i.memberWorkspaces(ctx, *operator.AcOperator.User)
+	ownedWorkspaces := []string{}
+	memberWorkspaces := []string{}
+
+	if operator != nil && operator.AcOperator != nil {
+		_, ownedWorkspaces, memberWorkspaces = i.memberWorkspaces(ctx, *operator.AcOperator.User)
+	}
 
 	targetWsList := accountdomain.WorkspaceIDList{aid}
 
