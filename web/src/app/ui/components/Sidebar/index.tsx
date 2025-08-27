@@ -127,16 +127,7 @@ const StyledLinkButton = styled(
     const isExternal = /^https?:\/\//.test(to);
     if (isExternal) {
       return (
-        <a
-          href={to}
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            pointerEvents: disabled ? "none" : "auto",
-            textDecoration: "none"
-          }}
-          {...props}
-        >
+        <a href={to} target="_blank" rel="noopener noreferrer" {...props}>
           {children}
         </a>
       );
