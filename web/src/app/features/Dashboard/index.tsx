@@ -38,7 +38,6 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
         id: "plugin",
         text: t("Plugin Playground"),
         icon: "puzzlePiece",
-        tileComponent: <Tooltip type="experimental" />,
         path: "/plugin-playground"
       },
       {
