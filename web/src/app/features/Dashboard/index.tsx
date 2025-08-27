@@ -1,4 +1,3 @@
-import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/app/ui/components/Sidebar";
 import { useMeFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
