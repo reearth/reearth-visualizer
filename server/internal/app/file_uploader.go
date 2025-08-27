@@ -126,7 +126,7 @@ func serveUploadFiles(
 
 func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId string) (*project.Project, error) {
 
-	visibility := "private"
+	visibility := string(project.VisibilityPublic)
 	coreSupport := true
 	unknown := "It's importing now..."
 	workspaceID, err := accountdomain.WorkspaceIDFrom(wsId)
@@ -144,7 +144,6 @@ func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container
 		ImportStatus: project.ProjectImportStatusProcessing, // PROCESSING
 	},
 		op,
-		true, // isImport
 	)
 	if err != nil {
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to create project")

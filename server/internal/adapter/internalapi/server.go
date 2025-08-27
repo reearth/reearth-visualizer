@@ -52,10 +52,12 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		}
 	}
 
+	var err error
 	if req.WorkspaceId == nil {
-		var err error
+
 		res, info, err = uc.Project.FindVisibilityByUser(
-			ctx, adapter.User(ctx),
+			ctx,
+			adapter.User(ctx),
 			req.Authenticated,
 			op,
 			req.Keyword,
@@ -79,11 +81,17 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 			param.Limit = req.Pagination.Limit
 			param.Offset = req.Pagination.Offset
 		}
+
 		res, info, err = uc.Project.FindVisibilityByWorkspace(
-			ctx, wId, req.Authenticated, op, req.Keyword, sort, pagination,
+			ctx,
+			wId,
+			req.Authenticated,
+			op,
+			req.Keyword,
+			sort,
+			pagination,
 			param,
 		)
-
 		if err != nil {
 			return nil, err
 		}
@@ -99,6 +107,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		Projects: projects,
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
+
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
@@ -216,7 +225,6 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		Topics:       req.Topics,
 	},
 		op,
-		false, // isImport
 	)
 	if err != nil {
 		return nil, err
@@ -449,8 +457,15 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 		"project":   prj.ID().String(),
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
-
-	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	b, err := json.Marshal(exportData)
+	if err != nil {
+		return nil, errors.New("failed normalize export data marshal: " + err.Error())
+	}
+	var data map[string]any
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, errors.New("failed normalize export data unmarshal: " + err.Error())
+	}
+	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}
@@ -550,16 +565,6 @@ func (s server) DeleteByProjectAlias(ctx context.Context, req *pb.DeleteByProjec
 		ProjectAlias: req.ProjectAlias,
 	}, nil
 
-}
-
-func Normalize(data any) map[string]any {
-	if b, err := json.Marshal(data); err == nil {
-		var result map[string]any
-		if err := json.Unmarshal(b, &result); err == nil {
-			return result
-		}
-	}
-	return nil
 }
 
 func (s server) getScenesAndStorytellings(ctx context.Context, res []*project.Project) ([]*pb.Project, error) {

@@ -64,8 +64,8 @@ func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container, file gateway.File) {
-	ctx := context.Background()
+func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container, file gateway.File, ctx context.Context) {
+	ctx = context.Background()
 
 	if useMongo {
 		db := mongotest.Connect(t)(t)
@@ -84,7 +84,7 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 		}
 	}
 
-	return repos, file
+	return repos, file, ctx
 }
 
 func initGateway() *gateway.Container {
@@ -173,15 +173,21 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 }
 
 func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	repos, _ := initRepos(t, true, seeder)
+	repos, _, _ := initRepos(t, true, seeder)
 	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos()
 }
 
 func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	repos, _ := initRepos(t, useMongo, seeder)
+	repos, _, _ := initRepos(t, useMongo, seeder)
 	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
 	return e, repos, gateways
+}
+
+func startServerWithCtx(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, context.Context) {
+	repos, _, ctx := initRepos(t, useMongo, seeder)
+	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
+	return e, repos, gateways, ctx
 }
 
 func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
@@ -190,6 +196,10 @@ func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Cont
 
 func GRPCServer(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
 	return startServer(t, internalApiConfig, true, seeder)
+}
+
+func GRPCServeWithCtx(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, context.Context) {
+	return startServerWithCtx(t, internalApiConfig, true, seeder)
 }
 
 func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {

@@ -139,23 +139,28 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 	return
 }
 
-func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) bson.M {
+func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, ownedWorkspaces []string, memberWorkspaces []string, targetWsList []string) bson.M {
 
-	// target Workspace
-	var idStrings []string
-	for _, id := range wList {
-		idStrings = append(idStrings, id.String())
+	matchOwnedWorkspaces := []string{}
+	matchMemberWorkspaces := []string{}
+	for _, wsID := range targetWsList {
+		if slices.Contains(ownedWorkspaces, wsID) {
+			matchOwnedWorkspaces = append(matchOwnedWorkspaces, wsID)
+		} else if slices.Contains(memberWorkspaces, wsID) {
+			matchMemberWorkspaces = append(matchMemberWorkspaces, wsID)
+		}
 	}
 
 	var filter bson.M
 
-	if !authenticated { // public only
+	// Not authenticated, or neither an owner nor a member
+	if !authenticated || (len(matchOwnedWorkspaces) == 0 && len(matchMemberWorkspaces) == 0) {
 		filter = bson.M{
 			"workspace": bson.M{
-				"$in": idStrings,
+				"$in": targetWsList,
 			},
-			"deleted":    false,
-			"visibility": "public",
+			// "deleted":    false,
+			"visibility": "public", // public only
 		}
 		if keyword != nil {
 			keywordRegex := primitive.Regex{
@@ -167,41 +172,25 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 		return filter
 	}
 
-	var owningWorkspaceStrings []string
-	for _, id := range owningWorkspaces {
-		owningWorkspaceStrings = append(owningWorkspaceStrings, id.String())
-	}
-
-	var ownedWorkspaces []string
-	var memberWorkspaces []string
-
-	for _, wsID := range idStrings {
-		if slices.Contains(owningWorkspaceStrings, wsID) {
-			ownedWorkspaces = append(ownedWorkspaces, wsID)
-		} else {
-			memberWorkspaces = append(memberWorkspaces, wsID)
-		}
-	}
-
 	var conditions []bson.M
 
 	// OwnedWorkspaces
-	if len(ownedWorkspaces) > 0 {
+	if len(matchOwnedWorkspaces) > 0 {
 		conditions = append(conditions, bson.M{
 			"workspace": bson.M{
-				"$in": ownedWorkspaces,
+				"$in": matchOwnedWorkspaces,
 			},
 		})
 	}
 
 	// MemberWorkspaces
-	if len(memberWorkspaces) > 0 {
+	if len(matchMemberWorkspaces) > 0 {
 		conditions = append(conditions, bson.M{
 			"workspace": bson.M{
-				"$in": memberWorkspaces,
+				"$in": matchMemberWorkspaces,
 			},
-			"deleted":    false,
-			"visibility": "public",
+			// "deleted":    false,
+			// "visibility": "public",
 		})
 	}
 
@@ -330,9 +319,9 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 	return absoluteFilter, findOptions, *limit, sortOrder
 }
 
-func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFilter repo.ProjectFilter, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFilter repo.ProjectFilter, ownedWorkspaces []string, memberWorkspaces []string, targetWsList []string) ([]*project.Project, *usecasex.PageInfo, error) {
 
-	absoluteFilter := r.ProjectAbsoluteFilter(authenticated, pFilter.Keyword, owningWorkspaces, wList)
+	absoluteFilter := r.ProjectAbsoluteFilter(authenticated, pFilter.Keyword, ownedWorkspaces, memberWorkspaces, targetWsList)
 
 	// --- Find Query (absoluteFilter for totalCount)
 	totalCount, err := r.client.Client().CountDocuments(ctx, absoluteFilter)
@@ -350,6 +339,10 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 	} else {
 		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, nil, pFilter.Offset, pFilter.Limit)
 	}
+
+	// if text, err := json.MarshalIndent(paginationSortilter, "", "  "); err == nil {
+	// 	fmt.Println(string(text))
+	// }
 
 	// --- Find Query (paginationSortilter)
 	cursor, err := r.client.Client().Find(ctx, paginationSortilter, findOptions)

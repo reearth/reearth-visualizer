@@ -1391,11 +1391,11 @@ extensions:
           padding:
             title: 余白
   markdownInfoboxBetaBlock:
-    name: MDテキスト
-    description: インフォボックスMDテキストブロック
+    name: マークダウンテキスト
+    description: インフォボックスマークダウンテキストブロック
     propertySchema:
       default:
-        title: MDテキストブロック
+        title: マークダウンテキストブロック
         fields:
           src:
             title: コンテンツ
