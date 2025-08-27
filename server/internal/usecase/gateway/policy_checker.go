@@ -10,12 +10,8 @@ import (
 type PolicyCheckType string
 
 const (
-	PolicyCheckPrivateDataTransferUpload     PolicyCheckType = "cms_private_data_transfer_upload_size"
-	PolicyCheckPrivateDataTransferDownload   PolicyCheckType = "cms_private_data_transfer_download_size"
-	PolicyCheckPublicDataTransferUpload      PolicyCheckType = "cms_public_data_transfer_upload_size"
-	PolicyCheckPublicDataTransferDownload    PolicyCheckType = "cms_public_data_transfer_download_size"
-	PolicyCheckUploadAssetsSize              PolicyCheckType = "cms_upload_assets_size_from_ui"
-	PolicyCheckModelCountPerProject          PolicyCheckType = "cms_model_count_per_project"
+	PolicyCheckUploadAssetsSize              PolicyCheckType = "visualizer_asset_size"
+	PolicyCheckCustomDomainCount             PolicyCheckType = "visualizer_custom_domain_count"
 	PolicyCheckGeneralPrivateProjectCreation PolicyCheckType = "general_private_project_creation"
 	PolicyCheckGeneralPublicProjectCreation  PolicyCheckType = "general_public_project_creation"
 )
