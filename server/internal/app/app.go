@@ -151,7 +151,13 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	published.GET("/:name/data.json", PublishedData("", true))
 	published.GET("/:name/", PublishedIndex("", true))
 
-	serveFiles(e, cfg.Gateways.File)
+	authService := NewDomainAuthorizationService(
+		cfg.Repos.Asset,
+		cfg.Repos.Project,
+		cfg.Repos.Plugin,
+	)
+	e.Use(SecureFileServingMiddleware(authService))
+	secureServeFiles(e, cfg.Gateways.File, authService)
 
 	serveUploadFiles(e, cfg.Gateways.File)
 
