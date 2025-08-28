@@ -1,6 +1,5 @@
-import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/app/ui/components/Sidebar";
-import { useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
@@ -18,6 +17,8 @@ export type DashboardProps = {
 
 const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   const t = useT();
+  const lang = useLang();
+
   const topTabItems: Omit<TabItems[], "active"> = useMemo(
     () => [
       { id: "projects", text: t("Projects"), icon: "grid" },
@@ -33,29 +34,31 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
         id: "plugin",
         text: t("Plugin Playground"),
         icon: "puzzlePiece",
-        tileComponent: <Tooltip type="experimental" />,
         path: "/plugin-playground"
       },
       {
         id: "documentation",
         text: t("Documentation"),
         icon: "book",
-        disabled: true
+        path:
+          lang === "ja"
+            ? "https://eukarya.notion.site/Visualizer-1a816e0fb16580bda8b2c2699f80399c"
+            : "https://eukarya.notion.site/Visualizer-User-manual-1a816e0fb16580e3a26ac6e35f23a166"
       },
       {
-        id: "community",
-        text: t("Community"),
-        icon: "usersFour",
-        disabled: true
+        id: "discord",
+        text: t("Discord"),
+        icon: "discord",
+        path: "https://discord.com/invite/XJhYkQQDAu"
       },
       {
-        id: "help",
-        text: t("Help & Support"),
+        id: "faq",
+        text: t("FAQ"),
         icon: "question",
-        disabled: true
+        path: "https://eukarya.notion.site/FAQ-19616e0fb16580f190aace7a918bfdd2"
       }
     ],
-    [t]
+    [t, lang]
   );
 
   const {
