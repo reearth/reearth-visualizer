@@ -182,14 +182,14 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 
 // stories
 
-func (f *fileRepo) ReadStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadBuiltStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	if name == "" {
 		return nil, rerror.ErrNotFound
 	}
 	return f.read(ctx, path.Join(storyBasePath, sanitize.Path(name)+".json"))
 }
 
-func (f *fileRepo) UploadStory(ctx context.Context, content io.Reader, name string) error {
+func (f *fileRepo) UploadBuiltStory(ctx context.Context, content io.Reader, name string) error {
 	sn := sanitize.Path(name + ".json")
 	if sn == "" {
 		return gateway.ErrInvalidFile
@@ -198,7 +198,7 @@ func (f *fileRepo) UploadStory(ctx context.Context, content io.Reader, name stri
 	return err
 }
 
-func (f *fileRepo) MoveStory(ctx context.Context, oldName, name string) error {
+func (f *fileRepo) MoveBuiltStory(ctx context.Context, oldName, name string) error {
 	from := sanitize.Path(oldName + ".json")
 	dest := sanitize.Path(name + ".json")
 	if from == "" || dest == "" {
@@ -207,7 +207,7 @@ func (f *fileRepo) MoveStory(ctx context.Context, oldName, name string) error {
 	return f.move(ctx, path.Join(storyBasePath, from), path.Join(storyBasePath, dest))
 }
 
-func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
+func (f *fileRepo) RemoveBuiltStory(ctx context.Context, name string) error {
 	log.Infofc(ctx, "s3: story deleted: %s", name)
 
 	sn := sanitize.Path(name + ".json")

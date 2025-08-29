@@ -271,7 +271,7 @@ func TestStoryPublishing(t *testing.T) {
 		Value("story").Object().
 		HasValue("id", storyID)
 
-	rc, err := g.File.ReadStoryFile(context.Background(), "test-alias")
+	rc, err := g.File.ReadBuiltStoryFile(context.Background(), "test-alias")
 	assert.NoError(t, err)
 
 	expected := fmt.Sprintf(`

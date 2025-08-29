@@ -30,6 +30,7 @@ help:
 	@echo "  run-app           Run the application"
 	@echo "  run-db            Start MongoDB with Docker Compose"
 	@echo "  run-reset         Reset MongoDB data and add mock user"
+	@echo "  run-migration     Run the migration"
 	@echo "  gql               Generate GraphQL code"
 	@echo "  schematyper       Generate schema using schematyper"
 	@echo "  deep-copy         Generate deep-copy code for Initializer"
@@ -66,6 +67,9 @@ dev: dev-install
 
 run-app:
 	go run ./cmd/reearth
+
+run-migration:
+	RUN_MIGRATION=true go run ./cmd/reearth
 
 clean:
 	go clean -modcache
