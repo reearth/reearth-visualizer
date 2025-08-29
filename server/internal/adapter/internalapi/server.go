@@ -465,9 +465,9 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	if err := json.Unmarshal(b, &data); err != nil {
 		return nil, errors.New("failed normalize export data unmarshal: " + err.Error())
 	}
-	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, data, prj)
+	err = uc.Project.SaveExportProjectZip(ctx, zipWriter, zipFile, data, prj)
 	if err != nil {
-		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
+		return nil, errors.New("Fail SaveExportProjectZip :" + err.Error())
 	}
 
 	return &pb.ExportProjectResponse{

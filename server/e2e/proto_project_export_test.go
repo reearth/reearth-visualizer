@@ -12,6 +12,7 @@ import (
 // go test -v -run TestInternalAPI_export ./e2e/...
 
 func TestInternalAPI_export(t *testing.T) {
+	e := Server(t, fullSeeder)
 	GRPCServer(t, fullSeeder)
 
 	// call api
@@ -23,6 +24,15 @@ func TestInternalAPI_export(t *testing.T) {
 
 		assert.NotNil(t, exp.ProjectDataPath)
 		assert.Nil(t, err)
+
+		// Try download
+		resp := e.GET(exp.ProjectDataPath).
+			Expect().
+			Status(200)
+
+		resp.Header("Content-Type").Contains("application/zip")
+		body := resp.Body().Raw()
+		assert.Greater(t, len(body), 0)
 
 	})
 }
