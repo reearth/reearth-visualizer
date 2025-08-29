@@ -43,6 +43,7 @@ func TestProjectExport(t *testing.T) {
 
 	assert.NotNil(t, projectDataPath)
 
+	// Try download
 	resp := e.GET(projectDataPath.Raw()).
 		Expect().
 		Status(200)
