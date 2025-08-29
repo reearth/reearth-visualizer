@@ -10,7 +10,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/kennygrant/sanitize"
@@ -285,24 +284,24 @@ func (f *fileRepo) delete(ctx context.Context, filename string) error {
 	return nil
 }
 
-func (f *fileRepo) debug() error {
-	fs := f.fs
-	root := "."
-	fmt.Printf("------------- current afero -> %p ------------- \n", f.fs)
-	return afero.Walk(fs, root, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		relPath, _ := filepath.Rel(root, path)
-		depth := 0
-		if relPath != "." {
-			depth = strings.Count(relPath, string(os.PathSeparator))
-		}
-		prefix := strings.Repeat("  ", depth)
-		fmt.Println(prefix + info.Name())
-		return nil
-	})
-}
+// func (f *fileRepo) debug() error {
+// 	fs := f.fs
+// 	root := "."
+// 	fmt.Printf("------------- current afero -> %p ------------- \n", f.fs)
+// 	return afero.Walk(fs, root, func(path string, info os.FileInfo, err error) error {
+// 		if err != nil {
+// 			return err
+// 		}
+// 		relPath, _ := filepath.Rel(root, path)
+// 		depth := 0
+// 		if relPath != "." {
+// 			depth = strings.Count(relPath, string(os.PathSeparator))
+// 		}
+// 		prefix := strings.Repeat("  ", depth)
+// 		fmt.Println(prefix + info.Name())
+// 		return nil
+// 	})
+// }
 
 func getAssetFileURL(base *url.URL, filename string) *url.URL {
 	if base == nil {
