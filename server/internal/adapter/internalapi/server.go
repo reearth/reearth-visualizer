@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -470,8 +471,15 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}
 
+	currentHost := adapter.CurrentHost(ctx)
+	fname := filepath.Base(zipFile.Name())
+	exportPath, err := url.JoinPath(currentHost, "export", fname)
+	if err != nil {
+		return nil, err
+	}
+
 	return &pb.ExportProjectResponse{
-		ProjectDataPath: "/export/" + zipFile.Name(),
+		ProjectDataPath: exportPath,
 	}, nil
 }
 

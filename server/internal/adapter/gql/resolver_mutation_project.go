@@ -6,7 +6,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/url"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -212,7 +214,14 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
 	}
 
+	currentHost := adapter.CurrentHost(ctx)
+	fname := filepath.Base(zipFile.Name())
+	exportPath, err := url.JoinPath(currentHost, "export", fname)
+	if err != nil {
+		return nil, err
+	}
+
 	return &gqlmodel.ExportProjectPayload{
-		ProjectDataPath: "/export/" + zipFile.Name(),
+		ProjectDataPath: exportPath,
 	}, nil
 }
