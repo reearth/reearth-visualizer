@@ -156,16 +156,16 @@ func (f *fileRepo) RemoveBuiltScene(ctx context.Context, name string) error {
 
 // Stories
 
-func (f *fileRepo) ReadStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
+func (f *fileRepo) ReadBuiltStoryFile(ctx context.Context, name string) (io.ReadCloser, error) {
 	return f.read(ctx, filepath.Join(storyDir, sanitize.Path(name+".json")))
 }
 
-func (f *fileRepo) UploadStory(ctx context.Context, reader io.Reader, name string) error {
+func (f *fileRepo) UploadBuiltStory(ctx context.Context, reader io.Reader, name string) error {
 	_, err := f.upload(ctx, filepath.Join(storyDir, sanitize.Path(name+".json")), reader)
 	return err
 }
 
-func (f *fileRepo) MoveStory(ctx context.Context, oldName, name string) error {
+func (f *fileRepo) MoveBuiltStory(ctx context.Context, oldName, name string) error {
 	return f.move(
 		ctx,
 		filepath.Join(storyDir, sanitize.Path(oldName+".json")),
@@ -173,7 +173,7 @@ func (f *fileRepo) MoveStory(ctx context.Context, oldName, name string) error {
 	)
 }
 
-func (f *fileRepo) RemoveStory(ctx context.Context, name string) error {
+func (f *fileRepo) RemoveBuiltStory(ctx context.Context, name string) error {
 	return f.delete(ctx, filepath.Join(storyDir, sanitize.Path(name+".json")))
 }
 
