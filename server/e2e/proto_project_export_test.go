@@ -16,7 +16,7 @@ func TestInternalAPI_export(t *testing.T) {
 	GRPCServer(t, fullSeeder)
 
 	// call api user1
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUserNoToken(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
 			ProjectId: pID.String(),
@@ -37,7 +37,7 @@ func TestInternalAPI_export(t *testing.T) {
 	})
 
 	// call api user2
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUserNoToken(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
 			ProjectId: pID.String(),

@@ -73,15 +73,20 @@ func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 			return nil, errors.New("unauthorized")
 		}
 
-		token := tokenFromGrpcMetadata(md)
-		if token == "" {
-			log.Errorf("unaryAuthInterceptor: no token found")
-			return nil, errors.New("unauthorized")
-		}
+		// Allow ExportProject without a token.
+		if info.FullMethod != "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject" {
+			token := tokenFromGrpcMetadata(md)
+			if token == "" {
+				log.Errorf("unaryAuthInterceptor: no token found")
+				return nil, errors.New("unauthorized")
+			}
 
-		if token != cfg.Config.Visualizer.InternalApi.Token {
-			log.Errorf("unaryAuthInterceptor: invalid token")
-			return nil, errors.New("unauthorized")
+			if token != cfg.Config.Visualizer.InternalApi.Token {
+				log.Errorf("unaryAuthInterceptor: invalid token")
+				return nil, errors.New("unauthorized")
+			}
+		} else {
+			log.Infof("Skip token check.")
 		}
 
 		return handler(ctx, req)

@@ -451,6 +451,24 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 	testFunc(client, ctx)
 }
 
+func runTestWithUserNoToken(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
+		"user-id": userID,
+	}))
+
+	conn, err := grpc.NewClient("localhost:"+internalApiConfig.Visualizer.InternalApi.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("failed to connect: %v", err)
+	}
+	defer SafeClose(conn)
+
+	client := pb.NewReEarthVisualizerClient(conn)
+	testFunc(client, ctx)
+}
+
 // go test -v -run TestCreateProjectForInternal ./e2e/...
 func TestCreateProjectForInternal(t *testing.T) {
 
