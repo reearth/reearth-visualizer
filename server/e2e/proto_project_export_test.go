@@ -13,26 +13,13 @@ import (
 
 func TestInternalAPI_export(t *testing.T) {
 	e := Server(t, fullSeeder)
-
-	projectId, sceneId, _ := createProjectSet(e)
-	updateProjectMetadata(e, uID, map[string]any{
-		"input": map[string]any{
-			"project": projectId,
-			"readme":  "readme test",
-			"license": "license test",
-			"topics":  "topics test",
-		},
-	})
-	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1)
-	createPhotoOverlay(e, layerId)
-
 	GRPCServer(t, fullSeeder)
 
 	// call api user1
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
-			ProjectId: projectId,
+			ProjectId: pID.String(),
 		})
 
 		assert.NotNil(t, exp.ProjectDataPath)
@@ -53,7 +40,7 @@ func TestInternalAPI_export(t *testing.T) {
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
-			ProjectId: projectId,
+			ProjectId: pID.String(),
 		})
 
 		assert.NotNil(t, exp.ProjectDataPath)
