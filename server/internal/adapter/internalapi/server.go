@@ -439,6 +439,12 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
+	if prj.Visibility() == string(project.VisibilityPrivate) {
+		if op == nil {
+			return nil, errors.New("Unauthorized project : " + prj.Name())
+		}
+	}
+
 	sce, exportData, err := uc.Scene.ExportScene(ctx, prj)
 	if err != nil {
 		return nil, errors.New("Fail ExportScene :" + err.Error())
