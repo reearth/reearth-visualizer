@@ -13,13 +13,47 @@ import (
 
 func TestInternalAPI_export(t *testing.T) {
 	e := Server(t, fullSeeder)
+
+	projectId, sceneId, _ := createProjectSet(e)
+	updateProjectMetadata(e, uID, map[string]any{
+		"input": map[string]any{
+			"project": projectId,
+			"readme":  "readme test",
+			"license": "license test",
+			"topics":  "topics test",
+		},
+	})
+	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1)
+	createPhotoOverlay(e, layerId)
+
 	GRPCServer(t, fullSeeder)
 
-	// call api
+	// call api user1
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
-			ProjectId: pID.String(),
+			ProjectId: projectId,
+		})
+
+		assert.NotNil(t, exp.ProjectDataPath)
+		assert.Nil(t, err)
+
+		// Try download
+		resp := e.GET(exp.ProjectDataPath).
+			Expect().
+			Status(200)
+
+		resp.Header("Content-Type").Contains("application/zip")
+		body := resp.Body().Raw()
+		assert.Greater(t, len(body), 0)
+
+	})
+
+	// call api user2
+	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
+			ProjectId: projectId,
 		})
 
 		assert.NotNil(t, exp.ProjectDataPath)
