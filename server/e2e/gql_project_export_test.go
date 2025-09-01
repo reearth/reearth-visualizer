@@ -30,7 +30,6 @@ func TestProjectExport(t *testing.T) {
 		},
 	})
 	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1)
-	// _, _, _, propertyId :=
 	createPhotoOverlay(e, layerId)
 
 	projectDataPath := Request(e, uID.String(), GraphQLRequest{
@@ -43,6 +42,7 @@ func TestProjectExport(t *testing.T) {
 
 	assert.NotNil(t, projectDataPath)
 
+	// Try download
 	resp := e.GET(projectDataPath.Raw()).
 		Expect().
 		Status(200)

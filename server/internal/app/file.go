@@ -56,21 +56,23 @@ func serveFiles(
 
 			r, err := repo.ReadExportProjectZip(ctx.Request().Context(), filename)
 			if err != nil {
-				return nil, "", err
+				fmt.Printf("[export] !!!! download error: %s \n", filename)
+				return nil, filename, err
 			}
-			fmt.Printf("download: %s \n", filename)
+			fmt.Printf("[export] download file: %s \n", filename)
+
+			rctx := ctx.Request().Context()
 
 			go func() {
 				// download and then delete
 				time.Sleep(3 * time.Second)
-				err := repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
+				err := repo.RemoveExportProjectZip(rctx, filename)
 				if err != nil {
-					fmt.Printf("delete err: %s \n", err.Error())
+					fmt.Printf("[export] !!!! delete err: %s \n", err.Error())
 				} else {
-					fmt.Printf("file deleted: %s \n", filename)
+					fmt.Printf("[export] file deleted: %s \n", filename)
 				}
 			}()
-
 			return r, filename, nil
 		}),
 	)

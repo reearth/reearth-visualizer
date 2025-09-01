@@ -53,9 +53,9 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+func (r *Project) FindByID(ctx context.Context, pid id.ProjectID) (*project.Project, error) {
 	prj, err := r.findOne(ctx, bson.M{
-		"id": id.String(),
+		"id": pid.String(),
 	}, false)
 
 	if err != nil {
@@ -704,9 +704,9 @@ func (r *Project) find(ctx context.Context, filter interface{}) ([]*project.Proj
 
 func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bool) (*project.Project, error) {
 	var f []accountdomain.WorkspaceID
-	if filterByWorkspaces {
-		f = r.f.Readable
-	}
+	// if filterByWorkspaces {
+	// 	f = r.f.Readable
+	// }
 	c := mongodoc.NewProjectConsumer(f)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err

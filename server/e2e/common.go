@@ -76,15 +76,18 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 		repos = memory.New()
 	}
 
-	file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
-	fr = &file
+	if fr == nil {
+		file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
+		fr = &file
+	}
+
 	if seeder != nil {
-		if err := seeder(ctx, repos, file); err != nil {
+		if err := seeder(ctx, repos, *fr); err != nil {
 			t.Fatalf("failed to seed the db: %s", err)
 		}
 	}
 
-	return repos, file, ctx
+	return repos, *fr, ctx
 }
 
 func initGateway() *gateway.Container {
