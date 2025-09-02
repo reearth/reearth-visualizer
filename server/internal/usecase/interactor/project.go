@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/url"
 	"path"
+	"slices"
 	"strings"
 	"time"
 
@@ -196,21 +197,21 @@ func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator
 	return pj, nil
 }
 
-func (i *Project) memberWorkspaces(ctx context.Context, uId accountdomain.UserID) (wsList workspace.List, ownedWorkspaces []string, memberWorkspaces []string) {
+func (i *Project) MemberWorkspaces(ctx context.Context, uId accountdomain.UserID) (wsList workspace.List, ownedWs []string, memberWs []string) {
 	wsList, err := i.workspaceRepo.FindByUser(ctx, uId)
 	if err != nil {
 		return nil, nil, nil
 	}
-	ownedWorkspaces = []string{}
-	memberWorkspaces = []string{}
+	ownedWs = []string{}
+	memberWs = []string{}
 	for _, ws := range wsList {
 		for userId, member := range ws.Members().Users() {
 			if uId.String() == userId.String() {
 				if member.Role == workspace.RoleOwner {
-					ownedWorkspaces = append(ownedWorkspaces, ws.ID().String())
+					ownedWs = append(ownedWs, ws.ID().String())
 				}
 				if member.Role == workspace.RoleWriter || member.Role == workspace.RoleReader || member.Role == workspace.RoleMaintainer {
-					memberWorkspaces = append(memberWorkspaces, ws.ID().String())
+					memberWs = append(memberWs, ws.ID().String())
 
 				}
 			}
@@ -249,7 +250,7 @@ func (i *Project) FindVisibilityByUser(
 		pFilter.Offset = param.Offset
 	}
 
-	wsList, ownedWorkspaces, memberWorkspaces := i.memberWorkspaces(ctx, u.ID())
+	wsList, ownedWs, memberWs := i.MemberWorkspaces(ctx, u.ID())
 
 	targetWsList := make(accountdomain.WorkspaceIDList, 0, len(wsList))
 	for _, ws := range wsList {
@@ -260,7 +261,7 @@ func (i *Project) FindVisibilityByUser(
 		targetWsList = append(targetWsList, wsId)
 	}
 
-	prjList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWorkspaces, memberWorkspaces, toIdStrings(targetWsList))
+	prjList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWs, memberWs, toIdStrings(targetWsList))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -295,16 +296,16 @@ func (i *Project) FindVisibilityByWorkspace(
 		pFilter.Offset = param.Offset
 	}
 
-	ownedWorkspaces := []string{}
-	memberWorkspaces := []string{}
+	ownedWs := []string{}
+	memberWs := []string{}
 
 	if operator != nil && operator.AcOperator != nil {
-		_, ownedWorkspaces, memberWorkspaces = i.memberWorkspaces(ctx, *operator.AcOperator.User)
+		_, ownedWs, memberWs = i.MemberWorkspaces(ctx, *operator.AcOperator.User)
 	}
 
 	targetWsList := accountdomain.WorkspaceIDList{aid}
 
-	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWorkspaces, memberWorkspaces, toIdStrings(targetWsList))
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWs, memberWs, toIdStrings(targetWsList))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -918,6 +919,24 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 	if prj.IsDeleted() {
 		fmt.Printf("Error Deleted project: %v\n", prj.ID())
 		return nil, errors.New("This project is deleted")
+	}
+
+	// In the case of private, only the owner or members are allowed.
+	if prj.Visibility() == string(project.VisibilityPrivate) {
+
+		if operator == nil || operator.AcOperator == nil {
+			return nil, errors.New("Unauthorized project : " + prj.Name())
+		}
+
+		_, ownedWs, memberWs := i.MemberWorkspaces(ctx, *operator.AcOperator.User)
+		targetWs := prj.Workspace().String()
+
+		if !slices.Contains(ownedWs, targetWs) {
+			if !slices.Contains(memberWs, targetWs) {
+				return nil, errors.New("Unauthorized project : " + prj.Name())
+			}
+		}
+
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)

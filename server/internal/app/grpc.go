@@ -159,6 +159,7 @@ func isReadOnlyMethod(method string) bool {
 		"v1.ReEarthVisualizer/GetProjectList",
 		"v1.ReEarthVisualizer/GetProject",
 		"v1.ReEarthVisualizer/GetProjectByAlias",
+		"v1.ReEarthVisualizer/ExportProject",
 	}
 
 	for _, readOnlyMethod := range readOnlyMethods {
