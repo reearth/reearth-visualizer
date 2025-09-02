@@ -1059,7 +1059,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 
 	projectData, ok := d["project"].(map[string]any)
 	if !ok {
-		return nil, errors.New("project parse error")
+		return nil, errors.New("project section parse error")
 	}
 
 	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
@@ -1101,7 +1101,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 
 	result, err := i.createProject(ctx, createProjectInput{
 		WorkspaceID:  workspaceId,
-		ProjectID:    projectId,
+		ProjectID:    projectId, // will perform the update by specifying the project ID that was created at the start of the import.
 		Visualizer:   visualizer.Visualizer(input.Visualizer),
 		ImportStatus: project.ProjectImportStatusProcessing,
 		Name:         &input.Name,
@@ -1195,6 +1195,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	var prjID idx.ID[id.Project]
 	if input.ProjectID != nil {
+		// If there is a project ID, it is the one from the time of import.
 		prjID, err = id.ProjectIDFrom(*input.ProjectID)
 		if err != nil {
 			return nil, err

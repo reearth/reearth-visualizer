@@ -560,7 +560,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, _type scene.WidgetAlignSystemT
 	return scene, nil
 }
 
-func (i *Scene) ExportScene(ctx context.Context, prj *project.Project) (*scene.Scene, map[string]interface{}, error) {
+func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*scene.Scene, map[string]interface{}, error) {
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
 	if err != nil {
@@ -609,7 +609,7 @@ func Filter(s id.SceneID) repo.SceneFilter {
 	return repo.SceneFilter{Readable: id.SceneIDList{s}, Writable: id.SceneIDList{s}}
 }
 
-func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {
+func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {
 
 	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
@@ -646,6 +646,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 		newWidgetID := id.NewWidgetID()
 
 		// Replace new widget id
+		fmt.Println("Replace to current widget: ", widgetJSON.ID, " -> new widget: ", newWidgetID.String())
 		*data = bytes.Replace(*data, []byte(widgetJSON.ID), []byte(newWidgetID.String()), -1)
 
 		widget, err := scene.NewWidget(

@@ -255,9 +255,9 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 				return
 			}
 
-			newScene, err = usecases.Scene.ImportScene(bgctx, newScene, importData)
+			newScene, err = usecases.Scene.ImportSceneData(bgctx, newScene, importData)
 			if err != nil {
-				log.Printf("fail sceneJSON ImportScene: %v", err)
+				log.Printf("fail sceneJSON ImportSceneData: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
