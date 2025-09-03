@@ -52,6 +52,14 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		e.Use(
 			middleware.CORSWithConfig(middleware.CORSConfig{
 				AllowOrigins: origins,
+				Skipper: func(c echo.Context) bool {
+					path := c.Request().URL.Path
+					// 1. we can skip if domain is *.reearth.io
+					//    set by env config
+					// 2. check host by requestiong reeath-cloud api
+					//    request endpoint to exist domain or not
+					return path == "/assets/" || (len(path) > 8 && path[:8] == "/assets/")
+				},
 			}),
 		)
 	}
