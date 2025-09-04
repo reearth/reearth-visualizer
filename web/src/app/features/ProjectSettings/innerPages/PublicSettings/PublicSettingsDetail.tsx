@@ -32,7 +32,7 @@ import {
 } from ".";
 
 interface WithTypename {
-  type?: "project" | "story";
+  type: "project" | "story";
 }
 
 export type SettingsProjectWithTypename = SettingsProject & WithTypename;
@@ -273,7 +273,10 @@ const PublicSettingsDetail: FC<Props> = ({
                 {...(settingsItem.type === "project"
                   ? {
                       projectId: settingsItem.id,
-                      projectAlias: "scene" in settingsItem ? settingsItem.scene?.alias : undefined
+                      projectAlias:
+                        "scene" in settingsItem
+                          ? settingsItem.scene?.alias
+                          : undefined
                     }
                   : {
                       storyId: settingsItem.id,
