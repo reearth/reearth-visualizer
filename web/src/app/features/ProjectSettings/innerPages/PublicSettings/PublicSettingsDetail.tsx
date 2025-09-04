@@ -154,15 +154,17 @@ const PublicSettingsDetail: FC<Props> = ({
     [setNotification]
   );
 
-  const ExtensionComponent = (props: ExtensionComponentProps) => {
-    const type = props.typename.toLocaleLowerCase();
-    const extensionId = `custom-${type}-domain`;
-    const Component = extensions?.find((e) => e.id === extensionId)?.component;
-    if (!Component) {
-      return null;
-    }
-    return <Component {...props} />;
-  };
+  const ExtensionComponent = useMemo(() => {
+    return (props: ExtensionComponentProps) => {
+      const type = props.typename.toLocaleLowerCase();
+      const extensionId = `custom-${type}-domain`;
+      const Component = extensions?.find((e) => e.id === extensionId)?.component;
+      if (!Component) {
+        return null;
+      }
+      return <Component {...props} />;
+    };
+  }, [extensions]);
 
   const isPublished = useMemo(
     () =>
