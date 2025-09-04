@@ -130,7 +130,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {
 	var err error
 	if conf.GCS.IsConfigured() {
-		log.Infofc(ctx, "file: GCS storage is used: %s\n", conf.GCS.BucketName)
+		log.Infofc(ctx, "[Storage] GCS storage is used: %s", conf.GCS.BucketName)
 		fileRepo, err = gcs.NewFile(false, conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
 		if err != nil {
 			log.Warnf("file: failed to init GCS storage: %s\n", err.Error())
@@ -140,7 +140,7 @@ func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) 
 	}
 
 	if conf.S3.IsConfigured() {
-		log.Infofc(ctx, "file: S3 storage is used: %s\n", conf.S3.BucketName)
+		log.Infofc(ctx, "[Storage] S3 storage is used: %s", conf.S3.BucketName)
 		fileRepo, err = s3.NewS3(ctx, conf.S3.BucketName, conf.AssetBaseURL, conf.S3.PublicationCacheControl)
 		if err != nil {
 			log.Warnf("file: failed to init S3 storage: %s\n", err.Error())
@@ -148,7 +148,7 @@ func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) 
 		return
 	}
 
-	log.Infof("file: local storage is used")
+	log.Infof("[Storage] local afero storage is used")
 	afs := afero.NewBasePathFs(afero.NewOsFs(), "data")
 	fileRepo, err = fs.NewFile(afs, conf.AssetBaseURL)
 	if err != nil {
