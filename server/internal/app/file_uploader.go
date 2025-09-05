@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -30,6 +29,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/log"
 	"github.com/spf13/afero"
 )
 
@@ -149,6 +149,7 @@ func CreateProcessingProject(ctx context.Context, usecases *interfaces.Container
 		return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to create project")
 	}
 
+	log.Infof("[Import] creating temporary project id: %s", prj.ID().String())
 	return prj, nil
 
 }
@@ -161,6 +162,7 @@ func UpdateImportStatus(ctx context.Context, usecases *interfaces.Container, op 
 }
 
 func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
+	log.Infof("[Import] Upload chunk ID: %s chunk:%d total: %d ", fileID, chunkNum, totalChunks)
 
 	// chunkPath, err := m.SaveChunk(fileID, chunkNum, file)
 	_, err := m.SaveChunk(fileID, chunkNum, file)
@@ -189,7 +191,7 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 
 			pid, err := id.ProjectIDFrom(session.ProjectID)
 			if err != nil {
-				log.Printf("Invalid project id: %v", err)
+				log.Errorf("[Import Error] Invalid project id: %v", err)
 				return
 			}
 
@@ -199,15 +201,16 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 			defer safeRemove(assembledPath)
 
 			if err := m.AssembleChunks(session, assembledPath); err != nil {
-				log.Printf("failed to assemble chunks: %v", err)
+				log.Errorf("[Import Error] failed to assemble chunks: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] assemble chunks")
 
 			fs := afero.NewOsFs()
 			f, err := fs.Open(assembledPath)
 			if err != nil {
-				log.Printf("failed to open assembled file: %v", err)
+				log.Errorf("[Import Error] failed to open assembled file: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
@@ -215,77 +218,86 @@ func (m *UploadManager) handleChunkedUpload(ctx context.Context, usecases *inter
 
 			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(currentHost, f)
 			if err != nil {
-				log.Printf("fail UncompressExportZip: %v", err)
+				log.Errorf("[Import Error] fail UncompressExportZip: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] uncompress zip file")
 
 			newProject, err := usecases.Project.ImportProjectData(bgctx, wsId, &session.ProjectID, importData, op)
 			if err != nil {
-				log.Printf("fail Import ProjectData: %v", err)
+				log.Errorf("[Import Error] fail Import ProjectData: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] imported Project data")
 
 			importData, err = usecases.Asset.ImportAssetFiles(bgctx, assetsZip, importData, newProject, op)
 			if err != nil {
-				log.Printf("fail Import AssetFiles: %v", err)
+				log.Errorf("[Import Error] fail Import AssetFiles: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] imported asset files")
 
 			newScene, err := usecases.Scene.Create(bgctx, newProject.ID(), false, op)
 			if err != nil {
-				log.Printf("fail Create Scene: %v", err)
+				log.Errorf("[Import Error] fail Create Scene: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] creating temporary scene id: %s", newScene.ID().String())
 
 			oldSceneID, err := replaceOldSceneID(importData, newScene)
 			if err != nil {
-				log.Printf("fail Get OldSceneID: %v", err)
+				log.Errorf("[Import Error] fail Get OldSceneID: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
 
 			_, _, err = usecases.Plugin.ImportPlugins(bgctx, pluginsZip, oldSceneID, newScene, importData)
 			if err != nil {
-				log.Printf("fail ImportPlugins: %v", err)
+				log.Errorf("[Import Error] fail ImportPlugins: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] imported plugins")
 
-			newScene, err = usecases.Scene.ImportScene(bgctx, newScene, importData)
+			newScene, err = usecases.Scene.ImportSceneData(bgctx, newScene, importData)
 			if err != nil {
-				log.Printf("fail sceneJSON ImportScene: %v", err)
+				log.Errorf("[Import Error] fail sceneJSON ImportSceneData: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] imported Scene data")
 
 			_, err = usecases.Style.ImportStyles(bgctx, newScene.ID(), importData)
 			if err != nil {
-				log.Printf("fail sceneJSON ImportStyles: %v", err)
+				log.Errorf("[Import Error] fail sceneJSON ImportStyles: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] imported Layerstyles data")
 
 			_, err = usecases.NLSLayer.ImportNLSLayers(bgctx, newScene.ID(), importData)
 			if err != nil {
-				log.Printf("fail sceneJSON ImportNLSLayers: %v", err)
+				log.Errorf("[Import Error] fail sceneJSON ImportNLSLayers: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] imported NLSLayers data")
 
 			_, err = usecases.StoryTelling.ImportStory(bgctx, newScene.ID(), importData)
 			if err != nil {
-				log.Printf("fail sceneJSON ImportStory: %v", err)
+				log.Errorf("[Import Error] fail sceneJSON ImportStory: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed)
 				return
 			}
+			log.Infof("[Import] imported Story data")
 
 			m.CleanupSession(session.FileID)
 			UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusSuccess) // SUCCESS
-			log.Printf("Upload completed: %s (%d chunks)", session.FileID, session.TotalChunks)
+			log.Printf("[Import Success] import completed: %s (%d chunks)", session.FileID, session.TotalChunks)
 
 		}(session)
 	}
@@ -383,7 +395,6 @@ func (m *UploadManager) AssembleChunks(session *UploadSession, outputPath string
 			return fmt.Errorf("failed to append chunk %s: %w", chunk, err)
 		}
 	}
-
 	return nil
 }
 

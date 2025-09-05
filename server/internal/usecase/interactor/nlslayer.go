@@ -28,6 +28,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -1235,7 +1236,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
 
 		for k, v := range nlsLayerJSON.Children {
-			fmt.Println("Unsupported nlsLayerJSON.Children ", k, v)
+			log.Errorf("[Import Error] Unsupported nlsLayer: %s value: %v", k, v)
 		}
 
 		newNLSLayerID := id.NewNLSLayerID()
@@ -1261,6 +1262,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			betaInfoboxSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
 			propI, err := i.addNewProperty(ctx, betaInfoboxSchema.ID(), sceneID, &filter)
 			if err != nil {
+				log.Errorf("[Import Error] fail nlsLayer add property: %v", err)
 				return nil, err
 			}
 			builder.PropertyUpdate(ctx, propI, i.propertyRepo, i.propertySchemaRepo, nlsInfoboxJSON.Property)
@@ -1273,16 +1275,18 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 
 				pluginId, extensionId, extension, err := i.getInfoboxBlockPlugin(ctx, nlsInfoboxBlockJSON.PluginId, nlsInfoboxBlockJSON.ExtensionId, &filter)
 				if err != nil {
+					log.Errorf("[Import Error] fail nlsLayer Infobox block: %v", err)
 					return nil, err
 				}
 
 				propB, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 				if err != nil {
+					log.Errorf("[Import Error] fail nlsLayer Infobox add property: %v", err)
 					return nil, err
 				}
 				builder.PropertyUpdate(ctx, propB, i.propertyRepo, i.propertySchemaRepo, nlsInfoboxBlockJSON.Property)
 				for k, v := range nlsInfoboxBlockJSON.Plugins {
-					fmt.Println("Unsupported nlsInfoboxBlockJSON.Plugins ", k, v)
+					log.Errorf("[Import Error] Unsupported nlsLayer InfoboxBlock: %s value: %v", k, v)
 				}
 
 				block, err := nlslayer.NewInfoboxBlock().
@@ -1292,6 +1296,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 					Property(propB.ID()).
 					Build()
 				if err != nil {
+					log.Errorf("[Import Error] fail save nlsLayer Infobox : %v", err)
 					return nil, err
 				}
 
@@ -1308,6 +1313,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			betaPhotoOverlaySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDPhotoOverlay)
 			propI, err := i.addNewProperty(ctx, betaPhotoOverlaySchema.ID(), sceneID, &filter)
 			if err != nil {
+				log.Errorf("[Import Error] fail nlsLayer PhotoOverlay add property: %v", err)
 				return nil, err
 			}
 			builder.PropertyUpdate(ctx, propI, i.propertyRepo, i.propertySchemaRepo, nlsPhotoOverlayJSON.Property)
@@ -1332,6 +1338,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 					if geometryMap, ok := g.(map[string]any); ok {
 						geometry, err = nlslayer.NewGeometryFromMap(geometryMap)
 						if err != nil {
+							log.Errorf("[Import Error] fail nlsLayer Geometry : %v", err)
 							return nil, err
 						}
 					}
@@ -1343,6 +1350,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 					geometry,
 				)
 				if err != nil {
+					log.Errorf("[Import Error] fail nlsLayer feature : %v", err)
 					return nil, err
 				}
 
@@ -1365,10 +1373,12 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 
 		nlayer, err := nlBuilder.Build()
 		if err != nil {
+			log.Errorf("[Import Error] fail nlsLayer build : %v", err)
 			return nil, err
 		}
 
 		if err := i.nlslayerRepo.Filtered(filter).Save(ctx, nlayer); err != nil {
+			log.Errorf("[Import Error] fail nlsLayer save : %v", err)
 			return nil, err
 		}
 

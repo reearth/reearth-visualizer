@@ -4,9 +4,9 @@ import (
 	"context"
 	"crypto/tls"
 	"io"
-	"log"
 
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
+	"github.com/reearth/reearthx/log"
 	"google.golang.org/api/idtoken"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"

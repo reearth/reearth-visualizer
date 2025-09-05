@@ -22,6 +22,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -143,6 +144,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 	var propertySchemaIDs []id.PropertySchemaID
 	var pluginIDs []id.PluginID
 	for _, pluginJSON := range pluginsJSON {
+
 		pid, err := jsonmodel.ToPluginID(pluginJSON.ID)
 		if err != nil {
 			return nil, nil, err
@@ -151,10 +153,12 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 
 		var extensions []*plugin.Extension
 		for _, pluginJSONextension := range pluginJSON.Extensions {
+
 			psid, err := jsonmodel.ToPropertySchemaID(pluginJSONextension.PropertySchemaID)
 			if err != nil {
 				return nil, nil, err
 			}
+
 			extension, err := plugin.NewExtension().
 				ID(id.PluginExtensionID(pluginJSONextension.ExtensionID)).
 				Type(gqlmodel.FromPluginExtension(pluginJSONextension.Type)).
@@ -166,8 +170,10 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 				Schema(psid).
 				Build()
 			if err != nil {
+				log.Errorf("[Import Error] plugin extension: %s", i18n.StringFrom(pluginJSONextension.Name))
 				return nil, nil, err
 			}
+
 			extensions = append(extensions, extension)
 
 			for _, schema := range schemasData {
@@ -176,6 +182,7 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 						if id == psid.String() {
 							ps, err := parsePropertySchema(psid, schemaMap)
 							if err != nil {
+								log.Errorf("[Import Error] plugin schema: %s", id)
 								return nil, nil, err
 							}
 							if err := i.propertySchemaRepo.Filtered(filter).Save(ctx, ps); err != nil {
@@ -197,10 +204,12 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 			Extensions(extensions).
 			Build()
 		if err != nil {
-			return nil, nil, err
+			log.Errorf("[Import Error] plugin : %s", i18n.StringFrom(pluginJSON.Name))
+			continue
 		}
 		if !p.ID().System() {
 			if err := i.pluginRepo.Filtered(filter).Save(ctx, p); err != nil {
+				log.Errorf("[Import Error] plugin : %s", i18n.StringFrom(pluginJSON.Name))
 				return nil, nil, errors.New("Save plugin :" + err.Error())
 			}
 		}
@@ -208,10 +217,13 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 
 	plgs, err := i.pluginRepo.Filtered(filter).FindByIDs(ctx, pluginIDs)
 	if err != nil {
+		log.Errorf("[Import Error] save plugin")
 		return nil, nil, err
 	}
+
 	pss, err := i.propertySchemaRepo.Filtered(filter).FindByIDs(ctx, propertySchemaIDs)
 	if err != nil {
+		log.Errorf("[Import Error] save plugin schema")
 		return nil, nil, err
 	}
 

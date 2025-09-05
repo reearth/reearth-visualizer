@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/i18n"
@@ -1079,6 +1080,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 
 	projectData, ok := d["project"].(map[string]any)
 	if !ok {
+		log.Errorf("[Import Error] project parse error")
 		return nil, errors.New("project parse error")
 	}
 
@@ -1138,7 +1140,6 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	if err != nil {
 		return nil, err
 	}
-
 	return result, nil
 }
 

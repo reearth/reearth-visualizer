@@ -3,7 +3,6 @@ package interactor
 import (
 	"context"
 	"errors"
-	"fmt"
 	"io"
 	"strings"
 	"time"
@@ -21,6 +20,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -1073,16 +1073,19 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 
 			plg, extension, err := i.getStoryBlockPlugin(ctx, sceneID, blockJSON.PluginId, blockJSON.ExtensionId)
 			if err != nil {
+				log.Errorf("[Import Error] fail StoryBlock plugin : %v\n", err)
 				return nil, err
 			}
 
 			propB, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 			if err != nil {
+				log.Errorf("[Import Error] fail StoryBlock add property: %v", err)
 				return nil, err
 			}
 			builder.PropertyUpdate(ctx, propB, i.propertyRepo, i.propertySchemaRepo, blockJSON.Property)
+
 			for k, v := range blockJSON.Plugins {
-				fmt.Println("Unsupported blockJSON.Plugins ", k, v)
+				log.Errorf("[Import Error] Unsupported StoryBlock plugin: %s value: %v", k, v)
 			}
 
 			block, err := storytelling.NewBlock().
@@ -1092,6 +1095,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 				Extension(id.PluginExtensionID(blockJSON.ExtensionId)).
 				Build()
 			if err != nil {
+				log.Errorf("[Import Error] fail StoryBlock Build: %v", err)
 				return nil, err
 			}
 
@@ -1103,6 +1107,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 
 		propP, err := i.addNewProperty(ctx, storyPageSchema.ID(), sceneID, &filter)
 		if err != nil {
+			log.Errorf("[Import Error] fail StoryPage add property: %v", err)
 			return nil, err
 		}
 
@@ -1132,6 +1137,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 			Layers(layers).
 			Build()
 		if err != nil {
+			log.Errorf("[Import Error] fail save StoryPage : %v", err)
 			return nil, err
 		}
 
@@ -1142,6 +1148,7 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 	storySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	propS, err := i.addNewProperty(ctx, storySchema.ID(), sceneID, &filter)
 	if err != nil {
+		log.Errorf("[Import Error] fail Story add property: %v", err)
 		return nil, err
 	}
 
@@ -1157,10 +1164,12 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 		BgColor(storyJSON.BgColor).
 		Build()
 	if err != nil {
+		log.Errorf("[Import Error] fail Story build : %v", err)
 		return nil, err
 	}
 
 	if err := i.storytellingRepo.Filtered(filter).Save(ctx, *story); err != nil {
+		log.Errorf("[Import Error] fail save Story : %v", err)
 		return nil, err
 	}
 
