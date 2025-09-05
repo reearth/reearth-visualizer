@@ -14,8 +14,11 @@ export type PhotoOverlayValue = {
   description?: string;
 };
 
-type BuiltinReearthPropertyValue = Partial<Record<typeof BUILT_IN_PHOTO_OVERLAY_PROPERTY_NAME, | PhotoOverlayValue
-    | undefined>>;
+type BuiltinReearthPropertyValue = {
+  [key in typeof BUILT_IN_PHOTO_OVERLAY_PROPERTY_NAME]?:
+    | PhotoOverlayValue
+    | undefined;
+};
 
 type Value =
   | string
@@ -24,7 +27,9 @@ type Value =
   | undefined
   | BuiltinReearthPropertyValue;
 
-type BuiltinReearthProperties = Record<typeof BUILT_IN_REEARTH_PROPERTIES_NAME, BuiltinReearthPropertyValue>;
+type BuiltinReearthProperties = {
+  [key in typeof BUILT_IN_REEARTH_PROPERTIES_NAME]: BuiltinReearthPropertyValue;
+};
 
 export type SketchFeatureProperties = Record<string, Value> &
   BuiltinReearthProperties;

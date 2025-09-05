@@ -5,7 +5,9 @@ import { FC } from "react";
 
 export type Device = "desktop" | "mobile";
 
-export type Devices = Record<Device, string | number>;
+export type Devices = {
+  [key in Device]: string | number;
+};
 
 export const devices: Devices = {
   desktop: "100%",

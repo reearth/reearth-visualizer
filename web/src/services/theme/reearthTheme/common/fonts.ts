@@ -176,9 +176,13 @@ export const FootnoteRegular = styled.p`
   line-height: ${lineHeights.footnote}px;
 `;
 
-type Typography = Record<FontSize, Partial<Record<FontWeight | UniqueTraits, React.FC<
+type Typography = {
+  [key in FontSize]: {
+    [key in FontWeight | UniqueTraits]?: React.FC<
       React.HTMLAttributes<HTMLParagraphElement>
-    >>>>;
+    >;
+  };
+};
 
 export const typography: Typography = {
   h1: {

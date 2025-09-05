@@ -35,7 +35,7 @@ import {
 
 import convertInfobox from "./convert-infobox";
 
-export type P = Record<string, any>;
+export type P = { [key in string]: any };
 
 export type Widget = Omit<RawWidget, "layout" | "extended"> & {
   extended?: boolean;
@@ -47,13 +47,15 @@ export const convertWidgets = (
   | {
       floating: Widget[];
       alignSystem: WidgetAlignSystem;
-      layoutConstraint: Record<string, WidgetLayoutConstraint> | undefined;
+      layoutConstraint: { [w in string]: WidgetLayoutConstraint } | undefined;
       ownBuiltinWidgets: (keyof BuiltinWidgets)[];
     }
   | undefined => {
   const layoutConstraint = scene?.plugins
     ?.map((p) =>
-      p.plugin?.extensions.reduce<Record<string, WidgetLayoutConstraint & { floating: boolean }>>(
+      p.plugin?.extensions.reduce<{
+        [w in string]: WidgetLayoutConstraint & { floating: boolean };
+      }>(
         (b, e) =>
           e?.widgetLayout?.extendable
             ? {
