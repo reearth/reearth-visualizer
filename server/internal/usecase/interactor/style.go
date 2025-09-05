@@ -3,6 +3,7 @@ package interactor
 import (
 	"bytes"
 	"context"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -201,15 +202,17 @@ func (i *Style) DuplicateStyle(ctx context.Context, styleID id.StyleID, operator
 	return duplicatedStyle, nil
 }
 
-func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data *[]byte) (scene.StyleList, error) {
+func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data *[]byte) (map[string]any, error) {
 
 	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
 		return nil, err
 	}
 
+	result := map[string]any{}
+
 	if sceneJSON.LayerStyles == nil {
-		return nil, nil
+		return result, nil
 	}
 
 	filter := Filter(sceneID)
@@ -217,7 +220,8 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data
 	styleIDs := id.StyleIDList{}
 	styles := []*scene.Style{}
 
-	for _, layerStyleJson := range sceneJSON.LayerStyles {
+	for lIndex, layerStyleJson := range sceneJSON.LayerStyles {
+
 		newStyleID := id.NewStyleID()
 		styleIDs = append(styleIDs, newStyleID)
 
@@ -231,24 +235,23 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data
 			Scene(sceneID).
 			Build()
 		if err != nil {
-			return nil, err
+			return result, err
 		}
 		styles = append(styles, style)
+
+		fmt.Println("[Import LayerStyle]  ", layerStyleJson.Name)
+		result[fmt.Sprintf("style%d", lIndex)] = layerStyleJson.Name
 	}
 
 	// Save style
 	styleList := scene.StyleList(styles)
 	if err := i.styleRepo.Filtered(filter).SaveAll(ctx, styleList); err != nil {
-		return nil, err
+		return result, err
 	}
 
 	if len(styleIDs) == 0 {
-		return nil, nil
+		return result, nil
 	}
 
-	results, err := i.styleRepo.Filtered(filter).FindByIDs(ctx, styleIDs)
-	if err != nil {
-		return nil, err
-	}
-	return *results, nil
+	return result, nil
 }

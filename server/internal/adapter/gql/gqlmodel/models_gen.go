@@ -738,15 +738,16 @@ type ProjectEdge struct {
 }
 
 type ProjectMetadata struct {
-	ID           ID                   `json:"id"`
-	Project      ID                   `json:"project"`
-	Workspace    ID                   `json:"workspace"`
-	Readme       *string              `json:"readme,omitempty"`
-	License      *string              `json:"license,omitempty"`
-	Topics       *string              `json:"topics,omitempty"`
-	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
-	CreatedAt    *time.Time           `json:"createdAt,omitempty"`
-	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
+	ID             ID                   `json:"id"`
+	Project        ID                   `json:"project"`
+	Workspace      ID                   `json:"workspace"`
+	Readme         *string              `json:"readme,omitempty"`
+	License        *string              `json:"license,omitempty"`
+	Topics         *string              `json:"topics,omitempty"`
+	ImportStatus   *ProjectImportStatus `json:"importStatus,omitempty"`
+	ImporResultLog JSON                 `json:"imporResultLog,omitempty"`
+	CreatedAt      *time.Time           `json:"createdAt,omitempty"`
+	UpdatedAt      *time.Time           `json:"updatedAt,omitempty"`
 }
 
 type ProjectMetadataPayload struct {
@@ -1835,6 +1836,7 @@ type ProjectImportStatus string
 
 const (
 	ProjectImportStatusNone       ProjectImportStatus = "NONE"
+	ProjectImportStatusUploading  ProjectImportStatus = "UPLOADING"
 	ProjectImportStatusProcessing ProjectImportStatus = "PROCESSING"
 	ProjectImportStatusFailed     ProjectImportStatus = "FAILED"
 	ProjectImportStatusSuccess    ProjectImportStatus = "SUCCESS"
@@ -1842,6 +1844,7 @@ const (
 
 var AllProjectImportStatus = []ProjectImportStatus{
 	ProjectImportStatusNone,
+	ProjectImportStatusUploading,
 	ProjectImportStatusProcessing,
 	ProjectImportStatusFailed,
 	ProjectImportStatusSuccess,
@@ -1849,7 +1852,7 @@ var AllProjectImportStatus = []ProjectImportStatus{
 
 func (e ProjectImportStatus) IsValid() bool {
 	switch e {
-	case ProjectImportStatusNone, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
+	case ProjectImportStatusNone, ProjectImportStatusUploading, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
 		return true
 	}
 	return false

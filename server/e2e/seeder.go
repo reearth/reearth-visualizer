@@ -245,6 +245,7 @@ func baseSetup(ctx context.Context, r *repo.Container, f gateway.File) error {
 	readme := "xxx readme"
 	license := "yyy license"
 	topics := "zzz topics"
+	imporResultLog := map[string]any{}
 
 	st := project.ProjectImportStatusNone
 	metadata, err := project.NewProjectMetadata().
@@ -255,6 +256,7 @@ func baseSetup(ctx context.Context, r *repo.Container, f gateway.File) error {
 		Readme(&readme).
 		License(&license).
 		Topics(&topics).
+		ImporResultLog(&imporResultLog).
 		Build()
 	if err != nil {
 		return err

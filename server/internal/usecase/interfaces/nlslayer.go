@@ -92,5 +92,5 @@ type NLSLayer interface {
 	AddGeoJSONFeature(context.Context, AddNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	UpdateGeoJSONFeature(context.Context, UpdateNLSLayerGeoJSONFeatureParams, *usecase.Operator) (nlslayer.Feature, error)
 	DeleteGeoJSONFeature(context.Context, DeleteNLSLayerGeoJSONFeatureParams, *usecase.Operator) (id.FeatureID, error)
-	ImportNLSLayers(context.Context, idx.ID[id.Scene], *[]byte) (nlslayer.NLSLayerList, error)
+	ImportNLSLayers(context.Context, idx.ID[id.Scene], *[]byte) (map[string]any, error)
 }

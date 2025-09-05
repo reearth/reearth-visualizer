@@ -39,5 +39,5 @@ type Asset interface {
 	Create(context.Context, CreateAssetParam, *usecase.Operator) (*asset.Asset, error)
 	Update(context.Context, id.AssetID, *id.ProjectID, *usecase.Operator) (id.AssetID, *id.ProjectID, error)
 	Remove(context.Context, id.AssetID, *usecase.Operator) (id.AssetID, error)
-	ImportAssetFiles(context.Context, map[string]*zip.File, *[]byte, *project.Project, *usecase.Operator) (*[]byte, error)
+	ImportAssetFiles(context.Context, map[string]*zip.File, *[]byte, *project.Project, *usecase.Operator) (*[]byte, map[string]any, error)
 }

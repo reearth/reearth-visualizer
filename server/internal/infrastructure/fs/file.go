@@ -201,6 +201,20 @@ func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) 
 	return f.delete(ctx, filepath.Join(exportDir, sanitize.Path(filename)))
 }
 
+// import
+
+func (f *fileRepo) GenerateSignedUploadUrl(context.Context, string) (*string, int, *string, error) {
+	return nil, 0, nil, nil
+}
+
+func (f *fileRepo) ReadImportProjectZip(context.Context, string) (io.ReadCloser, error) {
+	return nil, nil
+}
+
+func (f *fileRepo) RemoveImportProjectZip(context.Context, string) error {
+	return nil
+}
+
 // helpers
 
 func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
