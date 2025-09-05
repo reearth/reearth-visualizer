@@ -9,7 +9,7 @@ import {
   PropertySchemaGroupFragmentFragment
 } from "@reearth/services/gql";
 
-export type P = { [key in string]: any };
+export type P = Record<string, any>;
 
 export const processNewProperty = (
   parent: PropertyFragmentFragment | null | undefined,
