@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/app/internal/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/rerror"
@@ -16,9 +17,11 @@ import (
 
 func serveFiles(
 	ec *echo.Echo,
-	repo gateway.File,
+	allowedOrigins []string,
+	domainChecker gateway.DomainChecker,
+	fileGateway gateway.File,
 ) {
-	if repo == nil {
+	if fileGateway == nil {
 		return
 	}
 
@@ -40,43 +43,30 @@ func serveFiles(
 		}
 	}
 
-	// Asset CORS middleware - allows all origins for asset endpoints
-	assetCORSMiddleware := func(next echo.HandlerFunc) echo.HandlerFunc {
-		return func(c echo.Context) error {
-			c.Response().Header().Set("Access-Control-Allow-Origin", "*")
-			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-			c.Response().Header().Set("Access-Control-Allow-Headers", "*")
-			c.Response().Header().Set("Access-Control-Max-Age", "86400")
-
-			if c.Request().Method == "OPTIONS" {
-				return c.NoContent(http.StatusNoContent)
-			}
-
-			return next(c)
-		}
-	}
-
 	ec.GET(
 		"/assets/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			filename := ctx.Param("filename")
-			r, err := repo.ReadAsset(ctx.Request().Context(), filename)
+			r, err := fileGateway.ReadAsset(ctx.Request().Context(), filename)
 			return r, filename, err
 		}),
-		assetCORSMiddleware,
+		middleware.AssetsCORSMiddleware(domainChecker, allowedOrigins),
 	)
 
 	// Handle OPTIONS for assets endpoint
-	ec.OPTIONS("/assets/:filename", assetCORSMiddleware(func(c echo.Context) error {
-		return c.NoContent(http.StatusNoContent)
-	}))
+	ec.OPTIONS("/assets/:filename",
+		func(c echo.Context) error {
+			return c.NoContent(http.StatusNoContent)
+		},
+		middleware.AssetsCORSMiddleware(domainChecker, allowedOrigins),
+	)
 
 	ec.GET(
 		"/export/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			filename := ctx.Param("filename")
 
-			r, err := repo.ReadExportProjectZip(ctx.Request().Context(), filename)
+			r, err := fileGateway.ReadExportProjectZip(ctx.Request().Context(), filename)
 			if err != nil {
 				fmt.Printf("[export] !!!! download error: %s \n", filename)
 				return nil, filename, err
@@ -88,7 +78,7 @@ func serveFiles(
 			go func() {
 				// download and then delete
 				time.Sleep(3 * time.Second)
-				err := repo.RemoveExportProjectZip(rctx, filename)
+				err := fileGateway.RemoveExportProjectZip(rctx, filename)
 				if err != nil {
 					fmt.Printf("[export] !!!! delete err: %s \n", err.Error())
 				} else {
@@ -107,7 +97,7 @@ func serveFiles(
 				return nil, "", rerror.ErrNotFound
 			}
 			filename := ctx.Param("filename")
-			r, err := repo.ReadPluginFile(ctx.Request().Context(), pid, filename)
+			r, err := fileGateway.ReadPluginFile(ctx.Request().Context(), pid, filename)
 			return r, filename, err
 		}),
 	)
@@ -116,7 +106,7 @@ func serveFiles(
 		"/published/:name",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			name := ctx.Param("name")
-			r, err := repo.ReadBuiltSceneFile(ctx.Request().Context(), name)
+			r, err := fileGateway.ReadBuiltSceneFile(ctx.Request().Context(), name)
 			return r, name + ".json", err
 		}),
 	)

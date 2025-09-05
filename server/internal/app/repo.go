@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
+	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
@@ -21,6 +22,7 @@ import (
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/spf13/afero"
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
@@ -65,15 +67,37 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	acGateways := &accountgateway.Container{}
 
 	// Mongo
+
+	monitor := &event.CommandMonitor{
+		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
+			log.Printf("[MONGO-START] %s %s %v\n", evt.CommandName, evt.DatabaseName, evt.Command)
+		},
+		Succeeded: func(_ context.Context, evt *event.CommandSucceededEvent) {
+			log.Printf("[MONGO-SUCC ] %s %s (%.2fms)\n", evt.CommandName, evt.Reply, evt.Duration.Seconds()*1000)
+		},
+		Failed: func(_ context.Context, evt *event.CommandFailedEvent) {
+			log.Printf("[MONGO-FAIL ] %s %v\n", evt.CommandName, evt.Failure)
+		},
+	}
+
+	clientOpts := options.Client().
+		ApplyURI(conf.DB)
+
+	if debug {
+		clientOpts = clientOpts.SetMonitor(monitor)
+	} else {
+		clientOpts = clientOpts.SetMonitor(otelmongo.NewMonitor())
+	}
+
 	client, err := mongo.Connect(
 		ctx,
-		options.Client().
-			ApplyURI(conf.DB).
-			SetMonitor(otelmongo.NewMonitor()),
+		clientOpts,
 	)
+
 	if err != nil {
 		log.Fatalf("mongo error: %+v\n", err)
 	}
+
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
 	accountRepos := initAccountDatabase(client, txAvailable, ctx, conf)
 	visRepos := initVisDatabase(client, txAvailable, accountRepos, ctx, conf)
@@ -101,6 +125,22 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Infof("policy checker: using permissive checker (OSS mode)")
 	}
 	gateways.PolicyChecker = policyChecker
+
+	// Domain Checker - configurable via environment
+	var domainChecker gateway.DomainChecker
+	switch conf.Visualizer.DomainChecker.Type {
+	case "http":
+		domainChecker = domain.NewHTTPDomainChecker(
+			conf.Visualizer.DomainChecker.Endpoint,
+			conf.Visualizer.DomainChecker.Token,
+			conf.Visualizer.DomainChecker.Timeout,
+		)
+		log.Infof("domain checker: using HTTP checker with endpoint: %s", conf.Visualizer.DomainChecker.Endpoint)
+	default:
+		domainChecker = domain.NewDefaultChecker()
+		log.Infof("domain checker: using default checker (OSS mode)")
+	}
+	gateways.DomainChecker = domainChecker
 
 	// Auth0
 	auth0 := auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
@@ -131,6 +171,7 @@ func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) 
 	var err error
 	if conf.GCS.IsConfigured() {
 		log.Infofc(ctx, "file: GCS storage is used: %s\n", conf.GCS.BucketName)
+		log.Infofc(ctx, "file: GCS storage base URL: %s\n", conf.AssetBaseURL)
 		fileRepo, err = gcs.NewFile(false, conf.GCS.BucketName, conf.AssetBaseURL, conf.GCS.PublicationCacheControl)
 		if err != nil {
 			log.Warnf("file: failed to init GCS storage: %s\n", err.Error())

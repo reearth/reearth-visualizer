@@ -88,7 +88,8 @@ type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
 
 	// Policy Checker Configuration
-	Policy Policy `pp:",omitempty"`
+	Policy        Policy              `pp:",omitempty"`
+	DomainChecker DomainCheckerConfig `pp:",omitempty"`
 }
 
 type Policy struct {
@@ -97,6 +98,13 @@ type Policy struct {
 
 type CheckerConfig struct {
 	Type     string `default:"permissive"`
+	Endpoint string
+	Token    string
+	Timeout  int `default:"30"`
+}
+
+type DomainCheckerConfig struct {
+	Type     string `default:"default"`
 	Endpoint string
 	Token    string
 	Timeout  int `default:"30"`
