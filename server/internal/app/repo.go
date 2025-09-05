@@ -22,7 +22,6 @@ import (
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/spf13/afero"
-	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
@@ -68,27 +67,9 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 
 	// Mongo
 
-	monitor := &event.CommandMonitor{
-		Started: func(_ context.Context, evt *event.CommandStartedEvent) {
-			log.Printf("[MONGO-START] %s %s %v\n", evt.CommandName, evt.DatabaseName, evt.Command)
-		},
-		Succeeded: func(_ context.Context, evt *event.CommandSucceededEvent) {
-			log.Printf("[MONGO-SUCC ] %s %s (%.2fms)\n", evt.CommandName, evt.Reply, evt.Duration.Seconds()*1000)
-		},
-		Failed: func(_ context.Context, evt *event.CommandFailedEvent) {
-			log.Printf("[MONGO-FAIL ] %s %v\n", evt.CommandName, evt.Failure)
-		},
-	}
-
 	clientOpts := options.Client().
-		ApplyURI(conf.DB)
-
-	if debug {
-		clientOpts = clientOpts.SetMonitor(monitor)
-	} else {
-		clientOpts = clientOpts.SetMonitor(otelmongo.NewMonitor())
-	}
-
+		ApplyURI(conf.DB).
+		SetMonitor(otelmongo.NewMonitor())
 	client, err := mongo.Connect(
 		ctx,
 		clientOpts,
