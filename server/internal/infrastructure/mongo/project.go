@@ -53,9 +53,9 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+func (r *Project) FindByID(ctx context.Context, pid id.ProjectID) (*project.Project, error) {
 	prj, err := r.findOne(ctx, bson.M{
-		"id": id.String(),
+		"id": pid.String(),
 	}, false)
 
 	if err != nil {

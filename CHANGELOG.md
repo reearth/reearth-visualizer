@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.9.4 - 2025-09-04
+
+## 1.0.0-beta.9.3 - 2025-08-28
+
+### Web
+
+#### 🚀 Features
+
+- Update links on sidebar [VIZ-2201] ([#1788](https://github.com/reearth/reearth-visualizer/pull/1788)) [`1cfdd5`](https://github.com/reearth/reearth-visualizer/commit/1cfdd5)
+
+#### Miscellaneous Tasks
+
+- Bump up version 1.0.0-beta.9.3 ([#1792](https://github.com/reearth/reearth-visualizer/pull/1792)) [`1ac286`](https://github.com/reearth/reearth-visualizer/commit/1ac286)
+- Update core version to 0.0.7-alpha.43 ([#1791](https://github.com/reearth/reearth-visualizer/pull/1791)) [`5e0f35`](https://github.com/reearth/reearth-visualizer/commit/5e0f35)
+
+### Misc
+
+#### 🔧 Bug Fixes
+
+- Refactor import of lang value [`42d0bc`](https://github.com/reearth/reearth-visualizer/commit/42d0bc)
+
+### 
+
+#### 🔧 Bug Fixes
+
+- Refactor import of lang value [`42d0bc`](https://github.com/reearth/reearth-visualizer/commit/42d0bc)
+
 ## 1.0.0-beta.9.2 - 2025-08-27
 
 ### Web

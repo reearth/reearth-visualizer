@@ -113,7 +113,32 @@ export const SidebarMenuItem: FC<
   );
 };
 
-const StyledLinkButton = styled(Link)<{ disabled?: boolean }>(
+const StyledLinkButton = styled(
+  ({
+    disabled,
+    to,
+    children,
+    ...props
+  }: {
+    disabled?: boolean;
+    to: string;
+    children?: React.ReactNode;
+  }) => {
+    const isExternal = /^https?:\/\//.test(to);
+    if (isExternal) {
+      return (
+        <a href={to} target="_blank" rel="noopener noreferrer" {...props}>
+          {children}
+        </a>
+      );
+    }
+    return (
+      <Link to={to} {...props}>
+        {children}
+      </Link>
+    );
+  }
+)<{ disabled?: boolean; to: string; children?: React.ReactNode }>(
   ({ disabled }) => ({
     pointerEvents: disabled ? "none" : "auto",
     textDecoration: "none"
