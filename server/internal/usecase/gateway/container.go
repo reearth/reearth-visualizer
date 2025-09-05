@@ -9,4 +9,5 @@ type Container struct {
 	File           File
 	Google         Google
 	PolicyChecker  PolicyChecker
+	DomainChecker  DomainChecker
 }
