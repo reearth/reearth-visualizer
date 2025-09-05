@@ -3,6 +3,7 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -85,6 +86,10 @@ func (i common) CanWriteWorkspace(t accountdomain.WorkspaceID, op *usecase.Opera
 		return err
 	}
 	if !op.IsWritableWorkspace(t) {
+		fmt.Println("-----------------------2-1 ", t.String())
+		for _, v := range op.AllWritableWorkspaces() {
+			fmt.Println("-----------------------2-2 ", v.String())
+		}
 		return interfaces.ErrOperationDenied
 	}
 	return nil

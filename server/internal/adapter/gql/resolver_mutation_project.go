@@ -181,9 +181,9 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, exportData, err := uc.Scene.ExportScene(ctx, prj)
+	sce, exportData, err := uc.Scene.ExportSceneData(ctx, prj)
 	if err != nil {
-		return nil, errors.New("Fail ExportScene :" + err.Error())
+		return nil, errors.New("Fail ExportSceneData :" + err.Error())
 	}
 
 	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)

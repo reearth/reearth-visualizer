@@ -13,6 +13,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/i18n"
@@ -83,61 +84,83 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	}
 }
 
-func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Operator) ([]*project.Project, error) {
+// GetProject invoked by loader
+func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Operator) ([]*project.Project, error) {
 
 	projects, err := i.projectRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return []*project.Project{}, err
 	}
 
-	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	projects, err = i.addMetadata(ctx, projects, false, op)
 	if err != nil {
-		return []*project.Project{}, err
-	}
-
-	for _, project := range projects {
-		for _, metadata := range metadatas {
-			if project.ID() == metadata.Project() {
-				project.SetMetadata(metadata)
-				break
-			}
-		}
+		return nil, err
 	}
 
 	return projects, nil
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+// GetProjects invoked by loader
+func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, op *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 
-	pList, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
+	projects, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
 		Pagination: p,
 		Sort:       sort,
 		Keyword:    keyword,
 	})
 	if err != nil {
-		return pList, pInfo, err
+		return projects, pInfo, err
 	}
 
-	ids := make(id.ProjectIDList, 0, len(pList))
-	for _, p := range pList {
+	projects, err = i.addMetadata(ctx, projects, true, op)
+	if err != nil {
+		return projects, pInfo, err
+	}
+
+	return projects, pInfo, nil
+}
+
+func (i *Project) addMetadata(ctx context.Context, projects []*project.Project, exclude bool, op *usecase.Operator) ([]*project.Project, error) {
+
+	ids := make(id.ProjectIDList, 0, len(projects))
+	for _, p := range projects {
 		ids = append(ids, p.ID())
 	}
 
 	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	for _, p := range pList {
-		for _, metadata := range metadatas {
-			if p.ID() == metadata.Project() {
-				p.SetMetadata(metadata)
-				break
+	// projects with a FAILED status will be deleted and excluded.
+	excludedProjects := make([]*project.Project, 0)
+	for _, p := range projects {
+		metadata := matchMetadata(p.ID(), metadatas)
+		if metadata == nil {
+			continue
+		}
+		if *metadata.ImportStatus() == project.ProjectImportStatusFailed {
+			if err := i.Delete(ctx, p.ID(), op); err != nil {
+				return nil, err
+			}
+			if exclude {
+				continue
 			}
 		}
+		p.SetMetadata(metadata)
+		excludedProjects = append(excludedProjects, p)
 	}
 
-	return pList, pInfo, err
+	return excludedProjects, nil
+}
+
+func matchMetadata(pid id.ProjectID, metadatas []*project.ProjectMetadata) *project.ProjectMetadata {
+	for _, metadata := range metadatas {
+		if pid == metadata.Project() {
+			return metadata
+		}
+	}
+	return nil
 }
 
 func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
@@ -361,6 +384,7 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 		Name:         input.Name,
 		Description:  input.Description,
 		CoreSupport:  input.CoreSupport,
+		IsDeleted:    input.IsDeleted,
 		Visibility:   &visibility,
 		ImportStatus: input.ImportStatus,
 		ProjectAlias: input.ProjectAlias,
@@ -546,7 +570,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 }
 
-func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, operator *usecase.Operator) (*project.ProjectMetadata, error) {
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, imporResultLog *map[string]any, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
@@ -556,6 +580,7 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 	if meta != nil {
 		currentTime := time.Now().UTC()
 		meta.SetImportStatus(&importStatus)
+		meta.SetImporResultLog(imporResultLog)
 		meta.SetUpdatedAt(&currentTime)
 	}
 
@@ -864,6 +889,8 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s 
 }
 
 func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {
+	log.Warnf("Deleting a project %s", projectID.String())
+
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -1071,6 +1098,7 @@ func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Write
 }
 
 func (i *Project) ImportProjectData(ctx context.Context, workspace string, projectId *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+	log.Infof("[ImportProjectData] workspace: %s project: %s", workspace, *projectId)
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
@@ -1079,6 +1107,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 
 	projectData, ok := d["project"].(map[string]any)
 	if !ok {
+		log.Errorf("[Import Error] project parse error")
 		return nil, errors.New("project parse error")
 	}
 
@@ -1138,7 +1167,6 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	if err != nil {
 		return nil, err
 	}
-
 	return result, nil
 }
 
@@ -1173,18 +1201,20 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 type createProjectInput struct {
-	WorkspaceID  accountdomain.WorkspaceID
-	ProjectID    *string
-	Visualizer   visualizer.Visualizer
-	ImportStatus project.ProjectImportStatus
-	Name         *string
-	Description  *string
-	ImageURL     *url.URL
-	Alias        *string
-	Archived     *bool
-	CoreSupport  *bool
-	Visibility   *project.Visibility
-	ProjectAlias *string
+	WorkspaceID    accountdomain.WorkspaceID
+	ProjectID      *string
+	Visualizer     visualizer.Visualizer
+	ImportStatus   project.ProjectImportStatus
+	ImporResultLog *map[string]any
+	Name           *string
+	Description    *string
+	ImageURL       *url.URL
+	Alias          *string
+	IsDeleted      *bool
+	Archived       *bool
+	CoreSupport    *bool
+	Visibility     *project.Visibility
+	ProjectAlias   *string
 
 	// metadata
 	Readme  *string
@@ -1198,6 +1228,7 @@ var (
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
 	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
+		fmt.Println("----------------------- ")
 		return nil, err
 	}
 
@@ -1230,6 +1261,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 			Workspace(input.WorkspaceID).
 			Project(prjID).
 			ImportStatus(&input.ImportStatus).
+			ImporResultLog(input.ImporResultLog).
 			Build()
 		if err != nil {
 			return nil, err
@@ -1297,6 +1329,12 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	if input.Visibility != nil {
 		prj = prj.Visibility(*input.Visibility)
+	}
+
+	if input.IsDeleted != nil {
+		prj = prj.Deleted(*input.IsDeleted)
+	} else {
+		prj = prj.Deleted(false) // default is false
 	}
 
 	proj, err := prj.Build()
