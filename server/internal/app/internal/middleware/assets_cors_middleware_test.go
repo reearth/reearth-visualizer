@@ -83,7 +83,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 					return &gateway.DomainCheckResponse{Allowed: false}, nil
 				},
 			}
-			
+
 			handler := func(c echo.Context) error {
 				return c.String(http.StatusOK, "OK")
 			}
@@ -352,45 +352,45 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 
 func TestAssetsCORSMiddleware_ConcurrentRequests(t *testing.T) {
 	e := echo.New()
-	
+
 	mockChecker := &mockDomainChecker{
 		checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
 			return &gateway.DomainCheckResponse{Allowed: true}, nil
 		},
 	}
-	
+
 	middleware := AssetsCORSMiddleware(mockChecker, []string{"https://allowed.com"})
-	
+
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
 	}
-	
+
 	h := middleware(handler)
-	
+
 	concurrentRequests := 10
 	done := make(chan bool, concurrentRequests)
-	
+
 	for i := 0; i < concurrentRequests; i++ {
 		go func(idx int) {
 			origin := "https://allowed.com"
 			if idx%2 == 0 {
 				origin = "https://dynamic.com"
 			}
-			
+
 			req := httptest.NewRequest("GET", "/", nil)
 			req.Header.Set("Origin", origin)
 			rec := httptest.NewRecorder()
 			c := e.NewContext(req, rec)
-			
+
 			err := h(c)
 			assert.NoError(t, err)
 			assert.Equal(t, http.StatusOK, rec.Code)
 			assert.Equal(t, origin, rec.Header().Get("Access-Control-Allow-Origin"))
-			
+
 			done <- true
 		}(i)
 	}
-	
+
 	for i := 0; i < concurrentRequests; i++ {
 		<-done
 	}
@@ -398,38 +398,38 @@ func TestAssetsCORSMiddleware_ConcurrentRequests(t *testing.T) {
 
 func TestAssetsCORSMiddleware_NilDomainChecker(t *testing.T) {
 	e := echo.New()
-	
+
 	t.Run("origin not in allowed list - panics", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
 		req.Header.Set("Origin", "https://test.com")
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
-		
+
 		handler := func(c echo.Context) error {
 			return c.String(http.StatusOK, "OK")
 		}
-		
+
 		middleware := AssetsCORSMiddleware(nil, []string{"https://allowed.com"})
 		h := middleware(handler)
-		
+
 		assert.Panics(t, func() {
 			_ = h(c)
 		})
 	})
-	
+
 	t.Run("origin in allowed list - works fine", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/", nil)
 		req.Header.Set("Origin", "https://allowed.com")
 		rec := httptest.NewRecorder()
 		c := e.NewContext(req, rec)
-		
+
 		handler := func(c echo.Context) error {
 			return c.String(http.StatusOK, "OK")
 		}
-		
+
 		middleware := AssetsCORSMiddleware(nil, []string{"https://allowed.com"})
 		h := middleware(handler)
-		
+
 		assert.NotPanics(t, func() {
 			err := h(c)
 			assert.NoError(t, err)
@@ -455,7 +455,7 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 				return &gateway.DomainCheckResponse{Allowed: false}, nil
 			},
 		}
-		
+
 		handler := func(c echo.Context) error {
 			return c.String(http.StatusOK, "OK")
 		}
@@ -481,7 +481,7 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 				return &gateway.DomainCheckResponse{Allowed: false}, nil
 			},
 		}
-		
+
 		handler := func(c echo.Context) error {
 			return c.String(http.StatusOK, "OK")
 		}
@@ -542,13 +542,13 @@ func BenchmarkAssetsCORSMiddleware_AllowedOrigin(b *testing.B) {
 	e := echo.New()
 	mockChecker := &mockDomainChecker{}
 	middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
-	
+
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
 	}
-	
+
 	h := middleware(handler)
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		req := httptest.NewRequest("GET", "/", nil)
@@ -567,13 +567,13 @@ func BenchmarkAssetsCORSMiddleware_DomainChecker(b *testing.B) {
 		},
 	}
 	middleware := AssetsCORSMiddleware(mockChecker, []string{})
-	
+
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
 	}
-	
+
 	h := middleware(handler)
-	
+
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		req := httptest.NewRequest("GET", "/", nil)
