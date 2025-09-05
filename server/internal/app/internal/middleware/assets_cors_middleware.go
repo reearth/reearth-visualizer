@@ -23,13 +23,11 @@ func AssetsCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []
 				}
 			}
 			if allowedOrigin == "" {
-				log.Infofc(c.Request().Context(), "domain checker check domain: %s", origin)
 				domainResp, err := domainChecker.CheckDomain(c.Request().Context(), gateway.DomainCheckRequest{
 					Domain: origin,
 				})
-				log.Infofc(c.Request().Context(), "domain checker check domain resp: %v", domainResp)
 				if err != nil {
-					log.Errorfc(c.Request().Context(), "domain checker check domain err: %v", err)
+					log.Errorfc(c.Request().Context(), "[AssetsCORSMiddleware] domain checker check domain err: %v", err)
 					return next(c)
 				}
 				if domainResp.Allowed {
