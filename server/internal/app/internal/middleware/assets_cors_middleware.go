@@ -2,6 +2,8 @@ package middleware
 
 import (
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -23,8 +25,13 @@ func AssetsCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []
 				}
 			}
 			if allowedOrigin == "" {
+				domain, err := extractDomain(origin)
+				if err != nil {
+					log.Errorfc(c.Request().Context(), "[AssetsCORSMiddleware] extract domain err: %v", err)
+					return next(c)
+				}
 				domainResp, err := domainChecker.CheckDomain(c.Request().Context(), gateway.DomainCheckRequest{
-					Domain: origin,
+					Domain: domain,
 				})
 				if err != nil {
 					log.Errorfc(c.Request().Context(), "[AssetsCORSMiddleware] domain checker check domain err: %v", err)
@@ -45,4 +52,18 @@ func AssetsCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []
 			return next(c)
 		}
 	}
+}
+
+func extractDomain(raw string) (string, error) {
+	u, err := url.Parse(raw)
+	if err != nil {
+		return "", err
+	}
+
+	host := u.Host
+	if strings.Contains(host, ":") {
+		host = strings.Split(host, ":")[0]
+	}
+
+	return host, nil
 }
