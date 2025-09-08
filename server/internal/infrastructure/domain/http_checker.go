@@ -58,7 +58,7 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 
 	var domainResp gateway.DomainCheckResponse
 	if err := json.NewDecoder(resp.Body).Decode(&domainResp); err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to decode policy response: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to decode domain check response: %w", err))
 	}
 
 	return &domainResp, nil
