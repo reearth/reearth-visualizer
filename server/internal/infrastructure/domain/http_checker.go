@@ -31,12 +31,12 @@ func NewHTTPDomainChecker(endpoint, token string, timeoutSeconds int) *HTTPDomai
 func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to marshal policy request: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to marshal domain check request: %w", err))
 	}
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, h.endpoint, bytes.NewBuffer(body))
 	if err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to create policy check request: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to create domain check request: %w", err))
 	}
 
 	httpReq.Header.Set("Content-Type", "application/json")
@@ -46,19 +46,19 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 
 	resp, err := h.client.Do(httpReq)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("policy check request failed: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check request failed: %w", err))
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("policy check returned status %d", resp.StatusCode))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check returned status %d", resp.StatusCode))
 	}
 
 	var domainResp gateway.DomainCheckResponse
 	if err := json.NewDecoder(resp.Body).Decode(&domainResp); err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to decode policy response: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to decode domain check response: %w", err))
 	}
 
 	return &domainResp, nil
