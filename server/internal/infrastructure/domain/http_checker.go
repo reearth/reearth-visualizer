@@ -46,7 +46,7 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 
 	resp, err := h.client.Do(httpReq)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("policy check request failed: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check request failed: %w", err))
 	}
 	defer func() {
 		_ = resp.Body.Close()
