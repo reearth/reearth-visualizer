@@ -36,7 +36,7 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, h.endpoint, bytes.NewBuffer(body))
 	if err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to create policy check request: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to create domain check request: %w", err))
 	}
 
 	httpReq.Header.Set("Content-Type", "application/json")
