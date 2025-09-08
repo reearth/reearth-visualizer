@@ -111,6 +111,9 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	var domainChecker gateway.DomainChecker
 	switch conf.Visualizer.DomainChecker.Type {
 	case "http":
+		if conf.Visualizer.DomainChecker.Endpoint == "" {
+			log.Fatalf("domain checker HTTP endpoint is required")
+		}
 		domainChecker = domain.NewHTTPDomainChecker(
 			conf.Visualizer.DomainChecker.Endpoint,
 			conf.Visualizer.DomainChecker.Token,
