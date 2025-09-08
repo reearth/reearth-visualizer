@@ -45,12 +45,17 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 	}
 
 	resp, err := h.client.Do(httpReq)
+
 	if err != nil {
 		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check request failed: %w", err))
 	}
 	defer func() {
 		_ = resp.Body.Close()
 	}()
+
+	if resp.StatusCode == http.StatusNotFound {
+		return &gateway.DomainCheckResponse{Allowed: false}, nil
+	}
 
 	if resp.StatusCode != http.StatusOK {
 		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check returned status %d", resp.StatusCode))

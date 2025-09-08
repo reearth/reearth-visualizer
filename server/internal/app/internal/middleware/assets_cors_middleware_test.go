@@ -77,7 +77,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 
 			mockChecker := &mockDomainChecker{
 				checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
-					if req.Domain == "https://custom.com" {
+					if req.Domain == "custom.com" {
 						return &gateway.DomainCheckResponse{Allowed: true}, nil
 					}
 					return &gateway.DomainCheckResponse{Allowed: false}, nil
@@ -468,7 +468,7 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 
 		mockChecker := &mockDomainChecker{
 			checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
-				if req.Domain == "https://example.com/" {
+				if req.Domain == "example.com" {
 					return &gateway.DomainCheckResponse{Allowed: true}, nil
 				}
 				return &gateway.DomainCheckResponse{Allowed: false}, nil
