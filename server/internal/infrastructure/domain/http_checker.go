@@ -31,7 +31,7 @@ func NewHTTPDomainChecker(endpoint, token string, timeoutSeconds int) *HTTPDomai
 func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to marshal policy request: %w", err))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to marshal domain check request: %w", err))
 	}
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, h.endpoint, bytes.NewBuffer(body))
