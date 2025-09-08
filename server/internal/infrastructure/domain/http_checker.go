@@ -53,7 +53,7 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 	}()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, rerror.ErrInternalBy(fmt.Errorf("policy check returned status %d", resp.StatusCode))
+		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check returned status %d", resp.StatusCode))
 	}
 
 	var domainResp gateway.DomainCheckResponse
