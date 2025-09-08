@@ -16,6 +16,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
@@ -95,11 +96,13 @@ func initGateway() *gateway.Container {
 		return &gateway.Container{
 			File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
 			PolicyChecker: policy.NewPermissiveChecker(),
+			DomainChecker: domain.NewDefaultChecker(),
 		}
 	}
 	return &gateway.Container{
 		File:          *fr,
 		PolicyChecker: policy.NewPermissiveChecker(),
+		DomainChecker: domain.NewDefaultChecker(),
 	}
 }
 

@@ -124,9 +124,9 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 			assert.NoError(t, err)
 			assert.Equal(t, http.StatusOK, rec.Code)
 			assert.Empty(t, rec.Header().Get("Access-Control-Allow-Origin"))
-			assert.Equal(t, "GET, OPTIONS", rec.Header().Get("Access-Control-Allow-Methods"))
-			assert.Equal(t, "*", rec.Header().Get("Access-Control-Allow-Headers"))
-			assert.Equal(t, "86400", rec.Header().Get("Access-Control-Max-Age"))
+			assert.Empty(t, rec.Header().Get("Access-Control-Allow-Methods"))
+			assert.Empty(t, rec.Header().Get("Access-Control-Allow-Headers"))
+			assert.Empty(t, rec.Header().Get("Access-Control-Max-Age"))
 		})
 
 		t.Run("domain checker returns error", func(t *testing.T) {
@@ -160,7 +160,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 	})
 
 	t.Run("OPTIONS request", func(t *testing.T) {
-		t.Run("returns no content with CORS headers", func(t *testing.T) {
+		t.Run("passes through with CORS headers when origin in allowed list", func(t *testing.T) {
 			e := echo.New()
 			req := httptest.NewRequest("OPTIONS", "/", nil)
 			req.Header.Set("Origin", "https://example.com")
@@ -177,11 +177,30 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 
 			err := h(c)
 			assert.NoError(t, err)
-			assert.Equal(t, http.StatusNoContent, rec.Code)
+			assert.Equal(t, http.StatusOK, rec.Code)
 			assert.Equal(t, "https://example.com", rec.Header().Get("Access-Control-Allow-Origin"))
 			assert.Equal(t, "GET, OPTIONS", rec.Header().Get("Access-Control-Allow-Methods"))
 			assert.Equal(t, "*", rec.Header().Get("Access-Control-Allow-Headers"))
 			assert.Equal(t, "86400", rec.Header().Get("Access-Control-Max-Age"))
+		})
+
+		t.Run("returns bad request when no origin header", func(t *testing.T) {
+			e := echo.New()
+			req := httptest.NewRequest("OPTIONS", "/", nil)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+
+			mockChecker := &mockDomainChecker{}
+			handler := func(c echo.Context) error {
+				return c.String(http.StatusOK, "OK")
+			}
+
+			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			h := middleware(handler)
+
+			err := h(c)
+			assert.NoError(t, err)
+			assert.Equal(t, http.StatusBadRequest, rec.Code)
 		})
 	})
 

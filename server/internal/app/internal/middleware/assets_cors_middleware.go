@@ -31,18 +31,15 @@ func AssetsCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []
 					return next(c)
 				}
 				if domainResp.Allowed {
-					c.Response().Header().Set("Access-Control-Allow-Origin", origin)
+					allowedOrigin = origin
 				}
-			} else {
-				c.Response().Header().Set("Access-Control-Allow-Origin", allowedOrigin)
 			}
 
-			c.Response().Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
-			c.Response().Header().Set("Access-Control-Allow-Headers", "*")
-			c.Response().Header().Set("Access-Control-Max-Age", "86400")
-
-			if c.Request().Method == "OPTIONS" {
-				return c.NoContent(http.StatusNoContent)
+			if allowedOrigin != "" {
+				c.Response().Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+				c.Response().Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+				c.Response().Header().Set("Access-Control-Allow-Headers", "*")
+				c.Response().Header().Set("Access-Control-Max-Age", "86400")
 			}
 
 			return next(c)
