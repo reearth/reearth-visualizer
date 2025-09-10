@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -14,9 +13,7 @@ func AssetsCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			origin := c.Request().Header.Get("Origin")
-			if origin == "" {
-				return c.NoContent(http.StatusBadRequest)
-			}
+
 			allowedOrigin := ""
 			for _, allowed := range allowedOrigins {
 				if allowed == origin {
