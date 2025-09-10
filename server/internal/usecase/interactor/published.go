@@ -109,7 +109,7 @@ func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 		return r, nil
 	}
 
-	return nil, visualizer.ErrorWithCallerLogging(ctx, "published: read built scene file", rerror.ErrNotFound)
+	return nil, visualizer.ErrorWithCallerLogging(ctx, "published: no data file found", rerror.ErrNotFound)
 }
 
 func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string, error) {
