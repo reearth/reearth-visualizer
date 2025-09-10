@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
@@ -73,6 +74,7 @@ func NewPublishedWithURL(project repo.Project, storytelling repo.Storytelling, f
 func (i *Published) Metadata(ctx context.Context, name string) (interfaces.PublishedMetadata, error) {
 	prj, err := i.project.FindByPublicName(ctx, name)
 	if err != nil && !errors.Is(err, rerror.ErrNotFound) {
+		log.Warnfc(ctx, "published metadata: find by public name err: %s", err)
 		return interfaces.PublishedMetadata{}, err
 	}
 
@@ -93,7 +95,7 @@ func (i *Published) Metadata(ctx context.Context, name string) (interfaces.Publi
 func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 	r, err := i.file.ReadBuiltSceneFile(ctx, name)
 	if err != nil && err != rerror.ErrNotFound {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "published: read built scene file", err)
 	}
 	if r != nil {
 		return r, nil
@@ -101,12 +103,13 @@ func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 
 	r, err = i.file.ReadStoryFile(ctx, name)
 	if err != nil && err != rerror.ErrNotFound {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "published: read story file", err)
 	}
 	if r != nil {
 		return r, nil
 	}
-	return nil, rerror.ErrNotFound
+
+	return nil, visualizer.ErrorWithCallerLogging(ctx, "published: no data file found", rerror.ErrNotFound)
 }
 
 func (i *Published) Index(ctx context.Context, name string, u *url.URL) (string, error) {

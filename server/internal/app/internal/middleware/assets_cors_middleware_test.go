@@ -24,7 +24,7 @@ func (m *mockDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 }
 
 func TestAssetsCORSMiddleware(t *testing.T) {
-	t.Run("no origin header returns bad request", func(t *testing.T) {
+	t.Run("no origin header continues without CORS headers", func(t *testing.T) {
 		e := echo.New()
 		req := httptest.NewRequest("GET", "/", nil)
 		rec := httptest.NewRecorder()
@@ -40,7 +40,11 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 
 		err := h(c)
 		assert.NoError(t, err)
-		assert.Equal(t, http.StatusBadRequest, rec.Code)
+		assert.Equal(t, http.StatusOK, rec.Code)
+		assert.Empty(t, rec.Header().Get("Access-Control-Allow-Origin"))
+		assert.Empty(t, rec.Header().Get("Access-Control-Allow-Methods"))
+		assert.Empty(t, rec.Header().Get("Access-Control-Allow-Headers"))
+		assert.Empty(t, rec.Header().Get("Access-Control-Max-Age"))
 	})
 
 	t.Run("origin in allowed list", func(t *testing.T) {
@@ -184,7 +188,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 			assert.Equal(t, "86400", rec.Header().Get("Access-Control-Max-Age"))
 		})
 
-		t.Run("returns bad request when no origin header", func(t *testing.T) {
+		t.Run("continues without CORS headers when no origin header", func(t *testing.T) {
 			e := echo.New()
 			req := httptest.NewRequest("OPTIONS", "/", nil)
 			rec := httptest.NewRecorder()
@@ -200,7 +204,11 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 
 			err := h(c)
 			assert.NoError(t, err)
-			assert.Equal(t, http.StatusBadRequest, rec.Code)
+			assert.Equal(t, http.StatusOK, rec.Code)
+			assert.Empty(t, rec.Header().Get("Access-Control-Allow-Origin"))
+			assert.Empty(t, rec.Header().Get("Access-Control-Allow-Methods"))
+			assert.Empty(t, rec.Header().Get("Access-Control-Allow-Headers"))
+			assert.Empty(t, rec.Header().Get("Access-Control-Max-Age"))
 		})
 	})
 
