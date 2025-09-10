@@ -95,6 +95,16 @@ Description: 説明
 Write down your content: 内容を書き込む
 Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
 We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
+Download Error Log: エラーログをダウンロード,
+Ok: 確認
+Import Failed: インポート失敗,
+We were unable to import the project.: プロジェクトをインポートできませんでした。
+'Since this file was exported from the system, the structure should be valid. The issue may be caused by:': 'このファイルはシステムからエクスポートされたため、構造は有効であるはずです。問題の原因として考えられるのは以下の通りです:'
+File corruption or incomplete upload: ファイルの破損またはアップロードの不完全
+Version incompatibility: バージョンの互換性の問題
+Permission restrictions: 権限の制限
+A temporary system error: 一時的なシステムエラー
+Please check the issue and try importing again from the start.: 問題を確認し、最初からインポートを再試行してください。
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
 Change Visibility: 表示を変更する
@@ -273,7 +283,6 @@ Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
-Ok: 確認
 Congratulations! 🎊 Your story has been published: 🎊おめでとうございます！あなたのストーリーが公開されました。
 Congratulations! 🎊 Your scene has been published: 🎊おめでとうございます！あなたのシーンが公開されました。
 Congratulations! 🎊 Your story has been updated: 🎊おめでとうございます！あなたのストーリーが更新されました。

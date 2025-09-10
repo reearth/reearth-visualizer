@@ -16,6 +16,7 @@ import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
 import ProjectCreatorModal from "./ProjectCreatorModal";
+import ProjectImportErrorModal from "./ProjectImportErrorModal";
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
@@ -30,6 +31,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     searchTerm,
     sortValue,
     importStatus,
+    importError,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
@@ -41,7 +43,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleProjectSortChange,
     handleSearch,
     handleProjectImport,
-    handleProjectRemove
+    handleProjectRemove,
+    handleProjectImportErrorModalClose,
+    handleProjectImportErrorLogDownload
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -245,6 +249,13 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
           onClose={closeProjectCreator}
           onProjectCreate={handleProjectCreate}
           data-testid="project-creator-modal"
+        />
+      )}
+
+      {importError && (
+        <ProjectImportErrorModal
+          onClose={handleProjectImportErrorModalClose}
+          onProjectImportErrorLogDownload={handleProjectImportErrorLogDownload}
         />
       )}
     </ManagerWrapper>

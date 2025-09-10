@@ -267,6 +267,15 @@ export default (workspaceId?: string) => {
   >();
   const [importStatus, setImportStatus] = useState<ImportStatus>();
 
+  // TODO: connect with new API for check import status
+  const [importError, _setImportError] = useState<boolean>(false);
+  const handleProjectImportErrorModalClose = useCallback(() => {
+    _setImportError(false);
+  }, []);
+  const handleProjectImportErrorLogDownload = useCallback(() => {
+    // TODO: download error log
+  }, []);
+
   const { refetch: refetchProject } = useProjectQuery(importedProjectId);
 
   const handleProjectImport = useCallback(
@@ -352,6 +361,7 @@ export default (workspaceId?: string) => {
     contentWidth,
     starredProjects,
     importStatus,
+    importError,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
@@ -364,7 +374,9 @@ export default (workspaceId?: string) => {
     handleProjectSortChange,
     handleSearch,
     handleProjectImport,
-    handleProjectRemove
+    handleProjectRemove,
+    handleProjectImportErrorModalClose,
+    handleProjectImportErrorLogDownload
   };
 };
 
