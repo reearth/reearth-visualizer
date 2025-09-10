@@ -99,7 +99,7 @@ Download Error Log: エラーログをダウンロード,
 Ok: 確認
 Import Failed: インポート失敗,
 We were unable to import the project.: プロジェクトをインポートできませんでした。
-Since this file was exported from the system, the structure should be valid. The issue may be caused by:: 
+'Since this file was exported from the system, the structure should be valid. The issue may be caused by:': 'このファイルはシステムからエクスポートされたため、構造は有効であるはずです。問題の原因として考えられるのは以下の通りです:'
 File corruption or incomplete upload: ファイルの破損またはアップロードの不完全
 Version incompatibility: バージョンの互換性の問題
 Permission restrictions: 権限の制限
