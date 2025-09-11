@@ -9,7 +9,7 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
-func AssetsCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []string) func(echo.HandlerFunc) echo.HandlerFunc {
+func FilesCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []string) func(echo.HandlerFunc) echo.HandlerFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			origin := c.Request().Header.Get("Origin")
@@ -24,14 +24,14 @@ func AssetsCORSMiddleware(domainChecker gateway.DomainChecker, allowedOrigins []
 			if allowedOrigin == "" {
 				domain, err := extractDomain(origin)
 				if err != nil {
-					log.Errorfc(c.Request().Context(), "[AssetsCORSMiddleware] extract domain err: %v", err)
+					log.Errorfc(c.Request().Context(), "[FilesCORSMiddleware] extract domain err: %v", err)
 					return next(c)
 				}
 				domainResp, err := domainChecker.CheckDomain(c.Request().Context(), gateway.DomainCheckRequest{
 					Domain: domain,
 				})
 				if err != nil {
-					log.Errorfc(c.Request().Context(), "[AssetsCORSMiddleware] domain checker check domain err: %v", err)
+					log.Errorfc(c.Request().Context(), "[FilesCORSMiddleware] domain checker check domain err: %v", err)
 					return next(c)
 				}
 				if domainResp.Allowed {
