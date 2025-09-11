@@ -42,7 +42,7 @@ type Props = {
   isMobile?: boolean;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
   // note that layoutConstraint will be always undefined in published pages
-  layoutConstraint?: { [w in string]: WidgetLayoutConstraint };
+  layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   renderWidget?: (props: WidgetProps) => ReactNode;
 };
 
@@ -191,9 +191,7 @@ function useOverriddenExtended({
 }) {
   const extendable =
     layout.location.section === "center" || layout.location.area === "middle";
-  const [overriddenExtended, overrideExtend] = useState<{
-    [id in string]?: boolean;
-  }>({});
+  const [overriddenExtended, overrideExtend] = useState<Partial<Record<string, boolean>>>({});
   const handleExtend = useCallback(
     (id: string, extended: boolean | undefined) => {
       overrideExtend((oe) =>
