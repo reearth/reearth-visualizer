@@ -23,7 +23,7 @@ func (m *mockDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 	return &gateway.DomainCheckResponse{}, nil
 }
 
-func TestAssetsCORSMiddleware(t *testing.T) {
+func TestFilesCORSMiddleware(t *testing.T) {
 	t.Run("no origin header continues without CORS headers", func(t *testing.T) {
 		e := echo.New()
 		req := httptest.NewRequest("GET", "/", nil)
@@ -35,7 +35,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 		h := middleware(handler)
 
 		err := h(c)
@@ -59,7 +59,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com", "https://test.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com", "https://test.com"})
 		h := middleware(handler)
 
 		err := h(c)
@@ -92,7 +92,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -121,7 +121,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -150,7 +150,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{})
+			middleware := FilesCORSMiddleware(mockChecker, []string{})
 			h := middleware(handler)
 
 			err := h(c)
@@ -176,7 +176,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -199,7 +199,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -225,7 +225,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -246,7 +246,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -267,7 +267,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://first.com", "https://second.com", "https://third.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -295,7 +295,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{})
+			middleware := FilesCORSMiddleware(mockChecker, []string{})
 			h := middleware(handler)
 
 			err := h(c)
@@ -321,7 +321,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -343,7 +343,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -365,7 +365,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 				return c.String(http.StatusOK, "OK")
 			}
 
-			middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+			middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 			h := middleware(handler)
 
 			err := h(c)
@@ -377,7 +377,7 @@ func TestAssetsCORSMiddleware(t *testing.T) {
 	})
 }
 
-func TestAssetsCORSMiddleware_ConcurrentRequests(t *testing.T) {
+func TestFilesCORSMiddleware_ConcurrentRequests(t *testing.T) {
 	e := echo.New()
 
 	mockChecker := &mockDomainChecker{
@@ -386,7 +386,7 @@ func TestAssetsCORSMiddleware_ConcurrentRequests(t *testing.T) {
 		},
 	}
 
-	middleware := AssetsCORSMiddleware(mockChecker, []string{"https://allowed.com"})
+	middleware := FilesCORSMiddleware(mockChecker, []string{"https://allowed.com"})
 
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
@@ -423,7 +423,7 @@ func TestAssetsCORSMiddleware_ConcurrentRequests(t *testing.T) {
 	}
 }
 
-func TestAssetsCORSMiddleware_NilDomainChecker(t *testing.T) {
+func TestFilesCORSMiddleware_NilDomainChecker(t *testing.T) {
 	e := echo.New()
 
 	t.Run("origin not in allowed list - panics", func(t *testing.T) {
@@ -436,7 +436,7 @@ func TestAssetsCORSMiddleware_NilDomainChecker(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(nil, []string{"https://allowed.com"})
+		middleware := FilesCORSMiddleware(nil, []string{"https://allowed.com"})
 		h := middleware(handler)
 
 		assert.Panics(t, func() {
@@ -454,7 +454,7 @@ func TestAssetsCORSMiddleware_NilDomainChecker(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(nil, []string{"https://allowed.com"})
+		middleware := FilesCORSMiddleware(nil, []string{"https://allowed.com"})
 		h := middleware(handler)
 
 		assert.NotPanics(t, func() {
@@ -466,7 +466,7 @@ func TestAssetsCORSMiddleware_NilDomainChecker(t *testing.T) {
 	})
 }
 
-func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
+func TestFilesCORSMiddleware_EdgeCases(t *testing.T) {
 	t.Run("origin with trailing slash", func(t *testing.T) {
 		e := echo.New()
 		req := httptest.NewRequest("GET", "/", nil)
@@ -487,7 +487,7 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 		h := middleware(handler)
 
 		err := h(c)
@@ -513,7 +513,7 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 		h := middleware(handler)
 
 		err := h(c)
@@ -534,7 +534,7 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com:8080"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com:8080"})
 		h := middleware(handler)
 
 		err := h(c)
@@ -555,7 +555,7 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 			return c.String(http.StatusOK, "OK")
 		}
 
-		middleware := AssetsCORSMiddleware(mockChecker, []string{"http://localhost:3000"})
+		middleware := FilesCORSMiddleware(mockChecker, []string{"http://localhost:3000"})
 		h := middleware(handler)
 
 		err := h(c)
@@ -565,10 +565,10 @@ func TestAssetsCORSMiddleware_EdgeCases(t *testing.T) {
 	})
 }
 
-func BenchmarkAssetsCORSMiddleware_AllowedOrigin(b *testing.B) {
+func BenchmarkFilesCORSMiddleware_AllowedOrigin(b *testing.B) {
 	e := echo.New()
 	mockChecker := &mockDomainChecker{}
-	middleware := AssetsCORSMiddleware(mockChecker, []string{"https://example.com"})
+	middleware := FilesCORSMiddleware(mockChecker, []string{"https://example.com"})
 
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
@@ -586,14 +586,14 @@ func BenchmarkAssetsCORSMiddleware_AllowedOrigin(b *testing.B) {
 	}
 }
 
-func BenchmarkAssetsCORSMiddleware_DomainChecker(b *testing.B) {
+func BenchmarkFilesCORSMiddleware_DomainChecker(b *testing.B) {
 	e := echo.New()
 	mockChecker := &mockDomainChecker{
 		checkFunc: func(ctx context.Context, req gateway.DomainCheckRequest) (*gateway.DomainCheckResponse, error) {
 			return &gateway.DomainCheckResponse{Allowed: true}, nil
 		},
 	}
-	middleware := AssetsCORSMiddleware(mockChecker, []string{})
+	middleware := FilesCORSMiddleware(mockChecker, []string{})
 
 	handler := func(c echo.Context) error {
 		return c.String(http.StatusOK, "OK")
