@@ -473,7 +473,7 @@ func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelli
 	}()
 
 	// Save
-	if err := i.file.UploadStory(ctx, r, story.Alias()); err != nil {
+	if err := i.file.UploadBuiltStory(ctx, r, story.Alias()); err != nil {
 		return err
 	}
 

@@ -101,7 +101,7 @@ func (i *Published) Data(ctx context.Context, name string) (io.Reader, error) {
 		return r, nil
 	}
 
-	r, err = i.file.ReadStoryFile(ctx, name)
+	r, err = i.file.ReadBuiltStoryFile(ctx, name)
 	if err != nil && err != rerror.ErrNotFound {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "published: read story file", err)
 	}

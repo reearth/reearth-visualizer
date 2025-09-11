@@ -37,10 +37,10 @@ type File interface {
 	MoveBuiltScene(context.Context, string, string) error
 	RemoveBuiltScene(context.Context, string) error
 
-	UploadStory(context.Context, io.Reader, string) error
-	ReadStoryFile(context.Context, string) (io.ReadCloser, error)
-	MoveStory(context.Context, string, string) error
-	RemoveStory(context.Context, string) error
+	UploadBuiltStory(context.Context, io.Reader, string) error
+	ReadBuiltStoryFile(context.Context, string) (io.ReadCloser, error)
+	MoveBuiltStory(context.Context, string, string) error
+	RemoveBuiltStory(context.Context, string) error
 
 	ReadExportProjectZip(context.Context, string) (io.ReadCloser, error)
 	UploadExportProjectZip(context.Context, afero.File) error
