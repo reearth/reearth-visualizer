@@ -7,7 +7,10 @@ import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 import useWorkspaceManagementMenu from "./useWorkspaceManagementMenu";
 
 vi.mock("react-router-dom", () => ({
-  useNavigate: vi.fn()
+  useNavigate: vi.fn(),
+  Link: ({ children, to, ...props }: { children: React.ReactNode; to: string; [key: string]: any }) => (
+    <a href={to} {...props}>{children}</a>
+  )
 }));
 
 vi.mock("@reearth/services/state", () => ({

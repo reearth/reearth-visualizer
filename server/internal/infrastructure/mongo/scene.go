@@ -5,7 +5,6 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -16,7 +15,7 @@ import (
 )
 
 var (
-	sceneIndexes       = []string{"project", "team"}
+	sceneIndexes       = []string{"project", "workspace"}
 	sceneUniqueIndexes = []string{"id"}
 )
 
@@ -76,9 +75,16 @@ func (r *Scene) FindByProjects(ctx context.Context, ids []id.ProjectID) ([]*scen
 		projectIds = append(projectIds, id.String())
 	}
 
-	return r.find(ctx, bson.M{
+	filter := bson.M{
 		"project": bson.M{"$in": projectIds},
-	})
+	}
+
+	c := mongodoc.NewSceneConsumer(nil)
+
+	if err := r.client.Find(ctx, filter, c); err != nil {
+		return nil, err
+	}
+	return c.Result, nil
 }
 
 func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
@@ -91,29 +97,12 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}
 	res, err := r.find(ctx, bson.M{
-		"team": bson.M{"$in": user.WorkspaceIDList(workspaces2).Strings()},
+		"workspace": bson.M{"$in": user.WorkspaceIDList(workspaces2).Strings()},
 	})
 	if err != nil && err != mongo.ErrNilDocument && err != mongo.ErrNoDocuments {
 		return nil, err
 	}
 	return res, nil
-}
-
-func (r *Scene) CheckAliasUnique(ctx context.Context, name string) error {
-	filter := bson.M{
-		"$or": []bson.M{
-			{"id": name},
-			{"alias": name},
-		},
-	}
-	count, err := r.count(ctx, filter)
-	if err != nil {
-		return err
-	}
-	if count > 0 {
-		return alias.ErrExistsProjectAlias
-	}
-	return nil
 }
 
 func (r *Scene) Save(ctx context.Context, scene *scene.Scene) error {
@@ -125,7 +114,11 @@ func (r *Scene) Save(ctx context.Context, scene *scene.Scene) error {
 }
 
 func (r *Scene) Remove(ctx context.Context, id id.SceneID) error {
-	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
+	writeFilter := applyWorkspaceFilter(bson.M{
+		"id": id.String(),
+	}, r.f.Writable)
+
+	return r.client.RemoveOne(ctx, writeFilter)
 }
 
 func (r *Scene) count(ctx context.Context, filter interface{}) (int64, error) {
@@ -146,12 +139,4 @@ func (r *Scene) findOne(ctx context.Context, filter any) (*scene.Scene, error) {
 		return nil, err
 	}
 	return c.Result[0], nil
-}
-
-// func (r *Scene) readFilter(filter any) any {
-// 	return applyTeamFilter(filter, r.f.Readable)
-// }
-
-func (r *Scene) writeFilter(filter any) any {
-	return applyTeamFilter(filter, r.f.Writable)
 }

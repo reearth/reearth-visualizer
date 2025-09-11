@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/app/internal/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/rerror"
@@ -16,9 +17,11 @@ import (
 
 func serveFiles(
 	ec *echo.Echo,
-	repo gateway.File,
+	allowedOrigins []string,
+	domainChecker gateway.DomainChecker,
+	fileGateway gateway.File,
 ) {
-	if repo == nil {
+	if fileGateway == nil {
 		return
 	}
 
@@ -44,9 +47,18 @@ func serveFiles(
 		"/assets/:filename",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			filename := ctx.Param("filename")
-			r, err := repo.ReadAsset(ctx.Request().Context(), filename)
+			r, err := fileGateway.ReadAsset(ctx.Request().Context(), filename)
 			return r, filename, err
 		}),
+		middleware.AssetsCORSMiddleware(domainChecker, allowedOrigins),
+	)
+
+	// Handle OPTIONS for assets endpoint
+	ec.OPTIONS("/assets/:filename",
+		func(c echo.Context) error {
+			return c.NoContent(http.StatusNoContent)
+		},
+		middleware.AssetsCORSMiddleware(domainChecker, allowedOrigins),
 	)
 
 	ec.GET(
@@ -54,23 +66,25 @@ func serveFiles(
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			filename := ctx.Param("filename")
 
-			r, err := repo.ReadExportProjectZip(ctx.Request().Context(), filename)
+			r, err := fileGateway.ReadExportProjectZip(ctx.Request().Context(), filename)
 			if err != nil {
-				return nil, "", err
+				fmt.Printf("[export] !!!! download error: %s \n", filename)
+				return nil, filename, err
 			}
-			fmt.Printf("download: %s \n", filename)
+			fmt.Printf("[export] download file: %s \n", filename)
+
+			rctx := ctx.Request().Context()
 
 			go func() {
 				// download and then delete
 				time.Sleep(3 * time.Second)
-				err := repo.RemoveExportProjectZip(ctx.Request().Context(), filename)
+				err := fileGateway.RemoveExportProjectZip(rctx, filename)
 				if err != nil {
-					fmt.Printf("delete err: %s \n", err.Error())
+					fmt.Printf("[export] !!!! delete err: %s \n", err.Error())
 				} else {
-					fmt.Printf("file deleted: %s \n", filename)
+					fmt.Printf("[export] file deleted: %s \n", filename)
 				}
 			}()
-
 			return r, filename, nil
 		}),
 	)
@@ -83,7 +97,7 @@ func serveFiles(
 				return nil, "", rerror.ErrNotFound
 			}
 			filename := ctx.Param("filename")
-			r, err := repo.ReadPluginFile(ctx.Request().Context(), pid, filename)
+			r, err := fileGateway.ReadPluginFile(ctx.Request().Context(), pid, filename)
 			return r, filename, err
 		}),
 	)
@@ -92,7 +106,7 @@ func serveFiles(
 		"/published/:name",
 		fileHandler(func(ctx echo.Context) (io.Reader, string, error) {
 			name := ctx.Param("name")
-			r, err := repo.ReadBuiltSceneFile(ctx.Request().Context(), name)
+			r, err := fileGateway.ReadBuiltSceneFile(ctx.Request().Context(), name)
 			return r, name + ".json", err
 		}),
 	)

@@ -18,7 +18,6 @@ const PluginPlaygroundPage = lazy(
   () => import("@reearth/app/pages/PluginPlaygroundPage")
 );
 const NotFoundPage = lazy(() => import("@reearth/app/pages/NotFound"));
-const NonAuthPage = lazy(() => import("@reearth/app/pages/NonAuth"));
 
 const GraphQLPlayground = lazy(
   () => import("@reearth/app/pages/GraphQLPlayground")
@@ -69,10 +68,6 @@ export const AppRoutes = () => {
     {
       path: "*",
       element: <NotFoundPage />
-    },
-    {
-      path: "non-auth",
-      element: <NonAuthPage />
     }
   ]);
 

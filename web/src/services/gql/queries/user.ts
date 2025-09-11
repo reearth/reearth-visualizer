@@ -18,9 +18,10 @@ export const GET_ME = gql(`
       email
       lang
       theme
-      myTeam {
+      myWorkspace {
         id
         name
+        alias
         policyId
         policy {
           id
@@ -32,9 +33,10 @@ export const GET_ME = gql(`
           assetStorageSize
         }
       }
-      teams {
+      workspaces {
         id
         name
+        alias
         personal
         members {
           user {
@@ -86,7 +88,7 @@ export const UPDATE_ME = gql(`
         email
         lang
         theme
-        myTeam {
+        myWorkspace {
           id
           name
         }

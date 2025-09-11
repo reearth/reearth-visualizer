@@ -1,4 +1,9 @@
-import { Button, PopupMenu, TextInput } from "@reearth/app/lib/reearth-ui";
+import {
+  Button,
+  IconButton,
+  PopupMenu,
+  TextInput
+} from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
@@ -11,6 +16,7 @@ import { ProjectProps } from "./types";
 const ProjectGridViewItem: FC<ProjectProps> = ({
   project,
   selectedProjectId,
+  projectVisibility,
   onProjectOpen,
   onProjectSelect,
   onProjectUpdate,
@@ -54,20 +60,36 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           onMouseLeave={() => handleProjectHover?.(false)}
           isSelected={selectedProjectId === project.id}
         >
-          <StarButtonWrapper
-            isStarred={isStarred ?? false}
-            isHovered={isHovered ?? false}
-            data-testid={`project-grid-item-star-btn-wrapper-${project.name}`}
+          <ButtonWrapper
+            data-testid={`project-grid-item-btn-wrapper-${project.name}`}
           >
-            <Button
-              iconButton
-              icon={isStarred ? "starFilled" : "star"}
-              onClick={(e) => handleProjectStarClick?.(e)}
-              iconColor={isStarred ? theme.warning.main : theme.content.main}
-              appearance="simple"
-              data-testid={`project-grid-item-star-btn-${project.name}`}
-            />
-          </StarButtonWrapper>
+            {projectVisibility && (
+              <VisibilityButton
+                visibility={project?.visibility}
+                data-testid={`project-grid-item-visibility-btn-${project.name}`}
+              >
+                {project?.visibility}
+              </VisibilityButton>
+            )}
+            {(isStarred || isHovered) && (
+              <StarButtonWrapper
+                isStarred={isStarred ?? false}
+                isHovered={isHovered ?? false}
+                data-testid={`project-grid-item-star-btn-wrapper-${project.name}`}
+              >
+                <IconButton
+                  size="normal"
+                  icon={isStarred ? "starFilled" : "star"}
+                  onClick={(e) => handleProjectStarClick?.(e)}
+                  iconColor={
+                    isStarred ? theme.warning.main : theme.content.main
+                  }
+                  appearance="simple"
+                  data-testid={`project-grid-item-star-btn-${project.name}`}
+                />
+              </StarButtonWrapper>
+            )}
+          </ButtonWrapper>
         </CardImage>
         <CardFooter data-testid={`project-grid-item-footer-${project.name}`}>
           {hasMapOrStoryPublished && (
@@ -148,14 +170,36 @@ const CardImage = styled("div")<{
   boxShadow: `inset 0 0 0 1px ${isHovered ? theme.outline.weak : "transparent"}`
 }));
 
+const ButtonWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  gap: theme.spacing.small + 2,
+  position: "absolute",
+  top: "10px",
+  right: "10px"
+}));
+
+const VisibilityButton = styled("div")<{ visibility?: string }>(
+  ({ theme, visibility }) => ({
+    background: theme.bg[0],
+    color: visibility === "public" ? "#B1B1B1" : "#535353",
+    borderRadius: theme.radius.normal,
+    padding: `${theme.spacing.micro}px ${theme.spacing.small}px`,
+    border: visibility === "public" ? `1px solid #B1B1B1` : `1px solid #535353`,
+    fontSize: theme.fonts.sizes.body,
+    height: "25px"
+  })
+);
+
 const StarButtonWrapper = styled("div")<{
   isStarred: boolean;
   isHovered: boolean;
-}>(({ isStarred, isHovered }) => ({
-  position: "absolute",
-  top: "10px",
-  right: "10px",
-  opacity: isStarred || isHovered ? 1 : 0
+}>(({ isStarred, isHovered, theme }) => ({
+  opacity: isStarred || isHovered ? 1 : 0,
+  background: isStarred ? theme.bg[1] : "transparent",
+  borderRadius: isStarred ? theme.radius.smallest : "none",
+  border: isStarred ? `1px solid ${theme.outline.weaker}` : "none",
+  boxShadow: isStarred ? theme.shadow.button : "none"
 }));
 
 const CardFooter = styled("div")(({ theme }) => ({

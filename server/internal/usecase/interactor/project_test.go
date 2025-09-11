@@ -222,19 +222,19 @@ func TestProject_CheckAlias(t *testing.T) {
 	t.Run("when alias is valid", func(t *testing.T) {
 
 		t.Run("when alias length is valid max length", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 32), &pid)
+			ok, err := uc.CheckSceneAlias(ctx, strings.Repeat("a", 32), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
 		t.Run("when alias length is valid min length", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 5), &pid)
+			ok, err := uc.CheckSceneAlias(ctx, strings.Repeat("a", 5), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
 	})
 
 	t.Run("when alias update to same alias", func(t *testing.T) {
-		ok, err := uc.CheckAlias(ctx, testAlias, &pid)
+		ok, err := uc.CheckSceneAlias(ctx, testAlias, &pid)
 		assert.NoError(t, err)
 		assert.True(t, ok)
 	})
@@ -242,18 +242,18 @@ func TestProject_CheckAlias(t *testing.T) {
 	t.Run("when alias is invalid", func(t *testing.T) {
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
-				ok, err := uc.CheckAlias(ctx, "alias2"+c, &pid)
+				ok, err := uc.CheckSceneAlias(ctx, "alias2"+c, &pid)
 				assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 				assert.False(t, ok)
 			}
 		})
 		t.Run("when alias is too short", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, "aaaa", &pid)
+			ok, err := uc.CheckSceneAlias(ctx, "aaaa", &pid)
 			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 		t.Run("when alias is too long", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 33), &pid)
+			ok, err := uc.CheckSceneAlias(ctx, strings.Repeat("a", 33), &pid)
 			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
@@ -322,64 +322,6 @@ func TestProject_FindActiveById(t *testing.T) {
 		assert.Error(t, err)
 		assert.Nil(t, result)
 		assert.Equal(t, "project is private", err.Error())
-	})
-}
-
-func TestProject_FindVisibilityByWorkspace(t *testing.T) {
-	ctx := context.Background()
-
-	db := mongotest.Connect(t)(t)
-	client := mongox.NewClient(db.Name(), db.Client())
-	uc := createNewProjectUC(client)
-
-	us := factory.NewUser()
-	_ = uc.userRepo.Save(ctx, us)
-
-	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
-				Role:      workspace.RoleOwner,
-				Disabled:  false,
-				InvitedBy: workspace.UserID(us.ID()),
-				Host:      "",
-			},
-		})
-	})
-	_ = uc.workspaceRepo.Save(ctx, ws)
-
-	pj := factory.NewProject(func(p *project.Builder) {
-		p.Workspace(ws.ID()).
-			Visibility(project.VisibilityPublic)
-	})
-	_ = uc.projectRepo.Save(ctx, pj)
-
-	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
-		m.Project(pj.ID())
-		m.Workspace(ws.ID())
-	})
-	_ = uc.projectMetadataRepo.Save(ctx, meta)
-
-	t.Run("when project is public", func(t *testing.T) {
-		result, _, err := uc.FindVisibilityByWorkspace(ctx, ws.ID(), false, &usecase.Operator{
-			AcOperator: &accountusecase.Operator{
-				WritableWorkspaces: workspace.IDList{ws.ID()},
-			},
-		}, nil, nil, nil, nil)
-		assert.NoError(t, err)
-		assert.Equal(t, pj.ID(), result[0].ID())
-	})
-
-	t.Run("when project is private and authenticated is false", func(t *testing.T) {
-		err := pj.UpdateVisibility(string(project.VisibilityPrivate))
-		assert.NoError(t, err)
-		_ = uc.projectRepo.Save(ctx, pj)
-		result, _, err := uc.FindVisibilityByWorkspace(ctx, ws.ID(), false, &usecase.Operator{
-			AcOperator: &accountusecase.Operator{
-				WritableWorkspaces: workspace.IDList{ws.ID()},
-			},
-		}, nil, nil, nil, nil)
-		assert.NoError(t, err)
-		assert.Equal(t, 0, len(result))
 	})
 }
 

@@ -11,9 +11,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/internalapi"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"google.golang.org/grpc"
@@ -75,15 +73,20 @@ func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 			return nil, errors.New("unauthorized")
 		}
 
-		token := tokenFromGrpcMetadata(md)
-		if token == "" {
-			log.Errorf("unaryAuthInterceptor: no token found")
-			return nil, errors.New("unauthorized")
-		}
+		// Allow ExportProject without a token.
+		if info.FullMethod != "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject" {
+			token := tokenFromGrpcMetadata(md)
+			if token == "" {
+				log.Errorf("unaryAuthInterceptor: no token found")
+				return nil, errors.New("unauthorized")
+			}
 
-		if token != cfg.Config.Visualizer.InternalApi.Token {
-			log.Errorf("unaryAuthInterceptor: invalid token")
-			return nil, errors.New("unauthorized")
+			if token != cfg.Config.Visualizer.InternalApi.Token {
+				log.Errorf("unaryAuthInterceptor: invalid token")
+				return nil, errors.New("unauthorized")
+			}
+		} else {
+			log.Infof("Skip token check.")
 		}
 
 		return handler(ctx, req)
@@ -144,23 +147,6 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 		ar := cfg.AccountRepos
 		ag := cfg.AccountGateways
 
-		if op := adapter.Operator(ctx); op != nil {
-
-			ws := repo.WorkspaceFilterFromOperator(op)
-			sc := repo.SceneFilterFromOperator(op)
-
-			// apply filters to repos
-			r = r.Filtered(
-				ws,
-				sc,
-			)
-		}
-
-		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
-			// apply filters to repos
-			ar = ar.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
-		}
-
 		uc := interactor.NewContainer(r, g, ar, ag, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
 		ctx = adapter.AttachInternal(ctx, true)
@@ -173,6 +159,7 @@ func isReadOnlyMethod(method string) bool {
 		"v1.ReEarthVisualizer/GetProjectList",
 		"v1.ReEarthVisualizer/GetProject",
 		"v1.ReEarthVisualizer/GetProjectByAlias",
+		"v1.ReEarthVisualizer/ExportProject",
 	}
 
 	for _, readOnlyMethod := range readOnlyMethods {

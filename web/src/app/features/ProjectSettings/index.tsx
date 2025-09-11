@@ -177,6 +177,7 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
             <GeneralSettings
               data-testid="project-settings-general"
               project={project}
+              workspaceId={workspaceId || ""}
               onUpdateProject={handleUpdateProject}
               onProjectRemove={handleProjectRemove}
               disabled={disabled}

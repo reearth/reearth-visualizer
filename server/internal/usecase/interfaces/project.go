@@ -99,6 +99,8 @@ type Project interface {
 
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
+	FindByProjectAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
+
 	FindVisibilityByUser(context.Context, *user.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
@@ -108,10 +110,11 @@ type Project interface {
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
-	CheckAlias(context.Context, string, *id.ProjectID) (bool, error)
+	CheckProjectAlias(context.Context, string, accountdomain.WorkspaceID, *id.ProjectID) (bool, error)
+	CheckSceneAlias(context.Context, string, *id.ProjectID) (bool, error)
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
 	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *usecase.Operator) (*project.ProjectMetadata, error)
-	UploadExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
+	SaveExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }

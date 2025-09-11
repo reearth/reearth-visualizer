@@ -1,7 +1,7 @@
 type Scene implements Node {
   id: ID!
+  workspaceId: ID!
   projectId: ID!
-  teamId: ID!
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -9,7 +9,7 @@ type Scene implements Node {
   plugins: [ScenePlugin!]!
   widgetAlignSystem: WidgetAlignSystem
   project: Project
-  team: Team
+  workspace: Workspace
   property: Property
   newLayers: [NLSLayer!]!
   stories: [Story!]!

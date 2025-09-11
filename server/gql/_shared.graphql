@@ -18,7 +18,7 @@ interface Node {
 enum NodeType {
   ASSET
   USER
-  TEAM
+  WORKSPACE
   PROJECT
   PLUGIN
   SCENE

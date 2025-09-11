@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
@@ -48,12 +49,16 @@ func (r *ProjectMetadata) FindByProjectIDList(ctx context.Context, ids id.Projec
 	if len(ids) == 0 {
 		return nil, nil
 	}
-
-	return r.find(ctx, bson.M{
+	filter := bson.M{
 		"project": bson.M{
 			"$in": ids.Strings(),
 		},
-	})
+	}
+	c := mongodoc.NewProjectMetadataConsumer(nil)
+	if err := r.client.Find(ctx, filter, c); err != nil {
+		return nil, err
+	}
+	return c.Result, nil
 }
 
 func (r *ProjectMetadata) Save(ctx context.Context, projectmetadata *project.ProjectMetadata) error {
@@ -77,9 +82,12 @@ func (r *ProjectMetadata) find(ctx context.Context, filter interface{}) ([]*proj
 }
 
 func (r *ProjectMetadata) findOne(ctx context.Context, filter any) (*project.ProjectMetadata, error) {
-	c := mongodoc.NewProjectMetadataConsumer(r.f.Readable)
+	c := mongodoc.NewProjectMetadataConsumer(nil)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
 		return nil, err
+	}
+	if len(c.Result) == 0 {
+		return nil, mongo.ErrNoDocuments
 	}
 	return c.Result[0], nil
 }

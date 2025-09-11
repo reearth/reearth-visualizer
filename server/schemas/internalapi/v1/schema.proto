@@ -20,12 +20,17 @@ service ReEarthVisualizer {
   rpc GetProjectByAlias(GetProjectByAliasRequest)
       returns (GetProjectByAliasResponse) {}
 
-  // Determines if an alias is valid.
+  // Determines if an project alias is valid.
   // Request headers: user-id: <User ID>
   rpc ValidateProjectAlias(ValidateProjectAliasRequest)
       returns (ValidateProjectAliasResponse) {}
 
-  // Creates a new project in the specified team.
+  // Determines if an scene alias is valid.
+  // Request headers: user-id: <User ID>
+  rpc ValidateSceneAlias(ValidateSceneAliasRequest)
+      returns (ValidateSceneAliasResponse) {}
+
+  // Creates a new project in the specified workspace.
   // Request headers: user-id: <User ID>
   rpc CreateProject(CreateProjectRequest) returns (CreateProjectResponse) {}
 
@@ -37,7 +42,7 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc PublishProject(PublishProjectRequest) returns (PublishProjectResponse) {}
 
-  // Updates a new project metadata in the specified team.
+  // Updates a new project metadata in the specified workspace.
   // Request headers: user-id: <User ID>
   rpc UpdateProjectMetadata(UpdateProjectMetadataRequest)
       returns (UpdateProjectMetadataResponse) {}
@@ -49,6 +54,21 @@ service ReEarthVisualizer {
   // Export a project.
   // Request headers: user-id: <User ID>
   rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
+
+  // Find a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc GetProjectByProjectAlias(GetProjectByProjectAliasRequest)
+      returns (GetProjectByProjectAliasResponse) {}
+
+  // Update a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc UpdateByProjectAlias(UpdateByProjectAliasRequest)
+      returns (UpdateByProjectAliasResponse) {}
+
+  // Deletes a project by project alias.
+  // Request headers: user-id: <User ID>
+  rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
+      returns (DeleteByProjectAliasResponse) {}
 }
 
 // Core Project messages
@@ -240,6 +260,16 @@ message GetProjectByAliasRequest {
 
 // Determines if an alias is valid.
 message ValidateProjectAliasRequest {
+  // Workspace ID
+  string workspace_id = 1;
+  // Scene alias
+  string alias = 2;
+  // Project ID
+  optional string project_id = 3;
+}
+
+// Determines if an alias is valid.
+message ValidateSceneAliasRequest {
   // Project ID
   optional string project_id = 1;
   // Scene alias
@@ -247,7 +277,7 @@ message ValidateProjectAliasRequest {
 }
 
 // Creates a new project.
-// Cannot be created under a team the user does not belong to.
+// Cannot be created under a workspace the user does not belong to.
 message CreateProjectRequest {
   // Workspace ID
   string workspace_id = 1;
@@ -324,7 +354,7 @@ message PublishProjectRequest {
 }
 
 // Updates a new project metadata.
-// Cannot be updated under a team the user does not belong to.
+// Cannot be updated under a workspace the user does not belong to.
 message UpdateProjectMetadataRequest {
   // Project ID
   string project_id = 1;
@@ -342,6 +372,52 @@ message UpdateProjectMetadataRequest {
 message DeleteProjectRequest {
   // Project ID
   string project_id = 1;
+}
+
+// Find a project by project alias.
+message GetProjectByProjectAliasRequest {
+  // Project alias
+  string project_alias = 1;
+}
+
+// Update project fields.
+// Only the project owner can operate this
+message UpdateByProjectAliasRequest {
+  // Project alias (required)
+  string project_alias = 1;
+
+  // Project basic info (optional)
+  optional string name = 2;
+  optional string description = 3;
+  optional bool archived = 4;
+  optional string image_url = 5;
+  optional bool delete_image_url = 6;
+  optional string scene_id = 7;
+  optional bool starred = 8;
+  optional bool deleted = 9;
+  optional string visibility = 10;
+
+  // Publishment settings (optional)
+  optional string public_title = 11;
+  optional string public_description = 12;
+  optional string public_image = 13;
+  optional bool public_no_index = 14;
+  optional bool delete_public_image = 15;
+  optional bool is_basic_auth_active = 16;
+  optional string basic_auth_username = 17;
+  optional string basic_auth_password = 18;
+  optional bool enable_ga = 19;
+  optional string tracking_id = 20;
+
+  optional string new_project_alias = 21;
+}
+
+// Deletes a project.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
+message DeleteByProjectAliasRequest {
+  // Project alias
+  string project_alias = 1;
 }
 
 // Export a project.
@@ -410,10 +486,38 @@ message GetProjectByAliasResponse {
 
 // Response messages
 message ValidateProjectAliasResponse {
+  // Workspace ID
+  string workspace_id = 1;
+  // Scene alias available
+  bool available = 2;
+  // Error message
+  optional string error_message = 3;
+}
+
+// Response messages
+message ValidateSceneAliasResponse {
   // Project ID
   optional string project_id = 1;
   // Scene alias available
   bool available = 2;
   // Error message
   optional string error_message = 3;
+}
+
+// Response messages
+message GetProjectByProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateByProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message DeleteByProjectAliasResponse {
+  // Project alias
+  string project_alias = 1;
 }

@@ -1,5 +1,5 @@
 import { Button, PopupMenu, Typography } from "@reearth/app/lib/reearth-ui";
-import { Role, TeamMember } from "@reearth/services/gql";
+import { Role, WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback } from "react";
@@ -7,9 +7,9 @@ import { FC, useCallback } from "react";
 import { PermissionService } from "./PermissionService";
 
 const ListItem: FC<{
-  member: TeamMember;
+  member: WorkspaceMember;
   setUpdateRoleModalVisible: (visible: boolean) => void;
-  setSelectedMember: (member: TeamMember) => void;
+  setSelectedMember: (member: WorkspaceMember) => void;
   setDeleteMemerModalVisible: (visible: boolean) => void;
   meRole: Role | undefined;
   //when the item is the last owner, it can't be removed or modified
@@ -25,7 +25,7 @@ const ListItem: FC<{
   const t = useT();
 
   const handleUpdateRole = useCallback(
-    (member: TeamMember) => {
+    (member: WorkspaceMember) => {
       setSelectedMember(member);
       setUpdateRoleModalVisible(true);
     },
@@ -33,7 +33,7 @@ const ListItem: FC<{
   );
 
   const handleDeleteRole = useCallback(
-    (member: TeamMember) => {
+    (member: WorkspaceMember) => {
       setSelectedMember(member);
       setDeleteMemerModalVisible(true);
     },
@@ -44,9 +44,7 @@ const ListItem: FC<{
     <StyledListItem>
       <UserWrapper>
         <Avatar>
-          <Typography size="body">
-            {member.user?.name.charAt(0).toUpperCase()}
-          </Typography>
+          <Typography size="body">{member.user?.name.charAt(0)}</Typography>
         </Avatar>
         <TypographyWrapper>
           <Typography size="body">{member.user?.name}</Typography>

@@ -17,7 +17,7 @@ import {
 } from "@reearth/services/state";
 import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { SettingsFields, SettingsWrapper, TitleWrapper } from "../common";
 
@@ -32,7 +32,7 @@ import {
 } from ".";
 
 interface WithTypename {
-  type?: "project" | "story";
+  type: "project" | "story";
 }
 
 export type SettingsProjectWithTypename = SettingsProject & WithTypename;
@@ -55,7 +55,7 @@ type ExtensionComponentProps = (
   typename: string;
 };
 
-const PublicSettingsDetail: React.FC<Props> = ({
+const PublicSettingsDetail: FC<Props> = ({
   settingsItem,
   sceneId,
   isStory,
@@ -93,6 +93,16 @@ const PublicSettingsDetail: React.FC<Props> = ({
       ...localBasicAuthorization
     });
   }, [localBasicAuthorization, onUpdateBasicAuth]);
+  const handleBasicAuthEnableChange = useCallback(
+    (isBasicAuthActive: boolean) => {
+      setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
+      onUpdateBasicAuth({
+        ...localBasicAuthorization,
+        isBasicAuthActive
+      });
+    },
+    [localBasicAuthorization, onUpdateBasicAuth]
+  );
 
   const [localGA, setLocalGA] = useState<PublicGASettingsType>({
     enableGa: settingsItem.enableGa,
@@ -100,9 +110,9 @@ const PublicSettingsDetail: React.FC<Props> = ({
   });
 
   //TODO: Removed after investigation
-  const hideGASettings = true;
+  const hideGASettings = false;
 
-  const handleSubmitGA = useCallback(() => {
+  const handleTrackingIdChange = useCallback(() => {
     if (onUpdateGA) {
       onUpdateGA({
         enableGa: localGA.enableGa,
@@ -110,6 +120,19 @@ const PublicSettingsDetail: React.FC<Props> = ({
       });
     }
   }, [localGA.enableGa, localGA.trackingId, onUpdateGA]);
+
+  const handleGAEnableChange = useCallback(
+    (enableGa: boolean) => {
+      setLocalGA((s) => ({ ...s, enableGa }));
+      if (onUpdateGA) {
+        onUpdateGA({
+          enableGa,
+          trackingId: localGA.trackingId
+        });
+      }
+    },
+    [localGA.trackingId, onUpdateGA]
+  );
 
   const extensions = window.REEARTH_CONFIG?.extensions?.publication;
   const [accessToken, setAccessToken] = useState<string>();
@@ -131,15 +154,17 @@ const PublicSettingsDetail: React.FC<Props> = ({
     [setNotification]
   );
 
-  const ExtensionComponent = (props: ExtensionComponentProps) => {
-    const type = props.typename.toLocaleLowerCase();
-    const extensionId = `custom-${type}-domain`;
-    const Component = extensions?.find((e) => e.id === extensionId)?.component;
-    if (!Component) {
-      return null;
-    }
-    return <Component {...props} />;
-  };
+  const ExtensionComponent = useMemo(() => {
+    return (props: ExtensionComponentProps) => {
+      const type = props.typename.toLocaleLowerCase();
+      const extensionId = `custom-${type}-domain`;
+      const Component = extensions?.find((e) => e.id === extensionId)?.component;
+      if (!Component) {
+        return null;
+      }
+      return <Component {...props} />;
+    };
+  }, [extensions]);
 
   const isPublished = useMemo(
     () =>
@@ -250,7 +275,10 @@ const PublicSettingsDetail: React.FC<Props> = ({
                 {...(settingsItem.type === "project"
                   ? {
                       projectId: settingsItem.id,
-                      projectAlias: settingsItem.alias
+                      projectAlias:
+                        "scene" in settingsItem
+                          ? settingsItem.scene?.alias
+                          : undefined
                     }
                   : {
                       storyId: settingsItem.id,
@@ -284,9 +312,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
         <SwitchField
           title={t("Enable Basic Authorization")}
           value={localBasicAuthorization.isBasicAuthActive}
-          onChange={(isBasicAuthActive) => {
-            setBasicAuthorization((s) => ({ ...s, isBasicAuthActive }));
-          }}
+          onChange={handleBasicAuthEnableChange}
         />
         {localBasicAuthorization.isBasicAuthActive && (
           <>
@@ -319,9 +345,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
           <SwitchField
             title={t("Enable Google Analytics")}
             value={localGA.enableGa ?? false}
-            onChange={(enableGa: boolean) => {
-              setLocalGA((s) => ({ ...s, enableGa }));
-            }}
+            onChange={handleGAEnableChange}
           />
           {localGA.enableGa && (
             <InputField
@@ -330,7 +354,7 @@ const PublicSettingsDetail: React.FC<Props> = ({
               onChange={(trackingId: string) => {
                 setLocalGA((s) => ({ ...s, trackingId }));
               }}
-              onChangeComplete={handleSubmitGA}
+              onChangeComplete={handleTrackingIdChange}
             />
           )}
         </SettingsFields>

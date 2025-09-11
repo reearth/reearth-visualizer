@@ -1,6 +1,6 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
 import { PublishStatus } from "@reearth/services/api/publishTypes";
-import { ProjectImportStatus, TeamMember } from "@reearth/services/gql";
+import { ProjectImportStatus, WorkspaceMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
 
@@ -20,7 +20,7 @@ export type ProjectMetadata = {
 export type Project = {
   id: string;
   name: string;
-  teamId: string;
+  workspaceId: string;
   imageUrl?: string | null;
   status?: PublishStatus;
   isArchived?: boolean;
@@ -33,6 +33,8 @@ export type Project = {
   isDeleted?: boolean;
   isPublished?: boolean;
   metadata?: ProjectMetadata | null;
+  visibility?: string;
+  projectAlias?: string;
 };
 
 export type DeletedProject = {
@@ -40,6 +42,8 @@ export type DeletedProject = {
   name: string;
   imageUrl?: string | null;
   isDeleted?: boolean;
+  visibility?: string;
+  starred?: boolean;
 };
 
 export type TabItems = {
@@ -67,7 +71,8 @@ export type Member = {
 export type Workspace = {
   id: string;
   name: string;
-  members?: TeamMember[];
+  alias?: string;
+  members?: WorkspaceMember[];
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
   personal?: boolean;

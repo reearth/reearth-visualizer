@@ -111,7 +111,7 @@ export default ({
     useAssetsFetcher();
   const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } =
     useAssetsQuery({
-      teamId: workspaceId ?? "",
+      workspaceId: workspaceId ?? "",
       projectId,
       pagination: {
         first: ASSETS_PER_PAGE
@@ -208,7 +208,7 @@ export default ({
     async (files?: FileList) => {
       if (!files) return;
       await useCreateAssets({
-        teamId: workspaceId ?? "",
+        workspaceId: workspaceId ?? "",
         projectId,
         file: files,
         coreSupport: true

@@ -16,90 +16,244 @@ import (
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/stretchr/testify/assert"
 )
 
-// go test -v -run TestInternalAPI_GetProjectList ./e2e/...
+// go test -v -run TestInternalAPI_GetProjectList_Owner ./e2e/...
 
-func TestInternalAPI_GetProjectList(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
+func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
+	_, r, _, _ := GRPCServeWithCtx(t, baseSeeder)
 
 	testDataCount := 20
-	testWorkspace := wID2.String()
+	testWorkspace2 := wID2.String()
 	limit := 5
 
+	// user2(Owner) call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
+		//####################################
+		// Add TestData for user2 workspace
 		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		//####################################
 
 		// ASC UpdateAt
-		checkGetProjectsASC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_UPDATEDAT,
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// ASC Name
-		checkGetProjectsASC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_NAME,
 				Direction: pb.SortDirection_ASC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// DESC UpdateAt
-		checkGetProjectsDESC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_UPDATEDAT,
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// DESC Name
-		checkGetProjectsDESC(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2,
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_NAME,
 				Direction: pb.SortDirection_DESC,
 			},
 			limit,
-			testDataCount*2,
+			testDataCount*4, // all project
 		)
 
 		// keyword search
 		keyword := "2"
-		checkGetProjectsASCWithKeyword(
-			t,
-			client,
-			ctx,
-			true,
-			&testWorkspace,
+		checkGetProjectsASCWithKeyword(t, client, ctx, true,
+			&testWorkspace2,
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			&keyword,
+			limit,
+			26,
+		)
+
+	})
+
+}
+
+// go test -v -run TestInternalAPI_GetProjectList_Member ./e2e/...
+func TestInternalAPI_GetProjectList_Member(t *testing.T) {
+	_, r, _, ctx := GRPCServeWithCtx(t, baseSeeder)
+
+	testDataCount := 20
+	testWorkspace2 := wID2.String()
+	limit := 5
+
+	// user2(Owner) call api
+	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		//####################################
+		// Add TestData for user2 workspace
+		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		//####################################
+
+	})
+
+	// add user1 to workspace2(user2)
+	user1, err := r.User.FindByID(ctx, uID)
+	assert.Nil(t, err)
+	assert.Nil(t, JoinMembers(ctx, r, wID2, user1, workspace.RoleReader, uID2))
+
+	// user1(Member) call api
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		// ASC UpdateAt
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount*4, // all project
+		)
+
+		// ASC Name
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount*4, // all project
+		)
+
+		// DESC UpdateAt
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount*4, // all project
+		)
+
+		// DESC Name
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount*4, // all project
+		)
+
+		// keyword search
+		keyword := "2"
+		checkGetProjectsASCWithKeyword(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			&keyword,
+			limit,
+			26,
+		)
+
+	})
+
+}
+
+// go test -v -run TestInternalAPI_GetProjectList_Anonymous ./e2e/...
+func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
+	_, r, _, _ := GRPCServeWithCtx(t, baseSeeder)
+
+	testDataCount := 20
+	testWorkspace2 := wID2.String()
+	limit := 5
+
+	// user2(Owner) call api
+	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		//####################################
+		// Add TestData for user2 workspace
+		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		//####################################
+
+	})
+
+	// user3(Anonymous) call api
+	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		// ASC UpdateAt
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// ASC Name
+		checkGetProjectsASC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_ASC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// DESC UpdateAt
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_UPDATEDAT,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// DESC Name
+		checkGetProjectsDESC(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
+			&pb.ProjectSort{
+				Field:     pb.ProjectSortField_NAME,
+				Direction: pb.SortDirection_DESC,
+			},
+			limit,
+			testDataCount*2, // public project only
+		)
+
+		// keyword search
+		keyword := "2"
+		checkGetProjectsASCWithKeyword(t, client, ctx, true,
+			&testWorkspace2, // user2 workspace
 			&pb.ProjectSort{
 				Field:     pb.ProjectSortField_UPDATEDAT,
 				Direction: pb.SortDirection_ASC,
@@ -110,6 +264,7 @@ func TestInternalAPI_GetProjectList(t *testing.T) {
 		)
 
 	})
+
 }
 
 func checkGetProjectsASC(
@@ -125,7 +280,13 @@ func checkGetProjectsASC(
 	var endCursor *string
 	limit_int32 := int32(limit)
 
-	for i := 0; i < testDataCount/limit; i++ {
+	loop := testDataCount / limit
+	if testDataCount%limit != 0 {
+		loop++
+	}
+	// fmt.Println("============== loop:", loop, " testDataCount:", testDataCount, " limit:", limit)
+
+	for i := 0; i < loop; i++ {
 
 		var pagination *pb.Pagination
 		if i == 0 {
@@ -154,14 +315,14 @@ func checkGetProjectsASC(
 		// }
 		// PbDump(res.PageInfo)
 
-		if i < testDataCount/limit-1 {
-			assert.Equal(t, limit, len(res.Projects))
-			assert.Equal(t, true, res.PageInfo.HasNextPage)
+		if i == loop {
+			// last loop
+			assert.Equal(t, false, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 			endCursor = res.PageInfo.EndCursor
 		} else {
-			// last loop
-			assert.Equal(t, false, res.PageInfo.HasNextPage)
+			assert.Equal(t, limit, len(res.Projects))
+			assert.Equal(t, true, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 		}
 	}
@@ -182,7 +343,13 @@ func checkGetProjectsASCWithKeyword(
 	var endCursor *string
 	limit_int32 := int32(limit)
 
-	for i := 0; i < testDataCount/limit; i++ {
+	loop := testDataCount / limit
+	if testDataCount%limit != 0 {
+		loop++
+	}
+	// fmt.Println("============== loop:", loop, " testDataCount:", testDataCount, " limit:", limit)
+
+	for i := 0; i < loop; i++ {
 
 		var pagination *pb.Pagination
 		if i == 0 {
@@ -211,15 +378,16 @@ func checkGetProjectsASCWithKeyword(
 		// 	fmt.Println("==============", v.Id, v.Name)
 		// }
 		// PbDump(res.PageInfo)
+		// fmt.Println("============== i:", i, " HasNextPage:", res.PageInfo.HasNextPage, " HasPreviousPage:", res.PageInfo.HasPreviousPage)
 
-		if i < testDataCount/limit {
-			assert.Equal(t, limit, len(res.Projects))
-			assert.Equal(t, true, res.PageInfo.HasNextPage)
+		if i == loop {
+			// last loop
+			assert.Equal(t, false, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 			endCursor = res.PageInfo.EndCursor
 		} else {
-			// last loop
-			assert.Equal(t, false, res.PageInfo.HasNextPage)
+			assert.Equal(t, limit, len(res.Projects))
+			assert.Equal(t, true, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
 		}
 	}
@@ -239,7 +407,14 @@ func checkGetProjectsDESC(
 	var startCursor *string
 	limit_int32 := int32(limit)
 
-	for i := 0; i < testDataCount/limit; i++ {
+	loop := testDataCount / limit
+	if testDataCount%limit != 0 {
+		loop++
+	}
+
+	// fmt.Println("============== loop:", loop, " testDataCount:", testDataCount, " limit:", limit)
+
+	for i := 0; i < loop; i++ {
 
 		var pagination *pb.Pagination
 		if i == 0 {
@@ -268,15 +443,15 @@ func checkGetProjectsDESC(
 		// }
 		// PbDump(res.PageInfo)
 
-		if i < testDataCount/limit-1 {
-			assert.Equal(t, limit, len(res.Projects))
-			assert.Equal(t, false, res.PageInfo.HasNextPage)
-			assert.Equal(t, true, res.PageInfo.HasPreviousPage)
-			startCursor = res.PageInfo.StartCursor
-		} else {
+		if i == loop {
 			// last loop
 			assert.Equal(t, false, res.PageInfo.HasNextPage)
 			assert.Equal(t, false, res.PageInfo.HasPreviousPage)
+			startCursor = res.PageInfo.StartCursor
+		} else {
+			assert.Equal(t, limit, len(res.Projects))
+			assert.Equal(t, false, res.PageInfo.HasNextPage)
+			assert.Equal(t, true, res.PageInfo.HasPreviousPage)
 		}
 	}
 }

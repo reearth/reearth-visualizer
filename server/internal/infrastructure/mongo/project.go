@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	projectIndexes       = []string{"alias", "alias,publishmentstatus", "team"}
+	projectIndexes       = []string{"alias", "alias,publishmentstatus", "workspace"}
 	projectUniqueIndexes = []string{"id"}
 )
 
@@ -53,10 +53,10 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByID(ctx context.Context, id id.ProjectID) (*project.Project, error) {
+func (r *Project) FindByID(ctx context.Context, pid id.ProjectID) (*project.Project, error) {
 	prj, err := r.findOne(ctx, bson.M{
-		"id": id.String(),
-	}, true)
+		"id": pid.String(),
+	}, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -72,9 +72,19 @@ func (r *Project) FindByScene(ctx context.Context, id id.SceneID) (*project.Proj
 	if !r.s.CanRead(id) {
 		return nil, nil
 	}
-	return r.findOne(ctx, bson.M{
+
+	prj, err := r.findOne(ctx, bson.M{
 		"scene": id.String(),
-	}, true)
+	}, false)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
 }
 
 func (r *Project) FindByIDs(ctx context.Context, ids id.ProjectIDList) ([]*project.Project, error) {
@@ -129,23 +139,28 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 	return
 }
 
-func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) bson.M {
+func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, ownedWorkspaces []string, memberWorkspaces []string, targetWsList []string) bson.M {
 
-	// target Workspace
-	var idStrings []string
-	for _, id := range wList {
-		idStrings = append(idStrings, id.String())
+	matchOwnedWorkspaces := []string{}
+	matchMemberWorkspaces := []string{}
+	for _, wsID := range targetWsList {
+		if slices.Contains(ownedWorkspaces, wsID) {
+			matchOwnedWorkspaces = append(matchOwnedWorkspaces, wsID)
+		} else if slices.Contains(memberWorkspaces, wsID) {
+			matchMemberWorkspaces = append(matchMemberWorkspaces, wsID)
+		}
 	}
 
 	var filter bson.M
 
-	if !authenticated { // public only
+	// Not authenticated, or neither an owner nor a member
+	if !authenticated || (len(matchOwnedWorkspaces) == 0 && len(matchMemberWorkspaces) == 0) {
 		filter = bson.M{
-			"team": bson.M{
-				"$in": idStrings,
+			"workspace": bson.M{
+				"$in": targetWsList,
 			},
-			"deleted":    false,
-			"visibility": "public",
+			// "deleted":    false,
+			"visibility": "public", // public only
 		}
 		if keyword != nil {
 			keywordRegex := primitive.Regex{
@@ -157,40 +172,24 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 		return filter
 	}
 
-	var owningWorkspaceStrings []string
-	for _, id := range owningWorkspaces {
-		owningWorkspaceStrings = append(owningWorkspaceStrings, id.String())
-	}
-
-	var ownedWorkspaces []string
-	var memberWorkspaces []string
-
-	for _, wsID := range idStrings {
-		if slices.Contains(owningWorkspaceStrings, wsID) {
-			ownedWorkspaces = append(ownedWorkspaces, wsID)
-		} else {
-			memberWorkspaces = append(memberWorkspaces, wsID)
-		}
-	}
-
 	var conditions []bson.M
 
 	// OwnedWorkspaces
-	if len(ownedWorkspaces) > 0 {
+	if len(matchOwnedWorkspaces) > 0 {
 		conditions = append(conditions, bson.M{
-			"team": bson.M{
-				"$in": ownedWorkspaces,
+			"workspace": bson.M{
+				"$in": matchOwnedWorkspaces,
 			},
 		})
 	}
 
 	// MemberWorkspaces
-	if len(memberWorkspaces) > 0 {
+	if len(matchMemberWorkspaces) > 0 {
 		conditions = append(conditions, bson.M{
-			"team": bson.M{
-				"$in": memberWorkspaces,
+			"workspace": bson.M{
+				"$in": matchMemberWorkspaces,
 			},
-			"deleted": false,
+			// "deleted":    false,
 			// "visibility": "public",
 		})
 	}
@@ -320,9 +319,9 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 	return absoluteFilter, findOptions, *limit, sortOrder
 }
 
-func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFilter repo.ProjectFilter, owningWorkspaces accountdomain.WorkspaceIDList, wList accountdomain.WorkspaceIDList) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFilter repo.ProjectFilter, ownedWorkspaces []string, memberWorkspaces []string, targetWsList []string) ([]*project.Project, *usecasex.PageInfo, error) {
 
-	absoluteFilter := r.ProjectAbsoluteFilter(authenticated, pFilter.Keyword, owningWorkspaces, wList)
+	absoluteFilter := r.ProjectAbsoluteFilter(authenticated, pFilter.Keyword, ownedWorkspaces, memberWorkspaces, targetWsList)
 
 	// --- Find Query (absoluteFilter for totalCount)
 	totalCount, err := r.client.Client().CountDocuments(ctx, absoluteFilter)
@@ -341,6 +340,10 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 		paginationSortilter, findOptions, limit, sortOrder = r.ProjectPaginationFilter(absoluteFilter, pFilter.Sort, nil, pFilter.Offset, pFilter.Limit)
 	}
 
+	// if text, err := json.MarshalIndent(paginationSortilter, "", "  "); err == nil {
+	// 	fmt.Println(string(text))
+	// }
+
 	// --- Find Query (paginationSortilter)
 	cursor, err := r.client.Client().Find(ctx, paginationSortilter, findOptions)
 	if err != nil {
@@ -353,8 +356,7 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 		}
 	}()
 
-	consumer := mongodoc.NewProjectConsumer(r.f.Readable)
-
+	consumer := mongodoc.NewProjectConsumer(nil)
 	for cursor.Next(ctx) {
 		raw := cursor.Current
 		if err := consumer.Consume(raw); err != nil {
@@ -420,7 +422,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	}
 
 	filter := bson.M{
-		"team": id.String(),
+		"workspace": id.String(),
 		"$or": []bson.M{
 			{"deleted": false},
 			{"deleted": bson.M{"$exists": false}},
@@ -449,8 +451,8 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	}
 
 	filter := bson.M{
-		"team":    id.String(),
-		"starred": true,
+		"workspace": id.String(),
+		"starred":   true,
 		"$or": []bson.M{
 			{"deleted": false},
 			{"deleted": bson.M{"$exists": false}},
@@ -467,7 +469,7 @@ func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 	}
 
 	filter := bson.M{
-		"team":        id.String(),
+		"workspace":   id.String(),
 		"deleted":     true,
 		"coresupport": true,
 	}
@@ -479,7 +481,7 @@ func (r *Project) FindActiveById(ctx context.Context, id id.ProjectID) (*project
 	prj, err := r.findOne(ctx, bson.M{
 		"id":      id.String(),
 		"deleted": false,
-	}, true)
+	}, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -495,7 +497,23 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	prj, err := r.findOne(ctx, bson.M{
 		"alias":   alias,
 		"deleted": false,
-	}, true)
+	}, false)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
+}
+
+func (r *Project) FindByProjectAlias(ctx context.Context, alias string) (*project.Project, error) {
+
+	prj, err := r.findOne(ctx, bson.M{
+		"projectalias": alias,
+	}, false)
 
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -531,7 +549,7 @@ func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.
 	}
 
 	filter := bson.M{
-		"team":         ws.String(),
+		"workspace":    ws.String(),
 		"projectalias": newAlias,
 	}
 
@@ -551,7 +569,7 @@ func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.
 	return nil
 }
 
-func (r *Project) CheckAliasUnique(ctx context.Context, newAlias string) error {
+func (r *Project) CheckSceneAliasUnique(ctx context.Context, newAlias string) error {
 	sceneId := newAlias
 	if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
 		sceneId = newAlias[2:]
@@ -637,7 +655,7 @@ func (r *Project) CountByWorkspace(ctx context.Context, ws accountdomain.Workspa
 	}
 
 	count, err := r.client.Count(ctx, bson.M{
-		"team": ws.String(),
+		"workspace": ws.String(),
 	})
 	return int(count), err
 }
@@ -648,7 +666,7 @@ func (r *Project) CountPublicByWorkspace(ctx context.Context, ws accountdomain.W
 	}
 
 	count, err := r.client.Count(ctx, bson.M{
-		"team": ws.String(),
+		"workspace": ws.String(),
 		"publishmentstatus": bson.M{
 			"$in": []string{"public", "limited"},
 		},
@@ -665,7 +683,11 @@ func (r *Project) Save(ctx context.Context, project *project.Project) error {
 }
 
 func (r *Project) Remove(ctx context.Context, id id.ProjectID) error {
-	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{"id": id.String()}))
+	writeFilter := applyWorkspaceFilter(bson.M{
+		"id": id.String(),
+	}, r.f.Writable)
+
+	return r.client.RemoveOne(ctx, writeFilter)
 }
 
 func (r *Project) count(ctx context.Context, filter interface{}) (int64, error) {
@@ -731,12 +753,4 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 		res = append(res, r2)
 	}
 	return res
-}
-
-// func (r *Project) readFilter(filter interface{}) interface{} {
-// 	return applyTeamFilter(filter, r.f.Readable)
-// }
-
-func (r *Project) writeFilter(filter interface{}) interface{} {
-	return applyTeamFilter(filter, r.f.Writable)
 }

@@ -1,6 +1,6 @@
 export type Asset = {
   id: string;
-  teamId: string;
+  workspaceId: string;
   projectId?: string | null;
   name: string;
   size: number;

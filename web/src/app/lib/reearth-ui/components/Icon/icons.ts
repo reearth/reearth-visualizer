@@ -48,6 +48,7 @@ import Dashboard from "./Icons/Dashboard.svg?react";
 import Data from "./Icons/Data.svg?react";
 import Desktop from "./Icons/Desktop.svg?react";
 import DeviceMobile from "./Icons/DeviceMobile.svg?react";
+import Discord from "./Icons/Discord.svg?react";
 import DotsSixVertical from "./Icons/DotsSixVertical.svg?react";
 import DotsThreeVertical from "./Icons/DotsThreeVertical.svg?react";
 import DownloadSimple from "./Icons/DownloadSimple.svg?react";
@@ -96,7 +97,7 @@ import List from "./Icons/List.svg?react";
 import ListDashes from "./Icons/ListDashes.svg?react";
 import ListDashesFilled from "./Icons/ListDashesFilled.svg?react";
 import Lock from "./Icons/Lock.svg?react";
-import Logo from "./Icons/logo.svg?react";
+import Logo from "./Icons/Logo.svg?react";
 import LogoFullColor from "./Icons/LogoFullColor.svg?react";
 import LToS from "./Icons/LToS.svg?react";
 import MagnifyingGlass from "./Icons/MagnifyingGlass.svg?react";
@@ -224,6 +225,7 @@ export default {
   data: Data,
   desktop: Desktop,
   deviceMobile: DeviceMobile,
+  discord: Discord,
   dotsSixVertical: DotsSixVertical,
   dotsThreeVertical: DotsThreeVertical,
   downloadSimple: DownloadSimple,

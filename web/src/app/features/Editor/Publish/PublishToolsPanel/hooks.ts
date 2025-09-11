@@ -47,7 +47,7 @@ export default ({
         storyId: undefined,
         type: "scene" as const,
         buttonTitle: t("Scene"),
-        alias: project.alias,
+        alias: project.scene?.alias,
         publishmentStatus: project.publishmentStatus,
         isPublished: isPublished(project.publishmentStatus)
       },

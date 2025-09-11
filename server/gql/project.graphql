@@ -1,7 +1,7 @@
 type Project implements Node {
   id: ID!
-  teamId: ID!
-  team: Team
+  workspaceId: ID!
+  workspace: Workspace
   scene: Scene
   name: String!
   description: String!
@@ -72,7 +72,7 @@ enum ProjectSortField {
 # InputType
 
 input CreateProjectInput {
-  teamId: ID!
+  workspaceId: ID!
   visualizer: Visualizer!
   name: String
   description: String
@@ -157,6 +157,11 @@ type ProjectAliasAvailability {
   available: Boolean!
 }
 
+type SceneAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
 type ProjectMetadataPayload {
   metadata: ProjectMetadata!
 }
@@ -177,14 +182,19 @@ type ProjectEdge {
 
 extend type Query {
   projects(
-    teamId: ID!
+    workspaceId: ID!
     pagination: Pagination
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
-  starredProjects(teamId: ID!): ProjectConnection!
-  deletedProjects(teamId: ID!): ProjectConnection!
+  checkProjectAlias(
+    alias: String!
+    workspaceId: ID!
+    projectId: ID
+  ): ProjectAliasAvailability!
+  checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
+  starredProjects(workspaceId: ID!): ProjectConnection!
+  deletedProjects(workspaceId: ID!): ProjectConnection!
 }
 
 extend type Mutation {

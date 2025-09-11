@@ -107,7 +107,7 @@ func (r *Storytelling) FindByPublicName(ctx context.Context, name string) (*stor
 	return r.findOne(ctx, f, false)
 }
 
-func (r *Storytelling) CheckAliasUnique(ctx context.Context, name string) error {
+func (r *Storytelling) CheckStorytellingAlias(ctx context.Context, name string) error {
 	filter := bson.M{
 		"$or": []bson.M{
 			{"id": name},

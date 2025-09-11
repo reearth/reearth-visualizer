@@ -1,5 +1,5 @@
 import { Story } from "@reearth/services/api/storytellingApi/utils";
-import { FC } from "react";
+import { FC, useMemo } from "react";
 
 import { InnerPage, SettingsWrapper, ArchivedSettingNotice } from "../common";
 
@@ -41,6 +41,10 @@ export type SettingsProject = {
   basicAuthUsername: string;
   basicAuthPassword: string;
   alias: string;
+  scene?: {
+    id: string;
+    alias: string;
+  } | null;
   publishmentStatus: string;
   isArchived: boolean;
   enableGa: boolean;
@@ -72,16 +76,26 @@ const PublicSettings: FC<Props> = ({
   onUpdateProjectAlias,
   onUpdateProjectGA
 }) => {
+  const projectSettingsItem = useMemo(
+    () => ({ ...project, type: "project" as const }),
+    [project]
+  );
+  const storySettingsItem = useMemo(
+    () =>
+      currentStory ? { ...currentStory, type: "story" as const } : undefined,
+    [currentStory]
+  );
+
   return (
     <InnerPage wide>
       <SettingsWrapper>
         {project.isArchived ? (
           <ArchivedSettingNotice />
-        ) : isStory && currentStory ? (
+        ) : isStory && storySettingsItem ? (
           <PublicSettingsDetail
             key={currentStory?.id}
             isStory
-            settingsItem={currentStory as Story}
+            settingsItem={storySettingsItem}
             onUpdate={onUpdateStory}
             onUpdateBasicAuth={onUpdateStory}
             onUpdateAlias={onUpdateStoryAlias}
@@ -90,7 +104,7 @@ const PublicSettings: FC<Props> = ({
         ) : project ? (
           <PublicSettingsDetail
             key="map"
-            settingsItem={project}
+            settingsItem={projectSettingsItem}
             sceneId={sceneId}
             onUpdate={onUpdateProject}
             onUpdateBasicAuth={onUpdateProjectBasicAuth}

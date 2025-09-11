@@ -9,9 +9,8 @@ import (
 
 func TestGetScenePlaceholderEnglish(t *testing.T) {
 	e := ServerLanguage(t, language.English)
-	pID := createProjectWithExternalImage(e, "test")
-	sID := createScene(e, pID)
-	r := getScene(e, sID, language.English.String())
+	_, sceneId, _ := createProjectSet(e)
+	r := getScene(e, sceneId, language.English.String())
 
 	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
 		for _, field := range group.Object().Value("fields").Array().Iter() {
@@ -66,7 +65,7 @@ func TestGetSceneNLSLayer(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -87,7 +86,7 @@ func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"teamId":      wID.String(),
+			"workspaceId": wID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": true,
 		},
@@ -137,7 +136,7 @@ query GetScene($sceneId: ID!, $lang: Lang) {
   node(id: $sceneId, type: SCENE) {
     id
     ... on Scene {
-      teamId
+      workspaceId
       projectId
       property {
         id

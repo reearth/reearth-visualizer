@@ -388,7 +388,7 @@ func TestNLSLayerCRUD(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -781,7 +781,7 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -859,7 +859,7 @@ func TestInfoboxProperty(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -917,7 +917,7 @@ func TestPhotoOverlayProperty(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -991,7 +991,7 @@ func TestCustomProperties(t *testing.T) {
 	pId := createProject(e, uID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})

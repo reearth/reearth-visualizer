@@ -24,9 +24,9 @@ import (
 )
 
 // export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI ./e2e/...
+// go test -v -run TestInternalAPI_Basic ./e2e/...
 
-func TestInternalAPI(t *testing.T) {
+func TestInternalAPI_Basic(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
 	testWorkspace := wID.String()
 
@@ -100,16 +100,13 @@ func TestInternalAPI(t *testing.T) {
 
 	// user2 call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-		// get list size 1
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: false,
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res3.Projects))
-		// 3: creante public  => public   delete => false
+		assert.Equal(t, 2, len(res3.Projects))
 
-		// Authenticated => get list size 1
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: true,
 			WorkspaceId:   &testWorkspace,
@@ -127,10 +124,7 @@ func TestInternalAPI(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(res3.Projects))
-
-		// 2: creante public  => public   delete => false
-		// 3: creante private => private  delete => false
+		assert.Equal(t, 4, len(res3.Projects))
 	})
 
 }
@@ -321,6 +315,16 @@ func TestInternalAPI_unit(t *testing.T) {
 				CoreSupport: lo.ToPtr(true),
 				Visibility:  lo.ToPtr("public"),
 			})
+		createProjectInternal(
+			t, ctx, r, client, "public",
+			&pb.CreateProjectRequest{
+				WorkspaceId: testWorkspace,
+				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+				Name:        lo.ToPtr("Test Project1"),
+				Description: lo.ToPtr("Test Description1"),
+				CoreSupport: lo.ToPtr(true),
+				Visibility:  lo.ToPtr("public"),
+			})
 		UpdateProjectMetadata(
 			t, ctx, r, client,
 			&pb.UpdateProjectMetadataRequest{
@@ -335,11 +339,12 @@ func TestInternalAPI_unit(t *testing.T) {
 			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res.Projects))
+		assert.Equal(t, 2, len(res.Projects))
 
 		for _, pj := range res.Projects {
-			checkProjectFields(t, pj)
-			// PbDump(pj)
+			if pj.Id == pid.String() {
+				checkProjectFields(t, pj)
+			}
 		}
 
 		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
@@ -404,6 +409,8 @@ func checkProjectFields(t *testing.T, project *pb.Project) {
 	stories, ok := m["stories"].([]any)
 	assert.True(t, ok, "stories should be an array")
 
+	assert.Equal(t, 1, len(stories))
+
 	if len(stories) > 0 {
 		story, ok := stories[0].(map[string]any)
 		assert.True(t, ok, "story should be a map")
@@ -426,12 +433,38 @@ func PbDump(m proto.Message) string {
 }
 
 func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+	callGrpc(t, testFunc, metadata.New(map[string]string{
+		"authorization": fmt.Sprintf("Bearer %s", internalApiConfig.Visualizer.InternalApi.Token),
+		"user-id":       userID,
+	}))
+}
+
+func runTestVisitor(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+	callGrpc(t, testFunc, metadata.New(map[string]string{}))
+}
+
+func callGrpc(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context), op metadata.MD) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctx, op)
+
+	conn, err := grpc.NewClient("localhost:"+internalApiConfig.Visualizer.InternalApi.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("failed to connect: %v", err)
+	}
+	defer SafeClose(conn)
+
+	client := pb.NewReEarthVisualizerClient(conn)
+	testFunc(client, ctx)
+}
+
+func runTestWithUserNoToken(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"authorization": fmt.Sprintf("Bearer %s", internalApiConfig.Visualizer.InternalApi.Token),
-		"user-id":       userID,
+		"user-id": userID,
 	}))
 
 	conn, err := grpc.NewClient("localhost:"+internalApiConfig.Visualizer.InternalApi.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -444,6 +477,7 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 	testFunc(client, ctx)
 }
 
+// go test -v -run TestCreateProjectForInternal ./e2e/...
 func TestCreateProjectForInternal(t *testing.T) {
 
 	GRPCServer(t, baseSeeder)
@@ -452,20 +486,36 @@ func TestCreateProjectForInternal(t *testing.T) {
 
 		res, err := client.CreateProject(ctx,
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				Visibility:  lo.ToPtr("public"),
-				Readme:      lo.ToPtr("readme-xxxxxxxxxxx"),
-				License:     lo.ToPtr("license-xxxxxxxxxxx"),
-				Topics:      lo.ToPtr("topics-xxxxxxxxxxx"),
+				WorkspaceId:  wID.String(),
+				Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
+				Name:         lo.ToPtr("Test Project1"),
+				Description:  lo.ToPtr("Test Description1"),
+				CoreSupport:  lo.ToPtr(true),
+				Visibility:   lo.ToPtr("public"),
+				ProjectAlias: lo.ToPtr("projectalias-xxxxxxxxxxxx"),
+				Readme:       lo.ToPtr("readme-xxxxxxxxxxx"),
+				License:      lo.ToPtr("license-xxxxxxxxxxx"),
+				Topics:       lo.ToPtr("topics-xxxxxxxxxxx"),
 			})
 		require.Nil(t, err)
 
 		prj := res.GetProject()
+		assert.Equal(t, "projectalias-xxxxxxxxxxxx", prj.ProjectAlias)
+
 		metadata := prj.GetMetadata()
+		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
+		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
+		assert.Equal(t, "topics-xxxxxxxxxxx", *metadata.Topics)
+
+		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
+			ProjectId: res.Project.Id,
+		})
+		require.Nil(t, err)
+
+		prj = res2.GetProject()
+		assert.Equal(t, "projectalias-xxxxxxxxxxxx", prj.ProjectAlias)
+
+		metadata = prj.GetMetadata()
 		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
 		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
 		assert.Equal(t, "topics-xxxxxxxxxxx", *metadata.Topics)

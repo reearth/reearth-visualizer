@@ -4,8 +4,11 @@ import (
 	"context"
 	"errors"
 
+	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/policy"
+	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
@@ -13,11 +16,30 @@ import (
 )
 
 type Policy struct {
-	repos *repo.Container
+	repos         *repo.Container
+	policyChecker gateway.PolicyChecker
 }
 
-func NewPolicy(repos *repo.Container) *Policy {
-	return &Policy{repos: repos}
+func NewPolicy(repos *repo.Container, policyChecker gateway.PolicyChecker) *Policy {
+	return &Policy{repos: repos, policyChecker: policyChecker}
+}
+
+func (i *Policy) GetWorkspacePolicy(ctx context.Context, wsid accountdomain.WorkspaceID) (*policy.WorkspacePolicy, error) {
+	ws, err := i.repos.Workspace.FindByID(ctx, wsid)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralPolicyCheckRequest(ws.ID(), project.VisibilityPrivate))
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &policy.WorkspacePolicy{
+		WorkspaceID:                  wsid,
+		EnableToCreatePrivateProject: res.Allowed,
+	}, nil
 }
 
 func (i *Policy) FetchPolicy(ctx context.Context, ids []policy.ID) ([]*policy.Policy, error) {

@@ -45,8 +45,6 @@ extensions:
                   label: Road Map
                 - key: open_street_map
                   label: OpenStreetMap
-                - key: esri_world_topo
-                  label: ESRI Topography
                 - key: black_marble
                   label: Earth at night
                 - key: japan_gsi_standard
@@ -2802,9 +2800,9 @@ extensions:
               placeholder: ${your property key}
               ui: property_selector
   - id: markdownInfoboxBetaBlock
-    name: MD Text
+    name: Markdown Text
     type: infoboxBlock
-    description: Infobox MD Text Block
+    description: Infobox Markdown Text Block
     schema:
       groups:
         - id: panel
@@ -2817,7 +2815,7 @@ extensions:
               min: 0
               max: 100
         - id: default
-          title: MD Text Block
+          title: Markdown Text Block
           fields:
             - id: src
               type: string

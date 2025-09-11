@@ -1,4 +1,4 @@
-import { useGetTeamsQuery } from "@reearth/services/api/teams";
+import { useWorkspaceFetcher } from "@reearth/services/api";
 import { useAuth, useCleanUrl } from "@reearth/services/auth";
 import { useT } from "@reearth/services/i18n";
 import {
@@ -27,13 +27,15 @@ export default () => {
   const [currentUserId, setCurrentUserId] = useUserId();
   const [, setNotification] = useNotification();
 
-  const { data, loading } = useGetTeamsQuery({ skip: !isAuthenticated });
+  const { useWorkspacesQuery } = useWorkspaceFetcher();
+
+  const { data, loading } = useWorkspacesQuery();
 
   if (isAuthenticated && !currentUserId) {
     setCurrentUserId(data?.me?.id);
   }
 
-  const workspaceId = currentWorkspace?.id || data?.me?.myTeam?.id;
+  const workspaceId = currentWorkspace?.id || data?.me?.myWorkspace?.id;
 
   const verifySignup = useCallback(
     async (token: string) => {
@@ -79,7 +81,7 @@ export default () => {
     } else {
       if (!data?.me) return;
       setCurrentUserId(data?.me?.id);
-      setCurrentWorkspace(data.me?.myTeam ?? undefined);
+      setCurrentWorkspace(data.me?.myWorkspace ?? undefined);
       navigate(`/dashboard${workspaceId ? "/" + workspaceId : ""}`);
     }
   }, [

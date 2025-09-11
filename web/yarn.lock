@@ -8558,9 +8558,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.39":
-  version: 0.0.7-alpha.39
-  resolution: "@reearth/core@npm:0.0.7-alpha.39"
+"@reearth/core@npm:0.0.7-alpha.44":
+  version: 0.0.7-alpha.44
+  resolution: "@reearth/core@npm:0.0.7-alpha.44"
   dependencies:
     "@radix-ui/react-checkbox": "npm:1.1.1"
     "@radix-ui/react-dialog": "npm:1.1.1"
@@ -8615,7 +8615,7 @@ __metadata:
     cesium: 1.118.x
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/bf39fb2f24ae6327cb0fa5eb64eb57c9ff20a33a3461475686f57812fe68fbd770364f2fd812c90325cee3eae7fad0c80466cae1ee6bcf432b356dfc6ce0408f
+  checksum: 10c0/e8f26d6fb74cc8387b1ea25d436a766119d0de163a6d76c7cd611fec8a99ea0fd36f939417ba9cf80016a623f96c3d3899e354c49f017fe49cc3df9d4ec739d1
   languageName: node
   linkType: hard
 
@@ -8663,7 +8663,7 @@ __metadata:
     "@monaco-editor/react": "npm:4.6.0"
     "@popperjs/core": "npm:2.11.8"
     "@radix-ui/react-slot": "npm:1.1.0"
-    "@reearth/core": "npm:0.0.7-alpha.39"
+    "@reearth/core": "npm:0.0.7-alpha.44"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -8691,7 +8691,6 @@ __metadata:
     "@types/react": "npm:18.3.5"
     "@types/react-beautiful-dnd": "npm:13.1.8"
     "@types/react-dom": "npm:18.3.0"
-    "@types/react-ga": "npm:2.3.0"
     "@types/sortablejs": "npm:1.15.8"
     "@types/styled-components": "npm:5.1.29"
     "@types/tinycolor2": "npm:1.4.6"
@@ -8749,7 +8748,6 @@ __metadata:
     react-dnd: "npm:16.0.1"
     react-dnd-html5-backend: "npm:16.0.1"
     react-dom: "npm:18.3.1"
-    react-ga: "npm:3.3.1"
     react-ga4: "npm:2.1.0"
     react-i18next: "npm:15.0.1"
     react-markdown: "npm:9.0.1"
@@ -12032,15 +12030,6 @@ __metadata:
   dependencies:
     "@types/react": "npm:*"
   checksum: 10c0/6c90d2ed72c5a0e440d2c75d99287e4b5df3e7b011838cdc03ae5cd518ab52164d86990e73246b9d812eaf02ec351d74e3b4f5bd325bf341e13bf980392fd53b
-  languageName: node
-  linkType: hard
-
-"@types/react-ga@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@types/react-ga@npm:2.3.0"
-  dependencies:
-    react-ga: "npm:*"
-  checksum: 10c0/68515ce7e92bf1259cd8f480a0101f6b1a4f997ff00ed4fdcfc5174db4f84f73b72f28650067bf5439214e91c90b7ac606c6c8335442c1245619552e755ed6a7
   languageName: node
   linkType: hard
 
@@ -22917,16 +22906,6 @@ __metadata:
   version: 2.1.0
   resolution: "react-ga4@npm:2.1.0"
   checksum: 10c0/314aa86dd7cb868535f26bfb8b537d3b3c20649c66b2b942fba72e081295441446932a4ae96499231c8a4836ab0a222a97b1bd03633b8cc1477991efe93444cd
-  languageName: node
-  linkType: hard
-
-"react-ga@npm:*, react-ga@npm:3.3.1":
-  version: 3.3.1
-  resolution: "react-ga@npm:3.3.1"
-  peerDependencies:
-    prop-types: ^15.6.0
-    react: ^15.6.2 || ^16.0 || ^17 || ^18
-  checksum: 10c0/a2a61c138887c651a59b49669141246e9a01803bd67c5d7581016949d2c8acdbef14db1a0039b855dcd3c979c711b4c45d910fcaa49e27165c13cdc685b4c2e0
   languageName: node
   linkType: hard
 

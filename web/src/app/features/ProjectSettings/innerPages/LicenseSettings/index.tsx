@@ -1,4 +1,8 @@
 import {
+  visualizerProjectLicensesOptions,
+  licenseContent
+} from "@reearth/app/lib/license";
+import {
   Button,
   Modal,
   ModalPanel,
@@ -14,15 +18,13 @@ import ReactMarkdown from "react-markdown";
 
 import CommonLayout, { PreviewWrapper } from "../common";
 
-import { license_content, license_options } from "./content";
-
 type Props = {
   projectMetadata?: ProjectMetadata | null;
   onUpdateProjectMetadata?: (metadata: { license?: string }) => void;
 };
 
 const getLicenseContent = (value: string): string | null => {
-  return license_content[value as keyof typeof license_content] || null;
+  return licenseContent[value as keyof typeof licenseContent] || null;
 };
 
 const LicenseSettings: FC<Props> = ({
@@ -52,7 +54,7 @@ const LicenseSettings: FC<Props> = ({
     handleCloseModal();
   }, [handleCloseModal, selectedLicense]);
 
-  const selectedLicenseObj = license_options.find(
+  const selectedLicenseObj = visualizerProjectLicensesOptions.find(
     (l) => l.value === selectedLicense
   );
 
@@ -133,7 +135,7 @@ const LicenseSettings: FC<Props> = ({
                 value={selectedLicense}
                 onChange={(value) => setSelectedLicense(value as string)}
                 placeholder={t("Select a license")}
-                options={license_options.map((license) => ({
+                options={visualizerProjectLicensesOptions.map((license) => ({
                   value: license.value,
                   label: license.label
                 }))}

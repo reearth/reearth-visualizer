@@ -8,6 +8,7 @@ import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useProjectFetcher } from "@reearth/services/api";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
+import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 
@@ -83,7 +84,7 @@ const LeftSection: React.FC<Props> = ({
 
   return (
     <Wrapper>
-      <Icon icon="logo" size={30} />
+      <Icon icon="logo" color={brandRed.dynamicRed} size={30} />
       <StyledLink
         to={`/dashboard/${currentWorkspace?.id}`}
         disabled={!currentWorkspace?.id}

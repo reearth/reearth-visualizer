@@ -20,7 +20,7 @@ import (
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.TeamID)
+	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +37,9 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		Readme:       input.Readme,
 		License:      input.License,
 		Topics:       input.Topics,
-	}, getOperator(ctx))
+	},
+		getOperator(ctx),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -197,23 +199,20 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		"project":   prj.ID().String(),
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
-
-	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	b, err := json.Marshal(exportData)
 	if err != nil {
-		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
+		return nil, errors.New("failed normalize export data marshal: " + err.Error())
+	}
+	var data map[string]any
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, errors.New("failed normalize export data unmarshal: " + err.Error())
+	}
+	err = uc.Project.SaveExportProjectZip(ctx, zipWriter, zipFile, data, prj)
+	if err != nil {
+		return nil, errors.New("Fail SaveExportProjectZip :" + err.Error())
 	}
 
 	return &gqlmodel.ExportProjectPayload{
 		ProjectDataPath: "/export/" + zipFile.Name(),
 	}, nil
-}
-
-func Normalize(data any) map[string]any {
-	if b, err := json.Marshal(data); err == nil {
-		var result map[string]any
-		if err := json.Unmarshal(b, &result); err == nil {
-			return result
-		}
-	}
-	return nil
 }

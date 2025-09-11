@@ -484,6 +484,7 @@ github.com/golang/glog v1.2.3 h1:oDTdz9f5VGVVNGu/Q7UXKWYsD0873HXLHdJUNBsSEKM=
 github.com/golang/glog v1.2.3/go.mod h1:6AhwSGph0fcJtXVM/PEHPqZlFeoLxhs7/t5UDAwmO+w=
 github.com/golang/glog v1.2.4 h1:CNNw5U8lSiiBk7druxtSHHTsRWcxKoac6kZKm2peBBc=
 github.com/golang/glog v1.2.4/go.mod h1:6AhwSGph0fcJtXVM/PEHPqZlFeoLxhs7/t5UDAwmO+w=
+github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da/go.mod h1:cIg4eruTrX1D+g88fzRXU5OdNfaM+9IcxsU14FzY7Hc=
 github.com/golang/lint v0.0.0-20170918230701-e5d664eb928e h1:ior8LN6127GsA53E9mD9nH/oP/LVbJplmLH5V8o+/Uk=
 github.com/google/btree v1.0.0 h1:0udJVsspx3VBr5FwtLhQQtuAsVc79tTq0ocGIPAU6qo=
 github.com/google/go-cmp v0.5.9/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
@@ -656,6 +657,8 @@ github.com/redis/go-redis/v9 v9.5.1 h1:H1X4D3yHPaYrkL5X06Wh6xNVM/pX0Ft4RV0vMGvLB
 github.com/redis/go-redis/v9 v9.5.1/go.mod h1:hdY0cQFCN4fnSYT6TkisLufl/4W5UIXyv0b/CLO2V2M=
 github.com/reearth/reearthx v0.0.0-20240229141256-04bd46953fe6 h1:7EMP5wvzOcip/Bi7KPkCMx5Vtq4V31cfkSneqZxr+as=
 github.com/reearth/reearthx v0.0.0-20240229141256-04bd46953fe6/go.mod h1:8DSD6e+h1KhfhO4TceYDDPpLkhZJH2CLF6nHxyV8hts=
+github.com/reearth/reearthx v0.0.0-20250731060631-7ef9d9421c39 h1:Qe7HIt79dTVbjHQJX3te4pPLiJ/3YdCR0Q8tAbIyx7M=
+github.com/reearth/reearthx v0.0.0-20250731060631-7ef9d9421c39/go.mod h1:LB99y3wpdleJ2LcZ/5226iaHf8HO+R3pp6omwUFDw8I=
 github.com/robertkrimen/godocdown v0.0.0-20130622164427-0bfa04905481 h1:jMxcLa+VjJKhpCwbLUXAD15wJ+hhvXMLujCl3MkXpfM=
 github.com/rogpeppe/fastuuid v1.2.0 h1:Ppwyp6VYCF1nvBTXL3trRso7mXMlRrw9ooo375wvi2s=
 github.com/rogpeppe/go-internal v1.3.0 h1:RR9dF3JtopPvtkroDZuVD7qquD0bnHlKSqaQhgwt8yk=

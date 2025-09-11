@@ -52,10 +52,12 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		}
 	}
 
+	var err error
 	if req.WorkspaceId == nil {
-		var err error
+
 		res, info, err = uc.Project.FindVisibilityByUser(
-			ctx, adapter.User(ctx),
+			ctx,
+			adapter.User(ctx),
 			req.Authenticated,
 			op,
 			req.Keyword,
@@ -79,11 +81,17 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 			param.Limit = req.Pagination.Limit
 			param.Offset = req.Pagination.Offset
 		}
+
 		res, info, err = uc.Project.FindVisibilityByWorkspace(
-			ctx, wId, req.Authenticated, op, req.Keyword, sort, pagination,
+			ctx,
+			wId,
+			req.Authenticated,
+			op,
+			req.Keyword,
+			sort,
+			pagination,
 			param,
 		)
-
 		if err != nil {
 			return nil, err
 		}
@@ -99,6 +107,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		Projects: projects,
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
+
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
@@ -145,18 +154,41 @@ func (s server) GetProjectByAlias(ctx context.Context, req *pb.GetProjectByAlias
 func (s server) ValidateProjectAlias(ctx context.Context, req *pb.ValidateProjectAliasRequest) (*pb.ValidateProjectAliasResponse, error) {
 	uc := adapter.Usecases(ctx)
 
-	pid := id.ProjectIDFromRef(req.ProjectId)
-	available, err := uc.Project.CheckAlias(ctx, req.Alias, pid)
+	wsid, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	available, err := uc.Project.CheckProjectAlias(ctx, req.Alias, wsid, id.ProjectIDFromRef(req.ProjectId))
 	if err != nil {
 		errorMessage := err.Error()
 		return &pb.ValidateProjectAliasResponse{
-			ProjectId:    req.ProjectId,
+			WorkspaceId:  req.WorkspaceId,
 			Available:    available,
 			ErrorMessage: &errorMessage,
 		}, nil
 	}
 
 	return &pb.ValidateProjectAliasResponse{
+		WorkspaceId: req.WorkspaceId,
+		Available:   available,
+	}, nil
+}
+
+func (s server) ValidateSceneAlias(ctx context.Context, req *pb.ValidateSceneAliasRequest) (*pb.ValidateSceneAliasResponse, error) {
+	uc := adapter.Usecases(ctx)
+
+	available, err := uc.Project.CheckSceneAlias(ctx, req.Alias, id.ProjectIDFromRef(req.ProjectId))
+	if err != nil {
+		errorMessage := err.Error()
+		return &pb.ValidateSceneAliasResponse{
+			ProjectId:    req.ProjectId,
+			Available:    available,
+			ErrorMessage: &errorMessage,
+		}, nil
+	}
+
+	return &pb.ValidateSceneAliasResponse{
 		ProjectId: req.ProjectId,
 		Available: available,
 	}, nil
@@ -191,7 +223,9 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		Readme:       req.Readme,
 		License:      req.License,
 		Topics:       req.Topics,
-	}, op)
+	},
+		op,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -423,10 +457,17 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 		"project":   prj.ID().String(),
 		"timestamp": time.Now().Format(time.RFC3339),
 	}
-
-	err = uc.Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	b, err := json.Marshal(exportData)
 	if err != nil {
-		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
+		return nil, errors.New("failed normalize export data marshal: " + err.Error())
+	}
+	var data map[string]any
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, errors.New("failed normalize export data unmarshal: " + err.Error())
+	}
+	err = uc.Project.SaveExportProjectZip(ctx, zipWriter, zipFile, data, prj)
+	if err != nil {
+		return nil, errors.New("Fail SaveExportProjectZip :" + err.Error())
 	}
 
 	return &pb.ExportProjectResponse{
@@ -434,14 +475,96 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	}, nil
 }
 
-func Normalize(data any) map[string]any {
-	if b, err := json.Marshal(data); err == nil {
-		var result map[string]any
-		if err := json.Unmarshal(b, &result); err == nil {
-			return result
-		}
+func (s server) GetProjectByProjectAlias(ctx context.Context, req *pb.GetProjectByProjectAliasRequest) (*pb.GetProjectByProjectAliasResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetProjectByProjectAliasResponse{
+		Project: prj,
+	}, nil
+}
+
+func (s server) UpdateByProjectAlias(ctx context.Context, req *pb.UpdateByProjectAliasRequest) (*pb.UpdateByProjectAliasResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	var imageURL *url.URL
+	if req.ImageUrl != nil {
+		parsedURL, err := url.Parse(*req.ImageUrl)
+		if err != nil {
+			return nil, fmt.Errorf("invalid image_url: %w", err)
+		}
+		imageURL = parsedURL
+	}
+
+	pj, err = uc.Project.Update(ctx, interfaces.UpdateProjectParam{
+		ID:             pj.ID(),
+		Name:           req.Name,
+		Description:    req.Description,
+		Archived:       req.Archived,
+		ImageURL:       imageURL,
+		DeleteImageURL: req.DeleteImageUrl != nil && *req.DeleteImageUrl,
+		SceneID:        id.SceneIDFromRef(req.SceneId),
+		Starred:        req.Starred,
+		Deleted:        req.Deleted,
+		Visibility:     req.Visibility,
+		ProjectAlias:   req.NewProjectAlias,
+
+		// publishment
+		PublicTitle:       req.PublicTitle,
+		PublicDescription: req.PublicDescription,
+		PublicImage:       req.PublicImage,
+		PublicNoIndex:     req.PublicNoIndex,
+		DeletePublicImage: req.DeletePublicImage != nil && *req.DeletePublicImage,
+		IsBasicAuthActive: req.IsBasicAuthActive,
+		BasicAuthUsername: req.BasicAuthUsername,
+		BasicAuthPassword: req.BasicAuthPassword,
+		EnableGa:          req.EnableGa,
+		TrackingID:        req.TrackingId,
+	}, op)
+	if err != nil {
+		return nil, err
+	}
+
+	prj, err := s.getSceneAndStorytelling(ctx, pj)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.UpdateByProjectAliasResponse{
+		Project: prj,
+	}, nil
+}
+
+func (s server) DeleteByProjectAlias(ctx context.Context, req *pb.DeleteByProjectAliasRequest) (*pb.DeleteByProjectAliasResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := uc.Project.Delete(ctx, pj.ID(), op); err != nil {
+		return nil, err
+	}
+
+	return &pb.DeleteByProjectAliasResponse{
+		ProjectAlias: req.ProjectAlias,
+	}, nil
+
 }
 
 func (s server) getScenesAndStorytellings(ctx context.Context, res []*project.Project) ([]*pb.Project, error) {

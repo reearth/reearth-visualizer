@@ -40,7 +40,7 @@ func TestIsReadOnlyMethod(t *testing.T) {
 		{
 			name:     "ExportProject is read-only",
 			method:   "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject",
-			expected: false,
+			expected: true,
 		},
 
 		// Write methods (should return false)

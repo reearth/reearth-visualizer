@@ -1,11 +1,10 @@
 import { useEffect } from "react";
+import ReactGA from "react-ga4";
 
 export type GeneralGASettingsType = {
   enableGa?: boolean;
   trackingId?: string;
 };
-
-const isGa4TrackingId = (trackingId: string) => trackingId.startsWith("G-");
 
 export const useGA = ({ enableGa, trackingId }: GeneralGASettingsType) => {
   useEffect(() => {
@@ -13,14 +12,7 @@ export const useGA = ({ enableGa, trackingId }: GeneralGASettingsType) => {
 
     if (!isEnabled || !trackingId) return;
 
-    const loadGaModule = async () => {
-      const gaModule = isGa4TrackingId(trackingId)
-        ? await import("./ga4")
-        : await import("./ga");
-      gaModule.initialize(trackingId);
-      gaModule.pageview(window.location.pathname);
-    };
-
-    loadGaModule();
+    ReactGA.initialize(trackingId);
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname });
   }, [enableGa, trackingId]);
 };

@@ -87,7 +87,7 @@ func ToProject(p *project.Project) *Project {
 
 	return &Project{
 		ID:           IDFrom(p.ID()),
-		TeamID:       IDFrom(p.Workspace()),
+		WorkspaceID:  IDFrom(p.Workspace()),
 		Name:         p.Name(),
 		Description:  p.Description(),
 		ImageURL:     p.ImageURL(),
@@ -158,6 +158,8 @@ type ProjectExport struct {
 	Description string     `json:"description"`
 	ImageURL    *url.URL   `json:"imageUrl,omitempty"`
 
+	Visibility string `json:"visibility,omitempty"`
+
 	License *string `json:"readme,omitempty"`
 	Readme  *string `json:"license,omitempty"`
 	Topics  *string `json:"topics,omitempty"`
@@ -173,6 +175,7 @@ func ToProjectExport(p *project.Project) *ProjectExport {
 		Name:        p.Name(),
 		Description: p.Description(),
 		ImageURL:    p.ImageURL(),
+		Visibility:  p.Visibility(),
 	}
 
 	if pm := p.Metadata(); pm != nil {

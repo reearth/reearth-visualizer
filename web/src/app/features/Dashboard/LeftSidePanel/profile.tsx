@@ -40,7 +40,8 @@ export const Profile: FC<ProfileProp> = ({
   const theme = useTheme();
 
   const { workspaceManagementMenu } = useWorkspaceManagementMenu({
-    workspaceId: currentWorkspace?.id
+    workspaceId: currentWorkspace?.id,
+    workspaceAlias: currentWorkspace?.alias
   });
 
   const popupMenu: PopupMenuItem[] = useMemo(
@@ -90,7 +91,7 @@ export const Profile: FC<ProfileProp> = ({
         {isPersonal && (
           <Avatar data-testid="profile-avatar">
             <Typography size="body" data-testid="profile-avatar-initial">
-              {currentUser?.charAt(0).toUpperCase()}
+              {currentUser?.charAt(0)}
             </Typography>
           </Avatar>
         )}
