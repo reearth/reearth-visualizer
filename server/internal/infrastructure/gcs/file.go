@@ -329,12 +329,22 @@ func (f *fileRepo) GenerateSignedUploadUrl(ctx context.Context, filename string)
 	return &signedURL, expiresIn, &contentType, nil
 }
 
-func (f *fileRepo) ReadImportProjectZip(context.Context, string) (io.ReadCloser, error) {
-	return nil, nil
+func (f *fileRepo) ReadImportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
+	sn := sanitize.Path(name)
+	if sn == "" {
+		return nil, gateway.ErrInvalidFile
+	}
+	r, err := f.read(ctx, path.Join(gcsImportBasePath, sn))
+	if err != nil {
+		if errors.Is(err, rerror.ErrNotFound) {
+			r, err = f.read(ctx, path.Join(gcsImportBasePath, name))
+		}
+	}
+	return r, err
 }
 
-func (f *fileRepo) RemoveImportProjectZip(context.Context, string) error {
-	return nil
+func (f *fileRepo) RemoveImportProjectZip(ctx context.Context, filename string) error {
+	return f.delete(ctx, path.Join(gcsImportBasePath, filename))
 }
 
 // helpers

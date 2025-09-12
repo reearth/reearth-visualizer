@@ -66,8 +66,11 @@ func servSignatureUploadFiles(
 	ec.GET("/api/import-project",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
-			result := map[string]any{}
 			name := c.FormValue("name")
+			defer removeGcsZip(ctx, fileGateway, name)
+
+			result := map[string]any{}
+
 			base := filepath.Base(name)
 			filename := strings.TrimSuffix(base, filepath.Ext(base))
 			parts := strings.SplitN(filename, "-", 2)
@@ -134,4 +137,10 @@ func servSignatureUploadFiles(
 		}),
 	)
 
+}
+
+func removeGcsZip(ctx context.Context, fileGateway gateway.File, name string) {
+	if err := fileGateway.RemoveImportProjectZip(ctx, name); err != nil {
+		log.Errorf("fail RemoveImportProjectZip: %v", err)
+	}
 }
