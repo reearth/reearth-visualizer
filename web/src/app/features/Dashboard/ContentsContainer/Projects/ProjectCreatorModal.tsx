@@ -14,7 +14,8 @@ import {
   SelectField
 } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
-import { useProjectFetcher, useWorkspaceFetcher } from "@reearth/services/api";
+import { useValidateProjectAlias } from "@reearth/services/api/project";
+import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
@@ -53,9 +54,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   const theme = useTheme();
 
   const { projectVisibility } = appFeature();
-  const { checkProjectAlias } = useProjectFetcher();
+  const { validateProjectAlias } = useValidateProjectAlias();
   const [currentWorkspace] = useWorkspace();
-  const { useWorkspacePolicyCheck } = useWorkspaceFetcher();
 
   const data = useWorkspacePolicyCheck(currentWorkspace?.id as string);
   const enableToCreatePrivateProject =
@@ -101,7 +101,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
       handleFieldChange("projectAlias", alias);
       setAliasValid(false);
 
-      const result = await checkProjectAlias?.(
+      const result = await validateProjectAlias?.(
         alias.trim(),
         currentWorkspace?.id,
         undefined
@@ -117,7 +117,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
         );
       }
     },
-    [checkProjectAlias, currentWorkspace, handleFieldChange]
+    [validateProjectAlias, currentWorkspace, handleFieldChange]
   );
 
   const onSubmit = useCallback(() => {

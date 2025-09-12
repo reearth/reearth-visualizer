@@ -19,7 +19,7 @@ import {
   type EngineType,
   CoreVisualizer
 } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
 import { FC, MutableRefObject, SetStateAction } from "react";

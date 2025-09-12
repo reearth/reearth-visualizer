@@ -5,7 +5,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/app/utils/time";
-import { useMeFetcher } from "@reearth/services/api";
+import { useMe } from "@reearth/services/api/user";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useMemo } from "react";
 
@@ -24,8 +24,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
   onProjectRemove
 }) => {
   const theme = useTheme();
-  const { useMeQuery } = useMeFetcher();
-  const { me } = useMeQuery();
+  const { me } = useMe();
 
   const createAt = useMemo(() => {
     return project.createdAt

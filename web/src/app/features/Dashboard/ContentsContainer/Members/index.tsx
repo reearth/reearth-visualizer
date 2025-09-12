@@ -1,5 +1,6 @@
 import { Button, TextInput, Typography } from "@reearth/app/lib/reearth-ui";
-import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
+import { useMe } from "@reearth/services/api/user";
+import { useWorkspace } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
@@ -19,10 +20,8 @@ const ROLE_PRIORITY = { OWNER: 1, MAINTAINER: 2, WRITER: 3, READER: 4 };
 type Props = { currentWorkspace?: Workspace };
 
 const Members: FC<Props> = ({ currentWorkspace }) => {
-  const { workspace } = useWorkspaceFetcher().useWorkspaceQuery(
-    currentWorkspace?.id
-  );
-  const { me } = useMeFetcher().useMeQuery();
+  const { workspace } = useWorkspace(currentWorkspace?.id);
+  const { me } = useMe();
   const meId = me?.id;
   const meRole = useMemo(
     () => workspace?.members.find((m) => m.userId === meId)?.role,
