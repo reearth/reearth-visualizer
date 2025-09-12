@@ -22,6 +22,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -116,45 +117,51 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 	return plugins, schemas, nil
 }
 
-func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.File, oldSceneID string, sce *scene.Scene, data *[]byte) ([]*plugin.Plugin, property.SchemaList, error) {
+func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.File, oldSceneID string, sce *scene.Scene, data *[]byte) (map[string]any, error) {
 
+	result := map[string]any{}
 	if err := i.uploadPluginFile(ctx, pluginsZip, oldSceneID, sce.ID().String()); err != nil {
-		return nil, nil, err
+		return result, err
 	}
 
 	filter := Filter(sce.ID())
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
-		return nil, nil, err
+		return result, err
 	}
 	pluginsData, ok := d["plugins"].([]any)
 	if !ok {
-		return nil, nil, errors.New("plugins parse error")
+		return result, errors.New("plugins parse error")
 	}
 
 	schemasData, ok := d["schemas"].([]any)
 	if !ok {
-		return nil, nil, errors.New("schemas parse error")
+		return result, errors.New("schemas parse error")
 	}
 
 	var pluginsJSON = jsonmodel.ToPluginsFromJSON(pluginsData)
 
-	var propertySchemaIDs []id.PropertySchemaID
 	var pluginIDs []id.PluginID
-	for _, pluginJSON := range pluginsJSON {
+	var propertySchemaIDs []id.PropertySchemaID
+
+	for pIndex, pluginJSON := range pluginsJSON {
+
 		pid, err := jsonmodel.ToPluginID(pluginJSON.ID)
 		if err != nil {
-			return nil, nil, err
+			return result, err
 		}
 		pluginIDs = append(pluginIDs, pid)
 
 		var extensions []*plugin.Extension
-		for _, pluginJSONextension := range pluginJSON.Extensions {
+		resultExtensions := map[string]any{}
+		for eIndex, pluginJSONextension := range pluginJSON.Extensions {
+
 			psid, err := jsonmodel.ToPropertySchemaID(pluginJSONextension.PropertySchemaID)
 			if err != nil {
-				return nil, nil, err
+				return result, err
 			}
+
 			extension, err := plugin.NewExtension().
 				ID(id.PluginExtensionID(pluginJSONextension.ExtensionID)).
 				Type(gqlmodel.FromPluginExtension(pluginJSONextension.Type)).
@@ -166,26 +173,36 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 				Schema(psid).
 				Build()
 			if err != nil {
-				return nil, nil, err
+				log.Errorf("[Import Error] plugin extension: %s", i18n.StringFrom(pluginJSONextension.Name))
+				return result, err
 			}
-			extensions = append(extensions, extension)
 
-			for _, schema := range schemasData {
+			extensions = append(extensions, extension)
+			resultSchemas := map[string]any{}
+			for sIndex, schema := range schemasData {
 				if schemaMap, ok := schema.(map[string]any); ok {
 					if id, ok := schemaMap["id"].(string); ok {
 						if id == psid.String() {
 							ps, err := parsePropertySchema(psid, schemaMap)
 							if err != nil {
-								return nil, nil, err
+								log.Errorf("[Import Error] plugin schema: %s", id)
+								return result, err
 							}
+							// save PropertySchema -------------
 							if err := i.propertySchemaRepo.Filtered(filter).Save(ctx, ps); err != nil {
-								return nil, nil, errors.New("Save propertySchema :" + err.Error())
+								return result, errors.New("Save propertySchema :" + err.Error())
 							}
 							propertySchemaIDs = append(propertySchemaIDs, ps.ID())
+
+							fmt.Println("[Import Schema]  ", ps.ID().String())
+							resultSchemas[fmt.Sprintf("Shema%d", sIndex)] = ps.ID().String()
 						}
 					}
 				}
 			}
+			fmt.Println("[Import Extension] ", pluginJSONextension.Name)
+			resultExtensions[fmt.Sprintf("Extension%d", eIndex)] = pluginJSONextension.Name
+			resultExtensions[fmt.Sprintf("Extension%d_schemas", eIndex)] = resultSchemas
 		}
 
 		p, err := plugin.New().
@@ -197,25 +214,24 @@ func (i *Plugin) ImportPlugins(ctx context.Context, pluginsZip map[string]*zip.F
 			Extensions(extensions).
 			Build()
 		if err != nil {
-			return nil, nil, err
+			log.Errorf("[Import Error] plugin : %s", i18n.StringFrom(pluginJSON.Name))
+			return result, err
 		}
 		if !p.ID().System() {
+			// save Plugin -------------
 			if err := i.pluginRepo.Filtered(filter).Save(ctx, p); err != nil {
-				return nil, nil, errors.New("Save plugin :" + err.Error())
+				log.Errorf("[Import Error] plugin : %s", i18n.StringFrom(pluginJSON.Name))
+				return result, errors.New("Save plugin :" + err.Error())
 			}
 		}
+
+		fmt.Println("[Import Plugin] ", i18n.StringFrom(pluginJSON.Name))
+		result[fmt.Sprintf("plugin%d", pIndex)] = i18n.StringFrom(pluginJSON.Name)
+		result[fmt.Sprintf("plugin%d_extensions", pIndex)] = resultExtensions
+
 	}
 
-	plgs, err := i.pluginRepo.Filtered(filter).FindByIDs(ctx, pluginIDs)
-	if err != nil {
-		return nil, nil, err
-	}
-	pss, err := i.propertySchemaRepo.Filtered(filter).FindByIDs(ctx, propertySchemaIDs)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return plgs, pss, nil
+	return result, nil
 }
 
 func (i *Plugin) uploadPluginFile(ctx context.Context, plugins map[string]*zip.File, oldSceneID string, newSceneID string) error {

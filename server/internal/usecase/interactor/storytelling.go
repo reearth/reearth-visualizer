@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -1054,7 +1055,7 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 	return story, page, &inp.BlockID, inp.Index, nil
 }
 
-func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data *[]byte) (*storytelling.Story, error) {
+func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data *[]byte) (map[string]any, error) {
 
 	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
@@ -1062,29 +1063,33 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 	}
 
 	filter := Filter(sceneID)
-
 	storyJSON := sceneJSON.Story
+	result := map[string]any{}
 
 	pages := []*storytelling.Page{}
-	for _, pageJSON := range storyJSON.Pages {
+	resultPages := map[string]any{}
+	for pIndex, pageJSON := range storyJSON.Pages {
 
 		blocks := storytelling.BlockList{}
-		for _, blockJSON := range pageJSON.Blocks {
+		resultBlocks := map[string]any{}
+		for bIndex, blockJSON := range pageJSON.Blocks {
 
 			plg, extension, err := i.getStoryBlockPlugin(ctx, sceneID, blockJSON.PluginId, blockJSON.ExtensionId)
 			if err != nil {
-				return nil, err
+				log.Errorf("fail StoryBlock plugin : %v\n", err)
+				return result, err
 			}
 
 			propB, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 			if err != nil {
-				return nil, err
+				log.Errorf("fail StoryBlock add property: %v", err)
+				return result, err
 			}
 			builder.PropertyUpdate(ctx, propB, i.propertyRepo, i.propertySchemaRepo, blockJSON.Property)
-			for k, v := range blockJSON.Plugins {
-				fmt.Println("Unsupported blockJSON.Plugins ", k, v)
-			}
 
+			for k, v := range blockJSON.Plugins {
+				log.Errorf("Unsupported StoryBlock plugin: %s value: %v", k, v)
+			}
 			block, err := storytelling.NewBlock().
 				ID(id.NewBlockID()).
 				Property(propB.ID()).
@@ -1092,18 +1097,21 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 				Extension(id.PluginExtensionID(blockJSON.ExtensionId)).
 				Build()
 			if err != nil {
-				return nil, err
+				log.Errorf("fail StoryBlock Build: %v", err)
+				return result, err
 			}
-
 			blocks = append(blocks, block)
 
+			fmt.Println("[Import StoryPageBlock]", extension.Name())
+			resultBlocks[fmt.Sprintf("block%d", bIndex)] = extension.Name()
 		}
 
 		storyPageSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
 
 		propP, err := i.addNewProperty(ctx, storyPageSchema.ID(), sceneID, &filter)
 		if err != nil {
-			return nil, err
+			log.Errorf("fail StoryPage add property: %v", err)
+			return result, err
 		}
 
 		builder.PropertyUpdate(ctx, propP, i.propertyRepo, i.propertySchemaRepo, pageJSON.Property)
@@ -1121,7 +1129,6 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 				layers = append(layers, id)
 			}
 		}
-
 		page, err := storytelling.NewPage().
 			ID(id.NewPageID()).
 			Property(propP.ID()).
@@ -1132,17 +1139,22 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 			Layers(layers).
 			Build()
 		if err != nil {
-			return nil, err
+			log.Errorf("fail save StoryPage : %v", err)
+			return result, err
 		}
 
 		pages = append(pages, page)
 
+		fmt.Println("[Import StoryPage]", pageJSON.Title)
+		resultPages[fmt.Sprintf("page%d", pIndex)] = pageJSON.Title
+		resultPages[fmt.Sprintf("page%d_blocks", pIndex)] = resultBlocks
 	}
 
 	storySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	propS, err := i.addNewProperty(ctx, storySchema.ID(), sceneID, &filter)
 	if err != nil {
-		return nil, err
+		log.Errorf("fail Story add property: %v", err)
+		return result, err
 	}
 
 	builder.PropertyUpdate(ctx, propS, i.propertyRepo, i.propertySchemaRepo, storyJSON.Property)
@@ -1157,17 +1169,18 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 		BgColor(storyJSON.BgColor).
 		Build()
 	if err != nil {
-		return nil, err
+		log.Errorf("fail Story build : %v", err)
+		return result, err
 	}
 
 	if err := i.storytellingRepo.Filtered(filter).Save(ctx, *story); err != nil {
-		return nil, err
+		log.Errorf("fail save Story : %v", err)
+		return result, err
 	}
 
-	result, err := i.storytellingRepo.Filtered(filter).FindByID(ctx, story.Id())
-	if err != nil {
-		return nil, err
-	}
+	fmt.Println("[Import Story]", storyJSON.Title)
+	result["name"] = storyJSON.Title
+	result["pages"] = resultPages
 	return result, nil
 }
 
