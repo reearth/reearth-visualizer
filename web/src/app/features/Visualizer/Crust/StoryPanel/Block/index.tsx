@@ -3,7 +3,7 @@ import type {
   BlockProps
 } from "@reearth/app/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useCallback, type ComponentType, type ReactNode } from "react";
 
 import BlockWrapper from "../../../shared/components/BlockWrapper";

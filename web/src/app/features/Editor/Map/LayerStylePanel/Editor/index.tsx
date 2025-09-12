@@ -1,5 +1,5 @@
 import { Button, Tabs } from "@reearth/app/lib/reearth-ui";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";

@@ -1,14 +1,17 @@
 import { useApolloClient } from "@apollo/client";
+import { useProject } from "@reearth/services/api/project";
+import { useProjectMutations } from "@reearth/services/api/project/useProjectMutations";
 import {
-  useProjectFetcher,
-  useSceneFetcher,
-  useStorytellingFetcher
-} from "@reearth/services/api";
-import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
+  useStories,
+  useStoryMutations
+} from "@reearth/services/api/storytelling";
+import { toPublishmentStatus } from "@reearth/services/api/utils";
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import useScene from "../Editor/hooks/useScene";
 
 import { GeneralSettingsType } from "./innerPages/GeneralSettings";
 import {
@@ -26,43 +29,35 @@ export default ({ projectId }: ProjectSettingsProps) => {
   const navigate = useNavigate();
 
   const {
-    useProjectQuery,
-    useUpdateProject,
-    useUpdateProjectBasicAuth,
-    useUpdateProjectRemove,
-    usePublishProject,
-    useUpdatePublishProject,
-    useUpdateProjectMetadata
-  } = useProjectFetcher();
-  const { useSceneQuery } = useSceneFetcher();
-  const {
-    usePublishStory,
-    useUpdatePublishStory,
-    useStoriesQuery,
-    useUpdateStory
-  } = useStorytellingFetcher();
+    updateProject,
+    updateProjectBasicAuth,
+    updateProjectRecycleBin,
+    publishProject,
+    updatePublishProject,
+    updateProjectMetadata
+  } = useProjectMutations();
+
+  const { publishStory, updatePublishStory, updateStory } = useStoryMutations();
 
   const client = useApolloClient();
 
-  const { project } = useProjectQuery(projectId);
+  const { project } = useProject(projectId);
   const [disabled, setDisabled] = useState(false);
 
-  const { scene } = useSceneQuery({ sceneId: project?.scene?.id });
+  const { scene } = useScene({ sceneId: project?.scene?.id });
   const workspaceId = useMemo(() => scene?.workspaceId, [scene?.workspaceId]);
 
   const handleUpdateProject = useCallback(
-    async (
-      settings: GeneralSettingsType & PublicSettingsType
-    ) => {
-      await useUpdateProject({ projectId, ...settings });
+    async (settings: GeneralSettingsType & PublicSettingsType) => {
+      await updateProject({ projectId, ...settings });
     },
-    [projectId, useUpdateProject]
+    [projectId, updateProject]
   );
 
   const unpublish = useCallback(async () => {
     const publishmentStatus = toPublishmentStatus(project?.publishmentStatus);
     if (publishmentStatus === "published" || publishmentStatus === "limited") {
-      await usePublishProject("unpublished", projectId);
+      await publishProject("unpublished", projectId);
     }
 
     const storiesPublished = scene?.stories?.some((story) => {
@@ -82,7 +77,7 @@ export default ({ projectId }: ProjectSettingsProps) => {
             publishmentStatus === "published" ||
             publishmentStatus === "limited"
           ) {
-            await usePublishStory("unpublished", story.id);
+            await publishStory("unpublished", story.id);
           }
         })
       );
@@ -91,8 +86,8 @@ export default ({ projectId }: ProjectSettingsProps) => {
     projectId,
     project?.publishmentStatus,
     scene?.stories,
-    usePublishProject,
-    usePublishStory
+    publishProject,
+    publishStory
   ]);
 
   const handleProjectRemove = useCallback(async () => {
@@ -104,7 +99,7 @@ export default ({ projectId }: ProjectSettingsProps) => {
 
     await unpublish();
 
-    const { status } = await useUpdateProjectRemove(updatedProject);
+    const { status } = await updateProjectRecycleBin(updatedProject);
     client.cache.evict({
       id: client.cache.identify({
         __typename: "Project",
@@ -121,16 +116,16 @@ export default ({ projectId }: ProjectSettingsProps) => {
     unpublish,
     navigate,
     projectId,
-    useUpdateProjectRemove,
+    updateProjectRecycleBin,
     workspaceId
   ]);
 
   const handleUpdateProjectBasicAuth = useCallback(
     async (settings: PublicBasicAuthSettingsType) => {
       if (!projectId) return;
-      await useUpdateProjectBasicAuth({ projectId, ...settings });
+      await updateProjectBasicAuth({ projectId, ...settings });
     },
-    [projectId, useUpdateProjectBasicAuth]
+    [projectId, updateProjectBasicAuth]
   );
 
   const handleUpdateProjectAlias = useCallback(
@@ -138,19 +133,19 @@ export default ({ projectId }: ProjectSettingsProps) => {
       if (!projectId || settings.alias === undefined) return;
       const status =
         project?.publishmentStatus === "PUBLIC" ? "published" : "limited";
-      await useUpdatePublishProject(status, projectId, settings.alias);
+      await updatePublishProject(status, projectId, settings.alias);
     },
-    [project?.publishmentStatus, projectId, useUpdatePublishProject]
+    [project?.publishmentStatus, projectId, updatePublishProject]
   );
 
   const handleUpdateProjectGA = useCallback(
     async (settings: PublicGASettingsType) => {
       if (!projectId) return;
-      await useUpdateProject({ projectId, ...settings });
+      await updateProject({ projectId, ...settings });
     },
-    [projectId, useUpdateProject]
+    [projectId, updateProject]
   );
-  const { stories = [] } = useStoriesQuery({ sceneId: scene?.id });
+  const { stories = [] } = useStories({ sceneId: scene?.id });
   const currentStory = useMemo(
     () => (stories?.length ? stories[0] : undefined),
     [stories]
@@ -161,26 +156,26 @@ export default ({ projectId }: ProjectSettingsProps) => {
       if (!scene?.id || !currentStory?.id) return;
       const status =
         currentStory?.publishmentStatus === "PUBLIC" ? "published" : "limited";
-      await useUpdatePublishStory(status, currentStory.id, settings.alias);
+      await updatePublishStory(status, currentStory.id, settings.alias);
     },
     [
       scene?.id,
       currentStory?.id,
       currentStory?.publishmentStatus,
-      useUpdatePublishStory
+      updatePublishStory
     ]
   );
 
   const handleUpdateStory = useCallback(
     async (settings: PublicStorySettingsType | StorySettingsType) => {
       if (!scene?.id || !currentStory?.id) return;
-      await useUpdateStory({
+      await updateStory({
         storyId: currentStory.id,
         sceneId: scene.id,
         ...settings
       });
     },
-    [useUpdateStory, currentStory?.id, scene?.id]
+    [updateStory, currentStory?.id, scene?.id]
   );
 
   const { getAccessToken } = useAuth();
@@ -201,15 +196,10 @@ export default ({ projectId }: ProjectSettingsProps) => {
   );
 
   const handleUpdateProjectMetadata = useCallback(
-    async (
-      metadata: {
-        readme?: string;
-        license?: string;
-      } 
-    ) => {
-      await useUpdateProjectMetadata({ project: projectId, ...metadata });
+    async (metadata: { readme?: string; license?: string }) => {
+      await updateProjectMetadata({ project: projectId, ...metadata });
     },
-    [projectId, useUpdateProjectMetadata]
+    [projectId, updateProjectMetadata]
   );
 
   return {

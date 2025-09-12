@@ -1,10 +1,10 @@
 import { ValueType, ValueTypes, zeroValues } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
-import {
+import type {
   Group,
   GroupListItem,
   Item
-} from "@reearth/services/api/propertyApi/utils";
+} from "@reearth/services/api/property";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo, useState } from "react";

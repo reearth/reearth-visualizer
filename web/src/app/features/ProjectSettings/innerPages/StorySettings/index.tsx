@@ -1,4 +1,4 @@
-import { Position, Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Position, Story } from "@reearth/services/api/storytelling";
 
 import { InnerPage, SettingsWrapper, ArchivedSettingNotice } from "../common";
 

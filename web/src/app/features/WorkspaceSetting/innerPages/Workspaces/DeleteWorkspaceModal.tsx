@@ -5,7 +5,7 @@ import {
   TextInput,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useWorkspaceFetcher } from "@reearth/services/api";
+import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
@@ -26,7 +26,7 @@ const DeleteWorkspaceModal: FC<DeleteWorkspaceModalProps> = ({
   const t = useT();
   const navigate = useNavigate();
   const [_, setWorkspace] = useWorkspace();
-  const { useDeleteWorkspace: deleteWorkspace } = useWorkspaceFetcher();
+  const { deleteWorkspace } = useWorkspaceMutations();
 
   const [workspaceNameConfirm, setWorkspaceNameConfirm] = useState<string>("");
 

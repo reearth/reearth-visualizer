@@ -2,10 +2,14 @@ import useDoubleClick from "@reearth/app/hooks/useDoubleClick";
 import { PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import {
-  useStorytellingFetcher,
-  useProjectFetcher
-} from "@reearth/services/api";
-import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
+  useProjectImportExportMutations,
+  useProjectMutations
+} from "@reearth/services/api/project";
+import { toPublishmentStatus } from "@reearth/services/api/utils";
+import {
+  useStories,
+  useStoryMutations
+} from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -27,9 +31,10 @@ export default ({
   onProjectRemove
 }: Props) => {
   const t = useT();
-  const { useStoriesQuery, usePublishStory } = useStorytellingFetcher();
-  const { useExportProject, usePublishProject } = useProjectFetcher();
-  const { stories } = useStoriesQuery(
+  const { publishStory } = useStoryMutations();
+  const { publishProject } = useProjectMutations();
+  const { exportProject } = useProjectImportExportMutations();
+  const { stories } = useStories(
     {
       sceneId: project?.sceneId
     },
@@ -67,8 +72,8 @@ export default ({
   const handleExportProject = useCallback(async () => {
     if (!project.id) return;
 
-    await useExportProject(project.id);
-  }, [useExportProject, project.id]);
+    await exportProject(project.id);
+  }, [exportProject, project.id]);
 
   useEffect(() => {
     setIsStarred(project.starred);
@@ -161,23 +166,17 @@ export default ({
   const handleProjectPublish = useCallback(
     async (projectId: string) => {
       if (projectPublished) {
-        await usePublishProject("unpublished", projectId);
+        await publishProject("unpublished", projectId);
       }
 
       if (storiesPublished && stories?.length) {
         const storyPromises = stories.map((story) =>
-          usePublishStory("unpublished", story.id)
+          publishStory("unpublished", story.id)
         );
         await Promise.all(storyPromises);
       }
     },
-    [
-      projectPublished,
-      stories,
-      storiesPublished,
-      usePublishProject,
-      usePublishStory
-    ]
+    [projectPublished, stories, storiesPublished, publishProject, publishStory]
   );
 
   const handleProjectRemove = useCallback(

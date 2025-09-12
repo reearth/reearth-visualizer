@@ -9,14 +9,14 @@ import {
 import { Camera } from "@reearth/app/utils/value";
 import type { LatLng, ComputedLayer, ComputedFeature } from "@reearth/core";
 import {
-  useLayersFetcher,
-  useSceneFetcher,
-  useWidgetsFetcher,
-  useStorytellingFetcher,
-  usePropertyFetcher,
-  useLayerStylesFetcher,
-  useInfoboxFetcher
-} from "@reearth/services/api";
+  useInfoboxBlockMutations,
+  useInstallableInfoboxBlocks
+} from "@reearth/services/api/infobox";
+import { useNLSLayers } from "@reearth/services/api/layer";
+import { useLayerStyles } from "@reearth/services/api/layerStyle";
+import { usePropertyMutations } from "@reearth/services/api/property";
+import { useStoryBlockMutations } from "@reearth/services/api/storytelling";
+import { useWidgetMutations } from "@reearth/services/api/widget";
 import { config } from "@reearth/services/config";
 import { useAtomValue } from "jotai";
 import {
@@ -30,6 +30,7 @@ import {
 
 import { useCurrentCamera } from "../atoms";
 import type { LayerSelectProps, SelectedLayer } from "../hooks/useLayers";
+import useScene from "../hooks/useScene";
 import {
   PhotoOverlayPreviewAtom,
   SketchFeatureTooltipAtom
@@ -60,23 +61,17 @@ export default ({
   onVisualizerReady: (value: boolean) => void;
   setSelectedStoryPageId: (value: string | undefined) => void;
 }) => {
-  const { useUpdateWidget, useUpdateWidgetAlignSystem } = useWidgetsFetcher();
-  const { useGetLayersQuery } = useLayersFetcher();
-  const { useGetLayerStylesQuery } = useLayerStylesFetcher();
-  const { useSceneQuery } = useSceneFetcher();
-  const { useCreateStoryBlock, useDeleteStoryBlock } = useStorytellingFetcher();
+  const { updateWidget, updateWidgetAlignSystem } = useWidgetMutations();
+  const { createStoryBlock, deleteStoryBlock } = useStoryBlockMutations();
   const {
-    useUpdatePropertyValue,
-    useAddPropertyItem,
-    useMovePropertyItem,
-    useRemovePropertyItem
-  } = usePropertyFetcher();
-  const {
-    useInstallableInfoboxBlocksQuery,
-    useCreateInfoboxBlock,
-    useDeleteInfoboxBlock,
-    useMoveInfoboxBlock
-  } = useInfoboxFetcher();
+    updatePropertyValue,
+    addPropertyItem,
+    movePropertyItem,
+    removePropertyItem
+  } = usePropertyMutations();
+
+  const { createInfoboxBlock, deleteInfoboxBlock, moveInfoboxBlock } =
+    useInfoboxBlockMutations();
 
   const [currentCamera, setCurrentCamera] = useCurrentCamera();
   const handleCameraUpdate = useCallback(
@@ -86,10 +81,9 @@ export default ({
     [setCurrentCamera]
   );
 
-  const { nlsLayers } = useGetLayersQuery({ sceneId });
-  const { layerStyles } = useGetLayerStylesQuery({ sceneId });
-
-  const { scene } = useSceneQuery({ sceneId });
+  const { nlsLayers } = useNLSLayers({ sceneId });
+  const { layerStyles } = useLayerStyles({ sceneId });
+  const { scene } = useScene({ sceneId });
 
   const [zoomedLayerId, zoomToLayer] = useState<string | undefined>(undefined);
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
@@ -105,7 +99,7 @@ export default ({
     const timeoutId = setTimeout(() => {
       setTempDisableTerrain(false);
     }, 0);
-    
+
     return () => clearTimeout(timeoutId);
   }, []);
 
@@ -181,7 +175,7 @@ export default ({
     setCurrentCamera(initialCamera);
   }, [initialCamera, setCurrentCamera]);
 
-  const { installableInfoboxBlocks } = useInstallableInfoboxBlocksQuery({
+  const { installableInfoboxBlocks } = useInstallableInfoboxBlocks({
     sceneId
   });
 
@@ -247,14 +241,14 @@ export default ({
       id: string,
       update: { location?: Location; extended?: boolean; index?: number }
     ) => {
-      await useUpdateWidget(id, update, sceneId);
+      await updateWidget(id, update, sceneId);
     },
-    [sceneId, useUpdateWidget]
+    [sceneId, updateWidget]
   );
 
   const handleWidgetAlignSystemUpdate = useCallback(
     async (location: Location, align: Alignment) => {
-      await useUpdateWidgetAlignSystem(
+      await updateWidgetAlignSystem(
         {
           zone: location.zone,
           section: location.section,
@@ -264,7 +258,7 @@ export default ({
         sceneId
       );
     },
-    [sceneId, useUpdateWidgetAlignSystem]
+    [sceneId, updateWidgetAlignSystem]
   );
 
   // Plugin
@@ -280,37 +274,37 @@ export default ({
   const handleInfoboxBlockCreate = useCallback(
     async (pluginId: string, extensionId: string, index?: number) => {
       if (!selectedLayer?.layer?.id) return;
-      await useCreateInfoboxBlock({
+      await createInfoboxBlock({
         layerId: selectedLayer.layer.id,
         pluginId,
         extensionId,
         index
       });
     },
-    [selectedLayer, useCreateInfoboxBlock]
+    [selectedLayer, createInfoboxBlock]
   );
 
   const handleInfoboxBlockMove = useCallback(
     async (id: string, targetIndex: number) => {
       if (!selectedLayer?.layer?.id) return;
-      await useMoveInfoboxBlock({
+      await moveInfoboxBlock({
         layerId: selectedLayer.layer.id,
         infoboxBlockId: id,
         index: targetIndex
       });
     },
-    [selectedLayer, useMoveInfoboxBlock]
+    [selectedLayer, moveInfoboxBlock]
   );
 
   const handleInfoboxBlockRemove = useCallback(
     async (id?: string) => {
       if (!selectedLayer?.layer?.id || !id) return;
-      await useDeleteInfoboxBlock({
+      await deleteInfoboxBlock({
         layerId: selectedLayer.layer.id,
         infoboxBlockId: id
       });
     },
-    [selectedLayer, useDeleteInfoboxBlock]
+    [selectedLayer, deleteInfoboxBlock]
   );
 
   // Story
@@ -332,7 +326,7 @@ export default ({
       index?: number
     ) => {
       if (!extensionId || !pluginId || !storyId || !pageId) return;
-      await useCreateStoryBlock({
+      await createStoryBlock({
         pluginId,
         extensionId,
         storyId,
@@ -340,15 +334,15 @@ export default ({
         index
       });
     },
-    [storyId, useCreateStoryBlock]
+    [storyId, createStoryBlock]
   );
 
   const handleStoryBlockDelete = useCallback(
     async (pageId?: string, blockId?: string) => {
       if (!blockId || !storyId || !pageId) return;
-      await useDeleteStoryBlock({ blockId, pageId, storyId });
+      await deleteStoryBlock({ blockId, pageId, storyId });
     },
-    [storyId, useDeleteStoryBlock]
+    [storyId, deleteStoryBlock]
   );
 
   const handlePropertyValueUpdate = useCallback(
@@ -361,7 +355,7 @@ export default ({
       v?: unknown
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
-      await useUpdatePropertyValue(
+      await updatePropertyValue(
         propertyId,
         schemaItemId,
         itemId,
@@ -371,15 +365,15 @@ export default ({
         vt as keyof import("@reearth/core").ValueTypes
       );
     },
-    [useUpdatePropertyValue]
+    [updatePropertyValue]
   );
 
   const handlePropertyItemAdd = useCallback(
     async (propertyId?: string, schemaGroupId?: string) => {
       if (!propertyId || !schemaGroupId) return;
-      await useAddPropertyItem(propertyId, schemaGroupId);
+      await addPropertyItem(propertyId, schemaGroupId);
     },
-    [useAddPropertyItem]
+    [addPropertyItem]
   );
 
   const handlePropertyItemMove = useCallback(
@@ -391,17 +385,17 @@ export default ({
     ) => {
       if (!propertyId || !schemaGroupId || !itemId || index === undefined)
         return;
-      await useMovePropertyItem(propertyId, schemaGroupId, itemId, index);
+      await movePropertyItem(propertyId, schemaGroupId, itemId, index);
     },
-    [useMovePropertyItem]
+    [movePropertyItem]
   );
 
   const handlePropertyItemDelete = useCallback(
     async (propertyId?: string, schemaGroupId?: string, itemId?: string) => {
       if (!propertyId || !schemaGroupId || !itemId) return;
-      await useRemovePropertyItem(propertyId, schemaGroupId, itemId);
+      await removePropertyItem(propertyId, schemaGroupId, itemId);
     },
-    [useRemovePropertyItem]
+    [removePropertyItem]
   );
 
   const engineMeta = useMemo(

@@ -4,7 +4,7 @@ import {
 } from "@reearth/app/features/Editor/hooks/useLayers";
 import { Collapse } from "@reearth/app/lib/reearth-ui";
 import { InputField } from "@reearth/app/ui/fields";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
