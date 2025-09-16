@@ -2,7 +2,7 @@ import { getFieldValue } from "@reearth/app/features/Visualizer/Crust/StoryPanel
 import { TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
 import { isEmptyString } from "@reearth/app/utils/string";
-import { Page } from "@reearth/services/api/storytellingApi/utils";
+import type { Page } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";

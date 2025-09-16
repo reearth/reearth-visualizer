@@ -1,6 +1,10 @@
-import { useWorkspaceFetcher, useProjectFetcher } from "@reearth/services/api";
+import { useProject } from "@reearth/services/api/project";
+import { useWorkspaces, useWorkspace } from "@reearth/services/api/workspace";
 import { useAuth } from "@reearth/services/auth";
-import { useProjectId, useWorkspace } from "@reearth/services/state";
+import {
+  useProjectId,
+  useWorkspace as useWorkspaceState
+} from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 import { useMemo, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -15,15 +19,12 @@ export default ({
   const navigate = useNavigate();
   const { logout: handleLogout } = useAuth();
 
-  const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
+  const [currentWorkspace, setCurrentWorkspace] = useWorkspaceState();
 
-  const { useProjectQuery } = useProjectFetcher();
-  const { useWorkspaceQuery, useWorkspacesQuery } = useWorkspaceFetcher();
+  const { workspaces } = useWorkspaces();
+  const { workspace } = useWorkspace(workspaceId);
 
-  const { workspaces } = useWorkspacesQuery();
-  const { workspace } = useWorkspaceQuery(workspaceId);
-
-  const { project } = useProjectQuery(projectId);
+  const { project } = useProject(projectId);
   const [, setCurrentProjectId] = useProjectId();
 
   useEffect(() => {

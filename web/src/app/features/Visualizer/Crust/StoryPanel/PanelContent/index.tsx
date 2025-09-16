@@ -1,6 +1,6 @@
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import type { NLSLayer } from "@reearth/services/api/layer";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
 import { styled } from "@reearth/services/theme";
 import { FC, MutableRefObject, ReactNode } from "react";
 

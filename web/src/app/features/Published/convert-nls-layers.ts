@@ -1,4 +1,4 @@
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 
 import { PublishedNLSLayer } from "./types";
 

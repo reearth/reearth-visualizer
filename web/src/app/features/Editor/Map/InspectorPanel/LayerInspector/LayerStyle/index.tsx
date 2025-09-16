@@ -1,6 +1,6 @@
 import { SelectField } from "@reearth/app/ui/fields";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo } from "react";
 

@@ -48,6 +48,7 @@ import Dashboard from "./Icons/Dashboard.svg?react";
 import Data from "./Icons/Data.svg?react";
 import Desktop from "./Icons/Desktop.svg?react";
 import DeviceMobile from "./Icons/DeviceMobile.svg?react";
+import Discord from "./Icons/Discord.svg?react";
 import DotsSixVertical from "./Icons/DotsSixVertical.svg?react";
 import DotsThreeVertical from "./Icons/DotsThreeVertical.svg?react";
 import DownloadSimple from "./Icons/DownloadSimple.svg?react";
@@ -225,6 +226,7 @@ export default {
   data: Data,
   desktop: Desktop,
   deviceMobile: DeviceMobile,
+  discord: Discord,
   dotsSixVertical: DotsSixVertical,
   dotsThreeVertical: DotsThreeVertical,
   downloadSimple: DownloadSimple,

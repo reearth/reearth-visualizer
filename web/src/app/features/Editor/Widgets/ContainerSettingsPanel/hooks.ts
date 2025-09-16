@@ -1,5 +1,5 @@
 import { toWidgetAlignSystemType } from "@reearth/app/utils/value";
-import { useWidgetsFetcher } from "@reearth/services/api";
+import { useWidgetMutations } from "@reearth/services/api/widget";
 import { WidgetAreaState } from "@reearth/services/state";
 import { SetStateAction, useCallback } from "react";
 
@@ -13,14 +13,14 @@ type Props = {
 };
 
 export default ({ sceneId, selectWidgetArea }: Props) => {
-  const { useUpdateWidgetAlignSystem } = useWidgetsFetcher();
+  const { updateWidgetAlignSystem } = useWidgetMutations();
   const [widgetsViewDevice] = useWidgetsViewDevice();
 
   const handleWidgetAreaStateChange = useCallback(
     async (widgetAreaState?: WidgetAreaState) => {
       if (!sceneId || !widgetAreaState) return;
       const type = toWidgetAlignSystemType(widgetsViewDevice);
-      const results = await useUpdateWidgetAlignSystem(
+      const results = await updateWidgetAlignSystem(
         widgetAreaState,
         sceneId,
         type
@@ -29,7 +29,7 @@ export default ({ sceneId, selectWidgetArea }: Props) => {
         selectWidgetArea(widgetAreaState);
       }
     },
-    [sceneId, useUpdateWidgetAlignSystem, selectWidgetArea, widgetsViewDevice]
+    [sceneId, updateWidgetAlignSystem, selectWidgetArea, widgetsViewDevice]
   );
 
   return {

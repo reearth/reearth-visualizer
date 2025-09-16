@@ -1,5 +1,8 @@
 import { LayerAppearanceTypes } from "@reearth/core";
-import { useLayerStylesFetcher } from "@reearth/services/api";
+import {
+  useLayerStyleMutations,
+  useLayerStyles
+} from "@reearth/services/api/layerStyle";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo, useState } from "react";
 
@@ -24,16 +27,12 @@ export type LayerStyleValueUpdateProps = {
 
 export default function ({ sceneId }: LayerStyleProps) {
   const t = useT();
-  const {
-    useAddLayerStyle,
-    useGetLayerStylesQuery,
-    useRemoveLayerStyle,
-    useUpdateLayerStyle
-  } = useLayerStylesFetcher();
+  const { addLayerStyle, removeLayerStyle, updateLayerStyle } =
+    useLayerStyleMutations();
   const [selectedLayerStyleId, setSelectedLayerStyleId] = useState<
     string | undefined
   >(undefined);
-  const { layerStyles } = useGetLayerStylesQuery({ sceneId });
+  const { layerStyles } = useLayerStyles({ sceneId });
 
   const selectedLayerStyle = useMemo(
     () => layerStyles.find((l) => l.id === selectedLayerStyleId) || undefined,
@@ -50,7 +49,7 @@ export default function ({ sceneId }: LayerStyleProps) {
       const deletedPageIndex = layerStyles.findIndex((l) => l.id === styleId);
       if (deletedPageIndex === undefined) return;
 
-      await useRemoveLayerStyle({
+      await removeLayerStyle({
         styleId
       });
       if (styleId === selectedLayerStyleId) {
@@ -61,39 +60,39 @@ export default function ({ sceneId }: LayerStyleProps) {
       layerStyles,
       selectedLayerStyleId,
       setSelectedLayerStyleId,
-      useRemoveLayerStyle
+      removeLayerStyle
     ]
   );
 
   const handleLayerStyleAdd = useCallback(
     async (inp: LayerStyleAddProps) => {
-      await useAddLayerStyle({
+      await addLayerStyle({
         sceneId: sceneId,
         name: t(inp.name),
         value: inp.value
       });
     },
-    [sceneId, t, useAddLayerStyle]
+    [sceneId, t, addLayerStyle]
   );
 
   const handleLayerStyleNameUpdate = useCallback(
     async (inp: LayerStyleNameUpdateProps) => {
-      await useUpdateLayerStyle({
+      await updateLayerStyle({
         styleId: inp.styleId,
         name: inp.name
       });
     },
-    [useUpdateLayerStyle]
+    [updateLayerStyle]
   );
 
   const handleLayerStyleValueUpdate = useCallback(
     async (inp: LayerStyleValueUpdateProps) => {
-      await useUpdateLayerStyle({
+      await updateLayerStyle({
         styleId: inp.styleId,
         value: inp.value
       });
     },
-    [useUpdateLayerStyle]
+    [updateLayerStyle]
   );
 
   return {

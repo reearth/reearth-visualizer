@@ -6,7 +6,10 @@ import {
   TextInput,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useWorkspaceFetcher } from "@reearth/services/api";
+import {
+  useWorkspaceMutations,
+  useWorkspaces
+} from "@reearth/services/api/workspace";
 import { useT } from "@reearth/services/i18n";
 import { useAddWorkspaceModal } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -19,8 +22,7 @@ const AddWorkspaceModal: FC = () => {
 
   const navigate = useNavigate();
   const [addWorkspaceModal, setAddWorkspaceModal] = useAddWorkspaceModal();
-  const { useCreateWorkspace: addWorkspace, useWorkspacesQuery } =
-    useWorkspaceFetcher();
+  const { createWorkspace } = useWorkspaceMutations();
 
   const [workspaceNameConfirm, setWorkspaceNameConfirm] = useState<string>("");
 
@@ -29,14 +31,14 @@ const AddWorkspaceModal: FC = () => {
   }, [setAddWorkspaceModal]);
 
   const handleAddWorkspace = useCallback(async () => {
-    const { data } = await addWorkspace({
+    const { data } = await createWorkspace({
       name: workspaceNameConfirm
     });
     setAddWorkspaceModal(false);
     navigate(`/dashboard/${data?.id}`);
-  }, [addWorkspace, workspaceNameConfirm, setAddWorkspaceModal, navigate]);
+  }, [createWorkspace, workspaceNameConfirm, setAddWorkspaceModal, navigate]);
 
-  const { workspaces } = useWorkspacesQuery();
+  const { workspaces } = useWorkspaces();
   const isDuplicatedName: boolean | undefined = useMemo(() => {
     const name = workspaceNameConfirm.trim();
     if (!name) return false;

@@ -1,5 +1,10 @@
 import { StoryPanelRef } from "@reearth/app/features/Visualizer/Crust/StoryPanel";
-import useStorytellingAPI from "@reearth/services/api/storytellingApi";
+import {
+  useInstallableStoryBlocks,
+  useStories,
+  useStoryBlockMutations,
+  useStoryPageMutations
+} from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { useState, useCallback, useMemo, useRef } from "react";
 
@@ -15,18 +20,12 @@ export default function ({ sceneId }: Props) {
     string | undefined
   >(undefined);
 
-  const {
-    useStoriesQuery,
-    useCreateStoryPage,
-    useDeleteStoryPage,
-    useMoveStoryPage,
-    useMoveStoryBlock,
-    useUpdateStoryPage,
-    useInstallableStoryBlocksQuery
-  } = useStorytellingAPI();
+  const { createStoryPage, deleteStoryPage, moveStoryPage, updateStoryPage } =
+    useStoryPageMutations();
+  const { moveStoryBlock } = useStoryBlockMutations();
 
-  const { stories } = useStoriesQuery({ sceneId });
-  const { installableStoryBlocks } = useInstallableStoryBlocksQuery({
+  const { stories } = useStories({ sceneId });
+  const { installableStoryBlocks } = useInstallableStoryBlocks({
     sceneId
   });
 
@@ -53,7 +52,10 @@ export default function ({ sceneId }: Props) {
 
   const handleStoryPageDuplicate = useCallback(async (pageId: string) => {
     // TODO: Implement page duplication functionality
-    console.warn("Story page duplication not yet implemented for page:", pageId);
+    console.warn(
+      "Story page duplication not yet implemented for page:",
+      pageId
+    );
   }, []);
 
   const handleStoryPageDelete = useCallback(
@@ -62,7 +64,7 @@ export default function ({ sceneId }: Props) {
       const pages = selectedStory?.pages ?? [];
       const deletedPageIndex = pages.findIndex((p) => p.id === pageId);
 
-      await useDeleteStoryPage({
+      await deleteStoryPage({
         sceneId,
         storyId: selectedStory.id,
         pageId
@@ -78,14 +80,14 @@ export default function ({ sceneId }: Props) {
       sceneId,
       selectedStoryPageId,
       handleCurrentStoryPageChange,
-      useDeleteStoryPage
+      deleteStoryPage
     ]
   );
 
   const handleStoryPageAdd = useCallback(
     async (isSwipeable: boolean) => {
       if (!selectedStory) return;
-      await useCreateStoryPage({
+      await createStoryPage({
         sceneId,
         storyId: selectedStory.id,
         swipeable: isSwipeable,
@@ -95,45 +97,45 @@ export default function ({ sceneId }: Props) {
         swipeableLayers: []
       });
     },
-    [useCreateStoryPage, sceneId, selectedStory, t]
+    [createStoryPage, sceneId, selectedStory, t]
   );
 
   const handleStoryPageMove = useCallback(
     async (id: string, targetIndex: number) => {
       if (!selectedStory) return;
-      await useMoveStoryPage({
+      await moveStoryPage({
         storyId: selectedStory.id,
         pageId: id,
         index: targetIndex
       });
     },
-    [useMoveStoryPage, selectedStory]
+    [moveStoryPage, selectedStory]
   );
 
   const handleStoryBlockMove = useCallback(
     async (id: string, targetIndex: number, blockId: string) => {
       if (!selectedStory) return;
-      await useMoveStoryBlock({
+      await moveStoryBlock({
         storyId: selectedStory.id,
         pageId: id,
         index: targetIndex,
         blockId
       });
     },
-    [useMoveStoryBlock, selectedStory]
+    [moveStoryBlock, selectedStory]
   );
 
   const handleStoryPageUpdate = useCallback(
     async (pageId: string, layers: string[]) => {
       if (!selectedStory) return;
-      await useUpdateStoryPage({
+      await updateStoryPage({
         sceneId,
         storyId: selectedStory.id,
         pageId,
         layers
       });
     },
-    [sceneId, selectedStory, useUpdateStoryPage]
+    [sceneId, selectedStory, updateStoryPage]
   );
 
   return {

@@ -2,7 +2,7 @@ import { Collapse } from "@reearth/app/lib/reearth-ui";
 import PropertyItem from "@reearth/app/ui/fields/Properties";
 import { stopClickPropagation } from "@reearth/app/utils/events";
 import { FlyTo } from "@reearth/core";
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/property";
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode, createContext, memo } from "react";
 

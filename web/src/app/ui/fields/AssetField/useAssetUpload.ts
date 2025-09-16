@@ -5,7 +5,7 @@ import {
   GENERAL_FILE_TYPE_ACCEPT_STRING,
   MODEL_FILE_TYPES
 } from "@reearth/app/features/AssetsManager/constants";
-import { useAssetsFetcher } from "@reearth/services/api";
+import { useAssetMutations } from "@reearth/services/api/asset";
 import { useCallback, useMemo } from "react";
 import useFileInput from "use-file-input";
 
@@ -22,7 +22,7 @@ export default ({
   assetsTypes?: AcceptedAssetsTypes;
   multiple?: boolean;
 }) => {
-  const { useCreateAssets } = useAssetsFetcher();
+  const { createAssets } = useAssetMutations();
 
   const acceptedExtension = useMemo(() => {
     return assetsTypes && assetsTypes.length > 0
@@ -46,7 +46,7 @@ export default ({
     async (files?: FileList) => {
       if (!files) return;
       try {
-        const result = await useCreateAssets({
+        const result = await createAssets({
           workspaceId: workspaceId ?? "",
           projectId,
           file: files,
@@ -59,7 +59,7 @@ export default ({
         console.error("Error creating assets:", error);
       }
     },
-    [useCreateAssets, workspaceId, projectId, onAssetSelect]
+    [createAssets, workspaceId, projectId, onAssetSelect]
   );
   const handleFileUpload = useFileInput(
     (files) => handleAssetsCreate?.(files),

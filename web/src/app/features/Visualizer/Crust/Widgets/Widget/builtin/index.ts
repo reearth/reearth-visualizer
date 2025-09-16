@@ -3,7 +3,7 @@ import {
   DATA_ATTRIBUTION_WIDGET_ID,
   GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID,
   NAVIGATOR_BUILTIN_WIDGET_ID
-} from "@reearth/services/api/widgetsApi/utils";
+} from "@reearth/services/api/widget/utils";
 import { config } from "@reearth/services/config";
 import { merge } from "lodash-es";
 

@@ -1,7 +1,7 @@
 import { Theme } from "@reearth/app/features/Visualizer/Crust/types";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { ComputedFeature, FlyTo, Layer } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 
 export type InstallableBlock = {
   name: string;

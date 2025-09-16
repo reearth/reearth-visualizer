@@ -5,7 +5,7 @@ import {
   InstallableBlock
 } from "@reearth/app/features/Visualizer/shared/types";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { styled } from "@reearth/services/theme";
 import { forwardRef, memo, ReactNode, Ref, RefObject, useMemo } from "react";
 import { createPortal } from "react-dom";

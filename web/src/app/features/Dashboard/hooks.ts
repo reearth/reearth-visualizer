@@ -1,4 +1,4 @@
-import { useMeFetcher } from "@reearth/services/api";
+import { useMe } from "@reearth/services/api/user";
 import { useAuth } from "@reearth/services/auth";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useWorkspace } from "@reearth/services/state";
@@ -15,8 +15,7 @@ type Props = {
 
 export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   const navigate = useNavigate();
-  const { useMeQuery } = useMeFetcher();
-  const { me: data } = useMeQuery();
+  const { me: data } = useMe();
   const { logout } = useAuth();
   const [currentWorkspace, setCurrentWorkspace] = useWorkspace();
 

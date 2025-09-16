@@ -1,6 +1,6 @@
 import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
 import { InputField, SelectField } from "@reearth/app/ui/fields";
-import { useWorkspaceFetcher } from "@reearth/services/api";
+import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { Role, WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
@@ -32,17 +32,23 @@ const UpdateRoleModal: FC<UpdateRoleModalProps> = ({
 
   const [localRole, setLocalRole] = useState(member.role);
 
-  const { useUpdateMemberOfWorkspace: updateMember } = useWorkspaceFetcher();
+  const { updateMemberOfWorkspace } = useWorkspaceMutations();
 
   const handleUpdateRole = useCallback(async () => {
     if (!workspace?.id || !member.user?.id || !localRole) return;
-    await updateMember({
+    await updateMemberOfWorkspace({
       workspaceId: workspace.id,
       userId: member.user.id,
       role: localRole
     });
     onClose();
-  }, [workspace?.id, member.user?.id, localRole, updateMember, onClose]);
+  }, [
+    workspace?.id,
+    member.user?.id,
+    localRole,
+    updateMemberOfWorkspace,
+    onClose
+  ]);
 
   return (
     <Modal visible={visible} size="small">

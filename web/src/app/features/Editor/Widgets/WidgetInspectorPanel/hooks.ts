@@ -1,5 +1,5 @@
 import { filterVisibleItems } from "@reearth/app/ui/fields/utils";
-import { useWidgetsFetcher } from "@reearth/services/api";
+import { useInstalledWidgets } from "@reearth/services/api/widget";
 import { useMemo } from "react";
 
 import { useWidgetsViewDevice } from "../../atoms";
@@ -11,8 +11,6 @@ type Props = {
 };
 
 export default ({ sceneId, selectedWidget }: Props) => {
-  const { useInstalledWidgets } = useWidgetsFetcher();
-
   const [widgetsViewDevice] = useWidgetsViewDevice();
   const { installedWidgets } = useInstalledWidgets({
     sceneId,

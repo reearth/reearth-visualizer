@@ -1,8 +1,6 @@
 import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
-import {
-  useProjectFetcher,
-  useStorytellingFetcher
-} from "@reearth/services/api";
+import { useProjectMutations } from "@reearth/services/api/project";
+import { useStoryMutations } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
 
@@ -17,8 +15,8 @@ type Props = {
 const UnpublishModal: FC<Props> = ({ publishItem, onClose }) => {
   const t = useT();
 
-  const { usePublishProject: publishProject } = useProjectFetcher();
-  const { usePublishStory: publishStory } = useStorytellingFetcher();
+  const { publishProject } = useProjectMutations();
+  const { publishStory } = useStoryMutations();
 
   const [isLoading, setIsLoading] = useState(false);
   const handleUnpublish = useCallback(async () => {

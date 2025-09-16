@@ -44,9 +44,7 @@ const ListItem: FC<{
     <StyledListItem>
       <UserWrapper>
         <Avatar>
-          <Typography size="body">
-            {member.user?.name.charAt(0).toUpperCase()}
-          </Typography>
+          <Typography size="body">{member.user?.name.charAt(0)}</Typography>
         </Avatar>
         <TypographyWrapper>
           <Typography size="body">{member.user?.name}</Typography>

@@ -433,12 +433,38 @@ func PbDump(m proto.Message) string {
 }
 
 func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+	callGrpc(t, testFunc, metadata.New(map[string]string{
+		"authorization": fmt.Sprintf("Bearer %s", internalApiConfig.Visualizer.InternalApi.Token),
+		"user-id":       userID,
+	}))
+}
+
+func runTestVisitor(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+	callGrpc(t, testFunc, metadata.New(map[string]string{}))
+}
+
+func callGrpc(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context), op metadata.MD) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	ctx = metadata.NewOutgoingContext(ctx, op)
+
+	conn, err := grpc.NewClient("localhost:"+internalApiConfig.Visualizer.InternalApi.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		t.Fatalf("failed to connect: %v", err)
+	}
+	defer SafeClose(conn)
+
+	client := pb.NewReEarthVisualizerClient(conn)
+	testFunc(client, ctx)
+}
+
+func runTestWithUserNoToken(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"authorization": fmt.Sprintf("Bearer %s", internalApiConfig.Visualizer.InternalApi.Token),
-		"user-id":       userID,
+		"user-id": userID,
 	}))
 
 	conn, err := grpc.NewClient("localhost:"+internalApiConfig.Visualizer.InternalApi.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))

@@ -1,6 +1,6 @@
 import Visualizer from "@reearth/app/features/Visualizer";
 import { SpacingValues } from "@reearth/app/ui/fields/SpacingField";
-import { SchemaField } from "@reearth/services/api/propertyApi/utils";
+import { SchemaField } from "@reearth/services/api/property";
 import { ComponentProps } from "react";
 
 import { Field } from "../Visualizer/Crust/StoryPanel/types";

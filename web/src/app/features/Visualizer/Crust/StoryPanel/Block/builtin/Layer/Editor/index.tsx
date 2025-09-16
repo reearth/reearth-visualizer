@@ -4,7 +4,7 @@ import {
   ListField,
   SelectField
 } from "@reearth/app/ui/fields";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";

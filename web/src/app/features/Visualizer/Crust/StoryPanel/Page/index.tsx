@@ -4,8 +4,8 @@ import SelectableArea from "@reearth/app/features/Visualizer/shared/components/S
 import { useElementOnScreen } from "@reearth/app/features/Visualizer/shared/hooks/useElementOnScreen";
 import { DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import type { InstallableStoryBlock } from "@reearth/services/api/storytellingApi/blocks";
+import type { NLSLayer } from "@reearth/services/api/layer";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import {

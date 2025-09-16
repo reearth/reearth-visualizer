@@ -1,6 +1,6 @@
 import { defaultStyle } from "@reearth/app/features/Editor/Map/LayerStylePanel/PresetLayerStyle/presetLayerStyles";
 import { LayerAppearanceTypes } from "@reearth/core";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 
 export const getLayerStyleValue = (
   layerStyles: LayerStyle[] | undefined,

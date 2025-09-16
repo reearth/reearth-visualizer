@@ -5,8 +5,8 @@ import type {
   Geometry,
   TimeInterval
 } from "@reearth/core";
-import { SketchFeature } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { SketchFeature } from "@reearth/services/api/layer/types";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 
 export type PublishedData = {
   schemaVersion: number;

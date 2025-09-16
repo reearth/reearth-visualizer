@@ -1,9 +1,9 @@
 import { AreaSize } from "@reearth/app/ui/layout";
 import { FlyTo, MapRef, SketchEditingFeature, SketchType } from "@reearth/core";
-import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
-import { Item } from "@reearth/services/api/propertyApi/utils";
-import { Scene } from "@reearth/services/api/sceneApi";
+import { NLSLayer, SketchFeature } from "@reearth/services/api/layer/types";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
+import type { Item } from "@reearth/services/api/property";
+import type { Scene } from "@reearth/services/api/scene";
 import {
   ChangeCustomPropertyTitleInput,
   RemoveCustomPropertyInput,

@@ -5,7 +5,7 @@ import {
   ModalPanel,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useWorkspaceFetcher } from "@reearth/services/api";
+import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
@@ -27,13 +27,13 @@ const DeleteMemberWarningModal: FC<DeleteMemberWarningModalProps> = ({
 }) => {
   const t = useT();
 
-  const { useRemoveMemberFromWorkspace: removeMember } = useWorkspaceFetcher();
+  const { removeMemberFromWorkspace } = useWorkspaceMutations();
   const onRemoveMember = useCallback(
     (userId: string) => {
       if (!userId || !workspace?.id) return;
-      removeMember({ workspaceId: workspace?.id, userId });
+      removeMemberFromWorkspace({ workspaceId: workspace?.id, userId });
     },
-    [workspace?.id, removeMember]
+    [workspace?.id, removeMemberFromWorkspace]
   );
   const handleRemoveMember = useCallback(() => {
     if (!member?.user?.id) return;

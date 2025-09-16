@@ -5,7 +5,7 @@ import {
   PhotoOverlayPreview
 } from "@reearth/app/utils/sketch";
 import { Camera, ComputedFeature, ComputedLayer, MapRef } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import {
   FC,
   ReactNode,

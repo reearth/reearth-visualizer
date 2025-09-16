@@ -1,7 +1,7 @@
 import CursorStatus from "@reearth/app/features/CursorStatus";
 import useAccountSettingsTabs from "@reearth/app/hooks/useAccountSettingsTabs";
 import SettingBase from "@reearth/app/ui/components/SettingBase";
-import { useWorkspaceFetcher } from "@reearth/services/api";
+import { useWorkspace } from "@reearth/services/api/workspace";
 import { FC } from "react";
 
 import Workspace from "./innerPages/Workspaces";
@@ -16,8 +16,7 @@ enum TABS {
 }
 
 const WorkspaceSetting: FC<Props> = ({ tab, workspaceId }) => {
-  const { useWorkspaceQuery } = useWorkspaceFetcher();
-  const { workspace } = useWorkspaceQuery(workspaceId);
+  const { workspace } = useWorkspace(workspaceId);
 
   const { tabs } = useAccountSettingsTabs({ workspaceId: workspaceId ?? "" });
 

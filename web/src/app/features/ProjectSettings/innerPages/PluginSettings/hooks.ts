@@ -1,4 +1,4 @@
-import { usePluginsFetcher } from "@reearth/services/api";
+import { usePluginMutations } from "@reearth/services/api/plugin";
 import { ScenePlugin } from "@reearth/services/gql";
 import { useCallback, useMemo } from "react";
 
@@ -16,12 +16,8 @@ export default ({
   sceneId?: string;
   plugins?: ScenePlugin[];
 }) => {
-  const {
-    useInstallPlugin,
-    useUpgradePlugin,
-    useUploadPlugin,
-    useUninstallPlugin
-  } = usePluginsFetcher();
+  const { installPlugin, upgradePlugin, uploadPlugin, uninstallPlugin } =
+    usePluginMutations();
 
   const marketplacePlugins = useMemo(
     () =>
@@ -71,36 +67,36 @@ export default ({
       if (!sceneId || !pluginId) return;
 
       if (oldPluginId) {
-        await useUpgradePlugin(sceneId, pluginId, oldPluginId);
+        await upgradePlugin(sceneId, pluginId, oldPluginId);
       } else {
-        await useInstallPlugin(sceneId, pluginId);
+        await installPlugin(sceneId, pluginId);
       }
     },
-    [sceneId, useInstallPlugin, useUpgradePlugin]
+    [sceneId, installPlugin, upgradePlugin]
   );
 
   const handleInstallPluginFromFile = useCallback(
     async (files: FileList) => {
       if (!sceneId) return;
-      useUploadPlugin(sceneId, files);
+      uploadPlugin(sceneId, files);
     },
-    [sceneId, useUploadPlugin]
+    [sceneId, uploadPlugin]
   );
 
   const handleInstallPluginFromPublicRepo = useCallback(
     async (repoUrl: string) => {
       if (!sceneId) return;
-      useUploadPlugin(sceneId, undefined, repoUrl);
+      uploadPlugin(sceneId, undefined, repoUrl);
     },
-    [sceneId, useUploadPlugin]
+    [sceneId, uploadPlugin]
   );
 
   const handleUninstallPlugin = useCallback(
     async (pluginId: string) => {
       if (!sceneId) return;
-      useUninstallPlugin(sceneId, pluginId);
+      uninstallPlugin(sceneId, pluginId);
     },
-    [sceneId, useUninstallPlugin]
+    [sceneId, uninstallPlugin]
   );
 
   return {

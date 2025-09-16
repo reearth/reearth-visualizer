@@ -1,6 +1,6 @@
 import { EntryItem } from "@reearth/app/ui/components";
 import { Panel } from "@reearth/app/ui/layout";
-import { ScenePropertyCollection } from "@reearth/services/api/sceneApi";
+import type { ScenePropertyCollection } from "@reearth/services/api/scene";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback } from "react";

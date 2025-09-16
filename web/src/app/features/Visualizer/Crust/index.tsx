@@ -11,7 +11,7 @@ import {
   type Camera,
   type MapRef
 } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useMemo, type RefObject, useContext, useCallback } from "react";
 
 import { Viewport } from "../hooks/useViewport";

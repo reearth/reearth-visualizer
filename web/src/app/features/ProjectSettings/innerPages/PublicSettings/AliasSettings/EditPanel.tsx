@@ -7,7 +7,8 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { CommonField } from "@reearth/app/ui/fields";
-import { useSceneFetcher, useStorytellingFetcher } from "@reearth/services/api";
+import { useValidateSceneAlias } from "@reearth/services/api/scene";
+import { useValidateStoryAlias } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -33,8 +34,8 @@ const EditPanel: FC<Prop> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const { checkSceneAlias } = useSceneFetcher();
-  const { checkStoryAlias } = useStorytellingFetcher();
+  const { validateSceneAlias } = useValidateSceneAlias();
+  const { validateStoryAlias } = useValidateStoryAlias();
 
   const [prefix, suffix] = useMemo(
     () => extractPrefixSuffix(publicUrl),
@@ -54,8 +55,8 @@ const EditPanel: FC<Prop> = ({
   const handleBlur = useCallback(async () => {
     const alias = localAlias as string;
     const result = isStory
-      ? await checkStoryAlias(alias, itemId)
-      : await checkSceneAlias?.(alias, itemId);
+      ? await validateStoryAlias(alias, itemId)
+      : await validateSceneAlias?.(alias, itemId);
 
     if (!result?.available) {
       const description = result?.errors?.find(
@@ -68,7 +69,7 @@ const EditPanel: FC<Prop> = ({
       setWaring("");
       setIsAliasValid(true);
     }
-  }, [checkSceneAlias, checkStoryAlias, isStory, itemId, localAlias]);
+  }, [validateSceneAlias, validateStoryAlias, isStory, itemId, localAlias]);
 
   const isDisabled = useMemo(
     () => !!warning || localAlias === alias || !isAliasValid,

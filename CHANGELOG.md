@@ -2,6 +2,62 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.9.4 - 2025-09-04
+
+## 1.0.0-beta.9.3 - 2025-08-28
+
+### Web
+
+#### 🚀 Features
+
+- Update links on sidebar [VIZ-2201] ([#1788](https://github.com/reearth/reearth-visualizer/pull/1788)) [`1cfdd5`](https://github.com/reearth/reearth-visualizer/commit/1cfdd5)
+
+#### Miscellaneous Tasks
+
+- Bump up version 1.0.0-beta.9.3 ([#1792](https://github.com/reearth/reearth-visualizer/pull/1792)) [`1ac286`](https://github.com/reearth/reearth-visualizer/commit/1ac286)
+- Update core version to 0.0.7-alpha.43 ([#1791](https://github.com/reearth/reearth-visualizer/pull/1791)) [`5e0f35`](https://github.com/reearth/reearth-visualizer/commit/5e0f35)
+
+### Misc
+
+#### 🔧 Bug Fixes
+
+- Refactor import of lang value [`42d0bc`](https://github.com/reearth/reearth-visualizer/commit/42d0bc)
+
+### 
+
+#### 🔧 Bug Fixes
+
+- Refactor import of lang value [`42d0bc`](https://github.com/reearth/reearth-visualizer/commit/42d0bc)
+
+## 1.0.0-beta.9.2 - 2025-08-27
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Status check while checking project alias &amp; UI updates on recycle bin [VIZ-2195] ([#1772](https://github.com/reearth/reearth-visualizer/pull/1772)) [`04abe4`](https://github.com/reearth/reearth-visualizer/commit/04abe4)
+
+#### ✨ Refactor
+
+- Forbidden remove data attribution widget[VIZ-2139] ([#1773](https://github.com/reearth/reearth-visualizer/pull/1773)) [`fec746`](https://github.com/reearth/reearth-visualizer/commit/fec746)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.9.2 ([#1789](https://github.com/reearth/reearth-visualizer/pull/1789)) [`15120a`](https://github.com/reearth/reearth-visualizer/commit/15120a)
+- Update core version to 0.0.7-alpha.42 ([#1787](https://github.com/reearth/reearth-visualizer/pull/1787)) [`133172`](https://github.com/reearth/reearth-visualizer/commit/133172)
+
+### migration
+
+#### 🔧 Bug Fixes
+
+- Change esri to default migration ([#1786](https://github.com/reearth/reearth-visualizer/pull/1786)) [`e7c9f3`](https://github.com/reearth/reearth-visualizer/commit/e7c9f3)
+
+### web, server
+
+#### 🔧 Bug Fixes
+
+- Correct data attribution[VIZ-2137] ([#1765](https://github.com/reearth/reearth-visualizer/pull/1765)) [`1df37a`](https://github.com/reearth/reearth-visualizer/commit/1df37a)
+
 ## 1.0.0-beta.9.1 - 2025-08-26
 
 ### Web

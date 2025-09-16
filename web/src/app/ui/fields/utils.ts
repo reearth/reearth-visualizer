@@ -1,8 +1,4 @@
-import {
-  Field,
-  Item,
-  SchemaField
-} from "@reearth/services/api/propertyApi/utils";
+import type { Field, Item, SchemaField } from "@reearth/services/api/property";
 
 export const filterVisibleItems = (items?: Item[]) => {
   if (!items) return;

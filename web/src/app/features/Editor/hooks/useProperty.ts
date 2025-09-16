@@ -1,8 +1,8 @@
-import { usePropertyFetcher } from "@reearth/services/api";
+import { usePropertyMutations } from "@reearth/services/api/property";
 import { useCallback } from "react";
 
 export default () => {
-  const { useUpdatePropertyValue } = usePropertyFetcher();
+  const { updatePropertyValue } = usePropertyMutations();
   const handlePropertyValueUpdate = useCallback(
     async (
       propertyId?: string,
@@ -13,7 +13,7 @@ export default () => {
       v?: unknown
     ) => {
       if (!propertyId || !schemaItemId || !fieldId || !vt) return;
-      await useUpdatePropertyValue(
+      await updatePropertyValue(
         propertyId,
         schemaItemId,
         itemId,
@@ -23,7 +23,7 @@ export default () => {
         vt as keyof import("@reearth/core").ValueTypes
       );
     },
-    [useUpdatePropertyValue]
+    [updatePropertyValue]
   );
 
   return {

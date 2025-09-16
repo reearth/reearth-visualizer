@@ -1,19 +1,19 @@
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { usePropertyFetcher } from "@reearth/services/api";
+import { usePropertyMutations } from "@reearth/services/api/property";
 import { useCallback } from "react";
 
 export default (propertyId: string, schemaGroup: string) => {
   const {
-    useUpdatePropertyValue,
-    useAddPropertyItem,
-    useRemovePropertyItem,
-    useMovePropertyItem
-  } = usePropertyFetcher();
+    updatePropertyValue,
+    addPropertyItem,
+    removePropertyItem,
+    movePropertyItem
+  } = usePropertyMutations();
 
   const handlePropertyItemUpdate = useCallback(
     (fieldId: string, vt: ValueType, itemId?: string) => {
       return async (v?: ValueTypes[ValueType]) => {
-        await useUpdatePropertyValue(
+        await updatePropertyValue(
           propertyId,
           schemaGroup,
           itemId,
@@ -24,25 +24,25 @@ export default (propertyId: string, schemaGroup: string) => {
         );
       };
     },
-    [propertyId, schemaGroup, useUpdatePropertyValue]
+    [propertyId, schemaGroup, updatePropertyValue]
   );
 
   const handlePropertyItemAdd = useCallback(() => {
-    return useAddPropertyItem(propertyId, schemaGroup);
-  }, [propertyId, schemaGroup, useAddPropertyItem]);
+    return addPropertyItem(propertyId, schemaGroup);
+  }, [propertyId, schemaGroup, addPropertyItem]);
 
   const handlePropertyItemDelete = useCallback(
     (itemId: string) => {
-      return useRemovePropertyItem(propertyId, schemaGroup, itemId);
+      return removePropertyItem(propertyId, schemaGroup, itemId);
     },
-    [propertyId, schemaGroup, useRemovePropertyItem]
+    [propertyId, schemaGroup, removePropertyItem]
   );
 
   const handlePropertyItemMove = useCallback(
     (id: string, index: number) => {
-      return useMovePropertyItem(propertyId, schemaGroup, id, index);
+      return movePropertyItem(propertyId, schemaGroup, id, index);
     },
-    [propertyId, schemaGroup, useMovePropertyItem]
+    [propertyId, schemaGroup, movePropertyItem]
   );
 
   return {

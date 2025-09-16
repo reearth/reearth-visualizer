@@ -5,8 +5,8 @@ import {
   NLSInfobox,
   NLSLayer,
   SketchFeature
-} from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+} from "@reearth/services/api/layer/types";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { mapValues } from "lodash-es";
 
 export const processNewProperty = (p: any): any => {

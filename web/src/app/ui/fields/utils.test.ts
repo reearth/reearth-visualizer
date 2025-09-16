@@ -1,4 +1,4 @@
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/property";
 import { describe, it, expect } from "vitest";
 
 import { filterVisibleItems } from "./utils";

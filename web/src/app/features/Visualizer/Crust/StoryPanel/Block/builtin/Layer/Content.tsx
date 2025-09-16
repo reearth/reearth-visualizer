@@ -1,7 +1,7 @@
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import { useBlockContext } from "@reearth/app/features/Visualizer/shared/contexts/blockContext";
 import Button from "@reearth/app/ui/widgetui/Button";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useContext, useState } from "react";

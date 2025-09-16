@@ -1,5 +1,5 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
-import { PublishStatus } from "@reearth/services/api/publishTypes";
+import { PublishStatus } from "@reearth/services/api/utils";
 import { ProjectImportStatus, WorkspaceMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
@@ -42,6 +42,8 @@ export type DeletedProject = {
   name: string;
   imageUrl?: string | null;
   isDeleted?: boolean;
+  visibility?: string;
+  starred?: boolean;
 };
 
 export type TabItems = {

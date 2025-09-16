@@ -7,8 +7,8 @@ import {
 import { GeoJsonFeatureUpdateProps } from "@reearth/app/features/Editor/hooks/useSketch";
 import { TabItem, Tabs } from "@reearth/app/lib/reearth-ui";
 import { ComputedFeature, Geometry } from "@reearth/core";
-import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyleApi/utils";
+import { NLSLayer, SketchFeature } from "@reearth/services/api/layer/types";
+import type { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyle";
 import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
 

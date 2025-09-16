@@ -1,6 +1,6 @@
 import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
-import { useAssetsFetcher } from "@reearth/services/api";
+import { useAssetMutations, useAssets } from "@reearth/services/api/asset";
 import { AssetSortField, SortDirection } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -107,10 +107,9 @@ export default ({
   }, []);
 
   // assets
-  const { useAssetsQuery, useRemoveAssets, useCreateAssets } =
-    useAssetsFetcher();
+  const { removeAssets, createAssets } = useAssetMutations();
   const { assets, hasMoreAssets, isRefetching, endCursor, loading, fetchMore } =
-    useAssetsQuery({
+    useAssets({
       workspaceId: workspaceId ?? "",
       projectId,
       pagination: {
@@ -207,14 +206,14 @@ export default ({
   const handleAssetsCreate = useCallback(
     async (files?: FileList) => {
       if (!files) return;
-      await useCreateAssets({
+      await createAssets({
         workspaceId: workspaceId ?? "",
         projectId,
         file: files,
         coreSupport: true
       });
     },
-    [useCreateAssets, workspaceId, projectId]
+    [createAssets, workspaceId, projectId]
   );
 
   // upload
@@ -300,12 +299,12 @@ export default ({
 
   const handleAssetDelete = useCallback(async () => {
     if (selectedAssetIds.length) {
-      const { status } = await useRemoveAssets(selectedAssetIds);
+      const { status } = await removeAssets(selectedAssetIds);
       if (status === "success") {
         selectAsset([]);
       }
     }
-  }, [selectedAssetIds, useRemoveAssets]);
+  }, [selectedAssetIds, removeAssets]);
 
   return {
     filteredAssets,

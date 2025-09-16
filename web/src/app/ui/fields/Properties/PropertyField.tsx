@@ -1,6 +1,6 @@
 import { Camera, LatLng } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
-import { Field, SchemaField } from "@reearth/services/api/propertyApi/utils";
+import type { Field, SchemaField } from "@reearth/services/api/property";
 import { useT } from "@reearth/services/i18n";
 import { FC, useMemo } from "react";
 
