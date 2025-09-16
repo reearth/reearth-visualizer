@@ -4,7 +4,7 @@ import ProjectVisibilityModal from "@reearth/app/features/Dashboard/ContentsCont
 import { Button, Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
-import { useProjectFetcher } from "@reearth/services/api";
+import { useValidateProjectAlias } from "@reearth/services/api/project";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -57,8 +57,7 @@ const GeneralSettings: FC<Props> = ({
   const theme = useTheme();
 
   const { projectVisibility } = appFeature();
-  const { checkProjectAlias } = useProjectFetcher();
-  const [localAlias, setLocalAlias] = useState(project?.projectAlias || "");
+  const { validateProjectAlias } = useValidateProjectAlias();
   const [warning, setWarning] = useState<string>("");
 
   const handleNameUpdate = useCallback(
@@ -71,16 +70,16 @@ const GeneralSettings: FC<Props> = ({
     [project, onUpdateProject]
   );
 
-  const handleProjectAliasChange = useCallback((value: string) => {
-    setLocalAlias(value);
+  const handleProjectAliasChange = useCallback(() => {
     setWarning("");
   }, []);
 
   const handleProjectAliasUpdate = useCallback(
     async (projectAlias: string) => {
-      if (!project) return;
-      const result = await checkProjectAlias?.(
-        localAlias,
+      const trimmedAlias = projectAlias.trim();
+      if (!project || project.projectAlias === trimmedAlias) return;
+      const result = await validateProjectAlias?.(
+        trimmedAlias,
         workspaceId,
         project?.id
       );
@@ -94,11 +93,11 @@ const GeneralSettings: FC<Props> = ({
       } else {
         setWarning("");
         onUpdateProject({
-          projectAlias
+          projectAlias: trimmedAlias
         });
       }
     },
-    [project, checkProjectAlias, localAlias, workspaceId, onUpdateProject]
+    [project, validateProjectAlias, workspaceId, onUpdateProject]
   );
 
   const handleDescriptionUpdate = useCallback(

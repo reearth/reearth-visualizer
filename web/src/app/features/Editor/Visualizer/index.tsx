@@ -7,7 +7,7 @@ import {
 import { DeviceType } from "@reearth/app/utils/device";
 import { SketchFeature, SketchType } from "@reearth/core";
 import type { MapRef } from "@reearth/core";
-import type { Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Story } from "@reearth/services/api/storytelling";
 import { WidgetAreaState } from "@reearth/services/state";
 import { MutableRefObject, SetStateAction } from "react";
 

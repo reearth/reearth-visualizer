@@ -34,6 +34,7 @@ var migrations = migration.Migrations[DBClient]{
   250725112722: MetadataUpdate,
   250725133631: SetPhotoOverlayDefault,
   250725145932: ConvertNonValidProjectAliases,
+	250820113009: ChangeEsriToDefault,
   250820145437: MultipleWidgetAlignSystems,
   250822121249: AddDefaultDataAttributionForMobile,
 }

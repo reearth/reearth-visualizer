@@ -1,7 +1,5 @@
-import {
-  useProjectFetcher,
-  useStorytellingFetcher
-} from "@reearth/services/api";
+import { useProject } from "@reearth/services/api/project";
+import { useStories } from "@reearth/services/api/storytelling";
 import { PublishmentStatus } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo, useState } from "react";
@@ -30,11 +28,8 @@ export default ({
   activeSubProject?: SubProject | undefined;
   handleActiveSubProjectChange?: (subProject: SubProject | undefined) => void;
 }) => {
-  const { useProjectQuery } = useProjectFetcher();
-  const { useStoriesQuery } = useStorytellingFetcher();
-
-  const { project } = useProjectQuery(projectId);
-  const { stories } = useStoriesQuery({ sceneId });
+  const { project } = useProject(projectId);
+  const { stories } = useStories({ sceneId });
 
   const t = useT();
 

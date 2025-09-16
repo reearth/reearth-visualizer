@@ -23,6 +23,9 @@ export const useDataAttribution = ({
   const [otherCredits, setOtherCredits] = useState<
     ProcessesCredit[] | undefined
   >(undefined);
+  const [googleCredit, setGoogleCredit] = useState<ProcessesCredit | undefined>(
+    undefined
+  );
 
   const widgetCredits = useMemo(
     () => widget?.property.default || [],
@@ -40,6 +43,10 @@ export const useDataAttribution = ({
       const screenCredits = credits.screen
         .map(parseCreditHtml)
         .filter(Boolean) as ProcessesCredit[];
+      const googleCredit = screenCredits.find((e) =>
+        e.logo?.includes("google")
+      );
+      setGoogleCredit(googleCredit);
 
       const widgetProcessesCredits: ProcessesCredit[] = widgetCredits
         .filter(
@@ -66,7 +73,8 @@ export const useDataAttribution = ({
 
   return {
     cesiumCredit,
-    otherCredits
+    otherCredits,
+    googleCredit
   };
 };
 

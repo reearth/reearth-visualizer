@@ -5,7 +5,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { SelectField } from "@reearth/app/ui/fields";
-import { useWorkspaceFetcher } from "@reearth/services/api";
+import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { Workspace } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -26,7 +26,6 @@ const ProjectVisibilityModal: FC<Props> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const { useWorkspacePolicyCheck } = useWorkspaceFetcher();
   const data = useWorkspacePolicyCheck(workspaceId);
   const enableToCreatePrivateProject =
     data?.workspacePolicyCheck?.enableToCreatePrivateProject ?? false;

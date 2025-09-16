@@ -45,8 +45,6 @@ extensions:
                   label: Road Map
                 - key: open_street_map
                   label: OpenStreetMap
-                - key: esri_world_topo
-                  label: ESRI Topography
                 - key: black_marble
                   label: Earth at night
                 - key: japan_gsi_standard

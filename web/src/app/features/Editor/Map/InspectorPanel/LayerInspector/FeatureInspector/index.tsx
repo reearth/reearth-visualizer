@@ -8,7 +8,7 @@ import {
   generateNewPropertiesWithPhotoOverlay,
   getPhotoOverlayValue
 } from "@reearth/app/utils/sketch";
-import { NLSLayer, SketchFeature } from "@reearth/services/api/layersApi/utils";
+import { NLSLayer, SketchFeature } from "@reearth/services/api/layer/types";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";

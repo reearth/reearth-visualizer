@@ -1,8 +1,8 @@
 import { AreaSize } from "@reearth/app/ui/layout";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { Page } from "@reearth/services/api/storytellingApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
+import type { Page } from "@reearth/services/api/storytelling";
 import { createContext, useContext, ReactNode } from "react";
 
 import { Tab } from "../../Navbar";

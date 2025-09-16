@@ -1,6 +1,6 @@
 import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import type { CommonBlockProps as BlockProps } from "@reearth/app/features/Visualizer/shared/types";
-import type { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useMemo, useEffect } from "react";
 
 import { StoryBlock } from "../../../types";

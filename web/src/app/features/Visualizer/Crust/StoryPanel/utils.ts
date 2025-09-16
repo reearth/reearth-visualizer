@@ -2,7 +2,7 @@ import { IconName } from "@reearth/app/lib/reearth-ui";
 import { getTimeZone } from "@reearth/app/utils/time";
 import { ValueTypes, ValueType } from "@reearth/app/utils/value";
 import type { Spacing } from "@reearth/core";
-import type { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/property";
 
 export const getFieldValue = (
   items: Item[],

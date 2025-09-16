@@ -5,7 +5,7 @@ import {
   PopupMenuItem
 } from "@reearth/app/lib/reearth-ui";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
-import { useProjectFetcher } from "@reearth/services/api";
+import { useProjectImportExportMutations } from "@reearth/services/api/project";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
@@ -37,7 +37,7 @@ const LeftSection: React.FC<Props> = ({
 }) => {
   const t = useT();
 
-  const { useExportProject: exportProject } = useProjectFetcher();
+  const { exportProject } = useProjectImportExportMutations();
 
   const handleExportProject = useCallback(async () => {
     if (!currentProject?.id) return;

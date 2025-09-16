@@ -1,4 +1,4 @@
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { describe, expect, it } from "vitest";
 
 import {

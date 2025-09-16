@@ -1,4 +1,8 @@
-import { useMeFetcher } from "@reearth/services/api";
+import {
+  useMe,
+  useMeMutations,
+  useUserMutations
+} from "@reearth/services/api/user";
 import { useCallback } from "react";
 
 type UpdatePasswordType = {
@@ -7,41 +11,41 @@ type UpdatePasswordType = {
 };
 
 export default () => {
-  const { useMeQuery, useUpdatePassword, useDeleteUser, useUpdateLanguage } =
-    useMeFetcher();
-  const { me: data } = useMeQuery();
+  const { updatePassword, updateLanguage } = useMeMutations();
+  const { deleteUser } = useUserMutations();
+  const { me: data } = useMe();
 
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
 
   const handleUpdateUserPassword = useCallback(
     async ({ password, passwordConfirmation }: UpdatePasswordType) => {
       try {
-        await useUpdatePassword({ password, passwordConfirmation });
+        await updatePassword({ password, passwordConfirmation });
       } catch (error) {
         console.error("Failed to update password:", error);
       }
     },
-    [useUpdatePassword]
+    [updatePassword]
   );
 
   const handleDeleteUser = useCallback(async () => {
     try {
       const userId = data.id;
-      if (userId) await useDeleteUser({ userId });
+      if (userId) await deleteUser({ userId });
     } catch (error) {
       console.error("Failed to delete user:", error);
     }
-  }, [data.id, useDeleteUser]);
+  }, [data.id, deleteUser]);
 
   const handleUpdateUserLanguage = useCallback(
     async ({ lang }: { lang: string }) => {
       try {
-        await useUpdateLanguage(lang);
+        await updateLanguage(lang);
       } catch (error) {
         console.error("Failed to update language:", error);
       }
     },
-    [useUpdateLanguage]
+    [updateLanguage]
   );
 
   return {

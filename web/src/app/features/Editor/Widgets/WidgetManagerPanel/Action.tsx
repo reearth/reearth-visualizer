@@ -4,7 +4,7 @@ import {
   PopupMenu,
   PopupMenuItem
 } from "@reearth/app/lib/reearth-ui";
-import { InstallableWidget } from "@reearth/services/api/widgetsApi/utils";
+import type { InstallableWidget } from "@reearth/services/api/widget";
 import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
 

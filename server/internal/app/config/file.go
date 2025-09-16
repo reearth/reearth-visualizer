@@ -1,6 +1,7 @@
 package config
 
 type GCSConfig struct {
+	IsFake                  bool   `pp:",omitempty"`
 	BucketName              string `pp:",omitempty"`
 	PublicationCacheControl string `pp:",omitempty"`
 }
