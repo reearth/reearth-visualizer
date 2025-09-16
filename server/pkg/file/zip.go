@@ -139,8 +139,8 @@ func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[s
 			if err := json.Unmarshal(data, &d); err == nil {
 				if e, ok := d["exportedInfo"].(map[string]any); ok {
 					if host, ok := e["host"].(string); ok {
-
 						// Replace to current host
+						fmt.Println("Replace to current host: ", host, " -> currentHost: ", currentHost)
 						data = bytes.Replace(data, []byte(host), []byte(currentHost), -1)
 					}
 				}

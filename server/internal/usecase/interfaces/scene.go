@@ -30,8 +30,8 @@ type Scene interface {
 	InstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, *id.PropertyID, error)
 	UninstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
 	UpgradePlugin(context.Context, id.SceneID, id.PluginID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
-	ExportScene(context.Context, *project.Project) (*scene.Scene, map[string]any, error)
-	ImportScene(context.Context, *scene.Scene, *[]byte) (*scene.Scene, error)
+	ExportSceneData(context.Context, *project.Project) (*scene.Scene, map[string]any, error)
+	ImportSceneData(context.Context, *scene.Scene, *[]byte) (*scene.Scene, error)
 }
 
 type UpdateWidgetParam struct {

@@ -45,7 +45,7 @@ func ParserWidgetAlignSystem(data *[]byte) (*scene.WidgetAlignSystems, error) {
 	if err != nil {
 		return nil, err
 	}
-	widgetAlignSystemsJSON := sceneJSON.WidgetAlignSystem
+	widgetAlignSystemsJSON := sceneJSON.WidgetAlignSystems
 	if widgetAlignSystemsJSON == nil {
 		return nil, nil
 	}

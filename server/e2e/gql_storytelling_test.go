@@ -389,7 +389,7 @@ func TestStoryPublishing(t *testing.T) {
     "title": "test page"
   },
   "trackingId": "",
-  "widgetAlignSystem": {
+  "widgetAlignSystems": {
     "desktop": {
       "inner": null,
       "outer": {
