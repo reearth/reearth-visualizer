@@ -1,9 +1,4 @@
-<<<<<<< HEAD:web/src/services/api/widgetsApi/index.ts
-import { useMutation, useQuery } from "@apollo/client";
-import { DeviceType } from "@reearth/app/utils/device";
-=======
 import { useMutation } from "@apollo/client";
->>>>>>> main:web/src/services/api/widget/useWidgetMutations.ts
 import {
   SceneWidget,
   WidgetAlignSystemType,
@@ -26,78 +21,10 @@ import { MutationReturn } from "../types";
 
 import { Widget, WidgetLocation } from "./types";
 
-<<<<<<< HEAD:web/src/services/api/widgetsApi/index.ts
-export type WidgetLocation = {
-  zone: "inner" | "outer";
-  section: "left" | "center" | "right";
-  area: "top" | "middle" | "bottom";
-};
-
-export type WidgetAlignment = "start" | "centered" | "end";
-
-export type WidgetLayout = {
-  location: WidgetLocation;
-  align: WidgetAlignment;
-};
-
-export type Widget<P = any> = {
-  id: string;
-  pluginId: string;
-  extensionId: string;
-  property?: P;
-  propertyId?: string;
-  title?: string;
-  description?: string;
-  icon?: string;
-  enabled?: boolean;
-  extended?: boolean;
-  layout?: WidgetLayout;
-};
-
-export default () => {
-=======
 export const useWidgetMutations = () => {
->>>>>>> main:web/src/services/api/widget/useWidgetMutations.ts
   const t = useT();
   const [, setNotification] = useNotification();
 
-<<<<<<< HEAD:web/src/services/api/widgetsApi/index.ts
-  const useInstallableWidgets = useCallback(
-    ({ sceneId, type }: { sceneId?: string; type: DeviceType }) => {
-      const { data, ...rest } = useQuery(GET_SCENE, {
-        variables: { sceneId: sceneId ?? "", lang },
-        skip: !sceneId
-      });
-
-      const installableWidgets = useMemo(
-        () => getInstallableWidgets(data, type),
-        [data, type]
-      );
-
-      return { installableWidgets, ...rest };
-    },
-    [lang]
-  );
-
-  const useInstalledWidgets = useCallback(
-    ({ sceneId, type }: { sceneId?: string; type: DeviceType }) => {
-      const { data, ...rest } = useQuery(GET_SCENE, {
-        variables: { sceneId: sceneId ?? "", lang },
-        skip: !sceneId
-      });
-
-      const installedWidgets = useMemo(
-        () => getInstalledWidgets(data, type),
-        [data, type]
-      );
-
-      return { installedWidgets, ...rest };
-    },
-    [lang]
-  );
-
-=======
->>>>>>> main:web/src/services/api/widget/useWidgetMutations.ts
   const [addWidgetMutation] = useMutation(ADD_WIDGET, {
     refetchQueries: ["GetScene"]
   });
@@ -208,13 +135,8 @@ export const useWidgetMutations = () => {
         };
       }
 
-<<<<<<< HEAD:web/src/services/api/widgetsApi/index.ts
-      const { data, errors } = await removeWidget({
-        variables: { sceneId: sceneId ?? "", widgetId, type }
-=======
       const { data, errors } = await removeWidgetMutation({
-        variables: { sceneId: sceneId ?? "", widgetId }
->>>>>>> main:web/src/services/api/widget/useWidgetMutations.ts
+        variables: { sceneId: sceneId ?? "", widgetId, type }
       });
 
       if (errors || !data?.removeWidget) {
@@ -239,19 +161,13 @@ export const useWidgetMutations = () => {
     }
   );
 
-<<<<<<< HEAD:web/src/services/api/widgetsApi/index.ts
-  const useUpdateWidgetAlignSystem = useCallback(
+  const updateWidgetAlignSystem = useCallback(
     async (
       widgetAreaState: WidgetAreaState,
       sceneId?: string,
       type?: WidgetAlignSystemType
     ) => {
       if (!sceneId || !type) {
-=======
-  const updateWidgetAlignSystem = useCallback(
-    async (widgetAreaState: WidgetAreaState, sceneId?: string) => {
-      if (!sceneId) {
->>>>>>> main:web/src/services/api/widget/useWidgetMutations.ts
         console.log(
           "GraphQL: Failed to update the widget align system because there is no sceneId or type provided"
         );
@@ -303,18 +219,9 @@ export const useWidgetMutations = () => {
   );
 
   return {
-<<<<<<< HEAD:web/src/services/api/widgetsApi/index.ts
-    useInstallableWidgets,
-    useInstalledWidgets,
-    useAddWidget,
-    useUpdateWidget,
-    useUpdateWidgetAlignSystem,
-    useRemoveWidget
-=======
     addWidget,
     updateWidget,
     updateWidgetAlignSystem,
     removeWidget
->>>>>>> main:web/src/services/api/widget/useWidgetMutations.ts
   };
 };

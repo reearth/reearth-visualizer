@@ -11,7 +11,11 @@ type Props = {
 };
 
 export default ({ sceneId, selectedWidget }: Props) => {
-  const { installedWidgets } = useInstalledWidgets({ sceneId });
+  const [widgetsViewDevice] = useWidgetsViewDevice();
+  const { installedWidgets } = useInstalledWidgets({
+    sceneId,
+    type: widgetsViewDevice
+  });
 
   const visibleItems = useMemo(
     () =>
