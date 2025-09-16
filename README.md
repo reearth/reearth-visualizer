@@ -196,6 +196,7 @@ See [the contributing guide](CONTRIBUTING.md).
 ## Contributers
 
 [![Contributers](https://contrib.rocks/image?repo=reearth/reearth)](https://github.com/reearth/reearth-visualizer/graphs/contributors)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer?ref=badge_shield)
 
 Made with [contrib.rocks](https://contrib.rocks).
 
@@ -206,3 +207,6 @@ Re:Earth core committers: [community@reearth.io](mailto:community@reearth.io)
 ## License
 
 Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more information.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer?ref=badge_large)
