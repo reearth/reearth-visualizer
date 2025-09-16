@@ -81,7 +81,8 @@ export default (alias?: string) => {
 
   const pluginProperty = useMemo(
     () =>
-      Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>((a, b) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>((a, b) => { // Plugin properties have dynamic structure
         a[b] = processProperty(data?.plugins?.[b]?.property);
         return a;
       }, {}),

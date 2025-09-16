@@ -11,27 +11,27 @@ test("overriddenProperty", () => {
   expect(mergedProperty).toEqual({ a: 1, b: 2, c: { c1: 3 } });
 
   act(() => {
-    overrideProperty("plugin1", { a: 2 } as any);
+    overrideProperty("plugin1", { a: 2 });
   });
   expect(result.current[0]).toEqual({ a: 2, b: 2, c: { c1: 3 } });
 
   act(() => {
-    overrideProperty("plugin2", { b: 3 } as any);
+    overrideProperty("plugin2", { b: 3 });
   });
   expect(result.current[0]).toEqual({ a: 2, b: 3, c: { c1: 3 } });
 
   act(() => {
-    overrideProperty("plugin3", { c: { c2: 1 } } as any);
+    overrideProperty("plugin3", { c: { c2: 1 } });
   });
   expect(result.current[0]).toEqual({ a: 2, b: 3, c: { c1: 3, c2: 1 } });
 
   act(() => {
-    overrideProperty("plugin1", undefined as any);
+    overrideProperty("plugin1", undefined);
   });
   expect(result.current[0]).toEqual({ a: 1, b: 3, c: { c1: 3, c2: 1 } });
 
   act(() => {
-    overrideProperty("plugin2", undefined as any);
+    overrideProperty("plugin2", undefined);
   });
   expect(result.current[0]).toEqual({ a: 1, b: 2, c: { c1: 3, c2: 1 } });
 });

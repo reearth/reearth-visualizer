@@ -14,7 +14,8 @@ import type { NLSLayer } from "@reearth/services/api/layer";
 import {
   ChangeCustomPropertyTitleInput,
   RemoveCustomPropertyInput,
-  UpdateCustomPropertySchemaInput
+  UpdateCustomPropertySchemaInput,
+  Scalars
 } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import {
@@ -42,12 +43,12 @@ export type LayerSelectProps =
 
 export type LayerAddProps = {
   config?: Omit<LayerSimple, "type" | "id">;
-  index?: any;
+  index?: number;
   layerType: string;
   sceneId: string;
   title: string;
   visible?: boolean;
-  schema?: any;
+  schema?: Scalars['JSON']['input'];
 };
 
 export type LayerNameUpdateProps = {

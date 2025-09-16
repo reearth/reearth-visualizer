@@ -79,7 +79,8 @@ const processPropertyGroups = (
   schema: PropertySchemaGroupFragmentFragment,
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined
-): any => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any => { // Property processing returns dynamic structure
   const allFields: Record<
     string,
     {

@@ -1,11 +1,15 @@
 import { cloneDeep, mergeWith, omit } from "lodash-es";
 import { useCallback, useMemo, useState } from "react";
 
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+} & Record<string, unknown>;
+
 export function useOverriddenProperty<T extends object>(
   property: T | undefined
-): [T, (pluginId: string, property: T) => void] {
+): [T | undefined, (pluginId: string, property: DeepPartial<T> | undefined) => void] {
   const [overriddenProperties, setOverrideProperty] = useState<
-    Record<string, any>
+    Record<string, DeepPartial<T>>
   >({});
   const { overriddenPropertyCommon, overriddenProperty } = useMemo(() => {
     const { "": overriddenPropertyCommon, ...overriddenProperty } =
@@ -13,7 +17,7 @@ export function useOverriddenProperty<T extends object>(
     return { overriddenPropertyCommon, overriddenProperty };
   }, [overriddenProperties]);
 
-  const overrideProperty = useCallback((pluginId: string, property: any) => {
+  const overrideProperty = useCallback((pluginId: string, property: DeepPartial<T> | undefined) => {
     setOverrideProperty((p) =>
       property ? { ...p, [pluginId || ""]: property } : omit(p, pluginId)
     );
@@ -29,17 +33,20 @@ export function useOverriddenProperty<T extends object>(
   return [mergedProperty, overrideProperty];
 }
 
-export function mergeProperty(a: any, b: any) {
+export function mergeProperty<T = unknown>(
+  a: T | undefined,
+  b: DeepPartial<T> | undefined
+): T | undefined {
   const a2 = cloneDeep(a);
   return mergeWith(
     a2,
     b,
     (
-      s: any,
-      v: any,
+      s: unknown,
+      v: unknown,
       _k: string | number | symbol,
-      _obj: any,
-      _src: any,
+      _obj: unknown,
+      _src: unknown,
       stack: { size: number }
     ) => (stack.size > 0 || Array.isArray(v) ? (v ?? s) : undefined)
   );

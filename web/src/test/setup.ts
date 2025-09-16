@@ -21,6 +21,7 @@ declare global {
 }
 
 expect.extend(domMatchers);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 expect.extend(emotionMatchers as any);
 
 Object.defineProperty(window, "matchMedia", {

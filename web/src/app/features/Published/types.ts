@@ -36,7 +36,7 @@ export type StoryPage = {
   swipeable?: boolean;
   swipeableLayers?: string[];
   layers?: string[];
-  property?: any;
+  property?: Record<string, unknown>;
   blocks: StoryBlock[];
 };
 
@@ -46,7 +46,7 @@ export type StoryBlock = {
   pluginId: string;
   extensionId: string;
   propertyId?: string;
-  property?: any;
+  property?: Record<string, unknown>;
 };
 
 export type Plugin = {

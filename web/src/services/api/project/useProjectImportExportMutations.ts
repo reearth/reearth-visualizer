@@ -107,7 +107,7 @@ export const useProjectImportExportMutations = () => {
 
       const chunkIndices = Array.from({ length: totalChunks }, (_, i) => i);
 
-      const parallelUpload = async (indices: number[]): Promise<any[]> => {
+      const parallelUpload = async (indices: number[]): Promise<unknown[]> => {
         const results = [];
 
         // 1. Always upload chunk 0 first

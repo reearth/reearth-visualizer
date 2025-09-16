@@ -13,7 +13,8 @@ export type InstallableBlock = {
   type?: string;
 };
 
-export type BlockProps<T = any> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type BlockProps<T = any> = { // Blocks from plugins can have arbitrary structure
   block?: T;
   layer?: Layer;
   onClick?: () => void;
@@ -21,7 +22,8 @@ export type BlockProps<T = any> = {
   nlsLayers?: NLSLayer[];
 };
 
-export type CommonBlockProps<T = any> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CommonBlockProps<T = any> = { // Blocks from plugins can have arbitrary structure
   pageId?: string;
   isEditable?: boolean;
   isBuilt?: boolean;

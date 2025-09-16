@@ -34,12 +34,17 @@ export type SketchFeature = {
 };
 
 export type Sketch = {
-  customPropertySchema?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customPropertySchema?: any; // Schema definition is dynamic
   featureCollection?: {
     type: string;
     features: SketchFeature[];
   };
 };
+
+// Layer configuration varies significantly by layer type and data source
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type LayerConfig = any;
 
 export type NLSLayer = {
   id: string;
@@ -47,7 +52,7 @@ export type NLSLayer = {
   title: string;
   visible: boolean;
   layerType: string;
-  config?: any;
+  config?: LayerConfig;
   children?: NLSLayer[] | null;
   sketch?: Sketch;
   isSketch?: boolean;
