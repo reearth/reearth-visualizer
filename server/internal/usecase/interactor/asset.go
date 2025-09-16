@@ -18,7 +18,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -71,15 +70,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	var p *policy.Policy
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err = i.repos.Policy.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	result, _, err := i.uploadAndSave(ctx, inp.File, ws, inp.ProjectID, p, inp.CoreSupport)
+	result, _, err := i.uploadAndSave(ctx, inp.File, ws, inp.ProjectID, inp.CoreSupport)
 	return result, err
 }
 
@@ -149,13 +140,6 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		return nil, err
 	}
 
-	var p *policy.Policy
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err = i.repos.Policy.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-	}
 	for beforeName, zipFile := range assets {
 		if zipFile.UncompressedSize64 == 0 {
 			continue
@@ -181,7 +165,7 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		}
 
 		pid := newProject.ID()
-		_, url, err := i.uploadAndSave(ctx, file, ws, &pid, p, true)
+		_, url, err := i.uploadAndSave(ctx, file, ws, &pid, true)
 		if err != nil {
 			return nil, err
 		}
@@ -196,6 +180,7 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		// Replace new asset file name
 		beforeUrl := fmt.Sprintf("%s/assets/%s", currentHost, beforeName)
 		afterUrl := fmt.Sprintf("%s/assets/%s", currentHost, afterName)
+		fmt.Println("Replace to asset before: ", beforeUrl, " -> after: ", afterUrl)
 		*data = bytes.Replace(*data, []byte(beforeUrl), []byte(afterUrl), -1)
 	}
 
@@ -216,7 +201,7 @@ var (
 	ErrAssetUploadSizeLimitExceeded error = rerror.NewE(i18n.T("asset upload size limit exceeded"))
 )
 
-func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, p *policy.Policy, coreSupport bool) (*asset.Asset, *url.URL, error) {
+func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
 
 	// upload
 	u, size, err := i.gateways.File.UploadAsset(ctx, f)
@@ -224,6 +209,7 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.W
 		return nil, nil, err
 	}
 
+	// policy checke
 	if i.gateways != nil && i.gateways.PolicyChecker != nil {
 		policyReq := gateway.PolicyCheckRequest{
 			WorkspaceID: ws.ID(),

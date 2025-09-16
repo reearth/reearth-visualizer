@@ -10,33 +10,33 @@ import (
 )
 
 type sceneJSON struct {
-	SchemaVersion     int                     `json:"schemaVersion"`
-	ID                string                  `json:"id"`
-	PublishedAt       time.Time               `json:"publishedAt"`
-	Property          propertyJSON            `json:"property"`
-	Plugins           map[string]propertyJSON `json:"plugins"`
-	Widgets           []*widgetJSON           `json:"widgets"`
-	WidgetAlignSystem *widgetAlignSystemJSON  `json:"widgetAlignSystem"`
-	Story             *storyJSON              `json:"story,omitempty"`
-	NLSLayers         []*nlsLayerJSON         `json:"nlsLayers"`
-	LayerStyles       []*layerStylesJSON      `json:"layerStyles"`
-	CoreSupport       bool                    `json:"coreSupport"`
-	EnableGA          bool                    `json:"enableGa"`
-	TrackingID        string                  `json:"trackingId"`
+	SchemaVersion      int                     `json:"schemaVersion"`
+	ID                 string                  `json:"id"`
+	PublishedAt        time.Time               `json:"publishedAt"`
+	Property           propertyJSON            `json:"property"`
+	Plugins            map[string]propertyJSON `json:"plugins"`
+	Widgets            []*widgetJSON           `json:"widgets"`
+	WidgetAlignSystems *widgetAlignSystemsJSON `json:"widgetAlignSystems"`
+	Story              *storyJSON              `json:"story,omitempty"`
+	NLSLayers          []*nlsLayerJSON         `json:"nlsLayers"`
+	LayerStyles        []*layerStylesJSON      `json:"layerStyles"`
+	CoreSupport        bool                    `json:"coreSupport"`
+	EnableGA           bool                    `json:"enableGa"`
+	TrackingID         string                  `json:"trackingId"`
 }
 
 func (b *Builder) sceneJSON(ctx context.Context, publishedAt time.Time, p []*property.Property, coreSupport bool, enableGa bool, trackingId string) (*sceneJSON, error) {
 	return &sceneJSON{
-		SchemaVersion:     version,
-		ID:                b.scene.ID().String(),
-		PublishedAt:       publishedAt,
-		Property:          b.property(ctx, findProperty(p, b.scene.Property())),
-		Plugins:           b.plugins(ctx, p),
-		Widgets:           b.widgets(ctx, p),
-		WidgetAlignSystem: buildWidgetAlignSystem(b.scene.Widgets().Alignment()),
-		CoreSupport:       coreSupport,
-		EnableGA:          enableGa,
-		TrackingID:        trackingId,
+		SchemaVersion:      version,
+		ID:                 b.scene.ID().String(),
+		PublishedAt:        publishedAt,
+		Property:           b.property(ctx, findProperty(p, b.scene.Property())),
+		Plugins:            b.plugins(ctx, p),
+		Widgets:            b.widgets(ctx, p),
+		WidgetAlignSystems: buildWidgetAlignSystems(b.scene.Widgets().Alignment()),
+		CoreSupport:        coreSupport,
+		EnableGA:           enableGa,
+		TrackingID:         trackingId,
 	}, nil
 }
 
@@ -96,6 +96,20 @@ func toString(wids []id.WidgetID) []string {
 		docids = append(docids, wid.String())
 	}
 	return docids
+}
+
+func buildWidgetAlignSystems(ss *scene.WidgetAlignSystems) *widgetAlignSystemsJSON {
+	if ss == nil {
+		return nil
+	}
+	wass := widgetAlignSystemsJSON{
+		Desktop: buildWidgetAlignSystem(ss.System(scene.WidgetAlignSystemTypeDesktop)),
+		Mobile:  buildWidgetAlignSystem(ss.System(scene.WidgetAlignSystemTypeMobile)),
+	}
+	if wass.Desktop == nil && wass.Mobile == nil {
+		return nil
+	}
+	return &wass
 }
 
 func buildWidgetAlignSystem(s *scene.WidgetAlignSystem) *widgetAlignSystemJSON {

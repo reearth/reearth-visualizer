@@ -12,16 +12,18 @@ var (
 
 type Widgets struct {
 	widgets []*Widget
-	align   *WidgetAlignSystem
+	aligns  *WidgetAlignSystems
 }
 
-func NewWidgets(w []*Widget, a *WidgetAlignSystem) *Widgets {
-	if a == nil {
-		a = NewWidgetAlignSystem()
+func NewWidgets(w []*Widget, as *WidgetAlignSystems) *Widgets {
+	if as == nil {
+		as = NewWidgetAlignSystems()
 	}
+
 	if w == nil {
-		return &Widgets{widgets: []*Widget{}, align: a}
+		return &Widgets{widgets: []*Widget{}, aligns: as}
 	}
+
 	w2 := make([]*Widget, 0, len(w))
 	for _, w1 := range w {
 		if w1 == nil {
@@ -38,7 +40,8 @@ func NewWidgets(w []*Widget, a *WidgetAlignSystem) *Widgets {
 			w2 = append(w2, w1)
 		}
 	}
-	return &Widgets{widgets: w2, align: a}
+
+	return &Widgets{widgets: w2, aligns: as}
 }
 
 func (w *Widgets) Widgets() []*Widget {
@@ -48,18 +51,18 @@ func (w *Widgets) Widgets() []*Widget {
 	return append([]*Widget{}, w.widgets...)
 }
 
-func (w *Widgets) Alignment() *WidgetAlignSystem {
+func (w *Widgets) Alignment() *WidgetAlignSystems {
 	if w == nil {
 		return nil
 	}
-	return w.align
+	return w.aligns
 }
 
-func (w *Widgets) SetAlignment(align *WidgetAlignSystem) {
+func (w *Widgets) SetAlignment(aligns *WidgetAlignSystems) {
 	if w == nil {
 		return
 	}
-	w.align = align
+	w.aligns = aligns
 }
 
 func (w *Widgets) Widget(wid id.WidgetID) *Widget {
@@ -113,7 +116,7 @@ func (w *Widgets) RemoveAllByPlugin(p id.PluginID, e *id.PluginExtensionID) (res
 		ww := w.widgets[i]
 		if ww.Plugin().Equal(p) && (e == nil || ww.Extension() == *e) {
 			res = append(res, ww.Property())
-			w.align.Remove(ww.ID())
+			w.aligns.Remove(ww.ID())
 			w.widgets = append(w.widgets[:i], w.widgets[i+1:]...)
 			i--
 		}

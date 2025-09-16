@@ -32,7 +32,9 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleVisualizerResize,
     isVisualizerResizing,
     handleFlyTo
-  } = useEditorVisualizer();
+  } = useEditorVisualizer({
+    tab
+  });
 
   const {
     nlsLayers,
@@ -128,9 +130,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     closeDataSourceLayerCreator,
     sketchLayerCreatorShown,
     openSketchLayerCreator,
-    closeSketchLayerCreator,
-    selectedDevice,
-    handleDeviceChange
+    closeSketchLayerCreator
   } = useUI({
     projectId,
     storyId: selectedStory?.id,
@@ -280,8 +280,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleVisualizerResize,
       showWASEditor,
       handleShowWASEditorToggle,
-      selectedDevice,
-      handleDeviceChange,
       selectWidgetArea,
       sceneId,
       selectedWidget,
@@ -293,8 +291,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleVisualizerResize,
       showWASEditor,
       handleShowWASEditorToggle,
-      selectedDevice,
-      handleDeviceChange,
       selectWidgetArea,
       sceneId,
       selectedWidget,

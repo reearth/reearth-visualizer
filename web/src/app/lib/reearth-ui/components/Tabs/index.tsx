@@ -126,14 +126,16 @@ export const Tabs: FC<TabsProps> = ({
           </Tab>
         ))}
       </TabsMenu>
-      <Content
-        noPadding={noPadding}
-        noOverflowY={noOverflowY}
-        role="tabpanel"
-        data-testid="tabs-content"
-      >
-        {selectedTabItem ? selectedTabItem.children : null}
-      </Content>
+      {selectedTabItem && selectedTabItem.children && (
+        <Content
+          noPadding={noPadding}
+          noOverflowY={noOverflowY}
+          role="tabpanel"
+          data-testid="tabs-content"
+        >
+          {selectedTabItem.children}
+        </Content>
+      )}
     </Wrapper>
   );
 };

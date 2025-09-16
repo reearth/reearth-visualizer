@@ -12,6 +12,7 @@ import {
   isBuiltinWidget
 } from "@reearth/app/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/app/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
+import { DeviceType } from "@reearth/app/utils/device";
 import { getLayerStyleValue } from "@reearth/app/utils/layer-style";
 import { valueTypeFromGQL } from "@reearth/app/utils/value";
 import type { Layer } from "@reearth/core";
@@ -42,7 +43,8 @@ export type Widget = Omit<RawWidget, "layout" | "extended"> & {
 };
 
 export const convertWidgets = (
-  scene?: Partial<Scene>
+  scene?: Partial<Scene>,
+  device?: DeviceType
 ):
   | {
       floating: Widget[];
@@ -164,8 +166,8 @@ export const convertWidgets = (
   return {
     floating: floating ?? [],
     alignSystem: {
-      outer: widgetZone(scene?.widgetAlignSystem?.outer),
-      inner: widgetZone(scene?.widgetAlignSystem?.inner)
+      outer: widgetZone(scene?.widgetAlignSystem?.[device ?? "desktop"]?.outer),
+      inner: widgetZone(scene?.widgetAlignSystem?.[device ?? "desktop"]?.inner)
     },
     layoutConstraint,
     ownBuiltinWidgets: ownBuiltinWidgets ?? []

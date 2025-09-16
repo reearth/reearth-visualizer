@@ -15,7 +15,6 @@ export type Props = {
   invisibleWidgetIDs?: string[];
   layoutConstraint?: Record<string, WidgetLayoutConstraint>;
   isMobile?: boolean;
-  built?: boolean;
   renderWidget?: (props: WidgetProps) => ReactNode;
   onWidgetAreaSelect?: (widgetArea?: WidgetAreaType) => void;
 };
@@ -25,7 +24,6 @@ export default function Zone({
   zone,
   zoneName,
   layoutConstraint,
-  built,
   isMobile,
   children,
   renderWidget,
@@ -54,7 +52,6 @@ export default function Zone({
                 gap={zone?.[s]?.[a]?.gap}
                 centered={zone?.[s]?.[a]?.centered}
                 layoutConstraint={layoutConstraint}
-                built={built}
                 isMobile={isMobile}
                 renderWidget={renderWidget}
                 onWidgetAreaSelect={onWidgetAreaSelect}
