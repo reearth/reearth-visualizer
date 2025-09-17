@@ -1,6 +1,6 @@
 import { SpacingValues } from "@reearth/app/ui/fields/SpacingField";
 import { Camera, LatLng } from "@reearth/app/utils/value";
-import { SchemaField } from "@reearth/services/api/propertyApi/utils";
+import type { SchemaField } from "@reearth/services/api/property";
 import { FC, useCallback, useMemo } from "react";
 
 import {

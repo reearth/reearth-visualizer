@@ -7,7 +7,8 @@ import {
   TextInput,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useMeFetcher, useWorkspaceFetcher } from "@reearth/services/api";
+import { useSearchUser } from "@reearth/services/api/user";
+import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
@@ -28,7 +29,6 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
 }) => {
   const t = useT();
   const theme = useTheme();
-  const { useSearchUser } = useMeFetcher();
 
   const [userNotFoundWarningVisible, setUserNotFoundWarningVisible] =
     useState(false);
@@ -81,19 +81,19 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
     }
   }, [user]);
 
-  const { useAddMemberToWorkspace: addMember } = useWorkspaceFetcher();
+  const { addMemberToWorkspace } = useWorkspaceMutations();
 
   const handleAddMembersToWorkspace = useCallback(async () => {
     if (searchResult.length === 0 || !workspace?.id) return;
     for (const user of searchResult) {
-      await addMember({
+      await addMemberToWorkspace({
         workspaceId: workspace.id,
         userId: user.id,
         role: Role.Reader
       });
     }
     onClose();
-  }, [searchResult, workspace, addMember, onClose]);
+  }, [searchResult, workspace, addMemberToWorkspace, onClose]);
 
   const handleRemoveUserFromSearchResult = useCallback((userId: string) => {
     setSearchResult((prev) => prev.filter((u) => u.id !== userId));

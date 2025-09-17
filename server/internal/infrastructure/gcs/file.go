@@ -18,6 +18,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
@@ -33,14 +34,14 @@ const (
 )
 
 type fileRepo struct {
-	isTest          bool
+	isFake          bool
 	bucketName      string
 	base            *url.URL
 	cacheControl    string
 	baseFileStorage *infrastructure.BaseFileStorage
 }
 
-func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway.File, error) {
+func NewFile(isFake bool, bucketName, base string, cacheControl string) (gateway.File, error) {
 	if bucketName == "" {
 		return nil, errors.New("bucket name is empty")
 	}
@@ -57,7 +58,7 @@ func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway
 	}
 
 	return &fileRepo{
-		isTest:       isTest,
+		isFake:       isFake,
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
@@ -285,7 +286,9 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 }
 
 func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.File) error {
-	_, err := f.upload(ctx, path.Join(gcsExportBasePath, zipFile.Name()), zipFile)
+	fname := sanitize.Path(zipFile.Name())
+	size, err := f.upload(ctx, path.Join(gcsExportBasePath, zipFile.Name()), zipFile)
+	fmt.Println("[export] save file name:", fname, " size:", size)
 	return err
 }
 
@@ -299,7 +302,7 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 	var client *storage.Client
 	var err error
 
-	if f.isTest {
+	if f.isFake {
 		testGCS, err := testutil.NewGCSForTesting()
 		if err != nil {
 			return nil, err
@@ -324,13 +327,45 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 
 func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
 	if filename == "" {
+		visualizer.WarnWithCallerLogging(ctx, "gcs: read filename is empty")
 		return nil, rerror.ErrNotFound
 	}
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
-		log.Errorfc(ctx, "gcs: read bucket err: %+v\n", err)
-		return nil, rerror.ErrInternalByWithContext(ctx, err)
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read bucket err", rerror.ErrInternalByWithContext(ctx, err))
+	}
+
+	_, err = bucket.Object(filename).Attrs(ctx)
+	if err != nil && errors.Is(err, storage.ErrObjectNotExist) {
+		visualizer.WarnWithCallerLogging(ctx, "gcs: read attrs err")
+		return nil, rerror.ErrNotFound
+	}
+
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read attrs err", rerror.ErrInternalByWithContext(ctx, err))
+	}
+
+	// Note:
+	// fsouza/fake-gcs-server can't read object by Reader.
+	// so we need to download it from the server directly.
+	if f.isFake {
+		u := fmt.Sprintf("http://%s/download/storage/v1/b/%s/o/%s?alt=media",
+			strings.TrimRight("localhost:4443", "/"),
+			url.PathEscape(bucket.BucketName()),
+			url.PathEscape(filename),
+		)
+
+		resp, err := http.Get(u)
+		if err != nil {
+			return nil, err
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			body, _ := io.ReadAll(resp.Body)
+			return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read fake object err", fmt.Errorf("emu GET failed: status=%d body=%s", resp.StatusCode, string(body)))
+		}
+		return resp.Body, nil
 	}
 
 	reader, err := bucket.Object(filename).NewReader(ctx)
@@ -338,8 +373,7 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 		if errors.Is(err, storage.ErrObjectNotExist) {
 			return nil, rerror.ErrNotFound
 		}
-		log.Errorfc(ctx, "gcs: read err: %+v\n", err)
-		return nil, rerror.ErrInternalByWithContext(ctx, err)
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read object err", rerror.ErrInternalByWithContext(ctx, err))
 	}
 
 	return reader, nil

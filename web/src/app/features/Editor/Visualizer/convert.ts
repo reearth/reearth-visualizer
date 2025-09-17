@@ -15,8 +15,8 @@ import { WidgetAreaPadding } from "@reearth/app/features/Visualizer/Crust/Widget
 import { getLayerStyleValue } from "@reearth/app/utils/layer-style";
 import { valueTypeFromGQL } from "@reearth/app/utils/value";
 import type { Layer } from "@reearth/core";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import {
   type Maybe,
   type WidgetZone as WidgetZoneType,

@@ -1,10 +1,8 @@
 import { Typography, Button } from "@reearth/app/lib/reearth-ui";
 import { InputField } from "@reearth/app/ui/fields";
-import {
-  useMeFetcher,
-  useProjectFetcher,
-  useWorkspaceFetcher
-} from "@reearth/services/api";
+import { useProjects } from "@reearth/services/api/project";
+import { useMe } from "@reearth/services/api/user";
+import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace, type Workspace } from "@reearth/services/state";
@@ -21,7 +19,7 @@ type Props = {
 const WorkspaceSetting: FC<Props> = ({ workspace }) => {
   const t = useT();
 
-  const { useUpdateWorkspace: updateWorkspace } = useWorkspaceFetcher();
+  const { updateWorkspace } = useWorkspaceMutations();
 
   const handleSubmitUpdateWorkspaceName = useCallback(
     (name: string) => {
@@ -34,8 +32,7 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
     [workspace, updateWorkspace]
   );
 
-  const { useProjectsQuery } = useProjectFetcher();
-  const { projects } = useProjectsQuery({
+  const { projects } = useProjects({
     workspaceId: workspace?.id ?? "",
     pagination: { first: 1 } // we only need to check where there are projects or not
   });
@@ -59,7 +56,7 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
     }
   }, [workspace, currentWorkspace, setWorkspace]);
 
-  const { me } = useMeFetcher().useMeQuery();
+  const { me } = useMe();
   const meId = me?.id;
   const meRole = useMemo(
     () => workspace?.members?.find((m) => m.userId === meId)?.role,

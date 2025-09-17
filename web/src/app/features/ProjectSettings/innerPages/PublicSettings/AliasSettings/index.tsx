@@ -5,10 +5,8 @@ import {
 } from "@reearth/app/features/Editor/Publish/PublishToolsPanel/common";
 import { Button, Icon } from "@reearth/app/lib/reearth-ui";
 import CommonField from "@reearth/app/ui/fields/CommonField";
-import {
-  useSceneFetcher,
-  useStorytellingFetcher
-} from "@reearth/services/api";
+import { useValidateSceneAlias } from "@reearth/services/api/scene";
+import { useValidateStoryAlias } from "@reearth/services/api/storytelling";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
@@ -39,8 +37,8 @@ const AliasSetting: FC<AliasSettingProps> = ({
   onUpdateAlias
 }) => {
   const t = useT();
-  const { checkSceneAlias } = useSceneFetcher();
-  const { checkStoryAlias } = useStorytellingFetcher();
+  const { validateSceneAlias } = useValidateSceneAlias();
+  const { validateStoryAlias } = useValidateStoryAlias();
 
   const [, setNotification] = useNotification();
 
@@ -53,7 +51,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
       ? settingsItem.scene?.alias
       : settingsItem?.alias;
   }, [settingsItem]);
-  
+
   const publicUrl = useMemo(() => {
     const publishedConfig = config()?.published;
     if (!publishedConfig || !settingsItem) return "";
@@ -91,12 +89,19 @@ const AliasSetting: FC<AliasSettingProps> = ({
     const alias = isStory ? `s-${settingsItem?.id}` : `c-${sceneId}`;
 
     const data = isStory
-      ? await checkStoryAlias(alias, settingsItem?.id)
-      : await checkSceneAlias(alias, settingsItem?.id);
+      ? await validateStoryAlias(alias, settingsItem?.id)
+      : await validateSceneAlias(alias, settingsItem?.id);
     if (data?.available) {
       handleSubmitAlias(alias);
     }
-  }, [isStory, settingsItem?.id, sceneId, checkStoryAlias, checkSceneAlias, handleSubmitAlias]);
+  }, [
+    isStory,
+    settingsItem?.id,
+    sceneId,
+    validateStoryAlias,
+    validateSceneAlias,
+    handleSubmitAlias
+  ]);
 
   const isDisabled = useMemo(
     () =>

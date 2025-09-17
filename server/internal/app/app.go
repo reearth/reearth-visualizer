@@ -151,7 +151,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	published.GET("/:name/data.json", PublishedData("", true))
 	published.GET("/:name/", PublishedIndex("", true))
 
-	serveFiles(e, cfg.Gateways.File)
+	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	serveUploadFiles(e, cfg.Gateways.File)
 

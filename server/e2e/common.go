@@ -16,6 +16,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
@@ -76,15 +77,18 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 		repos = memory.New()
 	}
 
-	file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
-	fr = &file
+	if fr == nil {
+		file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
+		fr = &file
+	}
+
 	if seeder != nil {
-		if err := seeder(ctx, repos, file); err != nil {
+		if err := seeder(ctx, repos, *fr); err != nil {
 			t.Fatalf("failed to seed the db: %s", err)
 		}
 	}
 
-	return repos, file, ctx
+	return repos, *fr, ctx
 }
 
 func initGateway() *gateway.Container {
@@ -92,11 +96,13 @@ func initGateway() *gateway.Container {
 		return &gateway.Container{
 			File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
 			PolicyChecker: policy.NewPermissiveChecker(),
+			DomainChecker: domain.NewDefaultChecker(),
 		}
 	}
 	return &gateway.Container{
 		File:          *fr,
 		PolicyChecker: policy.NewPermissiveChecker(),
+		DomainChecker: domain.NewDefaultChecker(),
 	}
 }
 

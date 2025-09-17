@@ -3,7 +3,7 @@ import { Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { AssetField, InputField, SwitchField } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
-import { Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Story } from "@reearth/services/api/storytelling";
 import { useAuth } from "@reearth/services/auth";
 import {
   ProjectPublicationExtensionProps,
@@ -32,7 +32,7 @@ import {
 } from ".";
 
 interface WithTypename {
-  type?: "project" | "story";
+  type: "project" | "story";
 }
 
 export type SettingsProjectWithTypename = SettingsProject & WithTypename;
@@ -154,15 +154,19 @@ const PublicSettingsDetail: FC<Props> = ({
     [setNotification]
   );
 
-  const ExtensionComponent = (props: ExtensionComponentProps) => {
-    const type = props.typename.toLocaleLowerCase();
-    const extensionId = `custom-${type}-domain`;
-    const Component = extensions?.find((e) => e.id === extensionId)?.component;
-    if (!Component) {
-      return null;
-    }
-    return <Component {...props} />;
-  };
+  const ExtensionComponent = useMemo(() => {
+    return (props: ExtensionComponentProps) => {
+      const type = props.typename.toLocaleLowerCase();
+      const extensionId = `custom-${type}-domain`;
+      const Component = extensions?.find(
+        (e) => e.id === extensionId
+      )?.component;
+      if (!Component) {
+        return null;
+      }
+      return <Component {...props} />;
+    };
+  }, [extensions]);
 
   const isPublished = useMemo(
     () =>
@@ -273,7 +277,10 @@ const PublicSettingsDetail: FC<Props> = ({
                 {...(settingsItem.type === "project"
                   ? {
                       projectId: settingsItem.id,
-                      projectAlias: "scene" in settingsItem ? settingsItem.scene?.alias : undefined
+                      projectAlias:
+                        "scene" in settingsItem
+                          ? settingsItem.scene?.alias
+                          : undefined
                     }
                   : {
                       storyId: settingsItem.id,

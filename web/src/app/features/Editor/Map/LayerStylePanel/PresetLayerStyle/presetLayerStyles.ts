@@ -1,5 +1,5 @@
 import { LayerAppearanceTypes } from "@reearth/core";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 
 export const defaultStyle: Partial<LayerAppearanceTypes> = {
   marker: {

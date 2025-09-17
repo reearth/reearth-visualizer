@@ -1,4 +1,4 @@
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/property";
 
 export type Position = "left" | "right";
 

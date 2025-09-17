@@ -1,4 +1,4 @@
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n";
 import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
