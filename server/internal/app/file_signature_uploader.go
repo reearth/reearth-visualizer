@@ -23,9 +23,11 @@ import (
 )
 
 type SignedUploadURLResponse struct {
-	UploadURL   string `json:"upload_url"`
-	ExpiresAt   string `json:"expires_at"`
-	ContentType string `json:"content_type"`
+	TargetWorkspace  string `json:"target_workspace"`
+	TemporaryProject string `json:"temporary_project"`
+	UploadURL        string `json:"upload_url"`
+	ExpiresAt        string `json:"expires_at"`
+	ContentType      string `json:"content_type"`
 }
 
 type Notification struct {
@@ -74,9 +76,11 @@ func servSignatureUploadFiles(
 			expiresAt := time.Now().Add(time.Duration(expires) * time.Minute)
 
 			return SignedUploadURLResponse{
-				UploadURL:   *signedURL,
-				ExpiresAt:   expiresAt.Format(time.RFC3339),
-				ContentType: *contentType,
+				TargetWorkspace:  workspaceID,
+				TemporaryProject: tempPrj.ID().String(),
+				UploadURL:        *signedURL,
+				ExpiresAt:        expiresAt.Format(time.RFC3339),
+				ContentType:      *contentType,
 			}, nil
 		}),
 	)
