@@ -22,6 +22,35 @@ export type RefType = {
 
 export type AutoResize = "both" | "width-only" | "height-only";
 
+type AutoResizeData = {
+  width: number;
+  height: number;
+};
+
+type AutoResizeMessage = Record<string, AutoResizeData>;
+
+function isAutoResizeMessage(
+  data: unknown,
+  autoResizeMessageKey: string
+): data is AutoResizeMessage {
+  return (
+    data !== null &&
+    typeof data === "object" &&
+    autoResizeMessageKey in data &&
+    typeof (data as Record<string, unknown>)[autoResizeMessageKey] === "object" &&
+    (data as Record<string, unknown>)[autoResizeMessageKey] !== null
+  );
+}
+
+function isValidAutoResizeData(data: unknown): data is AutoResizeData {
+  return (
+    data !== null &&
+    typeof data === "object" &&
+    typeof (data as Record<string, unknown>).width === "number" &&
+    typeof (data as Record<string, unknown>).height === "number"
+  );
+}
+
 export default function useHook({
   autoResizeMessageKey = "___iframe_auto_resize___",
   width,
@@ -86,18 +115,11 @@ export default function useHook({
       if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow)
         return;
 
-      // Type guard for auto-resize messages
-      const data = ev.data as Record<string, unknown>;
-      if (data && typeof data === "object" && autoResizeMessageKey in data) {
-        const resizeData = data[autoResizeMessageKey] as {
-          width?: unknown;
-          height?: unknown;
-        };
-        const width = resizeData?.width;
-        const height = resizeData?.height;
-
-        if (typeof width === "number" && typeof height === "number") {
-          setIFrameSize([width + "px", height + "px"]);
+      // Check for auto-resize messages using type guards
+      if (isAutoResizeMessage(ev.data, autoResizeMessageKey)) {
+        const resizeData = ev.data[autoResizeMessageKey];
+        if (isValidAutoResizeData(resizeData)) {
+          setIFrameSize([resizeData.width + "px", resizeData.height + "px"]);
           onAutoResized?.();
         }
       } else {
