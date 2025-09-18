@@ -1,3 +1,4 @@
+import { ViewerProperty } from "@reearth/app/features/Editor/Visualizer/type";
 import { MouseEventHandles, MouseEvents } from "@reearth/core";
 import { useCallback, useEffect, useMemo } from "react";
 
@@ -44,7 +45,7 @@ export default ({
   const getViewerProperty = useGet(viewerProperty);
 
   const overrideViewerPropertyCommon = useCallback(
-    (property: any) => {
+    (property: ViewerProperty) => {
       return overrideViewerProperty?.("", property);
     },
     [overrideViewerProperty]
@@ -275,7 +276,15 @@ export default ({
     emit
   );
 
+  /**
+   * Handles mouse events by bridging between engine event handlers and plugin event system
+   *
+   * Note: Uses `any` type for fn parameter as it needs to be compatible with both
+   * MouseEventCallback (engine) and ViewerEventType expectations (DOM MouseEvent).
+   * This acts as a type bridge between different event systems.
+   */
   const onMouseEvent = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (eventType: keyof MouseEventHandles, fn: any) => {
       mapRef?.current?.engine[eventType]?.(fn);
     },
@@ -303,7 +312,8 @@ export default ({
     };
     (Object.keys(mouseEventHandles) as (keyof MouseEvents)[]).forEach(
       (event: keyof MouseEvents) => {
-        onMouseEvent(mouseEventHandles[event], (props: MouseEvent) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        onMouseEvent(mouseEventHandles[event], (props: any) => {
           emit(event, props);
         });
       }

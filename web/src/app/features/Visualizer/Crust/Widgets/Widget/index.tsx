@@ -2,6 +2,8 @@ import type { Credits, TickEvent } from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
 import { ComponentType, ReactNode, useMemo } from "react";
 
+import type { WidgetProperty } from "../types";
+
 import builtin, { isBuiltinWidget } from "./builtin";
 import type {
   Theme,
@@ -76,7 +78,10 @@ export type Context = {
   getCredits?: () => Credits | undefined;
 };
 
-export type ComponentProps<P = any> = Omit<Props, "widget" | "renderWidget"> & {
+export type ComponentProps<P = WidgetProperty> = Omit<
+  Props,
+  "widget" | "renderWidget"
+> & {
   widget: Widget<P>;
 };
 

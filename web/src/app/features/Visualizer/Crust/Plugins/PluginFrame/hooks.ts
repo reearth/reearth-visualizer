@@ -17,14 +17,14 @@ export type Options = {
   src?: string;
   sourceCode?: string;
   skip?: boolean;
-  isMarshalable?: boolean | "json" | ((obj: any) => boolean | "json");
+  isMarshalable?: boolean | "json" | ((obj: unknown) => boolean | "json");
   ref?: ForwardedRef<Ref>;
   mainIFrameRef?: RefObject<IFrameRef>;
-  exposed?: ((api: API) => Record<string, any>) | Record<string, any>;
-  onError?: (err: any) => void;
+  exposed?: ((api: API) => Record<string, unknown>) | Record<string, unknown>;
+  onError?: (err: unknown) => void;
   onPreInit?: () => void;
   onDispose?: () => void;
-  onMessage?: (msg: any) => void;
+  onMessage?: (msg: unknown) => void;
 };
 
 export type IFrameType = "main" | "modal" | "popup";
@@ -34,9 +34,9 @@ export type API = {
   modal: IFrameAPI;
   popup: IFrameAPI;
   messages: {
-    on: (e: (msg: any) => void) => void;
-    off: (e: (msg: any) => void) => void;
-    once: (e: (msg: any) => void) => void;
+    on: (handler: (msg: unknown) => void) => void;
+    off: (handler: (msg: unknown) => void) => void;
+    once: (handler: (msg: unknown) => void) => void;
   };
   startEventLoop: () => void;
 };
@@ -48,7 +48,7 @@ export type Ref = {
 const AsyncFunction = (async () => {}).constructor;
 
 // restrict any classes
-export const defaultIsMarshalable = (obj: any): boolean => {
+export const defaultIsMarshalable = (obj: unknown): boolean => {
   return (
     ((typeof obj !== "object" || obj === null) && typeof obj !== "function") ||
     Array.isArray(obj) ||
@@ -60,7 +60,7 @@ export const defaultIsMarshalable = (obj: any): boolean => {
   );
 };
 
-const defaultOnError = (err: any) => {
+const defaultOnError = (err: unknown) => {
   console.error("plugin error", err);
 };
 
@@ -88,28 +88,31 @@ export default function useHook({
   const modalIFrameRef = useRef<IFrameRef>(null);
   const popupIFrameRef = useRef<IFrameRef>(null);
 
-  const messageEvents = useMemo(() => new Set<(msg: any) => void>(), []);
-  const messageOnceEvents = useMemo(() => new Set<(msg: any) => void>(), []);
+  const messageEvents = useMemo(() => new Set<(msg: unknown) => void>(), []);
+  const messageOnceEvents = useMemo(
+    () => new Set<(msg: unknown) => void>(),
+    []
+  );
   const onMessage = useCallback(
-    (e: (msg: any) => void) => {
-      messageEvents.add(e);
+    (handler: (msg: unknown) => void) => {
+      messageEvents.add(handler);
     },
     [messageEvents]
   );
   const offMessage = useCallback(
-    (e: (msg: any) => void) => {
-      messageEvents.delete(e);
+    (handler: (msg: unknown) => void) => {
+      messageEvents.delete(handler);
     },
     [messageEvents]
   );
   const onceMessage = useCallback(
-    (e: (msg: any) => void) => {
-      messageOnceEvents.add(e);
+    (handler: (msg: unknown) => void) => {
+      messageOnceEvents.add(handler);
     },
     [messageOnceEvents]
   );
   const handleMessage = useCallback(
-    (msg: any) => {
+    (msg: unknown) => {
       try {
         messageEvents.forEach((e) => e(msg));
         messageOnceEvents.forEach((e) => e(msg));
@@ -139,10 +142,10 @@ export default function useHook({
   }, [eventLoopCb]);
 
   const evalCode = useCallback(
-    (code: string): any => {
+    (code: string): unknown => {
       if (!arena.current) return;
 
-      let result: any;
+      let result: unknown;
       try {
         result = arena.current.evalCode(code);
       } catch (err) {

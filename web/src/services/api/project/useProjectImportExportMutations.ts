@@ -6,6 +6,8 @@ import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";
 
+import { ImportProjectResponse } from "./types";
+
 const CHUNK_SIZE = 16 * 1024 * 1024;
 
 export const useProjectImportExportMutations = () => {
@@ -83,7 +85,7 @@ export const useProjectImportExportMutations = () => {
   );
 
   const importProject = useCallback(
-    async (file: File, workspaceId: string) => {
+    async (file: File, workspaceId: string): Promise<ImportProjectResponse> => {
       const CHUNK_CONCURRENCY = 4;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
       const fileId = uuidv4();
@@ -107,7 +109,7 @@ export const useProjectImportExportMutations = () => {
 
       const chunkIndices = Array.from({ length: totalChunks }, (_, i) => i);
 
-      const parallelUpload = async (indices: number[]): Promise<any[]> => {
+      const parallelUpload = async (indices: number[]): Promise<unknown[]> => {
         const results = [];
 
         // 1. Always upload chunk 0 first
@@ -147,7 +149,9 @@ export const useProjectImportExportMutations = () => {
       const responses = await parallelUpload(chunkIndices);
       lastResponse = responses.at(-1);
 
-      return lastResponse || { status: "chunk_received" };
+      return (
+        (lastResponse as ImportProjectResponse) || { status: "chunk_received" }
+      );
     },
     [axios, setNotification, t]
   );

@@ -11,7 +11,7 @@ export default {
 
 export const Default: StoryFn<Props> = (args) => <Component {...args} />;
 
-let cb: (message: any) => void;
+let cb: (message: unknown) => void;
 
 Default.args = {
   src: `/plugins/plugin.js`,
@@ -28,7 +28,7 @@ Default.args = {
       log: action("console.log")
     },
     reearth: {
-      on(type: string, value: (message: any) => void) {
+      on(type: string, value: (message: unknown) => void) {
         if (type === "message") {
           cb = value;
         }
@@ -39,7 +39,7 @@ Default.args = {
       }
     }
   }),
-  onMessage: (message: any) => {
+  onMessage: (message: unknown) => {
     action("onMessage")(message);
     return cb?.(message);
   }
@@ -62,7 +62,7 @@ HiddenIFrame.args = {
       log: action("console.log")
     },
     reearth: {
-      on(type: string, value: (message: any) => void) {
+      on(type: string, value: (message: unknown) => void) {
         if (type === "message") {
           cb = value;
         }
@@ -73,7 +73,7 @@ HiddenIFrame.args = {
       }
     }
   }),
-  onMessage: (message: any) => {
+  onMessage: (message: unknown) => {
     action("onMessage")(message);
     return cb?.(message);
   }

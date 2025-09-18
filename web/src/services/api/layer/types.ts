@@ -1,15 +1,25 @@
+import { PropertyFragmentFragment } from "@reearth/services/gql";
+
+export type NLSInfoboxBlock = {
+  id: string;
+  pluginId: string;
+  extensionId: string;
+  propertyId: string;
+  property?: PropertyFragmentFragment | null;
+};
+
 export type NLSInfobox = {
   sceneId: string;
   layerId: string;
   propertyId?: string;
-  property?: any;
-  blocks?: any[];
+  property?: PropertyFragmentFragment | null;
+  blocks?: NLSInfoboxBlock[];
 };
 
 export type NLSPhotoOverlay = {
   layerId?: string;
   propertyId?: string;
-  property?: any;
+  property?: PropertyFragmentFragment | null;
   processedProperty?: {
     enabled?: boolean;
     cameraDuration?: number;
@@ -29,17 +39,21 @@ export type SketchGeometry = {
 export type SketchFeature = {
   id: string;
   type: string;
-  properties: any;
+  properties: Record<string, unknown>;
   geometry: SketchGeometry[];
 };
 
 export type Sketch = {
-  customPropertySchema?: any;
+  customPropertySchema?: Record<string, string>;
   featureCollection?: {
     type: string;
     features: SketchFeature[];
   };
 };
+
+// any is from BE definition JSON
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type LayerConfig = any;
 
 export type NLSLayer = {
   id: string;
@@ -47,7 +61,7 @@ export type NLSLayer = {
   title: string;
   visible: boolean;
   layerType: string;
-  config?: any;
+  config?: LayerConfig;
   children?: NLSLayer[] | null;
   sketch?: Sketch;
   isSketch?: boolean;

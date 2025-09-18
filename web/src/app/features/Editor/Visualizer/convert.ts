@@ -13,7 +13,11 @@ import {
 } from "@reearth/app/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/app/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
 import { getLayerStyleValue } from "@reearth/app/utils/layer-style";
-import { valueTypeFromGQL } from "@reearth/app/utils/value";
+import {
+  valueTypeFromGQL,
+  type ValueTypes,
+  type ValueType
+} from "@reearth/app/utils/value";
 import type { Layer } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layer";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
@@ -35,7 +39,8 @@ import {
 
 import convertInfobox from "./convert-infobox";
 
-export type P = { [key in string]: any };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type P = Record<string, any>; // Properties have dynamic structure based on schema
 
 export type Widget = Omit<RawWidget, "layout" | "extended"> & {
   extended?: boolean;
@@ -240,7 +245,7 @@ const processPropertyGroups = (
   schema: PropertySchemaGroupFragmentFragment,
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined
-): any => {
+): Record<string, ValueTypes[ValueType] | null | undefined> => {
   const allFields: Record<
     string,
     {
@@ -271,7 +276,7 @@ const processPropertyGroups = (
   );
 };
 
-export const valueFromGQL = (val: any, type: GQLValueType) => {
+export const valueFromGQL = (val: unknown, type: GQLValueType) => {
   const t = valueTypeFromGQL(type);
   if (typeof val === "undefined" || val === null || !t) {
     return undefined;

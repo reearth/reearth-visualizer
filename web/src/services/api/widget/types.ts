@@ -13,20 +13,6 @@ export type WidgetLayout = {
   align: WidgetAlignment;
 };
 
-export type Widget<P = any> = {
-  id: string;
-  pluginId: string;
-  extensionId: string;
-  property?: P;
-  propertyId?: string;
-  title?: string;
-  description?: string;
-  icon?: string;
-  enabled?: boolean;
-  extended?: boolean;
-  layout?: WidgetLayout;
-};
-
 export type InstallableWidget = {
   pluginId: string;
   extensionId: string;

@@ -42,7 +42,7 @@ export default function ({
   layer?: Layer;
   widget?: Widget;
   block?: Block;
-  pluginProperty?: any;
+  pluginProperty?: unknown;
   shownPluginModalInfo?: PluginModalInfo;
   shownPluginPopupInfo?: PluginPopupInfo;
   onVisibilityChange?: (widgetId: string, v: boolean) => void;
@@ -144,7 +144,7 @@ export default function ({
   ]);
 
   const onError = useCallback(
-    (err: any) => {
+    (err: unknown) => {
       console.error(`plugin error from ${pluginId}/${extensionId}: `, err);
     },
     [pluginId, extensionId]

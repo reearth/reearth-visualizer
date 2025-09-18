@@ -1,12 +1,18 @@
 import localforage from "localforage";
 import { useRef, useMemo, useCallback } from "react";
 
+/**
+ * Client storage interface for plugin data persistence
+ *
+ * This provides a storage API for plugins to persist data using browser storage.
+ * Values must be JSON-serializable as they are stored using localforage.
+ */
 export type ClientStorage = {
-  getAsync: (extensionInstanceId: string, key: string) => Promise<any>;
+  getAsync: (extensionInstanceId: string, key: string) => Promise<unknown>;
   setAsync: (
     extensionInstanceId: string,
     key: string,
-    value: any
+    value: unknown
   ) => Promise<void>;
   deleteAsync: (extensionInstanceId: string, key: string) => Promise<void>;
   keysAsync: (extensionInstanceId: string) => Promise<string[]>;
@@ -34,17 +40,17 @@ export default () => {
   const clientStorage = useMemo(() => {
     return {
       getAsync: (extensionInstanceId: string, key: string) => {
-        return new Promise<any>((resolve, reject) => {
+        return new Promise<unknown>((resolve, reject) => {
           const store = getStore(extensionInstanceId);
           if (!store) {
             reject();
           } else {
             store
               .getItem(key)
-              .then((value: any) => {
+              .then((value: unknown) => {
                 resolve(value);
               })
-              .catch((err: any) => {
+              .catch((err: unknown) => {
                 console.log(
                   `err get client storage value for ${extensionInstanceId} ${key}: ${err}`
                 );
@@ -53,7 +59,7 @@ export default () => {
           }
         });
       },
-      setAsync: (extensionInstanceId: string, key: string, value: any) => {
+      setAsync: (extensionInstanceId: string, key: string, value: unknown) => {
         return new Promise<void>((resolve, reject) => {
           const store = getStore(extensionInstanceId);
           if (!store) {
@@ -64,7 +70,7 @@ export default () => {
               .then(() => {
                 resolve();
               })
-              .catch((err: any) => {
+              .catch((err: unknown) => {
                 console.log(
                   `err set client storage value for ${extensionInstanceId} ${key} ${value}: ${err}`
                 );
@@ -84,7 +90,7 @@ export default () => {
               .then(() => {
                 resolve();
               })
-              .catch((err: any) => {
+              .catch((err: unknown) => {
                 console.log(
                   `err delete client storage value for ${extensionInstanceId} ${key}: ${err}`
                 );
@@ -104,7 +110,7 @@ export default () => {
               .then((value: string[]) => {
                 resolve(value);
               })
-              .catch((err: any) => {
+              .catch((err: unknown) => {
                 console.log(
                   `err get client storage keys for ${extensionInstanceId}: ${err}`
                 );
@@ -123,7 +129,7 @@ export default () => {
             store
               .dropInstance()
               .then(() => resolve())
-              .catch((err: any) => {
+              .catch((err: unknown) => {
                 console.log(
                   `err drop client storage for ${extensionInstanceId}: ${err}`
                 );

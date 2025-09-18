@@ -11,6 +11,7 @@ import {
 
 import { calculatePaddingValue } from "../../../Crust/StoryPanel/utils";
 import { useEditModeContext } from "../../contexts/editModeContext";
+import type { BlockWrapperProperty, ContentSettings } from "../../types";
 
 export const DEFAULT_BLOCK_PADDING: Spacing = {
   top: 0,
@@ -29,7 +30,7 @@ export default ({
 }: {
   name?: string | null;
   isSelected?: boolean;
-  property?: any;
+  property?: BlockWrapperProperty;
   isEditable?: boolean;
   onClick: (() => void) | undefined;
   onBlockDoubleClick: (() => void) | undefined;
@@ -81,7 +82,12 @@ export default ({
     []
   );
 
-  const title = useMemo(() => name ?? property?.title, [name, property?.title]);
+  const title = useMemo(
+    () =>
+      name ??
+      (typeof property?.title === "string" ? property.title : undefined),
+    [name, property?.title]
+  );
 
   const handleBlockDoubleClick = useCallback(() => {
     if (isEditable && !editModeContext.disableSelection) {
@@ -107,7 +113,7 @@ export default ({
   const defaultSettings = useMemo(
     () => property?.default ?? property?.title,
     [property]
-  );
+  ) as ContentSettings | undefined;
 
   const groupId = useMemo(
     () =>
@@ -119,19 +125,26 @@ export default ({
     if (!property?.panel) return undefined;
     return {
       padding: {
-        ...property?.panel?.padding,
+        ...(typeof property?.panel?.padding === "object" &&
+        property?.panel?.padding !== null
+          ? property.panel.padding
+          : {}),
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
-          property?.panel?.padding?.value,
+          typeof property?.panel?.padding === "object" &&
+            property?.panel?.padding !== null &&
+            "value" in property.panel.padding
+            ? (property.panel.padding.value as Spacing | undefined)
+            : undefined,
           isEditable
         )
       }
     };
-  }, [property?.panel, isEditable]);
+  }, [property?.panel, isEditable]) as ContentSettings | undefined;
 
   const pluginBlockSettings = useMemo(() => {
     return property;
-  }, [property]);
+  }, [property]) as ContentSettings | undefined;
 
   return {
     title,

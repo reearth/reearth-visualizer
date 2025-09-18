@@ -16,7 +16,7 @@ export const convertNLSLayers = (
     layerType: l.layerType,
     config: l.config,
     isSketch: l.isSketch,
-    infobox: l.nlsInfobox,
+    infobox: l.nlsInfobox as NLSLayer["infobox"],
     photoOverlay: l.nlsPhotoOverlay
       ? {
           processedProperty: {

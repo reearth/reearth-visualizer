@@ -12,15 +12,14 @@ import "web-streams-polyfill/es2018";
 
 declare global {
   namespace Vi {
-    interface JestAssertion<T = any>
-      extends jest.Matchers<void, T>,
-        EmotionMatchers {
+    interface JestAssertion<T> extends jest.Matchers<void, T>, EmotionMatchers {
       toHaveStyleRule: EmotionMatchers["toHaveStyleRule"];
     }
   }
 }
 
 expect.extend(domMatchers);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 expect.extend(emotionMatchers as any);
 
 Object.defineProperty(window, "matchMedia", {

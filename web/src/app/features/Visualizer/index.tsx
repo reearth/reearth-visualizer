@@ -59,7 +59,7 @@ type VisualizerProps = {
     layoutConstraint?: Record<string, WidgetLayoutConstraint> | undefined;
   };
   viewerProperty?: ViewerProperty;
-  pluginProperty?: Record<string, any> | undefined;
+  pluginProperty?: Record<string, unknown> | undefined;
   story?: Story;
   zoomedLayerId?: string;
   visualizerRef?: MutableRefObject<MapRef | null>;

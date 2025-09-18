@@ -63,12 +63,12 @@ export default ({
           isEditable
         ),
         title: "Padding",
-        type: "spacing",
-        ui: "padding"
+        type: "spacing" as const,
+        ui: "padding" as const
       },
       gap: {
         value: property?.panel?.gap ?? DEFAULT_STORY_PAGE_GAP,
-        type: "number",
+        type: "number" as const,
         title: "Gap"
       }
     }),

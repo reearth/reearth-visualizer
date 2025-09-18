@@ -28,7 +28,7 @@ export type Props = {
   externalRef?: RefObject<HTMLIFrameElement>;
   onRender?: (type: string) => void;
   onClick?: () => void;
-  onMessage?: (message: any) => void;
+  onMessage?: (message: unknown) => void;
 };
 
 const PluginIFrame: ForwardRefRenderFunction<Ref, Props> = (

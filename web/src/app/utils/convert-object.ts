@@ -1,4 +1,5 @@
 export type Mapping = Record<string, string | [string, Record<string, string>]>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyObject = Record<string, any>;
 
 // Helper function to get nested property value
