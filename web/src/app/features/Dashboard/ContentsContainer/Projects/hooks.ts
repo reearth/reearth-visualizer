@@ -280,8 +280,12 @@ export default (workspaceId?: string) => {
       if (file && workspaceId) {
         setImportStatus("processing");
         const result = await importProject(file, workspaceId);
-        if (result.status === "success") {
-          setImportedProjectId(result.project_id);
+        if (
+          "projectId" in result &&
+          typeof result.projectId === "string" &&
+          result.projectId
+        ) {
+          setImportedProjectId(result.projectId);
         }
       }
     },
