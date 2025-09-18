@@ -2,6 +2,52 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.10.0 - 2025-09-17
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Memo ExtensionComponent ([#1806](https://github.com/reearth/reearth-visualizer/pull/1806)) [`8039df`](https://github.com/reearth/reearth-visualizer/commit/8039df)
+
+#### ✨ Refactor
+
+- Temporarily disable global modal ([#1820](https://github.com/reearth/reearth-visualizer/pull/1820)) [`569909`](https://github.com/reearth/reearth-visualizer/commit/569909)
+- Improve API hooks ([#1818](https://github.com/reearth/reearth-visualizer/pull/1818)) [`724371`](https://github.com/reearth/reearth-visualizer/commit/724371)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.10.0 ([#1821](https://github.com/reearth/reearth-visualizer/pull/1821)) [`22ed14`](https://github.com/reearth/reearth-visualizer/commit/22ed14)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Rename assets cors middleware and apply this middleware to reading all file ([#1814](https://github.com/reearth/reearth-visualizer/pull/1814)) [`18ccb5`](https://github.com/reearth/reearth-visualizer/commit/18ccb5)
+- Story publishing isn&[#39](https://github.com/reearth/reearth-visualizer/pull/39);t working ([#1812](https://github.com/reearth/reearth-visualizer/pull/1812)) [`8655ce`](https://github.com/reearth/reearth-visualizer/commit/8655ce)
+- Asset cors middleware ([#1810](https://github.com/reearth/reearth-visualizer/pull/1810)) [`f567b9`](https://github.com/reearth/reearth-visualizer/commit/f567b9)
+- Allow to access assets endpoint from custom domain ([#1802](https://github.com/reearth/reearth-visualizer/pull/1802)) [`df2d66`](https://github.com/reearth/reearth-visualizer/commit/df2d66)
+
+#### Miscellaneous Tasks
+
+- Add grpcurl doc ([#1714](https://github.com/reearth/reearth-visualizer/pull/1714)) [`883f56`](https://github.com/reearth/reearth-visualizer/commit/883f56)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update actions&#x2F;setup-go action to v6 ([#1816](https://github.com/reearth/reearth-visualizer/pull/1816)) [`d4774b`](https://github.com/reearth/reearth-visualizer/commit/d4774b)
+- Update actions&#x2F;cache action to v4 ([#1625](https://github.com/reearth/reearth-visualizer/pull/1625)) [`b7d049`](https://github.com/reearth/reearth-visualizer/commit/b7d049)
+- Update actions&#x2F;checkout action to v5 ([#1803](https://github.com/reearth/reearth-visualizer/pull/1803)) [`1966bd`](https://github.com/reearth/reearth-visualizer/commit/1966bd)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update actions&#x2F;setup-go action to v6 ([#1816](https://github.com/reearth/reearth-visualizer/pull/1816)) [`d4774b`](https://github.com/reearth/reearth-visualizer/commit/d4774b)
+- Update actions&#x2F;cache action to v4 ([#1625](https://github.com/reearth/reearth-visualizer/pull/1625)) [`b7d049`](https://github.com/reearth/reearth-visualizer/commit/b7d049)
+- Update actions&#x2F;checkout action to v5 ([#1803](https://github.com/reearth/reearth-visualizer/pull/1803)) [`1966bd`](https://github.com/reearth/reearth-visualizer/commit/1966bd)
+
 ## 1.0.0-beta.9.4 - 2025-09-04
 
 ## 1.0.0-beta.9.3 - 2025-08-28
