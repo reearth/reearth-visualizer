@@ -48,7 +48,7 @@ export type LayerAddProps = {
   sceneId: string;
   title: string;
   visible?: boolean;
-  schema?: Scalars['JSON']['input'];
+  schema?: Scalars["JSON"]["input"];
 };
 
 export type LayerNameUpdateProps = {

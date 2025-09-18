@@ -153,16 +153,19 @@ export type PanelProperty = {
 
 /**
  * Base property structure for builtin Story Panel blocks
- * 
+ *
  * This provides a common foundation for all builtin block properties,
  * extending the standard panel configuration with common block patterns.
  */
 export type BuiltinBlockProperty = {
   panel?: PanelProperty;
-  default?: Record<string, {
-    value?: ValueTypes[ValueType];
-    [key: string]: unknown;
-  }>;
+  default?: Record<
+    string,
+    {
+      value?: ValueTypes[ValueType];
+      [key: string]: unknown;
+    }
+  >;
   [key: string]: unknown;
 };
 

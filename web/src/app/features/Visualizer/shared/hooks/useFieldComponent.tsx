@@ -13,7 +13,14 @@ import {
   TwinInputField,
   PropertySelectorField
 } from "@reearth/app/ui/fields";
-import type { ValueType, ValueTypes, LatLng, Spacing, Timeline, Camera } from "@reearth/app/utils/value";
+import type {
+  ValueType,
+  ValueTypes,
+  LatLng,
+  Spacing,
+  Timeline,
+  Camera
+} from "@reearth/app/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
@@ -126,8 +133,11 @@ export const FieldComponent = ({
     <TwinInputField
       key={field?.id}
       title={field?.title}
-      values={field?.type === "latlng" && field?.value ? 
-        [(field?.value as LatLng).lat, (field?.value as LatLng).lng] : [0, 0]}
+      values={
+        field?.type === "latlng" && field?.value
+          ? [(field?.value as LatLng).lat, (field?.value as LatLng).lng]
+          : [0, 0]
+      }
       description={field?.description}
       onBlur={handlePropertyValueUpdate(
         groupId,
@@ -265,11 +275,15 @@ export const FieldComponent = ({
     <TimePeriodField
       key={field.id}
       title={field?.title}
-      value={field?.type === "timeline" && field?.value ? {
-        currentTime: (field?.value as Timeline).currentTime ?? "",
-        startTime: (field?.value as Timeline).startTime ?? "",
-        endTime: (field?.value as Timeline).endTime ?? ""
-      } : undefined}
+      value={
+        field?.type === "timeline" && field?.value
+          ? {
+              currentTime: (field?.value as Timeline).currentTime ?? "",
+              startTime: (field?.value as Timeline).startTime ?? "",
+              endTime: (field?.value as Timeline).endTime ?? ""
+            }
+          : undefined
+      }
       description={field?.description}
       onChange={handlePropertyValueUpdate(
         groupId,

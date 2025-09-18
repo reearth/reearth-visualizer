@@ -89,7 +89,10 @@ export default function useHook({
   const popupIFrameRef = useRef<IFrameRef>(null);
 
   const messageEvents = useMemo(() => new Set<(msg: unknown) => void>(), []);
-  const messageOnceEvents = useMemo(() => new Set<(msg: unknown) => void>(), []); 
+  const messageOnceEvents = useMemo(
+    () => new Set<(msg: unknown) => void>(),
+    []
+  );
   const onMessage = useCallback(
     (handler: (msg: unknown) => void) => {
       messageEvents.add(handler);

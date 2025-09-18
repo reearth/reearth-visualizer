@@ -5,7 +5,10 @@ export type { FlyToDestination, LookAtDestination } from "@reearth/core";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WidgetProperty = Record<string, any>;
 
-export type InternalWidget<P = WidgetProperty> = Omit<Widget<P>, "layout" | "extended"> & {
+export type InternalWidget<P = WidgetProperty> = Omit<
+  Widget<P>,
+  "layout" | "extended"
+> & {
   extended?: boolean;
 };
 

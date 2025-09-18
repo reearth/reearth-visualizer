@@ -1,7 +1,8 @@
 import { mapValues } from "lodash-es";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const processProperty = (p: any): any => { // Property processing requires dynamic typing
+export const processProperty = (p: any): any => {
+  // Property processing requires dynamic typing
   if (typeof p !== "object") return p;
   return mapValues(p, (g) =>
     Array.isArray(g)
@@ -11,7 +12,8 @@ export const processProperty = (p: any): any => { // Property processing require
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const processPropertyGroup = (g: any): any => { // Property groups have dynamic structure
+const processPropertyGroup = (g: any): any => {
+  // Property groups have dynamic structure
   if (typeof g !== "object") return g;
   return mapValues(g, (v) => {
     // For compability

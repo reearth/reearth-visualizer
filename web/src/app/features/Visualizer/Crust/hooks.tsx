@@ -9,7 +9,11 @@ import {
   useState
 } from "react";
 
-import type { BlockProps, DebuggableWidget, DebuggableBlock } from "../shared/types";
+import type {
+  BlockProps,
+  DebuggableWidget,
+  DebuggableBlock
+} from "../shared/types";
 
 import {
   Plugin,

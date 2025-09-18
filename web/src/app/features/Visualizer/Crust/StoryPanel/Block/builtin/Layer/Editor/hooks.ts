@@ -94,7 +94,12 @@ export default ({
   );
 
   const handleUpdate = useCallback(
-    (itemId: string, fieldId: string, fieldType: ValueType, updatedValue: ValueTypes[ValueType]) => {
+    (
+      itemId: string,
+      fieldId: string,
+      fieldType: ValueType,
+      updatedValue: ValueTypes[ValueType]
+    ) => {
       if (!propertyId || !itemId) return;
 
       handlePropertyValueUpdate(

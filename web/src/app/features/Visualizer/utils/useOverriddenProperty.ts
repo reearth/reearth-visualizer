@@ -7,7 +7,10 @@ type DeepPartial<T> = {
 
 export function useOverriddenProperty<T extends object>(
   property: T | undefined
-): [T | undefined, (pluginId: string, property: DeepPartial<T> | undefined) => void] {
+): [
+  T | undefined,
+  (pluginId: string, property: DeepPartial<T> | undefined) => void
+] {
   const [overriddenProperties, setOverrideProperty] = useState<
     Record<string, DeepPartial<T>>
   >({});
@@ -17,11 +20,14 @@ export function useOverriddenProperty<T extends object>(
     return { overriddenPropertyCommon, overriddenProperty };
   }, [overriddenProperties]);
 
-  const overrideProperty = useCallback((pluginId: string, property: DeepPartial<T> | undefined) => {
-    setOverrideProperty((p) =>
-      property ? { ...p, [pluginId || ""]: property } : omit(p, pluginId)
-    );
-  }, []);
+  const overrideProperty = useCallback(
+    (pluginId: string, property: DeepPartial<T> | undefined) => {
+      setOverrideProperty((p) =>
+        property ? { ...p, [pluginId || ""]: property } : omit(p, pluginId)
+      );
+    },
+    []
+  );
 
   const mergedProperty = useMemo(() => {
     return [

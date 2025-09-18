@@ -13,7 +13,11 @@ import {
 } from "@reearth/app/features/Visualizer/Crust/Widgets";
 import { WidgetAreaPadding } from "@reearth/app/features/Visualizer/Crust/Widgets/WidgetAlignSystem/types";
 import { getLayerStyleValue } from "@reearth/app/utils/layer-style";
-import { valueTypeFromGQL, type ValueTypes, type ValueType } from "@reearth/app/utils/value";
+import {
+  valueTypeFromGQL,
+  type ValueTypes,
+  type ValueType
+} from "@reearth/app/utils/value";
 import type { Layer } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layer";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";

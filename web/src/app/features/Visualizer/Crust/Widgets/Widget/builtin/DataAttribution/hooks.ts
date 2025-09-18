@@ -55,10 +55,10 @@ export const useDataAttribution = ({
           return (
             typeof credit === "object" &&
             credit !== null &&
-            ("description" in credit || "logo" in credit || "creditUrl" in credit) &&
-            (credit.description ||
-              credit.logo ||
-              credit.creditUrl)
+            ("description" in credit ||
+              "logo" in credit ||
+              "creditUrl" in credit) &&
+            (credit.description || credit.logo || credit.creditUrl)
           );
         })
         .map(

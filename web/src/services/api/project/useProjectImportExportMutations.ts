@@ -149,7 +149,9 @@ export const useProjectImportExportMutations = () => {
       const responses = await parallelUpload(chunkIndices);
       lastResponse = responses.at(-1);
 
-      return (lastResponse as ImportProjectResponse) || { status: "chunk_received" };
+      return (
+        (lastResponse as ImportProjectResponse) || { status: "chunk_received" }
+      );
     },
     [axios, setNotification, t]
   );

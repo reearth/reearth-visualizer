@@ -82,7 +82,12 @@ export default ({
     []
   );
 
-  const title = useMemo(() => name ?? (typeof property?.title === "string" ? property.title : undefined), [name, property?.title]);
+  const title = useMemo(
+    () =>
+      name ??
+      (typeof property?.title === "string" ? property.title : undefined),
+    [name, property?.title]
+  );
 
   const handleBlockDoubleClick = useCallback(() => {
     if (isEditable && !editModeContext.disableSelection) {
@@ -120,10 +125,17 @@ export default ({
     if (!property?.panel) return undefined;
     return {
       padding: {
-        ...(typeof property?.panel?.padding === "object" && property?.panel?.padding !== null ? property.panel.padding : {}),
+        ...(typeof property?.panel?.padding === "object" &&
+        property?.panel?.padding !== null
+          ? property.panel.padding
+          : {}),
         value: calculatePaddingValue(
           DEFAULT_BLOCK_PADDING,
-          typeof property?.panel?.padding === "object" && property?.panel?.padding !== null && "value" in property.panel.padding ? property.panel.padding.value as Spacing | undefined : undefined,
+          typeof property?.panel?.padding === "object" &&
+            property?.panel?.padding !== null &&
+            "value" in property.panel.padding
+            ? (property.panel.padding.value as Spacing | undefined)
+            : undefined,
           isEditable
         )
       }

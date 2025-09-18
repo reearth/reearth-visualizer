@@ -15,7 +15,7 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
     <>
       {properties?.map((field, idx) => {
         const [key, value]: [string, unknown] = Object.entries(field)[0];
-        const stringValue = typeof value === 'string' ? value : String(value);
+        const stringValue = typeof value === "string" ? value : String(value);
         if (value && typeof value === "object") {
           return (
             <ObjectWrapper key={key}>
@@ -36,7 +36,9 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
             </ObjectWrapper>
           );
         }
-        return <ListItem key={key} index={idx} keyValue={key} value={stringValue} />;
+        return (
+          <ListItem key={key} index={idx} keyValue={key} value={stringValue} />
+        );
       })}
     </>
   );
