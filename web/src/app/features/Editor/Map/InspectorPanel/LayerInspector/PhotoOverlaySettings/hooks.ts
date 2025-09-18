@@ -5,7 +5,13 @@ import { convert } from "@reearth/services/api/property/utils";
 import type { PropertyFragmentFragment } from "@reearth/services/gql";
 import { useCallback, useMemo } from "react";
 
-export default ({ layerId, property }: { layerId: string; property?: PropertyFragmentFragment }) => {
+export default ({
+  layerId,
+  property
+}: {
+  layerId: string;
+  property?: PropertyFragmentFragment | null;
+}) => {
   const { createNLSPhotoOverlay } = usePhotoOverlayMutations();
 
   const visibleItems: Item[] | undefined = useMemo(

@@ -5,7 +5,7 @@ import JsonView from "react18-json-view";
 import ListItem from "../ListItem";
 
 type Props = {
-  properties?: any[];
+  properties?: Record<string, unknown>[];
   isEditable?: boolean;
 };
 
@@ -14,7 +14,8 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
   return (
     <>
       {properties?.map((field, idx) => {
-        const [key, value]: [string, any] = Object.entries(field)[0];
+        const [key, value]: [string, unknown] = Object.entries(field)[0];
+        const stringValue = typeof value === 'string' ? value : String(value);
         if (value && typeof value === "object") {
           return (
             <ObjectWrapper key={key}>
@@ -35,7 +36,7 @@ const DefaultFields: React.FC<Props> = ({ properties, isEditable }) => {
             </ObjectWrapper>
           );
         }
-        return <ListItem key={key} index={idx} keyValue={key} value={value} />;
+        return <ListItem key={key} index={idx} keyValue={key} value={stringValue} />;
       })}
     </>
   );

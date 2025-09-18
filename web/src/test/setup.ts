@@ -12,9 +12,7 @@ import "web-streams-polyfill/es2018";
 
 declare global {
   namespace Vi {
-    interface JestAssertion<T = any>
-      extends jest.Matchers<void, T>,
-        EmotionMatchers {
+    interface JestAssertion<T> extends jest.Matchers<void, T>, EmotionMatchers {
       toHaveStyleRule: EmotionMatchers["toHaveStyleRule"];
     }
   }

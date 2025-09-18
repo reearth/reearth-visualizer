@@ -3,6 +3,7 @@ import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent, ReactNode } from "react";
 
 import ClickAwayListener from "../../../Crust/StoryPanel/ClickAwayListener";
+import type { ContentSettings } from "../../types";
 
 import ActionPanel, { type ActionPosition } from "./ActionPanel";
 import useHooks from "./hooks";
@@ -13,7 +14,7 @@ type Props = {
   isSelected?: boolean;
   children: ReactNode;
   propertyId?: string;
-  contentSettings?: any;
+  contentSettings?: ContentSettings;
   isPluginBlock?: boolean;
   dndEnabled?: boolean;
   showSettings?: boolean;

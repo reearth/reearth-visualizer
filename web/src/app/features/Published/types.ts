@@ -8,6 +8,23 @@ import type {
 import type { SketchFeature } from "@reearth/services/api/layer/types";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
 
+// Base type for plugin properties that can have arbitrary structure
+export type PluginProperty = Record<string, unknown>;
+
+// Common property structure for features and data
+export type Properties = Record<string, unknown>;
+
+// Schema definition for dynamic property structures
+export type PropertySchema = {
+  type?: string;
+  title?: string;
+  description?: string;
+  properties?: Record<string, PropertySchema>;
+  items?: PropertySchema;
+  enum?: unknown[];
+  default?: unknown;
+};
+
 export type PublishedData = {
   schemaVersion: number;
   id: string;
@@ -51,7 +68,7 @@ export type StoryBlock = {
 
 export type Plugin = {
   id: string;
-  property: any;
+  property: PluginProperty;
 };
 
 export type PublishedNLSLayer = {
@@ -64,13 +81,13 @@ export type PublishedNLSLayer = {
     data: {
       type: DataType;
       url?: string;
-      value?: any;
-      property?: any;
+      value?: unknown;
+      property?: Properties;
     };
   };
   isSketch?: boolean;
   sketchInfo?: SketchInfo;
-  nlsInfobox?: any;
+  nlsInfobox?: unknown;
   nlsPhotoOverlay?: {
     id?: string;
     property?: {
@@ -83,7 +100,7 @@ export type PublishedNLSLayer = {
 };
 
 export type SketchInfo = {
-  propertySchema?: any;
+  propertySchema?: PropertySchema;
   title?: string;
   featureCollection: {
     type: string;
@@ -91,24 +108,24 @@ export type SketchInfo = {
   };
 };
 
-export type NLSInfobox = {
+export type PublishedNLSInfobox = {
   id: string;
-  blocks: NLSInfoboxBlock[];
-  property: any;
+  blocks: PublishedNLSInfoboxBlock[];
+  property: Properties;
 };
 
-export type NLSInfoboxBlock = {
+export type PublishedNLSInfoboxBlock = {
   id: string;
   pluginId: string;
   extensionId: string;
-  property: any;
+  property: PluginProperty;
 };
 
 export type Widget = {
   id: string;
   pluginId: string;
   extensionId: string;
-  property: any;
+  property: PluginProperty;
   extended?: boolean;
   extendable?:
     | {
@@ -158,7 +175,7 @@ export type Feature = {
   id: string;
   geometry?: Geometry[];
   interval?: TimeInterval;
-  properties?: any;
+  properties?: Properties;
   // Map engine specific information.
   metaData?: {
     description?: string;

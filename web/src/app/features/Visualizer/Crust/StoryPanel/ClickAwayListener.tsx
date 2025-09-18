@@ -14,13 +14,27 @@ type MouseEvents = "click" | "mousedown" | "mouseup";
 type TouchEvents = "touchstart" | "touchend";
 type Events = FocusEvent | MouseEvent | TouchEvent;
 
+// Props type for React elements that can receive event handlers
+// Uses index signature to allow dynamic event handler access while being more descriptive than 'any'
+type ReactElementProps = {
+  // Common event handlers that the ClickAwayListener works with
+  onClick?: (event: MouseEvent) => void;
+  onMouseDown?: (event: MouseEvent) => void;
+  onMouseUp?: (event: MouseEvent) => void;
+  onTouchStart?: (event: TouchEvent) => void;
+  onTouchEnd?: (event: TouchEvent) => void;
+  onFocus?: (event: FocusEvent) => void;
+  // Allow other props that React elements might have
+  [key: string]: unknown;
+};
+
 interface Props extends HTMLAttributes<HTMLElement> {
   enabled?: boolean;
   onClickAway?: (event: Events) => void;
   focusEvent?: FocusEvents;
   mouseEvent?: MouseEvents;
   touchEvent?: TouchEvents;
-  children: ReactElement<any>;
+  children: ReactElement<ReactElementProps>;
 }
 
 const eventTypeMapping = {
@@ -67,7 +81,8 @@ const ClickAwayListener: FunctionComponent<Props> = ({
 
       const handler = children?.props[type];
 
-      if (handler) {
+      // Type guard to ensure handler is a function before calling
+      if (typeof handler === "function") {
         handler(event);
       }
     };
@@ -120,7 +135,7 @@ const ClickAwayListener: FunctionComponent<Props> = ({
 
   return enabled
     ? React.Children.only(
-        cloneElement(children as ReactElement<any>, {
+        cloneElement(children as ReactElement<ReactElementProps>, {
           ref: handleChildRef,
           [mappedFocusEvent]: handleBubbledEvents(mappedFocusEvent),
           [mappedMouseEvent]: handleBubbledEvents(mappedMouseEvent),

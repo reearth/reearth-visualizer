@@ -13,8 +13,11 @@ import {
   TwinInputField,
   PropertySelectorField
 } from "@reearth/app/ui/fields";
+import type { ValueType, ValueTypes, LatLng, Spacing, Timeline, Camera } from "@reearth/app/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
+
+import type { ContentSettingsField } from "../types";
 
 export const FieldComponent = ({
   propertyId,
@@ -27,14 +30,14 @@ export const FieldComponent = ({
   propertyId: string;
   groupId: string;
   fieldId: string;
-  field: any;
+  field: ContentSettingsField;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
@@ -59,10 +62,10 @@ export const FieldComponent = ({
       schemaGroupId: string,
       propertyId: string,
       fieldId: string,
-      vt: any,
+      vt: ValueType,
       itemId?: string
     ) => {
-      return async (v?: any) => {
+      return async (v?: ValueTypes[ValueType]) => {
         await onPropertyUpdate?.(
           propertyId,
           schemaGroupId,
@@ -95,7 +98,7 @@ export const FieldComponent = ({
     <SpacingField
       key={field?.id}
       title={field?.title}
-      value={field?.value}
+      value={field?.type === "spacing" ? (field?.value as Spacing) : undefined}
       description={field?.description}
       min={field?.min}
       max={field?.max}
@@ -123,7 +126,8 @@ export const FieldComponent = ({
     <TwinInputField
       key={field?.id}
       title={field?.title}
-      values={[field?.value?.lat, field?.value?.lng]}
+      values={field?.type === "latlng" && field?.value ? 
+        [(field?.value as LatLng).lat, (field?.value as LatLng).lng] : [0, 0]}
       description={field?.description}
       onBlur={handlePropertyValueUpdate(
         groupId,
@@ -136,7 +140,7 @@ export const FieldComponent = ({
     <CameraField
       key={field?.id}
       title={field?.title}
-      value={field?.value}
+      value={field?.type === "camera" ? (field?.value as Camera) : undefined}
       description={field?.description}
       onSave={handlePropertyValueUpdate(
         propertyId,
@@ -148,7 +152,7 @@ export const FieldComponent = ({
   ) : field?.type === "number" ? (
     <NumberField
       title={field?.title}
-      value={field?.value}
+      value={field?.type === "number" ? (field?.value as number) : undefined}
       description={field?.description}
       min={field?.min}
       max={field?.max}
@@ -167,7 +171,7 @@ export const FieldComponent = ({
       inputMethod={
         field.ui === "video" || field.ui === undefined ? "URL" : "asset"
       }
-      value={field.value}
+      value={field?.type === "url" ? (field?.value as string) : ""}
       description={field.description}
       onChange={handlePropertyValueUpdate(
         groupId,
@@ -182,7 +186,7 @@ export const FieldComponent = ({
         key={field.id}
         title={field?.title}
         description={field?.description}
-        value={field?.value}
+        value={field?.type === "string" ? (field?.value as string) : ""}
         onChange={handlePropertyValueUpdate(
           groupId,
           propertyId,
@@ -195,7 +199,7 @@ export const FieldComponent = ({
         key={field.id}
         title={field?.title}
         description={field?.description}
-        value={field?.value}
+        value={field?.type === "string" ? (field?.value as string) : ""}
         onChange={handlePropertyValueUpdate(
           groupId,
           propertyId,
@@ -207,13 +211,13 @@ export const FieldComponent = ({
       <SelectField
         key={field.id}
         title={field.title}
-        value={field?.value}
+        value={field?.type === "string" ? (field?.value as string) : ""}
         description={field.description}
         options={
-          field?.choices.map(
-            ({ key, title }: { key: string; title: string }) => ({
+          field?.choices?.map(
+            ({ key, label }: { key: string; label: string }) => ({
               value: key,
-              label: title
+              label: label
             })
           ) || []
         }
@@ -228,7 +232,7 @@ export const FieldComponent = ({
       <PropertySelectorField
         key={field.id}
         title={field?.title}
-        value={field?.value}
+        value={field?.type === "string" ? (field?.value as string) : ""}
         description={field?.description}
         placeholder={field?.placeholder}
         options={propertyOption}
@@ -246,7 +250,7 @@ export const FieldComponent = ({
       <InputField
         key={field.id}
         title={field?.title}
-        value={field?.value}
+        value={field?.type === "string" ? (field?.value as string) : ""}
         description={field?.description}
         placeholder={field?.placeholder}
         onChangeComplete={handlePropertyValueUpdate(
@@ -261,7 +265,11 @@ export const FieldComponent = ({
     <TimePeriodField
       key={field.id}
       title={field?.title}
-      value={field?.value}
+      value={field?.type === "timeline" && field?.value ? {
+        currentTime: (field?.value as Timeline).currentTime ?? "",
+        startTime: (field?.value as Timeline).startTime ?? "",
+        endTime: (field?.value as Timeline).endTime ?? ""
+      } : undefined}
       description={field?.description}
       onChange={handlePropertyValueUpdate(
         groupId,

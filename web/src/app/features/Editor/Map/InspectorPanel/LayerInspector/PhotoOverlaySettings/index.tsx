@@ -23,13 +23,15 @@ const PhotoOverlaySettings: FC<Props> = ({ selectedLayerId, photoOverlay }) => {
   return (
     <Wrapper>
       {visibleItems ? (
-        visibleItems.map((i) => (
-          <PropertyItem
-            key={i.id ?? ""}
-            propertyId={photoOverlay?.property?.id}
-            item={i}
-          />
-        ))
+        visibleItems.map((i) =>
+          photoOverlay?.property?.id ? (
+            <PropertyItem
+              key={i.id ?? ""}
+              propertyId={photoOverlay.property.id}
+              item={i}
+            />
+          ) : null
+        )
       ) : (
         <SwitchField
           title={t("Enable PhotoOverlay")}

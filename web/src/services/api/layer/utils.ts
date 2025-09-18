@@ -85,7 +85,12 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
       const processedPhotoOverlayProperty = processNewProperty(
         undefined,
         l.photoOverlay.property
-      );
+      ) as {
+        default?: {
+          enabled?: { value: boolean };
+          cameraDuration?: { value: number };
+        };
+      };
       layer.photoOverlay = {
         layerId: l.photoOverlay.layerId,
         propertyId: l.photoOverlay.propertyId,

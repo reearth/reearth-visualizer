@@ -272,6 +272,16 @@ export const context: Context = {
   }
 };
 
+/**
+ * Creates a Storybook action mock for plugin API functions
+ *
+ * This helper function creates mock implementations for the plugin API that log
+ * actions in Storybook while optionally calling a provided mock function.
+ *
+ * Note: Uses `any` types intentionally as this is a testing utility that needs
+ * to accommodate arbitrary function signatures in the plugin API.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function act<T extends any[], M extends (...args: T) => any>(
   name: string,
   mock?: M

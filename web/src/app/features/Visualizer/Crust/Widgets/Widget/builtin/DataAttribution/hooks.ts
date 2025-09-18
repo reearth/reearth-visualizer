@@ -27,10 +27,11 @@ export const useDataAttribution = ({
     undefined
   );
 
-  const widgetCredits = useMemo(
-    () => widget?.property.default || [],
-    [widget?.property.default]
-  );
+  const widgetCredits = useMemo(() => {
+    const defaultValue = widget?.property?.default;
+    // Ensure we return an array - defaultValue should be an array of WidgetCredit objects
+    return Array.isArray(defaultValue) ? defaultValue : [];
+  }, [widget?.property?.default]);
 
   useEffect(() => {
     if (credits) {
@@ -49,12 +50,17 @@ export const useDataAttribution = ({
       setGoogleCredit(googleCredit);
 
       const widgetProcessesCredits: ProcessesCredit[] = widgetCredits
-        .filter(
-          (widgetCredit: WidgetCredit) =>
-            widgetCredit.description ||
-            widgetCredit.logo ||
-            widgetCredit.creditUrl
-        )
+        .filter((credit): credit is WidgetCredit => {
+          // Type guard to ensure we have WidgetCredit objects
+          return (
+            typeof credit === "object" &&
+            credit !== null &&
+            ("description" in credit || "logo" in credit || "creditUrl" in credit) &&
+            (credit.description ||
+              credit.logo ||
+              credit.creditUrl)
+          );
+        })
         .map(
           (widgetCredit: WidgetCredit): ProcessesCredit => ({
             description: widgetCredit.description || "",
@@ -69,7 +75,7 @@ export const useDataAttribution = ({
         ...widgetProcessesCredits
       ]);
     }
-  }, [credits, widget.property.default, widgetCredits]);
+  }, [credits, widget?.property?.default, widgetCredits]);
 
   return {
     cesiumCredit,

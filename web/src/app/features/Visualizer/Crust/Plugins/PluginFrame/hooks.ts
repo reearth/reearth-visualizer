@@ -109,7 +109,7 @@ export default function useHook({
     [messageOnceEvents]
   );
   const handleMessage = useCallback(
-    (msg: any) => {
+    (msg: unknown) => {
       try {
         messageEvents.forEach((e) => e(msg));
         messageOnceEvents.forEach((e) => e(msg));
@@ -139,10 +139,10 @@ export default function useHook({
   }, [eventLoopCb]);
 
   const evalCode = useCallback(
-    (code: string): any => {
+    (code: string): unknown => {
       if (!arena.current) return;
 
-      let result: any;
+      let result: unknown;
       try {
         result = arena.current.evalCode(code);
       } catch (err) {

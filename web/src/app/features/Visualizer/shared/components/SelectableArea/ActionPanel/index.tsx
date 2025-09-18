@@ -1,5 +1,6 @@
 import { Dispatch, FC, MouseEvent, SetStateAction } from "react";
 
+import type { ContentSettings } from "../../../types";
 import ActionPanelUI, { type ActionPosition } from "../../ActionPanel";
 
 import useHooks from "./hooks";
@@ -14,7 +15,7 @@ type Props = {
   showPadding?: boolean;
   editMode?: boolean;
   propertyId?: string;
-  contentSettings?: any;
+  contentSettings?: ContentSettings;
   dragHandleClassName?: string;
   isPluginBlock?: boolean;
   dndEnabled?: boolean;
@@ -30,8 +31,8 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: import("@reearth/app/utils/value").ValueType,
+    v?: import("@reearth/app/utils/value").ValueTypes[import("@reearth/app/utils/value").ValueType]
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onPropertyItemAdd?: (

@@ -9,7 +9,7 @@ import {
   PropertySchemaGroupFragmentFragment
 } from "@reearth/services/gql";
 
-export type P = { [key in string]: any };
+export type P = Record<string, unknown>;
 
 export const processNewProperty = (
   parent: PropertyFragmentFragment | null | undefined,
@@ -79,7 +79,7 @@ const processPropertyGroups = (
   schema: PropertySchemaGroupFragmentFragment,
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined
-): any => {
+): Record<string, unknown> => {
   const allFields: Record<
     string,
     {

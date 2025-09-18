@@ -7,10 +7,12 @@ import {
   PopupPanel
 } from "@reearth/app/lib/reearth-ui";
 import { stopClickPropagation } from "@reearth/app/utils/events";
+import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
 import { Dispatch, FC, Fragment, MouseEvent, SetStateAction } from "react";
 
 import { FieldComponent } from "../../hooks/useFieldComponent";
+import type { ContentSettings } from "../../types";
 
 export type ActionItem = {
   icon: IconName;
@@ -30,7 +32,7 @@ type Props = {
   showSettings?: boolean;
   showPadding?: boolean;
   propertyId?: string;
-  contentSettings?: any;
+  contentSettings?: ContentSettings;
   actionItems: ActionItem[];
   dndEnabled?: boolean;
   position?: ActionPosition;
@@ -42,14 +44,14 @@ type Props = {
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   setOpenMenu: Dispatch<SetStateAction<boolean>>;
   onSettingsToggle?: () => void;
-  onClick?: (e: any) => void;
+  onClick?: (e: MouseEvent) => void;
   onPropertyUpdate?: (
     propertyId?: string,
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onBlockMove?: (id: string, targetId: number, blockId: string) => void;
   onPropertyItemAdd?: (

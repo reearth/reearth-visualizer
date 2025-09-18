@@ -115,6 +115,7 @@ export class FingerprintEventSystem {
   /**
    * Dispatch an event to all registered listeners
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   dispatchEvent(event: string, ...args: any[]): void {
     const eventListeners = this.listeners.get(event);
     if (!eventListeners) return;

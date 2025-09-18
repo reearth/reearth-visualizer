@@ -9,7 +9,7 @@ import {
   useState
 } from "react";
 
-import type { BlockProps } from "../shared/types";
+import type { BlockProps, DebuggableWidget, DebuggableBlock } from "../shared/types";
 
 import {
   Plugin,
@@ -121,7 +121,7 @@ const Widget: FC<{
       autoResize={autoResize}
       pluginId={widget.pluginId}
       extensionId={widget.extensionId}
-      sourceCode={(widget as any)?.__REEARTH_SOURCECODE} // for debugging
+      sourceCode={(widget as DebuggableWidget)?.__REEARTH_SOURCECODE} // for debugging
       extensionType="widget"
       visible
       iFrameProps={iframeProps}
@@ -142,7 +142,7 @@ const Block: FC<{
       autoResize="height-only"
       pluginId={blockProps.block?.pluginId}
       extensionId={blockProps.block?.extensionId}
-      sourceCode={(blockProps.block as any)?.__REEARTH_SOURCECODE} // for debugging
+      sourceCode={(blockProps.block as DebuggableBlock)?.__REEARTH_SOURCECODE} // for debugging
       extensionType={blockProps.block?.extensionType}
       visible
       layer={blockProps.layer}

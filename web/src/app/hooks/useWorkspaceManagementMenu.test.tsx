@@ -8,8 +8,18 @@ import useWorkspaceManagementMenu from "./useWorkspaceManagementMenu";
 
 vi.mock("react-router-dom", () => ({
   useNavigate: vi.fn(),
-  Link: ({ children, to, ...props }: { children: React.ReactNode; to: string; [key: string]: any }) => (
-    <a href={to} {...props}>{children}</a>
+  Link: ({
+    children,
+    to,
+    ...props
+  }: {
+    children: React.ReactNode;
+    to: string;
+    [key: string]: unknown;
+  }) => (
+    <a href={to} {...props}>
+      {children}
+    </a>
   )
 }));
 
@@ -42,7 +52,7 @@ describe("useWorkspaceManagementMenu", () => {
       accountManagement: true,
       externalAccountManagementUrl: undefined
     });
-    
+
     // Reset the mock function call count
     mockSetAddWorkspaceModal.mockClear();
   });
@@ -132,7 +142,7 @@ describe("useWorkspaceManagementMenu", () => {
   it("should open external URL when externalAccountManagementUrl is provided", () => {
     const externalUrl = "https://external-platform.com/account";
     const mockWindowOpen = vi.fn();
-    Object.defineProperty(window, 'open', {
+    Object.defineProperty(window, "open", {
       value: mockWindowOpen,
       writable: true
     });
@@ -149,7 +159,9 @@ describe("useWorkspaceManagementMenu", () => {
       useWorkspaceManagementMenu({ workspaceId })
     );
 
-    result.current.workspaceManagementMenu[0].onClick?.(result.current.workspaceManagementMenu[0].id);
+    result.current.workspaceManagementMenu[0].onClick?.(
+      result.current.workspaceManagementMenu[0].id
+    );
 
     expect(mockWindowOpen).toHaveBeenCalledWith(externalUrl, "_blank");
   });
@@ -167,7 +179,9 @@ describe("useWorkspaceManagementMenu", () => {
       useWorkspaceManagementMenu({ workspaceId })
     );
 
-    result.current.workspaceManagementMenu[2].onClick?.(result.current.workspaceManagementMenu[2].id);
+    result.current.workspaceManagementMenu[2].onClick?.(
+      result.current.workspaceManagementMenu[2].id
+    );
 
     expect(mockNavigate).toHaveBeenCalledWith("/settings/account");
   });
@@ -185,9 +199,13 @@ describe("useWorkspaceManagementMenu", () => {
       useWorkspaceManagementMenu({ workspaceId })
     );
 
-    result.current.workspaceManagementMenu[0].onClick?.(result.current.workspaceManagementMenu[0].id);
+    result.current.workspaceManagementMenu[0].onClick?.(
+      result.current.workspaceManagementMenu[0].id
+    );
 
-    expect(mockNavigate).toHaveBeenCalledWith(`/settings/workspaces/${workspaceId}`);
+    expect(mockNavigate).toHaveBeenCalledWith(
+      `/settings/workspaces/${workspaceId}`
+    );
   });
 
   it("should show add workspace item when workspace creation is enabled", () => {
@@ -228,6 +246,8 @@ describe("useWorkspaceManagementMenu", () => {
     );
 
     expect(result.current.workspaceManagementMenu).toHaveLength(1);
-    expect(result.current.workspaceManagementMenu[0].id).toBe("workspaceSettings");
+    expect(result.current.workspaceManagementMenu[0].id).toBe(
+      "workspaceSettings"
+    );
   });
 });

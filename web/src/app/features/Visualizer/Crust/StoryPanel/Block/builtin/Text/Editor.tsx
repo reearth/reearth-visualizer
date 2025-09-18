@@ -1,5 +1,6 @@
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import RichTextEditor from "@reearth/app/lib/lexical/RichTextEditor";
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { debounce } from "lodash-es";
 import { useMemo, useContext, useCallback, FC } from "react";
 
@@ -12,8 +13,8 @@ export type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
 };
 
@@ -30,10 +31,10 @@ const TextBlockEditor: FC<Props> = ({
       schemaGroupId: string,
       propertyId: string,
       fieldId: string,
-      vt: any,
+      vt: ValueType,
       itemId?: string
     ) => {
-      return async (v?: any) => {
+      return async (v?: ValueTypes[ValueType]) => {
         await onPropertyUpdate?.(
           propertyId,
           schemaGroupId,

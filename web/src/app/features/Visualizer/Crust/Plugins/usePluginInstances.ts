@@ -9,7 +9,10 @@ import type {
   WidgetZone
 } from "../Widgets/WidgetAlignSystem";
 
-import type { PluginExtensionInstance } from "./pluginAPI/types";
+import type {
+  PluginExtensionInstance,
+  ExtensionMessage
+} from "./pluginAPI/types";
 
 export type Props = {
   alignSystem?: WidgetAlignSystem;
@@ -20,10 +23,10 @@ export type Props = {
 
 export type PluginInstances = {
   meta: MutableRefObject<PluginExtensionInstance[]>;
-  postMessage: (id: string, msg: any, sender: string) => void;
+  postMessage: (id: string, msg: unknown, sender: string) => void;
   addPluginMessageSender: (
     id: string,
-    msgSender: (msg: string) => void
+    msgSender: (msg: ExtensionMessage) => void
   ) => void;
   removePluginMessageSender: (id: string) => void;
   runTimesCache: {
@@ -144,14 +147,14 @@ export default ({
     runTimesCacheHandler
   ]);
 
-  const pluginMessageSenders = useRef<Map<string, (msg: any) => void>>(
-    new Map()
-  );
+  const pluginMessageSenders = useRef<
+    Map<string, (msg: ExtensionMessage) => void>
+  >(new Map());
 
   const pluginInstances = useMemo(() => {
     return {
       meta: pluginInstancesMeta,
-      postMessage: (id: string, msg: any, sender: string) => {
+      postMessage: (id: string, msg: unknown, sender: string) => {
         const msgSender = pluginMessageSenders.current?.get(id);
         if (!msgSender) return;
         new Promise<void>((resolve, reject) => {
@@ -167,7 +170,7 @@ export default ({
       },
       addPluginMessageSender: (
         id: string,
-        msgSender: (msg: string) => void
+        msgSender: (msg: ExtensionMessage) => void
       ) => {
         pluginMessageSenders.current?.set(id, msgSender);
       },

@@ -13,7 +13,7 @@ import {
 import { insertToBody } from "./utils";
 
 export type RefType = {
-  postMessage: (message: any) => void;
+  postMessage: (message: unknown) => void;
   resize: (
     width: string | number | undefined,
     height: string | number | undefined
@@ -45,7 +45,7 @@ export default function useHook({
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
-  onMessage?: (message: any) => void;
+  onMessage?: (message: unknown) => void;
   onClick?: () => void;
   onAutoResized?: () => void;
 } = {}): {
@@ -58,7 +58,7 @@ export default function useHook({
   const iFrameRef = useRef<HTMLIFrameElement>(null);
   const [iFrameSize, setIFrameSize] =
     useState<[string | undefined, string | undefined]>();
-  const pendingMesages = useRef<any[]>([]);
+  const pendingMesages = useRef<unknown[]>([]);
 
   useImperativeHandle(
     ref,
@@ -82,14 +82,24 @@ export default function useHook({
   );
 
   useEffect(() => {
-    const cb = (ev: MessageEvent<any>) => {
+    const cb = (ev: MessageEvent<unknown>) => {
       if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow)
         return;
-      if (ev.data?.[autoResizeMessageKey]) {
-        const { width, height } = ev.data[autoResizeMessageKey];
-        if (typeof width !== "number" || typeof height !== "number") return;
-        setIFrameSize([width + "px", height + "px"]);
-        onAutoResized?.();
+
+      // Type guard for auto-resize messages
+      const data = ev.data as Record<string, unknown>;
+      if (data && typeof data === "object" && autoResizeMessageKey in data) {
+        const resizeData = data[autoResizeMessageKey] as {
+          width?: unknown;
+          height?: unknown;
+        };
+        const width = resizeData?.width;
+        const height = resizeData?.height;
+
+        if (typeof width === "number" && typeof height === "number") {
+          setIFrameSize([width + "px", height + "px"]);
+          onAutoResized?.();
+        }
       } else {
         onMessage?.(ev.data);
       }
