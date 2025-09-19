@@ -8,6 +8,7 @@ import {
   ManagerWrapper
 } from "@reearth/app/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/app/ui/components/ManagerBase/ManagerEmptyContent";
+import { ProjectImportStatus } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useRef, Fragment } from "react";
@@ -16,6 +17,7 @@ import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
 import ProjectListViewItem from "./Project/ProjectListViewItem";
 import ProjectCreatorModal from "./ProjectCreatorModal";
+import ProjectImportErrorModal from "./ProjectImportErrorModal";
 
 const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
   const {
@@ -41,7 +43,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleProjectSortChange,
     handleSearch,
     handleProjectImport,
-    handleProjectRemove
+    handleProjectRemove,
+    handleProjectImportErrorDownload,
+    handleProjectImportErrorClose
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -183,7 +187,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   layout={layout}
                   data-testid={`projects-group-${layout}`}
                 >
-                  {importStatus === "processing" &&
+                  {(importStatus === ProjectImportStatus.Processing ||
+                    importStatus === ProjectImportStatus.Uploading) &&
                     (layout === "grid" ? (
                       <ImportingCardContainer>
                         <ImportCardPlaceholder />
@@ -245,6 +250,13 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
           onClose={closeProjectCreator}
           onProjectCreate={handleProjectCreate}
           data-testid="project-creator-modal"
+        />
+      )}
+
+      {importStatus === ProjectImportStatus.Failed && (
+        <ProjectImportErrorModal
+          onClose={handleProjectImportErrorClose}
+          onProjectImportErrorLogDownload={handleProjectImportErrorDownload}
         />
       )}
     </ManagerWrapper>

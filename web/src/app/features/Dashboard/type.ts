@@ -78,15 +78,15 @@ export type Workspace = {
   personal?: boolean;
 };
 
-export const getImportStatus = (s?: ProjectImportStatus | null) => {
-  switch (s) {
-    case ProjectImportStatus.Failed:
-      return "failed";
-    case ProjectImportStatus.Success:
-      return "success";
-    case ProjectImportStatus.Processing:
-      return "processing";
-    default:
-      return "none";
-  }
-};
+// export const getImportStatus = (s?: ProjectImportStatus | null) => {
+//   switch (s) {
+//     case ProjectImportStatus.Failed:
+//       return "failed";
+//     case ProjectImportStatus.Success:
+//       return "success";
+//     case ProjectImportStatus.Processing:
+//       return "processing";
+//     default:
+//       return "none";
+//   }
+// };
