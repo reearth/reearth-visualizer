@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -533,7 +534,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	return scene, nil
 }
 
-func (i *Scene) ExportScene(ctx context.Context, prj *project.Project) (*scene.Scene, map[string]interface{}, error) {
+func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*scene.Scene, map[string]interface{}, error) {
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
 	if err != nil {
@@ -582,7 +583,8 @@ func Filter(s id.SceneID) repo.SceneFilter {
 	return repo.SceneFilter{Readable: id.SceneIDList{s}, Writable: id.SceneIDList{s}}
 }
 
-func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {
+func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {
+	log.Infof("[ImportSceneData] workspace: %s project: %s scene: %s", sce.Workspace().String(), sce.Project().String(), sce.ID().String())
 
 	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
@@ -594,7 +596,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 	if p, err := i.propertyRepo.Filtered(filter).FindByID(ctx, sce.Property()); err == nil {
 		builder.PropertyUpdate(ctx, p, i.propertyRepo, i.propertySchemaRepo, sceneJSON.Property)
 		for k, v := range sceneJSON.Plugins {
-			fmt.Println("Unsupported sceneJSON.Plugins ", k, v)
+			log.Errorf("[Import Error] Unsupported plugin: %s value: %v", k, v)
 		}
 	}
 
@@ -602,8 +604,10 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 
 		pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, widgetJSON.PluginID, widgetJSON.ExtensionID, &filter)
 		if err != nil {
+			log.Errorf("[Import Error] closing file: %v", err)
 			return nil, err
 		}
+		fmt.Println("[Import Widget] scene plugin id:", pluginID.String(), "extension:", extensionID.String(), "name:", extension.Name())
 
 		// exclude official plugin
 		if pluginID.String() != "reearth" {
@@ -612,6 +616,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 
 		propW, err := i.addNewProperty(ctx, extension.Schema(), sce.ID(), &filter)
 		if err != nil {
+			log.Errorf("[Import Error] fail scene add property: %v", err)
 			return nil, err
 		}
 		builder.PropertyUpdate(ctx, propW, i.propertyRepo, i.propertySchemaRepo, widgetJSON.Property)
@@ -630,6 +635,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 			widgetJSON.Extended,
 		)
 		if err != nil {
+			log.Errorf("[Import Error] fail scene build widget: %v", err)
 			return nil, err
 		}
 
@@ -645,6 +651,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 	sce.SetUpdatedAt(time.Now())
 
 	if err := i.sceneRepo.Save(ctx, sce); err != nil {
+		log.Errorf("[Import Error] fail scene update: %v", err)
 		return nil, err
 	}
 

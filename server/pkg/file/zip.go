@@ -135,13 +135,17 @@ func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[s
 			if err != nil {
 				return nil, nil, nil, err
 			}
+			if !json.Valid(data) {
+				return nil, nil, nil, fmt.Errorf("invalid json data: %s", file.Name)
+			}
 			var d map[string]any
 			if err := json.Unmarshal(data, &d); err == nil {
 				if e, ok := d["exportedInfo"].(map[string]any); ok {
 					if host, ok := e["host"].(string); ok {
-
-						// Replace to current host
-						data = bytes.Replace(data, []byte(host), []byte(currentHost), -1)
+						if host != "" {
+							// Replace to current host
+							data = bytes.ReplaceAll(data, []byte(host), []byte(currentHost))
+						}
 					}
 				}
 			}

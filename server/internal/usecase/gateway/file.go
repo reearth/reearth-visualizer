@@ -45,4 +45,9 @@ type File interface {
 	ReadExportProjectZip(context.Context, string) (io.ReadCloser, error)
 	UploadExportProjectZip(context.Context, afero.File) error
 	RemoveExportProjectZip(context.Context, string) error
+
+	GenerateSignedUploadUrl(context.Context, string) (*string, int, *string, error)
+
+	ReadImportProjectZip(context.Context, string) (io.ReadCloser, error)
+	RemoveImportProjectZip(context.Context, string) error
 }

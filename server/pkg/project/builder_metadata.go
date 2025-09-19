@@ -61,6 +61,11 @@ func (b *MetadataBuilder) ImportStatus(importStatus *ProjectImportStatus) *Metad
 	return b
 }
 
+func (b *MetadataBuilder) ImporResultLog(imporResultLog *map[string]any) *MetadataBuilder {
+	b.r.imporResultLog = imporResultLog
+	return b
+}
+
 func (b *MetadataBuilder) Readme(readme *string) *MetadataBuilder {
 	b.r.readme = readme
 	return b

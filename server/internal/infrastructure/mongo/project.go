@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"log"
 	"regexp"
 	"slices"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"

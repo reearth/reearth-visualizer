@@ -125,7 +125,12 @@ func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 }
 
 func Usecases(ctx context.Context) *interfaces.Container {
-	return ctx.Value(contextUsecases).(*interfaces.Container)
+	if v := ctx.Value(contextUsecases); v != nil {
+		if v2, ok := v.(*interfaces.Container); ok {
+			return v2
+		}
+	}
+	return nil
 }
 
 func IsMockAuth(ctx context.Context) bool {

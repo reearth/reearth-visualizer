@@ -31,6 +31,7 @@ const (
 	gcsMapBasePath    string = "maps"
 	gcsStoryBasePath  string = "stories"
 	gcsExportBasePath string = "export"
+	gcsImportBasePath string = "import"
 )
 
 type fileRepo struct {
@@ -279,7 +280,7 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 	r, err := f.read(ctx, path.Join(gcsExportBasePath, sn))
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			r, err = f.read(ctx, path.Join(gcsExportBasePath, name))
+			return f.read(ctx, path.Join(gcsExportBasePath, name))
 		}
 	}
 	return r, err
@@ -296,9 +297,57 @@ func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) 
 	return f.delete(ctx, path.Join(gcsExportBasePath, filename))
 }
 
+// import
+
+func (f *fileRepo) GenerateSignedUploadUrl(ctx context.Context, filename string) (*string, int, *string, error) {
+
+	contentType := "application/octet-stream"
+	expiresIn := 15 // default 15 min
+	objectName := path.Join(gcsImportBasePath, filename)
+
+	expiresAt := time.Now().Add(time.Duration(expiresIn) * time.Minute)
+
+	opts := &storage.SignedURLOptions{
+		Scheme: storage.SigningSchemeV4,
+		Method: "PUT",
+		Headers: []string{
+			fmt.Sprintf("Content-Type:%s", contentType),
+		},
+		Expires: expiresAt,
+	}
+
+	client, err := f.client(ctx)
+	if err != nil {
+		return nil, 0, nil, err
+	}
+
+	signedURL, err := client.Bucket(f.bucketName).SignedURL(objectName, opts)
+	if err != nil {
+		return nil, 0, nil, fmt.Errorf("failed to generate signed URL: %w", err)
+	}
+
+	return &signedURL, expiresIn, &contentType, nil
+}
+
+func (f *fileRepo) ReadImportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
+	sn := sanitize.Path(name)
+	if sn == "" {
+		return nil, gateway.ErrInvalidFile
+	}
+	r, err := f.read(ctx, path.Join(gcsImportBasePath, sn))
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (f *fileRepo) RemoveImportProjectZip(ctx context.Context, filename string) error {
+	return f.delete(ctx, path.Join(gcsImportBasePath, filename))
+}
+
 // helpers
 
-func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
+func (f *fileRepo) client(ctx context.Context) (*storage.Client, error) {
 	var client *storage.Client
 	var err error
 
@@ -319,6 +368,15 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 				log.Errorfc(ctx, "gcs: failed to close client: %v", err)
 			}
 		}()
+	}
+	return client, nil
+}
+
+func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
+
+	client, err := f.client(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	bucket := client.Bucket(f.bucketName)

@@ -34,6 +34,8 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 
 func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus {
 	switch v {
+	case ProjectImportStatusUploading:
+		return project.ProjectImportStatusUploading
 	case ProjectImportStatusProcessing:
 		return project.ProjectImportStatusProcessing
 	case ProjectImportStatusFailed:
@@ -46,6 +48,8 @@ func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus 
 
 func ToProjectImportStatus(v project.ProjectImportStatus) ProjectImportStatus {
 	switch v {
+	case project.ProjectImportStatusUploading:
+		return ProjectImportStatusUploading
 	case project.ProjectImportStatusProcessing:
 		return ProjectImportStatusProcessing
 	case project.ProjectImportStatusFailed:
@@ -70,8 +74,14 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 		License:      pm.License(),
 		Topics:       pm.Topics(),
 		ImportStatus: &importStatus,
-		CreatedAt:    pm.CreatedAt(),
-		UpdatedAt:    pm.UpdatedAt(),
+		ImporResultLog: func() map[string]any {
+			if pm.ImporResultLog() == nil {
+				return nil
+			}
+			return *pm.ImporResultLog()
+		}(),
+		CreatedAt: pm.CreatedAt(),
+		UpdatedAt: pm.UpdatedAt(),
 	}
 }
 
