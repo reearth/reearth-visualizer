@@ -3,8 +3,8 @@ import {
   StoryBlock,
   StoryPage
 } from "@reearth/app/features/Visualizer/Crust/StoryPanel/types";
-import { convert } from "@reearth/services/api/propertyApi/utils";
-import { Scene } from "@reearth/services/api/sceneApi";
+import { convert } from "@reearth/services/api/property/utils";
+import type { Scene } from "@reearth/services/api/scene";
 import {
   StoryPage as GqlStoryPage,
   StoryBlock as GqlStoryBlock

@@ -1,11 +1,18 @@
 export type { Camera, Theme, Clock } from "../types";
 export type { FlyToDestination, LookAtDestination } from "@reearth/core";
 
-export type InternalWidget<P = any> = Omit<Widget<P>, "layout" | "extended"> & {
+// Base widget property structure - flexible to accommodate various widget types
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WidgetProperty = Record<string, any>;
+
+export type InternalWidget<P = WidgetProperty> = Omit<
+  Widget<P>,
+  "layout" | "extended"
+> & {
   extended?: boolean;
 };
 
-export type Widget<P = any> = {
+export type Widget<P = WidgetProperty> = {
   id: string;
   pluginId?: string;
   extensionId?: string;

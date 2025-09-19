@@ -21,7 +21,10 @@ const DEFAULT_README = `# Test project
 ## plugins
 `;
 
-const ReadMeSettings: FC<Props> = ({ projectMetadata, onUpdateProjectMetadata }) => {
+const ReadMeSettings: FC<Props> = ({
+  projectMetadata,
+  onUpdateProjectMetadata
+}) => {
   const t = useT();
 
   const [activeTab, setActiveTab] = useState("edit");

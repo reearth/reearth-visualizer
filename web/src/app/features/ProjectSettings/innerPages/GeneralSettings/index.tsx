@@ -4,7 +4,7 @@ import ProjectVisibilityModal from "@reearth/app/features/Dashboard/ContentsCont
 import { Button, Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
-import { useProjectFetcher } from "@reearth/services/api";
+import { useValidateProjectAlias } from "@reearth/services/api/project";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -57,7 +57,7 @@ const GeneralSettings: FC<Props> = ({
   const theme = useTheme();
 
   const { projectVisibility } = appFeature();
-  const { checkProjectAlias } = useProjectFetcher();
+  const { validateProjectAlias } = useValidateProjectAlias();
   const [warning, setWarning] = useState<string>("");
 
   const handleNameUpdate = useCallback(
@@ -78,7 +78,7 @@ const GeneralSettings: FC<Props> = ({
     async (projectAlias: string) => {
       const trimmedAlias = projectAlias.trim();
       if (!project || project.projectAlias === trimmedAlias) return;
-      const result = await checkProjectAlias?.(
+      const result = await validateProjectAlias?.(
         trimmedAlias,
         workspaceId,
         project?.id
@@ -97,7 +97,7 @@ const GeneralSettings: FC<Props> = ({
         });
       }
     },
-    [project, checkProjectAlias, workspaceId, onUpdateProject]
+    [project, validateProjectAlias, workspaceId, onUpdateProject]
   );
 
   const handleDescriptionUpdate = useCallback(

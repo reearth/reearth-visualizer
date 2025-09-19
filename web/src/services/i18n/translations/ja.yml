@@ -579,13 +579,6 @@ Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
 Zoom Level Editor: ズームレベルエディター
-Re:Earth: Re:Earth
-Visualizer is part of the: VisualizerはRe:Earthの一部です
-Re:Earth product ecosystem: Re:Earth製品エコシステム
-To continue, please log in with your Re:Earth account.: 続行するには、Re:Earthアカウントでログインしてください。
-Log In: ログイン
-Don't have an account?: アカウントをお持ちでないですか？
-Sign up on Re:Earth: Re:Earthにサインアップ
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。
@@ -602,26 +595,20 @@ Failed to delete block.: ブロックの削除に失敗しました。
 Block was successfully deleted.: ブロックの削除に成功しました。
 Failed to move block.: ブロックの移動に失敗しました。
 Block was successfully moved.: ブロックの移動に成功しました。
-Failed to remove the layer.: レイヤーの削除に失敗しました。
-Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to update the custom property schema.: カスタムプロパティスキーマの更新に失敗しました。
 Successfully updated the custom property schema!: カスタムプロパティスキーマの更新に成功しました！
 Failed to update the custom property title.: カスタムプロパティタイトルの更新に失敗しました
 Successfully updated the custom property title!: カスタムプロパティタイトルの更新に成功しました！
 Failed to remove the custom property.: カスタムプロパティの削除に失敗しました
 Successfully removed the custom property!: カスタムプロパティの削除に成功しました！
+Failed to remove the layer.: レイヤーの削除に失敗しました。
+Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
 Successfully updated a the layerStyle!: レイヤースタイルの更新に成功しました！
 Failed to delete the layer style.: レイヤースタイルの削除に失敗しました。
 Successfully deleted the layer style!: レイヤースタイルの削除に成功しました！
-Failed to update user password.: ユーザーパスワードの更新に失敗しました。
-Successfully updated user password!: ユーザーパスワードの更新に成功しました！
-Failed to delete user.: ユーザーの削除に失敗しました。
-Successfully delete user!: ユーザーの削除に成功しました！
-Failed to change language.: 言語の変更に失敗しました。
-Successfully updated user language!: ユーザーの言語が更新されました！
 Successfully enabled photo overlay: フォトオーバーレイが有効になりました
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
@@ -629,7 +616,10 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Successfully checked alias!: エイリアスを正常に確認しました！
+Failed to export project.: プロジェクトのエクスポートに失敗しました。
+Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
+Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
@@ -655,10 +645,7 @@ Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to update project metadata.: プロジェクトのメタデータの更新に失敗しました。
 Successfully updated project metadata!: プロジェクトのメタデータを正常に更新しました！
-Failed to export project.: プロジェクトのエクスポートに失敗しました。
-Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
-Failed to import project.: プロジェクトのインポートに失敗しました。
+Successfully checked alias!: エイリアスを正常に確認しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
 Failed to create story.: ストーリーの作成に失敗しました。
@@ -680,6 +667,12 @@ Failed to move page.: ページの移動に失敗しました。
 Page was successfully moved.: ページの移動に成功しました。
 Failed to update page.: ページの更新に失敗しました。
 Successfully updated a page!: ページの更新に成功しました！
+Failed to update user password.: ユーザーパスワードの更新に失敗しました。
+Successfully updated user password!: ユーザーパスワードの更新に成功しました！
+Failed to change language.: 言語の変更に失敗しました。
+Successfully updated user language!: ユーザーの言語が更新されました！
+Failed to delete user.: ユーザーの削除に失敗しました。
+Successfully delete user!: ユーザーの削除に成功しました！
 Failed to add widget.: ウィジェットの追加に失敗しました。
 Failed to update widget.: ウィジェットの更新に失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。

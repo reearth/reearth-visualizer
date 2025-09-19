@@ -3,7 +3,7 @@ import { Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { AssetField, InputField, SwitchField } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
-import { Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Story } from "@reearth/services/api/storytelling";
 import { useAuth } from "@reearth/services/auth";
 import {
   ProjectPublicationExtensionProps,
@@ -158,7 +158,9 @@ const PublicSettingsDetail: FC<Props> = ({
     return (props: ExtensionComponentProps) => {
       const type = props.typename.toLocaleLowerCase();
       const extensionId = `custom-${type}-domain`;
-      const Component = extensions?.find((e) => e.id === extensionId)?.component;
+      const Component = extensions?.find(
+        (e) => e.id === extensionId
+      )?.component;
       if (!Component) {
         return null;
       }

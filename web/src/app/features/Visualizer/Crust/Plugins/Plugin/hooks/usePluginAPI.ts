@@ -16,6 +16,7 @@ import { exposedReearth } from "../../pluginAPI/exposedReearth";
 import type {
   CameraEventType,
   ExtensionEventType,
+  ExtensionMessage,
   GlobalThis,
   LayersEventType,
   ModalEventType,
@@ -54,7 +55,7 @@ export function usePluginAPI({
   extensionId: string | undefined;
   extensionType: string | undefined;
   mapRef?: RefObject<MapRef>;
-  pluginProperty: any;
+  pluginProperty: unknown;
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
@@ -91,7 +92,7 @@ export function usePluginAPI({
   const getBlock = useGet(block);
   const getWidget = useGet(widget);
 
-  const useEventRef = <T extends Record<string, any[]>>() =>
+  const useEventRef = <T extends Record<string, unknown[]>>() =>
     useRef<[Events<T>, EventEmitter<T>, (() => void) | undefined]>();
   const viewerEventsRef = useEventRef<ViewerEventType>();
   const selectionModeEventsRef = useEventRef<SelectionModeEventType>();
@@ -108,7 +109,7 @@ export function usePluginAPI({
   const extensionEvents =
     useRef<[Events<ExtensionEventType>, EventEmitter<ExtensionEventType>]>();
 
-  const pluginMessageSender = useCallback((msg: any) => {
+  const pluginMessageSender = useCallback((msg: ExtensionMessage) => {
     extensionEvents.current?.[1]("extensionMessage", msg);
   }, []);
 
@@ -235,7 +236,7 @@ export function usePluginAPI({
   ]);
 
   const isMarshalable = useCallback(
-    (target: any) => {
+    (target: unknown) => {
       return (
         defaultIsMarshalable(target) ||
         !!mapRef?.current?.layers?.isLayer(target) ||
@@ -463,7 +464,7 @@ export function usePluginAPI({
   };
 }
 
-function initAndMergeEvents<T extends Record<string, any[]>>(
+function initAndMergeEvents<T extends Record<string, unknown[]>>(
   ctxEvents: Events<T> | undefined,
   eventsRef: MutableRefObject<
     [Events<T>, EventEmitter<T>, (() => void) | undefined] | undefined

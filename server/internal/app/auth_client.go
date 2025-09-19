@@ -39,8 +39,8 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			// get sub from context
 			au := adapter.GetAuthInfo(ctx)
 
-			if u, ok := ctx.Value(contextUser).(string); ok {
-				userID = u
+			if cu, ok := ctx.Value(contextUser).(string); ok {
+				userID = cu
 			}
 
 			if adapter.IsMockAuth(ctx) {

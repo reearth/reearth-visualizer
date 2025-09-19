@@ -5,8 +5,8 @@ import {
   Geometry,
   SketchEditingFeature
 } from "@reearth/core";
-import { useFeatureCollectionFetcher } from "@reearth/services/api";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { useFeatureCollectionMutations } from "@reearth/services/api/featureCollection";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import {
   MutableRefObject,
   useCallback,
@@ -90,23 +90,20 @@ export default ({
     [visualizerRef]
   );
 
-  const {
-    useAddGeoJsonFeature,
-    useUpdateGeoJSONFeature,
-    useDeleteGeoJSONFeature
-  } = useFeatureCollectionFetcher();
+  const { addGeoJsonFeature, updateGeoJSONFeature, deleteGeoJSONFeature } =
+    useFeatureCollectionMutations();
 
   const handleSketchLayerAdd = useCallback(
     async (inp: FeatureProps) => {
       if (!selectedLayer?.layer?.id) return;
-      await useAddGeoJsonFeature({
+      await addGeoJsonFeature({
         layerId: inp.layerId,
         geometry: inp.geometry,
         type: inp.type,
         properties: inp.properties
       });
     },
-    [selectedLayer, useAddGeoJsonFeature]
+    [selectedLayer, addGeoJsonFeature]
   );
 
   const handleSketchFeatureCreate = useCallback(
@@ -166,7 +163,7 @@ export default ({
 
   const handleGeoJsonFeatureUpdate = useCallback(
     async (inp: GeoJsonFeatureUpdateProps) => {
-      await useUpdateGeoJSONFeature({
+      await updateGeoJSONFeature({
         layerId: inp.layerId,
         featureId: inp.featureId,
         geometry: inp.geometry,
@@ -178,17 +175,17 @@ export default ({
         featureId: inp.properties?.id as string
       };
     },
-    [useUpdateGeoJSONFeature]
+    [updateGeoJSONFeature]
   );
 
   const handleGeoJsonFeatureDelete = useCallback(
     async (inp: GeoJsonFeatureDeleteProps) => {
-      await useDeleteGeoJSONFeature({
+      await deleteGeoJSONFeature({
         layerId: inp.layerId,
         featureId: inp.featureId
       });
     },
-    [useDeleteGeoJSONFeature]
+    [deleteGeoJSONFeature]
   );
 
   const handleSketchFeatureUpdate = useCallback(

@@ -6,7 +6,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { EntryItem, EntryItemAction } from "@reearth/app/ui/components";
 import ConfirmModal from "@reearth/app/ui/components/ConfirmModal";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import {

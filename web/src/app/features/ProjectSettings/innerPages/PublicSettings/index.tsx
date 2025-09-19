@@ -1,4 +1,4 @@
-import { Story } from "@reearth/services/api/storytellingApi/utils";
+import type { Story } from "@reearth/services/api/storytelling";
 import { FC, useMemo } from "react";
 
 import { InnerPage, SettingsWrapper, ArchivedSettingNotice } from "../common";

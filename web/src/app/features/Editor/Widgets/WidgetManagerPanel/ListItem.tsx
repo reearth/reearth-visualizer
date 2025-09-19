@@ -1,8 +1,6 @@
 import { EntryItem } from "@reearth/app/ui/components";
-import {
-  InstalledWidget,
-  DATA_ATTRIBUTION_WIDGET_ID
-} from "@reearth/services/api/widgetsApi/utils";
+import type { InstalledWidget } from "@reearth/services/api/widget";
+import { DATA_ATTRIBUTION_WIDGET_ID } from "@reearth/services/api/widget/utils";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";

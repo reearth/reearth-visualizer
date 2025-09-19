@@ -1,5 +1,5 @@
 import { CodeInput } from "@reearth/app/lib/reearth-ui";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { styled } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useCallback, useEffect, useRef, useState } from "react";

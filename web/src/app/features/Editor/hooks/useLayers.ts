@@ -5,12 +5,17 @@ import type {
   LayerSimple,
   Geometry
 } from "@reearth/core";
-import { useLayersFetcher } from "@reearth/services/api";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import {
+  useNLSLayers,
+  useNLSLayerCustomPropertyMutations,
+  useNLSLayerMutations
+} from "@reearth/services/api/layer";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import {
   ChangeCustomPropertyTitleInput,
   RemoveCustomPropertyInput,
-  UpdateCustomPropertySchemaInput
+  UpdateCustomPropertySchemaInput,
+  Scalars
 } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import {
@@ -38,12 +43,12 @@ export type LayerSelectProps =
 
 export type LayerAddProps = {
   config?: Omit<LayerSimple, "type" | "id">;
-  index?: any;
+  index?: number;
   layerType: string;
   sceneId: string;
   title: string;
   visible?: boolean;
-  schema?: any;
+  schema?: Scalars["JSON"]["input"];
 };
 
 export type LayerNameUpdateProps = {
@@ -84,18 +89,16 @@ export default function ({
   visualizerRef
 }: LayerProps) {
   const t = useT();
-  const {
-    useGetLayersQuery,
-    useAddNLSLayerSimple,
-    useRemoveNLSLayer,
-    useUpdateNLSLayer,
-    useUpdateNLSLayers,
-    useUpdateCustomProperties,
-    useChangeCustomPropertyTitle,
-    useRemoveCustomProperty
-  } = useLayersFetcher();
+  const { addNLSLayerSimple, removeNLSLayer, updateNLSLayer, updateNLSLayers } =
+    useNLSLayerMutations();
 
-  const { nlsLayers: originNlsLayers } = useGetLayersQuery({ sceneId });
+  const {
+    updateCustomProperties,
+    changeCustomPropertyTitle,
+    removeCustomProperty
+  } = useNLSLayerCustomPropertyMutations();
+
+  const { nlsLayers: originNlsLayers } = useNLSLayers({ sceneId });
 
   const [sortedLayerIds, setSortedLayerIds] = useState<string[]>([]);
 
@@ -191,7 +194,7 @@ export default function ({
       const deletedPageIndex = nlsLayers.findIndex((l) => l.id === layerId);
       if (deletedPageIndex === undefined) return;
 
-      await useRemoveNLSLayer({
+      await removeNLSLayer({
         layerId
       });
       if (layerId === selectedLayer?.layer?.id) {
@@ -203,7 +206,7 @@ export default function ({
         return newSortedLayerIds;
       });
     },
-    [nlsLayers, selectedLayer, handleLayerSelect, useRemoveNLSLayer]
+    [nlsLayers, selectedLayer, handleLayerSelect, removeNLSLayer]
   );
 
   const selectedFeature: SelectedFeature | undefined = useMemo(() => {
@@ -236,7 +239,7 @@ export default function ({
 
       const nextIndex = maxIndex + 1;
 
-      await useAddNLSLayerSimple({
+      await addNLSLayerSimple({
         sceneId: inp.sceneId,
         config: inp.config,
         visible: inp.visible,
@@ -246,36 +249,36 @@ export default function ({
         schema: inp.schema
       });
     },
-    [nlsLayers, t, useAddNLSLayerSimple]
+    [nlsLayers, t, addNLSLayerSimple]
   );
 
   const handleLayerNameUpdate = useCallback(
     async (inp: LayerNameUpdateProps) => {
-      await useUpdateNLSLayer({
+      await updateNLSLayer({
         layerId: inp.layerId,
         name: inp.name
       });
     },
-    [useUpdateNLSLayer]
+    [updateNLSLayer]
   );
 
   const handleLayerConfigUpdate = useCallback(
     async (inp: LayerConfigUpdateProps) => {
-      await useUpdateNLSLayer({
+      await updateNLSLayer({
         layerId: inp.layerId,
         config: inp.config
       });
     },
-    [useUpdateNLSLayer]
+    [updateNLSLayer]
   );
   const handleLayerVisibilityUpdate = useCallback(
     async (inp: LayerVisibilityUpdateProps) => {
-      await useUpdateNLSLayer({
+      await updateNLSLayer({
         layerId: inp.layerId,
         visible: inp.visible
       });
     },
-    [useUpdateNLSLayer]
+    [updateNLSLayer]
   );
 
   useEffect(() => {
@@ -312,9 +315,9 @@ export default function ({
         }))
       };
 
-      await useUpdateNLSLayers(layersInput);
+      await updateNLSLayers(layersInput);
     },
-    [originNlsLayers, sortedLayerIds, useUpdateNLSLayers]
+    [originNlsLayers, sortedLayerIds, updateNLSLayers]
   );
 
   const handleCustomPropertySchemaClick = useCallback((id?: string) => {
@@ -324,35 +327,35 @@ export default function ({
 
   const handleCustomPropertySchemaUpdate = useCallback(
     async (inp: UpdateCustomPropertySchemaInput) => {
-      await useUpdateCustomProperties({
+      await updateCustomProperties({
         layerId: inp.layerId,
         schema: inp.schema
       });
     },
-    [useUpdateCustomProperties]
+    [updateCustomProperties]
   );
 
   const handleChangeCustomPropertyTitle = useCallback(
     async (inp: ChangeCustomPropertyTitleInput) => {
-      await useChangeCustomPropertyTitle({
+      await changeCustomPropertyTitle({
         layerId: inp.layerId,
         oldTitle: inp.oldTitle,
         newTitle: inp.newTitle,
         schema: inp.schema
       });
     },
-    [useChangeCustomPropertyTitle]
+    [changeCustomPropertyTitle]
   );
 
   const handleRemoveCustomProperty = useCallback(
     async (inp: RemoveCustomPropertyInput) => {
-      await useRemoveCustomProperty({
+      await removeCustomProperty({
         layerId: inp.layerId,
         removedTitle: inp.removedTitle,
         schema: inp.schema
       });
     },
-    [useRemoveCustomProperty]
+    [removeCustomProperty]
   );
   return {
     nlsLayers,

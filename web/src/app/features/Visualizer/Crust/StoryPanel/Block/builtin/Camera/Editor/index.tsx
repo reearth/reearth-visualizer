@@ -5,6 +5,7 @@ import {
   ListField,
   NumberField
 } from "@reearth/app/ui/fields";
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { Camera } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -24,8 +25,8 @@ export type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,

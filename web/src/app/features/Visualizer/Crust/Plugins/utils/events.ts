@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import EventTarget from "@ungap/event-target";
 import { useEffect } from "react";
 

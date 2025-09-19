@@ -1,4 +1,4 @@
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/property";
 
 export type Position = "left" | "right";
 
@@ -10,15 +10,33 @@ export type Story = {
   pages: StoryPage[];
 };
 
+// Story panel specific Field type
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type StoryField<V = any> = {
+  type?: string;
+  ui?: string;
+  title?: string;
+  description?: string;
+  value?: V;
+  choices?: string[];
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type StoryPropertyValue = Record<string, any>;
+
+export type StoryPageProperty = Record<string, StoryPropertyValue>;
 export type StoryPage = {
   id: string;
   title?: string;
   swipeable?: boolean;
   layerIds?: string[];
   propertyId?: string;
-  property?: any;
+  property?: StoryPageProperty;
   blocks: StoryBlock[];
 };
+
+export type StoryBlockProperty = Record<string, StoryPropertyValue>;
+export type StoryBlockPropertyForPluginAPI = Record<string, unknown>;
 
 export type StoryBlock = {
   id: string;
@@ -27,8 +45,8 @@ export type StoryBlock = {
   extensionId: string;
   extensionType?: "storyBlock";
   propertyId?: string;
-  property?: any;
-  propertyForPluginAPI?: any;
+  property?: StoryBlockProperty;
+  propertyForPluginAPI?: StoryBlockPropertyForPluginAPI;
   propertyItemsForPluginBlock?: Item[];
 };
 
@@ -37,11 +55,6 @@ export type PluginStoryBlock = Omit<
   "propertyForPluginAPI" | "propertyItemsForPluginBlock"
 >;
 
-export type Field<V = any> = {
-  type?: string;
-  ui?: string;
-  title?: string;
-  description?: string;
-  value?: V;
-  choices?: string[];
-};
+// Generic field type alias for backward compatibility
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Field<V = any> = StoryField<V>;

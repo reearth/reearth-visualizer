@@ -1,8 +1,14 @@
 import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
-import { useProjectFetcher } from "@reearth/services/api";
-import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
+import {
+  useProject,
+  useProjectImportExportMutations,
+  useProjectMutations,
+  useProjects,
+  useStarredProjects
+} from "@reearth/services/api/project";
+import { toPublishmentStatus } from "@reearth/services/api/utils";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import {
   ProjectSortField,
@@ -37,15 +43,14 @@ export type SortType =
 
 export default (workspaceId?: string) => {
   const {
-    useProjectsQuery,
-    useUpdateProject,
-    useCreateProject,
-    useStarredProjectsQuery,
-    useUpdateProjectRemove,
-    usePublishProject,
-    useImportProject,
-    useProjectQuery
-  } = useProjectFetcher();
+    updateProject,
+    createProject,
+    updateProjectRecycleBin,
+    publishProject
+  } = useProjectMutations();
+
+  const { importProject } = useProjectImportExportMutations();
+
   const navigate = useNavigate();
   const client = useApolloClient();
   const { projectVisibility } = appFeature();
@@ -53,7 +58,7 @@ export default (workspaceId?: string) => {
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
 
-  const { starredProjects } = useStarredProjectsQuery(workspaceId);
+  const { starredProjects } = useStarredProjects(workspaceId);
 
   const {
     projects,
@@ -63,7 +68,7 @@ export default (workspaceId?: string) => {
     endCursor,
     fetchMore,
     refetch
-  } = useProjectsQuery({
+  } = useProjects({
     workspaceId: workspaceId || "",
     pagination: {
       first: pagination(sortValue).first
@@ -166,7 +171,7 @@ export default (workspaceId?: string) => {
       > & { license?: string }
     ) => {
       if (!workspaceId) return;
-      await useCreateProject(
+      await createProject(
         workspaceId,
         Visualizer.Cesium,
         data.name,
@@ -177,16 +182,16 @@ export default (workspaceId?: string) => {
         data?.license
       );
     },
-    [useCreateProject, workspaceId]
+    [createProject, workspaceId]
   );
 
   // project update
   const handleProjectUpdate = useCallback(
     async (project: Project, projectId: string) => {
-      await useUpdateProject({ projectId, ...project });
+      await updateProject({ projectId, ...project });
       // if (sortBy) refetch();
     },
-    [useUpdateProject]
+    [updateProject]
   );
 
   // project open
@@ -276,19 +281,24 @@ export default (workspaceId?: string) => {
     // TODO: download error log
   }, []);
 
-  const { refetch: refetchProject } = useProjectQuery(importedProjectId);
+  const { refetch: refetchProject } = useProject(importedProjectId);
 
   const handleProjectImport = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
       if (file && workspaceId) {
         setImportStatus("processing");
-        const result = await useImportProject(file, workspaceId);
-        if (!result?.project_id) return;
-        setImportedProjectId(result.project_id);
+        const result = await importProject(file, workspaceId);
+        if (
+          "project_id" in result &&
+          typeof result.project_id === "string" &&
+          result.project_id
+        ) {
+          setImportedProjectId(result.project_id);
+        }
       }
     },
-    [workspaceId, useImportProject]
+    [workspaceId, importProject]
   );
 
   useEffect(() => {
@@ -331,9 +341,9 @@ export default (workspaceId?: string) => {
         deleted: true
       };
       if (project?.status === "limited") {
-        await usePublishProject("unpublished", project.id);
+        await publishProject("unpublished", project.id);
       }
-      await useUpdateProjectRemove(updatedProject);
+      await updateProjectRecycleBin(updatedProject);
 
       client.cache.evict({
         id: client.cache.identify({
@@ -344,7 +354,7 @@ export default (workspaceId?: string) => {
       client.cache.gc();
     },
 
-    [client, usePublishProject, useUpdateProjectRemove]
+    [client, publishProject, updateProjectRecycleBin]
   );
 
   return {

@@ -49,7 +49,10 @@ const Trigger = forwardRef<HTMLElement, HTMLProps<HTMLElement> & TriggerProps>(
     propRef
   ) {
     const context = usePopoverContext();
-    const childrenRef = (children as any)?.ref;
+    const childrenRef =
+      typeof children === "object" && children !== null && "ref" in children
+        ? (children as { ref?: React.Ref<HTMLElement> }).ref
+        : undefined;
     const ref = useMergeRefs([context.refs.setReference, propRef, childrenRef]);
 
     return (

@@ -5,11 +5,13 @@ import {
   NLSInfobox,
   NLSLayer,
   SketchFeature
-} from "@reearth/services/api/layersApi/utils";
-import { LayerStyle } from "@reearth/services/api/layerStyleApi/utils";
+} from "@reearth/services/api/layer/types";
+import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { mapValues } from "lodash-es";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const processNewProperty = (p: any): any => {
+  // Property processing requires dynamic typing
   if (typeof p !== "object") return p;
   return mapValues(p, (g) => {
     return Array.isArray(g)
@@ -21,7 +23,9 @@ export const processNewProperty = (p: any): any => {
   });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function processNewPropertyGroup(g: any): any {
+  // Property groups have dynamic structure
   if (typeof g !== "object") return g;
   return mapValues(g, (v) => {
     if (Array.isArray(v)) {

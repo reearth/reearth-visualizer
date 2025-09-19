@@ -1,7 +1,8 @@
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import { useBlockContext } from "@reearth/app/features/Visualizer/shared/contexts/blockContext";
 import Button from "@reearth/app/ui/widgetui/Button";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useContext, useState } from "react";
@@ -17,8 +18,8 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,

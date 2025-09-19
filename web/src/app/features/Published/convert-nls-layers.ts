@@ -1,4 +1,4 @@
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 
 import { PublishedNLSLayer } from "./types";
 
@@ -16,7 +16,7 @@ export const convertNLSLayers = (
     layerType: l.layerType,
     config: l.config,
     isSketch: l.isSketch,
-    infobox: l.nlsInfobox,
+    infobox: l.nlsInfobox as NLSLayer["infobox"],
     photoOverlay: l.nlsPhotoOverlay
       ? {
           processedProperty: {

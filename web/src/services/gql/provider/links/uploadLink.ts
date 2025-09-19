@@ -1,10 +1,12 @@
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
+type RequestInitWithTimeout = RequestInit & { __timeout?: number };
+
 export default (endpoint: string) => {
   return createUploadLink({
     uri: endpoint,
     fetch: (input, init) => {
-      const timeout = (init as any)?.__timeout ?? 30000;
+      const timeout = (init as RequestInitWithTimeout)?.__timeout ?? 30000;
       return fetchWithTimeout(input, init, Number(timeout));
     }
   });
