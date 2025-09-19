@@ -23,7 +23,8 @@
     "storybook:build": "storybook build --quiet -o dist/storybook",
     "gql": "graphql-codegen",
     "i18n": "i18next",
-    "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc"
+    "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc",
+    "scan:lock": "sh ./bin/scan-yarn-lock.sh"
   },
   "engines": {
     "node": ">=20.11.0"
