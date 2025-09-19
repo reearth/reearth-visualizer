@@ -8,6 +8,7 @@ import {
   ManagerWrapper
 } from "@reearth/app/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/app/ui/components/ManagerBase/ManagerEmptyContent";
+import { ProjectImportStatus } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useRef, Fragment } from "react";
@@ -31,7 +32,6 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     searchTerm,
     sortValue,
     importStatus,
-    importError,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
@@ -44,8 +44,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     handleSearch,
     handleProjectImport,
     handleProjectRemove,
-    handleProjectImportErrorModalClose,
-    handleProjectImportErrorLogDownload
+    handleProjectImportErrorDownload,
+    handleProjectImportErrorClose
   } = useHooks(workspaceId);
 
   const theme = useTheme();
@@ -187,7 +187,8 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   layout={layout}
                   data-testid={`projects-group-${layout}`}
                 >
-                  {importStatus === "processing" &&
+                  {(importStatus === ProjectImportStatus.Processing ||
+                    importStatus === ProjectImportStatus.Uploading) &&
                     (layout === "grid" ? (
                       <ImportingCardContainer>
                         <ImportCardPlaceholder />
@@ -252,10 +253,10 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         />
       )}
 
-      {importError && (
+      {importStatus === ProjectImportStatus.Failed && (
         <ProjectImportErrorModal
-          onClose={handleProjectImportErrorModalClose}
-          onProjectImportErrorLogDownload={handleProjectImportErrorLogDownload}
+          onClose={handleProjectImportErrorClose}
+          onProjectImportErrorLogDownload={handleProjectImportErrorDownload}
         />
       )}
     </ManagerWrapper>

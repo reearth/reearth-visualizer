@@ -2,8 +2,6 @@ import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
 import {
-  useProject,
-  useProjectImportExportMutations,
   useProjectMutations,
   useProjects,
   useStarredProjects
@@ -15,20 +13,19 @@ import {
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
   useState,
   MouseEvent,
   useEffect,
-  useRef,
-  ChangeEvent
+  useRef
 } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getImportStatus, ImportStatus, Project } from "../../type";
+import { Project } from "../../type";
+
+import useProjectImport from "./useProjectImport";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
@@ -48,8 +45,6 @@ export default (workspaceId?: string) => {
     updateProjectRecycleBin,
     publishProject
   } = useProjectMutations();
-
-  const { importProject } = useProjectImportExportMutations();
 
   const navigate = useNavigate();
   const client = useApolloClient();
@@ -76,9 +71,6 @@ export default (workspaceId?: string) => {
     sort: pagination(sortValue).sortBy,
     keyword: searchTerm
   });
-
-  const t = useT();
-  const [, setNotification] = useNotification();
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
@@ -266,72 +258,15 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
-  //import project
-  const [importedProjectId, setImportedProjectId] = useState<
-    string | undefined
-  >();
-  const [importStatus, setImportStatus] = useState<ImportStatus>();
-
-  // TODO: connect with new API for check import status
-  const [importError, _setImportError] = useState<boolean>(false);
-  const handleProjectImportErrorModalClose = useCallback(() => {
-    _setImportError(false);
-  }, []);
-  const handleProjectImportErrorLogDownload = useCallback(() => {
-    // TODO: download error log
-  }, []);
-
-  const { refetch: refetchProject } = useProject(importedProjectId);
-
-  const handleProjectImport = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file && workspaceId) {
-        setImportStatus("processing");
-        const result = await importProject(file, workspaceId);
-        if (
-          "project_id" in result &&
-          typeof result.project_id === "string" &&
-          result.project_id
-        ) {
-          setImportedProjectId(result.project_id);
-        }
-      }
-    },
-    [workspaceId, importProject]
-  );
-
-  useEffect(() => {
-    if (!importedProjectId) return;
-
-    let retries = 0;
-    const MAX_RETRIES = 100;
-
-    const interval = setInterval(() => {
-      if (++retries > MAX_RETRIES) {
-        clearInterval(interval);
-        return;
-      }
-      refetchProject().then((result) => {
-        const status =
-          result.data?.node?.__typename === "Project"
-            ? getImportStatus(result.data.node.metadata?.importStatus)
-            : undefined;
-
-        setImportStatus(status);
-        if (status === "success") {
-          setNotification({
-            type: "success",
-            text: t("Successfully imported project!")
-          });
-          refetch();
-        }
-        if (status !== "processing") clearInterval(interval);
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [importedProjectId, refetch, refetchProject, setNotification, t]);
+  const {
+    importStatus,
+    handleProjectImport,
+    handleProjectImportErrorDownload,
+    handleProjectImportErrorClose
+  } = useProjectImport({
+    workspaceId,
+    refetchProjectList: refetch
+  });
 
   // project remove
   const handleProjectRemove = useCallback(
@@ -371,7 +306,6 @@ export default (workspaceId?: string) => {
     contentWidth,
     starredProjects,
     importStatus,
-    importError,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
@@ -385,8 +319,8 @@ export default (workspaceId?: string) => {
     handleSearch,
     handleProjectImport,
     handleProjectRemove,
-    handleProjectImportErrorModalClose,
-    handleProjectImportErrorLogDownload
+    handleProjectImportErrorDownload,
+    handleProjectImportErrorClose
   };
 };
 
