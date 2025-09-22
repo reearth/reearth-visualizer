@@ -118,7 +118,7 @@ export const useProjectImportExportMutations = () => {
       } catch (error) {
         setNotification({
           type: "error",
-          text: t("Failed to get a signed upload URL.")
+          text: t("Failed to upload the file.")
         });
         console.error("signature-url error:", error);
         return { status: "error" };

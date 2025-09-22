@@ -60,7 +60,6 @@ MAINTAINER: 管理者
 OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
-Successfully imported project!: プロジェクトのインポートに成功しました！
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -112,6 +111,7 @@ Confirm visibility: 表示を確認する
 Project Visibility: プロジェクトの公開範囲
 Private projects are only available on paid plans. Please upgrade your plan.: 非公開プロジェクトは有料プランでのみ利用可能です。プランをアップグレードしてください。
 Starred: スター付き
+Successfully imported project!: プロジェクトのインポートに成功しました！
 No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
 Recover: 復元
 Delete: 削除
@@ -618,6 +618,8 @@ Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
 Failed to export project.: プロジェクトのエクスポートに失敗しました。
 Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to upload the file.: ファイルのアップロードに失敗しました。
+Upload completed.: アップロードが完了しました。
 Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
 Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
