@@ -7,8 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -17,8 +15,8 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	file_ "github.com/reearth/reearth/server/pkg/file"
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/log"
 )
 
@@ -36,8 +34,8 @@ type Notification struct {
 		Bucket      string `json:"bucket"`
 		Name        string `json:"name"`
 		ContentType string `json:"contentType"`
-		Size        string `json:"size"`        // 数値なら int64 でもOK
-		TimeCreated string `json:"timeCreated"` // RFC3339 なら後で time.Parse 可
+		Size        string `json:"size"`
+		TimeCreated string `json:"timeCreated"`
 	} `json:"cloud_event_data"`
 	FileInfo struct {
 		Folder   string `json:"folder"`
@@ -49,15 +47,19 @@ type Notification struct {
 
 func servSignatureUploadFiles(
 	ec *echo.Echo,
-	fileGateway gateway.File,
+	cfg *ServerConfig,
 ) {
 
-	securityHandler := SecurityHandler(enableDataLoaders)
+	securityHandler := SecurityHandler(cfg, enableDataLoaders)
 
 	ec.POST("/api/signature-url",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
-			workspaceID := c.FormValue("workspace_id")
+			workspaceID, err := accountdomain.WorkspaceIDFrom(c.FormValue("workspace_id"))
+			if err != nil {
+				errMsg := fmt.Sprintf("Invalid workspace id: %v", err)
+				return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
+			}
 
 			tempPrj, err := CreateTemporaryProject(ctx, usecases, op, workspaceID)
 			if err != nil {
@@ -66,7 +68,11 @@ func servSignatureUploadFiles(
 				return nil, err
 			}
 
-			signedURL, expires, contentType, err := fileGateway.GenerateSignedUploadUrl(ctx, fmt.Sprintf("%s-%s.zip", workspaceID, tempPrj.ID().String()))
+			userID := *op.AcOperator.User
+
+			fileName := GenFileName(workspaceID, tempPrj.ID(), userID)
+
+			signedURL, expires, contentType, err := cfg.Gateways.File.GenerateSignedUploadUrl(ctx, fileName)
 			if err != nil {
 				errMsg := fmt.Sprintf("Failed to Generate SignedUploadUrl: %v", err)
 				log.Error(errMsg)
@@ -76,7 +82,7 @@ func servSignatureUploadFiles(
 			expiresAt := time.Now().Add(time.Duration(expires) * time.Minute)
 
 			return SignedUploadURLResponse{
-				TargetWorkspace:  workspaceID,
+				TargetWorkspace:  workspaceID.String(),
 				TemporaryProject: tempPrj.ID().String(),
 				UploadURL:        *signedURL,
 				ExpiresAt:        expiresAt.Format(time.RFC3339),
@@ -88,39 +94,24 @@ func servSignatureUploadFiles(
 	ec.POST("/api/import-project",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
-			var n Notification
-			if err := c.Bind(&n); err != nil {
-				b, _ := io.ReadAll(c.Request().Body)
-				return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("invalid JSON: %v; body=%s", err, string(b)))
-			}
-
-			fmt.Println("[Import Project] recv notification file_name: ", n.CloudEventData.Name)
-
-			base := filepath.Base(n.CloudEventData.Name)
-
-			defer removeGcsZip(ctx, fileGateway, base)
-
-			filename := strings.TrimSuffix(base, filepath.Ext(base))
-			parts := strings.SplitN(filename, "-", 2)
-			if len(parts) != 2 {
-				return nil, fmt.Errorf("invalid file name format: %s", filename)
-			}
-
-			result := map[string]any{}
-
-			workspaceID := parts[0]
-			projectID := parts[1]
-			pid, err := id.ProjectIDFrom(projectID)
+			n, err := ParseNotification(c)
 			if err != nil {
-				errMsg := fmt.Sprintf("fail project id: %v", err)
-				UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
 				return nil, err
 			}
 
-			f, err := fileGateway.ReadImportProjectZip(ctx, base)
+			base, wid, pid, _, err := SplitFilename(n.CloudEventData.Name)
+			if err != nil {
+				return nil, err
+			}
+
+			defer removeGcsZip(ctx, cfg.Gateways.File, base)
+
+			result := map[string]any{}
+
+			f, err := cfg.Gateways.File.ReadImportProjectZip(ctx, base)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail ReadImportProjectZip: %v", err)
-				UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				return nil, err
 			}
 			defer f.Close()
@@ -144,7 +135,7 @@ func servSignatureUploadFiles(
 			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(currentHost, tmpfile)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
-				UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				return nil, errors.New(errMsg)
 			}
 
@@ -152,8 +143,8 @@ func servSignatureUploadFiles(
 				ctx,
 				usecases,
 				op,
-				workspaceID,
-				pid,
+				*wid,
+				*pid,
 				importData,
 				assetsZip,
 				pluginsZip,

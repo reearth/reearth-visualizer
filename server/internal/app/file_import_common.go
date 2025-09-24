@@ -2,9 +2,14 @@ package app
 
 import (
 	"archive/zip"
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"path/filepath"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -19,9 +24,62 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
+func ParseNotification(c echo.Context) (Notification, error) {
+	var n Notification
+
+	bodyBytes, err := io.ReadAll(c.Request().Body)
+	if err != nil {
+		return n, echo.NewHTTPError(http.StatusBadRequest, "failed to read body")
+	}
+
+	c.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	if err := json.Unmarshal(bodyBytes, &n); err != nil {
+		return n, echo.NewHTTPError(
+			http.StatusBadRequest,
+			fmt.Sprintf("invalid JSON: %v; body=%s", err, string(bodyBytes)),
+		)
+	}
+	return n, nil
+}
+
+func GenFileName(workspaceID accountdomain.WorkspaceID, projectID id.ProjectID, userID accountdomain.UserID) string {
+	return fmt.Sprintf("%s-%s-%s.zip", workspaceID.String(), projectID.String(), userID.String())
+}
+
+func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.ProjectID, *accountdomain.UserID, error) {
+
+	base := filepath.Base(objectPath)
+
+	filename := strings.TrimSuffix(base, filepath.Ext(base))
+	parts := strings.SplitN(filename, "-", 3)
+	if len(parts) != 3 {
+		return base, nil, nil, nil, fmt.Errorf("invalid file name format: %s", filename)
+	}
+
+	workspaceID := parts[0]
+	wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
+	if err != nil {
+		return base, nil, nil, nil, fmt.Errorf("Invalid workspace id: %v", err)
+	}
+
+	projectID := parts[1]
+	pid, err := id.ProjectIDFrom(projectID)
+	if err != nil {
+		return base, nil, nil, nil, fmt.Errorf("Invalid project id: %v", err)
+	}
+
+	userID := parts[2]
+	uid, err := accountdomain.UserIDFrom(userID)
+	if err != nil {
+		return base, nil, nil, nil, fmt.Errorf("Invalid user id: %v", err)
+	}
+	return base, &wid, &pid, &uid, nil
+}
+
 type WrappedHandler func(echo.Context, context.Context, *interfaces.Container, *usecase.Operator) (interface{}, error)
 
-func SecurityHandler(enableDataLoaders bool) func(WrappedHandler) echo.HandlerFunc {
+func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHandler) echo.HandlerFunc {
 	return func(handler WrappedHandler) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			req := c.Request()
@@ -32,7 +90,40 @@ func SecurityHandler(enableDataLoaders bool) func(WrappedHandler) echo.HandlerFu
 
 			c.SetRequest(req.WithContext(ctx))
 
+			// Since access from the storage trigger does not include an Auth token,
+			// we supplement the operator.
+			if req.Method == "POST" && req.URL.Path == "/api/import-project" {
+				n, err := ParseNotification(c)
+				if err != nil {
+					log.Errorf("import-project ParseNotification err: %v", err)
+					return err
+				}
+				fmt.Println("[Import Project] recv notification file_name: ", n.CloudEventData.Name)
+				_, _, _, userID, err := SplitFilename(n.CloudEventData.Name)
+				if err != nil {
+					log.Errorf("import-project SplitFilename err: %v", err)
+					return err
+				}
+				u, err := cfg.AccountRepos.User.FindByID(ctx, *userID)
+				if err != nil {
+					log.Errorf("import-project FindByID err: %v", err)
+					return err
+				}
+				if u != nil {
+					op, err := generateOperator(ctx, cfg, u)
+					if err != nil {
+						log.Errorf("import-project generateOperator err: %v", err)
+						return err
+					}
+
+					ctx = adapter.AttachUser(ctx, u)
+					ctx = adapter.AttachOperator(ctx, op)
+				}
+			}
+
 			op := adapter.Operator(ctx)
+			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+
 			res, err := handler(c, ctx, uc, op)
 			if err != nil {
 				log.Errorf("upload handler err: %v", err)
@@ -47,17 +138,12 @@ func SecurityHandler(enableDataLoaders bool) func(WrappedHandler) echo.HandlerFu
 	}
 }
 
-func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId string) (*project.Project, error) {
+func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, workspaceID accountdomain.WorkspaceID) (*project.Project, error) {
 
 	visibility := string(project.VisibilityPublic)
 	coreSupport := true
 	isDeleted := true
 	unknown := "It's importing now..."
-	workspaceID, err := accountdomain.WorkspaceIDFrom(wsId)
-	if err != nil {
-		errMsg := fmt.Sprintf("Invalid workspace id: %v", err)
-		return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
-	}
 	imporResultLog := map[string]any{}
 	imporResultLog["message"] = "import start..."
 	prj, err := usecases.Project.Create(ctx, interfaces.CreateProjectParam{
@@ -108,7 +194,7 @@ func ImportProject(
 	ctx context.Context,
 	usecases *interfaces.Container,
 	op *usecase.Operator,
-	wsId string,
+	wsId accountdomain.WorkspaceID,
 	pid id.ProjectID,
 	importData *[]byte,
 	assetsZip map[string]*zip.File,
@@ -117,7 +203,7 @@ func ImportProject(
 ) bool {
 
 	// project ----------
-	newProject, err := usecases.Project.ImportProjectData(ctx, wsId, pid.Ref().StringRef(), importData, op)
+	newProject, err := usecases.Project.ImportProjectData(ctx, wsId.String(), pid.Ref().StringRef(), importData, op)
 	if err != nil {
 		errMsg := fmt.Sprintf("fail Import ProjectData: %v", err)
 		UpdateImportStatus(ctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
