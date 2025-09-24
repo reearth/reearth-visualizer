@@ -80,6 +80,7 @@ export default ({
                 ? result.data.node.metadata?.imporResultLog
                 : undefined
             );
+            clearInterval(interval);
             break;
           case ProjectImportStatus.Success:
             setNotification({
