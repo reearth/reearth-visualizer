@@ -181,8 +181,8 @@ const PublicSettingsDetail: FC<Props> = ({
   const workspacePolicyCheckResultData = useWorkspacePolicyCheck(
     workspace?.id ?? ""
   );
-  const disableCustomDomainExtension =
-    !workspacePolicyCheckResultData?.workspacePolicyCheck
+  const enableCustomDomainExtension =
+    !!workspacePolicyCheckResultData?.workspacePolicyCheck
       ?.enableToCreatePrivateProject;
 
   return (
@@ -275,7 +275,7 @@ const PublicSettingsDetail: FC<Props> = ({
       </SettingsFields>
       {extensions &&
         extensions.filter((ext) => ext.type === "publication").length > 0 &&
-        !disableCustomDomainExtension &&
+        enableCustomDomainExtension &&
         accessToken && (
           <SettingsFields>
             <TitleWrapper size="body" weight="bold">
