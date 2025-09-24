@@ -4,6 +4,7 @@ import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProject
 import { AssetField, InputField, SwitchField } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
 import type { Story } from "@reearth/services/api/storytelling";
+import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { useAuth } from "@reearth/services/auth";
 import {
   ProjectPublicationExtensionProps,
@@ -13,7 +14,8 @@ import { useLang, useT } from "@reearth/services/i18n";
 import {
   NotificationType,
   useCurrentTheme,
-  useNotification
+  useNotification,
+  useWorkspace
 } from "@reearth/services/state";
 import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
@@ -175,6 +177,14 @@ const PublicSettingsDetail: FC<Props> = ({
     [settingsItem.publishmentStatus]
   );
 
+  const [workspace] = useWorkspace();
+  const workspacePolicyCheckResultData = useWorkspacePolicyCheck(
+    workspace?.id ?? ""
+  );
+  const enableCustomDomainExtension =
+    !!workspacePolicyCheckResultData?.workspacePolicyCheck
+      ?.enableToCreatePrivateProject;
+
   return (
     <SettingsWrapper>
       <SettingsFields>
@@ -265,6 +275,7 @@ const PublicSettingsDetail: FC<Props> = ({
       </SettingsFields>
       {extensions &&
         extensions.filter((ext) => ext.type === "publication").length > 0 &&
+        enableCustomDomainExtension &&
         accessToken && (
           <SettingsFields>
             <TitleWrapper size="body" weight="bold">
