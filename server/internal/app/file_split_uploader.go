@@ -26,6 +26,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/log"
 	"github.com/spf13/afero"
 )
@@ -51,19 +52,19 @@ type SplitUploadSession struct {
 
 func servSplitUploadFiles(
 	ec *echo.Echo,
-	fileGateway gateway.File,
+	cfg *ServerConfig,
 ) {
 	splitUploadManager := &SplitUploadManager{
 		activeUploads: make(map[string]*SplitUploadSession),
 		tempDir:       os.TempDir(),
 		chunkSize:     16 * 1024 * 1024, // 16MB
 		maxRetries:    3,
-		fileGateway:   fileGateway,
+		fileGateway:   cfg.Gateways.File,
 	}
 
 	splitUploadManager.StartCleanupRoutine(1 * time.Hour)
 
-	securityHandler := SecurityHandler(enableDataLoaders)
+	securityHandler := SecurityHandler(cfg, enableDataLoaders)
 
 	ec.POST("/api/split-import",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
@@ -72,7 +73,11 @@ func servSplitUploadFiles(
 				return nil, echo.NewHTTPError(http.StatusBadRequest, "Failed to parse multipart form")
 			}
 
-			workspaceID := c.FormValue("workspace_id")
+			workspaceID, err := accountdomain.WorkspaceIDFrom(c.FormValue("workspace_id"))
+			if err != nil {
+				errMsg := fmt.Sprintf("Invalid workspace id: %v", err)
+				return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
+			}
 
 			fileID := c.FormValue("file_id")
 
@@ -102,7 +107,7 @@ func servSplitUploadFiles(
 
 }
 
-func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
+func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, wsId accountdomain.WorkspaceID, fileID string, chunkNum, totalChunks int, file multipart.File) (interface{}, error) {
 
 	var pid *id.ProjectID
 	result := map[string]any{}
