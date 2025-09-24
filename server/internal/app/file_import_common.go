@@ -60,19 +60,19 @@ func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.P
 	workspaceID := parts[0]
 	wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
 	if err != nil {
-		return base, nil, nil, nil, fmt.Errorf("Invalid workspace id: %v", err)
+		return base, nil, nil, nil, fmt.Errorf("invalid workspace id: %v", err)
 	}
 
 	projectID := parts[1]
 	pid, err := id.ProjectIDFrom(projectID)
 	if err != nil {
-		return base, nil, nil, nil, fmt.Errorf("Invalid project id: %v", err)
+		return base, nil, nil, nil, fmt.Errorf("invalid project id: %v", err)
 	}
 
 	userID := parts[2]
 	uid, err := accountdomain.UserIDFrom(userID)
 	if err != nil {
-		return base, nil, nil, nil, fmt.Errorf("Invalid user id: %v", err)
+		return base, nil, nil, nil, fmt.Errorf("invalid user id: %v", err)
 	}
 	return base, &wid, &pid, &uid, nil
 }
