@@ -1228,7 +1228,6 @@ var (
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
 	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
-		fmt.Println("----------------------- ")
 		return nil, err
 	}
 
