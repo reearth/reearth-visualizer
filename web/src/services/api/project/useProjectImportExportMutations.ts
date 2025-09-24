@@ -10,6 +10,19 @@ import { ImportProjectResponse } from "./types";
 
 const CHUNK_SIZE = 16 * 1024 * 1024;
 
+type SignedUploadURLResponse = {
+  target_workspace: string;
+  temporary_project: string;
+  upload_url: string;
+  expires_at: string;
+  content_type: string;
+};
+
+type LastResponse = {
+  status: "error" | "uploaded" | "uploading";
+  project_id: string | undefined;
+};
+
 export const useProjectImportExportMutations = () => {
   const { axios } = useRestful();
   const [, setNotification] = useNotification();
@@ -85,6 +98,76 @@ export const useProjectImportExportMutations = () => {
   );
 
   const importProject = useCallback(
+    async (file: File, workspaceId: string) => {
+      let lastResponse: LastResponse = {
+        status: "uploading",
+        project_id: undefined
+      };
+
+      // --- Step 1: Obtain the signed URL ---
+      const form = new FormData();
+      form.append("workspace_id", workspaceId);
+
+      let signed: SignedUploadURLResponse;
+      try {
+        const res = await axios.post<SignedUploadURLResponse>(
+          "/signature-url",
+          form
+        );
+        signed = res.data;
+      } catch (error) {
+        setNotification({
+          type: "error",
+          text: t("Failed to upload the file.")
+        });
+        console.error("signature-url error:", error);
+        return { status: "error" };
+      }
+
+      const { upload_url, content_type, temporary_project } = signed;
+
+      // --- Step 2: PUT to the signed URL (single upload) ---
+      try {
+        const ct = content_type || file.type || "application/octet-stream";
+        const putRes = await axios.put(upload_url, file, {
+          headers: {
+            "Content-Type": ct,
+            Authorization: undefined
+          },
+          onUploadProgress: (e) => {
+            if (e.total) {
+              console.log(
+                "Uploading...",
+                Math.round((e.loaded / e.total) * 100) + "%"
+              );
+            }
+          }
+        });
+
+        if (putRes.status < 200 || putRes.status >= 300) {
+          throw new Error(`Upload failed: ${putRes.status}`);
+        }
+
+        lastResponse = {
+          status: "uploaded",
+          project_id: temporary_project
+        };
+        setNotification({ type: "success", text: t("Upload completed.") });
+      } catch (error) {
+        setNotification({
+          type: "error",
+          text: t("Failed to upload the file.")
+        });
+        console.error("upload PUT error:", error);
+        return { status: "error", project_id: undefined };
+      }
+
+      return lastResponse;
+    },
+    [axios, setNotification, t]
+  );
+
+  const importProjectWithSplitImport = useCallback(
     async (file: File, workspaceId: string): Promise<ImportProjectResponse> => {
       const CHUNK_CONCURRENCY = 4;
       const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
@@ -158,6 +241,7 @@ export const useProjectImportExportMutations = () => {
 
   return {
     exportProject,
-    importProject
+    importProject,
+    importProjectWithSplitImport
   };
 };
