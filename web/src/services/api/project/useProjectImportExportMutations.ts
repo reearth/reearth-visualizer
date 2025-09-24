@@ -131,7 +131,8 @@ export const useProjectImportExportMutations = () => {
         const ct = content_type || file.type || "application/octet-stream";
         const putRes = await axios.put(upload_url, file, {
           headers: {
-            "Content-Type": ct
+            "Content-Type": ct,
+            Authorization: undefined
           },
           onUploadProgress: (e) => {
             if (e.total) {
