@@ -42,7 +42,7 @@ export const projectMetadataFragment = gql`
     readme
     license
     importStatus
-    imporResultLog
+    importResultLog
     createdAt
     updatedAt
   }

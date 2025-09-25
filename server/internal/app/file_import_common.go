@@ -147,15 +147,15 @@ func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container,
 	imporResultLog := map[string]any{}
 	imporResultLog["message"] = "import start..."
 	prj, err := usecases.Project.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID:    workspaceID,
-		Visualizer:     visualizer.VisualizerCesium,
-		Name:           &unknown,
-		Description:    &unknown,
-		CoreSupport:    &coreSupport,
-		Visibility:     &visibility,
-		ImportStatus:   project.ProjectImportStatusUploading, // UPLOADING
-		ImporResultLog: &imporResultLog,
-		IsDeleted:      &isDeleted,
+		WorkspaceID:     workspaceID,
+		Visualizer:      visualizer.VisualizerCesium,
+		Name:            &unknown,
+		Description:     &unknown,
+		CoreSupport:     &coreSupport,
+		Visibility:      &visibility,
+		ImportStatus:    project.ProjectImportStatusUploading, // UPLOADING
+		ImportResultLog: &imporResultLog,
+		IsDeleted:       &isDeleted,
 	},
 		op,
 	)

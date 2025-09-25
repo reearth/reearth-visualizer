@@ -58,7 +58,7 @@ func (r *ProjectMetadata) ImportStatus() *ProjectImportStatus {
 	return r.importStatus
 }
 
-func (r *ProjectMetadata) ImporResultLog() *map[string]any {
+func (r *ProjectMetadata) ImportResultLog() *map[string]any {
 	return r.imporResultLog
 }
 
@@ -85,7 +85,7 @@ func (r *ProjectMetadata) SetImportStatus(importStatus *ProjectImportStatus) {
 	r.importStatus = importStatus
 }
 
-func (r *ProjectMetadata) SetImporResultLog(imporResultLog *map[string]any) {
+func (r *ProjectMetadata) SetImportResultLog(imporResultLog *map[string]any) {
 	if r == nil {
 		return
 	}
