@@ -74,11 +74,11 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 		License:      pm.License(),
 		Topics:       pm.Topics(),
 		ImportStatus: &importStatus,
-		ImporResultLog: func() map[string]any {
-			if pm.ImporResultLog() == nil {
+		ImportResultLog: func() map[string]any {
+			if pm.ImportResultLog() == nil {
 				return nil
 			}
-			return *pm.ImporResultLog()
+			return *pm.ImportResultLog()
 		}(),
 		CreatedAt: pm.CreatedAt(),
 		UpdatedAt: pm.UpdatedAt(),

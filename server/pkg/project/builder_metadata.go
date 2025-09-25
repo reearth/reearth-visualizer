@@ -61,8 +61,8 @@ func (b *MetadataBuilder) ImportStatus(importStatus *ProjectImportStatus) *Metad
 	return b
 }
 
-func (b *MetadataBuilder) ImporResultLog(imporResultLog *map[string]any) *MetadataBuilder {
-	b.r.imporResultLog = imporResultLog
+func (b *MetadataBuilder) ImportResultLog(importResultLog *map[string]any) *MetadataBuilder {
+	b.r.importResultLog = importResultLog
 	return b
 }
 

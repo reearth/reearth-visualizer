@@ -42,7 +42,7 @@ type ProjectMetadata {
   license: String
   topics: String
   importStatus: ProjectImportStatus
-  imporResultLog: JSON
+  importResultLog: JSON
   createdAt: DateTime
   updatedAt: DateTime
 }
