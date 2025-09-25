@@ -19,8 +19,9 @@ func TestWorkspacePolicyCheck_InputTypes(t *testing.T) {
 
 	// Test output structure
 	output := &gqlmodel.PolicyCheckPayload{
-		WorkspaceID:                  input.WorkspaceID,
-		EnableToCreatePrivateProject: true,
+		WorkspaceID:                    input.WorkspaceID,
+		EnableToCreatePrivateProject:   true,
+		DisableOperationByOverUsedSeat: false,
 	}
 
 	assert.Equal(t, input.WorkspaceID, output.WorkspaceID)
@@ -30,8 +31,9 @@ func TestWorkspacePolicyCheck_InputTypes(t *testing.T) {
 func TestWorkspacePolicyCheck_ResponseStructure(t *testing.T) {
 	// Test that the response structure is correctly defined
 	payload := &gqlmodel.PolicyCheckPayload{
-		WorkspaceID:                  gqlmodel.ID("01H4XCVR7QZJN0Z8V9XN9N9N9N"),
-		EnableToCreatePrivateProject: true,
+		WorkspaceID:                    gqlmodel.ID("01H4XCVR7QZJN0Z8V9XN9N9N9N"),
+		EnableToCreatePrivateProject:   true,
+		DisableOperationByOverUsedSeat: false,
 	}
 
 	assert.Equal(t, gqlmodel.ID("01H4XCVR7QZJN0Z8V9XN9N9N9N"), payload.WorkspaceID)
