@@ -8,10 +8,10 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"net/url"
 	"time"
 
 	"net/http"
-	"path"
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
@@ -26,6 +26,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
@@ -119,7 +120,7 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	}()
 
 	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
-		return nil, interfaces.ErrOperationDenied
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", interfaces.ErrOperationDenied), interfaces.ErrOperationDenied)
 	}
 
 	builder := nlslayer.NewNLSLayerSimple().
@@ -138,37 +139,37 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	if inp.LayerType.IsValidLayerType() {
 		layerSimple, err = builder.Build()
 		if err != nil {
-			return nil, err
+			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 		}
 	} else {
 		return nil, errors.New("layer type must be 'simple' or 'group'")
 	}
 
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	if policyID := operator.Policy(ws.Policy()); policyID != nil {
 		p, err := i.policyRepo.FindByID(ctx, *policyID)
 		if err != nil {
-			return nil, err
+			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 		}
 		s, err := i.nlslayerRepo.CountByScene(ctx, s.ID())
 		if err != nil {
-			return nil, err
+			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 		}
 		if err := p.EnforceNLSLayersCount(s + 1); err != nil {
-			return nil, err
+			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 		}
 	}
 
@@ -176,25 +177,19 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	if data, ok := (*inp.Config)["data"].(map[string]interface{}); ok {
 		if type_, ok := data["type"].(string); ok && type_ == "geojson" {
 			if url, ok := data["url"].(string); ok {
-				maxDownloadSize := 10 * 1024 * 1024 // 10MB
-				buf, err := downloadToBuffer(url, int64(maxDownloadSize))
-				if err != nil {
-					// If the download fails, it will be downloaded directly from the Asset repository.
-					if err := i.validateGeoJsonOfAssets(ctx, path.Base(url)); err != nil {
-						return nil, err
-					}
-				} else {
-					if err := validateGeoJSONFeatureCollection(buf.Bytes()); err != nil {
-						return nil, err
-					}
+				if url == "" {
+					return nil, visualizer.ErrorWithCallerLogging(ctx, "invalid GeoJSON URL format", errors.New("invalid GeoJSON URL format"))
+				}
+				if !isValidURL(url) {
+					return nil, visualizer.ErrorWithCallerLogging(ctx, "invalid GeoJSON URL format", errors.New("invalid GeoJSON URL format"))
 				}
 			} else if value, ok := data["value"].(map[string]interface{}); ok {
 				geojsonData, err := json.Marshal(value)
 				if err != nil {
-					return nil, err
+					return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: json.Marshal err: %v", err), err)
 				}
 				if err := validateGeoJSONFeatureCollection(geojsonData); err != nil {
-					return nil, err
+					return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 				}
 			}
 		}
@@ -216,12 +211,12 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 
 	err = i.nlslayerRepo.Save(ctx, layerSimple)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	err = updateProjectUpdatedAtByScene(ctx, layerSimple.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	tx.Commit()
@@ -1579,4 +1574,20 @@ func isValidLatLon(coords orb.Point) bool {
 	}
 	lat, lon := coords[1], coords[0]
 	return lat >= -90-epsilon && lat <= 90+epsilon && lon >= -180-epsilon && lon <= 180+epsilon
+}
+
+func isValidURL(urlStr string) bool {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return false
+	}
+	// Check if the URL has a valid scheme (http or https)
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return false
+	}
+	// Check if the URL has a host
+	if u.Host == "" {
+		return false
+	}
+	return true
 }
