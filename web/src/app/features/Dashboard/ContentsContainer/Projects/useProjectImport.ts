@@ -77,7 +77,7 @@ export default ({
             setImportStatus(status);
             setImportResultLog(
               result.data?.node?.__typename === "Project"
-                ? JSON.stringify(result.data.node.metadata?.imporResultLog)
+                ? JSON.stringify(result.data.node.metadata?.importResultLog)
                 : undefined
             );
             clearInterval(interval);

@@ -570,7 +570,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 }
 
-func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, imporResultLog *map[string]any, operator *usecase.Operator) (*project.ProjectMetadata, error) {
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, importResultLog *map[string]any, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
@@ -580,7 +580,7 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 	if meta != nil {
 		currentTime := time.Now().UTC()
 		meta.SetImportStatus(&importStatus)
-		meta.SetImportResultLog(imporResultLog)
+		meta.SetImportResultLog(importResultLog)
 		meta.SetUpdatedAt(&currentTime)
 	}
 
