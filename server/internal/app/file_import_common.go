@@ -144,18 +144,18 @@ func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container,
 	coreSupport := true
 	isDeleted := true
 	unknown := "It's importing now..."
-	imporResultLog := map[string]any{}
-	imporResultLog["message"] = "import start..."
+	importResultLog := map[string]any{}
+	importResultLog["message"] = "import start..."
 	prj, err := usecases.Project.Create(ctx, interfaces.CreateProjectParam{
-		WorkspaceID:    workspaceID,
-		Visualizer:     visualizer.VisualizerCesium,
-		Name:           &unknown,
-		Description:    &unknown,
-		CoreSupport:    &coreSupport,
-		Visibility:     &visibility,
-		ImportStatus:   project.ProjectImportStatusUploading, // UPLOADING
-		ImporResultLog: &imporResultLog,
-		IsDeleted:      &isDeleted,
+		WorkspaceID:     workspaceID,
+		Visualizer:      visualizer.VisualizerCesium,
+		Name:            &unknown,
+		Description:     &unknown,
+		CoreSupport:     &coreSupport,
+		Visibility:      &visibility,
+		ImportStatus:    project.ProjectImportStatusUploading, // UPLOADING
+		ImportResultLog: &importResultLog,
+		IsDeleted:       &isDeleted,
 	},
 		op,
 	)
@@ -178,13 +178,13 @@ func UpdateImportStatus(
 	message string,
 	result map[string]any,
 ) {
-	imporResultLog := map[string]any{}
-	imporResultLog["message"] = message
-	imporResultLog["result"] = result
+	importResultLog := map[string]any{}
+	importResultLog["message"] = message
+	importResultLog["result"] = result
 	if project.ProjectImportStatusFailed == status {
 		log.Errorf("[Import Error] %s", message)
 	}
-	_, err := usecases.Project.UpdateImportStatus(ctx, pid, status, &imporResultLog, op)
+	_, err := usecases.Project.UpdateImportStatus(ctx, pid, status, &importResultLog, op)
 	if err != nil {
 		log.Printf("failed to update import status: %v", err)
 	}

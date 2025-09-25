@@ -570,7 +570,7 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 }
 
-func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, imporResultLog *map[string]any, operator *usecase.Operator) (*project.ProjectMetadata, error) {
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, importResultLog *map[string]any, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
@@ -580,7 +580,7 @@ func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, impo
 	if meta != nil {
 		currentTime := time.Now().UTC()
 		meta.SetImportStatus(&importStatus)
-		meta.SetImporResultLog(imporResultLog)
+		meta.SetImportResultLog(importResultLog)
 		meta.SetUpdatedAt(&currentTime)
 	}
 
@@ -1201,20 +1201,20 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 type createProjectInput struct {
-	WorkspaceID    accountdomain.WorkspaceID
-	ProjectID      *string
-	Visualizer     visualizer.Visualizer
-	ImportStatus   project.ProjectImportStatus
-	ImporResultLog *map[string]any
-	Name           *string
-	Description    *string
-	ImageURL       *url.URL
-	Alias          *string
-	IsDeleted      *bool
-	Archived       *bool
-	CoreSupport    *bool
-	Visibility     *project.Visibility
-	ProjectAlias   *string
+	WorkspaceID     accountdomain.WorkspaceID
+	ProjectID       *string
+	Visualizer      visualizer.Visualizer
+	ImportStatus    project.ProjectImportStatus
+	ImportResultLog *map[string]any
+	Name            *string
+	Description     *string
+	ImageURL        *url.URL
+	Alias           *string
+	IsDeleted       *bool
+	Archived        *bool
+	CoreSupport     *bool
+	Visibility      *project.Visibility
+	ProjectAlias    *string
 
 	// metadata
 	Readme  *string
@@ -1260,7 +1260,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 			Workspace(input.WorkspaceID).
 			Project(prjID).
 			ImportStatus(&input.ImportStatus).
-			ImporResultLog(input.ImporResultLog).
+			ImportResultLog(input.ImportResultLog).
 			Build()
 		if err != nil {
 			return nil, err

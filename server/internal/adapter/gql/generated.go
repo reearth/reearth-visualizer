@@ -581,16 +581,16 @@ type ComplexityRoot struct {
 	}
 
 	ProjectMetadata struct {
-		CreatedAt      func(childComplexity int) int
-		ID             func(childComplexity int) int
-		ImporResultLog func(childComplexity int) int
-		ImportStatus   func(childComplexity int) int
-		License        func(childComplexity int) int
-		Project        func(childComplexity int) int
-		Readme         func(childComplexity int) int
-		Topics         func(childComplexity int) int
-		UpdatedAt      func(childComplexity int) int
-		Workspace      func(childComplexity int) int
+		CreatedAt       func(childComplexity int) int
+		ID              func(childComplexity int) int
+		ImportResultLog func(childComplexity int) int
+		ImportStatus    func(childComplexity int) int
+		License         func(childComplexity int) int
+		Project         func(childComplexity int) int
+		Readme          func(childComplexity int) int
+		Topics          func(childComplexity int) int
+		UpdatedAt       func(childComplexity int) int
+		Workspace       func(childComplexity int) int
 	}
 
 	ProjectMetadataPayload struct {
@@ -4029,12 +4029,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.ProjectMetadata.ID(childComplexity), true
 
-	case "ProjectMetadata.imporResultLog":
-		if e.complexity.ProjectMetadata.ImporResultLog == nil {
+	case "ProjectMetadata.importResultLog":
+		if e.complexity.ProjectMetadata.ImportResultLog == nil {
 			break
 		}
 
-		return e.complexity.ProjectMetadata.ImporResultLog(childComplexity), true
+		return e.complexity.ProjectMetadata.ImportResultLog(childComplexity), true
 
 	case "ProjectMetadata.importStatus":
 		if e.complexity.ProjectMetadata.ImportStatus == nil {
@@ -7020,7 +7020,7 @@ type ProjectMetadata {
   license: String
   topics: String
   importStatus: ProjectImportStatus
-  imporResultLog: JSON
+  importResultLog: JSON
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -27701,8 +27701,8 @@ func (ec *executionContext) fieldContext_Project_metadata(_ context.Context, fie
 				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
 			case "importStatus":
 				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
-			case "imporResultLog":
-				return ec.fieldContext_ProjectMetadata_imporResultLog(ctx, field)
+			case "importResultLog":
+				return ec.fieldContext_ProjectMetadata_importResultLog(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
 			case "updatedAt":
@@ -29064,8 +29064,8 @@ func (ec *executionContext) fieldContext_ProjectMetadata_importStatus(_ context.
 	return fc, nil
 }
 
-func (ec *executionContext) _ProjectMetadata_imporResultLog(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ProjectMetadata_imporResultLog(ctx, field)
+func (ec *executionContext) _ProjectMetadata_importResultLog(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_importResultLog(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -29078,7 +29078,7 @@ func (ec *executionContext) _ProjectMetadata_imporResultLog(ctx context.Context,
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ImporResultLog, nil
+		return obj.ImportResultLog, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -29092,7 +29092,7 @@ func (ec *executionContext) _ProjectMetadata_imporResultLog(ctx context.Context,
 	return ec.marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_ProjectMetadata_imporResultLog(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_ProjectMetadata_importResultLog(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "ProjectMetadata",
 		Field:      field,
@@ -29240,8 +29240,8 @@ func (ec *executionContext) fieldContext_ProjectMetadataPayload_metadata(_ conte
 				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
 			case "importStatus":
 				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
-			case "imporResultLog":
-				return ec.fieldContext_ProjectMetadata_imporResultLog(ctx, field)
+			case "importResultLog":
+				return ec.fieldContext_ProjectMetadata_importResultLog(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
 			case "updatedAt":
@@ -53756,8 +53756,8 @@ func (ec *executionContext) _ProjectMetadata(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._ProjectMetadata_topics(ctx, field, obj)
 		case "importStatus":
 			out.Values[i] = ec._ProjectMetadata_importStatus(ctx, field, obj)
-		case "imporResultLog":
-			out.Values[i] = ec._ProjectMetadata_imporResultLog(ctx, field, obj)
+		case "importResultLog":
+			out.Values[i] = ec._ProjectMetadata_importResultLog(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._ProjectMetadata_createdAt(ctx, field, obj)
 		case "updatedAt":

@@ -838,7 +838,7 @@ func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, w
 			Readme(&readme).
 			License(&license).
 			Topics(&topics).
-			ImporResultLog(&log).
+			ImportResultLog(&log).
 			Build()
 		assert.Nil(t, err)
 		err = r.ProjectMetadata.Save(ctx, m)

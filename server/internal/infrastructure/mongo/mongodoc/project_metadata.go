@@ -10,16 +10,16 @@ import (
 )
 
 type ProjectMetadataDocument struct {
-	ID             string
-	Workspace      string
-	Project        string
-	ImportStatus   *string
-	ImporResultLog *map[string]any
-	Readme         *string
-	License        *string
-	Topics         *string
-	CreatedAt      *time.Time
-	UpdatedAt      *time.Time
+	ID              string
+	Workspace       string
+	Project         string
+	ImportStatus    *string
+	ImportResultLog *map[string]any
+	Readme          *string
+	License         *string
+	Topics          *string
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
 }
 
 type ProjectMetadataConsumer = Consumer[*ProjectMetadataDocument, *project.ProjectMetadata]
@@ -40,16 +40,16 @@ func NewProjectMetadata(r *project.ProjectMetadata) (*ProjectMetadataDocument, s
 	}
 
 	return &ProjectMetadataDocument{
-		ID:             rid,
-		Workspace:      r.Workspace().String(),
-		Project:        r.Project().String(),
-		ImportStatus:   importStatus,
-		ImporResultLog: r.ImporResultLog(),
-		Readme:         r.Readme(),
-		License:        r.License(),
-		Topics:         r.Topics(),
-		CreatedAt:      r.CreatedAt(),
-		UpdatedAt:      r.UpdatedAt(),
+		ID:              rid,
+		Workspace:       r.Workspace().String(),
+		Project:         r.Project().String(),
+		ImportStatus:    importStatus,
+		ImportResultLog: r.ImportResultLog(),
+		Readme:          r.Readme(),
+		License:         r.License(),
+		Topics:          r.Topics(),
+		CreatedAt:       r.CreatedAt(),
+		UpdatedAt:       r.UpdatedAt(),
 	}, rid
 
 }
@@ -81,7 +81,7 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		Workspace(wid).
 		Project(pid).
 		ImportStatus(importStatus).
-		ImporResultLog(d.ImporResultLog).
+		ImportResultLog(d.ImportResultLog).
 		Readme(d.Readme).
 		License(d.License).
 		Topics(d.Topics).

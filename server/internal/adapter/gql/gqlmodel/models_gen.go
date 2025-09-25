@@ -738,16 +738,16 @@ type ProjectEdge struct {
 }
 
 type ProjectMetadata struct {
-	ID             ID                   `json:"id"`
-	Project        ID                   `json:"project"`
-	Workspace      ID                   `json:"workspace"`
-	Readme         *string              `json:"readme,omitempty"`
-	License        *string              `json:"license,omitempty"`
-	Topics         *string              `json:"topics,omitempty"`
-	ImportStatus   *ProjectImportStatus `json:"importStatus,omitempty"`
-	ImporResultLog JSON                 `json:"imporResultLog,omitempty"`
-	CreatedAt      *time.Time           `json:"createdAt,omitempty"`
-	UpdatedAt      *time.Time           `json:"updatedAt,omitempty"`
+	ID              ID                   `json:"id"`
+	Project         ID                   `json:"project"`
+	Workspace       ID                   `json:"workspace"`
+	Readme          *string              `json:"readme,omitempty"`
+	License         *string              `json:"license,omitempty"`
+	Topics          *string              `json:"topics,omitempty"`
+	ImportStatus    *ProjectImportStatus `json:"importStatus,omitempty"`
+	ImportResultLog JSON                 `json:"importResultLog,omitempty"`
+	CreatedAt       *time.Time           `json:"createdAt,omitempty"`
+	UpdatedAt       *time.Time           `json:"updatedAt,omitempty"`
 }
 
 type ProjectMetadataPayload struct {

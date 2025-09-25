@@ -15,16 +15,16 @@ var (
 )
 
 type ProjectMetadata struct {
-	id             id.ProjectMetadataID
-	workspace      accountdomain.WorkspaceID
-	project        id.ProjectID
-	importStatus   *ProjectImportStatus
-	imporResultLog *map[string]any
-	readme         *string
-	license        *string
-	topics         *string
-	createdAt      *time.Time
-	updatedAt      *time.Time
+	id              id.ProjectMetadataID
+	workspace       accountdomain.WorkspaceID
+	project         id.ProjectID
+	importStatus    *ProjectImportStatus
+	importResultLog *map[string]any
+	readme          *string
+	license         *string
+	topics          *string
+	createdAt       *time.Time
+	updatedAt       *time.Time
 }
 
 func (r *ProjectMetadata) ID() id.ProjectMetadataID {
@@ -58,8 +58,8 @@ func (r *ProjectMetadata) ImportStatus() *ProjectImportStatus {
 	return r.importStatus
 }
 
-func (r *ProjectMetadata) ImporResultLog() *map[string]any {
-	return r.imporResultLog
+func (r *ProjectMetadata) ImportResultLog() *map[string]any {
+	return r.importResultLog
 }
 
 func (r *ProjectMetadata) CreatedAt() *time.Time {
@@ -85,11 +85,11 @@ func (r *ProjectMetadata) SetImportStatus(importStatus *ProjectImportStatus) {
 	r.importStatus = importStatus
 }
 
-func (r *ProjectMetadata) SetImporResultLog(imporResultLog *map[string]any) {
+func (r *ProjectMetadata) SetImportResultLog(importResultLog *map[string]any) {
 	if r == nil {
 		return
 	}
-	r.imporResultLog = imporResultLog
+	r.importResultLog = importResultLog
 }
 
 func (r *ProjectMetadata) SetReadme(readme *string) {

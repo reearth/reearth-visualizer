@@ -21,16 +21,16 @@ import (
 )
 
 type CreateProjectParam struct {
-	WorkspaceID    accountdomain.WorkspaceID
-	Visualizer     visualizer.Visualizer
-	Name           *string
-	Description    *string
-	CoreSupport    *bool
-	Visibility     *string
-	IsDeleted      *bool
-	ImportStatus   project.ProjectImportStatus
-	ImporResultLog *map[string]any
-	ProjectAlias   *string
+	WorkspaceID     accountdomain.WorkspaceID
+	Visualizer      visualizer.Visualizer
+	Name            *string
+	Description     *string
+	CoreSupport     *bool
+	Visibility      *string
+	IsDeleted       *bool
+	ImportStatus    project.ProjectImportStatus
+	ImportResultLog *map[string]any
+	ProjectAlias    *string
 
 	// metadata
 	Readme  *string
