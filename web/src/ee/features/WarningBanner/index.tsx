@@ -13,7 +13,9 @@ const WarningBanner: FC<WarningBannerProps> = ({ workspaceId }) => {
   const t = useT();
 
   const info = useMemo(() => {
-    if (policyCheckResult?.workspacePolicyCheck?.enableToCreatePrivateProject) {
+    if (
+      policyCheckResult?.workspacePolicyCheck?.disableOperationByOverUsedSeat
+    ) {
       return {
         title: t("Member Limit Exceeded"),
         message: t(
