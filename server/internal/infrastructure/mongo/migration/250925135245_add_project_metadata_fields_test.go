@@ -121,8 +121,8 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 		"id":             "project1",
 		"workspace":      "workspace1", 
 		"name":           "Test Project 1",
-		"created_at":     "2023-01-01T00:00:00Z",
-		"updated_at":     "2023-01-02T00:00:00Z",
+		"created_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		"updated_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)),
 		"topics":         []string{"existing", "topics"},
 		"workspace_name": "Existing Workspace Name",
 		"star_count":     5,
@@ -141,8 +141,8 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 	err = projectColl.FindOne(ctx, bson.M{"id": "project1"}).Decode(&result)
 	assert.NoError(t, err)
 
-	assert.Equal(t, "2023-01-01T00:00:00Z", result["created_at"])
-	assert.Equal(t, "2023-01-02T00:00:00Z", result["updated_at"])
+	assert.Equal(t, primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)), result["created_at"])
+	assert.Equal(t, primitive.NewDateTimeFromTime(time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)), result["updated_at"])
 	assert.Equal(t, "Existing Workspace Name", result["workspace_name"])
 	assert.Equal(t, int32(5), result["star_count"])
 	
