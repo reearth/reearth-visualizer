@@ -61,8 +61,6 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 					default:
 						log.Printf("Warning: updatedat field has unexpected type %T for project %s, using current time\n", v, id)
 					}
-					// Remove the old "updatedat" property
-					delete(project, "updatedat")
 				}
 
 				workspaceID, _ := project["workspace"].(string)
@@ -70,7 +68,6 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 
 				// Add the new fields
 				project["created_at"] = createdAt
-				project["updated_at"] = now
 				project["topics"] = []string{}
 				project["workspace_name"] = workspaceName
 				project["star_count"] = 0

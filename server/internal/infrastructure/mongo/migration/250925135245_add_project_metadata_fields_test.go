@@ -74,15 +74,17 @@ func TestAddProjectMetadataFields(t *testing.T) {
 	for _, project := range projects {
 		// Check that new fields were added
 		assert.Contains(t, project, "created_at")
-		assert.Contains(t, project, "updated_at")
 		assert.Contains(t, project, "topics")
 		assert.Contains(t, project, "workspace_name")
 		assert.Contains(t, project, "star_count")
 		assert.Contains(t, project, "starred_by")
 
+		// Check that updatedat field is still present (unchanged)
+		assert.Contains(t, project, "updatedat")
+
 		// Verify field types and values
 		assert.IsType(t, primitive.DateTime(0), project["created_at"])
-		assert.IsType(t, primitive.DateTime(0), project["updated_at"])
+		assert.IsType(t, primitive.DateTime(0), project["updatedat"])
 		assert.IsType(t, primitive.A{}, project["topics"])
 		assert.IsType(t, "", project["workspace_name"])
 		assert.IsType(t, int32(0), project["star_count"])
@@ -122,7 +124,6 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 		"workspace":      "workspace1",
 		"name":           "Test Project 1",
 		"created_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
-		"updated_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)),
 		"topics":         []string{"existing", "topics"},
 		"workspace_name": "Existing Workspace Name",
 		"star_count":     5,
@@ -142,7 +143,6 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)), result["created_at"])
-	assert.Equal(t, primitive.NewDateTimeFromTime(time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)), result["updated_at"])
 	assert.Equal(t, "Existing Workspace Name", result["workspace_name"])
 	assert.Equal(t, int32(5), result["star_count"])
 
