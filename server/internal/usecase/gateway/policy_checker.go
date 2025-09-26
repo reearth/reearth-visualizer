@@ -14,6 +14,7 @@ const (
 	PolicyCheckCustomDomainCount             PolicyCheckType = "visualizer_custom_domain_count"
 	PolicyCheckGeneralPrivateProjectCreation PolicyCheckType = "general_private_project_creation"
 	PolicyCheckGeneralPublicProjectCreation  PolicyCheckType = "general_public_project_creation"
+	PolicyCheckGeneralOperationAllowed       PolicyCheckType = "general_operation_allowed"
 )
 
 type PolicyCheckRequest struct {
@@ -45,6 +46,14 @@ func CreateGeneralPolicyCheckRequest(workspaceID accountdomain.WorkspaceID, visi
 	return PolicyCheckRequest{
 		WorkspaceID: workspaceID,
 		CheckType:   checkType,
+		Value:       1,
+	}
+}
+
+func CreateGeneralOperationAllowedCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+	return PolicyCheckRequest{
+		WorkspaceID: workspaceID,
+		CheckType:   PolicyCheckGeneralOperationAllowed,
 		Value:       1,
 	}
 }
