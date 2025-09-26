@@ -25,7 +25,7 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 		Size: 1000,
 		Callback: func(rows []bson.Raw) error {
 			log.Printf("Processing batch of %d projects\n", len(rows))
-			
+
 			ids := make([]string, 0, len(rows))
 			newRows := make([]interface{}, 0, len(rows))
 
@@ -89,14 +89,13 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 	})
 }
 
-
 // getWorkspaces retrieves workspace ID to name mapping from reearth-account database
 func getWorkspaces(ctx context.Context, c DBClient) (map[string]string, error) {
 	mongoClient := c.Database().Client()
-	
+
 	accountClient := mongox.NewClient("reearth-account", mongoClient)
 	accountCol := accountClient.WithCollection("workspace")
-	
+
 	workspaces := make(map[string]string)
 	err := accountCol.Find(ctx, bson.M{}, &mongox.BatchConsumer{
 		Size: 1000,
@@ -115,11 +114,11 @@ func getWorkspaces(ctx context.Context, c DBClient) (map[string]string, error) {
 			return nil
 		},
 	})
-	
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to query workspaces from account database: %w", err)
 	}
-	
+
 	log.Printf("Retrieved %d workspaces from account database\n", len(workspaces))
 	return workspaces, nil
 }

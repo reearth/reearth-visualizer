@@ -20,25 +20,25 @@ func TestAddProjectMetadataFields(t *testing.T) {
 	// Setup: Insert test workspaces in account database
 	accountClient := mongox.NewClient("reearth-account", db.Client())
 	workspaceColl := accountClient.WithCollection("workspace").Client()
-	
+
 	testWorkspaces := []bson.M{
 		{
 			"id":   "workspace1",
 			"name": "Test Workspace 1",
 		},
 		{
-			"id":   "workspace2", 
+			"id":   "workspace2",
 			"name": "Test Workspace 2",
 		},
 	}
-	
+
 	_, err := workspaceColl.InsertMany(ctx, []interface{}{testWorkspaces[0], testWorkspaces[1]})
 	assert.NoError(t, err)
 
 	// Setup: Insert test projects
 	projectColl := client.WithCollection("project").Client()
 	now := time.Now()
-	
+
 	testProjects := []bson.M{
 		{
 			"id":        "project1",
@@ -47,13 +47,13 @@ func TestAddProjectMetadataFields(t *testing.T) {
 			"updatedat": primitive.NewDateTimeFromTime(now.Add(-24 * time.Hour)),
 		},
 		{
-			"id":        "project2", 
+			"id":        "project2",
 			"workspace": "workspace2",
 			"name":      "Test Project 2",
 			"updatedat": primitive.NewDateTimeFromTime(now.Add(-48 * time.Hour)),
 		},
 	}
-	
+
 	_, err = projectColl.InsertMany(ctx, []interface{}{testProjects[0], testProjects[1]})
 	assert.NoError(t, err)
 
@@ -74,7 +74,7 @@ func TestAddProjectMetadataFields(t *testing.T) {
 	for _, project := range projects {
 		// Check that new fields were added
 		assert.Contains(t, project, "created_at")
-		assert.Contains(t, project, "updated_at") 
+		assert.Contains(t, project, "updated_at")
 		assert.Contains(t, project, "topics")
 		assert.Contains(t, project, "workspace_name")
 		assert.Contains(t, project, "star_count")
@@ -102,7 +102,7 @@ func TestAddProjectMetadataFields(t *testing.T) {
 
 		// Verify star_count is 0
 		assert.Equal(t, int32(0), project["star_count"])
-		
+
 		// Verify starred_by is empty array
 		starredBy := project["starred_by"].(primitive.A)
 		assert.Len(t, starredBy, 0)
@@ -116,10 +116,10 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 
 	// Setup: Insert project that's already been migrated
 	projectColl := client.WithCollection("project").Client()
-	
+
 	testProject := bson.M{
 		"id":             "project1",
-		"workspace":      "workspace1", 
+		"workspace":      "workspace1",
 		"name":           "Test Project 1",
 		"created_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
 		"updated_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)),
@@ -128,7 +128,7 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 		"star_count":     5,
 		"starred_by":     []string{"user1", "user2"},
 	}
-	
+
 	_, err := projectColl.InsertOne(ctx, testProject)
 	assert.NoError(t, err)
 
@@ -145,12 +145,12 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 	assert.Equal(t, primitive.NewDateTimeFromTime(time.Date(2023, 1, 2, 0, 0, 0, 0, time.UTC)), result["updated_at"])
 	assert.Equal(t, "Existing Workspace Name", result["workspace_name"])
 	assert.Equal(t, int32(5), result["star_count"])
-	
+
 	topics := result["topics"].(primitive.A)
 	assert.Len(t, topics, 2)
 	assert.Equal(t, "existing", topics[0])
 	assert.Equal(t, "topics", topics[1])
-	
+
 	starredBy := result["starred_by"].(primitive.A)
 	assert.Len(t, starredBy, 2)
 	assert.Equal(t, "user1", starredBy[0])
@@ -164,13 +164,13 @@ func TestAddProjectMetadataFields_NoWorkspaceData(t *testing.T) {
 
 	// Setup: Insert test project without workspace data
 	projectColl := client.WithCollection("project").Client()
-	
+
 	testProject := bson.M{
 		"id":        "project1",
 		"workspace": "nonexistent_workspace",
 		"name":      "Test Project 1",
 	}
-	
+
 	_, err := projectColl.InsertOne(ctx, testProject)
 	assert.NoError(t, err)
 
@@ -187,7 +187,7 @@ func TestAddProjectMetadataFields_NoWorkspaceData(t *testing.T) {
 	assert.Equal(t, int32(0), result["star_count"])
 	assert.IsType(t, primitive.A{}, result["topics"])
 	assert.IsType(t, primitive.A{}, result["starred_by"])
-	
+
 	starredBy := result["starred_by"].(primitive.A)
 	assert.Len(t, starredBy, 0)
 }
