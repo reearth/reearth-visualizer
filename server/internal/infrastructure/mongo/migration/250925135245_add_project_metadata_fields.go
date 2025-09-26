@@ -8,6 +8,7 @@ import (
 
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
@@ -51,8 +52,14 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 				now := time.Now()
 				createdAt := now
 				if updatedat, exists := project["updatedat"]; exists {
-					if updateTime, ok := updatedat.(time.Time); ok {
-						createdAt = updateTime
+					// Handle both time.Time and primitive.DateTime types
+					switch v := updatedat.(type) {
+					case time.Time:
+						createdAt = v
+					case primitive.DateTime:
+						createdAt = v.Time()
+					default:
+						log.Printf("Warning: updatedat field has unexpected type %T for project %s, using current time\n", v, id)
 					}
 					// Remove the old "updatedat" property
 					delete(project, "updatedat")
