@@ -22,5 +22,5 @@ func ErrorWithCallerLogging(ctx context.Context, msg string, err error) error {
 
 func WarnWithCallerLogging(ctx context.Context, msg string) {
 	_, file, line, _ := runtime.Caller(1)
-	log.Warnfc(ctx, "[Warn] error with caller logging: %s at %s:%d %+v", msg, file, line)
+	log.Warnfc(ctx, "[Warn] error with caller logging: %s at %s:%d", msg, file, line)
 }
