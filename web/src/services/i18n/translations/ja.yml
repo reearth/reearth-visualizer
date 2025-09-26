@@ -579,6 +579,8 @@ Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
 Zoom Level Editor: ズームレベルエディター
+Member Limit Exceeded: メンバー上限を超えました
+This workspace has exceeded the member limit for its current plan. Editing is temporarily disabled for all members. Please ask the workspace owner to remove extra members or upgrade the plan to restore access.: このワークスペースは、現在のプランのメンバー上限を超えています。すべてのメンバーの編集が一時的に無効になっています。ワークスペースの所有者に、追加のメンバーを削除するか、プランをアップグレードしてアクセスを復元するよう依頼してください。
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。
