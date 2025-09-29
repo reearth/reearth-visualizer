@@ -55,7 +55,7 @@ func TestStorytelling_Create_WithPolicyChecker(t *testing.T) {
 					nil,
 				)
 			},
-			expectedError: "operation is disabled by over used seat",
+			expectedError: "operation is disabled by overused seat",
 		},
 		{
 			name: "policy check error",
