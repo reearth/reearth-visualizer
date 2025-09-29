@@ -368,6 +368,14 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 	visibility := project.VisibilityPublic
 
 	if i.policyChecker != nil {
+		operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(input.WorkspaceID))
+		if err != nil {
+			return nil, err
+		}
+		if !operationAllowed.Allowed {
+			return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+		}
+
 		errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
 		if errPrivate != nil {
 			visibility = project.VisibilityPublic
@@ -411,6 +419,15 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	if err != nil {
 		return nil, err
 	}
+
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
 	}
@@ -541,6 +558,13 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
@@ -716,6 +740,14 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 
 	if err := i.CanWriteWorkspace(prj.Workspace(), op); err != nil {
 		return nil, err
+	}
+
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	sc, err := i.sceneRepo.FindByProject(ctx, prj.ID())
@@ -911,6 +943,14 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 		return err
 	}
 
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return err
+	}
+	if !operationAllowed.Allowed {
+		return visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	deleter := ProjectDeleter{
 		SceneDeleter: SceneDeleter{
 			Scene:          i.sceneRepo,
@@ -941,6 +981,14 @@ func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWr
 	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, errors.New("project " + err.Error())
+	}
+
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	if prj.IsDeleted() {
