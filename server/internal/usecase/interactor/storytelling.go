@@ -106,7 +106,7 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		return nil, err
 	}
 	if !operationAllowed.Allowed {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by overused seat", errors.New("operation is disabled by overused seat"))
 	}
 
 	builder := storytelling.NewStory().
