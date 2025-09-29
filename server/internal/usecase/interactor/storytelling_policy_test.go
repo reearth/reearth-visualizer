@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"testing"
 
@@ -28,808 +29,436 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestStorytelling_Create_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
-	// sceneID := id.NewSceneID() // Would be used in full implementation
+// Test helper to create a storytelling test environment
+type storytellingTestEnv struct {
+	ctx               context.Context
+	wsID              accountdomain.WorkspaceID
+	projectID         id.ProjectID
+	sceneID           id.SceneID
+	storyID           id.StoryID
+	storytellingUC    interfaces.Storytelling
+	operator          *usecase.Operator
+	mockPolicyChecker *MockPolicyChecker
+	db                *repo.Container
+}
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled due to over-used seat",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by overused seat",
-		},
-		{
-			name: "policy check error",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					nil,
-					errors.New("policy service error"),
-				)
-			},
-			expectedError: "policy service error",
-		},
+func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTestEnv {
+	t.Helper()
+
+	mockPolicyChecker := new(MockPolicyChecker)
+	db := memory.New()
+	wsID := accountdomain.NewWorkspaceID()
+	projectID := id.NewProjectID()
+	sceneID := id.NewSceneID()
+	storyID := id.NewStoryID()
+
+	// Create workspace
+	ws := workspace.New().ID(wsID).MustBuild()
+	_ = db.Workspace.Save(ctx, ws)
+
+	// Create project
+	proj := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
+	_ = db.Project.Save(ctx, proj)
+
+	// Create scene
+	sc := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projectID).Build())
+	_ = db.Scene.Save(ctx, sc)
+
+	// Create story
+	story := lo.Must(storytelling.NewStory().
+		NewID().
+		ID(storyID).
+		Scene(sceneID).
+		Project(projectID).
+		Title("Test Story").
+		Build())
+	_ = db.Storytelling.Save(ctx, *story)
+
+	// Create repositories
+	repos := &repo.Container{
+		User:            db.User,
+		Workspace:       db.Workspace,
+		Project:         db.Project,
+		ProjectMetadata: db.ProjectMetadata,
+		Scene:           db.Scene,
+		Property:        db.Property,
+		PropertySchema:  db.PropertySchema,
+		Asset:           db.Asset,
+		Policy:          db.Policy,
+		Plugin:          db.Plugin,
+		NLSLayer:        db.NLSLayer,
+		Style:           db.Style,
+		Storytelling:    db.Storytelling,
+		SceneLock:       db.SceneLock,
+		Transaction:     &usecasex.NopTransaction{},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+	// Create gateways
+	gateways := &gateway.Container{
+		File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+		PolicyChecker: mockPolicyChecker,
+	}
 
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
+	// Create storytelling interactor
+	storytellingUC := NewStorytelling(repos, gateways)
 
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+	// Create operator
+	operator := &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{wsID},
+		},
+		WritableScenes: id.SceneIDList{sceneID},
+	}
 
-			// Create project and scene that the operator can write to
-			projectID := id.NewProjectID()
-			project := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
-
-			sceneID := id.NewSceneID()
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projectID).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the Create method
-			_, err := storytellingUC.Create(ctx, interfaces.CreateStoryInput{
-				SceneID: sceneID,
-				Title:   "Test Story",
-			}, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				assert.NoError(t, err)
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
-		})
+	return &storytellingTestEnv{
+		ctx:               ctx,
+		wsID:              wsID,
+		projectID:         projectID,
+		sceneID:           sceneID,
+		storyID:           storyID,
+		storytellingUC:    storytellingUC,
+		operator:          operator,
+		mockPolicyChecker: mockPolicyChecker,
+		db:                db,
 	}
 }
 
-func TestStorytelling_Update_WithPolicyChecker(t *testing.T) {
+func TestStorytelling_PolicyChecker(t *testing.T) {
 	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+	t.Run("Create", func(t *testing.T) {
+		t.Run("should create story when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+			// Act
+			result, err := env.storytellingUC.Create(ctx, interfaces.CreateStoryInput{
+				SceneID: env.sceneID,
+				Title:   "New Story",
+			}, env.operator)
 
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, "New Story", result.Title())
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
 
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-			// Create project and scene that the operator can write to
-			projectID := id.NewProjectID()
-			project := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
+			// Act
+			result, err := env.storytellingUC.Create(ctx, interfaces.CreateStoryInput{
+				SceneID: env.sceneID,
+				Title:   "New Story",
+			}, env.operator)
 
-			sceneID := id.NewSceneID()
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projectID).Build())
-			_ = db.Scene.Save(ctx, scene)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
 
-			// Create minimal story for Update operation
-			storyID := id.NewStoryID()
+		t.Run("should return error when policy check fails", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(nil, errors.New("policy service error")).
+				Once()
 
-			// Create a minimal story
-			story := lo.Must(storytelling.NewStory().
-				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projectID).
-				Title("Test Story").
-				Build())
-			_ = db.Storytelling.Save(ctx, *story)
+			// Act
+			result, err := env.storytellingUC.Create(ctx, interfaces.CreateStoryInput{
+				SceneID: env.sceneID,
+				Title:   "New Story",
+			}, env.operator)
 
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "policy service error")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
 
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
+	t.Run("Update", func(t *testing.T) {
+		t.Run("should update story when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the Update method
-			newTitle := "Updated Story Title"
-			_, err := storytellingUC.Update(ctx, interfaces.UpdateStoryInput{
-				SceneID: sceneID,
-				StoryID: storyID,
+			// Act
+			newTitle := "Updated Story"
+			result, err := env.storytellingUC.Update(ctx, interfaces.UpdateStoryInput{
+				SceneID: env.sceneID,
+				StoryID: env.storyID,
 				Title:   &newTitle,
-			}, operator)
+			}, env.operator)
 
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				// For the allowed case, we expect the policy check to pass,
-				// but the method might fail later due to business logic.
-				// The key is that it should NOT fail with a policy error.
-				if err != nil {
-					assert.NotContains(t, err.Error(), "operation is disabled by over used seat")
-				}
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, newTitle, result.Title())
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
 
-func TestStorytelling_Remove_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+			// Act
+			newTitle := "Updated Story"
+			result, err := env.storytellingUC.Update(ctx, interfaces.UpdateStoryInput{
+				SceneID: env.sceneID,
+				StoryID: env.storyID,
+				Title:   &newTitle,
+			}, env.operator)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
-
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
-
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
-
-			// Create project and scene that the operator can write to
-			projectID := id.NewProjectID()
-			project := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
-
-			sceneID := id.NewSceneID()
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projectID).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			// Create minimal story for Remove operation
-			storyID := id.NewStoryID()
-
-			// Create a minimal story
-			story := lo.Must(storytelling.NewStory().
-				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projectID).
-				Title("Test Story").
-				Build())
-			_ = db.Storytelling.Save(ctx, *story)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the Remove method
-			_, err := storytellingUC.Remove(ctx, interfaces.RemoveStoryInput{
-				SceneID: sceneID,
-				StoryID: storyID,
-			}, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				// For the allowed case, we expect the policy check to pass,
-				// but the method might fail later due to business logic.
-				// The key is that it should NOT fail with a policy error.
-				if err != nil {
-					assert.NotContains(t, err.Error(), "operation is disabled by over used seat")
-				}
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
+	})
 
-func TestStorytelling_Publish_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
-	projID := id.NewProjectID()
-	sceneID := id.NewSceneID()
-	storyID := id.NewStoryID()
+	t.Run("Remove", func(t *testing.T) {
+		t.Run("should remove story when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+			// Act
+			result, err := env.storytellingUC.Remove(ctx, interfaces.RemoveStoryInput{
+				SceneID: env.sceneID,
+				StoryID: env.storyID,
+			}, env.operator)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
 
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+			// Act
+			result, err := env.storytellingUC.Remove(ctx, interfaces.RemoveStoryInput{
+				SceneID: env.sceneID,
+				StoryID: env.storyID,
+			}, env.operator)
 
-			// Create project and scene that the operator can write to
-			project := lo.Must(project.New().NewID().ID(projID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
 
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projID).Build())
-			_ = db.Scene.Save(ctx, scene)
+	t.Run("Publish", func(t *testing.T) {
+		t.Run("should publish story when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
-			// Create minimal story for Publish operation
-			story := lo.Must(storytelling.NewStory().
-				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projID).
-				Title("Test Story").
-				Build())
-
-			_ = db.Storytelling.Save(ctx, *story)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the Publish method
-			_, err := storytellingUC.Publish(ctx, interfaces.PublishStoryInput{
-				ID:     storyID,
+			// Act
+			result, err := env.storytellingUC.Publish(ctx, interfaces.PublishStoryInput{
+				ID:     env.storyID,
 				Status: storytelling.PublishmentStatusPublic,
-			}, operator)
+			}, env.operator)
 
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				assert.NoError(t, err)
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
 
-func TestStorytelling_CreatePage_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
-	projID := id.NewProjectID()
-	sceneID := id.NewSceneID()
-	storyID := id.NewStoryID()
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+			// Act
+			result, err := env.storytellingUC.Publish(ctx, interfaces.PublishStoryInput{
+				ID:     env.storyID,
+				Status: storytelling.PublishmentStatusPublic,
+			}, env.operator)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
-
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
-
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
-
-			// Create project and scene that the operator can write to
-			project := lo.Must(project.New().NewID().ID(projID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
-
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projID).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			// Create minimal story for CreatePage operation
-			story := lo.Must(storytelling.NewStory().
-				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projID).
-				Title("Test Story").
-				Build())
-			_ = db.Storytelling.Save(ctx, *story)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the CreatePage method
-			pageTitle := "test page"
-			_, _, err := storytellingUC.CreatePage(ctx, interfaces.CreatePageParam{
-				SceneID: sceneID,
-				StoryID: storyID,
-				Title:   &pageTitle,
-			}, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				assert.NoError(t, err)
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
+	})
 
-func TestStorytelling_UpdatePage_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
-	projID := id.NewProjectID()
-	sceneID := id.NewSceneID()
-	storyID := id.NewStoryID()
-	pageID := id.NewPageID()
+	t.Run("Page Operations", func(t *testing.T) {
+		t.Run("CreatePage", func(t *testing.T) {
+			t.Run("should create page when policy allows", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+					Maybe()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+				// Act
+				pageTitle := "New Page"
+				_, page, err := env.storytellingUC.CreatePage(ctx, interfaces.CreatePageParam{
+					SceneID: env.sceneID,
+					StoryID: env.storyID,
+					Title:   &pageTitle,
+				}, env.operator)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
-
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
-
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
-
-			// Create project and scene that the operator can write to
-			project := lo.Must(project.New().NewID().ID(projID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
-
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projID).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			// Create minimal story with a page for UpdatePage operation
-			page := lo.Must(storytelling.NewPage().
-				NewID().
-				ID(pageID).
-				Title("Test Page").
-				Build())
-
-			story := lo.Must(storytelling.NewStory().
-				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projID).
-				Title("Test Story").
-				Pages(storytelling.NewPageList([]*storytelling.Page{page})).
-				Build())
-
-			_ = db.Storytelling.Save(ctx, *story)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the UpdatePage method
-			updatedTitle := "updated page title"
-			_, _, err := storytellingUC.UpdatePage(ctx, interfaces.UpdatePageParam{
-				SceneID: sceneID,
-				StoryID: storyID,
-				PageID:  pageID,
-				Title:   &updatedTitle,
-			}, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
+				// Assert
 				assert.NoError(t, err)
-			}
+				assert.NotNil(t, page)
+				assert.Equal(t, pageTitle, page.Title())
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
 
-			mockPolicyChecker.AssertExpectations(t)
+			t.Run("should return error when seats are overused", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+					Once()
+
+				// Act
+				pageTitle := "New Page"
+				_, page, err := env.storytellingUC.CreatePage(ctx, interfaces.CreatePageParam{
+					SceneID: env.sceneID,
+					StoryID: env.storyID,
+					Title:   &pageTitle,
+				}, env.operator)
+
+				// Assert
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), "operation is disabled by over")
+				assert.Nil(t, page)
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
 		})
-	}
-}
 
-func TestStorytelling_CreateBlock_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
-	projID := id.NewProjectID()
-	sceneID := id.NewSceneID()
-	storyID := id.NewStoryID()
-	pageID := id.NewPageID()
-	pluginID := id.MustPluginID("testplugin~1.0.0").WithScene(&sceneID)
-	extensionID := id.PluginExtensionID("block")
+		t.Run("UpdatePage", func(t *testing.T) {
+			t.Run("should update page when policy allows", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+					Maybe()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+				// Create a page first
+				pageID := id.NewPageID()
+				page := lo.Must(storytelling.NewPage().
+					NewID().
+					ID(pageID).
+					Title("Original Page").
+					Build())
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+				story := lo.Must(storytelling.NewStory().
+					NewID().
+					ID(env.storyID).
+					Scene(env.sceneID).
+					Project(env.projectID).
+					Title("Test Story").
+					Pages(storytelling.NewPageList([]*storytelling.Page{page})).
+					Build())
+				_ = env.db.Storytelling.Save(ctx, *story)
 
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
+				// Act
+				updatedTitle := "Updated Page"
+				_, updatedPage, err := env.storytellingUC.UpdatePage(ctx, interfaces.UpdatePageParam{
+					SceneID: env.sceneID,
+					StoryID: env.storyID,
+					PageID:  pageID,
+					Title:   &updatedTitle,
+				}, env.operator)
 
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+				// Assert
+				assert.NoError(t, err)
+				assert.NotNil(t, updatedPage)
+				assert.Equal(t, updatedTitle, updatedPage.Title())
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
 
-			// Create project and scene that the operator can write to
-			project := lo.Must(project.New().NewID().ID(projID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
+			t.Run("should return error when seats are overused", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+					Once()
 
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projID).Build())
-			_ = db.Scene.Save(ctx, scene)
+				pageID := id.NewPageID()
+				page := lo.Must(storytelling.NewPage().
+					NewID().
+					ID(pageID).
+					Title("Original Page").
+					Build())
 
-			// Create a property schema for the block extension
+				story := lo.Must(storytelling.NewStory().
+					NewID().
+					ID(env.storyID).
+					Scene(env.sceneID).
+					Project(env.projectID).
+					Title("Test Story").
+					Pages(storytelling.NewPageList([]*storytelling.Page{page})).
+					Build())
+				_ = env.db.Storytelling.Save(ctx, *story)
+
+				// Act
+				updatedTitle := "Updated Page"
+				_, updatedPage, err := env.storytellingUC.UpdatePage(ctx, interfaces.UpdatePageParam{
+					SceneID: env.sceneID,
+					StoryID: env.storyID,
+					PageID:  pageID,
+					Title:   &updatedTitle,
+				}, env.operator)
+
+				// Assert
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), "operation is disabled by over")
+				assert.Nil(t, updatedPage)
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
+		})
+	})
+
+	t.Run("Block Operations", func(t *testing.T) {
+		setupBlockEnv := func(env *storytellingTestEnv) (id.PageID, id.PluginID, id.PluginExtensionID) {
+			pageID := id.NewPageID()
+			pluginID := id.MustPluginID("testplugin~1.0.0").WithScene(&env.sceneID)
+			extensionID := id.PluginExtensionID("block")
+
+			// Create property schema
 			propertySchemaID := id.NewPropertySchemaID(pluginID, extensionID.String())
 			propertySchema := property.NewSchema().ID(propertySchemaID).MustBuild()
-			_ = db.PropertySchema.Save(ctx, propertySchema)
+			_ = env.db.PropertySchema.Save(ctx, propertySchema)
 
-			// Create a plugin with the required extension
+			// Create plugin with block extension
 			blockExtension := plugin.NewExtension().
 				ID(extensionID).
 				Type(plugin.ExtensionTypeStoryBlock).
@@ -841,9 +470,9 @@ func TestStorytelling_CreateBlock_WithPolicyChecker(t *testing.T) {
 				Name(i18n.StringFrom("Test Plugin")).
 				Extensions([]*plugin.Extension{blockExtension}).
 				MustBuild()
-			_ = db.Plugin.Save(ctx, testPlugin)
+			_ = env.db.Plugin.Save(ctx, testPlugin)
 
-			// Create minimal story with a page for CreateBlock operation
+			// Create story with page
 			page := lo.Must(storytelling.NewPage().
 				NewID().
 				ID(pageID).
@@ -852,447 +481,301 @@ func TestStorytelling_CreateBlock_WithPolicyChecker(t *testing.T) {
 
 			story := lo.Must(storytelling.NewStory().
 				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projID).
+				ID(env.storyID).
+				Scene(env.sceneID).
+				Project(env.projectID).
 				Title("Test Story").
 				Pages(storytelling.NewPageList([]*storytelling.Page{page})).
 				Build())
+			_ = env.db.Storytelling.Save(ctx, *story)
 
-			_ = db.Storytelling.Save(ctx, *story)
+			return pageID, pluginID, extensionID
+		}
 
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
+		t.Run("CreateBlock", func(t *testing.T) {
+			t.Run("should create block when policy allows", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+					Maybe()
 
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
+				pageID, pluginID, extensionID := setupBlockEnv(env)
 
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
+				// Act
+				_, _, block, _, err := env.storytellingUC.CreateBlock(ctx, interfaces.CreateBlockParam{
+					StoryID:     env.storyID,
+					PageID:      pageID,
+					PluginID:    pluginID,
+					ExtensionID: extensionID,
+				}, env.operator)
 
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the CreateBlock method
-			_, _, _, _, err := storytellingUC.CreateBlock(ctx, interfaces.CreateBlockParam{
-				StoryID:     storyID,
-				PageID:      pageID,
-				PluginID:    pluginID,
-				ExtensionID: extensionID,
-			}, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
+				// Assert
 				assert.NoError(t, err)
-			}
+				assert.NotNil(t, block)
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
 
-			mockPolicyChecker.AssertExpectations(t)
-		})
-	}
-}
+			t.Run("should return error when seats are overused", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+					Once()
 
-func TestStorytelling_RemoveBlock_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
+				pageID, pluginID, extensionID := setupBlockEnv(env)
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+				// Act
+				_, _, block, _, err := env.storytellingUC.CreateBlock(ctx, interfaces.CreateBlockParam{
+					StoryID:     env.storyID,
+					PageID:      pageID,
+					PluginID:    pluginID,
+					ExtensionID: extensionID,
+				}, env.operator)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
-
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
-
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
-
-			// Create project and scene that the operator can write to
-			projectID := id.NewProjectID()
-			project := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
-
-			sceneID := id.NewSceneID()
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projectID).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			// Create minimal story, page, and block IDs for RemoveBlock operation
-			storyID := id.NewStoryID()
-			pageID := id.NewPageID()
-			blockID := id.NewBlockID()
-
-			// Create a minimal page (without blocks to avoid ID validation issues)
-			page := lo.Must(storytelling.NewPage().
-				NewID().
-				ID(pageID).
-				Title("Test Page").
-				Build())
-
-			// Create a minimal story with the page
-			story := lo.Must(storytelling.NewStory().
-				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projectID).
-				Title("Test Story").
-				Pages(storytelling.NewPageList([]*storytelling.Page{page})).
-				Build())
-			_ = db.Storytelling.Save(ctx, *story)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the RemoveBlock method
-			_, _, _, err := storytellingUC.RemoveBlock(ctx, interfaces.RemoveBlockParam{
-				StoryID: storyID,
-				PageID:  pageID,
-				BlockID: blockID,
-			}, operator)
-
-			if tt.expectedError != "" {
+				// Assert
 				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				// For the allowed case, we expect the policy check to pass,
-				// but the method might fail later due to business logic.
-				// The key is that it should NOT fail with a policy error.
-				if err != nil {
-					assert.NotContains(t, err.Error(), "operation is disabled by over used seat")
-				}
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+				assert.Contains(t, err.Error(), "operation is disabled by over")
+				assert.Nil(t, block)
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
 		})
-	}
-}
 
-func TestStorytelling_MoveBlock_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
+		t.Run("RemoveBlock", func(t *testing.T) {
+			t.Run("should remove block when policy allows", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+					Maybe()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+				pageID := id.NewPageID()
+				blockID := id.NewBlockID()
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+				// Create a block to remove
+				pluginID := id.MustPluginID("testplugin~1.0.0")
+				extensionID := id.PluginExtensionID("block")
+				propertyID := id.NewPropertyID()
+				block := storytelling.NewBlock().
+					ID(blockID).
+					Plugin(pluginID).
+					Extension(extensionID).
+					Property(propertyID).
+					MustBuild()
 
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
+				page := lo.Must(storytelling.NewPage().
+					NewID().
+					ID(pageID).
+					Title("Test Page").
+					Blocks([]*storytelling.Block{block}).
+					Build())
 
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+				story := lo.Must(storytelling.NewStory().
+					NewID().
+					ID(env.storyID).
+					Scene(env.sceneID).
+					Project(env.projectID).
+					Title("Test Story").
+					Pages(storytelling.NewPageList([]*storytelling.Page{page})).
+					Build())
+				_ = env.db.Storytelling.Save(ctx, *story)
 
-			// Create project and scene that the operator can write to
-			projectID := id.NewProjectID()
-			project := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
+				// Act
+				_, _, removedID, err := env.storytellingUC.RemoveBlock(ctx, interfaces.RemoveBlockParam{
+					StoryID: env.storyID,
+					PageID:  pageID,
+					BlockID: blockID,
+				}, env.operator)
 
-			sceneID := id.NewSceneID()
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projectID).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			// Create minimal story, page, and block IDs for MoveBlock operation
-			storyID := id.NewStoryID()
-			pageID := id.NewPageID()
-			blockID := id.NewBlockID()
-
-			// Create a minimal page (without blocks to avoid ID validation issues)
-			page := lo.Must(storytelling.NewPage().
-				NewID().
-				ID(pageID).
-				Title("Test Page").
-				Build())
-
-			// Create a minimal story with the page
-			story := lo.Must(storytelling.NewStory().
-				NewID().
-				ID(storyID).
-				Scene(sceneID).
-				Project(projectID).
-				Title("Test Story").
-				Pages(storytelling.NewPageList([]*storytelling.Page{page})).
-				Build())
-			_ = db.Storytelling.Save(ctx, *story)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Create operator with scene access
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-				WritableScenes: id.SceneIDList{sceneID},
-			}
-
-			// Test the MoveBlock method
-			_, _, _, _, err := storytellingUC.MoveBlock(ctx, interfaces.MoveBlockParam{
-				StoryID: storyID,
-				PageID:  pageID,
-				BlockID: blockID,
-				Index:   0,
-			}, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				// For the allowed case, we expect the policy check to pass,
-				// but the method might fail later due to business logic.
-				// The key is that it should NOT fail with a policy error.
-				if err != nil {
-					assert.NotContains(t, err.Error(), "operation is disabled by over used seat")
-				}
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
-		})
-	}
-}
-
-func TestStorytelling_ImportStory_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
-	wsID := accountdomain.NewWorkspaceID()
-
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				)
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				)
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-		{
-			name: "policy check error",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, gateway.CreateGeneralOperationAllowedCheckRequest(wsID)).Return(
-					nil,
-					errors.New("policy service unavailable"),
-				)
-			},
-			expectedError: "policy service unavailable",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
-
-			// Create a minimal storytelling interactor with mock policy checker
-			db := memory.New()
-
-			// Create workspace for testing
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
-
-			// Create project and scene that the import can use
-			projectID := id.NewProjectID()
-			project := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
-			_ = db.Project.Save(ctx, project)
-
-			sceneID := id.NewSceneID()
-			scene := lo.Must(scene.New().NewID().ID(sceneID).Workspace(wsID).Project(projectID).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create storytelling interactor
-			storytellingUC := NewStorytelling(repos, gateways)
-
-			// Test the ImportStory method with sample scene data containing story
-			sampleData := []byte(`{"scene":{"story":{"pages":[]}}}`)
-			_, err := storytellingUC.ImportStory(ctx, sceneID, &sampleData)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
+				// Assert
 				assert.NoError(t, err)
-			}
+				assert.NotNil(t, removedID)
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
 
-			mockPolicyChecker.AssertExpectations(t)
+			t.Run("should return error when seats are overused", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+					Once()
+
+				pageID := id.NewPageID()
+				blockID := id.NewBlockID()
+
+				// Act
+				_, _, removedID, err := env.storytellingUC.RemoveBlock(ctx, interfaces.RemoveBlockParam{
+					StoryID: env.storyID,
+					PageID:  pageID,
+					BlockID: blockID,
+				}, env.operator)
+
+				// Assert
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), "operation is disabled by over")
+				assert.Nil(t, removedID)
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
 		})
-	}
+
+		t.Run("MoveBlock", func(t *testing.T) {
+			t.Run("should move block when policy allows", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+					Maybe()
+
+				pageID := id.NewPageID()
+				blockID := id.NewBlockID()
+
+				// Create a block to remove
+				pluginID := id.MustPluginID("testplugin~1.0.0")
+				extensionID := id.PluginExtensionID("block")
+				propertyID := id.NewPropertyID()
+				block := storytelling.NewBlock().
+					ID(blockID).
+					Plugin(pluginID).
+					Extension(extensionID).
+					Property(propertyID).
+					MustBuild()
+
+				page := lo.Must(storytelling.NewPage().
+					NewID().
+					ID(pageID).
+					Title("Test Page").
+					Blocks([]*storytelling.Block{block}).
+					Build())
+
+				story := lo.Must(storytelling.NewStory().
+					NewID().
+					ID(env.storyID).
+					Scene(env.sceneID).
+					Project(env.projectID).
+					Title("Test Story").
+					Pages(storytelling.NewPageList([]*storytelling.Page{page})).
+					Build())
+				_ = env.db.Storytelling.Save(ctx, *story)
+
+				// Act
+				_, _, _, index, err := env.storytellingUC.MoveBlock(ctx, interfaces.MoveBlockParam{
+					StoryID: env.storyID,
+					PageID:  pageID,
+					BlockID: blockID,
+					Index:   1,
+				}, env.operator)
+
+				// Assert
+				assert.NoError(t, err)
+				assert.Equal(t, 1, index)
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
+
+			t.Run("should return error when seats are overused", func(t *testing.T) {
+				// Arrange
+				env := setupStorytellingTestEnv(ctx, t)
+				env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+					Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+					Once()
+
+				pageID := id.NewPageID()
+				blockID := id.NewBlockID()
+
+				// Act
+				_, _, _, _, err := env.storytellingUC.MoveBlock(ctx, interfaces.MoveBlockParam{
+					StoryID: env.storyID,
+					PageID:  pageID,
+					BlockID: blockID,
+					Index:   1,
+				}, env.operator)
+
+				// Assert
+				assert.Error(t, err)
+				assert.Contains(t, err.Error(), "operation is disabled by over")
+				env.mockPolicyChecker.AssertExpectations(t)
+			})
+		})
+	})
+
+	t.Run("ImportStory", func(t *testing.T) {
+		t.Run("should import story when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
+
+			// Prepare import data
+			importData := map[string]any{
+				"scene": map[string]any{
+					"story": map[string]any{
+						"pages": []any{},
+					},
+				},
+			}
+			data, _ := json.Marshal(importData)
+
+			// Act
+			result, err := env.storytellingUC.ImportStory(ctx, env.sceneID, &data)
+
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
+
+			// Prepare import data
+			importData := map[string]any{
+				"scene": map[string]any{
+					"story": map[string]any{
+						"pages": []any{},
+					},
+				},
+			}
+			data, _ := json.Marshal(importData)
+
+			// Act
+			result, err := env.storytellingUC.ImportStory(ctx, env.sceneID, &data)
+
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+
+		t.Run("should return error when policy service fails", func(t *testing.T) {
+			// Arrange
+			env := setupStorytellingTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(nil, errors.New("policy service error")).
+				Once()
+
+			// Prepare import data
+			importData := map[string]any{
+				"scene": map[string]any{
+					"story": map[string]any{
+						"pages": []any{},
+					},
+				},
+			}
+			data, _ := json.Marshal(importData)
+
+			// Act
+			result, err := env.storytellingUC.ImportStory(ctx, env.sceneID, &data)
+
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "policy service error")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
 }

@@ -40,697 +40,439 @@ func (m *MockPolicyChecker) CheckPolicy(ctx context.Context, req gateway.PolicyC
 	return args.Get(0).(*gateway.PolicyCheckResponse), args.Error(1)
 }
 
-func TestProject_Create_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
+// Test helper to create a project test environment
+type projectTestEnv struct {
+	ctx               context.Context
+	wsID              accountdomain.WorkspaceID
+	projectUC         interfaces.Project
+	operator          *usecase.Operator
+	mockPolicyChecker *MockPolicyChecker
+	db                *repo.Container
+}
 
-	tests := []struct {
-		name                 string
-		setupMock            func(*MockPolicyChecker)
-		expectedError        string
-		expectProjectCreated bool
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				).Maybe()
-			},
-			expectProjectCreated: true,
-		},
-		{
-			name: "operation disabled due to over-used seat",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				).Once()
-			},
-			expectedError:        "operation is disabled by over used seat",
-			expectProjectCreated: false,
-		},
-		{
-			name: "policy check error",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					nil,
-					errors.New("policy check failed"),
-				).Once()
-			},
-			expectedError:        "policy check failed",
-			expectProjectCreated: false,
+func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
+	t.Helper()
+
+	mockPolicyChecker := new(MockPolicyChecker)
+	db := memory.New()
+	wsID := accountdomain.NewWorkspaceID()
+
+	// Create workspace
+	ws := workspace.New().ID(wsID).MustBuild()
+	_ = db.Workspace.Save(ctx, ws)
+
+	// Create repositories
+	repos := &repo.Container{
+		User:            db.User,
+		Workspace:       db.Workspace,
+		Project:         db.Project,
+		ProjectMetadata: db.ProjectMetadata,
+		Scene:           db.Scene,
+		Property:        db.Property,
+		PropertySchema:  db.PropertySchema,
+		Asset:           db.Asset,
+		Policy:          db.Policy,
+		Plugin:          db.Plugin,
+		NLSLayer:        db.NLSLayer,
+		Style:           db.Style,
+		Storytelling:    db.Storytelling,
+		SceneLock:       db.SceneLock,
+		Transaction:     &usecasex.NopTransaction{},
+	}
+
+	// Create gateways
+	gateways := &gateway.Container{
+		File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+		PolicyChecker: mockPolicyChecker,
+	}
+
+	// Create project interactor
+	projectUC := NewProject(repos, gateways)
+
+	// Create operator
+	operator := &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{wsID},
+			OwningWorkspaces:   workspace.IDList{wsID},
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// Setup mocks
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+	return &projectTestEnv{
+		ctx:               ctx,
+		wsID:              wsID,
+		projectUC:         projectUC,
+		operator:          operator,
+		mockPolicyChecker: mockPolicyChecker,
+		db:                db,
+	}
+}
 
-			// Create a minimal project interactor with mock policy checker
-			db := memory.New()
+func TestProject_PolicyChecker(t *testing.T) {
+	ctx := context.Background()
 
-			// Create workspace for testing
-			wsID := accountdomain.NewWorkspaceID()
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+	t.Run("Create", func(t *testing.T) {
+		t.Run("should create project when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
-			// Create container with repositories
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			// Create gateway container with mock policy checker
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			// Create project interactor
-			projectUC := NewProject(repos, gateways)
-
-			// Create operator
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-			}
-
-			// Create project input
+			// Act
 			input := interfaces.CreateProjectParam{
-				WorkspaceID: wsID,
+				WorkspaceID: env.wsID,
 				Visualizer:  visualizer.VisualizerCesium,
 				Name:        lo.ToPtr("Test Project"),
 				Description: lo.ToPtr("Test Description"),
 			}
+			result, err := env.projectUC.Create(ctx, input, env.operator)
 
-			// Call the Create method
-			result, err := projectUC.Create(ctx, input, operator)
-
-			// Assert results
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-				assert.Nil(t, result)
-			} else {
-				assert.NoError(t, err)
-				if tt.expectProjectCreated {
-					assert.NotNil(t, result)
-					assert.Equal(t, "Test Project", result.Name())
-					assert.Equal(t, "Test Description", result.Description())
-				}
-			}
-
-			// Verify mock expectations were met
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, "Test Project", result.Name())
+			assert.Equal(t, "Test Description", result.Description())
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
 
-func TestProject_Update_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				).Maybe()
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				).Once()
-			},
-			expectedError: "operation is disabled by overused seat",
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
+			// Act
+			input := interfaces.CreateProjectParam{
+				WorkspaceID: env.wsID,
+				Visualizer:  visualizer.VisualizerCesium,
+				Name:        lo.ToPtr("Test Project"),
 			}
+			result, err := env.projectUC.Create(ctx, input, env.operator)
 
-			// Create test infrastructure
-			db := memory.New()
-			wsID := accountdomain.NewWorkspaceID()
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+
+		t.Run("should return error when policy check fails", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(nil, errors.New("policy service unavailable")).
+				Once()
+
+			// Act
+			input := interfaces.CreateProjectParam{
+				WorkspaceID: env.wsID,
+				Visualizer:  visualizer.VisualizerCesium,
+				Name:        lo.ToPtr("Test Project"),
+			}
+			result, err := env.projectUC.Create(ctx, input, env.operator)
+
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "policy service unavailable")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
+
+	t.Run("Update", func(t *testing.T) {
+		t.Run("should update project when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
 			// Create a project to update
-			prj := project.New().NewID().Workspace(wsID).Name("Original").MustBuild()
-			_ = db.Project.Save(ctx, prj)
+			prj := project.New().NewID().Workspace(env.wsID).Name("Original").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 
-			// Create scene for the project
-			scene := lo.Must(scene.New().NewID().Workspace(wsID).Project(prj.ID()).Build())
-			_ = db.Scene.Save(ctx, scene)
+			// Act
+			newName := "Updated Project"
+			ctx := adapter.AttachInternal(ctx, true)
+			result, err := env.projectUC.Update(ctx, interfaces.UpdateProjectParam{
+				ID:   prj.ID(),
+				Name: &newName,
+			}, env.operator)
 
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			projectUC := NewProject(repos, gateways)
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-			}
-
-			input := interfaces.UpdateProjectParam{
-				ID:          prj.ID(),
-				Name:        lo.ToPtr("Updated Project"),
-				Description: lo.ToPtr("Updated Description"),
-			}
-
-			// Set context as internal to avoid GraphQL context issues
-			internalCtx := adapter.AttachInternal(ctx, true)
-			result, err := projectUC.Update(internalCtx, input, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-				assert.Nil(t, result)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
-				assert.Equal(t, "Updated Project", result.Name())
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, newName, result.Name())
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
 
-func TestProject_Delete_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				).Maybe()
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				).Once()
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+			// Create a project to update
+			prj := project.New().NewID().Workspace(env.wsID).Name("Original").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+			// Act
+			newName := "Updated Project"
+			ctx := adapter.AttachInternal(ctx, true)
+			result, err := env.projectUC.Update(ctx, interfaces.UpdateProjectParam{
+				ID:   prj.ID(),
+				Name: &newName,
+			}, env.operator)
 
-			// Create test infrastructure
-			db := memory.New()
-			wsID := accountdomain.NewWorkspaceID()
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
+
+	t.Run("Delete", func(t *testing.T) {
+		t.Run("should delete project when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
 			// Create a project to delete
-			prj := project.New().NewID().Workspace(wsID).Name("Project to Delete").MustBuild()
-			_ = db.Project.Save(ctx, prj)
+			prj := project.New().NewID().Workspace(env.wsID).Name("To Delete").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 
-			// Create scene for the project
-			scene := lo.Must(scene.New().NewID().Workspace(wsID).Project(prj.ID()).Build())
-			_ = db.Scene.Save(ctx, scene)
+			// Act
+			err := env.projectUC.Delete(ctx, prj.ID(), env.operator)
 
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			projectUC := NewProject(repos, gateways)
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-			}
-
-			// Set context as internal to avoid GraphQL context issues
-			internalCtx := adapter.AttachInternal(ctx, true)
-			err := projectUC.Delete(internalCtx, prj.ID(), operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-			} else {
-				assert.NoError(t, err)
-				// Verify project was deleted
-				_, err := db.Project.FindByID(ctx, prj.ID())
-				assert.Error(t, err) // Should not find deleted project
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.NoError(t, err)
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
 
-func TestProject_Publish_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				).Maybe()
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				).Once()
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+			// Create a project to delete
+			prj := project.New().NewID().Workspace(env.wsID).Name("To Delete").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+			// Act
+			err := env.projectUC.Delete(ctx, prj.ID(), env.operator)
 
-			// Create test infrastructure
-			db := memory.New()
-			wsID := accountdomain.NewWorkspaceID()
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
+
+	t.Run("Publish", func(t *testing.T) {
+		t.Run("should publish project when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
 			// Create a project to publish
-			prj := project.New().NewID().Workspace(wsID).Name("Project to Publish").MustBuild()
-			_ = db.Project.Save(ctx, prj)
+			prj := project.New().NewID().Workspace(env.wsID).Name("To Publish").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 
-			// Create scene for the project
-			scene := lo.Must(scene.New().NewID().Workspace(wsID).Project(prj.ID()).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			projectUC := NewProject(repos, gateways)
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-			}
-
-			input := interfaces.PublishProjectParam{
+			// Act
+			status := project.PublishmentStatusPublic
+			result, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
 				ID:     prj.ID(),
-				Status: project.PublishmentStatusPublic,
-			}
+				Status: status,
+			}, env.operator)
 
-			// Set context as internal to avoid GraphQL context issues
-			internalCtx := adapter.AttachInternal(ctx, true)
-			result, err := projectUC.Publish(internalCtx, input, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-				assert.Nil(t, result)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
 
-func TestProject_UpdateVisibility_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
-	tests := []struct {
-		name          string
-		visibility    string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name:       "update to public - operation allowed",
-			visibility: string(project.VisibilityPublic),
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				).Maybe()
-			},
-		},
-		{
-			name:       "update to private - operation allowed",
-			visibility: string(project.VisibilityPrivate),
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				).Maybe()
-			},
-		},
-		{
-			name:       "operation disabled",
-			visibility: string(project.VisibilityPublic),
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				).Once()
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-	}
+			// Create a project to publish
+			prj := project.New().NewID().Workspace(env.wsID).Name("To Publish").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+			// Act
+			status := project.PublishmentStatusPublic
+			result, err := env.projectUC.Publish(ctx, interfaces.PublishProjectParam{
+				ID:     prj.ID(),
+				Status: status,
+			}, env.operator)
 
-			// Create test infrastructure
-			db := memory.New()
-			wsID := accountdomain.NewWorkspaceID()
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
-
-			// Create a project to update visibility
-			prj := project.New().NewID().Workspace(wsID).Name("Project for Visibility Update").MustBuild()
-			_ = db.Project.Save(ctx, prj)
-
-			// Create scene for the project
-			scene := lo.Must(scene.New().NewID().Workspace(wsID).Project(prj.ID()).Build())
-			_ = db.Scene.Save(ctx, scene)
-
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			projectUC := NewProject(repos, gateways)
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-					OwningWorkspaces:   workspace.IDList{wsID},
-				},
-			}
-
-			// Set context as internal to avoid GraphQL context issues
-			internalCtx := adapter.AttachInternal(ctx, true)
-			result, err := projectUC.UpdateVisibility(internalCtx, prj.ID(), tt.visibility, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-				assert.Nil(t, result)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
-				assert.Equal(t, tt.visibility, result.Visibility())
-			}
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
-}
+	})
 
-func TestProject_ExportProjectData_WithPolicyChecker(t *testing.T) {
-	ctx := context.Background()
+	t.Run("UpdateVisibility", func(t *testing.T) {
+		t.Run("should update visibility when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
 
-	tests := []struct {
-		name          string
-		setupMock     func(*MockPolicyChecker)
-		expectedError string
-	}{
-		{
-			name: "operation allowed",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: true},
-					nil,
-				).Maybe()
-			},
-		},
-		{
-			name: "operation disabled",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					&gateway.PolicyCheckResponse{Allowed: false},
-					nil,
-				).Once()
-			},
-			expectedError: "operation is disabled by over used seat",
-		},
-		{
-			name: "policy check error",
-			setupMock: func(m *MockPolicyChecker) {
-				m.On("CheckPolicy", mock.Anything, mock.MatchedBy(func(req gateway.PolicyCheckRequest) bool {
-					return true
-				})).Return(
-					nil,
-					errors.New("policy service unavailable"),
-				).Once()
-			},
-			expectedError: "policy service unavailable",
-		},
-	}
+			// Create a project
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			mockPolicyChecker := new(MockPolicyChecker)
-			if tt.setupMock != nil {
-				tt.setupMock(mockPolicyChecker)
-			}
+			// Act
+			visibility := project.VisibilityPublic
+			result, err := env.projectUC.UpdateVisibility(ctx, prj.ID(), string(visibility), env.operator)
 
-			// Create test infrastructure
-			db := memory.New()
-			wsID := accountdomain.NewWorkspaceID()
-			ws := workspace.New().ID(wsID).MustBuild()
-			_ = db.Workspace.Save(ctx, ws)
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			assert.Equal(t, string(project.VisibilityPublic), result.Visibility())
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
 
-			// Create a project to export
-			prj := project.New().NewID().Workspace(wsID).Name("Project to Export").MustBuild()
-			_ = db.Project.Save(ctx, prj)
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
 
+			// Create a project
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
+
+			// Act
+			visibility := project.VisibilityPublic
+			result, err := env.projectUC.UpdateVisibility(ctx, prj.ID(), string(visibility), env.operator)
+
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
+
+	t.Run("ExportProjectData", func(t *testing.T) {
+		t.Run("should export data when policy allows", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: true}, nil).
+				Maybe()
+
+			// Create a project
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
 			// Create project metadata
-			meta := project.NewProjectMetadata().NewID().Project(prj.ID()).Workspace(wsID).MustBuild()
-			_ = db.ProjectMetadata.Save(ctx, meta)
+			metadata, _ := project.NewProjectMetadata().NewID().Project(prj.ID()).Build()
+			_ = env.db.ProjectMetadata.Save(ctx, metadata)
 
-			// Create scene for the project
-			scene := lo.Must(scene.New().NewID().Workspace(wsID).Project(prj.ID()).Build())
-			_ = db.Scene.Save(ctx, scene)
+			// Act
+			buf := new(bytes.Buffer)
+			zipWriter := zip.NewWriter(buf)
+			defer zipWriter.Close()
+			result, err := env.projectUC.ExportProjectData(ctx, prj.ID(), zipWriter, env.operator)
 
-			repos := &repo.Container{
-				User:            db.User,
-				Workspace:       db.Workspace,
-				Project:         db.Project,
-				ProjectMetadata: db.ProjectMetadata,
-				Scene:           db.Scene,
-				Property:        db.Property,
-				PropertySchema:  db.PropertySchema,
-				Asset:           db.Asset,
-				Policy:          db.Policy,
-				Plugin:          db.Plugin,
-				NLSLayer:        db.NLSLayer,
-				Style:           db.Style,
-				Storytelling:    db.Storytelling,
-				SceneLock:       db.SceneLock,
-				Transaction:     &usecasex.NopTransaction{},
-			}
-
-			gateways := &gateway.Container{
-				File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-				PolicyChecker: mockPolicyChecker,
-			}
-
-			projectUC := NewProject(repos, gateways)
-			operator := &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{wsID},
-				},
-			}
-
-			// Create a zip writer for the export
-			var buf bytes.Buffer
-			zipWriter := zip.NewWriter(&buf)
-
-			// Set context as internal to avoid GraphQL context issues
-			internalCtx := adapter.AttachInternal(ctx, true)
-			result, err := projectUC.ExportProjectData(internalCtx, prj.ID(), zipWriter, operator)
-
-			if tt.expectedError != "" {
-				assert.Error(t, err)
-				assert.Contains(t, err.Error(), tt.expectedError)
-				assert.Nil(t, result)
-			} else {
-				assert.NoError(t, err)
-				assert.NotNil(t, result)
-				assert.Equal(t, "Project to Export", result.Name())
-			}
-
-			// Clean up zip writer
-			zipWriter.Close()
-
-			mockPolicyChecker.AssertExpectations(t)
+			// Assert
+			assert.NoError(t, err)
+			assert.NotNil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
 		})
-	}
+
+		t.Run("should return error when seats are overused", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(&gateway.PolicyCheckResponse{Allowed: false}, nil).
+				Once()
+
+			// Create a project
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
+			// Create project metadata
+			metadata, _ := project.NewProjectMetadata().NewID().Project(prj.ID()).Build()
+			_ = env.db.ProjectMetadata.Save(ctx, metadata)
+
+			// Act
+			buf := new(bytes.Buffer)
+			zipWriter := zip.NewWriter(buf)
+			defer zipWriter.Close()
+			result, err := env.projectUC.ExportProjectData(ctx, prj.ID(), zipWriter, env.operator)
+
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "operation is disabled by over")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+
+		t.Run("should return error when policy service fails", func(t *testing.T) {
+			// Arrange
+			env := setupProjectTestEnv(ctx, t)
+			env.mockPolicyChecker.On("CheckPolicy", mock.Anything, mock.Anything).
+				Return(nil, errors.New("policy service error")).
+				Once()
+
+			// Create a project
+			prj := project.New().NewID().Workspace(env.wsID).Name("Test").MustBuild()
+			_ = env.db.Project.Save(ctx, prj)
+			scene := lo.Must(scene.New().NewID().Workspace(env.wsID).Project(prj.ID()).Build())
+			_ = env.db.Scene.Save(ctx, scene)
+			// Create project metadata
+			metadata, _ := project.NewProjectMetadata().NewID().Project(prj.ID()).Build()
+			_ = env.db.ProjectMetadata.Save(ctx, metadata)
+
+			// Act
+			buf := new(bytes.Buffer)
+			zipWriter := zip.NewWriter(buf)
+			defer zipWriter.Close()
+			result, err := env.projectUC.ExportProjectData(ctx, prj.ID(), zipWriter, env.operator)
+
+			// Assert
+			assert.Error(t, err)
+			assert.Contains(t, err.Error(), "policy service error")
+			assert.Nil(t, result)
+			env.mockPolicyChecker.AssertExpectations(t)
+		})
+	})
 }
