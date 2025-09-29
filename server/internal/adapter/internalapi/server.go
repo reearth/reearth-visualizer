@@ -126,10 +126,8 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 		log.Infof("GetPublicProjectList: Using default pagination with first=%v", defaultLimit)
 	}
 	
-	// Use the standard pagination mechanism
 	pagination := internalapimodel.ToProjectPagination(req.Pagination)
 	
-	// Query the database for public projects
 	log.Infof("GetPublicProjectList: Querying database for public projects")
 	res, info, err := uc.Project.FindAllPublic(ctx, nil, nil, pagination)
 	

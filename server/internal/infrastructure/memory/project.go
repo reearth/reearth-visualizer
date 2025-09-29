@@ -264,7 +264,7 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 	// Apply pagination
 	totalCount := len(result)
 	start := 0
-	limit := 50 // Default limit
+	limit := 100
 
 	if pFilter.Offset != nil {
 		start = int(*pFilter.Offset)

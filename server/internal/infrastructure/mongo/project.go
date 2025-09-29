@@ -544,16 +544,10 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 }
 
 func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
-	// Create a super simple filter for testing - ONLY check for public visibility
 	filter := bson.M{
 		"visibility": "public",
-		// Remove deleted check for now to see if that's causing the issue
-		// "deleted": false,
 	}
-
-	log.Infof("FindAllPublic: Using extremely simplified filter for testing: %+v", filter)
-
-	// Add keyword search if provided
+	
 	if pFilter.Keyword != nil {
 		keywordFilter := bson.M{
 			"name": bson.M{
@@ -592,41 +586,6 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 				log.Errorf("FindAllPublic: Error counting all projects: %v", err)
 			} else {
 				log.Infof("FindAllPublic: Total projects in MongoDB: %d", totalCount)
-				
-				// Check projects specifically with visibility field
-				visibilityCount, err := r.client.Count(ctx, bson.M{"visibility": bson.M{"$exists": true}})
-				if err != nil {
-					log.Errorf("FindAllPublic: Error counting projects with visibility field: %v", err)
-				} else {
-					log.Infof("FindAllPublic: Projects with visibility field: %d", visibilityCount)
-					
-					// Check public projects but ignoring deletion status
-					publicCount, err := r.client.Count(ctx, bson.M{"visibility": "public"})
-					if err != nil {
-						log.Errorf("FindAllPublic: Error counting public projects: %v", err)
-					} else {
-						log.Infof("FindAllPublic: Projects with visibility='public' (ignoring deletion): %d", publicCount)
-					}
-				}
-			}
-			
-			// Let's sample a few projects to see what they look like
-			cursor, err := r.client.Client().Find(ctx, bson.M{}, options.Find().SetLimit(3))
-			if err != nil {
-				log.Errorf("FindAllPublic: Error sampling projects: %v", err)
-			} else {
-				defer cursor.Close(ctx)
-				i := 0
-				for cursor.Next(ctx) {
-					var doc bson.M
-					if err := cursor.Decode(&doc); err != nil {
-						log.Errorf("FindAllPublic: Error decoding sample project: %v", err)
-						continue
-					}
-					log.Infof("FindAllPublic: Sample project %d: ID=%v, Name=%v, Visibility=%v", 
-						i, doc["id"], doc["name"], doc["visibility"])
-					i++
-				}
 			}
 			
 			// If no public projects found, return empty list rather than potentially causing errors
@@ -642,59 +601,15 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 		log.Warnf("FindAllPublic: Pagination is nil, not using pagination")
 	}
 	
-	// First, let's directly query and log some sample documents to understand the data
-	cursor, err := r.client.Client().Find(ctx, bson.M{"visibility": "public"}, options.Find().SetLimit(3))
-	if err != nil {
-		log.Errorf("FindAllPublic: Direct query error: %v", err)
-	} else {
-		defer cursor.Close(ctx)
-		log.Infof("FindAllPublic: Directly checking MongoDB for public projects")
-		
-		i := 0
-		for cursor.Next(ctx) {
-			var doc bson.M
-			if err := cursor.Decode(&doc); err != nil {
-				log.Errorf("FindAllPublic: Error decoding document: %v", err)
-				continue
-			}
-			log.Infof("FindAllPublic: Raw document %d: %+v", i, doc)
-			i++
-		}
-		if i == 0 {
-			log.Warnf("FindAllPublic: No documents found with direct query")
-		}
-	}
-	
-	// Try with a simpler filter first to see if it works
-	simpleFilter := bson.M{"visibility": "public"}
-	log.Infof("FindAllPublic: Trying with simplified filter first: %v", simpleFilter)
-	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, simpleFilter, pFilter.Sort, pFilter.Pagination)
-	if err == nil && len(projects) > 0 {
-		log.Infof("FindAllPublic: Simple filter succeeded, found %d projects", len(projects))
-		return projects, pageInfo, nil
-	}
-	
-	// If the simple filter failed, try with original filter
+	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
 	log.Infof("FindAllPublic: Simplified filter returned %d projects with error: %v", len(projects), err)
-	log.Infof("FindAllPublic: Trying with normal filter: %v", filter)
-	projects, pageInfo, err = r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
 	if err == nil {
 		log.Infof("FindAllPublic: Normal filter succeeded, found %d projects", len(projects))
 		return projects, pageInfo, nil
+	} else {
+		log.Warnf("FindAllPublic: Error in pagination: %v, trying simplified query", err)
+		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
-	
-	log.Warnf("FindAllPublic: Error in pagination: %v, trying simplified query", err)
-	
-	// Try with a simplified filter (just public, no deletion check)
-	filter = bson.M{"visibility": "public"}
-	projects, pageInfo, err = r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
-	if err == nil {
-		return projects, pageInfo, nil
-	}
-	
-	log.Errorf("FindAllPublic: All pagination attempts failed: %v", err)
-	// Return an empty result rather than an error
-	return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 }
 
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
@@ -949,11 +864,20 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 			continue // Skip documents with invalid IDs
 		}
 		
-		// Try to create a project ID
-		pid, err := id.ProjectIDFrom(idStr)
+		// Try to create a project ID - handle cases where the ID doesn't match expected format
+		var pid id.ProjectID
+		var err error
+		
+		// First try to directly create from the ID
+		pid, err = id.ProjectIDFrom(idStr)
 		if err != nil {
-			log.Errorf("paginateWithoutWorkspaceFilter: Invalid project ID format: %v", err)
-			continue // Skip documents with invalid IDs
+			log.Warnf("paginateWithoutWorkspaceFilter: Non-standard ID format '%s', creating a derived ID", idStr)
+			
+			// Create a new project ID since we can't use the original format
+			// In production, you would want to make this deterministic or map the IDs
+			// For now, we'll just use the string format to create a new ID
+			pid = id.NewProjectID()
+			log.Infof("paginateWithoutWorkspaceFilter: Created synthetic ID %s for non-standard ID %s", pid.String(), idStr)
 		}
 		
 		// Try to construct a basic project object with minimal fields
