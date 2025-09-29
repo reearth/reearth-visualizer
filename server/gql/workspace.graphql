@@ -100,6 +100,7 @@ type CreateWorkspacePayload {
 type PolicyCheckPayload {
   workspaceId: ID!
   enableToCreatePrivateProject: Boolean!
+  disableOperationByOverUsedSeat: Boolean!
 }
 
 type UpdateWorkspacePayload {

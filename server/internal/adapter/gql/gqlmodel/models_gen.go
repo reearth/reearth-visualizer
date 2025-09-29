@@ -674,8 +674,9 @@ type PolicyCheckInput struct {
 }
 
 type PolicyCheckPayload struct {
-	WorkspaceID                  ID   `json:"workspaceId"`
-	EnableToCreatePrivateProject bool `json:"enableToCreatePrivateProject"`
+	WorkspaceID                    ID   `json:"workspaceId"`
+	EnableToCreatePrivateProject   bool `json:"enableToCreatePrivateProject"`
+	DisableOperationByOverUsedSeat bool `json:"disableOperationByOverUsedSeat"`
 }
 
 type Polygon struct {

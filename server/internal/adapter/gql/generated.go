@@ -522,8 +522,9 @@ type ComplexityRoot struct {
 	}
 
 	PolicyCheckPayload struct {
-		EnableToCreatePrivateProject func(childComplexity int) int
-		WorkspaceID                  func(childComplexity int) int
+		DisableOperationByOverUsedSeat func(childComplexity int) int
+		EnableToCreatePrivateProject   func(childComplexity int) int
+		WorkspaceID                    func(childComplexity int) int
 	}
 
 	Polygon struct {
@@ -3727,6 +3728,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Policy.PublishedProjectCount(childComplexity), true
+
+	case "PolicyCheckPayload.disableOperationByOverUsedSeat":
+		if e.complexity.PolicyCheckPayload.DisableOperationByOverUsedSeat == nil {
+			break
+		}
+
+		return e.complexity.PolicyCheckPayload.DisableOperationByOverUsedSeat(childComplexity), true
 
 	case "PolicyCheckPayload.enableToCreatePrivateProject":
 		if e.complexity.PolicyCheckPayload.EnableToCreatePrivateProject == nil {
@@ -8170,6 +8178,7 @@ type CreateWorkspacePayload {
 type PolicyCheckPayload {
   workspaceId: ID!
   enableToCreatePrivateProject: Boolean!
+  disableOperationByOverUsedSeat: Boolean!
 }
 
 type UpdateWorkspacePayload {
@@ -26856,6 +26865,50 @@ func (ec *executionContext) fieldContext_PolicyCheckPayload_enableToCreatePrivat
 	return fc, nil
 }
 
+func (ec *executionContext) _PolicyCheckPayload_disableOperationByOverUsedSeat(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PolicyCheckPayload_disableOperationByOverUsedSeat(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisableOperationByOverUsedSeat, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PolicyCheckPayload_disableOperationByOverUsedSeat(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PolicyCheckPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Polygon_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Polygon_type(ctx, field)
 	if err != nil {
@@ -34301,6 +34354,8 @@ func (ec *executionContext) fieldContext_Query_workspacePolicyCheck(ctx context.
 				return ec.fieldContext_PolicyCheckPayload_workspaceId(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_PolicyCheckPayload_enableToCreatePrivateProject(ctx, field)
+			case "disableOperationByOverUsedSeat":
+				return ec.fieldContext_PolicyCheckPayload_disableOperationByOverUsedSeat(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PolicyCheckPayload", field.Name)
 		},
@@ -53287,6 +53342,11 @@ func (ec *executionContext) _PolicyCheckPayload(ctx context.Context, sel ast.Sel
 			}
 		case "enableToCreatePrivateProject":
 			out.Values[i] = ec._PolicyCheckPayload_enableToCreatePrivateProject(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "disableOperationByOverUsedSeat":
+			out.Values[i] = ec._PolicyCheckPayload_disableOperationByOverUsedSeat(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

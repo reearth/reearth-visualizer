@@ -170,6 +170,7 @@ export const WORKSPACE_POLICY_CHECK = gql(`
     workspacePolicyCheck(input: { workspaceId: $workspaceId }) {
       workspaceId
       enableToCreatePrivateProject
+      disableOperationByOverUsedSeat
     }
   }
 `);
