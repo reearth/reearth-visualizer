@@ -200,7 +200,7 @@ func TestProject_Update_WithPolicyChecker(t *testing.T) {
 					nil,
 				).Once()
 			},
-			expectedError: "operation is disabled by over used seat",
+			expectedError: "operation is disabled by overused seat",
 		},
 	}
 
