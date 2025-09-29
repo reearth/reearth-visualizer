@@ -227,6 +227,75 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return nil, rerror.ErrNotFound
 }
 
+func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	result := []*project.Project{}
+	for _, p := range r.data {
+		if p.Visibility() == string(project.VisibilityPublic) && !p.IsDeleted() {
+			// Apply keyword filter if provided
+			if pFilter.Keyword == nil || strings.Contains(strings.ToLower(p.Name()), strings.ToLower(*pFilter.Keyword)) {
+				result = append(result, p)
+			}
+		}
+	}
+
+	// Sort results
+	if pFilter.Sort != nil {
+		sort.SliceStable(result, func(i, j int) bool {
+			switch pFilter.Sort.Key {
+			case "name":
+				if pFilter.Sort.Desc {
+					return result[i].Name() > result[j].Name()
+				}
+				return result[i].Name() < result[j].Name()
+			case "updatedat":
+				if pFilter.Sort.Desc {
+					return result[i].UpdatedAt().After(result[j].UpdatedAt())
+				}
+				return result[i].UpdatedAt().Before(result[j].UpdatedAt())
+			default:
+				return false
+			}
+		})
+	}
+
+	// Apply pagination
+	totalCount := len(result)
+	start := 0
+	limit := 50 // Default limit
+
+	if pFilter.Offset != nil {
+		start = int(*pFilter.Offset)
+	}
+
+	if pFilter.Limit != nil {
+		limit = int(*pFilter.Limit)
+	} else if pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil && pFilter.Pagination.Cursor.First != nil {
+		limit = int(*pFilter.Pagination.Cursor.First)
+	}
+
+	end := start + limit
+	if end > totalCount {
+		end = totalCount
+	}
+
+	if start >= totalCount {
+		result = []*project.Project{}
+	} else {
+		result = result[start:end]
+	}
+
+	pageInfo := &usecasex.PageInfo{
+		TotalCount:      int64(totalCount),
+		HasNextPage:     end < totalCount,
+		HasPreviousPage: start > 0,
+	}
+
+	return result, pageInfo, nil
+}
+
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()

@@ -11,6 +11,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reearth/reearthx/log"
+
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/adapter/internalapi/internalapimodel"
@@ -108,6 +110,50 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
 
+}
+
+func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProjectListRequest) (*pb.GetPublicProjectListResponse, error) {
+	uc := adapter.Usecases(ctx)
+	
+	log.Infof("GetPublicProjectList: Request received with keyword=%v, pagination=%+v", req.Keyword, req.Pagination)
+	
+	// Create a pagination object if one wasn't provided
+	if req.Pagination == nil {
+		defaultLimit := int32(100)
+		req.Pagination = &pb.Pagination{
+			First: &defaultLimit,
+		}
+		log.Infof("GetPublicProjectList: Using default pagination with first=%v", defaultLimit)
+	}
+	
+	// Use the standard pagination mechanism
+	pagination := internalapimodel.ToProjectPagination(req.Pagination)
+	
+	// Query the database for public projects
+	log.Infof("GetPublicProjectList: Querying database for public projects")
+	res, info, err := uc.Project.FindAllPublic(ctx, nil, nil, pagination)
+	
+	if err != nil {
+		log.Errorf("GetPublicProjectList: Database query failed: %v", err)
+		return nil, err
+	}
+	
+	log.Infof("GetPublicProjectList: Database query returned %d projects", len(res))
+	
+	// Convert projects
+	projects := make([]*pb.Project, 0, len(res))
+	for _, pj := range res {
+		project := internalapimodel.ToInternalProject(ctx, pj, nil)	
+		if project != nil {
+			projects = append(projects, project)
+		}
+	}
+	
+	log.Infof("GetPublicProjectList: Returning %d projects from database", len(projects))
+	return &pb.GetPublicProjectListResponse{
+		Projects: projects,
+		PageInfo: internalapimodel.ToProjectPageInfo(info),
+	}, nil
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {

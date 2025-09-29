@@ -76,13 +76,29 @@ func int32ToInt64(i *int32) *int64 {
 }
 
 func ToProjectPageInfo(info *usecasex.PageInfo) *pb.PageInfo {
-	return &pb.PageInfo{
+	if info == nil {
+		return &pb.PageInfo{
+			TotalCount:      0,
+			HasNextPage:     false,
+			HasPreviousPage: false,
+		}
+	}
+	
+	result := &pb.PageInfo{
 		TotalCount:      info.TotalCount,
-		StartCursor:     info.EndCursor.StringRef(),
-		EndCursor:       info.EndCursor.StringRef(),
 		HasNextPage:     info.HasNextPage,
 		HasPreviousPage: info.HasPreviousPage,
 	}
+	
+	if info.StartCursor != nil {
+		result.StartCursor = info.StartCursor.StringRef()
+	}
+	
+	if info.EndCursor != nil {
+		result.EndCursor = info.EndCursor.StringRef()
+	}
+	
+	return result
 }
 
 func ToInternalProject(ctx context.Context, p *project.Project, storytellings *storytelling.StoryList) *pb.Project {

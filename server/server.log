@@ -1,0 +1,134 @@
+2025-09-29T10:39:47.507+0900	[34mINFO[0m	app/main.go:20	reearth 
+2025-09-29T10:39:47.508+0900	[34mINFO[0m	config/config.go:124	config: .env loaded
+2025-09-29T10:39:47.508+0900	[34mINFO[0m	app/main.go:29	config: &config.Config{
+  Config: mailer.Config{
+    Mailer: "",
+    SMTP:   mailer.SMTPConfig{
+      Host:         "",
+      Port:         "",
+      SMTPUsername: "",
+      Email:        "",
+      Password:     "",
+    },
+    SendGrid: mailer.SendGridConfig{
+      Email: "",
+      Name:  "",
+      API:   "",
+    },
+    SES: mailer.SESConfig{
+      Email: "",
+      Name:  "",
+    },
+  },
+  Port:       "8080",
+  Host:       "http://localhost:8080",
+  Host_Web:   "http://localhost:8080",
+  Dev:        true,
+  DB:         "***",
+  DB_Account: "reearth-account",
+  DB_Vis:     "reearth-visualizer",
+  GraphQL:    config.GraphQLConfig{
+    ComplexityLimit: 10000,
+  },
+  Published: config.PublishedConfig{
+    IndexURL: &url.URL{
+      Scheme:      "",
+      Opaque:      "",
+      User:        (*url.Userinfo)(nil),
+      Host:        "",
+      Path:        "",
+      RawPath:     "",
+      OmitHost:    false,
+      ForceQuery:  false,
+      RawQuery:    "",
+      Fragment:    "",
+      RawFragment: "",
+    },
+  },
+  Marketplace: config.MarketplaceConfig{
+    OAuth: &config.OAuthClientCredentialsConfig{},
+  },
+  AssetBaseURL: "http://localhost:8080/assets",
+  AuthSrv:      config.AuthSrvConfig{
+    Domain:   "http://localhost:8080",
+    UIDomain: "http://localhost:8080",
+    DN:       &config.AuthSrvDNConfig{},
+  },
+  MockAuth:   true,
+  Visualizer: config.VisualizerConfig{
+    InternalApi: config.InternalApiConfig{
+      Active: true,
+      Port:   "50051",
+      Token:  "test-abc-123",
+    },
+    Policy: config.Policy{
+      Checker: config.CheckerConfig{
+        Type:     "permissive",
+        Endpoint: "",
+        Token:    "",
+        Timeout:  30,
+      },
+    },
+    DomainChecker: config.DomainCheckerConfig{
+      Type:     "default",
+      Endpoint: "",
+      Token:    "",
+      Timeout:  30,
+    },
+  },
+}
+2025-09-29T10:39:47.508+0900	[34mINFO[0m	app/repo.go:32	accountDatabase: reearth-account
+2025-09-29T10:39:47.518+0900	[34mINFO[0m	app/repo.go:55	visDatabase: reearth-visualizer
+2025-09-29T10:39:47.526+0900	[34mINFO[0m	app/repo.go:175	file: local storage is used
+2025-09-29T10:39:47.526+0900	[34mINFO[0m	app/repo.go:106	policy checker: using permissive checker (OSS mode)
+2025-09-29T10:39:47.526+0900	[34mINFO[0m	app/repo.go:125	domain checker: using default checker (OSS mode)
+2025-09-29T10:39:47.526+0900	[34mINFO[0m	mailer/common.go:63	mailer: logger is used
+2025-09-29T10:39:47.527+0900	[34mINFO[0m	app/app.go:61	auth: config: []appx.JWTProvider{appx.JWTProvider{ISS:"mock_issuer", JWKSURI:(*string)(nil), AUD:[]string{"mock_audience"}, ALG:(*string)(0x14000d94e20), TTL:(*int)(0x14000eae770)}}
+2025-09-29T10:39:47.527+0900	[34mINFO[0m	app/app.go:65	Using mock auth for local development
+2025-09-29T10:39:47.527+0900	[34mINFO[0m	app/app.go:98	gql: GraphQL Playground is available
+2025-09-29T10:39:47.527+0900	[35mDEBUG[0m	mongo/lock.go:43	lock: trying to lock: id=config, name=d7990e38-fab0-47ed-ad7e-84c4a776f5e0, host=6100a054-4fa6-489b-9f4c-88a0a5c3919d
+2025-09-29T10:39:47.529+0900	[35mDEBUG[0m	mongo/lock.go:54	lock: locked: name=config, id=d7990e38-fab0-47ed-ad7e-84c4a776f5e0, host=6100a054-4fa6-489b-9f4c-88a0a5c3919d
+2025-09-29T10:39:47.532+0900	[35mDEBUG[0m	mongo/lock.go:69	lock: unlocked: name=config, id=d7990e38-fab0-47ed-ad7e-84c4a776f5e0, host=6100a054-4fa6-489b-9f4c-88a0a5c3919d
+time="2025-09-29T10:39:47+09:00" level=info msg="signer exchanged signing key" caller="/Users/wilfred/go/pkg/mod/github.com/zitadel/oidc@v1.13.5/pkg/op/signer.go:83"
+2025-09-29T10:39:47.533+0900	[34mINFO[0m	authserver/endpoint.go:107	auth: oidc server started with dev mode
+2025-09-29T10:39:47.533+0900	[34mINFO[0m	app/app.go:143	auth: config: config.AuthSrvConfig{Dev:false, Disabled:false, Issuer:"", Domain:"http://localhost:8080", UIDomain:"http://localhost:8080", Key:"", DN:(*config.AuthSrvDNConfig)(0x1400062a9c0)}
+2025-09-29T10:39:47.533+0900	[34mINFO[0m	app/server.go:91	server: started internal grpc server at :50051
+2025-09-29T10:40:06.337+0900	[34mINFO[0m	<-- RPC GetPublicProjectList
+2025-09-29T10:40:06.337+0900	[34mINFO[0m	internalapi/server.go:130	GetPublicProjectList: Found 0 projects from interactor
+2025-09-29T10:40:06.337+0900	[34mINFO[0m	internalapi/server.go:138	GetPublicProjectList: Converted 0 projects for response
+panic: runtime error: invalid memory address or nil pointer dereference
+[signal SIGSEGV: segmentation violation code=0x2 addr=0x8 pc=0x10175e50c]
+
+goroutine 78 [running]:
+github.com/reearth/reearth/server/internal/adapter/internalapi/internalapimodel.ToProjectPageInfo(...)
+	/Users/wilfred/projects/reearth-visualizer/server/internal/adapter/internalapi/internalapimodel/project.go:81
+github.com/reearth/reearth/server/internal/adapter/internalapi.server.GetPublicProjectList({{}}, {0x102adfdd8, 0x140005ae5a0}, 0x14000d2cb00)
+	/Users/wilfred/projects/reearth-visualizer/server/internal/adapter/internalapi/server.go:142 +0x30c
+github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1._ReEarthVisualizer_GetPublicProjectList_Handler.func1({0x102adfdd8?, 0x140005ae5a0?}, {0x1028c3d40?, 0x14000d2cb00?})
+	/Users/wilfred/projects/reearth-visualizer/server/internal/adapter/internalapi/schemas/internalapi/v1/schema_grpc.pb.go:356 +0xcc
+github.com/reearth/reearth/server/internal/app.initGrpc.unaryAttachUsecaseInterceptor.func4({0x102adfdd8, 0x140005ae4b0}, {0x1028c3d40, 0x14000d2cb00}, 0x101ffe16d?, 0x14000d12e10)
+	/Users/wilfred/projects/reearth-visualizer/server/internal/app/grpc.go:153 +0xfc
+google.golang.org/grpc.getChainUnaryHandler.func1({0x102adfdd8?, 0x140005ae4b0?}, {0x1028c3d40?, 0x14000d2cb00?})
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1217 +0x10c
+github.com/reearth/reearth/server/internal/app.initGrpc.unaryAttachOperatorInterceptor.func3({0x102adfdd8?, 0x14000571740?}, {0x1028c3d40, 0x14000d2cb00}, 0x14000d2b040, 0x14000d2d040)
+	/Users/wilfred/projects/reearth-visualizer/server/internal/app/grpc.go:111 +0xac
+google.golang.org/grpc.getChainUnaryHandler.func1.getChainUnaryHandler.1({0x102adfdd8, 0x14000571740}, {0x1028c3d40, 0x14000d2cb00})
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1217 +0x84
+github.com/reearth/reearth/server/internal/app.initGrpc.unaryAuthInterceptor.func2({0x102adfdd8, 0x14000571740}, {0x1028c3d40, 0x14000d2cb00}, 0x14000d2b040, 0x14000d2d000)
+	/Users/wilfred/projects/reearth-visualizer/server/internal/app/grpc.go:67 +0x1ec
+google.golang.org/grpc.getChainUnaryHandler.func1({0x102adfdd8?, 0x14000571740?}, {0x1028c3d40?, 0x14000d2cb00?})
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1217 +0x10c
+github.com/reearth/reearth/server/internal/app.initGrpc.unaryLogInterceptor.func1({0x102adfdd8, 0x14000571740}, {0x1028c3d40, 0x14000d2cb00}, 0x14000d2b040, 0x14000d2cfc0)
+	/Users/wilfred/projects/reearth-visualizer/server/internal/app/grpc.go:50 +0x128
+google.golang.org/grpc.NewServer.chainUnaryServerInterceptors.chainUnaryInterceptors.func1({0x102adfdd8, 0x14000571740}, {0x1028c3d40, 0x14000d2cb00}, 0x14000d2b040, 0x1029de060?)
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1208 +0x78
+github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1._ReEarthVisualizer_GetPublicProjectList_Handler({0x1029ef300, 0x104093000}, {0x102adfdd8, 0x14000571740}, 0x14000e9ad80, 0x14000d2ae80)
+	/Users/wilfred/projects/reearth-visualizer/server/internal/adapter/internalapi/schemas/internalapi/v1/schema_grpc.pb.go:358 +0x140
+google.golang.org/grpc.(*Server).processUnaryRPC(0x14000e20400, {0x102adfdd8, 0x140005716b0}, 0x14000d19380, 0x140005714a0, 0x10404d7b8, 0x0)
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1405 +0xbd0
+google.golang.org/grpc.(*Server).handleStream(0x14000e20400, {0x102ae0ab0, 0x14000672000}, 0x14000d19380)
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1815 +0x858
+google.golang.org/grpc.(*Server).serveStreams.func2.1()
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1035 +0x74
+created by google.golang.org/grpc.(*Server).serveStreams.func2 in goroutine 120
+	/Users/wilfred/go/pkg/mod/google.golang.org/grpc@v1.71.0/server.go:1046 +0x120
