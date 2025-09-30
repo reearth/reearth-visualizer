@@ -71,8 +71,6 @@ func TestAddProjectMetadataFields(t *testing.T) {
 		assert.IsType(t, int32(0), project["star_count"])
 		assert.IsType(t, primitive.A{}, project["starred_by"])
 
-
-
 		// Verify topics is empty array
 		topics := project["topics"].(primitive.A)
 		assert.Len(t, topics, 0)
@@ -95,13 +93,13 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 	projectColl := client.WithCollection("project").Client()
 
 	testProject := bson.M{
-		"id":             "project1",
-		"workspace":      "workspace1",
-		"name":           "Test Project 1",
-		"created_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
-		"topics":         []string{"existing", "topics"},
-		"star_count":     5,
-		"starred_by":     []string{"user1", "user2"},
+		"id":         "project1",
+		"workspace":  "workspace1",
+		"name":       "Test Project 1",
+		"created_at": primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
+		"topics":     []string{"existing", "topics"},
+		"star_count": 5,
+		"starred_by": []string{"user1", "user2"},
 	}
 
 	_, err := projectColl.InsertOne(ctx, testProject)

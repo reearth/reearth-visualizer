@@ -73,5 +73,3 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 		},
 	})
 }
-
-
