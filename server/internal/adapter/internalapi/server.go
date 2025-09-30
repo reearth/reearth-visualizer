@@ -128,8 +128,11 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 	
 	pagination := internalapimodel.ToProjectPagination(req.Pagination)
 	
+	// Parse the sort type from the request
+	sort := internalapimodel.ToProjectSortType(req.Sort)
+	
 	log.Infof("GetPublicProjectList: Querying database for public projects")
-	res, info, err := uc.Project.FindAllPublic(ctx, nil, nil, pagination)
+	res, info, err := uc.Project.FindAllPublic(ctx, req.Keyword, sort, pagination)
 	
 	if err != nil {
 		log.Errorf("GetPublicProjectList: Database query failed: %v", err)

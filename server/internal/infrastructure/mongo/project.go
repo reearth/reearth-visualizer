@@ -546,6 +546,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	filter := bson.M{
 		"visibility": "public",
+		"deleted":    false,
 	}
 	
 	if pFilter.Keyword != nil {
