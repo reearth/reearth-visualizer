@@ -2,7 +2,6 @@ package migration
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -13,13 +12,6 @@ import (
 
 func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 	projectCol := c.WithCollection("project")
-
-	// Get workspace information for workspace_name lookup
-	workspaces, err := getWorkspaces(ctx, c)
-	if err != nil {
-		log.Printf("Warning: failed to get workspaces for name lookup: %v\n", err)
-		workspaces = make(map[string]string)
-	}
 
 	return projectCol.Find(ctx, bson.M{}, &mongox.BatchConsumer{
 		Size: 1000,
@@ -63,13 +55,9 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 					}
 				}
 
-				workspaceID, _ := project["workspace"].(string)
-				workspaceName := workspaces[workspaceID]
-
 				// Add the new fields
 				project["created_at"] = createdAt
 				project["topics"] = []string{}
-				project["workspace_name"] = workspaceName
 				project["star_count"] = 0
 				project["starred_by"] = []string{}
 
@@ -86,36 +74,4 @@ func AddProjectMetadataFields(ctx context.Context, c DBClient) error {
 	})
 }
 
-// getWorkspaces retrieves workspace ID to name mapping from reearth-account database
-func getWorkspaces(ctx context.Context, c DBClient) (map[string]string, error) {
-	mongoClient := c.Database().Client()
 
-	accountClient := mongox.NewClient("reearth-account", mongoClient)
-	accountCol := accountClient.WithCollection("workspace")
-
-	workspaces := make(map[string]string)
-	err := accountCol.Find(ctx, bson.M{}, &mongox.BatchConsumer{
-		Size: 1000,
-		Callback: func(rows []bson.Raw) error {
-			for _, row := range rows {
-				var workspace struct {
-					ID   string `bson:"id"`
-					Name string `bson:"name"`
-				}
-				if err := bson.Unmarshal(row, &workspace); err != nil {
-					log.Printf("Error decoding workspace document: %v\n", err)
-					continue
-				}
-				workspaces[workspace.ID] = workspace.Name
-			}
-			return nil
-		},
-	})
-
-	if err != nil {
-		return nil, fmt.Errorf("failed to query workspaces from account database: %w", err)
-	}
-
-	log.Printf("Retrieved %d workspaces from account database\n", len(workspaces))
-	return workspaces, nil
-}

@@ -17,27 +17,10 @@ func TestAddProjectMetadataFields(t *testing.T) {
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClientWithDatabase(db)
 
-	// Setup: Insert test workspaces in account database
-	accountClient := mongox.NewClient("reearth-account", db.Client())
-	workspaceColl := accountClient.WithCollection("workspace").Client()
-
-	testWorkspaces := []bson.M{
-		{
-			"id":   "workspace1",
-			"name": "Test Workspace 1",
-		},
-		{
-			"id":   "workspace2",
-			"name": "Test Workspace 2",
-		},
-	}
-
-	_, err := workspaceColl.InsertMany(ctx, []interface{}{testWorkspaces[0], testWorkspaces[1]})
-	assert.NoError(t, err)
-
 	// Setup: Insert test projects
 	projectColl := client.WithCollection("project").Client()
 	now := time.Now()
+	var err error
 
 	testProjects := []bson.M{
 		{
@@ -75,7 +58,6 @@ func TestAddProjectMetadataFields(t *testing.T) {
 		// Check that new fields were added
 		assert.Contains(t, project, "created_at")
 		assert.Contains(t, project, "topics")
-		assert.Contains(t, project, "workspace_name")
 		assert.Contains(t, project, "star_count")
 		assert.Contains(t, project, "starred_by")
 
@@ -86,17 +68,10 @@ func TestAddProjectMetadataFields(t *testing.T) {
 		assert.IsType(t, primitive.DateTime(0), project["created_at"])
 		assert.IsType(t, primitive.DateTime(0), project["updatedat"])
 		assert.IsType(t, primitive.A{}, project["topics"])
-		assert.IsType(t, "", project["workspace_name"])
 		assert.IsType(t, int32(0), project["star_count"])
 		assert.IsType(t, primitive.A{}, project["starred_by"])
 
-		// Verify workspace_name is populated correctly
-		switch project["workspace"] {
-		case "workspace1":
-			assert.Equal(t, "Test Workspace 1", project["workspace_name"])
-		case "workspace2":
-			assert.Equal(t, "Test Workspace 2", project["workspace_name"])
-		}
+
 
 		// Verify topics is empty array
 		topics := project["topics"].(primitive.A)
@@ -125,7 +100,6 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 		"name":           "Test Project 1",
 		"created_at":     primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)),
 		"topics":         []string{"existing", "topics"},
-		"workspace_name": "Existing Workspace Name",
 		"star_count":     5,
 		"starred_by":     []string{"user1", "user2"},
 	}
@@ -143,7 +117,6 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Equal(t, primitive.NewDateTimeFromTime(time.Date(2023, 1, 1, 0, 0, 0, 0, time.UTC)), result["created_at"])
-	assert.Equal(t, "Existing Workspace Name", result["workspace_name"])
 	assert.Equal(t, int32(5), result["star_count"])
 
 	topics := result["topics"].(primitive.A)
@@ -155,39 +128,4 @@ func TestAddProjectMetadataFields_AlreadyMigrated(t *testing.T) {
 	assert.Len(t, starredBy, 2)
 	assert.Equal(t, "user1", starredBy[0])
 	assert.Equal(t, "user2", starredBy[1])
-}
-
-func TestAddProjectMetadataFields_NoWorkspaceData(t *testing.T) {
-	ctx := context.Background()
-	db := mongotest.Connect(t)(t)
-	client := mongox.NewClientWithDatabase(db)
-
-	// Setup: Insert test project without workspace data
-	projectColl := client.WithCollection("project").Client()
-
-	testProject := bson.M{
-		"id":        "project1",
-		"workspace": "nonexistent_workspace",
-		"name":      "Test Project 1",
-	}
-
-	_, err := projectColl.InsertOne(ctx, testProject)
-	assert.NoError(t, err)
-
-	// Run migration (without creating workspace data)
-	err = AddProjectMetadataFields(ctx, client)
-	assert.NoError(t, err)
-
-	// Verify the project was updated with empty workspace_name
-	var result bson.M
-	err = projectColl.FindOne(ctx, bson.M{"id": "project1"}).Decode(&result)
-	assert.NoError(t, err)
-
-	assert.Equal(t, "", result["workspace_name"]) // Should be empty string when workspace not found
-	assert.Equal(t, int32(0), result["star_count"])
-	assert.IsType(t, primitive.A{}, result["topics"])
-	assert.IsType(t, primitive.A{}, result["starred_by"])
-
-	starredBy := result["starred_by"].(primitive.A)
-	assert.Len(t, starredBy, 0)
 }
