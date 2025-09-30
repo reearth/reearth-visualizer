@@ -149,6 +149,7 @@ require (
 	github.com/smartystreets/assertions v1.1.1 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
 	github.com/sosodev/duration v1.3.1 // indirect
+	github.com/stretchr/objx v0.5.2 // indirect
 	github.com/urfave/cli/v2 v2.27.6 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.34.0 // indirect
