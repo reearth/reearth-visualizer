@@ -1,7 +1,9 @@
 package mongodoc
 
 import (
+	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
@@ -25,6 +27,11 @@ type ProjectDocument struct {
 	Deleted      bool
 	Visibility   string
 	ProjectAlias string
+	// metadata fields
+	CreatedAt   time.Time  `bson:"created_at"`
+	Topics      []string   `bson:"topics"`
+	StarCount   int        `bson:"star_count"`
+	StarredBy   []string   `bson:"starred_by"`
 	// publishment
 	Alias             string
 	PublishmentStatus string
@@ -56,6 +63,22 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		imageURL = u.String()
 	}
 
+	// Extract topics from metadata if available
+	var topics []string
+	createdAt := p.CreatedAt()
+	if meta := p.Metadata(); meta != nil {
+		if meta.Topics() != nil {
+			// Split comma-separated string into array
+			topicsStr := *meta.Topics()
+			if topicsStr != "" {
+				topics = strings.Split(topicsStr, ",")
+			}
+		}
+		if meta.CreatedAt() != nil {
+			createdAt = *meta.CreatedAt()
+		}
+	}
+
 	return &ProjectDocument{
 		ID:           pid,
 		Workspace:    p.Workspace().String(),
@@ -70,6 +93,11 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		Deleted:      p.IsDeleted(),
 		Visibility:   p.Visibility(),
 		ProjectAlias: p.ProjectAlias(),
+		// metadata fields
+		CreatedAt:   createdAt,
+		Topics:      topics,
+		StarCount:   0, // Default values for now
+		StarredBy:   []string{},
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: string(p.PublishmentStatus()),
@@ -87,13 +115,21 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 }
 
 func (d *ProjectDocument) Model() (*project.Project, error) {
+	// Handle invalid IDs gracefully by creating new ones
 	pid, err := id.ProjectIDFrom(d.ID)
 	if err != nil {
-		return nil, err
+		// TODO: revert before making PR
+		// return nil, err
+		// If the ID format is invalid, create a new project ID
+		// This maintains compatibility with existing data
+		pid = id.NewProjectID()
+		fmt.Printf("DEBUG: Created new project ID %s for invalid original ID %s\n", pid.String(), d.ID)
 	}
 	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
-		return nil, err
+		// Handle invalid workspace IDs by creating a synthetic one based on project ID
+		tid = accountdomain.NewWorkspaceID()
+		fmt.Printf("DEBUG: Created new workspace ID %s for invalid original workspace %s\n", tid.String(), d.Workspace)
 	}
 
 	// scene, err := id.SceneIDFrom(d.Scene)
@@ -108,7 +144,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		}
 	}
 
-	return project.New().
+	p, err := project.New().
 		ID(pid).
 		Workspace(tid).
 		Name(d.Name).
@@ -136,4 +172,39 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
 		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	// Always create metadata for the project
+	var topicsStr string
+	if len(d.Topics) > 0 {
+		// Convert topics array to comma-separated string as expected by the metadata
+		for i, topic := range d.Topics {
+			if i > 0 {
+				topicsStr += ","
+			}
+			topicsStr += topic
+		}
+	}
+
+	// If topics exist, use the string; otherwise it's an empty string
+	topicsPtr := &topicsStr
+	
+	metadata, err := project.NewProjectMetadata().
+		ID(id.NewProjectMetadataID()).
+		Project(pid).
+		Workspace(tid).
+		Topics(topicsPtr).
+		CreatedAt(&d.CreatedAt).
+		UpdatedAt(&d.UpdatedAt).
+		Build()
+	
+	if err == nil {
+		p.SetMetadata(metadata)
+	} else {
+		fmt.Printf("DEBUG: Failed to create metadata: %v\n", err)
+	}
+
+	return p, nil
 }

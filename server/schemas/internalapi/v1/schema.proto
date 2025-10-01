@@ -161,7 +161,7 @@ message ProjectMetadata {
   // Project license
   optional string license = 5;
   // Project topics
-  optional string topics = 6;
+  repeated string topics = 6;
 
   // Project import status — if PROCESSING, data should not be retrieved
   ProjectImportStatus import_status = 7;

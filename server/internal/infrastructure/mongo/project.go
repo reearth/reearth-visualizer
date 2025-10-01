@@ -847,61 +847,18 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 	// Manual document processing to handle invalid IDs
 	var results []*project.Project
 	
-	// Process the cursor results manually
+	// Process the cursor results using ProjectDocument.Model() to ensure metadata is created
 	for cursor.Next(ctx) {
-		var doc bson.M
-		if err := cursor.Decode(&doc); err != nil {
+		var projectDoc mongodoc.ProjectDocument
+		if err := cursor.Decode(&projectDoc); err != nil {
 			log.Errorf("paginateWithoutWorkspaceFilter: Decode error: %v", err)
 			continue // Skip this document but continue processing
 		}
 		
-		// Log the raw document to see what we're working with
-		log.Infof("paginateWithoutWorkspaceFilter: Raw document: %+v", doc)
-		
-		// Try to extract the ID
-		idStr, ok := doc["id"].(string)
-		if !ok || idStr == "" {
-			log.Errorf("paginateWithoutWorkspaceFilter: Invalid or missing ID in document")
-			continue // Skip documents with invalid IDs
-		}
-		
-		// Try to create a project ID - handle cases where the ID doesn't match expected format
-		var pid id.ProjectID
-		var err error
-		
-		// First try to directly create from the ID
-		pid, err = id.ProjectIDFrom(idStr)
+		// Use the ProjectDocument.Model() method to properly convert to project with metadata
+		p, err := projectDoc.Model()
 		if err != nil {
-			log.Warnf("paginateWithoutWorkspaceFilter: Non-standard ID format '%s', creating a derived ID", idStr)
-			
-			// Create a new project ID since we can't use the original format
-			// In production, you would want to make this deterministic or map the IDs
-			// For now, we'll just use the string format to create a new ID
-			pid = id.NewProjectID()
-			log.Infof("paginateWithoutWorkspaceFilter: Created synthetic ID %s for non-standard ID %s", pid.String(), idStr)
-		}
-		
-		// Try to construct a basic project object with minimal fields
-		name, _ := doc["name"].(string)
-		alias, _ := doc["alias"].(string)
-		visibility, _ := doc["visibility"].(string)
-		
-		// Use project.New to create a valid project object
-		// This is a simplified approach that won't have all fields but should be enough for testing
-		sceneID, _ := id.SceneIDFrom(fmt.Sprintf("%s-scene", idStr))
-		wsID, _ := accountdomain.WorkspaceIDFrom(fmt.Sprintf("%s-workspace", idStr))
-		
-		p, err := project.New().
-			ID(pid).
-			Name(name).
-			Alias(alias). // Alias is just a simple string field
-			Workspace(wsID).
-			Scene(sceneID).
-			Visibility(project.Visibility(visibility)).
-			Build()
-			
-		if err != nil {
-			log.Errorf("paginateWithoutWorkspaceFilter: Error creating project object: %v", err)
+			log.Errorf("paginateWithoutWorkspaceFilter: Error converting document to project: %v", err)
 			continue
 		}
 		

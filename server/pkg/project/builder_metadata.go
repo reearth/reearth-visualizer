@@ -19,10 +19,10 @@ func (b *MetadataBuilder) Build() (*ProjectMetadata, error) {
 	if b.r.id.IsNil() {
 		return nil, id.ErrInvalidID
 	}
-	if b.r.updatedAt == nil || b.r.updatedAt.IsZero() {
+	if b.r.updatedAt == nil || (b.r.updatedAt != nil && b.r.updatedAt.IsZero()) {
 		b.r.updatedAt = b.r.UpdatedAt()
 	}
-	if b.r.createdAt == nil || b.r.createdAt.IsZero() {
+	if b.r.createdAt == nil || (b.r.createdAt != nil && b.r.createdAt.IsZero()) {
 		b.r.createdAt = b.r.CreatedAt()
 	}
 	return b.r, nil
