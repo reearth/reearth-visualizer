@@ -258,6 +258,12 @@ enum SearchFieldType {
   SEARCH_FIELD_TYPE_TOPICS = 1; // Search in project topics
 }
 
+// Visibility filter for public project list
+enum ProjectVisibility {
+  PROJECT_VISIBILITY_PUBLIC = 0;  // Default visibility (public projects)
+  PROJECT_VISIBILITY_PRIVATE = 1; // Private projects
+}
+
 message GetPublicProjectListRequest {
   // Keyword search
   optional string keyword = 1;
@@ -267,6 +273,8 @@ message GetPublicProjectListRequest {
   optional Pagination pagination = 3;
   // Field to search in (name or topics), defaults to name if not provided
   optional SearchFieldType search_field = 4;
+  // Visibility filter, defaults to public if not provided
+  optional ProjectVisibility visibility = 5;
 }
 
 // Retrieves a project regardless of authentication.

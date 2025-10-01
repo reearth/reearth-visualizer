@@ -17,6 +17,7 @@ type ProjectFilter struct {
 	Limit      *int64
 	Offset     *int64
 	SearchField *string
+	Visibility  *string
 }
 
 type Project interface {

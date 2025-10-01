@@ -231,10 +231,16 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
+	
+	// Default visibility is public
+	visibility := "public"
+	if pFilter.Visibility != nil {
+		visibility = *pFilter.Visibility
+	}
 
 	result := []*project.Project{}
 	for _, p := range r.data {
-		if p.Visibility() == string(project.VisibilityPublic) && !p.IsDeleted() {
+		if p.Visibility() == visibility && !p.IsDeleted() {
 			// Apply keyword filter if provided
 			if pFilter.Keyword == nil || strings.Contains(strings.ToLower(p.Name()), strings.ToLower(*pFilter.Keyword)) {
 				result = append(result, p)
