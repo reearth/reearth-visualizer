@@ -136,6 +136,8 @@ message Project {
   PublishmentStatus publishment_status = 20;
   // Scene Publishment value
   optional string published_url = 21;
+  // Number of stars/likes the project has received
+  int32 star_count = 22;
 }
 
 message Story {

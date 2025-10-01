@@ -40,6 +40,7 @@ type Project struct {
 	basicAuthPassword string
 	enableGa          bool
 	trackingId        string
+	starCount         int32
 }
 
 // getter ---------------------
@@ -290,4 +291,8 @@ func (p *Project) UpdateEnableGA(enableGa bool) {
 
 func (p *Project) UpdateTrackingID(trackingId string) {
 	p.trackingId = trackingId
+}
+
+func (p *Project) StarCount() int32 {
+	return p.starCount
 }

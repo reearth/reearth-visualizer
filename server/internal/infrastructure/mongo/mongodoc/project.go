@@ -171,6 +171,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		BasicAuthPassword(d.BasicAuthPassword).
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
+		StarCount(int32(d.StarCount)).
 		Build()
 	if err != nil {
 		return nil, err

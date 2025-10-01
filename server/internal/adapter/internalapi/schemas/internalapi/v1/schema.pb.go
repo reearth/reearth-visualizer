@@ -7,12 +7,13 @@
 package v1
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 )
 
 const (
@@ -368,7 +369,9 @@ type Project struct {
 	// Scene Publishment value
 	PublishmentStatus PublishmentStatus `protobuf:"varint,20,opt,name=publishment_status,json=publishmentStatus,proto3,enum=reearth.visualizer.v1.PublishmentStatus" json:"publishment_status,omitempty"`
 	// Scene Publishment value
-	PublishedUrl  *string `protobuf:"bytes,21,opt,name=published_url,json=publishedUrl,proto3,oneof" json:"published_url,omitempty"`
+	PublishedUrl *string `protobuf:"bytes,21,opt,name=published_url,json=publishedUrl,proto3,oneof" json:"published_url,omitempty"`
+	// Number of stars/likes the project has received
+	StarCount     int32 `protobuf:"varint,22,opt,name=star_count,json=starCount,proto3" json:"star_count,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -548,6 +551,13 @@ func (x *Project) GetPublishedUrl() string {
 		return *x.PublishedUrl
 	}
 	return ""
+}
+
+func (x *Project) GetStarCount() int32 {
+	if x != nil {
+		return x.StarCount
+	}
+	return 0
 }
 
 type Story struct {
@@ -2949,7 +2959,7 @@ var File_schemas_internalapi_v1_schema_proto protoreflect.FileDescriptor
 
 const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
-	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x90\a\n" +
+	"#schemas/internalapi/v1/schema.proto\x12\x15reearth.visualizer.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\xaf\a\n" +
 	"\aProject\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12!\n" +
 	"\fworkspace_id\x18\x02 \x01(\tR\vworkspaceId\x12\x19\n" +
@@ -2981,7 +2991,9 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\rproject_alias\x18\x12 \x01(\tR\fprojectAlias\x12\x14\n" +
 	"\x05alias\x18\x13 \x01(\tR\x05alias\x12W\n" +
 	"\x12publishment_status\x18\x14 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatus\x12(\n" +
-	"\rpublished_url\x18\x15 \x01(\tH\x02R\fpublishedUrl\x88\x01\x01B\f\n" +
+	"\rpublished_url\x18\x15 \x01(\tH\x02R\fpublishedUrl\x88\x01\x01\x12\x1d\n" +
+	"\n" +
+	"star_count\x18\x16 \x01(\x05R\tstarCountB\f\n" +
 	"\n" +
 	"_image_urlB\v\n" +
 	"\t_metadataB\x10\n" +

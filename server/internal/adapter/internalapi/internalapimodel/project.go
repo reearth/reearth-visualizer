@@ -132,6 +132,7 @@ func ToInternalProject(ctx context.Context, p *project.Project, storytellings *s
 	editorUrl := adapter.CurrentHost(ctx) + "/scene/" + p.Scene().String() + "/map"
 	publishedUrl := adapter.CurrentHost(ctx) + "/published.html?alias=" + p.Alias()
 
+	// Default star count to 0 for now
 	project := &pb.Project{
 		Id:          p.ID().String(),
 		WorkspaceId: p.Workspace().String(),
@@ -150,6 +151,7 @@ func ToInternalProject(ctx context.Context, p *project.Project, storytellings *s
 		IsDeleted:    p.IsDeleted(),
 		Visibility:   p.Visibility(),
 		ProjectAlias: p.ProjectAlias(),
+		StarCount:    p.StarCount(),
 
 		EditorUrl: editorUrl,
 
