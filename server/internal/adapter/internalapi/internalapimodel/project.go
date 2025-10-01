@@ -19,6 +19,7 @@ const (
 	ProjectSortField_PROJECT_SORT_FIELD_UNSPECIFIED = "id"
 	ProjectSortField_UPDATEDAT                      = "updatedat"
 	ProjectSortField_NAME                           = "name"
+	ProjectSortField_STARCOUNT                      = "starcount"
 )
 
 func ToProjectSortType(sort *pb.ProjectSort) *project.SortType {
@@ -34,6 +35,8 @@ func ToProjectSortType(sort *pb.ProjectSort) *project.SortType {
 		key = ProjectSortField_UPDATEDAT
 	case pb.ProjectSortField_NAME:
 		key = ProjectSortField_NAME
+	case pb.ProjectSortField_STARCOUNT:
+		key = ProjectSortField_STARCOUNT
 	default:
 		key = ProjectSortField_UPDATEDAT
 	}

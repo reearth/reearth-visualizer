@@ -185,6 +185,7 @@ const (
 	ProjectSortField_PROJECT_SORT_FIELD_UNSPECIFIED ProjectSortField = 0
 	ProjectSortField_UPDATEDAT                      ProjectSortField = 1
 	ProjectSortField_NAME                           ProjectSortField = 2
+	ProjectSortField_STARCOUNT                      ProjectSortField = 3
 )
 
 // Enum value maps for ProjectSortField.
@@ -193,11 +194,13 @@ var (
 		0: "PROJECT_SORT_FIELD_UNSPECIFIED",
 		1: "UPDATEDAT",
 		2: "NAME",
+		3: "STARCOUNT",
 	}
 	ProjectSortField_value = map[string]int32{
 		"PROJECT_SORT_FIELD_UNSPECIFIED": 0,
 		"UPDATEDAT":                      1,
 		"NAME":                           2,
+		"STARCOUNT":                      3,
 	}
 )
 
@@ -3301,11 +3304,12 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x1ePUBLISHMENT_STATUS_UNSPECIFIED\x10\x00\x12\x1d\n" +
 	"\x19PUBLISHMENT_STATUS_PUBLIC\x10\x01\x12\x1e\n" +
 	"\x1aPUBLISHMENT_STATUS_LIMITED\x10\x02\x12\x1e\n" +
-	"\x1aPUBLISHMENT_STATUS_PRIVATE\x10\x03*O\n" +
+	"\x1aPUBLISHMENT_STATUS_PRIVATE\x10\x03*^\n" +
 	"\x10ProjectSortField\x12\"\n" +
 	"\x1ePROJECT_SORT_FIELD_UNSPECIFIED\x10\x00\x12\r\n" +
 	"\tUPDATEDAT\x10\x01\x12\b\n" +
-	"\x04NAME\x10\x02*B\n" +
+	"\x04NAME\x10\x02\x12\r\n" +
+	"\tSTARCOUNT\x10\x03*B\n" +
 	"\rSortDirection\x12\x1e\n" +
 	"\x1aSORT_DIRECTION_UNSPECIFIED\x10\x00\x12\a\n" +
 	"\x03ASC\x10\x01\x12\b\n" +

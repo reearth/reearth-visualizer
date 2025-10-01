@@ -122,18 +122,21 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 	if sort == nil {
 		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 	} else {
-
+		// Default suffix for unknown sort keys
 		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
-		if sort.Key == "id" {
+		
+		// Convert sort key to lowercase for case-insensitive comparison
+		sortKey := strings.ToLower(sort.Key)
+		
+		if sortKey == "id" {
 			suffix = ""
-		}
-		if sort.Key == "name" {
+		} else if sortKey == "name" {
 			suffix = ":" + p.Name()
-		}
-		if sort.Key == "updatedat" {
+		} else if sortKey == "updatedat" {
 			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
+		} else if sortKey == "starcount" {
+			suffix = fmt.Sprintf(":%d", p.StarCount())
 		}
-
 	}
 
 	cursor = usecasex.Cursor(p.ID().String() + suffix)
@@ -224,13 +227,14 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 
 func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.SortType, cursor *usecasex.CursorPagination, offset *int64, limit *int64) (bson.M, *options.FindOptions, int64, int) {
 	sortOrder := -1 // DESC
-	sortKey := internalapimodel.ProjectSortField_UPDATEDAT
+	sortKey := internalapimodel.ProjectSortField_STARCOUNT // Default to star count
 
-	if sort != nil {
+	if sort != nil && sort.Key != "" {
 		if !sort.Desc {
 			sortOrder = 1
 		}
-		sortKey = sort.Key
+		// Convert sort key to lowercase for case-insensitive comparison
+		sortKey = strings.ToLower(sort.Key)
 	}
 
 	// Prioritize offset-based pagination when offset is provided
@@ -256,8 +260,14 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 
 	*limit = *limit + 1
 
+	// Map the sort key to the correct MongoDB field name
+	mongoSortKey := sortKey
+	if sortKey == "starcount" {
+		mongoSortKey = "star_count"
+	}
+	
 	sortConfig := bson.D{
-		{Key: sortKey, Value: sortOrder},
+		{Key: mongoSortKey, Value: sortOrder},
 		{Key: "id", Value: sortOrder},
 	}
 
@@ -855,12 +865,19 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 		if sortKey == "" {
 			sortKey = "updatedat"
 		}
+		
+		// Map the sort key to the correct MongoDB field name
+		mongoSortKey := sortKey
+		if sortKey == "starcount" {
+			mongoSortKey = "star_count"
+		}
+		
 		sortDirection := 1
 		if sort.Desc {
 			sortDirection = -1
 		}
-		findOptions.SetSort(bson.D{{Key: sortKey, Value: sortDirection}})
-		log.Infof("paginateWithoutWorkspaceFilter: Setting sort to %s:%d", sortKey, sortDirection)
+		findOptions.SetSort(bson.D{{Key: mongoSortKey, Value: sortDirection}})
+		log.Infof("paginateWithoutWorkspaceFilter: Setting sort to %s:%d (mapped from %s)", mongoSortKey, sortDirection, sortKey)
 	}
 	
 	// Use the Find method directly

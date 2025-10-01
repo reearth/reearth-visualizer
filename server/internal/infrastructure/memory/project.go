@@ -2,6 +2,8 @@ package memory
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"sort"
 	"strings"
 	"sync"
@@ -231,6 +233,8 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
+	fmt.Println("reaches here")
+
 	result := []*project.Project{}
 	for _, p := range r.data {
 		if p.Visibility() == string(project.VisibilityPublic) && !p.IsDeleted() {
@@ -242,9 +246,13 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 	}
 
 	// Sort results
-	if pFilter.Sort != nil {
+	if pFilter.Sort != nil && pFilter.Sort.Key != "" {
+		// Convert sort key to lowercase for case-insensitive comparison
+		sortKey := strings.ToLower(pFilter.Sort.Key)
+		log.Printf("Sorting projects with key: %s (normalized to: %s), desc: %t", pFilter.Sort.Key, sortKey, pFilter.Sort.Desc)
+		
 		sort.SliceStable(result, func(i, j int) bool {
-			switch pFilter.Sort.Key {
+			switch sortKey {
 			case "name":
 				if pFilter.Sort.Desc {
 					return result[i].Name() > result[j].Name()
@@ -255,9 +263,23 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 					return result[i].UpdatedAt().After(result[j].UpdatedAt())
 				}
 				return result[i].UpdatedAt().Before(result[j].UpdatedAt())
+			case "starcount":
+				if pFilter.Sort.Desc {
+					log.Printf("Comparing starCount: %d vs %d", result[i].StarCount(), result[j].StarCount())
+					return result[i].StarCount() > result[j].StarCount()
+				}
+				return result[i].StarCount() < result[j].StarCount()
 			default:
-				return false
+				// Default to starCount descending
+				log.Printf("Using default sort (starCount desc) for unknown key: %s", sortKey)
+				return result[i].StarCount() > result[j].StarCount()
 			}
+		})
+	} else {
+		// Default sort when no sort is specified: starCount descending
+		log.Printf("No sort specified, using default sort (starCount desc)")
+		sort.SliceStable(result, func(i, j int) bool {
+			return result[i].StarCount() > result[j].StarCount()
 		})
 	}
 

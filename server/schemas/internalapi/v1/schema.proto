@@ -214,6 +214,7 @@ enum ProjectSortField {
   PROJECT_SORT_FIELD_UNSPECIFIED = 0;
   UPDATEDAT = 1;
   NAME = 2;
+  STARCOUNT = 3;
 }
 
 enum SortDirection {
