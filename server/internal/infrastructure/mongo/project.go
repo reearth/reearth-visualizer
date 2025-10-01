@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"slices"
@@ -550,14 +551,40 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 	}
 	
 	if pFilter.Keyword != nil {
-		keywordFilter := bson.M{
-			"name": bson.M{
-				"$regex": primitive.Regex{
-					Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
-					Options: "i",
+		var keywordFilter bson.M
+		
+		// Check if we should search in topics
+		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
+			keyword := strings.ToLower(*pFilter.Keyword)
+			log.Infof("FindAllPublic: Searching in topics for keyword: %s", keyword)
+			
+			// Try multiple approaches to match topics
+			// Simple direct match for the topics array
+			keywordFilter = bson.M{
+				"topics": keyword,
+			}
+			
+			// Convert filter to JSON for better logging
+			filterJSON, _ := json.Marshal(keywordFilter)
+			log.Infof("FindAllPublic: Using topics search with filter: %s", string(filterJSON))
+			
+			// Also log the complete filter
+			completeFilter := bson.M{"$and": []bson.M{filter, keywordFilter}}
+			completeJSON, _ := json.Marshal(completeFilter)
+			log.Infof("FindAllPublic: Complete filter: %s", string(completeJSON))
+		} else {
+			// Default search in name
+			keywordFilter = bson.M{
+				"name": bson.M{
+					"$regex": primitive.Regex{
+						Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
+						Options: "i",
+					},
 				},
-			},
+			}
+			log.Infof("FindAllPublic: Searching in name for keyword: %s", *pFilter.Keyword)
 		}
+		
 		filter = bson.M{"$and": []bson.M{filter, keywordFilter}}
 	}
 

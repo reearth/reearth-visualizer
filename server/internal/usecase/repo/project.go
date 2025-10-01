@@ -16,6 +16,7 @@ type ProjectFilter struct {
 	Pagination *usecasex.Pagination
 	Limit      *int64
 	Offset     *int64
+	SearchField *string
 }
 
 type Project interface {

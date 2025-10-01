@@ -249,6 +249,12 @@ message GetProjectListRequest {
 }
 
 // Retrieves all public projects (no authentication required).
+// Defines which field to search in when using keyword search
+enum SearchFieldType {
+  SEARCH_FIELD_TYPE_NAME = 0;  // Default search in project name
+  SEARCH_FIELD_TYPE_TOPICS = 1; // Search in project topics
+}
+
 message GetPublicProjectListRequest {
   // Keyword search
   optional string keyword = 1;
@@ -256,6 +262,8 @@ message GetPublicProjectListRequest {
   optional ProjectSort sort = 2;
   // Pagination info
   optional Pagination pagination = 3;
+  // Field to search in (name or topics), defaults to name if not provided
+  optional SearchFieldType search_field = 4;
 }
 
 // Retrieves a project regardless of authentication.

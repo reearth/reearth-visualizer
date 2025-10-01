@@ -341,11 +341,12 @@ func (i *Project) FindVisibilityByWorkspace(
 	return result, pInfo, err
 }
 
-func (i *Project) FindAllPublic(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindAllPublic(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, searchField *string) ([]*project.Project, *usecasex.PageInfo, error) {
 	pFilter := repo.ProjectFilter{
-		Keyword:    keyword,
-		Sort:       sort,
-		Pagination: pagination,
+		Keyword:     keyword,
+		Sort:        sort,
+		Pagination:  pagination,
+		SearchField: searchField,
 	}
 
 	// Use the repository method that directly queries for all public projects

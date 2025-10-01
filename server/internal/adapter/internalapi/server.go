@@ -115,7 +115,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProjectListRequest) (*pb.GetPublicProjectListResponse, error) {
 	uc := adapter.Usecases(ctx)
 	
-	log.Infof("GetPublicProjectList: Request received with keyword=%v, pagination=%+v", req.Keyword, req.Pagination)
+	log.Infof("GetPublicProjectList: Request received with keyword=%v, pagination=%+v, search_field=%v", req.Keyword, req.Pagination, req.SearchField)
 	
 	// Create a pagination object if one wasn't provided
 	if req.Pagination == nil {
@@ -130,9 +130,19 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 	
 	// Parse the sort type from the request
 	sort := internalapimodel.ToProjectSortType(req.Sort)
+
+	// Convert SearchFieldType to string
+	var searchField *string
+	if req.SearchField != nil && *req.SearchField == pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS {
+		sf := "topics"
+		searchField = &sf
+		log.Infof("GetPublicProjectList: Using topic search field for keyword: %v", req.Keyword)
+	} else {
+		log.Infof("GetPublicProjectList: Using name search field (default) for keyword: %v", req.Keyword)
+	}
 	
-	log.Infof("GetPublicProjectList: Querying database for public projects")
-	res, info, err := uc.Project.FindAllPublic(ctx, req.Keyword, sort, pagination)
+	log.Infof("GetPublicProjectList: Querying database for public projects with search field: %v", searchField)
+	res, info, err := uc.Project.FindAllPublic(ctx, req.Keyword, sort, pagination, searchField)
 	
 	if err != nil {
 		log.Errorf("GetPublicProjectList: Database query failed: %v", err)
