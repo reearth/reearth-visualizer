@@ -118,18 +118,11 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	// Handle invalid IDs gracefully by creating new ones
 	pid, err := id.ProjectIDFrom(d.ID)
 	if err != nil {
-		// TODO: revert before making PR
-		// return nil, err
-		// If the ID format is invalid, create a new project ID
-		// This maintains compatibility with existing data
-		pid = id.NewProjectID()
-		fmt.Printf("DEBUG: Created new project ID %s for invalid original ID %s\n", pid.String(), d.ID)
+		return nil, err
 	}
 	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
-		// Handle invalid workspace IDs by creating a synthetic one based on project ID
-		tid = accountdomain.NewWorkspaceID()
-		fmt.Printf("DEBUG: Created new workspace ID %s for invalid original workspace %s\n", tid.String(), d.Workspace)
+		return nil, err
 	}
 
 	// scene, err := id.SceneIDFrom(d.Scene)
@@ -189,7 +182,6 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		}
 	}
 
-	// If topics exist, use the string; otherwise it's an empty string
 	topicsPtr := &topicsStr
 	
 	metadata, err := project.NewProjectMetadata().
