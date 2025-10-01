@@ -11,6 +11,7 @@ const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
+test.describe.configure({ mode: "serial" });
 
 test.describe("Login Page Tests", () => {
   let context: BrowserContext;

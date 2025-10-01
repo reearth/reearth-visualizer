@@ -18,9 +18,11 @@ if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
 const projectName = faker.lorem.word(5);
 const projectDescription = faker.lorem.sentence();
 const specialProjectName = faker.lorem.word(5) + "!@#$%^&*()_+";
+const projectAlias = faker.lorem.word(15);
 
 const fileName = "Test_Asset_migration.zip";
 const docPath = path.resolve(__dirname, "../test-data", fileName);
+test.describe.configure({ mode: "serial" });
 
 test.describe("DASHBOARD - Test cases", () => {
   let context: BrowserContext;
@@ -86,7 +88,11 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Create a new project and verify after its creation", async () => {
-    await projectsPage.createNewProject(projectName, projectDescription);
+    await projectsPage.createNewProject(
+      projectName,
+      projectAlias,
+      projectDescription
+    );
     await expect(projectsPage.noticeBanner).toBeVisible();
     await expect(page.getByText(projectName)).toBeVisible();
   });
@@ -130,6 +136,7 @@ test.describe("DASHBOARD - Test cases", () => {
     await projectsPage.newProjectButton.click();
     await projectsPage.createNewProject(
       specialProjectName,
+      projectAlias,
       specialProjectDescription
     );
     await expect(projectsPage.noticeBanner).toBeVisible();

@@ -157,27 +157,26 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
             />
           </>
         }
-        data-testid="project-creator-modal-panel"
       >
-        <ContentWrapper data-testid="project-creator-content-wrapper">
-          <Form data-testid="project-creator-form">
-            <FormInputWrapper data-testid="project-creator-name-wrapper">
+        <ContentWrapper>
+          <Form>
+            <FormInputWrapper>
               <InputField
                 title={t("Project Name *")}
                 value={formState.projectName}
                 placeholder={t("Text")}
                 onChange={(value) => handleFieldChange("projectName", value)}
-                data-testid="project-creator-name-input"
+                data-testid="project-name-input"
               />
             </FormInputWrapper>
-            <FormInputWrapper data-testid="project-creator-project-alias-wrapper">
+            <FormInputWrapper>
               <InputField
                 title={t("Project Alias *")}
                 value={formState.projectAlias}
                 placeholder={t("Text")}
                 onChange={handleAliasChange}
                 onChangeComplete={handleProjectAliasCheck}
-                data-testid="project-creator-project-alias-input"
+                data-testid="project-alias-input"
                 description={
                   aliasWarning ? (
                     <Typography size="footnote" color={theme.dangerous.main}>
@@ -199,34 +198,34 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                   options={projectVisibilityOptions}
                   layout="vertical"
                   onChange={(value) => handleFieldChange("visibility", value)}
-                  data-testid="project-creator-project-visibility-input"
+                  data-testid="project-visibility-input"
                   description={t(
                     "For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it."
                   )}
                 />
               </FormInputWrapper>
             )}
-            <FormInputWrapper data-testid="project-creator-description-wrapper">
+            <FormInputWrapper>
               <TextAreaField
                 title={t("Description")}
                 value={formState.description}
                 placeholder={t("Write down your content")}
+                data-testid="project-description-input"
                 rows={4}
                 onChange={(value) => handleFieldChange("description", value)}
-                data-testid="project-creator-description-input"
                 description={t(
                   "Provide a short summary (within 200 characters) describing the purpose or key features of this project."
                 )}
               />
             </FormInputWrapper>
-            <FormInputWrapper data-testid="project-creator-project-alias-wrapper">
+            <FormInputWrapper>
               <SelectField
                 title={"Choose a license"}
                 value={formState.license}
                 onChange={(value) =>
                   handleFieldChange("license", value as string)
                 }
-                data-testid="project-creator-project-license-input"
+                data-testid="project-license-input"
                 options={visualizerProjectLicensesOptions.map((license) => ({
                   value: license.value,
                   label: license.label
