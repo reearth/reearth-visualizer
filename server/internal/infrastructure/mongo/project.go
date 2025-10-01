@@ -554,12 +554,12 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return r.findOne(ctx, f, false)
 }
 
-func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	// Default visibility is public
 	visibility := "public"
 	if pFilter.Visibility != nil {
 		visibility = *pFilter.Visibility
-		log.Infof("FindAllPublic: Using provided visibility filter: %s", visibility)
+		log.Infof("FindAll: Using provided visibility filter: %s", visibility)
 	}
 	
 	filter := bson.M{
@@ -573,7 +573,7 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 		// Check if we should search in topics
 		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
 			keyword := strings.ToLower(*pFilter.Keyword)
-			log.Infof("FindAllPublic: Searching in topics for keyword: %s", keyword)
+			log.Infof("FindAll: Searching in topics for keyword: %s", keyword)
 			
 			// Try multiple approaches to match topics
 			// Simple direct match for the topics array
@@ -583,12 +583,12 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 			
 			// Convert filter to JSON for better logging
 			filterJSON, _ := json.Marshal(keywordFilter)
-			log.Infof("FindAllPublic: Using topics search with filter: %s", string(filterJSON))
+			log.Infof("FindAll: Using topics search with filter: %s", string(filterJSON))
 			
 			// Also log the complete filter
 			completeFilter := bson.M{"$and": []bson.M{filter, keywordFilter}}
 			completeJSON, _ := json.Marshal(completeFilter)
-			log.Infof("FindAllPublic: Complete filter: %s", string(completeJSON))
+			log.Infof("FindAll: Complete filter: %s", string(completeJSON))
 		} else {
 			// Default search in name
 			keywordFilter = bson.M{
@@ -599,20 +599,20 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 					},
 				},
 			}
-			log.Infof("FindAllPublic: Searching in name for keyword: %s", *pFilter.Keyword)
+			log.Infof("FindAll: Searching in name for keyword: %s", *pFilter.Keyword)
 		}
 		
 		filter = bson.M{"$and": []bson.M{filter, keywordFilter}}
 	}
 
-	log.Infof("FindAllPublic: MongoDB filter: %+v", filter)
+	log.Infof("FindAll: MongoDB filter: %+v", filter)
 	
 	// Count all public projects first to verify
 	count, err := r.client.Count(ctx, filter)
 	if err != nil {
-		log.Errorf("FindAllPublic: Error counting public projects: %v", err)
+		log.Errorf("FindAll: Error counting public projects: %v", err)
 	} else {
-		log.Infof("FindAllPublic: Found %d public projects with current filter in MongoDB", count)
+		log.Infof("FindAll: Found %d public projects with current filter in MongoDB", count)
 		
 		// Let's count different combinations to understand our data
 		countPublic, _ := r.client.Count(ctx, bson.M{"visibility": "public"})
@@ -620,7 +620,7 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 		countPublicNotDeleted, _ := r.client.Count(ctx, bson.M{"visibility": "public", "deleted": false})
 		countTotal, _ := r.client.Count(ctx, bson.M{})
 		
-		log.Infof("FindAllPublic: Database stats: Total projects: %d, Public projects: %d, Not deleted projects: %d, Public AND not deleted: %d",
+		log.Infof("FindAll: Database stats: Total projects: %d, Public projects: %d, Not deleted projects: %d, Public AND not deleted: %d",
 			countTotal, countPublic, countNotDeleted, countPublicNotDeleted)
 		
 		// If count is 0, do a broader search just to verify projects exist
@@ -628,14 +628,14 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 			// Check if there are any projects at all
 			totalCount, err := r.client.Count(ctx, bson.M{})
 			if err != nil {
-				log.Errorf("FindAllPublic: Error counting all projects: %v", err)
+				log.Errorf("FindAll: Error counting all projects: %v", err)
 			} else {
-				log.Infof("FindAllPublic: Total projects in MongoDB: %d", totalCount)
+				log.Infof("FindAll: Total projects in MongoDB: %d", totalCount)
 			}
 			
 			// If no public projects found, return empty list rather than potentially causing errors
 			if count == 0 {
-				log.Warnf("FindAllPublic: No public projects found, returning empty list")
+				log.Warnf("FindAll: No public projects found, returning empty list")
 				return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 			}
 		}
@@ -643,16 +643,16 @@ func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter)
 
 	// Set a reasonable default limit for offset pagination
 	if pFilter.Pagination == nil {
-		log.Warnf("FindAllPublic: Pagination is nil, not using pagination")
+		log.Warnf("FindAll: Pagination is nil, not using pagination")
 	}
 	
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
-	log.Infof("FindAllPublic: Simplified filter returned %d projects with error: %v", len(projects), err)
+	log.Infof("FindAll: Simplified filter returned %d projects with error: %v", len(projects), err)
 	if err == nil {
-		log.Infof("FindAllPublic: Normal filter succeeded, found %d projects", len(projects))
+		log.Infof("FindAll: Normal filter succeeded, found %d projects", len(projects))
 		return projects, pageInfo, nil
 	} else {
-		log.Warnf("FindAllPublic: Error in pagination: %v, trying simplified query", err)
+		log.Warnf("FindAll: Error in pagination: %v, trying simplified query", err)
 		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 	}
 }

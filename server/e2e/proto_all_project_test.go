@@ -13,10 +13,10 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 )
 
-// Test GetPublicProjectList endpoint with various pagination and search parameters
-// go test -v -run TestGetPublicProjectList ./e2e/...
+// Test GetAllProjects endpoint with various pagination and search parameters
+// go test -v -run TestGetAllProjects ./e2e/...
 
-func TestGetPublicProjectList(t *testing.T) {
+func TestGetAllProjects(t *testing.T) {
 	GRPCServer(t, baseSeeder)
 	testWorkspace := wID.String()
 	
@@ -74,9 +74,9 @@ func TestGetPublicProjectList(t *testing.T) {
 		privateProjects[i] = res.Project.Id
 	}
 
-	// Test case 1: Get all public projects (default pagination)
-	t.Run("GetAllPublicProjects", func(t *testing.T) {
-		res, err := client.GetPublicProjectList(ctx, &pb.GetPublicProjectListRequest{})
+	// Test case 1: Get all projects (default pagination)
+	t.Run("GetAllProjects", func(t *testing.T) {
+		res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{})
 		require.NoError(t, err)
 		require.NotNil(t, res)
 		require.NotNil(t, res.Projects)
@@ -93,7 +93,7 @@ func TestGetPublicProjectList(t *testing.T) {
 	// Test case 2: Pagination with limit (first)
 	t.Run("PaginationWithFirst", func(t *testing.T) {
 		first := int32(5)
-		res, err := client.GetPublicProjectList(ctx, &pb.GetPublicProjectListRequest{
+		res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
 			Pagination: &pb.Pagination{
 				First: &first,
 			},
@@ -114,7 +114,7 @@ func TestGetPublicProjectList(t *testing.T) {
 	t.Run("PaginationWithAfter", func(t *testing.T) {
 		// First get initial page
 		first := int32(5)
-		initialRes, err := client.GetPublicProjectList(ctx, &pb.GetPublicProjectListRequest{
+		initialRes, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
 			Pagination: &pb.Pagination{
 				First: &first,
 			},
@@ -125,7 +125,7 @@ func TestGetPublicProjectList(t *testing.T) {
 		require.NotNil(t, initialRes.PageInfo.EndCursor)
 		
 		// Now get the next page using the cursor
-		nextRes, err := client.GetPublicProjectList(ctx, &pb.GetPublicProjectListRequest{
+		nextRes, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
 			Pagination: &pb.Pagination{
 				First: &first,
 				After: initialRes.PageInfo.EndCursor,
@@ -154,7 +154,7 @@ func TestGetPublicProjectList(t *testing.T) {
 	// Test case 4: Search with keyword
 	t.Run("SearchWithKeyword", func(t *testing.T) {
 		keyword := "Public Project 3"
-		res, err := client.GetPublicProjectList(ctx, &pb.GetPublicProjectListRequest{
+		res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
 			Keyword: &keyword,
 		})
 		require.NoError(t, err)
@@ -171,7 +171,7 @@ func TestGetPublicProjectList(t *testing.T) {
 	t.Run("LimitOffsetPagination", func(t *testing.T) {
 		limit := int64(3)
 		offset := int64(4)
-		res, err := client.GetPublicProjectList(ctx, &pb.GetPublicProjectListRequest{
+		res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
 			Pagination: &pb.Pagination{
 				Limit:  &limit,
 				Offset: &offset,

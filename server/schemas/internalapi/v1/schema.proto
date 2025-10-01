@@ -11,8 +11,8 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc GetProjectList(GetProjectListRequest) returns (GetProjectListResponse) {}
 
-  // Retrieves all public projects (no authentication required).
-  rpc GetPublicProjectList(GetPublicProjectListRequest) returns (GetPublicProjectListResponse) {}
+  // Retrieves all projects with filtering options (no authentication required).
+  rpc GetAllProjects(GetAllProjectsRequest) returns (GetAllProjectsResponse) {}
 
   // Retrieves a specific project regardless of authentication.
   // Request headers: user-id: <User ID>
@@ -264,7 +264,7 @@ enum ProjectVisibility {
   PROJECT_VISIBILITY_PRIVATE = 1; // Private projects
 }
 
-message GetPublicProjectListRequest {
+message GetAllProjectsRequest {
   // Keyword search
   optional string keyword = 1;
   // Sort options
@@ -475,8 +475,8 @@ message GetProjectListResponse {
 }
 
 // Response messages
-message GetPublicProjectListResponse {
-  // Public Project List
+message GetAllProjectsResponse {
+  // Project List
   repeated Project projects = 1;
   // PageInfo
   PageInfo page_info = 2;

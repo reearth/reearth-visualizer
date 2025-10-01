@@ -1094,7 +1094,7 @@ func (x *GetProjectListRequest) GetPagination() *Pagination {
 	return nil
 }
 
-type GetPublicProjectListRequest struct {
+type GetAllProjectsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Keyword search
 	Keyword *string `protobuf:"bytes,1,opt,name=keyword,proto3,oneof" json:"keyword,omitempty"`
@@ -1110,20 +1110,20 @@ type GetPublicProjectListRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetPublicProjectListRequest) Reset() {
-	*x = GetPublicProjectListRequest{}
+func (x *GetAllProjectsRequest) Reset() {
+	*x = GetAllProjectsRequest{}
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetPublicProjectListRequest) String() string {
+func (x *GetAllProjectsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetPublicProjectListRequest) ProtoMessage() {}
+func (*GetAllProjectsRequest) ProtoMessage() {}
 
-func (x *GetPublicProjectListRequest) ProtoReflect() protoreflect.Message {
+func (x *GetAllProjectsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -1135,40 +1135,40 @@ func (x *GetPublicProjectListRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPublicProjectListRequest.ProtoReflect.Descriptor instead.
-func (*GetPublicProjectListRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetAllProjectsRequest.ProtoReflect.Descriptor instead.
+func (*GetAllProjectsRequest) Descriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *GetPublicProjectListRequest) GetKeyword() string {
+func (x *GetAllProjectsRequest) GetKeyword() string {
 	if x != nil && x.Keyword != nil {
 		return *x.Keyword
 	}
 	return ""
 }
 
-func (x *GetPublicProjectListRequest) GetSort() *ProjectSort {
+func (x *GetAllProjectsRequest) GetSort() *ProjectSort {
 	if x != nil {
 		return x.Sort
 	}
 	return nil
 }
 
-func (x *GetPublicProjectListRequest) GetPagination() *Pagination {
+func (x *GetAllProjectsRequest) GetPagination() *Pagination {
 	if x != nil {
 		return x.Pagination
 	}
 	return nil
 }
 
-func (x *GetPublicProjectListRequest) GetSearchField() SearchFieldType {
+func (x *GetAllProjectsRequest) GetSearchField() SearchFieldType {
 	if x != nil && x.SearchField != nil {
 		return *x.SearchField
 	}
 	return SearchFieldType_SEARCH_FIELD_TYPE_NAME
 }
 
-func (x *GetPublicProjectListRequest) GetVisibility() ProjectVisibility {
+func (x *GetAllProjectsRequest) GetVisibility() ProjectVisibility {
 	if x != nil && x.Visibility != nil {
 		return *x.Visibility
 	}
@@ -2371,9 +2371,9 @@ func (x *GetProjectListResponse) GetTotalCount() int32 {
 }
 
 // Response messages
-type GetPublicProjectListResponse struct {
+type GetAllProjectsResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Public Project List
+	// Project List
 	Projects []*Project `protobuf:"bytes,1,rep,name=projects,proto3" json:"projects,omitempty"`
 	// PageInfo
 	PageInfo      *PageInfo `protobuf:"bytes,2,opt,name=page_info,json=pageInfo,proto3" json:"page_info,omitempty"`
@@ -2381,20 +2381,20 @@ type GetPublicProjectListResponse struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *GetPublicProjectListResponse) Reset() {
-	*x = GetPublicProjectListResponse{}
+func (x *GetAllProjectsResponse) Reset() {
+	*x = GetAllProjectsResponse{}
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *GetPublicProjectListResponse) String() string {
+func (x *GetAllProjectsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetPublicProjectListResponse) ProtoMessage() {}
+func (*GetAllProjectsResponse) ProtoMessage() {}
 
-func (x *GetPublicProjectListResponse) ProtoReflect() protoreflect.Message {
+func (x *GetAllProjectsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2406,19 +2406,19 @@ func (x *GetPublicProjectListResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetPublicProjectListResponse.ProtoReflect.Descriptor instead.
-func (*GetPublicProjectListResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetAllProjectsResponse.ProtoReflect.Descriptor instead.
+func (*GetAllProjectsResponse) Descriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{23}
 }
 
-func (x *GetPublicProjectListResponse) GetProjects() []*Project {
+func (x *GetAllProjectsResponse) GetProjects() []*Project {
 	if x != nil {
 		return x.Projects
 	}
 	return nil
 }
 
-func (x *GetPublicProjectListResponse) GetPageInfo() *PageInfo {
+func (x *GetAllProjectsResponse) GetPageInfo() *PageInfo {
 	if x != nil {
 		return x.PageInfo
 	}
@@ -3118,8 +3118,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
 	"\b_keywordB\a\n" +
 	"\x05_sortB\r\n" +
-	"\v_pagination\"\xa4\x03\n" +
-	"\x1bGetPublicProjectListRequest\x12\x1d\n" +
+	"\v_pagination\"\x9e\x03\n" +
+	"\x15GetAllProjectsRequest\x12\x1d\n" +
 	"\akeyword\x18\x01 \x01(\tH\x00R\akeyword\x88\x01\x01\x12;\n" +
 	"\x04sort\x18\x02 \x01(\v2\".reearth.visualizer.v1.ProjectSortH\x01R\x04sort\x88\x01\x01\x12F\n" +
 	"\n" +
@@ -3311,8 +3311,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\bprojects\x18\x01 \x03(\v2\x1e.reearth.visualizer.v1.ProjectR\bprojects\x12<\n" +
 	"\tpage_info\x18\x02 \x01(\v2\x1f.reearth.visualizer.v1.PageInfoR\bpageInfo\x12\x1f\n" +
 	"\vtotal_count\x18\x03 \x01(\x05R\n" +
-	"totalCount\"\x98\x01\n" +
-	"\x1cGetPublicProjectListResponse\x12:\n" +
+	"totalCount\"\x92\x01\n" +
+	"\x16GetAllProjectsResponse\x12:\n" +
 	"\bprojects\x18\x01 \x03(\v2\x1e.reearth.visualizer.v1.ProjectR\bprojects\x12<\n" +
 	"\tpage_info\x18\x02 \x01(\v2\x1f.reearth.visualizer.v1.PageInfoR\bpageInfo\"Q\n" +
 	"\x15CreateProjectResponse\x128\n" +
@@ -3378,10 +3378,10 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x18SEARCH_FIELD_TYPE_TOPICS\x10\x01*R\n" +
 	"\x11ProjectVisibility\x12\x1d\n" +
 	"\x19PROJECT_VISIBILITY_PUBLIC\x10\x00\x12\x1e\n" +
-	"\x1aPROJECT_VISIBILITY_PRIVATE\x10\x012\xb0\x0e\n" +
+	"\x1aPROJECT_VISIBILITY_PRIVATE\x10\x012\x9d\x0e\n" +
 	"\x11ReEarthVisualizer\x12o\n" +
-	"\x0eGetProjectList\x12,.reearth.visualizer.v1.GetProjectListRequest\x1a-.reearth.visualizer.v1.GetProjectListResponse\"\x00\x12\x81\x01\n" +
-	"\x14GetPublicProjectList\x122.reearth.visualizer.v1.GetPublicProjectListRequest\x1a3.reearth.visualizer.v1.GetPublicProjectListResponse\"\x00\x12c\n" +
+	"\x0eGetProjectList\x12,.reearth.visualizer.v1.GetProjectListRequest\x1a-.reearth.visualizer.v1.GetProjectListResponse\"\x00\x12o\n" +
+	"\x0eGetAllProjects\x12,.reearth.visualizer.v1.GetAllProjectsRequest\x1a-.reearth.visualizer.v1.GetAllProjectsResponse\"\x00\x12c\n" +
 	"\n" +
 	"GetProject\x12(.reearth.visualizer.v1.GetProjectRequest\x1a).reearth.visualizer.v1.GetProjectResponse\"\x00\x12x\n" +
 	"\x11GetProjectByAlias\x12/.reearth.visualizer.v1.GetProjectByAliasRequest\x1a0.reearth.visualizer.v1.GetProjectByAliasResponse\"\x00\x12\x81\x01\n" +
@@ -3427,7 +3427,7 @@ var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
 	(*ProjectSort)(nil),                      // 11: reearth.visualizer.v1.ProjectSort
 	(*PageInfo)(nil),                         // 12: reearth.visualizer.v1.PageInfo
 	(*GetProjectListRequest)(nil),            // 13: reearth.visualizer.v1.GetProjectListRequest
-	(*GetPublicProjectListRequest)(nil),      // 14: reearth.visualizer.v1.GetPublicProjectListRequest
+	(*GetAllProjectsRequest)(nil),            // 14: reearth.visualizer.v1.GetAllProjectsRequest
 	(*GetProjectRequest)(nil),                // 15: reearth.visualizer.v1.GetProjectRequest
 	(*GetProjectByAliasRequest)(nil),         // 16: reearth.visualizer.v1.GetProjectByAliasRequest
 	(*ValidateProjectAliasRequest)(nil),      // 17: reearth.visualizer.v1.ValidateProjectAliasRequest
@@ -3443,7 +3443,7 @@ var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
 	(*ExportProjectRequest)(nil),             // 27: reearth.visualizer.v1.ExportProjectRequest
 	(*GetProjectResponse)(nil),               // 28: reearth.visualizer.v1.GetProjectResponse
 	(*GetProjectListResponse)(nil),           // 29: reearth.visualizer.v1.GetProjectListResponse
-	(*GetPublicProjectListResponse)(nil),     // 30: reearth.visualizer.v1.GetPublicProjectListResponse
+	(*GetAllProjectsResponse)(nil),           // 30: reearth.visualizer.v1.GetAllProjectsResponse
 	(*CreateProjectResponse)(nil),            // 31: reearth.visualizer.v1.CreateProjectResponse
 	(*UpdateProjectResponse)(nil),            // 32: reearth.visualizer.v1.UpdateProjectResponse
 	(*PublishProjectResponse)(nil),           // 33: reearth.visualizer.v1.PublishProjectResponse
@@ -3473,17 +3473,17 @@ var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
 	4,  // 11: reearth.visualizer.v1.ProjectSort.direction:type_name -> reearth.visualizer.v1.SortDirection
 	11, // 12: reearth.visualizer.v1.GetProjectListRequest.sort:type_name -> reearth.visualizer.v1.ProjectSort
 	10, // 13: reearth.visualizer.v1.GetProjectListRequest.pagination:type_name -> reearth.visualizer.v1.Pagination
-	11, // 14: reearth.visualizer.v1.GetPublicProjectListRequest.sort:type_name -> reearth.visualizer.v1.ProjectSort
-	10, // 15: reearth.visualizer.v1.GetPublicProjectListRequest.pagination:type_name -> reearth.visualizer.v1.Pagination
-	5,  // 16: reearth.visualizer.v1.GetPublicProjectListRequest.search_field:type_name -> reearth.visualizer.v1.SearchFieldType
-	6,  // 17: reearth.visualizer.v1.GetPublicProjectListRequest.visibility:type_name -> reearth.visualizer.v1.ProjectVisibility
+	11, // 14: reearth.visualizer.v1.GetAllProjectsRequest.sort:type_name -> reearth.visualizer.v1.ProjectSort
+	10, // 15: reearth.visualizer.v1.GetAllProjectsRequest.pagination:type_name -> reearth.visualizer.v1.Pagination
+	5,  // 16: reearth.visualizer.v1.GetAllProjectsRequest.search_field:type_name -> reearth.visualizer.v1.SearchFieldType
+	6,  // 17: reearth.visualizer.v1.GetAllProjectsRequest.visibility:type_name -> reearth.visualizer.v1.ProjectVisibility
 	0,  // 18: reearth.visualizer.v1.CreateProjectRequest.visualizer:type_name -> reearth.visualizer.v1.Visualizer
 	2,  // 19: reearth.visualizer.v1.PublishProjectRequest.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
 	7,  // 20: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
 	7,  // 21: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
 	12, // 22: reearth.visualizer.v1.GetProjectListResponse.page_info:type_name -> reearth.visualizer.v1.PageInfo
-	7,  // 23: reearth.visualizer.v1.GetPublicProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
-	12, // 24: reearth.visualizer.v1.GetPublicProjectListResponse.page_info:type_name -> reearth.visualizer.v1.PageInfo
+	7,  // 23: reearth.visualizer.v1.GetAllProjectsResponse.projects:type_name -> reearth.visualizer.v1.Project
+	12, // 24: reearth.visualizer.v1.GetAllProjectsResponse.page_info:type_name -> reearth.visualizer.v1.PageInfo
 	7,  // 25: reearth.visualizer.v1.CreateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
 	7,  // 26: reearth.visualizer.v1.UpdateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
 	7,  // 27: reearth.visualizer.v1.PublishProjectResponse.project:type_name -> reearth.visualizer.v1.Project
@@ -3492,7 +3492,7 @@ var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
 	7,  // 30: reearth.visualizer.v1.GetProjectByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
 	7,  // 31: reearth.visualizer.v1.UpdateByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
 	13, // 32: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
-	14, // 33: reearth.visualizer.v1.ReEarthVisualizer.GetPublicProjectList:input_type -> reearth.visualizer.v1.GetPublicProjectListRequest
+	14, // 33: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:input_type -> reearth.visualizer.v1.GetAllProjectsRequest
 	15, // 34: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
 	16, // 35: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByAlias:input_type -> reearth.visualizer.v1.GetProjectByAliasRequest
 	17, // 36: reearth.visualizer.v1.ReEarthVisualizer.ValidateProjectAlias:input_type -> reearth.visualizer.v1.ValidateProjectAliasRequest
@@ -3507,7 +3507,7 @@ var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
 	25, // 45: reearth.visualizer.v1.ReEarthVisualizer.UpdateByProjectAlias:input_type -> reearth.visualizer.v1.UpdateByProjectAliasRequest
 	26, // 46: reearth.visualizer.v1.ReEarthVisualizer.DeleteByProjectAlias:input_type -> reearth.visualizer.v1.DeleteByProjectAliasRequest
 	29, // 47: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
-	30, // 48: reearth.visualizer.v1.ReEarthVisualizer.GetPublicProjectList:output_type -> reearth.visualizer.v1.GetPublicProjectListResponse
+	30, // 48: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:output_type -> reearth.visualizer.v1.GetAllProjectsResponse
 	28, // 49: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
 	37, // 50: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByAlias:output_type -> reearth.visualizer.v1.GetProjectByAliasResponse
 	38, // 51: reearth.visualizer.v1.ReEarthVisualizer.ValidateProjectAlias:output_type -> reearth.visualizer.v1.ValidateProjectAliasResponse

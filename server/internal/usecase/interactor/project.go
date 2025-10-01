@@ -341,7 +341,7 @@ func (i *Project) FindVisibilityByWorkspace(
 	return result, pInfo, err
 }
 
-func (i *Project) FindAllPublic(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
 	pFilter := repo.ProjectFilter{
 		Keyword:     keyword,
 		Sort:        sort,
@@ -350,7 +350,7 @@ func (i *Project) FindAllPublic(ctx context.Context, keyword *string, sort *proj
 		Visibility:  visibility,
 	}
 
-	pList, pInfo, err := i.projectRepo.FindAllPublic(ctx, pFilter)
+	pList, pInfo, err := i.projectRepo.FindAll(ctx, pFilter)
 	if err != nil {
 		return nil, nil, err
 	}

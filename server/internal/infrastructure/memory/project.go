@@ -228,7 +228,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return nil, rerror.ErrNotFound
 }
 
-func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 	

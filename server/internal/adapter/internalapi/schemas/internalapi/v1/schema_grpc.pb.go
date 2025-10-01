@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	ReEarthVisualizer_GetProjectList_FullMethodName           = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectList"
-	ReEarthVisualizer_GetPublicProjectList_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/GetPublicProjectList"
+	ReEarthVisualizer_GetAllProjects_FullMethodName           = "/reearth.visualizer.v1.ReEarthVisualizer/GetAllProjects"
 	ReEarthVisualizer_GetProject_FullMethodName               = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
 	ReEarthVisualizer_GetProjectByAlias_FullMethodName        = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByAlias"
 	ReEarthVisualizer_ValidateProjectAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/ValidateProjectAlias"
@@ -43,8 +43,8 @@ type ReEarthVisualizerClient interface {
 	// Retrieves the list of projects the user can access.
 	// Request headers: user-id: <User ID>
 	GetProjectList(ctx context.Context, in *GetProjectListRequest, opts ...grpc.CallOption) (*GetProjectListResponse, error)
-	// Retrieves all public projects (no authentication required).
-	GetPublicProjectList(ctx context.Context, in *GetPublicProjectListRequest, opts ...grpc.CallOption) (*GetPublicProjectListResponse, error)
+	// Retrieves all projects with filtering options (no authentication required).
+	GetAllProjects(ctx context.Context, in *GetAllProjectsRequest, opts ...grpc.CallOption) (*GetAllProjectsResponse, error)
 	// Retrieves a specific project regardless of authentication.
 	// Request headers: user-id: <User ID>
 	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectResponse, error)
@@ -104,10 +104,10 @@ func (c *reEarthVisualizerClient) GetProjectList(ctx context.Context, in *GetPro
 	return out, nil
 }
 
-func (c *reEarthVisualizerClient) GetPublicProjectList(ctx context.Context, in *GetPublicProjectListRequest, opts ...grpc.CallOption) (*GetPublicProjectListResponse, error) {
+func (c *reEarthVisualizerClient) GetAllProjects(ctx context.Context, in *GetAllProjectsRequest, opts ...grpc.CallOption) (*GetAllProjectsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetPublicProjectListResponse)
-	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetPublicProjectList_FullMethodName, in, out, cOpts...)
+	out := new(GetAllProjectsResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetAllProjects_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -251,8 +251,8 @@ type ReEarthVisualizerServer interface {
 	// Retrieves the list of projects the user can access.
 	// Request headers: user-id: <User ID>
 	GetProjectList(context.Context, *GetProjectListRequest) (*GetProjectListResponse, error)
-	// Retrieves all public projects (no authentication required).
-	GetPublicProjectList(context.Context, *GetPublicProjectListRequest) (*GetPublicProjectListResponse, error)
+	// Retrieves all projects with filtering options (no authentication required).
+	GetAllProjects(context.Context, *GetAllProjectsRequest) (*GetAllProjectsResponse, error)
 	// Retrieves a specific project regardless of authentication.
 	// Request headers: user-id: <User ID>
 	GetProject(context.Context, *GetProjectRequest) (*GetProjectResponse, error)
@@ -305,8 +305,8 @@ type UnimplementedReEarthVisualizerServer struct{}
 func (UnimplementedReEarthVisualizerServer) GetProjectList(context.Context, *GetProjectListRequest) (*GetProjectListResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProjectList not implemented")
 }
-func (UnimplementedReEarthVisualizerServer) GetPublicProjectList(context.Context, *GetPublicProjectListRequest) (*GetPublicProjectListResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPublicProjectList not implemented")
+func (UnimplementedReEarthVisualizerServer) GetAllProjects(context.Context, *GetAllProjectsRequest) (*GetAllProjectsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllProjects not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) GetProject(context.Context, *GetProjectRequest) (*GetProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProject not implemented")
@@ -386,20 +386,20 @@ func _ReEarthVisualizer_GetProjectList_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReEarthVisualizer_GetPublicProjectList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPublicProjectListRequest)
+func _ReEarthVisualizer_GetAllProjects_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllProjectsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ReEarthVisualizerServer).GetPublicProjectList(ctx, in)
+		return srv.(ReEarthVisualizerServer).GetAllProjects(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ReEarthVisualizer_GetPublicProjectList_FullMethodName,
+		FullMethod: ReEarthVisualizer_GetAllProjects_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReEarthVisualizerServer).GetPublicProjectList(ctx, req.(*GetPublicProjectListRequest))
+		return srv.(ReEarthVisualizerServer).GetAllProjects(ctx, req.(*GetAllProjectsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -650,8 +650,8 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ReEarthVisualizer_GetProjectList_Handler,
 		},
 		{
-			MethodName: "GetPublicProjectList",
-			Handler:    _ReEarthVisualizer_GetPublicProjectList_Handler,
+			MethodName: "GetAllProjects",
+			Handler:    _ReEarthVisualizer_GetAllProjects_Handler,
 		},
 		{
 			MethodName: "GetProject",

@@ -112,10 +112,10 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 
 }
 
-func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProjectListRequest) (*pb.GetPublicProjectListResponse, error) {
+func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsRequest) (*pb.GetAllProjectsResponse, error) {
 	uc := adapter.Usecases(ctx)
 	
-	log.Infof("GetPublicProjectList: Request received with keyword=%v, pagination=%+v, search_field=%v, visibility=%v", req.Keyword, req.Pagination, req.SearchField, req.Visibility)
+	log.Infof("GetAllProjects: Request received with keyword=%v, pagination=%+v, search_field=%v, visibility=%v", req.Keyword, req.Pagination, req.SearchField, req.Visibility)
 	
 	// Create a pagination object if one wasn't provided
 	if req.Pagination == nil {
@@ -123,7 +123,7 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 		req.Pagination = &pb.Pagination{
 			First: &defaultLimit,
 		}
-		log.Infof("GetPublicProjectList: Using default pagination with first=%v", defaultLimit)
+		log.Infof("GetAllProjects: Using default pagination with first=%v", defaultLimit)
 	}
 	
 	pagination := internalapimodel.ToProjectPagination(req.Pagination)
@@ -136,9 +136,9 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 	if req.SearchField != nil && *req.SearchField == pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS {
 		sf := "topics"
 		searchField = &sf
-		log.Infof("GetPublicProjectList: Using topic search field for keyword: %v", req.Keyword)
+		log.Infof("GetAllProjects: Using topic search field for keyword: %v", req.Keyword)
 	} else {
-		log.Infof("GetPublicProjectList: Using name search field (default) for keyword: %v", req.Keyword)
+		log.Infof("GetAllProjects: Using name search field (default) for keyword: %v", req.Keyword)
 	}
 	
 	// Convert ProjectVisibility to string
@@ -146,18 +146,18 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 	if req.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
 		v := "private"
 		visibility = &v
-		log.Infof("GetPublicProjectList: Filtering for private projects")
+		log.Infof("GetAllProjects: Filtering for private projects")
 	} else {
 		v := "public"
 		visibility = &v
-		log.Infof("GetPublicProjectList: Filtering for public projects (default)")
+		log.Infof("GetAllProjects: Filtering for public projects (default)")
 	}
 	
-	log.Infof("GetPublicProjectList: Querying database for public projects with search field: %v and visibility: %v", searchField, visibility)
-	res, info, err := uc.Project.FindAllPublic(ctx, req.Keyword, sort, pagination, searchField, visibility)
+	log.Infof("GetAllProjects: Querying database for projects with search field: %v and visibility: %v", searchField, visibility)
+	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, searchField, visibility)
 	
 	if err != nil {
-		log.Errorf("GetPublicProjectList: Database query failed: %v", err)
+		log.Errorf("GetAllProjects: Database query failed: %v", err)
 		return nil, err
 	}
 		
@@ -169,7 +169,7 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 		}
 	}
 	
-	return &pb.GetPublicProjectListResponse{
+	return &pb.GetAllProjectsResponse{
 		Projects: projects,
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
