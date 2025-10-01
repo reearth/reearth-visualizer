@@ -227,14 +227,13 @@ func (r *Project) ProjectAbsoluteFilter(authenticated bool, keyword *string, own
 
 func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.SortType, cursor *usecasex.CursorPagination, offset *int64, limit *int64) (bson.M, *options.FindOptions, int64, int) {
 	sortOrder := -1 // DESC
-	sortKey := internalapimodel.ProjectSortField_STARCOUNT // Default to star count
+	sortKey := internalapimodel.ProjectSortField_UPDATEDAT
 
-	if sort != nil && sort.Key != "" {
+	if sort != nil {
 		if !sort.Desc {
 			sortOrder = 1
 		}
-		// Convert sort key to lowercase for case-insensitive comparison
-		sortKey = strings.ToLower(sort.Key)
+		sortKey = sort.Key
 	}
 
 	// Prioritize offset-based pagination when offset is provided
@@ -260,17 +259,11 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 
 	*limit = *limit + 1
 
-	// Map the sort key to the correct MongoDB field name
-	mongoSortKey := sortKey
-	if sortKey == "starcount" {
-		mongoSortKey = "star_count"
-	}
-	
 	sortConfig := bson.D{
-		{Key: mongoSortKey, Value: sortOrder},
+		{Key: sortKey, Value: sortOrder},
 		{Key: "id", Value: sortOrder},
 	}
-
+	
 	findOptions := options.Find().
 		SetSort(sortConfig).
 		SetLimit(*limit)
@@ -573,24 +566,18 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		// Check if we should search in topics
 		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
 			keyword := strings.ToLower(*pFilter.Keyword)
-			log.Infof("FindAll: Searching in topics for keyword: %s", keyword)
 			
-			// Try multiple approaches to match topics
-			// Simple direct match for the topics array
 			keywordFilter = bson.M{
 				"topics": keyword,
 			}
 			
-			// Convert filter to JSON for better logging
 			filterJSON, _ := json.Marshal(keywordFilter)
 			log.Infof("FindAll: Using topics search with filter: %s", string(filterJSON))
 			
-			// Also log the complete filter
 			completeFilter := bson.M{"$and": []bson.M{filter, keywordFilter}}
 			completeJSON, _ := json.Marshal(completeFilter)
 			log.Infof("FindAll: Complete filter: %s", string(completeJSON))
 		} else {
-			// Default search in name
 			keywordFilter = bson.M{
 				"name": bson.M{
 					"$regex": primitive.Regex{
@@ -599,22 +586,17 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 					},
 				},
 			}
-			log.Infof("FindAll: Searching in name for keyword: %s", *pFilter.Keyword)
 		}
 		
 		filter = bson.M{"$and": []bson.M{filter, keywordFilter}}
 	}
 
-	log.Infof("FindAll: MongoDB filter: %+v", filter)
 	
-	// Count all public projects first to verify
 	count, err := r.client.Count(ctx, filter)
 	if err != nil {
 		log.Errorf("FindAll: Error counting public projects: %v", err)
 	} else {
-		log.Infof("FindAll: Found %d public projects with current filter in MongoDB", count)
 		
-		// Let's count different combinations to understand our data
 		countPublic, _ := r.client.Count(ctx, bson.M{"visibility": "public"})
 		countNotDeleted, _ := r.client.Count(ctx, bson.M{"deleted": false})
 		countPublicNotDeleted, _ := r.client.Count(ctx, bson.M{"visibility": "public", "deleted": false})
@@ -647,9 +629,8 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 	
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
-	log.Infof("FindAll: Simplified filter returned %d projects with error: %v", len(projects), err)
 	if err == nil {
-		log.Infof("FindAll: Normal filter succeeded, found %d projects", len(projects))
+		log.Infof("FindAll: Filter succeeded, found %d projects", len(projects))
 		return projects, pageInfo, nil
 	} else {
 		log.Warnf("FindAll: Error in pagination: %v, trying simplified query", err)
@@ -854,7 +835,7 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 	return c.Result, pageInfo, nil
 }
 
-func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any, sort *project.SortType, _ *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	// For now, let's use a simpler approach without pagination to verify projects can be returned
 	log.Infof("paginateWithoutWorkspaceFilter: Using simplified approach with filter: %v", filter)
 	
