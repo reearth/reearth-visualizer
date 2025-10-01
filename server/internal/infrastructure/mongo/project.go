@@ -552,7 +552,6 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	visibility := "public"
 	if pFilter.Visibility != nil {
 		visibility = *pFilter.Visibility
-		log.Infof("FindAll: Using provided visibility filter: %s", visibility)
 	}
 	
 	filter := bson.M{
@@ -595,16 +594,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	count, err := r.client.Count(ctx, filter)
 	if err != nil {
 		log.Errorf("FindAll: Error counting public projects: %v", err)
-	} else {
-		
-		countPublic, _ := r.client.Count(ctx, bson.M{"visibility": "public"})
-		countNotDeleted, _ := r.client.Count(ctx, bson.M{"deleted": false})
-		countPublicNotDeleted, _ := r.client.Count(ctx, bson.M{"visibility": "public", "deleted": false})
-		countTotal, _ := r.client.Count(ctx, bson.M{})
-		
-		log.Infof("FindAll: Database stats: Total projects: %d, Public projects: %d, Not deleted projects: %d, Public AND not deleted: %d",
-			countTotal, countPublic, countNotDeleted, countPublicNotDeleted)
-		
+	} else {	
 		// If count is 0, do a broader search just to verify projects exist
 		if count == 0 {
 			// Check if there are any projects at all

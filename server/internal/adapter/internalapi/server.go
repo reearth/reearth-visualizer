@@ -113,17 +113,13 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 }
 
 func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsRequest) (*pb.GetAllProjectsResponse, error) {
-	uc := adapter.Usecases(ctx)
-	
-	log.Infof("GetAllProjects: Request received with keyword=%v, pagination=%+v, search_field=%v, visibility=%v", req.Keyword, req.Pagination, req.SearchField, req.Visibility)
-	
+	uc := adapter.Usecases(ctx)	
 	// Create a pagination object if one wasn't provided
 	if req.Pagination == nil {
 		defaultLimit := int32(100)
 		req.Pagination = &pb.Pagination{
 			First: &defaultLimit,
 		}
-		log.Infof("GetAllProjects: Using default pagination with first=%v", defaultLimit)
 	}
 	
 	pagination := internalapimodel.ToProjectPagination(req.Pagination)
@@ -136,10 +132,7 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 	if req.SearchField != nil && *req.SearchField == pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS {
 		sf := "topics"
 		searchField = &sf
-		log.Infof("GetAllProjects: Using topic search field for keyword: %v", req.Keyword)
-	} else {
-		log.Infof("GetAllProjects: Using name search field (default) for keyword: %v", req.Keyword)
-	}
+	} 
 	
 	// Convert ProjectVisibility to string
 	var visibility *string
@@ -150,10 +143,8 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 	} else {
 		v := "public"
 		visibility = &v
-		log.Infof("GetAllProjects: Filtering for public projects (default)")
 	}
 	
-	log.Infof("GetAllProjects: Querying database for projects with search field: %v and visibility: %v", searchField, visibility)
 	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, searchField, visibility)
 	
 	if err != nil {
