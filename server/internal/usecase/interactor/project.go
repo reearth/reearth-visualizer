@@ -349,7 +349,6 @@ func (i *Project) FindAllPublic(ctx context.Context, keyword *string, sort *proj
 		SearchField: searchField,
 	}
 
-	// Use the repository method that directly queries for all public projects
 	pList, pInfo, err := i.projectRepo.FindAllPublic(ctx, pFilter)
 	if err != nil {
 		return nil, nil, err

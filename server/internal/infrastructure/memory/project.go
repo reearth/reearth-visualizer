@@ -2,7 +2,6 @@ package memory
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"sort"
 	"strings"
@@ -232,8 +231,6 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 func (r *Project) FindAllPublic(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
-
-	fmt.Println("reaches here")
 
 	result := []*project.Project{}
 	for _, p := range r.data {

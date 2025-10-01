@@ -148,10 +148,7 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 		log.Errorf("GetPublicProjectList: Database query failed: %v", err)
 		return nil, err
 	}
-	
-	log.Infof("GetPublicProjectList: Database query returned %d projects", len(res))
-	
-	// Convert projects
+		
 	projects := make([]*pb.Project, 0, len(res))
 	for _, pj := range res {
 		project := internalapimodel.ToInternalProject(ctx, pj, nil)	
@@ -160,7 +157,6 @@ func (s server) GetPublicProjectList(ctx context.Context, req *pb.GetPublicProje
 		}
 	}
 	
-	log.Infof("GetPublicProjectList: Returning %d projects from database", len(projects))
 	return &pb.GetPublicProjectListResponse{
 		Projects: projects,
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
