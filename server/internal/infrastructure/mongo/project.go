@@ -836,25 +836,20 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 }
 
 func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any, sort *project.SortType, _ *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
-	// For now, let's use a simpler approach without pagination to verify projects can be returned
 	log.Infof("paginateWithoutWorkspaceFilter: Using simplified approach with filter: %v", filter)
 	
-	// Create find options
 	findOptions := options.Find()
 	
-	// Add a reasonable limit by default
-	limit := int64(100) // Default to 100 as a reasonable limit
+	limit := int64(100) // Default to 100
 	findOptions.SetLimit(limit)
 	log.Infof("paginateWithoutWorkspaceFilter: Setting limit to %d", limit)
 	
-	// Add sorting if available
 	if sort != nil {
 		sortKey := sort.Key
 		if sortKey == "" {
 			sortKey = "updatedat"
 		}
 		
-		// Map the sort key to the correct MongoDB field name
 		mongoSortKey := sortKey
 		if sortKey == "starcount" {
 			mongoSortKey = "star_count"
@@ -868,7 +863,6 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 		log.Infof("paginateWithoutWorkspaceFilter: Setting sort to %s:%d (mapped from %s)", mongoSortKey, sortDirection, sortKey)
 	}
 	
-	// Use the Find method directly
 	cursor, err := r.client.Client().Find(ctx, filter, findOptions)
 	if err != nil {
 		log.Errorf("paginateWithoutWorkspaceFilter: Find error: %v", err)
@@ -876,18 +870,15 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 	}
 	defer cursor.Close(ctx)
 	
-	// Manual document processing to handle invalid IDs
 	var results []*project.Project
 	
-	// Process the cursor results using ProjectDocument.Model() to ensure metadata is created
 	for cursor.Next(ctx) {
 		var projectDoc mongodoc.ProjectDocument
 		if err := cursor.Decode(&projectDoc); err != nil {
 			log.Errorf("paginateWithoutWorkspaceFilter: Decode error: %v", err)
-			continue // Skip this document but continue processing
+			continue 
 		}
 		
-		// Use the ProjectDocument.Model() method to properly convert to project with metadata
 		p, err := projectDoc.Model()
 		if err != nil {
 			log.Errorf("paginateWithoutWorkspaceFilter: Error converting document to project: %v", err)
@@ -899,12 +890,10 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 	
 	if err := cursor.Err(); err != nil {
 		log.Errorf("paginateWithoutWorkspaceFilter: Cursor error: %v", err)
-		// Continue with any results we might have rather than failing entirely
 	}
 	
 	log.Infof("paginateWithoutWorkspaceFilter: Successfully processed %d projects", len(results))
 	
-	// Return with empty page info as we're not implementing real pagination yet
 	return results, usecasex.EmptyPageInfo(), nil
 }
 

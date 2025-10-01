@@ -115,7 +115,6 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 }
 
 func (d *ProjectDocument) Model() (*project.Project, error) {
-	// Handle invalid IDs gracefully by creating new ones
 	pid, err := id.ProjectIDFrom(d.ID)
 	if err != nil {
 		return nil, err
