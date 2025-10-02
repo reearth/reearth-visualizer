@@ -62,49 +62,35 @@ func unaryLogInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 
 func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-		if info.FullMethod == "/reearth.visualizer.v1.ReEarthVisualizer/GetAllProjects" {
-			// Check if this is a request for private projects
-			// This checks if the request is for private projects
-			if getProjectsReq, ok := req.(*pb.GetAllProjectsRequest); ok && getProjectsReq.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
-				log.Infof("unaryAuthInterceptor: GetAllProjects request with private visibility, requiring authentication")
-				return authenticateRequest(ctx, req, info, handler, cfg)
-			}
-			log.Infof("unaryAuthInterceptor: GetAllProjects request with public visibility, proceeding without authentication")
-			return handler(ctx, req)
-		}
-
+		// Check if this is a read-only GET method that should be allowed without auth
 		if isReadOnlyMethod(info.FullMethod) {
 			return handler(ctx, req)
 		}
 
-		return authenticateRequest(ctx, req, info, handler, cfg)
-	}
-}
-
-func authenticateRequest(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler, cfg *ServerConfig) (any, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		log.Errorf("authenticateRequest: no metadata found")
-		return nil, errors.New("unauthorized")
-	}
-
-	// Allow ExportProject without a token.
-	if info.FullMethod != "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject" {
-		token := tokenFromGrpcMetadata(md)
-		if token == "" {
-			log.Errorf("authenticateRequest: no token found")
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			log.Errorf("unaryAuthInterceptor: no metadata found")
 			return nil, errors.New("unauthorized")
 		}
 
-		if token != cfg.Config.Visualizer.InternalApi.Token {
-			log.Errorf("authenticateRequest: invalid token")
-			return nil, errors.New("unauthorized")
-		}
-	} else {
-		log.Infof("Skip token check.")
-	}
+		// Allow ExportProject without a token.
+		if info.FullMethod != "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject" {
+			token := tokenFromGrpcMetadata(md)
+			if token == "" {
+				log.Errorf("unaryAuthInterceptor: no token found")
+				return nil, errors.New("unauthorized")
+			}
 
-	return handler(ctx, req)
+			if token != cfg.Config.Visualizer.InternalApi.Token {
+				log.Errorf("unaryAuthInterceptor: invalid token")
+				return nil, errors.New("unauthorized")
+			}
+		} else {
+			log.Infof("Skip token check.")
+		}
+
+		return handler(ctx, req)
+	}
 }
 
 func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
@@ -171,7 +157,6 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 func isReadOnlyMethod(method string) bool {
 	readOnlyMethods := []string{
 		"v1.ReEarthVisualizer/GetProjectList",
-		"v1.ReEarthVisualizer/GetAllProjects",
 		"v1.ReEarthVisualizer/GetProject",
 		"v1.ReEarthVisualizer/GetProjectByAlias",
 		"v1.ReEarthVisualizer/ExportProject",
