@@ -831,66 +831,46 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 	return c.Result, pageInfo, nil
 }
 
-func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any, sort *project.SortType, _ *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
-	log.Infof("paginateWithoutWorkspaceFilter: Using simplified approach with filter: %v", filter)
+func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+	log.Infof("paginateWithoutWorkspaceFilter: Using pagination approach with filter: %v", filter)
 	
-	findOptions := options.Find()
-	
-	limit := int64(100) // Default to 100
-	findOptions.SetLimit(limit)
-	log.Infof("paginateWithoutWorkspaceFilter: Setting limit to %d", limit)
-	
-	if sort != nil {
-		sortKey := sort.Key
-		if sortKey == "" {
-			sortKey = "updatedat"
+	// Map sort key from external API format to MongoDB field name
+	mappedSort := sort
+	if sort != nil && sort.Key == "starcount" {
+		mappedSort = &project.SortType{
+			Key:  "star_count", // Map to MongoDB field name
+			Desc: sort.Desc,
 		}
-		
-		mongoSortKey := sortKey
-		if sortKey == "starcount" {
-			mongoSortKey = "star_count"
-		}
-		
-		sortDirection := 1
-		if sort.Desc {
-			sortDirection = -1
-		}
-		findOptions.SetSort(bson.D{{Key: mongoSortKey, Value: sortDirection}})
-		log.Infof("paginateWithoutWorkspaceFilter: Setting sort to %s:%d (mapped from %s)", mongoSortKey, sortDirection, sortKey)
 	}
 	
-	cursor, err := r.client.Client().Find(ctx, filter, findOptions)
+	// Convert sort to usecasex.Sort format
+	var usort *usecasex.Sort
+	if mappedSort != nil {
+		usort = &usecasex.Sort{
+			Key:      mappedSort.Key,
+			Reverted: mappedSort.Desc,
+		}
+	}
+
+	collation := options.Collation{
+		Locale:    "en",
+		Strength:  3,
+		CaseLevel: true,
+		Alternate: "shifted",
+	}
+
+	findOptions := options.Find().SetCollation(&collation)
+
+	// Create a consumer that doesn't filter by readable workspaces (use nil)
+	c := mongodoc.NewProjectConsumer(nil)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c, findOptions)
 	if err != nil {
-		log.Errorf("paginateWithoutWorkspaceFilter: Find error: %v", err)
+		log.Errorf("paginateWithoutWorkspaceFilter: Paginate error: %v", err)
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
-	defer cursor.Close(ctx)
 	
-	var results []*project.Project
-	
-	for cursor.Next(ctx) {
-		var projectDoc mongodoc.ProjectDocument
-		if err := cursor.Decode(&projectDoc); err != nil {
-			log.Errorf("paginateWithoutWorkspaceFilter: Decode error: %v", err)
-			continue 
-		}
-		
-		p, err := projectDoc.Model()
-		if err != nil {
-			log.Errorf("paginateWithoutWorkspaceFilter: Error converting document to project: %v", err)
-			continue
-		}
-		
-		results = append(results, p)
-	}
-	
-	if err := cursor.Err(); err != nil {
-		log.Errorf("paginateWithoutWorkspaceFilter: Cursor error: %v", err)
-	}
-	
-	log.Infof("paginateWithoutWorkspaceFilter: Successfully processed %d projects", len(results))
-	
-	return results, usecasex.EmptyPageInfo(), nil
+	log.Infof("paginateWithoutWorkspaceFilter: Successfully paginated %d projects, pageInfo: %+v", len(c.Result), pageInfo)
+	return c.Result, pageInfo, nil
 }
 
 func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Project {
