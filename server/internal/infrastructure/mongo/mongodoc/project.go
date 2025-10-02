@@ -184,7 +184,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 
 	// Only create metadata if we have topics or other metadata-specific values
 	hasTopics := len(d.Topics) > 0
-	
+
 	if hasTopics {
 		topicsPtr := &topicsStr
 
