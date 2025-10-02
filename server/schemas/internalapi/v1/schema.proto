@@ -251,14 +251,13 @@ message GetProjectListRequest {
   optional Pagination pagination = 5;
 }
 
-// Retrieves all public projects (no authentication required).
 // Defines which field to search in when using keyword search
 enum SearchFieldType {
   SEARCH_FIELD_TYPE_NAME = 0;  // Default search in project name
   SEARCH_FIELD_TYPE_TOPICS = 1; // Search in project topics
 }
 
-// Visibility filter for public project list
+// Visibility filter for all projects
 enum ProjectVisibility {
   PROJECT_VISIBILITY_PUBLIC = 0;  // Default visibility (public projects)
   PROJECT_VISIBILITY_PRIVATE = 1; // Private projects

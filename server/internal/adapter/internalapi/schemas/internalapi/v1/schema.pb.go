@@ -279,7 +279,6 @@ func (SortDirection) EnumDescriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{4}
 }
 
-// Retrieves all public projects (no authentication required).
 // Defines which field to search in when using keyword search
 type SearchFieldType int32
 
@@ -327,7 +326,7 @@ func (SearchFieldType) EnumDescriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{5}
 }
 
-// Visibility filter for public project list
+// Visibility filter for all projects
 type ProjectVisibility int32
 
 const (
