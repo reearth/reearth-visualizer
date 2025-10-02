@@ -65,54 +65,64 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
     {
       id: "empty",
       title: "Empty",
-      onClick: () => handleLayerStyleAddition({})
+      onClick: () => handleLayerStyleAddition({}),
+      dataTestid: "preset-style-empty"
     },
     {
       id: "default",
       title: "Default",
-      onClick: () => handleLayerStyleAddition(defaultStyle, "Default")
+      onClick: () => handleLayerStyleAddition(defaultStyle, "Default"),
+      dataTestid: "preset-style-default"
     },
     {
       id: "professional",
       title: "Professional",
-      onClick: () => handleLayerStyleAddition(professionalStyle, "Professional")
+      onClick: () => handleLayerStyleAddition(professionalStyle, "Professional"),
+      dataTestid: "preset-style-professional"
     },
     {
       id: "basicGeometry",
       title: "Basic Geometry",
       icon: "folderSimple",
+      dataTestid: "preset-style-basic-geometry",
       subItem: [
         {
           id: "point",
           title: "Points",
-          onClick: () => handleLayerStyleAddition(pointStyle, "Points")
+          onClick: () => handleLayerStyleAddition(pointStyle, "Points"),
+          dataTestid: "preset-style-points"
         },
         {
           id: "pointWithLabel",
           title: "Point with label",
           onClick: () =>
-            handleLayerStyleAddition(pointWithLabelStyle, "Point_with_label")
+            handleLayerStyleAddition(pointWithLabelStyle, "Point_with_label"),
+          dataTestid: "preset-style-point-with-label"
         },
         {
           id: "polyline",
           title: "Polyline",
-          onClick: () => handleLayerStyleAddition(polylineStyle, "Polyline")
+          onClick: () => handleLayerStyleAddition(polylineStyle, "Polyline"),
+          dataTestid: "preset-style-polyline"
         },
         {
           id: "polygon",
           title: "Polygon",
-          onClick: () => handleLayerStyleAddition(polygonStyle, "Polygon")
+          onClick: () => handleLayerStyleAddition(polygonStyle, "Polygon"),
+          dataTestid: "preset-style-polygon"
         },
         {
           id: "extrudedPolygon",
           title: "Extruded polygon",
           onClick: () =>
-            handleLayerStyleAddition(extrudedPolygonStyle, "Extruded_polygon")
+            handleLayerStyleAddition(extrudedPolygonStyle, "Extruded_polygon"),
+          dataTestid: "preset-style-extruded-polygon"
         },
         {
           id: "threedTiles",
           title: "3D Tiles",
-          onClick: () => handleLayerStyleAddition(threeDTilesStyle, "3D_tiles")
+          onClick: () => handleLayerStyleAddition(threeDTilesStyle, "3D_tiles"),
+          dataTestid: "preset-style-3d-tiles"
         }
       ]
     },
@@ -120,11 +130,13 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
       id: "geojson",
       title: "GeoJSON",
       icon: "folderSimple",
+      dataTestid: "preset-style-geojson",
       subItem: [
         {
           id: "simpleStyle",
           title: "Simple Style",
-          onClick: () => handleLayerStyleAddition(simpleStyle, "Simple_style")
+          onClick: () => handleLayerStyleAddition(simpleStyle, "Simple_style"),
+          dataTestid: "preset-style-simple-style"
         }
       ]
     },
@@ -132,6 +144,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
       id: "plateau",
       title: "Plateau",
       icon: "folderSimple",
+      dataTestid: "preset-style-plateau",
       subItem: [
         {
           id: "colorBuilding",
@@ -140,7 +153,8 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
             handleLayerStyleAddition(
               colorBuildingsByHeight,
               "Color_buildings_by_height"
-            )
+            ),
+          dataTestid: "preset-style-color-buildings"
         }
       ]
     }

@@ -15,6 +15,9 @@ if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
 const projectName = faker.lorem.word(5);
 const projectDescription = faker.lorem.sentence();
 const layerName = faker.lorem.word(5);
+const projectAlias = faker.lorem.word(5);
+test.describe.configure({ mode: "serial" });
+
 test.describe("Project Management", () => {
   let context: BrowserContext;
   let page: Page;
@@ -74,7 +77,11 @@ test.describe("Project Management", () => {
   });
 
   test("Create a new project and verify after its creation", async () => {
-    await projectsPage.createNewProject(projectName, projectDescription);
+    await projectsPage.createNewProject(
+      projectName,
+      projectAlias,
+      projectDescription
+    );
     await expect(projectsPage.noticeBanner).toBeVisible();
     await expect(page.getByText(projectName)).toBeVisible();
   });
