@@ -5,12 +5,17 @@ type User implements Node {
   host: String
 }
 
+type UserMetadata {
+  photoURL: String
+}
+
 type Me {
   id: ID!
   name: String!
   email: String!
   lang: Lang!
   theme: Theme!
+  metadata: UserMetadata
   myWorkspaceId: ID!
   auths: [String!]!
   workspaces: [Workspace!]!

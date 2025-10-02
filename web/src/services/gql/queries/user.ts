@@ -18,6 +18,9 @@ export const GET_ME = gql(`
       email
       lang
       theme
+      metadata {
+        photoURL
+      }
       myWorkspace {
         id
         name
