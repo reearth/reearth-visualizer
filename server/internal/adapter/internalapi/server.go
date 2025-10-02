@@ -132,7 +132,7 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 	if req.SearchField != nil && *req.SearchField == pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS {
 		sf := "topics"
 		searchField = &sf
-	} 
+	}
 	
 	// Convert ProjectVisibility to string
 	var visibility *string

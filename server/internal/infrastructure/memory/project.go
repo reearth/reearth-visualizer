@@ -241,9 +241,24 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	result := []*project.Project{}
 	for _, p := range r.data {
 		if p.Visibility() == visibility && !p.IsDeleted() {
-			// Apply keyword filter if provided
-			if pFilter.Keyword == nil || strings.Contains(strings.ToLower(p.Name()), strings.ToLower(*pFilter.Keyword)) {
+			// Check if we need to apply keyword filter
+			if pFilter.Keyword == nil {
+				// No keyword filter, include the project
 				result = append(result, p)
+				continue
+			}
+			
+			// Determine search type
+			if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
+				// Search in topics
+				// For the in-memory implementation, we'll skip topic filtering
+				// as we don't have access to the project metadata here
+				result = append(result, p)
+			} else {
+				// Search in name (default)
+				if strings.Contains(strings.ToLower(p.Name()), strings.ToLower(*pFilter.Keyword)) {
+					result = append(result, p)
+				}
 			}
 		}
 	}

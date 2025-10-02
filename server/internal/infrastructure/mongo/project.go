@@ -560,34 +560,40 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 	
 	if pFilter.Keyword != nil {
-		var keywordFilter bson.M
-		
 		// Check if we should search in topics
 		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
 			keyword := strings.ToLower(*pFilter.Keyword)
 			
-			keywordFilter = bson.M{
-				"topics": keyword,
+			// Split by comma to support multiple topics
+			topicKeywords := strings.Split(keyword, ",")
+			
+			// Trim whitespace from each topic
+			for i := range topicKeywords {
+				topicKeywords[i] = strings.TrimSpace(topicKeywords[i])
 			}
 			
-			filterJSON, _ := json.Marshal(keywordFilter)
-			log.Infof("FindAll: Using topics search with filter: %s", string(filterJSON))
+			// If multiple topics, use $in operator to match any of them
+			if len(topicKeywords) > 1 {
+				log.Infof("FindAll: Using multiple topics search: %v", topicKeywords)
+				// Add the topics condition to the existing filter
+				filter["topics"] = bson.M{"$in": topicKeywords}
+			} else {
+				log.Infof("FindAll: Using single topic search: %s", keyword)
+				// Add the single topic condition to the existing filter
+				filter["topics"] = keyword
+			}
 			
-			completeFilter := bson.M{"$and": []bson.M{filter, keywordFilter}}
-			completeJSON, _ := json.Marshal(completeFilter)
-			log.Infof("FindAll: Complete filter: %s", string(completeJSON))
+			filterJSON, _ := json.Marshal(filter)
+			log.Infof("FindAll: Final filter: %s", string(filterJSON))
 		} else {
-			keywordFilter = bson.M{
-				"name": bson.M{
-					"$regex": primitive.Regex{
-						Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
-						Options: "i",
-					},
+			// Add name regex search directly to the filter
+			filter["name"] = bson.M{
+				"$regex": primitive.Regex{
+					Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
+					Options: "i",
 				},
 			}
 		}
-		
-		filter = bson.M{"$and": []bson.M{filter, keywordFilter}}
 	}
 
 	

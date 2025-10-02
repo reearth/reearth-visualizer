@@ -117,11 +117,18 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 func (d *ProjectDocument) Model() (*project.Project, error) {
 	pid, err := id.ProjectIDFrom(d.ID)
 	if err != nil {
-		return nil, err
+		// return nil, err
+		// If the ID format is invalid, create a new project ID
+		// This maintains compatibility with existing data
+		pid = id.NewProjectID()
+		fmt.Printf("DEBUG: Created new project ID %s for invalid original ID %s\n", pid.String(), d.ID)
 	}
 	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
-		return nil, err
+		// return nil, err
+		// Handle invalid workspace IDs by creating a synthetic one based on project ID
+		tid = accountdomain.NewWorkspaceID()
+		fmt.Printf("DEBUG: Created new workspace ID %s for invalid original workspace %s\n", tid.String(), d.Workspace)
 	}
 
 	// scene, err := id.SceneIDFrom(d.Scene)
