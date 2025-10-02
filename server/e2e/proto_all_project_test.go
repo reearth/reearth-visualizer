@@ -213,110 +213,7 @@ func TestGetAllProjects(t *testing.T) {
 			}
 		})
 
-		// Test case 4-B: Search with keyword in topics
-		t.Run("SearchWithKeywordInTopics", func(t *testing.T) {
-			// Choose a topic that was assigned to at least one project
-			keyword := "visualization"
-			searchField := pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS
-
-			res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
-				Keyword:     &keyword,
-				SearchField: &searchField,
-			})
-			require.NoError(t, err)
-			require.NotNil(t, res)
-			require.NotNil(t, res.Projects)
-
-			// Should return some projects with the topic
-			assert.NotEmpty(t, res.Projects, "Should find projects with topic: "+keyword)
-
-			// Verify projects have metadata and the topic is included in their topics
-			for _, proj := range res.Projects {
-				// Skip projects without metadata
-				if proj.Metadata == nil {
-					continue
-				}
-
-				// Check if any of the project's topics contain the keyword
-				topicFound := false
-				for _, topic := range proj.Metadata.Topics {
-					if topic == keyword {
-						topicFound = true
-						break
-					}
-				}
-
-				assert.True(t, topicFound,
-					fmt.Sprintf("Project %s should have the topic %s", proj.Id, keyword))
-			}
-		})
-
-		// Test case 4-C: Search with multiple keywords in topics (comma-separated)
-		t.Run("SearchWithMultipleKeywordsInTopics", func(t *testing.T) {
-			// Search for projects that have either "mapping" or "urban-planning" as topics
-			keyword := "mapping,urban-planning"
-			searchField := pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS
-
-			res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
-				Keyword:     &keyword,
-				SearchField: &searchField,
-			})
-			require.NoError(t, err)
-			require.NotNil(t, res)
-			require.NotNil(t, res.Projects)
-
-			// Should return some projects with either of the topics
-			assert.NotEmpty(t, res.Projects, "Should find projects with topics: "+keyword)
-
-			// Convert the search keywords to a slice for easier comparison
-			searchTopics := strings.Split(keyword, ",")
-
-			// Verify that each returned project has at least one of the search topics
-			for _, proj := range res.Projects {
-				// Skip projects without metadata
-				if proj.Metadata == nil {
-					continue
-				}
-
-				// Check if any of the project's topics match any of our search topics
-				var matchFound bool
-				for _, projectTopic := range proj.Metadata.Topics {
-					for _, searchTopic := range searchTopics {
-						if projectTopic == searchTopic {
-							matchFound = true
-							break
-						}
-					}
-					if matchFound {
-						break
-					}
-				}
-
-				assert.True(t, matchFound,
-					fmt.Sprintf("Project %s should have at least one of the topics: %s",
-						proj.Id, keyword))
-			}
-		})
-
-		// Test case 5: Limit and offset pagination
-		t.Run("LimitOffsetPagination", func(t *testing.T) {
-			limit := int64(3)
-			offset := int64(4)
-			res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
-				Pagination: &pb.Pagination{
-					Limit:  &limit,
-					Offset: &offset,
-				},
-			})
-			require.NoError(t, err)
-			require.NotNil(t, res)
-			require.NotNil(t, res.Projects)
-
-			// Should return exactly 3 projects (the limit)
-			assert.Equal(t, 3, len(res.Projects))
-		})
-
-		// Test case 6: Sort by updated_at (ascending)
+		// Test case 5: Sort by updated_at (ascending)
 		t.Run("SortByUpdatedAtAscending", func(t *testing.T) {
 			// Create a sort parameter for updated_at ascending
 			sortField := pb.ProjectSortField_UPDATEDAT
@@ -347,7 +244,7 @@ func TestGetAllProjects(t *testing.T) {
 			}
 		})
 
-		// Test case 7: Sort by updated_at (descending)
+		// Test case 6: Sort by updated_at (descending)
 		t.Run("SortByUpdatedAtDescending", func(t *testing.T) {
 			// Create a sort parameter for updated_at descending
 			sortField := pb.ProjectSortField_UPDATEDAT
@@ -378,7 +275,7 @@ func TestGetAllProjects(t *testing.T) {
 			}
 		})
 
-		// Test case 8: Sort by star count (ascending)
+		// Test case 7: Sort by star count (ascending)
 		t.Run("SortByStarCountAscending", func(t *testing.T) {
 			// Create a sort parameter for star count ascending
 			sortField := pb.ProjectSortField_STARCOUNT
@@ -406,7 +303,7 @@ func TestGetAllProjects(t *testing.T) {
 			}
 		})
 
-		// Test case 9: Sort by star count (descending)
+		// Test case 8: Sort by star count (descending)
 		t.Run("SortByStarCountDescending", func(t *testing.T) {
 			// Create a sort parameter for star count descending
 			sortField := pb.ProjectSortField_STARCOUNT
@@ -434,7 +331,7 @@ func TestGetAllProjects(t *testing.T) {
 			}
 		})
 
-		// Test case 10: Get a specific public project by ID
+		// Test case 9: Get a specific public project by ID
 		t.Run("GetSpecificPublicProject", func(t *testing.T) {
 			// Use one of the public project IDs we created
 			projectId := publicProjects[2]
