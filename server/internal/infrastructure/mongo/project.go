@@ -122,20 +122,20 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 	if sort == nil {
 		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 	} else {
-		// Default suffix for unknown sort keys
-		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
-		
 		// Convert sort key to lowercase for case-insensitive comparison
 		sortKey := strings.ToLower(sort.Key)
 		
-		if sortKey == "id" {
+		switch sortKey {
+		case "id":
 			suffix = ""
-		} else if sortKey == "name" {
+		case "name":
 			suffix = ":" + p.Name()
-		} else if sortKey == "updatedat" {
+		case "updatedat":
 			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
-		} else if sortKey == "starcount" {
+		case "starcount":
 			suffix = fmt.Sprintf(":%d", p.StarCount())
+		default: 
+			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 		}
 	}
 

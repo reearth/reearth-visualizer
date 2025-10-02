@@ -64,7 +64,7 @@ func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		if info.FullMethod == "/reearth.visualizer.v1.ReEarthVisualizer/GetAllProjects" {
 			// Check if this is a request for private projects
-			// This is a request for private projects, so we need to authenticate
+			// This checks if the request is for private projects
 			if getProjectsReq, ok := req.(*pb.GetAllProjectsRequest); ok && getProjectsReq.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
 				log.Infof("unaryAuthInterceptor: GetAllProjects request with private visibility, requiring authentication")
 				return authenticateRequest(ctx, req, info, handler, cfg)
