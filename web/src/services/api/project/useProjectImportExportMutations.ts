@@ -152,7 +152,6 @@ export const useProjectImportExportMutations = () => {
           status: "uploaded",
           project_id: temporary_project
         };
-        setNotification({ type: "success", text: t("Upload completed.") });
       } catch (error) {
         setNotification({
           type: "error",

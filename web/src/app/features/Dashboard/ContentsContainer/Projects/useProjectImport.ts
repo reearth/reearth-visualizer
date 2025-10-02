@@ -9,10 +9,12 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 export default ({
   workspaceId,
-  refetchProjectList
+  refetchProjectList,
+  onImportCompleted
 }: {
   workspaceId?: string;
   refetchProjectList: () => void;
+  onImportCompleted?: () => void;
 }) => {
   const [, setNotification] = useNotification();
   const t = useT();
@@ -81,6 +83,7 @@ export default ({
                 : undefined
             );
             clearInterval(interval);
+            onImportCompleted?.();
             break;
           case ProjectImportStatus.Success:
             setNotification({
@@ -90,6 +93,7 @@ export default ({
             refetchProjectList();
             setImportStatus(ProjectImportStatus.None);
             clearInterval(interval);
+            onImportCompleted?.();
             break;
           case ProjectImportStatus.Processing:
           case ProjectImportStatus.Uploading:
@@ -108,6 +112,7 @@ export default ({
     refetchProjectList,
     refetchProject,
     setNotification,
+    onImportCompleted,
     t
   ]);
 
