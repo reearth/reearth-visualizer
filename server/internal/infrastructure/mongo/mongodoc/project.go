@@ -1,11 +1,11 @@
 package mongodoc
 
 import (
-	"fmt"
 	"net/url"
 	"strings"
 	"time"
 
+	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -195,7 +195,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err == nil {
 		p.SetMetadata(metadata)
 	} else {
-		fmt.Printf("DEBUG: Failed to create metadata: %v\n", err)
+		log.Errorf("DEBUG: Failed to create metadata: %v\n", err)
 	}
 
 	return p, nil

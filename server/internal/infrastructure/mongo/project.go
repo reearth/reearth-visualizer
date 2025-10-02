@@ -2,7 +2,6 @@ package mongo
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"regexp"
 	"slices"
@@ -564,27 +563,19 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
 			keyword := strings.ToLower(*pFilter.Keyword)
 
-			// Split by comma to support multiple topics
 			topicKeywords := strings.Split(keyword, ",")
 
-			// Trim whitespace from each topic
 			for i := range topicKeywords {
 				topicKeywords[i] = strings.TrimSpace(topicKeywords[i])
 			}
 
 			// If multiple topics, use $in operator to match any of them
 			if len(topicKeywords) > 1 {
-				log.Infof("FindAll: Using multiple topics search: %v", topicKeywords)
-				// Add the topics condition to the existing filter
 				filter["topics"] = bson.M{"$in": topicKeywords}
 			} else {
-				log.Infof("FindAll: Using single topic search: %s", keyword)
 				// Add the single topic condition to the existing filter
 				filter["topics"] = keyword
 			}
-
-			filterJSON, _ := json.Marshal(filter)
-			log.Infof("FindAll: Final filter: %s", string(filterJSON))
 		} else {
 			// Add name regex search directly to the filter
 			filter["name"] = bson.M{
@@ -610,15 +601,11 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 				log.Infof("FindAll: Total projects in MongoDB: %d", totalCount)
 			}
 
-			// If no public projects found, return empty list rather than potentially causing errors
-			if count == 0 {
-				log.Warnf("FindAll: No public projects found, returning empty list")
-				return []*project.Project{}, usecasex.EmptyPageInfo(), nil
-			}
+			log.Warnf("FindAll: No public projects found, returning empty list")
+			return []*project.Project{}, usecasex.EmptyPageInfo(), nil
 		}
 	}
 
-	// Set a reasonable default limit for offset pagination
 	if pFilter.Pagination == nil {
 		log.Warnf("FindAll: Pagination is nil, not using pagination")
 	}
