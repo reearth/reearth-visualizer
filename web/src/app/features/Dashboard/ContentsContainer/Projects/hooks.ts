@@ -258,6 +258,14 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImportCompleted = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [fileInputRef]);
+
   const {
     importStatus,
     handleProjectImport,
@@ -265,7 +273,8 @@ export default (workspaceId?: string) => {
     handleProjectImportErrorClose
   } = useProjectImport({
     workspaceId,
-    refetchProjectList: refetch
+    refetchProjectList: refetch,
+    onImportCompleted: handleImportCompleted
   });
 
   // project remove
@@ -306,6 +315,7 @@ export default (workspaceId?: string) => {
     contentWidth,
     starredProjects,
     importStatus,
+    fileInputRef,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
