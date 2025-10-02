@@ -100,7 +100,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Ope
 	return projects, nil
 }
 
-// GetProjects invoked by loader
+// GetProjects invoked by loader 
 func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, op *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 
 	projects, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
