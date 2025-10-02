@@ -174,7 +174,6 @@ func isReadOnlyMethod(method string) bool {
 		"v1.ReEarthVisualizer/GetAllProjects",
 		"v1.ReEarthVisualizer/GetProject",
 		"v1.ReEarthVisualizer/GetProjectByAlias",
-		"v1.ReEarthVisualizer/ValidateProjectAlias",
 		"v1.ReEarthVisualizer/ExportProject",
 	}
 
