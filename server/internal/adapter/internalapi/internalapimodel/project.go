@@ -87,21 +87,21 @@ func ToProjectPageInfo(info *usecasex.PageInfo) *pb.PageInfo {
 			HasPreviousPage: false,
 		}
 	}
-	
+
 	result := &pb.PageInfo{
 		TotalCount:      info.TotalCount,
 		HasNextPage:     info.HasNextPage,
 		HasPreviousPage: info.HasPreviousPage,
 	}
-	
+
 	if info.StartCursor != nil {
 		result.StartCursor = info.StartCursor.StringRef()
 	}
-	
+
 	if info.EndCursor != nil {
 		result.EndCursor = info.EndCursor.StringRef()
 	}
-	
+
 	return result
 }
 
@@ -185,12 +185,12 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		updatedAt = timestamppb.New(*p.UpdatedAt())
 	}
 	return &pb.ProjectMetadata{
-		Id:           p.ID().String(),
-		ProjectId:    p.Project().String(),
-		WorkspaceId:  p.Workspace().String(),
-		Readme:       p.Readme(),
-		License:      p.License(),
-		Topics:       func() []string {
+		Id:          p.ID().String(),
+		ProjectId:   p.Project().String(),
+		WorkspaceId: p.Workspace().String(),
+		Readme:      p.Readme(),
+		License:     p.License(),
+		Topics: func() []string {
 			if p.Topics() != nil && *p.Topics() != "" {
 				return strings.Split(*p.Topics(), ",")
 			}

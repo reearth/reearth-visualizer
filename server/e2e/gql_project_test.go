@@ -518,13 +518,14 @@ func TestFindStarredByWorkspace(t *testing.T) {
 
 		starredProjectsMap[id] = true
 
-		if id == project1ID {
+		switch id {
+		case project1ID:
 			assert.Equal(t, "Project 1", name)
 			assert.True(t, starred)
-		} else if id == project3ID {
+		case project3ID:
 			assert.Equal(t, "Project 3", name)
 			assert.True(t, starred)
-		} else {
+		default:
 			t.Errorf("Unexpected project in starred projects: %s", id)
 		}
 	}

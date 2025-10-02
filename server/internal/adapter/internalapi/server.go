@@ -113,7 +113,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 }
 
 func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsRequest) (*pb.GetAllProjectsResponse, error) {
-	uc := adapter.Usecases(ctx)	
+	uc := adapter.Usecases(ctx)
 	// Create a pagination object if one wasn't provided
 	if req.Pagination == nil {
 		defaultLimit := int32(100)
@@ -121,9 +121,9 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 			First: &defaultLimit,
 		}
 	}
-	
+
 	pagination := internalapimodel.ToProjectPagination(req.Pagination)
-	
+
 	// Parse the sort type from the request
 	sort := internalapimodel.ToProjectSortType(req.Sort)
 
@@ -133,7 +133,7 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		sf := "topics"
 		searchField = &sf
 	}
-	
+
 	// Convert ProjectVisibility to string
 	var visibility *string
 	if req.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
@@ -144,22 +144,22 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		v := "public"
 		visibility = &v
 	}
-	
+
 	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, searchField, visibility)
-	
+
 	if err != nil {
 		log.Errorf("GetAllProjects: Database query failed: %v", err)
 		return nil, err
 	}
-		
+
 	projects := make([]*pb.Project, 0, len(res))
 	for _, pj := range res {
-		project := internalapimodel.ToInternalProject(ctx, pj, nil)	
+		project := internalapimodel.ToInternalProject(ctx, pj, nil)
 		if project != nil {
 			projects = append(projects, project)
 		}
 	}
-	
+
 	return &pb.GetAllProjectsResponse{
 		Projects: projects,
 		PageInfo: internalapimodel.ToProjectPageInfo(info),

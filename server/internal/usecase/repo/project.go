@@ -11,11 +11,11 @@ import (
 )
 
 type ProjectFilter struct {
-	Sort       *project.SortType
-	Keyword    *string
-	Pagination *usecasex.Pagination
-	Limit      *int64
-	Offset     *int64
+	Sort        *project.SortType
+	Keyword     *string
+	Pagination  *usecasex.Pagination
+	Limit       *int64
+	Offset      *int64
 	SearchField *string
 	Visibility  *string
 }

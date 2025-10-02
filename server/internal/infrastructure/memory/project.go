@@ -231,7 +231,7 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
-	
+
 	// Default visibility is public
 	visibility := "public"
 	if pFilter.Visibility != nil {
@@ -247,7 +247,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 				result = append(result, p)
 				continue
 			}
-			
+
 			// Determine search type
 			if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
 				// Search in topics
@@ -268,7 +268,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		// Convert sort key to lowercase for case-insensitive comparison
 		sortKey := strings.ToLower(pFilter.Sort.Key)
 		log.Printf("Sorting projects with key: %s (normalized to: %s), desc: %t", pFilter.Sort.Key, sortKey, pFilter.Sort.Desc)
-		
+
 		sort.SliceStable(result, func(i, j int) bool {
 			switch sortKey {
 			case "name":

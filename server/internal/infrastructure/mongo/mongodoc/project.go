@@ -28,10 +28,10 @@ type ProjectDocument struct {
 	Visibility   string
 	ProjectAlias string
 	// metadata fields
-	CreatedAt   time.Time  `bson:"created_at"`
-	Topics      []string   `bson:"topics"`
-	StarCount   int        `bson:"star_count"`
-	StarredBy   []string   `bson:"starred_by"`
+	CreatedAt time.Time `bson:"created_at"`
+	Topics    []string  `bson:"topics"`
+	StarCount int       `bson:"star_count"`
+	StarredBy []string  `bson:"starred_by"`
 	// publishment
 	Alias             string
 	PublishmentStatus string
@@ -94,10 +94,10 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		Visibility:   p.Visibility(),
 		ProjectAlias: p.ProjectAlias(),
 		// metadata fields
-		CreatedAt:   createdAt,
-		Topics:      topics,
-		StarCount:   0, // Default values for now
-		StarredBy:   []string{},
+		CreatedAt: createdAt,
+		Topics:    topics,
+		StarCount: 0, // Default values for now
+		StarredBy: []string{},
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: string(p.PublishmentStatus()),
@@ -182,7 +182,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	}
 
 	topicsPtr := &topicsStr
-	
+
 	metadata, err := project.NewProjectMetadata().
 		ID(id.NewProjectMetadataID()).
 		Project(pid).
@@ -191,7 +191,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		CreatedAt(&d.CreatedAt).
 		UpdatedAt(&d.UpdatedAt).
 		Build()
-	
+
 	if err == nil {
 		p.SetMetadata(metadata)
 	} else {

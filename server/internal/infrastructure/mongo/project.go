@@ -124,7 +124,7 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 	} else {
 		// Convert sort key to lowercase for case-insensitive comparison
 		sortKey := strings.ToLower(sort.Key)
-		
+
 		switch sortKey {
 		case "id":
 			suffix = ""
@@ -134,7 +134,7 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 		case "starcount":
 			suffix = fmt.Sprintf(":%d", p.StarCount())
-		default: 
+		default:
 			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 		}
 	}
@@ -263,7 +263,7 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 		{Key: sortKey, Value: sortOrder},
 		{Key: "id", Value: sortOrder},
 	}
-	
+
 	findOptions := options.Find().
 		SetSort(sortConfig).
 		SetLimit(*limit)
@@ -553,25 +553,25 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	if pFilter.Visibility != nil {
 		visibility = *pFilter.Visibility
 	}
-	
+
 	filter := bson.M{
 		"visibility": visibility,
 		"deleted":    false,
 	}
-	
+
 	if pFilter.Keyword != nil {
 		// Check if we should search in topics
 		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
 			keyword := strings.ToLower(*pFilter.Keyword)
-			
+
 			// Split by comma to support multiple topics
 			topicKeywords := strings.Split(keyword, ",")
-			
+
 			// Trim whitespace from each topic
 			for i := range topicKeywords {
 				topicKeywords[i] = strings.TrimSpace(topicKeywords[i])
 			}
-			
+
 			// If multiple topics, use $in operator to match any of them
 			if len(topicKeywords) > 1 {
 				log.Infof("FindAll: Using multiple topics search: %v", topicKeywords)
@@ -582,7 +582,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 				// Add the single topic condition to the existing filter
 				filter["topics"] = keyword
 			}
-			
+
 			filterJSON, _ := json.Marshal(filter)
 			log.Infof("FindAll: Final filter: %s", string(filterJSON))
 		} else {
@@ -596,11 +596,10 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		}
 	}
 
-	
 	count, err := r.client.Count(ctx, filter)
 	if err != nil {
 		log.Errorf("FindAll: Error counting public projects: %v", err)
-	} else {	
+	} else {
 		// If count is 0, do a broader search just to verify projects exist
 		if count == 0 {
 			// Check if there are any projects at all
@@ -610,7 +609,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 			} else {
 				log.Infof("FindAll: Total projects in MongoDB: %d", totalCount)
 			}
-			
+
 			// If no public projects found, return empty list rather than potentially causing errors
 			if count == 0 {
 				log.Warnf("FindAll: No public projects found, returning empty list")
@@ -623,7 +622,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	if pFilter.Pagination == nil {
 		log.Warnf("FindAll: Pagination is nil, not using pagination")
 	}
-	
+
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
 	if err == nil {
 		log.Infof("FindAll: Filter succeeded, found %d projects", len(projects))
@@ -833,7 +832,7 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 
 func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
 	log.Infof("paginateWithoutWorkspaceFilter: Using pagination approach with filter: %v", filter)
-	
+
 	// Map sort key from external API format to MongoDB field name
 	mappedSort := sort
 	if sort != nil && sort.Key == "starcount" {
@@ -842,7 +841,7 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 			Desc: sort.Desc,
 		}
 	}
-	
+
 	// Convert sort to usecasex.Sort format
 	var usort *usecasex.Sort
 	if mappedSort != nil {
@@ -868,7 +867,7 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 		log.Errorf("paginateWithoutWorkspaceFilter: Paginate error: %v", err)
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
-	
+
 	log.Infof("paginateWithoutWorkspaceFilter: Successfully paginated %d projects, pageInfo: %+v", len(c.Result), pageInfo)
 	return c.Result, pageInfo, nil
 }

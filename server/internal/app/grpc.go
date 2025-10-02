@@ -72,7 +72,7 @@ func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 			log.Infof("unaryAuthInterceptor: GetAllProjects request with public visibility, proceeding without authentication")
 			return handler(ctx, req)
 		}
-		
+
 		if isReadOnlyMethod(info.FullMethod) {
 			return handler(ctx, req)
 		}
@@ -103,7 +103,7 @@ func authenticateRequest(ctx context.Context, req any, info *grpc.UnaryServerInf
 	} else {
 		log.Infof("Skip token check.")
 	}
-	
+
 	return handler(ctx, req)
 }
 
