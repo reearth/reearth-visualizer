@@ -169,7 +169,8 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		return nil, err
 	}
 
-	// Always create metadata for the project
+	// Only create metadata if there are meaningful metadata-specific values
+	// Check for metadata-specific fields that differ from default project fields
 	var topicsStr string
 	if len(d.Topics) > 0 {
 		// Convert topics array to comma-separated string as expected by the metadata
@@ -181,21 +182,26 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		}
 	}
 
-	topicsPtr := &topicsStr
+	// Only create metadata if we have topics or other metadata-specific values
+	hasTopics := len(d.Topics) > 0
+	
+	if hasTopics {
+		topicsPtr := &topicsStr
 
-	metadata, err := project.NewProjectMetadata().
-		ID(id.NewProjectMetadataID()).
-		Project(pid).
-		Workspace(tid).
-		Topics(topicsPtr).
-		CreatedAt(&d.CreatedAt).
-		UpdatedAt(&d.UpdatedAt).
-		Build()
+		metadata, err := project.NewProjectMetadata().
+			ID(id.NewProjectMetadataID()).
+			Project(pid).
+			Workspace(tid).
+			Topics(topicsPtr).
+			CreatedAt(&d.CreatedAt).
+			UpdatedAt(&d.UpdatedAt).
+			Build()
 
-	if err == nil {
-		p.SetMetadata(metadata)
-	} else {
-		log.Errorf("DEBUG: Failed to create metadata: %v\n", err)
+		if err == nil {
+			p.SetMetadata(metadata)
+		} else {
+			log.Errorf("DEBUG: Failed to create metadata: %v\n", err)
+		}
 	}
 
 	return p, nil
