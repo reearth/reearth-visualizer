@@ -64,7 +64,12 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 	if pm == nil {
 		return nil
 	}
-	importStatus := ToProjectImportStatus(*pm.ImportStatus())
+	var importStatus ProjectImportStatus
+	if pm.ImportStatus() != nil {
+		importStatus = ToProjectImportStatus(*pm.ImportStatus())
+	} else {
+		importStatus = ProjectImportStatusNone
+	}
 
 	return &ProjectMetadata{
 		ID:           IDFrom(pm.ID()),

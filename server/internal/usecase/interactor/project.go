@@ -341,6 +341,28 @@ func (i *Project) FindVisibilityByWorkspace(
 	return result, pInfo, err
 }
 
+func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
+	pFilter := repo.ProjectFilter{
+		Keyword:     keyword,
+		Sort:        sort,
+		Pagination:  pagination,
+		SearchField: searchField,
+		Visibility:  visibility,
+	}
+
+	pList, pInfo, err := i.projectRepo.FindAll(ctx, pFilter)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, pList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, nil
+}
+
 func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]*project.Project, error) {
 	ids := make(id.ProjectIDList, 0, len(pList))
 	for _, p := range pList {

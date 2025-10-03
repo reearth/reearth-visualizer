@@ -44,7 +44,7 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 		)
 		assert.Equal(t, "test readme", *res.Readme)
 		assert.Equal(t, "test license", *res.License)
-		assert.Equal(t, "test topics", *res.Topics)
+		assert.Equal(t, []string{"test topics"}, res.Topics)
 	})
 }
 
