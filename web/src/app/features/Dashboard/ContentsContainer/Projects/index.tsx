@@ -11,7 +11,7 @@ import ManagerEmptyContent from "@reearth/app/ui/components/ManagerBase/ManagerE
 import { ProjectImportStatus } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useMemo, useRef, Fragment } from "react";
+import { FC, useMemo, Fragment } from "react";
 
 import useHooks from "./hooks";
 import ProjectGridViewItem from "./Project/ProjectGridViewItem";
@@ -32,6 +32,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     searchTerm,
     sortValue,
     importStatus,
+    fileInputRef,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
@@ -61,7 +62,9 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
     [t]
   );
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasImportingProject =
+    importStatus === ProjectImportStatus.Processing ||
+    importStatus === ProjectImportStatus.Uploading;
 
   return (
     <ManagerWrapper
@@ -110,7 +113,7 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
         searchPlaceholder={t("Search project")}
         onSearch={handleSearch}
       />
-      {filtedProjects?.length ? (
+      {filtedProjects?.length || hasImportingProject ? (
         <ManagerContent data-testid="projects-manager-content">
           <ContentWrapper>
             <BreadcrumbContainer data-testid="projects-breadcrumb-container">
@@ -187,12 +190,11 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
                   layout={layout}
                   data-testid={`projects-group-${layout}`}
                 >
-                  {(importStatus === ProjectImportStatus.Processing ||
-                    importStatus === ProjectImportStatus.Uploading) &&
+                  {hasImportingProject &&
                     (layout === "grid" ? (
                       <ImportingCardContainer>
-                        <ImportCardPlaceholder />
-                        <ImportingCardFotter />
+                        <ImportingCardPlaceholder />
+                        <ImportingCardFooter />
                       </ImportingCardContainer>
                     ) : (
                       <ImportingListContainer />
@@ -364,24 +366,19 @@ const HiddenFileInput = styled("input")({
   display: "none"
 });
 
-const ImportingCardContainer = styled("div")(({ theme }) => ({
+const ImportingCardContainer = styled("div")(() => ({
   display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing.small,
-  height: "218px",
-  "@media (max-width: 567px)": {
-    height: "171px"
-  }
+  flexDirection: "column"
 }));
 
 const shimmerEffect = {
   background:
-    "linear-gradient(90deg, #292929 0%, #474747 33.04%, #474747 58.56%, #292929 100.09%)",
+    "linear-gradient(90deg, #292929 0%, #474747 30%, #474747 60%, #292929 100%)",
   backgroundSize: "400% 100%",
-  animation: "shimmer 1.2s infinite ease-in-out",
+  animation: "shimmer 3s infinite linear",
   "@keyframes shimmer": {
-    "0%": { backgroundPosition: "-400px 0" },
-    "100%": { backgroundPosition: "400px 0" }
+    "0%": { backgroundPosition: "400% 0" },
+    "100%": { backgroundPosition: "0 0" }
   }
 };
 
@@ -389,19 +386,22 @@ const ImportingListContainer = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   gap: theme.spacing.small,
-  height: "25px",
+  height: "50px",
   borderRadius: theme.radius.normal,
   ...shimmerEffect
 }));
 
-const ImportCardPlaceholder = styled("div")(({ theme }) => ({
+const ImportingCardPlaceholder = styled("div")(({ theme }) => ({
   flex: 1,
   borderRadius: theme.radius.normal,
+  minHeight: "188px",
   ...shimmerEffect
 }));
 
-const ImportingCardFotter = styled("div")(({ theme }) => ({
-  height: "20px",
+const ImportingCardFooter = styled("div")(({ theme }) => ({
+  height: "18px",
+  marginTop: "7px",
+  marginBottom: "7px",
   borderRadius: theme.radius.normal,
   flexShrink: 0,
   ...shimmerEffect

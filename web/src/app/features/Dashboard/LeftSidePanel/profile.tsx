@@ -23,6 +23,7 @@ type ProfileProp = {
   currentProject?: Project;
   currentWorkspace?: Workspace;
   isPersonal?: boolean;
+  userPhotoUrl?: string;
   workspaces?: Workspace[];
   onSignOut?: () => void;
   onWorkspaceChange?: (workspaceId?: string) => void;
@@ -31,6 +32,7 @@ type ProfileProp = {
 export const Profile: FC<ProfileProp> = ({
   currentUser,
   isPersonal,
+  userPhotoUrl,
   workspaces,
   currentWorkspace,
   onWorkspaceChange,
@@ -90,9 +92,13 @@ export const Profile: FC<ProfileProp> = ({
       <ProfileWrapper data-testid="profile-profileWrapper">
         {isPersonal && (
           <Avatar data-testid="profile-avatar">
-            <Typography size="body" data-testid="profile-avatar-initial">
-              {currentUser?.charAt(0)}
-            </Typography>
+            {userPhotoUrl ? (
+              <AvatarImage src={userPhotoUrl} alt="User Avatar" />
+            ) : (
+              <Typography size="body" data-testid="profile-avatar-initial">
+                {currentUser?.charAt(0)}
+              </Typography>
+            )}
           </Avatar>
         )}
         <TitleWrapper data-testid="profile-titleWrapper">
@@ -143,8 +149,16 @@ const Avatar = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  flexShrink: 0
+  flexShrink: 0,
+  overflow: "hidden"
 }));
+
+const AvatarImage = styled("img")({
+  position: "relative",
+  width: "100%",
+  height: "100%",
+  objectFit: "cover"
+});
 
 const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
