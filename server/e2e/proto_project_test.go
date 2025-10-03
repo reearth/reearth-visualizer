@@ -505,7 +505,7 @@ func TestCreateProjectForInternal(t *testing.T) {
 		metadata := prj.GetMetadata()
 		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
 		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
-		assert.Equal(t, "topics-xxxxxxxxxxx", *metadata.Topics)
+		assert.Equal(t, []string{"topics-xxxxxxxxxxx"}, metadata.Topics)
 
 		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
 			ProjectId: res.Project.Id,
@@ -518,7 +518,7 @@ func TestCreateProjectForInternal(t *testing.T) {
 		metadata = prj.GetMetadata()
 		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
 		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
-		assert.Equal(t, "topics-xxxxxxxxxxx", *metadata.Topics)
+		assert.Equal(t, []string{"topics-xxxxxxxxxxx"}, metadata.Topics)
 
 	})
 

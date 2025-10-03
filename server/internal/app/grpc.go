@@ -64,7 +64,16 @@ func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		// Check if this is a read-only GET method that should be allowed without auth
 		if isReadOnlyMethod(info.FullMethod) {
-			return handler(ctx, req)
+			// Special case: GetAllProjects with private visibility requires authentication
+			if info.FullMethod == "/reearth.visualizer.v1.ReEarthVisualizer/GetAllProjects" {
+				if getProjectsReq, ok := req.(*pb.GetAllProjectsRequest); ok && getProjectsReq.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
+					// TODO: Private projects require authentication, will continue to auth check below
+				} else {
+					return handler(ctx, req)
+				}
+			} else {
+				return handler(ctx, req)
+			}
 		}
 
 		md, ok := metadata.FromIncomingContext(ctx)
@@ -156,6 +165,7 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 
 func isReadOnlyMethod(method string) bool {
 	readOnlyMethods := []string{
+		"v1.ReEarthVisualizer/GetAllProjects",
 		"v1.ReEarthVisualizer/GetProjectList",
 		"v1.ReEarthVisualizer/GetProject",
 		"v1.ReEarthVisualizer/GetProjectByAlias",

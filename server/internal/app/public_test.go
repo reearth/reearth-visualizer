@@ -204,13 +204,14 @@ type mockPublished struct {
 }
 
 func (p *mockPublished) Metadata(ctx context.Context, name string) (interfaces.PublishedMetadata, error) {
-	if name == "active" {
+	switch name {
+	case "active":
 		return interfaces.PublishedMetadata{
 			IsBasicAuthActive: true,
 			BasicAuthUsername: "fooo",
 			BasicAuthPassword: "baar",
 		}, nil
-	} else if name == "inactive" {
+	case "inactive":
 		return interfaces.PublishedMetadata{
 			IsBasicAuthActive: false,
 			BasicAuthUsername: "fooo",

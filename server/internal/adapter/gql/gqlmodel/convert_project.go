@@ -64,7 +64,12 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 	if pm == nil {
 		return nil
 	}
-	importStatus := ToProjectImportStatus(*pm.ImportStatus())
+	var importStatus ProjectImportStatus
+	if pm.ImportStatus() != nil {
+		importStatus = ToProjectImportStatus(*pm.ImportStatus())
+	} else {
+		importStatus = ProjectImportStatusNone
+	}
 
 	return &ProjectMetadata{
 		ID:           IDFrom(pm.ID()),
@@ -170,8 +175,8 @@ type ProjectExport struct {
 
 	Visibility string `json:"visibility,omitempty"`
 
-	License *string `json:"readme,omitempty"`
-	Readme  *string `json:"license,omitempty"`
+	License *string `json:"license,omitempty"`
+	Readme  *string `json:"readme,omitempty"`
 	Topics  *string `json:"topics,omitempty"`
 }
 

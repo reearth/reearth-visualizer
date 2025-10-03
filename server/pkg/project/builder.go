@@ -189,3 +189,8 @@ func (b *Builder) TrackingID(trackingId string) *Builder {
 	b.p.trackingId = trackingId
 	return b
 }
+
+func (b *Builder) StarCount(starCount int32) *Builder {
+	b.p.starCount = starCount
+	return b
+}

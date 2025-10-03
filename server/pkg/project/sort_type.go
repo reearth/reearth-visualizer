@@ -9,4 +9,5 @@ var (
 	SortTypeID        = SortType{Key: "id"}
 	SortTypeUpdatedAt = SortType{Key: "updatedat"}
 	SortTypeName      = SortType{Key: "name"}
+	SortTypeStarCount = SortType{Key: "starcount"}
 )
