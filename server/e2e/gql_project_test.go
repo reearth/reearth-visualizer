@@ -122,7 +122,7 @@ mutation CreateProject(
   $projectAlias: String
   $readme: String
   $license: String
-  $topics: [String]
+  $topics: [String!]
 ) {
   createProject(
     input: {
@@ -219,7 +219,7 @@ func TestCreateUpdateProject(t *testing.T) {
 
 			"readme":  "readme-xxxxxx",
 			"license": "license-xxxxxx",
-			"topics": []string{"gis", "history"},
+			"topics":  []string{"gis", "history"},
 		},
 	})
 

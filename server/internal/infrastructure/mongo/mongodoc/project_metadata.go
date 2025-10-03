@@ -86,10 +86,10 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		License(d.License).
 		UpdatedAt(d.UpdatedAt).
 		CreatedAt(d.CreatedAt)
-	
+
 	if d.Topics != nil {
 		builder = builder.Topics(d.Topics)
 	}
-	
+
 	return builder.Build()
 }
