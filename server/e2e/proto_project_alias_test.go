@@ -27,7 +27,7 @@ func TestInternalAPI_projectAlias(t *testing.T) {
 			Description:  lo.ToPtr("Test Description1"),
 			CoreSupport:  lo.ToPtr(true),
 			Visibility:   lo.ToPtr("public"),
-			ProjectAlias: lo.ToPtr("xxxx"),
+			ProjectAlias: lo.ToPtr("xxxxx"),
 		})
 		require.Nil(t, err)
 
@@ -35,7 +35,7 @@ func TestInternalAPI_projectAlias(t *testing.T) {
 
 		res2, err := client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
 			WorkspaceId: wID.String(),
-			Alias:       "xxxx",
+			Alias:       "xxxxx",
 			ProjectId:   &pj.Id,
 		})
 		require.Nil(t, err)
@@ -43,7 +43,7 @@ func TestInternalAPI_projectAlias(t *testing.T) {
 
 		res2, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
 			WorkspaceId: wID.String(),
-			Alias:       "xxxx",
+			Alias:       "xxxxx",
 		})
 		require.Nil(t, err)
 		require.Equal(t, *res2.ErrorMessage, "The alias is already in use within the workspace. Please try a different value.")
