@@ -35,7 +35,7 @@ type CreateProjectParam struct {
 	// metadata
 	Readme  *string
 	License *string
-	Topics  *string
+	Topics  *[]string
 }
 
 type UpdateProjectParam struct {
@@ -69,7 +69,7 @@ type UpdateProjectMetadataParam struct {
 	ID      id.ProjectID
 	Readme  *string
 	License *string
-	Topics  *string
+	Topics  *[]string
 }
 
 type PublishProjectParam struct {

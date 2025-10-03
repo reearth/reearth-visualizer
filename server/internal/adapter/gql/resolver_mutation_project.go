@@ -36,7 +36,7 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		ProjectAlias: input.ProjectAlias,
 		Readme:       input.Readme,
 		License:      input.License,
-		Topics:       input.Topics,
+		Topics:       &input.Topics,
 	},
 		getOperator(ctx),
 	)
@@ -105,7 +105,7 @@ func (r *mutationResolver) UpdateProjectMetadata(ctx context.Context, input gqlm
 		ID:      pid,
 		Readme:  input.Readme,
 		License: input.License,
-		Topics:  input.Topics,
+		Topics:  &input.Topics,
 	}, getOperator(ctx))
 	if err != nil {
 		return nil, err

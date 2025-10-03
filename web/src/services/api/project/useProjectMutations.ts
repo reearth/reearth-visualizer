@@ -50,7 +50,7 @@ export const useProjectMutations = () => {
       description?: string,
       license?: string,
       readme?: string,
-      topics?: string
+      topics?: string[]
     ): Promise<MutationReturn<Partial<Project>>> => {
       const { data: projectResults, errors: projectErrors } =
         await createNewProject({
@@ -64,7 +64,7 @@ export const useProjectMutations = () => {
             visibility: visibility ? visibility : "private",
             license: license ?? "",
             readme: readme ?? "",
-            topics: topics ?? ""
+            topics: topics ?? undefined
           }
         });
       if (projectErrors || !projectResults?.createProject) {

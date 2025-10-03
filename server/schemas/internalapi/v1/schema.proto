@@ -338,7 +338,7 @@ message CreateProjectRequest {
   optional string license = 9;
 
   // Project topics
-  optional string topics = 10;
+  repeated string topics = 10;
 }
 
 // Update project fields.
@@ -394,7 +394,7 @@ message UpdateProjectMetadataRequest {
   // Project license
   optional string license = 3;
   // Project topics
-  optional string topics = 4;
+  repeated string topics = 4;
 }
 
 // Deletes a project.

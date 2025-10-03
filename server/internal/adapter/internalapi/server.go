@@ -278,7 +278,7 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		ProjectAlias: req.ProjectAlias,
 		Readme:       req.Readme,
 		License:      req.License,
-		Topics:       req.Topics,
+		Topics:       &req.Topics,
 	},
 		op,
 	)
@@ -343,7 +343,7 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 		ID:      pid,
 		Readme:  req.Readme,
 		License: req.License,
-		Topics:  req.Topics,
+		Topics:  &req.Topics,
 	}, op)
 	if err != nil {
 		return nil, err

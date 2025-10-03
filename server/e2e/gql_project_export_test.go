@@ -84,7 +84,7 @@ func Export(t *testing.T, e *httpexpect.Expect) string {
 			"project": projectId,
 			"readme":  "readme test",
 			"license": "license test",
-			"topics":  "topics test",
+			"topics":  []string{"gis", "history"},
 		},
 	})
 	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1)

@@ -244,7 +244,7 @@ func baseSetup(ctx context.Context, r *repo.Container, f gateway.File) error {
 
 	readme := "xxx readme"
 	license := "yyy license"
-	topics := "zzz topics"
+	topics := []string{"gis", "history"}
 	importResultLog := map[string]any{}
 
 	st := project.ProjectImportStatusNone
@@ -255,7 +255,7 @@ func baseSetup(ctx context.Context, r *repo.Container, f gateway.File) error {
 		ImportStatus(&st).
 		Readme(&readme).
 		License(&license).
-		Topics(&topics).
+		Topics(topics).
 		ImportResultLog(&importResultLog).
 		Build()
 	if err != nil {
