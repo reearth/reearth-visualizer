@@ -255,7 +255,7 @@ func baseSetup(ctx context.Context, r *repo.Container, f gateway.File) error {
 		ImportStatus(&st).
 		Readme(&readme).
 		License(&license).
-		Topics(topics).
+		Topics(&topics).
 		ImportResultLog(&importResultLog).
 		Build()
 	if err != nil {

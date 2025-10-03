@@ -88,7 +88,7 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		CreatedAt(d.CreatedAt)
 	
 	if d.Topics != nil {
-		builder = builder.Topics(*d.Topics)
+		builder = builder.Topics(d.Topics)
 	}
 	
 	return builder.Build()

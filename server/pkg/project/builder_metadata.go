@@ -76,8 +76,8 @@ func (b *MetadataBuilder) License(license *string) *MetadataBuilder {
 	return b
 }
 
-func (b *MetadataBuilder) Topics(topics []string) *MetadataBuilder {
-	b.r.topics = &topics
+func (b *MetadataBuilder) Topics(topics *[]string) *MetadataBuilder {
+	b.r.topics = topics
 	return b
 }
 

@@ -838,7 +838,7 @@ func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, w
 			ImportStatus(&st).
 			Readme(&readme).
 			License(&license).
-			Topics(topics).
+			Topics(&topics).
 			ImportResultLog(&log).
 			Build()
 		assert.Nil(t, err)

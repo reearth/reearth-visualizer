@@ -174,7 +174,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 			ID(id.NewProjectMetadataID()).
 			Project(pid).
 			Workspace(tid).
-			Topics(d.Topics).
+			Topics(&d.Topics).
 			CreatedAt(&d.CreatedAt).
 			UpdatedAt(&d.UpdatedAt).
 			Build()
