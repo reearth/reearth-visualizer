@@ -175,8 +175,8 @@ type ProjectExport struct {
 
 	Visibility string `json:"visibility,omitempty"`
 
-	License *string `json:"readme,omitempty"`
-	Readme  *string `json:"license,omitempty"`
+	License *string `json:"license,omitempty"`
+	Readme  *string `json:"readme,omitempty"`
 	Topics  *string `json:"topics,omitempty"`
 }
 
