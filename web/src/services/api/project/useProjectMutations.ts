@@ -64,7 +64,7 @@ export const useProjectMutations = () => {
             visibility: visibility ? visibility : "private",
             license: license ?? "",
             readme: readme ?? "",
-            topics: topics ?? undefined
+            topics: topics ?? []
           }
         });
       if (projectErrors || !projectResults?.createProject) {

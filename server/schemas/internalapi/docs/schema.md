@@ -75,7 +75,7 @@ Cannot be created under a workspace the user does not belong to.
 | project_alias | [string](#string)                               | optional | Project alias                                                         |
 | readme        | [string](#string)                               | optional | Project readme                                                        |
 | license       | [string](#string)                               | optional | Project license                                                       |
-| topics        | [string](#string)                               | optional | Project topics                                                        |
+| topics        | [string](#string)                               | repeated | Project topics (array of strings)                                     |
 
 <a name="reearth-visualizer-v1-CreateProjectResponse"></a>
 
@@ -307,7 +307,7 @@ Core Project messages
 | workspace_id  | [string](#string)                                                 |          | Workspace id                                                        |
 | readme        | [string](#string)                                                 | optional | Project readme                                                      |
 | license       | [string](#string)                                                 | optional | Project license                                                     |
-| topics        | [string](#string)                                                 | optional | Project topics                                                      |
+| topics        | [string](#string)                                                 | repeated | Project topics (array of strings)                                   |
 | import_status | [ProjectImportStatus](#reearth-visualizer-v1-ProjectImportStatus) |          | Project import status — if PROCESSING, data should not be retrieved |
 | created_at    | [google.protobuf.Timestamp](#google-protobuf-Timestamp)           |          | ProjectMetadata created date                                        |
 | updated_at    | [google.protobuf.Timestamp](#google-protobuf-Timestamp)           |          | ProjectMetadata updated date                                        |
@@ -403,12 +403,12 @@ Response messages
 Updates a new project metadata.
 Cannot be updated under a workspace the user does not belong to.
 
-| Field      | Type              | Label    | Description     |
-| ---------- | ----------------- | -------- | --------------- |
-| project_id | [string](#string) |          | Project ID      |
-| readme     | [string](#string) | optional | Project readme  |
-| license    | [string](#string) | optional | Project license |
-| topics     | [string](#string) | optional | Project topics  |
+| Field      | Type              | Label    | Description                       |
+| ---------- | ----------------- | -------- | --------------------------------- |
+| project_id | [string](#string) |          | Project ID                        |
+| readme     | [string](#string) | optional | Project readme                    |
+| license    | [string](#string) | optional | Project license                   |
+| topics     | [string](#string) | repeated | Project topics (array of strings) |
 
 <a name="reearth-visualizer-v1-UpdateProjectMetadataResponse"></a>
 
