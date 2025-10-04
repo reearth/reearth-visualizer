@@ -7045,7 +7045,7 @@ type ProjectMetadata {
   workspace: ID!
   readme: String
   license: String
-  topics: String
+  topics: [String!]
   importStatus: ProjectImportStatus
   importResultLog: JSON
   createdAt: DateTime
@@ -7090,7 +7090,7 @@ input CreateProjectInput {
   # metadata
   readme: String
   license: String
-  topics: String
+  topics: [String!]
 }
 
 input UpdateProjectInput {
@@ -7123,7 +7123,7 @@ input UpdateProjectMetadataInput {
   project: ID!
   readme: String
   license: String
-  topics: String
+  topics: [String!]
 }
 
 input PublishProjectInput {
@@ -29127,9 +29127,9 @@ func (ec *executionContext) _ProjectMetadata_topics(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectMetadata_topics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -46355,7 +46355,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 			it.License = data
 		case "topics":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48480,7 +48480,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context
 			it.License = data
 		case "topics":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -62916,6 +62916,42 @@ func (ec *executionContext) marshalOSketchInfo2ᚖgithubᚗcomᚋreearthᚋreear
 		return graphql.Null
 	}
 	return ec._SketchInfo(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v any) (*string, error) {

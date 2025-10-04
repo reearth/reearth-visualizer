@@ -17,7 +17,7 @@ type ProjectMetadataDocument struct {
 	ImportResultLog *map[string]any
 	Readme          *string
 	License         *string
-	Topics          *string
+	Topics          *[]string
 	CreatedAt       *time.Time
 	UpdatedAt       *time.Time
 }
@@ -76,7 +76,7 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		importStatus = &v
 	}
 
-	return project.NewProjectMetadata().
+	builder := project.NewProjectMetadata().
 		ID(rid).
 		Workspace(wid).
 		Project(pid).
@@ -84,8 +84,12 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		ImportResultLog(d.ImportResultLog).
 		Readme(d.Readme).
 		License(d.License).
-		Topics(d.Topics).
 		UpdatedAt(d.UpdatedAt).
-		CreatedAt(d.CreatedAt).
-		Build()
+		CreatedAt(d.CreatedAt)
+
+	if d.Topics != nil && len(*d.Topics) > 0 {
+		builder = builder.Topics(d.Topics)
+	}
+
+	return builder.Build()
 }

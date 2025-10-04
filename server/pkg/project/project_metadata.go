@@ -22,7 +22,7 @@ type ProjectMetadata struct {
 	importResultLog *map[string]any
 	readme          *string
 	license         *string
-	topics          *string
+	topics          *[]string
 	createdAt       *time.Time
 	updatedAt       *time.Time
 }
@@ -50,7 +50,7 @@ func (r *ProjectMetadata) License() *string {
 	return r.license
 }
 
-func (r *ProjectMetadata) Topics() *string {
+func (r *ProjectMetadata) Topics() *[]string {
 	return r.topics
 }
 
@@ -106,7 +106,7 @@ func (r *ProjectMetadata) SetLicense(license *string) {
 	r.license = license
 }
 
-func (r *ProjectMetadata) SetTopics(topics *string) {
+func (r *ProjectMetadata) SetTopics(topics *[]string) {
 	if r == nil {
 		return
 	}

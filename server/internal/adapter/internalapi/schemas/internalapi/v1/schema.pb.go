@@ -1409,7 +1409,7 @@ type CreateProjectRequest struct {
 	// Project license
 	License *string `protobuf:"bytes,9,opt,name=license,proto3,oneof" json:"license,omitempty"`
 	// Project topics
-	Topics        *string `protobuf:"bytes,10,opt,name=topics,proto3,oneof" json:"topics,omitempty"`
+	Topics        []string `protobuf:"bytes,10,rep,name=topics,proto3" json:"topics,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1507,11 +1507,11 @@ func (x *CreateProjectRequest) GetLicense() string {
 	return ""
 }
 
-func (x *CreateProjectRequest) GetTopics() string {
-	if x != nil && x.Topics != nil {
-		return *x.Topics
+func (x *CreateProjectRequest) GetTopics() []string {
+	if x != nil {
+		return x.Topics
 	}
-	return ""
+	return nil
 }
 
 // Update project fields.
@@ -1799,7 +1799,7 @@ type UpdateProjectMetadataRequest struct {
 	// Project license
 	License *string `protobuf:"bytes,3,opt,name=license,proto3,oneof" json:"license,omitempty"`
 	// Project topics
-	Topics        *string `protobuf:"bytes,4,opt,name=topics,proto3,oneof" json:"topics,omitempty"`
+	Topics        []string `protobuf:"bytes,4,rep,name=topics,proto3" json:"topics,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1855,11 +1855,11 @@ func (x *UpdateProjectMetadataRequest) GetLicense() string {
 	return ""
 }
 
-func (x *UpdateProjectMetadataRequest) GetTopics() string {
-	if x != nil && x.Topics != nil {
-		return *x.Topics
+func (x *UpdateProjectMetadataRequest) GetTopics() []string {
+	if x != nil {
+		return x.Topics
 	}
-	return ""
+	return nil
 }
 
 // Deletes a project.
@@ -3149,7 +3149,7 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tH\x00R\tprojectId\x88\x01\x01\x12\x14\n" +
 	"\x05alias\x18\x02 \x01(\tR\x05aliasB\r\n" +
-	"\v_project_id\"\xf9\x03\n" +
+	"\v_project_id\"\xe9\x03\n" +
 	"\x14CreateProjectRequest\x12!\n" +
 	"\fworkspace_id\x18\x01 \x01(\tR\vworkspaceId\x12A\n" +
 	"\n" +
@@ -3163,9 +3163,9 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"visibility\x88\x01\x01\x12(\n" +
 	"\rproject_alias\x18\a \x01(\tH\x04R\fprojectAlias\x88\x01\x01\x12\x1b\n" +
 	"\x06readme\x18\b \x01(\tH\x05R\x06readme\x88\x01\x01\x12\x1d\n" +
-	"\alicense\x18\t \x01(\tH\x06R\alicense\x88\x01\x01\x12\x1b\n" +
+	"\alicense\x18\t \x01(\tH\x06R\alicense\x88\x01\x01\x12\x16\n" +
 	"\x06topics\x18\n" +
-	" \x01(\tH\aR\x06topics\x88\x01\x01B\a\n" +
+	" \x03(\tR\x06topicsB\a\n" +
 	"\x05_nameB\x0e\n" +
 	"\f_descriptionB\x0f\n" +
 	"\r_core_supportB\r\n" +
@@ -3173,8 +3173,7 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x0e_project_aliasB\t\n" +
 	"\a_readmeB\n" +
 	"\n" +
-	"\b_licenseB\t\n" +
-	"\a_topics\"\xbd\t\n" +
+	"\b_license\"\xbd\t\n" +
 	"\x14UpdateProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x17\n" +
@@ -3232,17 +3231,16 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x19\n" +
 	"\x05alias\x18\x02 \x01(\tH\x00R\x05alias\x88\x01\x01\x12W\n" +
 	"\x12publishment_status\x18\x03 \x01(\x0e2(.reearth.visualizer.v1.PublishmentStatusR\x11publishmentStatusB\b\n" +
-	"\x06_alias\"\xb8\x01\n" +
+	"\x06_alias\"\xa8\x01\n" +
 	"\x1cUpdateProjectMetadataRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\x12\x1b\n" +
 	"\x06readme\x18\x02 \x01(\tH\x00R\x06readme\x88\x01\x01\x12\x1d\n" +
-	"\alicense\x18\x03 \x01(\tH\x01R\alicense\x88\x01\x01\x12\x1b\n" +
-	"\x06topics\x18\x04 \x01(\tH\x02R\x06topics\x88\x01\x01B\t\n" +
+	"\alicense\x18\x03 \x01(\tH\x01R\alicense\x88\x01\x01\x12\x16\n" +
+	"\x06topics\x18\x04 \x03(\tR\x06topicsB\t\n" +
 	"\a_readmeB\n" +
 	"\n" +
-	"\b_licenseB\t\n" +
-	"\a_topics\"5\n" +
+	"\b_license\"5\n" +
 	"\x14DeleteProjectRequest\x12\x1d\n" +
 	"\n" +
 	"project_id\x18\x01 \x01(\tR\tprojectId\"F\n" +

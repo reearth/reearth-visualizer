@@ -39,7 +39,7 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 				ProjectId: projectID.String(),
 				Readme:    lo.ToPtr("test readme"),
 				License:   lo.ToPtr("test license"),
-				Topics:    lo.ToPtr("test topics"),
+				Topics:    []string{"test topics"},
 			},
 		)
 		assert.Equal(t, "test readme", *res.Readme)

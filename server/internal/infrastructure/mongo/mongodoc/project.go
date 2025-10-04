@@ -2,7 +2,6 @@ package mongodoc
 
 import (
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/labstack/gommon/log"
@@ -68,11 +67,8 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 	createdAt := p.CreatedAt()
 	if meta := p.Metadata(); meta != nil {
 		if meta.Topics() != nil {
-			// Split comma-separated string into array
-			topicsStr := *meta.Topics()
-			if topicsStr != "" {
-				topics = strings.Split(topicsStr, ",")
-			}
+			// Topics is already an array
+			topics = *meta.Topics()
 		}
 		if meta.CreatedAt() != nil {
 			createdAt = *meta.CreatedAt()
@@ -170,29 +166,15 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	}
 
 	// Only create metadata if there are meaningful metadata-specific values
-	// Check for metadata-specific fields that differ from default project fields
-	var topicsStr string
-	if len(d.Topics) > 0 {
-		// Convert topics array to comma-separated string as expected by the metadata
-		for i, topic := range d.Topics {
-			if i > 0 {
-				topicsStr += ","
-			}
-			topicsStr += topic
-		}
-	}
-
 	// Only create metadata if we have topics or other metadata-specific values
 	hasTopics := len(d.Topics) > 0
 
 	if hasTopics {
-		topicsPtr := &topicsStr
-
 		metadata, err := project.NewProjectMetadata().
 			ID(id.NewProjectMetadataID()).
 			Project(pid).
 			Workspace(tid).
-			Topics(topicsPtr).
+			Topics(&d.Topics).
 			CreatedAt(&d.CreatedAt).
 			UpdatedAt(&d.UpdatedAt).
 			Build()

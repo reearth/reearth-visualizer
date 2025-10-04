@@ -26,7 +26,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 			"project": projectID,
 			"readme":  "readme test",
 			"license": "license test",
-			"topics":  "topics test",
+			"topics":  []string{"gis", "history"},
 		},
 	})
 
@@ -50,7 +50,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 
 	res.Value("readme").String().IsEqual("readme test")
 	res.Value("license").String().IsEqual("license test")
-	res.Value("topics").String().IsEqual("topics test")
+	res.Value("topics").Array().IsEqual([]string{"gis", "history"})
 }
 
 const UpdateProjectMetadataMutation = `

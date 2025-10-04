@@ -59,7 +59,7 @@ export const CREATE_PROJECT = gql(`
     $projectAlias: String
     $readme: String
     $license: String
-    $topics: String
+    $topics: [String!]
   ) {
     createProject(
       input: {
@@ -233,7 +233,7 @@ export const UPDATE_PROJECT_METADATA = gql(`
     $project: ID!
     $readme: String
     $license: String
-    $topics: String
+    $topics: [String!]
   ) {
     updateProjectMetadata(
       input: {
