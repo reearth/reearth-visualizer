@@ -4,7 +4,6 @@ import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
 import { DashBoardPage } from "../pages/dashBoardPage";
-import { LoginPage } from "../pages/loginPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
@@ -27,7 +26,6 @@ test.describe.configure({ mode: "serial" });
 test.describe("DASHBOARD - Test cases", () => {
   let context: BrowserContext;
   let page: Page;
-  let loginPage: LoginPage;
   let dashBoardPage: DashBoardPage;
   let projectsPage: ProjectsPage;
   let recycleBinPage: RecycleBinPage;
@@ -41,7 +39,6 @@ test.describe("DASHBOARD - Test cases", () => {
       }
     });
     page = await context.newPage();
-    loginPage = new LoginPage(page);
     dashBoardPage = new DashBoardPage(page);
     projectsPage = new ProjectsPage(page);
     recycleBinPage = new RecycleBinPage(page);
@@ -63,9 +60,8 @@ test.describe("DASHBOARD - Test cases", () => {
     await context.close();
   });
 
-  // eslint-disable-next-line no-empty-pattern
-  test("Login with valid credentials", async ({}) => {
-    await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
+  test("Verify dashboard is loaded", async () => {
+    await page.goto(REEARTH_WEB_E2E_BASEURL);
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
@@ -188,7 +184,6 @@ test.describe("DASHBOARD - Test cases", () => {
   test.describe.skip("Delete the Imported Project", () => {
     let context: BrowserContext;
     let page: Page;
-    let loginPage: LoginPage;
     let dashBoardPage: DashBoardPage;
     let projectsPage: ProjectsPage;
     test.beforeAll(async ({ browser }) => {
@@ -200,7 +195,6 @@ test.describe("DASHBOARD - Test cases", () => {
         }
       });
       page = await context.newPage();
-      loginPage = new LoginPage(page);
       dashBoardPage = new DashBoardPage(page);
       projectsPage = new ProjectsPage(page);
       await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
@@ -220,9 +214,10 @@ test.describe("DASHBOARD - Test cases", () => {
     test.afterAll(async () => {
       await context.close();
     });
-    // eslint-disable-next-line no-empty-pattern
-    test("Login with valid credentials", async ({}) => {
-      await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
+    test("Verify dashboard is loaded", async () => {
+      await page.goto(REEARTH_WEB_E2E_BASEURL + "/dashboard", {
+        waitUntil: "networkidle"
+      });
       await expect(dashBoardPage.projects).toBeVisible();
       await expect(dashBoardPage.recycleBin).toBeVisible();
       await expect(dashBoardPage.pluginPlayground).toBeVisible();
