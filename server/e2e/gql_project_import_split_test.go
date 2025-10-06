@@ -64,10 +64,18 @@ func TestProjectImportSplit(t *testing.T) {
 			return nil, err
 		}
 
-		writer.WriteField("file_id", fileId)
-		writer.WriteField("workspace_id", workspaceId)
-		writer.WriteField("chunk_num", strconv.Itoa(chunkNum))
-		writer.WriteField("total_chunks", strconv.Itoa(totalChunks))
+		if err := writer.WriteField("file_id", fileId); err != nil {
+			t.Fatalf("write field file_id: %v", err)
+		}
+		if err := writer.WriteField("workspace_id", workspaceId); err != nil {
+			t.Fatalf("write field workspace_id: %v", err)
+		}
+		if err := writer.WriteField("chunk_num", strconv.Itoa(chunkNum)); err != nil {
+			t.Fatalf("write field chunk_num: %v", err)
+		}
+		if err := writer.WriteField("total_chunks", strconv.Itoa(totalChunks)); err != nil {
+			t.Fatalf("write field total_chunks: %v", err)
+		}
 
 		err = writer.Close()
 		if err != nil {
