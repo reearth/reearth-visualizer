@@ -21,10 +21,10 @@ import (
 
 // !!! To run this test, you need to create an environment.
 
-func TestProjectImport(t *testing.T) {
+func TestProjectImportSignature(t *testing.T) {
 	// e := Server(t, fullSeeder)
 
-	// projectZipFilePath := GenProjectZipFile(e, t)
+	// projectZipFilePath := GenProjectZipFile(t, e)
 	// response := GenSignatureUrl("01k5aynsx7ddk31rpqkzhgytea", t)
 	// fmt.Printf("UploadURL: %s\n", response.UploadURL)
 
@@ -37,11 +37,12 @@ func TestProjectImport(t *testing.T) {
 	// t.Cleanup(func() { _ = os.Remove(projectZipFilePath) })
 }
 
-func GenProjectZipFile(e *httpexpect.Expect, t *testing.T) (projectZipFilePath string) {
+func GenProjectZipFile(t *testing.T, e *httpexpect.Expect) (projectZipFilePath string) {
 
 	projectZipFilePath = filepath.Join(t.TempDir(), "project.zip")
 
-	projectDataPath := Export(t, e)
+	projectId := SetupProject(t, e)
+	projectDataPath := Export(t, e, projectId)
 	resp := e.GET(projectDataPath).
 		Expect().
 		Status(200)
