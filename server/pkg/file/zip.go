@@ -7,6 +7,9 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
+
+	"github.com/reearth/reearthx/log"
 )
 
 type ZipReader struct {
@@ -145,6 +148,13 @@ func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[s
 						if host != "" {
 							// Replace to current host
 							data = bytes.ReplaceAll(data, []byte(host), []byte(currentHost))
+						}
+					}
+					if ts, ok := e["timestamp"].(string); ok {
+						if t, err := time.Parse(time.RFC3339, ts); err == nil {
+							log.Infof("[Import] export data time: %v", t)
+						} else {
+							fmt.Println("Invalid timestamp format:", err)
 						}
 					}
 				}
