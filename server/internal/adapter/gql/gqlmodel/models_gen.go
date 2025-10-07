@@ -202,7 +202,7 @@ type CreateProjectInput struct {
 	ProjectAlias *string    `json:"projectAlias,omitempty"`
 	Readme       *string    `json:"readme,omitempty"`
 	License      *string    `json:"license,omitempty"`
-	Topics       *string    `json:"topics,omitempty"`
+	Topics       []string   `json:"topics,omitempty"`
 }
 
 type CreateSceneInput struct {
@@ -745,7 +745,7 @@ type ProjectMetadata struct {
 	Workspace       ID                   `json:"workspace"`
 	Readme          *string              `json:"readme,omitempty"`
 	License         *string              `json:"license,omitempty"`
-	Topics          *string              `json:"topics,omitempty"`
+	Topics          []string             `json:"topics,omitempty"`
 	ImportStatus    *ProjectImportStatus `json:"importStatus,omitempty"`
 	ImportResultLog JSON                 `json:"importResultLog,omitempty"`
 	CreatedAt       *time.Time           `json:"createdAt,omitempty"`
@@ -1289,10 +1289,10 @@ type UpdateProjectInput struct {
 }
 
 type UpdateProjectMetadataInput struct {
-	Project ID      `json:"project"`
-	Readme  *string `json:"readme,omitempty"`
-	License *string `json:"license,omitempty"`
-	Topics  *string `json:"topics,omitempty"`
+	Project ID       `json:"project"`
+	Readme  *string  `json:"readme,omitempty"`
+	License *string  `json:"license,omitempty"`
+	Topics  []string `json:"topics,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {

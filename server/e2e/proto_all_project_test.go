@@ -3,7 +3,6 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 	"time"
 
@@ -81,13 +80,11 @@ func TestGetAllProjects(t *testing.T) {
 
 			// Update project metadata to add topics
 			if len(projectTopicList) > 0 {
-				// Join topics with comma for the API
-				topicsStr := strings.Join(projectTopicList, ",")
 
 				// Update project metadata with topics
 				_, err := client.UpdateProjectMetadata(ctx, &pb.UpdateProjectMetadataRequest{
 					ProjectId: res.Project.Id,
-					Topics:    lo.ToPtr(topicsStr),
+					Topics:    projectTopics[res.Project.Id],
 				})
 				require.NoError(t, err)
 			}

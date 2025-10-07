@@ -122,7 +122,7 @@ mutation CreateProject(
   $projectAlias: String
   $readme: String
   $license: String
-  $topics: String
+  $topics: [String!]
 ) {
   createProject(
     input: {
@@ -219,13 +219,13 @@ func TestCreateUpdateProject(t *testing.T) {
 
 			"readme":  "readme-xxxxxx",
 			"license": "license-xxxxxx",
-			"topics":  "topics-xxxxxx",
+			"topics":  []string{"gis", "history"},
 		},
 	})
 
 	res.Path("$.data.createProject.project.metadata.readme").IsEqual("readme-xxxxxx")
 	res.Path("$.data.createProject.project.metadata.license").IsEqual("license-xxxxxx")
-	res.Path("$.data.createProject.project.metadata.topics").IsEqual("topics-xxxxxx")
+	res.Path("$.data.createProject.project.metadata.topics").IsEqual([]string{"gis", "history"})
 
 	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
 	projectID := res.Path("$.data.createProject.project.id").Raw().(string)
@@ -251,7 +251,7 @@ func TestCreateUpdateProject(t *testing.T) {
 		if edge.Path("$.node.id").Raw().(string) == projectID {
 			edge.Path("$.node.metadata.readme").IsEqual("readme-xxxxxx")
 			edge.Path("$.node.metadata.license").IsEqual("license-xxxxxx")
-			edge.Path("$.node.metadata.topics").IsEqual("topics-xxxxxx")
+			edge.Path("$.node.metadata.topics").IsEqual([]string{"gis", "history"})
 		}
 	}
 
@@ -827,7 +827,7 @@ func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, w
 
 		readme := "xxx readme"
 		license := "yyy license"
-		topics := "zzz topics"
+		topics := []string{"gis", "history"}
 		log := map[string]any{}
 		st := project.ProjectImportStatusNone
 

@@ -2,7 +2,6 @@ package internalapimodel
 
 import (
 	"context"
-	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
@@ -191,8 +190,8 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		Readme:      p.Readme(),
 		License:     p.License(),
 		Topics: func() []string {
-			if p.Topics() != nil && *p.Topics() != "" {
-				return strings.Split(*p.Topics(), ",")
+			if p.Topics() != nil {
+				return *p.Topics()
 			}
 			return nil
 		}(),
