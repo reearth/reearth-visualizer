@@ -32,7 +32,7 @@ type ProfileProp = {
 export const Profile: FC<ProfileProp> = ({
   currentUser,
   isPersonal,
-  userPhotoUrl = "/123",
+  userPhotoUrl,
   workspaces,
   currentWorkspace,
   onWorkspaceChange,
