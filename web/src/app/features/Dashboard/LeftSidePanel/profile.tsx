@@ -8,7 +8,7 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { Workspace } from "../type";
 
@@ -32,7 +32,7 @@ type ProfileProp = {
 export const Profile: FC<ProfileProp> = ({
   currentUser,
   isPersonal,
-  userPhotoUrl,
+  userPhotoUrl = "/123",
   workspaces,
   currentWorkspace,
   onWorkspaceChange,
@@ -87,13 +87,19 @@ export const Profile: FC<ProfileProp> = ({
     ]
   );
 
+  const [showUserPhoto, setShowUserPhoto] = useState(!!userPhotoUrl);
+
   return (
     <Wrapper data-testid="profile-wrapper">
       <ProfileWrapper data-testid="profile-profileWrapper">
         {isPersonal && (
           <Avatar data-testid="profile-avatar">
-            {userPhotoUrl ? (
-              <AvatarImage src={userPhotoUrl} alt="User Avatar" />
+            {userPhotoUrl && showUserPhoto ? (
+              <AvatarImage
+                src={userPhotoUrl}
+                alt="User Avatar"
+                onError={() => setShowUserPhoto(false)}
+              />
             ) : (
               <Typography size="body" data-testid="profile-avatar-initial">
                 {currentUser?.charAt(0)}
