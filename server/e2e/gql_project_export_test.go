@@ -77,6 +77,13 @@ func TestProjectExport(t *testing.T) {
 	_, hasScene := proj["scene"]
 	require.True(t, hasProject, "`project` key must exist in project.json")
 	require.True(t, hasScene, "`scene` key must exist in project.json")
+
+	exportedInfo, hasExportedInfo := proj["exportedInfo"].(map[string]any)
+	require.True(t, hasExportedInfo, "`exportedInfo` key must exist in project.json")
+
+	_, hasExportDataVersion := exportedInfo["exportDataVersion"]
+	require.True(t, hasExportDataVersion, "`exportedInfo.exportDataVersion` key must exist in project.json")
+
 }
 
 func SetupProject(t *testing.T, e *httpexpect.Expect) string {
