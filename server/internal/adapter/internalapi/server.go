@@ -19,6 +19,7 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/alias"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/storytelling"
@@ -509,9 +510,10 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	exportData["plugins"] = gqlmodel.ToPlugins(plugins)
 	exportData["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 	exportData["exportedInfo"] = map[string]string{
-		"host":      adapter.CurrentHost(ctx),
-		"project":   prj.ID().String(),
-		"timestamp": time.Now().Format(time.RFC3339),
+		"host":              adapter.CurrentHost(ctx),
+		"project":           prj.ID().String(),
+		"timestamp":         time.Now().Format(time.RFC3339),
+		"exportDataVersion": file.EXPORT_DATA_VERSION,
 	}
 	b, err := json.Marshal(exportData)
 	if err != nil {
