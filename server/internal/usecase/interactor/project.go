@@ -443,12 +443,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to find project", err)
 	}
 
-	log.Debugfc(ctx, "policyChecker: %v", i.policyChecker)
-	log.Debugfc(ctx, "prj.Workspace(): %v", prj.Workspace())
-
 	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
-
-	log.Debugfc(ctx, "operationAllowed: %v", operationAllowed)
 
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
