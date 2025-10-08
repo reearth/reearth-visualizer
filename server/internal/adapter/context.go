@@ -22,6 +22,7 @@ const (
 	contextCurrentHost ContextKey = "currenthost"
 	contextLang        ContextKey = "lang"
 	contextInternal    ContextKey = "Internal"
+	contextUserID      ContextKey = "reearth_user"
 )
 
 var defaultLang = language.English
@@ -69,6 +70,13 @@ func User(ctx context.Context) *user.User {
 		if u, ok := v.(*user.User); ok {
 			return u
 		}
+	}
+	return nil
+}
+
+func UserID(ctx context.Context) *string {
+	if cu, ok := ctx.Value(contextUserID).(string); ok {
+		return &cu
 	}
 	return nil
 }

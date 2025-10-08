@@ -11,16 +11,10 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
+	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
-)
-
-type contextKey string
-
-const (
-	debugUserHeader            = "X-Reearth-Debug-User"
-	contextUser     contextKey = "reearth_user"
 )
 
 // load user from db and attach it to context along with operator
@@ -33,14 +27,17 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			req := c.Request()
 			ctx := req.Context()
 
+			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+
+			// get sub from context
+			var authInfo *appx.AuthInfo
+			authInfo = adapter.GetAuthInfo(ctx)
+
 			var userID string
 			var u *user.User
 
-			// get sub from context
-			au := adapter.GetAuthInfo(ctx)
-
-			if cu, ok := ctx.Value(contextUser).(string); ok {
-				userID = cu
+			if tempId := adapter.UserID(ctx); tempId != nil {
+				userID = *tempId
 			}
 
 			if adapter.IsMockAuth(ctx) {
@@ -48,18 +45,20 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
 				if err != nil {
 					// when creating the first mock user
-					uId, _ := user.IDFrom(au.Sub)
+					uId, _ := user.IDFrom(authInfo.Sub)
 					mockUser = user.New().
 						ID(uId).
-						Name(au.Name).
-						Email(au.Email).
+						Name(authInfo.Name).
+						Email(authInfo.Email).
 						MustBuild()
 				}
 				u = mockUser
+
 			} else {
+
 				// debug mode
 				if cfg.Debug {
-					if userID := c.Request().Header.Get(debugUserHeader); userID != "" {
+					if userID := c.Request().Header.Get("X-Reearth-Debug-User"); userID != "" {
 						if uId, err := accountdomain.UserIDFrom(userID); err == nil {
 							user2, err := multiUser.FetchByID(ctx, user.IDList{uId})
 							if err == nil && len(user2) == 1 {
@@ -71,33 +70,46 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				// This is from the past, and normally, it is retrieved via Sub. During testing, it is retrieved from the userID in the header.
 				if u == nil && userID != "" {
-					if userID2, err := accountdomain.UserIDFrom(userID); err == nil {
-						u2, err := multiUser.FetchByID(ctx, user.IDList{userID2})
-						if err != nil {
+
+					userID2, err := accountdomain.UserIDFrom(userID)
+					if err != nil {
+						return err
+					}
+
+					u2, err := multiUser.FetchByID(ctx, user.IDList{userID2})
+					if err != nil {
+						return err
+					}
+
+					if len(u2) > 0 {
+						u = u2[0]
+					} else {
+						log.Errorfc(ctx, "User not found id: %s", userID2)
+					}
+
+				}
+
+				if authInfo != nil {
+
+					if u == nil {
+						var err error
+						u, err = multiUser.FetchBySub(ctx, authInfo.Sub)
+						if err != nil && err != rerror.ErrNotFound {
 							return err
 						}
-						if len(u2) > 0 {
-							u = u2[0]
+						// find user
+					}
+
+					// save a new sub
+					if u != nil {
+						auth := user.AuthFrom(authInfo.Sub)
+						if err := addAuth0SubToUser(ctx, u, auth, cfg); err != nil {
+							return err
 						}
-					} else {
-						return err
 					}
-				}
 
-				if u == nil && au != nil {
-					var err error
-					// find user
-					u, err = multiUser.FetchBySub(ctx, au.Sub)
-					if err != nil && err != rerror.ErrNotFound {
-						return err
-					}
-				}
-
-				// save a new sub
-				if u != nil && au != nil {
-					if err := addAuth0SubToUser(ctx, u, user.AuthFrom(au.Sub), cfg); err != nil {
-						return err
-					}
+				} else {
+					log.Errorfc(ctx, "Auth information not found: %s", req.URL.Path)
 				}
 
 			}
@@ -117,9 +129,9 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				if u.Name() != "e2e" {
 					log.Debugfc(ctx, "auth: op: %#v", op)
 				}
+			} else {
+				log.Errorfc(ctx, "User information not found: %s", req.URL.Path)
 			}
-
-			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 
 			c.SetRequest(req.WithContext(ctx))
 			return next(c)
