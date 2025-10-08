@@ -430,9 +430,10 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+	log.Infof("Update project: %v", p)
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to begin transaction", err)
 	}
 
 	ctx = tx.Context()
@@ -444,19 +445,25 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	prj, err := i.projectRepo.FindByID(ctx, p.ID)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to find project", err)
 	}
 
+	log.Infof("policyChecker: %v", i.policyChecker)
+	log.Infof("prj.Workspace(): %v", prj.Workspace())
+
 	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+
+	log.Infof("operationAllowed: %v", operationAllowed)
+
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
 	}
 	if !operationAllowed.Allowed {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
 	}
 
 	if p.Name != nil {
