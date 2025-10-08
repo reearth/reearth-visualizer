@@ -607,7 +607,6 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 
 	if pFilter.Limit != nil && pFilter.Offset != nil {
-		
 		totalCount, err := r.client.Count(ctx, filter)
 		if err != nil {
 			log.Errorf("FindAll: Count error: %v", err)
@@ -638,13 +637,12 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 			SetCollation(&collation).
 			SetSkip(*pFilter.Offset).
 			SetLimit(*pFilter.Limit)
-		
+
 		if len(sortDoc) > 0 {
 			findOptions.SetSort(sortDoc)
 		}
 
 		c := mongodoc.NewProjectConsumer(nil)
-		
 		if err := r.client.Find(ctx, filter, c, findOptions); err != nil {
 			log.Errorf("FindAll: Find error: %v", err)
 			return nil, nil, rerror.ErrInternalByWithContext(ctx, err)

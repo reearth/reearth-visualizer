@@ -128,7 +128,6 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 
 	var pagination *usecasex.Pagination
 	var param *interfaces.AllProjectsParam
-	
 	if req.Pagination != nil && req.Pagination.Offset != nil && req.Pagination.Limit != nil {
 		param = &interfaces.AllProjectsParam{
 			Offset: req.Pagination.Offset,
