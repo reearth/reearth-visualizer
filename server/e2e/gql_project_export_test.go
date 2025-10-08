@@ -27,7 +27,9 @@ mutation ExportProject($projectId: ID!) {
 
 func TestProjectExport(t *testing.T) {
 	e := Server(t, fullSeeder)
-	projectDataPath := Export(t, e)
+
+	projectId := SetupProject(t, e)
+	projectDataPath := Export(t, e, projectId)
 
 	resp := e.GET(projectDataPath).
 		Expect().
@@ -75,9 +77,16 @@ func TestProjectExport(t *testing.T) {
 	_, hasScene := proj["scene"]
 	require.True(t, hasProject, "`project` key must exist in project.json")
 	require.True(t, hasScene, "`scene` key must exist in project.json")
+
+	exportedInfo, hasExportedInfo := proj["exportedInfo"].(map[string]any)
+	require.True(t, hasExportedInfo, "`exportedInfo` key must exist in project.json")
+
+	_, hasExportDataVersion := exportedInfo["exportDataVersion"]
+	require.True(t, hasExportDataVersion, "`exportedInfo.exportDataVersion` key must exist in project.json")
+
 }
 
-func Export(t *testing.T, e *httpexpect.Expect) string {
+func SetupProject(t *testing.T, e *httpexpect.Expect) string {
 	projectId, sceneId, _ := createProjectSet(e)
 	updateProjectMetadata(e, uID, map[string]any{
 		"input": map[string]any{
@@ -89,6 +98,10 @@ func Export(t *testing.T, e *httpexpect.Expect) string {
 	})
 	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1)
 	createPhotoOverlay(e, layerId)
+	return projectId
+}
+
+func Export(t *testing.T, e *httpexpect.Expect, projectId string) string {
 
 	projectDataPath := Request(e, uID.String(), GraphQLRequest{
 		OperationName: "ExportProject",

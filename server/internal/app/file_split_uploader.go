@@ -178,7 +178,7 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 			}
 			defer closeWithError(f, &err)
 
-			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(currentHost, f)
+			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, f)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
 				UpdateImportStatus(bgctx, usecases, op, pid, project.ProjectImportStatusFailed, errMsg, result)
@@ -195,7 +195,9 @@ func (m *SplitUploadManager) handleChunkedUpload(ctx context.Context, usecases *
 				importData,
 				assetsZip,
 				pluginsZip,
-				result)
+				result,
+				version,
+			)
 
 			if ok {
 				m.CleanupSession(session.FileID)
