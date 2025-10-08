@@ -606,61 +606,8 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		}
 	}
 
-	if pFilter.Limit != nil && pFilter.Offset != nil {
-		
-		totalCount, err := r.client.Count(ctx, filter)
-		if err != nil {
-			log.Errorf("FindAll: Count error: %v", err)
-			return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
-		}
-
-		var sortDoc bson.D
-		if pFilter.Sort != nil {
-			sortKey := pFilter.Sort.Key
-			if sortKey == "starcount" {
-				sortKey = "star_count" // Map to MongoDB field name
-			}
-			sortOrder := 1
-			if pFilter.Sort.Desc {
-				sortOrder = -1
-			}
-			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}}
-		}
-
-		collation := options.Collation{
-			Locale:    "en",
-			Strength:  3,
-			CaseLevel: true,
-			Alternate: "shifted",
-		}
-
-		findOptions := options.Find().
-			SetCollation(&collation).
-			SetSkip(*pFilter.Offset).
-			SetLimit(*pFilter.Limit)
-		
-		if len(sortDoc) > 0 {
-			findOptions.SetSort(sortDoc)
-		}
-
-		c := mongodoc.NewProjectConsumer(nil)
-		
-		if err := r.client.Find(ctx, filter, c, findOptions); err != nil {
-			log.Errorf("FindAll: Find error: %v", err)
-			return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
-		}
-
-		pageInfo := &usecasex.PageInfo{
-			TotalCount:      totalCount,
-			HasNextPage:     *pFilter.Offset+*pFilter.Limit < totalCount,
-			HasPreviousPage: *pFilter.Offset > 0,
-		}
-
-		return c.Result, pageInfo, nil
-	}
-
 	if pFilter.Pagination == nil {
-		log.Warnf("FindAll: No pagination provided, returning all results")
+		log.Warnf("FindAll: Pagination is nil, not using pagination")
 	}
 
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
