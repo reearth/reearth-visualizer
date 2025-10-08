@@ -123,6 +123,11 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		}
 	}
 
+	maxLimit := int64(100)
+	if req.Pagination.Limit != nil && *req.Pagination.Limit > maxLimit {
+		req.Pagination.Limit = &maxLimit
+	}
+
 	// Parse the sort type from the request
 	sort := internalapimodel.ToProjectSortType(req.Sort)
 
