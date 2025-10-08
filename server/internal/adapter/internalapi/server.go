@@ -279,7 +279,7 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		Readme:       req.Readme,
 		License:      req.License,
 		Topics: func() *[]string {
-			if len(req.Topics) == 0 {
+			if req.Topics == nil {
 				return nil
 			}
 			return &req.Topics
@@ -349,7 +349,7 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 		Readme:  req.Readme,
 		License: req.License,
 		Topics: func() *[]string {
-			if len(req.Topics) == 0 {
+			if req.Topics == nil {
 				return nil
 			}
 			return &req.Topics
