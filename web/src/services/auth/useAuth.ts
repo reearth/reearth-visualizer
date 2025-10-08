@@ -28,6 +28,7 @@ export function useCleanUrl(): [string | undefined, boolean] {
 
     params.delete("code");
     params.delete("state");
+    params.delete("iss");
     params.delete(errorKey);
 
     const queries = params.toString();
