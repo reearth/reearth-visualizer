@@ -190,10 +190,10 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		Readme:      p.Readme(),
 		License:     p.License(),
 		Topics: func() []string {
-			if p.Topics() != nil {
-				return *p.Topics()
+			if p.Topics() == nil {
+				return nil
 			}
-			return nil
+			return *p.Topics()
 		}(),
 		ImportStatus: importStatus,
 		CreatedAt:    createdAt,
