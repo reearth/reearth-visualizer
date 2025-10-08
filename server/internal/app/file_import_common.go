@@ -200,6 +200,7 @@ func ImportProject(
 	assetsZip map[string]*zip.File,
 	pluginsZip map[string]*zip.File,
 	result map[string]any,
+	version *string,
 ) bool {
 
 	// project ----------

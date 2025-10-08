@@ -132,13 +132,13 @@ func servSignatureUploadFiles(
 			}
 
 			currentHost := adapter.CurrentHost(ctx)
-			importData, assetsZip, pluginsZip, err := file_.UncompressExportZip(currentHost, tmpfile)
+			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, tmpfile)
 			if err != nil {
 				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
 				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
 				return nil, errors.New(errMsg)
 			}
-
+			// EXPORT_DATA_VERSION
 			ok := ImportProject(
 				ctx,
 				usecases,
@@ -148,7 +148,9 @@ func servSignatureUploadFiles(
 				importData,
 				assetsZip,
 				pluginsZip,
-				result)
+				result,
+				version,
+			)
 
 			if ok {
 				return "finish", nil
