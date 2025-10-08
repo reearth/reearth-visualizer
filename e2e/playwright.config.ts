@@ -18,6 +18,7 @@ import * as dotenv from "dotenv";
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 export default defineConfig({
+  globalSetup: require.resolve("./global-setup"),
   expect: {
     timeout: 15000
   },
@@ -31,10 +32,10 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   /* Opt out of parallel tests on CI. */
   // workers: process.env.CI ? 1 : undefined,
-  workers: 2, // Set to 2 workers
+  workers: 5,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: [["html", { outputFolder: "./test-report" }]],
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  reporter: [["html", { outputFolder: "./test-report", open: "never" }]],
+  /* Shared settings for all the projects below. See https://playwright.dev/docs/test-options. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
@@ -43,7 +44,8 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     actionTimeout: 10000,
-    navigationTimeout: 20000
+    navigationTimeout: 20000,
+    storageState: "./e2e/auth.json"
   },
 
   /* Configure projects for major browsers */

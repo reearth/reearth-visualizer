@@ -153,7 +153,8 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
-	serveUploadFiles(e, cfg.Gateways.File)
+	servSplitUploadFiles(e, cfg)
+	servSignatureUploadFiles(e, cfg)
 
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,

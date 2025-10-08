@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"fmt"
-	"log"
 	"regexp"
 	"slices"
 	"strings"
@@ -16,6 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -121,18 +121,21 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 	if sort == nil {
 		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 	} else {
+		// Convert sort key to lowercase for case-insensitive comparison
+		sortKey := strings.ToLower(sort.Key)
 
-		suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
-		if sort.Key == "id" {
+		switch sortKey {
+		case "id":
 			suffix = ""
-		}
-		if sort.Key == "name" {
+		case "name":
 			suffix = ":" + p.Name()
-		}
-		if sort.Key == "updatedat" {
+		case "updatedat":
+			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
+		case "starcount":
+			suffix = fmt.Sprintf(":%d", p.StarCount())
+		default:
 			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 		}
-
 	}
 
 	cursor = usecasex.Cursor(p.ID().String() + suffix)
@@ -543,6 +546,80 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 	return r.findOne(ctx, f, false)
 }
 
+func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+	// Default visibility is public
+	visibility := "public"
+	if pFilter.Visibility != nil {
+		visibility = *pFilter.Visibility
+	}
+
+	filter := bson.M{
+		"visibility": visibility,
+		"deleted":    false,
+	}
+
+	if pFilter.Keyword != nil {
+		// Check if we should search in topics
+		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
+			keyword := strings.ToLower(*pFilter.Keyword)
+
+			topicKeywords := strings.Split(keyword, ",")
+
+			for i := range topicKeywords {
+				topicKeywords[i] = strings.TrimSpace(topicKeywords[i])
+			}
+
+			// If multiple topics, use $in operator to match any of them
+			if len(topicKeywords) > 1 {
+				filter["topics"] = bson.M{"$in": topicKeywords}
+			} else {
+				// Add the single topic condition to the existing filter
+				filter["topics"] = keyword
+			}
+		} else {
+			// Add name regex search directly to the filter
+			filter["name"] = bson.M{
+				"$regex": primitive.Regex{
+					Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
+					Options: "i",
+				},
+			}
+		}
+	}
+
+	count, err := r.client.Count(ctx, filter)
+	if err != nil {
+		log.Errorf("FindAll: Error counting public projects: %v", err)
+	} else {
+		// If count is 0, do a broader search just to verify projects exist
+		if count == 0 {
+			// Check if there are any projects at all
+			totalCount, err := r.client.Count(ctx, bson.M{})
+			if err != nil {
+				log.Errorf("FindAll: Error counting all projects: %v", err)
+			} else {
+				log.Infof("FindAll: Total projects in MongoDB: %d", totalCount)
+			}
+
+			log.Warnf("FindAll: No public projects found, returning empty list")
+			return []*project.Project{}, usecasex.EmptyPageInfo(), nil
+		}
+	}
+
+	if pFilter.Pagination == nil {
+		log.Warnf("FindAll: Pagination is nil, not using pagination")
+	}
+
+	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
+	if err == nil {
+		log.Infof("FindAll: Filter succeeded, found %d projects", len(projects))
+		return projects, pageInfo, nil
+	} else {
+		log.Warnf("FindAll: Error in pagination: %v, trying simplified query", err)
+		return []*project.Project{}, usecasex.EmptyPageInfo(), nil
+	}
+}
+
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
 	if !r.f.CanRead(ws) {
 		return repo.ErrOperationDenied
@@ -737,6 +814,48 @@ func (r *Project) paginate(ctx context.Context, filter any, sort *project.SortTy
 	if err != nil {
 		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
+	return c.Result, pageInfo, nil
+}
+
+func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
+	log.Infof("paginateWithoutWorkspaceFilter: Using pagination approach with filter: %v", filter)
+
+	// Map sort key from external API format to MongoDB field name
+	mappedSort := sort
+	if sort != nil && sort.Key == "starcount" {
+		mappedSort = &project.SortType{
+			Key:  "star_count", // Map to MongoDB field name
+			Desc: sort.Desc,
+		}
+	}
+
+	// Convert sort to usecasex.Sort format
+	var usort *usecasex.Sort
+	if mappedSort != nil {
+		usort = &usecasex.Sort{
+			Key:      mappedSort.Key,
+			Reverted: mappedSort.Desc,
+		}
+	}
+
+	collation := options.Collation{
+		Locale:    "en",
+		Strength:  3,
+		CaseLevel: true,
+		Alternate: "shifted",
+	}
+
+	findOptions := options.Find().SetCollation(&collation)
+
+	// Create a consumer that doesn't filter by readable workspaces (use nil)
+	c := mongodoc.NewProjectConsumer(nil)
+	pageInfo, err := r.client.Paginate(ctx, filter, usort, pagination, c, findOptions)
+	if err != nil {
+		log.Errorf("paginateWithoutWorkspaceFilter: Paginate error: %v", err)
+		return nil, nil, rerror.ErrInternalByWithContext(ctx, err)
+	}
+
+	log.Infof("paginateWithoutWorkspaceFilter: Successfully paginated %d projects, pageInfo: %+v", len(c.Result), pageInfo)
 	return c.Result, pageInfo, nil
 }
 

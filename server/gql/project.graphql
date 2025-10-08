@@ -42,12 +42,14 @@ type ProjectMetadata {
   license: String
   topics: String
   importStatus: ProjectImportStatus
+  importResultLog: JSON
   createdAt: DateTime
   updatedAt: DateTime
 }
 
 enum ProjectImportStatus {
   NONE
+  UPLOADING
   PROCESSING
   FAILED
   SUCCESS

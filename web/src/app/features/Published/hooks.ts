@@ -13,6 +13,7 @@ import {
 } from "@reearth/app/utils/convert-object";
 import type { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
+import type { NLSInfobox } from "@reearth/services/api/layer/types";
 import { config } from "@reearth/services/config";
 import { useState, useMemo, useEffect, useRef } from "react";
 
@@ -79,9 +80,18 @@ export default (alias?: string) => {
     setCurrentCamera(initialCamera);
   }, [initialCamera]);
 
+  // Convert unknown infobox data to NLSInfobox type
+  const convertInfobox = (infobox: unknown): NLSInfobox | undefined => {
+    if (!infobox || typeof infobox !== "object") return undefined;
+    // Type assertion with runtime validation - we know the structure matches
+    return infobox as NLSInfobox;
+  };
+
   const pluginProperty = useMemo(
     () =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>((a, b) => {
+        // Plugin properties have dynamic structure
         a[b] = processProperty(data?.plugins?.[b]?.property);
         return a;
       }, {}),
@@ -243,7 +253,7 @@ export default (alias?: string) => {
         config: l.config,
         layerType: l.layerType,
         visible: !!l.isVisible,
-        infobox: l.nlsInfobox,
+        infobox: convertInfobox(l.nlsInfobox),
         isSketch: l.isSketch,
         sketch: l.sketchInfo
       })) ?? [],

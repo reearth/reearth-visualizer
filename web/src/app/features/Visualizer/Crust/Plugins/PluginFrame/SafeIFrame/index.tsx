@@ -22,7 +22,7 @@ export type Props = {
   height?: string | number;
   externalRef?: RefObject<HTMLIFrameElement>;
   onLoad?: () => void;
-  onMessage?: (message: any) => void;
+  onMessage?: (message: unknown) => void;
   onClick?: () => void;
   onAutoResized?: () => void;
 };

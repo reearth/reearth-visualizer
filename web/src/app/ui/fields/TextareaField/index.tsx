@@ -6,6 +6,7 @@ import { FC, useEffect, useState } from "react";
 
 export type TextAreaFieldProps = {
   onChangeComplete?: (text: string) => void;
+  "data-testid"?: string;
 } & CommonFieldProps &
   TextAreaProps;
 
@@ -45,7 +46,7 @@ const TextAreaField: FC<TextAreaFieldProps> = ({
         value={internalValue}
         onChange={handleChange}
         onBlur={handleChangeComplete}
-        dataTestid="textareafield-input"
+        dataTestid={props["data-testid"] || "textareafield-input"}
       />
     </CommonField>
   );

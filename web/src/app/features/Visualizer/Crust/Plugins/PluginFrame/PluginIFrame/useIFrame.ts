@@ -18,7 +18,7 @@ export type IFrameAPI = {
     width: string | number | undefined,
     height: string | number | undefined
   ) => void;
-  postMessage: (message: any) => void;
+  postMessage: (message: unknown) => void;
 };
 
 export default function useIFrame({

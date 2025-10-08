@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -181,9 +182,9 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, exportData, err := uc.Scene.ExportScene(ctx, prj)
+	sce, exportData, err := uc.Scene.ExportSceneData(ctx, prj)
 	if err != nil {
-		return nil, errors.New("Fail ExportScene :" + err.Error())
+		return nil, errors.New("Fail ExportSceneData :" + err.Error())
 	}
 
 	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)
@@ -195,9 +196,10 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	exportData["plugins"] = gqlmodel.ToPlugins(plugins)
 	exportData["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 	exportData["exportedInfo"] = map[string]string{
-		"host":      adapter.CurrentHost(ctx),
-		"project":   prj.ID().String(),
-		"timestamp": time.Now().Format(time.RFC3339),
+		"host":              adapter.CurrentHost(ctx),
+		"project":           prj.ID().String(),
+		"timestamp":         time.Now().Format(time.RFC3339),
+		"exportDataVersion": file.EXPORT_DATA_VERSION,
 	}
 	b, err := json.Marshal(exportData)
 	if err != nil {

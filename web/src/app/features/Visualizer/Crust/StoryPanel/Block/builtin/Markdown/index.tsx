@@ -1,6 +1,6 @@
 import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps as BlockProps } from "@reearth/app/features/Visualizer/shared/types";
-import { ValueTypes } from "@reearth/app/utils/value";
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { FC, useCallback, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
@@ -20,10 +20,10 @@ const MdBlock: FC<Props> = ({ block, isSelected, ...props }) => {
       schemaGroupId: string,
       propertyId: string,
       fieldId: string,
-      vt: any,
+      vt: ValueType,
       itemId?: string
     ) => {
-      return async (v?: any) => {
+      return async (v?: ValueTypes[ValueType]) => {
         await props.onPropertyUpdate?.(
           propertyId,
           schemaGroupId,

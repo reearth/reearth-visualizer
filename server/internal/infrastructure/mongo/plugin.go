@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -13,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/builtin"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 )

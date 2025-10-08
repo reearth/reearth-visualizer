@@ -1,17 +1,21 @@
-import { FC, memo, useContext, useMemo } from "react";
 import "react18-json-view/src/style.css";
 import "react18-json-view/src/dark.css";
-
 import Template from "@reearth/app/features/Visualizer/Crust/StoryPanel/Block/Template";
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { coreContext } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
+import { FC, memo, useContext, useMemo } from "react";
 
 import { InfoboxBlock } from "../../../types";
 
 import CustomFields from "./CustomFields";
 import DefaultFields from "./DefaultFields";
-import ListEditor, { DisplayTypeField, PropertyListField } from "./ListEditor";
+import ListEditor, {
+  DisplayTypeField,
+  PropertyListField,
+  PropertyListItem
+} from "./ListEditor";
 
 type Props = {
   block?: InfoboxBlock;
@@ -21,8 +25,8 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
@@ -74,14 +78,17 @@ const Content: FC<Props> = ({ block, isEditable, ...props }) => {
           properties ? (
             <CustomFields
               selectedFeature={selectedComputedFeature}
-              properties={properties}
+              properties={properties as PropertyListItem[]}
               extensionId={block?.extensionId}
             />
           ) : (
             <Template icon={block?.extensionId} height={120} />
           )
         ) : (
-          <DefaultFields properties={properties} isEditable={isEditable} />
+          <DefaultFields
+            properties={properties as Record<string, unknown>[]}
+            isEditable={isEditable}
+          />
         )
       ) : (
         <Template icon={block?.extensionId} height={120} />
@@ -104,10 +111,12 @@ const Wrapper = styled("div")(() => ({
   width: "100%"
 }));
 
-function filterChildObjectsToEnd(inputObject?: any): any[] {
+function filterChildObjectsToEnd(
+  inputObject?: Record<string, unknown>
+): unknown[] {
   if (!inputObject) return [];
-  const arrayResult: any[] = [];
-  const childObjects: [string, any][] = [];
+  const arrayResult: unknown[] = [];
+  const childObjects: [string, unknown][] = [];
 
   for (const key in inputObject) {
     if (typeof inputObject[key] === "object" && inputObject[key] !== null) {
@@ -124,11 +133,15 @@ function filterChildObjectsToEnd(inputObject?: any): any[] {
   return arrayResult;
 }
 
-function filterTypeFrom(inputObject?: any, type?: string): any[] {
-  if (!type) return inputObject;
+function filterTypeFrom(
+  inputObject?: Record<string, unknown>,
+  type?: string
+): unknown[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if (!type) return inputObject as any;
   if (!inputObject) return [];
 
-  const arrayResult: any[] = [];
+  const arrayResult: unknown[] = [];
 
   for (const key in inputObject) {
     if (typeof inputObject[key] !== type) {

@@ -12,7 +12,8 @@ import { FC, useCallback, useMemo } from "react";
 import {
   AppearanceField,
   StyleConditionOperator,
-  StyleCondition
+  StyleCondition,
+  StyleSimpleValue
 } from "../types";
 
 import Field from "./Field";
@@ -126,7 +127,7 @@ const ConditionsTab: FC<Props> = ({
   );
 
   const updateApplyValue = useCallback(
-    (idx: number, value: any) => {
+    (idx: number, value: StyleSimpleValue) => {
       const newConditions = conditions ? [...conditions] : [];
       newConditions[idx] = {
         ...newConditions[idx],

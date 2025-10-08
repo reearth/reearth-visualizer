@@ -377,31 +377,31 @@ func TestCreateAndGetProject(t *testing.T) {
 func TestSortByName(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "a-project",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "b-project",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "A-project",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "B-project",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -413,7 +413,7 @@ func TestSortByName(t *testing.T) {
 			"pagination": map[string]any{
 				"last": 5,
 			},
-			"workspaceId": wID.String(),
+			"workspaceId": wID2.String(),
 			"sort": map[string]string{
 				"field":     "NAME",
 				"direction": "ASC",
@@ -421,14 +421,14 @@ func TestSortByName(t *testing.T) {
 		},
 	}
 
-	edges := Request(e, uID.String(), requestBody).
+	edges := Request(e, uID2.String(), requestBody).
 		Path("$.data.projects.edges").Array()
 
-	edges.Length().IsEqual(5)
-	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("a-project")
-	edges.Value(1).Object().Value("node").Object().Value("name").IsEqual("A-project")
-	edges.Value(2).Object().Value("node").Object().Value("name").IsEqual("b-project")
-	edges.Value(3).Object().Value("node").Object().Value("name").IsEqual("B-project")
+	edges.Length().IsEqual(4)
+	edges.Value(0).Path("$.node.name").IsEqual("a-project")
+	edges.Value(1).Path("$.node.name").IsEqual("A-project")
+	edges.Value(2).Path("$.node.name").IsEqual("b-project")
+	edges.Value(3).Path("$.node.name").IsEqual("B-project")
 
 }
 
@@ -518,13 +518,14 @@ func TestFindStarredByWorkspace(t *testing.T) {
 
 		starredProjectsMap[id] = true
 
-		if id == project1ID {
+		switch id {
+		case project1ID:
 			assert.Equal(t, "Project 1", name)
 			assert.True(t, starred)
-		} else if id == project3ID {
+		case project3ID:
 			assert.Equal(t, "Project 3", name)
 			assert.True(t, starred)
-		} else {
+		default:
 			t.Errorf("Unexpected project in starred projects: %s", id)
 		}
 	}
@@ -822,6 +823,26 @@ func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, w
 			CoreSupport(coreSupport).
 			MustBuild()
 		err := r.Project.Save(ctx, p)
+		assert.Nil(t, err)
+
+		readme := "xxx readme"
+		license := "yyy license"
+		topics := "zzz topics"
+		log := map[string]any{}
+		st := project.ProjectImportStatusNone
+
+		m, err := project.NewProjectMetadata().
+			NewID().
+			Workspace(p.Workspace()).
+			Project(p.ID()).
+			ImportStatus(&st).
+			Readme(&readme).
+			License(&license).
+			Topics(&topics).
+			ImportResultLog(&log).
+			Build()
+		assert.Nil(t, err)
+		err = r.ProjectMetadata.Save(ctx, m)
 		assert.Nil(t, err)
 	}
 }

@@ -10,6 +10,7 @@ import {
   useState
 } from "react";
 
+import type { ContentSettings } from "../../../types";
 import type { ActionItem } from "../../ActionPanel";
 
 type Props = {
@@ -17,7 +18,7 @@ type Props = {
   icon?: string | IconName;
   isSelected?: boolean;
   editMode?: boolean;
-  contentSettings?: any;
+  contentSettings?: ContentSettings;
   isPluginBlock?: boolean;
   setShowPadding: Dispatch<SetStateAction<boolean>>;
   onRemove?: () => void;

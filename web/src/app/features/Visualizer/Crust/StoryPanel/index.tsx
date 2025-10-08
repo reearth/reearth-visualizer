@@ -68,7 +68,7 @@ export type StoryPanelProps = {
 };
 
 export const StoryPanel = memo(
-  forwardRef<any, StoryPanelProps>(
+  forwardRef<StoryPanelRef, StoryPanelProps>(
     (
       {
         storyWrapperRef,

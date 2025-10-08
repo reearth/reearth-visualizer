@@ -23,13 +23,15 @@ const Infobox: FC<Props> = ({ selectedLayerId, infobox }) => {
   return (
     <Wrapper>
       {visibleItems ? (
-        visibleItems.map((i) => (
-          <PropertyItem
-            key={i.id ?? ""}
-            propertyId={infobox?.property?.id}
-            item={i}
-          />
-        ))
+        visibleItems.map((i) =>
+          infobox?.property?.id ? (
+            <PropertyItem
+              key={i.id ?? ""}
+              propertyId={infobox.property.id}
+              item={i}
+            />
+          ) : null
+        )
       ) : (
         <SwitchField
           title={t("Enable Infobox")}

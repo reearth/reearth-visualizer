@@ -21,14 +21,16 @@ import (
 )
 
 type CreateProjectParam struct {
-	WorkspaceID  accountdomain.WorkspaceID
-	Visualizer   visualizer.Visualizer
-	Name         *string
-	Description  *string
-	CoreSupport  *bool
-	Visibility   *string
-	ImportStatus project.ProjectImportStatus
-	ProjectAlias *string
+	WorkspaceID     accountdomain.WorkspaceID
+	Visualizer      visualizer.Visualizer
+	Name            *string
+	Description     *string
+	CoreSupport     *bool
+	Visibility      *string
+	IsDeleted       *bool
+	ImportStatus    project.ProjectImportStatus
+	ImportResultLog *map[string]any
+	ProjectAlias    *string
 
 	// metadata
 	Readme  *string
@@ -103,6 +105,7 @@ type Project interface {
 
 	FindVisibilityByUser(context.Context, *user.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
+	FindAll(context.Context, *string, *project.SortType, *usecasex.Pagination, *string, *string) ([]*project.Project, *usecasex.PageInfo, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
 
 	Create(context.Context, CreateProjectParam, *usecase.Operator) (*project.Project, error)
@@ -115,6 +118,6 @@ type Project interface {
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)
 	ImportProjectData(context.Context, string, *string, *[]byte, *usecase.Operator) (*project.Project, error)
-	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *usecase.Operator) (*project.ProjectMetadata, error)
+	UpdateImportStatus(context.Context, id.ProjectID, project.ProjectImportStatus, *map[string]any, *usecase.Operator) (*project.ProjectMetadata, error)
 	SaveExportProjectZip(context.Context, *zip.Writer, afero.File, map[string]any, *project.Project) error
 }

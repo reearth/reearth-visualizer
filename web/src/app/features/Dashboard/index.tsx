@@ -1,4 +1,5 @@
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/app/ui/components/Sidebar";
+import WarningBanner from "@reearth/ee/features/WarningBanner";
 import { useLang, useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
@@ -63,6 +64,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
 
   const {
     isPersonal,
+    userPhotoUrl,
     currentWorkspace,
     topTabs,
     bottomTabs,
@@ -79,6 +81,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
           <LeftSidePanel
             tab={currentTab}
             isPersonal={isPersonal}
+            userPhotoUrl={userPhotoUrl}
             currentWorkspace={currentWorkspace}
             workspaces={workspaces}
             topTabs={topTabs}
@@ -88,12 +91,15 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
             data-testid="dashboard-left-side-panel"
           />
         </LeftSideWrapper>
-        <ContentsContainer
-          tab={currentTab}
-          workspaceId={workspaceId}
-          currentWorkspace={currentWorkspace}
-          data-testid="dashboard-contents-container"
-        />
+        <RightSideWrapper data-testid="dashboard-right-side-wrapper">
+          <WarningBanner workspaceId={workspaceId} />
+          <ContentsContainer
+            tab={currentTab}
+            workspaceId={workspaceId}
+            currentWorkspace={currentWorkspace}
+            data-testid="dashboard-contents-container"
+          />
+        </RightSideWrapper>
         <CursorStatus data-testid="dashboard-cursor-status" />
       </Wrapper>
       <AddWorkspaceModal data-testid="dashboard-add-workspace-modal" />
@@ -124,3 +130,10 @@ const LeftSideWrapper = styled("div")(({ theme }) => ({
   gap: theme.spacing.super,
   boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)"
 }));
+
+const RightSideWrapper = styled("div")({
+  display: "flex",
+  flexDirection: "column",
+  flex: 1,
+  minWidth: 0
+});

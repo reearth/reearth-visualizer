@@ -4,7 +4,6 @@ import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
 import { DashBoardPage } from "../pages/dashBoardPage";
-import { LoginPage } from "../pages/loginPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
@@ -18,14 +17,15 @@ if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
 const projectName = faker.lorem.word(5);
 const projectDescription = faker.lorem.sentence();
 const specialProjectName = faker.lorem.word(5) + "!@#$%^&*()_+";
+const projectAlias = faker.lorem.word(15);
 
 const fileName = "Test_Asset_migration.zip";
 const docPath = path.resolve(__dirname, "../test-data", fileName);
+test.describe.configure({ mode: "serial" });
 
 test.describe("DASHBOARD - Test cases", () => {
   let context: BrowserContext;
   let page: Page;
-  let loginPage: LoginPage;
   let dashBoardPage: DashBoardPage;
   let projectsPage: ProjectsPage;
   let recycleBinPage: RecycleBinPage;
@@ -39,7 +39,6 @@ test.describe("DASHBOARD - Test cases", () => {
       }
     });
     page = await context.newPage();
-    loginPage = new LoginPage(page);
     dashBoardPage = new DashBoardPage(page);
     projectsPage = new ProjectsPage(page);
     recycleBinPage = new RecycleBinPage(page);
@@ -61,9 +60,8 @@ test.describe("DASHBOARD - Test cases", () => {
     await context.close();
   });
 
-  // eslint-disable-next-line no-empty-pattern
-  test("Login with valid credentials", async ({}) => {
-    await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
+  test("Verify dashboard is loaded", async () => {
+    await page.goto(REEARTH_WEB_E2E_BASEURL);
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
@@ -86,7 +84,11 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Create a new project and verify after its creation", async () => {
-    await projectsPage.createNewProject(projectName, projectDescription);
+    await projectsPage.createNewProject(
+      projectName,
+      projectAlias,
+      projectDescription
+    );
     await expect(projectsPage.noticeBanner).toBeVisible();
     await expect(page.getByText(projectName)).toBeVisible();
   });
@@ -130,6 +132,7 @@ test.describe("DASHBOARD - Test cases", () => {
     await projectsPage.newProjectButton.click();
     await projectsPage.createNewProject(
       specialProjectName,
+      projectAlias,
       specialProjectDescription
     );
     await expect(projectsPage.noticeBanner).toBeVisible();
@@ -181,7 +184,6 @@ test.describe("DASHBOARD - Test cases", () => {
   test.describe.skip("Delete the Imported Project", () => {
     let context: BrowserContext;
     let page: Page;
-    let loginPage: LoginPage;
     let dashBoardPage: DashBoardPage;
     let projectsPage: ProjectsPage;
     test.beforeAll(async ({ browser }) => {
@@ -193,7 +195,6 @@ test.describe("DASHBOARD - Test cases", () => {
         }
       });
       page = await context.newPage();
-      loginPage = new LoginPage(page);
       dashBoardPage = new DashBoardPage(page);
       projectsPage = new ProjectsPage(page);
       await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
@@ -213,9 +214,10 @@ test.describe("DASHBOARD - Test cases", () => {
     test.afterAll(async () => {
       await context.close();
     });
-    // eslint-disable-next-line no-empty-pattern
-    test("Login with valid credentials", async ({}) => {
-      await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
+    test("Verify dashboard is loaded", async () => {
+      await page.goto(REEARTH_WEB_E2E_BASEURL + "/dashboard", {
+        waitUntil: "networkidle"
+      });
       await expect(dashBoardPage.projects).toBeVisible();
       await expect(dashBoardPage.recycleBin).toBeVisible();
       await expect(dashBoardPage.pluginPlayground).toBeVisible();

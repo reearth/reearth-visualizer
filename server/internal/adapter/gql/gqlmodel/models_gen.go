@@ -397,15 +397,16 @@ type LineString struct {
 func (LineString) IsGeometry() {}
 
 type Me struct {
-	ID            ID           `json:"id"`
-	Name          string       `json:"name"`
-	Email         string       `json:"email"`
-	Lang          language.Tag `json:"lang"`
-	Theme         Theme        `json:"theme"`
-	MyWorkspaceID ID           `json:"myWorkspaceId"`
-	Auths         []string     `json:"auths"`
-	Workspaces    []*Workspace `json:"workspaces"`
-	MyWorkspace   *Workspace   `json:"myWorkspace,omitempty"`
+	ID            ID            `json:"id"`
+	Name          string        `json:"name"`
+	Email         string        `json:"email"`
+	Lang          language.Tag  `json:"lang"`
+	Theme         Theme         `json:"theme"`
+	Metadata      *UserMetadata `json:"metadata,omitempty"`
+	MyWorkspaceID ID            `json:"myWorkspaceId"`
+	Auths         []string      `json:"auths"`
+	Workspaces    []*Workspace  `json:"workspaces"`
+	MyWorkspace   *Workspace    `json:"myWorkspace,omitempty"`
 }
 
 type MergedProperty struct {
@@ -674,8 +675,9 @@ type PolicyCheckInput struct {
 }
 
 type PolicyCheckPayload struct {
-	WorkspaceID                  ID   `json:"workspaceId"`
-	EnableToCreatePrivateProject bool `json:"enableToCreatePrivateProject"`
+	WorkspaceID                    ID   `json:"workspaceId"`
+	EnableToCreatePrivateProject   bool `json:"enableToCreatePrivateProject"`
+	DisableOperationByOverUsedSeat bool `json:"disableOperationByOverUsedSeat"`
 }
 
 type Polygon struct {
@@ -738,15 +740,16 @@ type ProjectEdge struct {
 }
 
 type ProjectMetadata struct {
-	ID           ID                   `json:"id"`
-	Project      ID                   `json:"project"`
-	Workspace    ID                   `json:"workspace"`
-	Readme       *string              `json:"readme,omitempty"`
-	License      *string              `json:"license,omitempty"`
-	Topics       *string              `json:"topics,omitempty"`
-	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
-	CreatedAt    *time.Time           `json:"createdAt,omitempty"`
-	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
+	ID              ID                   `json:"id"`
+	Project         ID                   `json:"project"`
+	Workspace       ID                   `json:"workspace"`
+	Readme          *string              `json:"readme,omitempty"`
+	License         *string              `json:"license,omitempty"`
+	Topics          *string              `json:"topics,omitempty"`
+	ImportStatus    *ProjectImportStatus `json:"importStatus,omitempty"`
+	ImportResultLog JSON                 `json:"importResultLog,omitempty"`
+	CreatedAt       *time.Time           `json:"createdAt,omitempty"`
+	UpdatedAt       *time.Time           `json:"updatedAt,omitempty"`
 }
 
 type ProjectMetadataPayload struct {
@@ -1434,6 +1437,10 @@ type User struct {
 func (User) IsNode()        {}
 func (this User) GetID() ID { return this.ID }
 
+type UserMetadata struct {
+	PhotoURL *string `json:"photoURL,omitempty"`
+}
+
 type WidgetAlignSystem struct {
 	Inner *WidgetZone `json:"inner,omitempty"`
 	Outer *WidgetZone `json:"outer,omitempty"`
@@ -1835,6 +1842,7 @@ type ProjectImportStatus string
 
 const (
 	ProjectImportStatusNone       ProjectImportStatus = "NONE"
+	ProjectImportStatusUploading  ProjectImportStatus = "UPLOADING"
 	ProjectImportStatusProcessing ProjectImportStatus = "PROCESSING"
 	ProjectImportStatusFailed     ProjectImportStatus = "FAILED"
 	ProjectImportStatusSuccess    ProjectImportStatus = "SUCCESS"
@@ -1842,6 +1850,7 @@ const (
 
 var AllProjectImportStatus = []ProjectImportStatus{
 	ProjectImportStatusNone,
+	ProjectImportStatusUploading,
 	ProjectImportStatusProcessing,
 	ProjectImportStatusFailed,
 	ProjectImportStatusSuccess,
@@ -1849,7 +1858,7 @@ var AllProjectImportStatus = []ProjectImportStatus{
 
 func (e ProjectImportStatus) IsValid() bool {
 	switch e {
-	case ProjectImportStatusNone, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
+	case ProjectImportStatusNone, ProjectImportStatusUploading, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
 		return true
 	}
 	return false

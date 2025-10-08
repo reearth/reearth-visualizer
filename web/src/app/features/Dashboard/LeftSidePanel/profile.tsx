@@ -8,7 +8,7 @@ import {
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useState } from "react";
 
 import { Workspace } from "../type";
 
@@ -23,6 +23,7 @@ type ProfileProp = {
   currentProject?: Project;
   currentWorkspace?: Workspace;
   isPersonal?: boolean;
+  userPhotoUrl?: string;
   workspaces?: Workspace[];
   onSignOut?: () => void;
   onWorkspaceChange?: (workspaceId?: string) => void;
@@ -31,6 +32,7 @@ type ProfileProp = {
 export const Profile: FC<ProfileProp> = ({
   currentUser,
   isPersonal,
+  userPhotoUrl,
   workspaces,
   currentWorkspace,
   onWorkspaceChange,
@@ -85,14 +87,24 @@ export const Profile: FC<ProfileProp> = ({
     ]
   );
 
+  const [showUserPhoto, setShowUserPhoto] = useState(!!userPhotoUrl);
+
   return (
     <Wrapper data-testid="profile-wrapper">
       <ProfileWrapper data-testid="profile-profileWrapper">
         {isPersonal && (
           <Avatar data-testid="profile-avatar">
-            <Typography size="body" data-testid="profile-avatar-initial">
-              {currentUser?.charAt(0)}
-            </Typography>
+            {userPhotoUrl && showUserPhoto ? (
+              <AvatarImage
+                src={userPhotoUrl}
+                alt="User Avatar"
+                onError={() => setShowUserPhoto(false)}
+              />
+            ) : (
+              <Typography size="body" data-testid="profile-avatar-initial">
+                {currentUser?.charAt(0)}
+              </Typography>
+            )}
           </Avatar>
         )}
         <TitleWrapper data-testid="profile-titleWrapper">
@@ -143,8 +155,16 @@ const Avatar = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  flexShrink: 0
+  flexShrink: 0,
+  overflow: "hidden"
 }));
+
+const AvatarImage = styled("img")({
+  position: "relative",
+  width: "100%",
+  height: "100%",
+  objectFit: "cover"
+});
 
 const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,

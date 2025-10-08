@@ -13,7 +13,7 @@ import {
 import { insertToBody } from "./utils";
 
 export type RefType = {
-  postMessage: (message: any) => void;
+  postMessage: (message: unknown) => void;
   resize: (
     width: string | number | undefined,
     height: string | number | undefined
@@ -21,6 +21,35 @@ export type RefType = {
 };
 
 export type AutoResize = "both" | "width-only" | "height-only";
+
+type AutoResizeData = {
+  width: number;
+  height: number;
+};
+
+type AutoResizeMessage = Record<string, AutoResizeData>;
+
+function isAutoResizeMessage(
+  data: unknown,
+  autoResizeMessageKey: string
+): data is AutoResizeMessage {
+  return (
+    data !== null &&
+    typeof data === "object" &&
+    autoResizeMessageKey in data &&
+    typeof (data as Record<string, unknown>)[autoResizeMessageKey] === "object" &&
+    (data as Record<string, unknown>)[autoResizeMessageKey] !== null
+  );
+}
+
+function isValidAutoResizeData(data: unknown): data is AutoResizeData {
+  return (
+    data !== null &&
+    typeof data === "object" &&
+    typeof (data as Record<string, unknown>).width === "number" &&
+    typeof (data as Record<string, unknown>).height === "number"
+  );
+}
 
 export default function useHook({
   autoResizeMessageKey = "___iframe_auto_resize___",
@@ -45,7 +74,7 @@ export default function useHook({
   visible?: boolean;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   onLoad?: () => void;
-  onMessage?: (message: any) => void;
+  onMessage?: (message: unknown) => void;
   onClick?: () => void;
   onAutoResized?: () => void;
 } = {}): {
@@ -58,7 +87,7 @@ export default function useHook({
   const iFrameRef = useRef<HTMLIFrameElement>(null);
   const [iFrameSize, setIFrameSize] =
     useState<[string | undefined, string | undefined]>();
-  const pendingMesages = useRef<any[]>([]);
+  const pendingMesages = useRef<unknown[]>([]);
 
   useImperativeHandle(
     ref,
@@ -82,14 +111,17 @@ export default function useHook({
   );
 
   useEffect(() => {
-    const cb = (ev: MessageEvent<any>) => {
+    const cb = (ev: MessageEvent<unknown>) => {
       if (!iFrameRef.current || ev.source !== iFrameRef.current.contentWindow)
         return;
-      if (ev.data?.[autoResizeMessageKey]) {
-        const { width, height } = ev.data[autoResizeMessageKey];
-        if (typeof width !== "number" || typeof height !== "number") return;
-        setIFrameSize([width + "px", height + "px"]);
-        onAutoResized?.();
+
+      // Check for auto-resize messages using type guards
+      if (isAutoResizeMessage(ev.data, autoResizeMessageKey)) {
+        const resizeData = ev.data[autoResizeMessageKey];
+        if (isValidAutoResizeData(resizeData)) {
+          setIFrameSize([resizeData.width + "px", resizeData.height + "px"]);
+          onAutoResized?.();
+        }
       } else {
         onMessage?.(ev.data);
       }

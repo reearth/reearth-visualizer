@@ -1,4 +1,5 @@
 import { useNotification } from "@reearth/services/state";
+import { merge } from "lodash-es";
 import { useCallback, useState } from "react";
 
 import { Story } from "../../Visualizer/Crust/StoryPanel/types";
@@ -26,6 +27,26 @@ type HookReturnType = {
   schemaFields?: CustomSchemaField[];
   story?: Story;
   widgets?: Widgets;
+};
+
+const defaultWidgets = {
+  alignSystem: {
+    outer: {
+      left: {
+        bottom: {
+          widgets: [
+            {
+              id: `reearth-data-attribution`,
+              extensionId: "dataAttribution",
+              pluginId: "reearth"
+            }
+          ]
+        }
+      }
+    }
+  },
+  floating: [],
+  ownBuiltinWidgets: []
 };
 
 function generateProperty(
@@ -60,7 +81,7 @@ export default ({
 }: Props): HookReturnType => {
   const [infoboxBlocks, setInfoboxBlocks] = useState<CustomInfoboxBlock[]>();
   const [story, setStory] = useState<Story>();
-  const [widgets, setWidgets] = useState<Widgets>();
+  const [widgets, setWidgets] = useState<Widgets>(defaultWidgets);
 
   const [, setNotification] = useNotification();
 
@@ -142,6 +163,9 @@ export default ({
         ownBuiltinWidgets: []
       }
     );
+
+    merge(widgets, defaultWidgets);
+
     setWidgets(widgets);
 
     const infoboxBlockFromExtension = ymlJson.extensions.reduce<

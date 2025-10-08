@@ -18,7 +18,7 @@ import { useCallback } from "react";
 
 import { MutationReturn } from "../types";
 
-import { Widget, WidgetLocation } from "./types";
+import { WidgetLocation } from "./types";
 
 export const useWidgetMutations = () => {
   const t = useT();
@@ -32,7 +32,7 @@ export const useWidgetMutations = () => {
     async (
       sceneId?: string,
       id?: string
-    ): Promise<MutationReturn<Partial<Widget>>> => {
+    ): Promise<MutationReturn<Partial<SceneWidget>>> => {
       if (!sceneId || !id)
         return {
           status: "error"

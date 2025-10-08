@@ -1,3 +1,4 @@
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { useCallback, useEffect, useState } from "react";
 
 import type { DisplayTypeField, PropertyListField } from ".";
@@ -22,8 +23,8 @@ export default ({
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
 }) => {
   const [currentPropertyList, setCurrentPropertyList] = useState<ListItem[]>(
@@ -41,8 +42,8 @@ export default ({
   );
 
   const handlePropertyValueUpdate = useCallback(
-    (fieldId?: string, vt?: any, itemId?: string) => {
-      return async (v?: any) => {
+    (fieldId?: string, vt?: ValueType, itemId?: string) => {
+      return async (v?: ValueTypes[ValueType]) => {
         if (!propertyId || !fieldId || !vt) return;
         await onPropertyUpdate?.(propertyId, "default", fieldId, itemId, vt, v);
       };

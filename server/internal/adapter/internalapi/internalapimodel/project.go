@@ -2,6 +2,7 @@ package internalapimodel
 
 import (
 	"context"
+	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
@@ -18,6 +19,7 @@ const (
 	ProjectSortField_PROJECT_SORT_FIELD_UNSPECIFIED = "id"
 	ProjectSortField_UPDATEDAT                      = "updatedat"
 	ProjectSortField_NAME                           = "name"
+	ProjectSortField_STARCOUNT                      = "starcount"
 )
 
 func ToProjectSortType(sort *pb.ProjectSort) *project.SortType {
@@ -33,6 +35,8 @@ func ToProjectSortType(sort *pb.ProjectSort) *project.SortType {
 		key = ProjectSortField_UPDATEDAT
 	case pb.ProjectSortField_NAME:
 		key = ProjectSortField_NAME
+	case pb.ProjectSortField_STARCOUNT:
+		key = ProjectSortField_STARCOUNT
 	default:
 		key = ProjectSortField_UPDATEDAT
 	}
@@ -76,13 +80,29 @@ func int32ToInt64(i *int32) *int64 {
 }
 
 func ToProjectPageInfo(info *usecasex.PageInfo) *pb.PageInfo {
-	return &pb.PageInfo{
+	if info == nil {
+		return &pb.PageInfo{
+			TotalCount:      0,
+			HasNextPage:     false,
+			HasPreviousPage: false,
+		}
+	}
+
+	result := &pb.PageInfo{
 		TotalCount:      info.TotalCount,
-		StartCursor:     info.EndCursor.StringRef(),
-		EndCursor:       info.EndCursor.StringRef(),
 		HasNextPage:     info.HasNextPage,
 		HasPreviousPage: info.HasPreviousPage,
 	}
+
+	if info.StartCursor != nil {
+		result.StartCursor = info.StartCursor.StringRef()
+	}
+
+	if info.EndCursor != nil {
+		result.EndCursor = info.EndCursor.StringRef()
+	}
+
+	return result
 }
 
 func ToInternalProject(ctx context.Context, p *project.Project, storytellings *storytelling.StoryList) *pb.Project {
@@ -133,6 +153,7 @@ func ToInternalProject(ctx context.Context, p *project.Project, storytellings *s
 		IsDeleted:    p.IsDeleted(),
 		Visibility:   p.Visibility(),
 		ProjectAlias: p.ProjectAlias(),
+		StarCount:    p.StarCount(),
 
 		EditorUrl: editorUrl,
 
@@ -164,12 +185,17 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		updatedAt = timestamppb.New(*p.UpdatedAt())
 	}
 	return &pb.ProjectMetadata{
-		Id:           p.ID().String(),
-		ProjectId:    p.Project().String(),
-		WorkspaceId:  p.Workspace().String(),
-		Readme:       p.Readme(),
-		License:      p.License(),
-		Topics:       p.Topics(),
+		Id:          p.ID().String(),
+		ProjectId:   p.Project().String(),
+		WorkspaceId: p.Workspace().String(),
+		Readme:      p.Readme(),
+		License:     p.License(),
+		Topics: func() []string {
+			if p.Topics() != nil && *p.Topics() != "" {
+				return strings.Split(*p.Topics(), ",")
+			}
+			return nil
+		}(),
 		ImportStatus: importStatus,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,

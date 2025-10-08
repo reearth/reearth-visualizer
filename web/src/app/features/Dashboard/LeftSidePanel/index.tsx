@@ -18,6 +18,7 @@ import { Profile } from "./profile";
 type Props = {
   workspaces: Workspace[];
   isPersonal?: boolean;
+  userPhotoUrl?: string;
   tab?: string;
   currentWorkspace?: Workspace;
   topTabs?: TabItems[];
@@ -31,6 +32,7 @@ const LeftSidePanel: FC<Props> = ({
   tab: currentTab,
   currentWorkspace,
   isPersonal,
+  userPhotoUrl,
   workspaces,
   onSignOut,
   onWorkspaceChange
@@ -44,6 +46,7 @@ const LeftSidePanel: FC<Props> = ({
           data-testid="sidebar-profile"
           currentUser={currentWorkspace?.name}
           isPersonal={isPersonal}
+          userPhotoUrl={userPhotoUrl}
           currentWorkspace={currentWorkspace}
           workspaces={workspaces}
           onSignOut={onSignOut}

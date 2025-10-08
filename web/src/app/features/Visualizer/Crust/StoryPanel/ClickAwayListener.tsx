@@ -14,13 +14,14 @@ type MouseEvents = "click" | "mousedown" | "mouseup";
 type TouchEvents = "touchstart" | "touchend";
 type Events = FocusEvent | MouseEvent | TouchEvent;
 
+
 interface Props extends HTMLAttributes<HTMLElement> {
   enabled?: boolean;
   onClickAway?: (event: Events) => void;
   focusEvent?: FocusEvents;
   mouseEvent?: MouseEvents;
   touchEvent?: TouchEvents;
-  children: ReactElement<any>;
+  children: ReactElement;
 }
 
 const eventTypeMapping = {
@@ -65,18 +66,20 @@ const ClickAwayListener: FunctionComponent<Props> = ({
     (event: Events): void => {
       bubbledEventTarget.current = event.target;
 
-      const handler = children?.props[type];
+      const props = children?.props as React.HTMLProps<HTMLElement>;
+      const handler = props[type as keyof React.HTMLProps<HTMLElement>];
 
-      if (handler) {
+      // Type guard to ensure handler is a function before calling
+      if (typeof handler === "function") {
         handler(event);
       }
     };
 
-  const handleChildRef = (childRef: HTMLElement) => {
+  const handleChildRef = (childRef: HTMLElement | null) => {
     node.current = childRef;
 
     const { ref } = children as typeof children & {
-      ref: RefCallback<HTMLElement> | MutableRefObject<HTMLElement>;
+      ref: RefCallback<HTMLElement | null> | MutableRefObject<HTMLElement | null>;
     };
 
     if (typeof ref === "function") {
@@ -120,7 +123,7 @@ const ClickAwayListener: FunctionComponent<Props> = ({
 
   return enabled
     ? React.Children.only(
-        cloneElement(children as ReactElement<any>, {
+        cloneElement(children, {
           ref: handleChildRef,
           [mappedFocusEvent]: handleBubbledEvents(mappedFocusEvent),
           [mappedMouseEvent]: handleBubbledEvents(mappedMouseEvent),

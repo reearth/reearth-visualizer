@@ -79,6 +79,7 @@ var (
 		errmsg.ErrKeyPkgProjectInvalidAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias],
 		message.MultiLocaleTemplateData(map[string]interface{}{
+			"aliasName": "",
 			"minLength": 5,
 			"maxLength": 32,
 			"allowedChars": func(locale language.Tag) string {
@@ -127,6 +128,7 @@ var (
 		errmsg.ErrKeyPkgStorytellingInvalidAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgStorytellingInvalidAlias],
 		message.MultiLocaleTemplateData(map[string]interface{}{
+			"aliasName": "",
 			"minLength": 5,
 			"maxLength": 32,
 			"allowedChars": func(locale language.Tag) string {

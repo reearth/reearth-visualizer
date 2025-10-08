@@ -11,12 +11,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/reearth/reearthx/log"
+
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/adapter/internalapi/internalapimodel"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/alias"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/storytelling"
@@ -108,6 +111,60 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
 
+}
+
+func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsRequest) (*pb.GetAllProjectsResponse, error) {
+	uc := adapter.Usecases(ctx)
+	// Create a pagination object if one wasn't provided
+	if req.Pagination == nil {
+		defaultLimit := int32(100)
+		req.Pagination = &pb.Pagination{
+			First: &defaultLimit,
+		}
+	}
+
+	pagination := internalapimodel.ToProjectPagination(req.Pagination)
+
+	// Parse the sort type from the request
+	sort := internalapimodel.ToProjectSortType(req.Sort)
+
+	// Convert SearchFieldType to string
+	var searchField *string
+	if req.SearchField != nil && *req.SearchField == pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS {
+		sf := "topics"
+		searchField = &sf
+	}
+
+	// Convert ProjectVisibility to string
+	var visibility *string
+	if req.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
+		v := "private"
+		visibility = &v
+		log.Infof("GetAllProjects: Filtering for private projects")
+	} else {
+		v := "public"
+		visibility = &v
+	}
+
+	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, searchField, visibility)
+
+	if err != nil {
+		log.Errorf("GetAllProjects: Database query failed: %v", err)
+		return nil, err
+	}
+
+	projects := make([]*pb.Project, 0, len(res))
+	for _, pj := range res {
+		project := internalapimodel.ToInternalProject(ctx, pj, nil)
+		if project != nil {
+			projects = append(projects, project)
+		}
+	}
+
+	return &pb.GetAllProjectsResponse{
+		Projects: projects,
+		PageInfo: internalapimodel.ToProjectPageInfo(info),
+	}, nil
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
@@ -439,9 +496,9 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, exportData, err := uc.Scene.ExportScene(ctx, prj)
+	sce, exportData, err := uc.Scene.ExportSceneData(ctx, prj)
 	if err != nil {
-		return nil, errors.New("Fail ExportScene :" + err.Error())
+		return nil, errors.New("Fail ExportSceneData :" + err.Error())
 	}
 
 	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)
@@ -453,9 +510,10 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	exportData["plugins"] = gqlmodel.ToPlugins(plugins)
 	exportData["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 	exportData["exportedInfo"] = map[string]string{
-		"host":      adapter.CurrentHost(ctx),
-		"project":   prj.ID().String(),
-		"timestamp": time.Now().Format(time.RFC3339),
+		"host":              adapter.CurrentHost(ctx),
+		"project":           prj.ID().String(),
+		"timestamp":         time.Now().Format(time.RFC3339),
+		"exportDataVersion": file.EXPORT_DATA_VERSION,
 	}
 	b, err := json.Marshal(exportData)
 	if err != nil {
