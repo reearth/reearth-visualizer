@@ -11,7 +11,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
-	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
@@ -30,8 +29,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 
 			// get sub from context
-			var authInfo *appx.AuthInfo
-			authInfo = adapter.GetAuthInfo(ctx)
+			authInfo := adapter.GetAuthInfo(ctx)
 
 			var userID string
 			var u *user.User
