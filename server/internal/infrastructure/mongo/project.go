@@ -624,6 +624,8 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 				sortOrder = -1
 			}
 			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}}
+		} else {
+			sortDoc = bson.D{{Key: "star_count", Value: -1}}
 		}
 
 		collation := options.Collation{
