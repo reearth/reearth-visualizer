@@ -37,7 +37,7 @@ type Config struct {
 	GCPProject       string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
 	Profiler         string            `pp:",omitempty"`
 	Tracer           string            `pp:",omitempty"`
-	TracerSample     float64           `pp:",omitempty"`
+	TracerSample     float64           `default:"0.01" pp:",omitempty"`
 	Marketplace      MarketplaceConfig `pp:",omitempty"`
 	AssetBaseURL     string            `default:"http://localhost:8080/assets"`
 	Origins          []string          `pp:",omitempty"`
