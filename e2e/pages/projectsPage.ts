@@ -37,7 +37,9 @@ export class ProjectsPage {
     return this.page.getByTestId(`project-grid-item-title-${projectName}`);
   }
   gridProjectStarButton(projectName: string): Locator {
-    return this.page.getByTestId(`project-grid-item-star-btn-wrapper-${projectName}`).locator('button');
+    return this.page
+      .getByTestId(`project-grid-item-star-btn-wrapper-${projectName}`)
+      .locator("button");
   }
   gridProjectMenuButton(projectName: string): Locator {
     return this.page.getByTestId(`project-grid-item-menu-btn-${projectName}`);
@@ -122,7 +124,10 @@ export class ProjectsPage {
     await this.projectNameInput.fill(projectName);
     await this.projectAliasInput.fill("");
     await this.projectAliasInput.fill(projectAlias);
+    await this.projectAliasInput.blur();
+    await this.page.waitForTimeout(10000);
     await this.descriptionTextarea.fill(description);
+    await expect(this.applyButton).toBeEnabled();
     await this.applyButton.click();
   }
   async deleteProject(projectName: string) {
@@ -154,7 +159,7 @@ export class ProjectsPage {
     const projectItem = this.gridProjectItem(specialProjectName).first();
     await projectItem.hover();
     const starButton = this.gridProjectStarButton(specialProjectName).first();
-    const starIcon = starButton.getByTestId('icon-starFilled');
+    const starIcon = starButton.getByTestId("icon-starFilled");
     await expect(starIcon).toBeVisible();
   }
 
@@ -169,7 +174,7 @@ export class ProjectsPage {
     const projectItem = this.gridProjectItem(specialProjectName).first();
     await projectItem.hover();
     const starButton = this.gridProjectStarButton(specialProjectName).first();
-    const starIcon = starButton.getByTestId('icon-star');
+    const starIcon = starButton.getByTestId("icon-star");
     await expect(starIcon).toBeVisible();
   }
   starredProjectNameMenuBar(projectName: string): Locator {
