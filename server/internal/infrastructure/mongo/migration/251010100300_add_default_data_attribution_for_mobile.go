@@ -12,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -69,7 +70,8 @@ func (m *DataAttribution) Do(ctx context.Context, c DBClient) error {
 
 		widget, location, err := m.buildDataAttribution(ctx, sceID)
 		if err != nil {
-			return err
+			log.Printf("migration: failed to build data attribution for scene %s: %v", sceID.String(), err)
+			continue
 		}
 		// Type Mobile Attribution
 		sce.Widgets().Add(widget)
