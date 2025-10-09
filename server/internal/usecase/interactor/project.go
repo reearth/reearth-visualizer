@@ -13,11 +13,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 
@@ -425,7 +425,7 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
-	log.Infof("Update project: %v", p)
+	log.Debugfc(ctx, "Update project: %v", p)
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to begin transaction", err)
@@ -443,12 +443,7 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to find project", err)
 	}
 
-	log.Infof("policyChecker: %v", i.policyChecker)
-	log.Infof("prj.Workspace(): %v", prj.Workspace())
-
 	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
-
-	log.Infof("operationAllowed: %v", operationAllowed)
 
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
