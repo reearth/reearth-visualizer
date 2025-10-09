@@ -661,7 +661,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 
 	if pFilter.Pagination == nil {
-		log.Warnf("FindAll: No pagination provided, returning all results")
+		visualizer.WarnWithCallerLogging(ctx, "FindAll: No pagination provided, returning all results")
 	}
 
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)
