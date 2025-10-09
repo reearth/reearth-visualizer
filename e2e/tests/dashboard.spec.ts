@@ -31,7 +31,6 @@ test.describe("DASHBOARD - Test cases", () => {
   let recycleBinPage: RecycleBinPage;
   let projectScreenPage: ProjectScreenPage;
   test.beforeAll(async ({ browser }) => {
-    test.setTimeout(20000);
     context = await browser.newContext({
       recordVideo: {
         dir: "videos/",

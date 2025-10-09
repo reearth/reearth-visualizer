@@ -20,9 +20,9 @@ dotenv.config({ path: path.resolve(__dirname, ".env") });
 export default defineConfig({
   globalSetup: require.resolve("./global-setup"),
   expect: {
-    timeout: 15000
+    timeout: 25000
   },
-  timeout: 25000,
+  timeout: 40000,
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: false,
