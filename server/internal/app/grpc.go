@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -29,7 +30,10 @@ func initGrpc(cfg *ServerConfig) *grpc.Server {
 		unaryAttachOperatorInterceptor(cfg),
 		unaryAttachUsecaseInterceptor(cfg),
 	)
-	s := grpc.NewServer(ui)
+	s := grpc.NewServer(
+		ui,
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	)
 	pb.RegisterReEarthVisualizerServer(s, internalapi.NewServer())
 
 	return s
