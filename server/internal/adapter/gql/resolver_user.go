@@ -2,9 +2,11 @@ package gql
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 )
 
 func (r *Resolver) Me() MeResolver {
@@ -15,7 +17,8 @@ type meResolver struct{ *Resolver }
 
 func (r *meResolver) MyWorkspace(ctx context.Context, obj *gqlmodel.Me) (*gqlmodel.Workspace, error) {
 	if obj.MyWorkspaceID == "" {
-		log.Errorfc(ctx, "MyWorkspaceID not found Me.ID: %s", obj.ID)
+		errMsg := fmt.Sprintf("MyWorkspaceID not found Me.ID: %s", obj.ID)
+		return nil, visualizer.ErrorWithCallerLogging(ctx, errMsg, errors.New(errMsg))
 	}
 	return dataloaders(ctx).Workspace.Load(obj.MyWorkspaceID)
 }
