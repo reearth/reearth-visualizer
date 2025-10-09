@@ -125,9 +125,8 @@ export class ProjectsPage {
     await this.projectAliasInput.fill("");
     await this.projectAliasInput.fill(projectAlias);
     await this.projectAliasInput.blur();
-    // wait for alias validation
-    await this.page.waitForTimeout(1000);
     await this.descriptionTextarea.fill(description);
+    await expect(this.applyButton).toBeEnabled();
     await this.applyButton.click();
   }
   async deleteProject(projectName: string) {
