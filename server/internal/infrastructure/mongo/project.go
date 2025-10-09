@@ -611,7 +611,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		totalCount, err := r.client.Count(ctx, filter)
 		if err != nil {
 			log.Errorf("FindAll: Count error: %v", err)
-			return nil, nil, visualizer.ErrorWithCallerLogging(ctx,"FindAll: Count error:", err)
+			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
 		}
 
 		var sortDoc bson.D
@@ -648,7 +648,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		c := mongodoc.NewProjectConsumer(nil)
 		if err := r.client.Find(ctx, filter, c, findOptions); err != nil {
 			log.Errorf("FindAll: Find error: %v", err)
-			return nil, nil, visualizer.ErrorWithCallerLogging(ctx,"FindAll: Count error:", err)
+			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
 		}
 
 		pageInfo := &usecasex.PageInfo{
@@ -657,7 +657,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 			HasPreviousPage: *pFilter.Offset > 0,
 		}
 
-		return c.Result, pageInfo, visualizer.ErrorWithCallerLogging(ctx,"FindAll: Count error:", err)
+		return c.Result, pageInfo, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
 	}
 
 	if pFilter.Pagination == nil {
