@@ -132,9 +132,9 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 	sort := internalapimodel.ToProjectSortType(req.Sort)
 
 	var pagination *usecasex.Pagination
-	var param *interfaces.AllProjectsParam
+	var param *interfaces.ProjectListParam
 	if req.Pagination != nil && req.Pagination.Offset != nil && req.Pagination.Limit != nil {
-		param = &interfaces.AllProjectsParam{
+		param = &interfaces.ProjectListParam{
 			Offset: req.Pagination.Offset,
 			Limit:  req.Pagination.Limit,
 		}

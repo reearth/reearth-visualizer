@@ -341,7 +341,7 @@ func (i *Project) FindVisibilityByWorkspace(
 	return result, pInfo, err
 }
 
-func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, param *interfaces.AllProjectsParam, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, param *interfaces.ProjectListParam, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
 	pFilter := repo.ProjectFilter{
 		Keyword:     keyword,
 		Sort:        sort,
