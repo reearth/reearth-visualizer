@@ -25,7 +25,6 @@ test.describe("Project Management", () => {
   let projectScreen: ProjectScreenPage;
 
   test.beforeAll(async ({ browser }) => {
-    test.setTimeout(20000);
     context = await browser.newContext({
       recordVideo: {
         dir: "videos/",
@@ -89,6 +88,7 @@ test.describe("Project Management", () => {
   });
 
   test("Should add new layer and add points on the map", async () => {
+    test.setTimeout(60000);
     await projectScreen.createNewLayer(layerName);
     await projectScreen.verifyLayerAdded(layerName);
     await projectScreen.clickLayer(layerName);

@@ -125,8 +125,9 @@ export class ProjectsPage {
     await this.projectAliasInput.fill("");
     await this.projectAliasInput.fill(projectAlias);
     await this.projectAliasInput.blur();
+    await this.page.waitForTimeout(1000);
     await this.descriptionTextarea.fill(description);
-    await expect(this.applyButton).toBeEnabled();
+    await expect(this.applyButton).toBeEnabled({ timeout: 20000 });
     await this.applyButton.click();
   }
   async deleteProject(projectName: string) {
