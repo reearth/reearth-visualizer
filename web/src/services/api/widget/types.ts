@@ -1,4 +1,11 @@
+import { DeviceType } from "@reearth/app/utils/device";
+
 import { Item } from "../property";
+
+export type WidgetQueryProps = {
+  sceneId?: string;
+  type: DeviceType;
+};
 
 export type WidgetLocation = {
   zone: "inner" | "outer";

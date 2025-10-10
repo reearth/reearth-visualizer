@@ -618,6 +618,10 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 		return nil, err
 	}
 
+	if sceneJSON.WidgetAlignSystems != nil {
+		return nil, errors.New("[Import WidgetAlignSystem] this is old data that is not supported.")
+	}
+
 	filter := Filter(sce.ID())
 
 	if p, err := i.propertyRepo.Filtered(filter).FindByID(ctx, sce.Property()); err == nil {

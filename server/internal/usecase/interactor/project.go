@@ -92,7 +92,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Ope
 		return []*project.Project{}, err
 	}
 
-	projects, err = i.addMetadata(ctx, projects, false, op)
+	projects, err = i.addMetadatas(ctx, projects, false, op)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.Workspa
 		return projects, pInfo, err
 	}
 
-	projects, err = i.addMetadata(ctx, projects, true, op)
+	projects, err = i.addMetadatas(ctx, projects, true, op)
 	if err != nil {
 		return projects, pInfo, err
 	}
@@ -120,11 +120,17 @@ func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.Workspa
 	return projects, pInfo, nil
 }
 
-func (i *Project) addMetadata(ctx context.Context, projects []*project.Project, exclude bool, op *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project, exclude bool, op *usecase.Operator) ([]*project.Project, error) {
 
 	ids := make(id.ProjectIDList, 0, len(projects))
 	for _, p := range projects {
-		ids = append(ids, p.ID())
+		if p != nil {
+			ids = append(ids, p.ID())
+		}
+	}
+
+	if len(ids) == 0 {
+		return []*project.Project{}, nil
 	}
 
 	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
