@@ -13,11 +13,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 
@@ -341,13 +341,18 @@ func (i *Project) FindVisibilityByWorkspace(
 	return result, pInfo, err
 }
 
-func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, param *interfaces.ProjectListParam, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
 	pFilter := repo.ProjectFilter{
 		Keyword:     keyword,
 		Sort:        sort,
 		Pagination:  pagination,
 		SearchField: searchField,
 		Visibility:  visibility,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
 	}
 
 	pList, pInfo, err := i.projectRepo.FindAll(ctx, pFilter)
@@ -425,9 +430,10 @@ func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectPara
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+	log.Debugfc(ctx, "Update project: %v", p)
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to begin transaction", err)
 	}
 
 	ctx = tx.Context()
@@ -439,19 +445,20 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	prj, err := i.projectRepo.FindByID(ctx, p.ID)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to find project", err)
 	}
 
 	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
 	}
 	if !operationAllowed.Allowed {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
 	}
 
 	if p.Name != nil {

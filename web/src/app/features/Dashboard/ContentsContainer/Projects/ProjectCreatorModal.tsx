@@ -57,7 +57,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
   const { validateProjectAlias } = useValidateProjectAlias();
   const [currentWorkspace] = useWorkspace();
 
-  const data = useWorkspacePolicyCheck(currentWorkspace?.id as string);
+  const data = useWorkspacePolicyCheck(currentWorkspace?.id ?? "");
   const enableToCreatePrivateProject =
     data?.workspacePolicyCheck?.enableToCreatePrivateProject ?? false;
 

@@ -14,6 +14,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
@@ -606,8 +607,61 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		}
 	}
 
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		totalCount, err := r.client.Count(ctx, filter)
+		if err != nil {
+			log.Errorf("FindAll: Count error: %v", err)
+			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+		}
+
+		var sortDoc bson.D
+		if pFilter.Sort != nil {
+			sortKey := pFilter.Sort.Key
+			if sortKey == "starcount" {
+				sortKey = "star_count" // Map to MongoDB field name
+			}
+			sortOrder := 1
+			if pFilter.Sort.Desc {
+				sortOrder = -1
+			}
+			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}}
+		} else {
+			sortDoc = bson.D{{Key: "star_count", Value: -1}}
+		}
+
+		collation := options.Collation{
+			Locale:    "en",
+			Strength:  3,
+			CaseLevel: true,
+			Alternate: "shifted",
+		}
+
+		findOptions := options.Find().
+			SetCollation(&collation).
+			SetSkip(*pFilter.Offset).
+			SetLimit(*pFilter.Limit)
+
+		if len(sortDoc) > 0 {
+			findOptions.SetSort(sortDoc)
+		}
+
+		c := mongodoc.NewProjectConsumer(nil)
+		if err := r.client.Find(ctx, filter, c, findOptions); err != nil {
+			log.Errorf("FindAll: Find error: %v", err)
+			return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+		}
+
+		pageInfo := &usecasex.PageInfo{
+			TotalCount:      totalCount,
+			HasNextPage:     *pFilter.Offset+*pFilter.Limit < totalCount,
+			HasPreviousPage: *pFilter.Offset > 0,
+		}
+
+		return c.Result, pageInfo, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+	}
+
 	if pFilter.Pagination == nil {
-		log.Warnf("FindAll: Pagination is nil, not using pagination")
+		visualizer.WarnWithCallerLogging(ctx, "FindAll: No pagination provided, returning all results")
 	}
 
 	projects, pageInfo, err := r.paginateWithoutWorkspaceFilter(ctx, filter, pFilter.Sort, pFilter.Pagination)

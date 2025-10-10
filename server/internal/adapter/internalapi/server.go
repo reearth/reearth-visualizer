@@ -123,10 +123,32 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		}
 	}
 
-	pagination := internalapimodel.ToProjectPagination(req.Pagination)
+	maxLimit := int64(100)
+	if req.Pagination.Limit != nil && *req.Pagination.Limit > maxLimit {
+		req.Pagination.Limit = &maxLimit
+	}
 
 	// Parse the sort type from the request
 	sort := internalapimodel.ToProjectSortType(req.Sort)
+
+	var pagination *usecasex.Pagination
+	var param *interfaces.ProjectListParam
+	if req.Pagination != nil && req.Pagination.Offset != nil && req.Pagination.Limit != nil {
+		param = &interfaces.ProjectListParam{
+			Offset: req.Pagination.Offset,
+			Limit:  req.Pagination.Limit,
+		}
+		pagination = nil
+	} else {
+		pagination = internalapimodel.ToProjectPagination(req.Pagination)
+		if pagination == nil {
+			defaultLimit := int32(100)
+			req.Pagination = &pb.Pagination{
+				First: &defaultLimit,
+			}
+			pagination = internalapimodel.ToProjectPagination(req.Pagination)
+		}
+	}
 
 	// Convert SearchFieldType to string
 	var searchField *string
@@ -146,7 +168,7 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		visibility = &v
 	}
 
-	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, searchField, visibility)
+	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, param, searchField, visibility)
 
 	if err != nil {
 		log.Errorf("GetAllProjects: Database query failed: %v", err)
