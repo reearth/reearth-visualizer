@@ -45,7 +45,7 @@ func ToScene(scene *scene.Scene) *Scene {
 		UpdatedAt:         scene.UpdatedAt(),
 		Plugins:           util.Map(scene.Plugins().Plugins(), ToScenePlugin),
 		Widgets:           util.Map(scene.Widgets().Widgets(), ToSceneWidget),
-		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
+		WidgetAlignSystem: ToWidgetAlignSystems(scene.Widgets().Alignment()),
 
 		// publishment ---------------------
 		Alias: scene.Alias(),
