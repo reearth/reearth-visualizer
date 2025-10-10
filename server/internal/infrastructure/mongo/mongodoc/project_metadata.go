@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/exp/slices"
 )
 
@@ -17,7 +18,7 @@ type ProjectMetadataDocument struct {
 	ImportResultLog *map[string]any
 	Readme          *string
 	License         *string
-	Topics          *[]string
+	Topics          interface{} `bson:"topics,omitempty"` // Can be *string (old) or *[]string (new)
 	CreatedAt       *time.Time
 	UpdatedAt       *time.Time
 }
@@ -87,8 +88,41 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		UpdatedAt(d.UpdatedAt).
 		CreatedAt(d.CreatedAt)
 
+	// Handle both old string format and new array format for topics
 	if d.Topics != nil {
-		builder = builder.Topics(d.Topics)
+		switch topics := d.Topics.(type) {
+		case []string:
+			if len(topics) > 0 {
+				builder = builder.Topics(&topics)
+			}
+		case *[]string:
+			if topics != nil && len(*topics) > 0 {
+				builder = builder.Topics(topics)
+			}
+		case primitive.A:
+			// MongoDB primitive array - convert to []string
+			if len(topics) > 0 {
+				stringTopics := make([]string, len(topics))
+				for i, topic := range topics {
+					if str, ok := topic.(string); ok {
+						stringTopics[i] = str
+					}
+				}
+				builder = builder.Topics(&stringTopics)
+			}
+		case string:
+			// Old string format (without pointer) - convert to array
+			if topics != "" {
+				topicsArray := []string{topics}
+				builder = builder.Topics(&topicsArray)
+			}
+		case *string:
+			// Old string format (with pointer) - convert to array
+			if topics != nil && *topics != "" {
+				topicsArray := []string{*topics}
+				builder = builder.Topics(&topicsArray)
+			}
+		}
 	}
 
 	return builder.Build()
