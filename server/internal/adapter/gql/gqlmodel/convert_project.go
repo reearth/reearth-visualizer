@@ -79,7 +79,7 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 		License:      pm.License(),
 		Topics: func() []string {
 			if pm.Topics() == nil {
-				return nil
+				return []string{}
 			}
 			return *pm.Topics()
 		}(),

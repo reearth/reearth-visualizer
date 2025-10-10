@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/exp/slices"
 )
 
@@ -97,6 +98,17 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		case *[]string:
 			if topics != nil && len(*topics) > 0 {
 				builder = builder.Topics(topics)
+			}
+		case primitive.A:
+			// MongoDB primitive array - convert to []string
+			if len(topics) > 0 {
+				stringTopics := make([]string, len(topics))
+				for i, topic := range topics {
+					if str, ok := topic.(string); ok {
+						stringTopics[i] = str
+					}
+				}
+				builder = builder.Topics(&stringTopics)
 			}
 		case string:
 			// Old string format (without pointer) - convert to array
