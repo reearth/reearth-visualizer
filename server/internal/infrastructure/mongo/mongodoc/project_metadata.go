@@ -87,7 +87,7 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		UpdatedAt(d.UpdatedAt).
 		CreatedAt(d.CreatedAt)
 
-	if d.Topics != nil && len(*d.Topics) > 0 {
+	if d.Topics != nil {
 		builder = builder.Topics(d.Topics)
 	}
 
