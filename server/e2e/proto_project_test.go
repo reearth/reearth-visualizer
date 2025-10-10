@@ -331,7 +331,7 @@ func TestInternalAPI_unit(t *testing.T) {
 				ProjectId: pid.String(),
 				Readme:    lo.ToPtr("test readme"),
 				License:   lo.ToPtr("test license"),
-				Topics:    lo.ToPtr("test topics"),
+				Topics:    []string{"test topics"},
 			},
 		)
 		res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
@@ -495,7 +495,7 @@ func TestCreateProjectForInternal(t *testing.T) {
 				ProjectAlias: lo.ToPtr("projectalias-xxxxxxxxxxxx"),
 				Readme:       lo.ToPtr("readme-xxxxxxxxxxx"),
 				License:      lo.ToPtr("license-xxxxxxxxxxx"),
-				Topics:       lo.ToPtr("topics-xxxxxxxxxxx"),
+				Topics:       []string{"gis", "history"},
 			})
 		require.Nil(t, err)
 
@@ -505,7 +505,7 @@ func TestCreateProjectForInternal(t *testing.T) {
 		metadata := prj.GetMetadata()
 		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
 		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
-		assert.Equal(t, []string{"topics-xxxxxxxxxxx"}, metadata.Topics)
+		assert.Equal(t, []string{"gis", "history"}, metadata.Topics)
 
 		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
 			ProjectId: res.Project.Id,
@@ -518,7 +518,7 @@ func TestCreateProjectForInternal(t *testing.T) {
 		metadata = prj.GetMetadata()
 		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
 		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
-		assert.Equal(t, []string{"topics-xxxxxxxxxxx"}, metadata.Topics)
+		assert.Equal(t, []string{"gis", "history"}, metadata.Topics)
 
 	})
 

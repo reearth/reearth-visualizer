@@ -1207,10 +1207,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	if ret, ok := projectData["license"].(string); ok {
 		license = &ret
 	}
-	var topics *string
-	if ret, ok := projectData["topics"].(string); ok {
-		topics = &ret
-	}
+	topics := input.Topics
 
 	visibility := project.VisibilityPublic
 	if i.policyChecker != nil {
@@ -1296,7 +1293,7 @@ type createProjectInput struct {
 	// metadata
 	Readme  *string
 	License *string
-	Topics  *string
+	Topics  *[]string
 }
 
 var (

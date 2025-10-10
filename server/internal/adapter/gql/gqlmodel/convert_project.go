@@ -77,7 +77,12 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 		Project:      IDFrom(pm.Project()),
 		Readme:       pm.Readme(),
 		License:      pm.License(),
-		Topics:       pm.Topics(),
+		Topics: func() []string {
+			if pm.Topics() == nil {
+				return nil
+			}
+			return *pm.Topics()
+		}(),
 		ImportStatus: &importStatus,
 		ImportResultLog: func() map[string]any {
 			if pm.ImportResultLog() == nil {
@@ -177,7 +182,7 @@ type ProjectExport struct {
 
 	License *string `json:"license,omitempty"`
 	Readme  *string `json:"readme,omitempty"`
-	Topics  *string `json:"topics,omitempty"`
+	Topics  *[]string `json:"topics,omitempty"`
 }
 
 func ToProjectExport(p *project.Project) *ProjectExport {
@@ -196,7 +201,9 @@ func ToProjectExport(p *project.Project) *ProjectExport {
 	if pm := p.Metadata(); pm != nil {
 		export.License = pm.License()
 		export.Readme = pm.Readme()
-		export.Topics = pm.Topics()
+		if pm.Topics() != nil {
+			export.Topics = pm.Topics()
+		}
 	}
 
 	return export

@@ -40,7 +40,7 @@ type ProjectMetadata {
   workspace: ID!
   readme: String
   license: String
-  topics: String
+  topics: [String!]
   importStatus: ProjectImportStatus
   importResultLog: JSON
   createdAt: DateTime
@@ -85,7 +85,7 @@ input CreateProjectInput {
   # metadata
   readme: String
   license: String
-  topics: String
+  topics: [String!]
 }
 
 input UpdateProjectInput {
@@ -118,7 +118,7 @@ input UpdateProjectMetadataInput {
   project: ID!
   readme: String
   license: String
-  topics: String
+  topics: [String!]
 }
 
 input PublishProjectInput {
