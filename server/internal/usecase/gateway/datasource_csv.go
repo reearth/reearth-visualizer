@@ -19,11 +19,24 @@ import (
 type CSVDataSource struct{}
 
 // IsURLValid checks if the URL is valid for CSV fetch (HTTP/HTTPS, .csv/.tsv).
-func (CSVDataSource) IsURLValid(_ context.Context, u string) bool {
+func (CSVDataSource) IsURLValid(ctx context.Context, u string) bool {
 	parsed, err := url.Parse(u)
-	if err != nil || (parsed.Scheme != "http" && parsed.Scheme != "https") {
+	if err != nil {
 		return false
 	}
+
+	if parsed.Scheme != "http" && parsed.Scheme != "https" {
+		return false
+	}
+
+	if strings.Contains(parsed.Host, "docs.google.com") && strings.Contains(parsed.Path, "/spreadsheets/d/e/") {
+		return true
+	}
+
+	if parsed.Host == "raw.githubusercontent.com" {
+		return true
+	}
+
 	ext := strings.ToLower(filepath.Ext(parsed.Path))
 	return ext == ".csv" || ext == ".tsv"
 }
