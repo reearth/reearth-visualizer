@@ -182,6 +182,7 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 	if p.UpdatedAt() != nil {
 		updatedAt = timestamppb.New(*p.UpdatedAt())
 	}
+
 	return &pb.ProjectMetadata{
 		Id:          p.ID().String(),
 		ProjectId:   p.Project().String(),
@@ -189,8 +190,8 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		Readme:      p.Readme(),
 		License:     p.License(),
 		Topics: func() []string {
-			if p.Topics() == nil {
-				return nil
+			if p.Topics() == nil || len(*p.Topics()) == 0 {
+				return []string{}
 			}
 			return *p.Topics()
 		}(),
@@ -201,8 +202,8 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 			return p.StarCount()
 		}(),
 		StarredBy: func() []string {
-			if p.StarredBy() == nil {
-				return nil
+			if p.StarredBy() == nil || len(*p.StarredBy()) == 0 {
+				return []string{}
 			}
 			return *p.StarredBy()
 		}(),
