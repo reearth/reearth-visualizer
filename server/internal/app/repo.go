@@ -71,7 +71,11 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	var accountsAPIClient *accounts.Client
 	if conf.AccountsAPI.Enabled {
 		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
-		accountsAPIClient = accounts.NewClient(conf.AccountsAPI.Host, adpaccounts.DynamicAuthTransport{})
+		accountsAPIClient = accounts.NewClient(
+			conf.AccountsAPI.Host,
+			conf.AccountsAPI.Timeout,
+			adpaccounts.DynamicAuthTransport{},
+		)
 	}
 
 	// Mongo

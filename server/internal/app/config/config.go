@@ -85,6 +85,7 @@ type Config struct {
 type AccountsAPIConfig struct {
 	Enabled bool   `default:"false"`
 	Host    string `default:"http://localhost:8081"`
+	Timeout int    `default:"30"`
 }
 
 type HealthCheckConfig struct {

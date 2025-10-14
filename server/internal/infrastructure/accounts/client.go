@@ -14,10 +14,10 @@ type Client struct {
 	UserRepo userpkg.Repo
 }
 
-func NewClient(host string, transport http.RoundTripper) *Client {
+func NewClient(host string, timeout int, transport http.RoundTripper) *Client {
 	httpClient := &http.Client{
 		Transport: transport,
-		Timeout:   30 * time.Second,
+		Timeout:   time.Duration(timeout) * time.Second,
 	}
 
 	normalizedHost := strings.TrimRight(host, "/")
