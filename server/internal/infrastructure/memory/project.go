@@ -283,21 +283,21 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 				return result[i].UpdatedAt().Before(result[j].UpdatedAt())
 			case "starcount":
 				if pFilter.Sort.Desc {
-					log.Printf("Comparing starCount: %d vs %d", result[i].StarCount(), result[j].StarCount())
-					return result[i].StarCount() > result[j].StarCount()
+					log.Printf("Comparing starCount: %d vs %d", result[i].Metadata().StarCount(), result[j].Metadata().StarCount())
+					return *result[i].Metadata().StarCount() > *result[j].Metadata().StarCount()
 				}
-				return result[i].StarCount() < result[j].StarCount()
+				return *result[i].Metadata().StarCount() < *result[j].Metadata().StarCount()
 			default:
 				// Default to starCount descending
 				log.Printf("Using default sort (starCount desc) for unknown key: %s", sortKey)
-				return result[i].StarCount() > result[j].StarCount()
+				return *result[i].Metadata().StarCount() > *result[j].Metadata().StarCount()
 			}
 		})
 	} else {
 		// Default sort when no sort is specified: starCount descending
 		log.Printf("No sort specified, using default sort (starCount desc)")
 		sort.SliceStable(result, func(i, j int) bool {
-			return result[i].StarCount() > result[j].StarCount()
+			return *result[i].Metadata().StarCount() > *result[j].Metadata().StarCount()
 		})
 	}
 

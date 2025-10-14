@@ -4,7 +4,6 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -26,11 +25,6 @@ type ProjectDocument struct {
 	Deleted      bool
 	Visibility   string
 	ProjectAlias string
-	// metadata fields
-	CreatedAt time.Time `bson:"created_at"`
-	Topics    []string  `bson:"topics"`
-	StarCount int       `bson:"star_count"`
-	StarredBy []string  `bson:"starred_by"`
 	// publishment
 	Alias             string
 	PublishmentStatus string
@@ -62,19 +56,6 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		imageURL = u.String()
 	}
 
-	// Extract topics from metadata if available
-	var topics []string
-	createdAt := p.CreatedAt()
-	if meta := p.Metadata(); meta != nil {
-		if meta.Topics() != nil {
-			// Topics is already an array
-			topics = *meta.Topics()
-		}
-		if meta.CreatedAt() != nil {
-			createdAt = *meta.CreatedAt()
-		}
-	}
-
 	return &ProjectDocument{
 		ID:           pid,
 		Workspace:    p.Workspace().String(),
@@ -89,11 +70,6 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		Deleted:      p.IsDeleted(),
 		Visibility:   p.Visibility(),
 		ProjectAlias: p.ProjectAlias(),
-		// metadata fields
-		CreatedAt: createdAt,
-		Topics:    topics,
-		StarCount: 0, // Default values for now
-		StarredBy: []string{},
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: string(p.PublishmentStatus()),
@@ -159,31 +135,9 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		BasicAuthPassword(d.BasicAuthPassword).
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
-		StarCount(int32(d.StarCount)).
 		Build()
 	if err != nil {
 		return nil, err
-	}
-
-	// Only create metadata if there are meaningful metadata-specific values
-	// Only create metadata if we have topics or other metadata-specific values
-	hasTopics := len(d.Topics) > 0
-
-	if hasTopics {
-		metadata, err := project.NewProjectMetadata().
-			ID(id.NewProjectMetadataID()).
-			Project(pid).
-			Workspace(tid).
-			Topics(&d.Topics).
-			CreatedAt(&d.CreatedAt).
-			UpdatedAt(&d.UpdatedAt).
-			Build()
-
-		if err == nil {
-			p.SetMetadata(metadata)
-		} else {
-			log.Errorf("DEBUG: Failed to create metadata: %v\n", err)
-		}
 	}
 
 	return p, nil
