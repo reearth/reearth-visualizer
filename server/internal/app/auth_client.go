@@ -91,15 +91,36 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 
 					if u == nil {
 						var err error
-						u, err = multiUser.FetchBySub(ctx, authInfo.Sub)
-						if err != nil && err != rerror.ErrNotFound {
-							return err
+						// Use Accounts API if enabled, otherwise use MongoDB
+						if cfg.AccountsAPIClient != nil {
+							userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
+							if err != nil && err != rerror.ErrNotFound {
+								log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
+								return err
+							}
+							if userModel != nil {
+								log.Debugfc(ctx, "accounts API: user fetched via FindMe")
+							}
+
+							log.Debugfc(ctx, "accounts API: user model: %#v", userModel)
+
+							uId, _ := user.IDFrom(userModel.ID())
+							u, err = user.New().
+								ID(uId).
+								Name(userModel.Name()).
+								Email(userModel.Email()).
+								Metadata(user.NewMetadata()).
+								Build()
+						} else {
+							u, err = multiUser.FetchBySub(ctx, authInfo.Sub)
+							if err != nil && err != rerror.ErrNotFound {
+								return err
+							}
 						}
-						// find user
 					}
 
-					// save a new sub
-					if u != nil {
+					// save a new sub (only for MongoDB-based user repo)
+					if u != nil && cfg.AccountsAPIClient == nil {
 						auth := user.AuthFrom(authInfo.Sub)
 						if err := addAuth0SubToUser(ctx, u, auth, cfg); err != nil {
 							return err

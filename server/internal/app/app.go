@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-
+	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
@@ -40,6 +40,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		otelecho.Middleware("reearth"),
 		echo.WrapMiddleware(appx.RequestIDMiddleware()),
 		logger.AccessLogger(),
+		appmiddleware.LoggerMiddleware(),
 		middleware.Gzip(),
 	)
 	if cfg.Config.HTTPSREDIRECT {
@@ -138,6 +139,9 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api.GET("/published_data/:name", PublishedData("", true))
 
 	apiPrivate := api.Group("", privateCache)
+	apiPrivate.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
+		AccountsClient: cfg.AccountsAPIClient,
+	})...)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
 	apiPrivate.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
