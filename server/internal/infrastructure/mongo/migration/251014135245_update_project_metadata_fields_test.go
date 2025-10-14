@@ -89,9 +89,9 @@ func TestUpdateProjectMetadataFields_WithExistingMetadata(t *testing.T) {
 	assert.NoError(t, err)
 
 	// Check that metadata fields were reset to defaults
-	assert.Equal(t, []interface{}{}, updatedMetadata["topics"].(primitive.A))
+	assert.Equal(t, primitive.A{}, updatedMetadata["topics"].(primitive.A))
 	assert.Equal(t, int32(0), updatedMetadata["star_count"])
-	assert.Equal(t, []interface{}{}, updatedMetadata["starred_by"].(primitive.A))
+	assert.Equal(t, primitive.A{}, updatedMetadata["starred_by"].(primitive.A))
 
 	// Verify no metadata was created for project2 (no existing metadata)
 	var noMetadata bson.M
