@@ -77,6 +77,15 @@ type Config struct {
 	HealthCheck HealthCheckConfig `pp:",omitempty"`
 
 	Visualizer VisualizerConfig `pp:",omitempty"`
+
+	// Accounts API Configuration
+	AccountsAPI AccountsAPIConfig `pp:",omitempty"`
+}
+
+type AccountsAPIConfig struct {
+	Enabled bool   `default:"false"`
+	Host    string `default:"http://localhost:8081"`
+	Timeout int    `default:"30"`
 }
 
 type HealthCheckConfig struct {

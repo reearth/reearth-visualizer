@@ -12,7 +12,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-
+	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
@@ -74,6 +74,12 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	} else {
 		// Set AuthInfo to context key => adapter.ContextAuthInfo
 		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+	}
+
+	if cfg.AccountsAPIClient != nil {
+		e.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
+			AccountsClient: cfg.AccountsAPIClient,
+		})...)
 	}
 
 	e.Use(echo.WrapMiddleware(wrapHandler))

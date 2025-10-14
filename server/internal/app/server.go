@@ -8,6 +8,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
@@ -18,15 +19,16 @@ import (
 )
 
 func runServer(ctx context.Context, conf *config.Config, debug bool) {
-	repos, gateways, acRepos, acGateways := initReposAndGateways(ctx, conf, debug)
+	repos, gateways, acRepos, acGateways, accountsAPIClient := initReposAndGateways(ctx, conf, debug)
 	// Start web server
 	NewServer(ctx, &ServerConfig{
-		Config:          conf,
-		Debug:           debug,
-		Repos:           repos,
-		Gateways:        gateways,
-		AccountRepos:    acRepos,
-		AccountGateways: acGateways,
+		Config:            conf,
+		Debug:             debug,
+		Repos:             repos,
+		Gateways:          gateways,
+		AccountRepos:      acRepos,
+		AccountGateways:   acGateways,
+		AccountsAPIClient: accountsAPIClient,
 	}).Run(ctx)
 }
 
@@ -38,12 +40,13 @@ type WebServer struct {
 }
 
 type ServerConfig struct {
-	Config          *config.Config
-	Debug           bool
-	Repos           *repo.Container
-	Gateways        *gateway.Container
-	AccountRepos    *accountrepo.Container
-	AccountGateways *accountgateway.Container
+	Config            *config.Config
+	Debug             bool
+	Repos             *repo.Container
+	Gateways          *gateway.Container
+	AccountRepos      *accountrepo.Container
+	AccountGateways   *accountgateway.Container
+	AccountsAPIClient *accounts.Client
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
