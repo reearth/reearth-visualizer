@@ -74,12 +74,18 @@ func TestProjectExport(t *testing.T) {
 	require.NoError(t, json.Unmarshal(projRaw, &proj), "project.json must be valid JSON")
 
 	_, hasProject := proj["project"]
-	_, hasScene := proj["scene"]
+	sce, hasScene := proj["scene"]
 	require.True(t, hasProject, "`project` key must exist in project.json")
 	require.True(t, hasScene, "`scene` key must exist in project.json")
 
 	exportedInfo, hasExportedInfo := proj["exportedInfo"].(map[string]any)
 	require.True(t, hasExportedInfo, "`exportedInfo` key must exist in project.json")
+
+	_, hasWidgetAlignSystem := sce.(map[string]any)["widgetAlignSystem"]
+	require.False(t, hasWidgetAlignSystem, "`widgetAlignSystem` key exist in project.json")
+
+	_, hasWidgetAlignSystems := sce.(map[string]any)["widgetAlignSystems"]
+	require.True(t, hasWidgetAlignSystems, "`widgetAlignSystems` key must exist in project.json")
 
 	_, hasExportDataVersion := exportedInfo["exportDataVersion"]
 	require.True(t, hasExportDataVersion, "`exportedInfo.exportDataVersion` key must exist in project.json")
