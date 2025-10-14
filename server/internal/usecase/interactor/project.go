@@ -1335,12 +1335,16 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	metadata, err := i.projectMetadataRepo.FindByProjectID(ctx, prjID)
 	if metadata == nil || err != nil { // if not found
+		starCount := int64(0)
+		starredBy := []string{}
 		metadata, err = project.NewProjectMetadata().
 			NewID().
 			Workspace(input.WorkspaceID).
 			Project(prjID).
 			ImportStatus(&input.ImportStatus).
 			ImportResultLog(input.ImportResultLog).
+			StarCount(&starCount).
+			StarredBy(&starredBy).
 			Build()
 		if err != nil {
 			return nil, err
