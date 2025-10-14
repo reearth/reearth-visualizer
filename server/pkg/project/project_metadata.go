@@ -23,6 +23,8 @@ type ProjectMetadata struct {
 	readme          *string
 	license         *string
 	topics          *[]string
+	starCount       *int64
+	starredBy       *[]string
 	createdAt       *time.Time
 	updatedAt       *time.Time
 }
@@ -52,6 +54,14 @@ func (r *ProjectMetadata) License() *string {
 
 func (r *ProjectMetadata) Topics() *[]string {
 	return r.topics
+}
+
+func (r *ProjectMetadata) StarCount() *int64 {
+	return r.starCount
+}
+
+func (r *ProjectMetadata) StarredBy() *[]string {
+	return r.starredBy
 }
 
 func (r *ProjectMetadata) ImportStatus() *ProjectImportStatus {
@@ -111,6 +121,20 @@ func (r *ProjectMetadata) SetTopics(topics *[]string) {
 		return
 	}
 	r.topics = topics
+}
+
+func (r *ProjectMetadata) SetStarCount(starCount *int64) {
+	if r == nil {
+		return
+	}
+	r.starCount = starCount
+}
+
+func (r *ProjectMetadata) SetStarredBy(starredBy *[]string) {
+	if r == nil {
+		return
+	}
+	r.starredBy = starredBy
 }
 
 func (r *ProjectMetadata) SetCreatedAt(createdAt *time.Time) {

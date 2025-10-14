@@ -133,7 +133,7 @@ func encodeProjectCursor(p *project.Project, sort *project.SortType) (cursor use
 		case "updatedat":
 			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 		case "starcount":
-			suffix = fmt.Sprintf(":%d", p.StarCount())
+			suffix = fmt.Sprintf(":%d", *p.Metadata().StarCount())
 		default:
 			suffix = ":" + p.UpdatedAt().Format(time.RFC3339Nano)
 		}

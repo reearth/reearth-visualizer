@@ -152,7 +152,6 @@ func ToInternalProject(ctx context.Context, p *project.Project, storytellings *s
 		IsDeleted:    p.IsDeleted(),
 		Visibility:   p.Visibility(),
 		ProjectAlias: p.ProjectAlias(),
-		StarCount:    p.StarCount(),
 
 		EditorUrl: editorUrl,
 
