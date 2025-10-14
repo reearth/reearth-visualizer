@@ -1,13 +1,14 @@
 package middleware
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
-	"strings"
 
 	echo "github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter/internal"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
+	"github.com/reearth/reearth/server/internal/infrastructure/accounts/gqlerror"
 	"github.com/reearth/reearthx/log"
 )
 
@@ -58,10 +59,9 @@ func newAccountsMiddleware(accountsClient *accounts.Client) echo.MiddlewareFunc 
 			// This will eliminate the overhead of making an API call to fetch user data for each request.
 			u, err := accountsClient.UserRepo.FindMe(ctx)
 			if err != nil {
-				if strings.Contains(err.Error(), "401") {
+				if errors.Is(err, gqlerror.ErrUnauthorized) {
 					return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized: user not found")
 				}
-
 				log.Errorc(ctx, fmt.Errorf("[Accounts Middleware] failed to fetch user: %w", err))
 				return echo.NewHTTPError(http.StatusInternalServerError, "server error: failed to fetch user")
 			}

@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/hasura/go-graphql-client"
+	"github.com/reearth/reearth/server/internal/infrastructure/accounts/gqlerror"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts/gqlmodel"
 	"github.com/reearth/reearth/server/pkg/gqlutil"
 	"github.com/reearth/reearth/server/pkg/user"
-	"github.com/reearth/reearthx/log"
 	"github.com/samber/lo"
 )
 
@@ -22,10 +22,9 @@ func NewRepo(gql *graphql.Client) user.Repo {
 func (r *userRepo) FindMe(ctx context.Context) (*user.User, error) {
 	var q findMeQuery
 	if err := r.client.Query(ctx, &q, nil); err != nil {
-		return nil, err
+		return nil, gqlerror.ReturnAccountsError(err)
 	}
 
-	log.Debugfc(ctx, "accounts API: user model userRepo: %#v", q.Me)
 	return user.New().
 		ID(string(q.Me.ID)).
 		Name(string(q.Me.Name)).
@@ -45,7 +44,7 @@ func (r *userRepo) FindByID(ctx context.Context, id string) (*user.User, error) 
 		"id": graphql.ID(id),
 	}
 	if err := r.client.Query(ctx, &q, vars); err != nil {
-		return nil, err
+		return nil, gqlerror.ReturnAccountsError(err)
 	}
 
 	return user.New().
@@ -65,7 +64,7 @@ func (r *userRepo) FindByAlias(ctx context.Context, name string) (*user.User, er
 		"nameOrEmail": graphql.String(name),
 	}
 	if err := r.client.Query(ctx, &q, vars); err != nil {
-		return nil, err
+		return nil, gqlerror.ReturnAccountsError(err)
 	}
 
 	return user.New().
@@ -97,7 +96,7 @@ func (r *userRepo) SignupOIDC(ctx context.Context, name string, email string, su
 		"secret": graphql.String(secret),
 	}
 	if err := r.client.Mutate(ctx, &m, vars); err != nil {
-		return nil, err
+		return nil, gqlerror.ReturnAccountsError(err)
 	}
 
 	return user.New().
@@ -125,7 +124,7 @@ func (r *userRepo) Signup(ctx context.Context, userID, name, email, password, se
 	vars["secret"] = graphql.String(secret)
 
 	if err := r.client.Mutate(ctx, &m, vars); err != nil {
-		return nil, err
+		return nil, gqlerror.ReturnAccountsError(err)
 	}
 
 	return user.New().
