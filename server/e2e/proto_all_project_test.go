@@ -297,7 +297,15 @@ func TestGetAllProjects(t *testing.T) {
 				nextProject := res.Projects[i+1]
 
 				if currProject.Metadata != nil && nextProject.Metadata != nil {
-					assert.LessOrEqual(t, currProject.Metadata.StarCount, nextProject.Metadata.StarCount,
+					currStarCount := int64(0)
+					nextStarCount := int64(0)
+					if currProject.Metadata.StarCount != nil {
+						currStarCount = *currProject.Metadata.StarCount
+					}
+					if nextProject.Metadata.StarCount != nil {
+						nextStarCount = *nextProject.Metadata.StarCount
+					}
+					assert.LessOrEqual(t, currStarCount, nextStarCount,
 						"Projects should be sorted by star count in ascending order")
 				} else {
 					t.Fail()
@@ -331,7 +339,15 @@ func TestGetAllProjects(t *testing.T) {
 
 				// Ensure Metadata is not nil before accessing StarCount
 				if currProject.Metadata != nil && nextProject.Metadata != nil {
-					assert.GreaterOrEqual(t, currProject.Metadata.StarCount, nextProject.Metadata.StarCount,
+					currStarCount := int64(0)
+					nextStarCount := int64(0)
+					if currProject.Metadata.StarCount != nil {
+						currStarCount = *currProject.Metadata.StarCount
+					}
+					if nextProject.Metadata.StarCount != nil {
+						nextStarCount = *nextProject.Metadata.StarCount
+					}
+					assert.GreaterOrEqual(t, currStarCount, nextStarCount,
 						"Projects should be sorted by star count in descending order")
 				} else {
 					t.Fail()
