@@ -194,6 +194,18 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 			}
 			return *p.Topics()
 		}(),
+		StarCount: func() *int64 {
+			if p.StarCount() == nil {
+				return lo.ToPtr(int64(0))
+			}
+			return p.StarCount()
+		}(),
+		StarredBy: func() []string {
+			if p.StarredBy() == nil {
+				return nil
+			}
+			return *p.StarredBy()
+		}(),
 		ImportStatus: importStatus,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,
