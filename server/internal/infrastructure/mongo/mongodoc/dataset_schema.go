@@ -14,6 +14,14 @@ type DatasetSchemaDocument struct {
 	Fields              []*DatasetSchemaFieldDocument
 	RepresentativeField *string
 	Scene               string
+	AuthConfig          *AuthConfigDocument
+}
+
+type AuthConfigDocument struct {
+	Type     string `bson:"type"`
+	Username string `bson:"username,omitempty"`
+	Password string `bson:"password,omitempty"`
+	APIKey   string `bson:"apiKey,omitempty"`
 }
 
 type DatasetSchemaFieldDocument struct {
@@ -65,6 +73,16 @@ func (d *DatasetSchemaDocument) Model() (*dataset.Schema, error) {
 		Source(d.Source).
 		Scene(scene).
 		Fields(fields)
+
+	if d.AuthConfig != nil {
+		b = b.AuthConfig(&dataset.AuthConfig{
+			Type:     d.AuthConfig.Type,
+			Username: d.AuthConfig.Username,
+			Password: d.AuthConfig.Password,
+			APIKey:   d.AuthConfig.APIKey,
+		})
+	}
+
 	if d.RepresentativeField != nil {
 		dsfid, err := id.DatasetFieldIDFrom(*d.RepresentativeField)
 		if err != nil {
@@ -83,6 +101,15 @@ func NewDatasetSchema(dataset *dataset.Schema) (*DatasetSchemaDocument, string) 
 		Source:              dataset.Source(),
 		Scene:               dataset.Scene().String(),
 		RepresentativeField: dataset.RepresentativeFieldID().StringRef(),
+	}
+
+	if auth := dataset.AuthConfig(); auth != nil {
+		doc.AuthConfig = &AuthConfigDocument{
+			Type:     auth.Type,
+			Username: auth.Username,
+			Password: auth.Password,
+			APIKey:   auth.APIKey,
+		}
 	}
 
 	fields := dataset.Fields()

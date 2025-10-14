@@ -30,6 +30,11 @@ export type Props = {
   onDatasetRemove?: (schemaId: string) => void | Promise<void>;
   onDatasetSchemaSelect?: (datasetSchemaId: string) => void;
   onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
+  onHostedDatasetImport?: (
+    url: string,
+    auth: { type: string;[key: string]: any } | null,
+    schemaId: string | null,
+  ) => void | Promise<void>;
 };
 
 const DatasetPane: React.FC<Props> = ({
@@ -45,6 +50,7 @@ const DatasetPane: React.FC<Props> = ({
   onDatasetRemove,
   onDatasetSchemaSelect,
   onNotificationChange,
+  onHostedDatasetImport,
 }) => {
   const t = useT();
   const theme = useTheme();
@@ -56,7 +62,8 @@ const DatasetPane: React.FC<Props> = ({
     handleDatasetAdd,
     openDatasetModal,
     closeDatasetModal,
-  } = useHooks(datasetSchemas, onDatasetImport, onDatasetSync, onGoogleSheetDatasetImport);
+    handleHostedDatasetAdd,
+  } = useHooks(datasetSchemas, onDatasetImport, onDatasetSync, onGoogleSheetDatasetImport, onHostedDatasetImport);
 
   return (
     <Wrapper className={className} align="stretch">
@@ -108,6 +115,7 @@ const DatasetPane: React.FC<Props> = ({
         onNotificationChange={onNotificationChange}
         currentTheme={currentTheme}
         currentLang={currentLang}
+        handleHostedDatasetAdd={handleHostedDatasetAdd}
       />
     </Wrapper>
   );

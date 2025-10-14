@@ -1,15 +1,25 @@
 package dataset
 
-import "fmt"
+import (
+	"fmt"
+)
+
+type AuthConfig struct {
+	Type     string `bson:"type" json:"type"`
+	Username string `bson:"username,omitempty" json:"username,omitempty"`
+	Password string `bson:"password,omitempty" json:"password,omitempty"`
+	APIKey   string `bson:"apiKey,omitempty" json:"apiKey,omitempty"`
+}
 
 type Schema struct {
-	id                  SchemaID
-	source              string
-	name                string
-	fields              map[FieldID]*SchemaField
-	order               []FieldID
-	representativeField *FieldID
-	scene               SceneID
+	id                  SchemaID                 `bson:"id"`
+	source              string                   `bson:"source"`
+	name                string                   `bson:"name"`
+	fields              map[FieldID]*SchemaField `bson:"fields"`
+	order               []FieldID                `bson:"order"`
+	representativeField *FieldID                 `bson:"representativefield"`
+	scene               SceneID                  `bson:"scene"`
+	authConfig          *AuthConfig              `bson:"authConfig,omitempty"`
 }
 
 func (d *Schema) ID() (i SchemaID) {
@@ -110,11 +120,12 @@ func (d *Schema) FieldByType(t ValueType) *SchemaField {
 	return nil
 }
 
-func (u *Schema) Rename(name string) {
-	u.name = name
+func (d *Schema) Rename(name string) {
+	if d != nil {
+		d.name = name
+	}
 }
 
-// JSONSchema prints a JSON schema for the schema
 func (d *Schema) JSONSchema() map[string]any {
 	if d == nil {
 		return nil
@@ -146,4 +157,34 @@ func (d *Schema) JSONSchema() map[string]any {
 		"properties": properties,
 	}
 	return m
+}
+
+func (d *Schema) SetURL(url string) {
+	if d != nil {
+		d.source = url // Đồng bộ với source
+	}
+}
+
+func (d *Schema) SetAuthConfig(auth *AuthConfig) {
+	if d != nil {
+		d.authConfig = auth
+	}
+}
+
+func (d *Schema) URL() string {
+	if d == nil {
+		return ""
+	}
+	return d.source // Trả source thay vì url
+}
+
+func (d *Schema) AuthConfig() *AuthConfig {
+	if d == nil {
+		return nil
+	}
+	return d.authConfig
+}
+
+func (d *Schema) HasAuthConfig() bool {
+	return d != nil && d.authConfig != nil
 }

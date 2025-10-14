@@ -48,6 +48,17 @@ var (
 	ErrDatasetInvalidDepth   error = errors.New("invalid depth")
 )
 
+type ImportHostedCSVParam struct {
+	URL      string
+	SceneID  id.SceneID
+	SchemaID *id.DatasetSchemaID
+	Auth     *dataset.AuthConfig
+}
+
+type RefreshHostedCSVParam struct {
+	SchemaID id.DatasetSchemaID
+}
+
 type Dataset interface {
 	Fetch(context.Context, []id.DatasetID) (dataset.List, error)
 	Export(context.Context, id.DatasetSchemaID, string, io.Writer, func(string, string)) error
@@ -63,4 +74,6 @@ type Dataset interface {
 	UpdateDatasetSchema(context.Context, UpdateDatasetSchemaParam, *usecase.Operator) (*dataset.Schema, error)
 	Sync(context.Context, id.SceneID, string, *usecase.Operator) (dataset.SchemaList, dataset.List, error)
 	AddDatasetSchema(context.Context, AddDatasetSchemaParam, *usecase.Operator) (*dataset.Schema, error)
+	ImportHostedCSV(context.Context, ImportHostedCSVParam, *usecase.Operator) (*dataset.Schema, error)
+	RefreshHostedCSV(context.Context, RefreshHostedCSVParam, *usecase.Operator) error
 }

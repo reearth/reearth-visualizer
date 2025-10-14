@@ -23,6 +23,7 @@ export type Props<T extends string = string> = {
   floatedTextColor?: string;
   doesChangeEveryTime?: boolean;
   autofocus?: boolean;
+  autoComplete?: string;
 };
 
 export default function TextBox<T extends string = string>({
@@ -43,6 +44,7 @@ export default function TextBox<T extends string = string>({
   floatedTextColor,
   doesChangeEveryTime = false,
   autofocus = false,
+  autoComplete
 }: Props<T>): JSX.Element | null {
   const isDirty = useRef(false);
   const [innerValue, setInnerValue] = useState(value);
@@ -138,6 +140,7 @@ export default function TextBox<T extends string = string>({
             placeholder={placeholder}
             borderColor={borderColor}
             autoFocus={autofocus}
+            autoComplete={autoComplete}
           />
         )}
         {suffix && (
@@ -152,7 +155,7 @@ export default function TextBox<T extends string = string>({
 
 type InputProps = Pick<Props, "color" | "backgroundColor" | "borderColor" | "floatedTextColor">;
 
-const FormWrapper = styled(Flex)<InputProps>`
+const FormWrapper = styled(Flex) <InputProps>`
   box-sizing: border-box;
 `;
 

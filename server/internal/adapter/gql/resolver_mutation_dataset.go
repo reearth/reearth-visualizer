@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/dataset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/util"
 )
@@ -116,4 +117,73 @@ func (r *mutationResolver) ImportDatasetFromGoogleSheet(ctx context.Context, inp
 	}
 
 	return &gqlmodel.ImportDatasetPayload{DatasetSchema: gqlmodel.ToDatasetSchema(res)}, nil
+}
+
+func coalesceString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
+
+func (r *mutationResolver) ImportHostedCSV(ctx context.Context, input gqlmodel.ImportHostedCSVInput) (*gqlmodel.ImportHostedCSVResult, error) {
+	op := getOperator(ctx)
+
+	var authConfig *dataset.AuthConfig
+	if input.Auth != nil {
+		authConfig = &dataset.AuthConfig{
+			Type:     input.Auth.Type,
+			Username: coalesceString(input.Auth.Username),
+			Password: coalesceString(input.Auth.Password),
+			APIKey:   coalesceString(input.Auth.APIKey),
+		}
+	}
+
+	var schemaID *id.DatasetSchemaID
+	if input.DatasetSchemaID != nil {
+		sid, err := gqlmodel.ToID[id.DatasetSchema](*input.DatasetSchemaID)
+		if err != nil {
+			return nil, err
+		}
+		schemaID = &sid
+	}
+
+	sid, err := gqlmodel.ToID[id.Scene](input.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	inp := interfaces.ImportHostedCSVParam{
+		URL:      input.URL,
+		SceneID:  sid,
+		SchemaID: schemaID,
+		Auth:     authConfig,
+	}
+
+	schema, err := usecases(ctx).Dataset.ImportHostedCSV(ctx, inp, op)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.ImportHostedCSVResult{
+		DatasetSchema: gqlmodel.ToDatasetSchema(schema),
+	}, nil
+}
+
+func (r *mutationResolver) RefreshHostedCSV(ctx context.Context, schemaId gqlmodel.ID) (bool, error) {
+	op := getOperator(ctx)
+
+	sid, err := gqlmodel.ToID[id.DatasetSchema](schemaId)
+	if err != nil {
+		return false, err
+	}
+
+	inp := interfaces.RefreshHostedCSVParam{
+		SchemaID: sid,
+	}
+
+	if err := usecases(ctx).Dataset.RefreshHostedCSV(ctx, inp, op); err != nil {
+		return false, err
+	}
+	return true, nil
 }

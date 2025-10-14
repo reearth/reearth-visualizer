@@ -5,6 +5,7 @@ import {
   useGetDatasetsForDatasetInfoPaneQuery,
   useGetScenePluginsForDatasetInfoPaneQuery,
   useUpdatePropertyValueMutation,
+  useRefreshHostedCsvMutation,
 } from "@reearth/classic/gql";
 import { useLang, useT } from "@reearth/services/i18n";
 import { useCesiumScene, useNotification, useProject, useRootLayerId, useSelected } from "@reearth/services/state";
@@ -12,6 +13,7 @@ import { useCesiumScene, useNotification, useProject, useRootLayerId, useSelecte
 import { processDatasets, processDatasetHeaders, processPrimitives, processDatasetToLocation } from "./convert";
 import { Cartesian3, Cartographic } from "cesium";
 import { valueToGQL, valueTypeToGQL } from "@reearth/classic/util/value";
+import { isHttpUrl } from "@reearth/classic/util/util";
 
 export default () => {
   const lang = useLang();
@@ -19,6 +21,7 @@ export default () => {
   const [selected] = useSelected();
   const [project] = useProject();
   const [addLayerGroupFromDatasetSchemaMutation] = useAddLayerGroupFromDatasetSchemaMutation();
+  const [refreshHostedCsvMutation] = useRefreshHostedCsvMutation();
   const selectedDatasetSchemaId = selected?.type === "dataset" ? selected.datasetSchemaId : "";
   const [rootLayerId, _] = useRootLayerId();
   const [, setNotification] = useNotification();
@@ -40,6 +43,9 @@ export default () => {
       skip: !project?.id,
     },
   );
+
+  const selectedDatasetSchema = rawDatasets?.datasets?.nodes?.[0]?.schema;
+  const isHosted = useMemo(() => isHttpUrl(selectedDatasetSchema?.url || ""), [selectedDatasetSchema?.url]);
 
   const datasets = useMemo(() => {
     return rawDatasets?.datasets?.nodes ? processDatasets(rawDatasets?.datasets?.nodes) : [];
@@ -70,12 +76,12 @@ export default () => {
         refetchQueries: ["GetLayers"],
       });
 
-      if(result.data?.addLayerGroup?.layer){
+      if (result.data?.addLayerGroup?.layer) {
         const makerLocation = processDatasetToLocation(rawDatasets?.datasets?.nodes)
         const layers = result.data?.addLayerGroup?.layer?.layers;
-        if(makerLocation?.length > 0 && layers?.length > 0 && scene){
-          scene?.clampToHeightMostDetailed(makerLocation.map(({location}) => Cartesian3.fromDegrees(location?.lng || 0, location?.lat || 0))).then((clampedPositions) => {
-            if(!clampedPositions?.length) return;
+        if (makerLocation?.length > 0 && layers?.length > 0 && scene) {
+          scene?.clampToHeightMostDetailed(makerLocation.map(({ location }) => Cartesian3.fromDegrees(location?.lng || 0, location?.lat || 0))).then((clampedPositions) => {
+            if (!clampedPositions?.length) return;
             clampedPositions.map((clampedPos: Cartesian3, index: number) => {
               if (clampedPos) {
                 const height = Cartographic.fromCartesian(clampedPos)?.height;
@@ -85,7 +91,7 @@ export default () => {
                 const vt = "number"
                 const gvt: any = valueTypeToGQL(vt);
                 const propertyId = layers.find(layerProp => (layerProp as any)?.linkedDatasetId === makerLocation[index].id)?.property?.id;
-                if(propertyId){
+                if (propertyId) {
                   updatePropertyValue({
                     variables: {
                       propertyId,
@@ -99,7 +105,7 @@ export default () => {
                   });
                 }
               }
-            })    
+            })
           });
         }
       }
@@ -120,11 +126,26 @@ export default () => {
     ],
   );
 
+  const handleRefresh = useCallback(async () => {
+    if (!selectedDatasetSchemaId) return;
+    try {
+      await refreshHostedCsvMutation({
+        variables: { schemaId: selectedDatasetSchemaId },
+      });
+      setNotification({ type: "success", text: t("Dataset refreshed") });
+    } catch (e) {
+      setNotification({ type: "error", text: t("Failed to refresh dataset") });
+    }
+  }, [selectedDatasetSchemaId, refreshHostedCsvMutation, setNotification, t]);
+
   return {
     datasets: datasets?.length > 0 ? datasets.slice(0, 10) : [],
     datasetHeaders: datasetHeaders?.length > 0 ? datasetHeaders.slice(0, 10) : [],
     loading: datasetsLoading || scenePluginLoading,
     primitiveItems,
     handleAddLayerGroupFromDatasetSchema,
+    selectedDatasetSchema,
+    isHosted,
+    handleRefresh,
   };
 };

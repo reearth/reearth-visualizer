@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"path/filepath"
 	"strings"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -204,7 +205,7 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		return nil, err
 	}
 
-	csvParser := dataset.NewCSVParser(content, name, separator)
+	csvParser := dataset.NewCSVParser(content, name, "", separator)
 	err = csvParser.Init()
 	if err != nil {
 		return nil, err
@@ -325,7 +326,6 @@ func (i *Dataset) importDataset(ctx context.Context, content io.Reader, name str
 		}
 	}
 
-	// Commit db transaction
 	tx.Commit()
 	return schema, nil
 }
@@ -617,4 +617,313 @@ func (i *Dataset) RemoveDatasetSchema(ctx context.Context, inp interfaces.Remove
 
 	tx.Commit()
 	return inp.SchemaID, nil
+}
+
+func (i *Dataset) ImportHostedCSV(
+	ctx context.Context,
+	inp interfaces.ImportHostedCSVParam,
+	operator *usecase.Operator,
+) (*dataset.Schema, error) {
+	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
+		return nil, err
+	}
+
+	inp.URL = strings.TrimSpace(inp.URL)
+
+	if i.datasource == nil {
+		return nil, errors.New("internal error: datasource is nil")
+	}
+
+	if !i.datasource.IsURLValid(ctx, inp.URL) {
+		return nil, interfaces.ErrDataSourceInvalidURL
+	}
+
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	if err := i.UpdateSceneLock(ctx, inp.SceneID, scene.LockModeFree, scene.LockModeDatasetSyncing); err != nil {
+		return nil, err
+	}
+	defer i.ReleaseSceneLock(ctx, inp.SceneID)
+
+	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
+	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	if err != nil {
+		return nil, err
+	}
+	var policy *policy.Policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return nil, err
+		}
+		policy = p
+	}
+
+	dsc, err := i.datasetSchemaRepo.CountByScene(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
+
+	var dss dataset.SchemaList
+	var ds dataset.List
+
+	if inp.SchemaID != nil {
+		schema, err := i.datasetSchemaRepo.FindByID(ctx, *inp.SchemaID)
+		if err != nil {
+			return nil, err
+		}
+		if schema.Scene() != inp.SceneID {
+			return nil, errors.New("schema not belong to scene")
+		}
+
+		var body io.ReadCloser
+		if inp.Auth != nil {
+			body, err = i.datasource.FetchRaw(ctx, inp.URL, inp.Auth)
+		} else {
+			body, err = i.datasource.FetchRaw(ctx, inp.URL, nil)
+		}
+		if err != nil {
+			return nil, err
+		}
+		defer body.Close()
+
+		name := filepath.Base(inp.URL)
+		separator := ','
+		if strings.HasSuffix(strings.ToLower(name), ".tsv") {
+			separator = '\t'
+		}
+
+		parser := dataset.NewCSVParser(body, name, inp.URL, separator)
+		if err := parser.Init(); err != nil {
+			return nil, err
+		}
+
+		if err := parser.CheckCompatible(schema); err != nil {
+			return nil, err
+		}
+
+		oldDatasets, err := i.datasetRepo.FindBySchemaAll(ctx, *inp.SchemaID)
+		if err != nil {
+			return nil, err
+		}
+		if err := i.datasetRepo.RemoveAll(ctx, oldDatasets.ToDatasetIds()); err != nil {
+			return nil, err
+		}
+
+		_, ds, err = parser.ReadAll()
+		if err != nil {
+			return nil, err
+		}
+
+		schema.SetURL(inp.URL)
+		if inp.Auth != nil {
+			schema.SetAuthConfig(inp.Auth)
+		}
+
+		dss = dataset.SchemaList{schema}
+		if err := policy.EnforceDatasetCount(len(ds)); err != nil {
+			return nil, err
+		}
+	} else {
+		if inp.Auth != nil {
+			dss, ds, err = i.datasource.FetchWithAuth(ctx, inp.URL, inp.SceneID, inp.Auth)
+		} else {
+			dss, ds, err = i.datasource.Fetch(ctx, inp.URL, inp.SceneID)
+		}
+		if err != nil {
+			return nil, err
+		}
+
+		if err := policy.EnforceDatasetSchemaCount(dsc + 1); err != nil {
+			return nil, err
+		}
+		if err := policy.EnforceDatasetCount(len(ds)); err != nil {
+			return nil, err
+		}
+
+		for _, s := range dss {
+			s.SetURL(inp.URL)
+			if inp.Auth != nil {
+				s.SetAuthConfig(inp.Auth)
+			}
+		}
+	}
+
+	if len(dss) == 0 {
+		return nil, errors.New("no dataset schema returned from URL")
+	}
+
+	if err := i.datasetSchemaRepo.SaveAll(ctx, dss); err != nil {
+		return nil, err
+	}
+
+	if err := i.datasetRepo.SaveAll(ctx, ds); err != nil {
+		return nil, err
+	}
+
+	result, err := sceneops.DatasetMigrator{
+		PropertyRepo:      i.propertyRepo,
+		LayerRepo:         i.layerRepo,
+		DatasetSchemaRepo: i.datasetSchemaRepo,
+		DatasetRepo:       i.datasetRepo,
+		Plugin:            repo.PluginLoaderFrom(i.pluginRepo),
+	}.Migrate(ctx, inp.SceneID, dss, ds)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := i.propertyRepo.SaveAll(ctx, result.Properties.List()); err != nil {
+		return nil, err
+	}
+	if err := i.layerRepo.SaveAll(ctx, result.Layers.List()); err != nil {
+		return nil, err
+	}
+
+	tx.Commit()
+
+	return dss[0], nil
+}
+
+func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHostedCSVParam, operator *usecase.Operator) error {
+	schema, err := i.datasetSchemaRepo.FindByID(ctx, inp.SchemaID)
+	if err != nil {
+		return err
+	}
+	if err := i.CanWriteScene(schema.Scene(), operator); err != nil {
+		return err
+	}
+
+	// Begin transaction
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return err
+	}
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	// Lock scene
+	if err := i.UpdateSceneLock(ctx, schema.Scene(), scene.LockModeFree, scene.LockModeDatasetSyncing); err != nil {
+		return err
+	}
+	defer i.ReleaseSceneLock(ctx, schema.Scene())
+
+	// Fetch CSV
+	var body io.ReadCloser
+	if schema.HasAuthConfig() {
+		body, err = i.datasource.FetchRaw(ctx, schema.URL(), schema.AuthConfig())
+	} else {
+		body, err = i.datasource.FetchRaw(ctx, schema.URL(), nil)
+	}
+	if err != nil {
+		return err
+	}
+	defer body.Close()
+
+	// Parse CSV
+	name := filepath.Base(schema.URL())
+	if name == "" {
+		name = "hosted.csv"
+	}
+	separator := ','
+	if strings.HasSuffix(strings.ToLower(name), ".tsv") {
+		separator = '\t'
+	}
+
+	parser := dataset.NewCSVParser(body, name, schema.URL(), separator)
+	if err := parser.Init(); err != nil {
+		return err
+	}
+
+	// Check compatibility with existing schema
+	if err := parser.CheckCompatible(schema); err != nil {
+		return err
+	}
+
+	// Read datasets
+	_, datasets, err := parser.ReadAll()
+	if err != nil {
+		return err
+	}
+
+	// Enforce policy
+	scene, err := i.sceneRepo.FindByID(ctx, schema.Scene())
+	if err != nil {
+		return err
+	}
+	ws, err := i.workspaceRepo.FindByID(ctx, scene.Workspace())
+	if err != nil {
+		return err
+	}
+	var policy *policy.Policy
+	if policyID := operator.Policy(ws.Policy()); policyID != nil {
+		p, err := i.policyRepo.FindByID(ctx, *policyID)
+		if err != nil {
+			return err
+		}
+		policy = p
+	}
+	if err := policy.EnforceDatasetCount(len(datasets)); err != nil {
+		return err
+	}
+
+	// Remove old datasets
+	oldDatasets, err := i.datasetRepo.FindBySchemaAll(ctx, inp.SchemaID)
+	if err != nil {
+		return err
+	}
+	if err := i.datasetRepo.RemoveAll(ctx, oldDatasets.ToDatasetIds()); err != nil {
+		return err
+	}
+
+	// Save new datasets
+	if err := i.datasetRepo.SaveAll(ctx, datasets); err != nil {
+		return err
+	}
+
+	// Migrate layers and properties
+	result, err := sceneops.DatasetMigrator{
+		PropertyRepo:      i.propertyRepo,
+		LayerRepo:         i.layerRepo,
+		DatasetSchemaRepo: i.datasetSchemaRepo,
+		DatasetRepo:       i.datasetRepo,
+		Plugin:            repo.PluginLoaderFrom(i.pluginRepo),
+	}.Migrate(ctx, schema.Scene(), dataset.SchemaList{schema}, datasets)
+	if err != nil {
+		return err
+	}
+
+	if err := i.propertyRepo.SaveAll(ctx, result.Properties.List()); err != nil {
+		return err
+	}
+	if err := i.layerRepo.SaveAll(ctx, result.Layers.List()); err != nil {
+		return err
+	}
+	if err := i.layerRepo.RemoveAll(ctx, result.RemovedLayers.List()); err != nil {
+		return err
+	}
+	if err := i.datasetRepo.RemoveAll(ctx, result.RemovedDatasets); err != nil {
+		return err
+	}
+	if err := i.datasetSchemaRepo.RemoveAll(ctx, result.RemovedDatasetSchemas); err != nil {
+		return err
+	}
+
+	tx.Commit()
+	return nil
 }

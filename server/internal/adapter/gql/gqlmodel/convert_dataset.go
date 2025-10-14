@@ -45,6 +45,16 @@ func ToDatasetSchema(ds *dataset.Schema) *DatasetSchema {
 		return nil
 	}
 
+	var authConfig *AuthConfig
+	if ds.AuthConfig() != nil {
+		authConfig = &AuthConfig{
+			Type:     ds.AuthConfig().Type,
+			Username: util.ToPtrIfNotEmpty(ds.AuthConfig().Username),
+			Password: util.ToPtrIfNotEmpty(ds.AuthConfig().Password),
+			APIKey:   util.ToPtrIfNotEmpty(ds.AuthConfig().APIKey),
+		}
+	}
+
 	return &DatasetSchema{
 		ID:                    IDFrom(ds.ID()),
 		Source:                ds.Source(),
@@ -61,5 +71,7 @@ func ToDatasetSchema(ds *dataset.Schema) *DatasetSchema {
 				RefID:    IDFromRef(f.Ref()),
 			}
 		}),
+		URL:        util.ToPtrIfNotEmpty(ds.URL()),
+		AuthConfig: authConfig,
 	}
 }

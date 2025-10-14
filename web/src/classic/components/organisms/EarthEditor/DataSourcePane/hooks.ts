@@ -11,6 +11,7 @@ import {
   useImportDatasetFromGoogleSheetMutation,
   useRemoveDatasetMutation,
   useGetDatasetSchemasWithCountQuery,
+  useImportHostedCsvMutation,
 } from "@reearth/classic/gql";
 import { useT, useLang } from "@reearth/services/i18n";
 import {
@@ -28,6 +29,7 @@ export default () => {
   const [selected, select] = useSelected();
   const [sceneId] = useSceneId();
   const [project] = useProject();
+  const [importHostedCsv] = useImportHostedCsvMutation();
 
   const { data, loading } = useGetDatasetSchemasWithCountQuery({
     variables: { projectId: project?.id || "", first: 1000 },
@@ -42,17 +44,17 @@ export default () => {
     () =>
       data?.scene
         ? data.scene.datasetSchemas.nodes
-            .map<DatasetSchema | undefined>(n =>
-              n
-                ? {
-                    id: n.id,
-                    name: n.name,
-                    source: n.source as DataSource,
-                    totalCount: n.totalCount,
-                  }
-                : undefined,
-            )
-            .filter((e): e is DatasetSchema => !!e)
+          .map<DatasetSchema | undefined>(n =>
+            n
+              ? {
+                id: n.id,
+                name: n.name,
+                source: n.source as DataSource,
+                totalCount: n.totalCount,
+              }
+              : undefined,
+          )
+          .filter((e): e is DatasetSchema => !!e)
         : [],
     [data],
   );
@@ -180,6 +182,44 @@ export default () => {
     [setNotification],
   );
 
+  const handleHostedDatasetImport = useCallback(
+    async (url: string, auth: any | null, schemaId: string | null) => {
+      if (!sceneId) {
+        setNotification({ type: "error", text: t("Scene ID is missing") });
+        return;
+      }
+
+      const result = await importHostedCsv({
+        variables: {
+          input: {
+            url,
+            sceneId,
+            datasetSchemaId: schemaId,
+            auth,
+          },
+        },
+      });
+
+      if (result.errors) {
+        setNotification({ type: "error", text: datasetMessageFailure });
+      } else {
+        setNotification({ type: "success", text: datasetMessageSuccess });
+      }
+
+      // Re-render
+      await client.resetStore();
+    },
+    [
+      client,
+      importHostedCsv,
+      sceneId,
+      datasetMessageSuccess,
+      datasetMessageFailure,
+      setNotification,
+      t,
+    ],
+  );
+
   const currentLang = useLang();
   const [currentTheme] = useCurrentTheme();
 
@@ -195,5 +235,6 @@ export default () => {
     handleDatasetRemove,
     handleDatasetSchemaSelect,
     handleNotificationChange,
+    handleHostedDatasetImport,
   };
 };

@@ -166,6 +166,13 @@ type ComplexityRoot struct {
 		Layer func(childComplexity int) int
 	}
 
+	AuthConfig struct {
+		APIKey   func(childComplexity int) int
+		Password func(childComplexity int) int
+		Type     func(childComplexity int) int
+		Username func(childComplexity int) int
+	}
+
 	Camera struct {
 		Altitude func(childComplexity int) int
 		Fov      func(childComplexity int) int
@@ -248,6 +255,7 @@ type ComplexityRoot struct {
 	}
 
 	DatasetSchema struct {
+		AuthConfig            func(childComplexity int) int
 		Datasets              func(childComplexity int, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 		Dynamic               func(childComplexity int) int
 		Fields                func(childComplexity int) int
@@ -259,6 +267,7 @@ type ComplexityRoot struct {
 		SceneID               func(childComplexity int) int
 		Source                func(childComplexity int) int
 		TotalCount            func(childComplexity int) int
+		URL                   func(childComplexity int) int
 	}
 
 	DatasetSchemaConnection struct {
@@ -314,6 +323,10 @@ type ComplexityRoot struct {
 	}
 
 	ImportDatasetPayload struct {
+		DatasetSchema func(childComplexity int) int
+	}
+
+	ImportHostedCSVResult struct {
 		DatasetSchema func(childComplexity int) int
 	}
 
@@ -576,6 +589,7 @@ type ComplexityRoot struct {
 		DuplicateStoryPage           func(childComplexity int, input gqlmodel.DuplicateStoryPageInput) int
 		ImportDataset                func(childComplexity int, input gqlmodel.ImportDatasetInput) int
 		ImportDatasetFromGoogleSheet func(childComplexity int, input gqlmodel.ImportDatasetFromGoogleSheetInput) int
+		ImportHostedCSV              func(childComplexity int, input gqlmodel.ImportHostedCSVInput) int
 		ImportLayer                  func(childComplexity int, input gqlmodel.ImportLayerInput) int
 		InstallPlugin                func(childComplexity int, input gqlmodel.InstallPluginInput) int
 		LinkDatasetToPropertyValue   func(childComplexity int, input gqlmodel.LinkDatasetToPropertyValueInput) int
@@ -587,6 +601,7 @@ type ComplexityRoot struct {
 		MoveStoryPage                func(childComplexity int, input gqlmodel.MoveStoryPageInput) int
 		PublishProject               func(childComplexity int, input gqlmodel.PublishProjectInput) int
 		PublishStory                 func(childComplexity int, input gqlmodel.PublishStoryInput) int
+		RefreshHostedCSV             func(childComplexity int, schemaID gqlmodel.ID) int
 		RemoveAsset                  func(childComplexity int, input gqlmodel.RemoveAssetInput) int
 		RemoveCluster                func(childComplexity int, input gqlmodel.RemoveClusterInput) int
 		RemoveDatasetSchema          func(childComplexity int, input gqlmodel.RemoveDatasetSchemaInput) int
@@ -1392,6 +1407,8 @@ type MutationResolver interface {
 	ImportDataset(ctx context.Context, input gqlmodel.ImportDatasetInput) (*gqlmodel.ImportDatasetPayload, error)
 	ImportDatasetFromGoogleSheet(ctx context.Context, input gqlmodel.ImportDatasetFromGoogleSheetInput) (*gqlmodel.ImportDatasetPayload, error)
 	AddDatasetSchema(ctx context.Context, input gqlmodel.AddDatasetSchemaInput) (*gqlmodel.AddDatasetSchemaPayload, error)
+	ImportHostedCSV(ctx context.Context, input gqlmodel.ImportHostedCSVInput) (*gqlmodel.ImportHostedCSVResult, error)
+	RefreshHostedCSV(ctx context.Context, schemaID gqlmodel.ID) (bool, error)
 	AddLayerItem(ctx context.Context, input gqlmodel.AddLayerItemInput) (*gqlmodel.AddLayerItemPayload, error)
 	AddLayerGroup(ctx context.Context, input gqlmodel.AddLayerGroupInput) (*gqlmodel.AddLayerGroupPayload, error)
 	RemoveLayer(ctx context.Context, input gqlmodel.RemoveLayerInput) (*gqlmodel.RemoveLayerPayload, error)
@@ -1849,6 +1866,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.AttachTagToLayerPayload.Layer(childComplexity), true
 
+	case "AuthConfig.apiKey":
+		if e.complexity.AuthConfig.APIKey == nil {
+			break
+		}
+
+		return e.complexity.AuthConfig.APIKey(childComplexity), true
+
+	case "AuthConfig.password":
+		if e.complexity.AuthConfig.Password == nil {
+			break
+		}
+
+		return e.complexity.AuthConfig.Password(childComplexity), true
+
+	case "AuthConfig.type":
+		if e.complexity.AuthConfig.Type == nil {
+			break
+		}
+
+		return e.complexity.AuthConfig.Type(childComplexity), true
+
+	case "AuthConfig.username":
+		if e.complexity.AuthConfig.Username == nil {
+			break
+		}
+
+		return e.complexity.AuthConfig.Username(childComplexity), true
+
 	case "Camera.altitude":
 		if e.complexity.Camera.Altitude == nil {
 			break
@@ -2143,6 +2188,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.DatasetField.ValueRef(childComplexity), true
 
+	case "DatasetSchema.authConfig":
+		if e.complexity.DatasetSchema.AuthConfig == nil {
+			break
+		}
+
+		return e.complexity.DatasetSchema.AuthConfig(childComplexity), true
+
 	case "DatasetSchema.datasets":
 		if e.complexity.DatasetSchema.Datasets == nil {
 			break
@@ -2224,6 +2276,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DatasetSchema.TotalCount(childComplexity), true
+
+	case "DatasetSchema.url":
+		if e.complexity.DatasetSchema.URL == nil {
+			break
+		}
+
+		return e.complexity.DatasetSchema.URL(childComplexity), true
 
 	case "DatasetSchemaConnection.edges":
 		if e.complexity.DatasetSchemaConnection.Edges == nil {
@@ -2385,6 +2444,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ImportDatasetPayload.DatasetSchema(childComplexity), true
+
+	case "ImportHostedCSVResult.datasetSchema":
+		if e.complexity.ImportHostedCSVResult.DatasetSchema == nil {
+			break
+		}
+
+		return e.complexity.ImportHostedCSVResult.DatasetSchema(childComplexity), true
 
 	case "ImportLayerPayload.layers":
 		if e.complexity.ImportLayerPayload.Layers == nil {
@@ -3890,6 +3956,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ImportDatasetFromGoogleSheet(childComplexity, args["input"].(gqlmodel.ImportDatasetFromGoogleSheetInput)), true
 
+	case "Mutation.importHostedCSV":
+		if e.complexity.Mutation.ImportHostedCSV == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_importHostedCSV_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.ImportHostedCSV(childComplexity, args["input"].(gqlmodel.ImportHostedCSVInput)), true
+
 	case "Mutation.importLayer":
 		if e.complexity.Mutation.ImportLayer == nil {
 			break
@@ -4021,6 +4099,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.PublishStory(childComplexity, args["input"].(gqlmodel.PublishStoryInput)), true
+
+	case "Mutation.refreshHostedCSV":
+		if e.complexity.Mutation.RefreshHostedCSV == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_refreshHostedCSV_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.RefreshHostedCSV(childComplexity, args["schemaId"].(gqlmodel.ID)), true
 
 	case "Mutation.removeAsset":
 		if e.complexity.Mutation.RemoveAsset == nil {
@@ -7492,6 +7582,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputAddWidgetInput,
 		ec.unmarshalInputAttachTagItemToGroupInput,
 		ec.unmarshalInputAttachTagToLayerInput,
+		ec.unmarshalInputAuthInput,
 		ec.unmarshalInputCreateAssetInput,
 		ec.unmarshalInputCreateInfoboxInput,
 		ec.unmarshalInputCreateProjectInput,
@@ -7512,6 +7603,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputDuplicateStoryPageInput,
 		ec.unmarshalInputImportDatasetFromGoogleSheetInput,
 		ec.unmarshalInputImportDatasetInput,
+		ec.unmarshalInputImportHostedCSVInput,
 		ec.unmarshalInputImportLayerInput,
 		ec.unmarshalInputInstallPluginInput,
 		ec.unmarshalInputLinkDatasetToPropertyValueInput,
@@ -7872,6 +7964,15 @@ extend type Mutation {
   datasets( first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection!
   scene: Scene
   representativeField: DatasetSchemaField
+  url: String
+  authConfig: AuthConfig
+}
+
+type AuthConfig {
+    type: String!
+    username: String
+    password: String
+    apiKey: String
 }
 
 type DatasetSchemaField implements Node {
@@ -7994,6 +8095,24 @@ type DatasetEdge {
   node: Dataset
 }
 
+input AuthInput {
+  type: String!
+  username: String
+  password: String
+  apiKey: String
+}
+
+input ImportHostedCSVInput {
+  url: String!
+  sceneId: ID!
+  datasetSchemaId: ID
+  auth: AuthInput
+}
+
+type ImportHostedCSVResult {
+  datasetSchema: DatasetSchema!
+}
+
 extend type Query{
   datasetSchemas(sceneId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetSchemaConnection!
   datasets(datasetSchemaId: ID!, first: Int, last: Int, after: Cursor, before: Cursor): DatasetConnection!
@@ -8006,6 +8125,8 @@ extend type Mutation {
   importDataset(input: ImportDatasetInput!): ImportDatasetPayload
   importDatasetFromGoogleSheet(input: ImportDatasetFromGoogleSheetInput!): ImportDatasetPayload
   addDatasetSchema(input: AddDatasetSchemaInput!): AddDatasetSchemaPayload
+  importHostedCSV(input: ImportHostedCSVInput!): ImportHostedCSVResult!
+  refreshHostedCSV(schemaId: ID!): Boolean!
 }
 `, BuiltIn: false},
 	{Name: "../../../gql/layer.graphql", Input: `interface Layer {
@@ -10264,6 +10385,21 @@ func (ec *executionContext) field_Mutation_importDataset_args(ctx context.Contex
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_importHostedCSV_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.ImportHostedCSVInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNImportHostedCSVInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportHostedCSVInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_importLayer_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -10426,6 +10562,21 @@ func (ec *executionContext) field_Mutation_publishStory_args(ctx context.Context
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_refreshHostedCSV_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 gqlmodel.ID
+	if tmp, ok := rawArgs["schemaId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("schemaId"))
+		arg0, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["schemaId"] = arg0
 	return args, nil
 }
 
@@ -11939,6 +12090,10 @@ func (ec *executionContext) fieldContext_AddDatasetSchemaPayload_datasetSchema(c
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -13616,6 +13771,173 @@ func (ec *executionContext) fieldContext_AttachTagToLayerPayload_layer(ctx conte
 	return fc, nil
 }
 
+func (ec *executionContext) _AuthConfig_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AuthConfig) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AuthConfig_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AuthConfig_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AuthConfig",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AuthConfig_username(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AuthConfig) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AuthConfig_username(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Username, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AuthConfig_username(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AuthConfig",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AuthConfig_password(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AuthConfig) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AuthConfig_password(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Password, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AuthConfig_password(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AuthConfig",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _AuthConfig_apiKey(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.AuthConfig) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_AuthConfig_apiKey(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APIKey, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_AuthConfig_apiKey(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "AuthConfig",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Camera_lat(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Camera) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Camera_lat(ctx, field)
 	if err != nil {
@@ -15072,6 +15394,10 @@ func (ec *executionContext) fieldContext_Dataset_schema(ctx context.Context, fie
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -15700,6 +16026,10 @@ func (ec *executionContext) fieldContext_DatasetField_schema(ctx context.Context
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -16394,6 +16724,98 @@ func (ec *executionContext) fieldContext_DatasetSchema_representativeField(ctx c
 	return fc, nil
 }
 
+func (ec *executionContext) _DatasetSchema_url(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DatasetSchema) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DatasetSchema_url(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DatasetSchema_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DatasetSchema",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DatasetSchema_authConfig(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DatasetSchema) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DatasetSchema_authConfig(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthConfig, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.AuthConfig)
+	fc.Result = res
+	return ec.marshalOAuthConfig2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAuthConfig(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DatasetSchema_authConfig(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DatasetSchema",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "type":
+				return ec.fieldContext_AuthConfig_type(ctx, field)
+			case "username":
+				return ec.fieldContext_AuthConfig_username(ctx, field)
+			case "password":
+				return ec.fieldContext_AuthConfig_password(ctx, field)
+			case "apiKey":
+				return ec.fieldContext_AuthConfig_apiKey(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AuthConfig", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _DatasetSchemaConnection_edges(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.DatasetSchemaConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_DatasetSchemaConnection_edges(ctx, field)
 	if err != nil {
@@ -16505,6 +16927,10 @@ func (ec *executionContext) fieldContext_DatasetSchemaConnection_nodes(ctx conte
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -16712,6 +17138,10 @@ func (ec *executionContext) fieldContext_DatasetSchemaEdge_node(ctx context.Cont
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -17038,6 +17468,10 @@ func (ec *executionContext) fieldContext_DatasetSchemaField_schema(ctx context.C
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -17103,6 +17537,10 @@ func (ec *executionContext) fieldContext_DatasetSchemaField_ref(ctx context.Cont
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -17583,6 +18021,82 @@ func (ec *executionContext) fieldContext_ImportDatasetPayload_datasetSchema(ctx 
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ImportHostedCSVResult_datasetSchema(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ImportHostedCSVResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ImportHostedCSVResult_datasetSchema(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DatasetSchema, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.DatasetSchema)
+	fc.Result = res
+	return ec.marshalNDatasetSchema2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐDatasetSchema(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ImportHostedCSVResult_datasetSchema(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ImportHostedCSVResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DatasetSchema_id(ctx, field)
+			case "source":
+				return ec.fieldContext_DatasetSchema_source(ctx, field)
+			case "name":
+				return ec.fieldContext_DatasetSchema_name(ctx, field)
+			case "sceneId":
+				return ec.fieldContext_DatasetSchema_sceneId(ctx, field)
+			case "fields":
+				return ec.fieldContext_DatasetSchema_fields(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_DatasetSchema_totalCount(ctx, field)
+			case "representativeFieldId":
+				return ec.fieldContext_DatasetSchema_representativeFieldId(ctx, field)
+			case "dynamic":
+				return ec.fieldContext_DatasetSchema_dynamic(ctx, field)
+			case "datasets":
+				return ec.fieldContext_DatasetSchema_datasets(ctx, field)
+			case "scene":
+				return ec.fieldContext_DatasetSchema_scene(ctx, field)
+			case "representativeField":
+				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -20425,6 +20939,10 @@ func (ec *executionContext) fieldContext_LayerGroup_linkedDatasetSchema(ctx cont
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -26858,6 +27376,120 @@ func (ec *executionContext) fieldContext_Mutation_addDatasetSchema(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_addDatasetSchema_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_importHostedCSV(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_importHostedCSV(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().ImportHostedCSV(rctx, fc.Args["input"].(gqlmodel.ImportHostedCSVInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.ImportHostedCSVResult)
+	fc.Result = res
+	return ec.marshalNImportHostedCSVResult2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportHostedCSVResult(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_importHostedCSV(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "datasetSchema":
+				return ec.fieldContext_ImportHostedCSVResult_datasetSchema(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ImportHostedCSVResult", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_importHostedCSV_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_refreshHostedCSV(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_refreshHostedCSV(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().RefreshHostedCSV(rctx, fc.Args["schemaId"].(gqlmodel.ID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_refreshHostedCSV(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_refreshHostedCSV_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -37050,6 +37682,10 @@ func (ec *executionContext) fieldContext_PropertyFieldLink_datasetSchema(ctx con
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -47204,6 +47840,10 @@ func (ec *executionContext) fieldContext_SyncDatasetPayload_datasetSchema(ctx co
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -47995,6 +48635,10 @@ func (ec *executionContext) fieldContext_TagItem_linkedDatasetSchema(ctx context
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -49553,6 +50197,10 @@ func (ec *executionContext) fieldContext_UpdateDatasetSchemaPayload_datasetSchem
 				return ec.fieldContext_DatasetSchema_scene(ctx, field)
 			case "representativeField":
 				return ec.fieldContext_DatasetSchema_representativeField(ctx, field)
+			case "url":
+				return ec.fieldContext_DatasetSchema_url(ctx, field)
+			case "authConfig":
+				return ec.fieldContext_DatasetSchema_authConfig(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type DatasetSchema", field.Name)
 		},
@@ -54325,6 +54973,58 @@ func (ec *executionContext) unmarshalInputAttachTagToLayerInput(ctx context.Cont
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputAuthInput(ctx context.Context, obj interface{}) (gqlmodel.AuthInput, error) {
+	var it gqlmodel.AuthInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"type", "username", "password", "apiKey"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "type":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "username":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
+			it.Username, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "password":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
+			it.Password, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "apiKey":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiKey"))
+			it.APIKey, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputCreateAssetInput(ctx context.Context, obj interface{}) (gqlmodel.CreateAssetInput, error) {
 	var it gqlmodel.CreateAssetInput
 	asMap := map[string]interface{}{}
@@ -55196,6 +55896,58 @@ func (ec *executionContext) unmarshalInputImportDatasetInput(ctx context.Context
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datasetSchemaId"))
 			it.DatasetSchemaID, err = ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputImportHostedCSVInput(ctx context.Context, obj interface{}) (gqlmodel.ImportHostedCSVInput, error) {
+	var it gqlmodel.ImportHostedCSVInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"url", "sceneId", "datasetSchemaId", "auth"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "url":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			it.URL, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "sceneId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
+			it.SceneID, err = ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "datasetSchemaId":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("datasetSchemaId"))
+			it.DatasetSchemaID, err = ec.unmarshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "auth":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("auth"))
+			it.Auth, err = ec.unmarshalOAuthInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAuthInput(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -58617,6 +59369,46 @@ func (ec *executionContext) _AttachTagToLayerPayload(ctx context.Context, sel as
 	return out
 }
 
+var authConfigImplementors = []string{"AuthConfig"}
+
+func (ec *executionContext) _AuthConfig(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.AuthConfig) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, authConfigImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("AuthConfig")
+		case "type":
+
+			out.Values[i] = ec._AuthConfig_type(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "username":
+
+			out.Values[i] = ec._AuthConfig_username(ctx, field, obj)
+
+		case "password":
+
+			out.Values[i] = ec._AuthConfig_password(ctx, field, obj)
+
+		case "apiKey":
+
+			out.Values[i] = ec._AuthConfig_apiKey(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var cameraImplementors = []string{"Camera"}
 
 func (ec *executionContext) _Camera(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Camera) graphql.Marshaler {
@@ -59362,6 +60154,14 @@ func (ec *executionContext) _DatasetSchema(ctx context.Context, sel ast.Selectio
 				return innerFunc(ctx)
 
 			})
+		case "url":
+
+			out.Values[i] = ec._DatasetSchema_url(ctx, field, obj)
+
+		case "authConfig":
+
+			out.Values[i] = ec._DatasetSchema_authConfig(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -59764,6 +60564,34 @@ func (ec *executionContext) _ImportDatasetPayload(ctx context.Context, sel ast.S
 		case "datasetSchema":
 
 			out.Values[i] = ec._ImportDatasetPayload_datasetSchema(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var importHostedCSVResultImplementors = []string{"ImportHostedCSVResult"}
+
+func (ec *executionContext) _ImportHostedCSVResult(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.ImportHostedCSVResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, importHostedCSVResultImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ImportHostedCSVResult")
+		case "datasetSchema":
+
+			out.Values[i] = ec._ImportHostedCSVResult_datasetSchema(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				invalids++
@@ -61934,6 +62762,24 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 				return ec._Mutation_addDatasetSchema(ctx, field)
 			})
 
+		case "importHostedCSV":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_importHostedCSV(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "refreshHostedCSV":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_refreshHostedCSV(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "addLayerItem":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -68920,6 +69766,25 @@ func (ec *executionContext) unmarshalNImportDatasetInput2githubᚗcomᚋreearth�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNImportHostedCSVInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportHostedCSVInput(ctx context.Context, v interface{}) (gqlmodel.ImportHostedCSVInput, error) {
+	res, err := ec.unmarshalInputImportHostedCSVInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNImportHostedCSVResult2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportHostedCSVResult(ctx context.Context, sel ast.SelectionSet, v gqlmodel.ImportHostedCSVResult) graphql.Marshaler {
+	return ec._ImportHostedCSVResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNImportHostedCSVResult2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportHostedCSVResult(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.ImportHostedCSVResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ImportHostedCSVResult(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNImportLayerInput2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐImportLayerInput(ctx context.Context, v interface{}) (gqlmodel.ImportLayerInput, error) {
 	res, err := ec.unmarshalInputImportLayerInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -71718,6 +72583,21 @@ func (ec *executionContext) marshalOAttachTagToLayerPayload2ᚖgithubᚗcomᚋre
 		return graphql.Null
 	}
 	return ec._AttachTagToLayerPayload(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOAuthConfig2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAuthConfig(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.AuthConfig) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._AuthConfig(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOAuthInput2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐAuthInput(ctx context.Context, v interface{}) (*gqlmodel.AuthInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputAuthInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v interface{}) (bool, error) {

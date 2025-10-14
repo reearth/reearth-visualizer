@@ -198,6 +198,20 @@ type AttachTagToLayerPayload struct {
 	Layer Layer `json:"layer"`
 }
 
+type AuthConfig struct {
+	Type     string  `json:"type"`
+	Username *string `json:"username"`
+	Password *string `json:"password"`
+	APIKey   *string `json:"apiKey"`
+}
+
+type AuthInput struct {
+	Type     string  `json:"type"`
+	Username *string `json:"username"`
+	Password *string `json:"password"`
+	APIKey   *string `json:"apiKey"`
+}
+
 type Camera struct {
 	Lat      float64 `json:"lat"`
 	Lng      float64 `json:"lng"`
@@ -360,6 +374,8 @@ type DatasetSchema struct {
 	Datasets              *DatasetConnection    `json:"datasets"`
 	Scene                 *Scene                `json:"scene"`
 	RepresentativeField   *DatasetSchemaField   `json:"representativeField"`
+	URL                   *string               `json:"url"`
+	AuthConfig            *AuthConfig           `json:"authConfig"`
 }
 
 func (DatasetSchema) IsNode() {}
@@ -472,6 +488,17 @@ type ImportDatasetInput struct {
 }
 
 type ImportDatasetPayload struct {
+	DatasetSchema *DatasetSchema `json:"datasetSchema"`
+}
+
+type ImportHostedCSVInput struct {
+	URL             string     `json:"url"`
+	SceneID         ID         `json:"sceneId"`
+	DatasetSchemaID *ID        `json:"datasetSchemaId"`
+	Auth            *AuthInput `json:"auth"`
+}
+
+type ImportHostedCSVResult struct {
 	DatasetSchema *DatasetSchema `json:"datasetSchema"`
 }
 

@@ -80,3 +80,8 @@ func (b *SchemaBuilder) Fields(fields []*SchemaField) *SchemaBuilder {
 
 	return b
 }
+
+func (b *SchemaBuilder) AuthConfig(authConfig *AuthConfig) *SchemaBuilder {
+	b.d.authConfig = authConfig
+	return b
+}

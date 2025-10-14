@@ -20,14 +20,16 @@ type DatasetCSVParser struct {
 	headers   []string
 	schema    *Schema
 	name      string
+	url       string
 }
 
-func NewCSVParser(r io.Reader, n string, seperator rune) *DatasetCSVParser {
+func NewCSVParser(r io.Reader, n, url string, separator rune) *DatasetCSVParser {
 	r2 := csv.NewReader(r)
-	r2.Comma = seperator
+	r2.Comma = separator
 	obj := &DatasetCSVParser{
 		reader: r2,
 		name:   n,
+		url:    url,
 	}
 	return obj
 }
@@ -37,18 +39,31 @@ func (p *DatasetCSVParser) Init() error {
 	if err != nil {
 		return ErrFailedToParseCSVorTSVFile
 	}
+	if len(headers) == 0 || strings.TrimSpace(strings.Join(headers, "")) == "" {
+		return errors.New("empty CSV file")
+	}
 	p.headers = headers
 	p.firstline, err = p.reader.Read()
 	if err != nil {
+		if err == io.EOF {
+			return errors.New("CSV file has no data rows")
+		}
+		return ErrFailedToParseCSVorTSVFile
+	}
+	if len(p.firstline) == 0 || !p.validateLine(p.firstline) {
 		return ErrFailedToParseCSVorTSVFile
 	}
 	return nil
 }
+
 func (p *DatasetCSVParser) validateLine(line []string) bool {
 	return len(p.headers) == len(line)
 }
 
 func (p *DatasetCSVParser) GuessSchema(sid SceneID) error {
+	if len(p.headers) == 0 {
+		return errors.New("no headers in CSV")
+	}
 	if !p.validateLine(p.firstline) {
 		return ErrFailedToParseCSVorTSVFile
 	}
@@ -71,11 +86,15 @@ func (p *DatasetCSVParser) GuessSchema(sid SceneID) error {
 		field, _ := NewSchemaField().NewID().Name("location").Type(ValueTypeLatLng).Build()
 		schemafields = append(schemafields, field)
 	}
+	source := p.url
+	if source == "" {
+		source = "file:///" + p.name
+	}
 	schema, err := NewSchema().
 		NewID().
 		Scene(sid).
 		Name(p.name).
-		Source("file:///" + p.name).
+		Source(source).
 		Fields(schemafields).
 		Build()
 	if err != nil {
@@ -104,7 +123,6 @@ func (p *DatasetCSVParser) ReadAll() (*Schema, []*Dataset, error) {
 		var line []string
 		var err error
 		if i == 0 {
-			// process first line
 			line = p.firstline
 		} else {
 			line, err = p.reader.Read()
@@ -191,7 +209,6 @@ func (p *DatasetCSVParser) CheckCompatible(s *Schema) error {
 			haslng = true
 		}
 	}
-	// check for location fields
 	if haslat && haslng {
 		if fieldsmap["location"] == nil {
 			return ErrIncompatibleSchema

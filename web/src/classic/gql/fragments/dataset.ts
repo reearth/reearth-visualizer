@@ -15,6 +15,11 @@ const datasetFragment = gql`
       }
     }
     name
+    schema {
+      id
+      name
+      url
+    }
   }
 `;
 

@@ -11,6 +11,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 
 import Gdrive from "./Gdrive";
+import HostedCsvForm from "./HostedCsvForm";
 import useHooks from "./hooks";
 
 export type NotificationType = "error" | "warning" | "info" | "success";
@@ -29,6 +30,11 @@ interface Props {
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>;
+  handleHostedDatasetAdd?: (
+    url: string,
+    auth: { type: string;[key: string]: any } | null,
+    schemaId: string | null,
+  ) => Promise<void>;
   onNotificationChange?: (type: NotificationType, text: string, heading?: string) => void;
 }
 
@@ -40,6 +46,7 @@ const DatasetModal: React.FC<Props> = ({
   onClose,
   handleDatasetAdd,
   handleGoogleSheetDatasetAdd,
+  handleHostedDatasetAdd,
   onNotificationChange,
 }) => {
   const theme = useTheme();
@@ -51,17 +58,33 @@ const DatasetModal: React.FC<Props> = ({
     dataType,
     disabled,
     accessToken,
+    hostedUrl,
+    authType,
+    username,
+    password,
+    apiKey,
     primaryButtonText,
     googleApiKey,
     extensions,
     setUrl,
+    setHostedUrl,
+    setAuthType,
+    setUsername,
+    setPassword,
+    setApiKey,
     handleSelectCsvFile,
     handleSetDataType,
     handleReturn,
     handleSheetSelect,
     handleImport,
     handleClose,
-  } = useHooks(syncLoading, handleDatasetAdd, handleGoogleSheetDatasetAdd, onClose);
+  } = useHooks(
+    syncLoading,
+    handleDatasetAdd,
+    handleGoogleSheetDatasetAdd,
+    handleHostedDatasetAdd,
+    onClose,
+  );
 
   return (
     <Modal
@@ -101,9 +124,20 @@ const DatasetModal: React.FC<Props> = ({
                 margin={56}
                 border="dashed"
                 borderColor={theme.classic.main.border}
-                onClick={handleSetDataType}
+                onClick={() => handleSetDataType("gdrive")}
               />
             )}
+            <Card
+              id="hosted"
+              icon="link"
+              iconSize="50px"
+              text={t("Hosted CSV")}
+              subtext={t("From URL (Google Sheets, GitHub, etc.)")}
+              margin={56}
+              border="dashed"
+              borderColor={theme.classic.main.border}
+              onClick={() => handleSetDataType("hosted")}
+            />
             {extensions?.map(ext => (
               <Card
                 key={ext.id}
@@ -114,7 +148,7 @@ const DatasetModal: React.FC<Props> = ({
                 margin={56}
                 border="dashed"
                 borderColor={theme.classic.main.border}
-                onClick={handleSetDataType}
+                onClick={() => handleSetDataType(ext.id)}
               />
             ))}
           </Content>
@@ -152,6 +186,21 @@ const DatasetModal: React.FC<Props> = ({
               </Content>
             </>
           )}
+          {dataType === "hosted" && (
+            <HostedCsvForm
+              onReturn={handleReturn}
+              onUrlChange={setHostedUrl}
+              authType={authType}
+              onAuthTypeChange={setAuthType}
+              username={username}
+              onUsernameChange={setUsername}
+              password={password}
+              onPasswordChange={setPassword}
+              apiKey={apiKey}
+              onApiKeyChange={setApiKey}
+              url={hostedUrl}
+            />
+          )}
           {extensions?.map(ext => (
             <ext.component
               key={ext.id}
@@ -164,18 +213,6 @@ const DatasetModal: React.FC<Props> = ({
               lang={currentLang}
             />
           ))}
-          {!dataType && (
-            <>
-              <Button onClick={handleReturn}>
-                <Icon icon={"arrowLongLeft"} size={24} color={theme.classic.main.text} />
-              </Button>
-
-              <Subtitle size="m" color={theme.classic.main.strongText}>
-                {t("Sorry, that service is unavailable at this time.")}
-              </Subtitle>
-              <Divider margin="24px" />
-            </>
-          )}
         </InputSection>
       )}
     </Modal>

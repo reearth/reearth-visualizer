@@ -81,6 +81,7 @@ export type AddLayerGroupPayload = {
 
 export type AddLayerItemInput = {
   extensionId: Scalars['ID']['input'];
+  height?: InputMaybe<Scalars['Float']['input']>;
   index?: InputMaybe<Scalars['Int']['input']>;
   lat?: InputMaybe<Scalars['Float']['input']>;
   lng?: InputMaybe<Scalars['Float']['input']>;
@@ -202,6 +203,13 @@ export type AttachTagToLayerInput = {
 export type AttachTagToLayerPayload = {
   __typename?: 'AttachTagToLayerPayload';
   layer: Layer;
+};
+
+export type AuthInput = {
+  apiKey?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
+  type: Scalars['String']['input'];
+  username?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Camera = {
@@ -378,6 +386,7 @@ export type DatasetSchema = Node & {
   sceneId: Scalars['ID']['output'];
   source: Scalars['String']['output'];
   totalCount: Scalars['Int']['output'];
+  url?: Maybe<Scalars['String']['output']>;
 };
 
 
@@ -505,6 +514,18 @@ export type ImportDatasetInput = {
 
 export type ImportDatasetPayload = {
   __typename?: 'ImportDatasetPayload';
+  datasetSchema: DatasetSchema;
+};
+
+export type ImportHostedCsvInput = {
+  auth?: InputMaybe<AuthInput>;
+  datasetSchemaId?: InputMaybe<Scalars['ID']['input']>;
+  sceneId: Scalars['ID']['input'];
+  url: Scalars['String']['input'];
+};
+
+export type ImportHostedCsvResult = {
+  __typename?: 'ImportHostedCSVResult';
   datasetSchema: DatasetSchema;
 };
 
@@ -886,6 +907,7 @@ export type Mutation = {
   duplicateStoryPage: StoryPagePayload;
   importDataset?: Maybe<ImportDatasetPayload>;
   importDatasetFromGoogleSheet?: Maybe<ImportDatasetPayload>;
+  importHostedCSV: ImportHostedCsvResult;
   importLayer?: Maybe<ImportLayerPayload>;
   installPlugin?: Maybe<InstallPluginPayload>;
   linkDatasetToPropertyValue?: Maybe<PropertyFieldPayload>;
@@ -897,6 +919,7 @@ export type Mutation = {
   moveStoryPage: MoveStoryPagePayload;
   publishProject?: Maybe<ProjectPayload>;
   publishStory: StoryPayload;
+  refreshHostedCSV: Scalars['Boolean']['output'];
   removeAsset?: Maybe<RemoveAssetPayload>;
   removeCluster?: Maybe<RemoveClusterPayload>;
   removeDatasetSchema?: Maybe<RemoveDatasetSchemaPayload>;
@@ -1100,6 +1123,11 @@ export type MutationImportDatasetFromGoogleSheetArgs = {
 };
 
 
+export type MutationImportHostedCsvArgs = {
+  input: ImportHostedCsvInput;
+};
+
+
 export type MutationImportLayerArgs = {
   input: ImportLayerInput;
 };
@@ -1152,6 +1180,11 @@ export type MutationPublishProjectArgs = {
 
 export type MutationPublishStoryArgs = {
   input: PublishStoryInput;
+};
+
+
+export type MutationRefreshHostedCsvArgs = {
+  schemaId: Scalars['ID']['input'];
 };
 
 
@@ -2693,7 +2726,7 @@ export type WidgetSectionFragmentFragment = { __typename?: 'WidgetSection', top?
 
 export type WidgetAreaFragmentFragment = { __typename?: 'WidgetArea', widgetIds: Array<string>, align: WidgetAreaAlign, gap?: number | null, centered: boolean, background?: string | null, padding?: { __typename?: 'WidgetAreaPadding', top: number, bottom: number, left: number, right: number } | null };
 
-export type DatasetFragmentFragment = { __typename?: 'Dataset', id: string, source: string, schemaId: string, name?: string | null, fields: Array<{ __typename?: 'DatasetField', fieldId: string, type: ValueType, value?: any | null, field?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> };
+export type DatasetFragmentFragment = { __typename?: 'Dataset', id: string, source: string, schemaId: string, name?: string | null, fields: Array<{ __typename?: 'DatasetField', fieldId: string, type: ValueType, value?: any | null, field?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }>, schema?: { __typename?: 'DatasetSchema', id: string, name: string, url?: string | null } | null };
 
 export type InfoboxFragmentFragment = { __typename?: 'Infobox', propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null, fields: Array<{ __typename?: 'InfoboxField', id: string, pluginId: string, extensionId: string, propertyId: string, property?: { __typename?: 'Property', id: string, schema?: { __typename?: 'PropertySchema', id: string, groups: Array<{ __typename?: 'PropertySchemaGroup', schemaGroupId: string, title?: string | null, translatedTitle: string, isList: boolean, representativeFieldId?: string | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null, fields: Array<{ __typename?: 'PropertySchemaField', fieldId: string, title: string, description: string, translatedTitle: string, translatedDescription: string, prefix?: string | null, suffix?: string | null, type: ValueType, defaultValue?: any | null, ui?: PropertySchemaFieldUi | null, min?: number | null, max?: number | null, choices?: Array<{ __typename?: 'PropertySchemaFieldChoice', key: string, icon?: string | null, title: string, translatedTitle: string }> | null, isAvailableIf?: { __typename?: 'PropertyCondition', fieldId: string, type: ValueType, value?: any | null } | null }> }> } | null, items: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> } | { __typename?: 'PropertyGroupList', id: string, schemaGroupId: string, groups: Array<{ __typename?: 'PropertyGroup', id: string, schemaGroupId: string, fields: Array<{ __typename?: 'PropertyField', id: string, fieldId: string, type: ValueType, value?: any | null, links?: Array<{ __typename?: 'PropertyFieldLink', datasetId?: string | null, datasetSchemaId: string, datasetSchemaFieldId: string, datasetSchema?: { __typename?: 'DatasetSchema', id: string, name: string } | null, dataset?: { __typename?: 'Dataset', id: string, name?: string | null } | null, datasetSchemaField?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> | null }> }> }> } | null }> };
 
@@ -2915,7 +2948,7 @@ export type GetDatasetsForDatasetInfoPaneQueryVariables = Exact<{
 }>;
 
 
-export type GetDatasetsForDatasetInfoPaneQuery = { __typename?: 'Query', datasets: { __typename?: 'DatasetConnection', totalCount: number, nodes: Array<{ __typename?: 'Dataset', id: string, source: string, schemaId: string, name?: string | null, fields: Array<{ __typename?: 'DatasetField', fieldId: string, type: ValueType, value?: any | null, field?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }> } | null>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } };
+export type GetDatasetsForDatasetInfoPaneQuery = { __typename?: 'Query', datasets: { __typename?: 'DatasetConnection', totalCount: number, nodes: Array<{ __typename?: 'Dataset', id: string, source: string, schemaId: string, name?: string | null, fields: Array<{ __typename?: 'DatasetField', fieldId: string, type: ValueType, value?: any | null, field?: { __typename?: 'DatasetSchemaField', id: string, name: string } | null }>, schema?: { __typename?: 'DatasetSchema', id: string, name: string, url?: string | null } | null } | null>, pageInfo: { __typename?: 'PageInfo', startCursor?: string | null, endCursor?: string | null, hasNextPage: boolean, hasPreviousPage: boolean } } };
 
 export type GetDatasetSchemasQueryVariables = Exact<{
   projectId: Scalars['ID']['input'];
@@ -3017,6 +3050,20 @@ export type ImportDatasetFromGoogleSheetMutationVariables = Exact<{
 
 
 export type ImportDatasetFromGoogleSheetMutation = { __typename?: 'Mutation', importDatasetFromGoogleSheet?: { __typename?: 'ImportDatasetPayload', datasetSchema: { __typename?: 'DatasetSchema', id: string, name: string } } | null };
+
+export type ImportHostedCsvMutationVariables = Exact<{
+  input: ImportHostedCsvInput;
+}>;
+
+
+export type ImportHostedCsvMutation = { __typename?: 'Mutation', importHostedCSV: { __typename?: 'ImportHostedCSVResult', datasetSchema: { __typename?: 'DatasetSchema', id: string, name: string, url?: string | null } } };
+
+export type RefreshHostedCsvMutationVariables = Exact<{
+  schemaId: Scalars['ID']['input'];
+}>;
+
+
+export type RefreshHostedCsvMutation = { __typename?: 'Mutation', refreshHostedCSV: boolean };
 
 export type GetBlocksQueryVariables = Exact<{
   sceneId: Scalars['ID']['input'];
@@ -3754,6 +3801,11 @@ export const DatasetFragmentFragmentDoc = gql`
     }
   }
   name
+  schema {
+    id
+    name
+    url
+  }
 }
     `;
 export const LayerSystemLayerFragmentDoc = gql`
@@ -5274,6 +5326,74 @@ export function useImportDatasetFromGoogleSheetMutation(baseOptions?: Apollo.Mut
 export type ImportDatasetFromGoogleSheetMutationHookResult = ReturnType<typeof useImportDatasetFromGoogleSheetMutation>;
 export type ImportDatasetFromGoogleSheetMutationResult = Apollo.MutationResult<ImportDatasetFromGoogleSheetMutation>;
 export type ImportDatasetFromGoogleSheetMutationOptions = Apollo.BaseMutationOptions<ImportDatasetFromGoogleSheetMutation, ImportDatasetFromGoogleSheetMutationVariables>;
+export const ImportHostedCsvDocument = gql`
+    mutation ImportHostedCSV($input: ImportHostedCSVInput!) {
+  importHostedCSV(input: $input) {
+    datasetSchema {
+      id
+      name
+      url
+    }
+  }
+}
+    `;
+export type ImportHostedCsvMutationFn = Apollo.MutationFunction<ImportHostedCsvMutation, ImportHostedCsvMutationVariables>;
+
+/**
+ * __useImportHostedCsvMutation__
+ *
+ * To run a mutation, you first call `useImportHostedCsvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useImportHostedCsvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [importHostedCsvMutation, { data, loading, error }] = useImportHostedCsvMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useImportHostedCsvMutation(baseOptions?: Apollo.MutationHookOptions<ImportHostedCsvMutation, ImportHostedCsvMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ImportHostedCsvMutation, ImportHostedCsvMutationVariables>(ImportHostedCsvDocument, options);
+      }
+export type ImportHostedCsvMutationHookResult = ReturnType<typeof useImportHostedCsvMutation>;
+export type ImportHostedCsvMutationResult = Apollo.MutationResult<ImportHostedCsvMutation>;
+export type ImportHostedCsvMutationOptions = Apollo.BaseMutationOptions<ImportHostedCsvMutation, ImportHostedCsvMutationVariables>;
+export const RefreshHostedCsvDocument = gql`
+    mutation RefreshHostedCSV($schemaId: ID!) {
+  refreshHostedCSV(schemaId: $schemaId)
+}
+    `;
+export type RefreshHostedCsvMutationFn = Apollo.MutationFunction<RefreshHostedCsvMutation, RefreshHostedCsvMutationVariables>;
+
+/**
+ * __useRefreshHostedCsvMutation__
+ *
+ * To run a mutation, you first call `useRefreshHostedCsvMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRefreshHostedCsvMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [refreshHostedCsvMutation, { data, loading, error }] = useRefreshHostedCsvMutation({
+ *   variables: {
+ *      schemaId: // value for 'schemaId'
+ *   },
+ * });
+ */
+export function useRefreshHostedCsvMutation(baseOptions?: Apollo.MutationHookOptions<RefreshHostedCsvMutation, RefreshHostedCsvMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RefreshHostedCsvMutation, RefreshHostedCsvMutationVariables>(RefreshHostedCsvDocument, options);
+      }
+export type RefreshHostedCsvMutationHookResult = ReturnType<typeof useRefreshHostedCsvMutation>;
+export type RefreshHostedCsvMutationResult = Apollo.MutationResult<RefreshHostedCsvMutation>;
+export type RefreshHostedCsvMutationOptions = Apollo.BaseMutationOptions<RefreshHostedCsvMutation, RefreshHostedCsvMutationVariables>;
 export const GetBlocksDocument = gql`
     query GetBlocks($sceneId: ID!, $lang: Lang) {
   node(id: $sceneId, type: SCENE) {

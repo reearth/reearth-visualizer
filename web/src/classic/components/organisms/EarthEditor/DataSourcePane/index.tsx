@@ -21,6 +21,7 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
     handleDatasetRemove,
     handleDatasetSchemaSelect,
     handleNotificationChange,
+    handleHostedDatasetImport,
   } = useHooks();
 
   return (
@@ -37,6 +38,7 @@ const DataSourcePane: React.FC<Props> = ({ className }) => {
       onNotificationChange={handleNotificationChange}
       currentLang={currentLang}
       currentTheme={currentTheme}
+      onHostedDatasetImport={handleHostedDatasetImport}
     />
   );
 };

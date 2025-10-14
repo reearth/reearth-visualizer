@@ -73,6 +73,9 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	// google
 	gateways.Google = google.NewGoogle()
 
+	// DataSource for hosted CSV
+	gateways.DataSource = &gateway.CSVDataSource{}
+
 	// mailer
 	mailer := mailer.New(ctx, &conf.Config)
 	gateways.Mailer = mailer

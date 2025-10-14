@@ -276,3 +276,21 @@ export const IMPORT_DATASET_FROM_GOOGLE_SHEET = gql`
     }
   }
 `;
+
+export const IMPORT_HOSTED_CSV = gql`
+  mutation ImportHostedCSV($input: ImportHostedCSVInput!) {
+    importHostedCSV(input: $input) {
+      datasetSchema {
+        id
+        name
+        url
+      }
+    }
+  }
+`;
+
+export const REFRESH_HOSTED_CSV = gql`
+  mutation RefreshHostedCSV($schemaId: ID!) {
+    refreshHostedCSV(schemaId: $schemaId)
+  }
+`;

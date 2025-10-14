@@ -15,6 +15,11 @@ export default (
     sheetName: string,
     schemeId: string | null,
   ) => Promise<void>,
+  handleHostedDatasetAdd?: (
+    url: string,
+    auth: { type: string;[key: string]: any } | null,
+    schemaId: string | null,
+  ) => Promise<void>,
   onClose?: () => void,
 ) => {
   const { getAccessToken } = useAuth();
@@ -25,32 +30,19 @@ export default (
   const [url, setUrl] = useState<string>();
   const [csv, setCsv] = useState<File>();
   const [sheet, setSheet] = useState<SheetParameter>();
+  const [hostedUrl, setHostedUrl] = useState<string>("");
+  const [authType, setAuthType] = useState<"none" | "basic" | "apikey">("none");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [apiKey, setApiKey] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [dataType, setDataType] = useState<string>();
   const [accessToken, setAccessToken] = useState<string>();
 
-  const primaryButtonText = useMemo(() => {
-    if (syncLoading) {
-      return t("sending...");
-    } else {
-      return t("Add Dataset");
-    }
-  }, [syncLoading, t]);
-
-  const extensionTypes = useMemo(() => {
-    if (!extensions) return;
-    const types: string[] = [];
-    for (let i = 0; i < extensions.length; i++) {
-      if (types.includes(extensions[i].id)) continue;
-      types.push(extensions[i].id);
-    }
-    return types;
-  }, [extensions]);
-
   const AllDatasetTypes = useMemo(() => {
-    const ReEarthDatasetTypes = ["csv", "gcms", "box", "drop", "gdrive"];
-    return extensionTypes ? [...extensionTypes, ...ReEarthDatasetTypes] : ReEarthDatasetTypes;
-  }, [extensionTypes]);
+    const ReEarthDatasetTypes = ["csv", "gcms", "box", "drop", "gdrive", "hosted"];
+    return extensions ? [...extensions, ...ReEarthDatasetTypes] : ReEarthDatasetTypes;
+  }, [extensions]);
 
   const handleSetDataType = useCallback(
     (type?: string) => {
@@ -67,11 +59,34 @@ export default (
     if (dataType === "gdrive") {
       if (!sheet || !handleGoogleSheetDatasetAdd) return;
       await handleGoogleSheetDatasetAdd(sheet.accessToken, sheet.fileId, sheet.sheetName, null);
+    } else if (dataType === "hosted") {
+      if (!handleHostedDatasetAdd) return;
+      const auth = authType === "none"
+        ? null
+        : authType === "basic"
+          ? { type: "basic", username, password }
+          : { type: "apikey", apiKey };
+      await handleHostedDatasetAdd(hostedUrl, auth, null);
+    } else {
+      const data = dataType === "csv" ? csv : url;
+      if (!data || !handleDatasetAdd) return;
+      await handleDatasetAdd(data, null);
     }
-    const data = dataType === "csv" ? csv : url;
-    if (!data || !handleDatasetAdd) return;
-    await handleDatasetAdd(data, null);
-  }, [dataType, url, csv, sheet, handleDatasetAdd, handleGoogleSheetDatasetAdd]);
+    handleClose();
+  }, [
+    dataType,
+    url,
+    csv,
+    sheet,
+    hostedUrl,
+    authType,
+    username,
+    password,
+    apiKey,
+    handleDatasetAdd,
+    handleGoogleSheetDatasetAdd,
+    handleHostedDatasetAdd,
+  ]);
 
   const handleSelectCsvFile = useFileInput(
     (files: FileList) => {
@@ -87,6 +102,11 @@ export default (
     setCsv(undefined);
     setSheet(undefined);
     setUrl(undefined);
+    setHostedUrl("");
+    setAuthType("none");
+    setUsername("");
+    setPassword("");
+    setApiKey("");
     handleSetDataType(undefined);
     onClose?.();
   }, [onClose, handleSetDataType]);
@@ -99,6 +119,11 @@ export default (
   const handleReturn = useCallback(() => {
     setUrl(undefined);
     setCsv(undefined);
+    setHostedUrl("");
+    setAuthType("none");
+    setUsername("");
+    setPassword("");
+    setApiKey("");
     handleSetDataType(undefined);
     setSheet(undefined);
   }, [handleSetDataType]);
@@ -110,8 +135,8 @@ export default (
   }, [getAccessToken]);
 
   useEffect(() => {
-    setDisabled(!(csv || url || sheet));
-  }, [csv, url, sheet]);
+    setDisabled(!(csv || url || sheet || (dataType === "hosted" && hostedUrl)));
+  }, [csv, url, sheet, hostedUrl, dataType]);
 
   return {
     url,
@@ -119,10 +144,20 @@ export default (
     dataType,
     disabled,
     accessToken,
-    primaryButtonText,
+    hostedUrl,
+    authType,
+    username,
+    password,
+    apiKey,
+    primaryButtonText: syncLoading ? t("sending...") : t("Add Dataset"),
     googleApiKey,
     extensions,
     setUrl,
+    setHostedUrl,
+    setAuthType,
+    setUsername,
+    setPassword,
+    setApiKey,
     handleSelectCsvFile,
     handleSetDataType,
     handleReturn,

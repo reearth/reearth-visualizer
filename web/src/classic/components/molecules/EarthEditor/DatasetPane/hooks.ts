@@ -22,6 +22,11 @@ export default (
     sheetName: string,
     datasetSchemaId: string | null,
   ) => void | Promise<void>,
+  onHostedDatasetImport?: (
+    url: string,
+    auth: { type: string;[key: string]: any } | null,
+    schemaId: string | null,
+  ) => void | Promise<void>,
 ) => {
   const t = useT();
 
@@ -71,6 +76,21 @@ export default (
     {},
   );
 
+  const handleHostedDatasetAdd = useCallback(
+    async (url: string, auth: any | null, schemeId: string | null) => {
+      setDatasetSyncLoading(true);
+      try {
+        await onHostedDatasetImport?.(url, auth, schemeId);
+        setDatasetSyncOpen(false);
+      } catch (error) {
+        console.error("Import hosted CSV failed:", error);
+      } finally {
+        setDatasetSyncLoading(false);
+      }
+    },
+    [onHostedDatasetImport],
+  );
+
   return {
     datasetSyncOpen,
     datasetSyncLoading,
@@ -79,5 +99,6 @@ export default (
     handleDatasetAdd,
     openDatasetModal,
     closeDatasetModal,
+    handleHostedDatasetAdd,
   };
 };
