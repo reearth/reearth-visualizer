@@ -85,7 +85,6 @@ type Config struct {
 type AccountsAPIConfig struct {
 	Enabled bool   `default:"false"`
 	Host    string `default:"http://localhost:8081"`
-	Token   string `pp:",omitempty"`
 }
 
 type HealthCheckConfig struct {

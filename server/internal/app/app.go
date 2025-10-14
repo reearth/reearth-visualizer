@@ -40,7 +40,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		otelecho.Middleware("reearth"),
 		echo.WrapMiddleware(appx.RequestIDMiddleware()),
 		logger.AccessLogger(),
-		appmiddleware.LoggerMiddleware(),
 		middleware.Gzip(),
 	)
 	if cfg.Config.HTTPSREDIRECT {
@@ -75,6 +74,12 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	} else {
 		// Set AuthInfo to context key => adapter.ContextAuthInfo
 		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+	}
+
+	if cfg.AccountsAPIClient != nil {
+		e.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
+			AccountsClient: cfg.AccountsAPIClient,
+		})...)
 	}
 
 	e.Use(echo.WrapMiddleware(wrapHandler))
@@ -139,9 +144,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	api.GET("/published_data/:name", PublishedData("", true))
 
 	apiPrivate := api.Group("", privateCache)
-	apiPrivate.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
-		AccountsClient: cfg.AccountsAPIClient,
-	})...)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
 	apiPrivate.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)

@@ -13,19 +13,6 @@ type Client struct {
 	UserRepo userpkg.Repo
 }
 
-type authTransport struct {
-	token     string
-	transport http.RoundTripper
-}
-
-func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	req = req.Clone(req.Context())
-	if t.token != "" {
-		req.Header.Set("Authorization", "Bearer "+t.token)
-	}
-	return t.transport.RoundTrip(req)
-}
-
 func NewClient(host string, transport http.RoundTripper) *Client {
 	httpClient := &http.Client{
 		Transport: transport,

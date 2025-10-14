@@ -1,13 +1,10 @@
 package middleware
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"strings"
 
-	jwtmiddleware "github.com/auth0/go-jwt-middleware/v2"
-	"github.com/auth0/go-jwt-middleware/v2/validator"
 	echo "github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter/internal"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
@@ -32,28 +29,11 @@ type NewAccountsMiddlewaresMockParam struct {
 	AccountsClient  *accounts.Client
 }
 
-func NewTempNewAuthMiddlewaresMock(param *NewAccountsMiddlewaresMockParam) AccountsMiddlewares {
-	return []echo.MiddlewareFunc{
-		echo.WrapMiddleware(func(next http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx := r.Context()
-				ctx = context.WithValue(ctx, jwtmiddleware.ContextKey{}, &validator.ValidatedClaims{
-					RegisteredClaims: validator.RegisteredClaims{
-						Subject: param.TestUserSubject,
-					},
-				})
-				r = r.WithContext(ctx)
-				next.ServeHTTP(w, r)
-			})
-		}),
-		newAccountsMiddleware(param.AccountsClient),
-	}
-}
-
 func jwtContextMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			authHeader := c.Request().Header.Get("Authorization")
+			log.Debugfc(c.Request().Context(), "accounts middleware: authHeader: %s", authHeader)
 			if authHeader != "" {
 				// Remove the "Bearer " prefix from the Authorization header to extract the token
 				const bearerPrefix = "Bearer "

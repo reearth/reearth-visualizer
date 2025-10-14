@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
+	pkgUser "github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -98,19 +99,11 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 								log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
 								return err
 							}
-							if userModel != nil {
-								log.Debugfc(ctx, "accounts API: user fetched via FindMe")
+							u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
+							if err != nil {
+								log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
+								return err
 							}
-
-							log.Debugfc(ctx, "accounts API: user model: %#v", userModel)
-
-							uId, _ := user.IDFrom(userModel.ID())
-							u, err = user.New().
-								ID(uId).
-								Name(userModel.Name()).
-								Email(userModel.Email()).
-								Metadata(user.NewMetadata()).
-								Build()
 						} else {
 							u, err = multiUser.FetchBySub(ctx, authInfo.Sub)
 							if err != nil && err != rerror.ErrNotFound {
@@ -156,6 +149,35 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			return next(c)
 		}
 	}
+}
+
+func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *pkgUser.User) (*user.User, error) {
+	uId, _ := user.IDFrom(userModel.ID())
+	wid, _ := workspace.IDFrom(userModel.MyWorkspaceID())
+
+	usermetadata := user.MetadataFrom(
+		userModel.Metadata().PhotoURL(),
+		userModel.Metadata().Description(),
+		userModel.Metadata().Website(),
+		userModel.Metadata().Lang(),
+		user.Theme(userModel.Metadata().Theme()),
+	)
+
+	u, err := user.New().
+		ID(uId).
+		Name(userModel.Name()).
+		Alias(userModel.Alias()).
+		Email(userModel.Email()).
+		Metadata(usermetadata).
+		Workspace(wid).
+		Build()
+
+	if err != nil {
+		log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
+		return nil, err
+	}
+
+	return u, nil
 }
 
 func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*usecase.Operator, error) {
