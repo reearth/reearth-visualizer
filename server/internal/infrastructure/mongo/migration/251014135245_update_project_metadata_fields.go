@@ -44,7 +44,7 @@ func UpdateProjectMetadataFields(ctx context.Context, c DBClient) error {
 				// Check if projectmetadata exists for this project and update if found
 				var existingMetadata bson.Raw
 				err := metadataCol.Client().FindOne(ctx, bson.M{"project": id}).Decode(&existingMetadata)
-				
+
 				if err == nil {
 					// Existing metadata found, update the fields
 					updateFields := bson.M{
