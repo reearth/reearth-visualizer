@@ -36,9 +36,6 @@ func (u *User) Metadata() Metadata {
 }
 
 func (u *User) Host() *string {
-	if u.host == nil {
-		return nil
-	}
 	return u.host
 }
 func (u *User) MyWorkspaceID() string {

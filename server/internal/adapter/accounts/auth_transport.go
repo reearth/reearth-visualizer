@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/reearth/reearth/server/internal/adapter/internal"
-	"github.com/reearth/reearthx/log"
 )
 
 type DynamicAuthTransport struct{}
@@ -21,8 +20,6 @@ func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 	} else if authInfo := internal.GetContextAuthInfo(req.Context()); authInfo != nil && authInfo.Token != "" {
 		token = authInfo.Token
 	}
-
-	log.Debugfc(req.Context(), "accounts API: token: %s", token)
 
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)

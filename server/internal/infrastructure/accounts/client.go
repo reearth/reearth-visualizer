@@ -3,6 +3,7 @@ package accounts
 import (
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/hasura/go-graphql-client"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts/user"
@@ -16,6 +17,7 @@ type Client struct {
 func NewClient(host string, transport http.RoundTripper) *Client {
 	httpClient := &http.Client{
 		Transport: transport,
+		Timeout:   30 * time.Second,
 	}
 
 	normalizedHost := strings.TrimRight(host, "/")
