@@ -18,6 +18,8 @@ type ProjectMetadataDocument struct {
 	Readme          *string
 	License         *string
 	Topics          *[]string
+	StarCount       *int64
+	StarredBy       *[]string
 	CreatedAt       *time.Time
 	UpdatedAt       *time.Time
 }
@@ -48,6 +50,8 @@ func NewProjectMetadata(r *project.ProjectMetadata) (*ProjectMetadataDocument, s
 		Readme:          r.Readme(),
 		License:         r.License(),
 		Topics:          r.Topics(),
+		StarCount:       r.StarCount(),
+		StarredBy:       r.StarredBy(),
 		CreatedAt:       r.CreatedAt(),
 		UpdatedAt:       r.UpdatedAt(),
 	}, rid
@@ -84,12 +88,11 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		ImportResultLog(d.ImportResultLog).
 		Readme(d.Readme).
 		License(d.License).
+		Topics(d.Topics).
+		StarCount(d.StarCount).
+		StarredBy(d.StarredBy).
 		UpdatedAt(d.UpdatedAt).
 		CreatedAt(d.CreatedAt)
-
-	if d.Topics != nil {
-		builder = builder.Topics(d.Topics)
-	}
 
 	return builder.Build()
 }

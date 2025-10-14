@@ -81,6 +81,16 @@ func (b *MetadataBuilder) Topics(topics *[]string) *MetadataBuilder {
 	return b
 }
 
+func (b *MetadataBuilder) StarCount(starCount *int64) *MetadataBuilder {
+	b.r.starCount = starCount
+	return b
+}
+
+func (b *MetadataBuilder) StarredBy(starredBy *[]string) *MetadataBuilder {
+	b.r.starredBy = starredBy
+	return b
+}
+
 func (b *MetadataBuilder) CreatedAt(createdAt *time.Time) *MetadataBuilder {
 	b.r.createdAt = createdAt
 	return b

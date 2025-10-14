@@ -136,8 +136,6 @@ message Project {
   PublishmentStatus publishment_status = 20;
   // Scene Publishment value
   optional string published_url = 21;
-  // Number of stars/likes the project has received
-  int32 star_count = 22;
 }
 
 message Story {
@@ -171,6 +169,10 @@ message ProjectMetadata {
   google.protobuf.Timestamp created_at = 8;
   // ProjectMetadata updated date
   google.protobuf.Timestamp updated_at = 9;
+  // Project star_count
+  optional int64 star_count = 10;
+  // Project starred_by
+  repeated string starred_by = 11;
 }
 
 enum Visualizer {
