@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -32,6 +33,16 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 			// get sub from context
 			authInfo := adapter.GetAuthInfo(ctx)
 
+			// Set JWT token in context for Accounts API authentication
+			if authInfo != nil && authInfo.Token != "" {
+				log.Debugfc(ctx, "[attachOpMiddleware] Setting JWT token in context (length: %d)", len(authInfo.Token))
+				ctx = adapter.SetContextJWT(ctx, authInfo.Token)
+				// Update the request context immediately so it's available for GraphQL calls
+				c.SetRequest(req.WithContext(ctx))
+			} else {
+				log.Debugfc(ctx, "[attachOpMiddleware] No authInfo or token found")
+			}
+
 			var userID string
 			var u *user.User
 
@@ -58,7 +69,15 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				// debug mode
 				if cfg.Debug {
 					if userID := c.Request().Header.Get("X-Reearth-Debug-User"); userID != "" {
-						if uId, err := accountdomain.UserIDFrom(userID); err == nil {
+						if cfg.Config.UseReearthAccountAuth() {
+							userModel, err := cfg.AccountsAPIClient.UserRepo.FindByID(ctx, userID)
+							if err == nil && userModel != nil {
+								u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
+								if err != nil {
+									log.Errorfc(ctx, "accounts API: failed to build user in debug mode: %v", err)
+								}
+							}
+						} else if uId, err := accountdomain.UserIDFrom(userID); err == nil {
 							user2, err := multiUser.FetchByID(ctx, user.IDList{uId})
 							if err == nil && len(user2) == 1 {
 								u = user2[0]
@@ -89,22 +108,34 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 
 				if authInfo != nil {
-
 					if u == nil {
 						var err error
 						// Use Accounts API if enabled, otherwise use MongoDB
-						if cfg.AccountsAPIClient != nil {
-							userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
-							if err != nil && err != rerror.ErrNotFound {
-								log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
-								return err
+						if cfg.Config.UseReearthAccountAuth() {
+							log.Debugfc(ctx, "[attachOpMiddleware] Using Accounts API to fetch user with sub: %s", authInfo.Sub)
+							if cfg.AccountsAPIClient == nil {
+								log.Errorfc(ctx, "accounts API: client is not initialized")
+								return echo.NewHTTPError(http.StatusInternalServerError, "accounts API client not available")
 							}
-							u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
+							userModel, err := cfg.AccountsAPIClient.UserRepo.FindBySub(ctx, authInfo.Sub)
 							if err != nil {
-								log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
-								return err
+								log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
+								if err != rerror.ErrNotFound {
+									return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
+								}
+							}
+							if userModel != nil {
+								log.Debugfc(ctx, "[attachOpMiddleware] Successfully fetched user from Accounts API: %s", userModel.ID())
+								u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
+								if err != nil {
+									log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
+									return err
+								}
+							} else {
+								log.Warnfc(ctx, "[attachOpMiddleware] Accounts API returned nil user")
 							}
 						} else {
+							log.Debugfc(ctx, "[attachOpMiddleware] Using MongoDB to fetch user with sub: %s", authInfo.Sub)
 							u, err = multiUser.FetchBySub(ctx, authInfo.Sub)
 							if err != nil && err != rerror.ErrNotFound {
 								return err
@@ -113,7 +144,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 					}
 
 					// save a new sub (only for MongoDB-based user repo)
-					if u != nil && cfg.AccountsAPIClient == nil {
+					if u != nil && !cfg.Config.UseReearthAccountAuth() {
 						auth := user.AuthFrom(authInfo.Sub)
 						if err := addAuth0SubToUser(ctx, u, auth, cfg); err != nil {
 							return err
@@ -163,6 +194,12 @@ func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *pkgUser
 		user.Theme(userModel.Metadata().Theme()),
 	)
 
+	// Convert auths to user.Auth slice
+	auths := make([]user.Auth, 0, len(userModel.Auths()))
+	for _, authStr := range userModel.Auths() {
+		auths = append(auths, user.AuthFrom(authStr))
+	}
+
 	u, err := user.New().
 		ID(uId).
 		Name(userModel.Name()).
@@ -170,6 +207,7 @@ func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *pkgUser
 		Email(userModel.Email()).
 		Metadata(usermetadata).
 		Workspace(wid).
+		Auths(auths).
 		Build()
 
 	if err != nil {

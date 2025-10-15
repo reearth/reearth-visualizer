@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"path"
 	"strings"
 	"time"
@@ -408,8 +409,14 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 	// fsouza/fake-gcs-server can't read object by Reader.
 	// so we need to download it from the server directly.
 	if f.isFake {
-		u := fmt.Sprintf("http://%s/download/storage/v1/b/%s/o/%s?alt=media",
-			strings.TrimRight("localhost:4443", "/"),
+		// Get the GCS emulator host from environment variable
+		gcsHost := os.Getenv("STORAGE_EMULATOR_HOST")
+		if gcsHost == "" {
+			gcsHost = "http://localhost:4443"
+		}
+
+		u := fmt.Sprintf("%s/download/storage/v1/b/%s/o/%s?alt=media",
+			strings.TrimRight(gcsHost, "/"),
 			url.PathEscape(bucket.BucketName()),
 			url.PathEscape(filename),
 		)
@@ -563,6 +570,7 @@ func getGCSObjectURL(base *url.URL, objectName string) *url.URL {
 	// https://github.com/golang/go/issues/38351
 	b := *base
 	b.Path = path.Join(b.Path, objectName)
+
 	return &b
 }
 

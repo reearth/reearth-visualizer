@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hasura/go-graphql-client"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts/gqlerror"
@@ -20,9 +21,20 @@ func NewRepo(gql *graphql.Client) user.Repo {
 }
 
 func (r *userRepo) FindMe(ctx context.Context) (*user.User, error) {
+	fmt.Println("[FindMe] Starting GraphQL query")
 	var q findMeQuery
 	if err := r.client.Query(ctx, &q, nil); err != nil {
+		fmt.Printf("[FindMe] GraphQL query failed: %v\n", err)
 		return nil, gqlerror.ReturnAccountsError(err)
+	}
+
+	fmt.Printf("[FindMe] Raw response: %+v\n", q)
+	fmt.Printf("[FindMe] Me object: ID=%s, Name=%s, Alias=%s, Email=%s, MyWorkspaceID=%s\n",
+		q.Me.ID, q.Me.Name, q.Me.Alias, q.Me.Email, q.Me.MyWorkspaceID)
+
+	if q.Me.ID == "" {
+		fmt.Println("[FindMe] ERROR: User ID is empty!")
+		return nil, fmt.Errorf("user ID is empty in response")
 	}
 
 	return user.New().
@@ -132,4 +144,18 @@ func (r *userRepo) Signup(ctx context.Context, userID, name, email, password, se
 		Name(string(m.Signup.User.Name)).
 		Email(string(m.Signup.User.Email)).
 		Build()
+}
+
+func (r *userRepo) FindBySub(ctx context.Context, sub string) (*user.User, error) {
+	fmt.Printf("[FindBySub] Called with sub: %s\n", sub)
+	// Accounts API uses JWT authentication and the 'me' query
+	// The sub is implicitly derived from the JWT token in the Authorization header
+	// via DynamicAuthTransport, so we just call FindMe
+	result, err := r.FindMe(ctx)
+	if err != nil {
+		fmt.Printf("[FindBySub] FindMe failed: %v\n", err)
+		return nil, err
+	}
+	fmt.Printf("[FindBySub] FindMe successful, user ID: %s\n", result.ID())
+	return result, nil
 }

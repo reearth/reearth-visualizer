@@ -13,17 +13,26 @@ import (
 	"google.golang.org/api/option"
 )
 
-const (
-	GCSBaseURLForTesting = "http://localhost:4443/storage/v1/b"
-)
+// GCSBaseURLForTesting is the base URL for fake-gcs-server in tests
+const GCSBaseURLForTesting = "http://localhost:4443"
 
 type GCSForTesting struct {
 	client *storage.Client
 }
 
+func getTestGCSEndpoint() string {
+	// Use STORAGE_EMULATOR_HOST if set, otherwise default to localhost:4443
+	endpoint := os.Getenv("STORAGE_EMULATOR_HOST")
+	if endpoint == "" {
+		endpoint = "http://localhost:4443"
+	}
+	return endpoint + "/storage/v1/b"
+}
+
 func NewGCSForTesting() (*GCSForTesting, error) {
 	ctx := context.Background()
-	client, err := storage.NewClient(ctx, option.WithoutAuthentication(), option.WithEndpoint(GCSBaseURLForTesting))
+	endpoint := getTestGCSEndpoint()
+	client, err := storage.NewClient(ctx, option.WithoutAuthentication(), option.WithEndpoint(endpoint))
 	if err != nil {
 		return nil, err
 	}

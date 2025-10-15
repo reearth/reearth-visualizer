@@ -12,7 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
@@ -56,33 +55,32 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		)
 	}
 
-	// auth
-	authConfig := cfg.Config.JWTProviders()
-	log.Infof("auth: config: %#v", authConfig)
-
-	var wrapHandler func(http.Handler) http.Handler
+	// Separate authentication methods
+	var preAuthHandler func(http.Handler) http.Handler
 	if cfg.Config.UseMockAuth() {
+
+		// Bypass authentication using mock user for local development
 		log.Infof("Using mock auth for local development")
-		wrapHandler = func(next http.Handler) http.Handler {
+		preAuthHandler = func(next http.Handler) http.Handler {
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				ctx := r.Context()
-				// Set the flag for Mock authentication, Mock user will be obtained with attachOpMiddlewar()
 				ctx = adapter.AttachMockAuth(ctx, true)
 				next.ServeHTTP(w, r.WithContext(ctx))
 			})
 		}
+
 	} else {
-		// Set AuthInfo to context key => adapter.ContextAuthInfo
-		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
+
+		// Decode the provided token and store it in ContextAuthInfo
+		authConfig := cfg.Config.JWTProviders()
+		log.Infof("auth0: config: %#v", authConfig)
+
+		preAuthHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
 	}
 
-	if cfg.AccountsAPIClient != nil {
-		e.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
-			AccountsClient: cfg.AccountsAPIClient,
-		})...)
-	}
+	e.Use(echo.WrapMiddleware(preAuthHandler))
 
-	e.Use(echo.WrapMiddleware(wrapHandler))
+	// Retrieve authenticated user information from the DB and store it in the context
 	e.Use(attachOpMiddleware(cfg))
 
 	// enable pprof

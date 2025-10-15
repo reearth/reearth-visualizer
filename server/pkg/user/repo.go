@@ -7,4 +7,6 @@ import (
 
 type Repo interface {
 	FindMe(ctx context.Context) (*User, error)
+	FindBySub(ctx context.Context, sub string) (*User, error)
+	FindByID(ctx context.Context, id string) (*User, error)
 }

@@ -9,9 +9,13 @@ type AccountsError error
 
 var ErrUnauthorized AccountsError = errors.New("unauthorized")
 
-func ReturnAccountsError(err error) AccountsError {
+func ReturnAccountsError(err error) error {
+	if err == nil {
+		return nil
+	}
 	if strings.Contains(err.Error(), "401") {
 		return ErrUnauthorized
 	}
-	return nil
+	// Return the original error instead of nil
+	return err
 }

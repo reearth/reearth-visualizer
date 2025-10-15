@@ -65,6 +65,17 @@ func AttachInternal(ctx context.Context, isInternal bool) context.Context {
 	return context.WithValue(ctx, contextInternal, isInternal)
 }
 
+func SetContextJWT(ctx context.Context, token string) context.Context {
+	return context.WithValue(ctx, "jwtToken", token)
+}
+
+func GetContextJWT(ctx context.Context) string {
+	if token, ok := ctx.Value("jwtToken").(string); ok {
+		return token
+	}
+	return ""
+}
+
 func User(ctx context.Context) *user.User {
 	if v := ctx.Value(contextUser); v != nil {
 		if u, ok := v.(*user.User); ok {
