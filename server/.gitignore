@@ -26,6 +26,7 @@ __debug_bin
 /mongo
 /.env*
 !/.env.example
+!/.env.docker
 /coverage.txt
 /web
 tmp
