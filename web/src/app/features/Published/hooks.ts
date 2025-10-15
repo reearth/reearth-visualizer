@@ -121,11 +121,11 @@ export default (alias?: string) => {
     if (!data?.widgets) return undefined;
 
     const widgetsInWas = new Set<string>();
-    if (data.widgetAlignSystem?.[detectedDevice]) {
+    if (data.widgetAlignSystems?.[detectedDevice]) {
       for (const z of ["inner", "outer"] as const) {
         for (const s of ["left", "center", "right"] as const) {
           for (const a of ["top", "middle", "bottom"] as const) {
-            for (const w of data.widgetAlignSystem[detectedDevice]?.[z]?.[s]?.[
+            for (const w of data.widgetAlignSystems[detectedDevice]?.[z]?.[s]?.[
               a
             ]?.widgetIds ?? []) {
               widgetsInWas.add(w);
@@ -211,10 +211,10 @@ export default (alias?: string) => {
 
     return {
       floating: floatingWidgets,
-      alignSystem: data.widgetAlignSystem
+      alignSystem: data.widgetAlignSystems
         ? {
-            outer: widgetZone(data.widgetAlignSystem[detectedDevice]?.outer),
-            inner: widgetZone(data.widgetAlignSystem[detectedDevice]?.inner)
+            outer: widgetZone(data.widgetAlignSystems[detectedDevice]?.outer),
+            inner: widgetZone(data.widgetAlignSystems[detectedDevice]?.inner)
           }
         : undefined,
       ownBuiltinWidgets

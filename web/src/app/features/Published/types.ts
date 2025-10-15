@@ -34,7 +34,7 @@ export type PublishedData = {
   nlsLayers?: PublishedNLSLayer[];
   layerStyles?: LayerStyle[];
   widgets?: Widget[];
-  widgetAlignSystem?: {
+  widgetAlignSystems?: {
     desktop?: WidgetAlignSystem;
     mobile?: WidgetAlignSystem;
   };
