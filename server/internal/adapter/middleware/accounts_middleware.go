@@ -34,7 +34,6 @@ func jwtContextMiddleware() echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			authHeader := c.Request().Header.Get("Authorization")
-			log.Debugfc(c.Request().Context(), "accounts middleware: authHeader: %s", authHeader)
 			if authHeader != "" {
 				// Remove the "Bearer " prefix from the Authorization header to extract the token
 				const bearerPrefix = "Bearer "
