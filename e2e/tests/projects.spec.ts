@@ -4,6 +4,7 @@ import { test, expect, BrowserContext, Page } from "@playwright/test";
 import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
+import { createIAPContext } from "../utils/iap-auth";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -25,18 +26,13 @@ test.describe("Project Management", () => {
   let projectScreen: ProjectScreenPage;
 
   test.beforeAll(async ({ browser }) => {
-    context = await browser.newContext({
-      recordVideo: {
-        dir: "videos/",
-        size: { width: 1280, height: 720 }
-      }
-    });
+    context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "");
     page = await context.newPage();
     dashBoardPage = new DashBoardPage(page);
     projectsPage = new ProjectsPage(page);
     projectScreen = new ProjectScreenPage(page);
 
-    await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
+    await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "domcontentloaded" });
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {

@@ -7,6 +7,7 @@ import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
+import { createIAPContext } from "../utils/iap-auth";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -31,18 +32,13 @@ test.describe("DASHBOARD - Test cases", () => {
   let recycleBinPage: RecycleBinPage;
   let projectScreenPage: ProjectScreenPage;
   test.beforeAll(async ({ browser }) => {
-    context = await browser.newContext({
-      recordVideo: {
-        dir: "videos/",
-        size: { width: 1280, height: 720 }
-      }
-    });
+    context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "");
     page = await context.newPage();
     dashBoardPage = new DashBoardPage(page);
     projectsPage = new ProjectsPage(page);
     recycleBinPage = new RecycleBinPage(page);
     projectScreenPage = new ProjectScreenPage(page);
-    await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
+    await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "domcontentloaded" });
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
@@ -187,16 +183,11 @@ test.describe("DASHBOARD - Test cases", () => {
     let projectsPage: ProjectsPage;
     test.beforeAll(async ({ browser }) => {
       test.setTimeout(20000);
-      context = await browser.newContext({
-        recordVideo: {
-          dir: "videos/",
-          size: { width: 1280, height: 720 }
-        }
-      });
+      context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "");
       page = await context.newPage();
       dashBoardPage = new DashBoardPage(page);
       projectsPage = new ProjectsPage(page);
-      await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
+      await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "domcontentloaded" });
     });
 
     // eslint-disable-next-line no-empty-pattern
@@ -215,7 +206,7 @@ test.describe("DASHBOARD - Test cases", () => {
     });
     test("Verify dashboard is loaded", async () => {
       await page.goto(REEARTH_WEB_E2E_BASEURL + "/dashboard", {
-        waitUntil: "networkidle"
+        waitUntil: "domcontentloaded"
       });
       await expect(dashBoardPage.projects).toBeVisible();
       await expect(dashBoardPage.recycleBin).toBeVisible();
