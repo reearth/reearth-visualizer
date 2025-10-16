@@ -57,7 +57,12 @@ var accountsMiddlewareSkipPaths = []string{
 	"/favicon.ico",
 }
 
-func shouldSkipAccountsMiddleware(path string) bool {
+func shouldSkipAccountsMiddleware(method, path string) bool {
+	// Only skip authentication for GET requests
+	if method != http.MethodGet {
+		return false
+	}
+
 	for _, skipPath := range accountsMiddlewareSkipPaths {
 		if skipPath == path || strings.HasPrefix(path, skipPath) {
 			return true
@@ -70,7 +75,7 @@ func newAccountsMiddleware(accountsClient *accounts.Client) echo.MiddlewareFunc 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
-			if shouldSkipAccountsMiddleware(c.Request().URL.Path) {
+			if shouldSkipAccountsMiddleware(c.Request().Method, c.Request().URL.Path) {
 				return next(c)
 			}
 
