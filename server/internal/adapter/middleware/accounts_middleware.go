@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
 
 	echo "github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter/internal"
@@ -48,9 +49,31 @@ func jwtContextMiddleware() echo.MiddlewareFunc {
 	}
 }
 
+var accountsMiddlewareSkipPaths = []string{
+	"/api/ping",
+	"/api/published/",
+	"/plugins/",
+	"/assets/",
+	"/favicon.ico",
+}
+
+func shouldSkipAccountsMiddleware(path string) bool {
+	for _, skipPath := range accountsMiddlewareSkipPaths {
+		if skipPath == path || strings.HasPrefix(path, skipPath) {
+			return true
+		}
+	}
+	return false
+}
+
 func newAccountsMiddleware(accountsClient *accounts.Client) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
+
+			if shouldSkipAccountsMiddleware(c.Request().URL.Path) {
+				return next(c)
+			}
+
 			ctx := c.Request().Context()
 
 			// TODO: Optimize performance by including necessary user information (userID, email, etc.)
