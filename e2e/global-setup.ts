@@ -18,7 +18,7 @@ async function globalSetup(_config: FullConfig) {
     );
   }
 
-  const browser = await webkit.launch({ headless: false });
+  const browser = await webkit.launch({ headless: true });
   const context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL);
   const page = await context.newPage();
 
