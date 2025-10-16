@@ -5,8 +5,13 @@ import * as dotenv from "dotenv";
 
 dotenv.config({ path: path.resolve(__dirname, ".env") });
 
+export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
+export const API_AUTH_STATE = path.join(__dirname, ".auth/api-token.json");
+
 export default defineConfig({
-  globalSetup: require.resolve("./global-setup"),
+  globalSetup: process.env.SKIP_STORAGE_STATE
+    ? undefined
+    : require.resolve("./global-setup"),
   expect: {
     timeout: 15000
   },
@@ -21,12 +26,7 @@ export default defineConfig({
     trace: "on-first-retry",
     actionTimeout: 15000,
     navigationTimeout: 30000,
-    storageState: "./e2e/auth.json",
-    // Performance optimizations
-    bypassCSP: true,
-    ignoreHTTPSErrors: true,
-    // Use domcontentloaded instead of networkidle for faster page loads
-    // This can be overridden per test if needed
+    storageState: process.env.SKIP_STORAGE_STATE ? undefined : STORAGE_STATE
   },
 
   projects: [
@@ -38,7 +38,7 @@ export default defineConfig({
         screenshot: "only-on-failure",
         headless: true,
         launchOptions: {
-          // No slowMo for faster execution - removed for performance
+          slowMo: 200
         },
         viewport: { width: 1920, height: 1080 }
       }

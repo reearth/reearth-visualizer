@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
+import { STORAGE_STATE } from "../global-setup";
 import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
@@ -26,13 +27,17 @@ test.describe("Project Management", () => {
   let projectScreen: ProjectScreenPage;
 
   test.beforeAll(async ({ browser }) => {
-    context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "");
+    context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "", {
+      storageState: STORAGE_STATE
+    });
     page = await context.newPage();
     dashBoardPage = new DashBoardPage(page);
     projectsPage = new ProjectsPage(page);
     projectScreen = new ProjectScreenPage(page);
 
-    await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "domcontentloaded" });
+    await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
+      waitUntil: "networkidle"
+    });
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
@@ -50,7 +55,7 @@ test.describe("Project Management", () => {
   });
 
   test("Verify dashboard is loaded", async () => {
-    await page.goto(REEARTH_WEB_E2E_BASEURL);
+    await page.waitForTimeout(5000);
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();

@@ -1,92 +1,58 @@
 import path from "path";
 
-import { FullConfig, webkit } from "@playwright/test";
-import * as dotenv from "dotenv";
+import { webkit, FullConfig } from "@playwright/test";
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
 
-dotenv.config({ path: path.resolve(__dirname, ".env") });
-
-const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
-const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
-const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
-
-if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
-  throw new Error("Missing required environment variables.");
-}
+export const STORAGE_STATE = path.join(__dirname, ".auth/user.json");
 
 async function globalSetup(_config: FullConfig) {
-  const browser = await webkit.launch({
-    headless: true,
-  });
+  const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
+  const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
+  const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 
-  const context = await createIAPContext(
-    browser,
-    REEARTH_WEB_E2E_BASEURL as string
-  );
+  if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
+    throw new Error(
+      "Missing required environment variables: REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD, or REEARTH_WEB_E2E_BASEURL"
+    );
+  }
 
+  const browser = await webkit.launch({ headless: false });
+  const context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL);
   const page = await context.newPage();
 
   try {
-    console.log('🔐 Starting authentication setup...');
-
-    // Navigate to the login page
-    await page.goto(REEARTH_WEB_E2E_BASEURL as string, {
-      waitUntil: "domcontentloaded",
-      timeout: 60000
+    // Navigate to the app
+    await page.goto(REEARTH_WEB_E2E_BASEURL, {
+      waitUntil: "networkidle"
     });
 
-    console.log('📄 Page loaded, attempting login...');
+    // Check if already logged in by looking for dashboard elements
+    const isLoggedIn = await page
+      .locator('[data-testid="header-user-menu"]')
+      .isVisible()
+      .catch(() => false);
 
-    // Perform login using LoginPage
-    const loginPage = new LoginPage(page);
-    await loginPage.login(
-      REEARTH_E2E_EMAIL as string,
-      REEARTH_E2E_PASSWORD as string
-    );
+    if (!isLoggedIn) {
+      const loginPage = new LoginPage(page);
 
-    console.log('⏳ Waiting for dashboard navigation...');
+      // Use login method from LoginPage
+      await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
 
-    // Wait for navigation to dashboard - be more flexible
-    try {
-      await page.waitForURL(/\/dashboard\/.+/, { timeout: 10000 });
-    } catch (e) {
-      // If URL doesn't match, check if we're already on a valid page
-      const currentUrl = page.url();
-      console.log('Current URL after login:', currentUrl);
-
-      // If we're at the root, try to navigate to dashboard manually
-      if (currentUrl === `${REEARTH_WEB_E2E_BASEURL}/` || !currentUrl.includes('/dashboard/')) {
-        console.log('Manually navigating to dashboard...');
-        // Wait a bit for any redirects to finish
-        await page.waitForTimeout(3000);
-
-        // Check if there's a workspace/dashboard selector
-        const dashboardLink = page.locator('[href*="/dashboard/"]').first();
-        if (await dashboardLink.isVisible({ timeout: 5000 }).catch(() => false)) {
-          await dashboardLink.click();
-          await page.waitForURL(/\/dashboard\/.+/, { timeout: 15000 });
-        } else {
-          // Try to find any link that goes to dashboard
-          await page.goto(`${REEARTH_WEB_E2E_BASEURL}/dashboard`, { waitUntil: 'domcontentloaded' });
-        }
-      }
+      // Wait for navigation and accept terms if present
+      await page.waitForTimeout(3000);
     }
 
-    console.log('✅ Successfully logged in, final URL:', page.url());
+    // Ensure we're on the dashboard before saving state
+    await page.waitForTimeout(2000);
 
-    // Save authentication state
-    await context.storageState({ path: "./e2e/auth.json" });
+    // Save signed-in state
+    await page.context().storageState({ path: STORAGE_STATE });
 
-    console.log('💾 Authentication state saved successfully');
+    console.log("✅ Global setup completed - authentication state saved");
   } catch (error) {
-    console.error('❌ Global setup failed:', error);
-
-    // Take screenshot for debugging
-    await page.screenshot({ path: './e2e/global-setup-error.png', fullPage: true });
-    console.log('📸 Error screenshot saved to: ./e2e/global-setup-error.png');
-
+    console.error("❌ Global setup failed:", error);
     throw error;
   } finally {
     await page.close();

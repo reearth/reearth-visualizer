@@ -102,6 +102,7 @@ export const makeServiceAccountIAPRequest = async (url: string, options: Request
 export async function createServiceAccountIAPContext(
   browser: Browser,
   baseUrl: string,
+  options?: { storageState?: string },
 ): Promise<BrowserContext> {
   const targetAudience = process.env.IAP_TARGET_AUDIENCE;
   const serviceAccountJson = process.env.GOOGLE_SERVICE_ACCOUNT_JSON;
@@ -115,5 +116,5 @@ export async function createServiceAccountIAPContext(
     serviceAccountJson
   });
 
-  return createIAPBrowserContext(browser, baseUrl, helper);
+  return createIAPBrowserContext(browser, baseUrl, helper, options);
 }
