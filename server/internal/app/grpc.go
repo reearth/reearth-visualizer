@@ -12,8 +12,8 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -132,19 +132,12 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 			log.Errorf("unaryAttachOperatorInterceptor: invalid user id")
 			return nil, errors.New("unauthorized")
 		}
-		// Hardcoded test user for development
-		u := user.New().
-			ID(userID).
-			Name("Test User").
-			Email("test@example.com").
-			MustBuild()
-		
-		// Original code (commented out for testing)
-		// u, err := cfg.AccountRepos.User.FindByID(ctx, userID)
-		// if err != nil {
-		//     log.Errorf("unaryAttachOperatorInterceptor: %v", err)
-		//     return nil, rerror.ErrInternalBy(err)
-		// }
+
+		u, err := cfg.AccountRepos.User.FindByID(ctx, userID)
+		if err != nil {
+			log.Errorf("unaryAttachOperatorInterceptor: %v", err)
+			return nil, rerror.ErrInternalBy(err)
+		}
 
 		if u != nil {
 			op, err := generateOperator(ctx, cfg, u)
