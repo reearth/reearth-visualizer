@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"slices"
 	"strings"
 	"time"
 
@@ -699,4 +700,89 @@ func (s server) getSceneAndStorytelling(ctx context.Context, pj *project.Project
 	}
 
 	return internalapimodel.ToInternalProject(ctx, pj, sts), nil
+}
+
+func (s server) UpdateProjectStarCount(ctx context.Context, req *pb.UpdateProjectStarCountRequest) (*pb.UpdateProjectStarCountResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+	usr := adapter.User(ctx)
+
+	if usr == nil {
+		return nil, errors.New("user not found in context")
+	}
+
+	fmt.Println("alias:", req.ProjectAlias)
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	pid := pj.ID()
+
+	metadata, err := uc.ProjectMetadata.FindByProjectID(ctx, pid, op)
+	if err != nil {
+		return nil, errors.New("failed to fetch project metadata: " + err.Error())
+	}
+
+	userID := usr.ID().String()
+	workspaceID := pj.Workspace().String()
+	if metadata == nil {
+		starCount := int64(1)
+		starredBy := []string{userID}
+
+		wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
+		if err != nil {
+			return nil, errors.New("failed to convert workspaceID: " + err.Error())
+		}
+		metadata, err = uc.ProjectMetadata.Create(ctx, interfaces.CreateProjectMetadataParam{
+			ProjectID:   pid,
+			WorkspaceID: wid,
+			Readme:      new(string),
+			License:     new(string),
+			Topics:      &[]string{},
+			StarCount:   &starCount,
+			StarredBy:   &starredBy,
+		}, op)
+
+		if err != nil {
+			return nil, errors.New("failed to create project metadata: " + err.Error())
+		}
+
+		return &pb.UpdateProjectStarCountResponse{
+			Projectmetadata: internalapimodel.ToProjectMetadata(metadata),
+		}, nil
+	}
+
+	starredBy := []string{}
+	starCount := int64(0)
+
+	if metadata.StarredBy() != nil {
+		starredBy = *metadata.StarredBy()
+	}
+
+	if metadata.StarCount() != nil {
+		starCount = *metadata.StarCount()
+	}
+
+	if slices.Contains(starredBy, userID) {
+		starredBy = slices.Delete(starredBy, slices.Index(starredBy, userID), slices.Index(starredBy, userID)+1)
+		starCount = starCount - 1
+
+	} else {
+		starredBy = append(starredBy, userID)
+		starCount = starCount + 1
+
+	}
+
+	meta, err := uc.ProjectMetadata.Update(ctx, interfaces.UpdateProjectMetadataParam{
+		ID:        pid,
+		StarCount: &starCount,
+		StarredBy: &starredBy,
+	}, op)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.UpdateProjectStarCountResponse{
+		Projectmetadata: internalapimodel.ToProjectMetadata(meta),
+	}, nil
 }

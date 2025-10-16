@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
@@ -84,10 +83,12 @@ func (r *ProjectMetadata) find(ctx context.Context, filter interface{}) ([]*proj
 func (r *ProjectMetadata) findOne(ctx context.Context, filter any) (*project.ProjectMetadata, error) {
 	c := mongodoc.NewProjectMetadataConsumer(nil)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
-		return nil, err
+		// For project metadata, return nil without error when not found
+		// This allows graceful handling of missing metadata
+		return nil, nil
 	}
 	if len(c.Result) == 0 {
-		return nil, mongo.ErrNoDocuments
+		return nil, nil
 	}
 	return c.Result[0], nil
 }
