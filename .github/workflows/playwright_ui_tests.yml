@@ -51,6 +51,9 @@ jobs:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
+          USE_IAP_AUTH: true
+          IAP_AUTH_METHOD: id-token
+          IAP_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
         run: npx playwright test --config=playwright.config.ts
 
       - name: Upload test results
