@@ -1,18 +1,11 @@
 import { Config } from ".";
 
-const { hostname, origin } = window.location;
-const isLocalhost =
-  hostname === "localhost" ||
-  hostname === "127.0.0.1" ||
-  hostname === "[::1]";
-const defaultAuthBase = isLocalhost ? "http://localhost:8080" : origin;
-
 export const defaultConfig: Config = {
   api: "/api",
   plugins: "/plugins",
   published: window.origin + "/p/{}/",
-  auth0Audience: defaultAuthBase,
-  auth0Domain: defaultAuthBase,
+  auth0Audience: "http://localhost:8080",
+  auth0Domain: "http://localhost:8080",
   auth0ClientId: "reearth-authsrv-client-default",
   authProvider: "auth0",
   policy: {
