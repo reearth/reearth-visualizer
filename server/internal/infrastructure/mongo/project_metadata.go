@@ -83,8 +83,6 @@ func (r *ProjectMetadata) find(ctx context.Context, filter interface{}) ([]*proj
 func (r *ProjectMetadata) findOne(ctx context.Context, filter any) (*project.ProjectMetadata, error) {
 	c := mongodoc.NewProjectMetadataConsumer(nil)
 	if err := r.client.FindOne(ctx, filter, c); err != nil {
-		// For project metadata, return nil without error when not found
-		// This allows graceful handling of missing metadata
 		return nil, nil
 	}
 	if len(c.Result) == 0 {
