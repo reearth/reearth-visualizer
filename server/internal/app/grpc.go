@@ -132,7 +132,6 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 			log.Errorf("unaryAttachOperatorInterceptor: invalid user id")
 			return nil, errors.New("unauthorized")
 		}
-
 		u, err := cfg.AccountRepos.User.FindByID(ctx, userID)
 		if err != nil {
 			log.Errorf("unaryAttachOperatorInterceptor: %v", err)
