@@ -710,8 +710,6 @@ func (s server) UpdateProjectStarCount(ctx context.Context, req *pb.UpdateProjec
 		return nil, errors.New("user not found in context")
 	}
 
-	fmt.Println("alias:", req.ProjectAlias)
-
 	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err

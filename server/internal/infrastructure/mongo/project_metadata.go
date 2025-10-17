@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
@@ -86,7 +87,7 @@ func (r *ProjectMetadata) findOne(ctx context.Context, filter any) (*project.Pro
 		return nil, nil
 	}
 	if len(c.Result) == 0 {
-		return nil, nil
+		return nil, mongo.ErrNoDocuments
 	}
 	return c.Result[0], nil
 }

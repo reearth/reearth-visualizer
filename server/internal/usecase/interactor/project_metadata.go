@@ -2,6 +2,7 @@ package interactor
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -11,6 +12,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/usecasex"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ProjectMetadata struct {
@@ -127,9 +129,8 @@ func (i *ProjectMetadata) Create(ctx context.Context, p interfaces.CreateProject
 
 func (i *ProjectMetadata) FindByProjectID(ctx context.Context, id id.ProjectID, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, id)
-	if err != nil {
-		// Return nil metadata without error when not found
-		return nil, nil
+	if err != mongo.ErrNoDocuments && err != nil {
+		return nil, errors.New("failed to find project metadata: " + err.Error())
 	}
 
 	if err := i.CanReadWorkspace(meta.Workspace(), operator); err != nil {
