@@ -72,6 +72,11 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
       returns (DeleteByProjectAliasResponse) {}
+
+  // Update a project's star count
+  // Request headers: user-id: <User ID>
+  rpc PatchStarCount(PatchStarCountRequest)
+      returns (PatchStarCountResponse) {}
 }
 
 // Core Project messages
@@ -459,6 +464,12 @@ message ExportProjectRequest {
   string project_id = 1;
 }
 
+// Star and unstar a project
+message PatchStarCountRequest {
+  // Project alias
+  string project_alias = 1;
+}
+
 // Response messages
 message GetProjectResponse {
   // Project
@@ -561,4 +572,10 @@ message UpdateByProjectAliasResponse {
 message DeleteByProjectAliasResponse {
   // Project alias
   string project_alias = 1;
+}
+
+// Response messages
+message PatchStarCountResponse {
+  // Project
+  ProjectMetadata projectmetadata = 1;
 }

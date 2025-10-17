@@ -10,5 +10,7 @@ import (
 
 type ProjectMetadata interface {
 	Fetch(context.Context, []id.ProjectID, *usecase.Operator) ([]*project.ProjectMetadata, error)
+	FindByProjectID(context.Context, id.ProjectID, *usecase.Operator) (*project.ProjectMetadata, error)
 	Update(context.Context, UpdateProjectMetadataParam, *usecase.Operator) (*project.ProjectMetadata, error)
+	Create(context.Context, CreateProjectMetadataParam, *usecase.Operator) (*project.ProjectMetadata, error)
 }
