@@ -59,7 +59,7 @@ func TestGCSFile_UploadAssetFromURL(t *testing.T) {
 	newFileRepo, err := NewFile(true, distBucketName, baseURL.String(), "")
 	assert.NoError(t, err)
 
-	srcURL, _ := url.Parse(fmt.Sprintf("%s/%s/o/%s", baseURL.String(), srcBucketName, testFileName))
+	srcURL, _ := url.Parse(fmt.Sprintf("%s/download/storage/v1/b/%s/o/%s?alt=media", baseURL.String(), srcBucketName, testFileName))
 	uploadedURL, _, err := newFileRepo.UploadAssetFromURL(ctx, srcURL)
 
 	assert.NoError(t, err)
