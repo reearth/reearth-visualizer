@@ -20,7 +20,7 @@ type GCSForTesting struct {
 	client *storage.Client
 }
 
-func getGCSEndpoint() string {
+func getTestGCSEndpoint() string {
 	// Use STORAGE_EMULATOR_HOST if set, otherwise default to localhost:4443
 	endpoint := os.Getenv("STORAGE_EMULATOR_HOST")
 	if endpoint == "" {
@@ -31,7 +31,7 @@ func getGCSEndpoint() string {
 
 func NewGCSForTesting() (*GCSForTesting, error) {
 	ctx := context.Background()
-	endpoint := getGCSEndpoint()
+	endpoint := getTestGCSEndpoint()
 	client, err := storage.NewClient(ctx, option.WithoutAuthentication(), option.WithEndpoint(endpoint))
 	if err != nil {
 		return nil, err
