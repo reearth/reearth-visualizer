@@ -2269,7 +2269,7 @@ func (x *ExportProjectRequest) GetProjectId() string {
 }
 
 // Star and unstar a project
-type UpdateProjectStarCountRequest struct {
+type PatchStarCountRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Project alias
 	ProjectAlias  string `protobuf:"bytes,1,opt,name=project_alias,json=projectAlias,proto3" json:"project_alias,omitempty"`
@@ -2277,20 +2277,20 @@ type UpdateProjectStarCountRequest struct {
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *UpdateProjectStarCountRequest) Reset() {
-	*x = UpdateProjectStarCountRequest{}
+func (x *PatchStarCountRequest) Reset() {
+	*x = PatchStarCountRequest{}
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateProjectStarCountRequest) String() string {
+func (x *PatchStarCountRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateProjectStarCountRequest) ProtoMessage() {}
+func (*PatchStarCountRequest) ProtoMessage() {}
 
-func (x *UpdateProjectStarCountRequest) ProtoReflect() protoreflect.Message {
+func (x *PatchStarCountRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -2302,12 +2302,12 @@ func (x *UpdateProjectStarCountRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateProjectStarCountRequest.ProtoReflect.Descriptor instead.
-func (*UpdateProjectStarCountRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use PatchStarCountRequest.ProtoReflect.Descriptor instead.
+func (*PatchStarCountRequest) Descriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{21}
 }
 
-func (x *UpdateProjectStarCountRequest) GetProjectAlias() string {
+func (x *PatchStarCountRequest) GetProjectAlias() string {
 	if x != nil {
 		return x.ProjectAlias
 	}
@@ -3068,7 +3068,7 @@ func (x *DeleteByProjectAliasResponse) GetProjectAlias() string {
 }
 
 // Response messages
-type UpdateProjectStarCountResponse struct {
+type PatchStarCountResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Project
 	Projectmetadata *ProjectMetadata `protobuf:"bytes,1,opt,name=projectmetadata,proto3" json:"projectmetadata,omitempty"`
@@ -3076,20 +3076,20 @@ type UpdateProjectStarCountResponse struct {
 	sizeCache       protoimpl.SizeCache
 }
 
-func (x *UpdateProjectStarCountResponse) Reset() {
-	*x = UpdateProjectStarCountResponse{}
+func (x *PatchStarCountResponse) Reset() {
+	*x = PatchStarCountResponse{}
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *UpdateProjectStarCountResponse) String() string {
+func (x *PatchStarCountResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*UpdateProjectStarCountResponse) ProtoMessage() {}
+func (*PatchStarCountResponse) ProtoMessage() {}
 
-func (x *UpdateProjectStarCountResponse) ProtoReflect() protoreflect.Message {
+func (x *PatchStarCountResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_schemas_internalapi_v1_schema_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -3101,12 +3101,12 @@ func (x *UpdateProjectStarCountResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use UpdateProjectStarCountResponse.ProtoReflect.Descriptor instead.
-func (*UpdateProjectStarCountResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use PatchStarCountResponse.ProtoReflect.Descriptor instead.
+func (*PatchStarCountResponse) Descriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{37}
 }
 
-func (x *UpdateProjectStarCountResponse) GetProjectmetadata() *ProjectMetadata {
+func (x *PatchStarCountResponse) GetProjectmetadata() *ProjectMetadata {
 	if x != nil {
 		return x.Projectmetadata
 	}
@@ -3406,8 +3406,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\rproject_alias\x18\x01 \x01(\tR\fprojectAlias\"5\n" +
 	"\x14ExportProjectRequest\x12\x1d\n" +
 	"\n" +
-	"project_id\x18\x01 \x01(\tR\tprojectId\"D\n" +
-	"\x1dUpdateProjectStarCountRequest\x12#\n" +
+	"project_id\x18\x01 \x01(\tR\tprojectId\"<\n" +
+	"\x15PatchStarCountRequest\x12#\n" +
 	"\rproject_alias\x18\x01 \x01(\tR\fprojectAlias\"N\n" +
 	"\x12GetProjectResponse\x128\n" +
 	"\aproject\x18\x01 \x01(\v2\x1e.reearth.visualizer.v1.ProjectR\aproject\"\xb3\x01\n" +
@@ -3451,8 +3451,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x1cUpdateByProjectAliasResponse\x128\n" +
 	"\aproject\x18\x01 \x01(\v2\x1e.reearth.visualizer.v1.ProjectR\aproject\"C\n" +
 	"\x1cDeleteByProjectAliasResponse\x12#\n" +
-	"\rproject_alias\x18\x01 \x01(\tR\fprojectAlias\"r\n" +
-	"\x1eUpdateProjectStarCountResponse\x12P\n" +
+	"\rproject_alias\x18\x01 \x01(\tR\fprojectAlias\"j\n" +
+	"\x16PatchStarCountResponse\x12P\n" +
 	"\x0fprojectmetadata\x18\x01 \x01(\v2&.reearth.visualizer.v1.ProjectMetadataR\x0fprojectmetadata*[\n" +
 	"\n" +
 	"Visualizer\x12\x1a\n" +
@@ -3484,7 +3484,7 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\x18SEARCH_FIELD_TYPE_TOPICS\x10\x01*R\n" +
 	"\x11ProjectVisibility\x12\x1d\n" +
 	"\x19PROJECT_VISIBILITY_PUBLIC\x10\x00\x12\x1e\n" +
-	"\x1aPROJECT_VISIBILITY_PRIVATE\x10\x012\xa7\x0f\n" +
+	"\x1aPROJECT_VISIBILITY_PRIVATE\x10\x012\x8e\x0f\n" +
 	"\x11ReEarthVisualizer\x12o\n" +
 	"\x0eGetProjectList\x12,.reearth.visualizer.v1.GetProjectListRequest\x1a-.reearth.visualizer.v1.GetProjectListResponse\"\x00\x12o\n" +
 	"\x0eGetAllProjects\x12,.reearth.visualizer.v1.GetAllProjectsRequest\x1a-.reearth.visualizer.v1.GetAllProjectsResponse\"\x00\x12c\n" +
@@ -3501,8 +3501,8 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\rExportProject\x12+.reearth.visualizer.v1.ExportProjectRequest\x1a,.reearth.visualizer.v1.ExportProjectResponse\"\x00\x12\x8d\x01\n" +
 	"\x18GetProjectByProjectAlias\x126.reearth.visualizer.v1.GetProjectByProjectAliasRequest\x1a7.reearth.visualizer.v1.GetProjectByProjectAliasResponse\"\x00\x12\x81\x01\n" +
 	"\x14UpdateByProjectAlias\x122.reearth.visualizer.v1.UpdateByProjectAliasRequest\x1a3.reearth.visualizer.v1.UpdateByProjectAliasResponse\"\x00\x12\x81\x01\n" +
-	"\x14DeleteByProjectAlias\x122.reearth.visualizer.v1.DeleteByProjectAliasRequest\x1a3.reearth.visualizer.v1.DeleteByProjectAliasResponse\"\x00\x12\x87\x01\n" +
-	"\x16UpdateProjectStarCount\x124.reearth.visualizer.v1.UpdateProjectStarCountRequest\x1a5.reearth.visualizer.v1.UpdateProjectStarCountResponse\"\x00B\n" +
+	"\x14DeleteByProjectAlias\x122.reearth.visualizer.v1.DeleteByProjectAliasRequest\x1a3.reearth.visualizer.v1.DeleteByProjectAliasResponse\"\x00\x12o\n" +
+	"\x0ePatchStarCount\x12,.reearth.visualizer.v1.PatchStarCountRequest\x1a-.reearth.visualizer.v1.PatchStarCountResponse\"\x00B\n" +
 	"Z\bproto/v1b\x06proto3"
 
 var (
@@ -3548,7 +3548,7 @@ var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
 	(*UpdateByProjectAliasRequest)(nil),      // 25: reearth.visualizer.v1.UpdateByProjectAliasRequest
 	(*DeleteByProjectAliasRequest)(nil),      // 26: reearth.visualizer.v1.DeleteByProjectAliasRequest
 	(*ExportProjectRequest)(nil),             // 27: reearth.visualizer.v1.ExportProjectRequest
-	(*UpdateProjectStarCountRequest)(nil),    // 28: reearth.visualizer.v1.UpdateProjectStarCountRequest
+	(*PatchStarCountRequest)(nil),            // 28: reearth.visualizer.v1.PatchStarCountRequest
 	(*GetProjectResponse)(nil),               // 29: reearth.visualizer.v1.GetProjectResponse
 	(*GetProjectListResponse)(nil),           // 30: reearth.visualizer.v1.GetProjectListResponse
 	(*GetAllProjectsResponse)(nil),           // 31: reearth.visualizer.v1.GetAllProjectsResponse
@@ -3564,7 +3564,7 @@ var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
 	(*GetProjectByProjectAliasResponse)(nil), // 41: reearth.visualizer.v1.GetProjectByProjectAliasResponse
 	(*UpdateByProjectAliasResponse)(nil),     // 42: reearth.visualizer.v1.UpdateByProjectAliasResponse
 	(*DeleteByProjectAliasResponse)(nil),     // 43: reearth.visualizer.v1.DeleteByProjectAliasResponse
-	(*UpdateProjectStarCountResponse)(nil),   // 44: reearth.visualizer.v1.UpdateProjectStarCountResponse
+	(*PatchStarCountResponse)(nil),           // 44: reearth.visualizer.v1.PatchStarCountResponse
 	(*timestamppb.Timestamp)(nil),            // 45: google.protobuf.Timestamp
 }
 var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
@@ -3600,7 +3600,7 @@ var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
 	7,  // 29: reearth.visualizer.v1.GetProjectByAliasResponse.project:type_name -> reearth.visualizer.v1.Project
 	7,  // 30: reearth.visualizer.v1.GetProjectByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
 	7,  // 31: reearth.visualizer.v1.UpdateByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
-	9,  // 32: reearth.visualizer.v1.UpdateProjectStarCountResponse.projectmetadata:type_name -> reearth.visualizer.v1.ProjectMetadata
+	9,  // 32: reearth.visualizer.v1.PatchStarCountResponse.projectmetadata:type_name -> reearth.visualizer.v1.ProjectMetadata
 	13, // 33: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
 	14, // 34: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:input_type -> reearth.visualizer.v1.GetAllProjectsRequest
 	15, // 35: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
@@ -3616,7 +3616,7 @@ var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
 	24, // 45: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByProjectAlias:input_type -> reearth.visualizer.v1.GetProjectByProjectAliasRequest
 	25, // 46: reearth.visualizer.v1.ReEarthVisualizer.UpdateByProjectAlias:input_type -> reearth.visualizer.v1.UpdateByProjectAliasRequest
 	26, // 47: reearth.visualizer.v1.ReEarthVisualizer.DeleteByProjectAlias:input_type -> reearth.visualizer.v1.DeleteByProjectAliasRequest
-	28, // 48: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectStarCount:input_type -> reearth.visualizer.v1.UpdateProjectStarCountRequest
+	28, // 48: reearth.visualizer.v1.ReEarthVisualizer.PatchStarCount:input_type -> reearth.visualizer.v1.PatchStarCountRequest
 	30, // 49: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
 	31, // 50: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:output_type -> reearth.visualizer.v1.GetAllProjectsResponse
 	29, // 51: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
@@ -3632,7 +3632,7 @@ var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
 	41, // 61: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByProjectAlias:output_type -> reearth.visualizer.v1.GetProjectByProjectAliasResponse
 	42, // 62: reearth.visualizer.v1.ReEarthVisualizer.UpdateByProjectAlias:output_type -> reearth.visualizer.v1.UpdateByProjectAliasResponse
 	43, // 63: reearth.visualizer.v1.ReEarthVisualizer.DeleteByProjectAlias:output_type -> reearth.visualizer.v1.DeleteByProjectAliasResponse
-	44, // 64: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectStarCount:output_type -> reearth.visualizer.v1.UpdateProjectStarCountResponse
+	44, // 64: reearth.visualizer.v1.ReEarthVisualizer.PatchStarCount:output_type -> reearth.visualizer.v1.PatchStarCountResponse
 	49, // [49:65] is the sub-list for method output_type
 	33, // [33:49] is the sub-list for method input_type
 	33, // [33:33] is the sub-list for extension type_name

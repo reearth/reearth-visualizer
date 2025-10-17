@@ -75,8 +75,8 @@ service ReEarthVisualizer {
 
   // Update a project's star count
   // Request headers: user-id: <User ID>
-  rpc UpdateProjectStarCount(UpdateProjectStarCountRequest)
-      returns (UpdateProjectStarCountResponse) {}
+  rpc PatchStarCount(PatchStarCountRequest)
+      returns (PatchStarCountResponse) {}
 }
 
 // Core Project messages
@@ -465,7 +465,7 @@ message ExportProjectRequest {
 }
 
 // Star and unstar a project
-message UpdateProjectStarCountRequest {
+message PatchStarCountRequest {
   // Project alias
   string project_alias = 1;
 }
@@ -575,7 +575,7 @@ message DeleteByProjectAliasResponse {
 }
 
 // Response messages
-message UpdateProjectStarCountResponse {
+message PatchStarCountResponse {
   // Project
   ProjectMetadata projectmetadata = 1;
 }

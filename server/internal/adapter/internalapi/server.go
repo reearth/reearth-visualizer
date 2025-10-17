@@ -702,7 +702,7 @@ func (s server) getSceneAndStorytelling(ctx context.Context, pj *project.Project
 	return internalapimodel.ToInternalProject(ctx, pj, sts), nil
 }
 
-func (s server) UpdateProjectStarCount(ctx context.Context, req *pb.UpdateProjectStarCountRequest) (*pb.UpdateProjectStarCountResponse, error) {
+func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountRequest) (*pb.PatchStarCountResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 	usr := adapter.User(ctx)
 
@@ -746,7 +746,7 @@ func (s server) UpdateProjectStarCount(ctx context.Context, req *pb.UpdateProjec
 			return nil, errors.New("failed to create project metadata: " + err.Error())
 		}
 
-		return &pb.UpdateProjectStarCountResponse{
+		return &pb.PatchStarCountResponse{
 			Projectmetadata: internalapimodel.ToProjectMetadata(metadata),
 		}, nil
 	}
@@ -780,7 +780,7 @@ func (s server) UpdateProjectStarCount(ctx context.Context, req *pb.UpdateProjec
 	if err != nil {
 		return nil, err
 	}
-	return &pb.UpdateProjectStarCountResponse{
+	return &pb.PatchStarCountResponse{
 		Projectmetadata: internalapimodel.ToProjectMetadata(meta),
 	}, nil
 }
