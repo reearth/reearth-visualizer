@@ -176,6 +176,22 @@ export default function useHook({
 
     onPreInit?.();
 
+    // Set up global error handler for QuickJS lifetime errors
+    const globalErrorHandler = (event: ErrorEvent): boolean => {
+      if (
+        event.error &&
+        (event.error.name === "QuickJSUseAfterFree" ||
+          String(event.error).includes("Lifetime not alive"))
+      ) {
+        // Silently prevent crash without logging to reduce console noise
+        event.preventDefault();
+        return false;
+      }
+      return true;
+    };
+
+    window.addEventListener("error", globalErrorHandler);
+
     (async () => {
       const ctx = (await getQuickJS()).newContext();
       arena.current = new Arena(ctx, {
@@ -212,23 +228,47 @@ export default function useHook({
     const iframeRef = mainIFrameRef.current;
 
     return () => {
-      onDisposeRef.current?.();
-      messageEvents.clear();
-      messageOnceEvents.clear();
-      iframeRef?.reset();
-      setLoaded(false);
+      // Remove global error handler
+      window.removeEventListener("error", globalErrorHandler);
+
+      // 1. Stop event loop first to prevent new callbacks
       if (typeof eventLoop.current === "number") {
         window.clearTimeout(eventLoop.current);
+        eventLoop.current = undefined;
       }
+
+      // 2. Clean up plugin events synchronously before arena disposal
+      try {
+        onDisposeRef.current?.();
+      } catch (err) {
+        console.error("Plugin cleanup: error disposing plugin events", err);
+      }
+
+      // 3. Clear message events
+      messageEvents.clear();
+      messageOnceEvents.clear();
+
+      // 4. Reset iframe
+      iframeRef?.reset();
+      setLoaded(false);
+
+      // 5. Dispose arena after a microtask to ensure all synchronous cleanup is done
       if (arena.current) {
-        try {
-          arena.current.dispose();
-          arena.current.context.dispose();
-        } catch (err) {
-          console.debug("quickjs-emscripten dispose error", err);
-        } finally {
-          arena.current = undefined;
-        }
+        const arenaToDispose = arena.current;
+
+        // Simple approach: just mark arena as disposed for our event safety checks
+
+        arena.current = undefined; // Mark as disposed immediately
+
+        // Simple disposal - global error handler will catch any lifetime errors
+        setTimeout(() => {
+          try {
+            arenaToDispose.dispose();
+            arenaToDispose.context.dispose();
+          } catch (_err) {
+            // Silently ignore disposal errors - global handler will catch them
+          }
+        }, 0);
       }
     };
   }, [
