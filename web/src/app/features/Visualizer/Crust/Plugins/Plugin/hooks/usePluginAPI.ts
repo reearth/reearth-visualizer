@@ -214,13 +214,17 @@ export function usePluginAPI({
     ];
 
     for (const ref of eventRefs) {
+      let cleanupSucceeded = false;
       try {
         if (ref.current?.[2]) {
           ref.current[2]();
         }
-        ref.current = undefined;
+        cleanupSucceeded = true;
       } catch (err) {
         console.error("Plugin API: error cleaning up events", err);
+      }
+      if (cleanupSucceeded) {
+        ref.current = undefined;
       }
     }
 
