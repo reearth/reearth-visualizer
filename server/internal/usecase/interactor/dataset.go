@@ -3,9 +3,11 @@ package interactor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -824,11 +826,13 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 	defer i.ReleaseSceneLock(ctx, schema.Scene())
 
 	// Fetch CSV
+	originalURL := schema.URL()
+	cacheBusterURL := fmt.Sprintf("%s%s_=%d", originalURL, selectQuerySeparator(originalURL), time.Now().UnixNano())
 	var body io.ReadCloser
 	if schema.HasAuthConfig() {
-		body, err = i.datasource.FetchRaw(ctx, schema.URL(), schema.AuthConfig())
+		body, err = i.datasource.FetchRaw(ctx, cacheBusterURL, schema.AuthConfig()) // Use cacheBusterURL
 	} else {
-		body, err = i.datasource.FetchRaw(ctx, schema.URL(), nil)
+		body, err = i.datasource.FetchRaw(ctx, cacheBusterURL, nil) // Use cacheBusterURL
 	}
 	if err != nil {
 		return err
@@ -836,7 +840,7 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 	defer body.Close()
 
 	// Parse CSV
-	name := filepath.Base(schema.URL())
+	name := filepath.Base(originalURL)
 	if name == "" {
 		name = "hosted.csv"
 	}
@@ -845,7 +849,7 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 		separator = '\t'
 	}
 
-	parser := dataset.NewCSVParser(body, name, schema.URL(), separator)
+	parser := dataset.NewCSVParser(body, name, cacheBusterURL, separator)
 	if err := parser.Init(); err != nil {
 		return err
 	}
@@ -926,4 +930,11 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 
 	tx.Commit()
 	return nil
+}
+
+func selectQuerySeparator(url string) string {
+	if strings.Contains(url, "?") {
+		return "&"
+	}
+	return "?"
 }

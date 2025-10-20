@@ -58,6 +58,11 @@ func (CSVDataSource) FetchRaw(ctx context.Context, urlStr string, auth *dataset.
 		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
+	// Add no-cache headers
+	req.Header.Set("Cache-Control", "no-cache, no-store, must-revalidate")
+	req.Header.Set("Pragma", "no-cache")
+	req.Header.Set("Expires", "0")
+
 	if auth != nil && auth.Type != "" {
 		switch auth.Type {
 		case "basic":

@@ -3,6 +3,7 @@ package dataset
 import (
 	"encoding/csv"
 	"errors"
+	"fmt"
 	"io"
 	"strconv"
 	"strings"
@@ -188,35 +189,42 @@ func (p *DatasetCSVParser) getFields(line []string, sfm map[string]FieldID) ([]*
 func (p *DatasetCSVParser) CheckCompatible(s *Schema) error {
 	fieldsmap := make(map[string]*SchemaField)
 	for _, f := range s.Fields() {
-		fieldsmap[f.Name()] = f
+		name := strings.ToLower(strings.TrimSpace(f.Name()))
+		fieldsmap[name] = f
 	}
-	haslat, haslng := false, false
-	for i, h := range p.headers {
-		if h != "lat" && h != "lng" {
-			if fieldsmap[h] == nil {
-				return ErrIncompatibleSchema
-			}
-			t := fieldsmap[h].Type()
-			v := ValueFromStringOrNumber(p.firstline[i])
-			if v.Type() != t {
-				return ErrIncompatibleSchema
-			}
+
+	hasLat, hasLng := false, false
+
+	for i, rawHeader := range p.headers {
+		header := strings.ToLower(strings.TrimSpace(rawHeader))
+
+		if header == "lat" {
+			hasLat = true
+			continue
 		}
-		if h == "lat" {
-			haslat = true
+		if header == "lng" {
+			hasLng = true
+			continue
 		}
-		if h == "lng" {
-			haslng = true
+
+		field := fieldsmap[header]
+		if field == nil {
+			continue
+		}
+
+		expectedType := field.Type()
+		value := ValueFromStringOrNumber(p.firstline[i])
+
+		if value.Type() != expectedType && value.Type() != ValueTypeUnknown {
+			return fmt.Errorf("%w: field '%s' type mismatch (expected %s, got %s)",
+				ErrIncompatibleSchema, field.Name(), expectedType, value.Type())
 		}
 	}
-	if haslat && haslng {
-		if fieldsmap["location"] == nil {
-			return ErrIncompatibleSchema
-		}
-	} else {
-		if fieldsmap["location"] != nil {
-			return ErrIncompatibleSchema
-		}
+
+	locationField := fieldsmap["location"] != nil
+
+	if hasLat && hasLng && !locationField {
+		return fmt.Errorf("%w: lat/lng present but no 'location' field in schema", ErrIncompatibleSchema)
 	}
 
 	p.schema = s

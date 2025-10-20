@@ -14,6 +14,7 @@ import { processDatasets, processDatasetHeaders, processPrimitives, processDatas
 import { Cartesian3, Cartographic } from "cesium";
 import { valueToGQL, valueTypeToGQL } from "@reearth/classic/util/value";
 import { isHttpUrl } from "@reearth/classic/util/util";
+import { useApolloClient } from "@apollo/client";
 
 export default () => {
   const lang = useLang();
@@ -27,12 +28,14 @@ export default () => {
   const [, setNotification] = useNotification();
   const t = useT();
   const [updatePropertyValue] = useUpdatePropertyValueMutation();
-  const { data: rawDatasets, loading: datasetsLoading } = useGetDatasetsForDatasetInfoPaneQuery({
+  const client = useApolloClient();
+  const { data: rawDatasets, loading: datasetsLoading, refetch } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
       datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "",
       first: 1000,
     },
     skip: selected?.type !== "dataset",
+    fetchPolicy: "no-cache",
   });
 
   const { data: rawScene, loading: scenePluginLoading } = useGetScenePluginsForDatasetInfoPaneQuery(
@@ -132,11 +135,14 @@ export default () => {
       await refreshHostedCsvMutation({
         variables: { schemaId: selectedDatasetSchemaId },
       });
+      await client.refetchQueries({
+        include: ["GetDatasetsForDatasetInfoPane"],
+      });
       setNotification({ type: "success", text: t("Dataset refreshed") });
     } catch (e) {
       setNotification({ type: "error", text: t("Failed to refresh dataset") });
     }
-  }, [selectedDatasetSchemaId, refreshHostedCsvMutation, setNotification, t]);
+  }, [selectedDatasetSchemaId, refreshHostedCsvMutation, client, setNotification, t]);
 
   return {
     datasets: datasets?.length > 0 ? datasets.slice(0, 10) : [],
