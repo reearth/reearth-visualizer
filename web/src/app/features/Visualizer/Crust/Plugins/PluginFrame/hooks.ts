@@ -177,7 +177,7 @@ export default function useHook({
     onPreInit?.();
 
     // Set up global error handler for QuickJS lifetime and runtime errors
-    const globalErrorHandler = (event: ErrorEvent): boolean => {
+    const globalErrorHandler = (event: ErrorEvent): void => {
       if (
         event.error &&
         (event.error.name === "QuickJSUseAfterFree" ||
@@ -187,9 +187,7 @@ export default function useHook({
       ) {
         // Silently prevent crash without logging to reduce console noise
         event.preventDefault();
-        return false;
       }
-      return true;
     };
 
     window.addEventListener("error", globalErrorHandler);
