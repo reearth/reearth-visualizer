@@ -254,13 +254,16 @@ export default function useHook({
       iframeRef?.reset();
       setLoaded(false);
 
-      // 5. Skip arena disposal to avoid QuickJS runtime assertion errors
+      // 5. Arena disposal
       if (arena.current) {
-        // Simply mark as disposed without calling dispose methods
-        // The global error handler will catch any lifetime errors
-        // Memory will be cleaned up by browser's garbage collector
-        // This is safer than attempting QuickJS runtime disposal with remaining references
-        arena.current = undefined;
+        try {
+          arena.current.dispose();
+          arena.current.context.dispose();
+        } catch (err) {
+          console.debug("quickjs-emscripten dispose error", err);
+        } finally {
+          arena.current = undefined;
+        }
       }
     };
   }, [
