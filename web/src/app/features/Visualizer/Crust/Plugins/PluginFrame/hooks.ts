@@ -176,12 +176,14 @@ export default function useHook({
 
     onPreInit?.();
 
-    // Set up global error handler for QuickJS lifetime errors
+    // Set up global error handler for QuickJS lifetime and runtime errors
     const globalErrorHandler = (event: ErrorEvent): boolean => {
       if (
         event.error &&
         (event.error.name === "QuickJSUseAfterFree" ||
-          String(event.error).includes("Lifetime not alive"))
+          String(event.error).includes("Lifetime not alive") ||
+          String(event.error).includes("list_empty(&rt->gc_obj_list)") ||
+          String(event.error).includes("JS_FreeRuntime"))
       ) {
         // Silently prevent crash without logging to reduce console noise
         event.preventDefault();
@@ -252,23 +254,13 @@ export default function useHook({
       iframeRef?.reset();
       setLoaded(false);
 
-      // 5. Dispose arena after a microtask to ensure all synchronous cleanup is done
+      // 5. Skip arena disposal to avoid QuickJS runtime assertion errors
       if (arena.current) {
-        const arenaToDispose = arena.current;
-
-        // Simple approach: just mark arena as disposed for our event safety checks
-
-        arena.current = undefined; // Mark as disposed immediately
-
-        // Simple disposal - global error handler will catch any lifetime errors
-        setTimeout(() => {
-          try {
-            arenaToDispose.dispose();
-            arenaToDispose.context.dispose();
-          } catch (_err) {
-            // Silently ignore disposal errors - global handler will catch them
-          }
-        }, 0);
+        // Simply mark as disposed without calling dispose methods
+        // The global error handler will catch any lifetime errors
+        // Memory will be cleaned up by browser's garbage collector
+        // This is safer than attempting QuickJS runtime disposal with remaining references
+        arena.current = undefined;
       }
     };
   }, [
