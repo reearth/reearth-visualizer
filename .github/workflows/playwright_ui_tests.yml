@@ -45,7 +45,7 @@ jobs:
       - name: Install dependencies and Playwright browsers
         run: |
           npm ci
-          npx playwright install
+          npx playwright install --with-deps
       - name: Run Playwright tests
         env:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
