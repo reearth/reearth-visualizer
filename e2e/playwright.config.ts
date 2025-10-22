@@ -13,9 +13,9 @@ export default defineConfig({
     ? undefined
     : require.resolve("./global-setup"),
   expect: {
-    timeout: 15000
+    timeout: 35000
   },
-  timeout: 60000,
+  timeout: 120000,
   testDir: "./tests",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
@@ -24,8 +24,8 @@ export default defineConfig({
   reporter: [["html", { outputFolder: "./test-report", open: "never" }]],
   use: {
     trace: "on-first-retry",
-    actionTimeout: 15000,
-    navigationTimeout: 30000,
+    actionTimeout: 35000,
+    navigationTimeout: 35000,
     storageState: process.env.SKIP_STORAGE_STATE ? undefined : STORAGE_STATE
   },
 

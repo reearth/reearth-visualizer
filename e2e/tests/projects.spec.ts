@@ -38,6 +38,13 @@ test.describe("Project Management", () => {
     await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
       waitUntil: "networkidle"
     });
+
+    // Wait for dashboard to load and verify we're not on login page
+    await page.waitForTimeout(2000);
+    const currentUrl = page.url();
+    if (currentUrl.includes('/login')) {
+      throw new Error('Authentication failed - redirected to login page. Check if STORAGE_STATE is valid.');
+    }
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
@@ -55,7 +62,6 @@ test.describe("Project Management", () => {
   });
 
   test("Verify dashboard is loaded", async () => {
-    await page.waitForTimeout(5000);
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
