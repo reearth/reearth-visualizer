@@ -798,7 +798,8 @@ func (i *Dataset) ImportHostedCSV(
 	return dss[0], nil
 }
 
-func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHostedCSVParam, operator *usecase.Operator) error {
+func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHostedCSVParam, operator *usecase.Operator) (err error) {
+	// load schema & permission
 	schema, err := i.datasetSchemaRepo.FindByID(ctx, inp.SchemaID)
 	if err != nil {
 		return err
@@ -807,7 +808,7 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 		return err
 	}
 
-	// Begin transaction
+	// tx + lock
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return err
@@ -818,28 +819,26 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 			err = err2
 		}
 	}()
-
-	// Lock scene
 	if err := i.UpdateSceneLock(ctx, schema.Scene(), scene.LockModeFree, scene.LockModeDatasetSyncing); err != nil {
 		return err
 	}
 	defer i.ReleaseSceneLock(ctx, schema.Scene())
 
-	// Fetch CSV
+	// fetch CSV (cache buster)
 	originalURL := schema.URL()
 	cacheBusterURL := fmt.Sprintf("%s%s_=%d", originalURL, selectQuerySeparator(originalURL), time.Now().UnixNano())
 	var body io.ReadCloser
 	if schema.HasAuthConfig() {
-		body, err = i.datasource.FetchRaw(ctx, cacheBusterURL, schema.AuthConfig()) // Use cacheBusterURL
+		body, err = i.datasource.FetchRaw(ctx, cacheBusterURL, schema.AuthConfig())
 	} else {
-		body, err = i.datasource.FetchRaw(ctx, cacheBusterURL, nil) // Use cacheBusterURL
+		body, err = i.datasource.FetchRaw(ctx, cacheBusterURL, nil)
 	}
 	if err != nil {
 		return err
 	}
 	defer body.Close()
 
-	// Parse CSV
+	// parser init
 	name := filepath.Base(originalURL)
 	if name == "" {
 		name = "hosted.csv"
@@ -848,24 +847,24 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 	if strings.HasSuffix(strings.ToLower(name), ".tsv") {
 		separator = '\t'
 	}
-
 	parser := dataset.NewCSVParser(body, name, cacheBusterURL, separator)
 	if err := parser.Init(); err != nil {
 		return err
 	}
 
-	// Check compatibility with existing schema
+	// check compat & set schema
 	if err := parser.CheckCompatible(schema); err != nil {
 		return err
 	}
+	parser.SetSchema(schema)
 
-	// Read datasets
-	_, datasets, err := parser.ReadAll()
+	// parse new datasets
+	_, newDatasets, err := parser.ReadAll()
 	if err != nil {
 		return err
 	}
 
-	// Enforce policy
+	// policy
 	scene, err := i.sceneRepo.FindByID(ctx, schema.Scene())
 	if err != nil {
 		return err
@@ -882,36 +881,153 @@ func (i *Dataset) RefreshHostedCSV(ctx context.Context, inp interfaces.RefreshHo
 		}
 		policy = p
 	}
-	if err := policy.EnforceDatasetCount(len(datasets)); err != nil {
+	if err := policy.EnforceDatasetCount(len(newDatasets)); err != nil {
 		return err
 	}
 
-	// Remove old datasets
+	// load old datasets (domain objects with IDs and field maps)
 	oldDatasets, err := i.datasetRepo.FindBySchemaAll(ctx, inp.SchemaID)
 	if err != nil {
 		return err
 	}
-	if err := i.datasetRepo.RemoveAll(ctx, oldDatasets.ToDatasetIds()); err != nil {
-		return err
+
+	// If counts match, do index-based update (preserves IDs & links).
+	// Otherwise try to match by a stable key (optional, see note).
+	if len(oldDatasets) == len(newDatasets) {
+		for idx := range oldDatasets {
+			old := oldDatasets[idx]
+			new := newDatasets[idx]
+
+			// --- For each field in new, overwrite/add into old ---
+			// This preserves dataset ID, order, and any references.
+			// But we must ensure "location" is treated specially: if new lacks location,
+			// keep old's location; if new has lat & lng columns, create location field.
+			// 1) Copy all non-location fields from new to old
+			for _, nf := range new.Fields() {
+				// find schema field to get name
+				sf := schema.Field(nf.Field())
+				if sf == nil {
+					// unknown field, still copy by fieldID
+					old.AddOrReplaceField(nf)
+					continue
+				}
+				name := strings.ToLower(strings.TrimSpace(sf.Name()))
+				if name == "location" {
+					// skip, handle later
+					continue
+				}
+				// add/replace into old
+				old.AddOrReplaceField(nf)
+			}
+
+			// 2) If new already has location field (parser will create it when lat/lng present), use it
+			var newLoc *dataset.Field
+			for _, f := range new.Fields() {
+				sf := schema.Field(f.Field())
+				if sf != nil && strings.EqualFold(sf.Name(), "location") {
+					newLoc = f
+					break
+				}
+			}
+			if newLoc != nil {
+				old.AddOrReplaceField(newLoc)
+				continue // done for this dataset
+			}
+
+			// 3) If new has separate lat & lng columns, synthesize location into old
+			var lat, lng *float64
+			for _, f := range new.Fields() {
+				sf := schema.Field(f.Field())
+				if sf == nil {
+					continue
+				}
+				switch strings.ToLower(sf.Name()) {
+				case "lat", "latitude":
+					if f.Value() != nil && f.Value().Value() != nil {
+						if v, ok := f.Value().Value().(float64); ok {
+							lat = &v
+						}
+					}
+				case "lng", "lon", "longitude":
+					if f.Value() != nil && f.Value().Value() != nil {
+						if v, ok := f.Value().Value().(float64); ok {
+							lng = &v
+						}
+					}
+				}
+			}
+			if lat != nil && lng != nil {
+				// find schema field id for location
+				for _, sf := range schema.Fields() {
+					if strings.EqualFold(sf.Name(), "location") {
+						latlng := dataset.LatLng{Lat: *lat, Lng: *lng}
+						locField := dataset.NewField(sf.ID(), dataset.ValueTypeLatLng.ValueFrom(latlng), "")
+						old.AddOrReplaceField(locField)
+						break
+					}
+				}
+				continue
+			}
+
+			// 4) If no new location & old had one, keep old's location (do nothing)
+			// (we already didn't remove old location unless overwritten above)
+		}
+
+		// Save updated oldDatasets (preserving dataset IDs)
+		if err := i.datasetRepo.SaveAll(ctx, oldDatasets); err != nil {
+			return err
+		}
+
+		// If there are extra newDatasets that don't map to old (not in this branch), add them:
+		// (skip here because counts equal)
+	} else {
+		// fallback when counts differ:
+		// Option A: try to match by a stable key (e.g., AtomicNumber or another unique column)
+		// Option B: use best-effort index mapping for first min(len(old), len(new)) rows,
+		// then SaveAll: update matched old, insert remaining new, remove extra old.
+		// For brevity, implement index-based up to minLen:
+		minLen := len(oldDatasets)
+		if len(newDatasets) < minLen {
+			minLen = len(newDatasets)
+		}
+		for i := 0; i < minLen; i++ {
+			old := oldDatasets[i]
+			new := newDatasets[i]
+			old.SetFieldsFrom(new) // copy all non-ID fields; implement SetFieldsFrom helper as above
+		}
+		// save updated old (for first minLen)
+		if err := i.datasetRepo.SaveAll(ctx, oldDatasets[:minLen]); err != nil {
+			return err
+		}
+		// insert remaining newDatasets (if any)
+		if len(newDatasets) > minLen {
+			toInsert := newDatasets[minLen:]
+			if err := i.datasetRepo.SaveAll(ctx, toInsert); err != nil {
+				return err
+			}
+		}
+		// remove extra old datasets (if any left unmatched)
+		if len(oldDatasets) > minLen {
+			toRemove := oldDatasets[minLen:].ToDatasetIds() // adapt if method exists
+			if err := i.datasetRepo.RemoveAll(ctx, toRemove); err != nil {
+				return err
+			}
+		}
 	}
 
-	// Save new datasets
-	if err := i.datasetRepo.SaveAll(ctx, datasets); err != nil {
-		return err
-	}
-
-	// Migrate layers and properties
+	// Rebuild layers/properties using schema and current datasets (oldDatasets preserved)
 	result, err := sceneops.DatasetMigrator{
 		PropertyRepo:      i.propertyRepo,
 		LayerRepo:         i.layerRepo,
 		DatasetSchemaRepo: i.datasetSchemaRepo,
 		DatasetRepo:       i.datasetRepo,
 		Plugin:            repo.PluginLoaderFrom(i.pluginRepo),
-	}.Migrate(ctx, schema.Scene(), dataset.SchemaList{schema}, datasets)
+	}.Migrate(ctx, schema.Scene(), dataset.SchemaList{schema}, oldDatasets)
 	if err != nil {
 		return err
 	}
 
+	// persist changes from migration
 	if err := i.propertyRepo.SaveAll(ctx, result.Properties.List()); err != nil {
 		return err
 	}

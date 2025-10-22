@@ -21,6 +21,7 @@ const DatasetInfoPane: React.FC<Props> = () => {
     handleAddLayerGroupFromDatasetSchema,
     isHosted,
     handleRefresh,
+    isRefreshing,
   } = useHooks();
 
   return (
@@ -35,13 +36,14 @@ const DatasetInfoPane: React.FC<Props> = () => {
         <div style={{ padding: "16px", textAlign: "center", display: "flex", justifyContent: "center" }}>
           <Button
             buttonType="primary"
-            text={t("Refresh data")}
+            text={isRefreshing ? t("Refreshing...") : t("Refresh data")}
             onClick={handleRefresh}
             large
+            disabled={isRefreshing}
           />
         </div>
       )}
-      {loading && <Loading />}
+      {(loading || isRefreshing) && <Loading />}
     </>
   );
 };

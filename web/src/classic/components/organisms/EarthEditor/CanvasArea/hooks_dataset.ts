@@ -22,7 +22,6 @@ export function useDatasets(datasetSchemaIds: string[] | undefined) {
     if (newIds.length === 0) return;
 
     fetched.current = [...fetched.current, ...newIds];
-    console.log("fetching datasets", newIds);
 
     (async () => {
       const accessToken = await auth.getAccessToken();

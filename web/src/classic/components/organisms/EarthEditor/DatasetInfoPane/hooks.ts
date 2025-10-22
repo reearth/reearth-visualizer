@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useState, useMemo } from "react";
 
 import {
   useAddLayerGroupFromDatasetSchemaMutation,
@@ -6,18 +6,21 @@ import {
   useGetScenePluginsForDatasetInfoPaneQuery,
   useUpdatePropertyValueMutation,
   useRefreshHostedCsvMutation,
+  useGetSceneQuery,
 } from "@reearth/classic/gql";
 import { useLang, useT } from "@reearth/services/i18n";
-import { useCesiumScene, useNotification, useProject, useRootLayerId, useSelected } from "@reearth/services/state";
+import { useCesiumScene, useNotification, useProject, useRootLayerId, useSceneId, useSelected } from "@reearth/services/state";
 
 import { processDatasets, processDatasetHeaders, processPrimitives, processDatasetToLocation } from "./convert";
 import { Cartesian3, Cartographic } from "cesium";
 import { valueToGQL, valueTypeToGQL } from "@reearth/classic/util/value";
 import { isHttpUrl } from "@reearth/classic/util/util";
 import { useApolloClient } from "@apollo/client";
+import { useAuth } from "@reearth/services/auth";
 
 export default () => {
   const lang = useLang();
+  const [sceneId] = useSceneId();
   const [scene] = useCesiumScene();
   const [selected] = useSelected();
   const [project] = useProject();
@@ -29,6 +32,9 @@ export default () => {
   const t = useT();
   const [updatePropertyValue] = useUpdatePropertyValueMutation();
   const client = useApolloClient();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const isAuthenticated = useAuth();
+
   const { data: rawDatasets, loading: datasetsLoading, refetch } = useGetDatasetsForDatasetInfoPaneQuery({
     variables: {
       datasetSchemaId: selected?.type === "dataset" ? selected.datasetSchemaId : "",
@@ -46,6 +52,11 @@ export default () => {
       skip: !project?.id,
     },
   );
+
+  const { loading: sceneLoading, data: sceneData, refetch: refetchScene } = useGetSceneQuery({
+    variables: { sceneId: sceneId || "" },
+    skip: !isAuthenticated || !sceneId,
+  });
 
   const selectedDatasetSchema = rawDatasets?.datasets?.nodes?.[0]?.schema;
   const isHosted = useMemo(() => isHttpUrl(selectedDatasetSchema?.url || ""), [selectedDatasetSchema?.url]);
@@ -132,17 +143,20 @@ export default () => {
   const handleRefresh = useCallback(async () => {
     if (!selectedDatasetSchemaId) return;
     try {
+      setIsRefreshing(true);
       await refreshHostedCsvMutation({
         variables: { schemaId: selectedDatasetSchemaId },
       });
-      await client.refetchQueries({
-        include: ["GetDatasetsForDatasetInfoPane"],
-      });
+      await refetch();
+      await refetchScene();
+
       setNotification({ type: "success", text: t("Dataset refreshed") });
     } catch (e) {
       setNotification({ type: "error", text: t("Failed to refresh dataset") });
+    } finally {
+      setIsRefreshing(false);
     }
-  }, [selectedDatasetSchemaId, refreshHostedCsvMutation, client, setNotification, t]);
+  }, [selectedDatasetSchemaId, refreshHostedCsvMutation, client, refetch, setNotification, t]);
 
   return {
     datasets: datasets?.length > 0 ? datasets.slice(0, 10) : [],
@@ -153,5 +167,6 @@ export default () => {
     selectedDatasetSchema,
     isHosted,
     handleRefresh,
+    isRefreshing,
   };
 };

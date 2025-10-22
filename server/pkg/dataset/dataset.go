@@ -55,6 +55,17 @@ func (d *Dataset) Field(id FieldID) *Field {
 	return d.fields[id]
 }
 
+func (d *Dataset) AddField(f *Field) {
+	if d == nil || f == nil {
+		return
+	}
+	if d.fields == nil {
+		d.fields = map[FieldID]*Field{}
+	}
+	d.fields[f.Field()] = f
+	d.order = append(d.order, f.Field())
+}
+
 func (d *Dataset) FieldRef(id *FieldID) *Field {
 	if d == nil || id == nil {
 		return nil
@@ -134,4 +145,55 @@ func (d *Dataset) InterfaceWithFieldIDs(idkey string) map[string]interface{} {
 		m[key] = f.Value().Interface()
 	}
 	return m
+}
+
+// AddOrReplaceField adds or replaces a field in the dataset.
+func (d *Dataset) AddOrReplaceField(f *Field) {
+	if d == nil || f == nil {
+		return
+	}
+	if d.fields == nil {
+		d.fields = map[FieldID]*Field{}
+	}
+	id := f.Field()
+	// Nếu chưa có field này trong order, thêm vào
+	exists := false
+	for _, fid := range d.order {
+		if fid == id {
+			exists = true
+			break
+		}
+	}
+	if !exists {
+		d.order = append(d.order, id)
+	}
+	d.fields[id] = f
+}
+
+// SetFieldsFrom replaces or merges fields from another dataset.
+func (d *Dataset) SetFieldsFrom(src *Dataset) {
+	if d == nil || src == nil {
+		return
+	}
+	if d.fields == nil {
+		d.fields = map[FieldID]*Field{}
+	}
+	for _, f := range src.Fields() {
+		if f == nil {
+			continue
+		}
+		id := f.Field()
+		// nếu chưa có field này trong order thì thêm mới
+		exists := false
+		for _, fid := range d.order {
+			if fid == id {
+				exists = true
+				break
+			}
+		}
+		if !exists {
+			d.order = append(d.order, id)
+		}
+		d.fields[id] = f
+	}
 }

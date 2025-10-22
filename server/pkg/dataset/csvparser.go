@@ -68,29 +68,40 @@ func (p *DatasetCSVParser) GuessSchema(sid SceneID) error {
 	if !p.validateLine(p.firstline) {
 		return ErrFailedToParseCSVorTSVFile
 	}
+
 	schemafields := []*SchemaField{}
 	haslat, haslng := false, false
+
 	for k, h := range p.headers {
-		if h == "lat" {
+		header := strings.TrimSpace(h)
+		lower := strings.ToLower(header)
+
+		if lower == "lat" {
 			haslat = true
+			continue
 		}
-		if h == "lng" {
+		if lower == "lng" {
 			haslng = true
+			continue
 		}
-		if h != "lng" && h != "lat" && strings.TrimSpace(h) != "" {
+
+		if header != "" {
 			t := ValueFromStringOrNumber(p.firstline[k]).Type()
-			field, _ := NewSchemaField().NewID().Name(h).Type(t).Build()
+			field, _ := NewSchemaField().NewID().Name(strings.TrimSpace(header)).Type(t).Build()
 			schemafields = append(schemafields, field)
 		}
 	}
+
 	if haslat && haslng {
 		field, _ := NewSchemaField().NewID().Name("location").Type(ValueTypeLatLng).Build()
 		schemafields = append(schemafields, field)
 	}
+
 	source := p.url
 	if source == "" {
 		source = "file:///" + p.name
 	}
+
 	schema, err := NewSchema().
 		NewID().
 		Scene(sid).
@@ -101,6 +112,7 @@ func (p *DatasetCSVParser) GuessSchema(sid SceneID) error {
 	if err != nil {
 		return err
 	}
+
 	p.schema = schema
 	return nil
 }
@@ -109,20 +121,26 @@ func (p *DatasetCSVParser) ReadAll() (*Schema, []*Dataset, error) {
 	if p.schema == nil {
 		return nil, nil, errors.New("schema is not generated yet")
 	}
+
 	var fields []*Field
 	schemafieldmap := make(map[string]FieldID)
+
 	for _, f := range p.schema.Fields() {
-		if _, ok := schemafieldmap[f.Name()]; !ok {
-			schemafieldmap[f.Name()] = f.ID()
+		name := strings.ToLower(strings.TrimSpace(f.Name()))
+		if _, ok := schemafieldmap[name]; !ok {
+			schemafieldmap[name] = f.ID()
 		} else {
 			return nil, nil, ErrDuplicatiedNameFields
 		}
 	}
+
 	datasets := []*Dataset{}
 	i := 0
+
 	for {
 		var line []string
 		var err error
+
 		if i == 0 {
 			line = p.firstline
 		} else {
@@ -134,6 +152,7 @@ func (p *DatasetCSVParser) ReadAll() (*Schema, []*Dataset, error) {
 				return nil, nil, err
 			}
 		}
+
 		if !p.validateLine(line) {
 			return nil, nil, ErrFailedToParseCSVorTSVFile
 		}
@@ -142,12 +161,16 @@ func (p *DatasetCSVParser) ReadAll() (*Schema, []*Dataset, error) {
 		if err != nil {
 			return nil, nil, err
 		}
+
 		ds, err := New().NewID().
 			Fields(fields).
-			Scene(p.schema.Scene()).Schema(p.schema.ID()).Build()
+			Scene(p.schema.Scene()).
+			Schema(p.schema.ID()).
+			Build()
 		if err != nil {
 			return nil, nil, err
 		}
+
 		datasets = append(datasets, ds)
 		i++
 	}
@@ -158,31 +181,39 @@ func (p *DatasetCSVParser) ReadAll() (*Schema, []*Dataset, error) {
 func (p *DatasetCSVParser) getFields(line []string, sfm map[string]FieldID) ([]*Field, error) {
 	fields := []*Field{}
 	var lat, lng *float64
-	for i, record := range line {
-		value := ValueFromStringOrNumber(record)
-		if p.headers[i] == "lng" {
-			value, err := strconv.ParseFloat(record, 64)
-			if err != nil {
-				return nil, ErrFailedToParseCSVorTSVFile
-			}
-			lng = &value
-		}
-		if p.headers[i] == "lat" {
-			value, err := strconv.ParseFloat(record, 64)
-			if err != nil {
-				return nil, ErrFailedToParseCSVorTSVFile
-			}
-			lat = &value
-		}
 
-		if p.headers[i] != "lat" && p.headers[i] != "lng" {
-			fields = append(fields, NewField(sfm[p.headers[i]], value, ""))
+	for i, record := range line {
+		header := strings.TrimSpace(p.headers[i])
+		lower := strings.ToLower(header)
+
+		switch lower {
+		case "lng":
+			val, err := strconv.ParseFloat(record, 64)
+			if err != nil {
+				return nil, ErrFailedToParseCSVorTSVFile
+			}
+			lng = &val
+			continue
+		case "lat":
+			val, err := strconv.ParseFloat(record, 64)
+			if err != nil {
+				return nil, ErrFailedToParseCSVorTSVFile
+			}
+			lat = &val
+			continue
+		default:
+			fieldID := sfm[lower]
+			fields = append(fields, NewField(fieldID, ValueFromStringOrNumber(record), ""))
 		}
 	}
+
 	if lat != nil && lng != nil {
-		latlng := LatLng{Lat: *lat, Lng: *lng}
-		fields = append(fields, NewField(sfm["location"], ValueTypeLatLng.ValueFrom(latlng), ""))
+		if id, ok := sfm["location"]; ok {
+			latlng := LatLng{Lat: *lat, Lng: *lng}
+			fields = append(fields, NewField(id, ValueTypeLatLng.ValueFrom(latlng), ""))
+		}
 	}
+
 	return append([]*Field{}, fields...), nil
 }
 
@@ -198,11 +229,11 @@ func (p *DatasetCSVParser) CheckCompatible(s *Schema) error {
 	for i, rawHeader := range p.headers {
 		header := strings.ToLower(strings.TrimSpace(rawHeader))
 
-		if header == "lat" {
+		switch header {
+		case "lat":
 			hasLat = true
 			continue
-		}
-		if header == "lng" {
+		case "lng":
 			hasLng = true
 			continue
 		}
@@ -216,17 +247,32 @@ func (p *DatasetCSVParser) CheckCompatible(s *Schema) error {
 		value := ValueFromStringOrNumber(p.firstline[i])
 
 		if value.Type() != expectedType && value.Type() != ValueTypeUnknown {
-			return fmt.Errorf("%w: field '%s' type mismatch (expected %s, got %s)",
-				ErrIncompatibleSchema, field.Name(), expectedType, value.Type())
+			return fmt.Errorf(
+				"%w: field '%s' type mismatch (expected %s, got %s)",
+				ErrIncompatibleSchema, field.Name(), expectedType, value.Type(),
+			)
 		}
 	}
 
-	locationField := fieldsmap["location"] != nil
+	locationFieldExists := false
+	for name := range fieldsmap {
+		if name == "location" {
+			locationFieldExists = true
+			break
+		}
+	}
 
-	if hasLat && hasLng && !locationField {
-		return fmt.Errorf("%w: lat/lng present but no 'location' field in schema", ErrIncompatibleSchema)
+	if hasLat && hasLng && !locationFieldExists {
+		return fmt.Errorf(
+			"%w: lat/lng present but no 'location' field in schema",
+			ErrIncompatibleSchema,
+		)
 	}
 
 	p.schema = s
 	return nil
+}
+
+func (p *DatasetCSVParser) SetSchema(s *Schema) {
+	p.schema = s
 }
