@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"io"
+	"os"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"github.com/reearth/reearth/server/internal/app/config"
@@ -25,7 +26,13 @@ type gcpTracerCloser struct {
 func (c *gcpTracerCloser) Close() error {
 	if c.tp != nil {
 		ctx := context.Background()
-		return c.tp.Shutdown(ctx)
+		if err := c.tp.ForceFlush(ctx); err != nil {
+			log.Errorf("tracer: failed to flush spans: %v", err)
+		}
+		if err := c.tp.Shutdown(ctx); err != nil {
+			log.Errorf("tracer: failed to shutdown: %v", err)
+			return err
+		}
 	}
 	return nil
 }
@@ -54,6 +61,8 @@ func initGCPTracer(ctx context.Context, conf *config.Config) io.Closer {
 		resource.WithTelemetrySDK(),
 		resource.WithAttributes(
 			semconv.ServiceNameKey.String("reearth-visualizer"),
+			semconv.ServiceVersionKey.String("1.0.0"),
+			semconv.DeploymentEnvironmentKey.String(getEnvironment()),
 		),
 	)
 	if err != nil {
@@ -62,22 +71,41 @@ func initGCPTracer(ctx context.Context, conf *config.Config) io.Closer {
 			resource.WithTelemetrySDK(),
 			resource.WithAttributes(
 				semconv.ServiceNameKey.String("reearth-visualizer"),
+				semconv.ServiceVersionKey.String("1.0.0"),
+				semconv.DeploymentEnvironmentKey.String(getEnvironment()),
 			),
 		)
 	}
 
-	// Create tracer provider with batch span processor for better performance
+	// Create sampler based on configuration
+	sampler := sdktrace.ParentBased(sdktrace.TraceIDRatioBased(conf.TracerSample))
+	if conf.TracerSample >= 1.0 {
+		sampler = sdktrace.AlwaysSample()
+	}
+
+	// Create tracer provider with batch span processor
 	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithBatcher(exporter),
+		sdktrace.WithBatcher(exporter,
+			sdktrace.WithMaxExportBatchSize(100),    // Batch up to 100 spans
+			sdktrace.WithBatchTimeout(1*1000000000), // 1 second timeout for faster export
+			sdktrace.WithMaxQueueSize(2048),         // Queue up to 2048 spans
+		),
 		sdktrace.WithResource(res),
-		sdktrace.WithSampler(sdktrace.TraceIDRatioBased(conf.TracerSample)),
+		sdktrace.WithSampler(sampler),
 	)
 
 	otel.SetTracerProvider(tp)
 
-	log.Infof("tracer: initialized GCP Cloud Trace (project=%s, sample=%g)", conf.GCPProject, conf.TracerSample)
-
 	return &gcpTracerCloser{tp: tp}
+}
+
+// getEnvironment returns the current deployment environment
+func getEnvironment() string {
+	env := os.Getenv("REEARTH_ENV")
+	if env == "" {
+		return "test"
+	}
+	return env
 }
 
 func initJaegerTracer(conf *config.Config) io.Closer {

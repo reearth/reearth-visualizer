@@ -19,6 +19,10 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 )
 
 func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
@@ -37,7 +41,8 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	e.Logger = logger
 	e.Use(
 		middleware.Recover(),
-		otelecho.Middleware("reearth"),
+		otelecho.Middleware("reearth-visualizer"),
+		restAPITracingMiddleware(), // Add detailed REST API tracing
 		echo.WrapMiddleware(appx.RequestIDMiddleware()),
 		logger.AccessLogger(),
 		middleware.Gzip(),
@@ -240,5 +245,76 @@ func privateCache(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		c.Response().Header().Set(echo.HeaderCacheControl, "private, no-store, no-cache, must-revalidate")
 		return next(c)
+	}
+}
+
+func restAPITracingMiddleware() echo.MiddlewareFunc {
+	tracer := otel.Tracer("reearth-visualizer")
+
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			req := c.Request()
+			ctx := req.Context()
+
+			parentSpan := trace.SpanFromContext(ctx)
+			if !parentSpan.SpanContext().IsValid() {
+				return next(c)
+			}
+
+			path := c.Path()
+			if path == "" {
+				path = req.URL.Path
+			}
+
+			spanName := "REST " + req.Method + " " + path
+			ctx, span := tracer.Start(ctx, spanName,
+				trace.WithSpanKind(trace.SpanKindInternal),
+				trace.WithAttributes(
+					attribute.String("component", "rest"),
+					attribute.String("http.route", path),
+					attribute.String("http.method", req.Method),
+					attribute.String("http.url", req.URL.Path),
+					attribute.String("http.host", req.Host),
+				),
+			)
+			defer span.End()
+
+			if query := req.URL.Query(); len(query) > 0 {
+				for key := range query {
+					span.SetAttributes(attribute.String("http.query."+key, "present"))
+				}
+			}
+
+			for _, paramName := range c.ParamNames() {
+				paramValue := c.Param(paramName)
+				if paramValue != "" {
+					span.SetAttributes(attribute.String("http.param."+paramName, paramValue))
+				}
+			}
+
+			c.SetRequest(req.WithContext(ctx))
+
+			err := next(c)
+
+			status := c.Response().Status
+			span.SetAttributes(
+				attribute.Int("http.status_code", status),
+				attribute.Int64("http.response.size", c.Response().Size),
+			)
+
+			if err != nil {
+				span.RecordError(err)
+				span.SetStatus(codes.Error, err.Error())
+				log.Warnfc(ctx, "rest: %s %s failed with error: %v", req.Method, path, err)
+			} else if status >= 400 {
+				span.SetStatus(codes.Error, http.StatusText(status))
+				log.Warnfc(ctx, "rest: %s %s returned status %d", req.Method, path, status)
+			} else {
+				span.SetStatus(codes.Ok, "Request completed successfully")
+				log.Infofc(ctx, "rest: %s %s completed successfully (status=%d)", req.Method, path, status)
+			}
+
+			return err
+		}
 	}
 }
