@@ -76,14 +76,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
 	}
 
-	if cfg.AccountsAPIClient != nil {
-		e.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
-			AccountsClient: cfg.AccountsAPIClient,
-		})...)
-	}
-
 	e.Use(echo.WrapMiddleware(wrapHandler))
-	e.Use(attachOpMiddleware(cfg))
 
 	// enable pprof
 	if e.Debug {
@@ -136,12 +129,24 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// auth srv
 	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
 
-	// apis
+	// public apis
 	api := e.Group("/api")
 	api.GET("/ping", Ping(), privateCache)
 	api.GET("/published/:name", PublishedMetadata())
 	api.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
 	api.GET("/published_data/:name", PublishedData("", true))
+	published := e.Group("/p", PublishedAuthMiddleware())
+	published.GET("/:name/data.json", PublishedData("", true))
+	published.GET("/:name/", PublishedIndex("", true))
+	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
+
+	// private apis
+	if cfg.AccountsAPIClient != nil {
+		e.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
+			AccountsClient: cfg.AccountsAPIClient,
+		})...)
+	}
+	e.Use(attachOpMiddleware(cfg))
 
 	apiPrivate := api.Group("", privateCache)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
@@ -152,12 +157,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		apiPrivate.POST("/signup/verify/:code", SignupVerify())
 		apiPrivate.POST("/password-reset", PasswordReset())
 	}
-
-	published := e.Group("/p", PublishedAuthMiddleware())
-	published.GET("/:name/data.json", PublishedData("", true))
-	published.GET("/:name/", PublishedIndex("", true))
-
-	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	servSplitUploadFiles(e, cfg)
 	servSignatureUploadFiles(e, cfg)
