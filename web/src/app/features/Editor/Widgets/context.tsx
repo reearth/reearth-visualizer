@@ -5,14 +5,10 @@ import { createContext, useContext, ReactNode, SetStateAction } from "react";
 
 import { SelectedWidget } from "../hooks/useWidgets";
 
-import { Device } from "./WASToolsPanel/Devices";
-
 export interface WidgetsPageContextType {
   handleVisualizerResize?: (props: AreaSize) => void;
   showWASEditor?: boolean;
-  selectedDevice?: Device;
   handleShowWASEditorToggle: () => void;
-  handleDeviceChange: (device: Device) => void;
   selectWidgetArea: (
     update?: SetStateAction<WidgetAreaState | undefined>
   ) => void;

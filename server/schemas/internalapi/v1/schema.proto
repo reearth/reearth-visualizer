@@ -72,6 +72,11 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
       returns (DeleteByProjectAliasResponse) {}
+
+  // Update a project's star count
+  // Request headers: user-id: <User ID>
+  rpc PatchStarCount(PatchStarCountRequest)
+      returns (PatchStarCountResponse) {}
 }
 
 // Core Project messages
@@ -136,8 +141,6 @@ message Project {
   PublishmentStatus publishment_status = 20;
   // Scene Publishment value
   optional string published_url = 21;
-  // Number of stars/likes the project has received
-  int32 star_count = 22;
 }
 
 message Story {
@@ -171,6 +174,10 @@ message ProjectMetadata {
   google.protobuf.Timestamp created_at = 8;
   // ProjectMetadata updated date
   google.protobuf.Timestamp updated_at = 9;
+  // Project star_count
+  optional int64 star_count = 10;
+  // Project starred_by
+  repeated string starred_by = 11;
 }
 
 enum Visualizer {
@@ -338,7 +345,7 @@ message CreateProjectRequest {
   optional string license = 9;
 
   // Project topics
-  optional string topics = 10;
+  repeated string topics = 10;
 }
 
 // Update project fields.
@@ -394,7 +401,7 @@ message UpdateProjectMetadataRequest {
   // Project license
   optional string license = 3;
   // Project topics
-  optional string topics = 4;
+  repeated string topics = 4;
 }
 
 // Deletes a project.
@@ -455,6 +462,12 @@ message DeleteByProjectAliasRequest {
 message ExportProjectRequest {
   // Project ID
   string project_id = 1;
+}
+
+// Star and unstar a project
+message PatchStarCountRequest {
+  // Project alias
+  string project_alias = 1;
 }
 
 // Response messages
@@ -559,4 +572,10 @@ message UpdateByProjectAliasResponse {
 message DeleteByProjectAliasResponse {
   // Project alias
   string project_alias = 1;
+}
+
+// Response messages
+message PatchStarCountResponse {
+  // Project
+  ProjectMetadata projectmetadata = 1;
 }

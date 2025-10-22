@@ -176,6 +176,22 @@ export default function useHook({
 
     onPreInit?.();
 
+    // Set up global error handler for QuickJS lifetime and runtime errors
+    const globalErrorHandler = (event: ErrorEvent): void => {
+      if (
+        event.error &&
+        (event.error.name === "QuickJSUseAfterFree" ||
+          String(event.error).includes("Lifetime not alive") ||
+          String(event.error).includes("list_empty(&rt->gc_obj_list)") ||
+          String(event.error).includes("JS_FreeRuntime"))
+      ) {
+        // Silently prevent crash without logging to reduce console noise
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener("error", globalErrorHandler);
+
     (async () => {
       const ctx = (await getQuickJS()).newContext();
       arena.current = new Arena(ctx, {
@@ -212,14 +228,31 @@ export default function useHook({
     const iframeRef = mainIFrameRef.current;
 
     return () => {
-      onDisposeRef.current?.();
-      messageEvents.clear();
-      messageOnceEvents.clear();
-      iframeRef?.reset();
-      setLoaded(false);
+      // Remove global error handler
+      window.removeEventListener("error", globalErrorHandler);
+
+      // 1. Stop event loop first to prevent new callbacks
       if (typeof eventLoop.current === "number") {
         window.clearTimeout(eventLoop.current);
+        eventLoop.current = undefined;
       }
+
+      // 2. Clean up plugin events synchronously before arena disposal
+      try {
+        onDisposeRef.current?.();
+      } catch (err) {
+        console.error("Plugin cleanup: error disposing plugin events", err);
+      }
+
+      // 3. Clear message events
+      messageEvents.clear();
+      messageOnceEvents.clear();
+
+      // 4. Reset iframe
+      iframeRef?.reset();
+      setLoaded(false);
+
+      // 5. Arena disposal
       if (arena.current) {
         try {
           arena.current.dispose();

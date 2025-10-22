@@ -155,7 +155,14 @@ export function mergeEvents<
 
   return () => {
     for (const t of Object.keys(cbs)) {
-      source.off(t, cbs[t]);
+      try {
+        source.off(t, cbs[t]);
+      } catch (err) {
+        console.error(
+          `Plugin events: error cleaning up event type "${t}":`,
+          err
+        );
+      }
     }
   };
 }

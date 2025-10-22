@@ -105,9 +105,10 @@ type AddStylePayload struct {
 }
 
 type AddWidgetInput struct {
-	SceneID     ID `json:"sceneId"`
-	PluginID    ID `json:"pluginId"`
-	ExtensionID ID `json:"extensionId"`
+	Type        WidgetAlignSystemType `json:"type"`
+	SceneID     ID                    `json:"sceneId"`
+	PluginID    ID                    `json:"pluginId"`
+	ExtensionID ID                    `json:"extensionId"`
 }
 
 type AddWidgetPayload struct {
@@ -202,7 +203,7 @@ type CreateProjectInput struct {
 	ProjectAlias *string    `json:"projectAlias,omitempty"`
 	Readme       *string    `json:"readme,omitempty"`
 	License      *string    `json:"license,omitempty"`
-	Topics       *string    `json:"topics,omitempty"`
+	Topics       []string   `json:"topics,omitempty"`
 }
 
 type CreateSceneInput struct {
@@ -745,7 +746,7 @@ type ProjectMetadata struct {
 	Workspace       ID                   `json:"workspace"`
 	Readme          *string              `json:"readme,omitempty"`
 	License         *string              `json:"license,omitempty"`
-	Topics          *string              `json:"topics,omitempty"`
+	Topics          []string             `json:"topics,omitempty"`
 	ImportStatus    *ProjectImportStatus `json:"importStatus,omitempty"`
 	ImportResultLog JSON                 `json:"importResultLog,omitempty"`
 	CreatedAt       *time.Time           `json:"createdAt,omitempty"`
@@ -1003,8 +1004,9 @@ type RemoveStylePayload struct {
 }
 
 type RemoveWidgetInput struct {
-	SceneID  ID `json:"sceneId"`
-	WidgetID ID `json:"widgetId"`
+	Type     WidgetAlignSystemType `json:"type"`
+	SceneID  ID                    `json:"sceneId"`
+	WidgetID ID                    `json:"widgetId"`
 }
 
 type RemoveWidgetPayload struct {
@@ -1013,22 +1015,22 @@ type RemoveWidgetPayload struct {
 }
 
 type Scene struct {
-	ID                ID                 `json:"id"`
-	WorkspaceID       ID                 `json:"workspaceId"`
-	ProjectID         ID                 `json:"projectId"`
-	PropertyID        ID                 `json:"propertyId"`
-	CreatedAt         time.Time          `json:"createdAt"`
-	UpdatedAt         time.Time          `json:"updatedAt"`
-	Widgets           []*SceneWidget     `json:"widgets"`
-	Plugins           []*ScenePlugin     `json:"plugins"`
-	WidgetAlignSystem *WidgetAlignSystem `json:"widgetAlignSystem,omitempty"`
-	Project           *Project           `json:"project,omitempty"`
-	Workspace         *Workspace         `json:"workspace,omitempty"`
-	Property          *Property          `json:"property,omitempty"`
-	NewLayers         []NLSLayer         `json:"newLayers"`
-	Stories           []*Story           `json:"stories"`
-	Styles            []*Style           `json:"styles"`
-	Alias             string             `json:"alias"`
+	ID                ID                  `json:"id"`
+	WorkspaceID       ID                  `json:"workspaceId"`
+	ProjectID         ID                  `json:"projectId"`
+	PropertyID        ID                  `json:"propertyId"`
+	CreatedAt         time.Time           `json:"createdAt"`
+	UpdatedAt         time.Time           `json:"updatedAt"`
+	Widgets           []*SceneWidget      `json:"widgets"`
+	Plugins           []*ScenePlugin      `json:"plugins"`
+	WidgetAlignSystem *WidgetAlignSystems `json:"widgetAlignSystem,omitempty"`
+	Project           *Project            `json:"project,omitempty"`
+	Workspace         *Workspace          `json:"workspace,omitempty"`
+	Property          *Property           `json:"property,omitempty"`
+	NewLayers         []NLSLayer          `json:"newLayers"`
+	Stories           []*Story            `json:"stories"`
+	Styles            []*Style            `json:"styles"`
+	Alias             string              `json:"alias"`
 }
 
 func (Scene) IsNode()        {}
@@ -1289,10 +1291,10 @@ type UpdateProjectInput struct {
 }
 
 type UpdateProjectMetadataInput struct {
-	Project ID      `json:"project"`
-	Readme  *string `json:"readme,omitempty"`
-	License *string `json:"license,omitempty"`
-	Topics  *string `json:"topics,omitempty"`
+	Project ID       `json:"project"`
+	Readme  *string  `json:"readme,omitempty"`
+	License *string  `json:"license,omitempty"`
+	Topics  []string `json:"topics,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
@@ -1359,6 +1361,7 @@ type UpdateStylePayload struct {
 }
 
 type UpdateWidgetAlignSystemInput struct {
+	Type       WidgetAlignSystemType   `json:"type"`
 	SceneID    ID                      `json:"sceneId"`
 	Location   *WidgetLocationInput    `json:"location"`
 	Align      *WidgetAreaAlign        `json:"align,omitempty"`
@@ -1373,12 +1376,13 @@ type UpdateWidgetAlignSystemPayload struct {
 }
 
 type UpdateWidgetInput struct {
-	SceneID  ID                   `json:"sceneId"`
-	WidgetID ID                   `json:"widgetId"`
-	Enabled  *bool                `json:"enabled,omitempty"`
-	Location *WidgetLocationInput `json:"location,omitempty"`
-	Extended *bool                `json:"extended,omitempty"`
-	Index    *int                 `json:"index,omitempty"`
+	Type     WidgetAlignSystemType `json:"type"`
+	SceneID  ID                    `json:"sceneId"`
+	WidgetID ID                    `json:"widgetId"`
+	Enabled  *bool                 `json:"enabled,omitempty"`
+	Location *WidgetLocationInput  `json:"location,omitempty"`
+	Extended *bool                 `json:"extended,omitempty"`
+	Index    *int                  `json:"index,omitempty"`
 }
 
 type UpdateWidgetPayload struct {
@@ -1444,6 +1448,11 @@ type UserMetadata struct {
 type WidgetAlignSystem struct {
 	Inner *WidgetZone `json:"inner,omitempty"`
 	Outer *WidgetZone `json:"outer,omitempty"`
+}
+
+type WidgetAlignSystems struct {
+	Desktop *WidgetAlignSystem `json:"desktop,omitempty"`
+	Mobile  *WidgetAlignSystem `json:"mobile,omitempty"`
 }
 
 type WidgetArea struct {
@@ -2455,6 +2464,61 @@ func (e *Visualizer) UnmarshalJSON(b []byte) error {
 }
 
 func (e Visualizer) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type WidgetAlignSystemType string
+
+const (
+	WidgetAlignSystemTypeDesktop WidgetAlignSystemType = "DESKTOP"
+	WidgetAlignSystemTypeMobile  WidgetAlignSystemType = "MOBILE"
+)
+
+var AllWidgetAlignSystemType = []WidgetAlignSystemType{
+	WidgetAlignSystemTypeDesktop,
+	WidgetAlignSystemTypeMobile,
+}
+
+func (e WidgetAlignSystemType) IsValid() bool {
+	switch e {
+	case WidgetAlignSystemTypeDesktop, WidgetAlignSystemTypeMobile:
+		return true
+	}
+	return false
+}
+
+func (e WidgetAlignSystemType) String() string {
+	return string(e)
+}
+
+func (e *WidgetAlignSystemType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WidgetAlignSystemType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WidgetAlignSystemType", str)
+	}
+	return nil
+}
+
+func (e WidgetAlignSystemType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *WidgetAlignSystemType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetAlignSystemType) MarshalJSON() ([]byte, error) {
 	var buf bytes.Buffer
 	e.MarshalGQL(&buf)
 	return buf.Bytes(), nil

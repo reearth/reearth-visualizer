@@ -3,7 +3,9 @@ package app
 import (
 	"context"
 
+	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
@@ -61,9 +63,20 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *accounts.Client) {
 	gateways := &gateway.Container{}
 	acGateways := &accountgateway.Container{}
+
+	// Initialize Accounts API client if enabled
+	var accountsAPIClient *accounts.Client
+	if conf.AccountsAPI.Enabled {
+		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
+		accountsAPIClient = accounts.NewClient(
+			conf.AccountsAPI.Host,
+			conf.AccountsAPI.Timeout,
+			adpaccounts.DynamicAuthTransport{},
+		)
+	}
 
 	// Mongo
 
@@ -148,7 +161,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	return visRepos, gateways, accountRepos, acGateways
+	return visRepos, gateways, accountRepos, acGateways, accountsAPIClient
 }
 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {

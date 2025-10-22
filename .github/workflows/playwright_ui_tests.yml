@@ -45,18 +45,25 @@ jobs:
       - name: Install dependencies and Playwright browsers
         run: |
           npm ci
-          npx playwright install
+          npx playwright install --with-deps
       - name: Run Playwright tests
         env:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
-        run: npx playwright test --config=playwright.config.ts
+          USE_IAP_AUTH: true
+          IAP_AUTH_METHOD: id-token
+          IAP_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
+        run: npm run test:ui
 
-      - name: Upload test results
+      - name: Generate Allure Report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        run: npm run allure:generate
+
+      - name: Upload artifact - Allure Report
+        if: always()
+        uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
-          path: e2e/test-report/
-          retention-days: 30
+          name: allure-report
+          path: e2e/allure-report/
+          retention-days: 10

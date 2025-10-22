@@ -11,33 +11,73 @@ import (
 	jaegercfg "github.com/uber/jaeger-client-go/config"
 	jaegerlog "github.com/uber/jaeger-client-go/log"
 	"github.com/uber/jaeger-lib/metrics"
+	"go.opentelemetry.io/contrib/detectors/gcp"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
 )
 
-func initTracer(ctx context.Context, conf *config.Config) io.Closer {
-	if conf.Tracer == "gcp" {
-		initGCPTracer(ctx, conf)
-	} else if conf.Tracer == "jaeger" {
-		return initJaegerTracer(conf)
+type gcpTracerCloser struct {
+	tp *sdktrace.TracerProvider
+}
+
+func (c *gcpTracerCloser) Close() error {
+	if c.tp != nil {
+		ctx := context.Background()
+		return c.tp.Shutdown(ctx)
 	}
 	return nil
 }
 
-func initGCPTracer(ctx context.Context, conf *config.Config) {
+func initTracer(ctx context.Context, conf *config.Config) io.Closer {
+	switch conf.Tracer {
+	case "gcp":
+		return initGCPTracer(ctx, conf)
+	case "jaeger":
+		return initJaegerTracer(conf)
+	default:
+		return nil
+	}
+}
+
+func initGCPTracer(ctx context.Context, conf *config.Config) io.Closer {
+	// Create GCP trace exporter
 	exporter, err := texporter.New(texporter.WithProjectID(conf.GCPProject))
 	if err != nil {
-		log.Fatalf("failed to init GCP tracer: %v", err)
+		log.Fatalf("failed to create GCP trace exporter: %v", err)
 	}
 
-	tp := sdktrace.NewTracerProvider(sdktrace.WithSyncer(exporter), sdktrace.WithSampler(sdktrace.TraceIDRatioBased(conf.TracerSample)))
-	defer func() {
-		_ = tp.ForceFlush(ctx)
-	}()
+	// Detect GCP resources (project, instance, etc.)
+	res, err := resource.New(ctx,
+		resource.WithDetectors(gcp.NewDetector()),
+		resource.WithTelemetrySDK(),
+		resource.WithAttributes(
+			semconv.ServiceNameKey.String("reearth-visualizer"),
+		),
+	)
+	if err != nil {
+		log.Warnf("failed to detect GCP resources: %v, using default resource", err)
+		res, _ = resource.New(ctx,
+			resource.WithTelemetrySDK(),
+			resource.WithAttributes(
+				semconv.ServiceNameKey.String("reearth-visualizer"),
+			),
+		)
+	}
+
+	// Create tracer provider with batch span processor for better performance
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(res),
+		sdktrace.WithSampler(sdktrace.TraceIDRatioBased(conf.TracerSample)),
+	)
 
 	otel.SetTracerProvider(tp)
 
-	log.Infof("tracer: initialized cloud trace with sample fraction: %g", conf.TracerSample)
+	log.Infof("tracer: initialized GCP Cloud Trace (project=%s, sample=%g)", conf.GCPProject, conf.TracerSample)
+
+	return &gcpTracerCloser{tp: tp}
 }
 
 func initJaegerTracer(conf *config.Config) io.Closer {

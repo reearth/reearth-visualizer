@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"slices"
 	"strings"
 	"time"
 
@@ -123,10 +124,32 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		}
 	}
 
-	pagination := internalapimodel.ToProjectPagination(req.Pagination)
+	maxLimit := int64(100)
+	if req.Pagination.Limit != nil && *req.Pagination.Limit > maxLimit {
+		req.Pagination.Limit = &maxLimit
+	}
 
 	// Parse the sort type from the request
 	sort := internalapimodel.ToProjectSortType(req.Sort)
+
+	var pagination *usecasex.Pagination
+	var param *interfaces.ProjectListParam
+	if req.Pagination != nil && req.Pagination.Offset != nil && req.Pagination.Limit != nil {
+		param = &interfaces.ProjectListParam{
+			Offset: req.Pagination.Offset,
+			Limit:  req.Pagination.Limit,
+		}
+		pagination = nil
+	} else {
+		pagination = internalapimodel.ToProjectPagination(req.Pagination)
+		if pagination == nil {
+			defaultLimit := int32(100)
+			req.Pagination = &pb.Pagination{
+				First: &defaultLimit,
+			}
+			pagination = internalapimodel.ToProjectPagination(req.Pagination)
+		}
+	}
 
 	// Convert SearchFieldType to string
 	var searchField *string
@@ -146,7 +169,7 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		visibility = &v
 	}
 
-	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, searchField, visibility)
+	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, param, searchField, visibility)
 
 	if err != nil {
 		log.Errorf("GetAllProjects: Database query failed: %v", err)
@@ -279,7 +302,12 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		ProjectAlias: req.ProjectAlias,
 		Readme:       req.Readme,
 		License:      req.License,
-		Topics:       req.Topics,
+		Topics: func() *[]string {
+			if req.Topics == nil {
+				return nil
+			}
+			return &req.Topics
+		}(),
 	},
 		op,
 	)
@@ -344,7 +372,12 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 		ID:      pid,
 		Readme:  req.Readme,
 		License: req.License,
-		Topics:  req.Topics,
+		Topics: func() *[]string {
+			if req.Topics == nil {
+				return nil
+			}
+			return &req.Topics
+		}(),
 	}, op)
 	if err != nil {
 		return nil, err
@@ -667,4 +700,87 @@ func (s server) getSceneAndStorytelling(ctx context.Context, pj *project.Project
 	}
 
 	return internalapimodel.ToInternalProject(ctx, pj, sts), nil
+}
+
+func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountRequest) (*pb.PatchStarCountResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+	usr := adapter.User(ctx)
+
+	if usr == nil {
+		return nil, errors.New("user not found in context")
+	}
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	pid := pj.ID()
+
+	metadata, err := uc.ProjectMetadata.FindByProjectID(ctx, pid, op)
+	if err != nil {
+		return nil, errors.New("failed to fetch project metadata: " + err.Error())
+	}
+
+	userID := usr.ID().String()
+	workspaceID := pj.Workspace().String()
+	if metadata == nil {
+		starCount := int64(1)
+		starredBy := []string{userID}
+
+		wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
+		if err != nil {
+			return nil, errors.New("failed to convert workspaceID: " + err.Error())
+		}
+		metadata, err = uc.ProjectMetadata.Create(ctx, interfaces.CreateProjectMetadataParam{
+			ProjectID:   pid,
+			WorkspaceID: wid,
+			Readme:      new(string),
+			License:     new(string),
+			Topics:      &[]string{},
+			StarCount:   &starCount,
+			StarredBy:   &starredBy,
+		}, op)
+
+		if err != nil {
+			return nil, errors.New("failed to create project metadata: " + err.Error())
+		}
+
+		return &pb.PatchStarCountResponse{
+			Projectmetadata: internalapimodel.ToProjectMetadata(metadata),
+		}, nil
+	}
+
+	starredBy := []string{}
+	starCount := int64(0)
+
+	if metadata.StarredBy() != nil {
+		starredBy = *metadata.StarredBy()
+	}
+
+	if metadata.StarCount() != nil {
+		starCount = *metadata.StarCount()
+	}
+
+	if slices.Contains(starredBy, userID) {
+		starredBy = slices.Delete(starredBy, slices.Index(starredBy, userID), slices.Index(starredBy, userID)+1)
+		starCount = starCount - 1
+
+	} else {
+		starredBy = append(starredBy, userID)
+		starCount = starCount + 1
+
+	}
+
+	meta, err := uc.ProjectMetadata.Update(ctx, interfaces.UpdateProjectMetadataParam{
+		ID:        pid,
+		StarCount: &starCount,
+		StarredBy: &starredBy,
+	}, op)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.PatchStarCountResponse{
+		Projectmetadata: internalapimodel.ToProjectMetadata(meta),
+	}, nil
 }

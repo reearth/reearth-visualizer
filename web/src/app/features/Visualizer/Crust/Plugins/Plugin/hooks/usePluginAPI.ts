@@ -190,24 +190,43 @@ export function usePluginAPI({
   ]);
 
   const onDispose = useCallback(() => {
-    uiEvents.current?.[1]("close");
+    // Close UI events first
+    try {
+      uiEvents.current?.[1]("close");
+    } catch (err) {
+      console.error("Plugin API: error closing UI events", err);
+    }
+
+    // Clear event references
     uiEvents.current = undefined;
     modalEvents.current = undefined;
     popupEvents.current = undefined;
     extensionEvents.current = undefined;
 
-    viewerEventsRef.current?.[2]?.();
-    viewerEventsRef.current = undefined;
-    selectionModeEventsRef.current?.[2]?.();
-    selectionModeEventsRef.current = undefined;
-    cameraEventsRef.current?.[2]?.();
-    cameraEventsRef.current = undefined;
-    timelineEventsRef.current?.[2]?.();
-    timelineEventsRef.current = undefined;
-    layersEventsRef.current?.[2]?.();
-    layersEventsRef.current = undefined;
-    sketchEventsRef.current?.[2]?.();
-    sketchEventsRef.current = undefined;
+    // Call cancel functions for merged events to properly unsubscribe
+    const eventRefs = [
+      viewerEventsRef,
+      selectionModeEventsRef,
+      cameraEventsRef,
+      timelineEventsRef,
+      layersEventsRef,
+      sketchEventsRef
+    ];
+
+    for (const ref of eventRefs) {
+      let cleanupSucceeded = false;
+      try {
+        if (ref.current?.[2]) {
+          ref.current[2]();
+        }
+        cleanupSucceeded = true;
+      } catch (err) {
+        console.error("Plugin API: error cleaning up events", err);
+      }
+      if (cleanupSucceeded) {
+        ref.current = undefined;
+      }
+    }
 
     if (modalVisible) {
       onPluginModalShow?.();

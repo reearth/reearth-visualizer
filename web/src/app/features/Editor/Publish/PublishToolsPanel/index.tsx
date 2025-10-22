@@ -5,6 +5,8 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
 
+import { usePublishViewDevice } from "../../atoms";
+import Devices from "../../common/Devices";
 import { usePublishPage } from "../context";
 
 import { PublishStatus } from "./common";
@@ -35,9 +37,18 @@ const PublishToolsPanel: FC = () => {
 
   const [isPublishMode, setIsPublishMode] = useState(false);
 
+  const [device, setDevice] = usePublishViewDevice();
+
   return (
     <Panel dataTestid="publish-tools-panel" extend>
       <StyledSecondaryNav>
+        <CenterWrapper>
+          <Devices
+            selectedDevice={device}
+            onDeviceChange={setDevice}
+            data-testid="publish-devices"
+          />
+        </CenterWrapper>
         <LeftSection>
           {publishItems.map((item) => (
             <TabButtonWrapper key={item.id}>
@@ -123,7 +134,8 @@ const LeftSection = styled("div")(({ theme }) => ({
 const ButtonWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   gap: theme.spacing.small,
-  height: "28px"
+  height: "28px",
+  zIndex: 1
 }));
 
 const TabButton = styled(EntryItem)({
@@ -145,3 +157,12 @@ const TabButtonWrapper = styled("div")(({ theme }) => ({
 const StatusWrapper = styled("div")({
   width: "8px"
 });
+
+const CenterWrapper = styled("div")(() => ({
+  position: "absolute",
+  width: "100%",
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
+}));

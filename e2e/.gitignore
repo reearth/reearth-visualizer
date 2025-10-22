@@ -13,3 +13,7 @@ test-results/
 /index.html
 /videos
 auth.json
+.auth
+allure-report
+allure-results
+.allure

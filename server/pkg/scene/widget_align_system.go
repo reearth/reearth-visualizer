@@ -16,6 +16,63 @@ func (l WidgetLocation) Vertical() bool {
 	return l.Area == WidgetAreaMiddle
 }
 
+type WidgetAlignSystems struct {
+	desktop *WidgetAlignSystem
+	mobile  *WidgetAlignSystem
+}
+
+type WidgetAlignSystemType string
+
+const (
+	WidgetAlignSystemTypeDesktop WidgetAlignSystemType = "desktop"
+	WidgetAlignSystemTypeMobile  WidgetAlignSystemType = "mobile"
+)
+
+func NewWidgetAlignSystems() *WidgetAlignSystems {
+	return &WidgetAlignSystems{}
+}
+
+func (wass *WidgetAlignSystems) System(t WidgetAlignSystemType) *WidgetAlignSystem {
+	if wass == nil {
+		return nil
+	}
+	switch t {
+	case WidgetAlignSystemTypeDesktop:
+		if wass.desktop == nil {
+			wass.desktop = NewWidgetAlignSystem()
+		}
+		return wass.desktop
+	case WidgetAlignSystemTypeMobile:
+		if wass.mobile == nil {
+			wass.mobile = NewWidgetAlignSystem()
+		}
+		return wass.mobile
+	}
+	return nil
+}
+
+func (wass *WidgetAlignSystems) SetSystem(t WidgetAlignSystemType, s *WidgetAlignSystem) {
+	if wass == nil {
+		return
+	}
+
+	switch t {
+	case WidgetAlignSystemTypeDesktop:
+		wass.desktop = s
+	case WidgetAlignSystemTypeMobile:
+		wass.mobile = s
+	}
+}
+
+func (wass *WidgetAlignSystems) Remove(wid id.WidgetID) {
+	if wass == nil {
+		return
+	}
+
+	wass.desktop.Remove(wid)
+	wass.mobile.Remove(wid)
+}
+
 // WidgetAlignSystem is the layout structure of any enabled widgets that will be displayed over the scene.
 type WidgetAlignSystem struct {
 	inner *WidgetZone
@@ -106,15 +163,15 @@ func (was *WidgetAlignSystem) Move(wid id.WidgetID, location WidgetLocation, ind
 	}
 }
 
-func (w *WidgetAlignSystem) SetZone(t WidgetZoneType, z *WidgetZone) {
-	if w == nil {
+func (was *WidgetAlignSystem) SetZone(t WidgetZoneType, z *WidgetZone) {
+	if was == nil {
 		return
 	}
 
 	switch t {
 	case WidgetZoneInner:
-		w.inner = z
+		was.inner = z
 	case WidgetZoneOuter:
-		w.outer = z
+		was.outer = z
 	}
 }

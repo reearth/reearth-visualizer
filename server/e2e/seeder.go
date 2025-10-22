@@ -244,7 +244,7 @@ func baseSetup(ctx context.Context, r *repo.Container, f gateway.File) error {
 
 	readme := "xxx readme"
 	license := "yyy license"
-	topics := "zzz topics"
+	topics := []string{"gis", "history"}
 	importResultLog := map[string]any{}
 
 	st := project.ProjectImportStatusNone
@@ -390,7 +390,8 @@ func addWidget(ctx context.Context, s *scene.Scene, r *repo.Container) error {
 		Section: scene.WidgetSectionType(location.Section),
 		Area:    scene.WidgetAreaType(location.Area),
 	}
-	s.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
+	s.Widgets().Alignment().System(scene.WidgetAlignSystemTypeDesktop).Area(loc).Add(widget.ID(), -1)
+	s.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(loc).Add(widget.ID(), -1)
 	if err = r.Property.Save(ctx, prop); err != err {
 		return err
 	}

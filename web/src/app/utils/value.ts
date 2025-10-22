@@ -1,5 +1,10 @@
-import { ValueType as GQLValueType } from "@reearth/services/gql";
+import {
+  ValueType as GQLValueType,
+  WidgetAlignSystemType
+} from "@reearth/services/gql";
 import { css } from "@reearth/services/theme";
+
+import { DeviceType } from "./device";
 
 export type LatLng = {
   lat: number;
@@ -238,4 +243,13 @@ export const typographyStyles = (t?: Typography) => {
 export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
   bool: false,
   string: ""
+};
+
+export const toWidgetAlignSystemType = (
+  device: DeviceType | undefined
+): WidgetAlignSystemType => {
+  if (!device) return WidgetAlignSystemType.Desktop;
+  return device === "mobile"
+    ? WidgetAlignSystemType.Mobile
+    : WidgetAlignSystemType.Desktop;
 };

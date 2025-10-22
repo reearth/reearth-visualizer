@@ -3,7 +3,6 @@ package e2e
 import (
 	"context"
 	"fmt"
-	"strings"
 	"testing"
 	"time"
 
@@ -81,13 +80,11 @@ func TestGetAllProjects(t *testing.T) {
 
 			// Update project metadata to add topics
 			if len(projectTopicList) > 0 {
-				// Join topics with comma for the API
-				topicsStr := strings.Join(projectTopicList, ",")
 
 				// Update project metadata with topics
 				_, err := client.UpdateProjectMetadata(ctx, &pb.UpdateProjectMetadataRequest{
 					ProjectId: res.Project.Id,
-					Topics:    lo.ToPtr(topicsStr),
+					Topics:    projectTopics[res.Project.Id],
 				})
 				require.NoError(t, err)
 			}
@@ -298,8 +295,21 @@ func TestGetAllProjects(t *testing.T) {
 			for i := 0; i < len(res.Projects)-1; i++ {
 				currProject := res.Projects[i]
 				nextProject := res.Projects[i+1]
-				assert.LessOrEqual(t, currProject.StarCount, nextProject.StarCount,
-					"Projects should be sorted by star count in ascending order")
+
+				if currProject.Metadata != nil && nextProject.Metadata != nil {
+					currStarCount := int64(0)
+					nextStarCount := int64(0)
+					if currProject.Metadata.StarCount != nil {
+						currStarCount = *currProject.Metadata.StarCount
+					}
+					if nextProject.Metadata.StarCount != nil {
+						nextStarCount = *nextProject.Metadata.StarCount
+					}
+					assert.LessOrEqual(t, currStarCount, nextStarCount,
+						"Projects should be sorted by star count in ascending order")
+				} else {
+					t.Fail()
+				}
 			}
 		})
 
@@ -326,8 +336,22 @@ func TestGetAllProjects(t *testing.T) {
 			for i := 0; i < len(res.Projects)-1; i++ {
 				currProject := res.Projects[i]
 				nextProject := res.Projects[i+1]
-				assert.GreaterOrEqual(t, currProject.StarCount, nextProject.StarCount,
-					"Projects should be sorted by star count in descending order")
+
+				// Ensure Metadata is not nil before accessing StarCount
+				if currProject.Metadata != nil && nextProject.Metadata != nil {
+					currStarCount := int64(0)
+					nextStarCount := int64(0)
+					if currProject.Metadata.StarCount != nil {
+						currStarCount = *currProject.Metadata.StarCount
+					}
+					if nextProject.Metadata.StarCount != nil {
+						nextStarCount = *nextProject.Metadata.StarCount
+					}
+					assert.GreaterOrEqual(t, currStarCount, nextStarCount,
+						"Projects should be sorted by star count in descending order")
+				} else {
+					t.Fail()
+				}
 			}
 		})
 

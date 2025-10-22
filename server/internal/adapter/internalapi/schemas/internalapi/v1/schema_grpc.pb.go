@@ -34,6 +34,7 @@ const (
 	ReEarthVisualizer_GetProjectByProjectAlias_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByProjectAlias"
 	ReEarthVisualizer_UpdateByProjectAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateByProjectAlias"
 	ReEarthVisualizer_DeleteByProjectAlias_FullMethodName     = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteByProjectAlias"
+	ReEarthVisualizer_PatchStarCount_FullMethodName           = "/reearth.visualizer.v1.ReEarthVisualizer/PatchStarCount"
 )
 
 // ReEarthVisualizerClient is the client API for ReEarthVisualizer service.
@@ -84,6 +85,9 @@ type ReEarthVisualizerClient interface {
 	// Deletes a project by project alias.
 	// Request headers: user-id: <User ID>
 	DeleteByProjectAlias(ctx context.Context, in *DeleteByProjectAliasRequest, opts ...grpc.CallOption) (*DeleteByProjectAliasResponse, error)
+	// Update a project's star count
+	// Request headers: user-id: <User ID>
+	PatchStarCount(ctx context.Context, in *PatchStarCountRequest, opts ...grpc.CallOption) (*PatchStarCountResponse, error)
 }
 
 type reEarthVisualizerClient struct {
@@ -244,6 +248,16 @@ func (c *reEarthVisualizerClient) DeleteByProjectAlias(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *reEarthVisualizerClient) PatchStarCount(ctx context.Context, in *PatchStarCountRequest, opts ...grpc.CallOption) (*PatchStarCountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PatchStarCountResponse)
+	err := c.cc.Invoke(ctx, ReEarthVisualizer_PatchStarCount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ReEarthVisualizerServer is the server API for ReEarthVisualizer service.
 // All implementations must embed UnimplementedReEarthVisualizerServer
 // for forward compatibility.
@@ -292,6 +306,9 @@ type ReEarthVisualizerServer interface {
 	// Deletes a project by project alias.
 	// Request headers: user-id: <User ID>
 	DeleteByProjectAlias(context.Context, *DeleteByProjectAliasRequest) (*DeleteByProjectAliasResponse, error)
+	// Update a project's star count
+	// Request headers: user-id: <User ID>
+	PatchStarCount(context.Context, *PatchStarCountRequest) (*PatchStarCountResponse, error)
 	mustEmbedUnimplementedReEarthVisualizerServer()
 }
 
@@ -346,6 +363,9 @@ func (UnimplementedReEarthVisualizerServer) UpdateByProjectAlias(context.Context
 }
 func (UnimplementedReEarthVisualizerServer) DeleteByProjectAlias(context.Context, *DeleteByProjectAliasRequest) (*DeleteByProjectAliasResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteByProjectAlias not implemented")
+}
+func (UnimplementedReEarthVisualizerServer) PatchStarCount(context.Context, *PatchStarCountRequest) (*PatchStarCountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PatchStarCount not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) mustEmbedUnimplementedReEarthVisualizerServer() {}
 func (UnimplementedReEarthVisualizerServer) testEmbeddedByValue()                           {}
@@ -638,6 +658,24 @@ func _ReEarthVisualizer_DeleteByProjectAlias_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ReEarthVisualizer_PatchStarCount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PatchStarCountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ReEarthVisualizerServer).PatchStarCount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ReEarthVisualizer_PatchStarCount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ReEarthVisualizerServer).PatchStarCount(ctx, req.(*PatchStarCountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ReEarthVisualizer_ServiceDesc is the grpc.ServiceDesc for ReEarthVisualizer service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -704,6 +742,10 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteByProjectAlias",
 			Handler:    _ReEarthVisualizer_DeleteByProjectAlias_Handler,
+		},
+		{
+			MethodName: "PatchStarCount",
+			Handler:    _ReEarthVisualizer_PatchStarCount_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

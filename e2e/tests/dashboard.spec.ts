@@ -3,10 +3,12 @@ import path from "path";
 import { faker } from "@faker-js/faker";
 import { test, expect, BrowserContext, Page } from "@playwright/test";
 
+import { STORAGE_STATE } from "../global-setup";
 import { DashBoardPage } from "../pages/dashBoardPage";
 import { ProjectScreenPage } from "../pages/projectScreenPage";
 import { ProjectsPage } from "../pages/projectsPage";
 import { RecycleBinPage } from "../pages/recycleBinPage";
+import { createIAPContext } from "../utils/iap-auth";
 
 const REEARTH_E2E_EMAIL = process.env.REEARTH_E2E_EMAIL;
 const REEARTH_E2E_PASSWORD = process.env.REEARTH_E2E_PASSWORD;
@@ -14,10 +16,10 @@ const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
-const projectName = faker.lorem.word(5);
+const projectName = faker.lorem.words(2);
 const projectDescription = faker.lorem.sentence();
-const specialProjectName = faker.lorem.word(5) + "!@#$%^&*()_+";
-const projectAlias = faker.lorem.word(15);
+const specialProjectName = faker.lorem.words(2) + "!@#$%^&*()_+";
+const projectAlias = faker.string.alphanumeric(15);
 
 const fileName = "Test_Asset_migration.zip";
 const docPath = path.resolve(__dirname, "../test-data", fileName);
@@ -31,19 +33,17 @@ test.describe("DASHBOARD - Test cases", () => {
   let recycleBinPage: RecycleBinPage;
   let projectScreenPage: ProjectScreenPage;
   test.beforeAll(async ({ browser }) => {
-    test.setTimeout(20000);
-    context = await browser.newContext({
-      recordVideo: {
-        dir: "videos/",
-        size: { width: 1280, height: 720 }
-      }
+    context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "", {
+      storageState: STORAGE_STATE
     });
     page = await context.newPage();
     dashBoardPage = new DashBoardPage(page);
     projectsPage = new ProjectsPage(page);
     recycleBinPage = new RecycleBinPage(page);
     projectScreenPage = new ProjectScreenPage(page);
-    await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
+    await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
+      waitUntil: "networkidle"
+    });
   });
   // eslint-disable-next-line no-empty-pattern
   test.afterEach(async ({}, testInfo) => {
@@ -61,7 +61,6 @@ test.describe("DASHBOARD - Test cases", () => {
   });
 
   test("Verify dashboard is loaded", async () => {
-    await page.goto(REEARTH_WEB_E2E_BASEURL);
     await expect(dashBoardPage.projects).toBeVisible();
     await expect(dashBoardPage.recycleBin).toBeVisible();
     await expect(dashBoardPage.pluginPlayground).toBeVisible();
@@ -188,16 +187,15 @@ test.describe("DASHBOARD - Test cases", () => {
     let projectsPage: ProjectsPage;
     test.beforeAll(async ({ browser }) => {
       test.setTimeout(20000);
-      context = await browser.newContext({
-        recordVideo: {
-          dir: "videos/",
-          size: { width: 1280, height: 720 }
-        }
+      context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL || "", {
+        storageState: STORAGE_STATE
       });
       page = await context.newPage();
       dashBoardPage = new DashBoardPage(page);
       projectsPage = new ProjectsPage(page);
-      await page.goto(REEARTH_WEB_E2E_BASEURL, { waitUntil: "networkidle" });
+      await page.goto(REEARTH_WEB_E2E_BASEURL, {
+        waitUntil: "domcontentloaded"
+      });
     });
 
     // eslint-disable-next-line no-empty-pattern
@@ -216,7 +214,7 @@ test.describe("DASHBOARD - Test cases", () => {
     });
     test("Verify dashboard is loaded", async () => {
       await page.goto(REEARTH_WEB_E2E_BASEURL + "/dashboard", {
-        waitUntil: "networkidle"
+        waitUntil: "domcontentloaded"
       });
       await expect(dashBoardPage.projects).toBeVisible();
       await expect(dashBoardPage.recycleBin).toBeVisible();

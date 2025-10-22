@@ -92,7 +92,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Ope
 		return []*project.Project{}, err
 	}
 
-	projects, err = i.addMetadata(ctx, projects, false, op)
+	projects, err = i.addMetadatas(ctx, projects, false, op)
 	if err != nil {
 		return nil, err
 	}
@@ -112,7 +112,7 @@ func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.Workspa
 		return projects, pInfo, err
 	}
 
-	projects, err = i.addMetadata(ctx, projects, true, op)
+	projects, err = i.addMetadatas(ctx, projects, true, op)
 	if err != nil {
 		return projects, pInfo, err
 	}
@@ -120,11 +120,17 @@ func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.Workspa
 	return projects, pInfo, nil
 }
 
-func (i *Project) addMetadata(ctx context.Context, projects []*project.Project, exclude bool, op *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project, exclude bool, op *usecase.Operator) ([]*project.Project, error) {
 
 	ids := make(id.ProjectIDList, 0, len(projects))
 	for _, p := range projects {
-		ids = append(ids, p.ID())
+		if p != nil {
+			ids = append(ids, p.ID())
+		}
+	}
+
+	if len(ids) == 0 {
+		return []*project.Project{}, nil
 	}
 
 	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
@@ -341,13 +347,18 @@ func (i *Project) FindVisibilityByWorkspace(
 	return result, pInfo, err
 }
 
-func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, param *interfaces.ProjectListParam, searchField *string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
 	pFilter := repo.ProjectFilter{
 		Keyword:     keyword,
 		Sort:        sort,
 		Pagination:  pagination,
 		SearchField: searchField,
 		Visibility:  visibility,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
 	}
 
 	pList, pInfo, err := i.projectRepo.FindAll(ctx, pFilter)
@@ -1202,10 +1213,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	if ret, ok := projectData["license"].(string); ok {
 		license = &ret
 	}
-	var topics *string
-	if ret, ok := projectData["topics"].(string); ok {
-		topics = &ret
-	}
+	topics := input.Topics
 
 	visibility := project.VisibilityPublic
 	if i.policyChecker != nil {
@@ -1291,7 +1299,7 @@ type createProjectInput struct {
 	// metadata
 	Readme  *string
 	License *string
-	Topics  *string
+	Topics  *[]string
 }
 
 var (
@@ -1327,12 +1335,16 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	metadata, err := i.projectMetadataRepo.FindByProjectID(ctx, prjID)
 	if metadata == nil || err != nil { // if not found
+		starCount := int64(0)
+		starredBy := []string{}
 		metadata, err = project.NewProjectMetadata().
 			NewID().
 			Workspace(input.WorkspaceID).
 			Project(prjID).
 			ImportStatus(&input.ImportStatus).
 			ImportResultLog(input.ImportResultLog).
+			StarCount(&starCount).
+			StarredBy(&starredBy).
 			Build()
 		if err != nil {
 			return nil, err

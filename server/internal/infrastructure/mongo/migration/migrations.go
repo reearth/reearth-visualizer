@@ -13,7 +13,6 @@ var migrations = migration.Migrations[DBClient]{
 	201217132559: AddSceneWidgetId,
 	201217193948: AddSceneDefaultTile,
 	210310145844: RemovePreviewToken,
-	210730175108: AddSceneAlignSystem,
 	220214180713: SplitSchemaOfProperties,
 	220309174648: AddSceneFieldToPropertySchema,
 	221028204300: MoveTerrainProperties,
@@ -36,5 +35,8 @@ var migrations = migration.Migrations[DBClient]{
 	250725133631: SetPhotoOverlayDefault,
 	250725145932: ConvertNonValidProjectAliases,
 	250820113009: ChangeEsriToDefault,
-	250925135245: AddProjectMetadataFields,
+	251010100253: MultipleWidgetAlignSystems,
+	251010100300: AddDefaultDataAttributionForMobile,
+	251022100100: UpdateProjectMetadataFields,
+	251022133500: UpdateProjectMetadataFields,
 }

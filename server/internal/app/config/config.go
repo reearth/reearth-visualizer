@@ -37,7 +37,7 @@ type Config struct {
 	GCPProject       string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
 	Profiler         string            `pp:",omitempty"`
 	Tracer           string            `pp:",omitempty"`
-	TracerSample     float64           `pp:",omitempty"`
+	TracerSample     float64           `default:"0.01" pp:",omitempty"`
 	Marketplace      MarketplaceConfig `pp:",omitempty"`
 	AssetBaseURL     string            `default:"http://localhost:8080/assets"`
 	Origins          []string          `pp:",omitempty"`
@@ -77,6 +77,15 @@ type Config struct {
 	HealthCheck HealthCheckConfig `pp:",omitempty"`
 
 	Visualizer VisualizerConfig `pp:",omitempty"`
+
+	// Accounts API Configuration
+	AccountsAPI AccountsAPIConfig `pp:",omitempty"`
+}
+
+type AccountsAPIConfig struct {
+	Enabled bool   `default:"false"`
+	Host    string `default:"http://localhost:8081"`
+	Timeout int    `default:"30"`
 }
 
 type HealthCheckConfig struct {

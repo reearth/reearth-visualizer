@@ -2,7 +2,6 @@ package internalapimodel
 
 import (
 	"context"
-	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
@@ -153,7 +152,6 @@ func ToInternalProject(ctx context.Context, p *project.Project, storytellings *s
 		IsDeleted:    p.IsDeleted(),
 		Visibility:   p.Visibility(),
 		ProjectAlias: p.ProjectAlias(),
-		StarCount:    p.StarCount(),
 
 		EditorUrl: editorUrl,
 
@@ -184,6 +182,7 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 	if p.UpdatedAt() != nil {
 		updatedAt = timestamppb.New(*p.UpdatedAt())
 	}
+
 	return &pb.ProjectMetadata{
 		Id:          p.ID().String(),
 		ProjectId:   p.Project().String(),
@@ -191,10 +190,22 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 		Readme:      p.Readme(),
 		License:     p.License(),
 		Topics: func() []string {
-			if p.Topics() != nil && *p.Topics() != "" {
-				return strings.Split(*p.Topics(), ",")
+			if p.Topics() == nil || len(*p.Topics()) == 0 {
+				return []string{}
 			}
-			return nil
+			return *p.Topics()
+		}(),
+		StarCount: func() *int64 {
+			if p.StarCount() == nil {
+				return lo.ToPtr(int64(0))
+			}
+			return p.StarCount()
+		}(),
+		StarredBy: func() []string {
+			if p.StarredBy() == nil || len(*p.StarredBy()) == 0 {
+				return []string{}
+			}
+			return *p.StarredBy()
 		}(),
 		ImportStatus: importStatus,
 		CreatedAt:    createdAt,
