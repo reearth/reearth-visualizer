@@ -283,7 +283,7 @@ func fieldTracer() graphql.FieldMiddleware {
 			defer span.End()
 
 			// Add field arguments if present
-			if fieldCtx.Args != nil && len(fieldCtx.Args) > 0 {
+			if len(fieldCtx.Args) > 0 {
 				for key := range fieldCtx.Args {
 					span.SetAttributes(attribute.String("graphql.field.arg."+key, "present"))
 				}
