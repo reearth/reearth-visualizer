@@ -38,4 +38,5 @@ var migrations = migration.Migrations[DBClient]{
   251010100253: MultipleWidgetAlignSystems,
   251010100300: AddDefaultDataAttributionForMobile,
   251014135245: UpdateProjectMetadataFields,
+  251022100000: ConvertTopicsToString,
 }
