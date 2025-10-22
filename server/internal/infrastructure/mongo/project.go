@@ -558,37 +558,24 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		visibility = *pFilter.Visibility
 	}
 
+	// Check if we need to filter by topics (which requires joining with projectmetadata)
+	if pFilter.Topics != nil && len(*pFilter.Topics) > 0 {
+		return r.findAllWithTopicsFilter(ctx, pFilter, visibility)
+	}
+
+	// Original implementation for non-topics search
 	filter := bson.M{
 		"visibility": visibility,
 		"deleted":    false,
 	}
 
 	if pFilter.Keyword != nil {
-		// Check if we should search in topics
-		if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
-			keyword := strings.ToLower(*pFilter.Keyword)
-
-			topicKeywords := strings.Split(keyword, ",")
-
-			for i := range topicKeywords {
-				topicKeywords[i] = strings.TrimSpace(topicKeywords[i])
-			}
-
-			// If multiple topics, use $in operator to match any of them
-			if len(topicKeywords) > 1 {
-				filter["topics"] = bson.M{"$in": topicKeywords}
-			} else {
-				// Add the single topic condition to the existing filter
-				filter["topics"] = keyword
-			}
-		} else {
-			// Add name regex search directly to the filter
-			filter["name"] = bson.M{
-				"$regex": primitive.Regex{
-					Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
-					Options: "i",
-				},
-			}
+		// Add name regex search directly to the filter
+		filter["name"] = bson.M{
+			"$regex": primitive.Regex{
+				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
+				Options: "i",
+			},
 		}
 	}
 
@@ -930,4 +917,123 @@ func filterProjects(ids []id.ProjectID, rows []*project.Project) []*project.Proj
 		res = append(res, r2)
 	}
 	return res
+}
+
+func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.ProjectFilter, visibility string) ([]*project.Project, *usecasex.PageInfo, error) {
+	// Build aggregation pipeline
+	matchStage := bson.M{
+		"$match": bson.M{
+			"visibility": visibility,
+			"deleted":    false,
+		},
+	}
+
+	// Add keyword search for name if provided
+	if pFilter.Keyword != nil {
+		matchStage["$match"].(bson.M)["name"] = bson.M{
+			"$regex": primitive.Regex{
+				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
+				Options: "i",
+			},
+		}
+	}
+
+	lookupStage := bson.M{
+		"$lookup": bson.M{
+			"from":         "projectmetadata",
+			"localField":   "id",
+			"foreignField": "project",
+			"as":           "metadata",
+		},
+	}
+
+	// Build topics match condition
+	topicsMatchStage := bson.M{
+		"$match": bson.M{
+			"metadata.topics": bson.M{"$in": *pFilter.Topics},
+		},
+	}
+
+	pipeline := []bson.M{matchStage, lookupStage, topicsMatchStage}
+
+	// Handle sorting
+	if pFilter.Sort != nil {
+		sortKey := pFilter.Sort.Key
+		if sortKey == "starcount" {
+			sortKey = "star_count"
+		}
+		sortOrder := 1
+		if pFilter.Sort.Desc {
+			sortOrder = -1
+		}
+		sortStage := bson.M{
+			"$sort": bson.D{{Key: sortKey, Value: sortOrder}},
+		}
+		pipeline = append(pipeline, sortStage)
+	} else {
+		// Default sort by star_count descending
+		sortStage := bson.M{
+			"$sort": bson.D{{Key: "star_count", Value: -1}},
+		}
+		pipeline = append(pipeline, sortStage)
+	}
+
+	// Count total documents with aggregation
+	countPipeline := make([]bson.M, len(pipeline))
+	copy(countPipeline, pipeline)
+	countPipeline = append(countPipeline, bson.M{"$count": "total"})
+
+	countCursor, err := r.client.Client().Aggregate(ctx, countPipeline)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer countCursor.Close(ctx)
+
+	var totalCount int64 = 0
+	if countCursor.Next(ctx) {
+		var result struct {
+			Total int64 `bson:"total"`
+		}
+		if err := countCursor.Decode(&result); err == nil {
+			totalCount = result.Total
+		}
+	}
+
+	// Handle pagination
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
+		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
+	}
+
+	// Execute aggregation
+	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer cursor.Close(ctx)
+
+	consumer := mongodoc.NewProjectConsumer(nil)
+	for cursor.Next(ctx) {
+		raw := cursor.Current
+		if err := consumer.Consume(raw); err != nil {
+			return nil, nil, err
+		}
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	var hasNextPage, hasPreviousPage bool
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
+		hasPreviousPage = *pFilter.Offset > 0
+	}
+
+	pageInfo := &usecasex.PageInfo{
+		TotalCount:      totalCount,
+		HasNextPage:     hasNextPage,
+		HasPreviousPage: hasPreviousPage,
+	}
+
+	return consumer.Result, pageInfo, nil
 }
