@@ -129,7 +129,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// auth srv
 	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
 
-	// publicapis
+	// public apis
 	api := e.Group("/api")
 	api.GET("/ping", Ping(), privateCache)
 	api.GET("/published/:name", PublishedMetadata())
