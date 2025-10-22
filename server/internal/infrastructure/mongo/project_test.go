@@ -234,34 +234,59 @@ func TestProject_FindAll(t *testing.T) {
 	pid4 := id.NewProjectID()
 
 	// Create projects with different visibility and names
+	now := time.Now()
 	_, err := c.Collection("project").InsertMany(ctx, []any{
 		bson.M{
-			"id":         pid1.String(),
-			"workspace":  wid.String(),
-			"name":       "Public Project 1",
-			"deleted":    false,
-			"visibility": "public",
+			"id":          pid1.String(),
+			"workspace":   wid.String(),
+			"name":        "Public Project 1",
+			"description": "Description for Public Project 1",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
 		},
 		bson.M{
-			"id":         pid2.String(),
-			"workspace":  wid.String(),
-			"name":       "Public Project 2",
-			"deleted":    false,
-			"visibility": "public",
+			"id":          pid2.String(),
+			"workspace":   wid.String(),
+			"name":        "Public Project 2",
+			"description": "Description for Public Project 2",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
 		},
 		bson.M{
-			"id":         pid3.String(),
-			"workspace":  wid.String(),
-			"name":       "Private Project 3",
-			"deleted":    false,
-			"visibility": "private",
+			"id":          pid3.String(),
+			"workspace":   wid.String(),
+			"name":        "Private Project 3",
+			"description": "Description for Private Project 3",
+			"deleted":     false,
+			"visibility":  "private",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
 		},
 		bson.M{
-			"id":         pid4.String(),
-			"workspace":  wid.String(),
-			"name":       "Deleted Project 4",
-			"deleted":    true,
-			"visibility": "public",
+			"id":          pid4.String(),
+			"workspace":   wid.String(),
+			"name":        "Deleted Project 4",
+			"description": "Description for Deleted Project 4",
+			"deleted":     true,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
 		},
 	})
 	assert.NoError(t, err)
@@ -297,8 +322,12 @@ func TestProject_FindAll(t *testing.T) {
 
 	t.Run("FindAll without filters", func(t *testing.T) {
 		visibility := "public"
+		limit := int64(100)
+		offset := int64(0)
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
 		}
 
 		got, pageInfo, err := r.FindAll(ctx, filter)
@@ -315,9 +344,13 @@ func TestProject_FindAll(t *testing.T) {
 	t.Run("FindAll with keyword filter", func(t *testing.T) {
 		keyword := "Project 1"
 		visibility := "public"
+		limit := int64(100)
+		offset := int64(0)
 		filter := repo.ProjectFilter{
 			Keyword:    &keyword,
 			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
 		}
 
 		got, pageInfo, err := r.FindAll(ctx, filter)
