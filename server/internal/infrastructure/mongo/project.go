@@ -559,7 +559,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 
 	// Check if we need to filter by topics (which requires joining with projectmetadata)
-	if pFilter.Topics != nil && len(pFilter.Topics) > 0 {
+	if len(pFilter.Topics) > 0 {
 		return r.findAllWithTopicsFilter(ctx, pFilter, visibility)
 	}
 
