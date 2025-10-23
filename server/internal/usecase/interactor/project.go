@@ -352,7 +352,7 @@ func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.So
 		Keyword:    keyword,
 		Sort:       sort,
 		Pagination: pagination,
-		Topics:     topics,
+		Topics:     *topics,
 		Visibility: visibility,
 	}
 

@@ -365,7 +365,7 @@ func TestProject_FindAll(t *testing.T) {
 		topics := []string{"gis"}
 		visibility := "public"
 		filter := repo.ProjectFilter{
-			Topics:     &topics,
+			Topics:     topics,
 			Visibility: &visibility,
 		}
 
@@ -380,7 +380,7 @@ func TestProject_FindAll(t *testing.T) {
 		topics := []string{"gis", "3d"}
 		visibility := "public"
 		filter := repo.ProjectFilter{
-			Topics:     &topics,
+			Topics:     topics,
 			Visibility: &visibility,
 		}
 
@@ -400,7 +400,7 @@ func TestProject_FindAll(t *testing.T) {
 		visibility := "public"
 		filter := repo.ProjectFilter{
 			Keyword:    &keyword,
-			Topics:     &topics,
+			Topics:     topics,
 			Visibility: &visibility,
 		}
 
@@ -415,7 +415,7 @@ func TestProject_FindAll(t *testing.T) {
 		topics := []string{"nonexistent"}
 		visibility := "public"
 		filter := repo.ProjectFilter{
-			Topics:     &topics,
+			Topics:     topics,
 			Visibility: &visibility,
 		}
 
@@ -430,7 +430,7 @@ func TestProject_FindAll(t *testing.T) {
 		topics := []string{"gis"}
 		visibility := "private"
 		filter := repo.ProjectFilter{
-			Topics:     &topics,
+			Topics:     topics,
 			Visibility: &visibility,
 		}
 
