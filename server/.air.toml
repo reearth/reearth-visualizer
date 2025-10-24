@@ -4,7 +4,7 @@ tmp_dir = "tmp"
 
 [build]
 # execute command
-cmd = "go build -o ./tmp/api ./cmd/reearth"
+cmd = "go build -ldflags=\"-X main.version=0.0.1\" -o ./tmp/api ./cmd/reearth"
 bin = "tmp/api"
 full_bin = "tmp/api"
 delay = 1000 # ms

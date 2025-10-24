@@ -22,7 +22,7 @@ type WebHandler struct {
 	FS          afero.Fs
 }
 
-func (w *WebHandler) Handler(e *echo.Echo) {
+func (w *WebHandler) Handler(ec *echo.Echo) {
 	if w.Disabled {
 		return
 	}
@@ -86,20 +86,20 @@ func (w *WebHandler) Handler(e *echo.Echo) {
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
-	e.GET("/reearth_config.json", func(c echo.Context) error {
+	ec.GET("/reearth_config.json", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, cfg)
 	})
-	e.GET("/data.json", PublishedData(w.HostPattern, false))
+	ec.GET("/data.json", PublishedData(w.HostPattern, false))
 	if favicon != nil && faviconPath != "" {
-		e.GET(faviconPath, func(c echo.Context) error {
+		ec.GET(faviconPath, func(c echo.Context) error {
 			return c.Blob(http.StatusOK, "image/vnd.microsoft.icon", favicon)
 		})
 	}
-	e.GET("/index.html", func(c echo.Context) error {
+	ec.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
 	})
-	e.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), static)
-	e.GET("*", notFound, static)
+	ec.GET("/", notFound, PublishedIndexMiddleware(w.HostPattern, false, w.AppDisabled), static)
+	ec.GET("*", notFound, static)
 }
 
 func (w *WebHandler) hostWithSchema() string {

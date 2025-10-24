@@ -17,7 +17,7 @@ import (
 )
 
 func Start(debug bool, version string) {
-	log.Infof("reearth %s", version)
+	log.Infof("Re:Earth Visualizer API version %s", version)
 
 	ctx := context.Background()
 
@@ -32,7 +32,7 @@ func Start(debug bool, version string) {
 	initProfiler(conf.Profiler, version)
 
 	// Init tracer
-	closer := initTracer(ctx, conf)
+	closer := initTracer(ctx, conf, version)
 	defer func() {
 		if closer != nil {
 			if err := closer.Close(); err != nil {
