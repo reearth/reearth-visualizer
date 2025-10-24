@@ -159,7 +159,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	}
 
 	servSplitUploadFiles(apiPrivate, cfg)
-	servSignatureUploadFiles(apiPrivate, cfg)
+	servSignatureUploadFiles(e, apiPrivate, cfg)
 
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,

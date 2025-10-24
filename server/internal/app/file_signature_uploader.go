@@ -46,6 +46,7 @@ type Notification struct {
 }
 
 func servSignatureUploadFiles(
+	ec *echo.Echo,
 	apiPrivate *echo.Group,
 	cfg *ServerConfig,
 ) {
@@ -91,7 +92,9 @@ func servSignatureUploadFiles(
 		}),
 	)
 
-	apiPrivate.POST("/import-project",
+	// this endpoint is called from cloud function triggered by GCS event
+	// so it is not authenticated
+	ec.POST("/api/import-project",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
 			n, err := ParseNotification(c)
