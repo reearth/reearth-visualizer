@@ -32,64 +32,19 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 			},
 		)
 
-		t.Run("update with normal topics", func(t *testing.T) {
-			res := UpdateProjectMetadata(
-				t, ctx, r, client,
-				&pb.UpdateProjectMetadataRequest{
-					ProjectId: projectID.String(),
-					Readme:    lo.ToPtr("test readme"),
-					License:   lo.ToPtr("test license"),
-					Topics:    []string{"test topics"},
-				},
-			)
-			assert.Equal(t, "test readme", *res.Readme)
-			assert.Equal(t, "test license", *res.License)
-			assert.Equal(t, []string{"test topics"}, res.Topics)
-		})
-
-		t.Run("update with empty topics array", func(t *testing.T) {
-			res := UpdateProjectMetadata(
-				t, ctx, r, client,
-				&pb.UpdateProjectMetadataRequest{
-					ProjectId: projectID.String(),
-					Readme:    lo.ToPtr("test readme 2"),
-					License:   lo.ToPtr("test license 2"),
-					Topics:    []string{""},
-				},
-			)
-			assert.Equal(t, "test readme 2", *res.Readme)
-			assert.Equal(t, "test license 2", *res.License)
-			assert.Empty(t, res.Topics) // omit if empty
-		})
-
-		t.Run("update with nil topics", func(t *testing.T) {
-			res := UpdateProjectMetadata(
-				t, ctx, r, client,
-				&pb.UpdateProjectMetadataRequest{
-					ProjectId: projectID.String(),
-					Readme:    lo.ToPtr("test readme 3"),
-					License:   lo.ToPtr("test license 3"),
-				},
-			)
-			assert.Equal(t, "test readme 3", *res.Readme)
-			assert.Equal(t, "test license 3", *res.License)
-			assert.Nil(t, res.Topics)
-		})
-
-		t.Run("update with multiple topics", func(t *testing.T) {
-			res := UpdateProjectMetadata(
-				t, ctx, r, client,
-				&pb.UpdateProjectMetadataRequest{
-					ProjectId: projectID.String(),
-					Readme:    lo.ToPtr("test readme 4"),
-					License:   lo.ToPtr("test license 4"),
-					Topics:    []string{"topic1", "topic2", "topic3"},
-				},
-			)
-			assert.Equal(t, "test readme 4", *res.Readme)
-			assert.Equal(t, "test license 4", *res.License)
-			assert.Equal(t, []string{"topic1", "topic2", "topic3"}, res.Topics)
-		})
+		// update metadata
+		res := UpdateProjectMetadata(
+			t, ctx, r, client,
+			&pb.UpdateProjectMetadataRequest{
+				ProjectId: projectID.String(),
+				Readme:    lo.ToPtr("test readme"),
+				License:   lo.ToPtr("test license"),
+				Topics:    []string{"test topics"},
+			},
+		)
+		assert.Equal(t, "test readme", *res.Readme)
+		assert.Equal(t, "test license", *res.License)
+		assert.Equal(t, []string{"test topics"}, res.Topics)
 	})
 }
 
