@@ -376,6 +376,10 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 			if req.Topics == nil {
 				return nil
 			}
+			if len(req.Topics) == 1 && req.Topics[0] == "" {
+				empty := []string{}
+				return &empty
+			}
 			return &req.Topics
 		}(),
 	}, op)
