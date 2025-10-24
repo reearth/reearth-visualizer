@@ -130,36 +130,36 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
 
 	// public apis
-	api := e.Group("/api")
-	api.GET("/ping", Ping(), privateCache)
-	api.GET("/published/:name", PublishedMetadata())
-	api.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
-	api.GET("/published_data/:name", PublishedData("", true))
+	apiRoot := e.Group("/api")
+	apiRoot.GET("/ping", Ping(), privateCache)
+	apiRoot.GET("/published/:name", PublishedMetadata())
+	apiRoot.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
+	apiRoot.GET("/published_data/:name", PublishedData("", true))
 	published := e.Group("/p", PublishedAuthMiddleware())
 	published.GET("/:name/data.json", PublishedData("", true))
 	published.GET("/:name/", PublishedIndex("", true))
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
-	apiPrivate := api.Group("", privateCache)
+	apiPrivateRoute := apiRoot.Group("", privateCache)
 	// private apis
 	if cfg.AccountsAPIClient != nil {
-		apiPrivate.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
+		apiPrivateRoute.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
 			AccountsClient: cfg.AccountsAPIClient,
 		})...)
 	}
-	apiPrivate.Use(attachOpMiddleware(cfg))
+	apiPrivateRoute.Use(attachOpMiddleware(cfg))
 
-	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
-	apiPrivate.POST("/signup", Signup())
+	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
+	apiPrivateRoute.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {
-		apiPrivate.POST("/signup/verify", StartSignupVerify())
-		apiPrivate.POST("/signup/verify/:code", SignupVerify())
-		apiPrivate.POST("/password-reset", PasswordReset())
+		apiPrivateRoute.POST("/signup/verify", StartSignupVerify())
+		apiPrivateRoute.POST("/signup/verify/:code", SignupVerify())
+		apiPrivateRoute.POST("/password-reset", PasswordReset())
 	}
 
-	servSplitUploadFiles(apiPrivate, cfg)
-	servSignatureUploadFiles(e, apiPrivate, cfg)
+	servSplitUploadFiles(apiPrivateRoute, cfg)
+	servSignatureUploadFiles(apiRoot, apiPrivateRoute, cfg)
 
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,

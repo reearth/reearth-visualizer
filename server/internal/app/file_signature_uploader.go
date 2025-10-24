@@ -46,14 +46,14 @@ type Notification struct {
 }
 
 func servSignatureUploadFiles(
-	ec *echo.Echo,
-	apiPrivate *echo.Group,
+	apiRoot *echo.Group,
+	apiPrivateRoute *echo.Group,
 	cfg *ServerConfig,
 ) {
 
 	securityHandler := SecurityHandler(cfg, enableDataLoaders)
 
-	apiPrivate.POST("/signature-url",
+	apiPrivateRoute.POST("/signature-url",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
 			workspaceID, err := accountdomain.WorkspaceIDFrom(c.FormValue("workspace_id"))
@@ -94,7 +94,7 @@ func servSignatureUploadFiles(
 
 	// this endpoint is called from cloud function triggered by GCS event
 	// so it is not authenticated
-	ec.POST("/api/import-project",
+	apiRoot.POST("/import-project",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
 			n, err := ParseNotification(c)
