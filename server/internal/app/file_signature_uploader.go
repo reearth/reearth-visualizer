@@ -46,13 +46,13 @@ type Notification struct {
 }
 
 func servSignatureUploadFiles(
-	ec *echo.Echo,
+	apiPrivate *echo.Group,
 	cfg *ServerConfig,
 ) {
 
 	securityHandler := SecurityHandler(cfg, enableDataLoaders)
 
-	ec.POST("/api/signature-url",
+	apiPrivate.POST("/signature-url",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
 			workspaceID, err := accountdomain.WorkspaceIDFrom(c.FormValue("workspace_id"))
@@ -91,7 +91,7 @@ func servSignatureUploadFiles(
 		}),
 	)
 
-	ec.POST("/api/import-project",
+	apiPrivate.POST("/import-project",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
 			n, err := ParseNotification(c)

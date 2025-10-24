@@ -140,15 +140,15 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	published.GET("/:name/", PublishedIndex("", true))
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
+	apiPrivate := api.Group("", privateCache)
 	// private apis
 	if cfg.AccountsAPIClient != nil {
-		e.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
+		apiPrivate.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
 			AccountsClient: cfg.AccountsAPIClient,
 		})...)
 	}
-	e.Use(attachOpMiddleware(cfg))
+	apiPrivate.Use(attachOpMiddleware(cfg))
 
-	apiPrivate := api.Group("", privateCache)
 	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
 	apiPrivate.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
@@ -158,8 +158,8 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		apiPrivate.POST("/password-reset", PasswordReset())
 	}
 
-	servSplitUploadFiles(e, cfg)
-	servSignatureUploadFiles(e, cfg)
+	servSplitUploadFiles(apiPrivate, cfg)
+	servSignatureUploadFiles(apiPrivate, cfg)
 
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,

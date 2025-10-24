@@ -51,7 +51,7 @@ type SplitUploadSession struct {
 }
 
 func servSplitUploadFiles(
-	ec *echo.Echo,
+	apiPrivate *echo.Group,
 	cfg *ServerConfig,
 ) {
 	splitUploadManager := &SplitUploadManager{
@@ -66,7 +66,7 @@ func servSplitUploadFiles(
 
 	securityHandler := SecurityHandler(cfg, enableDataLoaders)
 
-	ec.POST("/api/split-import",
+	apiPrivate.POST("/split-import",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
 			if err := c.Request().ParseMultipartForm(splitUploadManager.chunkSize); err != nil {
