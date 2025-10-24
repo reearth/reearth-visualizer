@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	echo "github.com/labstack/echo/v4"
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/internal"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts/gqlerror"
@@ -21,7 +22,6 @@ type NewAccountsMiddlewaresParam struct {
 
 func NewAccountsMiddlewares(param *NewAccountsMiddlewaresParam) AccountsMiddlewares {
 	return []echo.MiddlewareFunc{
-		// jwtContextMiddleware(),
 		newAccountsMiddleware(param.AccountsClient),
 	}
 }
@@ -31,24 +31,7 @@ type NewAccountsMiddlewaresMockParam struct {
 	AccountsClient  *accounts.Client
 }
 
-// func jwtContextMiddleware() echo.MiddlewareFunc {
-// 	return func(next echo.HandlerFunc) echo.HandlerFunc {
-// 		return func(c echo.Context) error {
-// 			authHeader := c.Request().Header.Get("Authorization")
-// 			if authHeader != "" {
-// 				// Remove the "Bearer " prefix from the Authorization header to extract the token
-// 				const bearerPrefix = "Bearer "
-// 				if len(authHeader) > len(bearerPrefix) && authHeader[:len(bearerPrefix)] == bearerPrefix {
-// 					token := authHeader[len(bearerPrefix):]
-// 					ctx := internal.SetContextJWT(c.Request().Context(), token)
-// 					c.SetRequest(c.Request().WithContext(ctx))
-// 				}
-// 			}
-// 		}
-// 	}
-// }
-
-var accountsMiddlewareSkipPaths = []string{
+var accountsMiddlewareSkipPathsGET = []string{
 	"/api/ping",
 	"/api/published/",
 	"/plugins/",
@@ -56,15 +39,25 @@ var accountsMiddlewareSkipPaths = []string{
 	"/favicon.ico",
 }
 
+var accountsMiddlewareSkipPathsPOST = []string{
+	"/api/signup",
+}
+
 func shouldSkipAccountsMiddleware(method, path string) bool {
-	// Only skip authentication for GET requests
-	if method != http.MethodGet {
-		return false
+
+	if method == http.MethodGet {
+		for _, skipPath := range accountsMiddlewareSkipPathsGET {
+			if skipPath == path || strings.HasPrefix(path, skipPath) {
+				return true
+			}
+		}
 	}
 
-	for _, skipPath := range accountsMiddlewareSkipPaths {
-		if skipPath == path || strings.HasPrefix(path, skipPath) {
-			return true
+	if method == http.MethodPost {
+		for _, skipPath := range accountsMiddlewareSkipPathsPOST {
+			if skipPath == path || strings.HasPrefix(path, skipPath) {
+				return true
+			}
 		}
 	}
 	return false
@@ -74,11 +67,20 @@ func newAccountsMiddleware(accountsClient *accounts.Client) echo.MiddlewareFunc 
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 
-			if shouldSkipAccountsMiddleware(c.Request().Method, c.Request().URL.Path) {
+			ctx := c.Request().Context()
+
+			if adapter.IsMockAuth(ctx) || shouldSkipAccountsMiddleware(c.Request().Method, c.Request().URL.Path) {
 				return next(c)
 			}
 
-			ctx := c.Request().Context()
+			authHeader := c.Request().Header.Get("Authorization")
+			if authHeader != "" {
+				const bearerPrefix = "Bearer "
+				if len(authHeader) > len(bearerPrefix) && strings.HasPrefix(authHeader, bearerPrefix) {
+					token := authHeader[len(bearerPrefix):]
+					ctx = internal.SetContextJWT(ctx, token)
+				}
+			}
 
 			// TODO: Optimize performance by including necessary user information (userID, email, etc.)
 			// directly in the JWT token instead of executing a GQL query on every request.

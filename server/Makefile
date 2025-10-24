@@ -31,6 +31,8 @@ help:
 	@echo "  run-app           Run the application"
 	@echo "  run-db            Start MongoDB with Docker Compose"
 	@echo "  run-reset         Reset MongoDB data and add mock user"
+	@echo "  reset             Reset database and GCS, reinitialize with mock data"
+	@echo "  init              Initialize GCS bucket and create mock user"
 	@echo "  gql               Generate GraphQL code"
 	@echo "  schematyper       Generate schema using schematyper"
 	@echo "  deep-copy         Generate deep-copy code for Initializer"
@@ -96,17 +98,21 @@ run-reset:
 
 reset:
 	@echo "==== Stopping database and GCS services ===="
-	make stop-db
+	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
 	@echo ""
 	@echo "==== Removing data directory (requires sudo password) ===="
-	sudo rm -rf tmp
+	sudo rm -rf tmp/gcs tmp/mongo 
 	@echo ""
 	@echo "==== Starting database and GCS services ===="
-	make run-db
+	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
 	@echo ""
 	@echo "==== Waiting for services to be ready (3 seconds) ===="
-	sleep 3
-	@echo ""
+	@echo "3..."
+	sleep 1
+	@echo "2..."
+	sleep 1
+	@echo "1..."
+	sleep 1
 	make init
 	@echo "✓ Reset complete!"
 
@@ -199,11 +205,13 @@ destroy:
 	@read -p "Are you sure you want to continue? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		docker stop $(docker ps -q); \
 		docker system prune -a --volumes -f; \
+		docker network prune -f; \
 		echo "✓ All Docker resources have been removed"; \
 	else \
 		echo "✗ Operation cancelled"; \
 	fi
 
-.PHONY: default help lint test test-debug e2e build dev-install dev run-app run-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate
+.PHONY: default help lint test test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
+        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy
