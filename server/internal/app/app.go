@@ -12,7 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
@@ -141,12 +140,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	apiPrivateRoute := apiRoot.Group("", privateCache)
-	// private apis
-	if cfg.AccountsAPIClient != nil {
-		apiPrivateRoute.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
-			AccountsClient: cfg.AccountsAPIClient,
-		})...)
-	}
 	apiPrivateRoute.Use(attachOpMiddleware(cfg))
 
 	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
