@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
@@ -68,10 +69,10 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	acGateways := &accountgateway.Container{}
 
 	// Initialize Accounts API client if enabled
-	var accountsAPIClient *accounts.Client
+	var accountsAPIClient *gqlclient.Client
 	if conf.AccountsAPI.Enabled {
 		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
-		accountsAPIClient = accounts.NewClient(
+		accountsAPIClient = gqlclient.NewClient(
 			conf.AccountsAPI.Host,
 			conf.AccountsAPI.Timeout,
 			adpaccounts.DynamicAuthTransport{},
