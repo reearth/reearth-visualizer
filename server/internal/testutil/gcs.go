@@ -21,9 +21,23 @@ type GCSForTesting struct {
 	client *storage.Client
 }
 
+func GetFakeGCSTestHost() string {
+	gcsHost := os.Getenv("STORAGE_EMULATOR_HOST") // In the case of Docker, it should be http://reearth-gcs:4443
+	if gcsHost == "" {
+		return "http://localhost:4443"
+	}
+	return gcsHost
+}
+
+func getFakeGCSTestEndpoint() string {
+	gcsHost := GetFakeGCSTestHost()
+	return gcsHost + "/storage/v1/b"
+}
+
 func NewGCSForTesting() (*GCSForTesting, error) {
 	ctx := context.Background()
-	client, err := storage.NewClient(ctx, option.WithoutAuthentication(), option.WithEndpoint(GCSBaseURLForTesting))
+	endpoint := getFakeGCSTestEndpoint()
+	client, err := storage.NewClient(ctx, option.WithoutAuthentication(), option.WithEndpoint(endpoint))
 	if err != nil {
 		return nil, err
 	}

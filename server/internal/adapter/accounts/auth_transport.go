@@ -3,7 +3,9 @@ package accounts
 import (
 	"net/http"
 
+	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/internal"
+	"github.com/reearth/reearthx/log"
 )
 
 type DynamicAuthTransport struct{}
@@ -15,7 +17,9 @@ func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 	// - JWT tokens set directly in context (new auth middleware)
 	// - JWT tokens extracted from AuthInfo (legacy auth middleware)
 	// TODO: Remove authInfo handling once the migration is complete
-	if jwtToken := internal.GetContextJWT(req.Context()); jwtToken != "" {
+	if jwtToken := adapter.GetContextJWT(req.Context()); jwtToken != "" {
+		token = jwtToken
+	} else if jwtToken := internal.GetContextJWT(req.Context()); jwtToken != "" {
 		token = jwtToken
 	} else if authInfo := internal.GetContextAuthInfo(req.Context()); authInfo != nil && authInfo.Token != "" {
 		token = authInfo.Token
@@ -25,5 +29,10 @@ func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 
-	return http.DefaultTransport.RoundTrip(req)
+	resp, err := http.DefaultTransport.RoundTrip(req)
+	if err != nil {
+		log.Errorfc(req.Context(), "[Accounts API] Request failed: %v", err)
+		return nil, err
+	}
+	return resp, nil
 }
