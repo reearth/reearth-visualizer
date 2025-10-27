@@ -375,6 +375,8 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 			if req.Topics == nil {
 				return nil
 			}
+			// A single empty string is used as a sentinel value to signal topic deletion.
+			// This distinguishes it from proto3's default empty array behavior.
 			if len(req.Topics) == 1 && req.Topics[0] == "" {
 				empty := []string{}
 				return &empty
