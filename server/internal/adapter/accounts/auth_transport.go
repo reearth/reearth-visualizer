@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearth/server/internal/adapter/internal"
 	"github.com/reearth/reearthx/log"
 )
 
@@ -17,11 +16,9 @@ func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 	// - JWT tokens set directly in context (new auth middleware)
 	// - JWT tokens extracted from AuthInfo (legacy auth middleware)
 	// TODO: Remove authInfo handling once the migration is complete
-	if jwtToken := adapter.GetContextJWT(req.Context()); jwtToken != "" {
+	if jwtToken := adapter.JwtToken(req.Context()); jwtToken != "" {
 		token = jwtToken
-	} else if jwtToken := internal.GetContextJWT(req.Context()); jwtToken != "" {
-		token = jwtToken
-	} else if authInfo := internal.GetContextAuthInfo(req.Context()); authInfo != nil && authInfo.Token != "" {
+	} else if authInfo := adapter.GetAuthInfo(req.Context()); authInfo != nil && authInfo.Token != "" {
 		token = authInfo.Token
 	}
 
