@@ -69,7 +69,7 @@ func TestFile_UploadAsset(t *testing.T) {
 func TestFSFile_UploadAssetFromURL(t *testing.T) {
 	ctx := context.Background()
 
-	gcsBaseURL, _ := url.Parse(testutil.GCSBaseURLForTesting)
+	gcsHost := testutil.GetFakeGCSTestHost()
 	srcBucketName := uuid.New().String()
 	testGCS, err := testutil.NewGCSForTesting()
 	if err != nil {
@@ -86,7 +86,7 @@ func TestFSFile_UploadAssetFromURL(t *testing.T) {
 		}
 	}()
 
-	validFilePath := fmt.Sprintf("%s/%s/o", gcsBaseURL.String(), srcBucketName)
+	validFilePath := fmt.Sprintf("%s/download/storage/v1/b/%s/o", gcsHost, srcBucketName)
 	tests := []struct {
 		name     string
 		fileName string
@@ -116,7 +116,7 @@ func TestFSFile_UploadAssetFromURL(t *testing.T) {
 			newFileRepo, err := NewFile(mockFs(), "/")
 			assert.NoError(t, err)
 
-			srcURL, _ := url.Parse(fmt.Sprintf("%s/%s", tc.filePath, tc.fileName))
+			srcURL, _ := url.Parse(fmt.Sprintf("%s/%s?alt=media", tc.filePath, tc.fileName))
 			uploadedURL, _, err := newFileRepo.UploadAssetFromURL(ctx, srcURL)
 
 			if tc.wantErr {

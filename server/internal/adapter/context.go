@@ -23,6 +23,7 @@ const (
 	contextLang        ContextKey = "lang"
 	contextInternal    ContextKey = "Internal"
 	contextUserID      ContextKey = "reearth_user"
+	contextJWT         ContextKey = "jwtToken"
 )
 
 var defaultLang = language.English
@@ -63,6 +64,17 @@ func AttachCurrentHost(ctx context.Context, currentHost string) context.Context 
 
 func AttachInternal(ctx context.Context, isInternal bool) context.Context {
 	return context.WithValue(ctx, contextInternal, isInternal)
+}
+
+func SetContextJWT(ctx context.Context, token string) context.Context {
+	return context.WithValue(ctx, contextJWT, token)
+}
+
+func GetContextJWT(ctx context.Context) string {
+	if token, ok := ctx.Value(contextJWT).(string); ok {
+		return token
+	}
+	return ""
 }
 
 func User(ctx context.Context) *user.User {

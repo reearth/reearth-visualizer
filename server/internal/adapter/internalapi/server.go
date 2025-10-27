@@ -151,13 +151,6 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		}
 	}
 
-	// Convert SearchFieldType to string
-	var searchField *string
-	if req.SearchField != nil && *req.SearchField == pb.SearchFieldType_SEARCH_FIELD_TYPE_TOPICS {
-		sf := "topics"
-		searchField = &sf
-	}
-
 	// Convert ProjectVisibility to string
 	var visibility *string
 	if req.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
@@ -169,7 +162,13 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 		visibility = &v
 	}
 
-	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, param, searchField, visibility)
+	// Handle topics filter
+	var topics *[]string
+	if len(req.Topics) > 0 {
+		topics = &req.Topics
+	}
+
+	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, param, topics, visibility)
 
 	if err != nil {
 		log.Errorf("GetAllProjects: Database query failed: %v", err)

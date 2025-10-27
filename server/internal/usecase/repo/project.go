@@ -18,6 +18,7 @@ type ProjectFilter struct {
 	Offset      *int64
 	SearchField *string
 	Visibility  *string
+	Topics      []string
 }
 
 type Project interface {
