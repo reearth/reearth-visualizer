@@ -39,7 +39,7 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 					ProjectId: projectID.String(),
 					Readme:    lo.ToPtr("test readme"),
 					License:   lo.ToPtr("test license"),
-					Topics:    []string{"test topics"},
+					Topics:    &pb.Topics{Values: []string{"test topics"}},
 				},
 			)
 			assert.Equal(t, "test readme", *res.Readme)
@@ -54,7 +54,7 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 					ProjectId: projectID.String(),
 					Readme:    lo.ToPtr("test readme 2"),
 					License:   lo.ToPtr("test license 2"),
-					Topics:    []string{""},
+					Topics:    &pb.Topics{Values: []string{""}},
 				},
 			)
 			assert.Equal(t, "test readme 2", *res.Readme)
@@ -83,7 +83,7 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 					ProjectId: projectID.String(),
 					Readme:    lo.ToPtr("test readme 4"),
 					License:   lo.ToPtr("test license 4"),
-					Topics:    []string{"topic1", "topic2", "topic3"},
+					Topics:    &pb.Topics{Values: []string{"topic1", "topic2", "topic3"}},
 				},
 			)
 			assert.Equal(t, "test readme 4", *res.Readme)

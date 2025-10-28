@@ -165,7 +165,9 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 	// Handle topics filter
 	var topics *[]string
 	if len(req.Topics) > 0 {
-		topics = &req.Topics
+		t := make([]string, len(req.Topics))
+		copy(t, req.Topics)
+		topics = &t
 	}
 
 	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, param, topics, visibility)
@@ -375,13 +377,7 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 			if req.Topics == nil {
 				return nil
 			}
-			// A single empty string is used as a sentinel value to signal topic deletion.
-			// This distinguishes it from proto3's default empty array behavior.
-			if len(req.Topics) == 1 && req.Topics[0] == "" {
-				empty := []string{}
-				return &empty
-			}
-			return &req.Topics
+			return &req.Topics.Values
 		}(),
 	}, op)
 	if err != nil {
