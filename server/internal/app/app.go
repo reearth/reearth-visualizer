@@ -142,7 +142,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	apiPrivateRoute := apiRoot.Group("", privateCache)
 	apiPrivateRoute.Use(attachOpMiddleware(cfg))
 
-	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
+	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))
 	apiPrivateRoute.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {

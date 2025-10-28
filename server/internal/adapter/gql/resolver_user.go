@@ -7,6 +7,8 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/util"
 )
 
 func (r *Resolver) Me() MeResolver {
@@ -24,5 +26,19 @@ func (r *meResolver) MyWorkspace(ctx context.Context, obj *gqlmodel.Me) (*gqlmod
 }
 
 func (r *meResolver) Workspaces(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Workspace, error) {
+	userId, err := gqlmodel.ToID[accountdomain.User](obj.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if r.AccountsAPIClient != nil {
+		workspaces, err := r.AccountsAPIClient.WorkspaceRepo.FindByUser(ctx, userId.String())
+		if err != nil {
+			return nil, err
+		}
+		return util.Map(workspaces, gqlmodel.ToWorkspaceFromAccounts), nil
+	}
+
+	// TODO: remove this after checking reearth-accounts API is working
 	return loaders(ctx).Workspace.FindByUser(ctx, obj.ID)
 }

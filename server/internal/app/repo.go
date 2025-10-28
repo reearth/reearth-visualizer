@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
@@ -64,7 +63,7 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *accounts.Client) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *gqlclient.Client) {
 	gateways := &gateway.Container{}
 	acGateways := &accountgateway.Container{}
 

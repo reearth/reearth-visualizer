@@ -5,11 +5,12 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
-	pkgUser "github.com/reearth/reearth/server/pkg/user"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
+
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
@@ -172,9 +173,9 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 	}
 }
 
-func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *pkgUser.User) (*user.User, error) {
-	uId, _ := user.IDFrom(userModel.ID())
-	wid, _ := workspace.IDFrom(userModel.MyWorkspaceID())
+func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *accountsUser.User) (*user.User, error) {
+	uId, _ := user.IDFrom(userModel.ID().String())
+	wid, _ := workspace.IDFrom(userModel.Workspace().String())
 
 	usermetadata := user.MetadataFrom(
 		userModel.Metadata().PhotoURL(),
@@ -187,7 +188,7 @@ func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *pkgUser
 	// Convert auths to user.Auth slice
 	auths := make([]user.Auth, 0, len(userModel.Auths()))
 	for _, authStr := range userModel.Auths() {
-		auths = append(auths, user.AuthFrom(authStr))
+		auths = append(auths, user.AuthFrom(authStr.String()))
 	}
 
 	u, err := user.New().
