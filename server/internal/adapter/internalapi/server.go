@@ -165,9 +165,7 @@ func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsReques
 	// Handle topics filter
 	var topics *[]string
 	if len(req.Topics) > 0 {
-		t := make([]string, len(req.Topics))
-		copy(t, req.Topics)
-		topics = &t
+		topics = &req.Topics
 	}
 
 	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, param, topics, visibility)
