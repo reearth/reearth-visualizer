@@ -47,19 +47,19 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 			assert.Equal(t, []string{"test topics"}, res.Topics)
 		})
 
-		t.Run("opics should be empty after deletion", func(t *testing.T) {
+		t.Run("topics should be empty after deletion", func(t *testing.T) {
 			res := UpdateProjectMetadata(
 				t, ctx, r, client,
 				&pb.UpdateProjectMetadataRequest{
 					ProjectId: projectID.String(),
 					Readme:    lo.ToPtr("test readme 2"),
 					License:   lo.ToPtr("test license 2"),
-					Topics:    &pb.Topics{Values: []string{""}},
+					Topics:    &pb.Topics{Values: []string{}},
 				},
 			)
 			assert.Equal(t, "test readme 2", *res.Readme)
 			assert.Equal(t, "test license 2", *res.License)
-			assert.Empty(t, res.Topics)
+			assert.Nil(t, res.Topics)
 		})
 
 		t.Run("update with nil topics", func(t *testing.T) {
