@@ -35,7 +35,7 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			// Set JWT token in context for Accounts API authentication
 			if authInfo != nil && authInfo.Token != "" {
-				ctx = adapter.SetContextJWT(ctx, authInfo.Token)
+				ctx = adapter.AttachJwtToken(ctx, authInfo.Token)
 				// Update the request context immediately so it's available for GraphQL calls
 				c.SetRequest(req.WithContext(ctx))
 			}
