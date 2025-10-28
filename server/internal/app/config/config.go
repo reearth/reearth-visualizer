@@ -126,11 +126,13 @@ type InternalApiConfig struct {
 }
 
 func ReadConfig(debug bool) (*Config, error) {
-	// load .env
-	if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
-		return nil, err
-	} else if err == nil {
-		log.Infof("config: .env loaded")
+	// load .env (skip if SKIP_DOTENV is set, e.g., when using docker-compose with env_file)
+	if os.Getenv("SKIP_DOTENV") == "" {
+		if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
+			return nil, err
+		} else if err == nil {
+			log.Infof("config: .env loaded")
+		}
 	}
 
 	var c Config

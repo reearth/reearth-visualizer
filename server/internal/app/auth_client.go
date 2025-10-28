@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"net/http"
+	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -40,53 +41,24 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				c.SetRequest(req.WithContext(ctx))
 			}
 
-			var userID string
 			var u *user.User
 
-			if tempId := adapter.UserID(ctx); tempId != nil {
-				userID = *tempId
-			}
-
-			if adapter.IsMockAuth(ctx) {
-				// Create a mock user based on the auth info
-				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
-				if err != nil {
-					// when creating the first mock user
-					uId, _ := user.IDFrom(authInfo.Sub)
-					mockUser = user.New().
-						ID(uId).
-						Name(authInfo.Name).
-						Email(authInfo.Email).
-						MustBuild()
-				}
-				u = mockUser
-
-			} else {
-
-				// debug mode
-				if cfg.Debug {
-					if userID := c.Request().Header.Get("X-Reearth-Debug-User"); userID != "" {
-						if cfg.Config.UseReearthAccountAuth() {
-							userModel, err := cfg.AccountsAPIClient.UserRepo.FindByID(ctx, userID)
-							if err == nil && userModel != nil {
-								u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
-								if err != nil {
-									log.Errorfc(ctx, "accounts API: failed to build user in debug mode: %v", err)
-								}
-							}
-						} else if uId, err := accountdomain.UserIDFrom(userID); err == nil {
-							user2, err := multiUser.FetchByID(ctx, user.IDList{uId})
-							if err == nil && len(user2) == 1 {
-								u = user2[0]
-							}
+			// debug mode
+			if cfg.Debug {
+				if userID := c.Request().Header.Get("X-Reearth-Debug-User"); userID != "" {
+					if uId, err := accountdomain.UserIDFrom(userID); err == nil {
+						user2, err := multiUser.FetchByID(ctx, user.IDList{uId})
+						if err == nil && len(user2) == 1 {
+							u = user2[0]
 						}
 					}
 				}
+			}
 
-				// This is from the past, and normally, it is retrieved via Sub. During testing, it is retrieved from the userID in the header.
-				if u == nil && userID != "" {
-
-					userID2, err := accountdomain.UserIDFrom(userID)
+			// This is from the past, and normally, it is retrieved via Sub. During testing, it is retrieved from the userID in the header.
+			if u == nil {
+				if tempId := adapter.UserID(ctx); tempId != nil {
+					userID2, err := accountdomain.UserIDFrom(*tempId)
 					if err != nil {
 						return err
 					}
@@ -101,50 +73,27 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 					} else {
 						log.Errorfc(ctx, "User not found id: %s", userID2)
 					}
+				}
+			}
 
+			if authInfo != nil {
+				if u == nil {
+					var err error
+					u, err = multiUser.FetchBySub(ctx, authInfo.Sub)
+					if err != nil && err != rerror.ErrNotFound {
+						return err
+					}
 				}
 
-				if authInfo != nil {
-					if u == nil {
-						var err error
-						// Use Accounts API if enabled, otherwise use MongoDB
-						if cfg.Config.UseReearthAccountAuth() {
-							userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
-							if err != nil {
-								log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
-								if err != rerror.ErrNotFound {
-									return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
-								}
-							}
-							if userModel != nil {
-								u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
-								if err != nil {
-									log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
-									return err
-								}
-							} else {
-								log.Warnfc(ctx, "[attachOpMiddleware] Accounts API returned nil user")
-							}
-						} else {
-							u, err = multiUser.FetchBySub(ctx, authInfo.Sub)
-							if err != nil && err != rerror.ErrNotFound {
-								return err
-							}
-						}
+				if u != nil {
+					auth := user.AuthFrom(authInfo.Sub)
+					if err := addAuth0SubToUser(ctx, u, auth, cfg); err != nil {
+						return err
 					}
-
-					// save a new sub (only for MongoDB-based user repo)
-					if u != nil && !cfg.Config.UseReearthAccountAuth() {
-						auth := user.AuthFrom(authInfo.Sub)
-						if err := addAuth0SubToUser(ctx, u, auth, cfg); err != nil {
-							return err
-						}
-					}
-
-				} else {
-					log.Errorfc(ctx, "Auth information not found: %s", req.URL.Path)
 				}
 
+			} else {
+				log.Errorfc(ctx, "Auth information not found: %s", req.URL.Path)
 			}
 
 			if u != nil {
@@ -162,6 +111,135 @@ func attachOpMiddleware(cfg *ServerConfig) echo.MiddlewareFunc {
 				if u.Name() != "e2e" {
 					log.Debugfc(ctx, "auth: op: %#v", op)
 				}
+			} else {
+				log.Errorfc(ctx, "User information not found: %s", req.URL.Path)
+			}
+
+			c.SetRequest(req.WithContext(ctx))
+			return next(c)
+		}
+	}
+}
+
+func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			req := c.Request()
+			ctx := req.Context()
+
+			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+
+			authInfo := adapter.GetAuthInfo(ctx)
+
+			var u *user.User
+
+			mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
+			if err != nil {
+				uId, _ := user.IDFrom(authInfo.Sub)
+				mockUser = user.New().
+					ID(uId).
+					Name(authInfo.Name).
+					Email(authInfo.Email).
+					MustBuild()
+			}
+
+			u = mockUser
+
+			if u != nil {
+				ctx = adapter.AttachUser(ctx, u)
+				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+
+				op, err := generateOperator(ctx, cfg, u)
+				if err != nil {
+					return err
+				}
+
+				ctx = adapter.AttachOperator(ctx, op)
+				log.Debugfc(ctx, "auth: op: %#v", op)
+
+			} else {
+				log.Errorfc(ctx, "Mock user information not found: %s", req.URL.Path)
+			}
+
+			c.SetRequest(req.WithContext(ctx))
+			return next(c)
+		}
+	}
+}
+
+func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			req := c.Request()
+			ctx := req.Context()
+
+			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+
+			// The token is set as is and sent to reearth-accounts for verification.
+			token := strings.TrimPrefix(req.Header.Get("Authorization"), "Bearer ")
+			ctx = adapter.AttachJwtToken(ctx, token)
+
+			var u *user.User
+
+			// debug mode
+			if cfg.Debug {
+
+				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
+
+					userModel, err := cfg.AccountsAPIClient.UserRepo.FindByID(ctx, userID)
+					if err != nil {
+						log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
+						if err != rerror.ErrNotFound {
+							return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
+						}
+						return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+					}
+
+					if userModel != nil {
+						u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
+						if err != nil {
+							log.Errorfc(ctx, "accounts API: failed to build user in debug mode: %v", err)
+							return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+						}
+					}
+
+				}
+
+			}
+
+			if u == nil {
+
+				userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
+				if err != nil {
+					log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
+					if err != rerror.ErrNotFound {
+						return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
+					}
+					return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+				}
+
+				if userModel != nil {
+					u, err = buildAccountDomainUserFromUserModel(ctx, userModel)
+					if err != nil {
+						log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
+						return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+					}
+				}
+
+			}
+
+			if u != nil {
+				ctx = adapter.AttachUser(ctx, u)
+				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+
+				op, err := generateOperator(ctx, cfg, u)
+				if err != nil {
+					return err
+				}
+
+				ctx = adapter.AttachOperator(ctx, op)
+				log.Debugfc(ctx, "auth: op: %#v", op)
+
 			} else {
 				log.Errorfc(ctx, "User information not found: %s", req.URL.Path)
 			}
