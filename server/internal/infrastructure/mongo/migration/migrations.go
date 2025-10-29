@@ -38,5 +38,5 @@ var migrations = migration.Migrations[DBClient]{
   251010100253: MultipleWidgetAlignSystems,
   251010100300: AddDefaultDataAttributionForMobile,
   251022133500: UpdateProjectMetadataFields,
-  251024112210: GcschangeEsriToDefault,
+  251029181312: GcschangeEsriToDefault,
 }
