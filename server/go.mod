@@ -33,7 +33,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/ravilushqa/otelgqlgen v0.17.0
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
-	github.com/reearth/reearth-accounts/server v0.0.0-20251028042005-1fabdd1549d3
+	github.com/reearth/reearth-accounts/server v0.0.0-20251029041058-19ad61a40385
 	github.com/reearth/reearthx v0.0.0-20250923165051-5bd6f1c10f7a
 	github.com/samber/lo v1.50.0
 	github.com/spf13/afero v1.14.0
