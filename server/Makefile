@@ -8,6 +8,7 @@ REEARTH_DB := mongodb://localhost
 SCHEMATYPER := github.com/idubinskiy/schematyper
 MANIFEST_DIR := pkg/plugin/manifest
 DOCKER_COMPOSE := docker compose -f ../docker-compose.yml
+DOCKER_COMPOSE_DEV := docker compose -f ../docker-compose.dev.yml
 
 # =======================
 # Default
@@ -30,6 +31,8 @@ help:
 	@echo "  run-app           Run the application"
 	@echo "  run-db            Start MongoDB with Docker Compose"
 	@echo "  run-reset         Reset MongoDB data and add mock user"
+	@echo "  reset             Reset database and GCS, reinitialize with mock data"
+	@echo "  init              Initialize GCS bucket and create mock user"
 	@echo "  gql               Generate GraphQL code"
 	@echo "  schematyper       Generate schema using schematyper"
 	@echo "  deep-copy         Generate deep-copy code for Initializer"
@@ -67,6 +70,12 @@ dev: dev-install
 run-app:
 	go run ./cmd/reearth
 
+run:
+	${DOCKER_COMPOSE_DEV} up reearth-visualizer-dev
+
+down:
+	${DOCKER_COMPOSE_DEV} down
+
 clean:
 	go clean -modcache
 	go clean -cache
@@ -86,6 +95,26 @@ run-reset:
 	rm -rf ../mongo data
 	make run-db
 	make mockuser
+
+reset:
+	@echo "==== Stopping database and GCS services ===="
+	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
+	@echo ""
+	@echo "==== Removing data directory (requires sudo password) ===="
+	sudo rm -rf tmp/gcs tmp/mongo 
+	@echo ""
+	@echo "==== Starting database and GCS services ===="
+	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
+	@echo ""
+	@echo "==== Waiting for services to be ready (3 seconds) ===="
+	@echo "3..."
+	sleep 1
+	@echo "2..."
+	sleep 1
+	@echo "1..."
+	sleep 1
+	make init
+	@echo "✓ Reset complete!"
 
 up-gcs:
 	${DOCKER_COMPOSE} up -d gcs
@@ -148,10 +177,41 @@ dev-install:
 # Others
 # =======================
 
+init:
+	@echo "==== Initializing GCS bucket ===="
+	make init-gcs
+	@echo ""
+	@echo "==== Waiting for GCS initialization (1 second) ===="
+	sleep 1
+	@echo ""
+	@echo "==== Creating mock user ===="
+	make mockuser
+	@echo ""
+
 mockuser:
 	curl -H 'Content-Type: application/json' \
 		-d '{"email": "mock@example.com", "username": "Mock User"}' \
-		http://localhost:8080/api/signup
+		http://localhost:8080/api/signup -vvv
 
-.PHONY: default help lint test test-debug e2e build dev-install dev run-app run-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate
+init-gcs:
+	curl -H 'Content-Type: application/json' \
+		-d '{"name": "test-bucket"}' \
+		http://localhost:4443/storage/v1/b -vvv
+
+destroy:
+	@echo "⚠️  WARNING: This will remove ALL Docker resources!"
+	@echo "This includes containers, images, volumes, and networks."
+	@echo ""
+	@read -p "Are you sure you want to continue? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		docker stop $(docker ps -q); \
+		docker system prune -a --volumes -f; \
+		docker network prune -f; \
+		echo "✓ All Docker resources have been removed"; \
+	else \
+		echo "✗ Operation cancelled"; \
+	fi
+
+.PHONY: default help lint test test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
+        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy

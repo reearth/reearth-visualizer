@@ -258,12 +258,6 @@ message GetProjectListRequest {
   optional Pagination pagination = 5;
 }
 
-// Defines which field to search in when using keyword search
-enum SearchFieldType {
-  SEARCH_FIELD_TYPE_NAME = 0;  // Default search in project name
-  SEARCH_FIELD_TYPE_TOPICS = 1; // Search in project topics
-}
-
 // Visibility filter for all projects
 enum ProjectVisibility {
   PROJECT_VISIBILITY_PUBLIC = 0;  // Default visibility (public projects)
@@ -271,16 +265,16 @@ enum ProjectVisibility {
 }
 
 message GetAllProjectsRequest {
-  // Keyword search
+  // Keyword search (searches in project name)
   optional string keyword = 1;
   // Sort options
   optional ProjectSort sort = 2;
   // Pagination info
   optional Pagination pagination = 3;
-  // Field to search in (name or topics), defaults to name if not provided
-  optional SearchFieldType search_field = 4;
   // Visibility filter, defaults to public if not provided
-  optional ProjectVisibility visibility = 5;
+  optional ProjectVisibility visibility = 4;
+  // Topics filter - if provided, filters projects by these topics
+  repeated string topics = 5;
 }
 
 // Retrieves a project regardless of authentication.

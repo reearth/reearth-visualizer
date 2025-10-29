@@ -279,53 +279,6 @@ func (SortDirection) EnumDescriptor() ([]byte, []int) {
 	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{4}
 }
 
-// Defines which field to search in when using keyword search
-type SearchFieldType int32
-
-const (
-	SearchFieldType_SEARCH_FIELD_TYPE_NAME   SearchFieldType = 0 // Default search in project name
-	SearchFieldType_SEARCH_FIELD_TYPE_TOPICS SearchFieldType = 1 // Search in project topics
-)
-
-// Enum value maps for SearchFieldType.
-var (
-	SearchFieldType_name = map[int32]string{
-		0: "SEARCH_FIELD_TYPE_NAME",
-		1: "SEARCH_FIELD_TYPE_TOPICS",
-	}
-	SearchFieldType_value = map[string]int32{
-		"SEARCH_FIELD_TYPE_NAME":   0,
-		"SEARCH_FIELD_TYPE_TOPICS": 1,
-	}
-)
-
-func (x SearchFieldType) Enum() *SearchFieldType {
-	p := new(SearchFieldType)
-	*p = x
-	return p
-}
-
-func (x SearchFieldType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (SearchFieldType) Descriptor() protoreflect.EnumDescriptor {
-	return file_schemas_internalapi_v1_schema_proto_enumTypes[5].Descriptor()
-}
-
-func (SearchFieldType) Type() protoreflect.EnumType {
-	return &file_schemas_internalapi_v1_schema_proto_enumTypes[5]
-}
-
-func (x SearchFieldType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use SearchFieldType.Descriptor instead.
-func (SearchFieldType) EnumDescriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{5}
-}
-
 // Visibility filter for all projects
 type ProjectVisibility int32
 
@@ -357,11 +310,11 @@ func (x ProjectVisibility) String() string {
 }
 
 func (ProjectVisibility) Descriptor() protoreflect.EnumDescriptor {
-	return file_schemas_internalapi_v1_schema_proto_enumTypes[6].Descriptor()
+	return file_schemas_internalapi_v1_schema_proto_enumTypes[5].Descriptor()
 }
 
 func (ProjectVisibility) Type() protoreflect.EnumType {
-	return &file_schemas_internalapi_v1_schema_proto_enumTypes[6]
+	return &file_schemas_internalapi_v1_schema_proto_enumTypes[5]
 }
 
 func (x ProjectVisibility) Number() protoreflect.EnumNumber {
@@ -370,7 +323,7 @@ func (x ProjectVisibility) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ProjectVisibility.Descriptor instead.
 func (ProjectVisibility) EnumDescriptor() ([]byte, []int) {
-	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{6}
+	return file_schemas_internalapi_v1_schema_proto_rawDescGZIP(), []int{5}
 }
 
 // Core Project messages
@@ -1104,16 +1057,16 @@ func (x *GetProjectListRequest) GetPagination() *Pagination {
 
 type GetAllProjectsRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// Keyword search
+	// Keyword search (searches in project name)
 	Keyword *string `protobuf:"bytes,1,opt,name=keyword,proto3,oneof" json:"keyword,omitempty"`
 	// Sort options
 	Sort *ProjectSort `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Pagination info
 	Pagination *Pagination `protobuf:"bytes,3,opt,name=pagination,proto3,oneof" json:"pagination,omitempty"`
-	// Field to search in (name or topics), defaults to name if not provided
-	SearchField *SearchFieldType `protobuf:"varint,4,opt,name=search_field,json=searchField,proto3,enum=reearth.visualizer.v1.SearchFieldType,oneof" json:"search_field,omitempty"`
 	// Visibility filter, defaults to public if not provided
-	Visibility    *ProjectVisibility `protobuf:"varint,5,opt,name=visibility,proto3,enum=reearth.visualizer.v1.ProjectVisibility,oneof" json:"visibility,omitempty"`
+	Visibility *ProjectVisibility `protobuf:"varint,4,opt,name=visibility,proto3,enum=reearth.visualizer.v1.ProjectVisibility,oneof" json:"visibility,omitempty"`
+	// Topics filter - if provided, filters projects by these topics
+	Topics        []string `protobuf:"bytes,5,rep,name=topics,proto3" json:"topics,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1169,18 +1122,18 @@ func (x *GetAllProjectsRequest) GetPagination() *Pagination {
 	return nil
 }
 
-func (x *GetAllProjectsRequest) GetSearchField() SearchFieldType {
-	if x != nil && x.SearchField != nil {
-		return *x.SearchField
-	}
-	return SearchFieldType_SEARCH_FIELD_TYPE_NAME
-}
-
 func (x *GetAllProjectsRequest) GetVisibility() ProjectVisibility {
 	if x != nil && x.Visibility != nil {
 		return *x.Visibility
 	}
 	return ProjectVisibility_PROJECT_VISIBILITY_PUBLIC
+}
+
+func (x *GetAllProjectsRequest) GetTopics() []string {
+	if x != nil {
+		return x.Topics
+	}
+	return nil
 }
 
 // Retrieves a project regardless of authentication.
@@ -3222,22 +3175,21 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\n" +
 	"\b_keywordB\a\n" +
 	"\x05_sortB\r\n" +
-	"\v_pagination\"\x9e\x03\n" +
+	"\v_pagination\"\xd5\x02\n" +
 	"\x15GetAllProjectsRequest\x12\x1d\n" +
 	"\akeyword\x18\x01 \x01(\tH\x00R\akeyword\x88\x01\x01\x12;\n" +
 	"\x04sort\x18\x02 \x01(\v2\".reearth.visualizer.v1.ProjectSortH\x01R\x04sort\x88\x01\x01\x12F\n" +
 	"\n" +
 	"pagination\x18\x03 \x01(\v2!.reearth.visualizer.v1.PaginationH\x02R\n" +
-	"pagination\x88\x01\x01\x12N\n" +
-	"\fsearch_field\x18\x04 \x01(\x0e2&.reearth.visualizer.v1.SearchFieldTypeH\x03R\vsearchField\x88\x01\x01\x12M\n" +
+	"pagination\x88\x01\x01\x12M\n" +
 	"\n" +
-	"visibility\x18\x05 \x01(\x0e2(.reearth.visualizer.v1.ProjectVisibilityH\x04R\n" +
-	"visibility\x88\x01\x01B\n" +
+	"visibility\x18\x04 \x01(\x0e2(.reearth.visualizer.v1.ProjectVisibilityH\x03R\n" +
+	"visibility\x88\x01\x01\x12\x16\n" +
+	"\x06topics\x18\x05 \x03(\tR\x06topicsB\n" +
 	"\n" +
 	"\b_keywordB\a\n" +
 	"\x05_sortB\r\n" +
-	"\v_paginationB\x0f\n" +
-	"\r_search_fieldB\r\n" +
+	"\v_paginationB\r\n" +
 	"\v_visibility\"2\n" +
 	"\x11GetProjectRequest\x12\x1d\n" +
 	"\n" +
@@ -3478,10 +3430,7 @@ const file_schemas_internalapi_v1_schema_proto_rawDesc = "" +
 	"\rSortDirection\x12\x1e\n" +
 	"\x1aSORT_DIRECTION_UNSPECIFIED\x10\x00\x12\a\n" +
 	"\x03ASC\x10\x01\x12\b\n" +
-	"\x04DESC\x10\x02*K\n" +
-	"\x0fSearchFieldType\x12\x1a\n" +
-	"\x16SEARCH_FIELD_TYPE_NAME\x10\x00\x12\x1c\n" +
-	"\x18SEARCH_FIELD_TYPE_TOPICS\x10\x01*R\n" +
+	"\x04DESC\x10\x02*R\n" +
 	"\x11ProjectVisibility\x12\x1d\n" +
 	"\x19PROJECT_VISIBILITY_PUBLIC\x10\x00\x12\x1e\n" +
 	"\x1aPROJECT_VISIBILITY_PRIVATE\x10\x012\x8e\x0f\n" +
@@ -3517,7 +3466,7 @@ func file_schemas_internalapi_v1_schema_proto_rawDescGZIP() []byte {
 	return file_schemas_internalapi_v1_schema_proto_rawDescData
 }
 
-var file_schemas_internalapi_v1_schema_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
+var file_schemas_internalapi_v1_schema_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
 var file_schemas_internalapi_v1_schema_proto_msgTypes = make([]protoimpl.MessageInfo, 38)
 var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
 	(Visualizer)(0),                          // 0: reearth.visualizer.v1.Visualizer
@@ -3525,119 +3474,117 @@ var file_schemas_internalapi_v1_schema_proto_goTypes = []any{
 	(PublishmentStatus)(0),                   // 2: reearth.visualizer.v1.PublishmentStatus
 	(ProjectSortField)(0),                    // 3: reearth.visualizer.v1.ProjectSortField
 	(SortDirection)(0),                       // 4: reearth.visualizer.v1.SortDirection
-	(SearchFieldType)(0),                     // 5: reearth.visualizer.v1.SearchFieldType
-	(ProjectVisibility)(0),                   // 6: reearth.visualizer.v1.ProjectVisibility
-	(*Project)(nil),                          // 7: reearth.visualizer.v1.Project
-	(*Story)(nil),                            // 8: reearth.visualizer.v1.Story
-	(*ProjectMetadata)(nil),                  // 9: reearth.visualizer.v1.ProjectMetadata
-	(*Pagination)(nil),                       // 10: reearth.visualizer.v1.Pagination
-	(*ProjectSort)(nil),                      // 11: reearth.visualizer.v1.ProjectSort
-	(*PageInfo)(nil),                         // 12: reearth.visualizer.v1.PageInfo
-	(*GetProjectListRequest)(nil),            // 13: reearth.visualizer.v1.GetProjectListRequest
-	(*GetAllProjectsRequest)(nil),            // 14: reearth.visualizer.v1.GetAllProjectsRequest
-	(*GetProjectRequest)(nil),                // 15: reearth.visualizer.v1.GetProjectRequest
-	(*GetProjectByAliasRequest)(nil),         // 16: reearth.visualizer.v1.GetProjectByAliasRequest
-	(*ValidateProjectAliasRequest)(nil),      // 17: reearth.visualizer.v1.ValidateProjectAliasRequest
-	(*ValidateSceneAliasRequest)(nil),        // 18: reearth.visualizer.v1.ValidateSceneAliasRequest
-	(*CreateProjectRequest)(nil),             // 19: reearth.visualizer.v1.CreateProjectRequest
-	(*UpdateProjectRequest)(nil),             // 20: reearth.visualizer.v1.UpdateProjectRequest
-	(*PublishProjectRequest)(nil),            // 21: reearth.visualizer.v1.PublishProjectRequest
-	(*UpdateProjectMetadataRequest)(nil),     // 22: reearth.visualizer.v1.UpdateProjectMetadataRequest
-	(*DeleteProjectRequest)(nil),             // 23: reearth.visualizer.v1.DeleteProjectRequest
-	(*GetProjectByProjectAliasRequest)(nil),  // 24: reearth.visualizer.v1.GetProjectByProjectAliasRequest
-	(*UpdateByProjectAliasRequest)(nil),      // 25: reearth.visualizer.v1.UpdateByProjectAliasRequest
-	(*DeleteByProjectAliasRequest)(nil),      // 26: reearth.visualizer.v1.DeleteByProjectAliasRequest
-	(*ExportProjectRequest)(nil),             // 27: reearth.visualizer.v1.ExportProjectRequest
-	(*PatchStarCountRequest)(nil),            // 28: reearth.visualizer.v1.PatchStarCountRequest
-	(*GetProjectResponse)(nil),               // 29: reearth.visualizer.v1.GetProjectResponse
-	(*GetProjectListResponse)(nil),           // 30: reearth.visualizer.v1.GetProjectListResponse
-	(*GetAllProjectsResponse)(nil),           // 31: reearth.visualizer.v1.GetAllProjectsResponse
-	(*CreateProjectResponse)(nil),            // 32: reearth.visualizer.v1.CreateProjectResponse
-	(*UpdateProjectResponse)(nil),            // 33: reearth.visualizer.v1.UpdateProjectResponse
-	(*PublishProjectResponse)(nil),           // 34: reearth.visualizer.v1.PublishProjectResponse
-	(*UpdateProjectMetadataResponse)(nil),    // 35: reearth.visualizer.v1.UpdateProjectMetadataResponse
-	(*DeleteProjectResponse)(nil),            // 36: reearth.visualizer.v1.DeleteProjectResponse
-	(*ExportProjectResponse)(nil),            // 37: reearth.visualizer.v1.ExportProjectResponse
-	(*GetProjectByAliasResponse)(nil),        // 38: reearth.visualizer.v1.GetProjectByAliasResponse
-	(*ValidateProjectAliasResponse)(nil),     // 39: reearth.visualizer.v1.ValidateProjectAliasResponse
-	(*ValidateSceneAliasResponse)(nil),       // 40: reearth.visualizer.v1.ValidateSceneAliasResponse
-	(*GetProjectByProjectAliasResponse)(nil), // 41: reearth.visualizer.v1.GetProjectByProjectAliasResponse
-	(*UpdateByProjectAliasResponse)(nil),     // 42: reearth.visualizer.v1.UpdateByProjectAliasResponse
-	(*DeleteByProjectAliasResponse)(nil),     // 43: reearth.visualizer.v1.DeleteByProjectAliasResponse
-	(*PatchStarCountResponse)(nil),           // 44: reearth.visualizer.v1.PatchStarCountResponse
-	(*timestamppb.Timestamp)(nil),            // 45: google.protobuf.Timestamp
+	(ProjectVisibility)(0),                   // 5: reearth.visualizer.v1.ProjectVisibility
+	(*Project)(nil),                          // 6: reearth.visualizer.v1.Project
+	(*Story)(nil),                            // 7: reearth.visualizer.v1.Story
+	(*ProjectMetadata)(nil),                  // 8: reearth.visualizer.v1.ProjectMetadata
+	(*Pagination)(nil),                       // 9: reearth.visualizer.v1.Pagination
+	(*ProjectSort)(nil),                      // 10: reearth.visualizer.v1.ProjectSort
+	(*PageInfo)(nil),                         // 11: reearth.visualizer.v1.PageInfo
+	(*GetProjectListRequest)(nil),            // 12: reearth.visualizer.v1.GetProjectListRequest
+	(*GetAllProjectsRequest)(nil),            // 13: reearth.visualizer.v1.GetAllProjectsRequest
+	(*GetProjectRequest)(nil),                // 14: reearth.visualizer.v1.GetProjectRequest
+	(*GetProjectByAliasRequest)(nil),         // 15: reearth.visualizer.v1.GetProjectByAliasRequest
+	(*ValidateProjectAliasRequest)(nil),      // 16: reearth.visualizer.v1.ValidateProjectAliasRequest
+	(*ValidateSceneAliasRequest)(nil),        // 17: reearth.visualizer.v1.ValidateSceneAliasRequest
+	(*CreateProjectRequest)(nil),             // 18: reearth.visualizer.v1.CreateProjectRequest
+	(*UpdateProjectRequest)(nil),             // 19: reearth.visualizer.v1.UpdateProjectRequest
+	(*PublishProjectRequest)(nil),            // 20: reearth.visualizer.v1.PublishProjectRequest
+	(*UpdateProjectMetadataRequest)(nil),     // 21: reearth.visualizer.v1.UpdateProjectMetadataRequest
+	(*DeleteProjectRequest)(nil),             // 22: reearth.visualizer.v1.DeleteProjectRequest
+	(*GetProjectByProjectAliasRequest)(nil),  // 23: reearth.visualizer.v1.GetProjectByProjectAliasRequest
+	(*UpdateByProjectAliasRequest)(nil),      // 24: reearth.visualizer.v1.UpdateByProjectAliasRequest
+	(*DeleteByProjectAliasRequest)(nil),      // 25: reearth.visualizer.v1.DeleteByProjectAliasRequest
+	(*ExportProjectRequest)(nil),             // 26: reearth.visualizer.v1.ExportProjectRequest
+	(*PatchStarCountRequest)(nil),            // 27: reearth.visualizer.v1.PatchStarCountRequest
+	(*GetProjectResponse)(nil),               // 28: reearth.visualizer.v1.GetProjectResponse
+	(*GetProjectListResponse)(nil),           // 29: reearth.visualizer.v1.GetProjectListResponse
+	(*GetAllProjectsResponse)(nil),           // 30: reearth.visualizer.v1.GetAllProjectsResponse
+	(*CreateProjectResponse)(nil),            // 31: reearth.visualizer.v1.CreateProjectResponse
+	(*UpdateProjectResponse)(nil),            // 32: reearth.visualizer.v1.UpdateProjectResponse
+	(*PublishProjectResponse)(nil),           // 33: reearth.visualizer.v1.PublishProjectResponse
+	(*UpdateProjectMetadataResponse)(nil),    // 34: reearth.visualizer.v1.UpdateProjectMetadataResponse
+	(*DeleteProjectResponse)(nil),            // 35: reearth.visualizer.v1.DeleteProjectResponse
+	(*ExportProjectResponse)(nil),            // 36: reearth.visualizer.v1.ExportProjectResponse
+	(*GetProjectByAliasResponse)(nil),        // 37: reearth.visualizer.v1.GetProjectByAliasResponse
+	(*ValidateProjectAliasResponse)(nil),     // 38: reearth.visualizer.v1.ValidateProjectAliasResponse
+	(*ValidateSceneAliasResponse)(nil),       // 39: reearth.visualizer.v1.ValidateSceneAliasResponse
+	(*GetProjectByProjectAliasResponse)(nil), // 40: reearth.visualizer.v1.GetProjectByProjectAliasResponse
+	(*UpdateByProjectAliasResponse)(nil),     // 41: reearth.visualizer.v1.UpdateByProjectAliasResponse
+	(*DeleteByProjectAliasResponse)(nil),     // 42: reearth.visualizer.v1.DeleteByProjectAliasResponse
+	(*PatchStarCountResponse)(nil),           // 43: reearth.visualizer.v1.PatchStarCountResponse
+	(*timestamppb.Timestamp)(nil),            // 44: google.protobuf.Timestamp
 }
 var file_schemas_internalapi_v1_schema_proto_depIdxs = []int32{
-	8,  // 0: reearth.visualizer.v1.Project.stories:type_name -> reearth.visualizer.v1.Story
+	7,  // 0: reearth.visualizer.v1.Project.stories:type_name -> reearth.visualizer.v1.Story
 	0,  // 1: reearth.visualizer.v1.Project.visualizer:type_name -> reearth.visualizer.v1.Visualizer
-	45, // 2: reearth.visualizer.v1.Project.created_at:type_name -> google.protobuf.Timestamp
-	45, // 3: reearth.visualizer.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
-	9,  // 4: reearth.visualizer.v1.Project.metadata:type_name -> reearth.visualizer.v1.ProjectMetadata
+	44, // 2: reearth.visualizer.v1.Project.created_at:type_name -> google.protobuf.Timestamp
+	44, // 3: reearth.visualizer.v1.Project.updated_at:type_name -> google.protobuf.Timestamp
+	8,  // 4: reearth.visualizer.v1.Project.metadata:type_name -> reearth.visualizer.v1.ProjectMetadata
 	2,  // 5: reearth.visualizer.v1.Project.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
 	2,  // 6: reearth.visualizer.v1.Story.story_publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
 	1,  // 7: reearth.visualizer.v1.ProjectMetadata.import_status:type_name -> reearth.visualizer.v1.ProjectImportStatus
-	45, // 8: reearth.visualizer.v1.ProjectMetadata.created_at:type_name -> google.protobuf.Timestamp
-	45, // 9: reearth.visualizer.v1.ProjectMetadata.updated_at:type_name -> google.protobuf.Timestamp
+	44, // 8: reearth.visualizer.v1.ProjectMetadata.created_at:type_name -> google.protobuf.Timestamp
+	44, // 9: reearth.visualizer.v1.ProjectMetadata.updated_at:type_name -> google.protobuf.Timestamp
 	3,  // 10: reearth.visualizer.v1.ProjectSort.field:type_name -> reearth.visualizer.v1.ProjectSortField
 	4,  // 11: reearth.visualizer.v1.ProjectSort.direction:type_name -> reearth.visualizer.v1.SortDirection
-	11, // 12: reearth.visualizer.v1.GetProjectListRequest.sort:type_name -> reearth.visualizer.v1.ProjectSort
-	10, // 13: reearth.visualizer.v1.GetProjectListRequest.pagination:type_name -> reearth.visualizer.v1.Pagination
-	11, // 14: reearth.visualizer.v1.GetAllProjectsRequest.sort:type_name -> reearth.visualizer.v1.ProjectSort
-	10, // 15: reearth.visualizer.v1.GetAllProjectsRequest.pagination:type_name -> reearth.visualizer.v1.Pagination
-	5,  // 16: reearth.visualizer.v1.GetAllProjectsRequest.search_field:type_name -> reearth.visualizer.v1.SearchFieldType
-	6,  // 17: reearth.visualizer.v1.GetAllProjectsRequest.visibility:type_name -> reearth.visualizer.v1.ProjectVisibility
-	0,  // 18: reearth.visualizer.v1.CreateProjectRequest.visualizer:type_name -> reearth.visualizer.v1.Visualizer
-	2,  // 19: reearth.visualizer.v1.PublishProjectRequest.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
-	7,  // 20: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	7,  // 21: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
-	12, // 22: reearth.visualizer.v1.GetProjectListResponse.page_info:type_name -> reearth.visualizer.v1.PageInfo
-	7,  // 23: reearth.visualizer.v1.GetAllProjectsResponse.projects:type_name -> reearth.visualizer.v1.Project
-	12, // 24: reearth.visualizer.v1.GetAllProjectsResponse.page_info:type_name -> reearth.visualizer.v1.PageInfo
-	7,  // 25: reearth.visualizer.v1.CreateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	7,  // 26: reearth.visualizer.v1.UpdateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	7,  // 27: reearth.visualizer.v1.PublishProjectResponse.project:type_name -> reearth.visualizer.v1.Project
-	9,  // 28: reearth.visualizer.v1.UpdateProjectMetadataResponse.metadata:type_name -> reearth.visualizer.v1.ProjectMetadata
-	7,  // 29: reearth.visualizer.v1.GetProjectByAliasResponse.project:type_name -> reearth.visualizer.v1.Project
-	7,  // 30: reearth.visualizer.v1.GetProjectByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
-	7,  // 31: reearth.visualizer.v1.UpdateByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
-	9,  // 32: reearth.visualizer.v1.PatchStarCountResponse.projectmetadata:type_name -> reearth.visualizer.v1.ProjectMetadata
-	13, // 33: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
-	14, // 34: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:input_type -> reearth.visualizer.v1.GetAllProjectsRequest
-	15, // 35: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
-	16, // 36: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByAlias:input_type -> reearth.visualizer.v1.GetProjectByAliasRequest
-	17, // 37: reearth.visualizer.v1.ReEarthVisualizer.ValidateProjectAlias:input_type -> reearth.visualizer.v1.ValidateProjectAliasRequest
-	18, // 38: reearth.visualizer.v1.ReEarthVisualizer.ValidateSceneAlias:input_type -> reearth.visualizer.v1.ValidateSceneAliasRequest
-	19, // 39: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:input_type -> reearth.visualizer.v1.CreateProjectRequest
-	20, // 40: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:input_type -> reearth.visualizer.v1.UpdateProjectRequest
-	21, // 41: reearth.visualizer.v1.ReEarthVisualizer.PublishProject:input_type -> reearth.visualizer.v1.PublishProjectRequest
-	22, // 42: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:input_type -> reearth.visualizer.v1.UpdateProjectMetadataRequest
-	23, // 43: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:input_type -> reearth.visualizer.v1.DeleteProjectRequest
-	27, // 44: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:input_type -> reearth.visualizer.v1.ExportProjectRequest
-	24, // 45: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByProjectAlias:input_type -> reearth.visualizer.v1.GetProjectByProjectAliasRequest
-	25, // 46: reearth.visualizer.v1.ReEarthVisualizer.UpdateByProjectAlias:input_type -> reearth.visualizer.v1.UpdateByProjectAliasRequest
-	26, // 47: reearth.visualizer.v1.ReEarthVisualizer.DeleteByProjectAlias:input_type -> reearth.visualizer.v1.DeleteByProjectAliasRequest
-	28, // 48: reearth.visualizer.v1.ReEarthVisualizer.PatchStarCount:input_type -> reearth.visualizer.v1.PatchStarCountRequest
-	30, // 49: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
-	31, // 50: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:output_type -> reearth.visualizer.v1.GetAllProjectsResponse
-	29, // 51: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
-	38, // 52: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByAlias:output_type -> reearth.visualizer.v1.GetProjectByAliasResponse
-	39, // 53: reearth.visualizer.v1.ReEarthVisualizer.ValidateProjectAlias:output_type -> reearth.visualizer.v1.ValidateProjectAliasResponse
-	40, // 54: reearth.visualizer.v1.ReEarthVisualizer.ValidateSceneAlias:output_type -> reearth.visualizer.v1.ValidateSceneAliasResponse
-	32, // 55: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:output_type -> reearth.visualizer.v1.CreateProjectResponse
-	33, // 56: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:output_type -> reearth.visualizer.v1.UpdateProjectResponse
-	34, // 57: reearth.visualizer.v1.ReEarthVisualizer.PublishProject:output_type -> reearth.visualizer.v1.PublishProjectResponse
-	35, // 58: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:output_type -> reearth.visualizer.v1.UpdateProjectMetadataResponse
-	36, // 59: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:output_type -> reearth.visualizer.v1.DeleteProjectResponse
-	37, // 60: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:output_type -> reearth.visualizer.v1.ExportProjectResponse
-	41, // 61: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByProjectAlias:output_type -> reearth.visualizer.v1.GetProjectByProjectAliasResponse
-	42, // 62: reearth.visualizer.v1.ReEarthVisualizer.UpdateByProjectAlias:output_type -> reearth.visualizer.v1.UpdateByProjectAliasResponse
-	43, // 63: reearth.visualizer.v1.ReEarthVisualizer.DeleteByProjectAlias:output_type -> reearth.visualizer.v1.DeleteByProjectAliasResponse
-	44, // 64: reearth.visualizer.v1.ReEarthVisualizer.PatchStarCount:output_type -> reearth.visualizer.v1.PatchStarCountResponse
-	49, // [49:65] is the sub-list for method output_type
-	33, // [33:49] is the sub-list for method input_type
-	33, // [33:33] is the sub-list for extension type_name
-	33, // [33:33] is the sub-list for extension extendee
-	0,  // [0:33] is the sub-list for field type_name
+	10, // 12: reearth.visualizer.v1.GetProjectListRequest.sort:type_name -> reearth.visualizer.v1.ProjectSort
+	9,  // 13: reearth.visualizer.v1.GetProjectListRequest.pagination:type_name -> reearth.visualizer.v1.Pagination
+	10, // 14: reearth.visualizer.v1.GetAllProjectsRequest.sort:type_name -> reearth.visualizer.v1.ProjectSort
+	9,  // 15: reearth.visualizer.v1.GetAllProjectsRequest.pagination:type_name -> reearth.visualizer.v1.Pagination
+	5,  // 16: reearth.visualizer.v1.GetAllProjectsRequest.visibility:type_name -> reearth.visualizer.v1.ProjectVisibility
+	0,  // 17: reearth.visualizer.v1.CreateProjectRequest.visualizer:type_name -> reearth.visualizer.v1.Visualizer
+	2,  // 18: reearth.visualizer.v1.PublishProjectRequest.publishment_status:type_name -> reearth.visualizer.v1.PublishmentStatus
+	6,  // 19: reearth.visualizer.v1.GetProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	6,  // 20: reearth.visualizer.v1.GetProjectListResponse.projects:type_name -> reearth.visualizer.v1.Project
+	11, // 21: reearth.visualizer.v1.GetProjectListResponse.page_info:type_name -> reearth.visualizer.v1.PageInfo
+	6,  // 22: reearth.visualizer.v1.GetAllProjectsResponse.projects:type_name -> reearth.visualizer.v1.Project
+	11, // 23: reearth.visualizer.v1.GetAllProjectsResponse.page_info:type_name -> reearth.visualizer.v1.PageInfo
+	6,  // 24: reearth.visualizer.v1.CreateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	6,  // 25: reearth.visualizer.v1.UpdateProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	6,  // 26: reearth.visualizer.v1.PublishProjectResponse.project:type_name -> reearth.visualizer.v1.Project
+	8,  // 27: reearth.visualizer.v1.UpdateProjectMetadataResponse.metadata:type_name -> reearth.visualizer.v1.ProjectMetadata
+	6,  // 28: reearth.visualizer.v1.GetProjectByAliasResponse.project:type_name -> reearth.visualizer.v1.Project
+	6,  // 29: reearth.visualizer.v1.GetProjectByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
+	6,  // 30: reearth.visualizer.v1.UpdateByProjectAliasResponse.project:type_name -> reearth.visualizer.v1.Project
+	8,  // 31: reearth.visualizer.v1.PatchStarCountResponse.projectmetadata:type_name -> reearth.visualizer.v1.ProjectMetadata
+	12, // 32: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:input_type -> reearth.visualizer.v1.GetProjectListRequest
+	13, // 33: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:input_type -> reearth.visualizer.v1.GetAllProjectsRequest
+	14, // 34: reearth.visualizer.v1.ReEarthVisualizer.GetProject:input_type -> reearth.visualizer.v1.GetProjectRequest
+	15, // 35: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByAlias:input_type -> reearth.visualizer.v1.GetProjectByAliasRequest
+	16, // 36: reearth.visualizer.v1.ReEarthVisualizer.ValidateProjectAlias:input_type -> reearth.visualizer.v1.ValidateProjectAliasRequest
+	17, // 37: reearth.visualizer.v1.ReEarthVisualizer.ValidateSceneAlias:input_type -> reearth.visualizer.v1.ValidateSceneAliasRequest
+	18, // 38: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:input_type -> reearth.visualizer.v1.CreateProjectRequest
+	19, // 39: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:input_type -> reearth.visualizer.v1.UpdateProjectRequest
+	20, // 40: reearth.visualizer.v1.ReEarthVisualizer.PublishProject:input_type -> reearth.visualizer.v1.PublishProjectRequest
+	21, // 41: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:input_type -> reearth.visualizer.v1.UpdateProjectMetadataRequest
+	22, // 42: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:input_type -> reearth.visualizer.v1.DeleteProjectRequest
+	26, // 43: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:input_type -> reearth.visualizer.v1.ExportProjectRequest
+	23, // 44: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByProjectAlias:input_type -> reearth.visualizer.v1.GetProjectByProjectAliasRequest
+	24, // 45: reearth.visualizer.v1.ReEarthVisualizer.UpdateByProjectAlias:input_type -> reearth.visualizer.v1.UpdateByProjectAliasRequest
+	25, // 46: reearth.visualizer.v1.ReEarthVisualizer.DeleteByProjectAlias:input_type -> reearth.visualizer.v1.DeleteByProjectAliasRequest
+	27, // 47: reearth.visualizer.v1.ReEarthVisualizer.PatchStarCount:input_type -> reearth.visualizer.v1.PatchStarCountRequest
+	29, // 48: reearth.visualizer.v1.ReEarthVisualizer.GetProjectList:output_type -> reearth.visualizer.v1.GetProjectListResponse
+	30, // 49: reearth.visualizer.v1.ReEarthVisualizer.GetAllProjects:output_type -> reearth.visualizer.v1.GetAllProjectsResponse
+	28, // 50: reearth.visualizer.v1.ReEarthVisualizer.GetProject:output_type -> reearth.visualizer.v1.GetProjectResponse
+	37, // 51: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByAlias:output_type -> reearth.visualizer.v1.GetProjectByAliasResponse
+	38, // 52: reearth.visualizer.v1.ReEarthVisualizer.ValidateProjectAlias:output_type -> reearth.visualizer.v1.ValidateProjectAliasResponse
+	39, // 53: reearth.visualizer.v1.ReEarthVisualizer.ValidateSceneAlias:output_type -> reearth.visualizer.v1.ValidateSceneAliasResponse
+	31, // 54: reearth.visualizer.v1.ReEarthVisualizer.CreateProject:output_type -> reearth.visualizer.v1.CreateProjectResponse
+	32, // 55: reearth.visualizer.v1.ReEarthVisualizer.UpdateProject:output_type -> reearth.visualizer.v1.UpdateProjectResponse
+	33, // 56: reearth.visualizer.v1.ReEarthVisualizer.PublishProject:output_type -> reearth.visualizer.v1.PublishProjectResponse
+	34, // 57: reearth.visualizer.v1.ReEarthVisualizer.UpdateProjectMetadata:output_type -> reearth.visualizer.v1.UpdateProjectMetadataResponse
+	35, // 58: reearth.visualizer.v1.ReEarthVisualizer.DeleteProject:output_type -> reearth.visualizer.v1.DeleteProjectResponse
+	36, // 59: reearth.visualizer.v1.ReEarthVisualizer.ExportProject:output_type -> reearth.visualizer.v1.ExportProjectResponse
+	40, // 60: reearth.visualizer.v1.ReEarthVisualizer.GetProjectByProjectAlias:output_type -> reearth.visualizer.v1.GetProjectByProjectAliasResponse
+	41, // 61: reearth.visualizer.v1.ReEarthVisualizer.UpdateByProjectAlias:output_type -> reearth.visualizer.v1.UpdateByProjectAliasResponse
+	42, // 62: reearth.visualizer.v1.ReEarthVisualizer.DeleteByProjectAlias:output_type -> reearth.visualizer.v1.DeleteByProjectAliasResponse
+	43, // 63: reearth.visualizer.v1.ReEarthVisualizer.PatchStarCount:output_type -> reearth.visualizer.v1.PatchStarCountResponse
+	48, // [48:64] is the sub-list for method output_type
+	32, // [32:48] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_schemas_internalapi_v1_schema_proto_init() }
@@ -3666,7 +3613,7 @@ func file_schemas_internalapi_v1_schema_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_schemas_internalapi_v1_schema_proto_rawDesc), len(file_schemas_internalapi_v1_schema_proto_rawDesc)),
-			NumEnums:      7,
+			NumEnums:      6,
 			NumMessages:   38,
 			NumExtensions: 0,
 			NumServices:   1,

@@ -371,19 +371,45 @@ func TestGetAllProjects(t *testing.T) {
 			assert.Equal(t, "public", projectRes.Project.Visibility)
 		})
 
-		// Clean up - delete all test projects
-		for _, id := range publicProjects {
-			_, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
-				ProjectId: id,
+		// Test case 10: Filter by single topic
+		t.Run("FilterBySingleTopic", func(t *testing.T) {
+			topic := "visualization"
+			res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
+				Topics: []string{topic},
 			})
-			assert.NoError(t, err)
-		}
+			require.NoError(t, err)
+			require.NotNil(t, res)
+			require.NotNil(t, res.Projects)
 
-		for _, id := range privateProjects {
-			_, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
-				ProjectId: id,
+			// All returned projects should contain the topic
+			for _, proj := range res.Projects {
+				require.NotNil(t, proj.Metadata)
+				assert.Contains(t, proj.Metadata.Topics, topic)
+			}
+		})
+
+		// Test case 11: Filter by multiple topics
+		t.Run("FilterByMultipleTopics", func(t *testing.T) {
+			topics := []string{"visualization", "mapping"}
+			res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
+				Topics: topics,
 			})
-			assert.NoError(t, err)
-		}
+			require.NoError(t, err)
+			require.NotNil(t, res)
+			require.NotNil(t, res.Projects)
+
+			// All returned projects should contain at least one of the topics
+			for _, proj := range res.Projects {
+				require.NotNil(t, proj.Metadata)
+				found := false
+				for _, t := range topics {
+					if lo.Contains(proj.Metadata.Topics, t) {
+						found = true
+						break
+					}
+				}
+				assert.True(t, found, "Project %s does not contain any of the topics", proj.Id)
+			}
+		})
 	})
 }
