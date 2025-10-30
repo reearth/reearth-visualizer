@@ -24,6 +24,7 @@ __debug_bin
 /bin
 /debug
 /mongo
+!/internal/infrastructure/mongo/
 /.env*
 !/.env.example
 !/.env.docker

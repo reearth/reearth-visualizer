@@ -39,7 +39,6 @@ func (r *userRepo) FindMe(ctx context.Context) (*user.User, error) {
 		Host(lo.ToPtr(string(q.Me.Host))).
 		MyWorkspaceID(string(q.Me.MyWorkspaceID)).
 		Auths(gqlutil.ToStringSlice(q.Me.Auths)).
-		Workspaces(gqlmodel.ToWorkspaces(q.Me.Workspaces)).
 		Build()
 }
 

@@ -11,7 +11,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/handler/lru"
 	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/labstack/echo/v4"
-	"github.com/ravilushqa/otelgqlgen"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/app/config"
@@ -20,6 +19,9 @@ import (
 	"github.com/reearth/reearthx/log"
 	"github.com/vektah/gqlparser/v2/ast"
 	"github.com/vektah/gqlparser/v2/gqlerror"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"golang.org/x/text/language"
 )
 
@@ -59,8 +61,10 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 		srv.Use(extension.FixedComplexityLimit(conf.ComplexityLimit))
 	}
 
-	// tracing
-	srv.Use(otelgqlgen.Middleware())
+	// tracing with detailed operation tracking
+	srv.AroundOperations(detailedOperationTracer())
+	srv.AroundResponses(responseTracer())
+	// srv.AroundFields(fieldTracer())
 
 	srv.SetErrorPresenter(func(ctx context.Context, e error) *gqlerror.Error {
 		defer func() {
@@ -80,6 +84,17 @@ func GraphqlAPI(conf config.GraphQLConfig, dev bool) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		req := c.Request()
 		ctx := req.Context()
+		tracer := otel.Tracer("reearth-visualizer")
+		ctx, span := tracer.Start(ctx, "GraphQL Handler",
+			trace.WithSpanKind(trace.SpanKindServer),
+			trace.WithAttributes(
+				attribute.String("component", "graphql"),
+				attribute.String("http.method", req.Method),
+				attribute.String("http.url", req.URL.Path),
+				attribute.String("handler", "graphql"),
+			),
+		)
+		defer span.End()
 
 		usecases := adapter.Usecases(ctx)
 		ctx = gql.AttachUsecases(ctx, usecases, enableDataLoaders)

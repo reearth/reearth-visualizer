@@ -17,7 +17,7 @@ import (
 
 var ErrInvalidEmailORPassword = errors.New("wrong email or password")
 
-func authServer(ctx context.Context, e *echo.Echo, cfg *config.AuthSrvConfig, repos *repo.Container) {
+func authServer(ctx context.Context, ec *echo.Echo, cfg *config.AuthSrvConfig, repos *repo.Container) {
 	if cfg.Disabled {
 		return
 	}
@@ -33,7 +33,7 @@ func authServer(ctx context.Context, e *echo.Echo, cfg *config.AuthSrvConfig, re
 		UserRepo:        &authServerUser{User: repos.User},
 		ConfigRepo:      &authServerConfig{Config: repos.Config},
 		RequestRepo:     repos.AuthRequest,
-	}, e.Group(""))
+	}, ec.Group(""))
 }
 
 type authServerUser struct {
