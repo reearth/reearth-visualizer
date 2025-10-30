@@ -7,8 +7,8 @@ import (
 	"os/signal"
 
 	"github.com/labstack/echo/v4"
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
@@ -46,7 +46,7 @@ type ServerConfig struct {
 	Gateways          *gateway.Container
 	AccountRepos      *accountrepo.Container
 	AccountGateways   *accountgateway.Container
-	AccountsAPIClient *accounts.Client
+	AccountsAPIClient *gqlclient.Client
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
