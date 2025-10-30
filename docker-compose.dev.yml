@@ -4,6 +4,8 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile.dev
+    environment:
+      - SKIP_DOTENV=true
     env_file:
       - ./server/.env.docker
     ports:

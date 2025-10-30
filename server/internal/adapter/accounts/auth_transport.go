@@ -18,8 +18,6 @@ func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 	// TODO: Remove authInfo handling once the migration is complete
 	if jwtToken := adapter.JwtToken(req.Context()); jwtToken != "" {
 		token = jwtToken
-	} else if authInfo := adapter.GetAuthInfo(req.Context()); authInfo != nil && authInfo.Token != "" {
-		token = authInfo.Token
 	}
 
 	if token != "" {
