@@ -90,6 +90,21 @@ func TestInternalAPI_metadata_update(t *testing.T) {
 			assert.Equal(t, "test license 4", *res.License)
 			assert.Equal(t, []string{"topic1", "topic2", "topic3"}, res.Topics)
 		})
+
+		t.Run("handle duplicate and empty string in topics", func(t *testing.T) {
+			res := UpdateProjectMetadata(
+				t, ctx, r, client,
+				&pb.UpdateProjectMetadataRequest{
+					ProjectId: projectID.String(),
+					Readme:    lo.ToPtr("test readme 4"),
+					License:   lo.ToPtr("test license 4"),
+					Topics:    &pb.Topics{Values: []string{"topic1", "topic1", "topic2", "", "topic3"}},
+				},
+			)
+			assert.Equal(t, "test readme 4", *res.Readme)
+			assert.Equal(t, "test license 4", *res.License)
+			assert.Equal(t, []string{"topic1", "topic2", "topic3"}, res.Topics)
+		})
 	})
 }
 

@@ -2,10 +2,12 @@ package project
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/samber/lo"
 )
 
 var (
@@ -117,10 +119,17 @@ func (r *ProjectMetadata) SetLicense(license *string) {
 }
 
 func (r *ProjectMetadata) SetTopics(topics *[]string) {
-	if r == nil {
+	if r == nil || topics == nil {
 		return
 	}
-	r.topics = topics
+
+	uniqTopics := lo.Uniq(
+		lo.FilterMap(*topics, func(s string, _ int) (string, bool) {
+			trimmed := strings.TrimSpace(s)
+			return trimmed, trimmed != ""
+		}),
+	)
+	r.topics = &uniqTopics
 }
 
 func (r *ProjectMetadata) SetStarCount(starCount *int64) {
