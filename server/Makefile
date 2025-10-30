@@ -62,13 +62,13 @@ e2e:
 # =======================
 
 build:
-	go build ./cmd/reearth
+	go build -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 dev: dev-install
 	air
 
 run-app:
-	go run ./cmd/reearth
+	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 run:
 	${DOCKER_COMPOSE_DEV} up reearth-visualizer-dev
