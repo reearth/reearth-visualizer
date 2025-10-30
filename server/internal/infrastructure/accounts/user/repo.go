@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hasura/go-graphql-client"
 	"github.com/reearth/reearth/server/internal/infrastructure/accounts/gqlerror"
@@ -25,6 +26,10 @@ func (r *userRepo) FindMe(ctx context.Context) (*user.User, error) {
 		return nil, gqlerror.ReturnAccountsError(err)
 	}
 
+	if q.Me.ID == "" {
+		return nil, gqlerror.ReturnAccountsError(fmt.Errorf("user ID is empty in response"))
+	}
+
 	return user.New().
 		ID(string(q.Me.ID)).
 		Name(string(q.Me.Name)).
@@ -34,7 +39,6 @@ func (r *userRepo) FindMe(ctx context.Context) (*user.User, error) {
 		Host(lo.ToPtr(string(q.Me.Host))).
 		MyWorkspaceID(string(q.Me.MyWorkspaceID)).
 		Auths(gqlutil.ToStringSlice(q.Me.Auths)).
-		Workspaces(gqlmodel.ToWorkspaces(q.Me.Workspaces)).
 		Build()
 }
 

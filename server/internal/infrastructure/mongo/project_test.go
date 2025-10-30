@@ -222,3 +222,241 @@ func TestProject_FindDeletedByWorkspace(t *testing.T) {
 	})
 
 }
+
+func TestProject_FindAll(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	pid1 := id.NewProjectID()
+	pid2 := id.NewProjectID()
+	pid3 := id.NewProjectID()
+	pid4 := id.NewProjectID()
+
+	// Create projects with different visibility and names
+	now := time.Now()
+	_, err := c.Collection("project").InsertMany(ctx, []any{
+		bson.M{
+			"id":          pid1.String(),
+			"workspace":   wid.String(),
+			"name":        "Public Project 1",
+			"description": "Description for Public Project 1",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+		bson.M{
+			"id":          pid2.String(),
+			"workspace":   wid.String(),
+			"name":        "Public Project 2",
+			"description": "Description for Public Project 2",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+		bson.M{
+			"id":          pid3.String(),
+			"workspace":   wid.String(),
+			"name":        "Private Project 3",
+			"description": "Description for Private Project 3",
+			"deleted":     false,
+			"visibility":  "private",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+		bson.M{
+			"id":          pid4.String(),
+			"workspace":   wid.String(),
+			"name":        "Deleted Project 4",
+			"description": "Description for Deleted Project 4",
+			"deleted":     true,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+	})
+	assert.NoError(t, err)
+
+	// Create project metadata with topics
+	pmid1 := id.NewProjectMetadataID()
+	pmid2 := id.NewProjectMetadataID()
+	pmid3 := id.NewProjectMetadataID()
+
+	_, err = c.Collection("projectmetadata").InsertMany(ctx, []any{
+		bson.M{
+			"id":        pmid1.String(),
+			"project":   pid1.String(),
+			"workspace": wid.String(),
+			"topics":    []string{"gis", "mapping"},
+		},
+		bson.M{
+			"id":        pmid2.String(),
+			"project":   pid2.String(),
+			"workspace": wid.String(),
+			"topics":    []string{"3d", "visualization"},
+		},
+		bson.M{
+			"id":        pmid3.String(),
+			"project":   pid3.String(),
+			"workspace": wid.String(),
+			"topics":    []string{"gis", "analysis"},
+		},
+	})
+	assert.NoError(t, err)
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("FindAll without filters", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(100)
+		offset := int64(0)
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 2, len(got)) // Only public, non-deleted projects
+
+		// Verify projects are the expected ones
+		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
+		assert.Contains(t, projectIds, pid1)
+		assert.Contains(t, projectIds, pid2)
+	})
+
+	t.Run("FindAll with keyword filter", func(t *testing.T) {
+		keyword := "Project 1"
+		visibility := "public"
+		limit := int64(100)
+		offset := int64(0)
+		filter := repo.ProjectFilter{
+			Keyword:    &keyword,
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 1, len(got))
+		assert.Equal(t, pid1, got[0].ID())
+		assert.Equal(t, "Public Project 1", got[0].Name())
+	})
+
+	t.Run("FindAll with single topic filter", func(t *testing.T) {
+		topics := []string{"gis"}
+		visibility := "public"
+		filter := repo.ProjectFilter{
+			Topics:     topics,
+			Visibility: &visibility,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 1, len(got)) // Only pid1 has "gis" topic and is public
+		assert.Equal(t, pid1, got[0].ID())
+	})
+
+	t.Run("FindAll with multiple topics filter", func(t *testing.T) {
+		topics := []string{"gis", "3d"}
+		visibility := "public"
+		filter := repo.ProjectFilter{
+			Topics:     topics,
+			Visibility: &visibility,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 2, len(got)) // Both pid1 (gis) and pid2 (3d) match
+
+		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
+		assert.Contains(t, projectIds, pid1)
+		assert.Contains(t, projectIds, pid2)
+	})
+
+	t.Run("FindAll with keyword and topics filter", func(t *testing.T) {
+		keyword := "Project"
+		topics := []string{"gis"}
+		visibility := "public"
+		filter := repo.ProjectFilter{
+			Keyword:    &keyword,
+			Topics:     topics,
+			Visibility: &visibility,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 1, len(got)) // Only pid1 matches both keyword and topic
+		assert.Equal(t, pid1, got[0].ID())
+	})
+
+	t.Run("FindAll with non-matching topic", func(t *testing.T) {
+		topics := []string{"nonexistent"}
+		visibility := "public"
+		filter := repo.ProjectFilter{
+			Topics:     topics,
+			Visibility: &visibility,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 0, len(got))
+		assert.Equal(t, int64(0), pageInfo.TotalCount)
+	})
+
+	t.Run("FindAll with private visibility", func(t *testing.T) {
+		topics := []string{"gis"}
+		visibility := "private"
+		filter := repo.ProjectFilter{
+			Topics:     topics,
+			Visibility: &visibility,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 1, len(got)) // Only pid3 is private with gis topic
+		assert.Equal(t, pid3, got[0].ID())
+	})
+
+	t.Run("FindAll with pagination", func(t *testing.T) {
+		limit := int64(1)
+		offset := int64(0)
+		visibility := "public"
+		filter := repo.ProjectFilter{
+			Limit:      &limit,
+			Offset:     &offset,
+			Visibility: &visibility,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 1, len(got))
+		assert.Equal(t, int64(2), pageInfo.TotalCount)
+		assert.True(t, pageInfo.HasNextPage)
+		assert.False(t, pageInfo.HasPreviousPage)
+	})
+}

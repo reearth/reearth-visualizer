@@ -12,7 +12,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
-	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
@@ -131,36 +130,30 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
 
 	// public apis
-	api := e.Group("/api")
-	api.GET("/ping", Ping(), privateCache)
-	api.GET("/published/:name", PublishedMetadata())
-	api.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
-	api.GET("/published_data/:name", PublishedData("", true))
+	apiRoot := e.Group("/api")
+	apiRoot.GET("/ping", Ping(), privateCache)
+	apiRoot.GET("/published/:name", PublishedMetadata())
+	apiRoot.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
+	apiRoot.GET("/published_data/:name", PublishedData("", true))
 	published := e.Group("/p", PublishedAuthMiddleware())
 	published.GET("/:name/data.json", PublishedData("", true))
 	published.GET("/:name/", PublishedIndex("", true))
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
-	// private apis
-	if cfg.AccountsAPIClient != nil {
-		e.Use(appmiddleware.NewAccountsMiddlewares(&appmiddleware.NewAccountsMiddlewaresParam{
-			AccountsClient: cfg.AccountsAPIClient,
-		})...)
-	}
-	e.Use(attachOpMiddleware(cfg))
+	apiPrivateRoute := apiRoot.Group("", privateCache)
+	apiPrivateRoute.Use(attachOpMiddleware(cfg))
 
-	apiPrivate := api.Group("", privateCache)
-	apiPrivate.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
-	apiPrivate.POST("/signup", Signup())
+	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, gqldev))
+	apiPrivateRoute.POST("/signup", Signup())
 	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
 	if !cfg.Config.AuthSrv.Disabled {
-		apiPrivate.POST("/signup/verify", StartSignupVerify())
-		apiPrivate.POST("/signup/verify/:code", SignupVerify())
-		apiPrivate.POST("/password-reset", PasswordReset())
+		apiPrivateRoute.POST("/signup/verify", StartSignupVerify())
+		apiPrivateRoute.POST("/signup/verify/:code", SignupVerify())
+		apiPrivateRoute.POST("/password-reset", PasswordReset())
 	}
 
-	servSplitUploadFiles(e, cfg)
-	servSignatureUploadFiles(e, cfg)
+	servSplitUploadFiles(apiPrivateRoute, cfg)
+	servSignatureUploadFiles(apiRoot, apiPrivateRoute, cfg)
 
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,

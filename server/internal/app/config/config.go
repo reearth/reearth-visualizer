@@ -182,6 +182,10 @@ func (c *Config) UseMockAuth() bool {
 	return c.Dev && c.MockAuth
 }
 
+func (c *Config) UseReearthAccountAuth() bool {
+	return c.AccountsAPI.Enabled
+}
+
 func (c *Config) secrets() []string {
 	s := []string{c.DB, c.Auth0.ClientSecret}
 	for _, ac := range c.DB_Users {
