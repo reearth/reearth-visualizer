@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.12.1 - 2025-10-29
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.12.1 ([#1891](https://github.com/reearth/reearth-visualizer/pull/1891)) [`a7a3d0`](https://github.com/reearth/reearth-visualizer/commit/a7a3d0)
+
+### Server
+
+#### 🚀 Features
+
+- Auth mode fix ([#1889](https://github.com/reearth/reearth-visualizer/pull/1889)) [`6b834b`](https://github.com/reearth/reearth-visualizer/commit/6b834b)
+- Refactoring the development environment [VIZ-2314] ([#1866](https://github.com/reearth/reearth-visualizer/pull/1866)) [`3d9bf1`](https://github.com/reearth/reearth-visualizer/commit/3d9bf1)
+- Add topics filter to endpoint to search for public projects [VIZ-2322] ([#1884](https://github.com/reearth/reearth-visualizer/pull/1884)) [`3b8a74`](https://github.com/reearth/reearth-visualizer/commit/3b8a74)
+- Migration to replace esri_world_topo with default in published data [VIZ-2213]  ([#1886](https://github.com/reearth/reearth-visualizer/pull/1886)) [`3b4b72`](https://github.com/reearth/reearth-visualizer/commit/3b4b72)
+
+#### 🔧 Bug Fixes
+
+- Delete workspaces from getme ([#1892](https://github.com/reearth/reearth-visualizer/pull/1892)) [`2c47cf`](https://github.com/reearth/reearth-visualizer/commit/2c47cf)
+- Attach middlware only when api group is private ([#1885](https://github.com/reearth/reearth-visualizer/pull/1885)) [`0e09b4`](https://github.com/reearth/reearth-visualizer/commit/0e09b4)
+
 ## 1.0.0-beta.12.0 - 2025-10-22
 
 ### Web
