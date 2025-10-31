@@ -8,7 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func UpdateProjectMetadataFieldsFix(ctx context.Context, c DBClient) error {
+func UpdateProjectMetadataFields(ctx context.Context, c DBClient) error {
 	projectCol := c.WithCollection("project")
 	metadataCol := c.WithCollection("projectmetadata")
 
