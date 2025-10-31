@@ -9,6 +9,7 @@ SCHEMATYPER := github.com/idubinskiy/schematyper
 MANIFEST_DIR := pkg/plugin/manifest
 DOCKER_COMPOSE := docker compose -f ../docker-compose.yml
 DOCKER_COMPOSE_DEV := docker compose -f ../docker-compose.dev.yml
+DOCKER_EXEC := docker exec reearth-visualizer-reearth-visualizer-dev-1
 
 # =======================
 # Default
@@ -21,24 +22,30 @@ help:
 	@echo "  make <target>"
 	@echo ""
 	@echo "Targets:"
-	@echo "  lint              Run golangci-lint with auto-fix"
-	@echo "  test              Run unit tests"
+	@echo "  lint              Run golangci-lint with auto-fix (local)"
+	@echo "  lint-docker       Run golangci-lint in Docker container"
+	@echo "  test              Run unit tests (local)"
+	@echo "  test-docker       Run unit tests in Docker container"
 	@echo "  test-debug        Run unit tests with verbose output"
 	@echo "  e2e               Run end-to-end tests"
 	@echo "  build             Build the project"
 	@echo "  dev-install       Install dev tools"
 	@echo "  dev               Run the application with hot reload"
 	@echo "  run-app           Run the application"
+	@echo "  run               Start dev server with Docker Compose"
 	@echo "  run-db            Start MongoDB with Docker Compose"
 	@echo "  run-reset         Reset MongoDB data and add mock user"
 	@echo "  reset             Reset database and GCS, reinitialize with mock data"
 	@echo "  init              Initialize GCS bucket and create mock user"
+	@echo "  init-gcs          Initialize GCS bucket only"
+	@echo "  destroy           Remove ALL Docker resources and data (destructive)"
 	@echo "  gql               Generate GraphQL code"
 	@echo "  schematyper       Generate schema using schematyper"
 	@echo "  deep-copy         Generate deep-copy code for Initializer"
 	@echo "  mockuser          Create a mock user"
 	@echo "  up-gcs            Start fake GCS server"
 	@echo "  down-gcs          Stop fake GCS server"
+	@echo "  down              Stop Docker Compose services"
 	@echo "  clean             Clean Go cache"
 
 # =======================
@@ -48,8 +55,29 @@ help:
 lint:
 	golangci-lint run --fix
 
+lint-docker:
+	@echo "Running golangci-lint in Docker container..."
+	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
+		${DOCKER_EXEC} golangci-lint run --fix --timeout=10m; \
+	else \
+		echo "Error: reearth-visualizer-dev container is not running."; \
+		echo "Please start the container with 'make run' first."; \
+		exit 1; \
+	fi
+
 test:
 	REEARTH_DB=${REEARTH_DB} go test ${TEST_DIR} -run ${TARGET_TEST}
+
+test-docker:
+	@echo "Running tests in Docker container..."
+	@echo "Note: Some e2e tests may fail due to MongoDB permission issues in Docker."
+	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
+		${DOCKER_EXEC} go test ${TEST_DIR} -run ${TARGET_TEST}; \
+	else \
+		echo "Error: reearth-visualizer-dev container is not running."; \
+		echo "Please start the container with 'make run' first."; \
+		exit 1; \
+	fi
 
 test-debug:
 	go test -v -timeout 10s ${TEST_DIR} | tee test.log
@@ -208,9 +236,12 @@ destroy:
 		docker system prune -a --volumes -f; \
 		docker network prune -f; \
 		echo "✓ All Docker resources have been removed"; \
+		echo "==== Removing data directory (requires sudo password) ===="; \
+		sudo rm -rf tmp/gcs tmp/mongo 
+		echo "✓ All data resources have been cleared"; \
 	else \
 		echo "✗ Operation cancelled"; \
 	fi
 
-.PHONY: default help lint test test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy
+.PHONY: default help lint lint-docker test test-docker test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
+        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down

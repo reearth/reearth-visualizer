@@ -4,6 +4,189 @@
 
 A back-end API server application for Re:Earth
 
+## 🛠️ Useful Development Commands
+
+### Database and Environment Reset
+
+Reset the development environment including database and GCS:
+
+**Unix/Linux/macOS:**
+
+```bash
+make reset
+```
+
+**Windows:**
+
+```cmd
+dev.bat reset
+```
+
+This command will:
+
+- Stop MongoDB and GCS services
+- Remove all data directories
+- Restart services
+- Initialize GCS bucket
+- Create mock user
+
+### Complete Environment Cleanup
+
+Remove all Docker resources and data (use with caution):
+
+**Unix/Linux/macOS:**
+
+```bash
+make destroy
+```
+
+**Windows:**
+
+```cmd
+dev.bat destroy
+```
+
+This command will:
+
+- Stop all Docker containers
+- Remove all Docker images, volumes, and networks
+- Delete all data directories
+- **⚠️ WARNING:** This is a destructive operation and cannot be undone
+
+> **Note:** This command will prompt for confirmation before proceeding.
+
+### Code Quality and Testing in Docker
+
+Run linting and tests inside the Docker container (same environment as CI/CD):
+
+**Unix/Linux/macOS:**
+
+```bash
+# Run linter with auto-fix
+make lint-docker
+
+# Run tests
+make test-docker
+```
+
+**Windows:**
+
+```cmd
+# Run linter with auto-fix
+dev.bat lint-docker
+
+# Run tests
+dev.bat test-docker
+```
+
+> **Note:**
+>
+> - These commands require the development container to be running (`make run` or `dev.bat run`)
+> - Some e2e tests may fail in Docker due to MongoDB permission constraints
+> - For local e2e testing, use `make test` or `dev.bat test` instead
+
+### Quick Reference
+
+| Command                                    | Description                                         |
+| ------------------------------------------ | --------------------------------------------------- |
+| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data |
+| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive) |
+| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container               |
+| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                       |
+
+## 🔐 Authentication Modes
+
+The backend server can be launched in the following authentication modes:
+
+### 1. Mock User Mode (Default)
+
+Launches in mock user mode.  
+This flag takes precedence, so any Auth0 configuration will be ignored.
+
+**Change: web/.env**
+
+```bash
+REEARTH_WEB_AUTH_PROVIDER=mock
+```
+
+**Change: server/.env.docker**
+
+```bash
+REEARTH_MOCKAUTH=true
+```
+
+### 2. Re:Earth Accounts Mode
+
+Uses [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) for user authentication and verification.  
+You need to start the `reearth-accounts` service separately.
+
+**Change: web/.env**
+
+```bash
+REEARTH_WEB_AUTH_PROVIDER=auth0
+```
+
+**Change: server/.env.docker**
+
+```bash
+REEARTH_MOCKAUTH=false
+REEARTH_ACCOUNTSAPI_ENABLED=true
+```
+
+### 3. Auth0 Direct Access Mode (Deprecated)
+
+Directly connects to Auth0 using the configured credentials.  
+🚨 This mode is deprecated and will be phased out in the future as the system transitions to [Re:Earth Accounts](https://github.com/reearth/reearth-accounts).
+
+**Change: web/.env**
+
+```bash
+REEARTH_WEB_AUTH_PROVIDER=auth0
+```
+
+**Change: server/.env.docker**
+
+```bash
+REEARTH_MOCKAUTH=false
+REEARTH_ACCOUNTSAPI_ENABLED=false
+
+REEARTH_AUTH0_DOMAIN=
+REEARTH_AUTH0_AUDIENCE=
+REEARTH_AUTH0_CLIENTID=
+REEARTH_AUTH0_CLIENTSECRET=
+```
+
+### 📢 When using an Identity Provider
+
+You need to add the Identity Provider user to Re:Earth
+
+**Unix/Linux/macOS:**
+
+```bash
+curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- << EOF
+{
+  "sub": "auth0|xxxxxxxx1234567890xxxxxx",
+  "email": "user@example.com",
+  "username": "example user",
+  "secret": "@Hoge123@Hoge123"
+}
+EOF
+```
+
+**Windows (Command Prompt):**
+
+```cmd
+curl -H "Content-Type: application/json" http://localhost:8080/api/signup ^
+  -d "{\"sub\": \"auth0|xxxxxxxx1234567890xxxxxx\", \"email\": \"user@example.com\", \"username\": \"example user\", \"secret\": \"@Hoge123@Hoge123\"}"
+```
+
+**Windows (PowerShell):**
+
+```powershell
+curl.exe -H "Content-Type: application/json" http://localhost:8080/api/signup `
+  -d '{"sub": "auth0|xxxxxxxx1234567890xxxxxx", "email": "user@example.com", "username": "example user", "secret": "@Hoge123@Hoge123"}'
+```
+
 ## Storage
 
 Visualizer is compatible with the following storage interfaces:
@@ -22,21 +205,66 @@ Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is 
 
 ### Testing GCS Locally
 
-1. `make gcs` ([fake-gcs-server](https://github.com/fsouza/fake-gcs-server) image is up)
+1. Start the fake-gcs-server ([fake-gcs-server](https://github.com/fsouza/fake-gcs-server)):
 
-2. create a bucket
+   ```bash
+   make up-gcs
+   ```
 
-```shell
-curl -X POST http://localhost:4443/storage/v1/b\?project\=your-project-id \
-    -H "Content-Type: application/json" \
-    -d '{
-          "name": "test-bucket"
-        }'
-```
+2. Create a bucket:
 
-3. set `REEARTH_GCS_BUCKETNAME` to `test-bucket`
+   **Using Make/dev.bat (Recommended):**
 
-※ project name and test name is anything you want
+   ```bash
+   # Unix/Linux/macOS
+   make init-gcs
+
+   # Windows
+   dev.bat init-gcs
+   ```
+
+   **Manual Creation (Advanced):**
+
+   If you need to create a bucket with a custom name or project ID:
+
+   <details>
+   <summary>Unix/Linux/macOS</summary>
+
+   ```shell
+   curl -X POST http://localhost:4443/storage/v1/b\?project\=your-project-id \
+       -H "Content-Type: application/json" \
+       -d '{
+             "name": "test-bucket"
+           }'
+   ```
+
+   </details>
+
+   <details>
+   <summary>Windows (Command Prompt)</summary>
+
+   ```cmd
+   curl -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" ^
+       -H "Content-Type: application/json" ^
+       -d "{\"name\": \"test-bucket\"}"
+   ```
+
+   </details>
+
+   <details>
+   <summary>Windows (PowerShell)</summary>
+
+   ```powershell
+   curl.exe -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" `
+       -H "Content-Type: application/json" `
+       -d '{"name": "test-bucket"}'
+   ```
+
+   </details>
+
+3. Set `REEARTH_GCS_BUCKETNAME` to `test-bucket`
+
+> **Note:** The default bucket name is `test-bucket`. You can use a different name if needed.
 
 ## Project Export and Import
 
@@ -76,6 +304,7 @@ project.zip
 #### Export Data Version
 
 The `exportDataVersion` field enables compatibility management for future format changes:
+
 - Current version: `"1"`
 - Version is embedded in `exportedInfo` section of `project.json`
 - Future versions can support schema migrations and new features
@@ -106,6 +335,7 @@ Handles chunked file uploads for large project files.
 Triggered automatically when a project zip file is uploaded directly to storage (e.g., GCS/S3 bucket notification).
 
 **Authentication**:
+
 - No auth token required (triggered by storage service)
 - User context extracted from filename: `{workspaceId}-{projectId}-{userId}.zip`
 - Operator context automatically generated from user ID
@@ -149,11 +379,13 @@ func ImportProject(
 ```
 
 **Current Implementation**:
+
 - Version `"1"` is the current format
 - Version parameter is extracted but not yet used for branching
 - Future versions can implement migration logic based on version value
 
 **Future Usage Example**:
+
 ```go
 if version != nil && *version == "2" {
     // Handle version 2 format with new features
@@ -168,6 +400,7 @@ return importV1(...)
 ### Error Handling
 
 All import steps update project status on failure:
+
 - Status: `ProjectImportStatusFailed`
 - Error message logged to `importResultLog`
 - Processing stops at first error
