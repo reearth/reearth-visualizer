@@ -206,6 +206,10 @@ enum PublishmentStatus {
   PUBLISHMENT_STATUS_PRIVATE = 3;
 }
 
+message Topics {
+  repeated string values = 1;
+}
+
 // Pagination
 message Pagination {
   optional int32 first = 1;
@@ -395,7 +399,7 @@ message UpdateProjectMetadataRequest {
   // Project license
   optional string license = 3;
   // Project topics
-  repeated string topics = 4;
+  optional Topics topics = 4;
 }
 
 // Deletes a project.

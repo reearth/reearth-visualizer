@@ -375,7 +375,7 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 			if req.Topics == nil {
 				return nil
 			}
-			return &req.Topics
+			return &req.Topics.Values
 		}(),
 	}, op)
 	if err != nil {

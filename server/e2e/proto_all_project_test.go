@@ -84,7 +84,7 @@ func TestGetAllProjects(t *testing.T) {
 				// Update project metadata with topics
 				_, err := client.UpdateProjectMetadata(ctx, &pb.UpdateProjectMetadataRequest{
 					ProjectId: res.Project.Id,
-					Topics:    projectTopics[res.Project.Id],
+					Topics:    &pb.Topics{Values: projectTopics[res.Project.Id]},
 				})
 				require.NoError(t, err)
 			}

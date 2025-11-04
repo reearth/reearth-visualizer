@@ -331,7 +331,7 @@ func TestInternalAPI_unit(t *testing.T) {
 				ProjectId: pid.String(),
 				Readme:    lo.ToPtr("test readme"),
 				License:   lo.ToPtr("test license"),
-				Topics:    []string{"test topics"},
+				Topics:    &pb.Topics{Values: []string{"test topics"}},
 			},
 		)
 		res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{

@@ -186,7 +186,7 @@ grpcurl -plaintext \
     "project_id": "???project-ID???",
     "readme": "# Updated README\n\nThis is new content.",
     "license": "Apache-2.0",
-    "topics": "3D, visualization, GIS, mapping"
+    "topics": {"values": ["3D", "visualization", "GIS", "mapping"]}
   }' \
   -import-path . \
   -proto ${PROTO_FILE} \
