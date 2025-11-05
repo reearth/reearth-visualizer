@@ -4,6 +4,7 @@ import (
 	workspacepkg "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/samber/lo"
 )
 
 func ToWorkspace(w *workspace.Workspace) *Workspace {
@@ -47,6 +48,7 @@ func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
 	return &Workspace{
 		ID:       IDFrom(w.ID()),
 		Name:     w.Name(),
+		PhotoURL: lo.EmptyableToPtr(w.Metadata().PhotoURL()),
 		Personal: w.IsPersonal(),
 		PolicyID: (*ID)(w.Policy()),
 		Members:  members,
