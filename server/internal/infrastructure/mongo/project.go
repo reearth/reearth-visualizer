@@ -563,6 +563,11 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		return r.findAllWithTopicsFilter(ctx, pFilter, visibility)
 	}
 
+	// Check if we need to sort by starcount (which requires joining with projectmetadata)
+	if pFilter.Sort != nil && pFilter.Sort.Key == "starcount" {
+		return r.findAllWithStarcountSort(ctx, pFilter, visibility)
+	}
+
 	// Original implementation for non-topics search
 	filter := bson.M{
 		"visibility": visibility,
@@ -608,16 +613,13 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 		var sortDoc bson.D
 		if pFilter.Sort != nil {
 			sortKey := pFilter.Sort.Key
-			if sortKey == "starcount" {
-				sortKey = "star_count" // Map to MongoDB field name
-			}
 			sortOrder := 1
 			if pFilter.Sort.Desc {
 				sortOrder = -1
 			}
 			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}}
 		} else {
-			sortDoc = bson.D{{Key: "star_count", Value: -1}}
+			sortDoc = bson.D{{Key: "starcount", Value: -1}}
 		}
 
 		collation := options.Collation{
@@ -869,7 +871,7 @@ func (r *Project) paginateWithoutWorkspaceFilter(ctx context.Context, filter any
 	mappedSort := sort
 	if sort != nil && sort.Key == "starcount" {
 		mappedSort = &project.SortType{
-			Key:  "star_count", // Map to MongoDB field name
+			Key:  "starcount", // Map to MongoDB field name
 			Desc: sort.Desc,
 		}
 	}
@@ -960,7 +962,7 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 	if pFilter.Sort != nil {
 		sortKey := pFilter.Sort.Key
 		if sortKey == "starcount" {
-			sortKey = "star_count"
+			sortKey = "metadata.starcount"
 		}
 		sortOrder := 1
 		if pFilter.Sort.Desc {
@@ -971,9 +973,9 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 		}
 		pipeline = append(pipeline, sortStage)
 	} else {
-		// Default sort by star_count descending
+		// Default sort by starcount descending
 		sortStage := bson.M{
-			"$sort": bson.D{{Key: "star_count", Value: -1}},
+			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}},
 		}
 		pipeline = append(pipeline, sortStage)
 	}
@@ -1015,6 +1017,135 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 	consumer := mongodoc.NewProjectConsumer(nil)
 	for cursor.Next(ctx) {
 		raw := cursor.Current
+		if err := consumer.Consume(raw); err != nil {
+			return nil, nil, err
+		}
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	var hasNextPage, hasPreviousPage bool
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		hasNextPage = *pFilter.Offset+*pFilter.Limit < totalCount
+		hasPreviousPage = *pFilter.Offset > 0
+	}
+
+	pageInfo := &usecasex.PageInfo{
+		TotalCount:      totalCount,
+		HasNextPage:     hasNextPage,
+		HasPreviousPage: hasPreviousPage,
+	}
+
+	return consumer.Result, pageInfo, nil
+}
+
+func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.ProjectFilter, visibility string) ([]*project.Project, *usecasex.PageInfo, error) {
+	// Build aggregation pipeline
+	matchStage := bson.M{
+		"$match": bson.M{
+			"visibility": visibility,
+			"deleted":    false,
+		},
+	}
+
+	// Add keyword search for name if provided
+	if pFilter.Keyword != nil {
+		matchStage["$match"].(bson.M)["name"] = bson.M{
+			"$regex": primitive.Regex{
+				Pattern: fmt.Sprintf(".*%s.*", regexp.QuoteMeta(*pFilter.Keyword)),
+				Options: "i",
+			},
+		}
+	}
+
+	lookupStage := bson.M{
+		"$lookup": bson.M{
+			"from":         "projectmetadata",
+			"localField":   "id",
+			"foreignField": "project",
+			"as":           "metadata",
+		},
+	}
+
+	// Handle sorting by starcount
+	// For projects without metadata, we need to handle them specially
+	// Add a field for sorting that handles missing metadata
+	addFieldsStage := bson.M{
+		"$addFields": bson.M{
+			"sort_star_count": bson.M{
+				"$cond": bson.M{
+					"if": bson.M{"$gt": bson.A{bson.M{"$size": "$metadata"}, 0}},
+					"then": bson.M{
+						"$toInt": bson.M{
+							"$ifNull": bson.A{
+								bson.M{"$arrayElemAt": bson.A{"$metadata.starcount", 0}},
+								0,
+							},
+						},
+					},
+					"else": 0, // Projects without metadata get 0 for sorting
+				},
+			},
+		},
+	}
+
+	sortOrder := 1
+	if pFilter.Sort.Desc {
+		sortOrder = -1
+	}
+	sortStage := bson.M{
+		"$sort": bson.D{{Key: "sort_star_count", Value: sortOrder}},
+	}
+
+	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, sortStage}
+
+	log.Infof("findAllWithStarcountSort: sortOrder=%d", sortOrder)
+	log.Infof("findAllWithStarcountSort: pipeline=%#v", pipeline)
+
+	// Count total documents with aggregation
+	countPipeline := make([]bson.M, len(pipeline))
+	copy(countPipeline, pipeline)
+	countPipeline = append(countPipeline, bson.M{"$count": "total"})
+
+	countCursor, err := r.client.Client().Aggregate(ctx, countPipeline)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer countCursor.Close(ctx)
+
+	var totalCount int64 = 0
+	if countCursor.Next(ctx) {
+		var result struct {
+			Total int64 `bson:"total"`
+		}
+		if err := countCursor.Decode(&result); err == nil {
+			totalCount = result.Total
+		}
+	}
+
+	// Handle pagination
+	if pFilter.Limit != nil && pFilter.Offset != nil {
+		pipeline = append(pipeline, bson.M{"$skip": *pFilter.Offset})
+		pipeline = append(pipeline, bson.M{"$limit": *pFilter.Limit})
+	}
+
+	// Execute aggregation
+	cursor, err := r.client.Client().Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, nil, err
+	}
+	defer cursor.Close(ctx)
+
+	consumer := mongodoc.NewProjectConsumer(nil)
+	for cursor.Next(ctx) {
+		raw := cursor.Current
+		var doc bson.M
+		if err := bson.Unmarshal(raw, &doc); err == nil {
+			projectID, _ := doc["id"].(string)
+			sortStarCount := doc["sort_star_count"]
+			log.Infof("findAllWithStarcountSort: projectId=%s sort_star_count=%v", projectID, sortStarCount)
+		}
 		if err := consumer.Consume(raw); err != nil {
 			return nil, nil, err
 		}
