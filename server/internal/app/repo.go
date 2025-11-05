@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/infrastructure/accounts"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
@@ -63,15 +63,15 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *accounts.Client) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *gqlclient.Client) {
 	gateways := &gateway.Container{}
 	acGateways := &accountgateway.Container{}
 
 	// Initialize Accounts API client if enabled
-	var accountsAPIClient *accounts.Client
+	var accountsAPIClient *gqlclient.Client
 	if conf.AccountsAPI.Enabled {
 		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
-		accountsAPIClient = accounts.NewClient(
+		accountsAPIClient = gqlclient.NewClient(
 			conf.AccountsAPI.Host,
 			conf.AccountsAPI.Timeout,
 			adpaccounts.DynamicAuthTransport{},

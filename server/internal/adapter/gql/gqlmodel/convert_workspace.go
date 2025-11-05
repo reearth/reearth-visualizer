@@ -1,6 +1,7 @@
 package gqlmodel
 
 import (
+	workspacepkg "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
@@ -16,6 +17,30 @@ func ToWorkspace(w *workspace.Workspace) *Workspace {
 		members = append(members, &WorkspaceMember{
 			UserID: IDFrom(u),
 			Role:   ToRole(r.Role),
+		})
+	}
+
+	return &Workspace{
+		ID:       IDFrom(w.ID()),
+		Name:     w.Name(),
+		Personal: w.IsPersonal(),
+		PolicyID: (*ID)(w.Policy()),
+		Members:  members,
+		Alias:    w.Alias(),
+	}
+}
+
+func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
+	if w == nil {
+		return nil
+	}
+
+	memberMap := w.Members().Users()
+	members := make([]*WorkspaceMember, 0, len(memberMap))
+	for u, r := range memberMap {
+		members = append(members, &WorkspaceMember{
+			UserID: IDFrom(u),
+			Role:   ToRole(workspace.Role(r.Role)),
 		})
 	}
 

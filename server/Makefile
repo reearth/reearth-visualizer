@@ -62,13 +62,13 @@ e2e:
 # =======================
 
 build:
-	go build ./cmd/reearth
+	go build -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 dev: dev-install
 	air
 
 run-app:
-	go run ./cmd/reearth
+	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 run:
 	${DOCKER_COMPOSE_DEV} up reearth-visualizer-dev
@@ -181,22 +181,21 @@ init:
 	@echo "==== Initializing GCS bucket ===="
 	make init-gcs
 	@echo ""
-	@echo "==== Waiting for GCS initialization (1 second) ===="
-	sleep 1
-	@echo ""
 	@echo "==== Creating mock user ===="
 	make mockuser
 	@echo ""
 
 mockuser:
-	curl -H 'Content-Type: application/json' \
+	curl -s -D - -o /dev/null \
+		-H 'Content-Type: application/json' \
 		-d '{"email": "mock@example.com", "username": "Mock User"}' \
-		http://localhost:8080/api/signup -vvv
+		http://localhost:8080/api/signup | head -n 1
 
 init-gcs:
-	curl -H 'Content-Type: application/json' \
+	curl -s -D - -o /dev/null \
+		-H 'Content-Type: application/json' \
 		-d '{"name": "test-bucket"}' \
-		http://localhost:4443/storage/v1/b -vvv
+		http://localhost:4443/storage/v1/b | head -n 1
 
 destroy:
 	@echo "⚠️  WARNING: This will remove ALL Docker resources!"
