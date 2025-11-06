@@ -157,3 +157,98 @@ func TestProjectMetadata_FindByProjectID_NotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, found)
 }
+
+func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
+	ctx := context.Background()
+	mongotest.Env = "REEARTH_DB"
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectMetadataUC(client)
+
+	ws := factory.NewWorkspace()
+	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
+	pid := id.NewProjectID()
+	operator := &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	}
+
+	// Create initial metadata as user1
+	user1 := accountdomain.NewUserID()
+	starCount := int64(1)
+	starredBy := []string{user1.String()}
+	param := interfaces.CreateProjectMetadataParam{
+		ProjectID:   pid,
+		WorkspaceID: ws.ID(),
+		StarCount:   &starCount,
+		StarredBy:   &starredBy,
+	}
+	meta, err := uc.Create(ctx, param, operator)
+	assert.NoError(t, err)
+	assert.NotNil(t, meta)
+
+	// Patch star count as user2 (should be allowed)
+	user2 := accountdomain.NewUserID()
+	newStarCount := int64(2)
+	newStarredBy := []string{user1.String(), user2.String()}
+	patchParam := interfaces.UpdateProjectMetadataParam{
+		ID:        pid,
+		StarCount: &newStarCount,
+		StarredBy: &newStarredBy,
+	}
+	patched, err := uc.PatchStarCountForAnyUser(ctx, patchParam, user2)
+	assert.NoError(t, err)
+	assert.NotNil(t, patched)
+	assert.Equal(t, &newStarCount, patched.StarCount())
+	assert.Equal(t, &newStarredBy, patched.StarredBy())
+
+	// Confirm persisted changes
+	found, err := uc.FindByProjectID(ctx, pid, operator)
+	assert.NoError(t, err)
+	assert.NotNil(t, found)
+	assert.Equal(t, &newStarCount, found.StarCount())
+	assert.Equal(t, &newStarredBy, found.StarredBy())
+
+	// Test: PatchStarCountForAnyUser should create ProjectMetadata if it does not exist
+	{
+		newPid := id.NewProjectID()
+		user3 := accountdomain.NewUserID()
+		starCount2 := int64(1)
+		starredBy2 := []string{user3.String()}
+		patchParam2 := interfaces.UpdateProjectMetadataParam{
+			ID:        newPid,
+			StarCount: &starCount2,
+			StarredBy: &starredBy2,
+		}
+		// Should fail because record does not exist
+		patched2, err := uc.PatchStarCountForAnyUser(ctx, patchParam2, user3)
+		assert.Error(t, err)
+		assert.Nil(t, patched2)
+
+		// Simulate PatchStarCount logic: create if not exists, then patch
+		param2 := interfaces.CreateProjectMetadataParam{
+			ProjectID:   newPid,
+			WorkspaceID: ws.ID(),
+			StarCount:   &starCount2,
+			StarredBy:   &starredBy2,
+		}
+		created, err := uc.CreateMetadataByAnyUser(ctx, param2, user3)
+		assert.NoError(t, err)
+		assert.NotNil(t, created)
+
+		// Now patch again
+		starCount3 := int64(2)
+		starredBy3 := []string{user3.String(), user1.String()}
+		patchParam3 := interfaces.UpdateProjectMetadataParam{
+			ID:        newPid,
+			StarCount: &starCount3,
+			StarredBy: &starredBy3,
+		}
+		patched3, err := uc.PatchStarCountForAnyUser(ctx, patchParam3, user1)
+		assert.NoError(t, err)
+		assert.NotNil(t, patched3)
+		assert.Equal(t, &starCount3, patched3.StarCount())
+		assert.Equal(t, &starredBy3, patched3.StarredBy())
+	}
+}

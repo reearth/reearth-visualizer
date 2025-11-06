@@ -138,3 +138,74 @@ func (i *ProjectMetadata) FindByProjectID(ctx context.Context, id id.ProjectID, 
 	}
 	return meta, nil
 }
+
+// PatchStarCountForAnyUser allows any authenticated user to update star count and starredBy fields as we cannot use 'Update' method above
+func (i *ProjectMetadata) PatchStarCountForAnyUser(ctx context.Context, p interfaces.UpdateProjectMetadataParam, user any) (*project.ProjectMetadata, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, p.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	// Only allow updating StarCount and StarredBy
+	if p.StarCount != nil {
+		meta.SetStarCount(p.StarCount)
+	}
+	if p.StarredBy != nil {
+		meta.SetStarredBy(p.StarredBy)
+	}
+	now := time.Now().UTC()
+	meta.SetUpdatedAt(&now)
+	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
+		return nil, err
+	}
+	tx.Commit()
+	return meta, nil
+}
+
+// CreateMetadataByAnyUser allows any authenticated user to create project metadata as we cannot use 'Create' method above
+func (i *ProjectMetadata) CreateMetadataByAnyUser(ctx context.Context, p interfaces.CreateProjectMetadataParam, user any) (*project.ProjectMetadata, error) {
+	tx, err := i.transaction.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	ctx = tx.Context()
+	defer func() {
+		if err2 := tx.End(ctx); err == nil && err2 != nil {
+			err = err2
+		}
+	}()
+
+	currentTime := time.Now().UTC()
+	meta, err := project.NewProjectMetadata().
+		NewID().
+		Project(p.ProjectID).
+		Workspace(p.WorkspaceID).
+		Readme(p.Readme).
+		License(p.License).
+		Topics(p.Topics).
+		StarCount(p.StarCount).
+		StarredBy(p.StarredBy).
+		CreatedAt(&currentTime).
+		UpdatedAt(&currentTime).
+		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
+		return nil, err
+	}
+	tx.Commit()
+	return meta, nil
+}
