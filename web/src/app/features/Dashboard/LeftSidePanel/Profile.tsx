@@ -62,6 +62,20 @@ const Profile: FC<ProfileProps> = ({
             hasCustomSubMenu: true,
             personal: w.personal,
             selected: currentWorkspace?.id === w.id,
+            customIcon: (
+              <AvatarOnMenu data-testid="workspace-avatar">
+                {w.photoURL ? (
+                  <AvatarImage src={w.photoURL} alt="Avatar" />
+                ) : (
+                  <Typography
+                    size="footnote"
+                    data-testid="workspace-avatar-initial"
+                  >
+                    {w.name?.charAt(0)}
+                  </Typography>
+                )}
+              </AvatarOnMenu>
+            ),
             onClick: () => onWorkspaceChange?.(w.id)
           };
         })
@@ -150,6 +164,18 @@ const Avatar = styled("div")(({ theme }) => ({
   height: "25px",
   borderRadius: "50%",
   background: theme.bg[2],
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+  overflow: "hidden"
+}));
+
+const AvatarOnMenu = styled("div")(({ theme }) => ({
+  width: "18px",
+  height: "18px",
+  borderRadius: "50%",
+  background: theme.relative.light,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

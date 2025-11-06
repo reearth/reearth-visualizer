@@ -5,6 +5,7 @@ export type Workspace = {
   name?: string;
   alias?: string;
   personal?: boolean;
+  photoURL?: string;
 };
 
 export type Project = {
