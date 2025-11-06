@@ -12,8 +12,8 @@ import { FC } from "react";
 import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
-import CurrentWorkspace from "./CurrentWorkspace";
 import LogoWrapper from "./LogoWrapper";
+import Profile from "./Profile";
 
 type Props = {
   workspaces: Workspace[];
@@ -40,7 +40,7 @@ const LeftSidePanel: FC<Props> = ({
       <SidebarMainSection data-testid="sidebar-main-section">
         <LogoWrapper data-testid="sidebar-logo" />
         <SidebarDivider data-testid="sidebar-divider-top" />
-        <CurrentWorkspace
+        <Profile
           data-testid="sidebar-profile"
           currentUser={currentWorkspace?.name}
           avatarURL={avatarURL}

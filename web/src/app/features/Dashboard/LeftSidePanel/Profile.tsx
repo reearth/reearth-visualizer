@@ -18,7 +18,7 @@ export type Project = {
   projectType?: ProjectType;
 };
 
-type CurrentWorkspaceProp = {
+type ProfileProps = {
   currentUser?: string;
   currentProject?: Project;
   currentWorkspace?: Workspace;
@@ -28,7 +28,7 @@ type CurrentWorkspaceProp = {
   onWorkspaceChange?: (workspaceId?: string) => void;
 };
 
-const CurrentWorkspace: FC<CurrentWorkspaceProp> = ({
+const Profile: FC<ProfileProps> = ({
   currentUser,
   avatarURL,
   workspaces,
@@ -125,7 +125,7 @@ const CurrentWorkspace: FC<CurrentWorkspaceProp> = ({
   );
 };
 
-export default CurrentWorkspace;
+export default Profile;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
