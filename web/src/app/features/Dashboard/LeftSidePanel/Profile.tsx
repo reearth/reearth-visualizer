@@ -5,6 +5,7 @@ import {
   PopupMenuItem,
   Typography
 } from "@reearth/app/lib/reearth-ui";
+import { isValidUrl } from "@reearth/app/utils/url";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -64,7 +65,7 @@ const Profile: FC<ProfileProps> = ({
             selected: currentWorkspace?.id === w.id,
             customIcon: (
               <AvatarOnMenu data-testid="workspace-avatar">
-                {w.photoURL ? (
+                {isValidUrl(w.photoURL) && w.photoURL ? (
                   <AvatarImage src={w.photoURL} alt="Avatar" />
                 ) : (
                   <Typography

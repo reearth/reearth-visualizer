@@ -5,6 +5,7 @@ import {
   PopupMenuItem,
   Typography
 } from "@reearth/app/lib/reearth-ui";
+import { isValidUrl } from "@reearth/app/utils/url";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { useCallback, useMemo } from "react";
@@ -57,7 +58,7 @@ const HeaderProfile: React.FC<Props> = ({
             selected: currentWorkspace?.id === w.id,
             customIcon: (
               <AvatarOnMenu data-testid="nav-workspace-avatar">
-                {w.photoURL ? (
+                {isValidUrl(w.photoURL) && w.photoURL ? (
                   <AvatarImage src={w.photoURL} alt="Avatar" />
                 ) : (
                   <Typography
@@ -99,7 +100,8 @@ const HeaderProfile: React.FC<Props> = ({
       label={
         <LabelWrapper>
           <AvatarOnMenu data-testid="nav-avatar">
-            {currentWorkspace?.photoURL ? (
+            {isValidUrl(currentWorkspace?.photoURL) &&
+            currentWorkspace?.photoURL ? (
               <AvatarImage src={currentWorkspace.photoURL} alt="Avatar" />
             ) : (
               <Typography size="body" data-testid="nav-avatar-initial">
