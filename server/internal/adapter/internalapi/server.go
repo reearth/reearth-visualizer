@@ -722,14 +722,18 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 	}
 
 	userID := usr.ID().String()
+	workspaceID := pj.Workspace().String()
 	if metadata == nil {
 		starCount := int64(1)
 		starredBy := []string{userID}
 
-		// workspaceID conversion no longer needed
+		wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
+		if err != nil {
+			return nil, errors.New("failed to convert workspaceID: " + err.Error())
+		}
 		metadata, err = uc.ProjectMetadata.CreateMetadataByAnyUser(ctx, interfaces.CreateProjectMetadataParam{
 			ProjectID:   pid,
-			WorkspaceID: pj.Workspace(),
+			WorkspaceID: wid,
 			Readme:      new(string),
 			License:     new(string),
 			Topics:      &[]string{},
