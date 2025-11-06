@@ -197,7 +197,7 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 		StarCount: &newStarCount,
 		StarredBy: &newStarredBy,
 	}
-	patched, err := uc.PatchStarCountForAnyUser(ctx, patchParam, user2)
+	patched, err := uc.PatchStarCountForAnyUser(ctx, patchParam)
 	assert.NoError(t, err)
 	assert.NotNil(t, patched)
 	assert.Equal(t, &newStarCount, patched.StarCount())
@@ -222,7 +222,7 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 			StarredBy: &starredBy2,
 		}
 		// Should fail because record does not exist
-		patched2, err := uc.PatchStarCountForAnyUser(ctx, patchParam2, user3)
+		patched2, err := uc.PatchStarCountForAnyUser(ctx, patchParam2)
 		assert.Error(t, err)
 		assert.Nil(t, patched2)
 
@@ -233,7 +233,7 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 			StarCount:   &starCount2,
 			StarredBy:   &starredBy2,
 		}
-		created, err := uc.CreateMetadataByAnyUser(ctx, param2, user3)
+		created, err := uc.CreateMetadataByAnyUser(ctx, param2)
 		assert.NoError(t, err)
 		assert.NotNil(t, created)
 
@@ -245,7 +245,7 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 			StarCount: &starCount3,
 			StarredBy: &starredBy3,
 		}
-		patched3, err := uc.PatchStarCountForAnyUser(ctx, patchParam3, user1)
+		patched3, err := uc.PatchStarCountForAnyUser(ctx, patchParam3)
 		assert.NoError(t, err)
 		assert.NotNil(t, patched3)
 		assert.Equal(t, &starCount3, patched3.StarCount())
