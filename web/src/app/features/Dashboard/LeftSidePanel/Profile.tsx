@@ -5,6 +5,7 @@ import {
   PopupMenuItem,
   Typography
 } from "@reearth/app/lib/reearth-ui";
+import { isValidUrl } from "@reearth/app/utils/url";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
@@ -18,21 +19,19 @@ export type Project = {
   projectType?: ProjectType;
 };
 
-type ProfileProp = {
+type ProfileProps = {
   currentUser?: string;
   currentProject?: Project;
   currentWorkspace?: Workspace;
-  isPersonal?: boolean;
-  userPhotoUrl?: string;
+  avatarURL?: string;
   workspaces?: Workspace[];
   onSignOut?: () => void;
   onWorkspaceChange?: (workspaceId?: string) => void;
 };
 
-export const Profile: FC<ProfileProp> = ({
+const Profile: FC<ProfileProps> = ({
   currentUser,
-  isPersonal,
-  userPhotoUrl,
+  avatarURL,
   workspaces,
   currentWorkspace,
   onWorkspaceChange,
@@ -64,6 +63,20 @@ export const Profile: FC<ProfileProp> = ({
             hasCustomSubMenu: true,
             personal: w.personal,
             selected: currentWorkspace?.id === w.id,
+            customIcon: (
+              <AvatarOnMenu data-testid="workspace-avatar">
+                {isValidUrl(w.photoURL) && w.photoURL ? (
+                  <AvatarImage src={w.photoURL} alt="Avatar" />
+                ) : (
+                  <Typography
+                    size="footnote"
+                    data-testid="workspace-avatar-initial"
+                  >
+                    {w.name?.charAt(0)}
+                  </Typography>
+                )}
+              </AvatarOnMenu>
+            ),
             onClick: () => onWorkspaceChange?.(w.id)
           };
         })
@@ -87,26 +100,24 @@ export const Profile: FC<ProfileProp> = ({
     ]
   );
 
-  const [showUserPhoto, setShowUserPhoto] = useState(!!userPhotoUrl);
+  const [showAvatar, setShowAvatar] = useState(!!avatarURL);
 
   return (
     <Wrapper data-testid="profile-wrapper">
       <ProfileWrapper data-testid="profile-profileWrapper">
-        {isPersonal && (
-          <Avatar data-testid="profile-avatar">
-            {userPhotoUrl && showUserPhoto ? (
-              <AvatarImage
-                src={userPhotoUrl}
-                alt="User Avatar"
-                onError={() => setShowUserPhoto(false)}
-              />
-            ) : (
-              <Typography size="body" data-testid="profile-avatar-initial">
-                {currentUser?.charAt(0)}
-              </Typography>
-            )}
-          </Avatar>
-        )}
+        <Avatar data-testid="profile-avatar">
+          {avatarURL && showAvatar ? (
+            <AvatarImage
+              src={avatarURL}
+              alt="Avatar"
+              onError={() => setShowAvatar(false)}
+            />
+          ) : (
+            <Typography size="body" data-testid="profile-avatar-initial">
+              {currentUser?.charAt(0)}
+            </Typography>
+          )}
+        </Avatar>
         <TitleWrapper data-testid="profile-titleWrapper">
           {currentUser}
         </TitleWrapper>
@@ -128,6 +139,8 @@ export const Profile: FC<ProfileProp> = ({
     </Wrapper>
   );
 };
+
+export default Profile;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -152,6 +165,18 @@ const Avatar = styled("div")(({ theme }) => ({
   height: "25px",
   borderRadius: "50%",
   background: theme.bg[2],
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0,
+  overflow: "hidden"
+}));
+
+const AvatarOnMenu = styled("div")(({ theme }) => ({
+  width: "18px",
+  height: "18px",
+  borderRadius: "50%",
+  background: theme.relative.light,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

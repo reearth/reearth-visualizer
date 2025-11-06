@@ -18,6 +18,7 @@ export type PopupMenuItem = {
   customSubMenuLabel?: string;
   customSubMenuOrder?: number;
   icon?: IconName;
+  customIcon?: ReactNode;
   id: string;
   hasCustomSubMenu?: boolean;
   hasBorderBottom?: boolean;
@@ -35,6 +36,7 @@ export type PopupMenuItem = {
 export type PopupMenuProps = {
   label?: string | ReactNode;
   icon?: IconName;
+  customIcon?: ReactNode;
   iconColor?: string;
   menu: PopupMenuItem[];
   nested?: boolean;
@@ -90,6 +92,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
   const renderSingleItem = (item: PopupMenuItem, index: number) => {
     const {
       icon,
+      customIcon,
       id,
       hasBorderBottom,
       onClick,
@@ -126,6 +129,7 @@ export const PopupMenu: FC<PopupMenuProps> = ({
             />
           </IconWrapper>
         )}
+        {customIcon && <IconWrapper>{customIcon}</IconWrapper>}
         <SubItem>
           {subItem ? (
             <PopupMenu

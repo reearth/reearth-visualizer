@@ -63,8 +63,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
   );
 
   const {
-    isPersonal,
-    userPhotoUrl,
+    avatarURL,
     currentWorkspace,
     topTabs,
     bottomTabs,
@@ -80,8 +79,7 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
         <LeftSideWrapper data-testid="dashboard-left-side-wrapper">
           <LeftSidePanel
             tab={currentTab}
-            isPersonal={isPersonal}
-            userPhotoUrl={userPhotoUrl}
+            avatarURL={avatarURL}
             currentWorkspace={currentWorkspace}
             workspaces={workspaces}
             topTabs={topTabs}
