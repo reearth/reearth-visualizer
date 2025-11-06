@@ -459,4 +459,112 @@ func TestProject_FindAll(t *testing.T) {
 		assert.True(t, pageInfo.HasNextPage)
 		assert.False(t, pageInfo.HasPreviousPage)
 	})
+
+	t.Run("FindAll with sort by starcount", func(t *testing.T) {
+		// Add starcount to projectmetadata
+		_, err := c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid1.String()}, bson.M{"$set": bson.M{"starcount": 5}})
+		assert.NoError(t, err)
+		_, err = c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid2.String()}, bson.M{"$set": bson.M{"starcount": 10}})
+		assert.NoError(t, err)
+
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "starcount", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 2, len(got))
+		// pid2 should come before pid1 because it has higher starcount
+		assert.Equal(t, pid2, got[0].ID())
+		assert.Equal(t, pid1, got[1].ID())
+	})
+
+	t.Run("FindAll with sort by updatedat DESC", func(t *testing.T) {
+		// Update updatedat for pid1 and pid2
+		now1 := time.Now().Add(-1 * time.Hour)
+		now2 := time.Now()
+		_, err := c.Collection("project").UpdateOne(ctx, bson.M{"id": pid1.String()}, bson.M{"$set": bson.M{"updatedat": now1}})
+		assert.NoError(t, err)
+		_, err = c.Collection("project").UpdateOne(ctx, bson.M{"id": pid2.String()}, bson.M{"$set": bson.M{"updatedat": now2}})
+		assert.NoError(t, err)
+
+		visibility := "public"
+		limit := int64(10)
+		offset := int64(0)
+		sort := &project.SortType{Key: "updatedat", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 2, len(got))
+		// pid2 should come before pid1 because it has newer updatedat
+		assert.Equal(t, pid2, got[0].ID())
+		assert.Equal(t, pid1, got[1].ID())
+	})
+
+	t.Run("FindAll with sort by starcount ASC", func(t *testing.T) {
+		// Set starcount values for testing ASC order
+		_, err := c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid1.String()}, bson.M{"$set": bson.M{"starcount": 5}})
+		assert.NoError(t, err)
+		_, err = c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid2.String()}, bson.M{"$set": bson.M{"starcount": 10}})
+		assert.NoError(t, err)
+
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "starcount", Desc: false} // ASC order
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 2, len(got))
+		// pid1 should come before pid2 because it has lower starcount (5 < 10)
+		assert.Equal(t, pid1, got[0].ID())
+		assert.Equal(t, pid2, got[1].ID())
+	})
+
+	t.Run("FindAll with sort by updatedat ASC", func(t *testing.T) {
+		// Set different updatedat values for testing ASC order
+		now1 := time.Now().Add(-2 * time.Hour) // older
+		now2 := time.Now().Add(-1 * time.Hour) // newer
+		_, err := c.Collection("project").UpdateOne(ctx, bson.M{"id": pid1.String()}, bson.M{"$set": bson.M{"updatedat": now1}})
+		assert.NoError(t, err)
+		_, err = c.Collection("project").UpdateOne(ctx, bson.M{"id": pid2.String()}, bson.M{"$set": bson.M{"updatedat": now2}})
+		assert.NoError(t, err)
+
+		visibility := "public"
+		limit := int64(10)
+		offset := int64(0)
+		sort := &project.SortType{Key: "updatedat", Desc: false} // ASC order
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 2, len(got))
+		// pid1 should come before pid2 because it has older updatedat (ASC order)
+		assert.Equal(t, pid1, got[0].ID())
+		assert.Equal(t, pid2, got[1].ID())
+	})
 }
