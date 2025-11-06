@@ -5,7 +5,7 @@ export type Workspace = {
   name?: string;
   alias?: string;
   personal?: boolean;
-  photoURL?: string;
+  photoURL?: string | null;
 };
 
 export type Project = {
