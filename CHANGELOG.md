@@ -2,6 +2,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.12.2 - 2025-11-05
+
+### Server
+
+#### 🚀 Features
+
+- Update server logic to handle empty topics arrays explicitly ([#1887](https://github.com/reearth/reearth-visualizer/pull/1887)) [`8f2210`](https://github.com/reearth/reearth-visualizer/commit/8f2210)
+- Use reearth-accounts api client pkg instead of using self implementation ([#1888](https://github.com/reearth/reearth-visualizer/pull/1888)) [`8b89ea`](https://github.com/reearth/reearth-visualizer/commit/8b89ea)
+- Split authtentication logic ([#1890](https://github.com/reearth/reearth-visualizer/pull/1890)) [`6c4fd2`](https://github.com/reearth/reearth-visualizer/commit/6c4fd2)
+- Modify sampler setting ([#1880](https://github.com/reearth/reearth-visualizer/pull/1880)) [`d2a37f`](https://github.com/reearth/reearth-visualizer/commit/d2a37f)
+- Migration date change ([#1893](https://github.com/reearth/reearth-visualizer/pull/1893)) [`dab7c6`](https://github.com/reearth/reearth-visualizer/commit/dab7c6)
+
+#### 🔧 Bug Fixes
+
+- Add deleted migration to allow following migrations to execute ([#1882](https://github.com/reearth/reearth-visualizer/pull/1882)) [`34642c`](https://github.com/reearth/reearth-visualizer/commit/34642c)
+
+#### Miscellaneous Tasks
+
+- Change log level when authentication is failed ([#1898](https://github.com/reearth/reearth-visualizer/pull/1898)) [`bda0ec`](https://github.com/reearth/reearth-visualizer/commit/bda0ec)
+- Migration date change ([#1896](https://github.com/reearth/reearth-visualizer/pull/1896)) [`3502b8`](https://github.com/reearth/reearth-visualizer/commit/3502b8)
+- Migration date change ([#1895](https://github.com/reearth/reearth-visualizer/pull/1895)) [`6420fb`](https://github.com/reearth/reearth-visualizer/commit/6420fb)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.12.2 ([#1901](https://github.com/reearth/reearth-visualizer/pull/1901)) [`264cfa`](https://github.com/reearth/reearth-visualizer/commit/264cfa)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.12.2 ([#1901](https://github.com/reearth/reearth-visualizer/pull/1901)) [`264cfa`](https://github.com/reearth/reearth-visualizer/commit/264cfa)
+
 ## 1.0.0-beta.12.1 - 2025-10-29
 
 ### Web

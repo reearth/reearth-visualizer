@@ -1063,6 +1063,7 @@ type ComplexityRoot struct {
 		Members                      func(childComplexity int) int
 		Name                         func(childComplexity int) int
 		Personal                     func(childComplexity int) int
+		PhotoURL                     func(childComplexity int) int
 		Policy                       func(childComplexity int) int
 		PolicyID                     func(childComplexity int) int
 		Projects                     func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
@@ -6145,6 +6146,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Workspace.Personal(childComplexity), true
 
+	case "Workspace.photoURL":
+		if e.complexity.Workspace.PhotoURL == nil {
+			break
+		}
+
+		return e.complexity.Workspace.PhotoURL(childComplexity), true
+
 	case "Workspace.policy":
 		if e.complexity.Workspace.Policy == nil {
 			break
@@ -8141,6 +8149,7 @@ extend type Mutation {
   name: String!
   members: [WorkspaceMember!]!
   personal: Boolean!
+  photoURL: String
   policyId: ID
   policy: Policy
   assets(
@@ -11821,6 +11830,8 @@ func (ec *executionContext) fieldContext_AddMemberToWorkspacePayload_workspace(_
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -12350,6 +12361,8 @@ func (ec *executionContext) fieldContext_Asset_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -13848,6 +13861,8 @@ func (ec *executionContext) fieldContext_CreateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -16112,6 +16127,8 @@ func (ec *executionContext) fieldContext_Me_workspaces(_ context.Context, field 
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -16175,6 +16192,8 @@ func (ec *executionContext) fieldContext_Me_myWorkspace(_ context.Context, field
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -27234,6 +27253,8 @@ func (ec *executionContext) fieldContext_Project_workspace(_ context.Context, fi
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -34879,6 +34900,8 @@ func (ec *executionContext) fieldContext_RemoveMemberFromWorkspacePayload_worksp
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -36064,6 +36087,8 @@ func (ec *executionContext) fieldContext_Scene_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -37245,6 +37270,8 @@ func (ec *executionContext) fieldContext_SignupPayload_workspace(_ context.Conte
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -40926,6 +40953,8 @@ func (ec *executionContext) fieldContext_UpdateMemberOfWorkspacePayload_workspac
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -41356,6 +41385,8 @@ func (ec *executionContext) fieldContext_UpdateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -43462,6 +43493,47 @@ func (ec *executionContext) fieldContext_Workspace_personal(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_photoURL(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_photoURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhotoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_photoURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -58799,6 +58871,8 @@ func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "photoURL":
+			out.Values[i] = ec._Workspace_photoURL(ctx, field, obj)
 		case "policyId":
 			out.Values[i] = ec._Workspace_policyId(ctx, field, obj)
 		case "policy":

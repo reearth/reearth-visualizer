@@ -1519,6 +1519,7 @@ type Workspace struct {
 	Name                         string             `json:"name"`
 	Members                      []*WorkspaceMember `json:"members"`
 	Personal                     bool               `json:"personal"`
+	PhotoURL                     *string            `json:"photoURL,omitempty"`
 	PolicyID                     *ID                `json:"policyId,omitempty"`
 	Policy                       *Policy            `json:"policy,omitempty"`
 	Assets                       *AssetConnection   `json:"assets"`
