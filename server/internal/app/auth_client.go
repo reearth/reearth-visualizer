@@ -219,6 +219,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 						log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
 						return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
 					}
+					log.Warnfc(ctx, "accounts API: user not found (FindMe): %s", req.URL.Path)
 					return echo.NewHTTPError(http.StatusNotFound, err.Error())
 				}
 
