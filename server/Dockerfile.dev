@@ -2,8 +2,9 @@ FROM golang:1.24.4-alpine
 
 RUN apk add --update --no-cache git ca-certificates build-base curl
 
-# Install air for hot reload
-RUN go install github.com/air-verse/air@v1.61.5
+# Install development tools
+RUN go install github.com/air-verse/air@v1.61.5 && \
+    go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.2
 
 WORKDIR /reearth-visualizer
 
