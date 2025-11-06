@@ -1100,9 +1100,6 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 
 	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, sortStage}
 
-	log.Infof("findAllWithStarcountSort: sortOrder=%d", sortOrder)
-	log.Infof("findAllWithStarcountSort: pipeline=%#v", pipeline)
-
 	// Count total documents with aggregation
 	countPipeline := make([]bson.M, len(pipeline))
 	copy(countPipeline, pipeline)
