@@ -1140,12 +1140,6 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	consumer := mongodoc.NewProjectConsumer(nil)
 	for cursor.Next(ctx) {
 		raw := cursor.Current
-		var doc bson.M
-		if err := bson.Unmarshal(raw, &doc); err == nil {
-			projectID, _ := doc["id"].(string)
-			sortStarCount := doc["sort_star_count"]
-			log.Infof("findAllWithStarcountSort: projectId=%s sort_star_count=%v", projectID, sortStarCount)
-		}
 		if err := consumer.Consume(raw); err != nil {
 			return nil, nil, err
 		}
