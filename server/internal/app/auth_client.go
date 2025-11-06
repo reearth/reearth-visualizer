@@ -216,7 +216,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 				userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
 				if err != nil {
 					if err != rerror.ErrNotFound {
-						log.Errorfc(ctx, "accounts API: failed to fetch user: %s, %v", userModel.ID(), err)
+						log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
 						return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
 					}
 					return echo.NewHTTPError(http.StatusNotFound, err.Error())
