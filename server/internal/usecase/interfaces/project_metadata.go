@@ -13,6 +13,7 @@ type ProjectMetadata interface {
 	FindByProjectID(context.Context, id.ProjectID, *usecase.Operator) (*project.ProjectMetadata, error)
 	Update(context.Context, UpdateProjectMetadataParam, *usecase.Operator) (*project.ProjectMetadata, error)
 	Create(context.Context, CreateProjectMetadataParam, *usecase.Operator) (*project.ProjectMetadata, error)
-	PatchStarCountForAnyUser(ctx context.Context, p UpdateProjectMetadataParam, user any) (*project.ProjectMetadata, error)
-	CreateMetadataByAnyUser(ctx context.Context, p CreateProjectMetadataParam, user any) (*project.ProjectMetadata, error)
+	PatchStarCountForAnyUser(ctx context.Context, p UpdateProjectMetadataParam) (*project.ProjectMetadata, error)
+	CreateMetadataByAnyUser(ctx context.Context, p CreateProjectMetadataParam) (*project.ProjectMetadata, error)
+	FindByProjectIDAsAnyUsr(ctx context.Context, pid id.ProjectID) (*project.ProjectMetadata, error)
 }

@@ -140,7 +140,7 @@ func (i *ProjectMetadata) FindByProjectID(ctx context.Context, id id.ProjectID, 
 }
 
 // PatchStarCountForAnyUser allows any authenticated user to update star count and starredBy fields as we cannot use 'Update' method above
-func (i *ProjectMetadata) PatchStarCountForAnyUser(ctx context.Context, p interfaces.UpdateProjectMetadataParam, user any) (*project.ProjectMetadata, error) {
+func (i *ProjectMetadata) PatchStarCountForAnyUser(ctx context.Context, p interfaces.UpdateProjectMetadataParam) (*project.ProjectMetadata, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -174,7 +174,7 @@ func (i *ProjectMetadata) PatchStarCountForAnyUser(ctx context.Context, p interf
 }
 
 // CreateMetadataByAnyUser allows any authenticated user to create project metadata as we cannot use 'Create' method above
-func (i *ProjectMetadata) CreateMetadataByAnyUser(ctx context.Context, p interfaces.CreateProjectMetadataParam, user any) (*project.ProjectMetadata, error) {
+func (i *ProjectMetadata) CreateMetadataByAnyUser(ctx context.Context, p interfaces.CreateProjectMetadataParam) (*project.ProjectMetadata, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -207,5 +207,14 @@ func (i *ProjectMetadata) CreateMetadataByAnyUser(ctx context.Context, p interfa
 		return nil, err
 	}
 	tx.Commit()
+	return meta, nil
+}
+
+func (i *ProjectMetadata) FindByProjectIDAsAnyUsr(ctx context.Context, id id.ProjectID) (*project.ProjectMetadata, error) {
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, id)
+	if err != mongo.ErrNoDocuments && err != nil {
+		return nil, errors.New("failed to find project metadata: " + err.Error())
+	}
+
 	return meta, nil
 }

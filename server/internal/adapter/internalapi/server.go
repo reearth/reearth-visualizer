@@ -716,7 +716,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	pid := pj.ID()
 
-	metadata, err := uc.ProjectMetadata.FindByProjectID(ctx, pid, op)
+	metadata, err := uc.ProjectMetadata.FindByProjectIDAsAnyUsr(ctx, pid)
 	if err != nil {
 		return nil, errors.New("failed to fetch project metadata: " + err.Error())
 	}
@@ -735,7 +735,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 			Topics:      &[]string{},
 			StarCount:   &starCount,
 			StarredBy:   &starredBy,
-		}, usr)
+		})
 		if err != nil {
 			return nil, errors.New("failed to create project metadata: " + err.Error())
 		}
@@ -769,7 +769,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		ID:        pid,
 		StarCount: &starCount,
 		StarredBy: &starredBy,
-	}, usr)
+	})
 	if err != nil {
 		return nil, err
 	}
