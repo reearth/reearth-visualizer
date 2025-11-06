@@ -12,13 +12,12 @@ import { FC } from "react";
 import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
+import CurrentWorkspace from "./CurrentWorkspace";
 import LogoWrapper from "./LogoWrapper";
-import { Profile } from "./profile";
 
 type Props = {
   workspaces: Workspace[];
-  isPersonal?: boolean;
-  userPhotoUrl?: string;
+  avatarURL?: string;
   tab?: string;
   currentWorkspace?: Workspace;
   topTabs?: TabItems[];
@@ -31,8 +30,7 @@ const LeftSidePanel: FC<Props> = ({
   bottomTabs,
   tab: currentTab,
   currentWorkspace,
-  isPersonal,
-  userPhotoUrl,
+  avatarURL,
   workspaces,
   onSignOut,
   onWorkspaceChange
@@ -42,11 +40,10 @@ const LeftSidePanel: FC<Props> = ({
       <SidebarMainSection data-testid="sidebar-main-section">
         <LogoWrapper data-testid="sidebar-logo" />
         <SidebarDivider data-testid="sidebar-divider-top" />
-        <Profile
+        <CurrentWorkspace
           data-testid="sidebar-profile"
           currentUser={currentWorkspace?.name}
-          isPersonal={isPersonal}
-          userPhotoUrl={userPhotoUrl}
+          avatarURL={avatarURL}
           currentWorkspace={currentWorkspace}
           workspaces={workspaces}
           onSignOut={onSignOut}

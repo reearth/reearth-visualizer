@@ -18,21 +18,19 @@ export type Project = {
   projectType?: ProjectType;
 };
 
-type ProfileProp = {
+type CurrentWorkspaceProp = {
   currentUser?: string;
   currentProject?: Project;
   currentWorkspace?: Workspace;
-  isPersonal?: boolean;
-  userPhotoUrl?: string;
+  avatarURL?: string;
   workspaces?: Workspace[];
   onSignOut?: () => void;
   onWorkspaceChange?: (workspaceId?: string) => void;
 };
 
-export const Profile: FC<ProfileProp> = ({
+const CurrentWorkspace: FC<CurrentWorkspaceProp> = ({
   currentUser,
-  isPersonal,
-  userPhotoUrl,
+  avatarURL,
   workspaces,
   currentWorkspace,
   onWorkspaceChange,
@@ -87,26 +85,24 @@ export const Profile: FC<ProfileProp> = ({
     ]
   );
 
-  const [showUserPhoto, setShowUserPhoto] = useState(!!userPhotoUrl);
+  const [showAvatar, setShowAvatar] = useState(!!avatarURL);
 
   return (
     <Wrapper data-testid="profile-wrapper">
       <ProfileWrapper data-testid="profile-profileWrapper">
-        {isPersonal && (
-          <Avatar data-testid="profile-avatar">
-            {userPhotoUrl && showUserPhoto ? (
-              <AvatarImage
-                src={userPhotoUrl}
-                alt="User Avatar"
-                onError={() => setShowUserPhoto(false)}
-              />
-            ) : (
-              <Typography size="body" data-testid="profile-avatar-initial">
-                {currentUser?.charAt(0)}
-              </Typography>
-            )}
-          </Avatar>
-        )}
+        <Avatar data-testid="profile-avatar">
+          {avatarURL && showAvatar ? (
+            <AvatarImage
+              src={avatarURL}
+              alt="Avatar"
+              onError={() => setShowAvatar(false)}
+            />
+          ) : (
+            <Typography size="body" data-testid="profile-avatar-initial">
+              {currentUser?.charAt(0)}
+            </Typography>
+          )}
+        </Avatar>
         <TitleWrapper data-testid="profile-titleWrapper">
           {currentUser}
         </TitleWrapper>
@@ -128,6 +124,8 @@ export const Profile: FC<ProfileProp> = ({
     </Wrapper>
   );
 };
+
+export default CurrentWorkspace;
 
 const Wrapper = styled("div")(({ theme }) => ({
   display: "flex",

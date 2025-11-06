@@ -50,6 +50,7 @@ export const GET_ME = gql(`
           userId
           role
         }
+        photoURL
         policyId
         policy {
           id
