@@ -41,4 +41,22 @@ Object.defineProperty(window, "requestIdleCallback", {
   value: vi.fn()
 });
 
+const MockResizeObserver = vi.fn(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn()
+  };
+});
+
+Object.defineProperty(window, "ResizeObserver", {
+  writable: true,
+  value: MockResizeObserver
+});
+
+Object.defineProperty(global, "ResizeObserver", {
+  writable: true,
+  value: MockResizeObserver
+});
+
 afterEach(cleanup);
