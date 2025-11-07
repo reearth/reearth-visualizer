@@ -31,7 +31,7 @@ export const configureCognito = (cognitoConfig: CognitoParams) => {
             scopes: cognitoOauthScope || [],
             redirectSignIn: [cognitoOauthRedirectSignIn || ""],
             redirectSignOut: [cognitoOauthRedirectSignOut || ""],
-            responseType: cognitoOauthResponseType as "code" | "token" || "code"
+            responseType: (cognitoOauthResponseType as "code" | "token" | undefined) || "code"
           }
         }
       }
