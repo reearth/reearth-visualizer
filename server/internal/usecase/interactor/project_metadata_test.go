@@ -157,3 +157,79 @@ func TestProjectMetadata_FindByProjectID_NotFound(t *testing.T) {
 	assert.Error(t, err)
 	assert.Nil(t, found)
 }
+
+func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
+	ctx := context.Background()
+	mongotest.Env = "REEARTH_DB"
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectMetadataUC(client)
+
+	ws := factory.NewWorkspace()
+	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
+	pid := id.NewProjectID()
+	operator := &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	}
+
+	// Create initial metadata as user1
+	user1 := accountdomain.NewUserID()
+	readme := "readme content"
+	license := "MIT"
+	topics := []string{"go", "test"}
+	starCount := int64(5)
+	userID := accountdomain.NewUserID()
+	starredBy := []string{userID.String()}
+	param := interfaces.CreateProjectMetadataParam{
+		ProjectID:   pid,
+		WorkspaceID: ws.ID(),
+		Readme:      &readme,
+		License:     &license,
+		Topics:      &topics,
+		StarCount:   &starCount,
+		StarredBy:   &starredBy,
+	}
+	meta, err := uc.Create(ctx, param, operator)
+	assert.NoError(t, err)
+	assert.NotNil(t, meta)
+
+	// Patch star count as user2 (should be allowed)
+	user2 := accountdomain.NewUserID()
+	newStarCount := int64(2)
+	newStarredBy := []string{user1.String(), user2.String()}
+	patchParam := interfaces.UpdateProjectMetadataByAnyUserParam{
+		ID:        pid,
+		StarCount: &newStarCount,
+		StarredBy: &newStarredBy,
+	}
+	patched, err := uc.UpdateProjectMetadataByAnyUser(ctx, patchParam)
+	assert.NoError(t, err)
+	assert.NotNil(t, patched)
+	assert.Equal(t, &newStarCount, patched.StarCount())
+	assert.Equal(t, &newStarredBy, patched.StarredBy())
+
+	// Confirm persisted changes
+	found, err := uc.FindByProjectID(ctx, pid, operator)
+	assert.NoError(t, err)
+	assert.NotNil(t, found)
+	assert.Equal(t, &newStarCount, found.StarCount())
+	assert.Equal(t, &newStarredBy, found.StarredBy())
+
+	{
+		newPid := id.NewProjectID()
+		user3 := accountdomain.NewUserID()
+		starCount2 := int64(1)
+		starredBy2 := []string{user3.String()}
+		patchParam2 := interfaces.UpdateProjectMetadataByAnyUserParam{
+			ID:        newPid,
+			StarCount: &starCount2,
+			StarredBy: &starredBy2,
+		}
+		// Should fail because record does not exist
+		patched2, err := uc.UpdateProjectMetadataByAnyUser(ctx, patchParam2)
+		assert.Error(t, err)
+		assert.Nil(t, patched2)
+	}
+}

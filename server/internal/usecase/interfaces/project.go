@@ -65,25 +65,6 @@ type UpdateProjectParam struct {
 	TrackingID        *string
 }
 
-type CreateProjectMetadataParam struct {
-	ProjectID   id.ProjectID
-	WorkspaceID accountdomain.WorkspaceID
-	Readme      *string
-	License     *string
-	Topics      *[]string
-	StarCount   *int64
-	StarredBy   *[]string
-}
-
-type UpdateProjectMetadataParam struct {
-	ID        id.ProjectID
-	Readme    *string
-	License   *string
-	Topics    *[]string
-	StarCount *int64
-	StarredBy *[]string
-}
-
 type PublishProjectParam struct {
 	ID     id.ProjectID
 	Alias  *string
