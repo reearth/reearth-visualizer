@@ -12,6 +12,7 @@ export type CognitoParams = {
 };
 
 export const configureCognito = (cognitoConfig: CognitoParams) => {
+  const cognitoRegion = cognitoConfig?.region;
   const cognitoUserPoolId = cognitoConfig?.userPoolId;
   const cognitoUserPoolWebClientId = cognitoConfig?.userPoolWebClientId;
   const cognitoOauthScope = cognitoConfig?.oauthScope?.split(", ");
@@ -23,6 +24,7 @@ export const configureCognito = (cognitoConfig: CognitoParams) => {
   const config = {
     Auth: {
       Cognito: {
+        region: cognitoRegion,
         userPoolId: cognitoUserPoolId || "",
         userPoolClientId: cognitoUserPoolWebClientId || "",
         loginWith: {
@@ -31,7 +33,9 @@ export const configureCognito = (cognitoConfig: CognitoParams) => {
             scopes: cognitoOauthScope || [],
             redirectSignIn: [cognitoOauthRedirectSignIn || ""],
             redirectSignOut: [cognitoOauthRedirectSignOut || ""],
-            responseType: (cognitoOauthResponseType as "code" | "token" | undefined) || "code"
+            responseType:
+              (cognitoOauthResponseType as "code" | "token" | undefined) ||
+              "code"
           }
         }
       }
