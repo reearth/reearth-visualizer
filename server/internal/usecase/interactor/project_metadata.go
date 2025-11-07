@@ -139,8 +139,8 @@ func (i *ProjectMetadata) FindByProjectID(ctx context.Context, id id.ProjectID, 
 	return meta, nil
 }
 
-// PatchStarCountForAnyUser allows any authenticated user to update star count and starredBy fields as we cannot use 'Update' method above
-func (i *ProjectMetadata) PatchStarCountForAnyUser(ctx context.Context, p interfaces.UpdateProjectMetadataParam) (*project.ProjectMetadata, error) {
+// UpdateProjectMetadataByAnyUser allows any authenticated user to update star count and starredBy fields as we cannot use 'Update' method above
+func (i *ProjectMetadata) UpdateProjectMetadataByAnyUser(ctx context.Context, p interfaces.UpdateProjectMetadataByAnyUserParam) (*project.ProjectMetadata, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -173,8 +173,8 @@ func (i *ProjectMetadata) PatchStarCountForAnyUser(ctx context.Context, p interf
 	return meta, nil
 }
 
-// CreateMetadataByAnyUser allows any authenticated user to create project metadata as we cannot use 'Create' method above
-func (i *ProjectMetadata) CreateMetadataByAnyUser(ctx context.Context, p interfaces.CreateProjectMetadataParam) (*project.ProjectMetadata, error) {
+// CreateProjectMetadataByAnyUser allows any authenticated user to create project metadata as we cannot use 'Create' method above
+func (i *ProjectMetadata) CreateProjectMetadataByAnyUser(ctx context.Context, p interfaces.CreateProjectMetadataByAnyUserParam) (*project.ProjectMetadata, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return nil, err
@@ -191,9 +191,6 @@ func (i *ProjectMetadata) CreateMetadataByAnyUser(ctx context.Context, p interfa
 		NewID().
 		Project(p.ProjectID).
 		Workspace(p.WorkspaceID).
-		Readme(p.Readme).
-		License(p.License).
-		Topics(p.Topics).
 		StarCount(p.StarCount).
 		StarredBy(p.StarredBy).
 		CreatedAt(&currentTime).
@@ -210,7 +207,7 @@ func (i *ProjectMetadata) CreateMetadataByAnyUser(ctx context.Context, p interfa
 	return meta, nil
 }
 
-func (i *ProjectMetadata) FindByProjectIDAsAnyUsr(ctx context.Context, id id.ProjectID) (*project.ProjectMetadata, error) {
+func (i *ProjectMetadata) FindProjectByIDByAnyUser(ctx context.Context, id id.ProjectID) (*project.ProjectMetadata, error) {
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, id)
 	if err != mongo.ErrNoDocuments && err != nil {
 		return nil, errors.New("failed to find project metadata: " + err.Error())

@@ -716,7 +716,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	pid := pj.ID()
 
-	metadata, err := uc.ProjectMetadata.FindByProjectIDAsAnyUsr(ctx, pid)
+	metadata, err := uc.ProjectMetadata.FindProjectByIDByAnyUser(ctx, pid)
 	if err != nil {
 		return nil, errors.New("failed to fetch project metadata: " + err.Error())
 	}
@@ -731,12 +731,9 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		if err != nil {
 			return nil, errors.New("failed to convert workspaceID: " + err.Error())
 		}
-		metadata, err = uc.ProjectMetadata.CreateMetadataByAnyUser(ctx, interfaces.CreateProjectMetadataParam{
+		metadata, err = uc.ProjectMetadata.CreateProjectMetadataByAnyUser(ctx, interfaces.CreateProjectMetadataByAnyUserParam{
 			ProjectID:   pid,
 			WorkspaceID: wid,
-			Readme:      new(string),
-			License:     new(string),
-			Topics:      &[]string{},
 			StarCount:   &starCount,
 			StarredBy:   &starredBy,
 		})
@@ -769,7 +766,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	}
 
-	meta, err := uc.ProjectMetadata.PatchStarCountForAnyUser(ctx, interfaces.UpdateProjectMetadataParam{
+	meta, err := uc.ProjectMetadata.UpdateProjectMetadataByAnyUser(ctx, interfaces.UpdateProjectMetadataByAnyUserParam{
 		ID:        pid,
 		StarCount: &starCount,
 		StarredBy: &starredBy,
