@@ -217,7 +217,6 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 	assert.Equal(t, &newStarCount, found.StarCount())
 	assert.Equal(t, &newStarredBy, found.StarredBy())
 
-	// Test: UpdateProjectMetadataByAnyUser should create ProjectMetadata if it does not exist
 	{
 		newPid := id.NewProjectID()
 		user3 := accountdomain.NewUserID()
