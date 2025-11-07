@@ -88,7 +88,18 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 		// Set AuthInfo to context key => adapter.ContextAuthInfo
 		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
-		e.Use(echo.WrapMiddleware(wrapHandler))
+
+		e.Use(echo.WrapMiddleware(func(next http.Handler) http.Handler {
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Skip authentication for GCP triggered endpoints
+				if r.Method == "POST" && r.URL.Path == "/api/storage-event" {
+					// These endpoints are called by GCP Cloud Functions/Pub/Sub
+					next.ServeHTTP(w, r)
+					return
+				}
+				wrapHandler(next).ServeHTTP(w, r)
+			})
+		}))
 	}
 
 	// enable pprof
