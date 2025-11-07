@@ -52,6 +52,14 @@ export default defineConfig({
   ],
   // https://github.com/storybookjs/storybook/issues/25256
   assetsInclude: ["/sb-preview/runtime.js"],
+  define: {
+    "process.env.QTS_DEBUG": "false", // quickjs-emscripten
+    __APP_VERSION__: JSON.stringify(pkg.version),
+    __REEARTH_COMMIT_HASH__: JSON.stringify(
+      process.env.GITHUB_SHA || commitHash
+    ),
+    global: "globalThis"
+  },
   mode: NO_MINIFY ? "development" : undefined,
   server: {
     port: 3000
@@ -63,12 +71,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         published: resolve(__dirname, "published.html")
-      },
-      external: [
-        // Mark Node.js modules as external to avoid bundling issues
-        "fs",
-        "path"
-      ]
+      }
     },
     minify: NO_MINIFY ? false : "esbuild"
   },
@@ -77,15 +80,6 @@ export default defineConfig({
       { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
       { find: "path", replacement: "path-browserify" } // Browser polyfill for path
     ]
-  },
-  define: {
-    "process.env.QTS_DEBUG": "false", // quickjs-emscripten
-    // Moved existing defines here to group them
-    __APP_VERSION__: JSON.stringify(pkg.version),
-    __REEARTH_COMMIT_HASH__: JSON.stringify(
-      process.env.GITHUB_SHA || commitHash
-    ),
-    global: "globalThis" // Add global polyfill
   }
 });
 
