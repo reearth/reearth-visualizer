@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from "@reearth/test/utils";
+import { render, screen, fireEvent } from "@reearth/test/utils";
 import { vi, describe, test, expect, beforeEach } from "vitest";
 
 import { DatePicker } from "./index";
@@ -84,7 +84,7 @@ describe("DatePicker Component", () => {
 
     // Test focus event handling
     fireEvent.focus(input);
-    
+
     // Test blur event handling - this should trigger the onBlur callback
     fireEvent.blur(input);
     expect(mockOnBlur).toHaveBeenCalledWith("2023-05-15");

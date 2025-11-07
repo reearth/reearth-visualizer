@@ -1,11 +1,17 @@
-import { getCurrentUser, fetchAuthSession, signInWithRedirect, signOut } from "@aws-amplify/auth";
+import {
+  getCurrentUser,
+  fetchAuthSession,
+  signInWithRedirect,
+  signOut,
+  AuthUser
+} from "@aws-amplify/auth";
 import { logOutFromTenant } from "@reearth/services/config";
 import { useState, useEffect } from "react";
 
 import type { AuthHook } from "./authHook";
 
 export const useCognitoAuth = (): AuthHook => {
-  const [user, setUser] = useState<any | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
