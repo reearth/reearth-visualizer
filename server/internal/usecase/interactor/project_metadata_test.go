@@ -176,15 +176,22 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 
 	// Create initial metadata as user1
 	user1 := accountdomain.NewUserID()
-	starCount := int64(1)
-	starredBy := []string{user1.String()}
-	param := interfaces.CreateProjectMetadataByAnyUserParam{
+	readme := "readme content"
+	license := "MIT"
+	topics := []string{"go", "test"}
+	starCount := int64(5)
+	userID := accountdomain.NewUserID()
+	starredBy := []string{userID.String()}
+	param := interfaces.CreateProjectMetadataParam{
 		ProjectID:   pid,
 		WorkspaceID: ws.ID(),
+		Readme:      &readme,
+		License:     &license,
+		Topics:      &topics,
 		StarCount:   &starCount,
 		StarredBy:   &starredBy,
 	}
-	meta, err := uc.CreateProjectMetadataByAnyUser(ctx, param)
+	meta, err := uc.Create(ctx, param, operator)
 	assert.NoError(t, err)
 	assert.NotNil(t, meta)
 
@@ -225,30 +232,5 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 		patched2, err := uc.UpdateProjectMetadataByAnyUser(ctx, patchParam2)
 		assert.Error(t, err)
 		assert.Nil(t, patched2)
-
-		// Simulate PatchStarCount logic: create if not exists, then patch
-		param2 := interfaces.CreateProjectMetadataByAnyUserParam{
-			ProjectID:   newPid,
-			WorkspaceID: ws.ID(),
-			StarCount:   &starCount2,
-			StarredBy:   &starredBy2,
-		}
-		created, err := uc.CreateProjectMetadataByAnyUser(ctx, param2)
-		assert.NoError(t, err)
-		assert.NotNil(t, created)
-
-		// Now patch again
-		starCount3 := int64(2)
-		starredBy3 := []string{user3.String(), user1.String()}
-		patchParam3 := interfaces.UpdateProjectMetadataByAnyUserParam{
-			ID:        newPid,
-			StarCount: &starCount3,
-			StarredBy: &starredBy3,
-		}
-		patched3, err := uc.UpdateProjectMetadataByAnyUser(ctx, patchParam3)
-		assert.NoError(t, err)
-		assert.NotNil(t, patched3)
-		assert.Equal(t, &starCount3, patched3.StarCount())
-		assert.Equal(t, &starredBy3, patched3.StarredBy())
 	}
 }

@@ -28,13 +28,6 @@ type UpdateProjectMetadataParam struct {
 	StarredBy *[]string
 }
 
-type CreateProjectMetadataByAnyUserParam struct {
-	ProjectID   id.ProjectID
-	WorkspaceID accountdomain.WorkspaceID
-	StarCount   *int64
-	StarredBy   *[]string
-}
-
 type UpdateProjectMetadataByAnyUserParam struct {
 	ID        id.ProjectID
 	StarCount *int64
@@ -47,6 +40,5 @@ type ProjectMetadata interface {
 	Update(context.Context, UpdateProjectMetadataParam, *usecase.Operator) (*project.ProjectMetadata, error)
 	Create(context.Context, CreateProjectMetadataParam, *usecase.Operator) (*project.ProjectMetadata, error)
 	UpdateProjectMetadataByAnyUser(ctx context.Context, p UpdateProjectMetadataByAnyUserParam) (*project.ProjectMetadata, error)
-	CreateProjectMetadataByAnyUser(ctx context.Context, p CreateProjectMetadataByAnyUserParam) (*project.ProjectMetadata, error)
 	FindProjectByIDByAnyUser(ctx context.Context, pid id.ProjectID) (*project.ProjectMetadata, error)
 }

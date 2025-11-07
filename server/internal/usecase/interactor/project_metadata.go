@@ -173,40 +173,6 @@ func (i *ProjectMetadata) UpdateProjectMetadataByAnyUser(ctx context.Context, p 
 	return meta, nil
 }
 
-// CreateProjectMetadataByAnyUser allows any authenticated user to create project metadata as we cannot use 'Create' method above
-func (i *ProjectMetadata) CreateProjectMetadataByAnyUser(ctx context.Context, p interfaces.CreateProjectMetadataByAnyUserParam) (*project.ProjectMetadata, error) {
-	tx, err := i.transaction.Begin(ctx)
-	if err != nil {
-		return nil, err
-	}
-	ctx = tx.Context()
-	defer func() {
-		if err2 := tx.End(ctx); err == nil && err2 != nil {
-			err = err2
-		}
-	}()
-
-	currentTime := time.Now().UTC()
-	meta, err := project.NewProjectMetadata().
-		NewID().
-		Project(p.ProjectID).
-		Workspace(p.WorkspaceID).
-		StarCount(p.StarCount).
-		StarredBy(p.StarredBy).
-		CreatedAt(&currentTime).
-		UpdatedAt(&currentTime).
-		Build()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
-		return nil, err
-	}
-	tx.Commit()
-	return meta, nil
-}
-
 func (i *ProjectMetadata) FindProjectByIDByAnyUser(ctx context.Context, id id.ProjectID) (*project.ProjectMetadata, error) {
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, id)
 	if err != mongo.ErrNoDocuments && err != nil {
