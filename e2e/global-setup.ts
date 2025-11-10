@@ -23,27 +23,18 @@ async function globalSetup(_config: FullConfig) {
   const page = await context.newPage();
 
   try {
-    console.log(`🔄 Navigating to ${REEARTH_WEB_E2E_BASEURL}...`);
-
-    // Navigate to the app with proper wait strategy
     await page.goto(REEARTH_WEB_E2E_BASEURL, {
       waitUntil: "domcontentloaded",
       timeout: 30000
     });
 
-    console.log("🔍 Checking authentication status...");
-
-    // Check if already logged in by looking for dashboard elements
     const isLoggedIn = await page
       .locator('[data-testid="projects-manager-wrapper"]')
       .isVisible()
       .catch(() => false);
 
     if (!isLoggedIn) {
-      console.log("🔐 Not logged in, attempting login...");
       const loginPage = new LoginPage(page);
-
-      // Use login method from LoginPage
       await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
 
       // Wait for navigation to complete and verify login was successful
@@ -84,7 +75,6 @@ async function globalSetup(_config: FullConfig) {
     console.error("❌ Global setup failed:", error);
     console.error("Current URL:", page.url());
 
-    // Take a screenshot for debugging
     try {
       await page.screenshot({ path: "./test-results/global-setup-error.png" });
       console.error(
