@@ -36,15 +36,24 @@ test.describe("Project Management", () => {
     projectScreen = new ProjectScreenPage(page);
 
     await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
-      waitUntil: "networkidle"
+      waitUntil: "domcontentloaded"
     });
 
     // Wait for dashboard to load and verify we're not on login page
-    await page.waitForTimeout(2000);
-    const currentUrl = page.url();
-    if (currentUrl.includes("/login")) {
+    try {
+      await page.waitForSelector('[data-testid="sidebar-tab-projects-link"]', {
+        timeout: 15000,
+        state: "visible"
+      });
+    } catch (error) {
+      const currentUrl = page.url();
+      if (currentUrl.includes("/login")) {
+        throw new Error(
+          "Authentication failed - redirected to login page. Check if STORAGE_STATE is valid."
+        );
+      }
       throw new Error(
-        "Authentication failed - redirected to login page. Check if STORAGE_STATE is valid."
+        `Dashboard did not load properly. Current URL: ${currentUrl}. Error: ${error}`
       );
     }
   });
