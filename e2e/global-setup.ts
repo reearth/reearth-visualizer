@@ -23,8 +23,15 @@ async function globalSetup(_config: FullConfig) {
   const page = await context.newPage();
 
   try {
-    // Navigate to the app
-    await page.goto(REEARTH_WEB_E2E_BASEURL);
+    console.log(`🔄 Navigating to ${REEARTH_WEB_E2E_BASEURL}...`);
+
+    // Navigate to the app with proper wait strategy
+    await page.goto(REEARTH_WEB_E2E_BASEURL, {
+      waitUntil: "domcontentloaded",
+      timeout: 30000
+    });
+
+    console.log("🔍 Checking authentication status...");
 
     // Check if already logged in by looking for dashboard elements
     const isLoggedIn = await page
@@ -33,6 +40,7 @@ async function globalSetup(_config: FullConfig) {
       .catch(() => false);
 
     if (!isLoggedIn) {
+      console.log("🔐 Not logged in, attempting login...");
       const loginPage = new LoginPage(page);
 
       // Use login method from LoginPage
@@ -42,15 +50,39 @@ async function globalSetup(_config: FullConfig) {
       await page.waitForTimeout(3000);
     }
 
-    // Ensure we're on the dashboard before saving state
-    await page.waitForTimeout(2000);
+    // Wait for dashboard to fully load and verify we're authenticated
+    console.log("⏳ Waiting for dashboard to load...");
+    await page.waitForSelector('[data-testid="sidebar-tab-projects-link"]', {
+      timeout: 15000,
+      state: "visible"
+    });
+
+    const currentUrl = page.url();
+    console.log(`✓ Current URL: ${currentUrl}`);
+
+    // Verify we're not on login page
+    if (currentUrl.includes("/login")) {
+      throw new Error(
+        "Authentication failed - still on login page after attempting login. Check credentials and IAP configuration."
+      );
+    }
 
     // Save signed-in state
     await page.context().storageState({ path: STORAGE_STATE });
 
-    console.log("✅ Global setup completed - authentication state saved");
+    console.log("✅ Global setup completed - authentication state saved to:", STORAGE_STATE);
   } catch (error) {
     console.error("❌ Global setup failed:", error);
+    console.error("Current URL:", page.url());
+
+    // Take a screenshot for debugging
+    try {
+      await page.screenshot({ path: "./test-results/global-setup-error.png" });
+      console.error("Screenshot saved to: ./test-results/global-setup-error.png");
+    } catch (screenshotError) {
+      console.error("Could not save screenshot:", screenshotError);
+    }
+
     throw error;
   } finally {
     await page.close();
