@@ -1,18 +1,9 @@
 import { ThemeProvider } from "@emotion/react";
 import darkTheme from "@reearth/services/theme/reearthTheme/darkTheme";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi, beforeAll } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import ListField, { ListItemProps } from "./index";
-
-// Mock ResizeObserver
-beforeAll(() => {
-  global.ResizeObserver = vi.fn().mockImplementation(() => ({
-    observe: vi.fn(),
-    unobserve: vi.fn(),
-    disconnect: vi.fn()
-  }));
-});
 
 describe("ListField", () => {
   it("renders ListField and adds a new item", () => {

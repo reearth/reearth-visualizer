@@ -22,7 +22,9 @@ describe("getImageDimensions", () => {
       height: 0
     };
 
-    global.Image = vi.fn(() => mockImage as unknown as HTMLImageElement);
+    global.Image = vi.fn(function () {
+      return mockImage as unknown as HTMLImageElement;
+    }) as unknown as typeof Image;
   });
 
   afterEach(() => {

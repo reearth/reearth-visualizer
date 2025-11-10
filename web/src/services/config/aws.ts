@@ -23,15 +23,21 @@ export const configureCognito = (cognitoConfig: CognitoParams) => {
 
   const config = {
     Auth: {
-      region: cognitoRegion,
-      userPoolId: cognitoUserPoolId,
-      userPoolWebClientId: cognitoUserPoolWebClientId,
-      oauth: {
-        scope: cognitoOauthScope,
-        domain: cognitoOauthDomain,
-        redirectSignIn: cognitoOauthRedirectSignIn,
-        redirectSignOut: cognitoOauthRedirectSignOut,
-        responseType: cognitoOauthResponseType
+      Cognito: {
+        region: cognitoRegion,
+        userPoolId: cognitoUserPoolId || "",
+        userPoolClientId: cognitoUserPoolWebClientId || "",
+        loginWith: {
+          oauth: {
+            domain: cognitoOauthDomain || "",
+            scopes: cognitoOauthScope || [],
+            redirectSignIn: [cognitoOauthRedirectSignIn || ""],
+            redirectSignOut: [cognitoOauthRedirectSignOut || ""],
+            responseType:
+              (cognitoOauthResponseType as "code" | "token" | undefined) ||
+              "code"
+          }
+        }
       }
     }
   };

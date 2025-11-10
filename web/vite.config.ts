@@ -57,7 +57,8 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(pkg.version),
     __REEARTH_COMMIT_HASH__: JSON.stringify(
       process.env.GITHUB_SHA || commitHash
-    )
+    ),
+    global: "globalThis"
   },
   mode: NO_MINIFY ? "development" : undefined,
   server: {
@@ -76,7 +77,8 @@ export default defineConfig({
   },
   resolve: {
     alias: [
-      { find: "crypto", replacement: "crypto-js" } // quickjs-emscripten
+      { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
+      { find: "path", replacement: "path-browserify" } // Browser polyfill for path
     ]
   }
 });
