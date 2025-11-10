@@ -164,8 +164,7 @@ func (i *ProjectMetadata) UpdateProjectMetadataByAnyUser(ctx context.Context, p 
 	if p.StarredBy != nil {
 		meta.SetStarredBy(p.StarredBy)
 	}
-	now := time.Now().UTC()
-	meta.SetUpdatedAt(&now)
+
 	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
 		return nil, err
 	}
