@@ -40,12 +40,30 @@ async function globalSetup(_config: FullConfig) {
       // Use login method from LoginPage
       await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
 
-      // Wait for navigation and accept terms if present
-      await page.waitForTimeout(3000);
+      // Wait for navigation to complete and verify login was successful
+      await page.waitForLoadState("networkidle");
+
+      // Wait for the header user menu to appear, confirming successful login
+      await page.waitForSelector('[data-testid="header-user-menu"]', {
+        timeout: 30000,
+        state: "visible"
+      });
     }
 
-    // Ensure we're on the dashboard before saving state
-    await page.waitForTimeout(2000);
+    // Verify we're on the dashboard and not on login page
+    const currentUrl = page.url();
+    if (currentUrl.includes('/login')) {
+      throw new Error('Global setup failed: Still on login page after authentication attempt');
+    }
+
+    // Verify dashboard elements are present
+    const isDashboardLoaded = await page
+      .locator('[data-testid="header-user-menu"]')
+      .isVisible();
+
+    if (!isDashboardLoaded) {
+      throw new Error('Global setup failed: Dashboard not loaded after login');
+    }
 
     // Save signed-in state
     await page.context().storageState({ path: STORAGE_STATE });
@@ -53,6 +71,8 @@ async function globalSetup(_config: FullConfig) {
     console.log("✅ Global setup completed - authentication state saved");
   } catch (error) {
     console.error("❌ Global setup failed:", error);
+    // Take a screenshot for debugging
+    await page.screenshot({ path: path.join(__dirname, "global-setup-error.png"), fullPage: true });
     throw error;
   } finally {
     await page.close();
