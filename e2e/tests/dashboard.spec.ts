@@ -42,7 +42,13 @@ test.describe("DASHBOARD - Test cases", () => {
     recycleBinPage = new RecycleBinPage(page);
     projectScreenPage = new ProjectScreenPage(page);
     await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
-      waitUntil: "networkidle"
+      waitUntil: "domcontentloaded"
+    });
+
+    // Wait for dashboard to fully load
+    await page.waitForSelector('[data-testid="sidebar-tab-projects-link"]', {
+      timeout: 15000,
+      state: "visible"
     });
   });
   // eslint-disable-next-line no-empty-pattern
