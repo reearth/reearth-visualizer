@@ -3,6 +3,7 @@ package accounts
 import (
 	"net/http"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearthx/log"
 )
@@ -24,10 +25,16 @@ func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 
-	resp, err := http.DefaultTransport.RoundTrip(req)
+	transport := gqlclient.NewAccountsTransport(
+		http.DefaultTransport,
+		gqlclient.InternalServiceVisualizerAPI,
+	)
+
+	resp, err := transport.RoundTrip(req)
 	if err != nil {
 		log.Errorfc(req.Context(), "[Accounts API] Request failed: %v", err)
 		return nil, err
 	}
+
 	return resp, nil
 }
