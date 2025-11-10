@@ -24,9 +24,7 @@ async function globalSetup(_config: FullConfig) {
 
   try {
     // Navigate to the app
-    await page.goto(REEARTH_WEB_E2E_BASEURL, {
-      waitUntil: "networkidle"
-    });
+    await page.goto(REEARTH_WEB_E2E_BASEURL);
 
     // Check if already logged in by looking for dashboard elements
     const isLoggedIn = await page
