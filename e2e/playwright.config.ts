@@ -31,10 +31,10 @@ export default defineConfig({
 
   projects: [
     {
-      name: "chromium Desktop",
+      name: "webkit",
       testIgnore: /api\/.*\.ts/,
       use: {
-        ...devices["Desktop Chrome"],
+        ...devices["Desktop Safari"],
         screenshot: "only-on-failure",
         headless: true,
         launchOptions: {

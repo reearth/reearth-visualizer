@@ -1,6 +1,6 @@
 import path from "path";
 
-import { chromium, FullConfig } from "@playwright/test";
+import { FullConfig, webkit } from "@playwright/test";
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
@@ -18,7 +18,7 @@ async function globalSetup(_config: FullConfig) {
     );
   }
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await webkit.launch({ headless: true });
   const context = await createIAPContext(browser, REEARTH_WEB_E2E_BASEURL);
   const page = await context.newPage();
 
