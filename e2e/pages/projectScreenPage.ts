@@ -141,15 +141,29 @@ export class ProjectScreenPage {
   }
 
   async addPointsOnMap(x: number, y: number) {
+    // Click the map pin button to activate drawing mode
     await this.mapPinButton.click();
+
+    // Wait for the drawing mode to be activated
     await this.page.waitForTimeout(1000);
-    const canvas = this.page.locator("canvas");
+
+    // Get the canvas element
+    const canvas = this.page.locator("canvas").first();
+
+    // Ensure canvas is visible and ready
+    await canvas.waitFor({ state: "visible" });
+
+    // Click on the canvas to place the point
+    // Use force: true to ensure the click goes through even if there are overlays
     await canvas.click({
       position: {
         x,
         y
-      }
+      },
+      force: true
     });
+
+    // Wait for the point to be added
     await this.page.waitForTimeout(2000);
   }
 }

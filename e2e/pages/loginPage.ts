@@ -4,9 +4,9 @@ export class LoginPage {
   appTitle: Locator = this.page.locator(
     'div#custom-prompt-logo[title="reearth-dev"]'
   );
-  emailInput: Locator = this.page.locator("input#username");
+  emailInput: Locator = this.page.locator(`input[name="username"]`);
   continueButton: Locator = this.page.getByRole("button", { name: "Continue" });
-  passwordInput: Locator = this.page.locator("input#password");
+  passwordInput: Locator = this.page.locator(`input[name="password"]`);
   loginButton: Locator = this.page.getByRole("button", { name: "Log In" });
   errorMessageUsername: Locator = this.page.getByRole("alert", {
     name: /Username can't be blank/i

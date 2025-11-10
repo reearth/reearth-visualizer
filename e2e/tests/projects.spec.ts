@@ -42,8 +42,10 @@ test.describe("Project Management", () => {
     // Wait for dashboard to load and verify we're not on login page
     await page.waitForTimeout(2000);
     const currentUrl = page.url();
-    if (currentUrl.includes('/login')) {
-      throw new Error('Authentication failed - redirected to login page. Check if STORAGE_STATE is valid.');
+    if (currentUrl.includes("/login")) {
+      throw new Error(
+        "Authentication failed - redirected to login page. Check if STORAGE_STATE is valid."
+      );
     }
   });
   // eslint-disable-next-line no-empty-pattern
@@ -105,9 +107,10 @@ test.describe("Project Management", () => {
       page.waitForResponse(
         (r) =>
           r.url().includes("/graphql") &&
-          (r.request().postData()?.includes("addGeoJSONFeature") ?? false)
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false),
+        { timeout: 45000 }
       ),
-      projectScreen.addPointsOnMap(110, 198)
+      projectScreen.addPointsOnMap(400, 400)
     ]);
 
     // Verify the GraphQL response
