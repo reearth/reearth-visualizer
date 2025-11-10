@@ -74,3 +74,10 @@ jobs:
           name: allure-report
           path: e2e/allure-report/
           retention-days: 10
+      - name: Upload artifact - Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: e2e/allure-results/
+          retention-days: 10

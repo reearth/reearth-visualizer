@@ -27,11 +27,14 @@ export class LoginPage {
   constructor(private page: Page) {}
 
   async login(email: string, password: string) {
+    await this.emailInput.waitFor({ state: "visible" });
     await this.emailInput.clear();
     await this.emailInput.fill(email);
     await this.continueButton.first().click();
+
+    await this.passwordInput.waitFor({ state: "visible" });
     await this.passwordInput.clear();
     await this.passwordInput.fill(password);
-    await this.continueButton.click();
+    await this.loginButton.click();
   }
 }
