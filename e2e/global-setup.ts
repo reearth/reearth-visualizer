@@ -58,7 +58,7 @@ async function globalSetup(_config: FullConfig) {
 
     // Verify dashboard elements are present
     const isDashboardLoaded = await page
-      .locator('[data-testid="header-user-menu"]')
+      .locator('[data-testid="profile-wrapper"]')
       .isVisible();
 
     if (!isDashboardLoaded) {
