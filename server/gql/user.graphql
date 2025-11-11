@@ -30,14 +30,6 @@ enum Theme {
 
 # InputType
 
-input SignupInput {
-  lang: Lang
-  theme: Theme
-  userId: ID
-  workspaceId: ID
-  secret: String
-}
-
 input UpdateMeInput {
   name: String
   email: String
@@ -47,27 +39,10 @@ input UpdateMeInput {
   passwordConfirmation: String
 }
 
-input RemoveMyAuthInput {
-  auth: String!
-}
-
-input DeleteMeInput {
-  userId: ID!
-}
-
 # Payload
 
 type UpdateMePayload {
   me: Me!
-}
-
-type SignupPayload {
-  user: User!
-  workspace: Workspace!
-}
-
-type DeleteMePayload {
-  userId: ID!
 }
 
 extend type Query {
@@ -76,8 +51,5 @@ extend type Query {
 }
 
 extend type Mutation {
-  signup(input: SignupInput!): SignupPayload
   updateMe(input: UpdateMeInput!): UpdateMePayload
-  removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
-  deleteMe(input: DeleteMeInput!): DeleteMePayload
 }

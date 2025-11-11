@@ -11,6 +11,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http1 "github.com/reearth/reearth/server/internal/adapter/http"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -23,86 +24,62 @@ func Ping() echo.HandlerFunc {
 	}
 }
 
-func Signup() echo.HandlerFunc {
+func Signup(cfg *ServerConfig) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var inp http1.SignupInput
 		if err := c.Bind(&inp); err != nil {
 			return &echo.HTTPError{Code: http.StatusBadRequest, Message: fmt.Errorf("failed to parse request body: %w", err)}
 		}
 
-		uc := adapter.Usecases(c.Request().Context())
-		controller := http1.NewUserController(uc.User)
+		ctx := c.Request().Context()
 
-		output, err := controller.Signup(c.Request().Context(), inp)
-		if err != nil {
-			return err
-		}
+		// Call reearth-accounts service for signup
+		if cfg.Config.UseReearthAccountAuth() && cfg.AccountsAPIClient != nil {
+			var u *accountsUser.User
+			var err error
 
-		return c.JSON(http.StatusOK, output)
-	}
-}
-
-func PasswordReset() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		var inp http1.PasswordResetInput
-		if err := c.Bind(&inp); err != nil {
-			return err
-		}
-
-		uc := adapter.Usecases(c.Request().Context())
-		controller := http1.NewUserController(uc.User)
-
-		isStartingNewRequest := len(inp.Email) > 0 && len(inp.Token) == 0 && len(inp.Password) == 0
-		isSettingNewPassword := len(inp.Email) > 0 && len(inp.Token) > 0 && len(inp.Password) > 0
-
-		if isStartingNewRequest {
-			if err := controller.StartPasswordReset(c.Request().Context(), inp); err != nil {
-				c.Logger().Error("an attempt to start reset password failed. internal error: %w", err)
+			// Check if this is OIDC signup (sub is provided)
+			if inp.Sub != nil && *inp.Sub != "" {
+				// Use SignupOIDC for OIDC-based signup
+				secret := ""
+				if inp.Secret != nil {
+					secret = *inp.Secret
+				}
+				u, err = cfg.AccountsAPIClient.UserRepo.SignupOIDC(ctx, inp.Name,
+					inp.Email, *inp.Sub, secret)
+			} else {
+				// Use regular Signup for password-based signup
+				userID := ""
+				if inp.UserID != nil {
+					userID = inp.UserID.String()
+				}
+				workspaceID := ""
+				if inp.WorkspaceID != nil {
+					workspaceID = inp.WorkspaceID.String()
+				}
+				secret := ""
+				if inp.Secret != nil {
+					secret = *inp.Secret
+				}
+				u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
+					inp.Email, inp.Password, secret, workspaceID)
 			}
-			return c.JSON(http.StatusOK, echo.Map{"message": "If that email address is in our database, we will send you an email to reset your password."})
-		}
 
-		if isSettingNewPassword {
-			if err := controller.PasswordReset(c.Request().Context(), inp); err != nil {
-				c.Logger().Error("an attempt to Set password failed. internal error: %w", err)
-				return c.JSON(http.StatusBadRequest, echo.Map{"message": "Bad set password request"})
+			if err != nil {
+				return &echo.HTTPError{Code: http.StatusInternalServerError, Message: fmt.Sprintf("signup failed: %v", err)}
 			}
-			return c.JSON(http.StatusOK, echo.Map{"message": "Password is updated successfully"})
+
+			return c.JSON(http.StatusOK, http1.SignupOutput{
+				ID:    u.ID().String(),
+				Name:  u.Name(),
+				Email: u.Email(),
+			})
 		}
 
-		return &echo.HTTPError{Code: http.StatusBadRequest, Message: "Bad reset password request"}
-	}
-}
-
-func StartSignupVerify() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		var inp http1.CreateVerificationInput
-		if err := c.Bind(&inp); err != nil {
-			return &echo.HTTPError{Code: http.StatusBadRequest, Message: fmt.Errorf("failed to parse request body: %w", err)}
-		}
-
-		uc := adapter.Usecases(c.Request().Context())
+		uc := adapter.Usecases(ctx)
 		controller := http1.NewUserController(uc.User)
 
-		if err := controller.CreateVerification(c.Request().Context(), inp); err != nil {
-			return err
-		}
-
-		return c.NoContent(http.StatusOK)
-	}
-}
-
-func SignupVerify() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		code := c.Param("code")
-		if len(code) == 0 {
-			return echo.ErrBadRequest
-		}
-
-		uc := adapter.Usecases(c.Request().Context())
-		controller := http1.NewUserController(uc.User)
-
-		output, err := controller.VerifyUser(c.Request().Context(), code)
+		output, err := controller.Signup(ctx, inp)
 		if err != nil {
 			return err
 		}
@@ -189,6 +166,25 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 
 			return c.HTML(http.StatusOK, index)
 		}
+	}
+}
+
+func MockUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		uc := adapter.Usecases(c.Request().Context())
+		controller := http1.NewUserController(uc.User)
+
+		input := http1.SignupInput{
+			Username: "Mock User",
+			Email:    "mock@example.com",
+		}
+
+		output, err := controller.Signup(c.Request().Context(), input)
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, output)
 	}
 }
 
