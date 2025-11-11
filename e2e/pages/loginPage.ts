@@ -7,7 +7,7 @@ export class LoginPage {
   emailInput: Locator = this.page.locator(`input[name="username"]`);
   continueButton: Locator = this.page.getByRole("button", { name: "Continue" });
   passwordInput: Locator = this.page.locator(`input[name="password"]`);
-  loginButton: Locator = this.page.getByRole("button", { name: "Log In" });
+  loginButton: Locator = this.page.getByRole("button", { name: "Continue" });
   errorMessageUsername: Locator = this.page.getByRole("alert", {
     name: /Username can't be blank/i
   });
