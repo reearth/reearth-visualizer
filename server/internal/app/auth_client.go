@@ -1,7 +1,10 @@
 package app
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"io"
 	"net/http"
 	"strings"
 
@@ -20,6 +23,44 @@ import (
 
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
+
+type graphqlRequest struct {
+	Query         string                 `json:"query"`
+	OperationName string                 `json:"operationName"`
+	Variables     map[string]interface{} `json:"variables"`
+}
+
+func isSignupMutation(req *http.Request) bool {
+	if req.Method != http.MethodPost {
+		return false
+	}
+
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		return false
+	}
+	req.Body = io.NopCloser(bytes.NewReader(body))
+
+	var gqlReq graphqlRequest
+	if err := json.Unmarshal(body, &gqlReq); err != nil {
+		return false
+	}
+
+	query := strings.ToLower(gqlReq.Query)
+	query = strings.ReplaceAll(query, " ", "")
+	query = strings.ReplaceAll(query, "\n", "")
+	query = strings.ReplaceAll(query, "\t", "")
+	query = strings.ReplaceAll(query, "\r", "")
+
+	// Check if it's a mutation
+	if !strings.Contains(query, "mutation") {
+		return false
+	}
+
+	// Check for signup or signupOIDC after mutation keyword
+	// This handles both named and anonymous mutations
+	return strings.Contains(query, "signup(") || strings.Contains(query, "signupoidc(")
+}
 
 // load user from db and attach it to context along with operator
 // user id can be from debug header or jwt token
@@ -180,6 +221,14 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 			// The token is set as is and sent to reearth-accounts for verification.
 			token := strings.TrimPrefix(req.Header.Get("Authorization"), "Bearer ")
 			ctx = adapter.AttachJwtToken(ctx, token)
+
+			// Skip user loading for signup mutations
+			// signup mutations will be handled by reearth-accounts service
+			if isSignupMutation(req) {
+				log.Debugfc(ctx, "auth: skipping user loading for signup mutation")
+				c.SetRequest(req.WithContext(ctx))
+				return next(c)
+			}
 
 			var u *user.User
 
