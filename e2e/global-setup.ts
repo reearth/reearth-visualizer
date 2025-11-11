@@ -24,13 +24,11 @@ async function globalSetup(_config: FullConfig) {
 
   try {
     // Navigate to the app
-    await page.goto(REEARTH_WEB_E2E_BASEURL, {
-      waitUntil: "networkidle"
-    });
+    await page.goto(REEARTH_WEB_E2E_BASEURL);
 
     // Check if already logged in by looking for dashboard elements
     const isLoggedIn = await page
-      .locator('[data-testid="header-user-menu"]')
+      .locator('[data-testid="projects-manager-wrapper"]')
       .isVisible()
       .catch(() => false);
 
@@ -43,8 +41,8 @@ async function globalSetup(_config: FullConfig) {
       // Wait for navigation to complete and verify login was successful
       await page.waitForLoadState("networkidle");
 
-      // Wait for the header user menu to appear, confirming successful login
-      await page.waitForSelector('[data-testid="header-user-menu"]', {
+      // Wait for the projects manager wrapper to appear, confirming successful login
+      await page.waitForSelector('[data-testid="projects-manager-wrapper"]', {
         timeout: 30000,
         state: "visible"
       });
@@ -52,8 +50,10 @@ async function globalSetup(_config: FullConfig) {
 
     // Verify we're on the dashboard and not on login page
     const currentUrl = page.url();
-    if (currentUrl.includes('/login')) {
-      throw new Error('Global setup failed: Still on login page after authentication attempt');
+    if (currentUrl.includes("/login")) {
+      throw new Error(
+        "Global setup failed: Still on login page after authentication attempt"
+      );
     }
 
     // Verify dashboard elements are present
@@ -62,7 +62,7 @@ async function globalSetup(_config: FullConfig) {
       .isVisible();
 
     if (!isDashboardLoaded) {
-      throw new Error('Global setup failed: Dashboard not loaded after login');
+      throw new Error("Global setup failed: Dashboard not loaded after login");
     }
 
     // Save signed-in state
@@ -72,7 +72,10 @@ async function globalSetup(_config: FullConfig) {
   } catch (error) {
     console.error("❌ Global setup failed:", error);
     // Take a screenshot for debugging
-    await page.screenshot({ path: path.join(__dirname, "global-setup-error.png"), fullPage: true });
+    await page.screenshot({
+      path: path.join(__dirname, "global-setup-error.png"),
+      fullPage: true
+    });
     throw error;
   } finally {
     await page.close();
