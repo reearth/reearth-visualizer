@@ -34,7 +34,7 @@ func ParseNotification(c echo.Context) (Notification, error) {
 
 	c.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-	log.Infofc(c.Request().Context(), "ParseNotification body: %s", string(bodyBytes))
+	log.Debugfc(c.Request().Context(), "ParseNotification body: %s", string(bodyBytes))
 
 	if err := json.Unmarshal(bodyBytes, &n); err != nil {
 		return n, echo.NewHTTPError(
