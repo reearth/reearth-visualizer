@@ -401,15 +401,15 @@ func TestGetAllProjects(t *testing.T) {
 			require.NoError(t, err)
 			require.NotNil(t, res)
 			require.NotNil(t, res.Projects)
-			
+
 			// Should return at least 1 project (Public Project 0 has both topics)
 			assert.GreaterOrEqual(t, len(res.Projects), 1)
-			
+
 			// All returned projects must contain ALL specified topics
 			for _, proj := range res.Projects {
 				require.NotNil(t, proj.Metadata)
 				for _, requiredTopic := range topics {
-					assert.Contains(t, proj.Metadata.Topics, requiredTopic, 
+					assert.Contains(t, proj.Metadata.Topics, requiredTopic,
 						"Project %s does not contain required topic %s", proj.Id, requiredTopic)
 				}
 			}
