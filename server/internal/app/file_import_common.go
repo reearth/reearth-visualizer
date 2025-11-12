@@ -4,6 +4,7 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -24,6 +25,31 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
+// CloudEventData represents the data inside a notification
+type CloudEventData struct {
+	Bucket      string `json:"bucket"`
+	Name        string `json:"name"`
+	ContentType string `json:"contentType"`
+	Size        string `json:"size"`
+	TimeCreated string `json:"timeCreated"`
+}
+
+// Notification represents either a direct cloud function notification or a Pub/Sub message
+type Notification struct {
+	// For direct CloudEvent notifications
+	EventType      string         `json:"event_type"`
+	CloudEventData CloudEventData `json:"cloud_event_data"`
+
+	// For Pub/Sub push notifications
+	Message *struct {
+		Data        string            `json:"data"`
+		Attributes  map[string]string `json:"attributes"`
+		MessageID   string            `json:"messageId"`
+		PublishTime string            `json:"publishTime"`
+	} `json:"message,omitempty"`
+	Subscription string `json:"subscription,omitempty"`
+}
+
 func ParseNotification(c echo.Context) (Notification, error) {
 	var n Notification
 
@@ -31,6 +57,9 @@ func ParseNotification(c echo.Context) (Notification, error) {
 	if err != nil {
 		return n, echo.NewHTTPError(http.StatusBadRequest, "failed to read body")
 	}
+
+	// Dump the raw POST body
+	log.Infof("[ParseNotification] Raw POST body: %s", string(bodyBytes))
 
 	c.Request().Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
@@ -42,6 +71,32 @@ func ParseNotification(c echo.Context) (Notification, error) {
 			fmt.Sprintf("invalid JSON: %v; body=%s", err, string(bodyBytes)),
 		)
 	}
+
+	// If this is a Pub/Sub message, decode the base64 data and parse StorageObjectData
+	if n.Message != nil && n.Message.Data != "" {
+		log.Infof("[ParseNotification] Detected Pub/Sub message format")
+		decodedData, err := base64.StdEncoding.DecodeString(n.Message.Data)
+		if err != nil {
+			return n, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("failed to decode base64 data: %v", err))
+		}
+
+		log.Infof("[ParseNotification] Decoded Pub/Sub data: %s", string(decodedData))
+
+		var storageData CloudEventData
+		if err := json.Unmarshal(decodedData, &storageData); err != nil {
+			return n, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("failed to parse storage data: %v", err))
+		}
+
+		// Set the CloudEventData from the Pub/Sub message
+		n.CloudEventData = storageData
+		n.EventType = "pubsub"
+	} else {
+		log.Infof("[ParseNotification] Detected direct CloudEvent format")
+	}
+
+	log.Infof("[ParseNotification] Parsed notification - EventType: %s, FileName: %s, Bucket: %s",
+		n.EventType, n.CloudEventData.Name, n.CloudEventData.Bucket)
+
 	return n, nil
 }
 
