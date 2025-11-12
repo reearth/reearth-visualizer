@@ -29,13 +29,13 @@ vi.mock("@monaco-editor/react", () => {
 });
 
 type MockEditorType = {
-  getAction: ReturnType<typeof vi.fn>;
+  getAction: ReturnType<typeof vi.fn> & (() => { run: ReturnType<typeof vi.fn> });
   onDidBlurEditorText: ReturnType<typeof vi.fn>;
   onDidFocusEditorWidget: ReturnType<typeof vi.fn>;
 };
 
 const mockEditorInstance: MockEditorType = {
-  getAction: vi.fn().mockReturnValue({ run: vi.fn() }),
+  getAction: vi.fn().mockReturnValue({ run: vi.fn() }) as MockEditorType['getAction'],
   onDidBlurEditorText: vi.fn().mockImplementation((callback) => callback),
   onDidFocusEditorWidget: vi.fn().mockImplementation((callback) => callback)
 };
