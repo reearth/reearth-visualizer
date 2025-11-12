@@ -1,6 +1,6 @@
 import path from "path";
 
-import { webkit, FullConfig } from "@playwright/test";
+import { FullConfig, webkit } from "@playwright/test";
 
 import { LoginPage } from "./pages/loginPage";
 import { createIAPContext } from "./utils/iap-auth";
@@ -23,36 +23,72 @@ async function globalSetup(_config: FullConfig) {
   const page = await context.newPage();
 
   try {
-    // Navigate to the app
     await page.goto(REEARTH_WEB_E2E_BASEURL, {
-      waitUntil: "networkidle"
+      waitUntil: "domcontentloaded",
+      timeout: 30000
     });
 
-    // Check if already logged in by looking for dashboard elements
     const isLoggedIn = await page
-      .locator('[data-testid="header-user-menu"]')
+      .locator('[data-testid="projects-manager-wrapper"]')
       .isVisible()
       .catch(() => false);
 
     if (!isLoggedIn) {
       const loginPage = new LoginPage(page);
-
-      // Use login method from LoginPage
       await loginPage.login(REEARTH_E2E_EMAIL, REEARTH_E2E_PASSWORD);
 
-      // Wait for navigation and accept terms if present
-      await page.waitForTimeout(3000);
+      // Wait for navigation to complete and verify login was successful
+      await page.waitForLoadState("networkidle");
+
+      // Wait for the projects manager wrapper to appear, confirming successful login
+      await page.waitForSelector('[data-testid="projects-manager-wrapper"]', {
+        timeout: 30000,
+        state: "visible"
+      });
     }
 
-    // Ensure we're on the dashboard before saving state
-    await page.waitForTimeout(2000);
+    // Verify we're on the dashboard and not on login page
+    const currentUrl = page.url();
+    if (currentUrl.includes("/login")) {
+      throw new Error(
+        "Global setup failed: Still on login page after authentication attempt"
+      );
+    }
+
+    // Verify dashboard elements are present
+    const isDashboardLoaded = await page
+      .locator('[data-testid="profile-wrapper"]')
+      .isVisible();
+
+    if (!isDashboardLoaded) {
+      throw new Error("Global setup failed: Dashboard not loaded after login");
+    }
 
     // Save signed-in state
     await page.context().storageState({ path: STORAGE_STATE });
 
-    console.log("✅ Global setup completed - authentication state saved");
+    console.log(
+      "✅ Global setup completed - authentication state saved to:",
+      STORAGE_STATE
+    );
   } catch (error) {
     console.error("❌ Global setup failed:", error);
+    console.error("Current URL:", page.url());
+
+    try {
+      await page.screenshot({ path: "./test-results/global-setup-error.png" });
+      console.error(
+        "Screenshot saved to: ./test-results/global-setup-error.png"
+      );
+    } catch (screenshotError) {
+      console.error("Could not save screenshot:", screenshotError);
+    }
+
+    // Take a screenshot for debugging
+    await page.screenshot({
+      path: path.join(__dirname, "global-setup-error.png"),
+      fullPage: true
+    });
     throw error;
   } finally {
     await page.close();

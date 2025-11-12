@@ -36,14 +36,25 @@ test.describe("Project Management", () => {
     projectScreen = new ProjectScreenPage(page);
 
     await page.goto(REEARTH_WEB_E2E_BASEURL || "", {
-      waitUntil: "networkidle"
+      waitUntil: "domcontentloaded"
     });
 
     // Wait for dashboard to load and verify we're not on login page
-    await page.waitForTimeout(2000);
-    const currentUrl = page.url();
-    if (currentUrl.includes('/login')) {
-      throw new Error('Authentication failed - redirected to login page. Check if STORAGE_STATE is valid.');
+    try {
+      await page.waitForSelector('[data-testid="sidebar-tab-projects-link"]', {
+        timeout: 15000,
+        state: "visible"
+      });
+    } catch (error) {
+      const currentUrl = page.url();
+      if (currentUrl.includes("/login")) {
+        throw new Error(
+          "Authentication failed - redirected to login page. Check if STORAGE_STATE is valid."
+        );
+      }
+      throw new Error(
+        `Dashboard did not load properly. Current URL: ${currentUrl}. Error: ${error}`
+      );
     }
   });
   // eslint-disable-next-line no-empty-pattern
@@ -105,9 +116,10 @@ test.describe("Project Management", () => {
       page.waitForResponse(
         (r) =>
           r.url().includes("/graphql") &&
-          (r.request().postData()?.includes("addGeoJSONFeature") ?? false)
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false),
+        { timeout: 45000 }
       ),
-      projectScreen.addPointsOnMap(110, 198)
+      projectScreen.addPointsOnMap(400, 400)
     ]);
 
     // Verify the GraphQL response
