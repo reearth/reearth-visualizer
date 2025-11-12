@@ -51,10 +51,17 @@ jobs:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
-          USE_IAP_AUTH: true
-          IAP_AUTH_METHOD: id-token
-          IAP_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
+          USE_IAP_AUTH: false
         run: npm run test:ui
+
+      - name: Upload global setup error screenshot
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: global-setup-error
+          path: e2e/global-setup-error.png
+          if-no-files-found: ignore
+          retention-days: 5
 
       - name: Generate Allure Report
         if: always()
@@ -66,4 +73,11 @@ jobs:
         with:
           name: allure-report
           path: e2e/allure-report/
+          retention-days: 10
+      - name: Upload artifact - Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: e2e/allure-results/
           retention-days: 10
