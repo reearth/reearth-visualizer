@@ -71,10 +71,15 @@ func TestGetAllProjects(t *testing.T) {
 			projectStarCounts[res.Project.Id] = starCount
 
 			var projectTopicList []string
-			topicCount := (i % 3) + 1 // 1-3 topics per project
-			for j := 0; j < topicCount; j++ {
-				topicIndex := (i + j) % len(topicsList) // Pick topics based on project index
-				projectTopicList = append(projectTopicList, topicsList[topicIndex])
+			if i == 0 {
+				// Ensure first project has both "visualization" and "mapping" for testing multiple topics filter
+				projectTopicList = []string{"visualization", "mapping"}
+			} else {
+				topicCount := (i % 3) + 1 // 1-3 topics per project
+				for j := 0; j < topicCount; j++ {
+					topicIndex := (i + j) % len(topicsList) // Pick topics based on project index
+					projectTopicList = append(projectTopicList, topicsList[topicIndex])
+				}
 			}
 			projectTopics[res.Project.Id] = projectTopicList
 
@@ -388,7 +393,6 @@ func TestGetAllProjects(t *testing.T) {
 			}
 		})
 
-		// Test case 11: Filter by multiple topics
 		t.Run("FilterByMultipleTopics", func(t *testing.T) {
 			topics := []string{"visualization", "mapping"}
 			res, err := client.GetAllProjects(ctx, &pb.GetAllProjectsRequest{
@@ -397,18 +401,17 @@ func TestGetAllProjects(t *testing.T) {
 			require.NoError(t, err)
 			require.NotNil(t, res)
 			require.NotNil(t, res.Projects)
-
-			// All returned projects should contain at least one of the topics
+			
+			// Should return at least 1 project (Public Project 0 has both topics)
+			assert.GreaterOrEqual(t, len(res.Projects), 1)
+			
+			// All returned projects must contain ALL specified topics
 			for _, proj := range res.Projects {
 				require.NotNil(t, proj.Metadata)
-				found := false
-				for _, t := range topics {
-					if lo.Contains(proj.Metadata.Topics, t) {
-						found = true
-						break
-					}
+				for _, requiredTopic := range topics {
+					assert.Contains(t, proj.Metadata.Topics, requiredTopic, 
+						"Project %s does not contain required topic %s", proj.Id, requiredTopic)
 				}
-				assert.True(t, found, "Project %s does not contain any of the topics", proj.Id)
 			}
 		})
 	})
