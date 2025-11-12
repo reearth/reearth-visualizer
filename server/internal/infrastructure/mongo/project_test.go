@@ -232,6 +232,7 @@ func TestProject_FindAll(t *testing.T) {
 	pid2 := id.NewProjectID()
 	pid3 := id.NewProjectID()
 	pid4 := id.NewProjectID()
+	pid5 := id.NewProjectID()
 
 	// Create projects with different visibility and names
 	now := time.Now()
@@ -288,6 +289,19 @@ func TestProject_FindAll(t *testing.T) {
 			"starred":     false,
 			"updatedat":   now,
 		},
+		bson.M{
+			"id":          pid5.String(),
+			"workspace":   wid.String(),
+			"name":        "Public Project 5",
+			"description": "Description for Public Project 3",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
 	})
 	assert.NoError(t, err)
 
@@ -295,6 +309,7 @@ func TestProject_FindAll(t *testing.T) {
 	pmid1 := id.NewProjectMetadataID()
 	pmid2 := id.NewProjectMetadataID()
 	pmid3 := id.NewProjectMetadataID()
+	pmid5 := id.NewProjectMetadataID()
 
 	_, err = c.Collection("projectmetadata").InsertMany(ctx, []any{
 		bson.M{
@@ -315,6 +330,12 @@ func TestProject_FindAll(t *testing.T) {
 			"workspace": wid.String(),
 			"topics":    []string{"gis", "analysis"},
 		},
+		bson.M{
+			"id":        pmid5.String(),
+			"project":   pid5.String(),
+			"workspace": wid.String(),
+			"topics":    []string{"gis", "mapping"},
+		},
 	})
 	assert.NoError(t, err)
 
@@ -333,12 +354,13 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 2, len(got)) // Only public, non-deleted projects
+		assert.Equal(t, 3, len(got)) // Only public, non-deleted projects (pid1, pid2, pid5)
 
 		// Verify projects are the expected ones
-		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
+		projectIds := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
 		assert.Contains(t, projectIds, pid1)
 		assert.Contains(t, projectIds, pid2)
+		assert.Contains(t, projectIds, pid5)
 	})
 
 	t.Run("FindAll with keyword filter", func(t *testing.T) {
@@ -374,7 +396,7 @@ func TestProject_FindAll(t *testing.T) {
 		assert.Equal(t, 2, len(got))
 		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
 		assert.Contains(t, projectIds, pid1)
-		assert.Contains(t, projectIds, pid3)
+		assert.Contains(t, projectIds, pid5)
 	})
 
 	t.Run("FindAll with multiple topics filter", func(t *testing.T) {
@@ -388,9 +410,11 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		// Only pid1 has both "gis" and "mapping" topics
-		assert.Equal(t, 1, len(got))
-		assert.Equal(t, pid1, got[0].ID())
+		// Both pid1 and pid5 have both "gis" and "mapping" topics
+		assert.Equal(t, 2, len(got))
+		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
+		assert.Contains(t, projectIds, pid1)
+		assert.Contains(t, projectIds, pid5)
 	})
 
 	t.Run("FindAll with keyword and topics filter", func(t *testing.T) {
@@ -406,8 +430,10 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 1, len(got)) // Only pid1 matches both keyword and topic
-		assert.Equal(t, pid1, got[0].ID())
+		assert.Equal(t, 2, len(got)) // Both pid1 and pid5 match keyword "Project" and have "gis" topic
+		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
+		assert.Contains(t, projectIds, pid1)
+		assert.Contains(t, projectIds, pid5)
 	})
 
 	t.Run("FindAll with non-matching topic", func(t *testing.T) {
@@ -454,7 +480,7 @@ func TestProject_FindAll(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
 		assert.Equal(t, 1, len(got))
-		assert.Equal(t, int64(2), pageInfo.TotalCount)
+		assert.Equal(t, int64(3), pageInfo.TotalCount)
 		assert.True(t, pageInfo.HasNextPage)
 		assert.False(t, pageInfo.HasPreviousPage)
 	})
@@ -464,6 +490,8 @@ func TestProject_FindAll(t *testing.T) {
 		_, err := c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid1.String()}, bson.M{"$set": bson.M{"starcount": 5}})
 		assert.NoError(t, err)
 		_, err = c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid2.String()}, bson.M{"$set": bson.M{"starcount": 10}})
+		assert.NoError(t, err)
+		_, err = c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid5.String()}, bson.M{"$set": bson.M{"starcount": 3}})
 		assert.NoError(t, err)
 
 		visibility := "public"
@@ -478,19 +506,23 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 2, len(got))
-		// pid2 should come before pid1 because it has higher starcount
+		assert.Equal(t, 3, len(got))
+		// pid2 should come first (starcount: 10), then pid1 (starcount: 5), then pid5 (starcount: 3)
 		assert.Equal(t, pid2, got[0].ID())
 		assert.Equal(t, pid1, got[1].ID())
+		assert.Equal(t, pid5, got[2].ID())
 	})
 
 	t.Run("FindAll with sort by updatedat DESC", func(t *testing.T) {
-		// Update updatedat for pid1 and pid2
-		now1 := time.Now().Add(-1 * time.Hour)
-		now2 := time.Now()
+		// Update updatedat for pid1, pid2, and pid5
+		now1 := time.Now().Add(-2 * time.Hour) // oldest
+		now2 := time.Now()                     // newest
+		now5 := time.Now().Add(-1 * time.Hour) // middle
 		_, err := c.Collection("project").UpdateOne(ctx, bson.M{"id": pid1.String()}, bson.M{"$set": bson.M{"updatedat": now1}})
 		assert.NoError(t, err)
 		_, err = c.Collection("project").UpdateOne(ctx, bson.M{"id": pid2.String()}, bson.M{"$set": bson.M{"updatedat": now2}})
+		assert.NoError(t, err)
+		_, err = c.Collection("project").UpdateOne(ctx, bson.M{"id": pid5.String()}, bson.M{"$set": bson.M{"updatedat": now5}})
 		assert.NoError(t, err)
 
 		visibility := "public"
@@ -507,10 +539,11 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 2, len(got))
-		// pid2 should come before pid1 because it has newer updatedat
+		assert.Equal(t, 3, len(got))
+		// pid2 should come first (newest), then pid5 (middle), then pid1 (oldest)
 		assert.Equal(t, pid2, got[0].ID())
-		assert.Equal(t, pid1, got[1].ID())
+		assert.Equal(t, pid5, got[1].ID())
+		assert.Equal(t, pid1, got[2].ID())
 	})
 
 	t.Run("FindAll with sort by starcount ASC", func(t *testing.T) {
@@ -518,6 +551,8 @@ func TestProject_FindAll(t *testing.T) {
 		_, err := c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid1.String()}, bson.M{"$set": bson.M{"starcount": 5}})
 		assert.NoError(t, err)
 		_, err = c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid2.String()}, bson.M{"$set": bson.M{"starcount": 10}})
+		assert.NoError(t, err)
+		_, err = c.Collection("projectmetadata").UpdateOne(ctx, bson.M{"project": pid5.String()}, bson.M{"$set": bson.M{"starcount": 3}})
 		assert.NoError(t, err)
 
 		visibility := "public"
@@ -532,19 +567,23 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 2, len(got))
-		// pid1 should come before pid2 because it has lower starcount (5 < 10)
-		assert.Equal(t, pid1, got[0].ID())
-		assert.Equal(t, pid2, got[1].ID())
+		assert.Equal(t, 3, len(got))
+		// ASC order: pid5 (3), pid1 (5), pid2 (10)
+		assert.Equal(t, pid5, got[0].ID())
+		assert.Equal(t, pid1, got[1].ID())
+		assert.Equal(t, pid2, got[2].ID())
 	})
 
 	t.Run("FindAll with sort by updatedat ASC", func(t *testing.T) {
 		// Set different updatedat values for testing ASC order
-		now1 := time.Now().Add(-2 * time.Hour) // older
-		now2 := time.Now().Add(-1 * time.Hour) // newer
+		now1 := time.Now().Add(-3 * time.Hour) // oldest
+		now2 := time.Now().Add(-1 * time.Hour) // newest
+		now5 := time.Now().Add(-2 * time.Hour) // middle
 		_, err := c.Collection("project").UpdateOne(ctx, bson.M{"id": pid1.String()}, bson.M{"$set": bson.M{"updatedat": now1}})
 		assert.NoError(t, err)
 		_, err = c.Collection("project").UpdateOne(ctx, bson.M{"id": pid2.String()}, bson.M{"$set": bson.M{"updatedat": now2}})
+		assert.NoError(t, err)
+		_, err = c.Collection("project").UpdateOne(ctx, bson.M{"id": pid5.String()}, bson.M{"$set": bson.M{"updatedat": now5}})
 		assert.NoError(t, err)
 
 		visibility := "public"
@@ -561,9 +600,10 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 2, len(got))
-		// pid1 should come before pid2 because it has older updatedat (ASC order)
+		assert.Equal(t, 3, len(got))
+		// ASC order: pid1 (oldest), pid5 (middle), pid2 (newest)
 		assert.Equal(t, pid1, got[0].ID())
-		assert.Equal(t, pid2, got[1].ID())
+		assert.Equal(t, pid5, got[1].ID())
+		assert.Equal(t, pid2, got[2].ID())
 	})
 }
