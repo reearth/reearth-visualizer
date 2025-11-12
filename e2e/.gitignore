@@ -17,3 +17,7 @@ auth.json
 allure-report
 allure-results
 .allure
+exploration
+explore-app.ts
+explore-project-editor.ts
+global-setup-error-screenshot.png
