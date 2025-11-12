@@ -952,7 +952,7 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 	// Build topics match condition
 	topicsMatchStage := bson.M{
 		"$match": bson.M{
-			"metadata.topics": bson.M{"$in": pFilter.Topics},
+			"metadata.topics": bson.M{"$all": pFilter.Topics},
 		},
 	}
 

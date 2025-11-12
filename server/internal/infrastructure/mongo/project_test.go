@@ -363,21 +363,22 @@ func TestProject_FindAll(t *testing.T) {
 
 	t.Run("FindAll with single topic filter", func(t *testing.T) {
 		topics := []string{"gis"}
-		visibility := "public"
 		filter := repo.ProjectFilter{
-			Topics:     topics,
-			Visibility: &visibility,
+			Topics: topics,
 		}
 
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 1, len(got)) // Only pid1 has "gis" topic and is public
-		assert.Equal(t, pid1, got[0].ID())
+		// Both pid1 and pid3 have "gis" in their topics
+		assert.Equal(t, 2, len(got))
+		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
+		assert.Contains(t, projectIds, pid1)
+		assert.Contains(t, projectIds, pid3)
 	})
 
 	t.Run("FindAll with multiple topics filter", func(t *testing.T) {
-		topics := []string{"gis", "3d"}
+		topics := []string{"gis", "mapping"}
 		visibility := "public"
 		filter := repo.ProjectFilter{
 			Topics:     topics,
@@ -387,11 +388,9 @@ func TestProject_FindAll(t *testing.T) {
 		got, pageInfo, err := r.FindAll(ctx, filter)
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
-		assert.Equal(t, 2, len(got)) // Both pid1 (gis) and pid2 (3d) match
-
-		projectIds := []id.ProjectID{got[0].ID(), got[1].ID()}
-		assert.Contains(t, projectIds, pid1)
-		assert.Contains(t, projectIds, pid2)
+		// Only pid1 has both "gis" and "mapping" topics
+		assert.Equal(t, 1, len(got))
+		assert.Equal(t, pid1, got[0].ID())
 	})
 
 	t.Run("FindAll with keyword and topics filter", func(t *testing.T) {
