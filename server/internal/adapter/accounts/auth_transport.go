@@ -8,9 +8,20 @@ import (
 	"github.com/reearth/reearthx/log"
 )
 
-type DynamicAuthTransport struct{}
+type dynamicAuthTransport struct {
+	transport *gqlclient.AccountsTransport
+}
 
-func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func NewDynamicAuthTransport() *dynamicAuthTransport {
+	return &dynamicAuthTransport{
+		transport: gqlclient.NewAccountsTransport(
+			http.DefaultTransport,
+			gqlclient.InternalServiceVisualizerAPI,
+		),
+	}
+}
+
+func (t dynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	var token string
 
 	// During the migration period to accounts server, this transport handles both:
@@ -25,12 +36,7 @@ func (t DynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 
-	transport := gqlclient.NewAccountsTransport(
-		http.DefaultTransport,
-		gqlclient.InternalServiceVisualizerAPI,
-	)
-
-	resp, err := transport.RoundTrip(req)
+	resp, err := t.transport.RoundTrip(req)
 	if err != nil {
 		log.Errorfc(req.Context(), "[Accounts API] Request failed: %v", err)
 		return nil, err
