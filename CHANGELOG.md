@@ -2,6 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.0 - 2025-11-13
+
+### Web
+
+#### 🚀 Features
+
+- Support display workspace avatar [VIZ-2311] ([#1904](https://github.com/reearth/reearth-visualizer/pull/1904)) [`78ff09`](https://github.com/reearth/reearth-visualizer/commit/78ff09)
+
+#### Miscellaneous Tasks
+
+- Bump version from 1.0.0-beta.12.2 to 1.0.0-beta.13.0 ([#1921](https://github.com/reearth/reearth-visualizer/pull/1921)) [`3b36fe`](https://github.com/reearth/reearth-visualizer/commit/3b36fe)
+- Upgrade dependencies ([#1911](https://github.com/reearth/reearth-visualizer/pull/1911)) [`757f9a`](https://github.com/reearth/reearth-visualizer/commit/757f9a)
+- Upgrade reearth&#x2F;core to 0.0.7-alpha.48 ([#1908](https://github.com/reearth/reearth-visualizer/pull/1908)) [`aec44c`](https://github.com/reearth/reearth-visualizer/commit/aec44c)
+- Upgrade reearth&#x2F;core to 0.0.7-alpha.47 ([#1906](https://github.com/reearth/reearth-visualizer/pull/1906)) [`5c27f5`](https://github.com/reearth/reearth-visualizer/commit/5c27f5)
+
+### Server
+
+#### 🚀 Features
+
+- Debug event ([#1918](https://github.com/reearth/reearth-visualizer/pull/1918)) [`e4e141`](https://github.com/reearth/reearth-visualizer/commit/e4e141)
+- Sikip auth signup ([#1916](https://github.com/reearth/reearth-visualizer/pull/1916)) [`21ee8f`](https://github.com/reearth/reearth-visualizer/commit/21ee8f)
+- Skip authentication for pubsub ([#1909](https://github.com/reearth/reearth-visualizer/pull/1909)) [`8c926f`](https://github.com/reearth/reearth-visualizer/commit/8c926f)
+- Allow storage event. api ([#1907](https://github.com/reearth/reearth-visualizer/pull/1907)) [`b62073`](https://github.com/reearth/reearth-visualizer/commit/b62073)
+- Change date ([#1903](https://github.com/reearth/reearth-visualizer/pull/1903)) [`e1f0d3`](https://github.com/reearth/reearth-visualizer/commit/e1f0d3)
+- Add photoURL on workspace query ([#1897](https://github.com/reearth/reearth-visualizer/pull/1897)) [`1b8e16`](https://github.com/reearth/reearth-visualizer/commit/1b8e16)
+- Receive storage events ([#1899](https://github.com/reearth/reearth-visualizer/pull/1899)) [`33dc63`](https://github.com/reearth/reearth-visualizer/commit/33dc63)
+
+#### 🔧 Bug Fixes
+
+- Preserve updated_at when project is starred ([#1912](https://github.com/reearth/reearth-visualizer/pull/1912)) [`5161f5`](https://github.com/reearth/reearth-visualizer/commit/5161f5)
+- Allow user to star project belonging to another user ([#1905](https://github.com/reearth/reearth-visualizer/pull/1905)) [`91d29f`](https://github.com/reearth/reearth-visualizer/commit/91d29f)
+- Add support for sorting projects by star count in GetAllProjects gRPC call ([#1902](https://github.com/reearth/reearth-visualizer/pull/1902)) [`4d4477`](https://github.com/reearth/reearth-visualizer/commit/4d4477)
+
+#### Miscellaneous Tasks
+
+- Fix to handle account api error ([#1920](https://github.com/reearth/reearth-visualizer/pull/1920)) [`22ea18`](https://github.com/reearth/reearth-visualizer/commit/22ea18)
+- Debug for importing project data ([#1917](https://github.com/reearth/reearth-visualizer/pull/1917)) [`324a56`](https://github.com/reearth/reearth-visualizer/commit/324a56)
+- Add service name to accounts request header ([#1915](https://github.com/reearth/reearth-visualizer/pull/1915)) [`d0411b`](https://github.com/reearth/reearth-visualizer/commit/d0411b)
+- Update reearth-accounts pkg to get correct workspace p… ([#1910](https://github.com/reearth/reearth-visualizer/pull/1910)) [`9f2da4`](https://github.com/reearth/reearth-visualizer/commit/9f2da4)
+- Add license scan report and status ([#1647](https://github.com/reearth/reearth-visualizer/pull/1647)) [`c2224a`](https://github.com/reearth/reearth-visualizer/commit/c2224a)
+- Update setup readme [VIZ-2329] ([#1894](https://github.com/reearth/reearth-visualizer/pull/1894)) [`770651`](https://github.com/reearth/reearth-visualizer/commit/770651)
+
+### Misc
+
+#### 🧪 Testing
+
+- Disable IAP authentication for UI tests ([#1914](https://github.com/reearth/reearth-visualizer/pull/1914)) [`6c36d2`](https://github.com/reearth/reearth-visualizer/commit/6c36d2)
+
+#### Miscellaneous Tasks
+
+- Update log level when auth failed ([#1900](https://github.com/reearth/reearth-visualizer/pull/1900)) [`381842`](https://github.com/reearth/reearth-visualizer/commit/381842)
+
+### 
+
+#### 🧪 Testing
+
+- Disable IAP authentication for UI tests ([#1914](https://github.com/reearth/reearth-visualizer/pull/1914)) [`6c36d2`](https://github.com/reearth/reearth-visualizer/commit/6c36d2)
+
+#### Miscellaneous Tasks
+
+- Update log level when auth failed ([#1900](https://github.com/reearth/reearth-visualizer/pull/1900)) [`381842`](https://github.com/reearth/reearth-visualizer/commit/381842)
+
 ## 1.0.0-beta.12.2 - 2025-11-05
 
 ### Server
