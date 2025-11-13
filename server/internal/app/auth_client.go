@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -21,6 +23,7 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
@@ -239,13 +242,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 					userModel, err := cfg.AccountsAPIClient.UserRepo.FindByID(ctx, userID)
 					if err != nil {
-						if err != rerror.ErrNotFound {
-							log.Errorfc(ctx, "accounts API: failed to fetch user: %s, %v", userID, err)
-							return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
-						}
-
-						log.Warnfc(ctx, "accounts API: user not found: %s", userID)
-						return echo.NewHTTPError(http.StatusNotFound, "user not found")
+						return handleAccountsAPIError(ctx, fmt.Errorf("(FindByID): %w, %s", err, userID))
 					}
 
 					if userModel != nil {
@@ -264,12 +261,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
 				if err != nil {
-					if err != rerror.ErrNotFound {
-						log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
-						return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
-					}
-					log.Warnfc(ctx, "accounts API: user not found (FindMe): %s", req.URL.Path)
-					return echo.NewHTTPError(http.StatusNotFound, err.Error())
+					return handleAccountsAPIError(ctx, fmt.Errorf("(FindMe): %w, %s", err, req.URL.Path))
 				}
 
 				if userModel != nil {
@@ -302,6 +294,21 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 			return next(c)
 		}
 	}
+}
+
+func handleAccountsAPIError(ctx context.Context, err error) error {
+	if gqlerror.IsUnauthorized(err) {
+		log.Warnfc(ctx, "accounts API: unauthorized: %s", err.Error())
+		return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
+	}
+
+	if errors.Is(err, rerror.ErrNotFound) {
+		log.Warnfc(ctx, "accounts API: user not found: %s", err.Error())
+		return echo.NewHTTPError(http.StatusNotFound, "user not found")
+	}
+
+	log.Errorfc(ctx, "accounts API: failed to fetch user: %s", err.Error())
+	return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
 }
 
 func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *accountsUser.User) (*user.User, error) {
