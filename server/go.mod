@@ -32,7 +32,7 @@ require (
 	github.com/oklog/ulid/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
-	github.com/reearth/reearth-accounts/server v0.0.0-20251112114021-a971c8876b09
+	github.com/reearth/reearth-accounts/server v0.0.0-20251113003628-f2c96f43e0a4
 	github.com/reearth/reearthx v0.0.0-20250923165051-5bd6f1c10f7a
 	github.com/samber/lo v1.50.0
 	github.com/spf13/afero v1.14.0
