@@ -2,8 +2,6 @@ package app
 
 import (
 	"context"
-	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -28,46 +26,6 @@ type SignedUploadURLResponse struct {
 	UploadURL        string `json:"upload_url"`
 	ExpiresAt        string `json:"expires_at"`
 	ContentType      string `json:"content_type"`
-}
-
-type Notification struct {
-	EventType      string `json:"event_type"`
-	CloudEventData struct {
-		Bucket      string `json:"bucket"`
-		Name        string `json:"name"`
-		ContentType string `json:"contentType"`
-		Size        string `json:"size"`
-		TimeCreated string `json:"timeCreated"`
-	} `json:"cloud_event_data"`
-	FileInfo struct {
-		Folder   string `json:"folder"`
-		Filename string `json:"filename"`
-		FullPath string `json:"full_path"`
-	} `json:"file_info"`
-	Timestamp string `json:"timestamp"`
-}
-
-// PubSubMessage represents the Pub/Sub push message format
-type PubSubMessage struct {
-	Message struct {
-		Data        string            `json:"data"`
-		Attributes  map[string]string `json:"attributes"`
-		MessageID   string            `json:"messageId"`
-		PublishTime string            `json:"publishTime"`
-	} `json:"message"`
-	Subscription string `json:"subscription"`
-}
-
-// StorageObjectData represents the Cloud Storage notification payload
-type StorageObjectData struct {
-	Bucket         string `json:"bucket"`
-	Name           string `json:"name"`
-	ContentType    string `json:"contentType"`
-	Size           string `json:"size"`
-	TimeCreated    string `json:"timeCreated"`
-	Updated        string `json:"updated"`
-	Generation     string `json:"generation"`
-	MetaGeneration string `json:"metageneration"`
 }
 
 func servSignatureUploadFiles(
@@ -193,32 +151,20 @@ func servSignatureUploadFiles(
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 			log.Info("[Import] Received storage event from Pub/Sub")
 
-			var pubsubMsg PubSubMessage
-			if err := c.Bind(&pubsubMsg); err != nil {
-				log.Errorf("[Import] Failed to parse Pub/Sub message: %v", err)
-				return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid Pub/Sub message format")
-			}
-
-			decodedData, err := base64.StdEncoding.DecodeString(pubsubMsg.Message.Data)
+			n, err := ParseNotification(c)
 			if err != nil {
-				log.Errorf("[Import] Failed to decode Pub/Sub message data: %v", err)
-				return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid base64 data")
+				log.Errorf("[Import] Failed to parse notification: %v", err)
+				return nil, err
 			}
 
-			var storageData StorageObjectData
-			if err := json.Unmarshal(decodedData, &storageData); err != nil {
-				log.Errorf("[Import] Failed to parse storage object data: %v", err)
-				return nil, echo.NewHTTPError(http.StatusBadRequest, "Invalid storage object data")
-			}
+			log.Infof("[Import] Processing file: %s from bucket: %s", n.CloudEventData.Name, n.CloudEventData.Bucket)
 
-			log.Infof("[Import] Processing file: %s from bucket: %s", storageData.Name, storageData.Bucket)
-
-			if len(storageData.Name) < 7 || storageData.Name[:7] != "import/" {
-				log.Infof("[Import] Ignoring file not in import folder: %s", storageData.Name)
+			if len(n.CloudEventData.Name) < 7 || n.CloudEventData.Name[:7] != "import/" {
+				log.Infof("[Import] Ignoring file not in import folder: %s", n.CloudEventData.Name)
 				return map[string]string{"status": "ignored", "reason": "not in import folder"}, nil
 			}
 
-			base, wid, pid, _, err := SplitFilename(storageData.Name)
+			base, wid, pid, _, err := SplitFilename(n.CloudEventData.Name)
 			if err != nil {
 				log.Errorf("[Import] Failed to parse filename: %v", err)
 				return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid filename format: %v", err))

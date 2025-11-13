@@ -74,7 +74,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		accountsAPIClient = gqlclient.NewClient(
 			conf.AccountsAPI.Host,
 			conf.AccountsAPI.Timeout,
-			adpaccounts.DynamicAuthTransport{},
+			adpaccounts.NewDynamicAuthTransport(),
 		)
 	}
 
