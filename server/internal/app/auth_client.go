@@ -261,7 +261,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
 				if err != nil {
-					return handleAccountsAPIError(ctx, fmt.Errorf("(FindMe): %v, %s", err, req.URL.Path))
+					return handleAccountsAPIError(ctx, fmt.Errorf("(FindMe): %w, %s", err, req.URL.Path))
 				}
 
 				if userModel != nil {
