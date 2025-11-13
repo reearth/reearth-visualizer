@@ -139,6 +139,7 @@
     "apollo-upload-client": "18.0.1",
     "aws-amplify": "6.15.8",
     "axios": "1.13.2",
+    "bowser": "2.12.1",
     "cesium": "1.118.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
@@ -186,7 +187,6 @@
     "tailwindcss-animate": "1.0.7",
     "tinycolor2": "1.6.0",
     "ts-easing": "0.2.0",
-    "ua-parser-js": "2.0.4",
     "use-file-input": "1.0.0",
     "uuid": "10.0.0"
   },
