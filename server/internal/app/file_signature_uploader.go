@@ -28,23 +28,6 @@ type SignedUploadURLResponse struct {
 	ContentType      string `json:"content_type"`
 }
 
-type Notification struct {
-	EventType      string `json:"event_type"`
-	CloudEventData struct {
-		Bucket      string `json:"bucket"`
-		Name        string `json:"name"`
-		ContentType string `json:"contentType"`
-		Size        string `json:"size"`
-		TimeCreated string `json:"timeCreated"`
-	} `json:"cloud_event_data"`
-	FileInfo struct {
-		Folder   string `json:"folder"`
-		Filename string `json:"filename"`
-		FullPath string `json:"full_path"`
-	} `json:"file_info"`
-	Timestamp string `json:"timestamp"`
-}
-
 func servSignatureUploadFiles(
 	apiRoot *echo.Group,
 	apiPrivateRoute *echo.Group,
@@ -159,6 +142,97 @@ func servSignatureUploadFiles(
 				return "finish", nil
 			}
 			return "failure", nil
+		}),
+	)
+
+	// this endpoint is called from Pub/Sub push subscription triggered by GCS event
+	// OIDC token authentication is handled by the push subscription
+	apiRoot.POST("/storage-event",
+		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
+			log.Info("[Import] Received storage event from Pub/Sub")
+
+			n, err := ParseNotification(c)
+			if err != nil {
+				log.Errorf("[Import] Failed to parse notification: %v", err)
+				return nil, err
+			}
+
+			log.Infof("[Import] Processing file: %s from bucket: %s", n.CloudEventData.Name, n.CloudEventData.Bucket)
+
+			if len(n.CloudEventData.Name) < 7 || n.CloudEventData.Name[:7] != "import/" {
+				log.Infof("[Import] Ignoring file not in import folder: %s", n.CloudEventData.Name)
+				return map[string]string{"status": "ignored", "reason": "not in import folder"}, nil
+			}
+
+			base, wid, pid, _, err := SplitFilename(n.CloudEventData.Name)
+			if err != nil {
+				log.Errorf("[Import] Failed to parse filename: %v", err)
+				return nil, echo.NewHTTPError(http.StatusBadRequest, fmt.Sprintf("Invalid filename format: %v", err))
+			}
+
+			defer removeGcsZip(ctx, cfg.Gateways.File, base)
+
+			result := map[string]any{}
+
+			f, err := cfg.Gateways.File.ReadImportProjectZip(ctx, base)
+			if err != nil {
+				errMsg := fmt.Sprintf("fail ReadImportProjectZip: %v", err)
+				log.Errorf("[Import] %s", errMsg)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
+			}
+			defer f.Close()
+
+			tmpfile, err := os.CreateTemp("", "import-*.zip")
+			if err != nil {
+				errMsg := fmt.Sprintf("failed to create temp file: %v", err)
+				log.Errorf("[Import] %s", errMsg)
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
+			}
+			defer os.Remove(tmpfile.Name())
+			defer tmpfile.Close()
+
+			if _, err := io.Copy(tmpfile, f); err != nil {
+				errMsg := fmt.Sprintf("failed to copy to temp file: %v", err)
+				log.Errorf("[Import] %s", errMsg)
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
+			}
+
+			if _, err := tmpfile.Seek(0, io.SeekStart); err != nil {
+				errMsg := fmt.Sprintf("failed to seek: %v", err)
+				log.Errorf("[Import] %s", errMsg)
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
+			}
+
+			currentHost := adapter.CurrentHost(ctx)
+			importData, assetsZip, pluginsZip, version, err := file_.UncompressExportZip(currentHost, tmpfile)
+			if err != nil {
+				errMsg := fmt.Sprintf("fail UncompressExportZip: %v", err)
+				log.Errorf("[Import] %s", errMsg)
+				UpdateImportStatus(ctx, usecases, op, *pid, project.ProjectImportStatusFailed, errMsg, result)
+				return nil, echo.NewHTTPError(http.StatusInternalServerError, errMsg)
+			}
+
+			ok := ImportProject(
+				ctx,
+				usecases,
+				op,
+				*wid,
+				*pid,
+				importData,
+				assetsZip,
+				pluginsZip,
+				result,
+				version,
+			)
+
+			if ok {
+				log.Infof("[Import] Successfully imported project: %s", pid.String())
+				return map[string]string{"status": "success", "project_id": pid.String()}, nil
+			}
+
+			log.Errorf("[Import] Failed to import project: %s", pid.String())
+			return nil, echo.NewHTTPError(http.StatusInternalServerError, "import failed")
 		}),
 	)
 

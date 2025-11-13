@@ -4,10 +4,10 @@ export class LoginPage {
   appTitle: Locator = this.page.locator(
     'div#custom-prompt-logo[title="reearth-dev"]'
   );
-  emailInput: Locator = this.page.locator("input#username");
+  emailInput: Locator = this.page.locator(`input[name="username"]`);
   continueButton: Locator = this.page.getByRole("button", { name: "Continue" });
-  passwordInput: Locator = this.page.locator("input#password");
-  loginButton: Locator = this.page.getByRole("button", { name: "Log In" });
+  passwordInput: Locator = this.page.locator(`input[name="password"]`);
+  loginButton: Locator = this.page.getByRole("button", { name: "Continue" });
   errorMessageUsername: Locator = this.page.getByRole("alert", {
     name: /Username can't be blank/i
   });
@@ -27,11 +27,14 @@ export class LoginPage {
   constructor(private page: Page) {}
 
   async login(email: string, password: string) {
+    await this.emailInput.waitFor({ state: "visible" });
     await this.emailInput.clear();
     await this.emailInput.fill(email);
     await this.continueButton.first().click();
+
+    await this.passwordInput.waitFor({ state: "visible" });
     await this.passwordInput.clear();
     await this.passwordInput.fill(password);
-    await this.continueButton.click();
+    await this.loginButton.click();
   }
 }

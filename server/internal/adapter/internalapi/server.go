@@ -716,40 +716,12 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	pid := pj.ID()
 
-	metadata, err := uc.ProjectMetadata.FindByProjectID(ctx, pid, op)
+	metadata, err := uc.ProjectMetadata.FindProjectByIDByAnyUser(ctx, pid)
 	if err != nil {
 		return nil, errors.New("failed to fetch project metadata: " + err.Error())
 	}
 
 	userID := usr.ID().String()
-	workspaceID := pj.Workspace().String()
-	if metadata == nil {
-		starCount := int64(1)
-		starredBy := []string{userID}
-
-		wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
-		if err != nil {
-			return nil, errors.New("failed to convert workspaceID: " + err.Error())
-		}
-		metadata, err = uc.ProjectMetadata.Create(ctx, interfaces.CreateProjectMetadataParam{
-			ProjectID:   pid,
-			WorkspaceID: wid,
-			Readme:      new(string),
-			License:     new(string),
-			Topics:      &[]string{},
-			StarCount:   &starCount,
-			StarredBy:   &starredBy,
-		}, op)
-
-		if err != nil {
-			return nil, errors.New("failed to create project metadata: " + err.Error())
-		}
-
-		return &pb.PatchStarCountResponse{
-			Projectmetadata: internalapimodel.ToProjectMetadata(metadata),
-		}, nil
-	}
-
 	starredBy := []string{}
 	starCount := int64(0)
 
@@ -771,11 +743,11 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 
 	}
 
-	meta, err := uc.ProjectMetadata.Update(ctx, interfaces.UpdateProjectMetadataParam{
+	meta, err := uc.ProjectMetadata.UpdateProjectMetadataByAnyUser(ctx, interfaces.UpdateProjectMetadataByAnyUserParam{
 		ID:        pid,
 		StarCount: &starCount,
 		StarredBy: &starredBy,
-	}, op)
+	})
 	if err != nil {
 		return nil, err
 	}

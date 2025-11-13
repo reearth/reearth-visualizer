@@ -1,7 +1,12 @@
 package app
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"strings"
 
@@ -18,8 +23,47 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
+
+type graphqlRequest struct {
+	Query         string                 `json:"query"`
+	OperationName string                 `json:"operationName"`
+	Variables     map[string]interface{} `json:"variables"`
+}
+
+func isSignupMutation(req *http.Request) bool {
+	if req.Method != http.MethodPost {
+		return false
+	}
+
+	body, err := io.ReadAll(req.Body)
+	if err != nil {
+		return false
+	}
+	req.Body = io.NopCloser(bytes.NewReader(body))
+
+	var gqlReq graphqlRequest
+	if err := json.Unmarshal(body, &gqlReq); err != nil {
+		return false
+	}
+
+	query := strings.ToLower(gqlReq.Query)
+	query = strings.ReplaceAll(query, " ", "")
+	query = strings.ReplaceAll(query, "\n", "")
+	query = strings.ReplaceAll(query, "\t", "")
+	query = strings.ReplaceAll(query, "\r", "")
+
+	// Check if it's a mutation
+	if !strings.Contains(query, "mutation") {
+		return false
+	}
+
+	// Check for signup or signupOIDC after mutation keyword
+	// This handles both named and anonymous mutations
+	return strings.Contains(query, "signup(") || strings.Contains(query, "signupoidc(")
+}
 
 // load user from db and attach it to context along with operator
 // user id can be from debug header or jwt token
@@ -181,6 +225,14 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 			token := strings.TrimPrefix(req.Header.Get("Authorization"), "Bearer ")
 			ctx = adapter.AttachJwtToken(ctx, token)
 
+			// Skip user loading for signup mutations
+			// signup mutations will be handled by reearth-accounts service
+			if isSignupMutation(req) {
+				log.Debugfc(ctx, "auth: skipping user loading for signup mutation")
+				c.SetRequest(req.WithContext(ctx))
+				return next(c)
+			}
+
 			var u *user.User
 
 			// debug mode
@@ -190,13 +242,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 					userModel, err := cfg.AccountsAPIClient.UserRepo.FindByID(ctx, userID)
 					if err != nil {
-						if err != rerror.ErrNotFound {
-							log.Errorfc(ctx, "accounts API: failed to fetch user: %s, %v", userID, err)
-							return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
-						}
-
-						log.Warnfc(ctx, "accounts API: user not found: %s", userID)
-						return echo.NewHTTPError(http.StatusNotFound, "user not found")
+						return handleAccountsAPIError(ctx, fmt.Errorf("(FindByID): %w, %s", err, userID))
 					}
 
 					if userModel != nil {
@@ -215,11 +261,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 				userModel, err := cfg.AccountsAPIClient.UserRepo.FindMe(ctx)
 				if err != nil {
-					log.Errorfc(ctx, "accounts API: failed to fetch user: %v", err)
-					if err != rerror.ErrNotFound {
-						return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
-					}
-					return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+					return handleAccountsAPIError(ctx, fmt.Errorf("(FindMe): %w, %s", err, req.URL.Path))
 				}
 
 				if userModel != nil {
@@ -252,6 +294,21 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 			return next(c)
 		}
 	}
+}
+
+func handleAccountsAPIError(ctx context.Context, err error) error {
+	if gqlerror.IsUnauthorized(err) {
+		log.Warnfc(ctx, "accounts API: unauthorized: %s", err.Error())
+		return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
+	}
+
+	if errors.Is(err, rerror.ErrNotFound) {
+		log.Warnfc(ctx, "accounts API: user not found: %s", err.Error())
+		return echo.NewHTTPError(http.StatusNotFound, "user not found")
+	}
+
+	log.Errorfc(ctx, "accounts API: failed to fetch user: %s", err.Error())
+	return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
 }
 
 func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *accountsUser.User) (*user.User, error) {

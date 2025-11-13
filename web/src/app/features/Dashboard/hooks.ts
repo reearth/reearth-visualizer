@@ -24,7 +24,8 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
     (workspace) => workspace.id === workspaceId
   );
   const isPersonal = !!workspaceId && workspaceId === data?.myWorkspace?.id;
-  const userPhotoUrl = data?.metadata?.photoURL ?? undefined;
+  const avatarURL =
+    (isPersonal ? data?.metadata?.photoURL : workspace?.photoURL) ?? undefined;
 
   const { tab } = useParams<{
     tab?: string;
@@ -77,8 +78,7 @@ export default ({ workspaceId, topTabItems, bottomTabsItems }: Props) => {
   return {
     workspaces,
     currentWorkspace,
-    isPersonal,
-    userPhotoUrl,
+    avatarURL,
     topTabs,
     bottomTabs,
     currentTab,

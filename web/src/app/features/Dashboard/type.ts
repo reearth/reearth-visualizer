@@ -73,6 +73,7 @@ export type Workspace = {
   name: string;
   alias?: string;
   members?: WorkspaceMember[];
+  photoURL?: string | null;
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
   personal?: boolean;
