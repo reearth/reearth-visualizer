@@ -242,7 +242,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 
 					userModel, err := cfg.AccountsAPIClient.UserRepo.FindByID(ctx, userID)
 					if err != nil {
-						return handleAccountsAPIError(ctx, fmt.Errorf("(FindByID): %v, %s", err, userID))
+						return handleAccountsAPIError(ctx, fmt.Errorf("(FindByID): %w, %s", err, userID))
 					}
 
 					if userModel != nil {
