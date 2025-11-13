@@ -1,5 +1,5 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
-import { PublishStatus } from "@reearth/services/api/publishTypes";
+import { PublishStatus } from "@reearth/services/api/utils";
 import { ProjectImportStatus, WorkspaceMember } from "@reearth/services/gql";
 import { ProjectType } from "@reearth/types";
 import { ReactNode } from "react";
@@ -73,20 +73,21 @@ export type Workspace = {
   name: string;
   alias?: string;
   members?: WorkspaceMember[];
+  photoURL?: string | null;
   policyId?: string | null;
   policy?: { id: string; name: string } | null;
   personal?: boolean;
 };
 
-export const getImportStatus = (s?: ProjectImportStatus | null) => {
-  switch (s) {
-    case ProjectImportStatus.Failed:
-      return "failed";
-    case ProjectImportStatus.Success:
-      return "success";
-    case ProjectImportStatus.Processing:
-      return "processing";
-    default:
-      return "none";
-  }
-};
+// export const getImportStatus = (s?: ProjectImportStatus | null) => {
+//   switch (s) {
+//     case ProjectImportStatus.Failed:
+//       return "failed";
+//     case ProjectImportStatus.Success:
+//       return "success";
+//     case ProjectImportStatus.Processing:
+//       return "processing";
+//     default:
+//       return "none";
+//   }
+// };

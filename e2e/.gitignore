@@ -12,3 +12,12 @@ test-results/
 /test-report/
 /index.html
 /videos
+auth.json
+.auth
+allure-report
+allure-results
+.allure
+exploration
+explore-app.ts
+explore-project-editor.ts
+global-setup-error-screenshot.png

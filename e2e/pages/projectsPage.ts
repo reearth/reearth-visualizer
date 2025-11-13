@@ -37,7 +37,9 @@ export class ProjectsPage {
     return this.page.getByTestId(`project-grid-item-title-${projectName}`);
   }
   gridProjectStarButton(projectName: string): Locator {
-    return this.page.getByTestId(`project-grid-item-star-btn-${projectName}`);
+    return this.page
+      .getByTestId(`project-grid-item-star-btn-wrapper-${projectName}`)
+      .locator("button");
   }
   gridProjectMenuButton(projectName: string): Locator {
     return this.page.getByTestId(`project-grid-item-menu-btn-${projectName}`);
@@ -68,10 +70,12 @@ export class ProjectsPage {
   // Modal - Create New Project
   modalTitle: Locator = this.page.getByText("Create new project");
   projectNameLabel: Locator = this.page.getByText("Project Name *");
-  projectNameInput: Locator = this.page.locator('input[placeholder="Text"]');
+  projectNameInput: Locator = this.page.getByTestId("project-name-input");
+  projectAliasLabel: Locator = this.page.getByText("Project Alias *");
+  projectAliasInput: Locator = this.page.getByTestId("project-alias-input");
   descriptionLabel: Locator = this.page.getByText("Description");
-  descriptionTextarea: Locator = this.page.locator(
-    'textarea[placeholder="Write down your content"]'
+  descriptionTextarea: Locator = this.page.getByTestId(
+    "project-description-input"
   );
   cancelButton: Locator = this.page.getByRole("button", { name: "Cancel" });
   applyButton: Locator = this.page.getByRole("button", { name: "Apply" });
@@ -110,38 +114,36 @@ export class ProjectsPage {
 
   constructor(private page: Page) {}
 
-  async createNewProject(projectName: string, description: string) {
+  async createNewProject(
+    projectName: string,
+    projectAlias: string,
+    description: string
+  ) {
     await this.projectNameInput.waitFor({ state: "visible" });
     await this.projectNameInput.fill("");
     await this.projectNameInput.fill(projectName);
+    await this.projectAliasInput.fill("");
+    await this.projectAliasInput.fill(projectAlias);
+    await this.projectAliasInput.blur();
+    await this.page.waitForTimeout(10000);
     await this.descriptionTextarea.fill(description);
+    await expect(this.applyButton).toBeEnabled();
     await this.applyButton.click();
   }
   async deleteProject(projectName: string) {
-    const projectRow = this.page
-      .locator(`.css-96bt7k`, {
-        hasText: projectName
-      })
-      .first();
-    const projectMenuButton = projectRow
-      .locator('button[appearance="simple"]')
-      .nth(1);
+    const projectMenuButton = this.gridProjectMenuButton(projectName).first();
     await projectMenuButton.click();
-    await this.moveToRecycleBinButton.waitFor({ state: "visible" });
     await this.moveToRecycleBinButton.click();
-    await this.popUpRemoveButton.waitFor({ state: "visible" });
+    await expect(this.popUpRemoveButton).toBeVisible();
     await this.popUpRemoveButton.click();
-    await this.page.waitForTimeout(2000);
+    await expect(this.gridProjectItem(projectName).first()).not.toBeVisible();
   }
 
   async starredProject(projectName: string) {
-    const projectRow = this.page.locator(`.css-96bt7k`, {
-      hasText: projectName
-    });
-    const projectMenuButton = projectRow
-      .locator('button[appearance="simple"]')
-      .nth(0);
-    await projectMenuButton.click();
+    const projectItem = this.gridProjectItem(projectName).first();
+    await projectItem.hover();
+    const starButton = this.gridProjectStarButton(projectName).first();
+    await starButton.click();
   }
 
   async verifyImportProject(projectName: string) {
@@ -154,28 +156,26 @@ export class ProjectsPage {
   }
 
   async verifyStarredProject(specialProjectName: string) {
-    const projectRow = this.page.locator(
-      `div:has-text("${specialProjectName}")`
-    );
-    const starIcon = projectRow.locator('svg[color="#f1c21b"]').first();
+    const projectItem = this.gridProjectItem(specialProjectName).first();
+    await projectItem.hover();
+    const starButton = this.gridProjectStarButton(specialProjectName).first();
+    const starIcon = starButton.getByTestId("icon-starFilled");
     await expect(starIcon).toBeVisible();
   }
 
   async unStarredProject(projectName: string) {
-    const projectRow = this.page.locator(`.css-96bt7k`, {
-      hasText: projectName
-    });
-    const projectMenuButton = projectRow
-      .locator('button[appearance="simple"]')
-      .nth(0);
-    await projectMenuButton.click();
+    const projectItem = this.gridProjectItem(projectName).first();
+    await projectItem.hover();
+    const starButton = this.gridProjectStarButton(projectName).first();
+    await starButton.click();
   }
+
   async verifyUnStarredProject(specialProjectName: string) {
-    const projectRow = this.page.locator(
-      `div:has-text("${specialProjectName}")`
-    );
-    const unStarIcon = projectRow.locator('svg[color="#e0e0e0"]').first();
-    await expect(unStarIcon).toBeVisible();
+    const projectItem = this.gridProjectItem(specialProjectName).first();
+    await projectItem.hover();
+    const starButton = this.gridProjectStarButton(specialProjectName).first();
+    const starIcon = starButton.getByTestId("icon-star");
+    await expect(starIcon).toBeVisible();
   }
   starredProjectNameMenuBar(projectName: string): Locator {
     return this.page.locator(

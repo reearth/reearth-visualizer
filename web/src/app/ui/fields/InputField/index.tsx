@@ -6,6 +6,7 @@ import { FC, useState, useEffect } from "react";
 
 export type InputFieldProps = {
   onChangeComplete?: (text: string) => void;
+  "data-testid"?: string;
 } & CommonFieldProps &
   Pick<
     TextInputProps,
@@ -48,7 +49,7 @@ const InputField: FC<InputFieldProps> = ({
         value={internalValue}
         onChange={handleChange}
         onBlur={handleChangeComplete}
-        dataTestid="inputfield-input"
+        dataTestid={props["data-testid"]}
       />
     </CommonField>
   );

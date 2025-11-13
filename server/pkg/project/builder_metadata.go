@@ -61,6 +61,11 @@ func (b *MetadataBuilder) ImportStatus(importStatus *ProjectImportStatus) *Metad
 	return b
 }
 
+func (b *MetadataBuilder) ImportResultLog(importResultLog *map[string]any) *MetadataBuilder {
+	b.r.importResultLog = importResultLog
+	return b
+}
+
 func (b *MetadataBuilder) Readme(readme *string) *MetadataBuilder {
 	b.r.readme = readme
 	return b
@@ -71,8 +76,18 @@ func (b *MetadataBuilder) License(license *string) *MetadataBuilder {
 	return b
 }
 
-func (b *MetadataBuilder) Topics(topics *string) *MetadataBuilder {
+func (b *MetadataBuilder) Topics(topics *[]string) *MetadataBuilder {
 	b.r.topics = topics
+	return b
+}
+
+func (b *MetadataBuilder) StarCount(starCount *int64) *MetadataBuilder {
+	b.r.starCount = starCount
+	return b
+}
+
+func (b *MetadataBuilder) StarredBy(starredBy *[]string) *MetadataBuilder {
+	b.r.starredBy = starredBy
 	return b
 }
 

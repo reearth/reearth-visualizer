@@ -37,91 +37,73 @@ Visualizer is a powerful tool for visualizing GIS data, offering a range of feat
 
 [React](https://github.com/facebook/react), [TypeScript](https://github.com/microsoft/TypeScript), [Go](https://github.com/golang/go), [GraphQL](https://github.com/graphql), [MongoDB](https://www.mongodb.com/), [WebAssembly](https://webassembly.org/) (plugin execution), [OpenID Connect](https://openid.net/connect/)
 
-## Getting Started
+# Getting Started
 
 ### Setup Server and Database
 
-Make sure Docker is properly installed and running on your machine.
+Before you begin, please ensure that **Docker** is properly installed and running on your machine.
 
 ### 🖥️ macOS / Linux
 
-1. From your cloned directory, navigate to the server folder and set up the database:
+1. Navigate to the `server` directory and start the backend server.  
+   This command will automatically start the database and mock GCS storage:
 
    ```bash
    cd server
-   make run-db
+   make run
    ```
 
-2. Create and configure the `.env` file in the server directory to use mock authentication.
+2. Initialize the development environment.  
+   This creates a mock user and sets up the mock GCS bucket.  
+   This step is only required for the first-time setup:
 
    ```bash
-   touch .env
-   echo "REEARTH_MOCKAUTH=true" >> .env
-   ```
-
-3. Start the backend server.
-
-   ```bash
-   make run-app
-   ```
-
-4. Register a new mockuser.
-
-   ```bash
-   make mockuser
+   make init
    ```
 
 ### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
 
-1. Open PowerShell and navigate to the server directory:
+1. Open PowerShell and navigate to the `server` directory:
 
    ```powershell
    cd server
    ```
 
-2. Set an alias so you can use `dv` like `make`:
+2. Set an alias to use `dv` as a shortcut for `make`:
 
    ```powershell
    Set-Alias dv .\dev.bat
    ```
 
-3. Start the MongoDB database:
+3. Start the backend server.  
+   This will automatically start the database and mock GCS storage:
 
    ```powershell
-   dv run-db
+   dv run
    ```
 
-4. Create and configure the `.env` file to use mock authentication:
+4. Initialize the development environment.  
+   This creates a mock user and sets up the mock GCS bucket.  
+   This step is only required for the first-time setup:
 
    ```powershell
-   New-Item .env -ItemType File
-   Add-Content .env "REEARTH_MOCKAUTH=true"
+   dv init
    ```
 
-5. Start the backend server:
+---
 
-   ```powershell
-   dv run-app
-   ```
-
-6. Register a new mock user:
-
-   ```powershell
-   dv mockuser
-   ```
-
-### Setup Web
+## Setup Web
 
 ### 🖥️ macOS / Linux
 
-1. Navigate to the `web` directory of your visualizer project and set up local `.env` file.
+1. Navigate to the `web` directory of your visualizer project and create a local `.env` file:
 
    ```bash
    cd web
    touch .env
    ```
 
-2. Add the following environment variables to the `.env` file:
+2. Add the following environment variables to your `.env` file:
 
    ```plaintext
    # .env
@@ -131,9 +113,10 @@ Make sure Docker is properly installed and running on your machine.
    REEARTH_WEB_AUTH_PROVIDER=mock
    ```
 
-   > Please follow <a href="https://cesium.com/learn/ion/cesium-ion-access-tokens/" target="_blank">this document</a> to create your own Cesium Ion Access Token.
+   > To obtain a Cesium Ion Access Token, please follow  
+   > [this official guide](https://cesium.com/learn/ion/cesium-ion-access-tokens/).
 
-3. Install dependencies and start the frontend server.
+3. Install dependencies and start the frontend server:
 
    ```bash
    yarn && yarn start
@@ -147,13 +130,13 @@ Make sure Docker is properly installed and running on your machine.
    cd web
    ```
 
-2. Create a new .env file:
+2. Create a new `.env` file:
 
    ```powershell
    New-Item .env -ItemType File
    ```
 
-3. Add the following environment variables to the `.env` file:
+3. Add the following environment variables:
 
    ```powershell
    Add-Content .env "REEARTH_WEB_API=http://localhost:8080/api"
@@ -169,19 +152,26 @@ Make sure Docker is properly installed and running on your machine.
    yarn start
    ```
 
-### Done!
+---
 
-You should now be able to access the Re:Earth Visualizer locally at <a href="http://localhost:3000" target="_blank">`http://localhost:3000`</a>.
+## ✅ Done!
 
-For more information, refer to the [Documentation](https://visualizer-developer-reearth-io.netlify.app/).
+You should now be able to access the **Re:Earth Visualizer** locally at:  
+👉 [http://localhost:3000](http://localhost:3000)
 
-## Environment
+---
 
-### OS
+## 🌎 Environment
 
-| Windows 10+ | Apple macOS 10.12 (macOS Sierra)+ | ChromeOS | iOS 11+ | Android 10+ | Linux (with the desktop) |
-| ----------- | --------------------------------- | -------- | ------- | ----------- | ------------------------ |
-| ✅          | ✅                                | ✅       | ✅      | ✅          | ✅                       |
+### Supported OS
+
+| Windows 10+ | macOS 10.12+ (Sierra) | ChromeOS | iOS 11+ | Android 10+ | Linux (Desktop) |
+| ----------- | --------------------- | -------- | ------- | ----------- | --------------- |
+| ✅          | ✅                    | ✅       | ✅      | ✅          | ✅              |
+
+---
+
+For more information, please refer to the [Documentation](https://visualizer-developer-reearth-io.netlify.app/).
 
 ### Web Browsers
 
@@ -196,6 +186,7 @@ See [the contributing guide](CONTRIBUTING.md).
 ## Contributers
 
 [![Contributers](https://contrib.rocks/image?repo=reearth/reearth)](https://github.com/reearth/reearth-visualizer/graphs/contributors)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer?ref=badge_shield)
 
 Made with [contrib.rocks](https://contrib.rocks).
 
@@ -206,3 +197,6 @@ Re:Earth core committers: [community@reearth.io](mailto:community@reearth.io)
 ## License
 
 Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more information.
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer?ref=badge_large)

@@ -18,6 +18,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
@@ -30,17 +31,18 @@ const (
 	gcsMapBasePath    string = "maps"
 	gcsStoryBasePath  string = "stories"
 	gcsExportBasePath string = "export"
+	gcsImportBasePath string = "import"
 )
 
 type fileRepo struct {
-	isTest          bool
+	isFake          bool
 	bucketName      string
 	base            *url.URL
 	cacheControl    string
 	baseFileStorage *infrastructure.BaseFileStorage
 }
 
-func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway.File, error) {
+func NewFile(isFake bool, bucketName, base string, cacheControl string) (gateway.File, error) {
 	if bucketName == "" {
 		return nil, errors.New("bucket name is empty")
 	}
@@ -57,7 +59,7 @@ func NewFile(isTest bool, bucketName, base string, cacheControl string) (gateway
 	}
 
 	return &fileRepo{
-		isTest:       isTest,
+		isFake:       isFake,
 		bucketName:   bucketName,
 		base:         u,
 		cacheControl: cacheControl,
@@ -278,7 +280,7 @@ func (f *fileRepo) ReadExportProjectZip(ctx context.Context, name string) (io.Re
 	r, err := f.read(ctx, path.Join(gcsExportBasePath, sn))
 	if err != nil {
 		if errors.Is(err, rerror.ErrNotFound) {
-			r, err = f.read(ctx, path.Join(gcsExportBasePath, name))
+			return f.read(ctx, path.Join(gcsExportBasePath, name))
 		}
 	}
 	return r, err
@@ -295,13 +297,61 @@ func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) 
 	return f.delete(ctx, path.Join(gcsExportBasePath, filename))
 }
 
+// import
+
+func (f *fileRepo) GenerateSignedUploadUrl(ctx context.Context, filename string) (*string, int, *string, error) {
+
+	contentType := "application/octet-stream"
+	expiresIn := 15 // default 15 min
+	objectName := path.Join(gcsImportBasePath, filename)
+
+	expiresAt := time.Now().Add(time.Duration(expiresIn) * time.Minute)
+
+	opts := &storage.SignedURLOptions{
+		Scheme: storage.SigningSchemeV4,
+		Method: "PUT",
+		Headers: []string{
+			fmt.Sprintf("Content-Type:%s", contentType),
+		},
+		Expires: expiresAt,
+	}
+
+	client, err := f.client(ctx)
+	if err != nil {
+		return nil, 0, nil, err
+	}
+
+	signedURL, err := client.Bucket(f.bucketName).SignedURL(objectName, opts)
+	if err != nil {
+		return nil, 0, nil, fmt.Errorf("failed to generate signed URL: %w", err)
+	}
+
+	return &signedURL, expiresIn, &contentType, nil
+}
+
+func (f *fileRepo) ReadImportProjectZip(ctx context.Context, name string) (io.ReadCloser, error) {
+	sn := sanitize.Path(name)
+	if sn == "" {
+		return nil, gateway.ErrInvalidFile
+	}
+	r, err := f.read(ctx, path.Join(gcsImportBasePath, sn))
+	if err != nil {
+		return nil, err
+	}
+	return r, nil
+}
+
+func (f *fileRepo) RemoveImportProjectZip(ctx context.Context, filename string) error {
+	return f.delete(ctx, path.Join(gcsImportBasePath, filename))
+}
+
 // helpers
 
-func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
+func (f *fileRepo) client(ctx context.Context) (*storage.Client, error) {
 	var client *storage.Client
 	var err error
 
-	if f.isTest {
+	if f.isFake {
 		testGCS, err := testutil.NewGCSForTesting()
 		if err != nil {
 			return nil, err
@@ -319,6 +369,15 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 			}
 		}()
 	}
+	return client, nil
+}
+
+func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
+
+	client, err := f.client(ctx)
+	if err != nil {
+		return nil, err
+	}
 
 	bucket := client.Bucket(f.bucketName)
 	return bucket, nil
@@ -326,13 +385,46 @@ func (f *fileRepo) bucket(ctx context.Context) (*storage.BucketHandle, error) {
 
 func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, error) {
 	if filename == "" {
+		visualizer.WarnWithCallerLogging(ctx, "gcs: read filename is empty")
 		return nil, rerror.ErrNotFound
 	}
 
 	bucket, err := f.bucket(ctx)
 	if err != nil {
-		log.Errorfc(ctx, "gcs: read bucket err: %+v\n", err)
-		return nil, rerror.ErrInternalByWithContext(ctx, err)
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read bucket err", rerror.ErrInternalByWithContext(ctx, err))
+	}
+
+	_, err = bucket.Object(filename).Attrs(ctx)
+	if err != nil && errors.Is(err, storage.ErrObjectNotExist) {
+		visualizer.WarnWithCallerLogging(ctx, "gcs: read attrs err")
+		return nil, rerror.ErrNotFound
+	}
+
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read attrs err", rerror.ErrInternalByWithContext(ctx, err))
+	}
+
+	// Note:
+	// fsouza/fake-gcs-server can't read object by Reader.
+	// so we need to download it from the server directly.
+	if f.isFake {
+		gcsHost := testutil.GetFakeGCSTestHost()
+		u := fmt.Sprintf("%s/download/storage/v1/b/%s/o/%s?alt=media",
+			strings.TrimRight(gcsHost, "/"),
+			url.PathEscape(bucket.BucketName()),
+			url.PathEscape(filename),
+		)
+
+		resp, err := http.Get(u)
+		if err != nil {
+			return nil, err
+		}
+
+		if resp.StatusCode != http.StatusOK {
+			body, _ := io.ReadAll(resp.Body)
+			return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read fake object err", fmt.Errorf("emu GET failed: status=%d body=%s", resp.StatusCode, string(body)))
+		}
+		return resp.Body, nil
 	}
 
 	obj := bucket.Object(filename)
@@ -506,6 +598,7 @@ func getGCSObjectURL(base *url.URL, objectName string) *url.URL {
 	// https://github.com/golang/go/issues/38351
 	b := *base
 	b.Path = path.Join(b.Path, objectName)
+
 	return &b
 }
 

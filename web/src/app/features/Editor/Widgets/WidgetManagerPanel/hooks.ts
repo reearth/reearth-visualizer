@@ -1,6 +1,12 @@
-import { useWidgetsFetcher } from "@reearth/services/api";
+import { toWidgetAlignSystemType } from "@reearth/app/utils/value";
+import {
+  useInstallableWidgets,
+  useInstalledWidgets,
+  useWidgetMutations
+} from "@reearth/services/api/widget";
 import { useCallback } from "react";
 
+import { useWidgetsViewDevice } from "../../atoms";
 import { SelectedWidget } from "../../hooks/useWidgets";
 
 type Props = {
@@ -9,29 +15,32 @@ type Props = {
 };
 
 export default ({ sceneId, selectWidget }: Props) => {
-  const {
-    useInstallableWidgetsQuery,
-    useInstalledWidgetsQuery,
-    useAddWidget,
-    useRemoveWidget
-    // useUpdateWidgetAlignSystem,
-  } = useWidgetsFetcher();
+  const { addWidget, removeWidget } = useWidgetMutations();
+  const [widgetsViewDevice] = useWidgetsViewDevice();
 
-  const { installableWidgets } = useInstallableWidgetsQuery({ sceneId });
-  const { installedWidgets } = useInstalledWidgetsQuery({ sceneId });
+  const { installableWidgets } = useInstallableWidgets({
+    sceneId,
+    type: widgetsViewDevice
+  });
+  const { installedWidgets } = useInstalledWidgets({
+    sceneId,
+    type: widgetsViewDevice
+  });
 
   const handleWidgetAdd = useCallback(
     async (id?: string) => {
-      await useAddWidget(sceneId, id);
+      const type = toWidgetAlignSystemType(widgetsViewDevice);
+      await addWidget(sceneId, id, type);
     },
-    [sceneId, useAddWidget]
+    [sceneId, addWidget, widgetsViewDevice]
   );
 
   const handleWidgetRemove = useCallback(
     async (id?: string) => {
-      await useRemoveWidget(sceneId, id);
+      const type = toWidgetAlignSystemType(widgetsViewDevice);
+      await removeWidget(sceneId, id, type);
     },
-    [sceneId, useRemoveWidget]
+    [sceneId, removeWidget, widgetsViewDevice]
   );
 
   const handleWidgetSelection = (id: string) => {

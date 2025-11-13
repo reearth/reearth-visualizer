@@ -1,5 +1,5 @@
 import { fetchAndZipFiles } from "@reearth/app/utils/file";
-import { usePluginsFetcher } from "@reearth/services/api";
+import { usePluginMutations } from "@reearth/services/api/plugin";
 import { config } from "@reearth/services/config";
 import {
   useDevPluginExtensionRenderKey,
@@ -25,7 +25,7 @@ export default ({ sceneId }: Props) => {
     useDevPluginExtensions();
   const [_, updateDevPluginExtensionRenderKey] =
     useDevPluginExtensionRenderKey();
-  const { useUploadPluginWithFile } = usePluginsFetcher();
+  const { uploadPluginWithFile } = usePluginMutations();
 
   const handleDevPluginExtensionsReload = useCallback(() => {
     updateDevPluginExtensionRenderKey((prev) => prev + 1);
@@ -34,9 +34,9 @@ export default ({ sceneId }: Props) => {
   const handleInstallPluginFromFile = useCallback(
     async (file: File) => {
       if (!sceneId || !file) return;
-      useUploadPluginWithFile(sceneId, file);
+      uploadPluginWithFile(sceneId, file);
     },
-    [sceneId, useUploadPluginWithFile]
+    [sceneId, uploadPluginWithFile]
   );
 
   const handleDevPluginsInstall = useCallback(async () => {

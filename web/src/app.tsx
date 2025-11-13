@@ -1,4 +1,4 @@
-import GlobalModal from "@reearth/app/features/GlobalModal";
+// import GlobalModal from "@reearth/app/features/GlobalModal";
 import NotificationBanner from "@reearth/app/features/Notification";
 import { Loading } from "@reearth/app/lib/reearth-ui";
 import { Provider as I18nProvider } from "@reearth/services/i18n";
@@ -19,7 +19,7 @@ export default function App() {
             <I18nProvider>
               <Suspense fallback={<Loading includeLogo />}>
                 <NotificationBanner />
-                <GlobalModal />
+                {/* <GlobalModal /> */}
                 <AppRoutes />
               </Suspense>
             </I18nProvider>

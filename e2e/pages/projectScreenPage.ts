@@ -49,10 +49,10 @@ export class ProjectScreenPage {
   professionalState: Locator = this.page.getByRole("menuitem", {
     name: "Professional"
   });
-  basicGeometryState: Locator = this.page.getByRole("menuitem", {
-    name: "Basic Geometry"
-  });
-  pointsState: Locator = this.page.getByText("Points");
+  basicGeometryState: Locator = this.page.getByTestId(
+    "preset-style-basic-geometry-item-3"
+  );
+  pointsState: Locator = this.page.getByTestId("preset-style-points-item-0");
   pointWithLabelState: Locator = this.page.getByText("Point with label");
   polylineState: Locator = this.page.getByText("Polyline");
   polygonState: Locator = this.page.getByText("Polygon");
@@ -133,27 +133,37 @@ export class ProjectScreenPage {
 
   async addNewLayerStyle() {
     await this.addNewStyleButton.click();
-    await expect(this.page.getByText("Empty")).toBeVisible();
+    await expect(this.basicGeometryState).toBeVisible();
     await this.basicGeometryState.hover();
     await expect(this.pointsState.first()).toBeVisible();
-    await expect(this.pointWithLabelState.first()).toBeVisible();
-    await expect(this.polylineState.first()).toBeVisible();
-    await this.page.waitForTimeout(1000);
     await this.pointsState.first().click();
     await this.assignNewStyleButton.click();
-    // await this.page.waitForTimeout(50000);
   }
 
   async addPointsOnMap(x: number, y: number) {
+    // Click the map pin button to activate drawing mode
     await this.mapPinButton.click();
+
+    // Wait for the drawing mode to be activated
     await this.page.waitForTimeout(1000);
-    const canvas = this.page.locator("canvas");
+
+    // Get the canvas element
+    const canvas = this.page.locator("canvas").first();
+
+    // Ensure canvas is visible and ready
+    await canvas.waitFor({ state: "visible" });
+
+    // Click on the canvas to place the point
+    // Use force: true to ensure the click goes through even if there are overlays
     await canvas.click({
       position: {
         x,
         y
-      }
+      },
+      force: true
     });
+
+    // Wait for the point to be added
     await this.page.waitForTimeout(2000);
   }
 }

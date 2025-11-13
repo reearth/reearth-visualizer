@@ -5,7 +5,7 @@ import {
   InstallableBlock
 } from "@reearth/app/features/Visualizer/shared/types";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
 import { styled } from "@reearth/services/theme";
 import { forwardRef, memo, ReactNode, Ref, RefObject, useMemo } from "react";
 import { createPortal } from "react-dom";
@@ -27,6 +27,7 @@ export type StoryPanelProps = {
   storyWrapperRef?: RefObject<HTMLDivElement>;
   selectedStory?: Story;
   isEditable?: boolean;
+  isMobile?: boolean;
   installableStoryBlocks?: InstallableStoryBlock[];
   onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
   onStoryBlockCreate?: (
@@ -68,12 +69,13 @@ export type StoryPanelProps = {
 };
 
 export const StoryPanel = memo(
-  forwardRef<any, StoryPanelProps>(
+  forwardRef<StoryPanelRef, StoryPanelProps>(
     (
       {
         storyWrapperRef,
         selectedStory,
         isEditable,
+        isMobile,
         installableStoryBlocks,
         onStoryPageChange,
         onStoryBlockCreate,
@@ -154,7 +156,10 @@ export const StoryPanel = memo(
             <PanelProvider value={panelContext}>
               <EditModeProvider value={editModeContext}>
                 <BlockProvider value={blockContext}>
-                  <PanelWrapper bgColor={selectedStory?.bgColor}>
+                  <PanelWrapper
+                    bgColor={selectedStory?.bgColor}
+                    isMobile={isMobile}
+                  >
                     {!!pageInfo && (
                       <PageIndicator
                         currentPage={pageInfo.currentPage}
@@ -200,11 +205,16 @@ export const StoryPanel = memo(
 
 export default StoryPanel;
 
-const PanelWrapper = styled("div")<{ bgColor?: string }>(
-  ({ bgColor, theme }) => ({
+const PanelWrapper = styled("div")<{ bgColor?: string; isMobile?: boolean }>(
+  ({ bgColor, isMobile, theme }) => ({
     flex: `0 0 ${STORY_PANEL_WIDTH}px`,
     background: bgColor,
     width: `${STORY_PANEL_WIDTH}px`,
-    color: theme.content.weak
+    color: theme.content.weak,
+    ...(isMobile && {
+      flex: "0 0 auto",
+      width: "100%",
+      height: "34vh"
+    })
   })
 );

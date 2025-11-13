@@ -22,6 +22,8 @@ const (
 	contextCurrentHost ContextKey = "currenthost"
 	contextLang        ContextKey = "lang"
 	contextInternal    ContextKey = "Internal"
+	contextUserID      ContextKey = "reearth_user"
+	contextJwtToken    ContextKey = "jwtToken"
 )
 
 var defaultLang = language.English
@@ -64,11 +66,29 @@ func AttachInternal(ctx context.Context, isInternal bool) context.Context {
 	return context.WithValue(ctx, contextInternal, isInternal)
 }
 
+func AttachJwtToken(ctx context.Context, token string) context.Context {
+	return context.WithValue(ctx, contextJwtToken, token)
+}
+
+func JwtToken(ctx context.Context) string {
+	if token, ok := ctx.Value(contextJwtToken).(string); ok {
+		return token
+	}
+	return ""
+}
+
 func User(ctx context.Context) *user.User {
 	if v := ctx.Value(contextUser); v != nil {
 		if u, ok := v.(*user.User); ok {
 			return u
 		}
+	}
+	return nil
+}
+
+func UserID(ctx context.Context) *string {
+	if cu, ok := ctx.Value(contextUserID).(string); ok {
+		return &cu
 	}
 	return nil
 }
@@ -125,7 +145,12 @@ func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 }
 
 func Usecases(ctx context.Context) *interfaces.Container {
-	return ctx.Value(contextUsecases).(*interfaces.Container)
+	if v := ctx.Value(contextUsecases); v != nil {
+		if v2, ok := v.(*interfaces.Container); ok {
+			return v2
+		}
+	}
+	return nil
 }
 
 func IsMockAuth(ctx context.Context) bool {

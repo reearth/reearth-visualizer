@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
-/mongo
-/data
 /.env
 /.env.*
 /.idea
+*.log
+mongo/
+tmp/

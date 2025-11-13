@@ -1,28 +1,31 @@
 import { useApolloClient } from "@apollo/client";
 import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
-import { useProjectFetcher } from "@reearth/services/api";
-import { toPublishmentStatus } from "@reearth/services/api/publishTypes";
+import {
+  useProjectMutations,
+  useProjects,
+  useStarredProjects
+} from "@reearth/services/api/project";
+import { toPublishmentStatus } from "@reearth/services/api/utils";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import {
   ProjectSortField,
   SortDirection,
   Visualizer
 } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
-import { useNotification } from "@reearth/services/state";
 import {
   useCallback,
   useMemo,
   useState,
   MouseEvent,
   useEffect,
-  useRef,
-  ChangeEvent
+  useRef
 } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { getImportStatus, ImportStatus, Project } from "../../type";
+import { Project } from "../../type";
+
+import useProjectImport from "./useProjectImport";
 
 const PROJECTS_VIEW_STATE_STORAGE_KEY_PREFIX = `reearth-visualizer-dashboard-project-view-state`;
 
@@ -37,15 +40,12 @@ export type SortType =
 
 export default (workspaceId?: string) => {
   const {
-    useProjectsQuery,
-    useUpdateProject,
-    useCreateProject,
-    useStarredProjectsQuery,
-    useUpdateProjectRemove,
-    usePublishProject,
-    useImportProject,
-    useProjectQuery
-  } = useProjectFetcher();
+    updateProject,
+    createProject,
+    updateProjectRecycleBin,
+    publishProject
+  } = useProjectMutations();
+
   const navigate = useNavigate();
   const client = useApolloClient();
   const { projectVisibility } = appFeature();
@@ -53,7 +53,7 @@ export default (workspaceId?: string) => {
   const [searchTerm, setSearchTerm] = useState<string>();
   const [sortValue, setSort] = useState<SortType>("date-updated");
 
-  const { starredProjects } = useStarredProjectsQuery(workspaceId);
+  const { starredProjects } = useStarredProjects(workspaceId);
 
   const {
     projects,
@@ -63,7 +63,7 @@ export default (workspaceId?: string) => {
     endCursor,
     fetchMore,
     refetch
-  } = useProjectsQuery({
+  } = useProjects({
     workspaceId: workspaceId || "",
     pagination: {
       first: pagination(sortValue).first
@@ -71,9 +71,6 @@ export default (workspaceId?: string) => {
     sort: pagination(sortValue).sortBy,
     keyword: searchTerm
   });
-
-  const t = useT();
-  const [, setNotification] = useNotification();
 
   const filtedProjects = useMemo(() => {
     return (projects ?? [])
@@ -166,7 +163,7 @@ export default (workspaceId?: string) => {
       > & { license?: string }
     ) => {
       if (!workspaceId) return;
-      await useCreateProject(
+      await createProject(
         workspaceId,
         Visualizer.Cesium,
         data.name,
@@ -177,16 +174,16 @@ export default (workspaceId?: string) => {
         data?.license
       );
     },
-    [useCreateProject, workspaceId]
+    [createProject, workspaceId]
   );
 
   // project update
   const handleProjectUpdate = useCallback(
     async (project: Project, projectId: string) => {
-      await useUpdateProject({ projectId, ...project });
+      await updateProject({ projectId, ...project });
       // if (sortBy) refetch();
     },
-    [useUpdateProject]
+    [updateProject]
   );
 
   // project open
@@ -261,58 +258,24 @@ export default (workspaceId?: string) => {
     };
   }, [wrapperRef, contentRef]);
 
-  //import project
-  const [importedProjectId, setImportedProjectId] = useState<
-    string | undefined
-  >();
-  const [importStatus, setImportStatus] = useState<ImportStatus>();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { refetch: refetchProject } = useProjectQuery(importedProjectId);
+  const handleImportCompleted = useCallback(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }, [fileInputRef]);
 
-  const handleProjectImport = useCallback(
-    async (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.target.files?.[0];
-      if (file && workspaceId) {
-        setImportStatus("processing");
-        const result = await useImportProject(file, workspaceId);
-        if (!result?.project_id) return;
-        setImportedProjectId(result.project_id);
-      }
-    },
-    [workspaceId, useImportProject]
-  );
-
-  useEffect(() => {
-    if (!importedProjectId) return;
-
-    let retries = 0;
-    const MAX_RETRIES = 100;
-
-    const interval = setInterval(() => {
-      if (++retries > MAX_RETRIES) {
-        clearInterval(interval);
-        return;
-      }
-      refetchProject().then((result) => {
-        const status =
-          result.data?.node?.__typename === "Project"
-            ? getImportStatus(result.data.node.metadata?.importStatus)
-            : undefined;
-
-        setImportStatus(status);
-        if (status === "success") {
-          setNotification({
-            type: "success",
-            text: t("Successfully imported project!")
-          });
-          refetch();
-        }
-        if (status !== "processing") clearInterval(interval);
-      });
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [importedProjectId, refetch, refetchProject, setNotification, t]);
+  const {
+    importStatus,
+    handleProjectImport,
+    handleProjectImportErrorDownload,
+    handleProjectImportErrorClose
+  } = useProjectImport({
+    workspaceId,
+    refetchProjectList: refetch,
+    onImportCompleted: handleImportCompleted
+  });
 
   // project remove
   const handleProjectRemove = useCallback(
@@ -322,9 +285,9 @@ export default (workspaceId?: string) => {
         deleted: true
       };
       if (project?.status === "limited") {
-        await usePublishProject("unpublished", project.id);
+        await publishProject("unpublished", project.id);
       }
-      await useUpdateProjectRemove(updatedProject);
+      await updateProjectRecycleBin(updatedProject);
 
       client.cache.evict({
         id: client.cache.identify({
@@ -335,7 +298,7 @@ export default (workspaceId?: string) => {
       client.cache.gc();
     },
 
-    [client, usePublishProject, useUpdateProjectRemove]
+    [client, publishProject, updateProjectRecycleBin]
   );
 
   return {
@@ -352,6 +315,7 @@ export default (workspaceId?: string) => {
     contentWidth,
     starredProjects,
     importStatus,
+    fileInputRef,
     projectVisibility,
     showProjectCreator,
     closeProjectCreator,
@@ -364,7 +328,9 @@ export default (workspaceId?: string) => {
     handleProjectSortChange,
     handleSearch,
     handleProjectImport,
-    handleProjectRemove
+    handleProjectRemove,
+    handleProjectImportErrorDownload,
+    handleProjectImportErrorClose
   };
 };
 

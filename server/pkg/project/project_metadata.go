@@ -2,10 +2,12 @@ package project
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/samber/lo"
 )
 
 var (
@@ -15,15 +17,18 @@ var (
 )
 
 type ProjectMetadata struct {
-	id           id.ProjectMetadataID
-	workspace    accountdomain.WorkspaceID
-	project      id.ProjectID
-	importStatus *ProjectImportStatus
-	readme       *string
-	license      *string
-	topics       *string
-	createdAt    *time.Time
-	updatedAt    *time.Time
+	id              id.ProjectMetadataID
+	workspace       accountdomain.WorkspaceID
+	project         id.ProjectID
+	importStatus    *ProjectImportStatus
+	importResultLog *map[string]any
+	readme          *string
+	license         *string
+	topics          *[]string
+	starCount       *int64
+	starredBy       *[]string
+	createdAt       *time.Time
+	updatedAt       *time.Time
 }
 
 func (r *ProjectMetadata) ID() id.ProjectMetadataID {
@@ -49,12 +54,24 @@ func (r *ProjectMetadata) License() *string {
 	return r.license
 }
 
-func (r *ProjectMetadata) Topics() *string {
+func (r *ProjectMetadata) Topics() *[]string {
 	return r.topics
+}
+
+func (r *ProjectMetadata) StarCount() *int64 {
+	return r.starCount
+}
+
+func (r *ProjectMetadata) StarredBy() *[]string {
+	return r.starredBy
 }
 
 func (r *ProjectMetadata) ImportStatus() *ProjectImportStatus {
 	return r.importStatus
+}
+
+func (r *ProjectMetadata) ImportResultLog() *map[string]any {
+	return r.importResultLog
 }
 
 func (r *ProjectMetadata) CreatedAt() *time.Time {
@@ -80,6 +97,13 @@ func (r *ProjectMetadata) SetImportStatus(importStatus *ProjectImportStatus) {
 	r.importStatus = importStatus
 }
 
+func (r *ProjectMetadata) SetImportResultLog(importResultLog *map[string]any) {
+	if r == nil {
+		return
+	}
+	r.importResultLog = importResultLog
+}
+
 func (r *ProjectMetadata) SetReadme(readme *string) {
 	if r == nil {
 		return
@@ -94,11 +118,32 @@ func (r *ProjectMetadata) SetLicense(license *string) {
 	r.license = license
 }
 
-func (r *ProjectMetadata) SetTopics(topics *string) {
+func (r *ProjectMetadata) SetTopics(topics *[]string) {
+	if r == nil || topics == nil {
+		return
+	}
+
+	uniqTopics := lo.Uniq(
+		lo.FilterMap(*topics, func(s string, _ int) (string, bool) {
+			trimmed := strings.TrimSpace(s)
+			return trimmed, trimmed != ""
+		}),
+	)
+	r.topics = &uniqTopics
+}
+
+func (r *ProjectMetadata) SetStarCount(starCount *int64) {
 	if r == nil {
 		return
 	}
-	r.topics = topics
+	r.starCount = starCount
+}
+
+func (r *ProjectMetadata) SetStarredBy(starredBy *[]string) {
+	if r == nil {
+		return
+	}
+	r.starredBy = starredBy
 }
 
 func (r *ProjectMetadata) SetCreatedAt(createdAt *time.Time) {

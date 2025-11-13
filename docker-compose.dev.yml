@@ -1,0 +1,43 @@
+services:
+
+  reearth-visualizer-dev:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    environment:
+      - SKIP_DOTENV=true
+    env_file:
+      - ./server/.env.docker
+    ports:
+      - 8080:8080
+    depends_on:
+      - reearth-mongo
+      - reearth-gcs
+    volumes:
+      - ./server:/reearth-visualizer       # Mount source code for hot reload
+      - /reearth-visualizer/tmp            # Exclude tmp directory
+    networks:
+      - reearth
+
+  reearth-mongo:
+    image: mongo:7
+    ports:
+      - 27017:27017
+    volumes:
+      - ${PWD}/tmp/mongo:/data/db
+    networks:
+      - reearth
+
+  reearth-gcs:
+    image: fsouza/fake-gcs-server:1.52.1
+    ports:
+      - 4443:4443
+    volumes:
+      - ${PWD}/tmp/gcs:/storage
+    command: -scheme http
+    networks:
+      - reearth
+
+networks:
+  reearth:
+    name: reearth

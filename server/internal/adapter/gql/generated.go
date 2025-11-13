@@ -257,6 +257,7 @@ type ComplexityRoot struct {
 		Email         func(childComplexity int) int
 		ID            func(childComplexity int) int
 		Lang          func(childComplexity int) int
+		Metadata      func(childComplexity int) int
 		MyWorkspace   func(childComplexity int) int
 		MyWorkspaceID func(childComplexity int) int
 		Name          func(childComplexity int) int
@@ -522,8 +523,9 @@ type ComplexityRoot struct {
 	}
 
 	PolicyCheckPayload struct {
-		EnableToCreatePrivateProject func(childComplexity int) int
-		WorkspaceID                  func(childComplexity int) int
+		DisableOperationByOverUsedSeat func(childComplexity int) int
+		EnableToCreatePrivateProject   func(childComplexity int) int
+		WorkspaceID                    func(childComplexity int) int
 	}
 
 	Polygon struct {
@@ -581,15 +583,16 @@ type ComplexityRoot struct {
 	}
 
 	ProjectMetadata struct {
-		CreatedAt    func(childComplexity int) int
-		ID           func(childComplexity int) int
-		ImportStatus func(childComplexity int) int
-		License      func(childComplexity int) int
-		Project      func(childComplexity int) int
-		Readme       func(childComplexity int) int
-		Topics       func(childComplexity int) int
-		UpdatedAt    func(childComplexity int) int
-		Workspace    func(childComplexity int) int
+		CreatedAt       func(childComplexity int) int
+		ID              func(childComplexity int) int
+		ImportResultLog func(childComplexity int) int
+		ImportStatus    func(childComplexity int) int
+		License         func(childComplexity int) int
+		Project         func(childComplexity int) int
+		Readme          func(childComplexity int) int
+		Topics          func(childComplexity int) int
+		UpdatedAt       func(childComplexity int) int
+		Workspace       func(childComplexity int) int
 	}
 
 	ProjectMetadataPayload struct {
@@ -992,9 +995,18 @@ type ComplexityRoot struct {
 		Name  func(childComplexity int) int
 	}
 
+	UserMetadata struct {
+		PhotoURL func(childComplexity int) int
+	}
+
 	WidgetAlignSystem struct {
 		Inner func(childComplexity int) int
 		Outer func(childComplexity int) int
+	}
+
+	WidgetAlignSystems struct {
+		Desktop func(childComplexity int) int
+		Mobile  func(childComplexity int) int
 	}
 
 	WidgetArea struct {
@@ -1051,6 +1063,7 @@ type ComplexityRoot struct {
 		Members                      func(childComplexity int) int
 		Name                         func(childComplexity int) int
 		Personal                     func(childComplexity int) int
+		PhotoURL                     func(childComplexity int) int
 		Policy                       func(childComplexity int) int
 		PolicyID                     func(childComplexity int) int
 		Projects                     func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
@@ -1875,6 +1888,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Me.Lang(childComplexity), true
+
+	case "Me.metadata":
+		if e.complexity.Me.Metadata == nil {
+			break
+		}
+
+		return e.complexity.Me.Metadata(childComplexity), true
 
 	case "Me.myWorkspace":
 		if e.complexity.Me.MyWorkspace == nil {
@@ -3727,6 +3747,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.Policy.PublishedProjectCount(childComplexity), true
 
+	case "PolicyCheckPayload.disableOperationByOverUsedSeat":
+		if e.complexity.PolicyCheckPayload.DisableOperationByOverUsedSeat == nil {
+			break
+		}
+
+		return e.complexity.PolicyCheckPayload.DisableOperationByOverUsedSeat(childComplexity), true
+
 	case "PolicyCheckPayload.enableToCreatePrivateProject":
 		if e.complexity.PolicyCheckPayload.EnableToCreatePrivateProject == nil {
 			break
@@ -4027,6 +4054,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.ProjectMetadata.ID(childComplexity), true
+
+	case "ProjectMetadata.importResultLog":
+		if e.complexity.ProjectMetadata.ImportResultLog == nil {
+			break
+		}
+
+		return e.complexity.ProjectMetadata.ImportResultLog(childComplexity), true
 
 	case "ProjectMetadata.importStatus":
 		if e.complexity.ProjectMetadata.ImportStatus == nil {
@@ -5848,6 +5882,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 
 		return e.complexity.User.Name(childComplexity), true
 
+	case "UserMetadata.photoURL":
+		if e.complexity.UserMetadata.PhotoURL == nil {
+			break
+		}
+
+		return e.complexity.UserMetadata.PhotoURL(childComplexity), true
+
 	case "WidgetAlignSystem.inner":
 		if e.complexity.WidgetAlignSystem.Inner == nil {
 			break
@@ -5861,6 +5902,20 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.WidgetAlignSystem.Outer(childComplexity), true
+
+	case "WidgetAlignSystems.desktop":
+		if e.complexity.WidgetAlignSystems.Desktop == nil {
+			break
+		}
+
+		return e.complexity.WidgetAlignSystems.Desktop(childComplexity), true
+
+	case "WidgetAlignSystems.mobile":
+		if e.complexity.WidgetAlignSystems.Mobile == nil {
+			break
+		}
+
+		return e.complexity.WidgetAlignSystems.Mobile(childComplexity), true
 
 	case "WidgetArea.align":
 		if e.complexity.WidgetArea.Align == nil {
@@ -6090,6 +6145,13 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Workspace.Personal(childComplexity), true
+
+	case "Workspace.photoURL":
+		if e.complexity.Workspace.PhotoURL == nil {
+			break
+		}
+
+		return e.complexity.Workspace.PhotoURL(childComplexity), true
 
 	case "Workspace.policy":
 		if e.complexity.Workspace.Policy == nil {
@@ -7010,14 +7072,16 @@ type ProjectMetadata {
   workspace: ID!
   readme: String
   license: String
-  topics: String
+  topics: [String!]
   importStatus: ProjectImportStatus
+  importResultLog: JSON
   createdAt: DateTime
   updatedAt: DateTime
 }
 
 enum ProjectImportStatus {
   NONE
+  UPLOADING
   PROCESSING
   FAILED
   SUCCESS
@@ -7053,7 +7117,7 @@ input CreateProjectInput {
   # metadata
   readme: String
   license: String
-  topics: String
+  topics: [String!]
 }
 
 input UpdateProjectInput {
@@ -7086,7 +7150,7 @@ input UpdateProjectMetadataInput {
   project: ID!
   readme: String
   license: String
-  topics: String
+  topics: [String!]
 }
 
 input PublishProjectInput {
@@ -7469,7 +7533,7 @@ extend type Mutation {
   updatedAt: DateTime!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystem
+  widgetAlignSystem: WidgetAlignSystems
   project: Project
   workspace: Workspace
   property: Property
@@ -7838,12 +7902,17 @@ extend type Mutation {
   host: String
 }
 
+type UserMetadata {
+  photoURL: String
+}
+
 type Me {
   id: ID!
   name: String!
   email: String!
   lang: Lang!
   theme: Theme!
+  metadata: UserMetadata
   myWorkspaceId: ID!
   auths: [String!]!
   workspaces: [Workspace!]!
@@ -7910,7 +7979,12 @@ extend type Mutation {
   deleteMe(input: DeleteMeInput!): DeleteMePayload
 }
 `, BuiltIn: false},
-	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystem {
+	{Name: "../../../gql/was.graphql", Input: `type WidgetAlignSystems {
+  desktop: WidgetAlignSystem
+  mobile: WidgetAlignSystem
+}
+
+type WidgetAlignSystem {
   inner: WidgetZone
   outer: WidgetZone
 }
@@ -7961,6 +8035,11 @@ type WidgetLayout {
   defaultLocation: WidgetLocation
 }
 
+enum WidgetAlignSystemType {
+  DESKTOP
+  MOBILE
+}
+
 enum WidgetAreaAlign {
   START
   CENTERED
@@ -7993,12 +8072,14 @@ input WidgetLocationInput {
 }
 
 input AddWidgetInput {
+  type: WidgetAlignSystemType!
   sceneId: ID!
   pluginId: ID!
   extensionId: ID!
 }
 
 input UpdateWidgetInput {
+  type: WidgetAlignSystemType!
   sceneId: ID!
   widgetId: ID!
   enabled: Boolean
@@ -8008,6 +8089,7 @@ input UpdateWidgetInput {
 }
 
 input UpdateWidgetAlignSystemInput {
+  type: WidgetAlignSystemType!
   sceneId: ID!
   location: WidgetLocationInput!
   align: WidgetAreaAlign
@@ -8025,6 +8107,7 @@ input WidgetAreaPaddingInput {
 }
 
 input RemoveWidgetInput {
+  type: WidgetAlignSystemType!
   sceneId: ID!
   widgetId: ID!
 }
@@ -8055,14 +8138,18 @@ type RemoveWidgetPayload {
 extend type Mutation {
   addWidget(input: AddWidgetInput!): AddWidgetPayload
   updateWidget(input: UpdateWidgetInput!): UpdateWidgetPayload
-  updateWidgetAlignSystem(input: UpdateWidgetAlignSystemInput!): UpdateWidgetAlignSystemPayload
+  updateWidgetAlignSystem(
+    input: UpdateWidgetAlignSystemInput!
+  ): UpdateWidgetAlignSystemPayload
   removeWidget(input: RemoveWidgetInput!): RemoveWidgetPayload
-}`, BuiltIn: false},
+}
+`, BuiltIn: false},
 	{Name: "../../../gql/workspace.graphql", Input: `type Workspace implements Node {
   id: ID!
   name: String!
   members: [WorkspaceMember!]!
   personal: Boolean!
+  photoURL: String
   policyId: ID
   policy: Policy
   assets(
@@ -8160,6 +8247,7 @@ type CreateWorkspacePayload {
 type PolicyCheckPayload {
   workspaceId: ID!
   enableToCreatePrivateProject: Boolean!
+  disableOperationByOverUsedSeat: Boolean!
 }
 
 type UpdateWorkspacePayload {
@@ -11742,6 +11830,8 @@ func (ec *executionContext) fieldContext_AddMemberToWorkspacePayload_workspace(_
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -12271,6 +12361,8 @@ func (ec *executionContext) fieldContext_Asset_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -13769,6 +13861,8 @@ func (ec *executionContext) fieldContext_CreateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -15853,6 +15947,51 @@ func (ec *executionContext) fieldContext_Me_theme(_ context.Context, field graph
 	return fc, nil
 }
 
+func (ec *executionContext) _Me_metadata(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Me_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.UserMetadata)
+	fc.Result = res
+	return ec.marshalOUserMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUserMetadata(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Me_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Me",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "photoURL":
+				return ec.fieldContext_UserMetadata_photoURL(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UserMetadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Me_myWorkspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Me) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Me_myWorkspaceId(ctx, field)
 	if err != nil {
@@ -15988,6 +16127,8 @@ func (ec *executionContext) fieldContext_Me_workspaces(_ context.Context, field 
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -16051,6 +16192,8 @@ func (ec *executionContext) fieldContext_Me_myWorkspace(_ context.Context, field
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -26846,6 +26989,50 @@ func (ec *executionContext) fieldContext_PolicyCheckPayload_enableToCreatePrivat
 	return fc, nil
 }
 
+func (ec *executionContext) _PolicyCheckPayload_disableOperationByOverUsedSeat(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PolicyCheckPayload_disableOperationByOverUsedSeat(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisableOperationByOverUsedSeat, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PolicyCheckPayload_disableOperationByOverUsedSeat(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PolicyCheckPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Polygon_type(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Polygon) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Polygon_type(ctx, field)
 	if err != nil {
@@ -27066,6 +27253,8 @@ func (ec *executionContext) fieldContext_Project_workspace(_ context.Context, fi
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -27691,6 +27880,8 @@ func (ec *executionContext) fieldContext_Project_metadata(_ context.Context, fie
 				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
 			case "importStatus":
 				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+			case "importResultLog":
+				return ec.fieldContext_ProjectMetadata_importResultLog(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
 			case "updatedAt":
@@ -28993,9 +29184,9 @@ func (ec *executionContext) _ProjectMetadata_topics(ctx context.Context, field g
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ProjectMetadata_topics(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -29047,6 +29238,47 @@ func (ec *executionContext) fieldContext_ProjectMetadata_importStatus(_ context.
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ProjectImportStatus does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ProjectMetadata_importResultLog(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.ProjectMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ProjectMetadata_importResultLog(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ImportResultLog, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(gqlmodel.JSON)
+	fc.Result = res
+	return ec.marshalOJSON2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ProjectMetadata_importResultLog(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ProjectMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JSON does not have child fields")
 		},
 	}
 	return fc, nil
@@ -29187,6 +29419,8 @@ func (ec *executionContext) fieldContext_ProjectMetadataPayload_metadata(_ conte
 				return ec.fieldContext_ProjectMetadata_topics(ctx, field)
 			case "importStatus":
 				return ec.fieldContext_ProjectMetadata_importStatus(ctx, field)
+			case "importResultLog":
+				return ec.fieldContext_ProjectMetadata_importResultLog(ctx, field)
 			case "createdAt":
 				return ec.fieldContext_ProjectMetadata_createdAt(ctx, field)
 			case "updatedAt":
@@ -34129,6 +34363,8 @@ func (ec *executionContext) fieldContext_Query_me(_ context.Context, field graph
 				return ec.fieldContext_Me_lang(ctx, field)
 			case "theme":
 				return ec.fieldContext_Me_theme(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Me_metadata(ctx, field)
 			case "myWorkspaceId":
 				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
@@ -34246,6 +34482,8 @@ func (ec *executionContext) fieldContext_Query_workspacePolicyCheck(ctx context.
 				return ec.fieldContext_PolicyCheckPayload_workspaceId(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_PolicyCheckPayload_enableToCreatePrivateProject(ctx, field)
+			case "disableOperationByOverUsedSeat":
+				return ec.fieldContext_PolicyCheckPayload_disableOperationByOverUsedSeat(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PolicyCheckPayload", field.Name)
 		},
@@ -34662,6 +34900,8 @@ func (ec *executionContext) fieldContext_RemoveMemberFromWorkspacePayload_worksp
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -35678,9 +35918,9 @@ func (ec *executionContext) _Scene_widgetAlignSystem(ctx context.Context, field 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*gqlmodel.WidgetAlignSystem)
+	res := resTmp.(*gqlmodel.WidgetAlignSystems)
 	fc.Result = res
-	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
+	return ec.marshalOWidgetAlignSystems2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystems(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -35691,12 +35931,12 @@ func (ec *executionContext) fieldContext_Scene_widgetAlignSystem(_ context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "inner":
-				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
-			case "outer":
-				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
+			case "desktop":
+				return ec.fieldContext_WidgetAlignSystems_desktop(ctx, field)
+			case "mobile":
+				return ec.fieldContext_WidgetAlignSystems_mobile(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystems", field.Name)
 		},
 	}
 	return fc, nil
@@ -35847,6 +36087,8 @@ func (ec *executionContext) fieldContext_Scene_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -37028,6 +37270,8 @@ func (ec *executionContext) fieldContext_SignupPayload_workspace(_ context.Conte
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -40645,6 +40889,8 @@ func (ec *executionContext) fieldContext_UpdateMePayload_me(_ context.Context, f
 				return ec.fieldContext_Me_lang(ctx, field)
 			case "theme":
 				return ec.fieldContext_Me_theme(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Me_metadata(ctx, field)
 			case "myWorkspaceId":
 				return ec.fieldContext_Me_myWorkspaceId(ctx, field)
 			case "auths":
@@ -40707,6 +40953,8 @@ func (ec *executionContext) fieldContext_UpdateMemberOfWorkspacePayload_workspac
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -41137,6 +41385,8 @@ func (ec *executionContext) fieldContext_UpdateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_members(ctx, field)
 			case "personal":
 				return ec.fieldContext_Workspace_personal(ctx, field)
+			case "photoURL":
+				return ec.fieldContext_Workspace_photoURL(ctx, field)
 			case "policyId":
 				return ec.fieldContext_Workspace_policyId(ctx, field)
 			case "policy":
@@ -41671,6 +41921,47 @@ func (ec *executionContext) fieldContext_User_host(_ context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _UserMetadata_photoURL(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.UserMetadata) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UserMetadata_photoURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhotoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UserMetadata_photoURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UserMetadata",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _WidgetAlignSystem_inner(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAlignSystem) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
 	if err != nil {
@@ -41764,6 +42055,100 @@ func (ec *executionContext) fieldContext_WidgetAlignSystem_outer(_ context.Conte
 				return ec.fieldContext_WidgetZone_right(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type WidgetZone", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WidgetAlignSystems_desktop(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAlignSystems) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WidgetAlignSystems_desktop(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Desktop, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.WidgetAlignSystem)
+	fc.Result = res
+	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WidgetAlignSystems_desktop(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WidgetAlignSystems",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "inner":
+				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
+			case "outer":
+				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WidgetAlignSystems_mobile(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.WidgetAlignSystems) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WidgetAlignSystems_mobile(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mobile, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*gqlmodel.WidgetAlignSystem)
+	fc.Result = res
+	return ec.marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystem(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WidgetAlignSystems_mobile(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WidgetAlignSystems",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "inner":
+				return ec.fieldContext_WidgetAlignSystem_inner(ctx, field)
+			case "outer":
+				return ec.fieldContext_WidgetAlignSystem_outer(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type WidgetAlignSystem", field.Name)
 		},
 	}
 	return fc, nil
@@ -43108,6 +43493,47 @@ func (ec *executionContext) fieldContext_Workspace_personal(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_photoURL(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_photoURL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PhotoURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_photoURL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -45834,13 +46260,20 @@ func (ec *executionContext) unmarshalInputAddWidgetInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "pluginId", "extensionId"}
+	fieldsInOrder := [...]string{"type", "sceneId", "pluginId", "extensionId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -46131,7 +46564,7 @@ func (ec *executionContext) unmarshalInputCreateProjectInput(ctx context.Context
 			it.License = data
 		case "topics":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -47587,13 +48020,20 @@ func (ec *executionContext) unmarshalInputRemoveWidgetInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "widgetId"}
+	fieldsInOrder := [...]string{"type", "sceneId", "widgetId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -48256,7 +48696,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectMetadataInput(ctx context
 			it.License = data
 		case "topics":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("topics"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -48681,13 +49121,20 @@ func (ec *executionContext) unmarshalInputUpdateWidgetAlignSystemInput(ctx conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "location", "align", "padding", "gap", "centered", "background"}
+	fieldsInOrder := [...]string{"type", "sceneId", "location", "align", "padding", "gap", "centered", "background"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -48750,13 +49197,20 @@ func (ec *executionContext) unmarshalInputUpdateWidgetInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "widgetId", "enabled", "location", "extended", "index"}
+	fieldsInOrder := [...]string{"type", "sceneId", "widgetId", "enabled", "location", "extended", "index"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "sceneId":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sceneId"))
 			data, err := ec.unmarshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID(ctx, v)
@@ -50846,6 +51300,8 @@ func (ec *executionContext) _Me(ctx context.Context, sel ast.SelectionSet, obj *
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "metadata":
+			out.Values[i] = ec._Me_metadata(ctx, field, obj)
 		case "myWorkspaceId":
 			out.Values[i] = ec._Me_myWorkspaceId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -53235,6 +53691,11 @@ func (ec *executionContext) _PolicyCheckPayload(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "disableOperationByOverUsedSeat":
+			out.Values[i] = ec._PolicyCheckPayload_disableOperationByOverUsedSeat(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -53701,6 +54162,8 @@ func (ec *executionContext) _ProjectMetadata(ctx context.Context, sel ast.Select
 			out.Values[i] = ec._ProjectMetadata_topics(ctx, field, obj)
 		case "importStatus":
 			out.Values[i] = ec._ProjectMetadata_importStatus(ctx, field, obj)
+		case "importResultLog":
+			out.Values[i] = ec._ProjectMetadata_importResultLog(ctx, field, obj)
 		case "createdAt":
 			out.Values[i] = ec._ProjectMetadata_createdAt(ctx, field, obj)
 		case "updatedAt":
@@ -57932,6 +58395,42 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 	return out
 }
 
+var userMetadataImplementors = []string{"UserMetadata"}
+
+func (ec *executionContext) _UserMetadata(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.UserMetadata) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, userMetadataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("UserMetadata")
+		case "photoURL":
+			out.Values[i] = ec._UserMetadata_photoURL(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var widgetAlignSystemImplementors = []string{"WidgetAlignSystem"}
 
 func (ec *executionContext) _WidgetAlignSystem(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.WidgetAlignSystem) graphql.Marshaler {
@@ -57947,6 +58446,44 @@ func (ec *executionContext) _WidgetAlignSystem(ctx context.Context, sel ast.Sele
 			out.Values[i] = ec._WidgetAlignSystem_inner(ctx, field, obj)
 		case "outer":
 			out.Values[i] = ec._WidgetAlignSystem_outer(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var widgetAlignSystemsImplementors = []string{"WidgetAlignSystems"}
+
+func (ec *executionContext) _WidgetAlignSystems(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.WidgetAlignSystems) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, widgetAlignSystemsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("WidgetAlignSystems")
+		case "desktop":
+			out.Values[i] = ec._WidgetAlignSystems_desktop(ctx, field, obj)
+		case "mobile":
+			out.Values[i] = ec._WidgetAlignSystems_mobile(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -58334,6 +58871,8 @@ func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "photoURL":
+			out.Values[i] = ec._Workspace_photoURL(ctx, field, obj)
 		case "policyId":
 			out.Values[i] = ec._Workspace_policyId(ctx, field, obj)
 		case "policy":
@@ -61508,6 +62047,16 @@ func (ec *executionContext) marshalNVisualizer2githubᚗcomᚋreearthᚋreearth�
 	return v
 }
 
+func (ec *executionContext) unmarshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx context.Context, v any) (gqlmodel.WidgetAlignSystemType, error) {
+	var res gqlmodel.WidgetAlignSystemType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNWidgetAlignSystemType2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystemType(ctx context.Context, sel ast.SelectionSet, v gqlmodel.WidgetAlignSystemType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNWidgetAreaAlign2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAreaAlign(ctx context.Context, v any) (gqlmodel.WidgetAreaAlign, error) {
 	var res gqlmodel.WidgetAreaAlign
 	err := res.UnmarshalGQL(v)
@@ -62649,6 +63198,42 @@ func (ec *executionContext) marshalOSketchInfo2ᚖgithubᚗcomᚋreearthᚋreear
 	return ec._SketchInfo(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalOString2ᚕstringᚄ(ctx context.Context, v any) ([]string, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []any
+	vSlice = graphql.CoerceList(v)
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v any) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -62830,6 +63415,13 @@ func (ec *executionContext) marshalOUser2ᚖgithubᚗcomᚋreearthᚋreearthᚋs
 	return ec._User(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOUserMetadata2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐUserMetadata(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.UserMetadata) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._UserMetadata(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOValueType2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐValueType(ctx context.Context, v any) (*gqlmodel.ValueType, error) {
 	if v == nil {
 		return nil, nil
@@ -62867,6 +63459,13 @@ func (ec *executionContext) marshalOWidgetAlignSystem2ᚖgithubᚗcomᚋreearth�
 		return graphql.Null
 	}
 	return ec._WidgetAlignSystem(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOWidgetAlignSystems2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetAlignSystems(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetAlignSystems) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._WidgetAlignSystems(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOWidgetArea2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐWidgetArea(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.WidgetArea) graphql.Marshaler {

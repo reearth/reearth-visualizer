@@ -2,6 +2,7 @@ package memory
 
 import (
 	"context"
+	"log"
 	"sort"
 	"strings"
 	"sync"
@@ -225,6 +226,114 @@ func (r *Project) FindByPublicName(ctx context.Context, name string) (*project.P
 		}
 	}
 	return nil, rerror.ErrNotFound
+}
+
+func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+	r.lock.Lock()
+	defer r.lock.Unlock()
+
+	// Default visibility is public
+	visibility := "public"
+	if pFilter.Visibility != nil {
+		visibility = *pFilter.Visibility
+	}
+
+	result := []*project.Project{}
+	for _, p := range r.data {
+		if p.Visibility() == visibility && !p.IsDeleted() {
+			// Check if we need to apply keyword filter
+			if pFilter.Keyword == nil {
+				// No keyword filter, include the project
+				result = append(result, p)
+				continue
+			}
+
+			// Determine search type
+			if pFilter.SearchField != nil && *pFilter.SearchField == "topics" {
+				// Search in topics
+				// For the in-memory implementation, we'll skip topic filtering
+				// as we don't have access to the project metadata here
+				result = append(result, p)
+			} else {
+				// Search in name (default)
+				if strings.Contains(strings.ToLower(p.Name()), strings.ToLower(*pFilter.Keyword)) {
+					result = append(result, p)
+				}
+			}
+		}
+	}
+
+	// Sort results
+	if pFilter.Sort != nil && pFilter.Sort.Key != "" {
+		// Convert sort key to lowercase for case-insensitive comparison
+		sortKey := strings.ToLower(pFilter.Sort.Key)
+		log.Printf("Sorting projects with key: %s (normalized to: %s), desc: %t", pFilter.Sort.Key, sortKey, pFilter.Sort.Desc)
+
+		sort.SliceStable(result, func(i, j int) bool {
+			switch sortKey {
+			case "name":
+				if pFilter.Sort.Desc {
+					return result[i].Name() > result[j].Name()
+				}
+				return result[i].Name() < result[j].Name()
+			case "updatedat":
+				if pFilter.Sort.Desc {
+					return result[i].UpdatedAt().After(result[j].UpdatedAt())
+				}
+				return result[i].UpdatedAt().Before(result[j].UpdatedAt())
+			case "starcount":
+				if pFilter.Sort.Desc {
+					log.Printf("Comparing starCount: %d vs %d", result[i].Metadata().StarCount(), result[j].Metadata().StarCount())
+					return *result[i].Metadata().StarCount() > *result[j].Metadata().StarCount()
+				}
+				return *result[i].Metadata().StarCount() < *result[j].Metadata().StarCount()
+			default:
+				// Default to starCount descending
+				log.Printf("Using default sort (starCount desc) for unknown key: %s", sortKey)
+				return *result[i].Metadata().StarCount() > *result[j].Metadata().StarCount()
+			}
+		})
+	} else {
+		// Default sort when no sort is specified: starCount descending
+		log.Printf("No sort specified, using default sort (starCount desc)")
+		sort.SliceStable(result, func(i, j int) bool {
+			return *result[i].Metadata().StarCount() > *result[j].Metadata().StarCount()
+		})
+	}
+
+	// Apply pagination
+	totalCount := len(result)
+	start := 0
+	limit := 100
+
+	if pFilter.Offset != nil {
+		start = int(*pFilter.Offset)
+	}
+
+	if pFilter.Limit != nil {
+		limit = int(*pFilter.Limit)
+	} else if pFilter.Pagination != nil && pFilter.Pagination.Cursor != nil && pFilter.Pagination.Cursor.First != nil {
+		limit = int(*pFilter.Pagination.Cursor.First)
+	}
+
+	end := start + limit
+	if end > totalCount {
+		end = totalCount
+	}
+
+	if start >= totalCount {
+		result = []*project.Project{}
+	} else {
+		result = result[start:end]
+	}
+
+	pageInfo := &usecasex.PageInfo{
+		TotalCount:      int64(totalCount),
+		HasNextPage:     end < totalCount,
+		HasPreviousPage: start > 0,
+	}
+
+	return result, pageInfo, nil
 }
 
 func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {

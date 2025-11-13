@@ -34,6 +34,8 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 
 func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus {
 	switch v {
+	case ProjectImportStatusUploading:
+		return project.ProjectImportStatusUploading
 	case ProjectImportStatusProcessing:
 		return project.ProjectImportStatusProcessing
 	case ProjectImportStatusFailed:
@@ -46,6 +48,8 @@ func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus 
 
 func ToProjectImportStatus(v project.ProjectImportStatus) ProjectImportStatus {
 	switch v {
+	case project.ProjectImportStatusUploading:
+		return ProjectImportStatusUploading
 	case project.ProjectImportStatusProcessing:
 		return ProjectImportStatusProcessing
 	case project.ProjectImportStatusFailed:
@@ -60,7 +64,12 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 	if pm == nil {
 		return nil
 	}
-	importStatus := ToProjectImportStatus(*pm.ImportStatus())
+	var importStatus ProjectImportStatus
+	if pm.ImportStatus() != nil {
+		importStatus = ToProjectImportStatus(*pm.ImportStatus())
+	} else {
+		importStatus = ProjectImportStatusNone
+	}
 
 	return &ProjectMetadata{
 		ID:           IDFrom(pm.ID()),
@@ -68,10 +77,21 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 		Project:      IDFrom(pm.Project()),
 		Readme:       pm.Readme(),
 		License:      pm.License(),
-		Topics:       pm.Topics(),
+		Topics: func() []string {
+			if pm.Topics() == nil {
+				return nil
+			}
+			return *pm.Topics()
+		}(),
 		ImportStatus: &importStatus,
-		CreatedAt:    pm.CreatedAt(),
-		UpdatedAt:    pm.UpdatedAt(),
+		ImportResultLog: func() map[string]any {
+			if pm.ImportResultLog() == nil {
+				return nil
+			}
+			return *pm.ImportResultLog()
+		}(),
+		CreatedAt: pm.CreatedAt(),
+		UpdatedAt: pm.UpdatedAt(),
 	}
 }
 
@@ -160,9 +180,9 @@ type ProjectExport struct {
 
 	Visibility string `json:"visibility,omitempty"`
 
-	License *string `json:"readme,omitempty"`
-	Readme  *string `json:"license,omitempty"`
-	Topics  *string `json:"topics,omitempty"`
+	License *string `json:"license,omitempty"`
+	Readme  *string `json:"readme,omitempty"`
+	Topics  *[]string `json:"topics,omitempty"`
 }
 
 func ToProjectExport(p *project.Project) *ProjectExport {
@@ -181,7 +201,9 @@ func ToProjectExport(p *project.Project) *ProjectExport {
 	if pm := p.Metadata(); pm != nil {
 		export.License = pm.License()
 		export.Readme = pm.Readme()
-		export.Topics = pm.Topics()
+		if pm.Topics() != nil {
+			export.Topics = pm.Topics()
+		}
 	}
 
 	return export

@@ -11,10 +11,12 @@ import {
   convertData,
   sceneProperty2ViewerPropertyMapping
 } from "@reearth/app/utils/convert-object";
+import { DeviceType } from "@reearth/app/utils/device";
 import type { Camera } from "@reearth/app/utils/value";
 import { MapRef } from "@reearth/core";
+import type { NLSInfobox } from "@reearth/services/api/layer/types";
 import { config } from "@reearth/services/config";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 
 import { WidgetThemeOptions } from "../Visualizer/Crust/theme";
 
@@ -40,6 +42,17 @@ export default (alias?: string) => {
   );
   const [initialCamera, setInitialCamera] = useState<Camera | undefined>(
     undefined
+  );
+
+  // Device for WAS
+  // Published project relies on Visualizer's device detection
+  const [detectedDevice, setDetectedDevice] = useState<DeviceType>("desktop");
+
+  const handleDeviceChange = useCallback(
+    (device: DeviceType) => {
+      setDetectedDevice(device);
+    },
+    [setDetectedDevice]
   );
 
   const { viewerProperty, widgetThemeOptions, cesiumIonAccessToken } =
@@ -79,9 +92,18 @@ export default (alias?: string) => {
     setCurrentCamera(initialCamera);
   }, [initialCamera]);
 
+  // Convert unknown infobox data to NLSInfobox type
+  const convertInfobox = (infobox: unknown): NLSInfobox | undefined => {
+    if (!infobox || typeof infobox !== "object") return undefined;
+    // Type assertion with runtime validation - we know the structure matches
+    return infobox as NLSInfobox;
+  };
+
   const pluginProperty = useMemo(
     () =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Object.keys(data?.plugins ?? {}).reduce<Record<string, any>>((a, b) => {
+        // Plugin properties have dynamic structure
         a[b] = processProperty(data?.plugins?.[b]?.property);
         return a;
       }, {}),
@@ -99,12 +121,13 @@ export default (alias?: string) => {
     if (!data?.widgets) return undefined;
 
     const widgetsInWas = new Set<string>();
-    if (data.widgetAlignSystem) {
+    if (data.widgetAlignSystems?.[detectedDevice]) {
       for (const z of ["inner", "outer"] as const) {
         for (const s of ["left", "center", "right"] as const) {
           for (const a of ["top", "middle", "bottom"] as const) {
-            for (const w of data.widgetAlignSystem?.[z]?.[s]?.[a]?.widgetIds ??
-              []) {
+            for (const w of data.widgetAlignSystems[detectedDevice]?.[z]?.[s]?.[
+              a
+            ]?.widgetIds ?? []) {
               widgetsInWas.add(w);
             }
           }
@@ -188,15 +211,15 @@ export default (alias?: string) => {
 
     return {
       floating: floatingWidgets,
-      alignSystem: data.widgetAlignSystem
+      alignSystem: data.widgetAlignSystems
         ? {
-            outer: widgetZone(data.widgetAlignSystem.outer),
-            inner: widgetZone(data.widgetAlignSystem.inner)
+            outer: widgetZone(data.widgetAlignSystems[detectedDevice]?.outer),
+            inner: widgetZone(data.widgetAlignSystems[detectedDevice]?.inner)
           }
         : undefined,
       ownBuiltinWidgets
     };
-  }, [data]);
+  }, [data, detectedDevice]);
 
   const actualAlias = useMemo(
     () =>
@@ -243,7 +266,7 @@ export default (alias?: string) => {
         config: l.config,
         layerType: l.layerType,
         visible: !!l.isVisible,
-        infobox: l.nlsInfobox,
+        infobox: convertInfobox(l.nlsInfobox),
         isSketch: l.isSketch,
         sketch: l.sketchInfo
       })) ?? [],
@@ -324,7 +347,8 @@ export default (alias?: string) => {
     visualizerRef,
     currentCamera,
     initialCamera,
-    setCurrentCamera
+    setCurrentCamera,
+    handleDeviceChange
   };
 };
 

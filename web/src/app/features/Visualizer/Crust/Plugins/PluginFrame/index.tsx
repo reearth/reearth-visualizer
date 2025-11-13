@@ -28,11 +28,11 @@ export type Props = {
   modalVisible?: boolean;
   popupVisible?: boolean;
   externalRef?: RefObject<HTMLIFrameElement>;
-  isMarshalable?: boolean | "json" | ((target: any) => boolean | "json");
-  exposed?: ((api: API) => Record<string, any>) | Record<string, any>;
-  onMessage?: (message: any) => void;
+  isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
+  exposed?: ((api: API) => Record<string, unknown>) | Record<string, unknown>;
+  onMessage?: (message: unknown) => void;
   onPreInit?: () => void;
-  onError?: (err: any) => void;
+  onError?: (err: unknown) => void;
   onDispose?: () => void;
   onClick?: () => void;
   onRender?: (type: IFrameType) => void;

@@ -1,17 +1,13 @@
-import useHooks from "@reearth/app/features/Visualizer/Crust/StoryPanel/Block/builtin/Timeline/hook";
+import useHooks, {
+  TimelineBlockProperty
+} from "@reearth/app/features/Visualizer/Crust/StoryPanel/Block/builtin/Timeline/hook";
 import useTimelineBlock from "@reearth/app/features/Visualizer/shared/hooks/useTimelineBlock";
+import { PaddingProp } from "@reearth/app/features/Visualizer/shared/types";
 import { Icon, Popup } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 
 import { TimelineValues } from ".";
-
-export type PaddingProp = {
-  bottom: number;
-  top: number;
-  left?: number;
-  right?: number;
-};
 
 type TimelineProps = {
   blockId?: string;
@@ -20,7 +16,7 @@ type TimelineProps = {
   inEditor?: boolean;
   playMode?: string;
   padding?: PaddingProp;
-  property?: any;
+  property?: TimelineBlockProperty;
 };
 
 const TimelineEditor = ({

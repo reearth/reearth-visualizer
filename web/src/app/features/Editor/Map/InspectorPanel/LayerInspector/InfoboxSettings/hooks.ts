@@ -1,11 +1,18 @@
 import { filterVisibleItems } from "@reearth/app/ui/fields/utils";
-import { useInfoboxFetcher } from "@reearth/services/api";
-import { Item, convert } from "@reearth/services/api/propertyApi/utils";
+import { useInfoboxMutations } from "@reearth/services/api/infobox";
+import type { Item } from "@reearth/services/api/property";
+import { convert } from "@reearth/services/api/property/utils";
+import { PropertyFragmentFragment } from "@reearth/services/gql";
 import { useCallback, useMemo } from "react";
 
-export default ({ layerId, property }: { layerId: string; property?: any }) => {
-  const { useCreateNLSInfobox } = useInfoboxFetcher();
-  //   const { useUpdatePropertyValue } = usePropertyFetcher();
+export default ({
+  layerId,
+  property
+}: {
+  layerId: string;
+  property?: PropertyFragmentFragment | null | undefined;
+}) => {
+  const { createNLSInfobox } = useInfoboxMutations();
 
   const visibleItems: Item[] | undefined = useMemo(
     () => filterVisibleItems(convert(property)),
@@ -14,9 +21,9 @@ export default ({ layerId, property }: { layerId: string; property?: any }) => {
 
   const handleInfoboxCreate = useCallback(async () => {
     if (!property) {
-      await useCreateNLSInfobox({ layerId });
+      await createNLSInfobox({ layerId });
     }
-  }, [layerId, property, useCreateNLSInfobox]);
+  }, [layerId, property, createNLSInfobox]);
 
   return {
     visibleItems,

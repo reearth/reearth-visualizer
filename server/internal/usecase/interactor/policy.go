@@ -30,15 +30,21 @@ func (i *Policy) GetWorkspacePolicy(ctx context.Context, wsid accountdomain.Work
 		return nil, err
 	}
 
-	res, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralPolicyCheckRequest(ws.ID(), project.VisibilityPrivate))
+	createPrivateProject, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralPolicyCheckRequest(ws.ID(), project.VisibilityPrivate))
 
 	if err != nil {
 		return nil, err
 	}
 
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(ws.ID()))
+	if err != nil {
+		return nil, err
+	}
+
 	return &policy.WorkspacePolicy{
-		WorkspaceID:                  wsid,
-		EnableToCreatePrivateProject: res.Allowed,
+		WorkspaceID:                    wsid,
+		EnableToCreatePrivateProject:   createPrivateProject.Allowed,
+		DisableOperationByOverUsedSeat: !operationAllowed.Allowed,
 	}, nil
 }
 

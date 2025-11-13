@@ -18,6 +18,7 @@ const (
 	ProjectSortField_PROJECT_SORT_FIELD_UNSPECIFIED = "id"
 	ProjectSortField_UPDATEDAT                      = "updatedat"
 	ProjectSortField_NAME                           = "name"
+	ProjectSortField_STARCOUNT                      = "starcount"
 )
 
 func ToProjectSortType(sort *pb.ProjectSort) *project.SortType {
@@ -33,6 +34,8 @@ func ToProjectSortType(sort *pb.ProjectSort) *project.SortType {
 		key = ProjectSortField_UPDATEDAT
 	case pb.ProjectSortField_NAME:
 		key = ProjectSortField_NAME
+	case pb.ProjectSortField_STARCOUNT:
+		key = ProjectSortField_STARCOUNT
 	default:
 		key = ProjectSortField_UPDATEDAT
 	}
@@ -76,13 +79,29 @@ func int32ToInt64(i *int32) *int64 {
 }
 
 func ToProjectPageInfo(info *usecasex.PageInfo) *pb.PageInfo {
-	return &pb.PageInfo{
+	if info == nil {
+		return &pb.PageInfo{
+			TotalCount:      0,
+			HasNextPage:     false,
+			HasPreviousPage: false,
+		}
+	}
+
+	result := &pb.PageInfo{
 		TotalCount:      info.TotalCount,
-		StartCursor:     info.EndCursor.StringRef(),
-		EndCursor:       info.EndCursor.StringRef(),
 		HasNextPage:     info.HasNextPage,
 		HasPreviousPage: info.HasPreviousPage,
 	}
+
+	if info.StartCursor != nil {
+		result.StartCursor = info.StartCursor.StringRef()
+	}
+
+	if info.EndCursor != nil {
+		result.EndCursor = info.EndCursor.StringRef()
+	}
+
+	return result
 }
 
 func ToInternalProject(ctx context.Context, p *project.Project, storytellings *storytelling.StoryList) *pb.Project {
@@ -163,13 +182,31 @@ func ToProjectMetadata(p *project.ProjectMetadata) *pb.ProjectMetadata {
 	if p.UpdatedAt() != nil {
 		updatedAt = timestamppb.New(*p.UpdatedAt())
 	}
+
 	return &pb.ProjectMetadata{
-		Id:           p.ID().String(),
-		ProjectId:    p.Project().String(),
-		WorkspaceId:  p.Workspace().String(),
-		Readme:       p.Readme(),
-		License:      p.License(),
-		Topics:       p.Topics(),
+		Id:          p.ID().String(),
+		ProjectId:   p.Project().String(),
+		WorkspaceId: p.Workspace().String(),
+		Readme:      p.Readme(),
+		License:     p.License(),
+		Topics: func() []string {
+			if p.Topics() == nil || len(*p.Topics()) == 0 {
+				return []string{}
+			}
+			return *p.Topics()
+		}(),
+		StarCount: func() *int64 {
+			if p.StarCount() == nil {
+				return lo.ToPtr(int64(0))
+			}
+			return p.StarCount()
+		}(),
+		StarredBy: func() []string {
+			if p.StarredBy() == nil || len(*p.StarredBy()) == 0 {
+				return []string{}
+			}
+			return *p.StarredBy()
+		}(),
 		ImportStatus: importStatus,
 		CreatedAt:    createdAt,
 		UpdatedAt:    updatedAt,

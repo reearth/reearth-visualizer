@@ -11,6 +11,9 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc GetProjectList(GetProjectListRequest) returns (GetProjectListResponse) {}
 
+  // Retrieves all projects with filtering options (no authentication required).
+  rpc GetAllProjects(GetAllProjectsRequest) returns (GetAllProjectsResponse) {}
+
   // Retrieves a specific project regardless of authentication.
   // Request headers: user-id: <User ID>
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
@@ -69,6 +72,11 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
       returns (DeleteByProjectAliasResponse) {}
+
+  // Update a project's star count
+  // Request headers: user-id: <User ID>
+  rpc PatchStarCount(PatchStarCountRequest)
+      returns (PatchStarCountResponse) {}
 }
 
 // Core Project messages
@@ -158,7 +166,7 @@ message ProjectMetadata {
   // Project license
   optional string license = 5;
   // Project topics
-  optional string topics = 6;
+  repeated string topics = 6;
 
   // Project import status — if PROCESSING, data should not be retrieved
   ProjectImportStatus import_status = 7;
@@ -166,6 +174,10 @@ message ProjectMetadata {
   google.protobuf.Timestamp created_at = 8;
   // ProjectMetadata updated date
   google.protobuf.Timestamp updated_at = 9;
+  // Project star_count
+  optional int64 star_count = 10;
+  // Project starred_by
+  repeated string starred_by = 11;
 }
 
 enum Visualizer {
@@ -194,6 +206,10 @@ enum PublishmentStatus {
   PUBLISHMENT_STATUS_PRIVATE = 3;
 }
 
+message Topics {
+  repeated string values = 1;
+}
+
 // Pagination
 message Pagination {
   optional int32 first = 1;
@@ -209,6 +225,7 @@ enum ProjectSortField {
   PROJECT_SORT_FIELD_UNSPECIFIED = 0;
   UPDATEDAT = 1;
   NAME = 2;
+  STARCOUNT = 3;
 }
 
 enum SortDirection {
@@ -243,6 +260,25 @@ message GetProjectListRequest {
   optional ProjectSort sort = 4;
   // Pagination info
   optional Pagination pagination = 5;
+}
+
+// Visibility filter for all projects
+enum ProjectVisibility {
+  PROJECT_VISIBILITY_PUBLIC = 0;  // Default visibility (public projects)
+  PROJECT_VISIBILITY_PRIVATE = 1; // Private projects
+}
+
+message GetAllProjectsRequest {
+  // Keyword search (searches in project name)
+  optional string keyword = 1;
+  // Sort options
+  optional ProjectSort sort = 2;
+  // Pagination info
+  optional Pagination pagination = 3;
+  // Visibility filter, defaults to public if not provided
+  optional ProjectVisibility visibility = 4;
+  // Topics filter - if provided, filters projects by these topics
+  repeated string topics = 5;
 }
 
 // Retrieves a project regardless of authentication.
@@ -307,7 +343,7 @@ message CreateProjectRequest {
   optional string license = 9;
 
   // Project topics
-  optional string topics = 10;
+  repeated string topics = 10;
 }
 
 // Update project fields.
@@ -363,7 +399,7 @@ message UpdateProjectMetadataRequest {
   // Project license
   optional string license = 3;
   // Project topics
-  optional string topics = 4;
+  optional Topics topics = 4;
 }
 
 // Deletes a project.
@@ -426,6 +462,12 @@ message ExportProjectRequest {
   string project_id = 1;
 }
 
+// Star and unstar a project
+message PatchStarCountRequest {
+  // Project alias
+  string project_alias = 1;
+}
+
 // Response messages
 message GetProjectResponse {
   // Project
@@ -440,6 +482,14 @@ message GetProjectListResponse {
   PageInfo page_info = 2;
   // TotalCount
   int32 total_count = 3;
+}
+
+// Response messages
+message GetAllProjectsResponse {
+  // Project List
+  repeated Project projects = 1;
+  // PageInfo
+  PageInfo page_info = 2;
 }
 
 // Response messages
@@ -520,4 +570,10 @@ message UpdateByProjectAliasResponse {
 message DeleteByProjectAliasResponse {
   // Project alias
   string project_alias = 1;
+}
+
+// Response messages
+message PatchStarCountResponse {
+  // Project
+  ProjectMetadata projectmetadata = 1;
 }

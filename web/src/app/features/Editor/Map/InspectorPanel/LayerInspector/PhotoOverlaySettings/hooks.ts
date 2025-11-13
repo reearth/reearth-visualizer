@@ -1,10 +1,18 @@
 import { filterVisibleItems } from "@reearth/app/ui/fields/utils";
-import { usePhotoOverlayFetcher } from "@reearth/services/api";
-import { Item, convert } from "@reearth/services/api/propertyApi/utils";
+import { usePhotoOverlayMutations } from "@reearth/services/api/photoOverlay";
+import type { Item } from "@reearth/services/api/property";
+import { convert } from "@reearth/services/api/property/utils";
+import type { PropertyFragmentFragment } from "@reearth/services/gql";
 import { useCallback, useMemo } from "react";
 
-export default ({ layerId, property }: { layerId: string; property?: any }) => {
-  const { useCreateNLSPhotoOverlay } = usePhotoOverlayFetcher();
+export default ({
+  layerId,
+  property
+}: {
+  layerId: string;
+  property?: PropertyFragmentFragment | null;
+}) => {
+  const { createNLSPhotoOverlay } = usePhotoOverlayMutations();
 
   const visibleItems: Item[] | undefined = useMemo(
     () => filterVisibleItems(convert(property)),
@@ -13,9 +21,9 @@ export default ({ layerId, property }: { layerId: string; property?: any }) => {
 
   const handlePhotoOverlayCreate = useCallback(async () => {
     if (!property) {
-      await useCreateNLSPhotoOverlay({ layerId });
+      await createNLSPhotoOverlay({ layerId });
     }
-  }, [layerId, property, useCreateNLSPhotoOverlay]);
+  }, [layerId, property, createNLSPhotoOverlay]);
 
   return {
     visibleItems,

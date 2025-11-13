@@ -8,8 +8,11 @@ import (
 	"fmt"
 	"net/url"
 	"os"
+	"slices"
 	"strings"
 	"time"
+
+	"github.com/reearth/reearthx/log"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -17,6 +20,7 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/alias"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/storytelling"
@@ -108,6 +112,81 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 		PageInfo: internalapimodel.ToProjectPageInfo(info),
 	}, nil
 
+}
+
+func (s server) GetAllProjects(ctx context.Context, req *pb.GetAllProjectsRequest) (*pb.GetAllProjectsResponse, error) {
+	uc := adapter.Usecases(ctx)
+	// Create a pagination object if one wasn't provided
+	if req.Pagination == nil {
+		defaultLimit := int32(100)
+		req.Pagination = &pb.Pagination{
+			First: &defaultLimit,
+		}
+	}
+
+	maxLimit := int64(100)
+	if req.Pagination.Limit != nil && *req.Pagination.Limit > maxLimit {
+		req.Pagination.Limit = &maxLimit
+	}
+
+	// Parse the sort type from the request
+	sort := internalapimodel.ToProjectSortType(req.Sort)
+
+	var pagination *usecasex.Pagination
+	var param *interfaces.ProjectListParam
+	if req.Pagination != nil && req.Pagination.Offset != nil && req.Pagination.Limit != nil {
+		param = &interfaces.ProjectListParam{
+			Offset: req.Pagination.Offset,
+			Limit:  req.Pagination.Limit,
+		}
+		pagination = nil
+	} else {
+		pagination = internalapimodel.ToProjectPagination(req.Pagination)
+		if pagination == nil {
+			defaultLimit := int32(100)
+			req.Pagination = &pb.Pagination{
+				First: &defaultLimit,
+			}
+			pagination = internalapimodel.ToProjectPagination(req.Pagination)
+		}
+	}
+
+	// Convert ProjectVisibility to string
+	var visibility *string
+	if req.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
+		v := "private"
+		visibility = &v
+		log.Infof("GetAllProjects: Filtering for private projects")
+	} else {
+		v := "public"
+		visibility = &v
+	}
+
+	// Handle topics filter
+	var topics *[]string
+	if len(req.Topics) > 0 {
+		topics = &req.Topics
+	}
+
+	res, info, err := uc.Project.FindAll(ctx, req.Keyword, sort, pagination, param, topics, visibility)
+
+	if err != nil {
+		log.Errorf("GetAllProjects: Database query failed: %v", err)
+		return nil, err
+	}
+
+	projects := make([]*pb.Project, 0, len(res))
+	for _, pj := range res {
+		project := internalapimodel.ToInternalProject(ctx, pj, nil)
+		if project != nil {
+			projects = append(projects, project)
+		}
+	}
+
+	return &pb.GetAllProjectsResponse{
+		Projects: projects,
+		PageInfo: internalapimodel.ToProjectPageInfo(info),
+	}, nil
 }
 
 func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.GetProjectResponse, error) {
@@ -222,7 +301,12 @@ func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest)
 		ProjectAlias: req.ProjectAlias,
 		Readme:       req.Readme,
 		License:      req.License,
-		Topics:       req.Topics,
+		Topics: func() *[]string {
+			if req.Topics == nil {
+				return nil
+			}
+			return &req.Topics
+		}(),
 	},
 		op,
 	)
@@ -287,7 +371,12 @@ func (s server) UpdateProjectMetadata(ctx context.Context, req *pb.UpdateProject
 		ID:      pid,
 		Readme:  req.Readme,
 		License: req.License,
-		Topics:  req.Topics,
+		Topics: func() *[]string {
+			if req.Topics == nil {
+				return nil
+			}
+			return &req.Topics.Values
+		}(),
 	}, op)
 	if err != nil {
 		return nil, err
@@ -439,9 +528,9 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, exportData, err := uc.Scene.ExportScene(ctx, prj)
+	sce, exportData, err := uc.Scene.ExportSceneData(ctx, prj)
 	if err != nil {
-		return nil, errors.New("Fail ExportScene :" + err.Error())
+		return nil, errors.New("Fail ExportSceneData :" + err.Error())
 	}
 
 	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)
@@ -453,9 +542,10 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	exportData["plugins"] = gqlmodel.ToPlugins(plugins)
 	exportData["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 	exportData["exportedInfo"] = map[string]string{
-		"host":      adapter.CurrentHost(ctx),
-		"project":   prj.ID().String(),
-		"timestamp": time.Now().Format(time.RFC3339),
+		"host":              adapter.CurrentHost(ctx),
+		"project":           prj.ID().String(),
+		"timestamp":         time.Now().Format(time.RFC3339),
+		"exportDataVersion": file.EXPORT_DATA_VERSION,
 	}
 	b, err := json.Marshal(exportData)
 	if err != nil {
@@ -609,4 +699,59 @@ func (s server) getSceneAndStorytelling(ctx context.Context, pj *project.Project
 	}
 
 	return internalapimodel.ToInternalProject(ctx, pj, sts), nil
+}
+
+func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountRequest) (*pb.PatchStarCountResponse, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+	usr := adapter.User(ctx)
+
+	if usr == nil {
+		return nil, errors.New("user not found in context")
+	}
+
+	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	if err != nil {
+		return nil, err
+	}
+
+	pid := pj.ID()
+
+	metadata, err := uc.ProjectMetadata.FindProjectByIDByAnyUser(ctx, pid)
+	if err != nil {
+		return nil, errors.New("failed to fetch project metadata: " + err.Error())
+	}
+
+	userID := usr.ID().String()
+	starredBy := []string{}
+	starCount := int64(0)
+
+	if metadata.StarredBy() != nil {
+		starredBy = *metadata.StarredBy()
+	}
+
+	if metadata.StarCount() != nil {
+		starCount = *metadata.StarCount()
+	}
+
+	if slices.Contains(starredBy, userID) {
+		starredBy = slices.Delete(starredBy, slices.Index(starredBy, userID), slices.Index(starredBy, userID)+1)
+		starCount = starCount - 1
+
+	} else {
+		starredBy = append(starredBy, userID)
+		starCount = starCount + 1
+
+	}
+
+	meta, err := uc.ProjectMetadata.UpdateProjectMetadataByAnyUser(ctx, interfaces.UpdateProjectMetadataByAnyUserParam{
+		ID:        pid,
+		StarCount: &starCount,
+		StarredBy: &starredBy,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &pb.PatchStarCountResponse{
+		Projectmetadata: internalapimodel.ToProjectMetadata(meta),
+	}, nil
 }

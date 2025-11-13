@@ -108,7 +108,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		}
 	}
 
-	return project.New().
+	p, err := project.New().
 		ID(pid).
 		Workspace(tid).
 		Name(d.Name).
@@ -136,4 +136,9 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
 		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }

@@ -1,4 +1,4 @@
-import { ValueTypes } from "@reearth/app/utils/value";
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { Camera } from "@reearth/core";
 import { useVisualizer } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
@@ -33,8 +33,8 @@ export default ({
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
@@ -70,10 +70,10 @@ export default ({
       schemaGroupId: string,
       propertyId: string,
       fieldId: string,
-      vt: any,
+      vt: ValueType,
       itemId?: string
     ) => {
-      return async (v?: any) => {
+      return async (v?: ValueTypes[ValueType]) => {
         await onPropertyUpdate?.(
           propertyId,
           schemaGroupId,

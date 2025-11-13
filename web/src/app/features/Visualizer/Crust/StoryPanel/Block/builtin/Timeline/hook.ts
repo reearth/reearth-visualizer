@@ -7,6 +7,10 @@ import {
 } from "@reearth/app/features/Visualizer/Crust/StoryPanel/utils";
 import { DEFAULT_BLOCK_PADDING } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper/hooks";
 import { getNewDate } from "@reearth/app/features/Visualizer/shared/hooks/useTimelineBlock";
+import type {
+  PaddingProp,
+  PanelProperty
+} from "@reearth/app/features/Visualizer/shared/types";
 import { TickEventCallback, TimelineCommitter } from "@reearth/core";
 import {
   ChangeEventHandler,
@@ -18,14 +22,17 @@ import {
   useState
 } from "react";
 
-import { PaddingProp } from "./Player";
-
 import { TimelineValues } from ".";
 
 export type Range = {
   start: number;
   mid: number;
   end: number;
+};
+
+export type TimelineBlockProperty = {
+  panel?: PanelProperty;
+  [key: string]: unknown;
 };
 
 type TimelineProps = {
@@ -38,7 +45,7 @@ type TimelineProps = {
   playMode?: string;
   timelineValues?: TimelineValues;
   padding?: PaddingProp;
-  property?: any;
+  property?: TimelineBlockProperty;
   timezone?: string;
   onPlay?: (committer: TimelineCommitter) => void;
   onSpeedChange?: (speed: number, committerId?: string) => void;

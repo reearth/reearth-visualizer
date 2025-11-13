@@ -60,7 +60,6 @@ MAINTAINER: 管理者
 OWNER: 所有者
 Update Member Role: メンバーの役割を更新
 Update: 更新する
-Successfully imported project!: プロジェクトのインポートに成功しました！
 Last Created: 最終作成日
 First Created: 最初の作成日
 Last Updated: 最終更新日
@@ -95,6 +94,16 @@ Description: 説明
 Write down your content: 内容を書き込む
 Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
 We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
+Download Error Log: エラーログをダウンロード
+Ok: 確認
+Import Failed: インポート失敗
+We were unable to import the project.: プロジェクトをインポートできませんでした。
+'Since this file was exported from the system, the structure should be valid. The issue may be caused by:': 'このファイルはシステムからエクスポートされたため、構造は有効であるはずです。問題の原因として考えられるのは以下の通りです:'
+File corruption or incomplete upload: ファイルの破損またはアップロードの不完全
+Version incompatibility: バージョンの互換性の問題
+Permission restrictions: 権限の制限
+A temporary system error: 一時的なシステムエラー
+Please check the issue and try importing again from the start.: 問題を確認し、最初からインポートを再試行してください。
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
 Change Visibility: 表示を変更する
@@ -102,6 +111,7 @@ Confirm visibility: 表示を確認する
 Project Visibility: プロジェクトの公開範囲
 Private projects are only available on paid plans. Please upgrade your plan.: 非公開プロジェクトは有料プランでのみ利用可能です。プランをアップグレードしてください。
 Starred: スター付き
+Successfully imported project!: プロジェクトのインポートに成功しました！
 No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
 Recover: 復元
 Delete: 削除
@@ -120,6 +130,8 @@ Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log out: ログアウト
+Desktop: デスクトップ
+Mobile: モバイル
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
@@ -273,7 +285,6 @@ Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
-Ok: 確認
 Congratulations! 🎊 Your story has been published: 🎊おめでとうございます！あなたのストーリーが公開されました。
 Congratulations! 🎊 Your scene has been published: 🎊おめでとうございます！あなたのシーンが公開されました。
 Congratulations! 🎊 Your story has been updated: 🎊おめでとうございます！あなたのストーリーが更新されました。
@@ -570,13 +581,9 @@ Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
 Zoom Level Editor: ズームレベルエディター
-Re:Earth: Re:Earth
-Visualizer is part of the: VisualizerはRe:Earthの一部です
-Re:Earth product ecosystem: Re:Earth製品エコシステム
-To continue, please log in with your Re:Earth account.: 続行するには、Re:Earthアカウントでログインしてください。
-Log In: ログイン
-Don't have an account?: アカウントをお持ちでないですか？
-Sign up on Re:Earth: Re:Earthにサインアップ
+Member Limit Exceeded: メンバー上限を超えました
+This workspace has exceeded the member limit for its current plan. Editing is temporarily disabled for all members. Please ask the workspace owner to remove extra members or upgrade the plan to restore access.: >-
+  このワークスペースは、現在のプランのメンバー上限を超えています。すべてのメンバーの編集が一時的に無効になっています。ワークスペースの所有者に、追加のメンバーを削除するか、プランをアップグレードしてアクセスを復元するよう依頼してください。
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。
@@ -593,26 +600,20 @@ Failed to delete block.: ブロックの削除に失敗しました。
 Block was successfully deleted.: ブロックの削除に成功しました。
 Failed to move block.: ブロックの移動に失敗しました。
 Block was successfully moved.: ブロックの移動に成功しました。
-Failed to remove the layer.: レイヤーの削除に失敗しました。
-Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to update the custom property schema.: カスタムプロパティスキーマの更新に失敗しました。
 Successfully updated the custom property schema!: カスタムプロパティスキーマの更新に成功しました！
 Failed to update the custom property title.: カスタムプロパティタイトルの更新に失敗しました
 Successfully updated the custom property title!: カスタムプロパティタイトルの更新に成功しました！
 Failed to remove the custom property.: カスタムプロパティの削除に失敗しました
 Successfully removed the custom property!: カスタムプロパティの削除に成功しました！
+Failed to remove the layer.: レイヤーの削除に失敗しました。
+Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
 Successfully updated a the layerStyle!: レイヤースタイルの更新に成功しました！
 Failed to delete the layer style.: レイヤースタイルの削除に失敗しました。
 Successfully deleted the layer style!: レイヤースタイルの削除に成功しました！
-Failed to update user password.: ユーザーパスワードの更新に失敗しました。
-Successfully updated user password!: ユーザーパスワードの更新に成功しました！
-Failed to delete user.: ユーザーの削除に失敗しました。
-Successfully delete user!: ユーザーの削除に成功しました！
-Failed to change language.: 言語の変更に失敗しました。
-Successfully updated user language!: ユーザーの言語が更新されました！
 Successfully enabled photo overlay: フォトオーバーレイが有効になりました
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
@@ -620,7 +621,11 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Successfully checked alias!: エイリアスを正常に確認しました！
+Failed to export project.: プロジェクトのエクスポートに失敗しました。
+Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to upload the file.: ファイルのアップロードに失敗しました。
+Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
+Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
@@ -646,10 +651,7 @@ Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
 Failed to update project metadata.: プロジェクトのメタデータの更新に失敗しました。
 Successfully updated project metadata!: プロジェクトのメタデータを正常に更新しました！
-Failed to export project.: プロジェクトのエクスポートに失敗しました。
-Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
-Failed to import project.: プロジェクトのインポートに失敗しました。
+Successfully checked alias!: エイリアスを正常に確認しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
 Failed to create story.: ストーリーの作成に失敗しました。
@@ -671,6 +673,12 @@ Failed to move page.: ページの移動に失敗しました。
 Page was successfully moved.: ページの移動に成功しました。
 Failed to update page.: ページの更新に失敗しました。
 Successfully updated a page!: ページの更新に成功しました！
+Failed to update user password.: ユーザーパスワードの更新に失敗しました。
+Successfully updated user password!: ユーザーパスワードの更新に成功しました！
+Failed to change language.: 言語の変更に失敗しました。
+Successfully updated user language!: ユーザーの言語が更新されました！
+Failed to delete user.: ユーザーの削除に失敗しました。
+Successfully delete user!: ユーザーの削除に成功しました！
 Failed to add widget.: ウィジェットの追加に失敗しました。
 Failed to update widget.: ウィジェットの更新に失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。

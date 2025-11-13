@@ -1,0 +1,22 @@
+FROM golang:1.24.4-alpine
+
+RUN apk add --update --no-cache git ca-certificates build-base curl
+
+# Install development tools
+RUN go install github.com/air-verse/air@v1.61.5 && \
+    go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.62.2
+
+WORKDIR /reearth-visualizer
+
+# Copy go mod files
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 8080
+
+# Run air for hot reload
+CMD ["air", "-c", ".air.toml"]

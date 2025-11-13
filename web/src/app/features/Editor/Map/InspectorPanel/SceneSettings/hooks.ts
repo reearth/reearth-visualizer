@@ -1,5 +1,5 @@
-import { NLSLayer } from "@reearth/services/api/layersApi/utils";
-import { Page } from "@reearth/services/api/storytellingApi/utils";
+import type { NLSLayer } from "@reearth/services/api/layer";
+import type { Page } from "@reearth/services/api/storytelling";
 import { useState, useEffect, useMemo, useCallback } from "react";
 
 type SettingProps = {

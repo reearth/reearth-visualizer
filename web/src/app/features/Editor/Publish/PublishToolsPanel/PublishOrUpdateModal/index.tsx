@@ -1,8 +1,6 @@
 import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
-import {
-  useProjectFetcher,
-  useStorytellingFetcher
-} from "@reearth/services/api";
+import { useProjectMutations } from "@reearth/services/api/project";
+import { useStoryMutations } from "@reearth/services/api/storytelling";
 import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n";
 import { FC, useCallback, useMemo, useState } from "react";
@@ -27,14 +25,8 @@ const PublishOrUpdateModal: FC<Props> = ({
 
   const [publishDone, setPublishDone] = useState(false);
 
-  const {
-    usePublishProject: publishProject,
-    useUpdatePublishProject: updatePublishProject
-  } = useProjectFetcher();
-  const {
-    usePublishStory: publishStory,
-    useUpdatePublishStory: updatePublishStory
-  } = useStorytellingFetcher();
+  const { publishProject, updatePublishProject } = useProjectMutations();
+  const { publishStory, updatePublishStory } = useStoryMutations();
 
   // search engine index
   const [searchEngineIndexEnabled, setSearchEngineIndexEnabled] = useState(

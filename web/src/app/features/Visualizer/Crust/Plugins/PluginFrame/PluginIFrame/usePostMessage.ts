@@ -3,11 +3,11 @@ import { RefObject, useCallback, useEffect, useRef } from "react";
 import type { Ref } from "../SafeIFrame";
 
 export function usePostMessage(iFrameRef: RefObject<Ref>, pending?: boolean) {
-  const messageQueue = useRef<any[]>([]);
+  const messageQueue = useRef<unknown[]>([]);
   const available = typeof pending !== "boolean" || !pending;
   const availableRef = useRef(available);
   const postMessage = useCallback(
-    (msg: any) => {
+    (msg: unknown) => {
       try {
         const message = JSON.parse(JSON.stringify(msg));
         if (iFrameRef.current && availableRef.current) {

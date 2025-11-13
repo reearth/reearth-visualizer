@@ -1,6 +1,7 @@
 import type { ComputedFeature, Layer, Spacing } from "@reearth/core";
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/property";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Infobox<BP = any> = {
   featureId?: string;
   property?: InfoboxProperty;
@@ -19,6 +20,7 @@ export type InfoboxProperty = {
   defaultContent?: "description" | "attributes";
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type InfoboxBlock<P = any> = {
   id: string;
   name?: string;
@@ -27,6 +29,7 @@ export type InfoboxBlock<P = any> = {
   extensionType?: "infoboxBlock";
   propertyId?: string;
   property?: P;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   propertyForPluginAPI?: any;
   propertyItemsForPluginBlock?: Item[];
 };
@@ -36,6 +39,7 @@ export type PluginInfoboxBlock = Omit<
   "propertyForPluginAPI" | "propertyItemsForPluginBlock"
 >;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type InfoboxBlockProps<P = any> = {
   block?: InfoboxBlock<P>;
   layer?: Layer;

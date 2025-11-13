@@ -21,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -207,26 +208,55 @@ func (i *Scene) addDefaultVisualizerTilesProperty(ctx context.Context, sceneID i
 	return prop, nil
 }
 
-func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, res *scene.Scene) error {
+func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneID, sce *scene.Scene) error {
+
+	widget, location, err := i.buidDataAttribution(ctx, sceneID)
+	if err != nil {
+		return err
+	}
+	// Type Desktop Attribution
+	sce.Widgets().Add(widget)
+
+	if location != nil {
+		// Type Desktop Location
+		sce.Widgets().Alignment().System(scene.WidgetAlignSystemTypeDesktop).Area(*location).Add(widget.ID(), -1)
+	}
+
+	widget, location, err = i.buidDataAttribution(ctx, sceneID)
+	if err != nil {
+		return err
+	}
+	// Type Mobile Attribution
+	sce.Widgets().Add(widget)
+
+	if location != nil {
+		// Type Mobile Location
+		sce.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(*location).Add(widget.ID(), -1)
+	}
+
+	return nil
+}
+
+func (i *Scene) buidDataAttribution(ctx context.Context, sceneID id.SceneID) (*scene.Widget, *scene.WidgetLocation, error) {
 	filter := Filter(sceneID)
 
 	pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, "reearth", "dataAttribution", &filter)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	prop, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	extended := false
 	floating := false
-	var location *plugin.WidgetLocation
+	var specifiedLocation *plugin.WidgetLocation
 	if widgetLayout := extension.WidgetLayout(); widgetLayout != nil {
 		extended = widgetLayout.Extended()
 		floating = widgetLayout.Floating()
-		location = widgetLayout.DefaultLocation()
+		specifiedLocation = widgetLayout.DefaultLocation()
 	}
 
 	widget, err := scene.NewWidget(
@@ -238,32 +268,30 @@ func (i *Scene) addDefaultExtensionWidget(ctx context.Context, sceneID id.SceneI
 		extended,
 	)
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	res.Widgets().Add(widget)
+	var location *scene.WidgetLocation
 	if !floating {
-		var loc scene.WidgetLocation
-		if location != nil {
-			loc = scene.WidgetLocation{
-				Zone:    scene.WidgetZoneType(location.Zone),
-				Section: scene.WidgetSectionType(location.Section),
-				Area:    scene.WidgetAreaType(location.Area),
+		if specifiedLocation != nil {
+			location = &scene.WidgetLocation{
+				Zone:    scene.WidgetZoneType(specifiedLocation.Zone),
+				Section: scene.WidgetSectionType(specifiedLocation.Section),
+				Area:    scene.WidgetAreaType(specifiedLocation.Area),
 			}
 		} else {
-			loc = scene.WidgetLocation{
+			location = &scene.WidgetLocation{
 				Zone:    scene.WidgetZoneOuter,
 				Section: scene.WidgetSectionLeft,
 				Area:    scene.WidgetAreaTop,
 			}
 		}
-		res.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
 	}
 
-	return nil
+	return widget, location, nil
 }
 
-func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, widget *scene.Widget, err error) {
+func (i *Scene) AddWidget(ctx context.Context, _type scene.WidgetAlignSystemType, sid id.SceneID, pid id.PluginID, eid id.PluginExtensionID, operator *usecase.Operator) (_ *scene.Scene, widget *scene.Widget, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -332,7 +360,7 @@ func (i *Scene) AddWidget(ctx context.Context, sid id.SceneID, pid id.PluginID, 
 				Area:    scene.WidgetAreaTop,
 			}
 		}
-		s.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
+		s.Widgets().Alignment().System(_type).Area(loc).Add(widget.ID(), -1)
 	}
 
 	err = i.sceneRepo.Save(ctx, s)
@@ -374,7 +402,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 	if widget == nil {
 		return nil, nil, rerror.ErrNotFound
 	}
-	_, location := scene.Widgets().Alignment().Find(param.WidgetID)
+	_, location := scene.Widgets().Alignment().System(param.Type).Find(param.WidgetID)
 
 	extension, err := i.getWidgePlugin(ctx, widget.Plugin(), widget.Extension(), nil)
 	if err != nil {
@@ -393,7 +421,7 @@ func (i *Scene) UpdateWidget(ctx context.Context, param interfaces.UpdateWidgetP
 		if param.Index != nil {
 			index = *param.Index
 		}
-		scene.Widgets().Alignment().Move(widget.ID(), location, index)
+		scene.Widgets().Alignment().System(param.Type).Move(widget.ID(), location, index)
 	}
 
 	if param.Extended != nil {
@@ -447,7 +475,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 		return nil, err
 	}
 
-	area := s.Widgets().Alignment().Area(param.Location)
+	area := s.Widgets().Alignment().System(param.Type).Area(param.Location)
 
 	if area == nil {
 		return nil, errors.New("invalid location")
@@ -483,7 +511,7 @@ func (i *Scene) UpdateWidgetAlignSystem(ctx context.Context, param interfaces.Up
 	return s, nil
 }
 
-func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
+func (i *Scene) RemoveWidget(ctx context.Context, _type scene.WidgetAlignSystemType, id id.SceneID, wid id.WidgetID, operator *usecase.Operator) (_ *scene.Scene, err error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -512,7 +540,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	}
 
 	ws.Remove(wid)
-	scene.Widgets().Alignment().Remove(wid)
+	scene.Widgets().Alignment().System(_type).Remove(wid)
 
 	err2 = i.propertyRepo.Remove(ctx, widget.Property())
 	if err2 != nil {
@@ -533,7 +561,7 @@ func (i *Scene) RemoveWidget(ctx context.Context, id id.SceneID, wid id.WidgetID
 	return scene, nil
 }
 
-func (i *Scene) ExportScene(ctx context.Context, prj *project.Project) (*scene.Scene, map[string]interface{}, error) {
+func (i *Scene) ExportSceneData(ctx context.Context, prj *project.Project) (*scene.Scene, map[string]interface{}, error) {
 
 	sce, err := i.sceneRepo.FindByProject(ctx, prj.ID())
 	if err != nil {
@@ -582,11 +610,16 @@ func Filter(s id.SceneID) repo.SceneFilter {
 	return repo.SceneFilter{Readable: id.SceneIDList{s}, Writable: id.SceneIDList{s}}
 }
 
-func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {
+func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]byte) (*scene.Scene, error) {
+	log.Infof("[ImportSceneData] workspace: %s project: %s scene: %s", sce.Workspace().String(), sce.Project().String(), sce.ID().String())
 
 	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
 		return nil, err
+	}
+
+	if sceneJSON.WidgetAlignSystems == nil {
+		return nil, errors.New("[Import WidgetAlignSystem] this is old data that is not supported")
 	}
 
 	filter := Filter(sce.ID())
@@ -594,7 +627,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 	if p, err := i.propertyRepo.Filtered(filter).FindByID(ctx, sce.Property()); err == nil {
 		builder.PropertyUpdate(ctx, p, i.propertyRepo, i.propertySchemaRepo, sceneJSON.Property)
 		for k, v := range sceneJSON.Plugins {
-			fmt.Println("Unsupported sceneJSON.Plugins ", k, v)
+			log.Errorf("[Import Error] Unsupported plugin: %s value: %v", k, v)
 		}
 	}
 
@@ -602,8 +635,10 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 
 		pluginID, extensionID, extension, err := i.getWidgePluginWithID(ctx, widgetJSON.PluginID, widgetJSON.ExtensionID, &filter)
 		if err != nil {
+			log.Errorf("[Import Error] closing file: %v", err)
 			return nil, err
 		}
+		fmt.Println("[Import Widget] scene plugin id:", pluginID.String(), "extension:", extensionID.String(), "name:", extension.Name())
 
 		// exclude official plugin
 		if pluginID.String() != "reearth" {
@@ -612,6 +647,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 
 		propW, err := i.addNewProperty(ctx, extension.Schema(), sce.ID(), &filter)
 		if err != nil {
+			log.Errorf("[Import Error] fail scene add property: %v", err)
 			return nil, err
 		}
 		builder.PropertyUpdate(ctx, propW, i.propertyRepo, i.propertySchemaRepo, widgetJSON.Property)
@@ -630,6 +666,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 			widgetJSON.Extended,
 		)
 		if err != nil {
+			log.Errorf("[Import Error] fail scene build widget: %v", err)
 			return nil, err
 		}
 
@@ -645,6 +682,7 @@ func (i *Scene) ImportScene(ctx context.Context, sce *scene.Scene, data *[]byte)
 	sce.SetUpdatedAt(time.Now())
 
 	if err := i.sceneRepo.Save(ctx, sce); err != nil {
+		log.Errorf("[Import Error] fail scene update: %v", err)
 		return nil, err
 	}
 

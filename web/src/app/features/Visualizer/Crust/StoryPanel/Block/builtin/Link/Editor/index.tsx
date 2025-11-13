@@ -4,6 +4,7 @@ import {
   InputField,
   ListField
 } from "@reearth/app/ui/fields";
+import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
@@ -22,8 +23,8 @@ export type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,

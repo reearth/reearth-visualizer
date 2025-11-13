@@ -1,5 +1,5 @@
 import { valueFromGQL, valueTypeFromGQL } from "@reearth/app/utils/value";
-import { toUi } from "@reearth/services/api/propertyApi/utils";
+import { toUi } from "@reearth/services/api/property/utils";
 import {
   PropertyFieldFragmentFragment,
   PropertyFragmentFragment,
@@ -79,7 +79,9 @@ const processPropertyGroups = (
   schema: PropertySchemaGroupFragmentFragment,
   parent: PropertyGroupFragmentFragment | null | undefined,
   original: PropertyGroupFragmentFragment | null | undefined
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any => {
+  // Property processing returns dynamic structure
   const allFields: Record<
     string,
     {

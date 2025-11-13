@@ -11,11 +11,14 @@ import (
 )
 
 type ProjectFilter struct {
-	Sort       *project.SortType
-	Keyword    *string
-	Pagination *usecasex.Pagination
-	Limit      *int64
-	Offset     *int64
+	Sort        *project.SortType
+	Keyword     *string
+	Pagination  *usecasex.Pagination
+	Limit       *int64
+	Offset      *int64
+	SearchField *string
+	Visibility  *string
+	Topics      []string
 }
 
 type Project interface {
@@ -31,6 +34,7 @@ type Project interface {
 	FindActiveByAlias(context.Context, string) (*project.Project, error)
 	FindByProjectAlias(context.Context, string) (*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
+	FindAll(context.Context, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
 	CheckProjectAliasUnique(context.Context, accountdomain.WorkspaceID, string, *id.ProjectID) error
 	CheckSceneAliasUnique(context.Context, string) error
 	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)

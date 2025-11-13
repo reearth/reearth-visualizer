@@ -2,6 +2,239 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.12.2 - 2025-11-05
+
+### Server
+
+#### 🚀 Features
+
+- Update server logic to handle empty topics arrays explicitly ([#1887](https://github.com/reearth/reearth-visualizer/pull/1887)) [`8f2210`](https://github.com/reearth/reearth-visualizer/commit/8f2210)
+- Use reearth-accounts api client pkg instead of using self implementation ([#1888](https://github.com/reearth/reearth-visualizer/pull/1888)) [`8b89ea`](https://github.com/reearth/reearth-visualizer/commit/8b89ea)
+- Split authtentication logic ([#1890](https://github.com/reearth/reearth-visualizer/pull/1890)) [`6c4fd2`](https://github.com/reearth/reearth-visualizer/commit/6c4fd2)
+- Modify sampler setting ([#1880](https://github.com/reearth/reearth-visualizer/pull/1880)) [`d2a37f`](https://github.com/reearth/reearth-visualizer/commit/d2a37f)
+- Migration date change ([#1893](https://github.com/reearth/reearth-visualizer/pull/1893)) [`dab7c6`](https://github.com/reearth/reearth-visualizer/commit/dab7c6)
+
+#### 🔧 Bug Fixes
+
+- Add deleted migration to allow following migrations to execute ([#1882](https://github.com/reearth/reearth-visualizer/pull/1882)) [`34642c`](https://github.com/reearth/reearth-visualizer/commit/34642c)
+
+#### Miscellaneous Tasks
+
+- Change log level when authentication is failed ([#1898](https://github.com/reearth/reearth-visualizer/pull/1898)) [`bda0ec`](https://github.com/reearth/reearth-visualizer/commit/bda0ec)
+- Migration date change ([#1896](https://github.com/reearth/reearth-visualizer/pull/1896)) [`3502b8`](https://github.com/reearth/reearth-visualizer/commit/3502b8)
+- Migration date change ([#1895](https://github.com/reearth/reearth-visualizer/pull/1895)) [`6420fb`](https://github.com/reearth/reearth-visualizer/commit/6420fb)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.12.2 ([#1901](https://github.com/reearth/reearth-visualizer/pull/1901)) [`264cfa`](https://github.com/reearth/reearth-visualizer/commit/264cfa)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.12.2 ([#1901](https://github.com/reearth/reearth-visualizer/pull/1901)) [`264cfa`](https://github.com/reearth/reearth-visualizer/commit/264cfa)
+
+## 1.0.0-beta.12.1 - 2025-10-29
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.12.1 ([#1891](https://github.com/reearth/reearth-visualizer/pull/1891)) [`a7a3d0`](https://github.com/reearth/reearth-visualizer/commit/a7a3d0)
+
+### Server
+
+#### 🚀 Features
+
+- Auth mode fix ([#1889](https://github.com/reearth/reearth-visualizer/pull/1889)) [`6b834b`](https://github.com/reearth/reearth-visualizer/commit/6b834b)
+- Refactoring the development environment [VIZ-2314] ([#1866](https://github.com/reearth/reearth-visualizer/pull/1866)) [`3d9bf1`](https://github.com/reearth/reearth-visualizer/commit/3d9bf1)
+- Add topics filter to endpoint to search for public projects [VIZ-2322] ([#1884](https://github.com/reearth/reearth-visualizer/pull/1884)) [`3b8a74`](https://github.com/reearth/reearth-visualizer/commit/3b8a74)
+- Migration to replace esri_world_topo with default in published data [VIZ-2213]  ([#1886](https://github.com/reearth/reearth-visualizer/pull/1886)) [`3b4b72`](https://github.com/reearth/reearth-visualizer/commit/3b4b72)
+
+#### 🔧 Bug Fixes
+
+- Delete workspaces from getme ([#1892](https://github.com/reearth/reearth-visualizer/pull/1892)) [`2c47cf`](https://github.com/reearth/reearth-visualizer/commit/2c47cf)
+- Attach middlware only when api group is private ([#1885](https://github.com/reearth/reearth-visualizer/pull/1885)) [`0e09b4`](https://github.com/reearth/reearth-visualizer/commit/0e09b4)
+
+## 1.0.0-beta.12.0 - 2025-10-22
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- WAS missing on published page [VIZ-2312] ([#1865](https://github.com/reearth/reearth-visualizer/pull/1865)) [`f66497`](https://github.com/reearth/reearth-visualizer/commit/f66497)
+
+#### ✨ Refactor
+
+- Improve error handling around plugin dispose [VIZ-2313] ([#1871](https://github.com/reearth/reearth-visualizer/pull/1871)) [`eccf80`](https://github.com/reearth/reearth-visualizer/commit/eccf80)
+
+#### 🧪 Testing
+
+- Update workflow to fix pipeline issues ([#1872](https://github.com/reearth/reearth-visualizer/pull/1872)) [`550a93`](https://github.com/reearth/reearth-visualizer/commit/550a93)
+- Added allure reporting to UI tests ([#1870](https://github.com/reearth/reearth-visualizer/pull/1870)) [`b1de69`](https://github.com/reearth/reearth-visualizer/commit/b1de69)
+- Added Google IAP authentication support for e2e tests ([#1867](https://github.com/reearth/reearth-visualizer/pull/1867)) [`9d4db5`](https://github.com/reearth/reearth-visualizer/commit/9d4db5)
+
+#### Miscellaneous Tasks
+
+- Bump up version to v1.0.0-beta.12.0 ([#1883](https://github.com/reearth/reearth-visualizer/pull/1883)) [`5fdd6a`](https://github.com/reearth/reearth-visualizer/commit/5fdd6a)
+- Upgrade core to 0.0.7-alpha.46 ([#1854](https://github.com/reearth/reearth-visualizer/pull/1854)) [`3cdc99`](https://github.com/reearth/reearth-visualizer/commit/3cdc99)
+
+### Server
+
+#### 🚀 Features
+
+- Add logic to update star count for project [VIZ-2272] ([#1869](https://github.com/reearth/reearth-visualizer/pull/1869)) [`e5c4a5`](https://github.com/reearth/reearth-visualizer/commit/e5c4a5)
+- Integrate reeath-accounts api for getMe ([#1863](https://github.com/reearth/reearth-visualizer/pull/1863)) [`a932a7`](https://github.com/reearth/reearth-visualizer/commit/a932a7)
+- Enable Cloud Trace [VIZ-2305] ([#1856](https://github.com/reearth/reearth-visualizer/pull/1856)) [`a7e347`](https://github.com/reearth/reearth-visualizer/commit/a7e347)
+- Add auth fail log [VIZ-2299] ([#1847](https://github.com/reearth/reearth-visualizer/pull/1847)) [`1f1157`](https://github.com/reearth/reearth-visualizer/commit/1f1157)
+
+#### 🔧 Bug Fixes
+
+- Fix migration for UpdateProjectMetadataFields ([#1881](https://github.com/reearth/reearth-visualizer/pull/1881)) [`1467b7`](https://github.com/reearth/reearth-visualizer/commit/1467b7)
+- Migration for topics ([#1879](https://github.com/reearth/reearth-visualizer/pull/1879)) [`39e73a`](https://github.com/reearth/reearth-visualizer/commit/39e73a)
+- Skip attachOpMiddleware for &#x2F;api routes ([#1878](https://github.com/reearth/reearth-visualizer/pull/1878)) [`511693`](https://github.com/reearth/reearth-visualizer/commit/511693)
+- Revert topic to string change  ([#1877](https://github.com/reearth/reearth-visualizer/pull/1877)) [`4d8910`](https://github.com/reearth/reearth-visualizer/commit/4d8910)
+- Revert topics to string from array in projectmetadata ([#1875](https://github.com/reearth/reearth-visualizer/pull/1875)) [`1ffd63`](https://github.com/reearth/reearth-visualizer/commit/1ffd63)
+- Skip account middleware ([#1868](https://github.com/reearth/reearth-visualizer/pull/1868)) [`6cfe0c`](https://github.com/reearth/reearth-visualizer/commit/6cfe0c)
+- Remove projectmetadata fields from project when it is created [VIZ-2293] ([#1861](https://github.com/reearth/reearth-visualizer/pull/1861)) [`88b7cb`](https://github.com/reearth/reearth-visualizer/commit/88b7cb)
+- Fix project import ([#1860](https://github.com/reearth/reearth-visualizer/pull/1860)) [`0cd503`](https://github.com/reearth/reearth-visualizer/commit/0cd503)
+- Update project metadata migration logic [VIZ-2293] ([#1859](https://github.com/reearth/reearth-visualizer/pull/1859)) [`6c9336`](https://github.com/reearth/reearth-visualizer/commit/6c9336)
+- Handle empty topics array in project metadata conversion [VIZ-2293] ([#1857](https://github.com/reearth/reearth-visualizer/pull/1857)) [`1e60c9`](https://github.com/reearth/reearth-visualizer/commit/1e60c9)
+- Change topics data structure to string array for Go model [VIZ-2293] ([#1840](https://github.com/reearth/reearth-visualizer/pull/1840)) [`275b4a`](https://github.com/reearth/reearth-visualizer/commit/275b4a)
+- Fix pagination for GetAllProjects to use limit and offset param [VIZ-2271] ([#1845](https://github.com/reearth/reearth-visualizer/pull/1845)) [`cd9c34`](https://github.com/reearth/reearth-visualizer/commit/cd9c34)
+
+#### Miscellaneous Tasks
+
+- Delete debug log ([#1864](https://github.com/reearth/reearth-visualizer/pull/1864)) [`d603d1`](https://github.com/reearth/reearth-visualizer/commit/d603d1)
+- Writing import project readme ([#1851](https://github.com/reearth/reearth-visualizer/pull/1851)) [`bb7af8`](https://github.com/reearth/reearth-visualizer/commit/bb7af8)
+
+### Misc
+
+
+### test
+
+#### 🔧 Bug Fixes
+
+- Delay apply for alias validation on create new project ([#1855](https://github.com/reearth/reearth-visualizer/pull/1855)) [`8169a5`](https://github.com/reearth/reearth-visualizer/commit/8169a5)
+
+### web, server
+
+#### 🚀 Features
+
+- Support mobile widget align system [VIZ-2078][VIZ-2079] ([#1768](https://github.com/reearth/reearth-visualizer/pull/1768)) [`712f02`](https://github.com/reearth/reearth-visualizer/commit/712f02)
+
+###
+
+## 1.0.0-beta.11.0 - 2025-10-08
+
+### Web
+
+#### 🚀 Features
+
+- Add warning banner on dashboard page [VIZ-2278] ([#1831](https://github.com/reearth/reearth-visualizer/pull/1831)) [`66ea98`](https://github.com/reearth/reearth-visualizer/commit/66ea98)
+- Add data attribution widget to plugin playground ([#1823](https://github.com/reearth/reearth-visualizer/pull/1823)) [`0c329e`](https://github.com/reearth/reearth-visualizer/commit/0c329e)
+
+#### 🔧 Bug Fixes
+
+- Clean up iss param ([#1850](https://github.com/reearth/reearth-visualizer/pull/1850)) [`cb4c1f`](https://github.com/reearth/reearth-visualizer/commit/cb4c1f)
+- Missing loading animation on project import when there&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s empty project list [VIZ-2289] [VIZ-2290] ([#1837](https://github.com/reearth/reearth-visualizer/pull/1837)) [`9b5d5e`](https://github.com/reearth/reearth-visualizer/commit/9b5d5e)
+
+#### ✨ Refactor
+
+- Hide user photo when loading failed ([#1844](https://github.com/reearth/reearth-visualizer/pull/1844)) [`ea2665`](https://github.com/reearth/reearth-visualizer/commit/ea2665)
+- Integrate workspace policy check to manage custom domain extension availability [VIZ-2268] ([#1826](https://github.com/reearth/reearth-visualizer/pull/1826)) [`63303c`](https://github.com/reearth/reearth-visualizer/commit/63303c)
+- Apply new project import API &amp; update UI&#x2F;UX [VIZ-2267] ([#1813](https://github.com/reearth/reearth-visualizer/pull/1813)) [`01e1cf`](https://github.com/reearth/reearth-visualizer/commit/01e1cf)
+
+#### 🧪 Testing
+
+- Added global auth ([#1839](https://github.com/reearth/reearth-visualizer/pull/1839)) [`0454a0`](https://github.com/reearth/reearth-visualizer/commit/0454a0)
+- Fixed e2e tests and enable ci&#x2F;cd ([#1833](https://github.com/reearth/reearth-visualizer/pull/1833)) [`b93acb`](https://github.com/reearth/reearth-visualizer/commit/b93acb)
+
+#### Miscellaneous Tasks
+
+- Bump up to 1.0.0-beta.11.0 ([#1853](https://github.com/reearth/reearth-visualizer/pull/1853)) [`b2091b`](https://github.com/reearth/reearth-visualizer/commit/b2091b)
+- Add script for scan yarn.lock, update reviewer ([#1824](https://github.com/reearth/reearth-visualizer/pull/1824)) [`74582c`](https://github.com/reearth/reearth-visualizer/commit/74582c)
+- Improve type definition &amp; clean up unused components &amp; format [VIZ-2246] ([#1822](https://github.com/reearth/reearth-visualizer/pull/1822)) [`46c87c`](https://github.com/reearth/reearth-visualizer/commit/46c87c)
+
+### Server
+
+#### 🚀 Features
+
+- Add export data version [VIZ-2295] ([#1843](https://github.com/reearth/reearth-visualizer/pull/1843)) [`0ba949`](https://github.com/reearth/reearth-visualizer/commit/0ba949)
+- Add split-import test ([#1842](https://github.com/reearth/reearth-visualizer/pull/1842)) [`b11ffb`](https://github.com/reearth/reearth-visualizer/commit/b11ffb)
+- Add internal api endpoint to get all projects without restriction to workspace ([#1834](https://github.com/reearth/reearth-visualizer/pull/1834)) [`fb1359`](https://github.com/reearth/reearth-visualizer/commit/fb1359)
+- Add photoURL on GetMe query ([#1836](https://github.com/reearth/reearth-visualizer/pull/1836)) [`5411b3`](https://github.com/reearth/reearth-visualizer/commit/5411b3)
+- Add migration to add new fields to project collection [VIZ-2269] ([#1830](https://github.com/reearth/reearth-visualizer/pull/1830)) [`e59b64`](https://github.com/reearth/reearth-visualizer/commit/e59b64)
+- When operation is not allowed, return false ([#1832](https://github.com/reearth/reearth-visualizer/pull/1832)) [`3c7c5a`](https://github.com/reearth/reearth-visualizer/commit/3c7c5a)
+- Allow access from storage trigger [VIZ-2232] ([#1825](https://github.com/reearth/reearth-visualizer/pull/1825)) [`84db2e`](https://github.com/reearth/reearth-visualizer/commit/84db2e)
+- Modifying the imported project [VIZ-2232] ([#1811](https://github.com/reearth/reearth-visualizer/pull/1811)) [`66bfe8`](https://github.com/reearth/reearth-visualizer/commit/66bfe8)
+
+#### 🔧 Bug Fixes
+
+- Delete debug code ([#1852](https://github.com/reearth/reearth-visualizer/pull/1852)) [`56ac81`](https://github.com/reearth/reearth-visualizer/commit/56ac81)
+- Fix debug code ([#1849](https://github.com/reearth/reearth-visualizer/pull/1849)) [`ac0884`](https://github.com/reearth/reearth-visualizer/commit/ac0884)
+- Debug log ([#1848](https://github.com/reearth/reearth-visualizer/pull/1848)) [`76a03d`](https://github.com/reearth/reearth-visualizer/commit/76a03d)
+- Debug for calling policy check ([#1846](https://github.com/reearth/reearth-visualizer/pull/1846)) [`72ffd2`](https://github.com/reearth/reearth-visualizer/commit/72ffd2)
+- Fix export project prop ([#1838](https://github.com/reearth/reearth-visualizer/pull/1838)) [`7a4791`](https://github.com/reearth/reearth-visualizer/commit/7a4791)
+- Add prop DisableOperationByOverUsedSeat on PolicyCheckPayload ([#1829](https://github.com/reearth/reearth-visualizer/pull/1829)) [`372e77`](https://github.com/reearth/reearth-visualizer/commit/372e77)
+- Delete validation of url geojson ([#1827](https://github.com/reearth/reearth-visualizer/pull/1827)) [`3f30b6`](https://github.com/reearth/reearth-visualizer/commit/3f30b6)
+
+### web,serer
+
+#### 🔧 Bug Fixes
+
+- Fixed typo import result log ([#1828](https://github.com/reearth/reearth-visualizer/pull/1828)) [`11a76e`](https://github.com/reearth/reearth-visualizer/commit/11a76e)
+
+## 1.0.0-beta.10.0 - 2025-09-17
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Memo ExtensionComponent ([#1806](https://github.com/reearth/reearth-visualizer/pull/1806)) [`8039df`](https://github.com/reearth/reearth-visualizer/commit/8039df)
+
+#### ✨ Refactor
+
+- Temporarily disable global modal ([#1820](https://github.com/reearth/reearth-visualizer/pull/1820)) [`569909`](https://github.com/reearth/reearth-visualizer/commit/569909)
+- Improve API hooks ([#1818](https://github.com/reearth/reearth-visualizer/pull/1818)) [`724371`](https://github.com/reearth/reearth-visualizer/commit/724371)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.10.0 ([#1821](https://github.com/reearth/reearth-visualizer/pull/1821)) [`22ed14`](https://github.com/reearth/reearth-visualizer/commit/22ed14)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Rename assets cors middleware and apply this middleware to reading all file ([#1814](https://github.com/reearth/reearth-visualizer/pull/1814)) [`18ccb5`](https://github.com/reearth/reearth-visualizer/commit/18ccb5)
+- Story publishing isn&[#39](https://github.com/reearth/reearth-visualizer/pull/39);t working ([#1812](https://github.com/reearth/reearth-visualizer/pull/1812)) [`8655ce`](https://github.com/reearth/reearth-visualizer/commit/8655ce)
+- Asset cors middleware ([#1810](https://github.com/reearth/reearth-visualizer/pull/1810)) [`f567b9`](https://github.com/reearth/reearth-visualizer/commit/f567b9)
+- Allow to access assets endpoint from custom domain ([#1802](https://github.com/reearth/reearth-visualizer/pull/1802)) [`df2d66`](https://github.com/reearth/reearth-visualizer/commit/df2d66)
+
+#### Miscellaneous Tasks
+
+- Add grpcurl doc ([#1714](https://github.com/reearth/reearth-visualizer/pull/1714)) [`883f56`](https://github.com/reearth/reearth-visualizer/commit/883f56)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update actions&#x2F;setup-go action to v6 ([#1816](https://github.com/reearth/reearth-visualizer/pull/1816)) [`d4774b`](https://github.com/reearth/reearth-visualizer/commit/d4774b)
+- Update actions&#x2F;cache action to v4 ([#1625](https://github.com/reearth/reearth-visualizer/pull/1625)) [`b7d049`](https://github.com/reearth/reearth-visualizer/commit/b7d049)
+- Update actions&#x2F;checkout action to v5 ([#1803](https://github.com/reearth/reearth-visualizer/pull/1803)) [`1966bd`](https://github.com/reearth/reearth-visualizer/commit/1966bd)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update actions&#x2F;setup-go action to v6 ([#1816](https://github.com/reearth/reearth-visualizer/pull/1816)) [`d4774b`](https://github.com/reearth/reearth-visualizer/commit/d4774b)
+- Update actions&#x2F;cache action to v4 ([#1625](https://github.com/reearth/reearth-visualizer/pull/1625)) [`b7d049`](https://github.com/reearth/reearth-visualizer/commit/b7d049)
+- Update actions&#x2F;checkout action to v5 ([#1803](https://github.com/reearth/reearth-visualizer/pull/1803)) [`1966bd`](https://github.com/reearth/reearth-visualizer/commit/1966bd)
+
+## 1.0.0-beta.9.4 - 2025-09-04
+
 ## 1.0.0-beta.9.3 - 2025-08-28
 
 ### Web

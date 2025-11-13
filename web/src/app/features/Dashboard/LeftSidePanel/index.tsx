@@ -13,11 +13,11 @@ import StarredProject from "../ContentsContainer/Projects/StarredProject";
 import { TabItems, Workspace } from "../type";
 
 import LogoWrapper from "./LogoWrapper";
-import { Profile } from "./profile";
+import Profile from "./Profile";
 
 type Props = {
   workspaces: Workspace[];
-  isPersonal?: boolean;
+  avatarURL?: string;
   tab?: string;
   currentWorkspace?: Workspace;
   topTabs?: TabItems[];
@@ -30,7 +30,7 @@ const LeftSidePanel: FC<Props> = ({
   bottomTabs,
   tab: currentTab,
   currentWorkspace,
-  isPersonal,
+  avatarURL,
   workspaces,
   onSignOut,
   onWorkspaceChange
@@ -43,7 +43,7 @@ const LeftSidePanel: FC<Props> = ({
         <Profile
           data-testid="sidebar-profile"
           currentUser={currentWorkspace?.name}
-          isPersonal={isPersonal}
+          avatarURL={avatarURL}
           currentWorkspace={currentWorkspace}
           workspaces={workspaces}
           onSignOut={onSignOut}

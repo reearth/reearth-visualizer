@@ -37,7 +37,7 @@ type Config struct {
 	GCPProject       string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
 	Profiler         string            `pp:",omitempty"`
 	Tracer           string            `pp:",omitempty"`
-	TracerSample     float64           `pp:",omitempty"`
+	TracerSample     float64           `default:"0.01" envconfig:"REEARTH_TRACER_SAMPLE" pp:",omitempty"`
 	Marketplace      MarketplaceConfig `pp:",omitempty"`
 	AssetBaseURL     string            `default:"http://localhost:8080/assets"`
 	Origins          []string          `pp:",omitempty"`
@@ -77,6 +77,15 @@ type Config struct {
 	HealthCheck HealthCheckConfig `pp:",omitempty"`
 
 	Visualizer VisualizerConfig `pp:",omitempty"`
+
+	// Accounts API Configuration
+	AccountsAPI AccountsAPIConfig `pp:",omitempty"`
+}
+
+type AccountsAPIConfig struct {
+	Enabled bool   `default:"false"`
+	Host    string `default:"http://localhost:8081"`
+	Timeout int    `default:"30"`
 }
 
 type HealthCheckConfig struct {
@@ -88,7 +97,8 @@ type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
 
 	// Policy Checker Configuration
-	Policy Policy `pp:",omitempty"`
+	Policy        Policy              `pp:",omitempty"`
+	DomainChecker DomainCheckerConfig `pp:",omitempty"`
 }
 
 type Policy struct {
@@ -102,6 +112,13 @@ type CheckerConfig struct {
 	Timeout  int `default:"30"`
 }
 
+type DomainCheckerConfig struct {
+	Type     string `default:"default"`
+	Endpoint string
+	Token    string
+	Timeout  int `default:"30"`
+}
+
 type InternalApiConfig struct {
 	Active bool   `default:"false" pp:",omitempty"`
 	Port   string `default:"50051" pp:",omitempty"`
@@ -109,11 +126,13 @@ type InternalApiConfig struct {
 }
 
 func ReadConfig(debug bool) (*Config, error) {
-	// load .env
-	if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
-		return nil, err
-	} else if err == nil {
-		log.Infof("config: .env loaded")
+	// load .env (skip if SKIP_DOTENV is set, e.g., when using docker-compose with env_file)
+	if os.Getenv("SKIP_DOTENV") == "" {
+		if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
+			return nil, err
+		} else if err == nil {
+			log.Infof("config: .env loaded")
+		}
 	}
 
 	var c Config
@@ -163,6 +182,10 @@ func (c *Config) Print() string {
 
 func (c *Config) UseMockAuth() bool {
 	return c.Dev && c.MockAuth
+}
+
+func (c *Config) UseReearthAccountAuth() bool {
+	return c.AccountsAPI.Enabled
 }
 
 func (c *Config) secrets() []string {

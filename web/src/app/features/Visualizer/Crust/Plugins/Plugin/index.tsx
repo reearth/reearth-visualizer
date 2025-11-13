@@ -20,7 +20,7 @@ export {
 } from "./ModalContainer";
 
 export type CommonProps = {
-  pluginProperty?: any; // Taken from Visualizer
+  pluginProperty?: unknown; // Taken from Visualizer
   pluginBaseUrl?: string; // Taken from Visualizer
   pluginModalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
@@ -44,7 +44,7 @@ export type Props = {
   extensionType?: string;
   autoResize?: "both" | "width-only" | "height-only";
   visible?: boolean;
-  property?: any;
+  property?: unknown;
   layer?: Layer;
   widget?: Widget;
   block?: Block;

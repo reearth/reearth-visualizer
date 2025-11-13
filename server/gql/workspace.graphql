@@ -3,6 +3,7 @@ type Workspace implements Node {
   name: String!
   members: [WorkspaceMember!]!
   personal: Boolean!
+  photoURL: String
   policyId: ID
   policy: Policy
   assets(
@@ -100,6 +101,7 @@ type CreateWorkspacePayload {
 type PolicyCheckPayload {
   workspaceId: ID!
   enableToCreatePrivateProject: Boolean!
+  disableOperationByOverUsedSeat: Boolean!
 }
 
 type UpdateWorkspacePayload {

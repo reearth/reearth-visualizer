@@ -70,7 +70,9 @@ describe("fetchAndZipFiles", () => {
         )
     };
     (JSZip as unknown as ReturnType<typeof vi.fn>).mockImplementation(
-      () => mockZipInstance
+      function () {
+        return mockZipInstance;
+      }
     );
 
     const mockResponse: MockResponse = {
@@ -83,10 +85,12 @@ describe("fetchAndZipFiles", () => {
     );
 
     (global.File as unknown as ReturnType<typeof vi.fn>).mockImplementation(
-      (content: BlobPart[], name: string) => ({
-        content,
-        name
-      })
+      function (content: BlobPart[], name: string) {
+        return {
+          content,
+          name
+        };
+      }
     );
   });
 
@@ -188,7 +192,9 @@ describe("fetchAndZipFiles", () => {
         .mockRejectedValue(new Error("Zip generation failed"))
     };
     (JSZip as unknown as ReturnType<typeof vi.fn>).mockImplementation(
-      () => mockZipInstance
+      function () {
+        return mockZipInstance;
+      }
     );
 
     const result = await fetchAndZipFiles(urls, "archive.zip");

@@ -16,6 +16,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
@@ -95,11 +96,13 @@ func initGateway() *gateway.Container {
 		return &gateway.Container{
 			File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
 			PolicyChecker: policy.NewPermissiveChecker(),
+			DomainChecker: domain.NewDefaultChecker(),
 		}
 	}
 	return &gateway.Container{
 		File:          *fr,
 		PolicyChecker: policy.NewPermissiveChecker(),
+		DomainChecker: domain.NewDefaultChecker(),
 	}
 }
 
@@ -244,16 +247,18 @@ type GraphQLRequest struct {
 }
 
 func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {
-	// RequestDump(requestBody)
-	return e.POST("/api/graphql").
+	response := e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", user).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+		Expect()
+	if response.Raw().StatusCode != http.StatusOK {
+		RequestDump(requestBody)
+	}
+
+	return response.Status(http.StatusOK).JSON()
 }
 
 func RequestQuery(t *testing.T, e *httpexpect.Expect, query string, user string) *httpexpect.Value {

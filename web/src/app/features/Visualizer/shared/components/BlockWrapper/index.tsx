@@ -1,13 +1,15 @@
 import { Collapse } from "@reearth/app/lib/reearth-ui";
 import PropertyItem from "@reearth/app/ui/fields/Properties";
 import { stopClickPropagation } from "@reearth/app/utils/events";
+import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
-import { Item } from "@reearth/services/api/propertyApi/utils";
+import type { Item } from "@reearth/services/api/property";
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode, createContext, memo } from "react";
 
 import Template from "../../../Crust/StoryPanel/Block/Template";
 import { FieldComponent } from "../../hooks/useFieldComponent";
+import type { BlockWrapperProperty } from "../../types";
 import SelectableArea from "../SelectableArea";
 
 import useHooks from "./hooks";
@@ -30,7 +32,7 @@ type Props = {
   isEditable?: boolean;
   children?: ReactNode;
   propertyId?: string;
-  property?: any;
+  property?: BlockWrapperProperty;
   dragHandleClassName?: string;
   propertyItemsForPluginBlock?: Item[];
   dndEnabled?: boolean;
@@ -46,8 +48,8 @@ type Props = {
     schemaItemId?: string,
     fieldId?: string,
     itemId?: string,
-    vt?: any,
-    v?: any
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
   ) => Promise<void>;
   onPropertyItemAdd?: (
     propertyId?: string,
@@ -147,7 +149,7 @@ const BlockWrapper: FC<Props> = ({
         onPropertyItemDelete={onPropertyItemDelete}
       >
         <Block
-          padding={generalBlockSettings?.padding?.value}
+          padding={generalBlockSettings?.padding?.value as Spacing | undefined}
           isEditable={isEditable}
           disableSelection={disableSelection}
         >
@@ -164,23 +166,24 @@ const BlockWrapper: FC<Props> = ({
           !isPluginBlock && (
             <EditorPanel onClick={stopClickPropagation}>
               <FieldsWrapper>
-                {Object.keys(defaultSettings).map((fieldId, idx) => {
-                  const field = defaultSettings[fieldId];
-                  return (
-                    <FieldComponent
-                      key={groupId + propertyId + idx}
-                      propertyId={propertyId}
-                      groupId={groupId}
-                      fieldId={fieldId}
-                      field={field}
-                      onPropertyUpdate={onPropertyUpdate}
-                      onPropertyItemAdd={onPropertyItemAdd}
-                      onPropertyItemMove={onPropertyItemMove}
-                      onPropertyItemDelete={onPropertyItemDelete}
-                      propertyNames={propertyNames}
-                    />
-                  );
-                })}
+                {defaultSettings &&
+                  Object.keys(defaultSettings).map((fieldId, idx) => {
+                    const field = defaultSettings[fieldId];
+                    return (
+                      <FieldComponent
+                        key={groupId + propertyId + idx}
+                        propertyId={propertyId}
+                        groupId={groupId}
+                        fieldId={fieldId}
+                        field={field}
+                        onPropertyUpdate={onPropertyUpdate}
+                        onPropertyItemAdd={onPropertyItemAdd}
+                        onPropertyItemMove={onPropertyItemMove}
+                        onPropertyItemDelete={onPropertyItemDelete}
+                        propertyNames={propertyNames}
+                      />
+                    );
+                  })}
               </FieldsWrapper>
             </EditorPanel>
           )}

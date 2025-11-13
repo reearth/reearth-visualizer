@@ -10,15 +10,18 @@ import (
 )
 
 type ProjectMetadataDocument struct {
-	ID           string
-	Workspace    string
-	Project      string
-	ImportStatus *string
-	Readme       *string
-	License      *string
-	Topics       *string
-	CreatedAt    *time.Time
-	UpdatedAt    *time.Time
+	ID              string
+	Workspace       string
+	Project         string
+	ImportStatus    *string
+	ImportResultLog *map[string]any
+	Readme          *string
+	License         *string
+	Topics          *[]string
+	StarCount       *int64
+	StarredBy       *[]string
+	CreatedAt       *time.Time
+	UpdatedAt       *time.Time
 }
 
 type ProjectMetadataConsumer = Consumer[*ProjectMetadataDocument, *project.ProjectMetadata]
@@ -39,15 +42,18 @@ func NewProjectMetadata(r *project.ProjectMetadata) (*ProjectMetadataDocument, s
 	}
 
 	return &ProjectMetadataDocument{
-		ID:           rid,
-		Workspace:    r.Workspace().String(),
-		Project:      r.Project().String(),
-		ImportStatus: importStatus,
-		Readme:       r.Readme(),
-		License:      r.License(),
-		Topics:       r.Topics(),
-		CreatedAt:    r.CreatedAt(),
-		UpdatedAt:    r.UpdatedAt(),
+		ID:              rid,
+		Workspace:       r.Workspace().String(),
+		Project:         r.Project().String(),
+		ImportStatus:    importStatus,
+		ImportResultLog: r.ImportResultLog(),
+		Readme:          r.Readme(),
+		License:         r.License(),
+		Topics:          r.Topics(),
+		StarCount:       r.StarCount(),
+		StarredBy:       r.StarredBy(),
+		CreatedAt:       r.CreatedAt(),
+		UpdatedAt:       r.UpdatedAt(),
 	}, rid
 
 }
@@ -74,15 +80,19 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		importStatus = &v
 	}
 
-	return project.NewProjectMetadata().
+	builder := project.NewProjectMetadata().
 		ID(rid).
 		Workspace(wid).
 		Project(pid).
 		ImportStatus(importStatus).
+		ImportResultLog(d.ImportResultLog).
 		Readme(d.Readme).
 		License(d.License).
 		Topics(d.Topics).
+		StarCount(d.StarCount).
+		StarredBy(d.StarredBy).
 		UpdatedAt(d.UpdatedAt).
-		CreatedAt(d.CreatedAt).
-		Build()
+		CreatedAt(d.CreatedAt)
+
+	return builder.Build()
 }

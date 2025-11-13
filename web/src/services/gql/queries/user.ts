@@ -18,6 +18,9 @@ export const GET_ME = gql(`
       email
       lang
       theme
+      metadata {
+        photoURL
+      }
       myWorkspace {
         id
         name
@@ -47,6 +50,7 @@ export const GET_ME = gql(`
           userId
           role
         }
+        photoURL
         policyId
         policy {
           id

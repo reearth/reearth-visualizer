@@ -1,6 +1,9 @@
-import { useWidgetsFetcher } from "@reearth/services/api";
+import { toWidgetAlignSystemType } from "@reearth/app/utils/value";
+import { useWidgetMutations } from "@reearth/services/api/widget";
 import { WidgetAreaState } from "@reearth/services/state";
 import { SetStateAction, useCallback } from "react";
+
+import { useWidgetsViewDevice } from "../../atoms";
 
 type Props = {
   sceneId?: string;
@@ -10,20 +13,23 @@ type Props = {
 };
 
 export default ({ sceneId, selectWidgetArea }: Props) => {
-  const { useUpdateWidgetAlignSystem } = useWidgetsFetcher();
+  const { updateWidgetAlignSystem } = useWidgetMutations();
+  const [widgetsViewDevice] = useWidgetsViewDevice();
 
   const handleWidgetAreaStateChange = useCallback(
     async (widgetAreaState?: WidgetAreaState) => {
       if (!sceneId || !widgetAreaState) return;
-      const results = await useUpdateWidgetAlignSystem(
+      const type = toWidgetAlignSystemType(widgetsViewDevice);
+      const results = await updateWidgetAlignSystem(
         widgetAreaState,
-        sceneId
+        sceneId,
+        type
       );
       if (results.status === "success") {
         selectWidgetArea(widgetAreaState);
       }
     },
-    [sceneId, useUpdateWidgetAlignSystem, selectWidgetArea]
+    [sceneId, updateWidgetAlignSystem, selectWidgetArea, widgetsViewDevice]
   );
 
   return {

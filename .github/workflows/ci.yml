@@ -10,8 +10,9 @@ jobs:
     outputs:
       web: ${{ steps.web.outputs.any_modified }}
       server: ${{ steps.server.outputs.any_modified }}
+      e2e: ${{ steps.e2e.outputs.any_modified }}
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           fetch-depth: 0
       - name: changed files for web
@@ -35,6 +36,14 @@ jobs:
             .github/workflows/build_server.yml
             .github/workflows/deploy_server_nightly.yml
             CHANGELOG.md
+
+      - name: changed files for e2e
+        id: e2e
+        uses: step-security/changed-files@95b56dadb92a30ca9036f16423fd3c088a71ee94 # v46.0.5
+        with:
+          files: |
+            e2e/
+            .github/workflows/playwright_ui_tests.yml
 
   ci-web:
     needs: prepare
@@ -142,15 +151,20 @@ jobs:
     needs: build-server
     uses: ./.github/workflows/deploy_server_nightly.yml
     secrets: inherit
-#skipping these tests for now, as we are having issues with the user accounts
-  # playwright-tests:
-  #   needs: deploy-web
-  #   uses: ./.github/workflows/playwright_ui_tests.yml
-  #   secrets: inherit
+  playwright-tests:
+    needs: deploy-web
+    uses: ./.github/workflows/playwright_ui_tests.yml
+    secrets: inherit
 
-  # playwright-tests-pr:
-  #   needs: deploy-web-pr
-  #   uses: ./.github/workflows/playwright_ui_tests.yml
-  #   with:
-  #     url: ${{ needs.deploy-web-pr.outputs.preview_url }}
-  #   secrets: inherit
+  playwright-tests-pr:
+    needs: deploy-web-pr
+    uses: ./.github/workflows/playwright_ui_tests.yml
+    with:
+      url: ${{ needs.deploy-web-pr.outputs.preview_url }}
+    secrets: inherit
+
+  playwright-tests-e2e-only:
+    needs: prepare
+    if: needs.prepare.outputs.e2e == 'true' && github.event_name == 'pull_request'
+    uses: ./.github/workflows/playwright_ui_tests.yml
+    secrets: inherit

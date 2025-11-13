@@ -1,7 +1,7 @@
 import { atom, useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import { WorkspaceMember } from "../gql";
+import { WorkspaceMember, GetAssetsQuery, Project } from "../gql";
 
 export * from "./devPlugins";
 
@@ -52,8 +52,8 @@ export type Workspace = {
   id: string;
   name: string;
   members?: WorkspaceMember[];
-  assets?: any;
-  projects?: any;
+  assets?: NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
+  projects?: Project[];
   personal?: boolean;
   policyId?: string | null;
   policy?: Policy | null;
