@@ -568,3 +568,240 @@ func TestProject_FindAll(t *testing.T) {
 		assert.Equal(t, pid2, got[1].ID())
 	})
 }
+
+func TestProject_FindAll_SecondarySort(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	
+	// Create projects with same updatedat to test secondary sort by _id
+	now := time.Now()
+	pid1 := id.NewProjectID() // Will be lexicographically first when sorted by string
+	pid2 := id.NewProjectID()
+	pid3 := id.NewProjectID()
+	
+	// Ensure pid1 < pid2 < pid3 lexicographically by creating them in order
+	// This way we can predict the secondary sort order
+	pidList := []id.ProjectID{pid1, pid2, pid3}
+	
+	// Insert projects with identical updatedat values
+	_, err := c.Collection("project").InsertMany(ctx, []any{
+		bson.M{
+			"id":          pid1.String(),
+			"workspace":   wid.String(),
+			"name":        "Project A",
+			"description": "Test project A",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now, // Same updatedat
+		},
+		bson.M{
+			"id":          pid2.String(),
+			"workspace":   wid.String(),
+			"name":        "Project B", 
+			"description": "Test project B",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now, // Same updatedat
+		},
+		bson.M{
+			"id":          pid3.String(),
+			"workspace":   wid.String(),
+			"name":        "Project C",
+			"description": "Test project C", 
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now, // Same updatedat
+		},
+	})
+	assert.NoError(t, err)
+
+	// Create project metadata with identical starcount values
+	pmid1 := id.NewProjectMetadataID()
+	pmid2 := id.NewProjectMetadataID()
+	pmid3 := id.NewProjectMetadataID()
+
+	_, err = c.Collection("projectmetadata").InsertMany(ctx, []any{
+		bson.M{
+			"id":        pmid1.String(),
+			"project":   pid1.String(),
+			"workspace": wid.String(),
+			"starcount": 5, // Same starcount
+		},
+		bson.M{
+			"id":        pmid2.String(),
+			"project":   pid2.String(),
+			"workspace": wid.String(),
+			"starcount": 5, // Same starcount
+		},
+		bson.M{
+			"id":        pmid3.String(),
+			"project":   pid3.String(),
+			"workspace": wid.String(),
+			"starcount": 5, // Same starcount
+		},
+	})
+	assert.NoError(t, err)
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("Default sort with secondary _id sort", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		offset := int64(0)
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+		}
+
+		// Run the query multiple times to ensure consistent ordering
+		var firstResults []id.ProjectID
+		for i := 0; i < 3; i++ {
+			got, pageInfo, err := r.FindAll(ctx, filter)
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 3, len(got))
+			
+			currentResults := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
+			
+			if i == 0 {
+				firstResults = currentResults
+			} else {
+				// Results should be identical across multiple runs (deterministic)
+				assert.Equal(t, firstResults, currentResults, "Results should be deterministic across multiple queries")
+			}
+		}
+		
+		// Results should be sorted by starcount DESC, then _id ASC
+		// Since all have same starcount, order should be determined by _id ASC
+		assert.Equal(t, pidList[0], firstResults[0], "First result should have smallest _id")
+		assert.Equal(t, pidList[1], firstResults[1], "Second result should have middle _id")  
+		assert.Equal(t, pidList[2], firstResults[2], "Third result should have largest _id")
+	})
+
+	t.Run("Sort by updatedat DESC with secondary _id sort", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		offset := int64(0)
+		sort := &project.SortType{Key: "updatedat", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+			Sort:       sort,
+		}
+
+		// Run the query multiple times to ensure consistent ordering
+		var firstResults []id.ProjectID
+		for i := 0; i < 3; i++ {
+			got, pageInfo, err := r.FindAll(ctx, filter)
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 3, len(got))
+			
+			currentResults := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
+			
+			if i == 0 {
+				firstResults = currentResults
+			} else {
+				// Results should be identical across multiple runs (deterministic)
+				assert.Equal(t, firstResults, currentResults, "Results should be deterministic across multiple queries")
+			}
+		}
+		
+		// Results should be sorted by updatedat DESC, then _id ASC
+		// Since all have same updatedat, order should be determined by _id ASC
+		assert.Equal(t, pidList[0], firstResults[0], "First result should have smallest _id")
+		assert.Equal(t, pidList[1], firstResults[1], "Second result should have middle _id")
+		assert.Equal(t, pidList[2], firstResults[2], "Third result should have largest _id")
+	})
+
+	t.Run("Sort by updatedat ASC with secondary _id sort", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		offset := int64(0)
+		sort := &project.SortType{Key: "updatedat", Desc: false}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 3, len(got))
+
+		// Results should be sorted by updatedat ASC, then _id ASC
+		// Since all have same updatedat, order should be determined by _id ASC
+		results := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
+		assert.Equal(t, pidList[0], results[0], "First result should have smallest _id")
+		assert.Equal(t, pidList[1], results[1], "Second result should have middle _id")
+		assert.Equal(t, pidList[2], results[2], "Third result should have largest _id")
+	})
+
+	t.Run("Sort by starcount DESC with secondary _id sort", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		offset := int64(0)
+		sort := &project.SortType{Key: "starcount", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 3, len(got))
+
+		// Results should be sorted by starcount DESC, then _id ASC
+		// Since all have same starcount, order should be determined by _id ASC
+		results := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
+		assert.Equal(t, pidList[0], results[0], "First result should have smallest _id")
+		assert.Equal(t, pidList[1], results[1], "Second result should have middle _id")
+		assert.Equal(t, pidList[2], results[2], "Third result should have largest _id")
+	})
+
+	t.Run("Sort by starcount ASC with secondary _id sort", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		offset := int64(0)
+		sort := &project.SortType{Key: "starcount", Desc: false}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 3, len(got))
+
+		// Results should be sorted by starcount ASC, then _id ASC  
+		// Since all have same starcount, order should be determined by _id ASC
+		results := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
+		assert.Equal(t, pidList[0], results[0], "First result should have smallest _id")
+		assert.Equal(t, pidList[1], results[1], "Second result should have middle _id")
+		assert.Equal(t, pidList[2], results[2], "Third result should have largest _id")
+	})
+}
