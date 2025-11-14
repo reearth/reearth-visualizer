@@ -41,17 +41,32 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			var u *user.User
 
-			mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
-			if err != nil {
-				uId, _ := user.IDFrom(authInfo.Sub)
-				mockUser = user.New().
-					ID(uId).
-					Name(authInfo.Name).
-					Email(authInfo.Email).
-					MustBuild()
+			// Check for debug user header first (for e2e tests)
+			if cfg.Debug {
+				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
+					uid, err := user.IDFrom(userID)
+					if err == nil {
+						u, err = cfg.AccountRepos.User.FindByID(ctx, uid)
+						if err != nil {
+							log.Warnfc(ctx, "auth: debug user not found: %s", userID)
+						}
+					}
+				}
 			}
 
-			u = mockUser
+			// Fallback to mock user if debug user not found
+			if u == nil {
+				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
+				if err != nil {
+					uId, _ := user.IDFrom(authInfo.Sub)
+					mockUser = user.New().
+						ID(uId).
+						Name(authInfo.Name).
+						Email(authInfo.Email).
+						MustBuild()
+				}
+				u = mockUser
+			}
 
 			if u != nil {
 				ctx = adapter.AttachUser(ctx, u)
