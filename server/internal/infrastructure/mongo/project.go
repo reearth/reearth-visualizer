@@ -650,7 +650,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 			HasPreviousPage: *pFilter.Offset > 0,
 		}
 
-		return c.Result, pageInfo, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+		return c.Result, pageInfo, nil
 	}
 
 	if pFilter.Pagination == nil {

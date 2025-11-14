@@ -1093,10 +1093,12 @@ func TestProject_FindAll_100Projects_SecondarySort(t *testing.T) {
 	t.Run("FindAll starcount sort with 100 projects", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(100)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: true}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -1120,10 +1122,12 @@ func TestProject_FindAll_100Projects_SecondarySort(t *testing.T) {
 	t.Run("FindAll updatedat ASC sort with 100 projects", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(100)
+		offset := int64(0)
 		sort := &project.SortType{Key: "updatedat", Desc: false}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
