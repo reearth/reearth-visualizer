@@ -966,7 +966,7 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 		assert.NoError(t, err)
 		assert.NotNil(t, pageInfo)
 		assert.True(t, len(got) > 0, "Should return some results")
-		
+
 		for i := 1; i < len(got); i++ {
 			assert.True(t, got[i-1].ID().String() > got[i].ID().String(),
 				"Results should be sorted by ID DESC as secondary sort")
@@ -1000,7 +1000,7 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 						"Should be sorted by updatedat DESC")
 				}
 			}
-			
+
 			lastTime = currentTime
 			lastID = currentID
 		}
