@@ -1250,3 +1250,477 @@ func TestProject_FindAll_100Projects_SecondarySort(t *testing.T) {
 		}
 	})
 }
+
+func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	now := time.Now()
+
+	// Create projects with mixed star counts including duplicates
+	pid1 := id.NewProjectID()
+	pid2 := id.NewProjectID()
+	pid3 := id.NewProjectID()
+	pid4 := id.NewProjectID()
+	pid5 := id.NewProjectID()
+
+	_ = []id.ProjectID{pid1, pid2, pid3, pid4, pid5}
+
+	// Insert projects with identical updatedat
+	_, err := c.Collection("project").InsertMany(ctx, []any{
+		bson.M{
+			"id":          pid1.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 1",
+			"description": "Test project 1",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+		bson.M{
+			"id":          pid2.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 2",
+			"description": "Test project 2",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+		bson.M{
+			"id":          pid3.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 3",
+			"description": "Test project 3",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+		bson.M{
+			"id":          pid4.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 4",
+			"description": "Test project 4",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+		bson.M{
+			"id":          pid5.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 5",
+			"description": "Test project 5",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now,
+		},
+	})
+	assert.NoError(t, err)
+
+	// Create project metadata with mixed star counts: 2, 2, 4, 2, 4
+	_, err = c.Collection("projectmetadata").InsertMany(ctx, []any{
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid1.String(),
+			"workspace": wid.String(),
+			"starcount": 2, // Two projects with starcount 2
+		},
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid2.String(),
+			"workspace": wid.String(),
+			"starcount": 2, // Two projects with starcount 2
+		},
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid3.String(),
+			"workspace": wid.String(),
+			"starcount": 4, // Two projects with starcount 4
+		},
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid4.String(),
+			"workspace": wid.String(),
+			"starcount": 2, // Two projects with starcount 2
+		},
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid5.String(),
+			"workspace": wid.String(),
+			"starcount": 4, // Two projects with starcount 4
+		},
+	})
+	assert.NoError(t, err)
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("Sort by starcount DESC with duplicate star counts", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "starcount", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 5, len(got))
+
+		results := make([]struct {
+			ID        string
+			StarCount int
+		}, len(got))
+
+		// Extract results for verification
+		for i, project := range got {
+			results[i].ID = project.ID().String()
+			
+			// Get starcount from metadata
+			var metadata bson.M
+			err := c.Collection("projectmetadata").FindOne(ctx, bson.M{"project": project.ID().String()}).Decode(&metadata)
+			assert.NoError(t, err)
+			results[i].StarCount = int(metadata["starcount"].(int32))
+		}
+
+		// Verify primary sort: starcount DESC (4, 4, 2, 2, 2)
+		expectedStarCounts := []int{4, 4, 2, 2, 2}
+		for i, result := range results {
+			assert.Equal(t, expectedStarCounts[i], result.StarCount,
+				"Position %d should have starcount %d", i, expectedStarCounts[i])
+		}
+
+		// Verify secondary sort within same starcount groups
+		// Projects with starcount 4 should be sorted by ID DESC
+		group4IDs := []string{results[0].ID, results[1].ID}
+		assert.True(t, group4IDs[0] > group4IDs[1],
+			"Within starcount 4 group, IDs should be sorted DESC")
+
+		// Projects with starcount 2 should be sorted by ID DESC  
+		group2IDs := []string{results[2].ID, results[3].ID, results[4].ID}
+		for i := 1; i < len(group2IDs); i++ {
+			assert.True(t, group2IDs[i-1] > group2IDs[i],
+				"Within starcount 2 group, IDs should be sorted DESC")
+		}
+	})
+
+	t.Run("Sort by starcount ASC with duplicate star counts", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "starcount", Desc: false}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 5, len(got))
+
+		results := make([]struct {
+			ID        string
+			StarCount int
+		}, len(got))
+
+		// Extract results for verification
+		for i, project := range got {
+			results[i].ID = project.ID().String()
+			
+			// Get starcount from metadata
+			var metadata bson.M
+			err := c.Collection("projectmetadata").FindOne(ctx, bson.M{"project": project.ID().String()}).Decode(&metadata)
+			assert.NoError(t, err)
+			results[i].StarCount = int(metadata["starcount"].(int32))
+		}
+
+		// Verify primary sort: starcount ASC (2, 2, 2, 4, 4)
+		expectedStarCounts := []int{2, 2, 2, 4, 4}
+		for i, result := range results {
+			assert.Equal(t, expectedStarCounts[i], result.StarCount,
+				"Position %d should have starcount %d", i, expectedStarCounts[i])
+		}
+
+		// Verify secondary sort within same starcount groups
+		// Projects with starcount 2 should be sorted by ID ASC (since primary sort is ASC)
+		group2IDs := []string{results[0].ID, results[1].ID, results[2].ID}
+		for i := 1; i < len(group2IDs); i++ {
+			assert.True(t, group2IDs[i-1] < group2IDs[i],
+				"Within starcount 2 group, IDs should be sorted ASC")
+		}
+
+		// Projects with starcount 4 should be sorted by ID ASC
+		group4IDs := []string{results[3].ID, results[4].ID}
+		assert.True(t, group4IDs[0] < group4IDs[1],
+			"Within starcount 4 group, IDs should be sorted ASC")
+	})
+
+	t.Run("Multiple query runs should be deterministic", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "starcount", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		// Run the same query multiple times
+		var firstResults []string
+		for run := 0; run < 3; run++ {
+			got, pageInfo, err := r.FindAll(ctx, filter)
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 5, len(got))
+
+			currentResults := make([]string, len(got))
+			for i, project := range got {
+				currentResults[i] = project.ID().String()
+			}
+
+			if run == 0 {
+				firstResults = currentResults
+			} else {
+				assert.Equal(t, firstResults, currentResults,
+					"Results with duplicate star counts should be deterministic (run %d)", run)
+			}
+		}
+	})
+}
+
+func TestProject_FindAll_SameStarCount_DifferentUpdatedat(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	baseTime := time.Now()
+
+	// Create projects with same star count but different updatedat values
+	pid1 := id.NewProjectID()
+	pid2 := id.NewProjectID()
+	pid3 := id.NewProjectID()
+
+	// Different updatedat times
+	time1 := baseTime.Add(-2 * time.Hour) // oldest
+	time2 := baseTime.Add(-1 * time.Hour) // middle
+	time3 := baseTime                     // newest
+
+	// Insert projects with different updatedat values
+	_, err := c.Collection("project").InsertMany(ctx, []any{
+		bson.M{
+			"id":          pid1.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 1",
+			"description": "Test project 1",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   time1, // oldest
+		},
+		bson.M{
+			"id":          pid2.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 2",
+			"description": "Test project 2",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   time2, // middle
+		},
+		bson.M{
+			"id":          pid3.String(),
+			"workspace":   wid.String(),
+			"name":        "Project 3",
+			"description": "Test project 3",
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   time3, // newest
+		},
+	})
+	assert.NoError(t, err)
+
+	// Create project metadata with identical star counts
+	_, err = c.Collection("projectmetadata").InsertMany(ctx, []any{
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid1.String(),
+			"workspace": wid.String(),
+			"starcount": 3, // Same starcount for all
+		},
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid2.String(),
+			"workspace": wid.String(),
+			"starcount": 3, // Same starcount for all
+		},
+		bson.M{
+			"id":        id.NewProjectMetadataID().String(),
+			"project":   pid3.String(),
+			"workspace": wid.String(),
+			"starcount": 3, // Same starcount for all
+		},
+	})
+	assert.NoError(t, err)
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("Sort by starcount DESC - should fallback to updatedat then ID", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "starcount", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 3, len(got))
+
+		// All should have same starcount
+		for _, project := range got {
+			var metadata bson.M
+			err := c.Collection("projectmetadata").FindOne(ctx, bson.M{"project": project.ID().String()}).Decode(&metadata)
+			assert.NoError(t, err)
+			assert.Equal(t, int32(3), metadata["starcount"], "All projects should have starcount 3")
+		}
+
+		// Should be sorted by updatedat DESC when starcount is same
+		// Order should be: pid3 (newest), pid2 (middle), pid1 (oldest)
+		assert.True(t, got[0].UpdatedAt().After(got[1].UpdatedAt()),
+			"First project should be newer than second")
+		assert.True(t, got[1].UpdatedAt().After(got[2].UpdatedAt()),
+			"Second project should be newer than third")
+
+		// Verify specific order
+		assert.Equal(t, pid3, got[0].ID(), "Newest project should be first")
+		assert.Equal(t, pid2, got[1].ID(), "Middle project should be second")
+		assert.Equal(t, pid1, got[2].ID(), "Oldest project should be third")
+	})
+
+	t.Run("Sort by updatedat DESC - explicit sort should work normally", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "updatedat", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 3, len(got))
+
+		// Should be sorted by updatedat DESC
+		// Order should be: pid3 (newest), pid2 (middle), pid1 (oldest)
+		assert.True(t, got[0].UpdatedAt().After(got[1].UpdatedAt()),
+			"First project should be newer than second")
+		assert.True(t, got[1].UpdatedAt().After(got[2].UpdatedAt()),
+			"Second project should be newer than third")
+
+		assert.Equal(t, pid3, got[0].ID(), "Newest project should be first")
+		assert.Equal(t, pid2, got[1].ID(), "Middle project should be second")
+		assert.Equal(t, pid1, got[2].ID(), "Oldest project should be third")
+	})
+
+	t.Run("Sort by updatedat ASC - should reverse the order", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "updatedat", Desc: false}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 3, len(got))
+
+		// Should be sorted by updatedat ASC
+		// Order should be: pid1 (oldest), pid2 (middle), pid3 (newest)
+		assert.True(t, got[0].UpdatedAt().Before(got[1].UpdatedAt()),
+			"First project should be older than second")
+		assert.True(t, got[1].UpdatedAt().Before(got[2].UpdatedAt()),
+			"Second project should be older than third")
+
+		assert.Equal(t, pid1, got[0].ID(), "Oldest project should be first")
+		assert.Equal(t, pid2, got[1].ID(), "Middle project should be second")
+		assert.Equal(t, pid3, got[2].ID(), "Newest project should be third")
+	})
+
+	t.Run("Same starcount different updatedat should be deterministic", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(10)
+		sort := &project.SortType{Key: "starcount", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		// Run the same query multiple times to ensure consistency
+		var firstResults []string
+		for run := 0; run < 3; run++ {
+			got, pageInfo, err := r.FindAll(ctx, filter)
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 3, len(got))
+
+			currentResults := make([]string, len(got))
+			for i, project := range got {
+				currentResults[i] = project.ID().String()
+			}
+
+			if run == 0 {
+				firstResults = currentResults
+			} else {
+				assert.Equal(t, firstResults, currentResults,
+					"Results should be deterministic with same starcount but different updatedat (run %d)", run)
+			}
+		}
+
+		// Verify the deterministic order is based on updatedat (newest first)
+		assert.Equal(t, pid3.String(), firstResults[0], "Newest project should consistently be first")
+		assert.Equal(t, pid2.String(), firstResults[1], "Middle project should consistently be second")
+		assert.Equal(t, pid1.String(), firstResults[2], "Oldest project should consistently be third")
+	})
+}
