@@ -470,10 +470,12 @@ func TestProject_FindAll(t *testing.T) {
 
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: true}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -524,10 +526,12 @@ func TestProject_FindAll(t *testing.T) {
 
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: false} // ASC order
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -861,9 +865,11 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 
 	t.Run("FindByWorkspaces with identical updatedat - should be deterministic", func(t *testing.T) {
 		limit := int64(100)
+		offset := int64(0)
 		filter := repo.ProjectFilter{
-			Sort:  &project.SortType{Key: "updatedat", Desc: true},
-			Limit: &limit,
+			Sort:   &project.SortType{Key: "updatedat", Desc: true},
+			Limit:  &limit,
+			Offset: &offset,
 		}
 
 		// Run the query multiple times to ensure consistent ordering
@@ -898,9 +904,11 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 
 	t.Run("FindByWorkspaces with identical starcount - should be deterministic", func(t *testing.T) {
 		limit := int64(100)
+		offset := int64(0)
 		filter := repo.ProjectFilter{
-			Sort:  &project.SortType{Key: "starcount", Desc: true},
-			Limit: &limit,
+			Sort:   &project.SortType{Key: "starcount", Desc: true},
+			Limit:  &limit,
+			Offset: &offset,
 		}
 
 		// Run the query multiple times
@@ -933,9 +941,11 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 
 	t.Run("FindByWorkspaces ASC sort with secondary id sort", func(t *testing.T) {
 		limit := int64(100)
+		offset := int64(0)
 		filter := repo.ProjectFilter{
-			Sort:  &project.SortType{Key: "updatedat", Desc: false},
-			Limit: &limit,
+			Sort:   &project.SortType{Key: "updatedat", Desc: false},
+			Limit:  &limit,
+			Offset: &offset,
 		}
 
 		got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
@@ -957,9 +967,11 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 
 	t.Run("FindByWorkspaces with pagination - basic functionality", func(t *testing.T) {
 		limit := int64(50)
+		offset := int64(0)
 		filter := repo.ProjectFilter{
-			Sort:  &project.SortType{Key: "updatedat", Desc: true},
-			Limit: &limit,
+			Sort:   &project.SortType{Key: "updatedat", Desc: true},
+			Limit:  &limit,
+			Offset: &offset,
 		}
 
 		got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
@@ -975,9 +987,11 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 
 	t.Run("FindByWorkspaces with sorting verification", func(t *testing.T) {
 		limit := int64(100)
+		offset := int64(0)
 		filter := repo.ProjectFilter{
-			Sort:  &project.SortType{Key: "updatedat", Desc: true},
-			Limit: &limit,
+			Sort:   &project.SortType{Key: "updatedat", Desc: true},
+			Limit:  &limit,
+			Offset: &offset,
 		}
 
 		got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
@@ -1332,10 +1346,12 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 	t.Run("Sort by starcount DESC with duplicate star counts", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: true}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -1384,10 +1400,12 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 	t.Run("Sort by starcount ASC with duplicate star counts", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: false}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -1436,10 +1454,12 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 	t.Run("Multiple query runs should be deterministic", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: true}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -1555,10 +1575,12 @@ func TestProject_FindAll_SameStarCount_DifferentUpdatedat(t *testing.T) {
 	t.Run("Sort by starcount DESC - should fallback to updatedat then ID", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: true}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -1591,10 +1613,12 @@ func TestProject_FindAll_SameStarCount_DifferentUpdatedat(t *testing.T) {
 	t.Run("Sort by updatedat DESC - explicit sort should work normally", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "updatedat", Desc: true}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -1618,10 +1642,12 @@ func TestProject_FindAll_SameStarCount_DifferentUpdatedat(t *testing.T) {
 	t.Run("Sort by updatedat ASC - should reverse the order", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "updatedat", Desc: false}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
@@ -1645,10 +1671,12 @@ func TestProject_FindAll_SameStarCount_DifferentUpdatedat(t *testing.T) {
 	t.Run("Same starcount different updatedat should be deterministic", func(t *testing.T) {
 		visibility := "public"
 		limit := int64(10)
+		offset := int64(0)
 		sort := &project.SortType{Key: "starcount", Desc: true}
 		filter := repo.ProjectFilter{
 			Visibility: &visibility,
 			Limit:      &limit,
+			Offset:     &offset,
 			Sort:       sort,
 		}
 
