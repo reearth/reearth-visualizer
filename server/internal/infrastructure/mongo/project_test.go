@@ -686,11 +686,11 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 			}
 		}
 
-		// Results should be sorted by starcount DESC, then _id ASC
-		// Since all have same starcount, order should be determined by _id ASC
-		assert.Equal(t, pidList[0], firstResults[0], "First result should have smallest _id")
+		// Results should be sorted by starcount DESC, then _id DESC
+		// Since all have same starcount, order should be determined by _id DESC
+		assert.Equal(t, pidList[2], firstResults[0], "First result should have largest _id")
 		assert.Equal(t, pidList[1], firstResults[1], "Second result should have middle _id")
-		assert.Equal(t, pidList[2], firstResults[2], "Third result should have largest _id")
+		assert.Equal(t, pidList[0], firstResults[2], "Third result should have smallest _id")
 	})
 
 	t.Run("Sort by updatedat DESC with secondary _id sort", func(t *testing.T) {
@@ -723,11 +723,11 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 			}
 		}
 
-		// Results should be sorted by updatedat DESC, then _id ASC
-		// Since all have same updatedat, order should be determined by _id ASC
-		assert.Equal(t, pidList[0], firstResults[0], "First result should have smallest _id")
+		// Results should be sorted by updatedat DESC, then _id DESC
+		// Since all have same updatedat, order should be determined by _id DESC
+		assert.Equal(t, pidList[2], firstResults[0], "First result should have largest _id")
 		assert.Equal(t, pidList[1], firstResults[1], "Second result should have middle _id")
-		assert.Equal(t, pidList[2], firstResults[2], "Third result should have largest _id")
+		assert.Equal(t, pidList[0], firstResults[2], "Third result should have smallest _id")
 	})
 
 	t.Run("Sort by updatedat ASC with secondary _id sort", func(t *testing.T) {
@@ -772,12 +772,12 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 		assert.NotNil(t, pageInfo)
 		assert.Equal(t, 3, len(got))
 
-		// Results should be sorted by starcount DESC, then _id ASC
-		// Since all have same starcount, order should be determined by _id ASC
+		// Results should be sorted by starcount DESC, then _id DESC
+		// Since all have same starcount, order should be determined by _id DESC
 		results := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
-		assert.Equal(t, pidList[0], results[0], "First result should have smallest _id")
+		assert.Equal(t, pidList[2], results[0], "First result should have largest _id")
 		assert.Equal(t, pidList[1], results[1], "Second result should have middle _id")
-		assert.Equal(t, pidList[2], results[2], "Third result should have largest _id")
+		assert.Equal(t, pidList[0], results[2], "Third result should have smallest _id")
 	})
 
 	t.Run("Sort by starcount ASC with secondary _id sort", func(t *testing.T) {

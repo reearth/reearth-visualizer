@@ -617,9 +617,9 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 			if pFilter.Sort.Desc {
 				sortOrder = -1
 			}
-			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}, {Key: "_id", Value: 1}}
+			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}, {Key: "_id", Value: sortOrder}}
 		} else {
-			sortDoc = bson.D{{Key: "starcount", Value: -1}, {Key: "_id", Value: 1}}
+			sortDoc = bson.D{{Key: "starcount", Value: -1}, {Key: "_id", Value: -1}}
 		}
 
 		collation := options.Collation{
@@ -975,7 +975,7 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 	} else {
 		// Default sort by starcount descending
 		sortStage := bson.M{
-			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}, {Key: "_id", Value: sortOrder}},
+			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}, {Key: "_id", Value: -1}},
 		}
 		pipeline = append(pipeline, sortStage)
 	}
@@ -1097,7 +1097,7 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	sortStage := bson.M{
 		"$sort": bson.D{
 			{Key: "sort_star_count", Value: sortOrder},
-			{Key: "_id", Value: 1},
+			{Key: "_id", Value: sortOrder},
 		},
 	}
 
