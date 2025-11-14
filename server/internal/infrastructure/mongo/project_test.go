@@ -860,8 +860,10 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 	r := NewProject(mongox.NewClientWithDatabase(c))
 
 	t.Run("FindByWorkspaces with identical updatedat - should be deterministic", func(t *testing.T) {
+		limit := int64(100)
 		filter := repo.ProjectFilter{
-			Sort: &project.SortType{Key: "updatedat", Desc: true},
+			Sort:  &project.SortType{Key: "updatedat", Desc: true},
+			Limit: &limit,
 		}
 
 		// Run the query multiple times to ensure consistent ordering
@@ -895,8 +897,10 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 	})
 
 	t.Run("FindByWorkspaces with identical starcount - should be deterministic", func(t *testing.T) {
+		limit := int64(100)
 		filter := repo.ProjectFilter{
-			Sort: &project.SortType{Key: "starcount", Desc: true},
+			Sort:  &project.SortType{Key: "starcount", Desc: true},
+			Limit: &limit,
 		}
 
 		// Run the query multiple times
@@ -928,8 +932,10 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 	})
 
 	t.Run("FindByWorkspaces ASC sort with secondary id sort", func(t *testing.T) {
+		limit := int64(100)
 		filter := repo.ProjectFilter{
-			Sort: &project.SortType{Key: "updatedat", Desc: false},
+			Sort:  &project.SortType{Key: "updatedat", Desc: false},
+			Limit: &limit,
 		}
 
 		got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
@@ -1012,8 +1018,10 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 			assert.NoError(t, err)
 		}
 
+		limit := int64(100)
 		filter := repo.ProjectFilter{
-			Sort: &project.SortType{Key: "updatedat", Desc: true},
+			Sort:  &project.SortType{Key: "updatedat", Desc: true},
+			Limit: &limit,
 		}
 
 		got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})

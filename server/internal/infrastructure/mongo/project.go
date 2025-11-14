@@ -242,7 +242,7 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 
 	// Prioritize offset-based pagination when offset is provided
 	if offset != nil && limit != nil && *limit > 0 {
-		// Use provided limit for offset pagination
+		// Use provided limit for offset pagination - no change needed
 	} else if cursor != nil && cursor.First != nil {
 		if limit == nil {
 			limit = new(int64)
@@ -257,11 +257,15 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 		// default
 		if limit == nil {
 			limit = new(int64)
+			*limit = 10
 		}
-		*limit = 10
 	}
 
-	*limit = *limit + 1
+	// Only add +1 for cursor-based pagination to check if there are more results
+	// For offset-based pagination, we can calculate hasNextPage using totalCount
+	if offset == nil {
+		*limit = *limit + 1
+	}
 
 	sortConfig := bson.D{
 		{Key: sortKey, Value: sortOrder},
@@ -393,9 +397,7 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 		hasNextPage = totalCount > currentOffset+currentLimit
 		hasPreviousPage = currentOffset > 0
 
-		if resultCount == limit && len(items) > 0 {
-			items = items[:len(items)-1]
-		}
+		// For offset pagination, no need to remove extra items since we don't add +1
 	} else {
 		if resultCount == limit {
 			switch sortOrder {
