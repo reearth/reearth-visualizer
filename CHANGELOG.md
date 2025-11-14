@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.0.0-beta.13.0 - 2025-11-13
+## 1.0.0-beta.13.0 - 2025-11-14
 
 ### Web
 
@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 
 #### 🔧 Bug Fixes
 
+- Update migration date ([#1922](https://github.com/reearth/reearth-visualizer/pull/1922)) [`27cf98`](https://github.com/reearth/reearth-visualizer/commit/27cf98)
 - Preserve updated_at when project is starred ([#1912](https://github.com/reearth/reearth-visualizer/pull/1912)) [`5161f5`](https://github.com/reearth/reearth-visualizer/commit/5161f5)
 - Allow user to star project belonging to another user ([#1905](https://github.com/reearth/reearth-visualizer/pull/1905)) [`91d29f`](https://github.com/reearth/reearth-visualizer/commit/91d29f)
 - Add support for sorting projects by star count in GetAllProjects gRPC call ([#1902](https://github.com/reearth/reearth-visualizer/pull/1902)) [`4d4477`](https://github.com/reearth/reearth-visualizer/commit/4d4477)
