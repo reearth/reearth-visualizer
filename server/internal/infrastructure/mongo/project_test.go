@@ -1397,7 +1397,7 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 		// Extract results for verification
 		for i, project := range got {
 			results[i].ID = project.ID().String()
-			
+
 			// Get starcount from metadata
 			var metadata bson.M
 			err := c.Collection("projectmetadata").FindOne(ctx, bson.M{"project": project.ID().String()}).Decode(&metadata)
@@ -1418,7 +1418,7 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 		assert.True(t, group4IDs[0] > group4IDs[1],
 			"Within starcount 4 group, IDs should be sorted DESC")
 
-		// Projects with starcount 2 should be sorted by ID DESC  
+		// Projects with starcount 2 should be sorted by ID DESC
 		group2IDs := []string{results[2].ID, results[3].ID, results[4].ID}
 		for i := 1; i < len(group2IDs); i++ {
 			assert.True(t, group2IDs[i-1] > group2IDs[i],
@@ -1449,7 +1449,7 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 		// Extract results for verification
 		for i, project := range got {
 			results[i].ID = project.ID().String()
-			
+
 			// Get starcount from metadata
 			var metadata bson.M
 			err := c.Collection("projectmetadata").FindOne(ctx, bson.M{"project": project.ID().String()}).Decode(&metadata)
