@@ -1097,7 +1097,7 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 	sortStage := bson.M{
 		"$sort": bson.D{
 			{Key: "sort_star_count", Value: sortOrder},
-			{Key: "_id", Value: sortOrder},
+			{Key: "_id", Value: 1},
 		},
 	}
 

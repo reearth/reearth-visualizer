@@ -574,17 +574,17 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 	ctx := context.Background()
 
 	wid := accountdomain.NewWorkspaceID()
-	
+
 	// Create projects with same updatedat to test secondary sort by _id
 	now := time.Now()
 	pid1 := id.NewProjectID() // Will be lexicographically first when sorted by string
 	pid2 := id.NewProjectID()
 	pid3 := id.NewProjectID()
-	
+
 	// Ensure pid1 < pid2 < pid3 lexicographically by creating them in order
 	// This way we can predict the secondary sort order
 	pidList := []id.ProjectID{pid1, pid2, pid3}
-	
+
 	// Insert projects with identical updatedat values
 	_, err := c.Collection("project").InsertMany(ctx, []any{
 		bson.M{
@@ -603,7 +603,7 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 		bson.M{
 			"id":          pid2.String(),
 			"workspace":   wid.String(),
-			"name":        "Project B", 
+			"name":        "Project B",
 			"description": "Test project B",
 			"deleted":     false,
 			"visibility":  "public",
@@ -617,7 +617,7 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 			"id":          pid3.String(),
 			"workspace":   wid.String(),
 			"name":        "Project C",
-			"description": "Test project C", 
+			"description": "Test project C",
 			"deleted":     false,
 			"visibility":  "public",
 			"visualizer":  "cesium",
@@ -675,9 +675,9 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 			assert.NoError(t, err)
 			assert.NotNil(t, pageInfo)
 			assert.Equal(t, 3, len(got))
-			
+
 			currentResults := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
-			
+
 			if i == 0 {
 				firstResults = currentResults
 			} else {
@@ -685,11 +685,11 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 				assert.Equal(t, firstResults, currentResults, "Results should be deterministic across multiple queries")
 			}
 		}
-		
+
 		// Results should be sorted by starcount DESC, then _id ASC
 		// Since all have same starcount, order should be determined by _id ASC
 		assert.Equal(t, pidList[0], firstResults[0], "First result should have smallest _id")
-		assert.Equal(t, pidList[1], firstResults[1], "Second result should have middle _id")  
+		assert.Equal(t, pidList[1], firstResults[1], "Second result should have middle _id")
 		assert.Equal(t, pidList[2], firstResults[2], "Third result should have largest _id")
 	})
 
@@ -712,9 +712,9 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 			assert.NoError(t, err)
 			assert.NotNil(t, pageInfo)
 			assert.Equal(t, 3, len(got))
-			
+
 			currentResults := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
-			
+
 			if i == 0 {
 				firstResults = currentResults
 			} else {
@@ -722,7 +722,7 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 				assert.Equal(t, firstResults, currentResults, "Results should be deterministic across multiple queries")
 			}
 		}
-		
+
 		// Results should be sorted by updatedat DESC, then _id ASC
 		// Since all have same updatedat, order should be determined by _id ASC
 		assert.Equal(t, pidList[0], firstResults[0], "First result should have smallest _id")
@@ -797,7 +797,7 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 		assert.NotNil(t, pageInfo)
 		assert.Equal(t, 3, len(got))
 
-		// Results should be sorted by starcount ASC, then _id ASC  
+		// Results should be sorted by starcount ASC, then _id ASC
 		// Since all have same starcount, order should be determined by _id ASC
 		results := []id.ProjectID{got[0].ID(), got[1].ID(), got[2].ID()}
 		assert.Equal(t, pidList[0], results[0], "First result should have smallest _id")
