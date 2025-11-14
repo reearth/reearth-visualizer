@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 
@@ -803,5 +804,449 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 		assert.Equal(t, pidList[0], results[0], "First result should have smallest _id")
 		assert.Equal(t, pidList[1], results[1], "Second result should have middle _id")
 		assert.Equal(t, pidList[2], results[2], "Third result should have largest _id")
+	})
+}
+
+func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	now := time.Now()
+
+	// Create 100 projects with identical primary sort values to test secondary sort by id
+	var projectDocs []any
+	var projectIDs []id.ProjectID
+
+	for i := 0; i < 100; i++ {
+		pid := id.NewProjectID()
+		projectIDs = append(projectIDs, pid)
+
+		projectDocs = append(projectDocs, bson.M{
+			"id":          pid.String(),
+			"workspace":   wid.String(),
+			"name":        fmt.Sprintf("Project %03d", i),
+			"description": fmt.Sprintf("Test project %d", i),
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now, // Same updatedat for all projects
+		})
+	}
+
+	// Insert all projects
+	_, err := c.Collection("project").InsertMany(ctx, projectDocs)
+	assert.NoError(t, err)
+
+	// Create project metadata with identical starcount values
+	var metadataDocs []any
+	for i, pid := range projectIDs {
+		pmid := id.NewProjectMetadataID()
+		metadataDocs = append(metadataDocs, bson.M{
+			"id":        pmid.String(),
+			"project":   pid.String(),
+			"workspace": wid.String(),
+			"starcount": 10,                                    // Same starcount for all projects
+			"topics":    []string{fmt.Sprintf("topic%d", i%5)}, // Vary topics for filtering tests
+		})
+	}
+
+	_, err = c.Collection("projectmetadata").InsertMany(ctx, metadataDocs)
+	assert.NoError(t, err)
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("FindByWorkspaces with identical updatedat - should be deterministic", func(t *testing.T) {
+		filter := repo.ProjectFilter{
+			Sort: &project.SortType{Key: "updatedat", Desc: true},
+		}
+
+		// Run the query multiple times to ensure consistent ordering
+		var firstResults []string
+		for run := 0; run < 3; run++ {
+			got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 100, len(got))
+
+			currentResults := make([]string, len(got))
+			for i, project := range got {
+				currentResults[i] = project.ID().String()
+			}
+
+			if run == 0 {
+				firstResults = currentResults
+			} else {
+				// Results should be identical across multiple runs (deterministic)
+				assert.Equal(t, firstResults, currentResults,
+					"Results should be deterministic across multiple queries (run %d)", run)
+			}
+		}
+
+		// Verify results are sorted by id as secondary sort (DESC order)
+		for i := 1; i < len(firstResults); i++ {
+			// Since updatedat is the same for all, they should be sorted by id DESC
+			assert.True(t, firstResults[i-1] > firstResults[i],
+				"Projects should be sorted by id DESC when updatedat is identical")
+		}
+	})
+
+	t.Run("FindByWorkspaces with identical starcount - should be deterministic", func(t *testing.T) {
+		filter := repo.ProjectFilter{
+			Sort: &project.SortType{Key: "starcount", Desc: true},
+		}
+
+		// Run the query multiple times
+		var firstResults []string
+		for run := 0; run < 3; run++ {
+			got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 100, len(got))
+
+			currentResults := make([]string, len(got))
+			for i, project := range got {
+				currentResults[i] = project.ID().String()
+			}
+
+			if run == 0 {
+				firstResults = currentResults
+			} else {
+				assert.Equal(t, firstResults, currentResults,
+					"Results should be deterministic for starcount sort (run %d)", run)
+			}
+		}
+
+		// Verify results are sorted by id as secondary sort (DESC order)
+		for i := 1; i < len(firstResults); i++ {
+			assert.True(t, firstResults[i-1] > firstResults[i],
+				"Projects should be sorted by id DESC when starcount is identical")
+		}
+	})
+
+	t.Run("FindByWorkspaces ASC sort with secondary id sort", func(t *testing.T) {
+		filter := repo.ProjectFilter{
+			Sort: &project.SortType{Key: "updatedat", Desc: false},
+		}
+
+		got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 100, len(got))
+
+		results := make([]string, len(got))
+		for i, project := range got {
+			results[i] = project.ID().String()
+		}
+
+		// Verify results are sorted by id as secondary sort (ASC order)
+		for i := 1; i < len(results); i++ {
+			assert.True(t, results[i-1] < results[i],
+				"Projects should be sorted by id ASC when updatedat is identical and sort is ASC")
+		}
+	})
+
+	t.Run("FindByWorkspaces with pagination - consistent across pages", func(t *testing.T) {
+		limit := int64(25)
+		filter := repo.ProjectFilter{
+			Sort: &project.SortType{Key: "updatedat", Desc: true},
+		}
+
+		var allResults []string
+
+		// Fetch all pages
+		for page := 0; page < 4; page++ {
+			offset := int64(page * 25)
+			filter.Offset = &offset
+			filter.Limit = &limit
+
+			got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 25, len(got))
+
+			for _, project := range got {
+				allResults = append(allResults, project.ID().String())
+			}
+		}
+
+		// Verify we got all 100 projects
+		assert.Equal(t, 100, len(allResults))
+
+		// Verify consistent sorting across pages
+		for i := 1; i < len(allResults); i++ {
+			assert.True(t, allResults[i-1] > allResults[i],
+				"Pagination should maintain consistent sort order across pages")
+		}
+
+		// Verify no duplicates
+		seen := make(map[string]bool)
+		for _, id := range allResults {
+			assert.False(t, seen[id], "Should not have duplicate project IDs across pages")
+			seen[id] = true
+		}
+	})
+
+	t.Run("FindByWorkspaces with mixed primary sort values", func(t *testing.T) {
+		// Update some projects to have different updatedat values
+		midIdx := len(projectIDs) / 2
+
+		// Set first half to older time
+		olderTime := now.Add(-1 * time.Hour)
+		for i := 0; i < midIdx; i++ {
+			_, err := c.Collection("project").UpdateOne(ctx,
+				bson.M{"id": projectIDs[i].String()},
+				bson.M{"$set": bson.M{"updatedat": olderTime}})
+			assert.NoError(t, err)
+		}
+
+		// Set second half to newer time
+		newerTime := now.Add(1 * time.Hour)
+		for i := midIdx; i < len(projectIDs); i++ {
+			_, err := c.Collection("project").UpdateOne(ctx,
+				bson.M{"id": projectIDs[i].String()},
+				bson.M{"$set": bson.M{"updatedat": newerTime}})
+			assert.NoError(t, err)
+		}
+
+		filter := repo.ProjectFilter{
+			Sort: &project.SortType{Key: "updatedat", Desc: true},
+		}
+
+		got, pageInfo, err := r.FindByWorkspaces(ctx, true, filter, []string{wid.String()}, []string{}, []string{wid.String()})
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 100, len(got))
+
+		// First 50 should be from newer time group
+		for i := 0; i < midIdx; i++ {
+			projectUpdatedat := got[i].UpdatedAt()
+			assert.True(t, projectUpdatedat.Equal(newerTime),
+				"First half should be from newer time group")
+		}
+
+		// Second 50 should be from older time group
+		for i := midIdx; i < len(got); i++ {
+			projectUpdatedat := got[i].UpdatedAt()
+			assert.True(t, projectUpdatedat.Equal(olderTime),
+				"Second half should be from older time group")
+		}
+
+		// Within each group, verify secondary sort by id DESC
+		newerGroupIds := make([]string, midIdx)
+		for i := 0; i < midIdx; i++ {
+			newerGroupIds[i] = got[i].ID().String()
+		}
+		for i := 1; i < len(newerGroupIds); i++ {
+			assert.True(t, newerGroupIds[i-1] > newerGroupIds[i],
+				"Within newer group, should be sorted by id DESC")
+		}
+
+		olderGroupIds := make([]string, midIdx)
+		for i := 0; i < midIdx; i++ {
+			olderGroupIds[i] = got[midIdx+i].ID().String()
+		}
+		for i := 1; i < len(olderGroupIds); i++ {
+			assert.True(t, olderGroupIds[i-1] > olderGroupIds[i],
+				"Within older group, should be sorted by id DESC")
+		}
+	})
+}
+
+func TestProject_FindAll_100Projects_SecondarySort(t *testing.T) {
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid := accountdomain.NewWorkspaceID()
+	now := time.Now()
+
+	// Create 100 projects with identical values to test secondary sort
+	var projectDocs []any
+	var projectIDs []id.ProjectID
+
+	for i := 0; i < 100; i++ {
+		pid := id.NewProjectID()
+		projectIDs = append(projectIDs, pid)
+
+		projectDocs = append(projectDocs, bson.M{
+			"id":          pid.String(),
+			"workspace":   wid.String(),
+			"name":        fmt.Sprintf("Public Project %03d", i),
+			"description": fmt.Sprintf("Public test project %d", i),
+			"deleted":     false,
+			"visibility":  "public",
+			"visualizer":  "cesium",
+			"coresupport": true,
+			"archived":    false,
+			"starred":     false,
+			"updatedat":   now, // Same updatedat for all
+		})
+	}
+
+	// Insert all projects
+	_, err := c.Collection("project").InsertMany(ctx, projectDocs)
+	assert.NoError(t, err)
+
+	// Create project metadata with identical starcount
+	var metadataDocs []any
+	for _, pid := range projectIDs {
+		pmid := id.NewProjectMetadataID()
+		metadataDocs = append(metadataDocs, bson.M{
+			"id":        pmid.String(),
+			"project":   pid.String(),
+			"workspace": wid.String(),
+			"starcount": 15, // Same starcount for all
+		})
+	}
+
+	_, err = c.Collection("projectmetadata").InsertMany(ctx, metadataDocs)
+	assert.NoError(t, err)
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("FindAll with 100 projects - default sort deterministic", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(100)
+		offset := int64(0)
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Offset:     &offset,
+		}
+
+		// Run multiple times to ensure deterministic results
+		var firstResults []string
+		for run := 0; run < 3; run++ {
+			got, pageInfo, err := r.FindAll(ctx, filter)
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 100, len(got))
+
+			currentResults := make([]string, len(got))
+			for i, project := range got {
+				currentResults[i] = project.ID().String()
+			}
+
+			if run == 0 {
+				firstResults = currentResults
+			} else {
+				assert.Equal(t, firstResults, currentResults,
+					"FindAll results should be deterministic (run %d)", run)
+			}
+		}
+	})
+
+	t.Run("FindAll starcount sort with 100 projects", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(100)
+		sort := &project.SortType{Key: "starcount", Desc: true}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 100, len(got))
+
+		// Verify secondary sort by _id DESC (since all starcount are same)
+		results := make([]string, len(got))
+		for i, project := range got {
+			results[i] = project.ID().String()
+		}
+
+		for i := 1; i < len(results); i++ {
+			assert.True(t, results[i-1] > results[i],
+				"Should be sorted by _id DESC when starcount is identical")
+		}
+	})
+
+	t.Run("FindAll updatedat ASC sort with 100 projects", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(100)
+		sort := &project.SortType{Key: "updatedat", Desc: false}
+		filter := repo.ProjectFilter{
+			Visibility: &visibility,
+			Limit:      &limit,
+			Sort:       sort,
+		}
+
+		got, pageInfo, err := r.FindAll(ctx, filter)
+		assert.NoError(t, err)
+		assert.NotNil(t, pageInfo)
+		assert.Equal(t, 100, len(got))
+
+		// Verify secondary sort by _id ASC (since sort is ASC and all updatedat are same)
+		results := make([]string, len(got))
+		for i, project := range got {
+			results[i] = project.ID().String()
+		}
+
+		for i := 1; i < len(results); i++ {
+			assert.True(t, results[i-1] < results[i],
+				"Should be sorted by _id ASC when updatedat is identical and sort is ASC")
+		}
+	})
+
+	t.Run("FindAll with pagination across 100 projects", func(t *testing.T) {
+		visibility := "public"
+		limit := int64(20)
+		sort := &project.SortType{Key: "updatedat", Desc: true}
+
+		var allResults []string
+
+		// Fetch 5 pages of 20 projects each
+		for page := 0; page < 5; page++ {
+			offset := int64(page * 20)
+			filter := repo.ProjectFilter{
+				Visibility: &visibility,
+				Limit:      &limit,
+				Offset:     &offset,
+				Sort:       sort,
+			}
+
+			got, pageInfo, err := r.FindAll(ctx, filter)
+			assert.NoError(t, err)
+			assert.NotNil(t, pageInfo)
+			assert.Equal(t, 20, len(got))
+
+			for _, project := range got {
+				allResults = append(allResults, project.ID().String())
+			}
+
+			// Check pagination info
+			if page < 4 {
+				assert.True(t, pageInfo.HasNextPage)
+			} else {
+				assert.False(t, pageInfo.HasNextPage)
+			}
+
+			if page > 0 {
+				assert.True(t, pageInfo.HasPreviousPage)
+			} else {
+				assert.False(t, pageInfo.HasPreviousPage)
+			}
+		}
+
+		// Verify we got all 100 projects
+		assert.Equal(t, 100, len(allResults))
+
+		// Verify consistent sorting across pages
+		for i := 1; i < len(allResults); i++ {
+			assert.True(t, allResults[i-1] > allResults[i],
+				"Pagination should maintain consistent sort order")
+		}
+
+		// Verify no duplicates
+		seen := make(map[string]bool)
+		for _, id := range allResults {
+			assert.False(t, seen[id], "Should not have duplicate project IDs")
+			seen[id] = true
+		}
 	})
 }
