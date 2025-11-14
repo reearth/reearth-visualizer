@@ -969,13 +969,13 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 			sortOrder = -1
 		}
 		sortStage := bson.M{
-			"$sort": bson.D{{Key: sortKey, Value: sortOrder}},
+			"$sort": bson.D{{Key: sortKey, Value: sortOrder}, {Key: "_id", Value: 1}},
 		}
 		pipeline = append(pipeline, sortStage)
 	} else {
 		// Default sort by starcount descending
 		sortStage := bson.M{
-			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}},
+			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}, {Key: "_id", Value: 1}},
 		}
 		pipeline = append(pipeline, sortStage)
 	}
@@ -1095,7 +1095,10 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		sortOrder = -1
 	}
 	sortStage := bson.M{
-		"$sort": bson.D{{Key: "sort_star_count", Value: sortOrder}},
+		"$sort": bson.D{
+			{Key: "sort_star_count", Value: sortOrder},
+			{Key: "_id", Value: 1},
+		},
 	}
 
 	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, sortStage}
