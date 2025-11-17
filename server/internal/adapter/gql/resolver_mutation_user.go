@@ -3,74 +3,82 @@ package gql
 import (
 	"context"
 
-	"github.com/reearth/reearth/server/internal/adapter"
+	accountsGqlUser "github.com/reearth/reearth-accounts/server/pkg/gqlclient/user"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/log"
 )
 
-func (r *mutationResolver) Signup(ctx context.Context, input gqlmodel.SignupInput) (*gqlmodel.SignupPayload, error) {
-	au := adapter.GetAuthInfo(ctx)
-	if au == nil {
-		return nil, interfaces.ErrOperationDenied
-	}
-
-	u, err := usecases(ctx).User.SignupOIDC(ctx, accountinterfaces.SignupOIDCParam{
-		Sub:         au.Sub,
-		AccessToken: au.Token,
-		Issuer:      au.Iss,
-		Email:       au.Email,
-		Name:        au.Name,
-		Secret:      input.Secret,
-		User: accountinterfaces.SignupUserParam{
-			Lang:        input.Lang,
-			Theme:       gqlmodel.ToTheme(input.Theme),
-			UserID:      gqlmodel.ToIDRef[accountdomain.User](input.UserID),
-			WorkspaceID: gqlmodel.ToIDRef[accountdomain.Workspace](input.WorkspaceID),
-		},
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.SignupPayload{User: gqlmodel.ToUser(u)}, nil
-}
-
 func (r *mutationResolver) UpdateMe(ctx context.Context, input gqlmodel.UpdateMeInput) (*gqlmodel.UpdateMePayload, error) {
-	res, err := usecases(ctx).User.UpdateMe(ctx, accountinterfaces.UpdateMeParam{
+	// Call reearth-accounts API
+	updateInput := accountsGqlUser.UpdateMeInput{
 		Name:                 input.Name,
 		Email:                input.Email,
-		Lang:                 input.Lang,
-		Theme:                gqlmodel.ToTheme(input.Theme),
 		Password:             input.Password,
 		PasswordConfirmation: input.PasswordConfirmation,
-	}, getAcOperator(ctx))
+	}
+
+	// Convert Lang if provided
+	if input.Lang != nil {
+		langStr := input.Lang.String()
+		updateInput.Lang = &langStr
+	}
+
+	// Convert Theme if provided
+	if input.Theme != nil {
+		themeStr := string(*input.Theme)
+		updateInput.Theme = &themeStr
+	}
+
+	userModel, err := r.AccountsAPIClient.UserRepo.UpdateMe(ctx, updateInput)
 	if err != nil {
 		return nil, err
 	}
 
-	return &gqlmodel.UpdateMePayload{Me: gqlmodel.ToMe(res)}, nil
+	// Convert the accounts user model to visualizer user domain model
+	u, err := buildAccountDomainUserFromAccountsUserModel(ctx, userModel)
+	if err != nil {
+		log.Errorfc(ctx, "failed to build user from accounts model: %v", err)
+		return nil, err
+	}
+
+	return &gqlmodel.UpdateMePayload{Me: gqlmodel.ToMe(u)}, nil
 }
 
-func (r *mutationResolver) RemoveMyAuth(ctx context.Context, input gqlmodel.RemoveMyAuthInput) (*gqlmodel.UpdateMePayload, error) {
-	res, err := usecases(ctx).User.RemoveMyAuth(ctx, input.Auth, getAcOperator(ctx))
+func buildAccountDomainUserFromAccountsUserModel(ctx context.Context, userModel *accountsUser.User) (*user.User, error) {
+	uId, _ := user.IDFrom(userModel.ID().String())
+	wid, _ := workspace.IDFrom(userModel.Workspace().String())
+
+	usermetadata := user.MetadataFrom(
+		userModel.Metadata().PhotoURL(),
+		userModel.Metadata().Description(),
+		userModel.Metadata().Website(),
+		userModel.Metadata().Lang(),
+		user.Theme(userModel.Metadata().Theme()),
+	)
+
+	// Convert auths to user.Auth slice
+	auths := make([]user.Auth, 0, len(userModel.Auths()))
+	for _, authStr := range userModel.Auths() {
+		auths = append(auths, user.AuthFrom(authStr.String()))
+	}
+
+	u, err := user.New().
+		ID(uId).
+		Name(userModel.Name()).
+		Alias(userModel.Alias()).
+		Email(userModel.Email()).
+		Metadata(usermetadata).
+		Workspace(wid).
+		Auths(auths).
+		Build()
+
 	if err != nil {
+		log.Errorfc(ctx, "failed to build user: %v", err)
 		return nil, err
 	}
 
-	return &gqlmodel.UpdateMePayload{Me: gqlmodel.ToMe(res)}, nil
-}
-
-func (r *mutationResolver) DeleteMe(ctx context.Context, input gqlmodel.DeleteMeInput) (*gqlmodel.DeleteMePayload, error) {
-	uid, err := gqlmodel.ToID[accountdomain.User](input.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := usecases(ctx).User.DeleteMe(ctx, uid, getAcOperator(ctx)); err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.DeleteMePayload{UserID: input.UserID}, nil
+	return u, nil
 }

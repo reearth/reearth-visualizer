@@ -87,12 +87,12 @@ dev.bat test-docker
 
 ### Quick Reference
 
-| Command                                    | Description                                         |
-| ------------------------------------------ | --------------------------------------------------- |
-| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data |
+| Command                                    | Description                                           |
+| ------------------------------------------ | ----------------------------------------------------- |
+| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data   |
 | `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive) |
-| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container               |
-| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                       |
+| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                 |
+| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                         |
 
 ## 🔐 Authentication Modes
 
@@ -131,29 +131,6 @@ REEARTH_WEB_AUTH_PROVIDER=auth0
 ```bash
 REEARTH_MOCKAUTH=false
 REEARTH_ACCOUNTSAPI_ENABLED=true
-```
-
-### 3. Auth0 Direct Access Mode (Deprecated)
-
-Directly connects to Auth0 using the configured credentials.  
-🚨 This mode is deprecated and will be phased out in the future as the system transitions to [Re:Earth Accounts](https://github.com/reearth/reearth-accounts).
-
-**Change: web/.env**
-
-```bash
-REEARTH_WEB_AUTH_PROVIDER=auth0
-```
-
-**Change: server/.env.docker**
-
-```bash
-REEARTH_MOCKAUTH=false
-REEARTH_ACCOUNTSAPI_ENABLED=false
-
-REEARTH_AUTH0_DOMAIN=
-REEARTH_AUTH0_AUDIENCE=
-REEARTH_AUTH0_CLIENTID=
-REEARTH_AUTH0_CLIENTSECRET=
 ```
 
 ### 📢 When using an Identity Provider
