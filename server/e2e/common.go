@@ -38,7 +38,9 @@ var (
 	fr *gateway.File
 
 	disabledAuthConfig = &config.Config{
-		Origins: []string{"https://example.com"},
+		Origins:  []string{"https://example.com"},
+		Dev:      true,
+		MockAuth: true,
 		AuthSrv: config.AuthSrvConfig{
 			Disabled: true,
 		},

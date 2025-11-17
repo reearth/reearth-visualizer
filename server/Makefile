@@ -216,8 +216,7 @@ init:
 mockuser:
 	curl -s -D - -o /dev/null \
 		-H 'Content-Type: application/json' \
-		-d '{"email": "mock@example.com", "username": "Mock User"}' \
-		http://localhost:8080/api/signup | head -n 1
+		http://localhost:8080/api/mockuser | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \
