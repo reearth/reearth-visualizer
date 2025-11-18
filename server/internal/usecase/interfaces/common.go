@@ -2,8 +2,6 @@ package interfaces
 
 import (
 	"errors"
-
-	accounts_interfaces "github.com/reearth/reearth-accounts/server/internal/usecase/interfaces"
 )
 
 type ListOperation string
@@ -33,6 +31,6 @@ type Container struct {
 	Scene           Scene
 	StoryTelling    Storytelling
 	Style           Style
-	User            accounts_interfaces.User
-	Workspace       accounts_interfaces.Workspace
+	// User            accounts_interfaces.User
+	// Workspace       accounts_interfaces.Workspace
 }

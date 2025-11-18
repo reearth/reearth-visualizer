@@ -14,7 +14,7 @@ func (r *Resolver) Project() ProjectResolver {
 type projectResolver struct{ *Resolver }
 
 func (r *projectResolver) Workspace(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Workspace, error) {
-	return dataloaders(ctx).Workspace.Load(obj.WorkspaceID)
+	return nil, nil
 }
 
 func (r *projectResolver) Scene(ctx context.Context, obj *gqlmodel.Project) (*gqlmodel.Scene, error) {

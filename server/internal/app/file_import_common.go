@@ -166,16 +166,16 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 				// 	log.Errorf("import project FindByID err: %v", err)
 				// 	return err
 				// }
-				if u != nil {
-					op, err := generateOperator(ctx, cfg, u)
-					if err != nil {
-						log.Errorf("import project generateOperator err: %v", err)
-						return err
-					}
-
-					ctx = adapter.AttachUser(ctx, u)
-					ctx = adapter.AttachOperator(ctx, op)
-				}
+// 				if u != nil {
+// 					op, err := generateOperator(ctx, cfg, u)
+// 					if err != nil {
+// 						log.Errorf("import project generateOperator err: %v", err)
+// 						return err
+// 					}
+// 
+// 					ctx = adapter.AttachUser(ctx, u)
+// 					ctx = adapter.AttachOperator(ctx, op)
+// 				}
 			}
 
 			op := adapter.Operator(ctx)

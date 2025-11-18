@@ -3,21 +3,20 @@ package http
 import (
 	"context"
 
-	accounts_interfaces "github.com/reearth/reearth-accounts/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth-accounts/server/pkg/user"
-	"github.com/reearth/reearth/server/internal/adapter"
-
 	"golang.org/x/text/language"
 )
 
+// UserController is currently not used as User/Workspace usecases are commented out
+// This will be refactored when the migration from reearthx to reearth-accounts is complete
 type UserController struct {
-	usecase accounts_interfaces.User
+	// usecase accounts_interfaces.User
 }
 
-func NewUserController(usecase accounts_interfaces.User) *UserController {
+func NewUserController() *UserController {
 	return &UserController{
-		usecase: usecase,
+		// usecase: usecase,
 	}
 }
 
@@ -57,74 +56,37 @@ type SignupOutput struct {
 }
 
 func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupOutput, error) {
-	if input.Name == "" && input.Username != "" {
-		input.Name = input.Username
-	}
-	if input.WorkspaceID == nil && input.TeamID != nil {
-		input.WorkspaceID = input.TeamID
-	}
-
-	if input.Sub != nil && *input.Sub != "" && input.Email != "" && input.Name != "" {
-		u, err := c.usecase.SignupOIDC(ctx, accounts_interfaces.SignupOIDCParam{
-			Name:   input.Name,
-			Email:  input.Email,
-			Sub:    *input.Sub,
-			Secret: input.Secret,
-		})
-
-		if err != nil {
-			return SignupOutput{}, err
-		}
-
-		return SignupOutput{
-			ID:    u.ID().String(),
-			Name:  u.Name(),
-			Email: u.Email(),
-		}, nil
-	}
-
-	u, err := c.usecase.Signup(ctx, accounts_interfaces.SignupParam{
-		Name:        input.Name,
-		Email:       input.Email,
-		Password:    input.Password,
-		Secret:      input.Secret,
-		UserID:      input.UserID,
-		WorkspaceID: input.WorkspaceID,
-		Lang:        input.Lang,
-		Theme:       input.Theme,
-		MockAuth:    adapter.IsMockAuth(ctx),
-	})
-
-	if err != nil {
-		return SignupOutput{}, err
-	}
-
-	return SignupOutput{
-		ID:    u.ID().String(),
-		Name:  u.Name(),
-		Email: u.Email(),
-	}, nil
+	// TODO: Re-implement when User usecase is available after migration
+	// This is currently not used as the user management has been migrated to reearth-accounts
+	_ = input
+	_ = ctx
+	return SignupOutput{}, nil
 }
 
 func (c *UserController) CreateVerification(ctx context.Context, input CreateVerificationInput) error {
-	return c.usecase.CreateVerification(ctx, input.Email)
+	// TODO: Re-implement when User usecase is available after migration
+	_ = input
+	_ = ctx
+	return nil
 }
 
 func (c *UserController) VerifyUser(ctx context.Context, code string) (VerifyUserOutput, error) {
-	u, err := c.usecase.VerifyUser(ctx, code)
-	if err != nil {
-		return VerifyUserOutput{}, err
-	}
-	return VerifyUserOutput{
-		UserID:   u.ID().String(),
-		Verified: u.Verification().IsVerified(),
-	}, nil
+	// TODO: Re-implement when User usecase is available after migration
+	_ = code
+	_ = ctx
+	return VerifyUserOutput{}, nil
 }
 
 func (c *UserController) StartPasswordReset(ctx context.Context, input PasswordResetInput) error {
-	return c.usecase.StartPasswordReset(ctx, input.Email)
+	// TODO: Re-implement when User usecase is available after migration
+	_ = input
+	_ = ctx
+	return nil
 }
 
 func (c *UserController) PasswordReset(ctx context.Context, input PasswordResetInput) error {
-	return c.usecase.PasswordReset(ctx, input.Password, input.Token)
+	// TODO: Re-implement when User usecase is available after migration
+	_ = input
+	_ = ctx
+	return nil
 }

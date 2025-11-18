@@ -17,7 +17,7 @@ import (
 )
 
 func runServer(ctx context.Context, conf *config.Config, debug bool) {
-	repos, gateways, accountsAPIClient := initReposAndGateways(ctx, conf, debug)
+	repos, gateways, accountsAPIClient, mockAccountUserRepo := initReposAndGateways(ctx, conf, debug)
 	// Start web server
 	NewServer(ctx, &ServerConfig{
 		Config:   conf,
@@ -27,6 +27,7 @@ func runServer(ctx context.Context, conf *config.Config, debug bool) {
 		// AccountRepos:      acRepos,
 		// AccountGateways:   acGateways,
 		AccountsAPIClient: accountsAPIClient,
+		MockAccountUserRepo: mockAccountUserRepo,
 	}).Run(ctx)
 }
 
@@ -43,6 +44,7 @@ type ServerConfig struct {
 	Repos             *repo.Container
 	Gateways          *gateway.Container
 	AccountsAPIClient *gqlclient.Client
+	MockAccountUserRepo interface{} // reearth-accounts memory repository for mock mode
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {

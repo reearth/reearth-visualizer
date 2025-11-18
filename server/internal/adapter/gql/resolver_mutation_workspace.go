@@ -2,86 +2,48 @@ package gql
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
-func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error) {
-	res, err := usecases(ctx).Workspace.Create(ctx, input.Name, getUser(ctx).ID(), input.Alias, getAcOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
+var ErrWorkspaceNotAvailable = errors.New("workspace operations are not available during migration")
 
-	return &gqlmodel.CreateWorkspacePayload{Workspace: gqlmodel.ToWorkspace(res)}, nil
+// TODO: Re-implement these mutations when Workspace usecase is available after migration
+// Workspace management has been migrated to reearth-accounts
+
+func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error) {
+	_ = input
+	_ = ctx
+	return nil, ErrWorkspaceNotAvailable
 }
 
 func (r *mutationResolver) DeleteWorkspace(ctx context.Context, input gqlmodel.DeleteWorkspaceInput) (*gqlmodel.DeleteWorkspacePayload, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := usecases(ctx).Workspace.Remove(ctx, tid, getAcOperator(ctx)); err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.DeleteWorkspacePayload{WorkspaceID: input.WorkspaceID}, nil
+	_ = input
+	_ = ctx
+	return nil, ErrWorkspaceNotAvailable
 }
 
 func (r *mutationResolver) UpdateWorkspace(ctx context.Context, input gqlmodel.UpdateWorkspaceInput) (*gqlmodel.UpdateWorkspacePayload, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := usecases(ctx).Workspace.Update(ctx, tid, input.Name, input.Alias, getAcOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.UpdateWorkspacePayload{Workspace: gqlmodel.ToWorkspace(res)}, nil
+	_ = input
+	_ = ctx
+	return nil, ErrWorkspaceNotAvailable
 }
 
 func (r *mutationResolver) AddMemberToWorkspace(ctx context.Context, input gqlmodel.AddMemberToWorkspaceInput) (*gqlmodel.AddMemberToWorkspacePayload, error) {
-	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.WorkspaceID, input.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, map[accountdomain.UserID]workspace.Role{uid: gqlmodel.FromRole(input.Role)}, getAcOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.AddMemberToWorkspacePayload{Workspace: gqlmodel.ToWorkspace(res)}, nil
+	_ = input
+	_ = ctx
+	return nil, ErrWorkspaceNotAvailable
 }
 
 func (r *mutationResolver) RemoveMemberFromWorkspace(ctx context.Context, input gqlmodel.RemoveMemberFromWorkspaceInput) (*gqlmodel.RemoveMemberFromWorkspacePayload, error) {
-	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.WorkspaceID, input.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := usecases(ctx).Workspace.RemoveUserMember(ctx, tid, uid, getAcOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.RemoveMemberFromWorkspacePayload{Workspace: gqlmodel.ToWorkspace(res)}, nil
+	_ = input
+	_ = ctx
+	return nil, ErrWorkspaceNotAvailable
 }
 
 func (r *mutationResolver) UpdateMemberOfWorkspace(ctx context.Context, input gqlmodel.UpdateMemberOfWorkspaceInput) (*gqlmodel.UpdateMemberOfWorkspacePayload, error) {
-	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.WorkspaceID, input.UserID)
-	if err != nil {
-		return nil, err
-	}
-
-	res, err := usecases(ctx).Workspace.UpdateUserMember(ctx, tid, uid, gqlmodel.FromRole(input.Role), getAcOperator(ctx))
-	if err != nil {
-		return nil, err
-	}
-
-	return &gqlmodel.UpdateMemberOfWorkspacePayload{Workspace: gqlmodel.ToWorkspace(res)}, nil
+	_ = input
+	_ = ctx
+	return nil, ErrWorkspaceNotAvailable
 }

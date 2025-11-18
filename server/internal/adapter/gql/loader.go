@@ -4,8 +4,6 @@ import (
 	"context"
 	"time"
 
-	accounts_gql "github.com/reearth/reearth-accounts/server/internal/adapter/gql"
-	accounts_interfaces "github.com/reearth/reearth-accounts/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 )
 
@@ -15,16 +13,16 @@ const (
 )
 
 type Loaders struct {
-	usecases  interfaces.Container
-	Asset     *AssetLoader
-	Plugin    *PluginLoader
-	Policy    *PolicyLoader
-	Project   *ProjectLoader
-	Property  *PropertyLoader
-	Scene     *SceneLoader
-	Story     *StoryLoader
-	Workspace *accounts_gql.WorkspaceLoader
-	User      *accounts_gql.UserLoader
+	usecases interfaces.Container
+	Asset    *AssetLoader
+	Plugin   *PluginLoader
+	Policy   *PolicyLoader
+	Project  *ProjectLoader
+	Property *PropertyLoader
+	Scene    *SceneLoader
+	Story    *StoryLoader
+	// Workspace *accounts_gql.WorkspaceLoader
+	// User      *accounts_gql.UserLoader
 }
 
 type DataLoaders struct {
@@ -46,16 +44,16 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		return nil
 	}
 	return &Loaders{
-		usecases:  *usecases,
-		Asset:     NewAssetLoader(usecases.Asset),
-		Plugin:    NewPluginLoader(usecases.Plugin),
-		Policy:    NewPolicyLoader(usecases.Policy),
-		Project:   NewProjectLoader(usecases.Project),
-		Property:  NewPropertyLoader(usecases.Property),
-		Scene:     NewSceneLoader(usecases.Scene),
-		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: accounts_gql.NewWorkspaceLoader(accounts_interfaces.Workspace),
-		User:      accounts_gql.NewUserLoader(accounts_interfaces.User),
+		usecases: *usecases,
+		Asset:    NewAssetLoader(usecases.Asset),
+		Plugin:   NewPluginLoader(usecases.Plugin),
+		Policy:   NewPolicyLoader(usecases.Policy),
+		Project:  NewProjectLoader(usecases.Project),
+		Property: NewPropertyLoader(usecases.Property),
+		Scene:    NewSceneLoader(usecases.Scene),
+		Story:    NewStoryLoader(usecases.StoryTelling),
+		// Workspace: accounts_gql.NewWorkspaceLoader(accounts_interfaces.Workspace),
+		// User:      accounts_gql.NewUserLoader(accounts_interfaces.User),
 	}
 }
 
@@ -74,8 +72,8 @@ func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 		Property:       l.Property.DataLoader(ctx),
 		PropertySchema: l.Property.SchemaDataLoader(ctx),
 		Scene:          l.Scene.DataLoader(ctx),
-		Workspace:      l.Workspace.DataLoader(ctx),
-		User:           l.User.DataLoader(ctx),
+		// Workspace:      l.Workspace.DataLoader(ctx),
+		// User:           l.User.DataLoader(ctx),
 	}
 }
 
@@ -87,8 +85,8 @@ func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
 		Property:       l.Property.OrdinaryDataLoader(ctx),
 		PropertySchema: l.Property.SchemaOrdinaryDataLoader(ctx),
 		Scene:          l.Scene.OrdinaryDataLoader(ctx),
-		Workspace:      l.Workspace.OrdinaryDataLoader(ctx),
-		User:           l.User.OrdinaryDataLoader(ctx),
+		// Workspace:      l.Workspace.OrdinaryDataLoader(ctx),
+		// User:           l.User.OrdinaryDataLoader(ctx),
 	}
 }
 

@@ -37,35 +37,56 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 
-			// authInfo := adapter.GetAuthInfo(ctx)
-
 			var u *user.User
+			var accountsUserModel *accountsUser.User
+
+			// Get the mock user repository
+			if cfg.MockAccountUserRepo == nil {
+				log.Errorfc(ctx, "Mock user repository not initialized")
+				return echo.NewHTTPError(http.StatusInternalServerError, "mock user repository not initialized")
+			}
+
+			// Type assert the repository
+			userRepo, ok := cfg.MockAccountUserRepo.(interface {
+				FindByNameOrEmail(context.Context, string) (*accountsUser.User, error)
+				FindByID(context.Context, accountsUser.ID) (*accountsUser.User, error)
+			})
+			if !ok {
+				log.Errorfc(ctx, "Mock user repository has invalid type")
+				return echo.NewHTTPError(http.StatusInternalServerError, "invalid mock user repository type")
+			}
 
 			// Check for debug user header first (for e2e tests)
 			if cfg.Debug {
-				// if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
-				// 	uid, err := user.IDFrom(userID)
-				// 	if err == nil {
-				// 		u, err = cfg.AccountRepos.User.FindByID(ctx, uid)
-				// 		if err != nil {
-				// 			log.Warnfc(ctx, "auth: debug user not found: %s", userID)
-				// 		}
-				// 	}
-				// }
+				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
+					uid, err := accountsUser.IDFrom(userID)
+					if err == nil {
+						accountsUserModel, err = userRepo.FindByID(ctx, uid)
+						if err != nil {
+							log.Warnfc(ctx, "auth: debug user not found: %s", userID)
+						}
+					}
+				}
 			}
 
 			// Fallback to mock user if debug user not found
-			if u == nil {
-				// mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
-				// if err != nil {
-				// 	uId, _ := user.IDFrom(authInfo.Sub)
-				// 	mockUser = user.New().
-				// 		ID(uId).
-				// 		Name(authInfo.Name).
-				// 		Email(authInfo.Email).
-				// 		MustBuild()
-				// }
-				u = mockUser
+			if accountsUserModel == nil {
+				var err error
+				accountsUserModel, err = userRepo.FindByNameOrEmail(ctx, "Mock User")
+				if err != nil {
+					log.Errorfc(ctx, "Failed to find mock user: %v", err)
+					return echo.NewHTTPError(http.StatusInternalServerError, "failed to find mock user")
+				}
+			}
+
+			if accountsUserModel != nil {
+				// Convert accountsUser.User to reearthx user.User
+				var err error
+				u, err = buildAccountDomainUserFromUserModel(ctx, accountsUserModel)
+				if err != nil {
+					log.Errorfc(ctx, "accounts API: failed to build user: %v", err)
+					return echo.NewHTTPError(http.StatusInternalServerError, err.Error())
+				}
 			}
 
 			if u != nil {

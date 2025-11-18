@@ -136,15 +136,15 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 		// 	return nil, rerror.ErrInternalBy(err)
 		// }
 
-		if u != nil {
-			op, err := generateOperator(ctx, cfg, u)
-			if err != nil {
-				return nil, err
-			}
-			ctx = adapter.AttachUser(ctx, u)
-			ctx = adapter.AttachOperator(ctx, op)
-			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
-		}
+// 		if u != nil {
+// 			op, err := generateOperator(ctx, cfg, u)
+// 			if err != nil {
+// 				return nil, err
+// 			}
+// 			ctx = adapter.AttachUser(ctx, u)
+// 			ctx = adapter.AttachOperator(ctx, op)
+// 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+// 		}
 
 		return handler(ctx, req)
 	}
