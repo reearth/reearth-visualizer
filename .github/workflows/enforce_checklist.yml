@@ -20,7 +20,7 @@ jobs:
         env:
           BODY: ${{ steps.pr.outputs.body }}
         run: |
-          if echo "$BODY" | grep -q '- [ ]'; then
+          if echo "$BODY" | grep -q '\- \[ \]'; then
             echo "❌ There are unchecked items in the checklist on this PR."
             exit 1
           fi
