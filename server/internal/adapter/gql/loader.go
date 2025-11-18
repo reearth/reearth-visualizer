@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	accounts_gql "github.com/reearth/reearth-accounts/server/internal/adapter/gql"
+	accounts_interfaces "github.com/reearth/reearth-accounts/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 )
 
@@ -21,8 +23,8 @@ type Loaders struct {
 	Property  *PropertyLoader
 	Scene     *SceneLoader
 	Story     *StoryLoader
-	Workspace *WorkspaceLoader
-	User      *UserLoader
+	Workspace *accounts_gql.WorkspaceLoader
+	User      *accounts_gql.UserLoader
 }
 
 type DataLoaders struct {
@@ -52,8 +54,8 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
 		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: NewWorkspaceLoader(usecases.Workspace),
-		User:      NewUserLoader(usecases.User),
+		Workspace: accounts_gql.NewWorkspaceLoader(accounts_interfaces.Workspace),
+		User:      accounts_gql.NewUserLoader(accounts_interfaces.User),
 	}
 }
 

@@ -63,7 +63,7 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *gqlclient.Client) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *gqlclient.Client) {
 	gateways := &gateway.Container{}
 	acGateways := &accountgateway.Container{}
 
@@ -161,7 +161,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	return visRepos, gateways, accountRepos, acGateways, accountsAPIClient
+	return visRepos, gateways, accountsAPIClient
 }
 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {

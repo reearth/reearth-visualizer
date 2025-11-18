@@ -37,34 +37,34 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 
-			authInfo := adapter.GetAuthInfo(ctx)
+			// authInfo := adapter.GetAuthInfo(ctx)
 
 			var u *user.User
 
 			// Check for debug user header first (for e2e tests)
 			if cfg.Debug {
-				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
-					uid, err := user.IDFrom(userID)
-					if err == nil {
-						u, err = cfg.AccountRepos.User.FindByID(ctx, uid)
-						if err != nil {
-							log.Warnfc(ctx, "auth: debug user not found: %s", userID)
-						}
-					}
-				}
+				// if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
+				// 	uid, err := user.IDFrom(userID)
+				// 	if err == nil {
+				// 		u, err = cfg.AccountRepos.User.FindByID(ctx, uid)
+				// 		if err != nil {
+				// 			log.Warnfc(ctx, "auth: debug user not found: %s", userID)
+				// 		}
+				// 	}
+				// }
 			}
 
 			// Fallback to mock user if debug user not found
 			if u == nil {
-				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
-				if err != nil {
-					uId, _ := user.IDFrom(authInfo.Sub)
-					mockUser = user.New().
-						ID(uId).
-						Name(authInfo.Name).
-						Email(authInfo.Email).
-						MustBuild()
-				}
+				// mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
+				// if err != nil {
+				// 	uId, _ := user.IDFrom(authInfo.Sub)
+				// 	mockUser = user.New().
+				// 		ID(uId).
+				// 		Name(authInfo.Name).
+				// 		Email(authInfo.Email).
+				// 		MustBuild()
+				// }
 				u = mockUser
 			}
 

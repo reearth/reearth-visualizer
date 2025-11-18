@@ -3,18 +3,19 @@ package http
 import (
 	"context"
 
+	accounts_interfaces "github.com/reearth/reearth-accounts/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth-accounts/server/pkg/id"
+	"github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+
 	"golang.org/x/text/language"
 )
 
 type UserController struct {
-	usecase accountinterfaces.User
+	usecase accounts_interfaces.User
 }
 
-func NewUserController(usecase accountinterfaces.User) *UserController {
+func NewUserController(usecase accounts_interfaces.User) *UserController {
 	return &UserController{
 		usecase: usecase,
 	}
@@ -27,17 +28,17 @@ type PasswordResetInput struct {
 }
 
 type SignupInput struct {
-	Sub         *string                    `json:"sub"`
-	Secret      *string                    `json:"secret"`
-	UserID      *accountdomain.UserID      `json:"userId"`
-	WorkspaceID *accountdomain.WorkspaceID `json:"workspaceId"`
-	TeamID      *accountdomain.WorkspaceID `json:"teamId"` // TeamID is an alias of WorkspaceID
-	Name        string                     `json:"name"`
-	Username    string                     `json:"username"` // ysername is an alias of Name
-	Email       string                     `json:"email"`
-	Password    string                     `json:"password"`
-	Theme       *user.Theme                `json:"theme"`
-	Lang        *language.Tag              `json:"lang"`
+	Sub         *string         `json:"sub"`
+	Secret      *string         `json:"secret"`
+	UserID      *id.UserID      `json:"userId"`
+	WorkspaceID *id.WorkspaceID `json:"workspaceId"`
+	TeamID      *id.WorkspaceID `json:"teamId"` // TeamID is an alias of WorkspaceID
+	Name        string          `json:"name"`
+	Username    string          `json:"username"` // ysername is an alias of Name
+	Email       string          `json:"email"`
+	Password    string          `json:"password"`
+	Theme       *user.Theme     `json:"theme"`
+	Lang        *language.Tag   `json:"lang"`
 }
 
 type CreateVerificationInput struct {
@@ -64,7 +65,7 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 	}
 
 	if input.Sub != nil && *input.Sub != "" && input.Email != "" && input.Name != "" {
-		u, err := c.usecase.SignupOIDC(ctx, accountinterfaces.SignupOIDCParam{
+		u, err := c.usecase.SignupOIDC(ctx, accounts_interfaces.SignupOIDCParam{
 			Name:   input.Name,
 			Email:  input.Email,
 			Sub:    *input.Sub,
@@ -82,7 +83,7 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 		}, nil
 	}
 
-	u, err := c.usecase.Signup(ctx, accountinterfaces.SignupParam{
+	u, err := c.usecase.Signup(ctx, accounts_interfaces.SignupParam{
 		Name:        input.Name,
 		Email:       input.Email,
 		Password:    input.Password,

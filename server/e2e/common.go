@@ -118,12 +118,10 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 	gateways := initGateway()
 	accountGateway := initAccountGateway(ctx)
 	return app.NewServer(ctx, &app.ServerConfig{
-		Config:          cfg,
-		Repos:           repos,
-		AccountRepos:    repos.AccountRepos(),
-		Gateways:        gateways,
-		AccountGateways: accountGateway,
-		Debug:           true,
+		Config:   cfg,
+		Repos:    repos,
+		Gateways: gateways,
+		Debug:    true,
 	}), gateways, accountGateway
 }
 

@@ -156,16 +156,16 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 					return err
 				}
 				fmt.Println("[Import Project] recv notification file_name: ", n.CloudEventData.Name)
-				_, _, _, userID, err := SplitFilename(n.CloudEventData.Name)
-				if err != nil {
-					log.Errorf("import project SplitFilename err: %v", err)
-					return err
-				}
-				u, err := cfg.AccountRepos.User.FindByID(ctx, *userID)
-				if err != nil {
-					log.Errorf("import project FindByID err: %v", err)
-					return err
-				}
+				// _, _, _, userID, err := SplitFilename(n.CloudEventData.Name)
+				// if err != nil {
+				// 	log.Errorf("import project SplitFilename err: %v", err)
+				// 	return err
+				// }
+				// u, err := cfg.AccountRepos.User.FindByID(ctx, *userID)
+				// if err != nil {
+				// 	log.Errorf("import project FindByID err: %v", err)
+				// 	return err
+				// }
 				if u != nil {
 					op, err := generateOperator(ctx, cfg, u)
 					if err != nil {
