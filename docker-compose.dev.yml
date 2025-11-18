@@ -21,12 +21,13 @@ services:
 
   reearth-mongo:
     image: mongo:7
+    hostname: reearth-mongo
     ports:
       - 27017:27017
     volumes:
       - ${PWD}/tmp/mongo:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-    command: ["mongod", "--replSet", "rs0"]
+    command: ["mongod", "--bind_ip_all", "--replSet", "rs0"]
     networks:
       - reearth
 
