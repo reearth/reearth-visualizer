@@ -11,8 +11,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/rerror"
-	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
@@ -100,52 +98,6 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 	}
 
 	return nil
-}
-
-func TestUpdateMe(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
-	query := `mutation { updateMe(input: {name: "updated",email:"hoge@test.com",lang: "ja",theme: DEFAULT,password: "Ajsownndww1",passwordConfirmation: "Ajsownndww1"}){ me{ id name email lang theme } }}`
-	request := GraphQLRequest{
-		Query: query,
-	}
-	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("updateMe").Object().Value("me").Object()
-	o.Value("name").String().IsEqual("updated")
-	o.Value("email").String().IsEqual("hoge@test.com")
-	o.Value("lang").String().IsEqual("ja")
-	o.Value("theme").String().IsEqual("default")
-}
-
-func TestRemoveMyAuth(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
-	u, err := r.User.FindByID(context.Background(), uId1)
-	assert.Nil(t, err)
-	assert.Equal(t, &user.Auth{Provider: "reearth", Sub: "reearth|" + uId1.String()}, u.Auths().GetByProvider("reearth"))
-
-	query := `mutation { removeMyAuth(input: {auth: "reearth"}){ me{ id name email lang theme } }}`
-	request := GraphQLRequest{
-		Query: query,
-	}
-	Request(e, uId1.String(), request).Object()
-
-	u, err = r.User.FindByID(context.Background(), uId1)
-	assert.Nil(t, err)
-	assert.Nil(t, u.Auths().Get("sub"))
-}
-
-func TestDeleteMe(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
-	u, err := r.User.FindByID(context.Background(), uId1)
-	assert.Nil(t, err)
-	assert.NotNil(t, u)
-
-	query := fmt.Sprintf(`mutation { deleteMe(input: {userId: "%s"}){ userId }}`, uId1)
-	request := GraphQLRequest{
-		Query: query,
-	}
-	Request(e, uId1.String(), request).Object()
-
-	_, err = r.User.FindByID(context.Background(), uId1)
-	assert.Equal(t, rerror.ErrNotFound, err)
 }
 
 func TestSearchUser(t *testing.T) {
