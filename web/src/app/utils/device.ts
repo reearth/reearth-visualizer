@@ -1,10 +1,11 @@
-import { UAParser } from "ua-parser-js";
+import Bowser from "bowser";
 
 export type DeviceType = "mobile" | "desktop";
 
 export function isMobileDevice(uaString?: string): boolean {
-  const { device } = UAParser(uaString || navigator.userAgent);
-  return device.is("mobile");
+  const parser = Bowser.getParser(uaString || window.navigator.userAgent);
+  const type = parser.getPlatformType(); // “desktop”, “mobile”, “tablet”, etc
+  return type === "mobile";
 }
 
 export function getDeviceType(uaString?: string): DeviceType {
