@@ -22,7 +22,7 @@ func (r *meResolver) MyWorkspace(ctx context.Context, obj *gqlmodel.Me) (*gqlmod
 		errMsg := fmt.Sprintf("MyWorkspaceID not found Me.ID: %s", obj.ID)
 		return nil, visualizer.ErrorWithCallerLogging(ctx, errMsg, errors.New(errMsg))
 	}
-	return dataloaders(ctx).Workspace.Load(obj.MyWorkspaceID)
+	return nil, nil
 }
 
 func (r *meResolver) Workspaces(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Workspace, error) {
@@ -40,5 +40,5 @@ func (r *meResolver) Workspaces(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmo
 	}
 
 	// TODO: remove this after checking reearth-accounts API is working
-	return loaders(ctx).Workspace.FindByUser(ctx, obj.ID)
+	return nil, nil
 }

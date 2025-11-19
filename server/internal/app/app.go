@@ -114,8 +114,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		UsecaseMiddleware(
 			cfg.Repos,
 			cfg.Gateways,
-			cfg.AccountRepos,
-			cfg.AccountGateways,
 			interactor.ContainerConfig{
 				SignupSecret:       cfg.Config.SignupSecret,
 				PublishedIndexHTML: publishedIndexHTML,

@@ -11,9 +11,7 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/internalapi"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/log"
-	"github.com/reearth/reearthx/rerror"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
@@ -127,27 +125,6 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 			return nil, errors.New("unauthorized")
 		}
 
-		userID, err := accountdomain.UserIDFrom(md["user-id"][0])
-		if err != nil {
-			log.Errorf("unaryAttachOperatorInterceptor: invalid user id")
-			return nil, errors.New("unauthorized")
-		}
-		u, err := cfg.AccountRepos.User.FindByID(ctx, userID)
-		if err != nil {
-			log.Errorf("unaryAttachOperatorInterceptor: %v", err)
-			return nil, rerror.ErrInternalBy(err)
-		}
-
-		if u != nil {
-			op, err := generateOperator(ctx, cfg, u)
-			if err != nil {
-				return nil, err
-			}
-			ctx = adapter.AttachUser(ctx, u)
-			ctx = adapter.AttachOperator(ctx, op)
-			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
-		}
-
 		return handler(ctx, req)
 	}
 }
@@ -157,10 +134,8 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 
 		r := cfg.Repos
 		g := cfg.Gateways
-		ar := cfg.AccountRepos
-		ag := cfg.AccountGateways
 
-		uc := interactor.NewContainer(r, g, ar, ag, interactor.ContainerConfig{})
+		uc := interactor.NewContainer(r, g, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
 		ctx = adapter.AttachInternal(ctx, true)
 		return handler(ctx, req)

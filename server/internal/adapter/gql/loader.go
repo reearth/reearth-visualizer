@@ -13,16 +13,16 @@ const (
 )
 
 type Loaders struct {
-	usecases  interfaces.Container
-	Asset     *AssetLoader
-	Plugin    *PluginLoader
-	Policy    *PolicyLoader
-	Project   *ProjectLoader
-	Property  *PropertyLoader
-	Scene     *SceneLoader
-	Story     *StoryLoader
-	Workspace *WorkspaceLoader
-	User      *UserLoader
+	usecases interfaces.Container
+	Asset    *AssetLoader
+	Plugin   *PluginLoader
+	Policy   *PolicyLoader
+	Project  *ProjectLoader
+	Property *PropertyLoader
+	Scene    *SceneLoader
+	Story    *StoryLoader
+	// Workspace *accounts_gql.WorkspaceLoader
+	// User      *accounts_gql.UserLoader
 }
 
 type DataLoaders struct {
@@ -44,16 +44,14 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		return nil
 	}
 	return &Loaders{
-		usecases:  *usecases,
-		Asset:     NewAssetLoader(usecases.Asset),
-		Plugin:    NewPluginLoader(usecases.Plugin),
-		Policy:    NewPolicyLoader(usecases.Policy),
-		Project:   NewProjectLoader(usecases.Project),
-		Property:  NewPropertyLoader(usecases.Property),
-		Scene:     NewSceneLoader(usecases.Scene),
-		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: NewWorkspaceLoader(usecases.Workspace),
-		User:      NewUserLoader(usecases.User),
+		usecases: *usecases,
+		Asset:    NewAssetLoader(usecases.Asset),
+		Plugin:   NewPluginLoader(usecases.Plugin),
+		Policy:   NewPolicyLoader(usecases.Policy),
+		Project:  NewProjectLoader(usecases.Project),
+		Property: NewPropertyLoader(usecases.Property),
+		Scene:    NewSceneLoader(usecases.Scene),
+		Story:    NewStoryLoader(usecases.StoryTelling),
 	}
 }
 
@@ -72,8 +70,6 @@ func (l Loaders) DataLoaders(ctx context.Context) *DataLoaders {
 		Property:       l.Property.DataLoader(ctx),
 		PropertySchema: l.Property.SchemaDataLoader(ctx),
 		Scene:          l.Scene.DataLoader(ctx),
-		Workspace:      l.Workspace.DataLoader(ctx),
-		User:           l.User.DataLoader(ctx),
 	}
 }
 
@@ -85,8 +81,6 @@ func (l Loaders) OrdinaryDataLoaders(ctx context.Context) *DataLoaders {
 		Property:       l.Property.OrdinaryDataLoader(ctx),
 		PropertySchema: l.Property.SchemaOrdinaryDataLoader(ctx),
 		Scene:          l.Scene.OrdinaryDataLoader(ctx),
-		Workspace:      l.Workspace.OrdinaryDataLoader(ctx),
-		User:           l.User.OrdinaryDataLoader(ctx),
 	}
 }
 

@@ -76,8 +76,7 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 			})
 		}
 
-		uc := adapter.Usecases(ctx)
-		controller := http1.NewUserController(uc.User)
+		controller := http1.NewUserController()
 
 		output, err := controller.Signup(ctx, inp)
 		if err != nil {
@@ -171,8 +170,7 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 
 func MockUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		uc := adapter.Usecases(c.Request().Context())
-		controller := http1.NewUserController(uc.User)
+		controller := http1.NewUserController()
 
 		input := http1.SignupInput{
 			Username: "Mock User",

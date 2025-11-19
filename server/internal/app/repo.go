@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
@@ -12,6 +14,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
 	"github.com/reearth/reearth/server/internal/infrastructure/marketplace"
+	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/infrastructure/s3"
@@ -63,9 +66,35 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *gqlclient.Client) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *gqlclient.Client, interface{}) {
 	gateways := &gateway.Container{}
 	acGateways := &accountgateway.Container{}
+
+	// Initialize mock account user repository if mock auth is enabled
+	var mockAccountUserRepo interface{}
+	if conf.UseMockAuth() {
+		log.Infof("auth: mock mode enabled, initializing in-memory user repository")
+		userRepo := memory.NewAccountsUserRepo()
+
+		// Create default mock user
+		mockUser, err := accountsUser.New().
+			NewID().
+			Name("Mock User").
+			Email("mock@example.com").
+			Workspace(accountsWorkspace.NewID()).
+			Build()
+
+		if err != nil {
+			log.Fatalf("failed to create mock user: %v", err)
+		}
+
+		if err := userRepo.Create(ctx, mockUser); err != nil {
+			log.Fatalf("failed to save mock user: %v", err)
+		}
+
+		mockAccountUserRepo = userRepo
+		log.Infof("auth: mock user created: id=%s name=%s email=%s", mockUser.ID(), mockUser.Name(), mockUser.Email())
+	}
 
 	// Initialize Accounts API client if enabled
 	var accountsAPIClient *gqlclient.Client
@@ -161,7 +190,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	return visRepos, gateways, accountRepos, acGateways, accountsAPIClient
+	return visRepos, gateways, accountsAPIClient, mockAccountUserRepo
 }
 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {

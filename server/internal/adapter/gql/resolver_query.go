@@ -2,6 +2,7 @@ package gql
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearthx/account/accountdomain"
@@ -169,7 +170,7 @@ func (r *queryResolver) Projects(ctx context.Context, workspaceID gqlmodel.ID, p
 }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
-	return loaders(ctx).User.SearchUser(ctx, nameOrEmail)
+	return nil, errors.New("user search not available during migration")
 }
 
 func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string, workspaceId gqlmodel.ID, projectId *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {

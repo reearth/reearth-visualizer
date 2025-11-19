@@ -15,9 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -31,8 +29,6 @@ type ContainerConfig struct {
 func NewContainer(
 	r *repo.Container,
 	g *gateway.Container,
-	ar *accountrepo.Container,
-	ag *accountgateway.Container,
 	config ContainerConfig,
 ) interfaces.Container {
 
@@ -55,8 +51,6 @@ func NewContainer(
 		Published:       published,
 		Scene:           NewScene(r, g),
 		StoryTelling:    NewStorytelling(r, g),
-		Workspace:       accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
-		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
 	}
 }
 
