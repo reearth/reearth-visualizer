@@ -2,6 +2,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.1 - 2025-11-19
+
+### Web
+
+#### ✨ Refactor
+
+- Replace ua-parser-js with bowser ([#1927](https://github.com/reearth/reearth-visualizer/pull/1927)) [`7f9b53`](https://github.com/reearth/reearth-visualizer/commit/7f9b53)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.13.1 ([#1929](https://github.com/reearth/reearth-visualizer/pull/1929)) [`a2ae90`](https://github.com/reearth/reearth-visualizer/commit/a2ae90)
+
+### Server
+
+#### 🚀 Features
+
+- Refactoring auth logic ([#1924](https://github.com/reearth/reearth-visualizer/pull/1924)) [`23757c`](https://github.com/reearth/reearth-visualizer/commit/23757c)
+
+#### 🔧 Bug Fixes
+
+- Add secondary sort by &#x60;_id&#x60; across query for GetAllProjects ([#1925](https://github.com/reearth/reearth-visualizer/pull/1925)) [`def51f`](https://github.com/reearth/reearth-visualizer/commit/def51f)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Add enforce checklist ci ([#1926](https://github.com/reearth/reearth-visualizer/pull/1926)) [`49451e`](https://github.com/reearth/reearth-visualizer/commit/49451e)
+
 ## 1.0.0-beta.13.0 - 2025-11-14
 
 ### Web
