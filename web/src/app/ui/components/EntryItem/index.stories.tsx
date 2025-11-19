@@ -1,5 +1,5 @@
 import { IconButton } from "@reearth/app/lib/reearth-ui";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { EntryItem } from ".";
 

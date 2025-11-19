@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 import { FC } from "react";
 
 import { TabItem, Tabs as TabsMenu, TabsProps } from ".";

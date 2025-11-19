@@ -1,7 +1,9 @@
-import { action } from "@storybook/addon-actions";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { RadioButton, RadioButtonProps } from ".";
+
+// Mock function for actions
+const fn = () => () => {};
 
 const meta: Meta<RadioButtonProps> = {
   component: RadioButton
@@ -34,7 +36,7 @@ export const Default: Story = {
   args: {
     items: sampleItems,
     value: "option1",
-    onChange: action("changed")
+    onChange: fn()
   }
 };
 
@@ -42,7 +44,7 @@ export const WithIcons: Story = {
   args: {
     items: itemsWithIcons,
     value: "desktop",
-    onChange: action("changed")
+    onChange: fn()
   }
 };
 
@@ -50,14 +52,14 @@ export const WithDisabledItems: Story = {
   args: {
     items: itemsWithDisabled,
     value: "enabled1",
-    onChange: action("changed")
+    onChange: fn()
   }
 };
 
 export const NoSelection: Story = {
   args: {
     items: sampleItems,
-    onChange: action("changed")
+    onChange: fn()
   }
 };
 
@@ -66,7 +68,7 @@ export const Disabled: Story = {
     items: sampleItems,
     value: "option2",
     disabled: true,
-    onChange: action("changed")
+    onChange: fn()
   }
 };
 
@@ -77,7 +79,7 @@ export const TwoButtons: Story = {
       { id: "option2", label: "Option 2" }
     ],
     value: "option2",
-    onChange: action("changed")
+    onChange: fn()
   }
 };
 
@@ -88,6 +90,6 @@ export const WithIconsAndSettings: Story = {
       { id: "option2", label: "Option 2", icon: "setting" }
     ],
     value: "option2",
-    onChange: action("changed")
+    onChange: fn()
   }
 };
