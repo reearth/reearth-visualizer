@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
@@ -12,6 +13,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
 	"github.com/reearth/reearth/server/internal/infrastructure/marketplace"
+	infrastructure "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/infrastructure/s3"
@@ -63,7 +65,7 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *gqlclient.Client) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountsRepo.Container, *accountgateway.Container, *gqlclient.Client) {
 	gateways := &gateway.Container{}
 	acGateways := &accountgateway.Container{}
 
@@ -161,7 +163,13 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	return visRepos, gateways, accountRepos, acGateways, accountsAPIClient
+	// Convert old account repos to new interface type
+	newAccountRepos := &accountsRepo.Container{
+		User:      infrastructure.NewUserAdapter(accountRepos.User),
+		Workspace: infrastructure.NewWorkspaceAdapter(accountRepos.Workspace),
+	}
+
+	return visRepos, gateways, newAccountRepos, acGateways, accountsAPIClient
 }
 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {

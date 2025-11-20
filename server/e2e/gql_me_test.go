@@ -9,8 +9,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
-
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 const GetMeQuery = `
@@ -129,34 +127,44 @@ func TestMeWithPhotoURL(t *testing.T) {
 func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) error {
 	defer util.MockNow(now)()
 
+	// Create user and workspace using the same approach as createUserAndWorkspace
+	// Convert new IDs to old IDs for domain models
+	oldUID, _ := user.IDFrom(uID.String())
+	oldWID, _ := user.WorkspaceIDFrom(wID.String())
+
 	// Create metadata with photoURL
 	metadata := user.NewMetadata()
 	metadata.SetPhotoURL("https://example.com/photo.jpg")
 
-	// Create user with photoURL in metadata
+	// Create user with photoURL in metadata using old types
 	u := user.New().
-		ID(uID).
-		Workspace(wID).
+		ID(oldUID).
+		Workspace(oldWID).
 		Name(uName).
 		Email(uEmail).
 		Metadata(metadata).
 		MustBuild()
 
-	if err := r.User.Save(ctx, u); err != nil {
+	// Convert to new user type for save
+	newUser := convertOldUserToNewForE2E(u)
+	if err := r.User.Save(ctx, newUser); err != nil {
 		return err
 	}
 
-	// Create workspace for the user
+	// Create workspace for the user using old types
 	m := workspace.Member{
 		Role: workspace.RoleOwner,
 	}
-	w := workspace.New().ID(wID).
+	w := workspace.New().ID(oldWID).
 		Name(uName).
 		Personal(false).
-		Members(map[accountsID.UserID]workspace.Member{u.ID(): m}).
+		Members(map[user.ID]workspace.Member{oldUID: m}).
 		Metadata(workspace.NewMetadata()).
 		MustBuild()
-	if err := r.Workspace.Save(ctx, w); err != nil {
+
+	// Convert to new workspace type for save
+	newWorkspace := convertOldWorkspaceToNewForE2E(w)
+	if err := r.Workspace.Save(ctx, newWorkspace); err != nil {
 		return err
 	}
 
@@ -177,7 +185,7 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) 
 	}
 
 	// assign user3 to user1's workspace
-	if err := JoinMembers(ctx, r, wID, u3, workspace.RoleReader, uID); err != nil {
+	if err := JoinMembers(ctx, r, oldWID, u3, workspace.RoleReader, oldUID); err != nil {
 		return err
 	}
 

@@ -23,9 +23,9 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
@@ -180,7 +180,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
 }
 
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountsRepo.Container) {
 	repos, _, _ := initRepos(t, true, seeder)
 	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos()

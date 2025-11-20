@@ -33,25 +33,27 @@ import (
 	"golang.org/x/text/language"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 var (
 
 	// ---------------- user1
 	wID    = accountsID.NewWorkspaceID()
-	uID    = user.NewID()
+	uID    = accountsID.NewUserID()
 	uName  = "e2e"
 	uEmail = "e2e@e2e.com"
 
 	// ---------------- user2
 	wID2    = accountsID.NewWorkspaceID()
-	uID2    = user.NewID()
+	uID2    = accountsID.NewUserID()
 	uName2  = "e3e"
 	uEmail2 = "e3e@e3e.com"
 
 	// ---------------- user3
 	wID3    = accountsID.NewWorkspaceID()
-	uID3    = user.NewID()
+	uID3    = accountsID.NewUserID()
 	uName3  = "e4e"
 	uEmail3 = "e4e@e4e.com"
 
@@ -90,7 +92,9 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 	}
 
 	// assign user3 to user1's workspace
-	if err := JoinMembers(ctx, r, wID, u3, workspace.RoleReader, uID); err != nil {
+	oldWID, _ := workspace.IDFrom(wID.String())
+	oldUID, _ := user.IDFrom(uID.String())
+	if err := JoinMembers(ctx, r, oldWID, u3, workspace.RoleReader, oldUID); err != nil {
 		return err
 	}
 
@@ -104,27 +108,38 @@ func createUserAndWorkspace(
 	uid accountsID.UserID,
 	name string,
 	email string) (*user.User, error) {
+	// Convert new IDs to old IDs for domain models
+	oldUID, _ := user.IDFrom(uid.String())
+	oldWID, _ := user.WorkspaceIDFrom(wid.String())
+
 	u := user.New().
-		ID(uid).
-		Workspace(wid).
+		ID(oldUID).
+		Workspace(oldWID).
 		Name(name).
 		Email(email).
 		Metadata(user.NewMetadata()).
 		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
+
+	// Convert to new user type for save
+	newUser := convertOldUserToNewForE2E(u)
+	if err := r.User.Save(ctx, newUser); err != nil {
 		return nil, err
 	}
 
 	m := workspace.Member{
 		Role: workspace.RoleOwner,
 	}
-	w := workspace.New().ID(wid).
+	oldWsID, _ := workspace.IDFrom(wid.String())
+	w := workspace.New().ID(oldWsID).
 		Name(name).
 		Personal(false).
-		Members(map[accountsID.UserID]workspace.Member{u.ID(): m}).
+		Members(map[user.ID]workspace.Member{oldUID: m}).
 		Metadata(workspace.NewMetadata()).
 		MustBuild()
-	if err := r.Workspace.Save(ctx, w); err != nil {
+
+	// Convert to new workspace type for save
+	newWorkspace := convertOldWorkspaceToNewForE2E(w)
+	if err := r.Workspace.Save(ctx, newWorkspace); err != nil {
 		return nil, err
 	}
 	return u, nil
@@ -164,11 +179,17 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 	grantRole workspace.Role,
 	invitedUserId workspace.UserID,
 ) error {
-	w, err := r.Workspace.FindByID(ctx, targetWorkspace)
+	// Convert to new workspace ID for FindByID
+	newWID, _ := accountsID.WorkspaceIDFrom(targetWorkspace.String())
+	w, err := r.Workspace.FindByID(ctx, newWID)
 	if err != nil {
 		return err
 	}
-	members := w.Members()
+
+	// Convert new workspace to old for manipulation
+	oldW := convertNewWorkspaceToOldForE2E(w)
+	members := oldW.Members()
+
 	err = members.Join(newUser, grantRole, invitedUserId)
 	if err != nil {
 		return err
@@ -179,13 +200,16 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 	}
 	metadata := workspace.NewMetadata()
 	w2 := workspace.New().
-		ID(w.ID()).
-		Name(w.Name()).
-		Personal(w.IsPersonal()).
+		ID(oldW.ID()).
+		Name(oldW.Name()).
+		Personal(oldW.IsPersonal()).
 		Members(newMembers).
 		Metadata(metadata).
 		MustBuild()
-	if err := r.Workspace.Save(ctx, w2); err != nil {
+
+	// Convert back to new workspace for Save
+	newW2 := convertOldWorkspaceToNewForE2E(w2)
+	if err := r.Workspace.Save(ctx, newW2); err != nil {
 		return err
 	}
 	return nil
@@ -194,28 +218,40 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, lang language.Tag) error {
 	defer util.MockNow(now)()
 
+	// Convert new IDs to old for domain models
+	oldUID, _ := user.IDFrom(uID.String())
+	oldWID, _ := user.WorkspaceIDFrom(wID.String())
+
 	metadata := user.NewMetadata()
 	metadata.SetLang(lang)
 
-	u := user.New().ID(uID).
-		Workspace(wID).
+	u := user.New().ID(oldUID).
+		Workspace(oldWID).
 		Name(uName).
 		Email(uEmail).
 		Metadata(metadata).
 		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
+
+	// Convert to new user for Save
+	newUser := convertOldUserToNewForE2E(u)
+	if err := r.User.Save(ctx, newUser); err != nil {
 		return err
 	}
+
 	m := workspace.Member{
 		Role: workspace.RoleOwner,
 	}
-	w := workspace.New().ID(wID).
+	oldWsID, _ := workspace.IDFrom(wID.String())
+	w := workspace.New().ID(oldWsID).
 		Name(uName).
 		Personal(false).
-		Members(map[accountsID.UserID]workspace.Member{u.ID(): m}).
+		Members(map[user.ID]workspace.Member{oldUID: m}).
 		Metadata(workspace.NewMetadata()).
 		MustBuild()
-	if err := r.Workspace.Save(ctx, w); err != nil {
+
+	// Convert to new workspace for Save
+	newWorkspace := convertOldWorkspaceToNewForE2E(w)
+	if err := r.Workspace.Save(ctx, newWorkspace); err != nil {
 		return err
 	}
 	return baseSetup(ctx, r, f)
@@ -650,4 +686,114 @@ func generateUUID() string {
 		hex.EncodeToString(b[8:10]),
 		hex.EncodeToString(b[10:16]),
 	)
+}
+
+// Conversion helpers for e2e tests
+func convertOldUserToNewForE2E(oldUser *user.User) *accountsUser.User {
+	if oldUser == nil {
+		return nil
+	}
+
+	newID, _ := accountsID.UserIDFrom(oldUser.ID().String())
+	newWorkspaceID, _ := accountsID.WorkspaceIDFrom(oldUser.Workspace().String())
+
+	var newMetadata *accountsUser.Metadata
+	if oldMetadata := oldUser.Metadata(); oldMetadata != nil {
+		md := accountsUser.Metadata{}
+		md.SetPhotoURL(oldMetadata.PhotoURL())
+		md.SetDescription(oldMetadata.Description())
+		md.SetWebsite(oldMetadata.Website())
+		md.SetLang(oldMetadata.Lang())
+		md.SetTheme(accountsUser.Theme(oldMetadata.Theme()))
+		newMetadata = &md
+	}
+
+	oldAuths := oldUser.Auths()
+	newAuths := make([]accountsUser.Auth, 0, len(oldAuths))
+	for _, auth := range oldAuths {
+		newAuths = append(newAuths, accountsUser.Auth{
+			Provider: auth.Provider,
+			Sub:      auth.Sub,
+		})
+	}
+
+	builder := accountsUser.New().
+		ID(newID).
+		Name(oldUser.Name()).
+		Email(oldUser.Email()).
+		Workspace(newWorkspaceID).
+		Auths(newAuths)
+
+	if newMetadata != nil {
+		builder = builder.Metadata(*newMetadata)
+	}
+
+	newUser, _ := builder.Build()
+	return newUser
+}
+
+func convertOldWorkspaceToNewForE2E(oldWs *workspace.Workspace) *accountsWorkspace.Workspace {
+	if oldWs == nil {
+		return nil
+	}
+
+	newID, _ := accountsID.WorkspaceIDFrom(oldWs.ID().String())
+
+	oldMembers := oldWs.Members().Users()
+	newMembers := make(map[accountsID.UserID]accountsWorkspace.Member)
+	for uid, member := range oldMembers {
+		newUID, _ := accountsID.UserIDFrom(uid.String())
+		newMembers[newUID] = accountsWorkspace.Member{
+			Role: accountsWorkspace.Role(member.Role),
+		}
+	}
+
+	var newPolicyID *accountsWorkspace.PolicyID
+	if oldPolicy := oldWs.Policy(); oldPolicy != nil {
+		policyID := accountsWorkspace.PolicyID(*oldPolicy)
+		newPolicyID = &policyID
+	}
+
+	newWs, _ := accountsWorkspace.New().
+		ID(newID).
+		Name(oldWs.Name()).
+		Members(newMembers).
+		Personal(oldWs.IsPersonal()).
+		Policy(newPolicyID).
+		Build()
+
+	return newWs
+}
+
+func convertNewWorkspaceToOldForE2E(newWs *accountsWorkspace.Workspace) *workspace.Workspace {
+	if newWs == nil {
+		return nil
+	}
+
+	oldID, _ := workspace.IDFrom(newWs.ID().String())
+
+	newMembers := newWs.Members().Users()
+	oldMembers := make(map[user.ID]workspace.Member)
+	for uid, member := range newMembers {
+		oldUID, _ := user.IDFrom(uid.String())
+		oldMembers[oldUID] = workspace.Member{
+			Role: workspace.Role(member.Role),
+		}
+	}
+
+	var oldPolicyID *workspace.PolicyID
+	if newPolicy := newWs.Policy(); newPolicy != nil {
+		policyID := workspace.PolicyID(*newPolicy)
+		oldPolicyID = &policyID
+	}
+
+	oldWs, _ := workspace.New().
+		ID(oldID).
+		Name(newWs.Name()).
+		Members(oldMembers).
+		Personal(newWs.IsPersonal()).
+		Policy(oldPolicyID).
+		Build()
+
+	return oldWs
 }

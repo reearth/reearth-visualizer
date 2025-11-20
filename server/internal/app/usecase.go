@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/labstack/echo/v4"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
@@ -12,7 +13,7 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 )
 
-func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
+func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountsRepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		repos := r
 
@@ -30,10 +31,13 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 
 		var ar2 *accountrepo.Container
 		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
+			// Create adapters to wrap new repos and implement old interfaces
+			ar2 = &accountrepo.Container{
+				User:      NewReverseUserAdapter(ar.User),
+				Workspace: NewReverseWorkspaceAdapter(ar.Workspace),
+			}
 			// apply filters to repos
-			ar2 = ar.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
-		} else {
-			ar2 = ar
+			ar2 = ar2.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
 		}
 
 		uc := interactor.NewContainer(repos, g, ar2, ag, config)
