@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
@@ -45,8 +46,8 @@ func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Co
 		Property:        NewProperty(client),
 		Scene:           NewScene(client),
 		SceneLock:       NewSceneLock(client),
-		Workspace:       NewWorkspace(client),
-		User:            NewUser(client),
+		Workspace:       accountsInfra.NewMongoWorkspace(client),
+		User:            accountsInfra.NewMongoUser(client),
 		Policy:          NewPolicy(client),
 		Storytelling:    NewStorytelling(client),
 		Transaction:     client.Transaction(),
@@ -114,8 +115,7 @@ func Init(r *repo.Container) error {
 		func() error { return r.Property.(*Property).Init(ctx) },
 		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
 		func() error { return r.Scene.(*Scene).Init(ctx) },
-		func() error { return r.User.(*User).Init(ctx) },
-		func() error { return r.Workspace.(*Workspace).Init(ctx) },
+		// User and Workspace init are handled by reearth-accounts
 	)
 }
 
