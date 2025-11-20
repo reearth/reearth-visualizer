@@ -17,8 +17,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
@@ -26,6 +24,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 )
 
 // MockPolicyChecker is a mock implementation of gateway.PolicyChecker
@@ -58,10 +57,6 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 	db := memory.New()
 	wsID := accountsID.NewWorkspaceID()
 
-	// Create workspace
-	ws := workspace.New().ID(wsID).MustBuild()
-	_ = db.Workspace.Save(ctx, ws)
-
 	// Create repositories
 	repos := &repo.Container{
 		User:            db.User,
@@ -92,9 +87,9 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 
 	// Create operator
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{wsID},
-			OwningWorkspaces:   workspace.IDList{wsID},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{wsID},
+			OwningWorkspaces:   accountsID.WorkspaceIDList{wsID},
 		},
 	}
 

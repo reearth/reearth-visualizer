@@ -9,14 +9,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 )
 
 func createNewProjectMetadataUC(client *mongox.Client) *ProjectMetadata {
@@ -35,11 +33,10 @@ func TestProjectMetadata_CreateAndFindByProjectID(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 
@@ -85,11 +82,10 @@ func TestProjectMetadata_Update(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 
@@ -146,11 +142,10 @@ func TestProjectMetadata_FindByProjectID_NotFound(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 
@@ -167,11 +162,10 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 

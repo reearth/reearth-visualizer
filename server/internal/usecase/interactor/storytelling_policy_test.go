@@ -19,8 +19,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
@@ -28,6 +26,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 )
 
 // Test helper to create a storytelling test environment
@@ -52,10 +51,6 @@ func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTe
 	projectID := id.NewProjectID()
 	sceneID := id.NewSceneID()
 	storyID := id.NewStoryID()
-
-	// Create workspace
-	ws := workspace.New().ID(wsID).MustBuild()
-	_ = db.Workspace.Save(ctx, ws)
 
 	// Create project
 	proj := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
@@ -105,8 +100,8 @@ func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTe
 
 	// Create operator
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{wsID},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{wsID},
 		},
 		WritableScenes: id.SceneIDList{sceneID},
 	}

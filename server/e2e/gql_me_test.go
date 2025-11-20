@@ -9,6 +9,8 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
+
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 const GetMeQuery = `
@@ -185,7 +187,7 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) 
 	}
 
 	// assign user3 to user1's workspace
-	if err := JoinMembers(ctx, r, oldWID, u3, workspace.RoleReader, oldUID); err != nil {
+	if err := JoinMembers(ctx, r, wID, u3, accountsWorkspace.RoleReader, uID); err != nil {
 		return err
 	}
 

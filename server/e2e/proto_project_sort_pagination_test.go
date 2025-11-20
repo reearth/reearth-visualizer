@@ -15,10 +15,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 // go test -v -run TestInternalAPI_GetProjectList_Owner ./e2e/...
@@ -120,7 +120,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 	// add user1 to workspace2(user2)
 	user1, err := r.User.FindByID(ctx, uID)
 	assert.Nil(t, err)
-	assert.Nil(t, JoinMembers(ctx, r, wID2, user1, workspace.RoleReader, uID2))
+	assert.Nil(t, JoinMembers(ctx, r, wID2, user1, accountsWorkspace.RoleReader, uID2))
 
 	// user1(Member) call api
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {

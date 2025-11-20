@@ -92,9 +92,7 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 	}
 
 	// assign user3 to user1's workspace
-	oldWID, _ := workspace.IDFrom(wID.String())
-	oldUID, _ := user.IDFrom(uID.String())
-	if err := JoinMembers(ctx, r, oldWID, u3, workspace.RoleReader, oldUID); err != nil {
+	if err := JoinMembers(ctx, r, wID, u3, accountsWorkspace.RoleReader, uID); err != nil {
 		return err
 	}
 
@@ -107,39 +105,32 @@ func createUserAndWorkspace(
 	wid accountsID.WorkspaceID,
 	uid accountsID.UserID,
 	name string,
-	email string) (*user.User, error) {
-	// Convert new IDs to old IDs for domain models
-	oldUID, _ := user.IDFrom(uid.String())
-	oldWID, _ := user.WorkspaceIDFrom(wid.String())
-
-	u := user.New().
-		ID(oldUID).
-		Workspace(oldWID).
+	email string) (*accountsUser.User, error) {
+	// Create user with new types
+	u := accountsUser.New().
+		ID(uid).
+		Workspace(wid).
 		Name(name).
 		Email(email).
-		Metadata(user.NewMetadata()).
+		Metadata(accountsUser.NewMetadata()).
 		MustBuild()
 
-	// Convert to new user type for save
-	newUser := convertOldUserToNewForE2E(u)
-	if err := r.User.Save(ctx, newUser); err != nil {
+	if err := r.User.Save(ctx, u); err != nil {
 		return nil, err
 	}
 
-	m := workspace.Member{
-		Role: workspace.RoleOwner,
+	// Create workspace with new types
+	m := accountsWorkspace.Member{
+		Role: accountsWorkspace.RoleOwner,
 	}
-	oldWsID, _ := workspace.IDFrom(wid.String())
-	w := workspace.New().ID(oldWsID).
+	w := accountsWorkspace.New().ID(wid).
 		Name(name).
 		Personal(false).
-		Members(map[user.ID]workspace.Member{oldUID: m}).
-		Metadata(workspace.NewMetadata()).
+		Members(map[accountsID.UserID]accountsWorkspace.Member{uid: m}).
+		Metadata(accountsWorkspace.NewMetadata()).
 		MustBuild()
 
-	// Convert to new workspace type for save
-	newWorkspace := convertOldWorkspaceToNewForE2E(w)
-	if err := r.Workspace.Save(ctx, newWorkspace); err != nil {
+	if err := r.Workspace.Save(ctx, w); err != nil {
 		return nil, err
 	}
 	return u, nil
@@ -174,42 +165,45 @@ func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 }
 
 func JoinMembers(ctx context.Context, r *repo.Container,
-	targetWorkspace workspace.ID,
-	newUser *user.User,
-	grantRole workspace.Role,
-	invitedUserId workspace.UserID,
+	targetWorkspace accountsID.WorkspaceID,
+	newUser *accountsUser.User,
+	grantRole accountsWorkspace.Role,
+	invitedUserId accountsID.UserID,
 ) error {
-	// Convert to new workspace ID for FindByID
-	newWID, _ := accountsID.WorkspaceIDFrom(targetWorkspace.String())
-	w, err := r.Workspace.FindByID(ctx, newWID)
+	// Find workspace by ID
+	w, err := r.Workspace.FindByID(ctx, targetWorkspace)
 	if err != nil {
 		return err
 	}
 
-	// Convert new workspace to old for manipulation
-	oldW := convertNewWorkspaceToOldForE2E(w)
-	members := oldW.Members()
-
-	err = members.Join(newUser, grantRole, invitedUserId)
-	if err != nil {
-		return err
-	}
-	newMembers := make(map[workspace.UserID]workspace.Member)
-	for k, v := range members.Users() {
+	// Add new member to workspace
+	newMembers := make(map[accountsID.UserID]accountsWorkspace.Member)
+	for k, v := range w.Members().Users() {
 		newMembers[k] = v
 	}
-	metadata := workspace.NewMetadata()
-	w2 := workspace.New().
-		ID(oldW.ID()).
-		Name(oldW.Name()).
-		Personal(oldW.IsPersonal()).
+	newMembers[newUser.ID()] = accountsWorkspace.Member{
+		Role:      grantRole,
+		InvitedBy: invitedUserId,
+	}
+
+	// Rebuild workspace with new members
+	metadata := w.Metadata()
+	var metadataValue accountsWorkspace.Metadata
+	if metadata != nil {
+		metadataValue = *metadata
+	} else {
+		metadataValue = accountsWorkspace.NewMetadata()
+	}
+	w2 := accountsWorkspace.New().
+		ID(w.ID()).
+		Name(w.Name()).
+		Personal(w.IsPersonal()).
 		Members(newMembers).
-		Metadata(metadata).
+		Metadata(metadataValue).
 		MustBuild()
 
-	// Convert back to new workspace for Save
-	newW2 := convertOldWorkspaceToNewForE2E(w2)
-	if err := r.Workspace.Save(ctx, newW2); err != nil {
+	// Save updated workspace
+	if err := r.Workspace.Save(ctx, w2); err != nil {
 		return err
 	}
 	return nil

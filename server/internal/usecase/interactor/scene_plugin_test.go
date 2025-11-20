@@ -14,13 +14,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 )
 
 func TestScene_InstallPlugin(t *testing.T) {
@@ -83,7 +83,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			name: "operation denied",
 			args: args{
 				operator: &usecase.Operator{
-					AcOperator: &accountusecase.Operator{},
+					AcOperator: &accountsUsecase.Operator{},
 				},
 			},
 			wantErr: interfaces.ErrOperationDenied,
@@ -121,7 +121,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					AcOperator: &accountusecase.Operator{
+					AcOperator: &accountsUsecase.Operator{
 						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}
@@ -197,7 +197,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			name: "operation denied",
 			args: args{
 				operator: &usecase.Operator{
-					AcOperator: &accountusecase.Operator{},
+					AcOperator: &accountsUsecase.Operator{},
 				}},
 			wantErr: interfaces.ErrOperationDenied,
 		},
@@ -245,7 +245,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					AcOperator: &accountusecase.Operator{
+					AcOperator: &accountsUsecase.Operator{
 						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}
@@ -332,7 +332,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			name: "operation denied",
 			args: args{
 				operator: &usecase.Operator{
-					AcOperator: &accountusecase.Operator{},
+					AcOperator: &accountsUsecase.Operator{},
 				}},
 			wantErr: interfaces.ErrOperationDenied,
 		},
@@ -378,7 +378,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					AcOperator: &accountusecase.Operator{
+					AcOperator: &accountsUsecase.Operator{
 						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}

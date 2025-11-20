@@ -10,10 +10,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 )
 
 func TestProperty_AddItem(t *testing.T) {
@@ -139,8 +139,8 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 		transaction:        memory.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: []accountsID.WorkspaceID{ws},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws},
 		},
 		WritableScenes: []id.SceneID{scene.ID()},
 	}

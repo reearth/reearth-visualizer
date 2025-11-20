@@ -9,7 +9,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/app"
-	"github.com/reearth/reearthx/account/accountdomain/user"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"golang.org/x/text/language"
 
 	"github.com/stretchr/testify/assert"
@@ -49,10 +50,16 @@ func TestLanguageExtractor(t *testing.T) {
 			req, _ := http.NewRequest("GET", "/", nil)
 			req.Header.Set("lang", tt.headerLang)
 
-			u := &user.User{}
-			metadata := user.NewMetadata()
+			// Create new-style user
+			metadata := accountsUser.NewMetadata()
 			metadata.SetLang(tt.userLang)
-			u.SetMetadata(metadata)
+			u, _ := accountsUser.New().
+				ID(accountsID.NewUserID()).
+				Workspace(accountsID.NewWorkspaceID()).
+				Name("test").
+				Email("test@example.com").
+				Metadata(metadata).
+				Build()
 			ctx := adapter.AttachUser(context.Background(), u)
 			req = req.WithContext(ctx)
 
