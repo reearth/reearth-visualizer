@@ -77,15 +77,9 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 			})
 		}
 
-		uc := adapter.Usecases(ctx)
-		controller := http1.NewUserController(uc.User)
-
-		output, err := controller.Signup(ctx, inp)
-		if err != nil {
-			return err
-		}
-
-		return c.JSON(http.StatusOK, output)
+		// TODO: Re-implement signup functionality with new account repos
+		// For now, return not implemented error
+		return echo.NewHTTPError(http.StatusNotImplemented, "Signup functionality needs to be re-implemented")
 	}
 }
 
@@ -172,20 +166,9 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 
 func MockUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		uc := adapter.Usecases(c.Request().Context())
-		controller := http1.NewUserController(uc.User)
-
-		input := http1.SignupInput{
-			Username: "Mock User",
-			Email:    "mock@example.com",
-		}
-
-		output, err := controller.Signup(c.Request().Context(), input)
-		if err != nil {
-			return err
-		}
-
-		return c.JSON(http.StatusOK, output)
+		// TODO: Re-implement mock signup functionality with new account repos
+		// For now, return not implemented error
+		return echo.NewHTTPError(http.StatusNotImplemented, "Mock signup functionality needs to be re-implemented")
 	}
 }
 

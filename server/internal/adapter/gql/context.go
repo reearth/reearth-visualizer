@@ -3,11 +3,12 @@ package gql
 import (
 	"context"
 
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 
 	"golang.org/x/text/language"
 )
@@ -19,11 +20,12 @@ const (
 	contextDataloaders ContextKey = "dataloaders"
 )
 
-func AttachUsecases(ctx context.Context, u *interfaces.Container, enableDataLoaders bool) context.Context {
-	loaders := NewLoaders(u)
+func AttachUsecases(ctx context.Context, u *interfaces.Container, acRepos *accountsRepo.Container, enableDataLoaders bool) context.Context {
+	loaders := NewLoaders(u, acRepos)
 	dataloaders := loaders.DataLoadersWith(ctx, enableDataLoaders)
 
 	ctx = adapter.AttachUsecases(ctx, u)
+	ctx = adapter.AttachAcRepos(ctx, acRepos)
 	ctx = context.WithValue(ctx, contextLoaders, loaders)
 	ctx = context.WithValue(ctx, contextDataloaders, dataloaders)
 
@@ -51,6 +53,10 @@ func getAcOperator(ctx context.Context) *accountsUsecase.Operator {
 
 func usecases(ctx context.Context) *interfaces.Container {
 	return adapter.Usecases(ctx)
+}
+
+func acRepos(ctx context.Context) *accountsRepo.Container {
+	return adapter.AcRepos(ctx)
 }
 
 func loaders(ctx context.Context) *Loaders {

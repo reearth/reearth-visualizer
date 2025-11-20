@@ -10,7 +10,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 )
 
 func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountsRepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
@@ -29,18 +28,7 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountsRepo
 			)
 		}
 
-		var ar2 *accountrepo.Container
-		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
-			// Create adapters to wrap new repos and implement old interfaces
-			ar2 = &accountrepo.Container{
-				User:      NewReverseUserAdapter(ar.User),
-				Workspace: NewReverseWorkspaceAdapter(ar.Workspace),
-			}
-			// apply filters to repos
-			ar2 = ar2.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
-		}
-
-		uc := interactor.NewContainer(repos, g, ar2, ag, config)
+		uc := interactor.NewContainer(repos, g, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
 		return ctx
 	})

@@ -12,7 +12,6 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -160,19 +159,8 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 
 		r := cfg.Repos
 		g := cfg.Gateways
-		ar := cfg.AccountRepos
-		ag := cfg.AccountGateways
 
-		// Convert new account repos to old-style repos using adapters
-		var ar2 *accountrepo.Container
-		if ar != nil {
-			ar2 = &accountrepo.Container{
-				User:      NewReverseUserAdapter(ar.User),
-				Workspace: NewReverseWorkspaceAdapter(ar.Workspace),
-			}
-		}
-
-		uc := interactor.NewContainer(r, g, ar2, ag, interactor.ContainerConfig{})
+		uc := interactor.NewContainer(r, g, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
 		ctx = adapter.AttachInternal(ctx, true)
 		return handler(ctx, req)

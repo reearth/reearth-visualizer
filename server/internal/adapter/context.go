@@ -5,10 +5,10 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
 
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
@@ -19,6 +19,7 @@ const (
 	contextOperator    ContextKey = "operator"
 	ContextAuthInfo    ContextKey = "authinfo"
 	contextUsecases    ContextKey = "usecases"
+	contextAcRepos     ContextKey = "acRepos"
 	contextMockAuth    ContextKey = "mockauth"
 	contextCurrentHost ContextKey = "currenthost"
 	contextLang        ContextKey = "lang"
@@ -53,6 +54,10 @@ func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Context {
 	ctx = context.WithValue(ctx, contextUsecases, u)
 	return ctx
+}
+
+func AttachAcRepos(ctx context.Context, ar *accountsRepo.Container) context.Context {
+	return context.WithValue(ctx, contextAcRepos, ar)
 }
 
 func AttachMockAuth(ctx context.Context, mockAuth bool) context.Context {
@@ -120,15 +125,6 @@ func Operator(ctx context.Context) *usecase.Operator {
 	return nil
 }
 
-func AcOperator(ctx context.Context) *accountusecase.Operator {
-	if v := ctx.Value(contextOperator); v != nil {
-		if v2, ok := v.(*accountusecase.Operator); ok {
-			return v2
-		}
-	}
-	return nil
-}
-
 func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 	if IsMockAuth(ctx) {
 		return &appx.AuthInfo{
@@ -148,6 +144,15 @@ func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 func Usecases(ctx context.Context) *interfaces.Container {
 	if v := ctx.Value(contextUsecases); v != nil {
 		if v2, ok := v.(*interfaces.Container); ok {
+			return v2
+		}
+	}
+	return nil
+}
+
+func AcRepos(ctx context.Context) *accountsRepo.Container {
+	if v := ctx.Value(contextAcRepos); v != nil {
+		if v2, ok := v.(*accountsRepo.Container); ok {
 			return v2
 		}
 	}

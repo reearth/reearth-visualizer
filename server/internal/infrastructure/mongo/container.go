@@ -11,8 +11,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
@@ -22,7 +20,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool) (*repo.Container, error) {
+func New(ctx context.Context, db *mongo.Database, useTransaction bool) (*repo.Container, error) {
 	lock, err := NewLock(db.Collection("locks"))
 	if err != nil {
 		return nil, err
@@ -47,14 +45,12 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Property:        NewProperty(client),
 		Scene:           NewScene(client),
 		SceneLock:       NewSceneLock(client),
-		Workspace:       NewWorkspaceAdapter(account.Workspace),
-		User:            NewUserAdapter(account.User),
+		Workspace:       NewWorkspace(client),
+		User:            NewUser(client),
 		Policy:          NewPolicy(client),
 		Storytelling:    NewStorytelling(client),
 		Transaction:     client.Transaction(),
 		Extensions:      nil,
-		Role:            account.Role,
-		Permittable:     account.Permittable,
 	}
 
 	// init
@@ -65,8 +61,8 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 	return c, nil
 }
 
-func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool, src []string) (*repo.Container, error) {
-	c, err := New(ctx, db, account, useTransaction)
+func NewWithExtensions(ctx context.Context, db *mongo.Database, useTransaction bool, src []string) (*repo.Container, error) {
+	c, err := New(ctx, db, useTransaction)
 	if err != nil {
 		return nil, err
 	}
@@ -118,8 +114,8 @@ func Init(r *repo.Container) error {
 		func() error { return r.Property.(*Property).Init(ctx) },
 		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
 		func() error { return r.Scene.(*Scene).Init(ctx) },
-		func() error { return r.User.(*UserAdapter).inner.(*accountmongo.User).Init() },
-		func() error { return r.Workspace.(*WorkspaceAdapter).inner.(*accountmongo.Workspace).Init() },
+		func() error { return r.User.(*User).Init(ctx) },
+		func() error { return r.Workspace.(*Workspace).Init(ctx) },
 	)
 }
 

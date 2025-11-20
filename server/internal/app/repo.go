@@ -13,15 +13,12 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
 	"github.com/reearth/reearth/server/internal/infrastructure/google"
 	"github.com/reearth/reearth/server/internal/infrastructure/marketplace"
-	infrastructure "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/infrastructure/s3"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox"
@@ -31,34 +28,12 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 )
 
-func initAccountDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *accountrepo.Container {
-	accountDatabase := conf.DB_Account
-	log.Infof("accountDatabase: %s", accountDatabase)
 
-	accountUsers := make([]accountrepo.User, 0, len(conf.DB_Users))
-	for _, u := range conf.DB_Users {
-		c, err := mongo.Connect(ctx, options.Client().ApplyURI(u.URI).SetMonitor(otelmongo.NewMonitor()))
-		if err != nil {
-			log.Fatalf("mongo error: %+v\n", err)
-		}
-		accountUsers = append(accountUsers, accountmongo.NewUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
-	}
-
-	// this flag is for old database structure compatibility
-	// on this service, it is always false
-	useLegacyStructure := false
-	accountRepos, err := accountmongo.New(ctx, client, accountDatabase, txAvailable, useLegacyStructure, accountUsers)
-	if err != nil {
-		log.Fatalf("Failed to init mongo database account: %+v\n", err)
-	}
-	return accountRepos
-}
-
-func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accountrepo.Container, ctx context.Context, conf *config.Config) *repo.Container {
+func initVisDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *repo.Container {
 	visDatabase := conf.DB_Vis
 	log.Infof("visDatabase: %s", visDatabase)
 
-	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(visDatabase), accountRepos, txAvailable, conf.Ext_Plugin)
+	repos, err := mongorepo.NewWithExtensions(ctx, client.Database(visDatabase), txAvailable, conf.Ext_Plugin)
 	if err != nil {
 		log.Fatalf("Failed to init mongo database visualizer: %+v\n", err)
 	}
@@ -95,8 +70,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	}
 
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
-	accountRepos := initAccountDatabase(client, txAvailable, ctx, conf)
-	visRepos := initVisDatabase(client, txAvailable, accountRepos, ctx, conf)
+	visRepos := initVisDatabase(client, txAvailable, ctx, conf)
 
 	// File
 	gateways.File = initFile(ctx, conf)
@@ -163,10 +137,10 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	// Convert old account repos to new interface type
+	// Account repos are now part of the main repo container
 	newAccountRepos := &accountsRepo.Container{
-		User:      infrastructure.NewUserAdapter(accountRepos.User),
-		Workspace: infrastructure.NewWorkspaceAdapter(accountRepos.Workspace),
+		User:      visRepos.User,
+		Workspace: visRepos.Workspace,
 	}
 
 	return visRepos, gateways, newAccountRepos, acGateways, accountsAPIClient

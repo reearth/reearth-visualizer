@@ -8,7 +8,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/verror"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
 
@@ -40,8 +39,6 @@ type Container struct {
 	Storytelling    Storytelling
 	Transaction     usecasex.Transaction
 	Extensions      []id.PluginID
-	Role            accountrepo.Role        // TODO: Delete this once the permission check migration is complete.
-	Permittable     accountrepo.Permittable // TODO: Delete this once the permission check migration is complete.
 }
 
 func (c *Container) AccountRepos() *accountsRepo.Container {

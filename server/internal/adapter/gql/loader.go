@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 )
 
@@ -39,7 +40,7 @@ type DataLoaders struct {
 	User            UserDataLoader
 }
 
-func NewLoaders(usecases *interfaces.Container) *Loaders {
+func NewLoaders(usecases *interfaces.Container, acRepos *accountsRepo.Container) *Loaders {
 	if usecases == nil {
 		return nil
 	}
@@ -52,8 +53,8 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
 		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: NewWorkspaceLoader(usecases.Workspace),
-		User:      NewUserLoader(usecases.User),
+		Workspace: NewWorkspaceLoader(acRepos.Workspace),
+		User:      NewUserLoader(acRepos.User),
 	}
 }
 

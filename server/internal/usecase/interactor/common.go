@@ -14,9 +14,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -32,8 +29,6 @@ type ContainerConfig struct {
 func NewContainer(
 	r *repo.Container,
 	g *gateway.Container,
-	ar *accountrepo.Container,
-	ag *accountgateway.Container,
 	config ContainerConfig,
 ) interfaces.Container {
 
@@ -56,9 +51,6 @@ func NewContainer(
 		Published:       published,
 		Scene:           NewScene(r, g),
 		StoryTelling:    NewStorytelling(r, g),
-		// TODO: Update workspace member count enforcer after workspace member migration
-		Workspace:       accountinteractor.NewWorkspace(ar, nil),
-		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
 	}
 }
 

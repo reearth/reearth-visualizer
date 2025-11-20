@@ -18,7 +18,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
@@ -27,7 +26,6 @@ import (
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
-	infrastructure "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 )
 
 func init() {
@@ -41,8 +39,8 @@ func createNewProjectUC(client *mongox.Client) *Project {
 		projectRepo:         mongo.NewProject(client),
 		projectMetadataRepo: mongo.NewProjectMetadata(client),
 		storytellingRepo:    mongo.NewStorytelling(client),
-		userRepo:            infrastructure.NewUserAdapter(accountmongo.NewUser(client)),
-		workspaceRepo:       infrastructure.NewWorkspaceAdapter(accountmongo.NewWorkspace(client)),
+		userRepo:            mongo.NewUser(client),
+		workspaceRepo:       mongo.NewWorkspace(client),
 		sceneRepo:           mongo.NewScene(client),
 		propertyRepo:        mongo.NewProperty(client),
 		propertySchemaRepo:  mongo.NewPropertySchema(client),
