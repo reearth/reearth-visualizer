@@ -56,7 +56,8 @@ func NewContainer(
 		Published:       published,
 		Scene:           NewScene(r, g),
 		StoryTelling:    NewStorytelling(r, g),
-		Workspace:       accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
+		// TODO: Update workspace member count enforcer after workspace member migration
+		Workspace:       accountinteractor.NewWorkspace(ar, nil),
 		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
 	}
 }

@@ -4,12 +4,11 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearthx/account/accountdomain/user"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
 
 	"golang.org/x/text/language"
-
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type UserController struct {
@@ -38,7 +37,7 @@ type SignupInput struct {
 	Username    string                  `json:"username"` // ysername is an alias of Name
 	Email       string                  `json:"email"`
 	Password    string                  `json:"password"`
-	Theme       *user.Theme             `json:"theme"`
+	Theme       *accountsUser.Theme     `json:"theme"`
 	Lang        *language.Tag           `json:"lang"`
 }
 

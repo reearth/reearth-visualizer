@@ -5,9 +5,8 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error) {
@@ -52,7 +51,7 @@ func (r *mutationResolver) AddMemberToWorkspace(ctx context.Context, input gqlmo
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, map[accountsID.UserID]workspace.Role{uid: gqlmodel.FromRole(input.Role)}, getAcOperator(ctx))
+	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, map[accountsID.UserID]accountsWorkspace.Role{uid: gqlmodel.FromRole(input.Role)}, getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}

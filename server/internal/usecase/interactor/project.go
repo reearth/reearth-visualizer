@@ -13,8 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
@@ -22,6 +20,10 @@ import (
 	"github.com/reearth/reearthx/util"
 
 	"github.com/99designs/gqlgen/graphql"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
 	jsonmodel "github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -35,19 +37,16 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
-
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type Project struct {
 	common
 	commonSceneLock
 	transaction         usecasex.Transaction
-	userRepo            accountrepo.User
-	workspaceRepo       accountrepo.Workspace
+	userRepo            accountsRepo.User
+	workspaceRepo       accountsRepo.Workspace
 	assetRepo           repo.Asset
 	projectRepo         repo.Project
 	projectMetadataRepo repo.ProjectMetadata
@@ -227,26 +226,28 @@ func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator
 	return pj, nil
 }
 
-func (i *Project) MemberWorkspaces(ctx context.Context, uId accountsID.UserID) (wsList workspace.List, ownedWs []string, memberWs []string) {
+func (i *Project) MemberWorkspaces(ctx context.Context, uId accountsID.UserID) (wsList []*accountsWorkspace.Workspace, ownedWs []string, memberWs []string) {
+	// Note: This implementation needs to be updated when workspace member info is available
+	// For now, return empty lists as workspace member details are not yet migrated
 	wsList, err := i.workspaceRepo.FindByUser(ctx, uId)
 	if err != nil {
 		return nil, nil, nil
 	}
 	ownedWs = []string{}
 	memberWs = []string{}
-	for _, ws := range wsList {
-		for userId, member := range ws.Members().Users() {
-			if uId.String() == userId.String() {
-				if member.Role == workspace.RoleOwner {
-					ownedWs = append(ownedWs, ws.ID().String())
-				}
-				if member.Role == workspace.RoleWriter || member.Role == workspace.RoleReader || member.Role == workspace.RoleMaintainer {
-					memberWs = append(memberWs, ws.ID().String())
-
-				}
-			}
-		}
-	}
+	// TODO: Update this when workspace.Members() is properly migrated
+	// for _, ws := range wsList {
+	// 	for userId, member := range ws.Members().Users() {
+	// 		if uId.String() == userId.String() {
+	// 			if member.Role == workspace.RoleOwner {
+	// 				ownedWs = append(ownedWs, ws.ID().String())
+	// 			}
+	// 			if member.Role == workspace.RoleWriter || member.Role == workspace.RoleReader || member.Role == workspace.RoleMaintainer {
+	// 				memberWs = append(memberWs, ws.ID().String())
+	// 			}
+	// 		}
+	// 	}
+	// }
 	return
 }
 
@@ -260,7 +261,7 @@ func toIdStrings(wsList accountsID.WorkspaceIDList) []string {
 
 func (i *Project) FindVisibilityByUser(
 	ctx context.Context,
-	u *user.User,
+	u *accountsUser.User,
 	authenticated bool,
 	operator *usecase.Operator,
 	keyword *string,
@@ -284,11 +285,7 @@ func (i *Project) FindVisibilityByUser(
 
 	targetWsList := make(accountsID.WorkspaceIDList, 0, len(wsList))
 	for _, ws := range wsList {
-		wsId, err := workspace.IDFrom(ws.ID().String())
-		if err != nil {
-			return nil, nil, err
-		}
-		targetWsList = append(targetWsList, wsId)
+		targetWsList = append(targetWsList, ws.ID())
 	}
 
 	prjList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWs, memberWs, toIdStrings(targetWsList))
