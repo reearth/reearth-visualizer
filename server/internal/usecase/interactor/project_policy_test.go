@@ -17,7 +17,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/usecasex"
@@ -25,6 +24,8 @@ import (
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // MockPolicyChecker is a mock implementation of gateway.PolicyChecker
@@ -43,7 +44,7 @@ func (m *MockPolicyChecker) CheckPolicy(ctx context.Context, req gateway.PolicyC
 // Test helper to create a project test environment
 type projectTestEnv struct {
 	ctx               context.Context
-	wsID              accountdomain.WorkspaceID
+	wsID              accountsID.WorkspaceID
 	projectUC         interfaces.Project
 	operator          *usecase.Operator
 	mockPolicyChecker *MockPolicyChecker
@@ -55,7 +56,7 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 
 	mockPolicyChecker := new(MockPolicyChecker)
 	db := memory.New()
-	wsID := accountdomain.NewWorkspaceID()
+	wsID := accountsID.NewWorkspaceID()
 
 	// Create workspace
 	ws := workspace.New().ID(wsID).MustBuild()

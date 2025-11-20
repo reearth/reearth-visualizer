@@ -4,8 +4,9 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // export REEARTH_DB=mongodb://localhost
@@ -267,7 +268,7 @@ fragment PropertyFragment on Property {
   __typename
 }`
 
-func addWidgetMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) ([]httpexpect.Value, *httpexpect.Value) {
+func addWidgetMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) ([]httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "AddWidget",
 		Query:         AddWidgetMutation,
@@ -299,7 +300,7 @@ const UpdateWidgetMutation = `mutation UpdateWidget($type: WidgetAlignSystemType
   }
 }`
 
-func updateWidgetMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateWidgetMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateWidget",
 		Query:         UpdateWidgetMutation,
@@ -397,7 +398,7 @@ fragment WidgetAlignSystemFragment on WidgetAlignSystem {
   __typename
 }`
 
-func updateWidgetAlignSystemMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateWidgetAlignSystemMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateWidgetAlignSystem",
 		Query:         UpdateWidgetAlignSystemMutation,
@@ -425,7 +426,7 @@ const RemoveWidgetMutation = `mutation RemoveWidget($type: WidgetAlignSystemType
   }
 }`
 
-func removeWidgetMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func removeWidgetMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveWidget",
 		Query:         RemoveWidgetMutation,

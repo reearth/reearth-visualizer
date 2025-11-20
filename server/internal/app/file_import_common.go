@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v4"
+
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
@@ -21,8 +22,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/log"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // CloudEventData represents the data inside a notification
@@ -100,11 +103,11 @@ func ParseNotification(c echo.Context) (Notification, error) {
 	return n, nil
 }
 
-func GenFileName(workspaceID accountdomain.WorkspaceID, projectID id.ProjectID, userID accountdomain.UserID) string {
+func GenFileName(workspaceID accountsID.WorkspaceID, projectID id.ProjectID, userID accountsID.UserID) string {
 	return fmt.Sprintf("%s-%s-%s.zip", workspaceID.String(), projectID.String(), userID.String())
 }
 
-func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.ProjectID, *accountdomain.UserID, error) {
+func SplitFilename(objectPath string) (string, *accountsID.WorkspaceID, *id.ProjectID, *accountsID.UserID, error) {
 
 	base := filepath.Base(objectPath)
 
@@ -115,7 +118,7 @@ func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.P
 	}
 
 	workspaceID := parts[0]
-	wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
+	wid, err := accountsID.WorkspaceIDFrom(workspaceID)
 	if err != nil {
 		return base, nil, nil, nil, fmt.Errorf("invalid workspace id: %v", err)
 	}
@@ -127,7 +130,7 @@ func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.P
 	}
 
 	userID := parts[2]
-	uid, err := accountdomain.UserIDFrom(userID)
+	uid, err := accountsID.UserIDFrom(userID)
 	if err != nil {
 		return base, nil, nil, nil, fmt.Errorf("invalid user id: %v", err)
 	}
@@ -195,7 +198,7 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 	}
 }
 
-func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, workspaceID accountdomain.WorkspaceID) (*project.Project, error) {
+func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, workspaceID accountsID.WorkspaceID) (*project.Project, error) {
 
 	visibility := string(project.VisibilityPublic)
 	coreSupport := true
@@ -251,7 +254,7 @@ func ImportProject(
 	ctx context.Context,
 	usecases *interfaces.Container,
 	op *usecase.Operator,
-	wsId accountdomain.WorkspaceID,
+	wsId accountsID.WorkspaceID,
 	pid id.ProjectID,
 	importData *[]byte,
 	assetsZip map[string]*zip.File,

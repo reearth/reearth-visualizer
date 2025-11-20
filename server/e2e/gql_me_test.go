@@ -6,10 +6,11 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 const GetMeQuery = `
@@ -152,7 +153,7 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) 
 	w := workspace.New().ID(wID).
 		Name(uName).
 		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Members(map[accountsID.UserID]workspace.Member{u.ID(): m}).
 		Metadata(workspace.NewMetadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {

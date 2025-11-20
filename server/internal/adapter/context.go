@@ -5,10 +5,11 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
+
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 type ContextKey string
@@ -41,7 +42,7 @@ func AttachLang(ctx context.Context, lang language.Tag) context.Context {
 	return context.WithValue(ctx, contextLang, lang)
 }
 
-func AttachUser(ctx context.Context, u *user.User) context.Context {
+func AttachUser(ctx context.Context, u *accountsUser.User) context.Context {
 	return context.WithValue(ctx, contextUser, u)
 }
 
@@ -77,9 +78,9 @@ func JwtToken(ctx context.Context) string {
 	return ""
 }
 
-func User(ctx context.Context) *user.User {
+func User(ctx context.Context) *accountsUser.User {
 	if v := ctx.Value(contextUser); v != nil {
-		if u, ok := v.(*user.User); ok {
+		if u, ok := v.(*accountsUser.User); ok {
 			return u
 		}
 	}
@@ -131,7 +132,7 @@ func AcOperator(ctx context.Context) *accountusecase.Operator {
 func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 	if IsMockAuth(ctx) {
 		return &appx.AuthInfo{
-			Sub:   user.NewID().String(), // Use it if there is a Mock user in the DB
+			Sub:   accountsUser.NewID().String(), // Use it if there is a Mock user in the DB
 			Name:  "Mock User",
 			Email: "mock@example.com",
 		}

@@ -4,7 +4,8 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type Builder struct {
@@ -52,7 +53,7 @@ func (b *Builder) NewID() *Builder {
 	return b
 }
 
-func (b *Builder) Workspace(workspace accountdomain.WorkspaceID) *Builder {
+func (b *Builder) Workspace(workspace accountsID.WorkspaceID) *Builder {
 	b.a.workspace = workspace
 	return b
 }

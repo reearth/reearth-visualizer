@@ -15,7 +15,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
@@ -24,6 +24,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 var (
@@ -424,7 +426,7 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, uFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountsID.WorkspaceID, uFilter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(id) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
@@ -453,7 +455,7 @@ func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.Workspac
 	return r.paginate(ctx, filter, uFilter.Sort, uFilter.Pagination)
 }
 
-func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID) ([]*project.Project, error) {
 	if !r.f.CanRead(id) {
 		return nil, repo.ErrOperationDenied
 	}
@@ -471,7 +473,7 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	return r.find(ctx, filter)
 }
 
-func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID) ([]*project.Project, error) {
 	if !r.f.CanRead(id) {
 		return nil, repo.ErrOperationDenied
 	}
@@ -667,7 +669,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	}
 }
 
-func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
+func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountsID.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
 	if !r.f.CanRead(ws) {
 		return repo.ErrOperationDenied
 	}
@@ -773,7 +775,7 @@ func (r *Project) CheckSceneAliasUnique(ctx context.Context, newAlias string) er
 	return nil
 }
 
-func (r *Project) CountByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
+func (r *Project) CountByWorkspace(ctx context.Context, ws accountsID.WorkspaceID) (int, error) {
 	if !r.f.CanRead(ws) {
 		return 0, repo.ErrOperationDenied
 	}
@@ -784,7 +786,7 @@ func (r *Project) CountByWorkspace(ctx context.Context, ws accountdomain.Workspa
 	return int(count), err
 }
 
-func (r *Project) CountPublicByWorkspace(ctx context.Context, ws accountdomain.WorkspaceID) (int, error) {
+func (r *Project) CountPublicByWorkspace(ctx context.Context, ws accountsID.WorkspaceID) (int, error) {
 	if !r.f.CanRead(ws) {
 		return 0, repo.ErrOperationDenied
 	}
@@ -827,7 +829,7 @@ func (r *Project) find(ctx context.Context, filter interface{}) ([]*project.Proj
 }
 
 func (r *Project) findOne(ctx context.Context, filter any, filterByWorkspaces bool) (*project.Project, error) {
-	var f []accountdomain.WorkspaceID
+	var f []accountsID.WorkspaceID
 	if filterByWorkspaces {
 		f = r.f.Readable
 	}

@@ -5,9 +5,11 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type ProjectFilter struct {
@@ -26,24 +28,24 @@ type Project interface {
 	FindByIDs(context.Context, id.ProjectIDList) ([]*project.Project, error)
 	FindByID(context.Context, id.ProjectID) (*project.Project, error)
 	FindByScene(context.Context, id.SceneID) (*project.Project, error)
-	FindByWorkspace(context.Context, accountdomain.WorkspaceID, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
+	FindByWorkspace(context.Context, accountsID.WorkspaceID, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
 	FindByWorkspaces(context.Context, bool, ProjectFilter, []string, []string, []string) ([]*project.Project, *usecasex.PageInfo, error)
-	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
-	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
+	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID) ([]*project.Project, error)
+	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID) ([]*project.Project, error)
 	FindActiveById(context.Context, id.ProjectID) (*project.Project, error)
 	FindActiveByAlias(context.Context, string) (*project.Project, error)
 	FindByProjectAlias(context.Context, string) (*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	FindAll(context.Context, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
-	CheckProjectAliasUnique(context.Context, accountdomain.WorkspaceID, string, *id.ProjectID) error
+	CheckProjectAliasUnique(context.Context, accountsID.WorkspaceID, string, *id.ProjectID) error
 	CheckSceneAliasUnique(context.Context, string) error
-	CountByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
-	CountPublicByWorkspace(context.Context, accountdomain.WorkspaceID) (int, error)
+	CountByWorkspace(context.Context, accountsID.WorkspaceID) (int, error)
+	CountPublicByWorkspace(context.Context, accountsID.WorkspaceID) (int, error)
 	Save(context.Context, *project.Project) error
 	Remove(context.Context, id.ProjectID) error
 }
 
-func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid accountdomain.WorkspaceID, batch int64, callback func([]*project.Project) error) error {
+func IterateProjectsByWorkspace(repo Project, ctx context.Context, tid accountsID.WorkspaceID, batch int64, callback func([]*project.Project) error) error {
 	pagination := usecasex.CursorPagination{
 		Before: nil,
 		After:  nil,

@@ -10,10 +10,11 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 const ProjectFragment = `
@@ -147,7 +148,7 @@ mutation CreateProject(
 }
 ` + ProjectFragment + ProjectMetadataFragment
 
-func createProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) string {
+func createProject(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
 		Query:         CreateProjectMutation,
@@ -157,7 +158,7 @@ func createProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[s
 	return res.Path("$.data.createProject.project.id").Raw().(string)
 }
 
-func createProject2(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func createProject2(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
 		Query:         CreateProjectMutation,
@@ -179,7 +180,7 @@ mutation UpdateProject($input: UpdateProjectInput!) {
 }
 ` + ProjectFragment + ProjectMetadataFragment
 
-func updateProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateProject(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateProject",
 		Query:         UpdateProjectMutation,
@@ -189,7 +190,7 @@ func updateProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[s
 		Path("$.data.updateProject.project")
 }
 
-func updateProject2(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateProject2(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateProject",
 		Query:         UpdateProjectMutation,
@@ -809,7 +810,7 @@ func testData(e *httpexpect.Expect) {
 	deleteProject(e, id) // delete
 }
 
-func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, wID idx.ID[accountdomain.Workspace], name string, alias string, coreSupport bool) {
+func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, wID idx.ID[accountsID.Workspace], name string, alias string, coreSupport bool) {
 	for i := range make([]int, count) {
 		p := project.New().
 			ID(id.NewProjectID()).
@@ -847,7 +848,7 @@ func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, w
 	}
 }
 
-func projectsOldData(t *testing.T, ctx context.Context, r *repo.Container, count int, wID idx.ID[accountdomain.Workspace], name string, alias string) {
+func projectsOldData(t *testing.T, ctx context.Context, r *repo.Container, count int, wID idx.ID[accountsID.Workspace], name string, alias string) {
 	for i := range make([]int, count) {
 		p := project.New().
 			ID(id.NewProjectID()).

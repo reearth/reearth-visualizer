@@ -10,13 +10,14 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestProject_FindByIDs(t *testing.T) {
@@ -24,8 +25,8 @@ func TestProject_FindByIDs(t *testing.T) {
 	ctx := context.Background()
 	pid := id.NewProjectID()
 	pid2 := id.NewProjectID()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": pid.String(), "workspace": wid.String()},
 		bson.M{"id": pid2.String(), "workspace": wid2.String()},
@@ -38,7 +39,7 @@ func TestProject_FindByIDs(t *testing.T) {
 	assert.Equal(t, pid, got[0].ID())
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: accountsID.WorkspaceIDList{wid2},
 	})
 	got, err = r2.FindByIDs(ctx, id.ProjectIDList{pid, pid2})
 	assert.NoError(t, err)
@@ -50,8 +51,8 @@ func TestProject_FindByIDs(t *testing.T) {
 func TestProject_CountByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": "a", "workspace": wid.String(), "publishmentstatus": "public"},
 		bson.M{"id": "b", "workspace": wid.String(), "publishmentstatus": "limited"},
@@ -65,7 +66,7 @@ func TestProject_CountByWorkspace(t *testing.T) {
 	assert.NoError(t, err)
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: accountsID.WorkspaceIDList{wid2},
 	})
 	got, err = r2.CountByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
@@ -75,8 +76,8 @@ func TestProject_CountByWorkspace(t *testing.T) {
 func TestProject_CountPublicByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 	_, _ = c.Collection("project").InsertMany(ctx, []any{
 		bson.M{"id": "a", "workspace": wid.String(), "publishmentstatus": "public"},
 		bson.M{"id": "b", "workspace": wid.String(), "publishmentstatus": "limited"},
@@ -90,7 +91,7 @@ func TestProject_CountPublicByWorkspace(t *testing.T) {
 	assert.NoError(t, err)
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: accountsID.WorkspaceIDList{wid2},
 	})
 	got, err = r2.CountPublicByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)
@@ -102,8 +103,8 @@ func TestProject_FindByPublicName(t *testing.T) {
 	defer util.MockNow(now)()
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 	prj1 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("alias").PublishmentStatus(project.PublishmentStatusPublic).MustBuild()
 	prj2 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("aaaaa").PublishmentStatus(project.PublishmentStatusLimited).MustBuild()
 	prj3 := project.New().NewID().Workspace(wid).UpdatedAt(now).Alias("bbbbb").MustBuild()
@@ -133,7 +134,7 @@ func TestProject_FindByPublicName(t *testing.T) {
 
 	// filter should not work because the projects are public
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: accountsID.WorkspaceIDList{wid2},
 	})
 
 	got, err = r2.FindByPublicName(ctx, "alias")
@@ -145,8 +146,8 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 
 	pid1 := id.NewProjectID()
 	pid2 := id.NewProjectID()
@@ -173,7 +174,7 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 
 	t.Run("FindStarredByWorkspace with workspace filter", func(t *testing.T) {
 		r2 := r.Filtered(repo.WorkspaceFilter{
-			Readable: accountdomain.WorkspaceIDList{wid2},
+			Readable: accountsID.WorkspaceIDList{wid2},
 		})
 		got, err := r2.FindStarredByWorkspace(ctx, wid)
 		assert.Equal(t, repo.ErrOperationDenied, err)
@@ -188,7 +189,7 @@ func TestProject_FindStarredByWorkspace(t *testing.T) {
 	})
 
 	t.Run("FindStarredByWorkspace with workspace having no starred projects", func(t *testing.T) {
-		emptyWid := accountdomain.NewWorkspaceID()
+		emptyWid := accountsID.NewWorkspaceID()
 		got, err := r.FindStarredByWorkspace(ctx, emptyWid)
 		assert.NoError(t, err)
 		assert.Empty(t, got)
@@ -199,8 +200,8 @@ func TestProject_FindDeletedByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 
 	pid1 := id.NewProjectID()
 	pid2 := id.NewProjectID()
@@ -228,7 +229,7 @@ func TestProject_FindAll(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 	pid1 := id.NewProjectID()
 	pid2 := id.NewProjectID()
 	pid3 := id.NewProjectID()
@@ -578,7 +579,7 @@ func TestProject_FindAll_SecondarySort(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 
 	// Create projects with same updatedat to test secondary sort by _id
 	now := time.Now()
@@ -815,7 +816,7 @@ func TestProject_FindByWorkspaces_100Projects_SecondarySort(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 	now := time.Now()
 
 	// Create 100 projects with identical primary sort values to test secondary sort by id
@@ -1025,7 +1026,7 @@ func TestProject_FindAll_100Projects_SecondarySort(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 	now := time.Now()
 
 	// Create 100 projects with identical values to test secondary sort
@@ -1224,7 +1225,7 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 	now := time.Now()
 
 	// Create projects with mixed star counts including duplicates
@@ -1490,7 +1491,7 @@ func TestProject_FindAll_SameStarCount_DifferentUpdatedat(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 	baseTime := time.Now()
 
 	// Create projects with same star count but different updatedat values

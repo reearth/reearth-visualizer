@@ -15,12 +15,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestAsset_Create(t *testing.T) {
@@ -57,7 +58,7 @@ func TestAsset_Create(t *testing.T) {
 		},
 	}, &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: accountdomain.WorkspaceIDList{ws.ID()},
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	})
 	assert.NoError(t, err)

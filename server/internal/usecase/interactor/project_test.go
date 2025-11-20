@@ -18,7 +18,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase"
@@ -26,6 +25,8 @@ import (
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func init() {
@@ -63,8 +64,8 @@ func TestProject_createProject(t *testing.T) {
 	_ = uc.userRepo.Save(ctx, us)
 
 	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
+		w.Members(map[accountsID.UserID]workspace.Member{
+			accountsID.NewUserID(): {
 				Role:      workspace.RoleOwner,
 				Disabled:  false,
 				InvitedBy: workspace.UserID(us.ID()),
@@ -181,8 +182,8 @@ func TestProject_CheckAlias(t *testing.T) {
 	_ = uc.userRepo.Save(ctx, us)
 
 	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
+		w.Members(map[accountsID.UserID]workspace.Member{
+			accountsID.NewUserID(): {
 				Role:      workspace.RoleOwner,
 				Disabled:  false,
 				InvitedBy: workspace.UserID(us.ID()),
@@ -271,8 +272,8 @@ func TestProject_FindActiveById(t *testing.T) {
 	_ = uc.userRepo.Save(ctx, us)
 
 	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
+		w.Members(map[accountsID.UserID]workspace.Member{
+			accountsID.NewUserID(): {
 				Role:      workspace.RoleOwner,
 				Disabled:  false,
 				InvitedBy: workspace.UserID(us.ID()),
@@ -336,7 +337,7 @@ func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {
 	_ = uc.userRepo.Save(ctx, us)
 
 	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
+		w.Members(map[accountsID.UserID]workspace.Member{
 			us.ID(): {
 				Role:      workspace.RoleOwner,
 				Disabled:  false,

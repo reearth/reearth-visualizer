@@ -9,10 +9,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type Asset struct {
@@ -64,7 +66,7 @@ func (r *Asset) FindByIDs(_ context.Context, ids id.AssetIDList) ([]*asset.Asset
 	}), nil
 }
 
-func (r *Asset) FindByWorkspaceProject(_ context.Context, wid accountdomain.WorkspaceID, pid *id.ProjectID, filter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (r *Asset) FindByWorkspaceProject(_ context.Context, wid accountsID.WorkspaceID, pid *id.ProjectID, filter repo.AssetFilter) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	if !r.f.CanRead(wid) {
 		return nil, usecasex.EmptyPageInfo(), nil
 	}
@@ -109,7 +111,7 @@ func (r *Asset) FindByWorkspaceProject(_ context.Context, wid accountdomain.Work
 	), nil
 }
 
-func (r *Asset) TotalSizeByWorkspace(_ context.Context, wid accountdomain.WorkspaceID) (t int64, err error) {
+func (r *Asset) TotalSizeByWorkspace(_ context.Context, wid accountsID.WorkspaceID) (t int64, err error) {
 	if !r.f.CanRead(wid) {
 		return 0, nil
 	}

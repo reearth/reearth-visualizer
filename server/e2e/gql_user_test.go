@@ -7,20 +7,21 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/idx"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 var (
-	uId1 = accountdomain.NewUserID()
-	uId2 = accountdomain.NewUserID()
-	uId3 = accountdomain.NewUserID()
-	wId1 = accountdomain.NewWorkspaceID()
-	wId2 = accountdomain.NewWorkspaceID()
-	iId1 = accountdomain.NewIntegrationID()
+	uId1 = accountsID.NewUserID()
+	uId2 = accountsID.NewUserID()
+	uId3 = accountsID.NewUserID()
+	wId1 = accountsID.NewWorkspaceID()
+	wId2 = accountsID.NewWorkspaceID()
+	iId1 = accountsID.NewIntegrationID()
 )
 
 func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) error {
@@ -70,10 +71,10 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 	wMetadata := workspace.NewMetadata()
 	w := workspace.New().ID(wId1).
 		Name("e2e").
-		Members(map[idx.ID[accountdomain.User]]workspace.Member{
+		Members(map[idx.ID[accountsID.User]]workspace.Member{
 			uId1: roleOwner,
 		}).
-		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
+		Integrations(map[idx.ID[accountsID.Integration]]workspace.Member{
 			iId1: roleOwner,
 		}).
 		Metadata(wMetadata).
@@ -84,11 +85,11 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 
 	w2 := workspace.New().ID(wId2).
 		Name("e2e2").
-		Members(map[idx.ID[accountdomain.User]]workspace.Member{
+		Members(map[idx.ID[accountsID.User]]workspace.Member{
 			uId1: roleOwner,
 			uId3: roleReader,
 		}).
-		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
+		Integrations(map[idx.ID[accountsID.Integration]]workspace.Member{
 			iId1: roleOwner,
 		}).
 		Metadata(wMetadata).

@@ -7,8 +7,10 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func (r *Resolver) Me() MeResolver {
@@ -26,7 +28,7 @@ func (r *meResolver) MyWorkspace(ctx context.Context, obj *gqlmodel.Me) (*gqlmod
 }
 
 func (r *meResolver) Workspaces(ctx context.Context, obj *gqlmodel.Me) ([]*gqlmodel.Workspace, error) {
-	userId, err := gqlmodel.ToID[accountdomain.User](obj.ID)
+	userId, err := gqlmodel.ToID[accountsID.User](obj.ID)
 	if err != nil {
 		return nil, err
 	}

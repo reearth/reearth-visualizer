@@ -26,29 +26,31 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 var (
 
 	// ---------------- user1
-	wID    = accountdomain.NewWorkspaceID()
+	wID    = accountsID.NewWorkspaceID()
 	uID    = user.NewID()
 	uName  = "e2e"
 	uEmail = "e2e@e2e.com"
 
 	// ---------------- user2
-	wID2    = accountdomain.NewWorkspaceID()
+	wID2    = accountsID.NewWorkspaceID()
 	uID2    = user.NewID()
 	uName2  = "e3e"
 	uEmail2 = "e3e@e3e.com"
 
 	// ---------------- user3
-	wID3    = accountdomain.NewWorkspaceID()
+	wID3    = accountsID.NewWorkspaceID()
 	uID3    = user.NewID()
 	uName3  = "e4e"
 	uEmail3 = "e4e@e4e.com"
@@ -98,8 +100,8 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 func createUserAndWorkspace(
 	ctx context.Context,
 	r *repo.Container,
-	wid accountdomain.WorkspaceID,
-	uid accountdomain.UserID,
+	wid accountsID.WorkspaceID,
+	uid accountsID.UserID,
 	name string,
 	email string) (*user.User, error) {
 	u := user.New().
@@ -119,7 +121,7 @@ func createUserAndWorkspace(
 	w := workspace.New().ID(wid).
 		Name(name).
 		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Members(map[accountsID.UserID]workspace.Member{u.ID(): m}).
 		Metadata(workspace.NewMetadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
@@ -210,7 +212,7 @@ func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, 
 	w := workspace.New().ID(wID).
 		Name(uName).
 		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Members(map[accountsID.UserID]workspace.Member{u.ID(): m}).
 		Metadata(workspace.NewMetadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {

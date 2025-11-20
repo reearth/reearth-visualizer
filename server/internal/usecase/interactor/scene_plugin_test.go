@@ -14,12 +14,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin/pluginpack"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestScene_InstallPlugin(t *testing.T) {
@@ -96,7 +97,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			assert := assert.New(t)
 			ctx := context.Background()
 
-			tid := accountdomain.NewWorkspaceID()
+			tid := accountsID.NewWorkspaceID()
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			for _, p := range tt.installedScenePlugins {
 				sc.Plugins().Add(p)
@@ -121,7 +122,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			if o == nil {
 				o = &usecase.Operator{
 					AcOperator: &accountusecase.Operator{
-						WritableWorkspaces: accountdomain.WorkspaceIDList{tid},
+						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}
 			}
@@ -222,7 +223,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			ppr2 := property.New().NewID().Scene(sid).Schema(id.NewPropertySchemaID(pid, "a")).MustBuild()
 			prr := memory.NewPropertyWith(ppr, ppr2)
 
-			tid := accountdomain.NewWorkspaceID()
+			tid := accountsID.NewWorkspaceID()
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid, nil))
 			sc.Plugins().Add(scene.NewPlugin(pid4, ppr.ID().Ref()))
@@ -245,7 +246,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			if o == nil {
 				o = &usecase.Operator{
 					AcOperator: &accountusecase.Operator{
-						WritableWorkspaces: accountdomain.WorkspaceIDList{tid},
+						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}
 			}
@@ -360,7 +361,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			pl2p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 			prr := memory.NewPropertyWith(pl1p, pl2p)
 
-			tid := accountdomain.NewWorkspaceID()
+			tid := accountsID.NewWorkspaceID()
 			sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 			sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 			sr := memory.NewSceneWith(sc)
@@ -378,7 +379,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			if o == nil {
 				o = &usecase.Operator{
 					AcOperator: &accountusecase.Operator{
-						WritableWorkspaces: accountdomain.WorkspaceIDList{tid},
+						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}
 			}

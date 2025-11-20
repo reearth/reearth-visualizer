@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 const workspaceNode = `
@@ -80,7 +81,7 @@ func TestDeleteWorkspace(t *testing.T) {
 	res = Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			deleteWorkspace(input: {workspaceId: "%s"}){ workspaceId }}`,
-			accountdomain.NewWorkspaceID()),
+			accountsID.NewWorkspaceID()),
 	})
 	res.Path("$.errors[0].message").IsEqual("operation denied")
 }
@@ -109,7 +110,7 @@ func TestUpdateWorkspace(t *testing.T) {
 	res = Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateWorkspace(input: { workspaceId: "%s", name: "%s" }) { %s } }`,
-			accountdomain.NewWorkspaceID(), "updated", workspaceNode),
+			accountsID.NewWorkspaceID(), "updated", workspaceNode),
 	})
 
 	res.Path("$.errors[0].message").IsEqual("not found")
@@ -202,7 +203,7 @@ func TestUpdateMemberOfWorkspace(t *testing.T) {
 	res := Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: WRITER } ) { %s } }`,
-			accountdomain.NewWorkspaceID(), uId3, workspaceNode),
+			accountsID.NewWorkspaceID(), uId3, workspaceNode),
 	})
 	res.Path("$.errors[0].message").IsEqual("operation denied")
 }

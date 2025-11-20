@@ -19,7 +19,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/usecasex"
@@ -27,12 +26,14 @@ import (
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // Test helper to create a storytelling test environment
 type storytellingTestEnv struct {
 	ctx               context.Context
-	wsID              accountdomain.WorkspaceID
+	wsID              accountsID.WorkspaceID
 	projectID         id.ProjectID
 	sceneID           id.SceneID
 	storyID           id.StoryID
@@ -47,7 +48,7 @@ func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTe
 
 	mockPolicyChecker := new(MockPolicyChecker)
 	db := memory.New()
-	wsID := accountdomain.NewWorkspaceID()
+	wsID := accountsID.NewWorkspaceID()
 	projectID := id.NewProjectID()
 	sceneID := id.NewSceneID()
 	storyID := id.NewStoryID()

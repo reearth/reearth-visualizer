@@ -15,9 +15,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // go test -v -run TestInternalAPI_GetProjectList_Owner ./e2e/...
@@ -459,7 +460,7 @@ func checkGetProjectsDESC(
 // --- test data ---------------------------------------
 
 type ProjectConfig struct {
-	workspace   accountdomain.WorkspaceID
+	workspace   accountsID.WorkspaceID
 	name        string
 	coreSupport bool
 	isDeleted   bool
@@ -467,7 +468,7 @@ type ProjectConfig struct {
 	updatedAt   time.Time
 }
 
-func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container, workspace accountdomain.WorkspaceID, dataCount int) {
+func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container, workspace accountsID.WorkspaceID, dataCount int) {
 
 	startTime := time.Now()
 

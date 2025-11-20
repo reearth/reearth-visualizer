@@ -35,10 +35,11 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type Project struct {
@@ -101,7 +102,7 @@ func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Ope
 }
 
 // GetProjects invoked by loader
-func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, op *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+func (i *Project) FindByWorkspace(ctx context.Context, wid accountsID.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, op *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 
 	projects, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
 		Pagination: p,
@@ -169,11 +170,11 @@ func matchMetadata(pid id.ProjectID, metadatas []*project.ProjectMetadata) *proj
 	return nil
 }
 
-func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
 	return i.projectRepo.FindStarredByWorkspace(ctx, id)
 }
 
-func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
+func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
 	return i.projectRepo.FindDeletedByWorkspace(ctx, id)
 }
 
@@ -226,7 +227,7 @@ func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator
 	return pj, nil
 }
 
-func (i *Project) MemberWorkspaces(ctx context.Context, uId accountdomain.UserID) (wsList workspace.List, ownedWs []string, memberWs []string) {
+func (i *Project) MemberWorkspaces(ctx context.Context, uId accountsID.UserID) (wsList workspace.List, ownedWs []string, memberWs []string) {
 	wsList, err := i.workspaceRepo.FindByUser(ctx, uId)
 	if err != nil {
 		return nil, nil, nil
@@ -249,7 +250,7 @@ func (i *Project) MemberWorkspaces(ctx context.Context, uId accountdomain.UserID
 	return
 }
 
-func toIdStrings(wsList accountdomain.WorkspaceIDList) []string {
+func toIdStrings(wsList accountsID.WorkspaceIDList) []string {
 	var ret []string
 	for _, wsID := range wsList {
 		ret = append(ret, wsID.String())
@@ -281,7 +282,7 @@ func (i *Project) FindVisibilityByUser(
 
 	wsList, ownedWs, memberWs := i.MemberWorkspaces(ctx, u.ID())
 
-	targetWsList := make(accountdomain.WorkspaceIDList, 0, len(wsList))
+	targetWsList := make(accountsID.WorkspaceIDList, 0, len(wsList))
 	for _, ws := range wsList {
 		wsId, err := workspace.IDFrom(ws.ID().String())
 		if err != nil {
@@ -305,7 +306,7 @@ func (i *Project) FindVisibilityByUser(
 
 func (i *Project) FindVisibilityByWorkspace(
 	ctx context.Context,
-	aid accountdomain.WorkspaceID,
+	aid accountsID.WorkspaceID,
 	authenticated bool,
 	operator *usecase.Operator,
 	keyword *string,
@@ -332,7 +333,7 @@ func (i *Project) FindVisibilityByWorkspace(
 		_, ownedWs, memberWs = i.MemberWorkspaces(ctx, *operator.AcOperator.User)
 	}
 
-	targetWsList := accountdomain.WorkspaceIDList{aid}
+	targetWsList := accountsID.WorkspaceIDList{aid}
 
 	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWs, memberWs, toIdStrings(targetWsList))
 	if err != nil {
@@ -673,7 +674,7 @@ func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.
 	return prj, dedicatedID1, dedicatedID2, err
 }
 
-func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid accountdomain.WorkspaceID, pid *id.ProjectID) (bool, error) {
+func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid accountsID.WorkspaceID, pid *id.ProjectID) (bool, error) {
 
 	if pid != nil {
 		if alias.ReservedReearthPrefixProject+pid.String() == newAlias || pid.String() == newAlias {
@@ -1205,7 +1206,7 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	archived := false
 	coreSupport := true
 
-	workspaceId, err := accountdomain.WorkspaceIDFrom(workspace)
+	workspaceId, err := accountsID.WorkspaceIDFrom(workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -1286,7 +1287,7 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 type createProjectInput struct {
-	WorkspaceID     accountdomain.WorkspaceID
+	WorkspaceID     accountsID.WorkspaceID
 	ProjectID       *string
 	Visualizer      visualizer.Visualizer
 	ImportStatus    project.ProjectImportStatus
@@ -1440,7 +1441,7 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	return proj, nil
 }
 
-func (i *Project) checkGeneralPolicy(ctx context.Context, workspaceID accountdomain.WorkspaceID, visibility project.Visibility) error {
+func (i *Project) checkGeneralPolicy(ctx context.Context, workspaceID accountsID.WorkspaceID, visibility project.Visibility) error {
 
 	var checkType gateway.PolicyCheckType
 	if visibility == project.VisibilityPublic {

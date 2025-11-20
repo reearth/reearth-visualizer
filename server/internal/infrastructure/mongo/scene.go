@@ -7,11 +7,13 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 var (
@@ -87,12 +89,12 @@ func (r *Scene) FindByProjects(ctx context.Context, ids []id.ProjectID) ([]*scen
 	return c.Result, nil
 }
 
-func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
+func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountsID.WorkspaceID) (scene.List, error) {
 	if len(workspaces) == 0 {
 		return nil, nil
 	}
 
-	workspaces2 := accountdomain.WorkspaceIDList(workspaces)
+	workspaces2 := accountsID.WorkspaceIDList(workspaces)
 	if r.f.Readable != nil {
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}

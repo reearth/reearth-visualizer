@@ -16,8 +16,10 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	file_ "github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/log"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type SignedUploadURLResponse struct {
@@ -39,7 +41,7 @@ func servSignatureUploadFiles(
 	apiPrivateRoute.POST("/signature-url",
 		securityHandler(func(c echo.Context, ctx context.Context, usecases *interfaces.Container, op *usecase.Operator) (interface{}, error) {
 
-			workspaceID, err := accountdomain.WorkspaceIDFrom(c.FormValue("workspace_id"))
+			workspaceID, err := accountsID.WorkspaceIDFrom(c.FormValue("workspace_id"))
 			if err != nil {
 				errMsg := fmt.Sprintf("Invalid workspace id: %v", err)
 				return nil, echo.NewHTTPError(http.StatusBadRequest, errMsg)
