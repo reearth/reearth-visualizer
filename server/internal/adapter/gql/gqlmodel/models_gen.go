@@ -263,14 +263,6 @@ type DeleteGeoJSONFeaturePayload struct {
 	DeletedFeatureID ID `json:"deletedFeatureId"`
 }
 
-type DeleteMeInput struct {
-	UserID ID `json:"userId"`
-}
-
-type DeleteMePayload struct {
-	UserID ID `json:"userId"`
-}
-
 type DeleteProjectInput struct {
 	ProjectID ID `json:"projectId"`
 }
@@ -932,10 +924,6 @@ type RemoveMemberFromWorkspacePayload struct {
 	Workspace *Workspace `json:"workspace"`
 }
 
-type RemoveMyAuthInput struct {
-	Auth string `json:"auth"`
-}
-
 type RemoveNLSInfoboxBlockInput struct {
 	LayerID        ID `json:"layerId"`
 	InfoboxBlockID ID `json:"infoboxBlockId"`
@@ -1058,19 +1046,6 @@ type SceneWidget struct {
 	Plugin      *Plugin          `json:"plugin,omitempty"`
 	Extension   *PluginExtension `json:"extension,omitempty"`
 	Property    *Property        `json:"property,omitempty"`
-}
-
-type SignupInput struct {
-	Lang        *language.Tag `json:"lang,omitempty"`
-	Theme       *Theme        `json:"theme,omitempty"`
-	UserID      *ID           `json:"userId,omitempty"`
-	WorkspaceID *ID           `json:"workspaceId,omitempty"`
-	Secret      *string       `json:"secret,omitempty"`
-}
-
-type SignupPayload struct {
-	User      *User      `json:"user"`
-	Workspace *Workspace `json:"workspace"`
 }
 
 type SketchInfo struct {

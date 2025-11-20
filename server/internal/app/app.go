@@ -17,7 +17,6 @@ import (
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/samber/lo"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 )
 
@@ -78,28 +77,6 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		// Re:Earth Accounts Mode
 		log.Infof("[Auth] Re:Earth Accounts Mode")
 		// The token verification is performed by reearth-accounts.
-
-	} else {
-		// Auth0 Direct Access Mode
-		log.Infof("[Auth] Auth0 Direct Access Mode")
-
-		authConfig := cfg.Config.JWTProviders()
-		log.Infof("auth: config: %#v", authConfig)
-
-		// Set AuthInfo to context key => adapter.ContextAuthInfo
-		wrapHandler = lo.Must(appx.AuthMiddleware(authConfig, adapter.ContextAuthInfo, true))
-
-		e.Use(echo.WrapMiddleware(func(next http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				// Skip authentication for GCP triggered endpoints
-				if r.Method == "POST" && r.URL.Path == "/api/storage-event" {
-					// These endpoints are called by GCP Cloud Functions/Pub/Sub
-					next.ServeHTTP(w, r)
-					return
-				}
-				wrapHandler(next).ServeHTTP(w, r)
-			})
-		}))
 	}
 
 	// enable pprof
@@ -150,15 +127,14 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 
 	e.Use(AttachLanguageMiddleware)
 
-	// auth srv
-	authServer(ctx, e, &cfg.Config.AuthSrv, cfg.Repos)
-
 	// public apis
 	apiRoot := e.Group("/api")
 	apiRoot.GET("/ping", Ping(), privateCache)
 	apiRoot.GET("/published/:name", PublishedMetadata())
 	apiRoot.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
 	apiRoot.GET("/published_data/:name", PublishedData("", true))
+	apiRoot.GET("/mockuser", MockUser())
+
 	published := e.Group("/p", PublishedAuthMiddleware())
 	published.GET("/:name/data.json", PublishedData("", true))
 	published.GET("/:name/", PublishedIndex("", true))
@@ -170,18 +146,11 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 		apiPrivateRoute.Use(attachOpMiddlewareMockUser(cfg))
 	} else if cfg.Config.UseReearthAccountAuth() {
 		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
-	} else {
-		apiPrivateRoute.Use(attachOpMiddleware(cfg))
 	}
 
 	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))
-	apiPrivateRoute.POST("/signup", Signup())
-	log.Infofc(ctx, "auth: config: %#v", cfg.Config.AuthSrv)
-	if !cfg.Config.AuthSrv.Disabled {
-		apiPrivateRoute.POST("/signup/verify", StartSignupVerify())
-		apiPrivateRoute.POST("/signup/verify/:code", SignupVerify())
-		apiPrivateRoute.POST("/password-reset", PasswordReset())
-	}
+
+	apiPrivateRoute.POST("/signup", Signup(cfg))
 
 	servSplitUploadFiles(apiPrivateRoute, cfg)
 	servSignatureUploadFiles(apiRoot, apiPrivateRoute, cfg)

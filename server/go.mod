@@ -32,8 +32,8 @@ require (
 	github.com/oklog/ulid/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
-	github.com/reearth/reearth-accounts/server v0.0.0-20251111014419-b23f73d64b5d
-	github.com/reearth/reearthx v0.0.0-20250923165051-5bd6f1c10f7a
+	github.com/reearth/reearth-accounts/server v0.0.0-20251114040111-9b5f5f67a6c7
+	github.com/reearth/reearthx v0.0.0-20251113074259-e2958d8c50f6 // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
 	github.com/samber/lo v1.50.0
 	github.com/spf13/afero v1.14.0
 	github.com/square/mongo-lock v0.0.0-20230808145049-cfcf499f6bf0
@@ -42,7 +42,7 @@ require (
 	github.com/uber/jaeger-lib v2.4.1+incompatible
 	github.com/vektah/dataloaden v0.3.0
 	github.com/vektah/gqlparser/v2 v2.5.27
-	github.com/zitadel/oidc v1.13.5
+	github.com/zitadel/oidc v1.13.5 // indirect
 	go.mongodb.org/mongo-driver v1.17.3
 	go.opentelemetry.io/contrib/detectors/gcp v1.36.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.59.0
@@ -61,7 +61,7 @@ require (
 	google.golang.org/grpc v1.74.2
 	google.golang.org/protobuf v1.36.7
 	gopkg.in/h2non/gock.v1 v1.1.2
-	gopkg.in/square/go-jose.v2 v2.6.0
+	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 )
 
 require (
