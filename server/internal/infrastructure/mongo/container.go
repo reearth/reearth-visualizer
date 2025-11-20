@@ -47,8 +47,8 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Property:        NewProperty(client),
 		Scene:           NewScene(client),
 		SceneLock:       NewSceneLock(client),
-		Workspace:       account.Workspace,
-		User:            account.User,
+		Workspace:       NewWorkspaceAdapter(account.Workspace),
+		User:            NewUserAdapter(account.User),
 		Policy:          NewPolicy(client),
 		Storytelling:    NewStorytelling(client),
 		Transaction:     client.Transaction(),
@@ -118,8 +118,8 @@ func Init(r *repo.Container) error {
 		func() error { return r.Property.(*Property).Init(ctx) },
 		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
 		func() error { return r.Scene.(*Scene).Init(ctx) },
-		func() error { return r.User.(*accountmongo.User).Init() },
-		func() error { return r.Workspace.(*accountmongo.Workspace).Init() },
+		func() error { return r.User.(*UserAdapter).inner.(*accountmongo.User).Init() },
+		func() error { return r.Workspace.(*WorkspaceAdapter).inner.(*accountmongo.Workspace).Init() },
 	)
 }
 

@@ -6,6 +6,8 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
 
 	"golang.org/x/text/language"
@@ -83,15 +85,34 @@ func (c *UserController) Signup(ctx context.Context, input SignupInput) (SignupO
 		}, nil
 	}
 
+	// Convert new types to old types for the usecase
+	var oldUserID *user.ID
+	if input.UserID != nil {
+		uid, _ := user.IDFrom(input.UserID.String())
+		oldUserID = &uid
+	}
+
+	var oldWorkspaceID *workspace.ID
+	if input.WorkspaceID != nil {
+		wid, _ := workspace.IDFrom(input.WorkspaceID.String())
+		oldWorkspaceID = &wid
+	}
+
+	var oldTheme *user.Theme
+	if input.Theme != nil {
+		theme := user.Theme(*input.Theme)
+		oldTheme = &theme
+	}
+
 	u, err := c.usecase.Signup(ctx, accountinterfaces.SignupParam{
 		Name:        input.Name,
 		Email:       input.Email,
 		Password:    input.Password,
 		Secret:      input.Secret,
-		UserID:      input.UserID,
-		WorkspaceID: input.WorkspaceID,
+		UserID:      oldUserID,
+		WorkspaceID: oldWorkspaceID,
 		Lang:        input.Lang,
-		Theme:       input.Theme,
+		Theme:       oldTheme,
 		MockAuth:    adapter.IsMockAuth(ctx),
 	})
 

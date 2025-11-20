@@ -164,7 +164,7 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 					log.Errorf("import project SplitFilename err: %v", err)
 					return err
 				}
-				u, err := cfg.AccountRepos.User.FindByID(ctx, *userID)
+				u, err := cfg.Repos.User.FindByID(ctx, *userID)
 				if err != nil {
 					log.Errorf("import project FindByID err: %v", err)
 					return err

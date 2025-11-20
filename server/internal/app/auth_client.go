@@ -16,19 +16,10 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/util"
 
-	accountsConfig "github.com/reearth/reearth-accounts/server/pkg/config"
-	accountsGqlClient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsGqlError "github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
-	accountsGqlModel "github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlmodel"
-	accountsGqlUtil "github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlutil"
-	accountsGqlUser "github.com/reearth/reearth-accounts/server/pkg/gqlclient/user"
-	accountsGqlWorkspace "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsPagination "github.com/reearth/reearth-accounts/server/pkg/pagination"
-	accountsPermittable "github.com/reearth/reearth-accounts/server/pkg/permittable"
-	accountsPolicy "github.com/reearth/reearth-accounts/server/pkg/policy"
-	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -47,9 +38,9 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 			// Check for debug user header first (for e2e tests)
 			if cfg.Debug {
 				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
-					uid, err := accountsUser.IDFrom(userID)
+					uid, err := accountsID.UserIDFrom(userID)
 					if err == nil {
-						u, err = cfg.AccountRepos.User.FindByID(ctx, uid)
+						u, err = cfg.Repos.User.FindByID(ctx, uid)
 						if err != nil {
 							log.Warnfc(ctx, "auth: debug user not found: %s", userID)
 						}
@@ -59,16 +50,16 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			// Fallback to mock user if debug user not found
 			if u == nil {
-				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
+				var err error
+				u, err = cfg.Repos.User.FindByNameOrEmail(ctx, "Mock User")
 				if err != nil {
-					uId, _ := accountsUser.IDFrom(authInfo.Sub)
-					mockUser = accountsUser.New().
+					uId, _ := accountsID.UserIDFrom(authInfo.Sub)
+					u = accountsUser.New().
 						ID(uId).
 						Name(authInfo.Name).
 						Email(authInfo.Email).
 						MustBuild()
 				}
-				u = mockUser
 			}
 
 			if u != nil {
@@ -176,7 +167,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 }
 
 func handleAccountsAPIError(ctx context.Context, err error) error {
-	if gqlerror.IsUnauthorized(err) {
+	if accountsGqlError.IsUnauthorized(err) {
 		log.Warnfc(ctx, "accounts API: unauthorized: %s", err.Error())
 		return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
 	}
@@ -191,8 +182,8 @@ func handleAccountsAPIError(ctx context.Context, err error) error {
 }
 
 func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *accountsUser.User) (*accountsUser.User, error) {
-	uId, _ := accountsUser.IDFrom(userModel.ID().String())
-	wid, _ := accountsWorkspace.IDFrom(userModel.Workspace().String())
+	uId, _ := accountsID.UserIDFrom(userModel.ID().String())
+	wid, _ := accountsID.WorkspaceIDFrom(userModel.Workspace().String())
 
 	usermetadata := accountsUser.MetadataFrom(
 		userModel.Metadata().PhotoURL(),
@@ -236,19 +227,21 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.Us
 	if err != nil {
 		return nil, err
 	}
-	scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, accountsWorkspace.IDs()...)
+
+	wsList := accountsWorkspace.List(workspaces)
+	scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, wsList.IDs()...)
 	if err != nil {
 		return nil, err
 	}
 
-	readableWorkspaces := accountsWorkspace.FilterByUserRole(uid, accountsWorkspace.RoleReader).IDs()
-	writableWorkspaces := accountsWorkspace.FilterByUserRole(uid, accountsWorkspace.RoleWriter).IDs()
-	maintainingWorkspaces := accountsWorkspace.FilterByUserRole(uid, accountsWorkspace.RoleMaintainer).IDs()
-	owningWorkspaces := accountsWorkspace.FilterByUserRole(uid, accountsWorkspace.RoleOwner).IDs()
+	readableWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleReader).IDs()
+	writableWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleWriter).IDs()
+	maintainingWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleMaintainer).IDs()
+	owningWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleOwner).IDs()
 	defaultPolicy := util.CloneRef(cfg.Config.Policy.Default)
 
 	return &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
+		AcOperator: &accountsUsecase.Operator{
 			User:                   &uid,
 			ReadableWorkspaces:     readableWorkspaces,
 			WritableWorkspaces:     writableWorkspaces,
