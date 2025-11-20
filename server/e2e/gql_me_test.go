@@ -6,10 +6,10 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -129,44 +129,35 @@ func TestMeWithPhotoURL(t *testing.T) {
 func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) error {
 	defer util.MockNow(now)()
 
-	// Create user and workspace using the same approach as createUserAndWorkspace
-	// Convert new IDs to old IDs for domain models
-	oldUID, _ := user.IDFrom(uID.String())
-	oldWID, _ := user.WorkspaceIDFrom(wID.String())
-
 	// Create metadata with photoURL
-	metadata := user.NewMetadata()
+	metadata := accountsUser.NewMetadata()
 	metadata.SetPhotoURL("https://example.com/photo.jpg")
 
-	// Create user with photoURL in metadata using old types
-	u := user.New().
-		ID(oldUID).
-		Workspace(oldWID).
+	// Create user with photoURL in metadata
+	u := accountsUser.New().
+		ID(uID).
+		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
 		Metadata(metadata).
 		MustBuild()
 
-	// Convert to new user type for save
-	newUser := convertOldUserToNewForE2E(u)
-	if err := r.User.Save(ctx, newUser); err != nil {
+	if err := r.User.Save(ctx, u); err != nil {
 		return err
 	}
 
-	// Create workspace for the user using old types
-	m := workspace.Member{
-		Role: workspace.RoleOwner,
+	// Create workspace for the user
+	m := accountsWorkspace.Member{
+		Role: accountsWorkspace.RoleOwner,
 	}
-	w := workspace.New().ID(oldWID).
+	w := accountsWorkspace.New().ID(wID).
 		Name(uName).
 		Personal(false).
-		Members(map[user.ID]workspace.Member{oldUID: m}).
-		Metadata(workspace.NewMetadata()).
+		Members(map[accountsID.UserID]accountsWorkspace.Member{uID: m}).
+		Metadata(accountsWorkspace.NewMetadata()).
 		MustBuild()
 
-	// Convert to new workspace type for save
-	newWorkspace := convertOldWorkspaceToNewForE2E(w)
-	if err := r.Workspace.Save(ctx, newWorkspace); err != nil {
+	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err
 	}
 
