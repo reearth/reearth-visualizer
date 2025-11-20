@@ -1,6 +1,5 @@
-import { useArgs } from "@storybook/preview-api";
-import { Meta, StoryObj } from "@storybook/react";
-import { useCallback } from "react";
+import { Meta, StoryObj } from "@storybook/react-vite";
+import { useCallback, useState } from "react";
 
 import ListField, { ListFieldProps } from ".";
 
@@ -12,56 +11,49 @@ export default meta;
 
 type Story = StoryObj<typeof ListField>;
 
-export const Default: Story = (args: ListFieldProps) => {
-  const [_, updateArgs] = useArgs();
+
+const DefaultComponent = (initialArgs: ListFieldProps) => {
+  const [items, setItems] = useState(initialArgs.items);
+  const [selected, setSelected] = useState(initialArgs.selected);
 
   const handleAdd = useCallback(() => {
     const randomId = (Math.random() + 1).toString(30).substring(9);
-    updateArgs({
-      items: [
-        ...args.items,
-        {
-          id: randomId,
-          title: `Item ${randomId}`
-        }
-      ]
-    });
-  }, [updateArgs, args.items]);
+    setItems(prevItems => [
+      ...prevItems,
+      {
+        id: randomId,
+        title: `Item ${randomId}`
+      }
+    ]);
+  }, []);
 
-  const handleDelete = useCallback(
-    (key: string) => {
-      updateArgs({ items: args.items.filter(({ id }) => id != key) });
-    },
-    [updateArgs, args.items]
-  );
+  const handleDelete = useCallback((key: string) => {
+    setItems(prevItems => prevItems.filter(({ id }) => id !== key));
+  }, []);
 
-  const handleSelect = useCallback(
-    (id: string) => updateArgs({ selected: id }),
-    [updateArgs]
-  );
+  const handleSelect = useCallback((id: string) => {
+    setSelected(id);
+  }, []);
 
-  const handleItemMove = useCallback(
-    (id: string, targetIndex: number) => {
-      const currentIndex = args.items.findIndex((item) => item.id === id);
-      if (currentIndex === -1 || currentIndex === targetIndex) return;
+  const handleItemMove = useCallback((id: string, targetIndex: number) => {
+    setItems(prevItems => {
+      const currentIndex = prevItems.findIndex((item) => item.id === id);
+      if (currentIndex === -1 || currentIndex === targetIndex) return prevItems;
 
-      const updatedItems = [...args.items];
+      const updatedItems = [...prevItems];
       const [movedItem] = updatedItems.splice(currentIndex, 1);
       updatedItems.splice(targetIndex, 0, movedItem);
+      return updatedItems;
+    });
+  }, []);
 
-      updateArgs({ items: updatedItems });
-    },
-    [updateArgs, args.items]
-  );
-  const handleItemNameUpdate = useCallback(
-    (id: string, newTitle: string) => {
-      const updatedItems = args.items.map((item) =>
+  const handleItemNameUpdate = useCallback((id: string, newTitle: string) => {
+    setItems(prevItems =>
+      prevItems.map((item) =>
         item.id === id ? { ...item, title: newTitle } : item
-      );
-      updateArgs({ items: updatedItems });
-    },
-    [updateArgs, args.items]
-  );
+      )
+    );
+  }, []);
 
   return (
     <div
@@ -74,7 +66,9 @@ export const Default: Story = (args: ListFieldProps) => {
       }}
     >
       <ListField
-        {...args}
+        {...initialArgs}
+        items={items}
+        selected={selected}
         atLeastOneItem={true}
         onItemAdd={handleAdd}
         onItemDelete={handleDelete}
@@ -86,7 +80,11 @@ export const Default: Story = (args: ListFieldProps) => {
   );
 };
 
-Default.args = {
+export const Default: Story = {
+  render: () => <DefaultComponent {...DefaultArgs} />
+};
+
+const DefaultArgs = {
   title: "List Field",
   description: "List field Sample description",
   items: [

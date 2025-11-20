@@ -7,7 +7,7 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "noEmit": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "pretty": true,
@@ -19,7 +19,9 @@
     "skipLibCheck": true,
     "paths": {
       "@reearth/*": ["src/*"],
-      "@reearth-widget-ui/*": ["src/app/lib/reearth-widget-ui/*"]
+      "@reearth-widget-ui/*": ["src/app/lib/reearth-widget-ui/*"],
+      "react-align": ["node_modules/react-align/dist/index.d.ts"],
+      "quickjs-emscripten-sync": ["node_modules/quickjs-emscripten-sync/dist/index.d.ts"]
     },
     "plugins": [
       {

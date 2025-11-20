@@ -14,3 +14,5 @@ __screenshots__
 /cesium_ion_token.txt
 .idea/*
 .yarn/*
+
+*storybook.log

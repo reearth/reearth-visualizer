@@ -1,4 +1,4 @@
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react-vite";
 import { Math as CesiumMath } from "cesium";
 
 import { contextEvents } from "../../storybook";
