@@ -6,8 +6,8 @@ import (
 	"errors"
 	"net/url"
 
-	"github.com/reearth/reearthx/account/accountdomain/user"
-
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
@@ -17,8 +17,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
-
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type CreateProjectParam struct {
@@ -97,7 +95,7 @@ type Project interface {
 	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
 	FindByProjectAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
 
-	FindVisibilityByUser(context.Context, *user.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
+	FindVisibilityByUser(context.Context, *accountsUser.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	FindVisibilityByWorkspace(context.Context, accountsID.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	FindAll(context.Context, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam, *[]string, *string) ([]*project.Project, *usecasex.PageInfo, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)

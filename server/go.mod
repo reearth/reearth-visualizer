@@ -199,3 +199,5 @@ require (
 )
 
 go 1.24.4
+
+replace github.com/reearth/reearth-accounts/server => /Users/tantaka/reearth-accounts/server

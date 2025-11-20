@@ -3,17 +3,14 @@ package mongo
 import (
 	"context"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
-
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 var (
@@ -99,7 +96,7 @@ func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountsID.Wo
 		workspaces2 = workspaces2.Intersect(r.f.Readable)
 	}
 	res, err := r.find(ctx, bson.M{
-		"workspace": bson.M{"$in": user.WorkspaceIDList(workspaces2).Strings()},
+		"workspace": bson.M{"$in": accountsID.WorkspaceIDList(workspaces2).Strings()},
 	})
 	if err != nil && err != mongo.ErrNilDocument && err != mongo.ErrNoDocuments {
 		return nil, err

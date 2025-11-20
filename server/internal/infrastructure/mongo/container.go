@@ -10,7 +10,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearthx/account/accountdomain/user"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
@@ -123,7 +123,7 @@ func Init(r *repo.Container) error {
 	)
 }
 
-func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
+func applyWorkspaceFilter(filter interface{}, ids accountsID.WorkspaceIDList) interface{} {
 	if ids == nil {
 		return filter
 	}

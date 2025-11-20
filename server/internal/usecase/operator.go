@@ -4,16 +4,14 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/policy"
 
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
-	"github.com/reearth/reearthx/util"
-
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	"github.com/reearth/reearthx/util"
 )
 
 type Operator struct {
-	AcOperator        *accountusecase.Operator
+	AcOperator        *accountsUsecase.Operator
 	ReadableScenes    id.SceneIDList
 	WritableScenes    id.SceneIDList
 	MaintainingScenes id.SceneIDList
@@ -21,38 +19,38 @@ type Operator struct {
 	DefaultPolicy     *policy.ID
 }
 
-func (o *Operator) Workspaces(r workspace.Role) accountsID.WorkspaceIDList {
+func (o *Operator) Workspaces(r accountsWorkspace.Role) accountsID.WorkspaceIDList {
 	if o == nil {
 		return nil
 	}
-	if r == workspace.RoleReader {
+	if r == accountsWorkspace.RoleReader {
 		return o.AcOperator.ReadableWorkspaces
 	}
-	if r == workspace.RoleWriter {
+	if r == accountsWorkspace.RoleWriter {
 		return o.AcOperator.WritableWorkspaces
 	}
-	if r == workspace.RoleMaintainer {
+	if r == accountsWorkspace.RoleMaintainer {
 		return o.AcOperator.MaintainableWorkspaces
 	}
-	if r == workspace.RoleOwner {
+	if r == accountsWorkspace.RoleOwner {
 		return o.AcOperator.OwningWorkspaces
 	}
 	return nil
 }
 
-func (o *Operator) AllReadableWorkspaces() user.WorkspaceIDList {
+func (o *Operator) AllReadableWorkspaces() accountsID.WorkspaceIDList {
 	return o.AcOperator.AllReadableWorkspaces()
 }
 
-func (o *Operator) AllWritableWorkspaces() user.WorkspaceIDList {
+func (o *Operator) AllWritableWorkspaces() accountsID.WorkspaceIDList {
 	return o.AcOperator.AllWritableWorkspaces()
 }
 
-func (o *Operator) AllMaintainingWorkspace() user.WorkspaceIDList {
+func (o *Operator) AllMaintainingWorkspace() accountsID.WorkspaceIDList {
 	return o.AcOperator.AllMaintainingWorkspaces()
 }
 
-func (o *Operator) AllOwningWorkspaces() user.WorkspaceIDList {
+func (o *Operator) AllOwningWorkspaces() accountsID.WorkspaceIDList {
 	return o.AcOperator.AllOwningWorkspaces()
 }
 

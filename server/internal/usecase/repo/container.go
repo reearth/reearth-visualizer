@@ -3,11 +3,11 @@ package repo
 import (
 	"errors"
 
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/verror"
-
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
@@ -34,8 +34,8 @@ type Container struct {
 	Property        Property
 	Scene           Scene
 	SceneLock       SceneLock
-	Workspace       accountrepo.Workspace
-	User            accountrepo.User
+	Workspace       accountsRepo.Workspace
+	User            accountsRepo.User
 	Policy          Policy
 	Storytelling    Storytelling
 	Transaction     usecasex.Transaction
@@ -44,13 +44,10 @@ type Container struct {
 	Permittable     accountrepo.Permittable // TODO: Delete this once the permission check migration is complete.
 }
 
-func (c *Container) AccountRepos() *accountrepo.Container {
-	return &accountrepo.Container{
+func (c *Container) AccountRepos() *accountsRepo.Container {
+	return &accountsRepo.Container{
 		Workspace:   c.Workspace,
 		User:        c.User,
-		Role:        c.Role,        // TODO: Delete this once the permission check migration is complete.
-		Permittable: c.Permittable, // TODO: Delete this once the permission check migration is complete.
-		// TODO: Policy: c.Policy,
 		Transaction: c.Transaction,
 	}
 }

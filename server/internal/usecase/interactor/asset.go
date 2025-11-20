@@ -21,12 +21,11 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
-
-	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type Asset struct {
@@ -209,7 +208,7 @@ var (
 	ErrAssetUploadSizeLimitExceeded error = rerror.NewE(i18n.T("asset upload size limit exceeded"))
 )
 
-func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
+func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *accountsWorkspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
 
 	// upload
 	u, size, err := i.gateways.File.UploadAsset(ctx, f)
