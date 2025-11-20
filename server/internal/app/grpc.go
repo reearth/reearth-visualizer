@@ -41,7 +41,7 @@ func initGrpc(cfg *ServerConfig) *grpc.Server {
 	return s
 }
 
-func unaryLogInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
+func unaryLogInterceptor(_ *ServerConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		logger := log.GetLoggerFromContextOrDefault(ctx).WithCaller(false)
 

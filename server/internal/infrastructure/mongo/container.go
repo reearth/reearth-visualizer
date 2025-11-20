@@ -123,21 +123,21 @@ func Init(r *repo.Container) error {
 	)
 }
 
-func applyWorkspaceFilter(filter interface{}, ids accountsID.WorkspaceIDList) interface{} {
+func applyWorkspaceFilter(filter any, ids accountsID.WorkspaceIDList) any {
 	if ids == nil {
 		return filter
 	}
 	return mongox.And(filter, "workspace", bson.M{"$in": ids.Strings()})
 }
 
-func applySceneFilter(filter interface{}, ids id.SceneIDList) interface{} {
+func applySceneFilter(filter any, ids id.SceneIDList) any {
 	if ids == nil {
 		return filter
 	}
 	return mongox.And(filter, "scene", bson.M{"$in": ids.Strings()})
 }
 
-func applyOptionalSceneFilter(filter interface{}, ids id.SceneIDList) interface{} {
+func applyOptionalSceneFilter(filter any, ids id.SceneIDList) any {
 	if ids == nil {
 		return filter
 	}

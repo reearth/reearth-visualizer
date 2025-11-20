@@ -137,7 +137,7 @@ func SplitFilename(objectPath string) (string, *accountsID.WorkspaceID, *id.Proj
 	return base, &wid, &pid, &uid, nil
 }
 
-type WrappedHandler func(echo.Context, context.Context, *interfaces.Container, *usecase.Operator) (interface{}, error)
+type WrappedHandler func(echo.Context, context.Context, *interfaces.Container, *usecase.Operator) (any, error)
 
 func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHandler) echo.HandlerFunc {
 	return func(handler WrappedHandler) echo.HandlerFunc {
