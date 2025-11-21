@@ -257,8 +257,8 @@ func (r *Project) ProjectPaginationFilter(absoluteFilter bson.M, sort *project.S
 		// default
 		if limit == nil {
 			limit = new(int64)
+			*limit = 10
 		}
-		*limit = 10
 	}
 
 	*limit = *limit + 1
@@ -617,9 +617,9 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 			if pFilter.Sort.Desc {
 				sortOrder = -1
 			}
-			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}}
+			sortDoc = bson.D{{Key: sortKey, Value: sortOrder}, {Key: "_id", Value: sortOrder}}
 		} else {
-			sortDoc = bson.D{{Key: "starcount", Value: -1}}
+			sortDoc = bson.D{{Key: "starcount", Value: -1}, {Key: "_id", Value: -1}}
 		}
 
 		collation := options.Collation{
@@ -650,7 +650,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 			HasPreviousPage: *pFilter.Offset > 0,
 		}
 
-		return c.Result, pageInfo, visualizer.ErrorWithCallerLogging(ctx, "FindAll: Count error:", err)
+		return c.Result, pageInfo, nil
 	}
 
 	if pFilter.Pagination == nil {
@@ -952,30 +952,30 @@ func (r *Project) findAllWithTopicsFilter(ctx context.Context, pFilter repo.Proj
 	// Build topics match condition
 	topicsMatchStage := bson.M{
 		"$match": bson.M{
-			"metadata.topics": bson.M{"$in": pFilter.Topics},
+			"metadata.topics": bson.M{"$all": pFilter.Topics},
 		},
 	}
 
 	pipeline := []bson.M{matchStage, lookupStage, topicsMatchStage}
 
 	// Handle sorting
+	sortOrder := 1
 	if pFilter.Sort != nil {
 		sortKey := pFilter.Sort.Key
 		if sortKey == "starcount" {
 			sortKey = "metadata.starcount"
 		}
-		sortOrder := 1
 		if pFilter.Sort.Desc {
 			sortOrder = -1
 		}
 		sortStage := bson.M{
-			"$sort": bson.D{{Key: sortKey, Value: sortOrder}},
+			"$sort": bson.D{{Key: sortKey, Value: sortOrder}, {Key: "_id", Value: sortOrder}},
 		}
 		pipeline = append(pipeline, sortStage)
 	} else {
 		// Default sort by starcount descending
 		sortStage := bson.M{
-			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}},
+			"$sort": bson.D{{Key: "metadata.starcount", Value: -1}, {Key: "_id", Value: -1}},
 		}
 		pipeline = append(pipeline, sortStage)
 	}
@@ -1095,7 +1095,10 @@ func (r *Project) findAllWithStarcountSort(ctx context.Context, pFilter repo.Pro
 		sortOrder = -1
 	}
 	sortStage := bson.M{
-		"$sort": bson.D{{Key: "sort_star_count", Value: sortOrder}},
+		"$sort": bson.D{
+			{Key: "sort_star_count", Value: sortOrder},
+			{Key: "_id", Value: sortOrder},
+		},
 	}
 
 	pipeline := []bson.M{matchStage, lookupStage, addFieldsStage, sortStage}

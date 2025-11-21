@@ -1,7 +1,9 @@
-import { action } from "@storybook/addon-actions";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Button, ButtonProps } from ".";
+
+// Mock function for actions
+const fn = () => () => {};
 
 const meta: Meta<ButtonProps> = {
   component: Button
@@ -13,39 +15,39 @@ type Story = StoryObj<typeof Button>;
 export const Default: Story = {
   render: () => (
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <Button title="Secondary" onClick={action("secondary-click")} />
+      <Button title="Secondary" onClick={fn()} />
       <Button
         title="Secondary Small"
         size="small"
-        onClick={action("secondary-small-click")}
+        onClick={fn()}
       />
       <Button title="Secondary Disabled" disabled={true} />
       <Button
         title="Secondary Icon Button"
         icon="settingFilled"
         iconRight="caretDown"
-        onClick={action("secondary-icon-button-click")}
+        onClick={fn()}
       />
       <Button
         title="Secondary Extend"
         extendWidth={true}
-        onClick={action("secondary-extend-click")}
+        onClick={fn()}
       />
       <Button
         title="Secondary Min Width(300)"
         minWidth={300}
-        onClick={action("secondary-min-width-click")}
+        onClick={fn()}
       />
       <Button
         iconButton={true}
         icon="settingFilled"
-        onClick={action("secondary-icon-click")}
+        onClick={fn()}
       />
       <Button
         iconButton={true}
         icon="settingFilled"
         size="small"
-        onClick={action("secondary-icon-small-click")}
+        onClick={fn()}
       />
     </div>
   )
@@ -57,51 +59,51 @@ export const Primary: Story = {
       <Button
         title="Primary"
         appearance="primary"
-        onClick={action("primary-click")}
+        onClick={fn()}
       />
       <Button
         title="Primary Small"
         appearance="primary"
         size="small"
-        onClick={action("primary-small-click")}
+        onClick={fn()}
       />
       <Button
         title="Primary Disabled"
         appearance="primary"
         disabled={true}
-        onClick={action("primary-disabled-click")}
+        onClick={fn()}
       />
       <Button
         title="Primary Icon Button"
         appearance="primary"
         icon="settingFilled"
-        onClick={action("primary-icon-button-click")}
+        onClick={fn()}
         iconRight="caretDown"
       />
       <Button
         title="Primary Extend"
         appearance="primary"
         extendWidth={true}
-        onClick={action("primary-extend-click")}
+        onClick={fn()}
       />
       <Button
         title="Primary Min Width(300)"
         appearance="primary"
         minWidth={300}
-        onClick={action("primary-min-width-click")}
+        onClick={fn()}
       />
       <Button
         appearance="primary"
         iconButton={true}
         icon="settingFilled"
-        onClick={action("primary-icon-click")}
+        onClick={fn()}
       />
       <Button
         appearance="primary"
         iconButton={true}
         icon="settingFilled"
         size="small"
-        onClick={action("primary-icon-small-click")}
+        onClick={fn()}
       />
     </div>
   )
@@ -113,51 +115,51 @@ export const Dangerous: Story = {
       <Button
         title="Dangerous"
         appearance="dangerous"
-        onClick={action("dangerous-click")}
+        onClick={fn()}
       />
       <Button
         title="Dangerous Small"
         appearance="dangerous"
         size="small"
-        onClick={action("dangerous-small-click")}
+        onClick={fn()}
       />
       <Button
         title="Dangerous Disabled"
         appearance="dangerous"
         disabled={true}
-        onClick={action("dangerous-disabled-click")}
+        onClick={fn()}
       />
       <Button
         title="Dangerous Icon Button"
         appearance="dangerous"
         icon="settingFilled"
         iconRight="caretDown"
-        onClick={action("dangerous-icon-button-click")}
+        onClick={fn()}
       />
       <Button
         title="Dangerous Extend"
         appearance="dangerous"
         extendWidth={true}
-        onClick={action("dangerous-extend-click")}
+        onClick={fn()}
       />
       <Button
         title="Dangerous Min Width(300)"
         appearance="dangerous"
         minWidth={300}
-        onClick={action("dangerous-min-width-click")}
+        onClick={fn()}
       />
       <Button
         appearance="dangerous"
         iconButton={true}
         icon="settingFilled"
-        onClick={action("dangerous-icon-click")}
+        onClick={fn()}
       />
       <Button
         appearance="dangerous"
         iconButton={true}
         icon="settingFilled"
         size="small"
-        onClick={action("dangerous-icon-small-click")}
+        onClick={fn()}
       />
     </div>
   )
@@ -169,51 +171,51 @@ export const Simple: Story = {
       <Button
         title="Simple"
         appearance="simple"
-        onClick={action("simple-click")}
+        onClick={fn()}
       />
       <Button
         title="Simple Small"
         appearance="simple"
         size="small"
-        onClick={action("simple-small-click")}
+        onClick={fn()}
       />
       <Button
         title="Simple Disabled"
         appearance="simple"
         disabled={true}
-        onClick={action("simple-disabled-click")}
+        onClick={fn()}
       />
       <Button
         title="Simple Icon Button"
         appearance="simple"
         icon="settingFilled"
         iconRight="caretDown"
-        onClick={action("simple-icon-button-click")}
+        onClick={fn()}
       />
       <Button
         title="Simple Extend"
         appearance="simple"
         extendWidth={true}
-        onClick={action("simple-extend-click")}
+        onClick={fn()}
       />
       <Button
         title="Simple Min Width(300)"
         appearance="simple"
         minWidth={300}
-        onClick={action("simple-min-width-click")}
+        onClick={fn()}
       />
       <Button
         appearance="simple"
         iconButton={true}
         icon="settingFilled"
-        onClick={action("simple-icon-click")}
+        onClick={fn()}
       />
       <Button
         appearance="simple"
         iconButton={true}
         icon="settingFilled"
         size="small"
-        onClick={action("simple-icon-small-click")}
+        onClick={fn()}
       />
     </div>
   )

@@ -2,7 +2,35 @@
 
 All notable changes to this project will be documented in this file.
 
-## 1.0.0-beta.13.0 - 2025-11-13
+## 1.0.0-beta.13.1 - 2025-11-19
+
+### Web
+
+#### ✨ Refactor
+
+- Replace ua-parser-js with bowser ([#1927](https://github.com/reearth/reearth-visualizer/pull/1927)) [`7f9b53`](https://github.com/reearth/reearth-visualizer/commit/7f9b53)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.13.1 ([#1929](https://github.com/reearth/reearth-visualizer/pull/1929)) [`a2ae90`](https://github.com/reearth/reearth-visualizer/commit/a2ae90)
+
+### Server
+
+#### 🚀 Features
+
+- Refactoring auth logic ([#1924](https://github.com/reearth/reearth-visualizer/pull/1924)) [`23757c`](https://github.com/reearth/reearth-visualizer/commit/23757c)
+
+#### 🔧 Bug Fixes
+
+- Add secondary sort by &#x60;_id&#x60; across query for GetAllProjects ([#1925](https://github.com/reearth/reearth-visualizer/pull/1925)) [`def51f`](https://github.com/reearth/reearth-visualizer/commit/def51f)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Add enforce checklist ci ([#1926](https://github.com/reearth/reearth-visualizer/pull/1926)) [`49451e`](https://github.com/reearth/reearth-visualizer/commit/49451e)
+
+## 1.0.0-beta.13.0 - 2025-11-14
 
 ### Web
 
@@ -31,6 +59,7 @@ All notable changes to this project will be documented in this file.
 
 #### 🔧 Bug Fixes
 
+- Update migration date ([#1922](https://github.com/reearth/reearth-visualizer/pull/1922)) [`27cf98`](https://github.com/reearth/reearth-visualizer/commit/27cf98)
 - Preserve updated_at when project is starred ([#1912](https://github.com/reearth/reearth-visualizer/pull/1912)) [`5161f5`](https://github.com/reearth/reearth-visualizer/commit/5161f5)
 - Allow user to star project belonging to another user ([#1905](https://github.com/reearth/reearth-visualizer/pull/1905)) [`91d29f`](https://github.com/reearth/reearth-visualizer/commit/91d29f)
 - Add support for sorting projects by star count in GetAllProjects gRPC call ([#1902](https://github.com/reearth/reearth-visualizer/pull/1902)) [`4d4477`](https://github.com/reearth/reearth-visualizer/commit/4d4477)

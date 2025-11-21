@@ -1,5 +1,5 @@
 import { fonts, styled } from "@reearth/services/theme";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 import { FC, useCallback, useState } from "react";
 
 import { Button } from "../Button";

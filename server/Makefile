@@ -216,8 +216,7 @@ init:
 mockuser:
 	curl -s -D - -o /dev/null \
 		-H 'Content-Type: application/json' \
-		-d '{"email": "mock@example.com", "username": "Mock User"}' \
-		http://localhost:8080/api/signup | head -n 1
+		http://localhost:8080/api/mockuser | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \
@@ -232,12 +231,17 @@ destroy:
 	@read -p "Are you sure you want to continue? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker stop $(docker ps -q); \
+		containers=$$(docker ps -q); \
+		if [ -n "$$containers" ]; then \
+			docker stop $$containers; \
+		else \
+			echo "No running containers to stop."; \
+		fi; \
 		docker system prune -a --volumes -f; \
 		docker network prune -f; \
 		echo "✓ All Docker resources have been removed"; \
 		echo "==== Removing data directory (requires sudo password) ===="; \
-		sudo rm -rf tmp/gcs tmp/mongo 
+		sudo rm -rf tmp/gcs tmp/mongo; \
 		echo "✓ All data resources have been cleared"; \
 	else \
 		echo "✗ Operation cancelled"; \

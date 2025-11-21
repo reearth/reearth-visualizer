@@ -1,7 +1,9 @@
-import { action } from "@storybook/addon-actions";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { IconButton, IconButtonProps } from ".";
+
+// Mock function for actions
+const fn = () => () => {};
 
 const meta: Meta<IconButtonProps> = {
   component: IconButton
@@ -15,7 +17,7 @@ export const Default: Story = {
     icon: "polyline",
     size: "normal",
     appearance: "secondary",
-    onClick: action("onClick")
+    onClick: fn()
   }
 };
 
@@ -24,7 +26,7 @@ export const Primary: Story = {
     <IconButton
       icon="polyline"
       appearance="primary"
-      onClick={action("onClick")}
+      onClick={fn()}
     />
   )
 };
@@ -34,7 +36,7 @@ export const Simple: Story = {
     <IconButton
       icon="polyline"
       appearance="simple"
-      onClick={action("onClick")}
+      onClick={fn()}
     />
   )
 };
@@ -45,20 +47,20 @@ export const Disabled: Story = {
       icon="polyline"
       appearance="simple"
       disabled
-      onClick={action("onClick")}
+      onClick={fn()}
     />
   )
 };
 
 export const Large: Story = {
   render: () => (
-    <IconButton icon="polyline" size="large" onClick={action("onClick")} />
+    <IconButton icon="polyline" size="large" onClick={fn()} />
   )
 };
 
 export const Small: Story = {
   render: () => (
-    <IconButton icon="polyline" size="small" onClick={action("onClick")} />
+    <IconButton icon="polyline" size="small" onClick={fn()} />
   )
 };
 
@@ -68,7 +70,7 @@ export const Active: Story = {
       icon="polyline"
       appearance="primary"
       active
-      onClick={action("onClick")}
+      onClick={fn()}
     />
   )
 };

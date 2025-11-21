@@ -2,14 +2,10 @@ import { defineConfig, mergeConfig } from "vitest/config";
 
 import viteConfig from "./vite.config";
 
-// This file is required by VSCode's Vitest extension.
 export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
-      environment: "jsdom",
-      setupFiles: "src/test/setup.ts",
-      include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
       coverage: {
         provider: "v8",
         include: ["src/**/*.{ts,tsx}"],
@@ -22,7 +18,17 @@ export default mergeConfig(
           "src/**/*.test.{ts,tsx}"
         ],
         reporter: ["text", "json", "lcov"]
-      }
+      },
+      projects: [
+        {
+          extends: true,
+          test: {
+            environment: "jsdom",
+            setupFiles: "src/test/setup.ts",
+            include: ["src/**/*.test.ts", "src/**/*.test.tsx"]
+          }
+        }
+      ]
     }
   })
 );
