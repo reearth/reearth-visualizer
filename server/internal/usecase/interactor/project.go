@@ -39,6 +39,8 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type Project struct {
@@ -60,9 +62,12 @@ type Project struct {
 	pluginRepo          repo.Plugin
 	file                gateway.File
 	policyChecker       gateway.PolicyChecker
+
+	accountUuserRepo     accountsRepo.User
+	accountWorkspaceRepo accountsRepo.Workspace
 }
 
-func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
+func NewProject(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Container) interfaces.Project {
 	return &Project{
 		commonSceneLock:     commonSceneLock{sceneLockRepo: r.SceneLock},
 		userRepo:            r.User,
@@ -81,6 +86,9 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		propertySchemaRepo:  r.PropertySchema,
 		file:                gr.File,
 		policyChecker:       gr.PolicyChecker,
+
+		accountUuserRepo:     auc.User,
+		accountWorkspaceRepo: auc.Workspace,
 	}
 }
 

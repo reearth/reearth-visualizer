@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
 type ListOperation string
@@ -35,4 +37,7 @@ type Container struct {
 	Style           Style
 	User            accountinterfaces.User
 	Workspace       accountinterfaces.Workspace
+
+	AccountsWorkspace accountsInterfaces.Workspace
+	AccountsUser      accountsInterfaces.User
 }

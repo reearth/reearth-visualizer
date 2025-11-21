@@ -38,17 +38,18 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 			ar2 = ar
 		}
 
-		uc := interactor.NewContainer(repos, g, ar2, ag, config)
+		// Prepare reearth-accounts repos
+		var aur2 *accountsRepo.Container
+		if op := adapter.AccountsOperator(ctx); op != nil && aur != nil {
+			aur2 = aur.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
+		} else {
+			aur2 = aur
+		}
+
+		uc := interactor.NewContainer(repos, g, ar2, ag, aur2, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
 
-		// Attach reearth-accounts usecases
-		var auc *accountsRepo.Container
-		if op := adapter.AccountsOperator(ctx); op != nil && aur != nil {
-			auc = aur.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
-		} else {
-			auc = aur
-		}
-		ctx = adapter.AttachAccountsUsecases(ctx, auc)
+		ctx = adapter.AttachAccountsUsecases(ctx, aur2)
 
 		return ctx
 	})

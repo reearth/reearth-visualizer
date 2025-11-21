@@ -19,6 +19,9 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
+
+	accountsInteractor "github.com/reearth/reearth-accounts/server/pkg/interactor"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type ContainerConfig struct {
@@ -33,6 +36,7 @@ func NewContainer(
 	g *gateway.Container,
 	ar *accountrepo.Container,
 	ag *accountgateway.Container,
+	auc *accountsRepo.Container,
 	config ContainerConfig,
 ) interfaces.Container {
 
@@ -45,18 +49,21 @@ func NewContainer(
 
 	return interfaces.Container{
 		Asset:           NewAsset(r, g),
-		NLSLayer:        NewNLSLayer(r, g),
+		NLSLayer:        NewNLSLayer(r, g, auc),
 		Style:           NewStyle(r),
 		Plugin:          NewPlugin(r, g),
 		Policy:          NewPolicy(r, g.PolicyChecker),
-		Project:         NewProject(r, g),
+		Project:         NewProject(r, g, auc),
 		ProjectMetadata: NewProjectMetadata(r, g),
 		Property:        NewProperty(r, g),
 		Published:       published,
 		Scene:           NewScene(r, g),
-		StoryTelling:    NewStorytelling(r, g),
+		StoryTelling:    NewStorytelling(r, g, auc),
 		Workspace:       accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
 		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
+
+		AccountsWorkspace: accountsInteractor.NewWorkspace(auc),
+		AccountsUser:      accountsInteractor.NewUser(auc),
 	}
 }
 

@@ -161,8 +161,9 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 		g := cfg.Gateways
 		ar := cfg.AccountRepos
 		ag := cfg.AccountGateways
+		aur := cfg.ReearthAccountsRepos
 
-		uc := interactor.NewContainer(r, g, ar, ag, interactor.ContainerConfig{})
+		uc := interactor.NewContainer(r, g, ar, ag, aur, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
 
 		// Attach reearth-accounts usecases

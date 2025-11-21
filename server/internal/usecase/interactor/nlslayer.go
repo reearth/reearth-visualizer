@@ -33,6 +33,8 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 var (
@@ -70,9 +72,11 @@ type NLSLayer struct {
 	transaction   usecasex.Transaction
 
 	propertySchemaRepo repo.PropertySchema
+
+	accountWorkspaceRepo accountsRepo.Workspace
 }
 
-func NewNLSLayer(r *repo.Container, gr *gateway.Container) interfaces.NLSLayer {
+func NewNLSLayer(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Container) interfaces.NLSLayer {
 	return &NLSLayer{
 		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
 		nlslayerRepo:    r.NLSLayer,
@@ -87,6 +91,8 @@ func NewNLSLayer(r *repo.Container, gr *gateway.Container) interfaces.NLSLayer {
 		transaction:     r.Transaction,
 
 		propertySchemaRepo: r.PropertySchema,
+
+		accountWorkspaceRepo: auc.Workspace,
 	}
 }
 

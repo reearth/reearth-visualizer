@@ -26,6 +26,8 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type Storytelling struct {
@@ -45,9 +47,12 @@ type Storytelling struct {
 	policyChecker    gateway.PolicyChecker
 
 	propertySchemaRepo repo.PropertySchema
+
+	accountWorkspaceRepo accountsRepo.Workspace
 }
 
-func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
+func NewStorytelling(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Container) interfaces.Storytelling {
+
 	return &Storytelling{
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		storytellingRepo:   r.Storytelling,
@@ -63,6 +68,8 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		layerStyles:        r.Style,
 		policyChecker:      gr.PolicyChecker,
 		propertySchemaRepo: r.PropertySchema,
+
+		accountWorkspaceRepo: auc.Workspace,
 	}
 }
 
