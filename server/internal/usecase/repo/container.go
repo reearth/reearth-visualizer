@@ -11,6 +11,8 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 var (
@@ -32,14 +34,21 @@ type Container struct {
 	Property        Property
 	Scene           Scene
 	SceneLock       SceneLock
-	Workspace       accountrepo.Workspace
-	User            accountrepo.User
-	Policy          Policy
-	Storytelling    Storytelling
-	Transaction     usecasex.Transaction
-	Extensions      []id.PluginID
-	Role            accountrepo.Role        // TODO: Delete this once the permission check migration is complete.
-	Permittable     accountrepo.Permittable // TODO: Delete this once the permission check migration is complete.
+
+	// Deprecated: This function is deprecated and will be replaced by AccountsWorkspace in the future.
+	Workspace accountrepo.Workspace
+	// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
+	User accountrepo.User
+
+	Policy       Policy
+	Storytelling Storytelling
+	Transaction  usecasex.Transaction
+	Extensions   []id.PluginID
+	Role         accountrepo.Role        // TODO: Delete this once the permission check migration is complete.
+	Permittable  accountrepo.Permittable // TODO: Delete this once the permission check migration is complete.
+
+	AccountsWorkspace accountsRepo.Workspace
+	AccountsUser      accountsRepo.User
 }
 
 func (c *Container) AccountRepos() *accountrepo.Container {
@@ -74,9 +83,15 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Scene:           c.Scene.Filtered(workspace),
 		SceneLock:       c.SceneLock,
 		Transaction:     c.Transaction,
-		User:            c.User,
-		Workspace:       c.Workspace,
 		Extensions:      c.Extensions,
+
+		// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
+		User: c.User,
+		// Deprecated: This function is deprecated and will be replaced by AccountsWorkspace in the future.
+		Workspace: c.Workspace,
+
+		AccountsUser:      c.AccountsUser,
+		AccountsWorkspace: c.AccountsWorkspace,
 	}
 }
 

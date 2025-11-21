@@ -32,7 +32,7 @@ require (
 	github.com/oklog/ulid/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
-	github.com/reearth/reearth-accounts/server v0.0.0-20251114040111-9b5f5f67a6c7
+	github.com/reearth/reearth-accounts/server v0.0.0-20251125034551-0f2f9e0259cf
 	github.com/reearth/reearthx v0.0.0-20251113074259-e2958d8c50f6 // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
 	github.com/samber/lo v1.50.0
 	github.com/spf13/afero v1.14.0

@@ -10,9 +10,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
-func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
+func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, aur *accountsRepo.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		repos := r
 
@@ -36,8 +39,27 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 			ar2 = ar
 		}
 
-		uc := interactor.NewContainer(repos, g, ar2, ag, config)
+		// Prepare reearth-accounts repos
+		var aur2 *accountsRepo.Container
+		if op := adapter.AccountsOperator(ctx); op != nil && aur != nil {
+			aur2 = aur.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
+		} else {
+			aur2 = aur
+		}
+
+		uc := interactor.NewContainer(repos, g, ar2, ag, aur2, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
+
+		// Build accountsInterfaces.Container for AttachAccountsUsecases
+		var accountsUC *accountsInterfaces.Container
+		if aur2 != nil {
+			accountsUC = &accountsInterfaces.Container{
+				Workspace: uc.AccountsWorkspace,
+				User:      uc.AccountsUser,
+			}
+		}
+		ctx = adapter.AttachAccountsUsecases(ctx, accountsUC)
+
 		return ctx
 	})
 }
