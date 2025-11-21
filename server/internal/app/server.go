@@ -21,7 +21,7 @@ import (
 )
 
 func runServer(ctx context.Context, conf *config.Config, debug bool) {
-	repos, gateways, acRepos, acGateways, accountsAPIClient := initReposAndGateways(ctx, conf, debug)
+	repos, gateways, acRepos, acGateways, accountsAPIClient, reearthAccountsRepos := initReposAndGateways(ctx, conf, debug)
 	// Start web server
 	NewServer(ctx, &ServerConfig{
 		Config:            conf,
@@ -31,6 +31,8 @@ func runServer(ctx context.Context, conf *config.Config, debug bool) {
 		AccountRepos:      acRepos,
 		AccountGateways:   acGateways,
 		AccountsAPIClient: accountsAPIClient,
+
+		ReearthAccountsRepos: reearthAccountsRepos,
 	}).Run(ctx)
 }
 

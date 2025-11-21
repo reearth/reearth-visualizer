@@ -3,8 +3,6 @@ package app
 import (
 	"context"
 
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
-	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
@@ -27,6 +25,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
+
+	accountsAdapter "github.com/reearth/reearth-accounts/server/pkg/adapter"
+	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 )
 
 func initAccountDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *accountrepo.Container {
@@ -63,19 +66,23 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *gqlclient.Client) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *accountsGQLclient.Client, *accountsRepo.Container) {
 	gateways := &gateway.Container{}
 	acGateways := &accountgateway.Container{}
 
 	// Initialize Accounts API client if enabled
-	var accountsAPIClient *gqlclient.Client
+	var accountsAPIClient *accountsGQLclient.Client
+	var reearthAccountsRepos *accountsRepo.Container
 	if conf.AccountsAPI.Enabled {
 		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
-		accountsAPIClient = gqlclient.NewClient(
+		accountsAPIClient = accountsGQLclient.NewClient(
 			conf.AccountsAPI.Host,
 			conf.AccountsAPI.Timeout,
 			adpaccounts.NewDynamicAuthTransport(),
 		)
+		// Initialize reearth-accounts repository container
+		reearthAccountsRepos = accountsAdapter.NewContainer(accountsAPIClient)
+		log.Infof("reearth-accounts repos: initialized")
 	}
 
 	// Mongo
@@ -161,7 +168,7 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Fatalf("repo initialization error: %v", err)
 	}
 
-	return visRepos, gateways, accountRepos, acGateways, accountsAPIClient
+	return visRepos, gateways, accountRepos, acGateways, accountsAPIClient, reearthAccountsRepos
 }
 
 func initFile(ctx context.Context, conf *config.Config) (fileRepo gateway.File) {
