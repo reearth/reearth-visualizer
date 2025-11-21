@@ -188,7 +188,8 @@
   "resolutions": {
     "@types/node-fetch": "2.6.13",
     "glob": "^11.1.0",
-    "graphql": "16.12.0"
+    "graphql": "16.12.0",
+    "js-yaml": "4.1.1"
   },
   "packageManager": "yarn@4.6.0"
 }
