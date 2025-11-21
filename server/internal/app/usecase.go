@@ -10,9 +10,11 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
-func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
+func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, aur *accountsRepo.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		repos := r
 
@@ -38,6 +40,16 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 
 		uc := interactor.NewContainer(repos, g, ar2, ag, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
+
+		// Attach reearth-accounts usecases
+		var auc *accountsRepo.Container
+		if op := adapter.AccountsOperator(ctx); op != nil && aur != nil {
+			auc = aur.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
+		} else {
+			auc = aur
+		}
+		ctx = adapter.AttachAccountsUsecases(ctx, auc)
+
 		return ctx
 	})
 }

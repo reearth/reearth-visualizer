@@ -11,6 +11,8 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 var (
@@ -40,6 +42,9 @@ type Container struct {
 	Extensions      []id.PluginID
 	Role            accountrepo.Role        // TODO: Delete this once the permission check migration is complete.
 	Permittable     accountrepo.Permittable // TODO: Delete this once the permission check migration is complete.
+
+	AccountsWorkspace accountsRepo.Workspace
+	AccountsUser      accountsRepo.User
 }
 
 func (c *Container) AccountRepos() *accountrepo.Container {
@@ -77,6 +82,9 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		User:            c.User,
 		Workspace:       c.Workspace,
 		Extensions:      c.Extensions,
+
+		AccountsUser:      c.AccountsUser,
+		AccountsWorkspace: c.AccountsWorkspace,
 	}
 }
 

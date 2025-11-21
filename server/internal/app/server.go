@@ -16,6 +16,8 @@ import (
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 func runServer(ctx context.Context, conf *config.Config, debug bool) {
@@ -47,6 +49,8 @@ type ServerConfig struct {
 	AccountRepos      *accountrepo.Container
 	AccountGateways   *accountgateway.Container
 	AccountsAPIClient *gqlclient.Client
+
+	ReearthAccountsRepos *accountsRepo.Container // reearth-accounts
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
