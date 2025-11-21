@@ -55,6 +55,7 @@ export type Config = {
   multiTenant?: Record<string, AuthInfo>;
   devPluginUrls?: string[];
   featureCollection?: string;
+  enableGqlPlayground?: boolean;
   platformUrl?: string;
 } & AuthInfo;
 
