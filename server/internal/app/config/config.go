@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/k0kubun/pp/v3"
@@ -23,34 +24,41 @@ func init() {
 type Mailer mailer.Mailer
 type Config struct {
 	mailer.Config
-	Port             string            `default:"8080" envconfig:"PORT"`
-	ServerHost       string            `pp:",omitempty"`
-	Host             string            `default:"http://localhost:8080"`
-	Host_Web         string            `pp:",omitempty"`
-	Dev              bool              `pp:",omitempty"`
-	DB               string            `default:"mongodb://localhost"`
-	DB_Account       string            `default:"reearth_account" pp:",omitempty"`
-	DB_Users         []appx.NamedURI   `pp:",omitempty"`
-	DB_Vis           string            `default:"reearth" pp:",omitempty"`
-	GraphQL          GraphQLConfig     `pp:",omitempty"`
-	Published        PublishedConfig   `pp:",omitempty"`
-	GCPProject       string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
-	Profiler         string            `pp:",omitempty"`
-	Tracer           string            `pp:",omitempty"`
-	TracerSample     float64           `default:"0.01" envconfig:"REEARTH_TRACER_SAMPLE" pp:",omitempty"`
-	Marketplace      MarketplaceConfig `pp:",omitempty"`
-	AssetBaseURL     string            `default:"http://localhost:8080/assets"`
-	Origins          []string          `pp:",omitempty"`
-	Policy           PolicyConfig      `pp:",omitempty"`
-	Web_Disabled     bool              `pp:",omitempty"`
-	Web_App_Disabled bool              `pp:",omitempty"`
-	Web              map[string]string `pp:",omitempty"`
-	Web_Config       JSON              `pp:",omitempty"`
-	Web_Title        string            `pp:",omitempty"`
-	Web_FaviconURL   string            `pp:",omitempty"`
-	SignupSecret     string            `pp:",omitempty"`
-	SignupDisabled   bool              `pp:",omitempty"`
-	HTTPSREDIRECT    bool              `pp:",omitempty"`
+	Port                   string            `default:"8080" envconfig:"PORT"`
+	ServerHost             string            `pp:",omitempty"`
+	Host                   string            `default:"http://localhost:8080"`
+	Host_Web               string            `pp:",omitempty"`
+	Dev                    bool              `pp:",omitempty"`
+	DB                     string            `default:"mongodb://localhost"`
+	DB_Account             string            `default:"reearth_account" pp:",omitempty"`
+	DB_Users               []appx.NamedURI   `pp:",omitempty"`
+	DB_Vis                 string            `default:"reearth" pp:",omitempty"`
+	GraphQL                GraphQLConfig     `pp:",omitempty"`
+	Published              PublishedConfig   `pp:",omitempty"`
+	GCPProject             string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
+	OtelEnabled            bool              `env:"REEARTH_VISUALIZER_OTEL_ENABLED" envDefault:"false"`
+	OtelEndpoint           string            `env:"REEARTH_VISUALIZER_OTEL_ENDPOINT" envDefault:"localhost:4317"`
+	OtelExporterType       string            `env:"REEARTH_VISUALIZER_OTEL_EXPORTER_TYPE" envDefault:"otlp"` // otlp, jaeger, or gcp
+	OtelBatchTimeout       time.Duration     `env:"REEARTH_VISUALIZER_OTEL_BATCH_TIMEOUT" envDefault:"1s"`   // seconds
+	OtelMaxExportBatchSize int               `env:"REEARTH_VISUALIZER_OTEL_MAX_EXPORT_BATCH_SIZE" envDefault:"512"`
+	OtelMaxQueueSize       int               `env:"REEARTH_VISUALIZER_OTEL_MAX_QUEUE_SIZE" envDefault:"2048"`
+	OtelSamplingRatio      float64           `env:"REEARTH_VISUALIZER_OTEL_SAMPLING_RATIO" envDefault:"1.0"` // 0.0 to 1.0
+	Profiler               string            `pp:",omitempty"`
+	Tracer                 string            `pp:",omitempty"`
+	TracerSample           float64           `default:"0.01" envconfig:"REEARTH_TRACER_SAMPLE" pp:",omitempty"`
+	Marketplace            MarketplaceConfig `pp:",omitempty"`
+	AssetBaseURL           string            `default:"http://localhost:8080/assets"`
+	Origins                []string          `pp:",omitempty"`
+	Policy                 PolicyConfig      `pp:",omitempty"`
+	Web_Disabled           bool              `pp:",omitempty"`
+	Web_App_Disabled       bool              `pp:",omitempty"`
+	Web                    map[string]string `pp:",omitempty"`
+	Web_Config             JSON              `pp:",omitempty"`
+	Web_Title              string            `pp:",omitempty"`
+	Web_FaviconURL         string            `pp:",omitempty"`
+	SignupSecret           string            `pp:",omitempty"`
+	SignupDisabled         bool              `pp:",omitempty"`
+	HTTPSREDIRECT          bool              `pp:",omitempty"`
 
 	// storage
 	GCS GCSConfig `pp:",omitempty"`
