@@ -39,14 +39,14 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type Project struct {
 	common
 	commonSceneLock
 	transaction         usecasex.Transaction
-	userRepo            accountrepo.User
-	workspaceRepo       accountrepo.Workspace
 	assetRepo           repo.Asset
 	projectRepo         repo.Project
 	projectMetadataRepo repo.ProjectMetadata
@@ -60,13 +60,26 @@ type Project struct {
 	pluginRepo          repo.Plugin
 	file                gateway.File
 	policyChecker       gateway.PolicyChecker
+
+	// Deprecated: This function is deprecated and will be replaced by accountsUserRepo in the future.
+	userRepo accountrepo.User
+	// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
+	workspaceRepo accountrepo.Workspace
+
+	accountsUserRepo     accountsRepo.User
+	accountWorkspaceRepo accountsRepo.Workspace
 }
 
-func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
+func NewProject(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Container) interfaces.Project {
+	var accountUserRepo accountsRepo.User
+	var accountWsRepo accountsRepo.Workspace
+	if auc != nil {
+		accountUserRepo = auc.User
+		accountWsRepo = auc.Workspace
+	}
+
 	return &Project{
 		commonSceneLock:     commonSceneLock{sceneLockRepo: r.SceneLock},
-		userRepo:            r.User,
-		workspaceRepo:       r.Workspace,
 		assetRepo:           r.Asset,
 		projectRepo:         r.Project,
 		projectMetadataRepo: r.ProjectMetadata,
@@ -81,6 +94,14 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		propertySchemaRepo:  r.PropertySchema,
 		file:                gr.File,
 		policyChecker:       gr.PolicyChecker,
+
+		// Deprecated: This function is deprecated and will be replaced by accountsUserRepo in the future.
+		userRepo: r.User, //nolint:staticcheck // TODO: migrate to accountsUserRepo
+		// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
+		workspaceRepo: r.Workspace, //nolint:staticcheck // TODO: migrate to accountWorkspaceRepo
+
+		accountsUserRepo:     accountUserRepo,
+		accountWorkspaceRepo: accountWsRepo,
 	}
 }
 

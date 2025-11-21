@@ -9,6 +9,9 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 type ContextKey string
@@ -24,6 +27,10 @@ const (
 	contextInternal    ContextKey = "Internal"
 	contextUserID      ContextKey = "reearth_user"
 	contextJwtToken    ContextKey = "jwtToken"
+
+	contextAccountsUser     ContextKey = "accounts_user"
+	contextAccountsOperator ContextKey = "accounts_operator"
+	contextAccountsUsecases ContextKey = "accounts_usecases"
 )
 
 var defaultLang = language.English
@@ -41,16 +48,32 @@ func AttachLang(ctx context.Context, lang language.Tag) context.Context {
 	return context.WithValue(ctx, contextLang, lang)
 }
 
+// Deprecated: This function is deprecated and will be replaced by AttachAccountsUser in the future.
 func AttachUser(ctx context.Context, u *user.User) context.Context {
 	return context.WithValue(ctx, contextUser, u)
 }
 
+func AttachAccountsUser(ctx context.Context, u *accountsUser.User) context.Context {
+	return context.WithValue(ctx, contextAccountsUser, u)
+}
+
+// Deprecated: This function is deprecated and will be replaced by AttachAccountsOperator in the future.
 func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 	return context.WithValue(ctx, contextOperator, o)
 }
 
+func AttachAccountsOperator(ctx context.Context, o *usecase.AccountsOperator) context.Context {
+	return context.WithValue(ctx, contextAccountsOperator, o)
+}
+
+// Deprecated: This function is deprecated and will be replaced by AttachAccountsUsecases in the future.
 func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Context {
 	ctx = context.WithValue(ctx, contextUsecases, u)
+	return ctx
+}
+
+func AttachAccountsUsecases(ctx context.Context, au *accountsInterfaces.Container) context.Context {
+	ctx = context.WithValue(ctx, contextAccountsUsecases, au)
 	return ctx
 }
 
@@ -77,9 +100,19 @@ func JwtToken(ctx context.Context) string {
 	return ""
 }
 
+// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
 func User(ctx context.Context) *user.User {
 	if v := ctx.Value(contextUser); v != nil {
 		if u, ok := v.(*user.User); ok {
+			return u
+		}
+	}
+	return nil
+}
+
+func AccountsUser(ctx context.Context) *accountsUser.User {
+	if v := ctx.Value(contextAccountsUser); v != nil {
+		if u, ok := v.(*accountsUser.User); ok {
 			return u
 		}
 	}
@@ -110,6 +143,7 @@ func Lang(ctx context.Context, lang *language.Tag) string {
 	return defaultLang.String()
 }
 
+// reearth-visualizer Operator
 func Operator(ctx context.Context) *usecase.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
 		if v2, ok := v.(*usecase.Operator); ok {
@@ -119,9 +153,21 @@ func Operator(ctx context.Context) *usecase.Operator {
 	return nil
 }
 
+// reearthx Operator
+// Deprecated: This function is deprecated and will be replaced by AccountsOperator in the future.
 func AcOperator(ctx context.Context) *accountusecase.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
 		if v2, ok := v.(*accountusecase.Operator); ok {
+			return v2
+		}
+	}
+	return nil
+}
+
+// reearth-accounts Operator
+func AccountsOperator(ctx context.Context) *usecase.AccountsOperator {
+	if v := ctx.Value(contextAccountsOperator); v != nil {
+		if v2, ok := v.(*usecase.AccountsOperator); ok {
 			return v2
 		}
 	}
@@ -144,9 +190,20 @@ func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 	return nil
 }
 
+// reearthx Container
 func Usecases(ctx context.Context) *interfaces.Container {
 	if v := ctx.Value(contextUsecases); v != nil {
 		if v2, ok := v.(*interfaces.Container); ok {
+			return v2
+		}
+	}
+	return nil
+}
+
+// reearth-accounts Container
+func AccountsUsecases(ctx context.Context) *accountsInterfaces.Container {
+	if v := ctx.Value(contextAccountsUsecases); v != nil {
+		if v2, ok := v.(*accountsInterfaces.Container); ok {
 			return v2
 		}
 	}

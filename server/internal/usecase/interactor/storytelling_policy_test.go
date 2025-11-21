@@ -100,7 +100,7 @@ func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTe
 	}
 
 	// Create storytelling interactor
-	storytellingUC := NewStorytelling(repos, gateways)
+	storytellingUC := NewStorytelling(repos, gateways, nil)
 
 	// Create operator
 	operator := &usecase.Operator{

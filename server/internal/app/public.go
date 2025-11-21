@@ -11,7 +11,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http1 "github.com/reearth/reearth/server/internal/adapter/http"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -171,7 +173,8 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 
 func MockUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		uc := adapter.Usecases(c.Request().Context())
+		ctx := c.Request().Context()
+		uc := adapter.Usecases(ctx)
 		controller := http1.NewUserController(uc.User)
 
 		input := http1.SignupInput{
@@ -179,9 +182,53 @@ func MockUser() echo.HandlerFunc {
 			Email:    "mock@example.com",
 		}
 
-		output, err := controller.Signup(c.Request().Context(), input)
+		output, err := controller.Signup(ctx, input)
+
 		if err != nil {
-			return err
+			output = http1.SignupOutput{
+				ID:    "error",
+				Name:  input.Username,
+				Email: input.Email,
+			}
+		}
+
+		auc := adapter.AccountsUsecases(ctx)
+		if auc != nil && auc.User != nil {
+			acUserSimple, err := auc.User.FetchByNameOrEmail(ctx, input.Email)
+			if err != nil {
+				return err
+			}
+
+			var acUser *accountsUser.User
+			if acUserSimple != nil {
+				users, err := auc.User.FetchByID(ctx, accountsUser.IDList{acUserSimple.ID})
+				if err != nil {
+					return err
+				}
+				if len(users) > 0 {
+					acUser = users[0]
+				}
+			}
+
+			if acUser == nil {
+				acUser, err = auc.User.Signup(ctx, accountsInterfaces.SignupParam{
+					Email:    input.Email,
+					Name:     input.Username,
+					Password: "mockpassword",
+					MockAuth: true,
+				})
+				if err != nil {
+					return err
+				}
+			}
+
+			if auc.Workspace != nil && acUser != nil {
+				workspaces, err := auc.Workspace.FindByUser(ctx, acUser.ID(), nil)
+				if err != nil || len(workspaces) == 0 {
+					alias := strings.ToLower(strings.ReplaceAll(input.Username, " ", "-")) + "-workspace"
+					_, _ = auc.Workspace.Create(ctx, alias, input.Username+"'s Workspace", "", accountsWorkspace.UserID(acUser.ID()), nil)
+				}
+			}
 		}
 
 		return c.JSON(http.StatusOK, output)

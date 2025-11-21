@@ -5,17 +5,27 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearth/server/pkg/id"
+
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
 	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 type WorkspaceLoader struct {
-	usecase accountinterfaces.Workspace
+	usecase          accountinterfaces.Workspace
+	accountsUsecases *accountsInterfaces.Container
 }
 
-func NewWorkspaceLoader(usecase accountinterfaces.Workspace) *WorkspaceLoader {
-	return &WorkspaceLoader{usecase: usecase}
+func NewWorkspaceLoader(usecase accountinterfaces.Workspace, accountsUsecases *accountsInterfaces.Container) *WorkspaceLoader {
+	return &WorkspaceLoader{
+		usecase:          usecase,
+		accountsUsecases: accountsUsecases,
+	}
 }
 
 func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.Workspace, []error) {
@@ -27,6 +37,14 @@ func (c *WorkspaceLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlm
 	res, err := c.usecase.Fetch(ctx, uids, getAcOperator(ctx))
 	if err != nil {
 		return nil, []error{err}
+	}
+
+	// TODO: Planning to move here
+	if c.accountsUsecases != nil && c.accountsUsecases.Workspace != nil {
+		_, err = c.accountsUsecases.Workspace.Fetch(ctx, id.ChangeWorkspaceID_ReearthxToAccounts(uids), getAccountsOperator(ctx))
+		if err != nil {
+			return nil, []error{err}
+		}
 	}
 
 	workspaces := make([]*gqlmodel.Workspace, 0, len(res))
@@ -46,6 +64,19 @@ func (c *WorkspaceLoader) FindByUser(ctx context.Context, uid gqlmodel.ID) ([]*g
 	if err != nil {
 		return nil, err
 	}
+
+	// TODO: Planning to move here
+	if c.accountsUsecases != nil {
+		acUserId, err := gqlmodel.ToID[accountsID.User](uid)
+		if err != nil {
+			return nil, err
+		}
+		_, err = c.accountsUsecases.User.FetchByID(ctx, accountsUser.IDList{acUserId})
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	workspaces := make([]*gqlmodel.Workspace, 0, len(res))
 	for _, t := range res {
 		workspaces = append(workspaces, gqlmodel.ToWorkspace(t))
