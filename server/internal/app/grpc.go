@@ -17,6 +17,8 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 func initGrpc(cfg *ServerConfig) *grpc.Server {
@@ -162,6 +164,16 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 
 		uc := interactor.NewContainer(r, g, ar, ag, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
+
+		// Attach reearth-accounts usecases
+		var auc *accountsRepo.Container
+		if op := adapter.AccountsOperator(ctx); op != nil && cfg.ReearthAccountsRepos != nil {
+			auc = cfg.ReearthAccountsRepos.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
+		} else {
+			auc = cfg.ReearthAccountsRepos
+		}
+		ctx = adapter.AttachAccountsUsecases(ctx, auc)
+
 		ctx = adapter.AttachInternal(ctx, true)
 		return handler(ctx, req)
 	}

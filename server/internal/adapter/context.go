@@ -9,6 +9,9 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 type ContextKey string
@@ -24,6 +27,10 @@ const (
 	contextInternal    ContextKey = "Internal"
 	contextUserID      ContextKey = "reearth_user"
 	contextJwtToken    ContextKey = "jwtToken"
+
+	contextAccountsUser     ContextKey = "accounts_user"
+	contextAccountsOperator ContextKey = "accounts_operator"
+	contextAccountsUsecases ContextKey = "accounts_usecases"
 )
 
 var defaultLang = language.English
@@ -45,12 +52,25 @@ func AttachUser(ctx context.Context, u *user.User) context.Context {
 	return context.WithValue(ctx, contextUser, u)
 }
 
+func AttachAccountsUser(ctx context.Context, u *accountsUser.User) context.Context {
+	return context.WithValue(ctx, contextAccountsUser, u)
+}
+
 func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 	return context.WithValue(ctx, contextOperator, o)
 }
 
+func AttachAccountsOperator(ctx context.Context, o *usecase.AccountsOperator) context.Context {
+	return context.WithValue(ctx, contextAccountsOperator, o)
+}
+
 func AttachUsecases(ctx context.Context, u *interfaces.Container) context.Context {
 	ctx = context.WithValue(ctx, contextUsecases, u)
+	return ctx
+}
+
+func AttachAccountsUsecases(ctx context.Context, au *accountsRepo.Container) context.Context {
+	ctx = context.WithValue(ctx, contextAccountsUsecases, au)
 	return ctx
 }
 
@@ -86,6 +106,15 @@ func User(ctx context.Context) *user.User {
 	return nil
 }
 
+func AccountsUser(ctx context.Context) *accountsUser.User {
+	if v := ctx.Value(contextAccountsUser); v != nil {
+		if u, ok := v.(*accountsUser.User); ok {
+			return u
+		}
+	}
+	return nil
+}
+
 func UserID(ctx context.Context) *string {
 	if cu, ok := ctx.Value(contextUserID).(string); ok {
 		return &cu
@@ -110,6 +139,7 @@ func Lang(ctx context.Context, lang *language.Tag) string {
 	return defaultLang.String()
 }
 
+// reearth-visualizer Operator
 func Operator(ctx context.Context) *usecase.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
 		if v2, ok := v.(*usecase.Operator); ok {
@@ -119,9 +149,20 @@ func Operator(ctx context.Context) *usecase.Operator {
 	return nil
 }
 
+// reearthx Operator
 func AcOperator(ctx context.Context) *accountusecase.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
 		if v2, ok := v.(*accountusecase.Operator); ok {
+			return v2
+		}
+	}
+	return nil
+}
+
+// reearth-accounts Operator
+func AccountsOperator(ctx context.Context) *usecase.AccountsOperator {
+	if v := ctx.Value(contextAccountsOperator); v != nil {
+		if v2, ok := v.(*usecase.AccountsOperator); ok {
 			return v2
 		}
 	}
@@ -147,6 +188,15 @@ func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
 func Usecases(ctx context.Context) *interfaces.Container {
 	if v := ctx.Value(contextUsecases); v != nil {
 		if v2, ok := v.(*interfaces.Container); ok {
+			return v2
+		}
+	}
+	return nil
+}
+
+func AccountsUsecases(ctx context.Context) *accountsRepo.Container {
+	if v := ctx.Value(contextAccountsUsecases); v != nil {
+		if v2, ok := v.(*accountsRepo.Container); ok {
 			return v2
 		}
 	}

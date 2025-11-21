@@ -8,10 +8,13 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/util"
+
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 )
 
 type Operator struct {
 	AcOperator        *accountusecase.Operator
+	AccountsOperator  *accountsUsecase.Operator
 	ReadableScenes    id.SceneIDList
 	WritableScenes    id.SceneIDList
 	MaintainingScenes id.SceneIDList

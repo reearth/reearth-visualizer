@@ -116,6 +116,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 			cfg.Gateways,
 			cfg.AccountRepos,
 			cfg.AccountGateways,
+			cfg.ReearthAccountsRepos,
 			interactor.ContainerConfig{
 				SignupSecret:       cfg.Config.SignupSecret,
 				PublishedIndexHTML: publishedIndexHTML,

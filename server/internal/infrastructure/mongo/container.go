@@ -20,6 +20,8 @@ import (
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 )
 
 func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool) (*repo.Container, error) {
@@ -55,6 +57,9 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Extensions:      nil,
 		Role:            account.Role,
 		Permittable:     account.Permittable,
+
+		AccountsWorkspace: accountsInfra.NewMongoWorkspace(client),
+		AccountsUser:      accountsInfra.NewMongoUser(client),
 	}
 
 	// init

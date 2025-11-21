@@ -11,6 +11,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
+	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -20,14 +21,12 @@ import (
 	"github.com/reearth/reearthx/util"
 
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
-	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
-)
 
-type graphqlRequest struct {
-	Query         string                 `json:"query"`
-	OperationName string                 `json:"operationName"`
-	Variables     map[string]interface{} `json:"variables"`
-}
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+)
 
 func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -78,6 +77,67 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 
 				ctx = adapter.AttachOperator(ctx, op)
+				log.Debugfc(ctx, "auth: op: %#v", op)
+
+			} else {
+				log.Errorfc(ctx, "Mock user information not found: %s", req.URL.Path)
+			}
+
+			c.SetRequest(req.WithContext(ctx))
+			return next(c)
+		}
+	}
+}
+
+func attachAcOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			req := c.Request()
+			ctx := req.Context()
+
+			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
+
+			authInfo := adapter.GetAuthInfo(ctx)
+
+			var u *accountsUser.User
+
+			// Check for debug user header first (for e2e tests)
+			if cfg.Debug {
+				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
+					uid, err := accountsID.UserIDFrom(userID)
+					if err == nil {
+						u, err = cfg.ReearthAccountsRepos.User.FindByID(ctx, uid)
+						if err != nil {
+							log.Warnfc(ctx, "auth: debug user not found: %s", userID)
+						}
+					}
+				}
+			}
+
+			// Fallback to mock user if debug user not found
+			if u == nil {
+				var err error
+				u, err = cfg.ReearthAccountsRepos.User.FindByNameOrEmail(ctx, "Mock User")
+				if err != nil {
+					uId, _ := accountsID.UserIDFrom(authInfo.Sub)
+					u = accountsUser.New().
+						ID(uId).
+						Name(authInfo.Name).
+						Email(authInfo.Email).
+						MustBuild()
+				}
+			}
+
+			if u != nil {
+				ctx = adapter.AttachAccountsUser(ctx, u)
+				log.Debugfc(ctx, "auth: user: id=%s name=%s email=%s", u.ID(), u.Name(), u.Email())
+
+				op, err := generateAccountsOperator(ctx, cfg, u)
+				if err != nil {
+					return err
+				}
+
+				ctx = adapter.AttachAccountsOperator(ctx, op)
 				log.Debugfc(ctx, "auth: op: %#v", op)
 
 			} else {
@@ -244,8 +304,8 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 	owningWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleOwner).IDs()
 	defaultPolicy := util.CloneRef(cfg.Config.Policy.Default)
 
-	return &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
+	return &usecase.Operator{ // reearth-visualizer Operator
+		AcOperator: &accountusecase.Operator{ // reearthx Operator
 			User:                   &uid,
 			ReadableWorkspaces:     readableWorkspaces,
 			WritableWorkspaces:     writableWorkspaces,
@@ -258,6 +318,64 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 		MaintainingScenes: scenes.FilterByWorkspace(maintainingWorkspaces...).IDs(),
 		OwningScenes:      scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
 		DefaultPolicy:     defaultPolicy,
+	}, nil
+}
+
+// TODO: =======================> Temporary fix
+func CahngeID(wsIDs []accountsWorkspace.ID) []accountdomain.WorkspaceID {
+	wsDomainIDs := make([]accountdomain.WorkspaceID, 0, len(wsIDs))
+	for _, id := range wsIDs {
+		wid, err := accountdomain.WorkspaceIDFrom(id.String())
+		if err != nil {
+			continue
+		}
+		wsDomainIDs = append(wsDomainIDs, wid)
+	}
+	return wsDomainIDs
+}
+
+// <======================= Temporary fix
+
+func generateAccountsOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.User) (*usecase.AccountsOperator, error) {
+	if u == nil {
+		return nil, nil
+	}
+
+	uid := u.ID()
+	workspaces, err := cfg.Repos.AccountsWorkspace.FindByUser(ctx, uid)
+	if err != nil {
+		return nil, err
+	}
+
+	wsList := accountsWorkspace.List(workspaces)
+
+	scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, CahngeID(wsList.IDs())...) // TODO: Temporary fix
+	// scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, wsIDs...)
+	if err != nil {
+		return nil, err
+	}
+
+	readableWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleReader).IDs()
+	writableWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleWriter).IDs()
+	maintainingWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleMaintainer).IDs()
+	owningWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleOwner).IDs()
+
+	return &usecase.AccountsOperator{ // reearth-visualizer Operator
+		AcOperator: &accountsUsecase.Operator{ // reearth-accounts Operator
+			User:                   &uid,
+			ReadableWorkspaces:     readableWorkspaces,
+			WritableWorkspaces:     writableWorkspaces,
+			MaintainableWorkspaces: maintainingWorkspaces,
+			OwningWorkspaces:       owningWorkspaces,
+		},
+		ReadableScenes:    scenes.FilterByWorkspace(CahngeID(readableWorkspaces)...).IDs(),    // TODO: Temporary fix
+		WritableScenes:    scenes.FilterByWorkspace(CahngeID(writableWorkspaces)...).IDs(),    // TODO: Temporary fix
+		MaintainingScenes: scenes.FilterByWorkspace(CahngeID(maintainingWorkspaces)...).IDs(), // TODO: Temporary fix
+		OwningScenes:      scenes.FilterByWorkspace(CahngeID(owningWorkspaces)...).IDs(),      // TODO: Temporary fix
+		// ReadableScenes:    scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
+		// WritableScenes:    scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
+		// MaintainingScenes: scenes.FilterByWorkspace(maintainingWorkspaces...).IDs(),
+		// OwningScenes:      scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
 	}, nil
 }
 
