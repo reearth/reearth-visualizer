@@ -19,6 +19,10 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
+
+	accountsInteractor "github.com/reearth/reearth-accounts/server/pkg/interactor"
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type ContainerConfig struct {
@@ -33,6 +37,7 @@ func NewContainer(
 	g *gateway.Container,
 	ar *accountrepo.Container,
 	ag *accountgateway.Container,
+	auc *accountsRepo.Container,
 	config ContainerConfig,
 ) interfaces.Container {
 
@@ -43,20 +48,33 @@ func NewContainer(
 		published = NewPublished(r.Project, r.Storytelling, g.File, config.PublishedIndexHTML)
 	}
 
+	var accountsWorkspace accountsInterfaces.Workspace
+	var accountsUser accountsInterfaces.User
+	if auc != nil {
+		accountsWorkspace = accountsInteractor.NewWorkspace(auc, nil)
+		accountsUser = accountsInteractor.NewUser(auc, nil, config.SignupSecret, config.AuthSrvUIDomain)
+	}
+
 	return interfaces.Container{
 		Asset:           NewAsset(r, g),
-		NLSLayer:        NewNLSLayer(r, g),
+		NLSLayer:        NewNLSLayer(r, g, auc),
 		Style:           NewStyle(r),
 		Plugin:          NewPlugin(r, g),
 		Policy:          NewPolicy(r, g.PolicyChecker),
-		Project:         NewProject(r, g),
+		Project:         NewProject(r, g, auc),
 		ProjectMetadata: NewProjectMetadata(r, g),
 		Property:        NewProperty(r, g),
 		Published:       published,
 		Scene:           NewScene(r, g),
-		StoryTelling:    NewStorytelling(r, g),
-		Workspace:       accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
-		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
+		StoryTelling:    NewStorytelling(r, g, auc),
+
+		// Deprecated: This function is deprecated and will be replaced by AccountsWorkspace in the future.
+		Workspace: accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
+		// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
+		User: accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
+
+		AccountsWorkspace: accountsWorkspace,
+		AccountsUser:      accountsUser,
 	}
 }
 

@@ -30,7 +30,7 @@ func TestAddOrUpdateCustomProperties(t *testing.T) {
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	})
+	}, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -81,7 +81,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	})
+	}, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -138,7 +138,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	})
+	}, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)
@@ -220,7 +220,7 @@ func TestAddLayerSimple(t *testing.T) {
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	})
+	}, nil)
 
 	operator := &usecase.Operator{
 		WritableScenes: []id.SceneID{scene.ID()},
@@ -387,7 +387,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
-	})
+	}, nil)
 
 	l, _ := nlslayer.NewNLSLayerSimple().NewID().Scene(scene.ID()).Build()
 	_ = db.NLSLayer.Save(ctx, l)

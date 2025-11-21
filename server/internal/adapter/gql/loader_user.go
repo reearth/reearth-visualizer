@@ -8,14 +8,20 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
 	"github.com/reearth/reearthx/util"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
 type UserLoader struct {
-	usecase accountinterfaces.User
+	usecase          accountinterfaces.User
+	accountsUsecases *accountsInterfaces.Container
 }
 
-func NewUserLoader(usecase accountinterfaces.User) *UserLoader {
-	return &UserLoader{usecase: usecase}
+func NewUserLoader(usecase accountinterfaces.User, accountsUsecases *accountsInterfaces.Container) *UserLoader {
+	return &UserLoader{
+		usecase:          usecase,
+		accountsUsecases: accountsUsecases,
+	}
 }
 
 func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.User, []error) {
@@ -28,6 +34,9 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 	if err != nil {
 		return nil, []error{err}
 	}
+
+	// TODO: Planning to move here
+	// c.accountsUsecases.User.FetchByID(ctx, uids)
 
 	users := make([]*gqlmodel.User, 0, len(res))
 	for _, u := range res {
@@ -48,6 +57,9 @@ func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmo
 			return gqlmodel.ToUserFromSimple(user), nil
 		}
 	}
+
+	// TODO: Planning to move here
+	// c.accountsUsecases.User.SearchUser(ctx, nameOrEmail)
 
 	return nil, nil
 }

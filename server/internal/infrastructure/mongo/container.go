@@ -20,6 +20,8 @@ import (
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 )
 
 func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool) (*repo.Container, error) {
@@ -47,14 +49,20 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Property:        NewProperty(client),
 		Scene:           NewScene(client),
 		SceneLock:       NewSceneLock(client),
-		Workspace:       account.Workspace,
-		User:            account.User,
 		Policy:          NewPolicy(client),
 		Storytelling:    NewStorytelling(client),
 		Transaction:     client.Transaction(),
 		Extensions:      nil,
 		Role:            account.Role,
 		Permittable:     account.Permittable,
+
+		// Deprecated: This function is deprecated and will be replaced by AccountsWorkspace in the future.
+		Workspace: account.Workspace,
+		// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
+		User: account.User,
+
+		AccountsWorkspace: accountsInfra.NewMongoWorkspace(client),
+		AccountsUser:      accountsInfra.NewMongoUser(client),
 	}
 
 	// init

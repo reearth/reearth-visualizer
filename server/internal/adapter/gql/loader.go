@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
 const (
@@ -43,6 +45,16 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 	if usecases == nil {
 		return nil
 	}
+
+	// Build accountsUsecases container if available
+	var accountsUsecases *accountsInterfaces.Container
+	if usecases.AccountsWorkspace != nil || usecases.AccountsUser != nil {
+		accountsUsecases = &accountsInterfaces.Container{
+			Workspace: usecases.AccountsWorkspace,
+			User:      usecases.AccountsUser,
+		}
+	}
+
 	return &Loaders{
 		usecases:  *usecases,
 		Asset:     NewAssetLoader(usecases.Asset),
@@ -52,8 +64,8 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
 		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: NewWorkspaceLoader(usecases.Workspace),
-		User:      NewUserLoader(usecases.User),
+		Workspace: NewWorkspaceLoader(usecases.Workspace, accountsUsecases), //nolint:staticcheck // TODO: migrate to AccountsWorkspace
+		User:      NewUserLoader(usecases.User, accountsUsecases),
 	}
 }
 
