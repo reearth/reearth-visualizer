@@ -36,13 +36,13 @@ type Config struct {
 	GraphQL                GraphQLConfig     `pp:",omitempty"`
 	Published              PublishedConfig   `pp:",omitempty"`
 	GCPProject             string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
-	OtelEnabled            bool              `env:"REEARTH_VISUALIZER_OTEL_ENABLED" envDefault:"false"`
-	OtelEndpoint           string            `env:"REEARTH_VISUALIZER_OTEL_ENDPOINT" envDefault:"localhost:4317"`
-	OtelExporterType       string            `env:"REEARTH_VISUALIZER_OTEL_EXPORTER_TYPE" envDefault:"otlp"` // otlp, jaeger, or gcp
-	OtelBatchTimeout       time.Duration     `env:"REEARTH_VISUALIZER_OTEL_BATCH_TIMEOUT" envDefault:"1s"`   // seconds
-	OtelMaxExportBatchSize int               `env:"REEARTH_VISUALIZER_OTEL_MAX_EXPORT_BATCH_SIZE" envDefault:"512"`
-	OtelMaxQueueSize       int               `env:"REEARTH_VISUALIZER_OTEL_MAX_QUEUE_SIZE" envDefault:"2048"`
-	OtelSamplingRatio      float64           `env:"REEARTH_VISUALIZER_OTEL_SAMPLING_RATIO" envDefault:"1.0"` // 0.0 to 1.0
+	OtelEnabled            bool              `envconfig:"REEARTH_VISUALIZER_OTEL_ENABLED" default:"false"`
+	OtelEndpoint           string            `envconfig:"REEARTH_VISUALIZER_OTEL_ENDPOINT" default:"localhost:4317"`
+	OtelExporterType       string            `envconfig:"REEARTH_VISUALIZER_OTEL_EXPORTER_TYPE" default:"otlp"` // otlp, jaeger, or gcp
+	OtelBatchTimeout       time.Duration     `envconfig:"REEARTH_VISUALIZER_OTEL_BATCH_TIMEOUT" default:"1s"`   // seconds
+	OtelMaxExportBatchSize int               `envconfig:"REEARTH_VISUALIZER_OTEL_MAX_EXPORT_BATCH_SIZE" default:"512"`
+	OtelMaxQueueSize       int               `envconfig:"REEARTH_VISUALIZER_OTEL_MAX_QUEUE_SIZE" default:"2048"`
+	OtelSamplingRatio      float64           `envconfig:"REEARTH_VISUALIZER_OTEL_SAMPLING_RATIO" default:"1.0"` // 0.0 to 1.0
 	Profiler               string            `pp:",omitempty"`
 	Tracer                 string            `pp:",omitempty"`
 	TracerSample           float64           `default:"0.01" envconfig:"REEARTH_TRACER_SAMPLE" pp:",omitempty"`

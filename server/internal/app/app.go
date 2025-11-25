@@ -39,6 +39,7 @@ func initEcho(
 	logger := log.NewEcho()
 	e.Logger = logger
 	if cfg.Config.OtelEnabled {
+		log.Infof("OpenTelemetry tracing enabled for %s", string(otelServiceName))
 		e.Use(otel.Middleware(string(otelServiceName)))
 	}
 	e.Use(
