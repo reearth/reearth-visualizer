@@ -9,6 +9,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
@@ -68,7 +69,13 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 	w := &WebServer{
 		address: address,
 	}
-	w.appServer = initEcho(ctx, cfg)
+
+	otelServiceName := otel.OtelVisualizerServiceName
+	if cfg.Config.Visualizer.InternalApi.Active {
+		otelServiceName = otel.OtelVisualizerInternalApiServiceName
+	}
+
+	w.appServer = initEcho(ctx, cfg, otelServiceName)
 
 	if cfg.Config.Visualizer.InternalApi.Active {
 		w.internalPort = ":" + cfg.Config.Visualizer.InternalApi.Port
