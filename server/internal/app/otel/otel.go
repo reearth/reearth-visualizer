@@ -34,8 +34,13 @@ const (
 const (
 	gcpProjectIDAttribute = "gcp.project_id"
 	gcpCloudTraceEndpoint = "telemetry.googleapis.com:443"
+)
 
-	OtelServiceName string = "reearth-visualizer-api"
+type OtelServiceName string
+
+const (
+	OtelVisualizerServiceName            OtelServiceName = "reearth-visualizer-api"
+	OtelVisualizerInternalApiServiceName OtelServiceName = "reearth-visualizer-internal-api"
 )
 
 type Config struct {
@@ -47,6 +52,8 @@ type Config struct {
 	MaxQueueSize       int
 
 	SamplingRatio float64
+
+	ServiceName OtelServiceName
 }
 
 type TracerProvider interface {
@@ -129,7 +136,7 @@ func InitTracer(ctx context.Context, cfg *Config) (TracerProvider, error) {
 	log.Infoc(ctx, "OpenTelemetry tracing initialized successfully",
 		"endpoint", cfg.Endpoint,
 		"exporter", cfg.ExporterType,
-		"service", OtelServiceName,
+		"service", string(cfg.ServiceName),
 		"max_export_batch_size", cfg.MaxExportBatchSize,
 		"batch_timeout", cfg.BatchTimeout,
 		"max_queue_size", cfg.MaxQueueSize,
@@ -160,7 +167,7 @@ func createResource(ctx context.Context, cfg *Config) (*resource.Resource, error
 	baseAttributes = append(baseAttributes, []resource.Option{
 		resource.WithTelemetrySDK(),
 		resource.WithAttributes(
-			semconv.ServiceName(OtelServiceName),
+			semconv.ServiceName(string(cfg.ServiceName)),
 		),
 	}...)
 

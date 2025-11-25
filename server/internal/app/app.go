@@ -20,7 +20,11 @@ import (
 	"github.com/reearth/reearthx/rerror"
 )
 
-func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
+func initEcho(
+	ctx context.Context,
+	cfg *ServerConfig,
+	otelServiceName otel.OtelServiceName,
+) *echo.Echo {
 	if cfg.Config == nil {
 		log.Fatalf("ServerConfig.Config is nil")
 	}
@@ -35,7 +39,7 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	logger := log.NewEcho()
 	e.Logger = logger
 	if cfg.Config.OtelEnabled {
-		e.Use(otel.Middleware(otel.OtelServiceName))
+		e.Use(otel.Middleware(string(otelServiceName)))
 	}
 	e.Use(
 		middleware.Recover(),
