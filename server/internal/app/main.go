@@ -45,13 +45,13 @@ func Start(debug bool, version string) {
 
 		if err != nil {
 			log.Warnfc(ctx, "failed to init tracer: %v", err)
+		} else {
+			defer func() {
+				if err := closer.Shutdown(ctx); err != nil {
+					log.Errorfc(ctx, "Failed to shutdown tracer: %s\n", err.Error())
+				}
+			}()
 		}
-
-		defer func() {
-			if err := closer.Shutdown(ctx); err != nil {
-				log.Errorfc(ctx, "Failed to shutdown tracer: %s\n", err.Error())
-			}
-		}()
 	}
 
 	// run migration
