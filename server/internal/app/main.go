@@ -44,12 +44,12 @@ func Start(debug bool, version string) {
 		})
 
 		if err != nil {
-			log.Fatalf("failed to init tracer: %v", err)
+			log.Warnfc(ctx, "failed to init tracer: %v", err)
 		}
 
 		defer func() {
 			if err := closer.Shutdown(ctx); err != nil {
-				log.Errorf("Failed to shutdown tracer: %s\n", err.Error())
+				log.Errorfc(ctx, "Failed to shutdown tracer: %s\n", err.Error())
 			}
 		}()
 	}
