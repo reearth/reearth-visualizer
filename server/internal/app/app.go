@@ -41,7 +41,10 @@ func initEcho(
 	if cfg.Config.OtelEnabled {
 		log.Infof("OpenTelemetry tracing enabled for %s", string(otelServiceName))
 		e.Use(otel.Middleware(string(otelServiceName)))
+	} else {
+		log.Infof("OpenTelemetry tracing disabled for %s", string(otelServiceName))
 	}
+
 	e.Use(
 		middleware.Recover(),
 		appmiddleware.RestAPITracingMiddleware(), // Add detailed REST API tracing
