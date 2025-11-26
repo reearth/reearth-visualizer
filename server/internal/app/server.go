@@ -50,6 +50,8 @@ type ServerConfig struct {
 	AccountGateways   *accountgateway.Container
 	AccountsAPIClient *gqlclient.Client
 	ServiceName       otel.OtelServiceName
+
+	ReearthAccountsRepos *accountsRepo.Container // reearth-accounts
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
