@@ -16,6 +16,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
@@ -124,6 +125,7 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 		Gateways:        gateways,
 		AccountGateways: accountGateway,
 		Debug:           true,
+		ServiceName:     otel.OtelVisualizerServiceName,
 	}), gateways, accountGateway
 }
 
