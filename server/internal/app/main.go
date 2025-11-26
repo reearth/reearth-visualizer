@@ -33,14 +33,20 @@ func Start(debug bool, version string) {
 	initProfiler(conf.Profiler, version)
 
 	// Init tracer
+	serviceName := otel.OtelVisualizerServiceName
+	if conf.Visualizer.InternalApi.Active {
+		serviceName = otel.OtelVisualizerInternalApiServiceName
+	}
 	if conf.OtelEnabled {
 		closer, err := otel.InitTracer(ctx, &otel.Config{
+			BatchTimeout:       conf.OtelBatchTimeout,
 			Enabled:            conf.OtelEnabled,
 			Endpoint:           conf.OtelEndpoint,
 			ExporterType:       otel.ExporterType(conf.OtelExporterType),
 			MaxExportBatchSize: conf.OtelMaxExportBatchSize,
-			BatchTimeout:       conf.OtelBatchTimeout,
 			MaxQueueSize:       conf.OtelMaxQueueSize,
+			SamplingRatio:      conf.OtelSamplingRatio,
+			ServiceName:        serviceName,
 		})
 
 		if err != nil {
@@ -104,5 +110,5 @@ func Start(debug bool, version string) {
 	}
 
 	// run server
-	runServer(ctx, conf, debug)
+	runServer(ctx, conf, serviceName, debug)
 }

@@ -19,7 +19,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-func runServer(ctx context.Context, conf *config.Config, debug bool) {
+func runServer(ctx context.Context, conf *config.Config, otelServiceName otel.OtelServiceName, debug bool) {
 	repos, gateways, acRepos, acGateways, accountsAPIClient := initReposAndGateways(ctx, conf, debug)
 	// Start web server
 	NewServer(ctx, &ServerConfig{
@@ -30,6 +30,7 @@ func runServer(ctx context.Context, conf *config.Config, debug bool) {
 		AccountRepos:      acRepos,
 		AccountGateways:   acGateways,
 		AccountsAPIClient: accountsAPIClient,
+		ServiceName:       otelServiceName,
 	}).Run(ctx)
 }
 
@@ -48,6 +49,7 @@ type ServerConfig struct {
 	AccountRepos      *accountrepo.Container
 	AccountGateways   *accountgateway.Container
 	AccountsAPIClient *gqlclient.Client
+	ServiceName       otel.OtelServiceName
 }
 
 func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
@@ -70,12 +72,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) *WebServer {
 		address: address,
 	}
 
-	otelServiceName := otel.OtelVisualizerServiceName
-	if cfg.Config.Visualizer.InternalApi.Active {
-		otelServiceName = otel.OtelVisualizerInternalApiServiceName
-	}
-
-	w.appServer = initEcho(ctx, cfg, otelServiceName)
+	w.appServer = initEcho(ctx, cfg, cfg.ServiceName)
 
 	if cfg.Config.Visualizer.InternalApi.Active {
 		w.internalPort = ":" + cfg.Config.Visualizer.InternalApi.Port
