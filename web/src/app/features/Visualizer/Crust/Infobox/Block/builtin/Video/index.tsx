@@ -2,7 +2,7 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import { CommonBlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import type ReactPlayer from "react-player";
 import Player from "react-player";
 
@@ -16,6 +16,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   selectedFeature,
   ...props
 }) => {
+  const playerRef = useRef<ReactPlayer>(null);
   const [aspectRatio, setAspectRatio] = useState(56.25);
 
   const src = useMemo(
@@ -31,12 +32,23 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
     }
   );
 
-  const handleVideoReady = useCallback((player: ReactPlayer) => {
-    const height = player.getInternalPlayer().videoHeight;
-    const width = player.getInternalPlayer().videoWidth;
-    if (!height || !width) return;
-    setAspectRatio((height / width) * 100);
-  }, []);
+  useEffect(() => {
+    const player =
+      playerRef.current?.getInternalPlayer() as HTMLVideoElement | null;
+    if (!player) return;
+
+    const handleMeta = () => {
+      const w = player.videoWidth;
+      const h = player.videoHeight;
+      console.log("video meta loaded", w, h);
+      if (w && h) setAspectRatio((h / w) * 100);
+    };
+
+    handleMeta();
+    player.addEventListener("loadedmetadata", handleMeta);
+
+    return () => player.removeEventListener("loadedmetadata", handleMeta);
+  }, [evaluatedSrc]);
 
   return (
     <BlockWrapper
@@ -51,14 +63,23 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
       {evaluatedSrc !== undefined ? (
         <Wrapper aspectRatio={aspectRatio}>
           <StyledPlayer
+            ref={playerRef}
             url={evaluatedSrc}
             width="100%"
             height="100%"
-            onReady={handleVideoReady}
             playsinline
             pip
             controls
             light
+            config={{
+              file: {
+                attributes: {
+                  controlsList: "nodownload",
+                  preload: "metadata",
+                  onContextMenu: (e: React.SyntheticEvent) => e.preventDefault()
+                }
+              }
+            }}
           />
         </Wrapper>
       ) : null}
@@ -68,11 +89,11 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
 
 export default VideoBlock;
 
-const Wrapper = styled("div")<{ aspectRatio: number }>(({ aspectRatio }) => ({
-  position: "relative",
-  paddingTop: `${aspectRatio}%`,
-  width: "100%"
-}));
+const Wrapper = styled("div")<{ aspectRatio: number }>`
+  position: relative;
+  padding-top: ${({ aspectRatio }) => `${aspectRatio}%`};
+  width: 100%;
+`;
 
 const StyledPlayer = styled(Player)({
   position: "absolute",
