@@ -13,14 +13,18 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
 	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
+	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearthx/appx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho"
 )
 
-func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
+func initEcho(
+	ctx context.Context,
+	cfg *ServerConfig,
+	otelServiceName otel.OtelServiceName,
+) *echo.Echo {
 	if cfg.Config == nil {
 		log.Fatalf("ServerConfig.Config is nil")
 	}
@@ -34,9 +38,15 @@ func initEcho(ctx context.Context, cfg *ServerConfig) *echo.Echo {
 	// basic middleware
 	logger := log.NewEcho()
 	e.Logger = logger
+	if cfg.Config.OtelEnabled {
+		log.Infof("OpenTelemetry tracing enabled for %s", string(otelServiceName))
+		e.Use(otel.Middleware(string(otelServiceName)))
+	} else {
+		log.Infof("OpenTelemetry tracing disabled for %s", string(otelServiceName))
+	}
+
 	e.Use(
 		middleware.Recover(),
-		otelecho.Middleware("reearth-visualizer"),
 		appmiddleware.RestAPITracingMiddleware(), // Add detailed REST API tracing
 		echo.WrapMiddleware(appx.RequestIDMiddleware()),
 		logger.AccessLogger(),

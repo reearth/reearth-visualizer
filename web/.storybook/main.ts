@@ -1,11 +1,20 @@
-import { resolve } from "path";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 
 import type { StorybookConfig } from "@storybook/react-vite";
 import { mergeConfig } from "vite";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const config: StorybookConfig = {
-  stories: ["../src/**/*.stories.@(js|ts|tsx|mdx)"],
-  addons: ["@storybook/addon-essentials", "@storybook/addon-styling"],
+  stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
+  addons: [
+    "@chromatic-com/storybook",
+    "@storybook/addon-docs",
+    "@storybook/addon-onboarding",
+    "@storybook/addon-a11y",
+  ],
   framework: {
     name: "@storybook/react-vite",
     options: {}
@@ -37,7 +46,6 @@ const config: StorybookConfig = {
             find: "@reearth/core",
             replacement: resolve(__dirname, "..", "node_modules/@reearth/core")
           },
-          // quickjs-emscripten
           {
             find: "@reearth",
             replacement: resolve(__dirname, "..", "src")
@@ -55,8 +63,6 @@ const config: StorybookConfig = {
       }
     });
   },
-  docs: {
-    autodocs: true
-  }
 };
-module.exports = config;
+
+export default config;

@@ -1,5 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import { Meta } from "@storybook/react";
+import { Meta } from "@storybook/react-vite";
 import { useState } from "react";
 
 import { Slide } from ".";

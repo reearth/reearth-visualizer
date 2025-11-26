@@ -1,8 +1,10 @@
-import { action } from "@storybook/addon-actions";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react-vite";
 import { useRef } from "react";
 
 import Component, { Props, Ref } from ".";
+
+// Mock function for actions
+const fn = () => () => {};
 
 export default {
   component: Component,
@@ -25,7 +27,7 @@ Default.args = {
   },
   exposed: ({ main: { render, postMessage } }) => ({
     console: {
-      log: action("console.log")
+      log: fn()
     },
     reearth: {
       on(type: string, value: (message: unknown) => void) {
@@ -40,7 +42,7 @@ Default.args = {
     }
   }),
   onMessage: (message: unknown) => {
-    action("onMessage")(message);
+    fn();
     return cb?.(message);
   }
 };
@@ -59,7 +61,7 @@ HiddenIFrame.args = {
   },
   exposed: ({ main: { render, postMessage } }) => ({
     console: {
-      log: action("console.log")
+      log: fn()
     },
     reearth: {
       on(type: string, value: (message: unknown) => void) {
@@ -74,7 +76,7 @@ HiddenIFrame.args = {
     }
   }),
   onMessage: (message: unknown) => {
-    action("onMessage")(message);
+    fn();
     return cb?.(message);
   }
 };
@@ -85,7 +87,7 @@ SourceCode.args = {
   sourceCode: `console.log("Hello")`,
   exposed: {
     console: {
-      log: action("console.log")
+      log: fn()
     }
   }
 };

@@ -5,7 +5,7 @@ import {
   InteractionModeType,
   INTERACTION_MODES
 } from "@reearth/core";
-import { Meta, StoryFn } from "@storybook/react";
+import { Meta, StoryFn } from "@storybook/react-vite";
 import { useRef } from "react";
 
 import { MapRef } from "./types";

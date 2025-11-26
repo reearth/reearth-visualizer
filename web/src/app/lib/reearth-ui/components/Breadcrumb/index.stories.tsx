@@ -2,7 +2,7 @@ import {
   PopupMenu,
   PopupMenuItem as PopupItems
 } from "@reearth/app/lib/reearth-ui";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Breadcrumb, BreadcrumbProp, BreadcrumbItem } from "./";
 
