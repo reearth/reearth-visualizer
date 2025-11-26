@@ -4100,6 +4100,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@jsep-plugin/assignment@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@jsep-plugin/assignment@npm:1.3.0"
+  peerDependencies:
+    jsep: ^0.4.0||^1.0.0
+  checksum: 10c0/d749554dc691798116eb068eebe2d9bcb0b0d89ef6c7cc7c2a9f37d03da15fdbf8053407e97008090cd1bd6f256ea6c26abbada7399cf79f0b6b502e164b084b
+  languageName: node
+  linkType: hard
+
+"@jsep-plugin/regex@npm:^1.0.4":
+  version: 1.0.4
+  resolution: "@jsep-plugin/regex@npm:1.0.4"
+  peerDependencies:
+    jsep: ^0.4.0||^1.0.0
+  checksum: 10c0/bec7eb7ea6ab453a2672edc808644c5be3dc06b2a9d77182e18cd595b37deba6dcdb3760849d8684afc5779a86b7d2604dd525cb612a548f9ed9f31a8032ec24
+  languageName: node
+  linkType: hard
+
 "@lexical/clipboard@npm:0.38.2":
   version: 0.38.2
   resolution: "@lexical/clipboard@npm:0.38.2"
@@ -6082,29 +6100,29 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/cesium-mvt-imagery-provider@npm:1.6.0":
-  version: 1.6.0
-  resolution: "@reearth/cesium-mvt-imagery-provider@npm:1.6.0"
+"@reearth/cesium-mvt-imagery-provider@npm:1.6.1":
+  version: 1.6.1
+  resolution: "@reearth/cesium-mvt-imagery-provider@npm:1.6.1"
   dependencies:
     "@mapbox/vector-tile": "npm:1.3.1"
     "@turf/turf": "npm:6.5.0"
     "@types/jsonpath-plus": "npm:5.0.5"
     "@types/lodash-es": "npm:4.17.12"
     "@types/offscreencanvas": "npm:2019.7.3"
-    jsonpath-plus: "npm:8.1.0"
+    jsonpath-plus: "npm:10.3.0"
     lodash-es: "npm:4.17.21"
     lru-cache: "npm:10.2.0"
     pbf: "npm:3.2.1"
     threads: "npm:1.7.0"
   peerDependencies:
     cesium: 1.x
-  checksum: 10c0/f047cea29ec39f4151d816d231670256ae75b29b802c7bf1db11935dd697e62f363ab0f967ae1896042d857d643ae1a7c19b42408a363af8ffecb103d9c99e42
+  checksum: 10c0/ec78c974ce31cca56571aae5814233979141678bb3552a1731db1953ab08aea0b5f4654a3ac1661e0a54a8b31aa5a5275ae2da470a1378faf472eec2075acc5a
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.48":
-  version: 0.0.7-alpha.48
-  resolution: "@reearth/core@npm:0.0.7-alpha.48"
+"@reearth/core@npm:0.0.7-alpha.49":
+  version: 0.0.7-alpha.49
+  resolution: "@reearth/core@npm:0.0.7-alpha.49"
   dependencies:
     "@radix-ui/react-checkbox": "npm:1.1.1"
     "@radix-ui/react-dialog": "npm:1.1.1"
@@ -6115,7 +6133,7 @@ __metadata:
     "@radix-ui/react-slot": "npm:1.1.0"
     "@radix-ui/react-switch": "npm:1.1.0"
     "@radix-ui/react-toggle": "npm:1.1.0"
-    "@reearth/cesium-mvt-imagery-provider": "npm:1.6.0"
+    "@reearth/cesium-mvt-imagery-provider": "npm:1.6.1"
     "@reearth/spatial-id-sdk": "npm:0.0.0"
     "@rot1024/use-transition": "npm:1.0.0"
     "@seznam/compose-react-refs": "npm:1.0.6"
@@ -6133,7 +6151,7 @@ __metadata:
     jotai: "npm:1.12.1"
     js-md5: "npm:0.7.3"
     jsep: "npm:1.3.8"
-    jsonpath-plus: "npm:7.2.0"
+    jsonpath-plus: "npm:10.3.0"
     jszip: "npm:3.10.1"
     lodash-es: "npm:4.17.21"
     lru-cache: "npm:8.0.4"
@@ -6159,7 +6177,7 @@ __metadata:
     cesium: 1.118.x
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/02557926b0cd388040d80b3704b7be43888b1d75da5f50b631605e904684da331ea1d43691a60b5664687100b0c8c86c5678911db1bc1610751bf67fb015942c
+  checksum: 10c0/3298dd2df4479f5e98edcdafa1df89112c61a1085198eaac8e229e0e244db30f95bb2632690b0d51f6fe5e12e586f905a7834c58c31d33e65c06db1e9bfaab45
   languageName: node
   linkType: hard
 
@@ -6209,7 +6227,7 @@ __metadata:
     "@monaco-editor/react": "npm:4.6.0"
     "@popperjs/core": "npm:2.11.8"
     "@radix-ui/react-slot": "npm:1.1.0"
-    "@reearth/core": "npm:0.0.7-alpha.48"
+    "@reearth/core": "npm:0.0.7-alpha.49"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -15865,6 +15883,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsep@npm:^1.4.0":
+  version: 1.4.0
+  resolution: "jsep@npm:1.4.0"
+  checksum: 10c0/fe60adf47e050e22eadced42514a51a15a3cf0e2d147896584486acd8ee670fc16641101b9aeb81f4aaba382043d29744b7aac41171e8106515b14f27e0c7116
+  languageName: node
+  linkType: hard
+
 "jsesc@npm:^3.0.2":
   version: 3.1.0
   resolution: "jsesc@npm:3.1.0"
@@ -15984,20 +16009,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsonpath-plus@npm:7.2.0":
-  version: 7.2.0
-  resolution: "jsonpath-plus@npm:7.2.0"
-  checksum: 10c0/b4fbb8387b80721a47e8098f390dbaa5c74ff4e778832d9f662bcf4ab6038ded26944b8dd433f0474b51fb3e0d7e960990c03af89f4f922a6dc0905102ed86b2
-  languageName: node
-  linkType: hard
-
-"jsonpath-plus@npm:8.1.0":
-  version: 8.1.0
-  resolution: "jsonpath-plus@npm:8.1.0"
+"jsonpath-plus@npm:10.3.0":
+  version: 10.3.0
+  resolution: "jsonpath-plus@npm:10.3.0"
+  dependencies:
+    "@jsep-plugin/assignment": "npm:^1.3.0"
+    "@jsep-plugin/regex": "npm:^1.0.4"
+    jsep: "npm:^1.4.0"
   bin:
     jsonpath: bin/jsonpath-cli.js
     jsonpath-plus: bin/jsonpath-cli.js
-  checksum: 10c0/4fa14f95621a6c91140795c22977b0584238335111aaf15e2370142fa8617925cd65ababc39949560d28d0913ac199f459ff16565c68b27c77c75b97c5b7a97a
+  checksum: 10c0/f5ff53078ecab98e8afd1dcdb4488e528653fa5a03a32d671f52db1ae9c3236e6e072d75e1949a80929fd21b07603924a586f829b40ad35993fa0247fa4f7506
   languageName: node
   linkType: hard
 
