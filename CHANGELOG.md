@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.2 - 2025-11-26
+
+### Web
+
+#### 🚀 Features
+
+- Bump up visualizer version ([#1945](https://github.com/reearth/reearth-visualizer/pull/1945)) [`ef2115`](https://github.com/reearth/reearth-visualizer/commit/ef2115)
+
+#### ✨ Refactor
+
+- Enable graphql playground by env var ([#1937](https://github.com/reearth/reearth-visualizer/pull/1937)) [`8719f3`](https://github.com/reearth/reearth-visualizer/commit/8719f3)
+
+#### 🧪 Testing
+
+- Fixed versions ([#1934](https://github.com/reearth/reearth-visualizer/pull/1934)) [`e380df`](https://github.com/reearth/reearth-visualizer/commit/e380df)
+
+#### Miscellaneous Tasks
+
+- Upgrade core to 0.0.7-alpha.49 ([#1943](https://github.com/reearth/reearth-visualizer/pull/1943)) [`fd39d2`](https://github.com/reearth/reearth-visualizer/commit/fd39d2)
+- Set resolution for js-yaml to v4.1.1 ([#1936](https://github.com/reearth/reearth-visualizer/pull/1936)) [`d5e17e`](https://github.com/reearth/reearth-visualizer/commit/d5e17e)
+- Upgrade js-yaml and add resolution for graphql ([#1933](https://github.com/reearth/reearth-visualizer/pull/1933)) [`c1ea77`](https://github.com/reearth/reearth-visualizer/commit/c1ea77)
+- Upgrade storybook to v10 ([#1928](https://github.com/reearth/reearth-visualizer/pull/1928)) [`927875`](https://github.com/reearth/reearth-visualizer/commit/927875)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Init tracer for otel ([#1942](https://github.com/reearth/reearth-visualizer/pull/1942)) [`5b5e29`](https://github.com/reearth/reearth-visualizer/commit/5b5e29)
+- Update go.mod for otel error ([#1941](https://github.com/reearth/reearth-visualizer/pull/1941)) [`796519`](https://github.com/reearth/reearth-visualizer/commit/796519)
+- Fix env name for otel ([#1940](https://github.com/reearth/reearth-visualizer/pull/1940)) [`20f122`](https://github.com/reearth/reearth-visualizer/commit/20f122)
+- Fix config tag for otel ([#1939](https://github.com/reearth/reearth-visualizer/pull/1939)) [`c804f6`](https://github.com/reearth/reearth-visualizer/commit/c804f6)
+- Update the topic filtering condition from &#x60;$in&#x60; to &#x60;$all&#x60;  ([#1919](https://github.com/reearth/reearth-visualizer/pull/1919)) [`c03ff8`](https://github.com/reearth/reearth-visualizer/commit/c03ff8)
+
+#### Miscellaneous Tasks
+
+- Improve the code related to otel ([#1938](https://github.com/reearth/reearth-visualizer/pull/1938)) [`ae50c1`](https://github.com/reearth/reearth-visualizer/commit/ae50c1)
+- Change mogo replica setting ([#1930](https://github.com/reearth/reearth-visualizer/pull/1930)) [`6f8e61`](https://github.com/reearth/reearth-visualizer/commit/6f8e61)
+
+### Misc
+
+#### 🧪 Testing
+
+- Project test extended ([#1923](https://github.com/reearth/reearth-visualizer/pull/1923)) [`d6b671`](https://github.com/reearth/reearth-visualizer/commit/d6b671)
+
+### 
+
+#### 🧪 Testing
+
+- Project test extended ([#1923](https://github.com/reearth/reearth-visualizer/pull/1923)) [`d6b671`](https://github.com/reearth/reearth-visualizer/commit/d6b671)
+
 ## 1.0.0-beta.13.1 - 2025-11-19
 
 ### Web
