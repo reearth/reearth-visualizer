@@ -56,27 +56,63 @@ jobs:
 
       - name: Upload global setup error screenshot
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: global-setup-error
           path: e2e/global-setup-error.png
           if-no-files-found: ignore
           retention-days: 5
 
-      - name: Generate Allure Report
+      # Authenticate to Google Cloud
+      - name: Authenticate to Google Cloud
         if: always()
-        run: npm run allure:generate
+        uses: google-github-actions/auth@71e0dc4c4d3419b12b102dfca74fb5c21ab696da # v2.2.0
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
+      # Download previous Allure history from GCS
+      - name: Download Allure history from GCS
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p allure-history
+          gsutil -m rsync -r gs://${{ secrets.GCS_BUCKET_NAME }}/history allure-history/history || true
+
+      # Build Allure Report with history
+      - name: Build Allure Report with history
+        if: always()
+        uses: simple-elf/allure-report-action@53ebb757a2097edc77c53ecef4d454fc2f2f774c # v1.13
+        with:
+          allure_results: e2e/allure-results
+          allure_history: allure-history
+          keep_reports: 20
+
+      # Upload Allure Report to Google Cloud Storage
+      - name: Upload Allure Report to GCS
+        if: always()
+        run: |
+          # Upload the full report
+          gsutil -m rsync -r -d allure-history gs://${{ secrets.GCS_BUCKET_NAME }}
+
+          # Set cache control for HTML files
+          gsutil -m setmeta -h "Cache-Control:no-cache, max-age=0" \
+            "gs://${{ secrets.GCS_BUCKET_NAME }}/**/*.html"
+
+          echo " Allure Report deployed to: https://visualizer-allure.dev.reearth.io"
+
+
+      # Still upload artifacts for backup and manual download
       - name: Upload artifact - Allure Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: allure-report
-          path: e2e/allure-report/
+          path: allure-history/
           retention-days: 10
+
       - name: Upload artifact - Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: allure-results
           path: e2e/allure-results/
