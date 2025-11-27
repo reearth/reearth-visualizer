@@ -1,9 +1,9 @@
+import useVideoAspectRatio from "@reearth/app/features/Visualizer/hooks/useVideoAspectRatio";
 import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
-import type ReactPlayer from "react-player";
+import { FC, useMemo } from "react";
 import Player from "react-player";
 
 import { InfoboxBlock } from "../../../types";
@@ -16,9 +16,6 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   selectedFeature,
   ...props
 }) => {
-  const playerRef = useRef<ReactPlayer>(null);
-  const [aspectRatio, setAspectRatio] = useState(56.25);
-
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src]
@@ -32,23 +29,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
     }
   );
 
-  useEffect(() => {
-    const player =
-      playerRef.current?.getInternalPlayer() as HTMLVideoElement | null;
-    if (!player) return;
-
-    const handleMeta = () => {
-      const w = player.videoWidth;
-      const h = player.videoHeight;
-      console.log("video meta loaded", w, h);
-      if (w && h) setAspectRatio((h / w) * 100);
-    };
-
-    handleMeta();
-    player.addEventListener("loadedmetadata", handleMeta);
-
-    return () => player.removeEventListener("loadedmetadata", handleMeta);
-  }, [evaluatedSrc]);
+  const { playerRef, aspectRatio } = useVideoAspectRatio({ src: evaluatedSrc });
 
   return (
     <BlockWrapper
