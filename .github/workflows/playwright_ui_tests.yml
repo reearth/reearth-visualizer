@@ -21,6 +21,9 @@ concurrency:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     env:
       BASE_URL: ${{ inputs.url || secrets.REEARTH_WEB_E2E_BASEURL }}
     defaults:
@@ -66,9 +69,14 @@ jobs:
       # Authenticate to Google Cloud
       - name: Authenticate to Google Cloud
         if: always()
-        uses: google-github-actions/auth@71e0dc4c4d3419b12b102dfca74fb5c21ab696da # v2.2.0
+        uses: google-github-actions/auth@ba79af03959ebeac9769e648f473a284504d9193 # v2.1.10
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Set up Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@77e7a554d41e2ee56fc945c52dfd3f33d12def9a # v2.1.4
 
       # Download previous Allure history from GCS
       - name: Download Allure history from GCS
@@ -91,15 +99,9 @@ jobs:
       - name: Upload Allure Report to GCS
         if: always()
         run: |
-          # Upload the full report
-          gsutil -m rsync -r -d allure-history gs://${{ secrets.GCS_BUCKET_NAME }}
-
-          # Set cache control for HTML files
-          gsutil -m setmeta -h "Cache-Control:no-cache, max-age=0" \
-            "gs://${{ secrets.GCS_BUCKET_NAME }}/**/*.html"
-
-          echo " Allure Report deployed to: https://visualizer-allure.dev.reearth.io"
-
+          # Upload the full report with cache control for HTML files
+          gsutil -m rsync -r -d -h "Cache-Control:no-cache, max-age=0" allure-history gs://${{ secrets.GCS_BUCKET_NAME }}
+          echo "Allure Report deployed to: https://visualizer-allure.dev.reearth.io"
 
       # Still upload artifacts for backup and manual download
       - name: Upload artifact - Allure Report
