@@ -97,7 +97,7 @@ func NewNLSLayer(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Con
 		propertySchemaRepo: r.PropertySchema,
 
 		// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
-		workspaceRepo: r.Workspace,
+		workspaceRepo: r.Workspace, //nolint:staticcheck // TODO: migrate to accountWorkspaceRepo
 
 		accountWorkspaceRepo: accountWsRepo,
 	}

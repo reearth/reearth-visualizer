@@ -96,9 +96,9 @@ func NewProject(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Cont
 		policyChecker:       gr.PolicyChecker,
 
 		// Deprecated: This function is deprecated and will be replaced by accountsUserRepo in the future.
-		userRepo: r.User,
+		userRepo: r.User, //nolint:staticcheck // TODO: migrate to accountsUserRepo
 		// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
-		workspaceRepo: r.Workspace,
+		workspaceRepo: r.Workspace, //nolint:staticcheck // TODO: migrate to accountWorkspaceRepo
 
 		accountsUserRepo:     accountUserRepo,
 		accountWorkspaceRepo: accountWsRepo,

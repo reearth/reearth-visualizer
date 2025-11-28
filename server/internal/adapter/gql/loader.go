@@ -64,7 +64,7 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
 		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: NewWorkspaceLoader(usecases.Workspace, accountsUsecases),
+		Workspace: NewWorkspaceLoader(usecases.Workspace, accountsUsecases), //nolint:staticcheck // TODO: migrate to AccountsWorkspace
 		User:      NewUserLoader(usecases.User),
 	}
 }
