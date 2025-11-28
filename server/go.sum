@@ -331,6 +331,8 @@ github.com/reearth/reearth-accounts/server v0.0.0-20251114040111-9b5f5f67a6c7 h1
 github.com/reearth/reearth-accounts/server v0.0.0-20251114040111-9b5f5f67a6c7/go.mod h1:Sb7QPlYvqtsm8dXynRs5mezChJaKGzbtD9Cmssd6rP0=
 github.com/reearth/reearthx v0.0.0-20251113074259-e2958d8c50f6 h1:jfN8IsR2Bj2rDAEwIFBVKfVy3AnNMBsZyOJjKxPkHoE=
 github.com/reearth/reearthx v0.0.0-20251113074259-e2958d8c50f6/go.mod h1:z4JjOCy4MZZglLSrJx+btJ1ZLltESDZfSWJCnONwRS4=
+github.com/reearth/reearthx v0.0.0-20251128044232-3067c04f34da h1:eolcPfhTG4aTAi6yoBpDlE1yyrnHUGDf8D7lIxg7dZQ=
+github.com/reearth/reearthx v0.0.0-20251128044232-3067c04f34da/go.mod h1:z4JjOCy4MZZglLSrJx+btJ1ZLltESDZfSWJCnONwRS4=
 github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
 github.com/rogpeppe/go-internal v1.14.1/go.mod h1:MaRKkUm5W0goXpeCfT7UZI6fk/L7L7so1lCWt35ZSgc=
 github.com/rs/cors v1.11.1 h1:eU3gRzXLRK57F5rKMGMZURNdIG4EoAmX8k94r9wXWHA=
