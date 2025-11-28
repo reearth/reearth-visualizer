@@ -25,10 +25,11 @@ func runServer(ctx context.Context, conf *config.Config, otelServiceName otel.Ot
 	repos, gateways, acRepos, acGateways, accountsAPIClient, reearthAccountsRepos := initReposAndGateways(ctx, conf, debug)
 	// Start web server
 	NewServer(ctx, &ServerConfig{
-		Config:            conf,
-		Debug:             debug,
-		Repos:             repos,
-		Gateways:          gateways,
+		Config:   conf,
+		Debug:    debug,
+		Repos:    repos,
+		Gateways: gateways,
+		// Deprecated: This function is deprecated and will be replaced by ReearthAccountsRepos in the future.
 		AccountRepos:      acRepos,
 		AccountGateways:   acGateways,
 		AccountsAPIClient: accountsAPIClient,
