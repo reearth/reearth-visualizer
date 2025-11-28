@@ -26,34 +26,43 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type Storytelling struct {
 	common
 	commonSceneLock
-	storytellingRepo repo.Storytelling
-	pluginRepo       repo.Plugin
-	propertyRepo     repo.Property
-	workspaceRepo    accountrepo.Workspace
-	policyRepo       repo.Policy
-	projectRepo      repo.Project
-	sceneRepo        repo.Scene
-	file             gateway.File
-	transaction      usecasex.Transaction
-	nlsLayerRepo     repo.NLSLayer
-	layerStyles      repo.Style
-	policyChecker    gateway.PolicyChecker
-
+	storytellingRepo   repo.Storytelling
+	pluginRepo         repo.Plugin
+	propertyRepo       repo.Property
+	policyRepo         repo.Policy
+	projectRepo        repo.Project
+	sceneRepo          repo.Scene
+	file               gateway.File
+	transaction        usecasex.Transaction
+	nlsLayerRepo       repo.NLSLayer
+	layerStyles        repo.Style
+	policyChecker      gateway.PolicyChecker
 	propertySchemaRepo repo.PropertySchema
+
+	// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
+	workspaceRepo accountrepo.Workspace
+
+	accountWorkspaceRepo accountsRepo.Workspace
 }
 
-func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
+func NewStorytelling(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Container) interfaces.Storytelling {
+	var accountWsRepo accountsRepo.Workspace
+	if auc != nil {
+		accountWsRepo = auc.Workspace
+	}
+
 	return &Storytelling{
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		storytellingRepo:   r.Storytelling,
 		pluginRepo:         r.Plugin,
 		propertyRepo:       r.Property,
-		workspaceRepo:      r.Workspace,
 		policyRepo:         r.Policy,
 		projectRepo:        r.Project,
 		sceneRepo:          r.Scene,
@@ -63,6 +72,11 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		layerStyles:        r.Style,
 		policyChecker:      gr.PolicyChecker,
 		propertySchemaRepo: r.PropertySchema,
+
+		// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
+		workspaceRepo: r.Workspace, //nolint:staticcheck // TODO: migrate to accountWorkspaceRepo
+
+		accountWorkspaceRepo: accountWsRepo,
 	}
 }
 

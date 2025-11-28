@@ -171,7 +171,8 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 
 func MockUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		uc := adapter.Usecases(c.Request().Context())
+		ctx := c.Request().Context()
+		uc := adapter.Usecases(ctx)
 		controller := http1.NewUserController(uc.User)
 
 		input := http1.SignupInput{
@@ -179,9 +180,35 @@ func MockUser() echo.HandlerFunc {
 			Email:    "mock@example.com",
 		}
 
-		output, err := controller.Signup(c.Request().Context(), input)
+		output, err := controller.Signup(ctx, input)
+
 		if err != nil {
-			return err
+			output = http1.SignupOutput{
+				ID:    "error",
+				Name:  input.Username,
+				Email: input.Email,
+			}
+		}
+
+		auc := adapter.AccountsUsecases(ctx)
+		if auc != nil && auc.User != nil {
+			acUser, err := auc.User.FindByEmail(ctx, input.Email)
+			if err != nil {
+				newUser := accountsUser.New().
+					NewID().
+					Name(input.Username).
+					Email(input.Email).
+					MustBuild()
+
+				acUser, _ = auc.User.Create(ctx, newUser, nil)
+			}
+
+			if auc.Workspace != nil && acUser != nil {
+				workspaces, err := auc.Workspace.FindByUser(ctx, acUser.ID(), nil)
+				if err != nil || len(workspaces) == 0 {
+					_, _ = auc.Workspace.Create(ctx, input.Username+"'s Workspace", acUser.ID(), nil)
+				}
+			}
 		}
 
 		return c.JSON(http.StatusOK, output)

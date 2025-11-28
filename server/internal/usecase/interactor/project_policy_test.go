@@ -87,7 +87,7 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 	}
 
 	// Create project interactor
-	projectUC := NewProject(repos, gateways)
+	projectUC := NewProject(repos, gateways, nil)
 
 	// Create operator
 	operator := &usecase.Operator{
