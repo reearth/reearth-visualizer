@@ -1,29 +1,29 @@
 module github.com/reearth/reearth/server
 
 require (
-	cloud.google.com/go/profiler v0.4.2
-	cloud.google.com/go/storage v1.56.1
-	github.com/99designs/gqlgen v0.17.73
+	cloud.google.com/go/profiler v0.4.3
+	cloud.google.com/go/storage v1.57.2
+	github.com/99designs/gqlgen v0.17.84
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace v1.27.0 // indirect
-	github.com/avast/retry-go/v4 v4.6.1
-	github.com/aws/aws-sdk-go-v2 v1.36.3
-	github.com/aws/aws-sdk-go-v2/config v1.29.14
-	github.com/aws/aws-sdk-go-v2/service/s3 v1.74.1
+	github.com/avast/retry-go/v5 v5.0.0
+	github.com/aws/aws-sdk-go-v2 v1.40.0
+	github.com/aws/aws-sdk-go-v2/config v1.32.2
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.92.1
 	github.com/blang/semver v3.5.1+incompatible
-	github.com/gavv/httpexpect/v2 v2.16.0
+	github.com/gavv/httpexpect/v2 v2.17.0
 	github.com/globusdigital/deep-copy v0.5.4
-	github.com/go-faker/faker/v4 v4.6.0
-	github.com/go-playground/validator/v10 v10.27.0
-	github.com/goccy/go-yaml v1.17.1
+	github.com/go-faker/faker/v4 v4.7.0
+	github.com/go-playground/validator/v10 v10.28.0
+	github.com/goccy/go-yaml v1.19.0
 	github.com/google/uuid v1.6.0
-	github.com/hasura/go-graphql-client v0.14.5
-	github.com/hellofresh/health-go/v5 v5.5.4
+	github.com/hasura/go-graphql-client v0.15.0
+	github.com/hellofresh/health-go/v5 v5.5.5
 	github.com/iancoleman/strcase v0.3.0
 	github.com/idubinskiy/schematyper v0.0.0-20190118213059-f71b40dac30d
-	github.com/jarcoal/httpmock v1.4.0
+	github.com/jarcoal/httpmock v1.4.1
 	github.com/joho/godotenv v1.5.1
 	github.com/jonas-p/go-shp v0.1.1
-	github.com/k0kubun/pp/v3 v3.4.1
+	github.com/k0kubun/pp/v3 v3.5.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/kennygrant/sanitize v1.2.4
 	github.com/labstack/echo/v4 v4.13.4
@@ -34,16 +34,16 @@ require (
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
 	github.com/reearth/reearth-accounts/server v0.0.0-20251114040111-9b5f5f67a6c7
 	github.com/reearth/reearthx v0.0.0-20251128044232-3067c04f34da // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
-	github.com/samber/lo v1.50.0
-	github.com/spf13/afero v1.14.0
+	github.com/samber/lo v1.52.0
+	github.com/spf13/afero v1.15.0
 	github.com/square/mongo-lock v0.0.0-20230808145049-cfcf499f6bf0
 	github.com/stretchr/testify v1.11.1
 	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
 	github.com/vektah/dataloaden v0.3.0
-	github.com/vektah/gqlparser/v2 v2.5.27
+	github.com/vektah/gqlparser/v2 v2.5.31
 	github.com/zitadel/oidc v1.13.5 // indirect
-	go.mongodb.org/mongo-driver v1.17.4
+	go.mongodb.org/mongo-driver/v2 v2.4.0
 	go.opentelemetry.io/contrib/detectors/gcp v1.38.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.63.0
 	go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo v0.63.0
@@ -53,19 +53,19 @@ require (
 	go.opentelemetry.io/otel/trace v1.38.0
 	go.uber.org/mock v0.6.0
 	golang.org/x/exp v0.0.0-20250531010427-b6e5de432a8b
-	golang.org/x/net v0.43.0
-	golang.org/x/oauth2 v0.30.0
-	golang.org/x/text v0.28.0
-	golang.org/x/tools v0.36.0
-	google.golang.org/api v0.247.0
-	google.golang.org/grpc v1.75.0
-	google.golang.org/protobuf v1.36.8
+	golang.org/x/net v0.47.0
+	golang.org/x/oauth2 v0.33.0
+	golang.org/x/text v0.31.0
+	golang.org/x/tools v0.39.0
+	google.golang.org/api v0.256.0
+	google.golang.org/grpc v1.77.0
+	google.golang.org/protobuf v1.36.10
 	gopkg.in/h2non/gock.v1 v1.1.2
 	gopkg.in/square/go-jose.v2 v2.6.0 // indirect
 )
 
 require (
-	cloud.google.com/go/compute/metadata v0.8.0
+	cloud.google.com/go/compute/metadata v0.9.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.38.0
 )
 
@@ -207,4 +207,4 @@ require (
 	moul.io/http2curl/v2 v2.3.0 // indirect
 )
 
-go 1.24.4
+go 1.25.4
