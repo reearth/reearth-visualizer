@@ -1,9 +1,9 @@
+import useVideoAspectRatio from "@reearth/app/features/Visualizer/hooks/useVideoAspectRatio";
 import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import { CommonBlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback, useMemo, useState } from "react";
-import type ReactPlayer from "react-player";
+import { FC, useMemo } from "react";
 import Player from "react-player";
 
 import { InfoboxBlock } from "../../../types";
@@ -16,8 +16,6 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
   selectedFeature,
   ...props
 }) => {
-  const [aspectRatio, setAspectRatio] = useState(56.25);
-
   const src = useMemo(
     () => block?.property?.default?.src?.value as ValueTypes["string"],
     [block?.property?.default?.src]
@@ -31,12 +29,7 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
     }
   );
 
-  const handleVideoReady = useCallback((player: ReactPlayer) => {
-    const height = player.getInternalPlayer().videoHeight;
-    const width = player.getInternalPlayer().videoWidth;
-    if (!height || !width) return;
-    setAspectRatio((height / width) * 100);
-  }, []);
+  const { playerRef, aspectRatio } = useVideoAspectRatio({ src: evaluatedSrc });
 
   return (
     <BlockWrapper
@@ -51,14 +44,23 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
       {evaluatedSrc !== undefined ? (
         <Wrapper aspectRatio={aspectRatio}>
           <StyledPlayer
+            ref={playerRef}
             url={evaluatedSrc}
             width="100%"
             height="100%"
-            onReady={handleVideoReady}
             playsinline
             pip
             controls
             light
+            config={{
+              file: {
+                attributes: {
+                  controlsList: "nodownload",
+                  preload: "metadata",
+                  onContextMenu: (e: React.SyntheticEvent) => e.preventDefault()
+                }
+              }
+            }}
           />
         </Wrapper>
       ) : null}
@@ -68,11 +70,11 @@ const VideoBlock: FC<CommonBlockProps<InfoboxBlock>> = ({
 
 export default VideoBlock;
 
-const Wrapper = styled("div")<{ aspectRatio: number }>(({ aspectRatio }) => ({
-  position: "relative",
-  paddingTop: `${aspectRatio}%`,
-  width: "100%"
-}));
+const Wrapper = styled("div")<{ aspectRatio: number }>`
+  position: relative;
+  padding-top: ${({ aspectRatio }) => `${aspectRatio}%`};
+  width: 100%;
+`;
 
 const StyledPlayer = styled(Player)({
   position: "absolute",
