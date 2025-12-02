@@ -192,9 +192,9 @@ dev-install:
 			echo "$$bin is not installed. Installing..."; \
 			case $$bin in \
 				air) go install github.com/air-verse/air@v1.61.5 ;; \
-				stringer) go install golang.org/x/tools/cmd/stringer@v0.29.0 ;; \
+				stringer) go install golang.org/x/tools/cmd/stringer@v0.39.0 ;; \
 				schematyper) go install github.com/idubinskiy/schematyper ;; \
-				deep-copy) go install github.com/globusdigital/deep-copy@dc4a8d91ed65656858cd53e6e83bbf7b83d5b7cb ;; \
+				deep-copy) go install github.com/globusdigital/deep-copy@v0.5.5-0.20251122193020-7cda106f7b4b ;; \
 			esac; \
 		else \
 			echo "$$bin is already installed."; \

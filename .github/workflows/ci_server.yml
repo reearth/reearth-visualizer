@@ -22,7 +22,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
-          version: v2.1
+          version: latest
           args: --new-from-rev=origin/main --timeout=10m
           working-directory: server
       - name: Run go generate
