@@ -19,20 +19,21 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 // Test helper to create a storytelling test environment
 type storytellingTestEnv struct {
 	ctx               context.Context
-	wsID              accountdomain.WorkspaceID
+	wsID              accountsID.WorkspaceID
 	projectID         id.ProjectID
 	sceneID           id.SceneID
 	storyID           id.StoryID
@@ -47,14 +48,14 @@ func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTe
 
 	mockPolicyChecker := new(MockPolicyChecker)
 	db := memory.New()
-	wsID := accountdomain.NewWorkspaceID()
+	wsID := accountsID.NewWorkspaceID()
 	projectID := id.NewProjectID()
 	sceneID := id.NewSceneID()
 	storyID := id.NewStoryID()
 
 	// Create workspace
-	ws := workspace.New().ID(wsID).MustBuild()
-	_ = db.Workspace.Save(ctx, ws)
+	ws := accountsWorkspace.New().ID(wsID).MustBuild()
+	_ = db.AccountsWorkspace.Save(ctx, ws)
 
 	// Create project
 	proj := lo.Must(project.New().NewID().ID(projectID).Workspace(wsID).Name("Test Project").Build())
@@ -76,15 +77,13 @@ func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTe
 
 	// Create repositories
 	repos := &repo.Container{
-		User:            db.User,
-		Workspace:       db.Workspace,
+
 		Project:         db.Project,
 		ProjectMetadata: db.ProjectMetadata,
 		Scene:           db.Scene,
 		Property:        db.Property,
 		PropertySchema:  db.PropertySchema,
 		Asset:           db.Asset,
-		Policy:          db.Policy,
 		Plugin:          db.Plugin,
 		NLSLayer:        db.NLSLayer,
 		Style:           db.Style,
@@ -104,8 +103,8 @@ func setupStorytellingTestEnv(ctx context.Context, t *testing.T) *storytellingTe
 
 	// Create operator
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{wsID},
+		AccountsOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsWorkspace.IDList{wsID},
 		},
 		WritableScenes: id.SceneIDList{sceneID},
 	}

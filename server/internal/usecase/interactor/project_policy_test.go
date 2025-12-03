@@ -17,14 +17,16 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 // MockPolicyChecker is a mock implementation of gateway.PolicyChecker
@@ -43,7 +45,7 @@ func (m *MockPolicyChecker) CheckPolicy(ctx context.Context, req gateway.PolicyC
 // Test helper to create a project test environment
 type projectTestEnv struct {
 	ctx               context.Context
-	wsID              accountdomain.WorkspaceID
+	wsID              accountsID.WorkspaceID
 	projectUC         interfaces.Project
 	operator          *usecase.Operator
 	mockPolicyChecker *MockPolicyChecker
@@ -55,23 +57,20 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 
 	mockPolicyChecker := new(MockPolicyChecker)
 	db := memory.New()
-	wsID := accountdomain.NewWorkspaceID()
+	wsID := accountsID.NewWorkspaceID()
 
 	// Create workspace
-	ws := workspace.New().ID(wsID).MustBuild()
-	_ = db.Workspace.Save(ctx, ws)
+	ws := accountsWorkspace.New().ID(wsID).MustBuild()
+	_ = db.AccountsWorkspace.Save(ctx, ws)
 
 	// Create repositories
 	repos := &repo.Container{
-		User:            db.User,
-		Workspace:       db.Workspace,
 		Project:         db.Project,
 		ProjectMetadata: db.ProjectMetadata,
 		Scene:           db.Scene,
 		Property:        db.Property,
 		PropertySchema:  db.PropertySchema,
 		Asset:           db.Asset,
-		Policy:          db.Policy,
 		Plugin:          db.Plugin,
 		NLSLayer:        db.NLSLayer,
 		Style:           db.Style,
@@ -91,9 +90,9 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 
 	// Create operator
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{wsID},
-			OwningWorkspaces:   workspace.IDList{wsID},
+		AccountsOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsWorkspace.IDList{wsID},
+			OwningWorkspaces:   accountsWorkspace.IDList{wsID},
 		},
 	}
 

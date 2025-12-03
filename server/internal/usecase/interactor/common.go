@@ -14,12 +14,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInteractor "github.com/reearth/reearth-accounts/server/pkg/interactor"
 	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
@@ -35,7 +33,6 @@ type ContainerConfig struct {
 func NewContainer(
 	r *repo.Container,
 	g *gateway.Container,
-	ar *accountrepo.Container,
 	ag *accountgateway.Container,
 	auc *accountsRepo.Container,
 	config ContainerConfig,
@@ -68,11 +65,6 @@ func NewContainer(
 		Scene:           NewScene(r, g),
 		StoryTelling:    NewStorytelling(r, g, auc),
 
-		// Deprecated: This function is deprecated and will be replaced by AccountsWorkspace in the future.
-		Workspace: accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
-		// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
-		User: accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
-
 		AccountsWorkspace: accountsWorkspace,
 		AccountsUser:      accountsUser,
 	}
@@ -88,7 +80,7 @@ func (common) OnlyOperator(op *usecase.Operator) error {
 	return nil
 }
 
-func (i common) CanReadWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanReadWorkspace(t accountsID.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
@@ -98,7 +90,7 @@ func (i common) CanReadWorkspace(t accountdomain.WorkspaceID, op *usecase.Operat
 	return nil
 }
 
-func (i common) CanWriteWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanWriteWorkspace(t accountsID.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}

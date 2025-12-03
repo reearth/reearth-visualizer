@@ -4,23 +4,24 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
+
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 func TestToMe(t *testing.T) {
-	uid := user.NewID()
-	wid := user.NewWorkspaceID()
+	uid := accountsUser.NewID()
+	wid := accountsUser.NewWorkspaceID()
 	photoURL := "https://example.com/photo.jpg"
 
 	t.Run("with photoURL", func(t *testing.T) {
-		metadata := user.NewMetadata()
+		metadata := accountsUser.NewMetadata()
 		metadata.SetPhotoURL(photoURL)
 		metadata.SetLang(language.English)
-		metadata.SetTheme(user.ThemeDark)
+		metadata.SetTheme(accountsUser.ThemeDark)
 
-		u := user.New().
+		u := accountsUser.New().
 			ID(uid).
 			Workspace(wid).
 			Name("Test User").
@@ -42,11 +43,11 @@ func TestToMe(t *testing.T) {
 	})
 
 	t.Run("without photoURL", func(t *testing.T) {
-		metadata := user.NewMetadata()
+		metadata := accountsUser.NewMetadata()
 		metadata.SetLang(language.Japanese)
-		metadata.SetTheme(user.ThemeLight)
+		metadata.SetTheme(accountsUser.ThemeLight)
 
-		u := user.New().
+		u := accountsUser.New().
 			ID(uid).
 			Workspace(wid).
 			Name("Test User").

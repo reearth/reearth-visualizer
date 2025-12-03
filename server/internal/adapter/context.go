@@ -6,7 +6,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
 
@@ -62,7 +61,7 @@ func AttachOperator(ctx context.Context, o *usecase.Operator) context.Context {
 	return context.WithValue(ctx, contextOperator, o)
 }
 
-func AttachAccountsOperator(ctx context.Context, o *usecase.AccountsOperator) context.Context {
+func AttachAccountsOperator(ctx context.Context, o *usecase.Operator) context.Context {
 	return context.WithValue(ctx, contextAccountsOperator, o)
 }
 
@@ -153,21 +152,10 @@ func Operator(ctx context.Context) *usecase.Operator {
 	return nil
 }
 
-// reearthx Operator
-// Deprecated: This function is deprecated and will be replaced by AccountsOperator in the future.
-func AcOperator(ctx context.Context) *accountusecase.Operator {
-	if v := ctx.Value(contextOperator); v != nil {
-		if v2, ok := v.(*accountusecase.Operator); ok {
-			return v2
-		}
-	}
-	return nil
-}
-
 // reearth-accounts Operator
-func AccountsOperator(ctx context.Context) *usecase.AccountsOperator {
+func AccountsOperator(ctx context.Context) *usecase.Operator {
 	if v := ctx.Value(contextAccountsOperator); v != nil {
-		if v2, ok := v.(*usecase.AccountsOperator); ok {
+		if v2, ok := v.(*usecase.Operator); ok {
 			return v2
 		}
 	}

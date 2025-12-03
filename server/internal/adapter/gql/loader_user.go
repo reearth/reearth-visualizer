@@ -5,38 +5,32 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
 	"github.com/reearth/reearthx/util"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
 type UserLoader struct {
-	usecase          accountinterfaces.User
 	accountsUsecases *accountsInterfaces.Container
 }
 
-func NewUserLoader(usecase accountinterfaces.User, accountsUsecases *accountsInterfaces.Container) *UserLoader {
+func NewUserLoader(accountsUsecases *accountsInterfaces.Container) *UserLoader {
 	return &UserLoader{
-		usecase:          usecase,
 		accountsUsecases: accountsUsecases,
 	}
 }
 
 func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.User, []error) {
-	uids, err := util.TryMap(ids, gqlmodel.ToID[accountdomain.User])
+	uids, err := util.TryMap(ids, gqlmodel.ToID[accountsID.User])
 	if err != nil {
 		return nil, []error{err}
 	}
 
-	res, err := c.usecase.FetchByID(ctx, uids)
+	res, err := c.accountsUsecases.User.FetchByID(ctx, uids)
 	if err != nil {
 		return nil, []error{err}
 	}
-
-	// TODO: Planning to move here
-	// c.accountsUsecases.User.FetchByID(ctx, uids)
 
 	users := make([]*gqlmodel.User, 0, len(res))
 	for _, u := range res {
@@ -47,21 +41,12 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 }
 
 func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
-	res, err := c.usecase.SearchUser(ctx, nameOrEmail)
+	res, err := c.accountsUsecases.User.FetchByNameOrEmail(ctx, nameOrEmail)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, user := range res {
-		if user.Name == nameOrEmail || user.Email == nameOrEmail {
-			return gqlmodel.ToUserFromSimple(user), nil
-		}
-	}
-
-	// TODO: Planning to move here
-	// c.accountsUsecases.User.SearchUser(ctx, nameOrEmail)
-
-	return nil, nil
+	return gqlmodel.ToUserFromSimple(res), nil
 }
 
 // data loader

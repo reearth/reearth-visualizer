@@ -1,13 +1,14 @@
 package gqlmodel
 
 import (
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 	"golang.org/x/text/language"
+
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
-func ToUser(u *user.User) *User {
+func ToUser(u *accountsUser.User) *User {
 	if u == nil {
 		return nil
 	}
@@ -20,7 +21,7 @@ func ToUser(u *user.User) *User {
 	}
 }
 
-func ToUserFromSimple(u *user.Simple) *User {
+func ToUserFromSimple(u *accountsUser.Simple) *User {
 	if u == nil {
 		return nil
 	}
@@ -32,7 +33,7 @@ func ToUserFromSimple(u *user.Simple) *User {
 	}
 }
 
-func ToMe(u *user.User) *Me {
+func ToMe(u *accountsUser.User) *Me {
 	if u == nil {
 		return nil
 	}
@@ -41,7 +42,7 @@ func ToMe(u *user.User) *Me {
 	var userMetadata *UserMetadata
 
 	var lang language.Tag
-	var theme user.Theme
+	var theme accountsUser.Theme
 
 	if metadata != nil {
 		lang = metadata.Lang()
@@ -55,7 +56,7 @@ func ToMe(u *user.User) *Me {
 		}
 	} else {
 		lang = language.English
-		theme = user.ThemeDefault
+		theme = accountsUser.ThemeDefault
 	}
 
 	return &Me{
@@ -66,34 +67,34 @@ func ToMe(u *user.User) *Me {
 		Theme:         Theme(theme),
 		Metadata:      userMetadata,
 		MyWorkspaceID: IDFrom(u.Workspace()),
-		Auths: util.Map(u.Auths(), func(a user.Auth) string {
+		Auths: util.Map(u.Auths(), func(a accountsUser.Auth) string {
 			return a.Provider
 		}),
 	}
 }
 
-func ToGQLTheme(t user.Theme) Theme {
+func ToGQLTheme(t accountsUser.Theme) Theme {
 	switch t {
-	case user.ThemeDark:
+	case accountsUser.ThemeDark:
 		return ThemeDark
-	case user.ThemeLight:
+	case accountsUser.ThemeLight:
 		return ThemeLight
 	default:
 		return ThemeDefault
 	}
 }
 
-func ToTheme(t *Theme) *user.Theme {
+func ToTheme(t *Theme) *accountsUser.Theme {
 	if t == nil {
 		return nil
 	}
 
-	th := user.ThemeDefault
+	th := accountsUser.ThemeDefault
 	switch *t {
 	case ThemeDark:
-		th = user.ThemeDark
+		th = accountsUser.ThemeDark
 	case ThemeLight:
-		th = user.ThemeLight
+		th = accountsUser.ThemeLight
 	}
 	return &th
 }

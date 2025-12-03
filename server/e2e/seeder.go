@@ -26,30 +26,31 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 var (
 
 	// ---------------- user1
-	wID    = accountdomain.NewWorkspaceID()
-	uID    = user.NewID()
+	wID    = accountsID.NewWorkspaceID()
+	uID    = accountsID.NewUserID()
 	uName  = "e2e"
 	uEmail = "e2e@e2e.com"
 
 	// ---------------- user2
-	wID2    = accountdomain.NewWorkspaceID()
-	uID2    = user.NewID()
+	wID2    = accountsID.NewWorkspaceID()
+	uID2    = accountsID.NewUserID()
 	uName2  = "e3e"
 	uEmail2 = "e3e@e3e.com"
 
 	// ---------------- user3
-	wID3    = accountdomain.NewWorkspaceID()
-	uID3    = user.NewID()
+	wID3    = accountsID.NewWorkspaceID()
+	uID3    = accountsID.NewUserID()
 	uName3  = "e4e"
 	uEmail3 = "e4e@e4e.com"
 
@@ -88,7 +89,7 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 	}
 
 	// assign user3 to user1's workspace
-	if err := JoinMembers(ctx, r, wID, u3, workspace.RoleReader, uID); err != nil {
+	if err := JoinMembers(ctx, r, wID, u3, accountsWorkspace.RoleReader, uID); err != nil {
 		return err
 	}
 
@@ -98,31 +99,35 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 func createUserAndWorkspace(
 	ctx context.Context,
 	r *repo.Container,
-	wid accountdomain.WorkspaceID,
-	uid accountdomain.UserID,
+	wid accountsID.WorkspaceID,
+	uid accountsID.UserID,
 	name string,
-	email string) (*user.User, error) {
-	u := user.New().
+	email string) (*accountsUser.User, error) {
+	// Create user with new types
+	u := accountsUser.New().
 		ID(uid).
 		Workspace(wid).
 		Name(name).
 		Email(email).
-		Metadata(user.NewMetadata()).
+		Metadata(accountsUser.NewMetadata()).
 		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
+
+	if err := r.AccountsUser.Save(ctx, u); err != nil {
 		return nil, err
 	}
 
-	m := workspace.Member{
-		Role: workspace.RoleOwner,
+	// Create workspace with new types
+	m := accountsWorkspace.Member{
+		Role: accountsWorkspace.RoleOwner,
 	}
-	w := workspace.New().ID(wid).
+	w := accountsWorkspace.New().ID(wid).
 		Name(name).
 		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
-		Metadata(workspace.NewMetadata()).
+		Members(map[accountsID.UserID]accountsWorkspace.Member{uid: m}).
+		Metadata(accountsWorkspace.NewMetadata()).
 		MustBuild()
-	if err := r.Workspace.Save(ctx, w); err != nil {
+
+	if err := r.AccountsWorkspace.Save(ctx, w); err != nil {
 		return nil, err
 	}
 	return u, nil
@@ -157,33 +162,45 @@ func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 }
 
 func JoinMembers(ctx context.Context, r *repo.Container,
-	targetWorkspace workspace.ID,
-	newUser *user.User,
-	grantRole workspace.Role,
-	invitedUserId workspace.UserID,
+	targetWorkspace accountsID.WorkspaceID,
+	newUser *accountsUser.User,
+	grantRole accountsWorkspace.Role,
+	invitedUserId accountsID.UserID,
 ) error {
-	w, err := r.Workspace.FindByID(ctx, targetWorkspace)
+	// Find workspace by ID
+	w, err := r.AccountsWorkspace.FindByID(ctx, targetWorkspace)
 	if err != nil {
 		return err
 	}
-	members := w.Members()
-	err = members.Join(newUser, grantRole, invitedUserId)
-	if err != nil {
-		return err
-	}
-	newMembers := make(map[workspace.UserID]workspace.Member)
-	for k, v := range members.Users() {
+
+	// Add new member to workspace
+	newMembers := make(map[accountsID.UserID]accountsWorkspace.Member)
+	for k, v := range w.Members().Users() {
 		newMembers[k] = v
 	}
-	metadata := workspace.NewMetadata()
-	w2 := workspace.New().
+	newMembers[newUser.ID()] = accountsWorkspace.Member{
+		Role:      grantRole,
+		InvitedBy: invitedUserId,
+	}
+
+	// Rebuild workspace with new members
+	metadata := w.Metadata()
+	var metadataValue accountsWorkspace.Metadata
+	if metadata != nil {
+		metadataValue = *metadata
+	} else {
+		metadataValue = accountsWorkspace.NewMetadata()
+	}
+	w2 := accountsWorkspace.New().
 		ID(w.ID()).
 		Name(w.Name()).
 		Personal(w.IsPersonal()).
 		Members(newMembers).
-		Metadata(metadata).
+		Metadata(metadataValue).
 		MustBuild()
-	if err := r.Workspace.Save(ctx, w2); err != nil {
+
+	// Save updated workspace
+	if err := r.AccountsWorkspace.Save(ctx, w2); err != nil {
 		return err
 	}
 	return nil
@@ -192,28 +209,34 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, lang language.Tag) error {
 	defer util.MockNow(now)()
 
-	metadata := user.NewMetadata()
+	// Create metadata with language
+	metadata := accountsUser.NewMetadata()
 	metadata.SetLang(lang)
 
-	u := user.New().ID(uID).
+	// Create user with language metadata
+	u := accountsUser.New().ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
 		Metadata(metadata).
 		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
+
+	if err := r.AccountsUser.Save(ctx, u); err != nil {
 		return err
 	}
-	m := workspace.Member{
-		Role: workspace.RoleOwner,
+
+	// Create workspace for the user
+	m := accountsWorkspace.Member{
+		Role: accountsWorkspace.RoleOwner,
 	}
-	w := workspace.New().ID(wID).
+	w := accountsWorkspace.New().ID(wID).
 		Name(uName).
 		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
-		Metadata(workspace.NewMetadata()).
+		Members(map[accountsID.UserID]accountsWorkspace.Member{uID: m}).
+		Metadata(accountsWorkspace.NewMetadata()).
 		MustBuild()
-	if err := r.Workspace.Save(ctx, w); err != nil {
+
+	if err := r.AccountsWorkspace.Save(ctx, w); err != nil {
 		return err
 	}
 	return baseSetup(ctx, r, f)

@@ -2,7 +2,6 @@ package memory
 
 import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
 
@@ -23,17 +22,13 @@ func New() *repo.Container {
 		Scene:           NewScene(),
 		SceneLock:       NewSceneLock(),
 		AuthRequest:     authserver.NewMemory(),
-		Policy:          NewPolicy(),
 		Storytelling:    NewStorytelling(),
 		Lock:            NewLock(),
 		Transaction:     &usecasex.NopTransaction{},
 
-		// Deprecated: This function is deprecated and will be replaced by AccountsWorkspace in the future.
-		Workspace: accountmemory.NewWorkspace(),
-		// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
-		User: accountmemory.NewUser(),
-
-		AccountsWorkspace: accountsInfra.NewMemoryWorkspace(),
-		AccountsUser:      accountsInfra.NewMemoryUser(),
+		AccountsWorkspace:   accountsInfra.NewMemoryWorkspace(),
+		AccountsUser:        accountsInfra.NewMemoryUser(),
+		AccountsRole:        accountsInfra.NewMemoryRole(),
+		AccountsPermittable: accountsInfra.NewMemoryPermittable(),
 	}
 }
