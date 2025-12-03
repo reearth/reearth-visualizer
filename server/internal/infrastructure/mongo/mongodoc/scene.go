@@ -9,7 +9,8 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type SceneDocument struct {
@@ -40,7 +41,7 @@ type ScenePluginDocument struct {
 
 type SceneConsumer = Consumer[*SceneDocument, *scene.Scene]
 
-func NewSceneConsumer(workspaces []accountdomain.WorkspaceID) *SceneConsumer {
+func NewSceneConsumer(workspaces []accountsID.WorkspaceID) *SceneConsumer {
 	return NewConsumer[*SceneDocument, *scene.Scene](func(s *scene.Scene) bool {
 		return workspaces == nil || slices.Contains(workspaces, s.Workspace())
 	})
@@ -125,7 +126,7 @@ func (d *SceneDocument) Model() (*scene.Scene, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
+	tid, err := accountsID.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}

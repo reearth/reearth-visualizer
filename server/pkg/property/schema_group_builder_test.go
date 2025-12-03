@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +33,7 @@ func TestSchemaGroupBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "fail: invalid id",
-			Err:  id.ErrInvalidID,
+			Err:  idx.ErrInvalidID,
 		},
 		{
 			Name:   "success",

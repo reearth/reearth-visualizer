@@ -124,9 +124,8 @@ func initEcho(
 		UsecaseMiddleware(
 			cfg.Repos,
 			cfg.Gateways,
-			cfg.AccountRepos,
-			cfg.AccountGateways,
 			cfg.ReearthAccountsRepos,
+			cfg.AccountGateways,
 			interactor.ContainerConfig{
 				SignupSecret:       cfg.Config.SignupSecret,
 				PublishedIndexHTML: publishedIndexHTML,

@@ -21,8 +21,9 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/log"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // CloudEventData represents the data inside a notification
@@ -100,11 +101,11 @@ func ParseNotification(c echo.Context) (Notification, error) {
 	return n, nil
 }
 
-func GenFileName(workspaceID accountdomain.WorkspaceID, projectID id.ProjectID, userID accountdomain.UserID) string {
+func GenFileName(workspaceID accountsID.WorkspaceID, projectID id.ProjectID, userID accountsID.UserID) string {
 	return fmt.Sprintf("%s-%s-%s.zip", workspaceID.String(), projectID.String(), userID.String())
 }
 
-func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.ProjectID, *accountdomain.UserID, error) {
+func SplitFilename(objectPath string) (string, *accountsID.WorkspaceID, *id.ProjectID, *accountsID.UserID, error) {
 
 	base := filepath.Base(objectPath)
 
@@ -115,7 +116,7 @@ func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.P
 	}
 
 	workspaceID := parts[0]
-	wid, err := accountdomain.WorkspaceIDFrom(workspaceID)
+	wid, err := accountsID.WorkspaceIDFrom(workspaceID)
 	if err != nil {
 		return base, nil, nil, nil, fmt.Errorf("invalid workspace id: %v", err)
 	}
@@ -127,7 +128,7 @@ func SplitFilename(objectPath string) (string, *accountdomain.WorkspaceID, *id.P
 	}
 
 	userID := parts[2]
-	uid, err := accountdomain.UserIDFrom(userID)
+	uid, err := accountsID.UserIDFrom(userID)
 	if err != nil {
 		return base, nil, nil, nil, fmt.Errorf("invalid user id: %v", err)
 	}
@@ -162,24 +163,24 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 					log.Errorf("import project SplitFilename err: %v", err)
 					return err
 				}
-				u, err := cfg.AccountRepos.User.FindByID(ctx, *userID)
+				u, err := cfg.ReearthAccountsRepos.User.FindByID(ctx, *userID)
 				if err != nil {
 					log.Errorf("import project FindByID err: %v", err)
 					return err
 				}
 				if u != nil {
-					op, err := generateOperator(ctx, cfg, u)
+					op, err := generateAccountsOperator(ctx, cfg, u)
 					if err != nil {
-						log.Errorf("import project generateOperator err: %v", err)
+						log.Errorf("import project generateAccountsOperator err: %v", err)
 						return err
 					}
 
-					ctx = adapter.AttachUser(ctx, u)
-					ctx = adapter.AttachOperator(ctx, op)
+					ctx = adapter.AttachAccountsUser(ctx, u)
+					ctx = adapter.AttachAccountsOperator(ctx, op)
 				}
 			}
 
-			op := adapter.Operator(ctx)
+			op := adapter.AccountsOperator(ctx)
 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 
 			res, err := handler(c, ctx, uc, op)
@@ -196,7 +197,7 @@ func SecurityHandler(cfg *ServerConfig, enableDataLoaders bool) func(WrappedHand
 	}
 }
 
-func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, workspaceID accountdomain.WorkspaceID) (*project.Project, error) {
+func CreateTemporaryProject(ctx context.Context, usecases *interfaces.Container, op *usecase.Operator, workspaceID accountsID.WorkspaceID) (*project.Project, error) {
 
 	visibility := string(project.VisibilityPublic)
 	coreSupport := true
@@ -252,7 +253,7 @@ func ImportProject(
 	ctx context.Context,
 	usecases *interfaces.Container,
 	op *usecase.Operator,
-	wsId accountdomain.WorkspaceID,
+	wsId accountsID.WorkspaceID,
 	pid id.ProjectID,
 	importData *[]byte,
 	assetsZip map[string]*zip.File,

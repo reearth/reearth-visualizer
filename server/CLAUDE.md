@@ -5,9 +5,11 @@ This document captures the development work and context for maintaining and exte
 ## Internal API Authentication Enhancement
 
 ### Overview
+
 Implemented selective authentication for the Internal API to allow GET methods (read-only operations) to execute without authentication while maintaining security for write operations.
 
 ### Requirements
+
 - Allow only GET methods of the Internal API to be executed without authentication
 - Maintain security for all write operations (CREATE, UPDATE, DELETE)
 - Preserve backward compatibility for authenticated requests
@@ -21,6 +23,7 @@ Implemented selective authentication for the Internal API to allow GET methods (
 Modified the gRPC interceptor chain to implement selective authentication:
 
 ##### `unaryAuthInterceptor` Enhancement
+
 ```go
 func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
     return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
@@ -28,7 +31,7 @@ func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
         if isReadOnlyMethod(info.FullMethod) {
             return handler(ctx, req)
         }
-        
+
         // Continue with normal authentication for write methods
         // ... existing authentication logic
     }
@@ -36,17 +39,19 @@ func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 ```
 
 ##### `isReadOnlyMethod` Function
+
 Identifies read-only methods that can execute without authentication:
+
 ```go
 func isReadOnlyMethod(method string) bool {
     readOnlyMethods := []string{
         "v1.ReEarthVisualizer/GetProjectList",
-        "v1.ReEarthVisualizer/GetProject", 
+        "v1.ReEarthVisualizer/GetProject",
         "v1.ReEarthVisualizer/GetProjectByAlias",
         "v1.ReEarthVisualizer/ValidateProjectAlias",
         "v1.ReEarthVisualizer/ExportProject",
     }
-    
+
     for _, readOnlyMethod := range readOnlyMethods {
         if strings.Contains(method, readOnlyMethod) {
             return true
@@ -57,7 +62,9 @@ func isReadOnlyMethod(method string) bool {
 ```
 
 ##### `unaryAttachOperatorInterceptor` Enhancement
+
 Modified to handle cases where no user context is provided for read-only methods:
+
 ```go
 func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
     return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
@@ -82,6 +89,7 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 Enhanced project visibility handling for unauthenticated requests:
 
 ##### `FindActiveById` Enhancement
+
 ```go
 func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
     pj, err := i.projectRepo.FindActiveById(ctx, pid)
@@ -99,18 +107,19 @@ func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator
 ```
 
 ##### `FindVisibilityByWorkspace` Enhancement
+
 ```go
 func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator, keyword *string, sort *project.SortType, pagination *usecasex.Pagination) ([]*project.Project, *usecasex.PageInfo, error) {
     // ... method logic
 
     var owningWsList accountdomain.WorkspaceIDList
     if operator != nil {
-        owningWsList = operator.AcOperator.OwningWorkspaces
+        owningWsList = operator.AccountsOperator.OwningWorkspaces
     }
-    
+
     // Pass owningWsList which may be nil for unauthenticated requests
     pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, owningWsList, wList)
-    
+
     // ... rest of the method
 }
 ```
@@ -118,6 +127,7 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 ### Read-Only vs Write Methods Classification
 
 #### Read-Only Methods (No Authentication Required)
+
 - `GetProjectList` - Retrieve list of projects (filtered by visibility)
 - `GetProject` - Retrieve specific project by ID
 - `GetProjectByAlias` - Retrieve project by alias
@@ -125,6 +135,7 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 - `ExportProject` - Export project data
 
 #### Write Methods (Authentication Required)
+
 - `CreateProject` - Create new project
 - `UpdateProject` - Update existing project
 - `UpdateProjectMetadata` - Update project metadata
@@ -143,6 +154,7 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 #### Test Files Created
 
 **File**: `internal/usecase/interactor/project_auth_test.go`
+
 - `TestProject_ReadOnlyMethodsWithoutAuth` - Validates read-only operations work without auth
 - `TestProject_WriteMethodsRequireAuth` - Ensures write operations still require auth
 - `TestProject_AuthenticatedMethodsWork` - Verifies authenticated flows continue to work
@@ -150,6 +162,7 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 - `TestProject_PaginationAndFiltering` - Tests pagination and filtering functionality
 
 **File**: `internal/app/grpc_auth_test.go`
+
 - `TestIsReadOnlyMethod` - Tests method classification logic
 - `TestTokenFromGrpcMetadata` - Tests token extraction from gRPC metadata
 - `TestUnaryAuthInterceptor` - Tests authentication interceptor behavior
@@ -157,7 +170,9 @@ func (i *Project) FindVisibilityByWorkspace(ctx context.Context, aid accountdoma
 - `TestAuthenticationFlow` - Tests complete authentication flow
 
 #### Test Results
+
 All tests pass successfully:
+
 - ✅ gRPC Authentication Tests: 13/13 test cases pass
 - ✅ Authentication Flow Tests: 4/4 test cases pass
 - ✅ Token Extraction Tests: 8/8 test cases pass
@@ -167,6 +182,7 @@ All tests pass successfully:
 ### Usage Examples
 
 #### Unauthenticated Request (Read-Only)
+
 ```bash
 # Get public projects without authentication
 grpcurl -plaintext \
@@ -176,6 +192,7 @@ grpcurl -plaintext \
 ```
 
 #### Authenticated Request (Write Operation)
+
 ```bash
 # Create project with authentication
 grpcurl -plaintext \
@@ -189,23 +206,27 @@ grpcurl -plaintext \
 ### Configuration
 
 The Internal API authentication is controlled by environment variables:
+
 - `REEARTH_VISUALIZER_INTERNALAPI_ACTIVE`: Enable/disable the Internal API
-- `REEARTH_VISUALIZER_INTERNALAPI_PORT`: Port for the gRPC server (default: 50051)  
+- `REEARTH_VISUALIZER_INTERNALAPI_PORT`: Port for the gRPC server (default: 50051)
 - `REEARTH_VISUALIZER_INTERNALAPI_TOKEN`: Authentication token for write operations
 
 ### Development Notes
 
 #### Method Name Format
+
 - gRPC method names follow the pattern: `/reearth.visualizer.v1.ReEarthVisualizer/MethodName`
 - The `isReadOnlyMethod` function uses partial matching with `strings.Contains` for flexibility
 - Method classification is based on suffix matching: `v1.ReEarthVisualizer/GetProjectList`
 
 #### Context Handling
+
 - Internal context is attached using `adapter.AttachInternal(ctx, true)`
 - User context is attached using `adapter.AttachUser(ctx, user)` for authenticated requests
 - Current host is always attached for read-only requests: `adapter.AttachCurrentHost(ctx, cfg.Config.Host)`
 
 #### Error Handling
+
 - Unauthenticated access to private projects returns: `"project is private"`
 - Missing authentication for write operations returns: `"unauthorized"`
 - Invalid tokens return: `"unauthorized"`
@@ -215,10 +236,12 @@ The Internal API authentication is controlled by environment variables:
 #### Common Issues
 
 1. **Read-only method still requires auth**
+
    - Check that the method name is correctly listed in `isReadOnlyMethod`
    - Verify the method name format matches the gRPC service definition
 
 2. **Private projects visible without auth**
+
    - Ensure `FindActiveById` has the visibility check
    - Verify `authenticated=false` is being passed for unauthenticated requests
 
@@ -249,5 +272,5 @@ go build -o /tmp/test-build ./cmd/reearth
 
 ---
 
-*Last Updated: 2025-07-09*  
-*Implementation by: Claude (AI Assistant)*
+_Last Updated: 2025-07-09_  
+_Implementation by: Claude (AI Assistant)_

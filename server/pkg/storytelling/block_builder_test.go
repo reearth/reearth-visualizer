@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func TestBlockBuilder(t *testing.T) {
 	b := NewBlock()
 	assert.Equal(t, &BlockBuilder{block: &Block{}}, b)
 
-	assert.PanicsWithError(t, id.ErrInvalidID.Error(), func() {
+	assert.PanicsWithError(t, idx.ErrInvalidID.Error(), func() {
 		b.MustBuild()
 	})
 

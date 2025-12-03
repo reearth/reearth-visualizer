@@ -8,7 +8,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/account/accountdomain/user"
 
-	"github.com/reearth/reearthx/account/accountusecase"
 	"golang.org/x/text/language"
 
 	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
@@ -53,15 +52,6 @@ func getLang(ctx context.Context, lang *language.Tag) string {
 // reearth-visualizer Operator
 func getOperator(ctx context.Context) *usecase.Operator {
 	return adapter.Operator(ctx)
-}
-
-// reearthx Operator
-// Deprecated: This function is deprecated and will be replaced by getAccountsOperator in the future.
-func getAcOperator(ctx context.Context) *accountusecase.Operator {
-	if op := getOperator(ctx); op != nil {
-		return op.AcOperator
-	}
-	return nil
 }
 
 // reearth-accounts Operator

@@ -3,6 +3,8 @@ package id
 import (
 	"regexp"
 	"strings"
+
+	"github.com/reearth/reearthx/idx"
 )
 
 var propertySchemaIDRe = regexp.MustCompile("^[a-zA-Z0-9][a-zA-Z0-9_-]*$|^@$")
@@ -24,11 +26,11 @@ func NewPropertySchemaID(p PluginID, name string) PropertySchemaID {
 func PropertySchemaIDFrom(id string) (PropertySchemaID, error) {
 	ids := strings.SplitN(id, "/", 2)
 	if len(ids) < 2 || !propertySchemaIDRe.MatchString(ids[len(ids)-1]) {
-		return PropertySchemaID{}, ErrInvalidID
+		return PropertySchemaID{}, idx.ErrInvalidID
 	}
 	pid, err := PluginIDFrom(ids[0])
 	if err != nil {
-		return PropertySchemaID{}, ErrInvalidID
+		return PropertySchemaID{}, idx.ErrInvalidID
 	}
 	return PropertySchemaID{plugin: pid, id: ids[1]}, nil
 }

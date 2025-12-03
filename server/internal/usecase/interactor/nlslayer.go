@@ -66,7 +66,6 @@ type NLSLayer struct {
 	sceneRepo          repo.Scene
 	propertyRepo       repo.Property
 	pluginRepo         repo.Plugin
-	policyRepo         repo.Policy
 	file               gateway.File
 	transaction        usecasex.Transaction
 	propertySchemaRepo repo.PropertySchema
@@ -91,13 +90,9 @@ func NewNLSLayer(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Con
 		sceneRepo:          r.Scene,
 		propertyRepo:       r.Property,
 		pluginRepo:         r.Plugin,
-		policyRepo:         r.Policy,
 		file:               gr.File,
 		transaction:        r.Transaction,
 		propertySchemaRepo: r.PropertySchema,
-
-		// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
-		workspaceRepo: r.Workspace, //nolint:staticcheck // TODO: migrate to accountWorkspaceRepo
 
 		accountWorkspaceRepo: accountWsRepo,
 	}
@@ -160,30 +155,6 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
-	if err != nil {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-	}
-
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-		}
-		s, err := i.nlslayerRepo.CountByScene(ctx, s.ID())
-		if err != nil {
-			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-		}
-		if err := p.EnforceNLSLayersCount(s + 1); err != nil {
-			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-		}
 	}
 
 	// geojson validate

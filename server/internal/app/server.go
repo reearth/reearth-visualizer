@@ -13,7 +13,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
@@ -22,15 +21,13 @@ import (
 )
 
 func runServer(ctx context.Context, conf *config.Config, otelServiceName otel.OtelServiceName, debug bool) {
-	repos, gateways, acRepos, acGateways, accountsAPIClient, reearthAccountsRepos := initReposAndGateways(ctx, conf, debug)
+	repos, gateways, reearthAccountsRepos, acGateways, accountsAPIClient := initReposAndGateways(ctx, conf, debug)
 	// Start web server
 	NewServer(ctx, &ServerConfig{
-		Config:   conf,
-		Debug:    debug,
-		Repos:    repos,
-		Gateways: gateways,
-		// Deprecated: This function is deprecated and will be replaced by ReearthAccountsRepos in the future.
-		AccountRepos:      acRepos,
+		Config:            conf,
+		Debug:             debug,
+		Repos:             repos,
+		Gateways:          gateways,
 		AccountGateways:   acGateways,
 		AccountsAPIClient: accountsAPIClient,
 		ServiceName:       otelServiceName,
@@ -47,12 +44,10 @@ type WebServer struct {
 }
 
 type ServerConfig struct {
-	Config   *config.Config
-	Debug    bool
-	Repos    *repo.Container
-	Gateways *gateway.Container
-	// Deprecated: This function is deprecated and will be replaced by ReearthAccountsRepos in the future.
-	AccountRepos      *accountrepo.Container
+	Config            *config.Config
+	Debug             bool
+	Repos             *repo.Container
+	Gateways          *gateway.Container
 	AccountGateways   *accountgateway.Container
 	AccountsAPIClient *gqlclient.Client
 	ServiceName       otel.OtelServiceName

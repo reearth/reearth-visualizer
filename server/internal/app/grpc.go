@@ -11,13 +11,13 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/internalapi"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
@@ -129,24 +129,24 @@ func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercept
 			return nil, errors.New("unauthorized")
 		}
 
-		userID, err := accountdomain.UserIDFrom(md["user-id"][0])
+		userID, err := accountsID.UserIDFrom(md["user-id"][0])
 		if err != nil {
 			log.Errorf("unaryAttachOperatorInterceptor: invalid user id")
 			return nil, errors.New("unauthorized")
 		}
-		u, err := cfg.AccountRepos.User.FindByID(ctx, userID)
+		u, err := cfg.ReearthAccountsRepos.User.FindByID(ctx, userID)
 		if err != nil {
 			log.Errorf("unaryAttachOperatorInterceptor: %v", err)
 			return nil, rerror.ErrInternalBy(err)
 		}
 
 		if u != nil {
-			op, err := generateOperator(ctx, cfg, u)
+			op, err := generateAccountsOperator(ctx, cfg, u)
 			if err != nil {
 				return nil, err
 			}
-			ctx = adapter.AttachUser(ctx, u)
-			ctx = adapter.AttachOperator(ctx, op)
+			ctx = adapter.AttachAccountsUser(ctx, u)
+			ctx = adapter.AttachAccountsOperator(ctx, op)
 			ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 		}
 
@@ -159,11 +159,10 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 
 		r := cfg.Repos
 		g := cfg.Gateways
-		ar := cfg.AccountRepos
 		ag := cfg.AccountGateways
 		aur := cfg.ReearthAccountsRepos
 
-		uc := interactor.NewContainer(r, g, ar, ag, aur, interactor.ContainerConfig{})
+		uc := interactor.NewContainer(r, g, ag, aur, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
 
 		// Attach reearth-accounts usecases

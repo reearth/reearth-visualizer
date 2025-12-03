@@ -14,10 +14,11 @@ import (
 	"github.com/reearth/reearth/server/pkg/nlslayer"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestAddOrUpdateCustomProperties(t *testing.T) {
@@ -26,7 +27,7 @@ func TestAddOrUpdateCustomProperties(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountsID.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -77,7 +78,7 @@ func TestAddGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountsID.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -134,7 +135,7 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountsID.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
@@ -212,7 +213,7 @@ func TestAddLayerSimple(t *testing.T) {
 
 	db := memory.New()
 	workspace := factory.NewWorkspace()
-	_ = db.Workspace.Save(ctx, workspace)
+	_ = db.AccountsWorkspace.Save(ctx, workspace)
 
 	prj, _ := project.New().NewID().Workspace(workspace.ID()).Build()
 	_ = db.Project.Save(ctx, prj)
@@ -383,7 +384,7 @@ func TestDeleteGeoJSONFeature(t *testing.T) {
 	db := memory.New()
 	prj, _ := project.New().NewID().Build()
 	_ = db.Project.Save(ctx, prj)
-	scene, _ := scene.New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(prj.ID()).Build()
+	scene, _ := scene.New().NewID().Workspace(accountsID.NewWorkspaceID()).Project(prj.ID()).Build()
 	_ = db.Scene.Save(ctx, scene)
 	il := NewNLSLayer(db, &gateway.Container{
 		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
