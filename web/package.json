@@ -22,6 +22,7 @@
     "storybook": "storybook dev -p 9001",
     "storybook:build": "storybook build --quiet -o dist/storybook",
     "gql": "graphql-codegen",
+    "gql:plateau": "graphql-codegen --config ./src/services/plateau/graphql/codegen_catelog.ts",
     "i18n": "i18next",
     "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc",
     "scan:lock": "sh ./bin/scan-yarn-lock.sh"
