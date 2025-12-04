@@ -27,9 +27,7 @@ interface IPermissionEntry {
   default?: IRolePermissionConfig;
 }
 
-type PermissionMatrix = {
-  [A in Action]?: IPermissionEntry;
-};
+type PermissionMatrix = Partial<Record<Action, IPermissionEntry>>;
 
 const permissionMatrix: PermissionMatrix = {
   [Action.Invite]: {

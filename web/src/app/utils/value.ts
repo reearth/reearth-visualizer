@@ -240,7 +240,7 @@ export const typographyStyles = (t?: Typography) => {
   `;
 };
 
-export const zeroValues: { [key in ValueType]?: ValueTypes[ValueType] } = {
+export const zeroValues: Partial<Record<ValueType, ValueTypes[ValueType]>> = {
   bool: false,
   string: ""
 };
