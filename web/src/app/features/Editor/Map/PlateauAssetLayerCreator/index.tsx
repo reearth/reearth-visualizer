@@ -131,9 +131,9 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
                       type={dataset.type}
                     />
                   ))
-                ) : searchText ? (
+                ) : (
                   <NoResult>{t("No results found")}</NoResult>
-                ) : null}
+                )}
               </SearchResults>
             ) : (
               <Tabs tabs={tabItems} noPadding flexHeight />
