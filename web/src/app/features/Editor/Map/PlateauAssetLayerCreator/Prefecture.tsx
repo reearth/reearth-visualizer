@@ -2,15 +2,24 @@ import { useAreas } from "@reearth/services/plateau/graphql";
 import { AreaType } from "@reearth/services/plateau/graphql/base/catalog/__gen__/graphql";
 import { FC, useMemo } from "react";
 
-import { useExpandedIds } from "./atoms";
+import { useExpandedPlateauFolderIds } from "./atoms";
 import City from "./City";
 import { TOKYO_CODE } from "./constants";
 import TreeItem, { TreeItemType, TreeItemProps } from "./TreeItem";
 
-export type PrefectureProps = TreeItemProps;
+export type PrefectureProps = TreeItemProps & {
+  areaCode?: string;
+  type?: string;
+};
 
-const Prefecture: FC<PrefectureProps> = ({ id, label }) => {
-  const [expandedIds, setExpandedIds] = useExpandedIds();
+const Prefecture: FC<PrefectureProps> = ({
+  id,
+  areaCode,
+  label,
+  level = 0,
+  type
+}) => {
+  const [expandedIds, setExpandedIds] = useExpandedPlateauFolderIds();
   const expanded = expandedIds.includes(id);
   const handleClick = () => {
     if (expanded) {
@@ -21,19 +30,21 @@ const Prefecture: FC<PrefectureProps> = ({ id, label }) => {
   };
 
   const cityData = useAreas({
-    parentCode: id,
-    areaTypes: [AreaType.City]
+    parentCode: areaCode,
+    areaTypes: [AreaType.City],
+    ...(type ? { datasetTypes: [type] } : {})
   });
   const cities: TreeItemType[] = useMemo(() => {
     if (!cityData.data) return [];
 
     return cityData.data.areas
       .map((area) => ({
-        id: area.code,
+        id: `${id}-city-${area.code}`,
+        areaCode: area.code,
         label: area.name
       }))
       .filter((area) => area.id !== TOKYO_CODE);
-  }, [cityData]);
+  }, [cityData, id]);
 
   return (
     <TreeItem
@@ -41,10 +52,18 @@ const Prefecture: FC<PrefectureProps> = ({ id, label }) => {
       label={label}
       icon={expanded ? "folderNotchOpen" : "folderSimple"}
       onClick={handleClick}
+      level={level}
     >
       {expanded &&
         cities.map((city) => (
-          <City id={city.id} label={city.label} key={city.id} />
+          <City
+            id={city.id}
+            label={city.label}
+            key={city.id}
+            level={level + 1}
+            type={type}
+            areaCode={city.areaCode}
+          />
         ))}
     </TreeItem>
   );

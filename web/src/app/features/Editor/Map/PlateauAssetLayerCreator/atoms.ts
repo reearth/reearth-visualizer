@@ -2,17 +2,20 @@ import { DatasetFormat } from "@reearth/services/plateau/graphql/types/catalog";
 import { useAtom } from "jotai";
 import { atomWithReset } from "jotai/utils";
 
-export const expandedIds = atomWithReset<string[]>([]);
-export const useExpandedIds = () => useAtom(expandedIds);
+export const expandedPlateauFolderIds = atomWithReset<string[]>([]);
+export const useExpandedPlateauFolderIds = () =>
+  useAtom(expandedPlateauFolderIds);
 
-export const selectedId = atomWithReset<string | null>(null);
-export const useSelectedId = () => useAtom(selectedId);
+export const selectedPlateauDatasetId = atomWithReset<string | null>(null);
+export const useSelectedPlateauDatasetId = () =>
+  useAtom(selectedPlateauDatasetId);
 
-export const selectedDatasetItem = atomWithReset<{
+export const selectedPlateauDatasetItem = atomWithReset<{
   id: string;
   format: DatasetFormat;
   name: string;
   url: string;
   layers?: string[] | null;
 } | null>(null);
-export const useSelectedDatasetItem = () => useAtom(selectedDatasetItem);
+export const useSelectedPlateauDatasetItem = () =>
+  useAtom(selectedPlateauDatasetItem);

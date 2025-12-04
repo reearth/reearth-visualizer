@@ -1,15 +1,18 @@
 import { useDatasets } from "@reearth/services/plateau/graphql";
 import { FC, useMemo } from "react";
 
-import { useExpandedIds } from "./atoms";
+import { useExpandedPlateauFolderIds } from "./atoms";
 import { PlateauDatasetType } from "./constants";
 import Dataset from "./Dataset";
 import TreeItem, { TreeItemProps } from "./TreeItem";
 
-export type CityProps = TreeItemProps;
+export type CityProps = TreeItemProps & {
+  areaCode?: string;
+  type?: string;
+};
 
-const City: FC<CityProps> = ({ id, label }) => {
-  const [expandedIds, setExpandedIds] = useExpandedIds();
+const City: FC<CityProps> = ({ id, areaCode, label, level = 0, type }) => {
+  const [expandedIds, setExpandedIds] = useExpandedPlateauFolderIds();
   const expanded = expandedIds.includes(id);
   const handleClick = () => {
     if (expanded) {
@@ -20,7 +23,8 @@ const City: FC<CityProps> = ({ id, label }) => {
   };
 
   const datasetData = useDatasets({
-    areaCodes: [id]
+    areaCodes: [areaCode],
+    ...(type ? { includeTypes: [type] } : {})
   });
 
   const datasets = useMemo(() => {
@@ -39,15 +43,17 @@ const City: FC<CityProps> = ({ id, label }) => {
       label={label}
       icon={expanded ? "folderNotchOpen" : "folderSimple"}
       onClick={handleClick}
-      level={1}
+      level={level}
     >
       {expanded &&
         datasets.map((dataset) => (
           <Dataset
-            id={dataset.id}
+            id={`${id}-dataset-${dataset.id}`}
+            datasetId={dataset.id}
             label={dataset.label}
             type={dataset.type}
             key={dataset.id}
+            level={level + 1}
           />
         ))}
     </TreeItem>

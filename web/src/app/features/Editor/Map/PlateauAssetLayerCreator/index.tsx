@@ -1,13 +1,21 @@
-import { Button, Icon, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
+import {
+  Button,
+  Icon,
+  Modal,
+  ModalPanel,
+  TabItem,
+  Tabs
+} from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 
+import AreaTree from "./AreaTree";
 import useHooks from "./hooks";
-import Prefecture from "./Prefecture";
 import TreeItem from "./TreeItem";
+import TypeTree from "./TypeTree";
 
 type PlateauAssetLayerCreatorProps = {
   sceneId: string;
@@ -26,9 +34,8 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
   const t = useT();
 
   const {
-    prefectures,
     dataset,
-    selectedDatasetItem,
+    selectedPlateauDatasetItem,
     handleSelectDatasetItem,
     handleLayerAdd,
     addLayerDisabled
@@ -36,6 +43,19 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
     onLayerAdd,
     sceneId
   });
+
+  const tabItems: TabItem[] = [
+    {
+      id: "area",
+      name: t("Area"),
+      children: <AreaTree />
+    },
+    {
+      id: "type",
+      name: t("Dataset Type"),
+      children: <TypeTree />
+    }
+  ];
 
   return (
     <Modal size="large" visible={true} data-testid="plateau-asset-layer-modal">
@@ -64,15 +84,7 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
       >
         <Wrapper data-testid="plateau-asset-layer-wrapper">
           <Sidebar>
-            <AreaWrapper>
-              {prefectures.map((prefecture) => (
-                <Prefecture
-                  key={prefecture.id}
-                  id={prefecture.id}
-                  label={prefecture.label}
-                />
-              ))}
-            </AreaWrapper>
+            <Tabs tabs={tabItems} noPadding />
           </Sidebar>
           <Main>
             <Title>{dataset?.name}</Title>
@@ -83,7 +95,7 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
                     key={item.id}
                     id={item.id}
                     label={item.name}
-                    selected={selectedDatasetItem?.id === item.id}
+                    selected={selectedPlateauDatasetItem?.id === item.id}
                     onClick={() => handleSelectDatasetItem(item)}
                   />
                 ))}
@@ -112,13 +124,6 @@ const Sidebar = styled("div")(({ theme }) => ({
   height: "100%",
   borderRight: `1px solid ${theme.outline.weaker}`,
   boxSizing: "border-box"
-}));
-
-const AreaWrapper = styled("div")(({ theme }) => ({
-  height: "100%",
-  overflow: "auto",
-  padding: theme.spacing.smallest,
-  ...theme.scrollBar
 }));
 
 const Main = styled("div")(({ theme }) => ({

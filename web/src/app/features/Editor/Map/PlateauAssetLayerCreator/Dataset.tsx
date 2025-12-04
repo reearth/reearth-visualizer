@@ -1,17 +1,28 @@
 import { FC } from "react";
 
-import { useSelectedId } from "./atoms";
+import { useSelectedPlateauDatasetId } from "./atoms";
 import { datasetTypeIcons, PlateauDatasetType } from "./constants";
 import TreeItem, { TreeItemProps } from "./TreeItem";
 
-export type DatasetProps = TreeItemProps & { type: PlateauDatasetType };
+export type DatasetProps = TreeItemProps & {
+  datasetId: string;
+  type: PlateauDatasetType;
+  level?: number;
+};
 
-const Dataset: FC<DatasetProps> = ({ id, label, type }) => {
-  const [selectedId, setSelectedId] = useSelectedId();
+const Dataset: FC<DatasetProps> = ({
+  id,
+  datasetId,
+  label,
+  type,
+  level = 0
+}) => {
+  const [selectedPlateauDatasetId, setSelectedPlateauDatasetId] =
+    useSelectedPlateauDatasetId();
 
   const handleClick = () => {
-    if (selectedId !== id) {
-      setSelectedId(id);
+    if (selectedPlateauDatasetId !== datasetId) {
+      setSelectedPlateauDatasetId(datasetId);
     }
   };
 
@@ -21,8 +32,8 @@ const Dataset: FC<DatasetProps> = ({ id, label, type }) => {
       label={label}
       icon={datasetTypeIcons[type]}
       onClick={handleClick}
-      selected={selectedId === id}
-      level={2}
+      selected={selectedPlateauDatasetId === datasetId}
+      level={level}
     />
   );
 };

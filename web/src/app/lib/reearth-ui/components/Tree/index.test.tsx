@@ -286,7 +286,7 @@ describe("Tree Component", () => {
     ];
 
     // Create a promise that we can control
-    let resolveLoad: (children: TreeNode[]) => void;
+    let resolveLoad: (children: TreeNode[]) => void = () => {};
     const loadPromise = new Promise<TreeNode[]>((resolve) => {
       resolveLoad = resolve;
     });

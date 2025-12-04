@@ -5,6 +5,7 @@ import { FC, ReactNode } from "react";
 export type TreeItemType = {
   id: string;
   label: string;
+  areaCode: string;
 };
 
 export type TreeItemProps = {

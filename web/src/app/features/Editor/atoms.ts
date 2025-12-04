@@ -4,9 +4,9 @@ import { useAtom } from "jotai";
 import { atomWithReset, useResetAtom } from "jotai/utils";
 
 import {
-  expandedIds,
-  selectedId,
-  selectedDatasetItem
+  expandedPlateauFolderIds,
+  selectedPlateauDatasetId,
+  selectedPlateauDatasetItem
 } from "./Map/PlateauAssetLayerCreator/atoms";
 
 const currentCamera = atomWithReset<Camera | undefined>(undefined);
@@ -26,16 +26,18 @@ export const useResetAllAtoms = () => {
   const resetWidgetsViewDevice = useResetAtom(widgetsViewDevice);
   const resetPublishViewDevice = useResetAtom(publishViewDevice);
 
-  const resetPlateauExpendedIds = useResetAtom(expandedIds);
-  const resetPlateauSelectedId = useResetAtom(selectedId);
-  const resetPlateauSelectedDatasetItem = useResetAtom(selectedDatasetItem);
+  const resetPlateauExpendedFolderIds = useResetAtom(expandedPlateauFolderIds);
+  const resetPlateauSelectedDatasetId = useResetAtom(selectedPlateauDatasetId);
+  const resetPlateauSelectedDatasetItem = useResetAtom(
+    selectedPlateauDatasetItem
+  );
 
   return () => {
     resetCurrentCamera();
     resetWidgetsViewDevice();
     resetPublishViewDevice();
-    resetPlateauExpendedIds();
-    resetPlateauSelectedId();
+    resetPlateauExpendedFolderIds();
+    resetPlateauSelectedDatasetId();
     resetPlateauSelectedDatasetItem();
   };
 };

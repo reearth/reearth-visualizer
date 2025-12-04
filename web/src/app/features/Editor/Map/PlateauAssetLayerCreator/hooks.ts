@@ -1,16 +1,15 @@
-import { useAreas, useDatasetById } from "@reearth/services/plateau/graphql";
-import {
-  AreaType,
-  DatasetFormat
-} from "@reearth/services/plateau/graphql/types/catalog";
+import { useDatasetById } from "@reearth/services/plateau/graphql";
+import { DatasetFormat } from "@reearth/services/plateau/graphql/types/catalog";
 import { useSetAtom } from "jotai";
 import { useCallback, useEffect, useMemo } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 import { showPlateauAssetLayerCreatorAtom } from "../state";
 
-import { useSelectedDatasetItem, useSelectedId } from "./atoms";
-import { TreeItemType } from "./TreeItem";
+import {
+  useSelectedPlateauDatasetItem,
+  useSelectedPlateauDatasetId
+} from "./atoms";
 
 export default ({
   onLayerAdd,
@@ -23,32 +22,18 @@ export default ({
     showPlateauAssetLayerCreatorAtom
   );
 
-  const { data: prefecturesData, isLoading: loadingPrefectures } = useAreas({
-    includeParents: true,
-    areaTypes: [AreaType.Prefecture]
-  });
-
-  const prefectures: TreeItemType[] = useMemo(() => {
-    if (!prefecturesData) return [];
-
-    return prefecturesData.areas.map((area) => ({
-      id: area.code,
-      label: area.name
-    }));
-  }, [prefecturesData]);
-
-  const [selectedId] = useSelectedId();
+  const [selectedPlateauDatasetId] = useSelectedPlateauDatasetId();
   const { data: datasetData, isLoading: loadingDataset } = useDatasetById(
-    selectedId ?? "",
-    { skip: !selectedId }
+    selectedPlateauDatasetId ?? "",
+    { skip: !selectedPlateauDatasetId }
   );
 
   const dataset = useMemo(() => {
     return datasetData?.node;
   }, [datasetData]);
 
-  const [selectedDatasetItem, setSelectedDatasetItem] =
-    useSelectedDatasetItem();
+  const [selectedPlateauDatasetItem, setSelectedPlateauDatasetItem] =
+    useSelectedPlateauDatasetItem();
   const handleSelectDatasetItem = useCallback(
     (
       item: {
@@ -59,9 +44,9 @@ export default ({
         layers?: string[] | null;
       } | null
     ) => {
-      setSelectedDatasetItem(item);
+      setSelectedPlateauDatasetItem(item);
     },
-    [setSelectedDatasetItem]
+    [setSelectedPlateauDatasetItem]
   );
 
   useEffect(() => {
@@ -72,27 +57,26 @@ export default ({
     }
   }, [dataset, handleSelectDatasetItem]);
 
-  const addLayerDisabled =
-    !selectedDatasetItem || loadingPrefectures || loadingDataset;
+  const addLayerDisabled = !selectedPlateauDatasetItem || loadingDataset;
 
   const handleLayerAdd = useCallback(async () => {
-    if (!selectedDatasetItem) return;
+    if (!selectedPlateauDatasetItem) return;
 
-    const type = toDataType(selectedDatasetItem.format);
+    const type = toDataType(selectedPlateauDatasetItem.format);
     if (!type) return;
 
     await onLayerAdd({
       title:
-        selectedDatasetItem.format === dataset?.name.split("(")[0]
-          ? selectedDatasetItem.name
-          : `${dataset.name} - ${selectedDatasetItem.name}`,
+        selectedPlateauDatasetItem.format === dataset?.name.split("(")[0]
+          ? selectedPlateauDatasetItem.name
+          : `${dataset.name} - ${selectedPlateauDatasetItem.name}`,
       layerType: "simple",
       sceneId,
       config: {
         data: {
           type,
-          url: selectedDatasetItem.url,
-          layers: selectedDatasetItem.layers ?? []
+          url: selectedPlateauDatasetItem.url,
+          layers: selectedPlateauDatasetItem.layers ?? []
         }
       }
     });
@@ -101,15 +85,14 @@ export default ({
   }, [
     onLayerAdd,
     sceneId,
-    selectedDatasetItem,
+    selectedPlateauDatasetItem,
     showPlateauAssetLayerCreater,
     dataset
   ]);
 
   return {
-    prefectures,
     dataset,
-    selectedDatasetItem,
+    selectedPlateauDatasetItem,
     handleSelectDatasetItem,
     addLayerDisabled,
     handleLayerAdd
