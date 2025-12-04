@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.3 - 2025-12-03
+
+### Web
+
+#### ✨ Refactor
+
+- Hide download button from builtin infobox video block and story video block ([#1947](https://github.com/reearth/reearth-visualizer/pull/1947)) [`e99d5e`](https://github.com/reearth/reearth-visualizer/commit/e99d5e)
+
+#### Miscellaneous Tasks
+
+- Bump version from 1.0.0-beta.13.2 to 1.0.0-beta.13.3 ([#1951](https://github.com/reearth/reearth-visualizer/pull/1951)) [`3e5a6d`](https://github.com/reearth/reearth-visualizer/commit/3e5a6d)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update reearthx module to the latest version ([#1949](https://github.com/reearth/reearth-visualizer/pull/1949)) [`d6649c`](https://github.com/reearth/reearth-visualizer/commit/d6649c)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update reearthx module to the latest version ([#1949](https://github.com/reearth/reearth-visualizer/pull/1949)) [`d6649c`](https://github.com/reearth/reearth-visualizer/commit/d6649c)
+
 ## 1.0.0-beta.13.2 - 2025-11-26
 
 ### Web
