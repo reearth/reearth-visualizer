@@ -3,11 +3,12 @@ import { AreaType } from "@reearth/services/plateau/graphql/base/catalog/__gen__
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
+import Loading from "./Loading";
 import Prefecture from "./Prefecture";
 import { TreeItemType } from "./TreeItem";
 
 const AreaTree: FC = () => {
-  const { data: prefecturesData, isLoading: _loadingPrefectures } = useAreas({
+  const { data: prefecturesData, loading } = useAreas({
     includeParents: true,
     areaTypes: [AreaType.Prefecture]
   });
@@ -24,14 +25,18 @@ const AreaTree: FC = () => {
 
   return (
     <Wrapper>
-      {prefectures.map((prefecture) => (
-        <Prefecture
-          key={prefecture.id}
-          id={prefecture.id}
-          areaCode={prefecture.areaCode}
-          label={prefecture.label}
-        />
-      ))}
+      {loading ? (
+        <Loading />
+      ) : (
+        prefectures.map((prefecture) => (
+          <Prefecture
+            key={prefecture.id}
+            id={prefecture.id}
+            areaCode={prefecture.areaCode}
+            label={prefecture.label}
+          />
+        ))
+      )}
     </Wrapper>
   );
 };

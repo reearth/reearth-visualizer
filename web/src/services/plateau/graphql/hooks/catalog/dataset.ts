@@ -45,7 +45,6 @@ export const useDatasetById = (id: string, options?: Options) => {
 
   return {
     ...query,
-    isLoading: query.loading,
     data: {
       ...query.data,
       node: query.data?.node as DatasetFragmentFragment

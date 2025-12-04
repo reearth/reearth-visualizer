@@ -1,7 +1,7 @@
-import { useDatasetById } from "@reearth/services/plateau/graphql";
+import { useDatasetById, useDatasets } from "@reearth/services/plateau/graphql";
 import { DatasetFormat } from "@reearth/services/plateau/graphql/types/catalog";
 import { useSetAtom } from "jotai";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
 import { showPlateauAssetLayerCreatorAtom } from "../state";
@@ -10,6 +10,8 @@ import {
   useSelectedPlateauDatasetItem,
   useSelectedPlateauDatasetId
 } from "./atoms";
+import { PlateauDatasetType } from "./constants";
+import { toDataType } from "./utils";
 
 export default ({
   onLayerAdd,
@@ -23,7 +25,7 @@ export default ({
   );
 
   const [selectedPlateauDatasetId] = useSelectedPlateauDatasetId();
-  const { data: datasetData, isLoading: loadingDataset } = useDatasetById(
+  const { data: datasetData, loading: loadingDataset } = useDatasetById(
     selectedPlateauDatasetId ?? "",
     { skip: !selectedPlateauDatasetId }
   );
@@ -90,37 +92,51 @@ export default ({
     dataset
   ]);
 
+  const [searchInput, setSearchInput] = useState("");
+
+  const handleSearchChange = useCallback(
+    (text: string) => {
+      setSearchInput(text);
+    },
+    [setSearchInput]
+  );
+
+  const [searchText, setSearchText] = useState("");
+  const handleSearch = useCallback(() => {
+    setSearchText(searchInput.trim());
+  }, [searchInput]);
+  const { data: searchData, loading: searchLoading } = useDatasets(
+    {
+      searchTokens: searchText ? searchText?.split(/\s+/).filter(Boolean) : []
+    },
+    { skip: !searchText }
+  );
+
+  const searchDatasets = useMemo(() => {
+    return searchData?.datasets?.map((dataset) => ({
+      id: dataset.id,
+      label: dataset.name,
+      type: dataset.type.code as PlateauDatasetType
+    }));
+  }, [searchData]);
+
+  useEffect(() => {
+    if (searchInput.trim() === "") {
+      setSearchText("");
+    }
+  }, [searchInput]);
+
   return {
     dataset,
     selectedPlateauDatasetItem,
     handleSelectDatasetItem,
     addLayerDisabled,
-    handleLayerAdd
+    handleLayerAdd,
+    searchInput,
+    handleSearchChange,
+    searchDatasets,
+    searchText,
+    searchLoading,
+    handleSearch
   };
-};
-
-const toDataType = (format: DatasetFormat) => {
-  switch (format) {
-    case DatasetFormat.Geojson:
-      return "geojson";
-    case DatasetFormat.Cesium3Dtiles:
-      return "3dtiles";
-    case DatasetFormat.Mvt:
-      return "mvt";
-    case DatasetFormat.Csv:
-      return "csv";
-    case DatasetFormat.Czml:
-      return "czml";
-    case DatasetFormat.Wms:
-      return "wms";
-    case DatasetFormat.Gltf:
-    case DatasetFormat.GtfsRealtime:
-      return "gltf";
-    case DatasetFormat.Tms:
-      return "tms";
-    case DatasetFormat.Tiles:
-      return "tiles";
-    default:
-      return "";
-  }
 };

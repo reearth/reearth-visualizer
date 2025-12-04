@@ -20,7 +20,6 @@ export const useAreas = (input?: AreasInput, options?: Options) => {
   const next = useMemo(
     () => ({
       ...data,
-      isLoading: data.loading,
       data: data.data
         ? {
             ...data.data,
@@ -70,7 +69,6 @@ export const useAreaDatasets = (
             : {})
         }
       : undefined,
-    isLoading: rest.loading,
     ...rest
   };
 };

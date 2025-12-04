@@ -9,21 +9,26 @@ type Options = {
   skip?: boolean;
 };
 
-export const useDatasetTypes = (input?: DatasetTypesInput, options?: Options) => {
+export const useDatasetTypes = (
+  input?: DatasetTypesInput,
+  options?: Options
+) => {
   const { data, ...rest } = useQuery(DATASET_TYPES, {
     variables: {
-      input,
+      input
     },
-    skip: options?.skip,
+    skip: options?.skip
   });
 
   const [datasetTypes, setDatasetTypes] = useState(
-    data?.datasetTypes.slice().sort((a, b) => a.order - b.order),
+    data?.datasetTypes.slice().sort((a, b) => a.order - b.order)
   );
 
   useEffect(() => {
     if (data?.datasetTypes && !datasetTypes) {
-      setDatasetTypes(data.datasetTypes.slice().sort((a, b) => a.order - b.order));
+      setDatasetTypes(
+        data.datasetTypes.slice().sort((a, b) => a.order - b.order)
+      );
     }
   }, [data?.datasetTypes, datasetTypes]);
 

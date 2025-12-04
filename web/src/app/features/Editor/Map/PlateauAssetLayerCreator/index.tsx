@@ -1,10 +1,12 @@
 import {
   Button,
   Icon,
+  IconButton,
   Modal,
   ModalPanel,
   TabItem,
-  Tabs
+  Tabs,
+  TextInput
 } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
@@ -13,7 +15,9 @@ import { FC } from "react";
 import { LayerAddProps } from "../../hooks/useLayers";
 
 import AreaTree from "./AreaTree";
+import Dataset from "./Dataset";
 import useHooks from "./hooks";
+import Loading from "./Loading";
 import TreeItem from "./TreeItem";
 import TypeTree from "./TypeTree";
 
@@ -38,7 +42,13 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
     selectedPlateauDatasetItem,
     handleSelectDatasetItem,
     handleLayerAdd,
-    addLayerDisabled
+    addLayerDisabled,
+    searchInput,
+    handleSearchChange,
+    searchDatasets,
+    searchText,
+    searchLoading,
+    handleSearch
   } = useHooks({
     onLayerAdd,
     sceneId
@@ -46,12 +56,12 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
 
   const tabItems: TabItem[] = [
     {
-      id: "area",
+      id: "plateau-asset-area-tab",
       name: t("Area"),
       children: <AreaTree />
     },
     {
-      id: "type",
+      id: "plateau-asset-type-tab",
       name: t("Dataset Type"),
       children: <TypeTree />
     }
@@ -84,7 +94,50 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
       >
         <Wrapper data-testid="plateau-asset-layer-wrapper">
           <Sidebar>
-            <Tabs tabs={tabItems} noPadding />
+            <SearchWrapper>
+              <TextInput
+                value={searchInput}
+                placeholder={`${t("Search by name")}`}
+                onChange={handleSearchChange}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    handleSearch();
+                  }
+                }}
+                data-testid="plateau-asset-search-input"
+                actions={[
+                  <IconButton
+                    icon="magnifyingGlass"
+                    appearance="simple"
+                    onClick={handleSearch}
+                    data-testid="plateau-asset-search-btn"
+                  />
+                ]}
+              />
+            </SearchWrapper>
+            {searchText && searchInput ? (
+              <SearchResults>
+                {searchLoading ? (
+                  <LoadingWrapper>
+                    <Loading />
+                  </LoadingWrapper>
+                ) : searchDatasets?.length ? (
+                  searchDatasets.map((dataset) => (
+                    <Dataset
+                      id={`search-result-${dataset.id}`}
+                      label={dataset.label}
+                      key={dataset.id}
+                      datasetId={dataset.id}
+                      type={dataset.type}
+                    />
+                  ))
+                ) : searchText ? (
+                  <NoResult>{t("No results found")}</NoResult>
+                ) : null}
+              </SearchResults>
+            ) : (
+              <Tabs tabs={tabItems} noPadding flexHeight />
+            )}
           </Sidebar>
           <Main>
             <Title>{dataset?.name}</Title>
@@ -97,6 +150,7 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
                     label={item.name}
                     selected={selectedPlateauDatasetItem?.id === item.id}
                     onClick={() => handleSelectDatasetItem(item)}
+                    testId={item.id}
                   />
                 ))}
               </ItemSelector>
@@ -123,7 +177,38 @@ const Sidebar = styled("div")(({ theme }) => ({
   flexShrink: 0,
   height: "100%",
   borderRight: `1px solid ${theme.outline.weaker}`,
-  boxSizing: "border-box"
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column"
+}));
+
+const SearchWrapper = styled("div")(({ theme }) => ({
+  padding: theme.spacing.small,
+  backgroundColor: theme.bg[0]
+}));
+
+const LoadingWrapper = styled("div")(() => ({
+  height: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
+}));
+
+const NoResult = styled("div")(({ theme }) => ({
+  padding: theme.spacing.small,
+  textAlign: "center",
+  color: theme.content.weak,
+  fontSize: theme.fonts.sizes.body
+}));
+
+const SearchResults = styled("div")(({ theme }) => ({
+  minHeight: 0,
+  flex: 1,
+  overflow: "auto",
+  padding: theme.spacing.smallest,
+  backgroundColor: theme.bg[0],
+  fontSize: theme.fonts.sizes.body,
+  ...theme.scrollBar
 }));
 
 const Main = styled("div")(({ theme }) => ({

@@ -34,6 +34,7 @@ const Dataset: FC<DatasetProps> = ({
       onClick={handleClick}
       selected={selectedPlateauDatasetId === datasetId}
       level={level}
+      testId={id}
     />
   );
 };

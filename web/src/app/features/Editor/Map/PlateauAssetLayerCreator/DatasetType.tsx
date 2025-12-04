@@ -21,7 +21,7 @@ const DatasetType: FC<DatasetTypeProps> = ({ id, label, datasetType }) => {
     }
   };
 
-  const { data: prefecturesData, isLoading: _loadingPrefectures } = useAreas({
+  const { data: prefecturesData } = useAreas({
     includeParents: true,
     datasetTypes: [datasetType],
     areaTypes: [AreaType.Prefecture]
@@ -43,6 +43,7 @@ const DatasetType: FC<DatasetTypeProps> = ({ id, label, datasetType }) => {
       label={label}
       icon={expanded ? "folderNotchOpen" : "folderSimple"}
       onClick={handleClick}
+      testId={id}
     >
       {expanded &&
         prefectures.map((prefecture) => (

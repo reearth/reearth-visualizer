@@ -4,6 +4,7 @@ import { unionBy } from "lodash-es";
 import { FC, useMemo } from "react";
 
 import DatasetType from "./DatasetType";
+import Loading from "./Loading";
 
 type DatasetType = {
   id: string;
@@ -12,7 +13,7 @@ type DatasetType = {
 };
 
 const TypeBrowser: FC = () => {
-  const { data: datasetTypeOrder } = useDatasetTypes();
+  const { data: datasetTypeOrder, loading } = useDatasetTypes();
   const types: DatasetType[] = useMemo(
     () => unionBy(datasetTypeOrder, "name") ?? [],
     [datasetTypeOrder]
@@ -20,14 +21,18 @@ const TypeBrowser: FC = () => {
 
   return (
     <Wrapper>
-      {types?.map((type) => (
-        <DatasetType
-          id={`type-${type.id}`}
-          key={type.id}
-          label={type.name}
-          datasetType={type.code}
-        />
-      ))}
+      {loading ? (
+        <Loading />
+      ) : (
+        types?.map((type) => (
+          <DatasetType
+            id={`type-${type.id}`}
+            key={type.id}
+            label={type.name}
+            datasetType={type.code}
+          />
+        ))
+      )}
     </Wrapper>
   );
 };

@@ -15,6 +15,7 @@ export type TreeItemProps = {
   level?: number;
   selected?: boolean;
   children?: ReactNode;
+  testId?: string;
   onClick?: (id: string) => void;
 };
 
@@ -25,7 +26,8 @@ const TreeItem: FC<TreeItemProps> = ({
   level = 0,
   selected,
   onClick,
-  children
+  children,
+  testId
 }) => {
   return (
     <>
@@ -33,6 +35,7 @@ const TreeItem: FC<TreeItemProps> = ({
         level={level}
         onClick={() => onClick && onClick(id)}
         selected={selected}
+        data-testid={testId}
       >
         {icon && <StyledIcon icon={icon} />}
         {label}

@@ -247,6 +247,9 @@ Camera: カメラ
 Area: 都道府県
 Dataset Type: カテゴリー
 PLATEAU Data Catalog: PLATEAUデータカタログ
+Search by name: 名前で検索
+No results found: 結果が見つかりません
+Loading...: ロード中...
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -541,7 +544,6 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-Loading...: ロード中...
 Please select: 選択してください
 This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
 'Sort:': '並び替え:'

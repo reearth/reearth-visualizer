@@ -53,6 +53,7 @@ const Prefecture: FC<PrefectureProps> = ({
       icon={expanded ? "folderNotchOpen" : "folderSimple"}
       onClick={handleClick}
       level={level}
+      testId={id}
     >
       {expanded &&
         cities.map((city) => (

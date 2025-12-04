@@ -44,6 +44,7 @@ const City: FC<CityProps> = ({ id, areaCode, label, level = 0, type }) => {
       icon={expanded ? "folderNotchOpen" : "folderSimple"}
       onClick={handleClick}
       level={level}
+      testId={id}
     >
       {expanded &&
         datasets.map((dataset) => (
