@@ -9,5 +9,4 @@ import (
 
 type Policy interface {
 	GetWorkspacePolicy(ctx context.Context, workspaceID workspace.ID) (*policy.WorkspacePolicy, error)
-	FetchPolicy(ctx context.Context, ids []policy.ID) ([]*policy.Policy, error)
 }

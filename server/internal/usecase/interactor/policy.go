@@ -2,7 +2,6 @@ package interactor
 
 import (
 	"context"
-	"errors"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
@@ -48,27 +47,8 @@ func (i *Policy) GetWorkspacePolicy(ctx context.Context, wsid accountdomain.Work
 	}, nil
 }
 
-func (i *Policy) FetchPolicy(ctx context.Context, ids []policy.ID) ([]*policy.Policy, error) {
-	res, err := i.repos.Policy.FindByIDs(ctx, ids)
-	return res, err
-}
-
 func workspaceMemberCountEnforcer(r *repo.Container) accountinteractor.WorkspaceMemberCountEnforcer {
 	return func(ctx context.Context, ws *workspace.Workspace, _ user.List, op *accountusecase.Operator) error {
-		policyID := op.Policy(ws.Policy())
-		if policyID == nil || *policyID == "" {
-			return nil
-		}
-
-		policy, err := r.Policy.FindByID(ctx, *policyID)
-		if err != nil {
-			return err
-		}
-
-		if policy == nil {
-			return errors.New("invalid policy")
-		}
-
-		return policy.EnforceMemberCount(ws.Members().Count() + 1)
+		return nil
 	}
 }

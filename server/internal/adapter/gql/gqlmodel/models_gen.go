@@ -650,19 +650,6 @@ type Point struct {
 
 func (Point) IsGeometry() {}
 
-type Policy struct {
-	ID                    ID     `json:"id"`
-	Name                  string `json:"name"`
-	ProjectCount          *int   `json:"projectCount,omitempty"`
-	MemberCount           *int   `json:"memberCount,omitempty"`
-	PublishedProjectCount *int   `json:"publishedProjectCount,omitempty"`
-	LayerCount            *int   `json:"layerCount,omitempty"`
-	AssetStorageSize      *int64 `json:"assetStorageSize,omitempty"`
-	NlsLayersCount        *int   `json:"nlsLayersCount,omitempty"`
-	PageCount             *int   `json:"pageCount,omitempty"`
-	BlocksCount           *int   `json:"blocksCount,omitempty"`
-}
-
 type PolicyCheckInput struct {
 	WorkspaceID ID `json:"workspaceId"`
 }
@@ -1495,8 +1482,6 @@ type Workspace struct {
 	Members                      []*WorkspaceMember `json:"members"`
 	Personal                     bool               `json:"personal"`
 	PhotoURL                     *string            `json:"photoURL,omitempty"`
-	PolicyID                     *ID                `json:"policyId,omitempty"`
-	Policy                       *Policy            `json:"policy,omitempty"`
 	Assets                       *AssetConnection   `json:"assets"`
 	Projects                     *ProjectConnection `json:"projects"`
 	EnableToCreatePrivateProject bool               `json:"enableToCreatePrivateProject"`

@@ -263,8 +263,6 @@ models:
         resolver: true
   Workspace:
     fields:
-      policy:
-        resolver: true
       assets:
         resolver: true
       projects:
