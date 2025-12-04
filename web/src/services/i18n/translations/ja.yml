@@ -209,6 +209,7 @@ Show photo overlay when the user clicks on a layer: レイヤーをクリック�
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
+Add Layer from PLATEAU Asset: 'PLATEAUアセットからレイヤーを追加'
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
@@ -243,6 +244,7 @@ Photo size type: フォトサイズタイプ
 Photo size: フォトサイズ
 Photo description: フォト説明
 Camera: カメラ
+PLATEAU Data Catalog: 'PLATEAUデータカタログ'
 Main: メイン
 Tiles: タイル
 Terrain: 地形
