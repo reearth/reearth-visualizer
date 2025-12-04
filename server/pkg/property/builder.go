@@ -1,6 +1,9 @@
 package property
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
+)
 
 type Builder struct {
 	p *Property
@@ -12,7 +15,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Property, error) {
 	if b.p.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.p.scene.IsNil() {
 		return nil, ErrInvalidSceneID

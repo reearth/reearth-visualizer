@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 )
 
 type SchemaFieldBuilder struct {
@@ -17,7 +18,7 @@ func NewSchemaField() *SchemaFieldBuilder {
 
 func (b *SchemaFieldBuilder) Build() (*SchemaField, error) {
 	if b.p.id.String() == "" || b.p.id.String() == "id" {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.p.ui != SchemaFieldUI("") && SchemaFieldUIFrom(string(b.p.ui)) == SchemaFieldUI("") {
 		return nil, errors.New("invalid property schema field ui")

@@ -1,8 +1,8 @@
 package user
 
 import (
-	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/workspace"
+	"github.com/reearth/reearthx/idx"
 	"github.com/samber/lo"
 )
 
@@ -16,7 +16,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*User, error) {
 	if b.a.id == "" {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	return b.a, nil
 }

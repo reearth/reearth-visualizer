@@ -33,6 +33,8 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 var (
@@ -58,35 +60,41 @@ var (
 type NLSLayer struct {
 	common
 	commonSceneLock
-	nlslayerRepo  repo.NLSLayer
-	sceneLockRepo repo.SceneLock
-	projectRepo   repo.Project
-	sceneRepo     repo.Scene
-	propertyRepo  repo.Property
-	pluginRepo    repo.Plugin
-	policyRepo    repo.Policy
-	file          gateway.File
-	workspaceRepo accountrepo.Workspace
-	transaction   usecasex.Transaction
-
+	nlslayerRepo       repo.NLSLayer
+	sceneLockRepo      repo.SceneLock
+	projectRepo        repo.Project
+	sceneRepo          repo.Scene
+	propertyRepo       repo.Property
+	pluginRepo         repo.Plugin
+	file               gateway.File
+	transaction        usecasex.Transaction
 	propertySchemaRepo repo.PropertySchema
+
+	// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
+	workspaceRepo accountrepo.Workspace
+
+	accountWorkspaceRepo accountsRepo.Workspace
 }
 
-func NewNLSLayer(r *repo.Container, gr *gateway.Container) interfaces.NLSLayer {
-	return &NLSLayer{
-		commonSceneLock: commonSceneLock{sceneLockRepo: r.SceneLock},
-		nlslayerRepo:    r.NLSLayer,
-		sceneLockRepo:   r.SceneLock,
-		projectRepo:     r.Project,
-		sceneRepo:       r.Scene,
-		propertyRepo:    r.Property,
-		pluginRepo:      r.Plugin,
-		policyRepo:      r.Policy,
-		file:            gr.File,
-		workspaceRepo:   r.Workspace,
-		transaction:     r.Transaction,
+func NewNLSLayer(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Container) interfaces.NLSLayer {
+	var accountWsRepo accountsRepo.Workspace
+	if auc != nil {
+		accountWsRepo = auc.Workspace
+	}
 
+	return &NLSLayer{
+		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
+		nlslayerRepo:       r.NLSLayer,
+		sceneLockRepo:      r.SceneLock,
+		projectRepo:        r.Project,
+		sceneRepo:          r.Scene,
+		propertyRepo:       r.Property,
+		pluginRepo:         r.Plugin,
+		file:               gr.File,
+		transaction:        r.Transaction,
 		propertySchemaRepo: r.PropertySchema,
+
+		accountWorkspaceRepo: accountWsRepo,
 	}
 }
 
@@ -147,30 +155,6 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 
 	if err != nil {
 		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
-	if err != nil {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-	}
-
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-		}
-		s, err := i.nlslayerRepo.CountByScene(ctx, s.ID())
-		if err != nil {
-			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-		}
-		if err := p.EnforceNLSLayersCount(s + 1); err != nil {
-			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
-		}
 	}
 
 	// geojson validate

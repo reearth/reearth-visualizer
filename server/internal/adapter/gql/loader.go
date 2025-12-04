@@ -5,6 +5,8 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
 const (
@@ -16,7 +18,6 @@ type Loaders struct {
 	usecases  interfaces.Container
 	Asset     *AssetLoader
 	Plugin    *PluginLoader
-	Policy    *PolicyLoader
 	Project   *ProjectLoader
 	Property  *PropertyLoader
 	Scene     *SceneLoader
@@ -28,7 +29,6 @@ type Loaders struct {
 type DataLoaders struct {
 	Asset           AssetDataLoader
 	Plugin          PluginDataLoader
-	Policy          PolicyDataLoader
 	Project         ProjectDataLoader
 	ProjectMetadata ProjectMetadataLoader
 	Property        PropertyDataLoader
@@ -43,17 +43,26 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 	if usecases == nil {
 		return nil
 	}
+
+	// Build accountsUsecases container if available
+	var accountsUsecases *accountsInterfaces.Container
+	if usecases.AccountsWorkspace != nil || usecases.AccountsUser != nil {
+		accountsUsecases = &accountsInterfaces.Container{
+			Workspace: usecases.AccountsWorkspace,
+			User:      usecases.AccountsUser,
+		}
+	}
+
 	return &Loaders{
 		usecases:  *usecases,
 		Asset:     NewAssetLoader(usecases.Asset),
 		Plugin:    NewPluginLoader(usecases.Plugin),
-		Policy:    NewPolicyLoader(usecases.Policy),
 		Project:   NewProjectLoader(usecases.Project),
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
 		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: NewWorkspaceLoader(usecases.Workspace),
-		User:      NewUserLoader(usecases.User),
+		Workspace: NewWorkspaceLoader(accountsUsecases), //nolint:staticcheck // TODO: migrate to AccountsWorkspace
+		User:      NewUserLoader(accountsUsecases),
 	}
 }
 

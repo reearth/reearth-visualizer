@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/blang/semver"
+	"github.com/reearth/reearthx/idx"
 )
 
 type PluginID struct {
@@ -39,11 +40,11 @@ func NewPluginID(name string, version string, scene *SceneID) (PluginID, error) 
 	}
 
 	if !validatePluginName(name) {
-		return PluginID{}, ErrInvalidID
+		return PluginID{}, idx.ErrInvalidID
 	}
 
 	if _, err := semver.Parse(version); err != nil {
-		return PluginID{}, ErrInvalidID
+		return PluginID{}, idx.ErrInvalidID
 	}
 
 	return PluginID{
@@ -71,13 +72,13 @@ func PluginIDFrom(id string) (PluginID, error) {
 	case 3:
 		sceneID2, err := SceneIDFrom(ids[0])
 		if err != nil {
-			return PluginID{}, ErrInvalidID
+			return PluginID{}, idx.ErrInvalidID
 		}
 		sceneID = &sceneID2
 		name = ids[1]
 		version = ids[2]
 	default:
-		return PluginID{}, ErrInvalidID
+		return PluginID{}, idx.ErrInvalidID
 	}
 
 	return NewPluginID(name, version, sceneID)

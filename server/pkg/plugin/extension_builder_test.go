@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -126,18 +127,18 @@ func TestExtensionBuilder_Build(t *testing.T) {
 			args: args{
 				extensionType: ExtensionTypeVisualizer,
 			},
-			err: id.ErrInvalidID,
+			err: idx.ErrInvalidID,
 		},
 		{
 			name: "fail not system type infobox",
 			args: args{
 				extensionType: ExtensionTypeInfobox,
 			},
-			err: id.ErrInvalidID,
+			err: idx.ErrInvalidID,
 		},
 		{
 			name: "fail nil id",
-			err:  id.ErrInvalidID,
+			err:  idx.ErrInvalidID,
 		},
 	}
 
@@ -226,18 +227,18 @@ func TestExtensionBuilder_MustBuild(t *testing.T) {
 			args: args{
 				extensionType: ExtensionTypeVisualizer,
 			},
-			err: id.ErrInvalidID,
+			err: idx.ErrInvalidID,
 		},
 		{
 			name: "fail not system type infobox",
 			args: args{
 				extensionType: ExtensionTypeInfobox,
 			},
-			err: id.ErrInvalidID,
+			err: idx.ErrInvalidID,
 		},
 		{
 			name: "fail nil id",
-			err:  id.ErrInvalidID,
+			err:  idx.ErrInvalidID,
 		},
 	}
 

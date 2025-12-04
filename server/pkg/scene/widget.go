@@ -1,6 +1,9 @@
 package scene
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
+)
 
 type Widget struct {
 	id        id.WidgetID
@@ -13,7 +16,7 @@ type Widget struct {
 
 func NewWidget(wid id.WidgetID, plugin id.PluginID, extension id.PluginExtensionID, property id.PropertyID, enabled bool, extended bool) (*Widget, error) {
 	if !plugin.Validate() || string(extension) == "" || property.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 
 	return &Widget{

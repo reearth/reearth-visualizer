@@ -1,6 +1,9 @@
 package nlslayer
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
+)
 
 func NLSLayerGroupFromLayer(l NLSLayer) *NLSLayerGroup {
 	li, ok := l.(*NLSLayerGroup)
@@ -31,7 +34,7 @@ func NewNLSLayerGroup() *NLSLayerGroupBuilder {
 
 func (b *NLSLayerGroupBuilder) Build() (*NLSLayerGroup, error) {
 	if b.l.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	return b.l, nil
 }

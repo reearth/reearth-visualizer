@@ -4,22 +4,8 @@ type Workspace implements Node {
   members: [WorkspaceMember!]!
   personal: Boolean!
   photoURL: String
-  policyId: ID
-  policy: Policy
-  assets(
-    projectId: ID
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): AssetConnection!
-  projects(
-    includeArchived: Boolean
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): ProjectConnection!
+  assets(projectId: ID, first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
+  projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
   enableToCreatePrivateProject: Boolean!
   alias: String!
 }
@@ -28,19 +14,6 @@ type WorkspaceMember {
   userId: ID!
   role: Role!
   user: User
-}
-
-type Policy {
-  id: ID!
-  name: String!
-  projectCount: Int
-  memberCount: Int
-  publishedProjectCount: Int
-  layerCount: Int
-  assetStorageSize: FileSize
-  nlsLayersCount: Int
-  pageCount: Int
-  blocksCount: Int
 }
 
 enum Role {
@@ -132,13 +105,7 @@ extend type Mutation {
   createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
   deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
   updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
-  addMemberToWorkspace(
-    input: AddMemberToWorkspaceInput!
-  ): AddMemberToWorkspacePayload
-  removeMemberFromWorkspace(
-    input: RemoveMemberFromWorkspaceInput!
-  ): RemoveMemberFromWorkspacePayload
-  updateMemberOfWorkspace(
-    input: UpdateMemberOfWorkspaceInput!
-  ): UpdateMemberOfWorkspacePayload
+  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
+  removeMemberFromWorkspace(input: RemoveMemberFromWorkspaceInput!): RemoveMemberFromWorkspacePayload
+  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
 }

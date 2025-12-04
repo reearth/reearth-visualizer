@@ -1,6 +1,9 @@
 package nlslayer
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
+)
 
 func NLSLayerSimpleFromLayer(l NLSLayer) *NLSLayerSimple {
 	li, ok := l.(*NLSLayerSimple)
@@ -31,7 +34,7 @@ func NewNLSLayerSimple() *NLSLayerSimpleBuilder {
 
 func (b *NLSLayerSimpleBuilder) Build() (*NLSLayerSimple, error) {
 	if b.l.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	return b.l, nil
 }

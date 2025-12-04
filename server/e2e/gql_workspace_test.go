@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 const workspaceNode = `
@@ -80,7 +81,7 @@ func TestDeleteWorkspace(t *testing.T) {
 	res = Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			deleteWorkspace(input: {workspaceId: "%s"}){ workspaceId }}`,
-			accountdomain.NewWorkspaceID()),
+			accountsID.NewWorkspaceID()),
 	})
 	res.Path("$.errors[0].message").IsEqual("operation denied")
 }
@@ -109,7 +110,7 @@ func TestUpdateWorkspace(t *testing.T) {
 	res = Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateWorkspace(input: { workspaceId: "%s", name: "%s" }) { %s } }`,
-			accountdomain.NewWorkspaceID(), "updated", workspaceNode),
+			accountsID.NewWorkspaceID(), "updated", workspaceNode),
 	})
 
 	res.Path("$.errors[0].message").IsEqual("not found")
@@ -147,7 +148,7 @@ func TestAddMemberToWorkspace(t *testing.T) {
 	w, err = r.Workspace.FindByID(context.Background(), wId1)
 	assert.Nil(t, err)
 	assert.True(t, w.Members().HasUser(uId2))
-	assert.Equal(t, w.Members().User(uId2).Role, workspace.RoleReader)
+	assert.Equal(t, w.Members().User(uId2).Role, accountsWorkspace.RoleReader)
 
 	res := Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
@@ -187,7 +188,7 @@ func TestUpdateMemberOfWorkspace(t *testing.T) {
 
 	w, err := r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
-	assert.Equal(t, w.Members().User(uId3).Role, workspace.RoleReader)
+	assert.Equal(t, w.Members().User(uId3).Role, accountsWorkspace.RoleReader)
 
 	Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
@@ -197,12 +198,12 @@ func TestUpdateMemberOfWorkspace(t *testing.T) {
 
 	w, err = r.Workspace.FindByID(context.Background(), wId2)
 	assert.Nil(t, err)
-	assert.Equal(t, w.Members().User(uId3).Role, workspace.RoleWriter)
+	assert.Equal(t, w.Members().User(uId3).Role, accountsWorkspace.RoleWriter)
 
 	res := Request(e, uId1.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: WRITER } ) { %s } }`,
-			accountdomain.NewWorkspaceID(), uId3, workspaceNode),
+			accountsID.NewWorkspaceID(), uId3, workspaceNode),
 	})
 	res.Path("$.errors[0].message").IsEqual("operation denied")
 }

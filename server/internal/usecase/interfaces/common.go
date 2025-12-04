@@ -4,6 +4,8 @@ import (
 	"errors"
 
 	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
 type ListOperation string
@@ -33,6 +35,11 @@ type Container struct {
 	Scene           Scene
 	StoryTelling    Storytelling
 	Style           Style
-	User            accountinterfaces.User
-	Workspace       accountinterfaces.Workspace
+	// Deprecated: This function is deprecated and will be replaced by AccountsWorkspace in the future.
+	User accountinterfaces.User
+	// Deprecated: This function is deprecated and will be replaced by AccountsUser in the future.
+	Workspace accountinterfaces.Workspace
+
+	AccountsWorkspace accountsInterfaces.Workspace
+	AccountsUser      accountsInterfaces.User
 }

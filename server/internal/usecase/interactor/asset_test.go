@@ -15,18 +15,18 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func TestAsset_Create(t *testing.T) {
 	ctx := context.Background()
 
-	ws := workspace.New().NewID().MustBuild()
+	ws := accountsWorkspace.New().NewID().MustBuild()
 	pid := id.NewProjectID()
 
 	gFile, err := fs.NewFile(afero.NewMemMapFs(), "")
@@ -34,8 +34,7 @@ func TestAsset_Create(t *testing.T) {
 
 	uContainer := &Asset{
 		repos: &repo.Container{
-			Asset:     memory.NewAsset(),
-			Workspace: accountmemory.NewWorkspaceWith(ws),
+			Asset: memory.NewAsset(),
 		},
 		gateways: &gateway.Container{
 			File: gFile,
@@ -56,8 +55,8 @@ func TestAsset_Create(t *testing.T) {
 			Size:        buflen,
 		},
 	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: accountdomain.WorkspaceIDList{ws.ID()},
+		AccountsOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	})
 	assert.NoError(t, err)

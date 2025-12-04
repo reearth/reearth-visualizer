@@ -2,72 +2,70 @@ package usecase
 
 import (
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/policy"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
-	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 type Operator struct {
-	AcOperator        *accountusecase.Operator
+	AccountsOperator  *accountsUsecase.Operator
 	ReadableScenes    id.SceneIDList
 	WritableScenes    id.SceneIDList
 	MaintainingScenes id.SceneIDList
 	OwningScenes      id.SceneIDList
-	DefaultPolicy     *policy.ID
 }
 
-func (o *Operator) Workspaces(r workspace.Role) accountdomain.WorkspaceIDList {
+func (o *Operator) Workspaces(r accountsWorkspace.Role) accountsID.WorkspaceIDList {
 	if o == nil {
 		return nil
 	}
-	if r == workspace.RoleReader {
-		return o.AcOperator.ReadableWorkspaces
+	if r == accountsWorkspace.RoleReader {
+		return o.AccountsOperator.ReadableWorkspaces
 	}
-	if r == workspace.RoleWriter {
-		return o.AcOperator.WritableWorkspaces
+	if r == accountsWorkspace.RoleWriter {
+		return o.AccountsOperator.WritableWorkspaces
 	}
-	if r == workspace.RoleMaintainer {
-		return o.AcOperator.MaintainableWorkspaces
+	if r == accountsWorkspace.RoleMaintainer {
+		return o.AccountsOperator.MaintainableWorkspaces
 	}
-	if r == workspace.RoleOwner {
-		return o.AcOperator.OwningWorkspaces
+	if r == accountsWorkspace.RoleOwner {
+		return o.AccountsOperator.OwningWorkspaces
 	}
 	return nil
 }
 
-func (o *Operator) AllReadableWorkspaces() user.WorkspaceIDList {
-	return o.AcOperator.AllReadableWorkspaces()
+func (o *Operator) AllReadableWorkspaces() accountsUser.WorkspaceIDList {
+	return o.AccountsOperator.AllReadableWorkspaces()
 }
 
-func (o *Operator) AllWritableWorkspaces() user.WorkspaceIDList {
-	return o.AcOperator.AllWritableWorkspaces()
+func (o *Operator) AllWritableWorkspaces() accountsUser.WorkspaceIDList {
+	return o.AccountsOperator.AllWritableWorkspaces()
 }
 
-func (o *Operator) AllMaintainingWorkspace() user.WorkspaceIDList {
-	return o.AcOperator.AllMaintainingWorkspaces()
+func (o *Operator) AllMaintainingWorkspace() accountsUser.WorkspaceIDList {
+	return o.AccountsOperator.AllMaintainingWorkspaces()
 }
 
-func (o *Operator) AllOwningWorkspaces() user.WorkspaceIDList {
-	return o.AcOperator.AllOwningWorkspaces()
+func (o *Operator) AllOwningWorkspaces() accountsUser.WorkspaceIDList {
+	return o.AccountsOperator.AllOwningWorkspaces()
 }
 
-func (o *Operator) IsReadableWorkspace(ws ...accountdomain.WorkspaceID) bool {
-	return o.AcOperator.IsReadableWorkspace(ws...)
+func (o *Operator) IsReadableWorkspace(ws ...accountsID.WorkspaceID) bool {
+	return o.AccountsOperator.IsReadableWorkspace(ws...)
 }
 
-func (o *Operator) IsWritableWorkspace(ws ...accountdomain.WorkspaceID) bool {
-	return o.AcOperator.IsWritableWorkspace(ws...)
+func (o *Operator) IsWritableWorkspace(ws ...accountsID.WorkspaceID) bool {
+	return o.AccountsOperator.IsWritableWorkspace(ws...)
 }
 
-func (o *Operator) IsMaintainingWorkspace(ws ...accountdomain.WorkspaceID) bool {
-	return o.AcOperator.IsMaintainingWorkspace(ws...)
+func (o *Operator) IsMaintainingWorkspace(ws ...accountsID.WorkspaceID) bool {
+	return o.AccountsOperator.IsMaintainingWorkspace(ws...)
 }
 
-func (o *Operator) IsOwningWorkspace(ws ...accountdomain.WorkspaceID) bool {
-	return o.AcOperator.IsOwningWorkspace(ws...)
+func (o *Operator) IsOwningWorkspace(ws ...accountsID.WorkspaceID) bool {
+	return o.AccountsOperator.IsOwningWorkspace(ws...)
 }
 
 func (o *Operator) AllReadableScenes() id.SceneIDList {
@@ -102,24 +100,14 @@ func (o *Operator) IsOwningScene(scene ...id.SceneID) bool {
 	return o.AllOwningScenes().Has(scene...)
 }
 
-func (o *Operator) AddNewWorkspace(ws accountdomain.WorkspaceID) {
-	o.AcOperator.OwningWorkspaces = append(o.AcOperator.OwningWorkspaces, ws)
+func (o *Operator) AddNewWorkspace(ws accountsID.WorkspaceID) {
+	o.AccountsOperator.OwningWorkspaces = append(o.AccountsOperator.OwningWorkspaces, ws)
 }
 
-func (o *Operator) AddNewScene(ws accountdomain.WorkspaceID, scene id.SceneID) {
+func (o *Operator) AddNewScene(ws accountsID.WorkspaceID, scene id.SceneID) {
 	if o.IsOwningWorkspace(ws) {
 		o.OwningScenes = append(o.OwningScenes, scene)
 	} else if o.IsWritableWorkspace(ws) {
 		o.WritableScenes = append(o.WritableScenes, scene)
 	}
-}
-
-func (o *Operator) Policy(p *policy.ID) *policy.ID {
-	if p == nil && o.DefaultPolicy != nil && *o.DefaultPolicy != "" {
-		return util.CloneRef(o.DefaultPolicy)
-	}
-	if p != nil && *p == "" {
-		return nil
-	}
-	return p
 }

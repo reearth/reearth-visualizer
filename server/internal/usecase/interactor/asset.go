@@ -20,11 +20,12 @@ import (
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/i18n"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 type Asset struct {
@@ -43,7 +44,7 @@ func (i *Asset) Fetch(ctx context.Context, assets []id.AssetID, operator *usecas
 	return i.repos.Asset.FindByIDs(ctx, assets)
 }
 
-func (i *Asset) FindByWorkspaceProject(ctx context.Context, tid accountdomain.WorkspaceID, pid *id.ProjectID, keyword *string, sort *asset.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error) {
+func (i *Asset) FindByWorkspaceProject(ctx context.Context, tid accountsID.WorkspaceID, pid *id.ProjectID, keyword *string, sort *asset.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error) {
 	return Run2(
 		ctx, operator, i.repos,
 		Usecase().WithReadableWorkspaces(tid),
@@ -62,7 +63,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		return nil, interfaces.ErrFileNotIncluded
 	}
 
-	ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
+	ws, err := i.repos.AccountsWorkspace.FindByID(ctx, inp.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		}
 	}
 
-	ws, err := i.repos.Workspace.FindByID(ctx, newProject.Workspace())
+	ws, err := i.repos.AccountsWorkspace.FindByID(ctx, newProject.Workspace())
 	if err != nil {
 		return nil, nil, err
 	}
@@ -207,7 +208,7 @@ var (
 	ErrAssetUploadSizeLimitExceeded error = rerror.NewE(i18n.T("asset upload size limit exceeded"))
 )
 
-func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
+func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *accountsWorkspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
 
 	// upload
 	u, size, err := i.gateways.File.UploadAsset(ctx, f)

@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 )
 
 var (
@@ -24,7 +25,7 @@ func NewSchema() *SchemaBuilder {
 
 func (b *SchemaBuilder) Build() (*Schema, error) {
 	if b.p.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if !b.p.linkable.Validate(b.p) {
 		return nil, ErrInvalidPropertyLinkableField

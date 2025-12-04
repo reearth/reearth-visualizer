@@ -8,10 +8,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type AssetLoader struct {
@@ -36,7 +38,7 @@ func (c *AssetLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel
 }
 
 func (c *AssetLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, proId *gqlmodel.ID, keyword *string, sort *asset.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.AssetConnection, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}

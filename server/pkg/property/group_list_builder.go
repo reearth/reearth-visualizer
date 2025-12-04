@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 )
 
 var ErrInvalidGroupInGroupList = errors.New("cannot contain an invalid property group in the property group list")
@@ -28,10 +29,10 @@ func InitGroupListFrom(g *SchemaGroup) *GroupList {
 
 func (b *GroupListBuilder) Build() (*GroupList, error) {
 	if b.p.itemBase.ID.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.p.itemBase.SchemaGroup == "" {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	for _, g := range b.p.groups {
 		if g.SchemaGroup() != b.p.SchemaGroup() {

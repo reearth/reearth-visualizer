@@ -124,7 +124,7 @@ func initEcho(
 		UsecaseMiddleware(
 			cfg.Repos,
 			cfg.Gateways,
-			cfg.AccountRepos,
+			cfg.ReearthAccountsRepos,
 			cfg.AccountGateways,
 			interactor.ContainerConfig{
 				SignupSecret:       cfg.Config.SignupSecret,
@@ -153,7 +153,8 @@ func initEcho(
 	apiPrivateRoute := apiRoot.Group("", privateCache)
 
 	if cfg.Config.UseMockAuth() {
-		apiPrivateRoute.Use(attachOpMiddlewareMockUser(cfg))
+		apiPrivateRoute.Use(attachOpMiddlewareMockUser(cfg))             // Current Implementation => remove!
+		apiPrivateRoute.Use(attachAccountLibraryMiddlewareMockUser(cfg)) // Future Implementation
 	} else if cfg.Config.UseReearthAccountAuth() {
 		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 	}

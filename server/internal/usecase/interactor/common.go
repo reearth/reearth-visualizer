@@ -14,11 +14,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountinteractor"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/rerror"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsInteractor "github.com/reearth/reearth-accounts/server/pkg/interactor"
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type ContainerConfig struct {
@@ -31,8 +33,8 @@ type ContainerConfig struct {
 func NewContainer(
 	r *repo.Container,
 	g *gateway.Container,
-	ar *accountrepo.Container,
 	ag *accountgateway.Container,
+	auc *accountsRepo.Container,
 	config ContainerConfig,
 ) interfaces.Container {
 
@@ -43,20 +45,28 @@ func NewContainer(
 		published = NewPublished(r.Project, r.Storytelling, g.File, config.PublishedIndexHTML)
 	}
 
+	var accountsWorkspace accountsInterfaces.Workspace
+	var accountsUser accountsInterfaces.User
+	if auc != nil {
+		accountsWorkspace = accountsInteractor.NewWorkspace(auc, nil)
+		accountsUser = accountsInteractor.NewUser(auc, nil, config.SignupSecret, config.AuthSrvUIDomain)
+	}
+
 	return interfaces.Container{
 		Asset:           NewAsset(r, g),
-		NLSLayer:        NewNLSLayer(r, g),
+		NLSLayer:        NewNLSLayer(r, g, auc),
 		Style:           NewStyle(r),
 		Plugin:          NewPlugin(r, g),
 		Policy:          NewPolicy(r, g.PolicyChecker),
-		Project:         NewProject(r, g),
+		Project:         NewProject(r, g, auc),
 		ProjectMetadata: NewProjectMetadata(r, g),
 		Property:        NewProperty(r, g),
 		Published:       published,
 		Scene:           NewScene(r, g),
-		StoryTelling:    NewStorytelling(r, g),
-		Workspace:       accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
-		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
+		StoryTelling:    NewStorytelling(r, g, auc),
+
+		AccountsWorkspace: accountsWorkspace,
+		AccountsUser:      accountsUser,
 	}
 }
 
@@ -70,7 +80,7 @@ func (common) OnlyOperator(op *usecase.Operator) error {
 	return nil
 }
 
-func (i common) CanReadWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanReadWorkspace(t accountsID.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}
@@ -80,7 +90,7 @@ func (i common) CanReadWorkspace(t accountdomain.WorkspaceID, op *usecase.Operat
 	return nil
 }
 
-func (i common) CanWriteWorkspace(t accountdomain.WorkspaceID, op *usecase.Operator) error {
+func (i common) CanWriteWorkspace(t accountsID.WorkspaceID, op *usecase.Operator) error {
 	if err := i.OnlyOperator(op); err != nil {
 		return err
 	}

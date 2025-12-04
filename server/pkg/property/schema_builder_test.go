@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -26,7 +27,7 @@ func TestSchemaBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "fail: invalid id",
-			Err:  id.ErrInvalidID,
+			Err:  idx.ErrInvalidID,
 		},
 		{
 			Name: "fail: invalid linkable field",
@@ -90,7 +91,7 @@ func TestSchemaBuilder_MustBuild(t *testing.T) {
 	}{
 		{
 			Name: "fail: invalid id",
-			Err:  id.ErrInvalidID.Error(),
+			Err:  idx.ErrInvalidID.Error(),
 		},
 		{
 			Name: "fail: invalid linkable field",

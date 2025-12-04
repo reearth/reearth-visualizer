@@ -9,14 +9,16 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
-func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
+func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountsRepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		repos := r
 
-		if op := adapter.Operator(ctx); op != nil {
+		if op := adapter.AccountsOperator(ctx); op != nil {
 
 			ws := repo.WorkspaceFilterFromOperator(op)
 			sc := repo.SceneFilterFromOperator(op)
@@ -28,16 +30,27 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 			)
 		}
 
-		var ar2 *accountrepo.Container
-		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
-			// apply filters to repos
-			ar2 = ar.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
+		// Prepare reearth-accounts repos
+		var aur2 *accountsRepo.Container
+		if op := adapter.AccountsOperator(ctx); op != nil && ar != nil {
+			aur2 = ar.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
 		} else {
-			ar2 = ar
+			aur2 = ar
 		}
 
-		uc := interactor.NewContainer(repos, g, ar2, ag, config)
+		uc := interactor.NewContainer(repos, g, ag, aur2, config)
 		ctx = adapter.AttachUsecases(ctx, &uc)
+
+		// Build accountsInterfaces.Container for AttachAccountsUsecases
+		var accountsUC *accountsInterfaces.Container
+		if aur2 != nil {
+			accountsUC = &accountsInterfaces.Container{
+				Workspace: uc.AccountsWorkspace,
+				User:      uc.AccountsUser,
+			}
+		}
+		ctx = adapter.AttachAccountsUsecases(ctx, accountsUC)
+
 		return ctx
 	})
 }

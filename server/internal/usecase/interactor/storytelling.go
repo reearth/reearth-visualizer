@@ -26,35 +26,42 @@ import (
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type Storytelling struct {
 	common
 	commonSceneLock
-	storytellingRepo repo.Storytelling
-	pluginRepo       repo.Plugin
-	propertyRepo     repo.Property
-	workspaceRepo    accountrepo.Workspace
-	policyRepo       repo.Policy
-	projectRepo      repo.Project
-	sceneRepo        repo.Scene
-	file             gateway.File
-	transaction      usecasex.Transaction
-	nlsLayerRepo     repo.NLSLayer
-	layerStyles      repo.Style
-	policyChecker    gateway.PolicyChecker
-
+	storytellingRepo   repo.Storytelling
+	pluginRepo         repo.Plugin
+	propertyRepo       repo.Property
+	projectRepo        repo.Project
+	sceneRepo          repo.Scene
+	file               gateway.File
+	transaction        usecasex.Transaction
+	nlsLayerRepo       repo.NLSLayer
+	layerStyles        repo.Style
+	policyChecker      gateway.PolicyChecker
 	propertySchemaRepo repo.PropertySchema
+
+	// Deprecated: This function is deprecated and will be replaced by accountWorkspaceRepo in the future.
+	workspaceRepo accountrepo.Workspace
+
+	accountWorkspaceRepo accountsRepo.Workspace
 }
 
-func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
+func NewStorytelling(r *repo.Container, gr *gateway.Container, auc *accountsRepo.Container) interfaces.Storytelling {
+	var accountWsRepo accountsRepo.Workspace
+	if auc != nil {
+		accountWsRepo = auc.Workspace
+	}
+
 	return &Storytelling{
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		storytellingRepo:   r.Storytelling,
 		pluginRepo:         r.Plugin,
 		propertyRepo:       r.Property,
-		workspaceRepo:      r.Workspace,
-		policyRepo:         r.Policy,
 		projectRepo:        r.Project,
 		sceneRepo:          r.Scene,
 		file:               gr.File,
@@ -63,6 +70,8 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		layerStyles:        r.Style,
 		policyChecker:      gr.PolicyChecker,
 		propertySchemaRepo: r.PropertySchema,
+
+		accountWorkspaceRepo: accountWsRepo,
 	}
 }
 
@@ -441,36 +450,9 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	return story, nil
 }
 
-func (i *Storytelling) checkPublishPolicy(ctx context.Context, story *storytelling.Story, op *usecase.Operator) (*scene.Scene, error) {
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
-	if err != nil {
-		return nil, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, err
-	}
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-		if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
-			return nil, err
-		}
-	}
-	return s, nil
-}
-
 func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelling.Story, op *usecase.Operator) error {
 
-	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, story, op)
+	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
 	if err != nil {
 		return err
 	}
@@ -594,28 +576,6 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	page, err := builder.Build()
 	if err != nil {
 		return nil, nil, err
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		var pageCount = len(story.Pages().Pages())
-		if err := p.EnforcePageCount(pageCount + 1); err != nil {
-			return nil, nil, err
-		}
 	}
 
 	story.Pages().AddAt(page, inp.Index)
@@ -1021,38 +981,6 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 	}
 	if !operationAllowed.Allowed {
 		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
-	if err != nil {
-		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find scene", err)
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find workspace", err)
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find policy", err)
-		}
-
-		story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
-		if err != nil {
-			return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find story", err)
-		}
-
-		page := story.Pages().Page(inp.PageID)
-		if page == nil {
-			return nil, nil, nil, -1, interfaces.ErrPageNotFound
-		}
-
-		var s = page.Count()
-		if err := p.EnforceBlocksCount(s + 1); err != nil {
-			return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to enforce blocks count", err)
-		}
 	}
 
 	_, extension, err := i.getStoryBlockPlugin(ctx, story.Scene(), inp.PluginID.String(), inp.ExtensionID.String())

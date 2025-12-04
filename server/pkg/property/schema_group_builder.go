@@ -3,6 +3,7 @@ package property
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 )
 
 type SchemaGroupBuilder struct {
@@ -17,7 +18,7 @@ func NewSchemaGroup() *SchemaGroupBuilder {
 
 func (b *SchemaGroupBuilder) Build() (*SchemaGroup, error) {
 	if b.p.id == "" {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	return b.p, nil
 }

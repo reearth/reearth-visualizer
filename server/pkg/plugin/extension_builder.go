@@ -6,6 +6,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
+	"github.com/reearth/reearthx/idx"
 )
 
 type ExtensionBuilder struct {
@@ -19,7 +20,7 @@ func NewExtension() *ExtensionBuilder {
 
 func (b *ExtensionBuilder) Build() (*Extension, error) {
 	if string(b.p.id) == "" {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if !b.s {
 		if b.p.extensionType == ExtensionTypeVisualizer || b.p.extensionType == ExtensionTypeInfobox {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,7 +41,7 @@ func TestNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       id.ErrInvalidID,
+			Err:       idx.ErrInvalidID,
 		},
 	}
 
@@ -96,7 +97,7 @@ func TestMustNewWidget(t *testing.T) {
 			Property:  pr,
 			Enabled:   true,
 			Extended:  false,
-			Err:       id.ErrInvalidID,
+			Err:       idx.ErrInvalidID,
 		},
 	}
 

@@ -6,12 +6,13 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type CreateProjectMetadataParam struct {
 	ProjectID   id.ProjectID
-	WorkspaceID accountdomain.WorkspaceID
+	WorkspaceID accountsID.WorkspaceID
 	Readme      *string
 	License     *string
 	Topics      *[]string

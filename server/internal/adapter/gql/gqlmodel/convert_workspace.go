@@ -2,12 +2,12 @@ package gqlmodel
 
 import (
 	workspacepkg "github.com/reearth/reearth-accounts/server/pkg/workspace"
-	"github.com/reearth/reearth/server/pkg/policy"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
+
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
-func ToWorkspace(w *workspace.Workspace) *Workspace {
+func ToWorkspace(w *accountsWorkspace.Workspace) *Workspace {
 	if w == nil {
 		return nil
 	}
@@ -25,7 +25,6 @@ func ToWorkspace(w *workspace.Workspace) *Workspace {
 		ID:       IDFrom(w.ID()),
 		Name:     w.Name(),
 		Personal: w.IsPersonal(),
-		PolicyID: (*ID)(w.Policy()),
 		Members:  members,
 		Alias:    w.Alias(),
 	}
@@ -41,7 +40,7 @@ func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
 	for u, r := range memberMap {
 		members = append(members, &WorkspaceMember{
 			UserID: IDFrom(u),
-			Role:   ToRole(workspace.Role(r.Role)),
+			Role:   ToRole(accountsWorkspace.Role(r.Role)),
 		})
 	}
 
@@ -50,56 +49,35 @@ func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
 		Name:     w.Name(),
 		PhotoURL: lo.EmptyableToPtr(w.Metadata().PhotoURL()),
 		Personal: w.IsPersonal(),
-		PolicyID: (*ID)(w.Policy()),
 		Members:  members,
 		Alias:    w.Alias(),
 	}
 }
 
-func ToRole(r workspace.Role) Role {
+func ToRole(r accountsWorkspace.Role) Role {
 	switch r {
-	case workspace.RoleReader:
+	case accountsWorkspace.RoleReader:
 		return RoleReader
-	case workspace.RoleWriter:
+	case accountsWorkspace.RoleWriter:
 		return RoleWriter
-	case workspace.RoleMaintainer:
+	case accountsWorkspace.RoleMaintainer:
 		return RoleMaintainer
-	case workspace.RoleOwner:
+	case accountsWorkspace.RoleOwner:
 		return RoleOwner
 	}
 	return Role("")
 }
 
-func FromRole(r Role) workspace.Role {
+func FromRole(r Role) accountsWorkspace.Role {
 	switch r {
 	case RoleReader:
-		return workspace.RoleReader
+		return accountsWorkspace.RoleReader
 	case RoleWriter:
-		return workspace.RoleWriter
+		return accountsWorkspace.RoleWriter
 	case RoleMaintainer:
-		return workspace.RoleMaintainer
+		return accountsWorkspace.RoleMaintainer
 	case RoleOwner:
-		return workspace.RoleOwner
+		return accountsWorkspace.RoleOwner
 	}
-	return workspace.Role("")
-}
-
-func ToPolicy(p *policy.Policy) *Policy {
-	if p == nil {
-		return nil
-	}
-
-	o := p.Option()
-	return &Policy{
-		ID:                    ID(o.ID),
-		Name:                  o.Name,
-		ProjectCount:          o.ProjectCount,
-		MemberCount:           o.MemberCount,
-		PublishedProjectCount: o.PublishedProjectCount,
-		LayerCount:            o.LayerCount,
-		AssetStorageSize:      o.AssetStorageSize,
-		NlsLayersCount:        o.NLSLayersCount,
-		PageCount:             o.PageCount,
-		BlocksCount:           o.BlocksCount,
-	}
+	return accountsWorkspace.Role("")
 }

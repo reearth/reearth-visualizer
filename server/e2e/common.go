@@ -16,7 +16,6 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
@@ -24,15 +23,16 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
+
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 var (
@@ -74,7 +74,15 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 	if useMongo {
 		db := mongotest.Connect(t)(t)
 		fmt.Println("db.Name():", db.Name())
-		accountRepos := lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, false, nil))
+
+		// Create account container for mongo
+		accountRepos := &accountsRepo.Container{
+			User:        accountsInfra.NewMemoryUser(),
+			Workspace:   accountsInfra.NewMemoryWorkspace(),
+			Role:        accountsInfra.NewMemoryRole(),
+			Permittable: accountsInfra.NewMemoryPermittable(),
+		}
+
 		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
 	} else {
 		repos = memory.New()
@@ -119,13 +127,12 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 	gateways := initGateway()
 	accountGateway := initAccountGateway(ctx)
 	return app.NewServer(ctx, &app.ServerConfig{
-		Config:          cfg,
-		Repos:           repos,
-		AccountRepos:    repos.AccountRepos(),
-		Gateways:        gateways,
-		AccountGateways: accountGateway,
-		Debug:           true,
-		ServiceName:     otel.OtelVisualizerServiceName,
+		Config:               cfg,
+		Repos:                repos,
+		ReearthAccountsRepos: repos.AccountRepos(),
+		Gateways:             gateways,
+		AccountGateways:      accountGateway,
+		Debug:                true,
 	}), gateways, accountGateway
 }
 
@@ -182,7 +189,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
 }
 
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountsRepo.Container) {
 	repos, _, _ := initRepos(t, true, seeder)
 	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos()
