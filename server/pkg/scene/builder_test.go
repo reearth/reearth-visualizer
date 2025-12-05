@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -92,7 +93,7 @@ func TestBuilder_Build(t *testing.T) {
 				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:  ppid,
 			},
-			Err: id.ErrInvalidID,
+			Err: idx.ErrInvalidID,
 		},
 		{
 			Name: "fail nil workspace id",
@@ -105,7 +106,7 @@ func TestBuilder_Build(t *testing.T) {
 				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:  ppid,
 			},
-			Err: id.ErrInvalidID,
+			Err: idx.ErrInvalidID,
 		},
 		{
 			Name: "success build new scene",
@@ -195,7 +196,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:          ppid,
 			},
-			Err: id.ErrInvalidID,
+			Err: idx.ErrInvalidID,
 		},
 		{
 			Name: "fail nil workspace id",
@@ -209,7 +210,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				UpdatedAt:         time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
 				Property:          ppid,
 			},
-			Err: id.ErrInvalidID,
+			Err: idx.ErrInvalidID,
 		},
 		{
 			Name: "success build new scene",
