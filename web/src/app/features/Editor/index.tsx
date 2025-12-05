@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import { useAtom } from "jotai";
 import { FC } from "react";
 
 import CursorStatus from "../CursorStatus";
@@ -9,7 +10,13 @@ import useHooks from "./hooks";
 import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
+import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
+import {
+  showDataSourceLayerCreatorAtom,
+  showPlateauAssetLayerCreatorAtom,
+  showSketchLayerCreatorAtom
+} from "./Map/state";
 import Publish from "./Publish";
 import { PublishPageProvider } from "./Publish/context";
 import Story from "./Story";
@@ -45,20 +52,36 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleCoreLayerSelectFromMap,
     selectStoryPage,
     selectWidgetArea,
+    handleLayerAdd,
     mapPageValue,
     storyPageValue,
     widgetsPageValue,
     publishPageValue,
-    dataSourceLayerCreatorShown,
-    closeDataSourceLayerCreator,
-    handleLayerAdd,
-    sketchLayerCreatorShown,
-    closeSketchLayerCreator,
     handleCoreAPIReady
   } = useHooks({ sceneId, tab, projectId });
 
   const [widgetsViewDevice] = useWidgetsViewDevice();
   const [publishViewDevice] = usePublishViewDevice();
+
+  const [showDataSourceLayerCreator, setShowDataSourceLayerCreator] = useAtom(
+    showDataSourceLayerCreatorAtom
+  );
+  const closeDataSourceLayerCreator = () => {
+    setShowDataSourceLayerCreator(false);
+  };
+
+  const [showSketchLayerCreator, setShowSketchLayerCreator] = useAtom(
+    showSketchLayerCreatorAtom
+  );
+  const closeSketchLayerCreator = () => {
+    setShowSketchLayerCreator(false);
+  };
+
+  const [showPlateauAssetLayerCreator, setShowPlateauAssetLayerCreator] =
+    useAtom(showPlateauAssetLayerCreatorAtom);
+  const closePlateauAssetLayerCreator = () => {
+    setShowPlateauAssetLayerCreator(false);
+  };
 
   return (
     <Wrapper data-testid="editor-wrapper">
@@ -128,7 +151,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           )}
         </Workbench>
       </Content>
-      {dataSourceLayerCreatorShown && (
+      {showDataSourceLayerCreator && (
         <DataSourceLayerCreator
           sceneId={sceneId}
           onClose={closeDataSourceLayerCreator}
@@ -136,12 +159,20 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           data-testid="editor-datasource-layer-creator"
         />
       )}
-      {sketchLayerCreatorShown && (
+      {showSketchLayerCreator && (
         <SketchLayerCreator
           onSubmit={handleLayerAdd}
           sceneId={sceneId}
           onClose={closeSketchLayerCreator}
           data-testid="editor-sketch-layer-creator"
+        />
+      )}
+      {showPlateauAssetLayerCreator && (
+        <PlateauAssetLayerCreator
+          sceneId={sceneId}
+          onClose={closePlateauAssetLayerCreator}
+          onLayerAdd={handleLayerAdd}
+          data-testid="editor-plateau-asset-layer-creator"
         />
       )}
       <CursorStatus data-testid="editor-cursor-status" />

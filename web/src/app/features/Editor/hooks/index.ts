@@ -9,6 +9,7 @@ import { WidgetsPageContextType } from "../Widgets/context";
 import useEditorVisualizer from "./useEditorVisualizer";
 import useLayers from "./useLayers";
 import useLayerStyles from "./useLayerStyles";
+import usePlateau from "./usePlateau";
 import useProperty from "./useProperty";
 import useScene from "./useScene";
 import useSketch from "./useSketch";
@@ -124,13 +125,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     handleActiveSubProjectChange,
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromMap,
-    handleSceneSettingSelectFromUI,
-    dataSourceLayerCreatorShown,
-    openDataSourceLayerCreator,
-    closeDataSourceLayerCreator,
-    sketchLayerCreatorShown,
-    openSketchLayerCreator,
-    closeSketchLayerCreator
+    handleSceneSettingSelectFromUI
   } = useUI({
     projectId,
     storyId: selectedStory?.id,
@@ -166,8 +161,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerNameUpdate,
       handleLayerMove,
       handleLayerSelect: handleLayerSelectFromUI,
-      openDataSourceLayerCreator,
-      openSketchLayerCreator,
       handleLayerVisibilityUpdate,
       handleFlyTo,
       sketchEnabled: !!selectedLayer?.layer?.isSketch,
@@ -210,8 +203,6 @@ export default ({ sceneId, projectId, tab }: Props) => {
       handleLayerNameUpdate,
       handleLayerMove,
       handleLayerSelectFromUI,
-      openDataSourceLayerCreator,
-      openSketchLayerCreator,
       handleLayerVisibilityUpdate,
       handleFlyTo,
       selectedSketchFeature,
@@ -321,6 +312,8 @@ export default ({ sceneId, projectId, tab }: Props) => {
     initSketch();
   }, [initSketch]);
 
+  usePlateau();
+
   return {
     visualizerSize,
     isVisualizerResizing,
@@ -345,11 +338,7 @@ export default ({ sceneId, projectId, tab }: Props) => {
     storyPageValue,
     widgetsPageValue,
     publishPageValue,
-    dataSourceLayerCreatorShown,
-    closeDataSourceLayerCreator,
     handleLayerAdd,
-    sketchLayerCreatorShown,
-    closeSketchLayerCreator,
     layerStyles,
     layers: nlsLayers,
     layerId,
