@@ -8,9 +8,9 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/rerror"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type Scene struct {
@@ -103,13 +103,13 @@ func (r *Scene) FindByProjects(ctx context.Context, ids []id.ProjectID) ([]*scen
 	return results, nil
 }
 
-func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountdomain.WorkspaceID) (scene.List, error) {
+func (r *Scene) FindByWorkspace(ctx context.Context, workspaces ...accountsID.WorkspaceID) (scene.List, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
 	result := scene.List{}
 	for _, d := range r.data {
-		if user.WorkspaceIDList(workspaces).Has(d.Workspace()) && r.f.CanRead(d.Workspace()) {
+		if accountsID.WorkspaceIDList(workspaces).Has(d.Workspace()) && r.f.CanRead(d.Workspace()) {
 			result = append(result, d)
 		}
 	}

@@ -8,9 +8,10 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestNew(t *testing.T) {
@@ -112,7 +113,7 @@ func TestBuilder_Visualizer(t *testing.T) {
 
 func TestBuilder_Workspace(t *testing.T) {
 	var tb = New().NewID()
-	res := tb.Workspace(accountdomain.NewWorkspaceID()).MustBuild()
+	res := tb.Workspace(accountsID.NewWorkspaceID()).MustBuild()
 	assert.NotNil(t, res.Workspace())
 }
 
@@ -165,7 +166,7 @@ func TestBuilder_Build(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := id.NewProjectID()
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 
 	type args struct {
 		name, description string
@@ -179,7 +180,7 @@ func TestBuilder_Build(t *testing.T) {
 		publishedAt       time.Time
 		imageURL          *url.URL
 		publicNoIndex     bool
-		workspace         accountdomain.WorkspaceID
+		workspace         accountsID.WorkspaceID
 		visualizer        visualizer.Visualizer
 		publishmentStatus PublishmentStatus
 	}
@@ -279,7 +280,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := id.NewProjectID()
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 
 	type args struct {
 		name, description string
@@ -293,7 +294,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		publishedAt       time.Time
 		imageURL          *url.URL
 		publicNoIndex     bool
-		workspace         accountdomain.WorkspaceID
+		workspace         accountsID.WorkspaceID
 		visualizer        visualizer.Visualizer
 		publishmentStatus PublishmentStatus
 		trackingId        string

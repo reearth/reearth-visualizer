@@ -4,8 +4,9 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestList_FilterByID(t *testing.T) {
@@ -22,15 +23,15 @@ func TestList_FilterByID(t *testing.T) {
 }
 
 func TestList_FilterByWorkspace(t *testing.T) {
-	tid1 := accountdomain.NewWorkspaceID()
-	tid2 := accountdomain.NewWorkspaceID()
+	tid1 := accountsID.NewWorkspaceID()
+	tid2 := accountsID.NewWorkspaceID()
 	t1 := &Scene{id: id.NewSceneID(), workspace: tid1}
 	t2 := &Scene{id: id.NewSceneID(), workspace: tid2}
 
 	assert.Equal(t, List{t1}, List{t1, t2}.FilterByWorkspace(tid1))
 	assert.Equal(t, List{t2}, List{t1, t2}.FilterByWorkspace(tid2))
 	assert.Equal(t, List{t1, t2}, List{t1, t2}.FilterByWorkspace(tid1, tid2))
-	assert.Equal(t, List{}, List{t1, t2}.FilterByWorkspace(accountdomain.NewWorkspaceID()))
+	assert.Equal(t, List{}, List{t1, t2}.FilterByWorkspace(accountsID.NewWorkspaceID()))
 	assert.Equal(t, List(nil), List(nil).FilterByWorkspace(tid1))
 }
 

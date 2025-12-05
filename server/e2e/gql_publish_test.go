@@ -7,8 +7,9 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/pkg/alias"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // go test -v -run TestDefaultAlias ./e2e/...
@@ -873,7 +874,7 @@ func createProjectSet(e *httpexpect.Expect) (string, string, string) {
 	return projectId, sceneId, storyId
 }
 
-func publishProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func publishProject(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishProject",
 		Query:         PublishProjectMutation,
@@ -883,7 +884,7 @@ func publishProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[
 	return res.Path("$.data.publishProject.project")
 }
 
-func publishProjectErrors(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func publishProjectErrors(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishProject",
 		Query:         PublishProjectMutation,
@@ -893,7 +894,7 @@ func publishProjectErrors(e *httpexpect.Expect, u accountdomain.UserID, variable
 	return res.Path("$.data.publishProject"), res.Path("$.errors")
 }
 
-func publishStory(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func publishStory(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishStory",
 		Query:         PublishStoryMutation,
@@ -903,7 +904,7 @@ func publishStory(e *httpexpect.Expect, u accountdomain.UserID, variables map[st
 	return res.Path("$.data.publishStory.story")
 }
 
-func publishStoryErrors(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func publishStoryErrors(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishStory",
 		Query:         PublishStoryMutation,
@@ -913,7 +914,7 @@ func publishStoryErrors(e *httpexpect.Expect, u accountdomain.UserID, variables 
 	return res.Path("$.data"), res.Path("$.errors")
 }
 
-func checkSceneAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func checkSceneAlias(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckSceneAlias",
 		Query:         CheckSceneAliasQuery,
@@ -923,7 +924,7 @@ func checkSceneAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map
 	return res.Path("$.data.checkSceneAlias")
 }
 
-func checkSceneAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func checkSceneAliasError(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckSceneAlias",
 		Query:         CheckSceneAliasQuery,
@@ -933,7 +934,7 @@ func checkSceneAliasError(e *httpexpect.Expect, u accountdomain.UserID, variable
 	return res.Path("$.data"), res.Path("$.errors")
 }
 
-func checkStoryAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func checkStoryAlias(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckStoryAlias",
 		Query:         CheckStoryAliasQuery,
@@ -943,7 +944,7 @@ func checkStoryAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map
 	return res.Path("$.data.checkStoryAlias")
 }
 
-func checkStoryAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func checkStoryAliasError(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckStoryAlias",
 		Query:         CheckStoryAliasQuery,
