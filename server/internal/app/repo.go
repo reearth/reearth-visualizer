@@ -65,13 +65,23 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountsRepo.Container, *accountsGateway.Container, *accountsGQLclient.Client) {
+func initReposAndGateways(
+	ctx context.Context,
+	conf *config.Config,
+	debug bool,
+) (
+	*repo.Container,
+	*gateway.Container,
+	*accountsRepo.Container, // reearth-accounts repos using MongoDB (library mode)
+	*accountsGateway.Container,
+	*accountsGQLclient.Client, // reearth-accounts client externals invoke (microservice mode)
+) {
 	gateways := &gateway.Container{}
 	acGateways := &accountsGateway.Container{}
 
-	// Initialize Accounts API client if enabled
+	// Initialize Accounts API client if enabled (microservice mode)
 	var accountsAPIClient *accountsGQLclient.Client
-	if conf.AccountsAPI.Enabled {
+	if !conf.UseMockAuth() && conf.UseReearthAccountAuth() { // cannot be used with mockuser
 		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
 		accountsAPIClient = accountsGQLclient.NewClient(
 			conf.AccountsAPI.Host,
@@ -97,15 +107,6 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
 	accountRepos := initAccountDatabase(client, txAvailable, ctx, conf)
 	visRepos := initVisDatabase(client, txAvailable, accountRepos, ctx, conf)
-
-	// // Initialize reearth-accounts repos using MongoDB (library mode)
-	// accountDatabase := conf.DB_Account
-	// accountsMongoClient := mongox.NewClient(accountDatabase, client)
-	// reearthAccountsRepos = &accountsRepo.Container{
-	// 	User:      accountsInfrastructure.NewMongoUser(accountsMongoClient),
-	// 	Workspace: accountsInfrastructure.NewMongoWorkspace(accountsMongoClient),
-	// }
-	// log.Infof("reearth-accounts repos: initialized with MongoDB (library mode)")
 
 	// File
 	gateways.File = initFile(ctx, conf)
