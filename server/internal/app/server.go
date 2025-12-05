@@ -12,11 +12,12 @@ import (
 	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
+
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 func runServer(ctx context.Context, conf *config.Config, otelServiceName otel.OtelServiceName, debug bool) {
@@ -46,8 +47,8 @@ type ServerConfig struct {
 	Debug             bool
 	Repos             *repo.Container
 	Gateways          *gateway.Container
-	AccountRepos      *accountrepo.Container
-	AccountGateways   *accountgateway.Container
+	AccountRepos      *accountsRepo.Container
+	AccountGateways   *accountsGateway.Container
 	AccountsAPIClient *gqlclient.Client
 	ServiceName       otel.OtelServiceName
 }

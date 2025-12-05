@@ -11,11 +11,12 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http1 "github.com/reearth/reearth/server/internal/adapter/http"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/rerror"
+
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 func Ping() echo.HandlerFunc {

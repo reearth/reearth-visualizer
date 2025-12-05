@@ -3,10 +3,7 @@ package app
 import (
 	"context"
 
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
-	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/app/config"
-	"github.com/reearth/reearth/server/internal/infrastructure/auth0"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/gcs"
@@ -17,42 +14,47 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/s3"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox"
+
 	"github.com/spf13/afero"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
+
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsMongo "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 )
 
-func initAccountDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *accountrepo.Container {
+func initAccountDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *accountsRepo.Container {
 	accountDatabase := conf.DB_Account
 	log.Infof("accountDatabase: %s", accountDatabase)
 
-	accountUsers := make([]accountrepo.User, 0, len(conf.DB_Users))
+	accountUsers := make([]accountsRepo.User, 0, len(conf.DB_Users))
 	for _, u := range conf.DB_Users {
 		c, err := mongo.Connect(ctx, options.Client().ApplyURI(u.URI).SetMonitor(otelmongo.NewMonitor()))
 		if err != nil {
 			log.Fatalf("mongo error: %+v\n", err)
 		}
-		accountUsers = append(accountUsers, accountmongo.NewUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
+		accountUsers = append(accountUsers, accountsMongo.NewMongoUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
 	}
 
 	// this flag is for old database structure compatibility
 	// on this service, it is always false
 	useLegacyStructure := false
-	accountRepos, err := accountmongo.New(ctx, client, accountDatabase, txAvailable, useLegacyStructure, accountUsers)
+	accountRepos, err := accountsMongo.New(ctx, client, accountDatabase, txAvailable, useLegacyStructure, accountUsers)
 	if err != nil {
 		log.Fatalf("Failed to init mongo database account: %+v\n", err)
 	}
 	return accountRepos
 }
 
-func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accountrepo.Container, ctx context.Context, conf *config.Config) *repo.Container {
+func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accountsRepo.Container, ctx context.Context, conf *config.Config) *repo.Container {
 	visDatabase := conf.DB_Vis
 	log.Infof("visDatabase: %s", visDatabase)
 
@@ -63,15 +65,15 @@ func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accou
 	return repos
 }
 
-func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountrepo.Container, *accountgateway.Container, *gqlclient.Client) {
+func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) (*repo.Container, *gateway.Container, *accountsRepo.Container, *accountsGateway.Container, *accountsGQLclient.Client) {
 	gateways := &gateway.Container{}
-	acGateways := &accountgateway.Container{}
+	acGateways := &accountsGateway.Container{}
 
 	// Initialize Accounts API client if enabled
-	var accountsAPIClient *gqlclient.Client
+	var accountsAPIClient *accountsGQLclient.Client
 	if conf.AccountsAPI.Enabled {
 		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
-		accountsAPIClient = gqlclient.NewClient(
+		accountsAPIClient = accountsGQLclient.NewClient(
 			conf.AccountsAPI.Host,
 			conf.AccountsAPI.Timeout,
 			adpaccounts.NewDynamicAuthTransport(),
@@ -95,6 +97,15 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	txAvailable := mongox.IsTransactionAvailable(conf.DB)
 	accountRepos := initAccountDatabase(client, txAvailable, ctx, conf)
 	visRepos := initVisDatabase(client, txAvailable, accountRepos, ctx, conf)
+
+	// // Initialize reearth-accounts repos using MongoDB (library mode)
+	// accountDatabase := conf.DB_Account
+	// accountsMongoClient := mongox.NewClient(accountDatabase, client)
+	// reearthAccountsRepos = &accountsRepo.Container{
+	// 	User:      accountsInfrastructure.NewMongoUser(accountsMongoClient),
+	// 	Workspace: accountsInfrastructure.NewMongoWorkspace(accountsMongoClient),
+	// }
+	// log.Infof("reearth-accounts repos: initialized with MongoDB (library mode)")
 
 	// File
 	gateways.File = initFile(ctx, conf)
@@ -138,11 +149,6 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 		log.Infof("domain checker: using default checker (OSS mode)")
 	}
 	gateways.DomainChecker = domainChecker
-
-	// Auth0
-	auth0 := auth0.New(conf.Auth0.Domain, conf.Auth0.ClientID, conf.Auth0.ClientSecret)
-	gateways.Authenticator = auth0
-	acGateways.Authenticator = auth0
 
 	// google
 	gateways.Google = google.NewGoogle()

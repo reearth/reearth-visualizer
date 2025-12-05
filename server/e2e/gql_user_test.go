@@ -7,40 +7,40 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/idx"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 var (
-	uId1 = accountdomain.NewUserID()
-	uId2 = accountdomain.NewUserID()
-	uId3 = accountdomain.NewUserID()
-	wId1 = accountdomain.NewWorkspaceID()
-	wId2 = accountdomain.NewWorkspaceID()
-	iId1 = accountdomain.NewIntegrationID()
+	uId1 = accountsID.NewUserID()
+	uId2 = accountsID.NewUserID()
+	uId3 = accountsID.NewUserID()
+	wId1 = accountsID.NewWorkspaceID()
+	wId2 = accountsID.NewWorkspaceID()
+	iId1 = accountsID.NewIntegrationID()
 )
 
 func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) error {
-	auth := user.ReearthSub(uId1.String())
+	auth := accountsUser.ReearthSub(uId1.String())
 
-	metadata := user.NewMetadata()
+	metadata := accountsUser.NewMetadata()
 	metadata.SetLang(language.Japanese)
-	metadata.SetTheme(user.ThemeDark)
+	metadata.SetTheme(accountsUser.ThemeDark)
 
-	u := user.New().ID(uId1).
+	u := accountsUser.New().ID(uId1).
 		Name("e2e").
 		Email("e2e@e2e.com").
-		Auths([]user.Auth{*auth}).
+		Auths([]accountsUser.Auth{*auth}).
 		Metadata(metadata).
 		Workspace(wId1).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
 	}
-	u2 := user.New().ID(uId2).
+	u2 := accountsUser.New().ID(uId2).
 		Name("e2e2").
 		Workspace(wId2).
 		Email("e2e2@e2e.com").
@@ -49,7 +49,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 	if err := r.User.Save(ctx, u2); err != nil {
 		return err
 	}
-	u3 := user.New().ID(uId3).
+	u3 := accountsUser.New().ID(uId3).
 		Name("e2e3").
 		Workspace(wId2).
 		Email("e2e3@e2e.com").
@@ -58,22 +58,22 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 	if err := r.User.Save(ctx, u3); err != nil {
 		return err
 	}
-	roleOwner := workspace.Member{
-		Role:      workspace.RoleOwner,
+	roleOwner := accountsWorkspace.Member{
+		Role:      accountsWorkspace.RoleOwner,
 		InvitedBy: uId1,
 	}
-	roleReader := workspace.Member{
-		Role:      workspace.RoleReader,
+	roleReader := accountsWorkspace.Member{
+		Role:      accountsWorkspace.RoleReader,
 		InvitedBy: uId2,
 	}
 
-	wMetadata := workspace.NewMetadata()
-	w := workspace.New().ID(wId1).
+	wMetadata := accountsWorkspace.NewMetadata()
+	w := accountsWorkspace.New().ID(wId1).
 		Name("e2e").
-		Members(map[idx.ID[accountdomain.User]]workspace.Member{
+		Members(map[accountsID.UserID]accountsWorkspace.Member{
 			uId1: roleOwner,
 		}).
-		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
+		Integrations(map[accountsID.IntegrationID]accountsWorkspace.Member{
 			iId1: roleOwner,
 		}).
 		Metadata(wMetadata).
@@ -82,13 +82,13 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 		return err
 	}
 
-	w2 := workspace.New().ID(wId2).
+	w2 := accountsWorkspace.New().ID(wId2).
 		Name("e2e2").
-		Members(map[idx.ID[accountdomain.User]]workspace.Member{
+		Members(map[accountsID.UserID]accountsWorkspace.Member{
 			uId1: roleOwner,
 			uId3: roleReader,
 		}).
-		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
+		Integrations(map[accountsID.IntegrationID]accountsWorkspace.Member{
 			iId1: roleOwner,
 		}).
 		Metadata(wMetadata).

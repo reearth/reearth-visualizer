@@ -7,10 +7,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/verror"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 var (
@@ -32,22 +34,22 @@ type Container struct {
 	Property        Property
 	Scene           Scene
 	SceneLock       SceneLock
-	Workspace       accountrepo.Workspace
-	User            accountrepo.User
 	Storytelling    Storytelling
 	Transaction     usecasex.Transaction
 	Extensions      []id.PluginID
-	Role            accountrepo.Role        // TODO: Delete this once the permission check migration is complete.
-	Permittable     accountrepo.Permittable // TODO: Delete this once the permission check migration is complete.
+
+	Workspace   accountsRepo.Workspace
+	User        accountsRepo.User
+	Role        accountsRepo.Role
+	Permittable accountsRepo.Permittable
 }
 
-func (c *Container) AccountRepos() *accountrepo.Container {
-	return &accountrepo.Container{
+func (c *Container) AccountRepos() *accountsRepo.Container {
+	return &accountsRepo.Container{
 		Workspace:   c.Workspace,
 		User:        c.User,
-		Role:        c.Role,        // TODO: Delete this once the permission check migration is complete.
-		Permittable: c.Permittable, // TODO: Delete this once the permission check migration is complete.
-		// TODO: Policy: c.Policy,
+		Role:        c.Role,
+		Permittable: c.Permittable,
 		Transaction: c.Transaction,
 	}
 }
@@ -72,15 +74,18 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 		Scene:           c.Scene.Filtered(workspace),
 		SceneLock:       c.SceneLock,
 		Transaction:     c.Transaction,
-		User:            c.User,
-		Workspace:       c.Workspace,
 		Extensions:      c.Extensions,
+
+		User:        c.User,
+		Workspace:   c.Workspace,
+		Role:        c.Role,
+		Permittable: c.Permittable,
 	}
 }
 
 type WorkspaceFilter struct {
-	Readable accountdomain.WorkspaceIDList
-	Writable accountdomain.WorkspaceIDList
+	Readable accountsID.WorkspaceIDList
+	Writable accountsID.WorkspaceIDList
 }
 
 func WorkspaceFilterFromOperator(o *usecase.Operator) WorkspaceFilter {
@@ -98,7 +103,7 @@ func (f WorkspaceFilter) Clone() WorkspaceFilter {
 }
 
 func (f WorkspaceFilter) Merge(g WorkspaceFilter) WorkspaceFilter {
-	var r, w accountdomain.WorkspaceIDList
+	var r, w accountsID.WorkspaceIDList
 	if f.Readable != nil || g.Readable != nil {
 		if f.Readable == nil {
 			r = g.Readable.Clone()
@@ -121,11 +126,11 @@ func (f WorkspaceFilter) Merge(g WorkspaceFilter) WorkspaceFilter {
 	}
 }
 
-func (f WorkspaceFilter) CanRead(id accountdomain.WorkspaceID) bool {
+func (f WorkspaceFilter) CanRead(id accountsID.WorkspaceID) bool {
 	return f.Readable == nil || f.Readable.Has(id)
 }
 
-func (f WorkspaceFilter) CanWrite(id accountdomain.WorkspaceID) bool {
+func (f WorkspaceFilter) CanWrite(id accountsID.WorkspaceID) bool {
 	return f.Writable == nil || f.Writable.Has(id)
 }
 
