@@ -26,17 +26,6 @@ query GetMe {
     myWorkspace {
       id
       name
-      policyId
-      policy {
-        id
-        name
-        projectCount
-        memberCount
-        publishedProjectCount
-        layerCount
-        assetStorageSize
-        __typename
-      }
       enableToCreatePrivateProject
       __typename
     }
@@ -53,17 +42,6 @@ query GetMe {
         }
         userId
         role
-        __typename
-      }
-      policyId
-      policy {
-        id
-        name
-        projectCount
-        memberCount
-        publishedProjectCount
-        layerCount
-        assetStorageSize
         __typename
       }
 	  enableToCreatePrivateProject

@@ -71,7 +71,6 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 		Property:        db.Property,
 		PropertySchema:  db.PropertySchema,
 		Asset:           db.Asset,
-		Policy:          db.Policy,
 		Plugin:          db.Plugin,
 		NLSLayer:        db.NLSLayer,
 		Style:           db.Style,
