@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -97,7 +98,7 @@ func TestBuilder_Build(t *testing.T) {
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			err: id.ErrInvalidID,
+			err: idx.ErrInvalidID,
 		},
 	}
 
@@ -213,7 +214,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				url:         "tt://xxx.zz",
 				contentType: "bbb",
 			},
-			err: id.ErrInvalidID,
+			err: idx.ErrInvalidID,
 		},
 	}
 

@@ -1,6 +1,9 @@
 package property
 
-import "github.com/reearth/reearth/server/pkg/id"
+import (
+	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
+)
 
 type GroupBuilder struct {
 	p *Group
@@ -22,10 +25,10 @@ func InitGroupFrom(g *SchemaGroup) *Group {
 
 func (b *GroupBuilder) Build() (*Group, error) {
 	if b.p.itemBase.ID.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.p.itemBase.SchemaGroup == "" {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	return b.p, nil
 }
