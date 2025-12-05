@@ -1532,8 +1532,8 @@ func TestProject_FindByWorkspaceIDAndProjectAlias(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
 
-	wid1 := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid1 := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 
 	// Create projects with different workspace IDs and project aliases
 	prj1 := project.New().NewID().Workspace(wid1).UpdatedAt(now).ProjectAlias("my-project").MustBuild()
@@ -1569,7 +1569,7 @@ func TestProject_FindByWorkspaceIDAndProjectAlias(t *testing.T) {
 	})
 
 	t.Run("Return error for non-existent workspace ID", func(t *testing.T) {
-		nonExistentWid := accountdomain.NewWorkspaceID()
+		nonExistentWid := accountsID.NewWorkspaceID()
 		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, nonExistentWid, "my-project")
 		assert.Error(t, err)
 		assert.Nil(t, got)

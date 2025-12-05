@@ -691,7 +691,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		return nil, errors.New("user not found in context")
 	}
 
-	workspaceID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	workspaceID, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
 	if err != nil {
 		return nil, err
 	}

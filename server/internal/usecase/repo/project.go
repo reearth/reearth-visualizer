@@ -35,7 +35,7 @@ type Project interface {
 
 	// TODO should be removed because project id is not unique
 	FindActiveByAlias(context.Context, string) (*project.Project, error)
-	FindByWorkspaceIDAndProjectAlias(context.Context, accountdomain.WorkspaceID, string) (*project.Project, error)
+	FindByWorkspaceIDAndProjectAlias(context.Context, accountsID.WorkspaceID, string) (*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)
 	FindAll(context.Context, ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error)
 	CheckProjectAliasUnique(context.Context, accountsID.WorkspaceID, string, *id.ProjectID) error

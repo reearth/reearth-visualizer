@@ -224,7 +224,7 @@ func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, works
 	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
 }
 
-func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
 	if operator != nil && !operator.IsReadableWorkspace(workspaceID) {
 		return nil, interfaces.ErrOperationDenied
 	}

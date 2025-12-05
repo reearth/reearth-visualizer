@@ -95,7 +95,7 @@ type Project interface {
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
 	FindByWorkspaceAliasAndProjectAlias(context.Context, string, string, *usecase.Operator) (*project.Project, error)
-	FindByWorkspaceIDAndProjectAlias(context.Context, accountdomain.WorkspaceID, string, *usecase.Operator) (*project.Project, error)
+	FindByWorkspaceIDAndProjectAlias(context.Context, accountsID.WorkspaceID, string, *usecase.Operator) (*project.Project, error)
 
 	FindVisibilityByUser(context.Context, *accountsUser.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	FindVisibilityByWorkspace(context.Context, accountsID.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
