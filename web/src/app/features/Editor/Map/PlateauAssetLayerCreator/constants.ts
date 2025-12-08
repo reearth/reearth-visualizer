@@ -66,4 +66,8 @@ export const datasetTypeIcons: Record<PlateauDatasetType, IconName> = {
   [PlateauDatasetType.Traffic]: "plateauUseCase"
 } as const;
 
-export const TOKYO_CODE = "13";
+export const EXCLUDE_CITY_CODE = "13";
+export const EXCLUDE_TYPES: PlateauDatasetType[] = [
+  PlateauDatasetType.Global,
+  PlateauDatasetType.Sample
+] as const;

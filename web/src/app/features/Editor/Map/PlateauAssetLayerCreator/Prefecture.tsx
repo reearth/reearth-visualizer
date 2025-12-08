@@ -4,7 +4,7 @@ import { FC, useMemo } from "react";
 
 import { useExpandedPlateauFolderIds } from "./atoms";
 import City from "./City";
-import { TOKYO_CODE } from "./constants";
+import { EXCLUDE_CITY_CODE } from "./constants";
 import TreeItem, { TreeItemType, TreeItemProps } from "./TreeItem";
 
 export type PrefectureProps = TreeItemProps & {
@@ -43,7 +43,7 @@ const Prefecture: FC<PrefectureProps> = ({
         areaCode: area.code,
         label: area.name
       }))
-      .filter((area) => area.id !== TOKYO_CODE);
+      .filter((area) => area.id !== EXCLUDE_CITY_CODE);
   }, [cityData, id]);
 
   return (

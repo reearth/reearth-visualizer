@@ -108,6 +108,7 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
                 actions={[
                   <IconButton
                     icon="magnifyingGlass"
+                    key="search"
                     appearance="simple"
                     onClick={handleSearch}
                     data-testid="plateau-asset-search-btn"

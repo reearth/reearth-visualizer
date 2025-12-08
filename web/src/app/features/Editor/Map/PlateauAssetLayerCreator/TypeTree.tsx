@@ -3,6 +3,7 @@ import { styled } from "@reearth/services/theme";
 import { unionBy } from "lodash-es";
 import { FC, useMemo } from "react";
 
+import { EXCLUDE_TYPES, PlateauDatasetType } from "./constants";
 import DatasetType from "./DatasetType";
 import Loading from "./Loading";
 
@@ -15,7 +16,10 @@ type DatasetType = {
 const TypeBrowser: FC = () => {
   const { data: datasetTypeOrder, loading } = useDatasetTypes();
   const types: DatasetType[] = useMemo(
-    () => unionBy(datasetTypeOrder, "name") ?? [],
+    () =>
+      unionBy(datasetTypeOrder, "name").filter(
+        (type) => !EXCLUDE_TYPES.includes(type.code as PlateauDatasetType)
+      ) ?? [],
     [datasetTypeOrder]
   );
 
