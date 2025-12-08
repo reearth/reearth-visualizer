@@ -9,6 +9,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -239,7 +240,7 @@ func TestBuilder_Build(t *testing.T) {
 		},
 		{
 			name: "failed invalid id",
-			err:  id.ErrInvalidID,
+			err:  idx.ErrInvalidID,
 		},
 	}
 
@@ -362,7 +363,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		},
 		{
 			name: "failed invalid id",
-			err:  id.ErrInvalidID,
+			err:  idx.ErrInvalidID,
 		},
 	}
 

@@ -54,7 +54,6 @@ type Project struct {
 	sceneRepo           repo.Scene
 	propertyRepo        repo.Property
 	propertySchemaRepo  repo.PropertySchema
-	policyRepo          repo.Policy
 	nlsLayerRepo        repo.NLSLayer
 	layerStyles         repo.Style
 	pluginRepo          repo.Plugin
@@ -74,7 +73,6 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		sceneRepo:           r.Scene,
 		propertyRepo:        r.Property,
 		transaction:         r.Transaction,
-		policyRepo:          r.Policy,
 		nlsLayerRepo:        r.NLSLayer,
 		layerStyles:         r.Style,
 		pluginRepo:          r.Plugin,
@@ -872,44 +870,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	return prj, nil
 }
 
-func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) error {
-
-	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
-	if err != nil {
-		return err
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return err
-		}
-
-		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return err
-		}
-
-		// newrly published
-		if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-			projectCount += 1
-		}
-
-		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s *scene.Scene, op *usecase.Operator) error {
-
-	// enforce policy
-	if err := i.checkPublishPolicy(ctx, p, op); err != nil {
-		return err
-	}
 
 	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
 		return err

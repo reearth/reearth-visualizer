@@ -45,7 +45,6 @@ func createNewProjectUC(client *mongox.Client) *Project {
 		propertyRepo:        mongo.NewProperty(client),
 		propertySchemaRepo:  mongo.NewPropertySchema(client),
 		transaction:         client.Transaction(),
-		policyRepo:          mongo.NewPolicy(client),
 		nlsLayerRepo:        mongo.NewNLSLayer(client),
 		layerStyles:         mongo.NewStyle(client),
 		pluginRepo:          mongo.NewPlugin(client),

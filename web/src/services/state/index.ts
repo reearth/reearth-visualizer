@@ -36,18 +36,6 @@ export type Notification = {
   duration?: number | "persistent";
 };
 
-export type Policy = {
-  id: string;
-  name: string;
-  projectCount?: number | null;
-  memberCount?: number | null;
-  publishedProjectCount?: number | null;
-  layerCount?: number | null;
-  assetStorageSize?: number | null;
-  datasetSchemaCount?: number | null;
-  datasetCount?: number | null;
-};
-
 export type Workspace = {
   id: string;
   name: string;
@@ -55,8 +43,6 @@ export type Workspace = {
   assets?: NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
   projects?: Project[];
   personal?: boolean;
-  policyId?: string | null;
-  policy?: Policy | null;
   alias?: string;
 };
 
