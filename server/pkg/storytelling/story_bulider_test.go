@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/util"
 	"github.com/stretchr/testify/assert"
 )
@@ -14,9 +15,9 @@ func TestStoryBuilder(t *testing.T) {
 
 	s, err := b.Build()
 	assert.Nil(t, s)
-	assert.ErrorIs(t, id.ErrInvalidID, err)
+	assert.ErrorIs(t, idx.ErrInvalidID, err)
 
-	assert.PanicsWithError(t, id.ErrInvalidID.Error(), func() {
+	assert.PanicsWithError(t, idx.ErrInvalidID.Error(), func() {
 		b.MustBuild()
 	})
 

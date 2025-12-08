@@ -2,7 +2,6 @@ package gqlmodel
 
 import (
 	workspacepkg "github.com/reearth/reearth-accounts/server/pkg/workspace"
-	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
 )
@@ -25,7 +24,6 @@ func ToWorkspace(w *workspace.Workspace) *Workspace {
 		ID:       IDFrom(w.ID()),
 		Name:     w.Name(),
 		Personal: w.IsPersonal(),
-		PolicyID: (*ID)(w.Policy()),
 		Members:  members,
 		Alias:    w.Alias(),
 	}
@@ -50,7 +48,6 @@ func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
 		Name:     w.Name(),
 		PhotoURL: lo.EmptyableToPtr(w.Metadata().PhotoURL()),
 		Personal: w.IsPersonal(),
-		PolicyID: (*ID)(w.Policy()),
 		Members:  members,
 		Alias:    w.Alias(),
 	}
@@ -82,24 +79,4 @@ func FromRole(r Role) workspace.Role {
 		return workspace.RoleOwner
 	}
 	return workspace.Role("")
-}
-
-func ToPolicy(p *policy.Policy) *Policy {
-	if p == nil {
-		return nil
-	}
-
-	o := p.Option()
-	return &Policy{
-		ID:                    ID(o.ID),
-		Name:                  o.Name,
-		ProjectCount:          o.ProjectCount,
-		MemberCount:           o.MemberCount,
-		PublishedProjectCount: o.PublishedProjectCount,
-		LayerCount:            o.LayerCount,
-		AssetStorageSize:      o.AssetStorageSize,
-		NlsLayersCount:        o.NLSLayersCount,
-		PageCount:             o.PageCount,
-		BlocksCount:           o.BlocksCount,
-	}
 }

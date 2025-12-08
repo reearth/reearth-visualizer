@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mongo:
-        image: mongo:5-focal
+        image: mongo:7
         ports:
           - 27017:27017
     steps:

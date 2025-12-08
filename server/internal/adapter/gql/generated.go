@@ -502,19 +502,6 @@ type ComplexityRoot struct {
 		Type             func(childComplexity int) int
 	}
 
-	Policy struct {
-		AssetStorageSize      func(childComplexity int) int
-		BlocksCount           func(childComplexity int) int
-		ID                    func(childComplexity int) int
-		LayerCount            func(childComplexity int) int
-		MemberCount           func(childComplexity int) int
-		Name                  func(childComplexity int) int
-		NlsLayersCount        func(childComplexity int) int
-		PageCount             func(childComplexity int) int
-		ProjectCount          func(childComplexity int) int
-		PublishedProjectCount func(childComplexity int) int
-	}
-
 	PolicyCheckPayload struct {
 		DisableOperationByOverUsedSeat func(childComplexity int) int
 		EnableToCreatePrivateProject   func(childComplexity int) int
@@ -1052,8 +1039,6 @@ type ComplexityRoot struct {
 		Name                         func(childComplexity int) int
 		Personal                     func(childComplexity int) int
 		PhotoURL                     func(childComplexity int) int
-		Policy                       func(childComplexity int) int
-		PolicyID                     func(childComplexity int) int
 		Projects                     func(childComplexity int, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) int
 	}
 
@@ -1287,7 +1272,6 @@ type StyleResolver interface {
 	Scene(ctx context.Context, obj *gqlmodel.Style) (*gqlmodel.Scene, error)
 }
 type WorkspaceResolver interface {
-	Policy(ctx context.Context, obj *gqlmodel.Workspace) (*gqlmodel.Policy, error)
 	Assets(ctx context.Context, obj *gqlmodel.Workspace, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.AssetConnection, error)
 	Projects(ctx context.Context, obj *gqlmodel.Workspace, includeArchived *bool, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.ProjectConnection, error)
 }
@@ -3392,67 +3376,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Point.Type(childComplexity), true
-
-	case "Policy.assetStorageSize":
-		if e.complexity.Policy.AssetStorageSize == nil {
-			break
-		}
-
-		return e.complexity.Policy.AssetStorageSize(childComplexity), true
-	case "Policy.blocksCount":
-		if e.complexity.Policy.BlocksCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.BlocksCount(childComplexity), true
-	case "Policy.id":
-		if e.complexity.Policy.ID == nil {
-			break
-		}
-
-		return e.complexity.Policy.ID(childComplexity), true
-	case "Policy.layerCount":
-		if e.complexity.Policy.LayerCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.LayerCount(childComplexity), true
-	case "Policy.memberCount":
-		if e.complexity.Policy.MemberCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.MemberCount(childComplexity), true
-	case "Policy.name":
-		if e.complexity.Policy.Name == nil {
-			break
-		}
-
-		return e.complexity.Policy.Name(childComplexity), true
-	case "Policy.nlsLayersCount":
-		if e.complexity.Policy.NlsLayersCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.NlsLayersCount(childComplexity), true
-	case "Policy.pageCount":
-		if e.complexity.Policy.PageCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.PageCount(childComplexity), true
-	case "Policy.projectCount":
-		if e.complexity.Policy.ProjectCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.ProjectCount(childComplexity), true
-	case "Policy.publishedProjectCount":
-		if e.complexity.Policy.PublishedProjectCount == nil {
-			break
-		}
-
-		return e.complexity.Policy.PublishedProjectCount(childComplexity), true
 
 	case "PolicyCheckPayload.disableOperationByOverUsedSeat":
 		if e.complexity.PolicyCheckPayload.DisableOperationByOverUsedSeat == nil {
@@ -5590,18 +5513,6 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Workspace.PhotoURL(childComplexity), true
-	case "Workspace.policy":
-		if e.complexity.Workspace.Policy == nil {
-			break
-		}
-
-		return e.complexity.Workspace.Policy(childComplexity), true
-	case "Workspace.policyId":
-		if e.complexity.Workspace.PolicyID == nil {
-			break
-		}
-
-		return e.complexity.Workspace.PolicyID(childComplexity), true
 	case "Workspace.projects":
 		if e.complexity.Workspace.Projects == nil {
 			break
@@ -7552,22 +7463,8 @@ extend type Mutation {
   members: [WorkspaceMember!]!
   personal: Boolean!
   photoURL: String
-  policyId: ID
-  policy: Policy
-  assets(
-    projectId: ID
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): AssetConnection!
-  projects(
-    includeArchived: Boolean
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): ProjectConnection!
+  assets(projectId: ID, first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
+  projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
   enableToCreatePrivateProject: Boolean!
   alias: String!
 }
@@ -7576,19 +7473,6 @@ type WorkspaceMember {
   userId: ID!
   role: Role!
   user: User
-}
-
-type Policy {
-  id: ID!
-  name: String!
-  projectCount: Int
-  memberCount: Int
-  publishedProjectCount: Int
-  layerCount: Int
-  assetStorageSize: FileSize
-  nlsLayersCount: Int
-  pageCount: Int
-  blocksCount: Int
 }
 
 enum Role {
@@ -7680,15 +7564,9 @@ extend type Mutation {
   createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
   deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
   updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
-  addMemberToWorkspace(
-    input: AddMemberToWorkspaceInput!
-  ): AddMemberToWorkspacePayload
-  removeMemberFromWorkspace(
-    input: RemoveMemberFromWorkspaceInput!
-  ): RemoveMemberFromWorkspacePayload
-  updateMemberOfWorkspace(
-    input: UpdateMemberOfWorkspaceInput!
-  ): UpdateMemberOfWorkspacePayload
+  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
+  removeMemberFromWorkspace(input: RemoveMemberFromWorkspaceInput!): RemoveMemberFromWorkspacePayload
+  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
 }
 `, BuiltIn: false},
 }
@@ -8989,10 +8867,6 @@ func (ec *executionContext) fieldContext_AddMemberToWorkspacePayload_workspace(_
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -9388,10 +9262,6 @@ func (ec *executionContext) fieldContext_Asset_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -10459,10 +10329,6 @@ func (ec *executionContext) fieldContext_CreateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -12024,10 +11890,6 @@ func (ec *executionContext) fieldContext_Me_workspaces(_ context.Context, field 
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -12077,10 +11939,6 @@ func (ec *executionContext) fieldContext_Me_myWorkspace(_ context.Context, field
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -19711,296 +19569,6 @@ func (ec *executionContext) fieldContext_Point_pointCoordinates(_ context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Policy_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_id,
-		func(ctx context.Context) (any, error) {
-			return obj.ID, nil
-		},
-		nil,
-		ec.marshalNID2githubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_name(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_name,
-		func(ctx context.Context) (any, error) {
-			return obj.Name, nil
-		},
-		nil,
-		ec.marshalNString2string,
-		true,
-		true,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_projectCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_projectCount,
-		func(ctx context.Context) (any, error) {
-			return obj.ProjectCount, nil
-		},
-		nil,
-		ec.marshalOInt2ᚖint,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_projectCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_memberCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_memberCount,
-		func(ctx context.Context) (any, error) {
-			return obj.MemberCount, nil
-		},
-		nil,
-		ec.marshalOInt2ᚖint,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_memberCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_publishedProjectCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_publishedProjectCount,
-		func(ctx context.Context) (any, error) {
-			return obj.PublishedProjectCount, nil
-		},
-		nil,
-		ec.marshalOInt2ᚖint,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_publishedProjectCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_layerCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_layerCount,
-		func(ctx context.Context) (any, error) {
-			return obj.LayerCount, nil
-		},
-		nil,
-		ec.marshalOInt2ᚖint,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_layerCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_assetStorageSize(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_assetStorageSize,
-		func(ctx context.Context) (any, error) {
-			return obj.AssetStorageSize, nil
-		},
-		nil,
-		ec.marshalOFileSize2ᚖint64,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_assetStorageSize(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type FileSize does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_nlsLayersCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_nlsLayersCount,
-		func(ctx context.Context) (any, error) {
-			return obj.NlsLayersCount, nil
-		},
-		nil,
-		ec.marshalOInt2ᚖint,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_nlsLayersCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_pageCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_pageCount,
-		func(ctx context.Context) (any, error) {
-			return obj.PageCount, nil
-		},
-		nil,
-		ec.marshalOInt2ᚖint,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_pageCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Policy_blocksCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Policy) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Policy_blocksCount,
-		func(ctx context.Context) (any, error) {
-			return obj.BlocksCount, nil
-		},
-		nil,
-		ec.marshalOInt2ᚖint,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Policy_blocksCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Policy",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _PolicyCheckPayload_workspaceId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -20238,10 +19806,6 @@ func (ec *executionContext) fieldContext_Project_workspace(_ context.Context, fi
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -25849,10 +25413,6 @@ func (ec *executionContext) fieldContext_RemoveMemberFromWorkspacePayload_worksp
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -26715,10 +26275,6 @@ func (ec *executionContext) fieldContext_Scene_workspace(_ context.Context, fiel
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -30130,10 +29686,6 @@ func (ec *executionContext) fieldContext_UpdateMemberOfWorkspacePayload_workspac
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -30457,10 +30009,6 @@ func (ec *executionContext) fieldContext_UpdateWorkspacePayload_workspace(_ cont
 				return ec.fieldContext_Workspace_personal(ctx, field)
 			case "photoURL":
 				return ec.fieldContext_Workspace_photoURL(ctx, field)
-			case "policyId":
-				return ec.fieldContext_Workspace_policyId(ctx, field)
-			case "policy":
-				return ec.fieldContext_Workspace_policy(ctx, field)
 			case "assets":
 				return ec.fieldContext_Workspace_assets(ctx, field)
 			case "projects":
@@ -31995,86 +31543,6 @@ func (ec *executionContext) fieldContext_Workspace_photoURL(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Workspace_policyId(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Workspace_policyId,
-		func(ctx context.Context) (any, error) {
-			return obj.PolicyID, nil
-		},
-		nil,
-		ec.marshalOID2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐID,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Workspace_policyId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Workspace",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Workspace_policy(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Workspace) (ret graphql.Marshaler) {
-	return graphql.ResolveField(
-		ctx,
-		ec.OperationContext,
-		field,
-		ec.fieldContext_Workspace_policy,
-		func(ctx context.Context) (any, error) {
-			return ec.resolvers.Workspace().Policy(ctx, obj)
-		},
-		nil,
-		ec.marshalOPolicy2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicy,
-		true,
-		false,
-	)
-}
-
-func (ec *executionContext) fieldContext_Workspace_policy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Workspace",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Policy_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Policy_name(ctx, field)
-			case "projectCount":
-				return ec.fieldContext_Policy_projectCount(ctx, field)
-			case "memberCount":
-				return ec.fieldContext_Policy_memberCount(ctx, field)
-			case "publishedProjectCount":
-				return ec.fieldContext_Policy_publishedProjectCount(ctx, field)
-			case "layerCount":
-				return ec.fieldContext_Policy_layerCount(ctx, field)
-			case "assetStorageSize":
-				return ec.fieldContext_Policy_assetStorageSize(ctx, field)
-			case "nlsLayersCount":
-				return ec.fieldContext_Policy_nlsLayersCount(ctx, field)
-			case "pageCount":
-				return ec.fieldContext_Policy_pageCount(ctx, field)
-			case "blocksCount":
-				return ec.fieldContext_Policy_blocksCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Policy", field.Name)
 		},
 	}
 	return fc, nil
@@ -41282,66 +40750,6 @@ func (ec *executionContext) _Point(ctx context.Context, sel ast.SelectionSet, ob
 	return out
 }
 
-var policyImplementors = []string{"Policy"}
-
-func (ec *executionContext) _Policy(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.Policy) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, policyImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Policy")
-		case "id":
-			out.Values[i] = ec._Policy_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "name":
-			out.Values[i] = ec._Policy_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "projectCount":
-			out.Values[i] = ec._Policy_projectCount(ctx, field, obj)
-		case "memberCount":
-			out.Values[i] = ec._Policy_memberCount(ctx, field, obj)
-		case "publishedProjectCount":
-			out.Values[i] = ec._Policy_publishedProjectCount(ctx, field, obj)
-		case "layerCount":
-			out.Values[i] = ec._Policy_layerCount(ctx, field, obj)
-		case "assetStorageSize":
-			out.Values[i] = ec._Policy_assetStorageSize(ctx, field, obj)
-		case "nlsLayersCount":
-			out.Values[i] = ec._Policy_nlsLayersCount(ctx, field, obj)
-		case "pageCount":
-			out.Values[i] = ec._Policy_pageCount(ctx, field, obj)
-		case "blocksCount":
-			out.Values[i] = ec._Policy_blocksCount(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var policyCheckPayloadImplementors = []string{"PolicyCheckPayload"}
 
 func (ec *executionContext) _PolicyCheckPayload(ctx context.Context, sel ast.SelectionSet, obj *gqlmodel.PolicyCheckPayload) graphql.Marshaler {
@@ -46501,41 +45909,6 @@ func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet
 			}
 		case "photoURL":
 			out.Values[i] = ec._Workspace_photoURL(ctx, field, obj)
-		case "policyId":
-			out.Values[i] = ec._Workspace_policyId(ctx, field, obj)
-		case "policy":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Workspace_policy(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "assets":
 			field := field
 
@@ -50273,24 +49646,6 @@ func (ec *executionContext) marshalOFeatureCollection2ᚖgithubᚗcomᚋreearth�
 	return ec._FeatureCollection(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOFileSize2ᚖint64(ctx context.Context, v any) (*int64, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalInt64(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOFileSize2ᚖint64(ctx context.Context, sel ast.SelectionSet, v *int64) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	_ = sel
-	_ = ctx
-	res := graphql.MarshalInt64(*v)
-	return res
-}
-
 func (ec *executionContext) unmarshalOFloat2ᚖfloat64(ctx context.Context, v any) (*float64, error) {
 	if v == nil {
 		return nil, nil
@@ -50493,13 +49848,6 @@ func (ec *executionContext) marshalOPluginExtension2ᚖgithubᚗcomᚋreearthᚋ
 		return graphql.Null
 	}
 	return ec._PluginExtension(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOPolicy2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicy(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.Policy) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Policy(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOPolicyCheckPayload2ᚖgithubᚗcomᚋreearthᚋreearthᚋserverᚋinternalᚋadapterᚋgqlᚋgqlmodelᚐPolicyCheckPayload(ctx context.Context, sel ast.SelectionSet, v *gqlmodel.PolicyCheckPayload) graphql.Marshaler {

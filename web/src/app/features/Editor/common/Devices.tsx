@@ -4,9 +4,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 
-export type Devices = {
-  [key in DeviceType]: string | number;
-};
+export type Devices = Record<DeviceType, string | number>;
 
 type Props = {
   selectedDevice?: DeviceType;

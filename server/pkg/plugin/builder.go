@@ -3,6 +3,7 @@ package plugin
 import (
 	"github.com/reearth/reearth/server/pkg/i18n"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 )
 
 type Builder struct {
@@ -15,7 +16,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Plugin, error) {
 	if b.p.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	return b.p, nil
 }
