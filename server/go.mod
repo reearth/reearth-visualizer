@@ -32,10 +32,14 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
 <<<<<<< HEAD
+<<<<<<< HEAD
 	github.com/reearth/reearth-accounts/server v0.0.0-20251209054848-bd4c5410fef5
 =======
 	github.com/reearth/reearth-accounts/server v0.0.0-20251208100030-320273b6f630
 >>>>>>> b0a0301f5 (Migrating from reerthx to reearth-accounts)
+=======
+	github.com/reearth/reearth-accounts/server v0.0.0-20251209054848-bd4c5410fef5
+>>>>>>> 1ae60d27c (git commit hash update)
 	github.com/reearth/reearthx v0.0.0-20251128044232-3067c04f34da // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
 	github.com/samber/lo v1.52.0
 	github.com/spf13/afero v1.15.0
