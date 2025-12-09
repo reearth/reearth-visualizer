@@ -2,7 +2,6 @@ package gql
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 
@@ -20,12 +19,10 @@ func (r *queryResolver) Assets(ctx context.Context, workspaceID gqlmodel.ID, pro
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*gqlmodel.Me, error) {
-	fmt.Println("==================================  Me")
 	u := getUser(ctx)
 	if u == nil {
 		return nil, nil
 	}
-	fmt.Println("==================================  Me2")
 	return gqlmodel.ToMe(u), nil
 }
 
