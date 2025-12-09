@@ -1,66 +1,37 @@
-import TimelineUI from "@reearth/app/features/Visualizer/Crust/Widgets/Widget/builtin/Timeline/UI";
-import { styled } from "@reearth/services/theme";
+import { FC, useMemo } from "react";
 
-import type { ComponentProps as WidgetProps } from "../..";
+import { ComponentProps } from "../..";
+import { CommonBuiltInWidgetProperty } from "../types";
 
-import { useTimeline } from "./hooks";
+type Property = CommonBuiltInWidgetProperty & {
+  general?: {
+    initial_time?: string;
+    display_timezone?: string;
+  };
+  timeline_channels?: {
+    timeline_title?: string;
+    timeline_range?: {
+      start?: string;
+      end?: string;
+      current?: string;
+    };
+  }[];
+};
+type TimelineProps = ComponentProps<Property>;
 
-export type Props = WidgetProps;
-
-const Timeline = ({
-  widget,
-  theme,
-  isMobile,
-  onExtend,
-  context: {
-    timelineManagerRef,
-    onPlay,
-    onPause,
-    onSpeedChange,
-    onTimeChange,
-    onTick,
-    removeTickEventListener
-  } = {}
-}: Props): JSX.Element | null => {
-  const { isOpened, currentTime, range, speed, events } = useTimeline({
-    widget,
-    timelineManagerRef,
-    isMobile,
-    onPlay,
-    onPause,
-    onSpeedChange,
-    onTimeChange,
-    onTick,
-    removeTickEventListener,
-    onExtend
-  });
+const Timeline: FC<TimelineProps> = ({ widget }) => {
+  const theme = useMemo(
+    () => widget.property?.appearance?.theme ?? "light",
+    [widget.property?.appearance?.theme]
+  );
 
   return (
-    <Widget extended={!!widget?.extended?.horizontally} opened={isOpened}>
-      <TimelineUI
-        isOpened={isOpened}
-        currentTime={currentTime}
-        range={range}
-        theme={theme}
-        speed={speed}
-        {...events}
-      />
-    </Widget>
+    <div className={theme === "dark" ? "tw-dark" : "tw-light"}>
+      <div className="tw-w-full tw-min-w-[700px] tw-bg-white dark:tw-bg-gray-800">
+        123
+      </div>
+    </div>
   );
 };
-
-const Widget = styled.div<{
-  extended?: boolean;
-  opened?: boolean;
-}>`
-  max-width: 100vw;
-  width: ${({ extended, opened }) =>
-    extended && opened ? "100%" : opened ? "720px" : "auto"};
-
-  @media (max-width: 768px) {
-    width: ${({ extended, opened }) =>
-      extended && opened ? "100%" : opened ? "90vw" : "auto"};
-  }
-`;
 
 export default Timeline;

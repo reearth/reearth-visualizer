@@ -1,4 +1,4 @@
-import type { TimeEventHandler } from "@reearth/app/features/Visualizer/Crust/Widgets/Widget/builtin/Timeline/UI";
+import type { TimeEventHandler } from "@reearth/app/features/Visualizer/Crust/Widgets/Widget/builtin/Timeline_todel/UI";
 import {
   TickEvent,
   TickEventCallback,
