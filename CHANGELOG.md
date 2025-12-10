@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.4 - 2025-12-10
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Wasm mime type error on dev server ([#1962](https://github.com/reearth/reearth-visualizer/pull/1962)) [`d40a6d`](https://github.com/reearth/reearth-visualizer/commit/d40a6d)
+- Delete unused query and properties ([#1957](https://github.com/reearth/reearth-visualizer/pull/1957)) [`157249`](https://github.com/reearth/reearth-visualizer/commit/157249)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.13.4 ([#1963](https://github.com/reearth/reearth-visualizer/pull/1963)) [`9ec7de`](https://github.com/reearth/reearth-visualizer/commit/9ec7de)
+- Upgrade web package[VIZ-2349] ([#1950](https://github.com/reearth/reearth-visualizer/pull/1950)) [`d870e7`](https://github.com/reearth/reearth-visualizer/commit/d870e7)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Fix go version to 1.25.5 on Dockerfile ([#1964](https://github.com/reearth/reearth-visualizer/pull/1964)) [`3d9255`](https://github.com/reearth/reearth-visualizer/commit/3d9255)
+- Delete unused tiletype from manifest ([#1956](https://github.com/reearth/reearth-visualizer/pull/1956)) [`e3e102`](https://github.com/reearth/reearth-visualizer/commit/e3e102)
+
+#### Miscellaneous Tasks
+
+- Remove database policy ([#1954](https://github.com/reearth/reearth-visualizer/pull/1954)) [`466129`](https://github.com/reearth/reearth-visualizer/commit/466129)
+- Reference ErrInvalidID directly ([#1953](https://github.com/reearth/reearth-visualizer/pull/1953)) [`96d0c9`](https://github.com/reearth/reearth-visualizer/commit/96d0c9)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update dependency golang to v1.25.5 ([#1958](https://github.com/reearth/reearth-visualizer/pull/1958)) [`7a88ef`](https://github.com/reearth/reearth-visualizer/commit/7a88ef)
+- Update go dependencies ([#1841](https://github.com/reearth/reearth-visualizer/pull/1841)) [`edd817`](https://github.com/reearth/reearth-visualizer/commit/edd817)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update dependency golang to v1.25.5 ([#1958](https://github.com/reearth/reearth-visualizer/pull/1958)) [`7a88ef`](https://github.com/reearth/reearth-visualizer/commit/7a88ef)
+- Update go dependencies ([#1841](https://github.com/reearth/reearth-visualizer/pull/1841)) [`edd817`](https://github.com/reearth/reearth-visualizer/commit/edd817)
+
 ## 1.0.0-beta.13.3 - 2025-12-03
 
 ### Web
