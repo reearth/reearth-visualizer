@@ -101,7 +101,7 @@ The backend server can be launched in the following authentication modes:
 ### 1. Mock User Mode (Default)
 
 Launches in mock user mode.  
-This flag takes precedence, so any Auth0 configuration will be ignored.
+This flag takes precedence, so any other auth provider configuration will be ignored.
 
 **Change: web/.env**
 

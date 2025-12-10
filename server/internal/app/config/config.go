@@ -65,9 +65,7 @@ type Config struct {
 
 	// auth
 	Auth          AuthConfigs   `pp:",omitempty"`
-	Auth0         Auth0Config   `pp:",omitempty"`
 	Cognito       CognitoConfig `pp:",omitempty"`
-	AuthSrv       AuthSrvConfig `pp:",omitempty"`
 	Auth_ISS      string        `pp:",omitempty"`
 	Auth_AUD      string        `pp:",omitempty"`
 	Auth_ALG      *string       `pp:",omitempty"`
@@ -157,20 +155,8 @@ func ReadConfig(debug bool) (*Config, error) {
 		c.Host_Web = addHTTPScheme(c.Host_Web)
 	}
 
-	if c.AuthSrv.Domain == "" {
-		c.AuthSrv.Domain = c.Host
-	} else {
-		c.AuthSrv.Domain = addHTTPScheme(c.AuthSrv.Domain)
-	}
-
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
-	}
-
-	if c.AuthSrv.UIDomain == "" {
-		c.AuthSrv.UIDomain = c.Host_Web
-	} else {
-		c.AuthSrv.UIDomain = addHTTPScheme(c.AuthSrv.UIDomain)
 	}
 
 	return &c, err
@@ -196,7 +182,7 @@ func (c *Config) UseReearthAccountAuth() bool {
 }
 
 func (c *Config) secrets() []string {
-	s := []string{c.DB, c.Auth0.ClientSecret}
+	s := []string{c.DB}
 	for _, ac := range c.DB_Users {
 		s = append(s, ac.URI)
 	}
@@ -220,7 +206,7 @@ func (c *Config) HostWebURL() *url.URL {
 }
 
 func (c *Config) AuthConfigs() []AuthProvider {
-	return []AuthProvider{c.Auth0, c.Cognito}
+	return []AuthProvider{c.Cognito}
 }
 
 func (c *Config) Auths() (res AuthConfigs) {
@@ -238,9 +224,6 @@ func (c *Config) Auths() (res AuthConfigs) {
 			ClientID: c.Auth_ClientID,
 			JWKSURI:  c.Auth_JWKSURI,
 		})
-	}
-	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
-		res = append(res, *ac)
 	}
 	return append(res, c.Auth...)
 }
@@ -269,9 +252,6 @@ func (c *Config) AuthForWeb() *AuthConfig {
 		}
 	}
 
-	if ac := c.Auth0.AuthConfigForWeb(); ac != nil {
-		return ac
-	}
 	if c.Auth_ISS != "" {
 		var aud []string
 		if len(c.Auth_AUD) > 0 {
@@ -285,8 +265,11 @@ func (c *Config) AuthForWeb() *AuthConfig {
 			ClientID: c.Auth_ClientID,
 		}
 	}
-	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
-		return ac
+	if len(c.Auth) > 0 {
+		return &c.Auth[0]
+	}
+	if ac := c.Cognito.Configs(); len(ac) > 0 {
+		return &ac[0]
 	}
 	return nil
 }

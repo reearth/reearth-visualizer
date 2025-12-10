@@ -7,17 +7,11 @@ import (
 )
 
 func TestReadConfig(t *testing.T) {
-	clientID := AuthServerDefaultClientID
-	localAuth := AuthConfig{
-		ISS:      "http://localhost:8080/",
-		AUD:      []string{"http://localhost:8080"},
-		ClientID: &clientID,
-	}
-
 	cfg, err := ReadConfig(false)
 	assert.NoError(t, err)
 	assert.Nil(t, cfg.Auth)
-	assert.Equal(t, AuthConfigs{localAuth}, cfg.Auths())
+	assert.Equal(t, AuthConfigs{}, cfg.Auths())
+	assert.Nil(t, cfg.AuthForWeb())
 
 	t.Setenv("REEARTH_AUTH", `[{"iss":"bar"}]`)
 	t.Setenv("REEARTH_AUTH_ISS", "hoge")
@@ -28,26 +22,25 @@ func TestReadConfig(t *testing.T) {
 	assert.Equal(t, AuthConfigs([]AuthConfig{{ISS: "bar"}}), cfg.Auth)
 	assert.Equal(t, AuthConfigs{
 		{ISS: "hoge"}, // REEARTH_AUTH_*
-		localAuth,     // local auth srv
 		{ISS: "bar"},  // REEARTH_AUTH
 	}, cfg.Auths())
 	assert.Equal(t, "hoge", cfg.Auth_ISS)
 	assert.Equal(t, "", cfg.Auth_AUD)
 	assert.Equal(t, map[string]any{"a": "1", "b": "2", "c": float64(3)}, cfg.WebConfig())
+	assert.Equal(t, &AuthConfig{ISS: "hoge"}, cfg.AuthForWeb())
 
 	t.Setenv("REEARTH_AUTH_AUD", "foo")
-	t.Setenv("REEARTH_AUTH0_DOMAIN", "foo")
-	t.Setenv("REEARTH_AUTH0_CLIENTID", clientID)
+	t.Setenv("REEARTH_AUTH", `[{"iss":"bar","aud":["baz"]}]`)
 	t.Setenv("REEARTH_WEB", "")
+	t.Setenv("REEARTH_AUTH_ISS", "hoge2")
 	cfg, err = ReadConfig(false)
 	assert.NoError(t, err)
 	assert.Equal(t, AuthConfigs{
-		{ISS: "https://foo/", ClientID: &clientID}, // Auth0
-		{ISS: "hoge", AUD: []string{"foo"}},        // REEARTH_AUTH_*
-		localAuth,                                  // local auth srv
-		{ISS: "bar"},                               // REEARTH_AUTH
+		{ISS: "hoge2", AUD: []string{"foo"}}, // REEARTH_AUTH_*
+		{ISS: "bar", AUD: []string{"baz"}},   // REEARTH_AUTH
 	}, cfg.Auths())
 	assert.Equal(t, "foo", cfg.Auth_AUD)
+	assert.Equal(t, &AuthConfig{ISS: "hoge2", AUD: []string{"foo"}}, cfg.AuthForWeb())
 	assert.Equal(t, map[string]string{}, cfg.Web)
 
 	t.Setenv("REEARTH_EXT_PLUGIN", "https://hoge.com/myplugin,https://hoge.com/myplugin2")
