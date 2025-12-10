@@ -4,6 +4,7 @@ import (
 	"encoding"
 	"testing"
 
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -68,7 +69,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}, err: ErrInvalidID},
+			}{result: PropertySchemaID{}, err: idx.ErrInvalidID},
 		},
 		{
 			name:  "fail 2",
@@ -76,7 +77,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}, err: ErrInvalidID},
+			}{result: PropertySchemaID{}, err: idx.ErrInvalidID},
 		},
 		{
 			name:  "fail 3",
@@ -84,7 +85,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}, err: ErrInvalidID},
+			}{result: PropertySchemaID{}, err: idx.ErrInvalidID},
 		},
 		{
 			name:  "fail 4",
@@ -92,7 +93,7 @@ func TestPropertySchemaIDFrom(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}, err: ErrInvalidID},
+			}{result: PropertySchemaID{}, err: idx.ErrInvalidID},
 		},
 	}
 
@@ -141,7 +142,7 @@ func TestMustPropertySchemaID(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}, err: ErrInvalidID},
+			}{result: PropertySchemaID{}, err: idx.ErrInvalidID},
 		},
 		{
 			name:  "fail:invalid name",
@@ -149,7 +150,7 @@ func TestMustPropertySchemaID(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}, err: ErrInvalidID},
+			}{result: PropertySchemaID{}, err: idx.ErrInvalidID},
 		},
 		{
 			name:  "fail:invalid name",
@@ -157,7 +158,7 @@ func TestMustPropertySchemaID(t *testing.T) {
 			expected: struct {
 				result PropertySchemaID
 				err    error
-			}{result: PropertySchemaID{}, err: ErrInvalidID},
+			}{result: PropertySchemaID{}, err: idx.ErrInvalidID},
 		},
 	}
 
@@ -401,7 +402,7 @@ func TestPropertySchemaIDsFrom(t *testing.T) {
 				"Test~1.0.1/test",
 				"Test~1.0.2",
 			},
-			err: ErrInvalidID,
+			err: idx.ErrInvalidID,
 		},
 	}
 

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -27,7 +28,7 @@ func TestGroupBuilder_Build(t *testing.T) {
 	}{
 		{
 			Name: "fail invalid id",
-			Err:  id.ErrInvalidID,
+			Err:  idx.ErrInvalidID,
 		},
 		{
 			Name: "success",
@@ -84,7 +85,7 @@ func TestGroupBuilder_MustBuild(t *testing.T) {
 	}{
 		{
 			Name: "fail invalid id",
-			Err:  id.ErrInvalidID,
+			Err:  idx.ErrInvalidID,
 		},
 		{
 			Name: "success",

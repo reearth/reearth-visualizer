@@ -49,7 +49,6 @@ type Config struct {
 	Marketplace            MarketplaceConfig `pp:",omitempty"`
 	AssetBaseURL           string            `default:"http://localhost:8080/assets"`
 	Origins                []string          `pp:",omitempty"`
-	Policy                 PolicyConfig      `pp:",omitempty"`
 	Web_Disabled           bool              `pp:",omitempty"`
 	Web_App_Disabled       bool              `pp:",omitempty"`
 	Web                    map[string]string `pp:",omitempty"`

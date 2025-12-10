@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 )
 
 type Builder struct {
@@ -17,7 +18,7 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Asset, error) {
 	if b.a.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.a.workspace.IsNil() {
 		return nil, ErrEmptyWorkspaceID

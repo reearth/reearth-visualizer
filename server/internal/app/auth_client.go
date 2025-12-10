@@ -17,7 +17,6 @@ import (
 	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
-	"github.com/reearth/reearthx/util"
 
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
@@ -242,7 +241,6 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 	writableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleWriter).IDs()
 	maintainingWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleMaintainer).IDs()
 	owningWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleOwner).IDs()
-	defaultPolicy := util.CloneRef(cfg.Config.Policy.Default)
 
 	return &usecase.Operator{
 		AcOperator: &accountusecase.Operator{
@@ -251,13 +249,11 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*us
 			WritableWorkspaces:     writableWorkspaces,
 			MaintainableWorkspaces: maintainingWorkspaces,
 			OwningWorkspaces:       owningWorkspaces,
-			DefaultPolicy:          defaultPolicy,
 		},
 		ReadableScenes:    scenes.FilterByWorkspace(readableWorkspaces...).IDs(),
 		WritableScenes:    scenes.FilterByWorkspace(writableWorkspaces...).IDs(),
 		MaintainingScenes: scenes.FilterByWorkspace(maintainingWorkspaces...).IDs(),
 		OwningScenes:      scenes.FilterByWorkspace(owningWorkspaces...).IDs(),
-		DefaultPolicy:     defaultPolicy,
 	}, nil
 }
 

@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 )
 
 type MetadataBuilder struct {
@@ -17,7 +18,7 @@ func NewProjectMetadata() *MetadataBuilder {
 
 func (b *MetadataBuilder) Build() (*ProjectMetadata, error) {
 	if b.r.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.r.updatedAt == nil || b.r.updatedAt.IsZero() {
 		b.r.updatedAt = b.r.UpdatedAt()
