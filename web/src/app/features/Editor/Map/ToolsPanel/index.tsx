@@ -10,6 +10,7 @@ import { RESET } from "jotai/utils";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
+import MapGoogleSearch from "../MapGoogleSearch";
 import { SketchFeatureTooltipAtom } from "../state";
 
 type SketchTool = {
@@ -185,47 +186,50 @@ const ToolsPanel: FC = () => {
       storageId="editor-map-tools-panel"
       extend
     >
-      <SketchToolsWrapper data-testid="sketch-tools-wrapper">
-        <SketchFeatureButtons data-testid="sketch-feature-buttons-draw">
-          {sketchTools.map(
-            ({ icon, selected, tooltipText, placement, onClick }) => (
-              <IconButton
-                data-testid={`sketch-tool-${icon}`}
-                key={icon}
-                icon={icon}
-                disabled={!sketchEnabled}
-                appearance={"simple"}
-                active={selected}
-                tooltipText={tooltipText}
-                placement={placement}
-                onClick={onClick}
-              />
-            )
-          )}
-        </SketchFeatureButtons>
-        <Divider data-testid="sketch-tools-divider" />
-        <SketchFeatureButtons data-testid="sketch-feature-buttons-edit">
-          <IconButton
-            icon="pencilLine"
-            disabled={!selectedSketchFeature}
-            appearance={"simple"}
-            active={isEditingGeometry}
-            placement="top"
-            onClick={handleEditSketchFeature}
-            tooltipText={t("Edit Geometry")}
-            data-testid="sketch-tool-edit"
-          />
-          <IconButton
-            icon="trash"
-            disabled={!selectedSketchFeature}
-            appearance={"simple"}
-            tooltipText={t("Delete Feature")}
-            placement="top"
-            onClick={handleShowDeleteFeatureConfirmModal}
-            data-testid="sketch-tool-delete-feature"
-          />
-        </SketchFeatureButtons>
-      </SketchToolsWrapper>
+      <ToolsPanelContent>
+        <SketchToolsWrapper data-testid="sketch-tools-wrapper">
+          <SketchFeatureButtons data-testid="sketch-feature-buttons-draw">
+            {sketchTools.map(
+              ({ icon, selected, tooltipText, placement, onClick }) => (
+                <IconButton
+                  data-testid={`sketch-tool-${icon}`}
+                  key={icon}
+                  icon={icon}
+                  disabled={!sketchEnabled}
+                  appearance={"simple"}
+                  active={selected}
+                  tooltipText={tooltipText}
+                  placement={placement}
+                  onClick={onClick}
+                />
+              )
+            )}
+          </SketchFeatureButtons>
+          <Divider data-testid="sketch-tools-divider" />
+          <SketchFeatureButtons data-testid="sketch-feature-buttons-edit">
+            <IconButton
+              icon="pencilLine"
+              disabled={!selectedSketchFeature}
+              appearance={"simple"}
+              active={isEditingGeometry}
+              placement="top"
+              onClick={handleEditSketchFeature}
+              tooltipText={t("Edit Geometry")}
+              data-testid="sketch-tool-edit"
+            />
+            <IconButton
+              icon="trash"
+              disabled={!selectedSketchFeature}
+              appearance={"simple"}
+              tooltipText={t("Delete Feature")}
+              placement="top"
+              onClick={handleShowDeleteFeatureConfirmModal}
+              data-testid="sketch-tool-delete-feature"
+            />
+          </SketchFeatureButtons>
+        </SketchToolsWrapper>
+        <MapGoogleSearch />
+      </ToolsPanelContent>
       {showDeleteFeatureConfirmModal && (
         <ConfirmModal
           visible={true}
@@ -258,6 +262,14 @@ const ToolsPanel: FC = () => {
 };
 
 export default ToolsPanel;
+
+const ToolsPanelContent = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  width: "100%",
+  padding: `0 ${theme.spacing.small}px`
+}));
 
 const SketchToolsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
