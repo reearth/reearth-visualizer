@@ -3,5 +3,8 @@
   "yaml.schemas": {
     "https://json.schemastore.org/github-workflow": "/.github/workflows/**/*.yml"
   },
-  "vitest.commandLine": "yarn run vitest watch"
+  "vitest.commandLine": "yarn run vitest watch",
+  "css.customData": [
+    ".vscode/tailwind.json"
+  ],
 }
