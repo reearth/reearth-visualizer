@@ -33,7 +33,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
         with:
-          go-version: "1.25.4"
+          go-version: "1.25.5"
       - name: Run GoReleaser
         uses: goreleaser/goreleaser-action@9c156ee8a17a598857849441385a2041ef570552 # v6.3.0
         # TODO: fix error=archive named dist/reearth_0.0.0-SNAPSHOT-xxxxxxxx.tar.gz already exists. Check your archive name template
