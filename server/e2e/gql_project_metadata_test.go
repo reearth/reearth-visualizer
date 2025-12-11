@@ -4,7 +4,8 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // export REEARTH_DB=mongodb://localhost
@@ -73,7 +74,7 @@ mutation UpdateProjectMetadata($input: UpdateProjectMetadataInput!) {
 }
 `
 
-func updateProjectMetadata(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateProjectMetadata(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateProjectMetadata",
 		Query:         UpdateProjectMetadataMutation,

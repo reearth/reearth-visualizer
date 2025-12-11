@@ -4,8 +4,9 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestWorkspacePolicyCheck_InputTypes(t *testing.T) {
@@ -47,7 +48,7 @@ func TestWorkspacePolicyCheck_ResponseStructure(t *testing.T) {
 func TestWorkspacePolicyCheck_IDConversion(t *testing.T) {
 	// Test the ID conversion logic that should happen in the resolver
 	// Generate a valid workspace ID for testing
-	validWorkspaceID := accountdomain.NewWorkspaceID()
+	validWorkspaceID := accountsID.NewWorkspaceID()
 
 	tests := []struct {
 		name     string
@@ -78,7 +79,7 @@ func TestWorkspacePolicyCheck_IDConversion(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := gqlmodel.ToID[accountdomain.Workspace](gqlmodel.ID(tt.inputID))
+			result, err := gqlmodel.ToID[accountsID.Workspace](gqlmodel.ID(tt.inputID))
 
 			if tt.hasError {
 				assert.Error(t, err)

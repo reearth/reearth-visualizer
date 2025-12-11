@@ -6,8 +6,6 @@ import (
 	"errors"
 	"net/url"
 
-	"github.com/reearth/reearthx/account/accountdomain/user"
-
 	"github.com/reearth/reearth/server/internal/app/i18n/message/errmsg"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/i18n/message"
@@ -15,13 +13,15 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 type CreateProjectParam struct {
-	WorkspaceID     accountdomain.WorkspaceID
+	WorkspaceID     accountsID.WorkspaceID
 	Visualizer      visualizer.Visualizer
 	Name            *string
 	Description     *string
@@ -88,16 +88,16 @@ type ProjectListParam struct {
 
 type Project interface {
 	Fetch(context.Context, []id.ProjectID, *usecase.Operator) ([]*project.Project, error)
-	FindByWorkspace(context.Context, accountdomain.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
-	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
-	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
+	FindByWorkspace(context.Context, accountsID.WorkspaceID, *string, *project.SortType, *usecasex.Pagination, *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error)
+	FindStarredByWorkspace(context.Context, accountsID.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
+	FindDeletedByWorkspace(context.Context, accountsID.WorkspaceID, *usecase.Operator) ([]*project.Project, error)
 
 	FindActiveById(context.Context, id.ProjectID, *usecase.Operator) (*project.Project, error)
 	FindActiveByAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
 	FindByProjectAlias(context.Context, string, *usecase.Operator) (*project.Project, error)
 
-	FindVisibilityByUser(context.Context, *user.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
-	FindVisibilityByWorkspace(context.Context, accountdomain.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
+	FindVisibilityByUser(context.Context, *accountsUser.User, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
+	FindVisibilityByWorkspace(context.Context, accountsID.WorkspaceID, bool, *usecase.Operator, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam) ([]*project.Project, *usecasex.PageInfo, error)
 	FindAll(context.Context, *string, *project.SortType, *usecasex.Pagination, *ProjectListParam, *[]string, *string) ([]*project.Project, *usecasex.PageInfo, error)
 	UpdateVisibility(context.Context, id.ProjectID, string, *usecase.Operator) (*project.Project, error)
 
@@ -106,7 +106,7 @@ type Project interface {
 	Delete(context.Context, id.ProjectID, *usecase.Operator) error
 
 	Publish(context.Context, PublishProjectParam, *usecase.Operator) (*project.Project, error)
-	CheckProjectAlias(context.Context, string, accountdomain.WorkspaceID, *id.ProjectID) (bool, error)
+	CheckProjectAlias(context.Context, string, accountsID.WorkspaceID, *id.ProjectID) (bool, error)
 	CheckSceneAlias(context.Context, string, *id.ProjectID) (bool, error)
 
 	ExportProjectData(context.Context, id.ProjectID, *zip.Writer, *usecase.Operator) (*project.Project, error)

@@ -5,21 +5,22 @@ import (
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqldataloader"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountinterfaces"
 	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
 )
 
 type UserLoader struct {
-	usecase accountinterfaces.User
+	usecase accountsInterfaces.User
 }
 
-func NewUserLoader(usecase accountinterfaces.User) *UserLoader {
+func NewUserLoader(usecase accountsInterfaces.User) *UserLoader {
 	return &UserLoader{usecase: usecase}
 }
 
 func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.User, []error) {
-	uids, err := util.TryMap(ids, gqlmodel.ToID[accountdomain.User])
+	uids, err := util.TryMap(ids, gqlmodel.ToID[accountsID.User])
 	if err != nil {
 		return nil, []error{err}
 	}
@@ -38,18 +39,12 @@ func (c *UserLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmodel.
 }
 
 func (c *UserLoader) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
-	res, err := c.usecase.SearchUser(ctx, nameOrEmail)
+	res, err := c.usecase.FetchByNameOrEmail(ctx, nameOrEmail)
 	if err != nil {
 		return nil, err
 	}
 
-	for _, user := range res {
-		if user.Name == nameOrEmail || user.Email == nameOrEmail {
-			return gqlmodel.ToUserFromSimple(user), nil
-		}
-	}
-
-	return nil, nil
+	return gqlmodel.ToUserFromSimple(res), nil
 }
 
 // data loader

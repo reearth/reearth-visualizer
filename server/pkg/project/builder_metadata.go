@@ -4,8 +4,9 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type MetadataBuilder struct {
@@ -47,7 +48,7 @@ func (b *MetadataBuilder) NewID() *MetadataBuilder {
 	return b
 }
 
-func (b *MetadataBuilder) Workspace(workspace accountdomain.WorkspaceID) *MetadataBuilder {
+func (b *MetadataBuilder) Workspace(workspace accountsID.WorkspaceID) *MetadataBuilder {
 	b.r.workspace = workspace
 	return b
 }
