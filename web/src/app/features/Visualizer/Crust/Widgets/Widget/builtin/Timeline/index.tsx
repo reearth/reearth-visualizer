@@ -26,8 +26,8 @@ const Timeline: FC<TimelineProps> = ({ widget }) => {
   );
 
   return (
-    <div className={theme === "dark" ? "tw-dark" : "tw-light"}>
-      <div className="tw-w-full tw-min-w-[700px] tw-bg-white dark:tw-bg-gray-800">
+    <div className={theme}>
+      <div className="w-full min-w-[700px] bg-background text-foreground rounded-md overflow-hidden">
         123
       </div>
     </div>

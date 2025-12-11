@@ -77,7 +77,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   widget,
   context: { onFlyTo } = {}
 }) => {
-  const theme = useMemo(
+  const themeClass = useMemo(
     () => widget.property?.appearance?.theme ?? "light",
     [widget.property?.appearance?.theme]
   );
@@ -330,14 +330,14 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         : "Please setup apikey";
 
   return (
-    <div className={theme}>
-      <Card className="tw-pl-3 tw-w-[400px] tw-flex tw-flex-col tw-bg-background tw-text-foreground tw-rounded-md tw-border-0">
-        <div className="tw-flex tw-items-center">
-          <span className="tw-text-foreground">
-            <Search className="tw-w-5 tw-h-5" />
+    <div className={themeClass} data-theme-debug={themeClass}>
+      <Card className="w-[400px] flex flex-col bg-background text-foreground rounded-md border-0 overflow-hidden">
+        <div className="flex items-center gap-2 px-3">
+          <span className="text-foreground">
+            <Search className="w-5 h-5" />
           </span>
           <Input
-            className="tw-border-0 tw-shadow-none focus:outline-none focus:ring-0 "
+            className="border-0 shadow-none focus:outline-none focus:ring-0 "
             placeholder={inputPlaceholder}
             value={query}
             onChange={handleInputChange}
@@ -346,15 +346,21 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
           />
         </div>
         {loading && (
-          <p className="tw-text-gray-500 tw-p-1 tw-text-sm">Loading...</p>
+          <div className="px-3 py-2 border-t border-accent">
+            <p className="text-sm text-muted-foreground">Loading...</p>
+          </div>
         )}
-        {error && <p className="tw-text-gray-500 tw-p-1 tw-text-sm">{error}</p>}
+        {error && (
+          <div className="px-3 py-2 border-t border-accent">
+            <p className="p-3 text-sm text-muted-foreground">{error}</p>
+          </div>
+        )}
         {filteredSuggestions.length > 0 && (
-          <ul className="tw-ml-[-0.75rem] tw-rounded-b-md tw-shadow-lg tw-max-h-60 tw-overflow-y-auto tw-text-sm">
+          <ul className="py-2 overflow-y-auto text-sm border-t shadow-lg rounded-b-md max-h-60 border-accent">
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
-                className="tw-px-4 tw-py-2 tw-cursor-pointer hover:tw-bg-hoverbackground"
+                className="px-3 py-2 cursor-pointer hover:bg-hover-background"
                 onClick={async () => await handleSelectItem(suggestion)}
               >
                 {`${suggestion.formatted_address}, ${suggestion.name}`}
@@ -364,23 +370,23 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         )}
 
         {selectedItems.length > 0 && filteredSuggestions.length === 0 && (
-          <div className="tw-space-y-1 tw-ml-[-0.75rem] tw-text-sm">
+          <div className="py-2 space-y-1 text-sm border-t border-accent">
             {selectedItems.map((item, index) => {
               const isSelected = index === selectedItemIndex;
               return (
                 <div
                   key={index}
-                  className={`tw-flex tw-items-center tw-justify-between tw-px-4 tw-py-2 hover:tw-bg-hoverbackground tw-rounded-md tw-cursor-pointer ${
-                    isSelected && "tw-bg-hoverbackground"
+                  className={`flex items-center justify-between px-3 py-2 hover:bg-hoverbackground rounded-md cursor-pointer ${
+                    isSelected && "bg-hoverbackground"
                   }`}
                   onClick={() => handleSelectFromSelectedItems(item, index)}
                 >
-                  <div className="tw-flex tw-items-center">
-                    <MapPin className="tw-w-5 tw-h-5 tw-mr-2 tw-flex-shrink-0" />
+                  <div className="flex items-center">
+                    <MapPin className="w-5 h-5 mr-2 shrink-0" />
                     <span>{`${item.formatted_address}, ${item.name}`}</span>
                   </div>
                   <Trash2
-                    className="tw-w-5 tw-h-5 tw-cursor-pointer hover:tw-text-red-500 tw-flex-shrink-0"
+                    className="w-5 h-5 cursor-pointer hover:text-red-500 shrink-0"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteItem(index, item?.layerId ?? "");
