@@ -10,7 +10,44 @@ import {
 
 import { useMapPage } from "../context";
 
+// ==================== Constants ====================
+
+// Debounce timing
+const SEARCH_DEBOUNCE_MS = 500;
+
+// Google Maps configuration
+//TODO: Delete this and use BE API management system when available
+const GOOGLE_MAPS_LIBRARIES = ["places"];
+const GOOGLE_PLACES_SEARCH_FIELDS = [
+  "displayName",
+  "location",
+  "formattedAddress"
+];
+const MAX_SEARCH_RESULTS = 20;
+
+// UI positioning
+const DROPDOWN_OFFSET_PX = 4;
+
+// Layer configuration
+const LAYER_TYPE_SIMPLE = "simple";
+const DATA_TYPE_GEOJSON = "geojson";
+const GEOJSON_FEATURE_TYPE = "Feature";
+const GEOMETRY_TYPE_POINT = "Point";
+const MARKER_ALTITUDE = 0;
+
+// Camera fly-to configuration
+const CAMERA_HEIGHT = 3000;
+const CAMERA_HEADING = 0;
+const CAMERA_PITCH = -1.5;
+const CAMERA_ROLL = 0;
+const CAMERA_FOV = 1.0471975511965976; // 60 degrees in radians
+const CAMERA_ANIMATION_DURATION = 2;
+
+// Keyboard keys
+const KEY_ENTER = "Enter";
+
 // ==================== Type Definitions ====================
+//TODO: Refactor this and use BE API management system when available
 
 type MapSearchPlace = {
   place_id: string;
@@ -35,6 +72,8 @@ type GooglePlacesResult = {
   };
 };
 
+// ==================== Google Maps Service ====================
+//TODO: Delete this and use BE API management system when available
 declare global {
   interface Window {
     google: {
@@ -55,8 +94,6 @@ declare global {
   }
 }
 
-// ==================== Google Maps Service ====================
-
 let loaderInstance: Loader | null = null;
 
 /**
@@ -71,7 +108,7 @@ const loadGoogleMaps = async (
   if (!loaderInstance) {
     loaderInstance = new Loader({
       apiKey,
-      libraries: ["places"],
+      libraries: GOOGLE_MAPS_LIBRARIES as "places"[],
       language
     });
   }
@@ -90,8 +127,8 @@ const searchPlaces = async (query: string): Promise<MapSearchPlace[]> => {
   try {
     const { places } = await window.google.maps.places.Place.searchByText({
       textQuery: query,
-      fields: ["displayName", "location", "formattedAddress"],
-      maxResultCount: 20
+      fields: GOOGLE_PLACES_SEARCH_FIELDS,
+      maxResultCount: MAX_SEARCH_RESULTS
     });
 
     if (!places || places.length === 0) {
@@ -145,8 +182,8 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
   } | null>(null);
 
   // Initialize Google Maps
+  //TODO: Delete this and use BE API management system when available
   const didLoadRef = useRef(false);
-
   useEffect(() => {
     if (didLoadRef.current || !apiKey || !language) {
       return;
@@ -167,7 +204,7 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedQuery(query);
-    }, 500);
+    }, SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [query]);
 
@@ -194,7 +231,7 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
       const rect = containerRef.current?.getBoundingClientRect();
       if (rect) {
         setDropdownPosition({
-          top: rect.bottom + 4,
+          top: rect.bottom + DROPDOWN_OFFSET_PX,
           left: rect.left,
           width: rect.width
         });
@@ -227,7 +264,7 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter") {
+      if (e.key === KEY_ENTER) {
         setDebouncedQuery(query);
       }
     },
@@ -246,14 +283,14 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
 
       // Add new marker
       const layer = visualizerRef?.current?.layers?.add({
-        type: "simple",
+        type: LAYER_TYPE_SIMPLE,
         data: {
-          type: "geojson",
+          type: DATA_TYPE_GEOJSON,
           value: {
-            type: "Feature",
+            type: GEOJSON_FEATURE_TYPE,
             geometry: {
-              coordinates: [lng, lat, 0],
-              type: "Point"
+              coordinates: [lng, lat, MARKER_ALTITUDE],
+              type: GEOMETRY_TYPE_POINT
             }
           }
         }
@@ -270,13 +307,13 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
         {
           lat,
           lng,
-          height: 3000,
-          heading: 0,
-          pitch: -1.5,
-          roll: 0,
-          fov: 1.0471975511965976
+          height: CAMERA_HEIGHT,
+          heading: CAMERA_HEADING,
+          pitch: CAMERA_PITCH,
+          roll: CAMERA_ROLL,
+          fov: CAMERA_FOV
         },
-        { duration: 2 }
+        { duration: CAMERA_ANIMATION_DURATION }
       );
     },
     [visualizerRef, handleFlyTo, selectedPlace]

@@ -6,7 +6,9 @@ import { createPortal } from "react-dom";
 import { useMapSearch } from "./hooks";
 
 // Hard-coded configuration
+//TODO: Delete this and use BE API management system when available
 const API_TOKEN = "";
+const tempDisabled = true;
 
 const MapGoogleSearch: FC = () => {
   const {
@@ -22,21 +24,31 @@ const MapGoogleSearch: FC = () => {
     inputPlaceholder
   } = useMapSearch({ apiKey: API_TOKEN });
 
+  const suggestionsListId = "map-search-suggestions-list";
+  const isDropdownOpen = suggestions.length > 0;
+
   // Render dropdown in portal
   const renderDropdown = () => {
-    if (!dropdownPosition || suggestions.length === 0) return null;
+    if (!dropdownPosition || !isDropdownOpen) return null;
 
     const content = (
       <SuggestionsList
+        id={suggestionsListId}
+        role="listbox"
+        aria-label="Map search suggestions"
+        data-testid="map-search-suggestions-list"
         style={{
           top: dropdownPosition.top,
           left: dropdownPosition.left,
           width: dropdownPosition.width
         }}
       >
-        {suggestions.map((suggestion) => (
+        {suggestions.map((suggestion, index) => (
           <SuggestionItem
             key={suggestion.place_id}
+            role="option"
+            aria-selected={false}
+            data-testid={`map-search-suggestion-item-${index}`}
             onClick={() => handleSelectPlace(suggestion)}
           >
             {`${suggestion.formatted_address}, ${suggestion.name}`}
@@ -49,18 +61,34 @@ const MapGoogleSearch: FC = () => {
   };
 
   return (
-    <Container ref={containerRef}>
-      <SearchBox>
+    <Container
+      ref={containerRef}
+      data-testid="map-search-container"
+      show={!tempDisabled}
+    >
+      <SearchBox data-testid="map-search-box">
         <InputWrapper>
           <StyledInput
+            role="combobox"
+            aria-label="Search map locations"
+            aria-expanded={isDropdownOpen}
+            aria-controls={suggestionsListId}
+            aria-autocomplete="list"
+            aria-haspopup="listbox"
             placeholder={inputPlaceholder}
             value={query}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            data-testid="map-search-input"
           />
           <SearchIconWrapper
             clickable={!!selectedPlace}
             onClick={selectedPlace ? handleClear : undefined}
+            aria-label={selectedPlace ? "Clear search" : "Search icon"}
+            role={selectedPlace ? "button" : undefined}
+            data-testid={
+              selectedPlace ? "map-search-clear-button" : "map-search-icon"
+            }
           >
             {selectedPlace ? <X size={14} /> : <Search size={14} />}
           </SearchIconWrapper>
@@ -74,9 +102,9 @@ const MapGoogleSearch: FC = () => {
 
 export default MapGoogleSearch;
 
-const Container = styled("div")(() => ({
+const Container = styled("div")<{ show: boolean }>(({ show }) => ({
   position: "relative",
-  display: "flex",
+  display: show ? "flex" : "none",
   alignItems: "center",
   flex: "0 1 419px", // flex-grow: 0, flex-shrink: 1, flex-basis: 419px
   maxWidth: "419px",
