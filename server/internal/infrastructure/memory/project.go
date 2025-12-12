@@ -152,9 +152,18 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	return nil, nil
 }
 
-func (r *Project) FindByProjectAlias(ctx context.Context, projectAlias string) (*project.Project, error) {
+func (r *Project) FindByProjectAlias(ctx context.Context, alias string) (*project.Project, error) {
 	for _, p := range r.data {
-		if p.ProjectAlias() == projectAlias {
+		if p.ProjectAlias() == alias {
+			return p, nil
+		}
+	}
+	return nil, nil
+}
+
+func (r *Project) FindByProjectAliasAndWorkspaceID(ctx context.Context, workspaceID, projectAlias string) (*project.Project, error) {
+	for _, p := range r.data {
+		if p.ProjectAlias() == projectAlias && p.Workspace().String() == workspaceID {
 			return p, nil
 		}
 	}
