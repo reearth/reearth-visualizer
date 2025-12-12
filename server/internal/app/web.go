@@ -23,7 +23,23 @@ type WebHandler struct {
 }
 
 func (w *WebHandler) Handler(ec *echo.Echo) {
+
+	publishedHost := ""
+	if w.HostPattern != "" {
+		publishedHost = w.hostWithSchema()
+	}
+
+	ec.GET("/api/published/:name", PublishedMetadata())
+	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true)) // for oss / localhost
+
+	// BasicAuth endpoint
+	publishedGroup := ec.Group("/p", PublishedAuthMiddleware()) // for prod / dev
+
+	publishedGroup.GET("/:name/data.json", PublishedData(w.HostPattern, true))
+	publishedGroup.GET("/:name/", PublishedIndex(w.HostPattern, true))
+
 	if w.Disabled {
+		ec.Any("/*", func(c echo.Context) error { return echo.ErrNotFound })
 		return
 	}
 
@@ -57,26 +73,6 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 
 	log.Infof("web: web directory will be delivered")
 
-	cfg := map[string]any{}
-	if w.AuthConfig != nil {
-		if w.AuthConfig.ISS != "" {
-			cfg["auth0Domain"] = strings.TrimSuffix(w.AuthConfig.ISS, "/")
-		}
-		if w.AuthConfig.ClientID != nil {
-			cfg["auth0ClientId"] = *w.AuthConfig.ClientID
-		}
-		if len(w.AuthConfig.AUD) > 0 {
-			cfg["auth0Audience"] = w.AuthConfig.AUD[0]
-		}
-	}
-	if w.HostPattern != "" {
-		cfg["published"] = w.hostWithSchema()
-	}
-
-	for k, v := range w.WebConfig {
-		cfg[k] = v
-	}
-
 	static := middleware.StaticWithConfig(middleware.StaticConfig{
 		Root:       "web",
 		Index:      "index.html",
@@ -86,15 +82,15 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
 
-	ec.GET("/reearth_config.json", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, cfg)
-	})
-	ec.GET("/data.json", PublishedData(w.HostPattern, false))
+	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
+	ec.GET("/data.json", PublishedData(w.HostPattern, false)) // for prod / dev
+
 	if favicon != nil && faviconPath != "" {
 		ec.GET(faviconPath, func(c echo.Context) error {
 			return c.Blob(http.StatusOK, "image/vnd.microsoft.icon", favicon)
 		})
 	}
+
 	ec.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
 	})
