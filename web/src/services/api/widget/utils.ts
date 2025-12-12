@@ -14,13 +14,14 @@ export const BUTTON_BUILTIN_WIDGET_ID = "reearth/button";
 export const NAVIGATOR_BUILTIN_WIDGET_ID = "reearth/navigator";
 export const DATA_ATTRIBUTION_WIDGET_ID = "reearth/dataAttribution";
 export const GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID = "reearth/googleMapSearch";
-// export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
+export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
 
 export const AVAILABLE_WIDGET_IDS = [
   BUTTON_BUILTIN_WIDGET_ID,
   NAVIGATOR_BUILTIN_WIDGET_ID,
   DATA_ATTRIBUTION_WIDGET_ID,
-  GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID
+  GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID,
+  TIMELINE_BUILTIN_WIDGET_ID
 ];
 
 const getWidgetIdsFromWAS = (
@@ -114,6 +115,8 @@ function getBuiltinExtensionIcon(
       return "listDashes";
     case GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID:
       return "magnifyingGlass";
+    case TIMELINE_BUILTIN_WIDGET_ID:
+      return "timeline";
     default:
       return undefined;
   }
