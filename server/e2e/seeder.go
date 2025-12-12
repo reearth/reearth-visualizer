@@ -37,19 +37,23 @@ import (
 var (
 
 	// ---------------- user1
+
 	wID    = accountsID.NewWorkspaceID()
+	wAlias = "workspace-alias"
 	uID    = accountsID.NewUserID()
 	uName  = "e2e"
 	uEmail = "e2e@e2e.com"
 
 	// ---------------- user2
 	wID2    = accountsID.NewWorkspaceID()
+	wAlias2 = "workspace-alias-2"
 	uID2    = accountsID.NewUserID()
 	uName2  = "e3e"
 	uEmail2 = "e3e@e3e.com"
 
 	// ---------------- user3
 	wID3    = accountsID.NewWorkspaceID()
+	wAlias3 = "workspace-alias-3"
 	uID3    = accountsID.NewUserID()
 	uName3  = "e4e"
 	uEmail3 = "e4e@e4e.com"
@@ -69,7 +73,7 @@ var (
 
 func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.File) error {
 
-	_, err := createUserAndWorkspace(ctx, r, wID, uID, uName, uEmail)
+	_, err := createUserAndWorkspace(ctx, r, wID, wAlias, uID, uName, uEmail)
 	if err != nil {
 		return err
 	}
@@ -78,12 +82,12 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 		return err
 	}
 
-	_, err = createUserAndWorkspace(ctx, r, wID2, uID2, uName2, uEmail2)
+	_, err = createUserAndWorkspace(ctx, r, wID2, wAlias2, uID2, uName2, uEmail2)
 	if err != nil {
 		return err
 	}
 
-	u3, err := createUserAndWorkspace(ctx, r, wID3, uID3, uName3, uEmail3)
+	u3, err := createUserAndWorkspace(ctx, r, wID3, wAlias3, uID3, uName3, uEmail3)
 	if err != nil {
 		return err
 	}
@@ -100,6 +104,7 @@ func createUserAndWorkspace(
 	ctx context.Context,
 	r *repo.Container,
 	wid accountsID.WorkspaceID,
+	wAlias string,
 	uid accountsID.UserID,
 	name string,
 	email string) (*accountsUser.User, error) {
@@ -122,6 +127,7 @@ func createUserAndWorkspace(
 	}
 	w := accountsWorkspace.New().ID(wid).
 		Name(name).
+		Alias(wAlias).
 		Personal(false).
 		Members(map[accountsID.UserID]accountsWorkspace.Member{uid: m}).
 		Metadata(accountsWorkspace.NewMetadata()).
@@ -178,25 +184,19 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 	for k, v := range w.Members().Users() {
 		newMembers[k] = v
 	}
+
 	newMembers[newUser.ID()] = accountsWorkspace.Member{
 		Role:      grantRole,
 		InvitedBy: invitedUserId,
 	}
 
-	// Rebuild workspace with new members
-	metadata := w.Metadata()
-	var metadataValue accountsWorkspace.Metadata
-	if metadata != nil {
-		metadataValue = *metadata
-	} else {
-		metadataValue = accountsWorkspace.NewMetadata()
-	}
 	w2 := accountsWorkspace.New().
 		ID(w.ID()).
 		Name(w.Name()).
+		Alias(w.Alias()).
 		Personal(w.IsPersonal()).
 		Members(newMembers).
-		Metadata(metadataValue).
+		Metadata(*w.Metadata()).
 		MustBuild()
 
 	// Save updated workspace
