@@ -286,14 +286,14 @@ message GetAllProjectsRequest {
 message GetProjectRequest {
   // Project ID
   string project_id = 1;
+  // Workspace ID
+  string workspace_id = 2;
 }
 
 // Find a project by alias.
 message GetProjectByAliasRequest {
   // Scene alias
   string alias = 1;
-  // Workspace alias
-  string workspace_alias = 2;
 }
 
 // Determines if an alias is valid.
