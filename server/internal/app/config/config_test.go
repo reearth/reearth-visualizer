@@ -7,17 +7,12 @@ import (
 )
 
 func TestReadConfig(t *testing.T) {
-	clientID := AuthServerDefaultClientID
-	localAuth := AuthConfig{
-		ISS:      "http://localhost:8080/",
-		AUD:      []string{"http://localhost:8080"},
-		ClientID: &clientID,
-	}
+	clientID := "client"
 
 	cfg, err := ReadConfig(false)
 	assert.NoError(t, err)
 	assert.Nil(t, cfg.Auth)
-	assert.Equal(t, AuthConfigs{localAuth}, cfg.Auths())
+	assert.Empty(t, cfg.Auths())
 
 	t.Setenv("REEARTH_AUTH", `[{"iss":"bar"}]`)
 	t.Setenv("REEARTH_AUTH_ISS", "hoge")
@@ -28,7 +23,6 @@ func TestReadConfig(t *testing.T) {
 	assert.Equal(t, AuthConfigs([]AuthConfig{{ISS: "bar"}}), cfg.Auth)
 	assert.Equal(t, AuthConfigs{
 		{ISS: "hoge"}, // REEARTH_AUTH_*
-		localAuth,     // local auth srv
 		{ISS: "bar"},  // REEARTH_AUTH
 	}, cfg.Auths())
 	assert.Equal(t, "hoge", cfg.Auth_ISS)
@@ -44,7 +38,6 @@ func TestReadConfig(t *testing.T) {
 	assert.Equal(t, AuthConfigs{
 		{ISS: "https://foo/", ClientID: &clientID}, // Auth0
 		{ISS: "hoge", AUD: []string{"foo"}},        // REEARTH_AUTH_*
-		localAuth,                                  // local auth srv
 		{ISS: "bar"},                               // REEARTH_AUTH
 	}, cfg.Auths())
 	assert.Equal(t, "foo", cfg.Auth_AUD)
