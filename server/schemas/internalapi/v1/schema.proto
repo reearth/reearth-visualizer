@@ -73,6 +73,24 @@ service ReEarthVisualizer {
   rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
       returns (DeleteByProjectAliasResponse) {}
 
+  // Find a project by workspace alias and project alias.
+  // Request headers: user-id: <User ID>
+  rpc GetProjectByWorkspaceAliasAndProjectAlias(
+      GetProjectByWorkspaceAliasAndProjectAliasRequest)
+      returns (GetProjectByWorkspaceAliasAndProjectAliasResponse) {}
+
+  // Update a project by workspace alias and project alias.
+  // Request headers: user-id: <User ID>
+  rpc UpdateProjectByWorkspaceAliasAndProjectAlias(
+      UpdateProjectByWorkspaceAliasAndProjectAliasRequest)
+      returns (UpdateProjectByWorkspaceAliasAndProjectAliasResponse) {}
+
+  // Delete a project by workspace alias and project alias.
+  // Request headers: user-id: <User ID>
+  rpc DeleteProjectByWorkspaceAliasAndProjectAlias(
+      DeleteProjectByWorkspaceAliasAndProjectAliasRequest)
+      returns (DeleteProjectByWorkspaceAliasAndProjectAliasResponse) {}
+
   // Update a project's star count
   // Request headers: user-id: <User ID>
   rpc PatchStarCount(PatchStarCountRequest)
@@ -456,6 +474,58 @@ message DeleteByProjectAliasRequest {
   string project_alias = 1;
 }
 
+// Find a project by workspace alias and project alias.
+message GetProjectByWorkspaceAliasAndProjectAliasRequest {
+  // Workspace alias
+  string workspace_alias = 1;
+  // Project alias
+  string project_alias = 2;
+}
+
+// Update project fields by workspace alias and project alias.
+// Only the project owner can operate this
+message UpdateProjectByWorkspaceAliasAndProjectAliasRequest {
+  // Workspace alias (required)
+  string workspace_alias = 1;
+  // Project alias (required)
+  string project_alias = 2;
+
+  // Project basic info (optional)
+  optional string name = 3;
+  optional string description = 4;
+  optional bool archived = 5;
+  optional string image_url = 6;
+  optional bool delete_image_url = 7;
+  optional string scene_id = 8;
+  optional bool starred = 9;
+  optional bool deleted = 10;
+  optional string visibility = 11;
+
+  // Publishment settings (optional)
+  optional string public_title = 12;
+  optional string public_description = 13;
+  optional string public_image = 14;
+  optional bool public_no_index = 15;
+  optional bool delete_public_image = 16;
+  optional bool is_basic_auth_active = 17;
+  optional string basic_auth_username = 18;
+  optional string basic_auth_password = 19;
+  optional bool enable_ga = 20;
+  optional string tracking_id = 21;
+
+  optional string new_project_alias = 22;
+}
+
+// Delete a project by workspace alias and project alias.
+// This is a physical deletion, not a logical deletion. Data cannot be restored.
+// Only the project owner can operate this
+message DeleteProjectByWorkspaceAliasAndProjectAliasRequest {
+  // Workspace alias
+  string workspace_alias = 1;
+  // Project alias
+  string project_alias = 2;
+}
+
 // Export a project.
 message ExportProjectRequest {
   // Project ID
@@ -568,6 +638,24 @@ message UpdateByProjectAliasResponse {
 
 // Response messages
 message DeleteByProjectAliasResponse {
+  // Project alias
+  string project_alias = 1;
+}
+
+// Response messages
+message GetProjectByWorkspaceAliasAndProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message UpdateProjectByWorkspaceAliasAndProjectAliasResponse {
+  // Project
+  Project project = 1;
+}
+
+// Response messages
+message DeleteProjectByWorkspaceAliasAndProjectAliasResponse {
   // Project alias
   string project_alias = 1;
 }
