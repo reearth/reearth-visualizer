@@ -1,6 +1,10 @@
 import { Loader } from "@googlemaps/js-api-loader";
 import { Card } from "@reearth/app/lib/reearth-widget-ui/components/ui/card";
 import { Input } from "@reearth/app/lib/reearth-widget-ui/components/ui/input";
+import {
+  useSystemTheme,
+  resolveTheme
+} from "@reearth/app/lib/reearth-widget-ui/hooks/useSystemTheme";
 import { useVisualizer } from "@reearth/core";
 import { Search, Trash2, MapPin } from "lucide-react";
 import { FC, useMemo, useEffect, useCallback, useState, useRef } from "react";
@@ -77,9 +81,10 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   widget,
   context: { onFlyTo } = {}
 }) => {
+  const systemTheme = useSystemTheme();
   const themeClass = useMemo(
-    () => widget.property?.appearance?.theme ?? "light",
-    [widget.property?.appearance?.theme]
+    () => resolveTheme(widget.property?.appearance?.theme, systemTheme),
+    [widget.property?.appearance?.theme, systemTheme]
   );
   const apiToken = useMemo(
     () => widget?.property?.default?.apiToken,
@@ -332,7 +337,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
   return (
     <div className={themeClass} data-theme-debug={themeClass}>
       <Card className="w-[400px] flex flex-col bg-background text-foreground rounded-md border-0 overflow-hidden">
-        <div className="flex items-center gap-2 px-3">
+        <div className="flex items-center gap-3 px-3">
           <span className="text-foreground">
             <Search className="w-5 h-5" />
           </span>
@@ -356,7 +361,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
           </div>
         )}
         {filteredSuggestions.length > 0 && (
-          <ul className="py-2 overflow-y-auto text-sm border-t shadow-lg rounded-b-md max-h-60 border-accent">
+          <ul className="overflow-y-auto text-sm border-t shadow-lg rounded-b-md max-h-60 border-accent">
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.place_id}
@@ -370,7 +375,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
         )}
 
         {selectedItems.length > 0 && filteredSuggestions.length === 0 && (
-          <div className="py-2 space-y-1 text-sm border-t border-accent">
+          <div className="space-y-1 text-sm border-t border-accent">
             {selectedItems.map((item, index) => {
               const isSelected = index === selectedItemIndex;
               return (

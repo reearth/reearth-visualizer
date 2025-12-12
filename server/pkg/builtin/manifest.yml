@@ -2342,6 +2342,8 @@ extensions:
                   label: Light
                 - key: dark
                   label: Dark
+                - key: auto
+                  label: Auto
   - id: navigator
     type: widget
     name: Navigator
@@ -2427,6 +2429,8 @@ extensions:
                   label: Light
                 - key: dark
                   label: Dark
+                - key: auto
+                  label: Auto
         - id: languageSetting
           title: Language Setting
           fields:
@@ -2443,7 +2447,6 @@ extensions:
                   label: Japanese
                 - key: cn
                   label: Chinese
-
   - id: story
     name: Story
     type: story
