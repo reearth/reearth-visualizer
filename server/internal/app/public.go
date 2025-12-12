@@ -13,6 +13,7 @@ import (
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http1 "github.com/reearth/reearth/server/internal/adapter/http"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/rerror"
 
@@ -133,6 +134,32 @@ func PublishedData(pattern string, useParam bool) echo.HandlerFunc {
 
 func PublishedIndex(pattern string, useParam bool) echo.HandlerFunc {
 	return PublishedIndexMiddleware(pattern, useParam, true)(nil)
+}
+
+func WebConfigHandler(authCfg *config.AuthConfig, webCfg map[string]any, published string) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		cfg := map[string]any{}
+		if authCfg != nil {
+			if authCfg.ISS != "" {
+				cfg["auth0Domain"] = strings.TrimSuffix(authCfg.ISS, "/")
+			}
+			if authCfg.ClientID != nil {
+				cfg["auth0ClientId"] = *authCfg.ClientID
+			}
+			if len(authCfg.AUD) > 0 {
+				cfg["auth0Audience"] = authCfg.AUD[0]
+			}
+		}
+		if published != "" {
+			cfg["published"] = published
+		}
+
+		for k, v := range webCfg {
+			cfg[k] = v
+		}
+
+		return c.JSON(http.StatusOK, cfg)
+	}
 }
 
 func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) echo.MiddlewareFunc {

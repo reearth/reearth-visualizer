@@ -7,8 +7,6 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/verror"
-
-	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
@@ -22,7 +20,6 @@ var (
 
 type Container struct {
 	Asset           Asset
-	AuthRequest     authserver.RequestRepo
 	Config          Config
 	NLSLayer        NLSLayer
 	Style           Style
@@ -60,7 +57,6 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 	}
 	return &Container{
 		Asset:           c.Asset.Filtered(workspace),
-		AuthRequest:     c.AuthRequest,
 		Config:          c.Config,
 		NLSLayer:        c.NLSLayer.Filtered(scene),
 		Style:           c.Style.Filtered(scene),

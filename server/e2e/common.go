@@ -42,16 +42,10 @@ var (
 		Origins:  []string{"https://example.com"},
 		Dev:      true,
 		MockAuth: true,
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
 	}
 
 	internalApiConfig = &config.Config{
 		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
 		Visualizer: config.VisualizerConfig{
 			InternalApi: config.InternalApiConfig{
 				Active: true,
@@ -234,9 +228,6 @@ func ServerMockTest(t *testing.T) *httpexpect.Expect {
 		Dev:      true,
 		MockAuth: true,
 		Origins:  []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
 	}
 	e, _, _ := startServer(t, c, true, nil)
 	return e
