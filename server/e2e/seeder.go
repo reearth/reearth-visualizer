@@ -180,13 +180,13 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 	for k, v := range members.Users() {
 		newMembers[k] = v
 	}
-	metadata := workspace.NewMetadata()
 	w2 := workspace.New().
 		ID(w.ID()).
 		Name(w.Name()).
+		Alias(w.Alias()).
 		Personal(w.IsPersonal()).
 		Members(newMembers).
-		Metadata(metadata).
+		Metadata(w.Metadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w2); err != nil {
 		return err
