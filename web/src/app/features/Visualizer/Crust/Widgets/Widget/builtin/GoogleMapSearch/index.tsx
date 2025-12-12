@@ -18,6 +18,20 @@ type Places = {
   };
 };
 
+/**
+ * Global type declaration for Google Maps API
+ *
+ * Why we need `declare global`:
+ * 1. The Google Maps JavaScript API is loaded via <script> tag and adds the `google` object to the global `window` object
+ * 2. TypeScript doesn't know about this runtime addition, so we need to tell it that `window.google` exists
+ * 3. This provides type safety when accessing `window.google.maps.places` API
+ * 4. Without this declaration, TypeScript would throw errors like "Property 'google' does not exist on type 'Window'"
+ *
+ * How it works:
+ * - `declare global` extends the global namespace
+ * - `interface Window` merges with the existing Window interface
+ * - This tells TypeScript that `window.google` is available at runtime
+ */
 declare global {
   interface Window {
     google: {
