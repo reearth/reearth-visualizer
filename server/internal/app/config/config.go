@@ -108,7 +108,8 @@ type VisualizerConfig struct {
 }
 
 type Policy struct {
-	Checker CheckerConfig
+	Disabled bool `default:"false"`
+	Checker  CheckerConfig
 }
 
 type CheckerConfig struct {
