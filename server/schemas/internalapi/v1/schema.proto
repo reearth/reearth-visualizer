@@ -286,8 +286,6 @@ message GetAllProjectsRequest {
 message GetProjectRequest {
   // Project ID
   string project_id = 1;
-  // Workspace ID
-  string workspace_id = 2;
 }
 
 // Find a project by alias.
@@ -421,6 +419,8 @@ message DeleteProjectRequest {
 message GetProjectByProjectAliasRequest {
   // Project alias
   string project_alias = 1;
+  // Workspace ID
+  string workspace_id = 2;
 }
 
 // Update project fields.
