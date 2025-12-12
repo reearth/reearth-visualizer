@@ -518,9 +518,24 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 }
 
 func (r *Project) FindByProjectAlias(ctx context.Context, alias string) (*project.Project, error) {
-
 	prj, err := r.findOne(ctx, bson.M{
 		"projectalias": alias,
+	}, false)
+
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, repo.ErrResourceNotFound
+		}
+		return nil, err
+	}
+
+	return prj, nil
+}
+
+func (r *Project) FindByProjectAliasAndWorkspaceID(ctx context.Context, workspaceID string, projectAlias string) (*project.Project, error) {
+	prj, err := r.findOne(ctx, bson.M{
+		"projectalias": projectAlias,
+		"workspace":    workspaceID,
 	}, false)
 
 	if err != nil {
