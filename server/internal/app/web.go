@@ -24,6 +24,23 @@ type WebHandler struct {
 
 func (w *WebHandler) Handler(ec *echo.Echo) {
 
+	publishedHost := ""
+	if w.HostPattern != "" {
+		publishedHost = w.hostWithSchema()
+	}
+
+	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
+	ec.GET("/data.json", PublishedData(w.HostPattern, false)) // for prod / dev
+
+	ec.GET("/api/published/:name", PublishedMetadata())
+	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true)) // for oss / localhost
+
+	// BasicAuth endpoint
+	publishedGroup := ec.Group("/p", PublishedAuthMiddleware()) // for prod / dev
+
+	publishedGroup.GET("/:name/data.json", PublishedData(w.HostPattern, true))
+	publishedGroup.GET("/:name/", PublishedIndex(w.HostPattern, true))
+
 	if w.Disabled {
 		return
 	}
@@ -56,11 +73,6 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 		return
 	}
 
-	publishedHost := ""
-	if w.HostPattern != "" {
-		publishedHost = w.hostWithSchema()
-	}
-
 	log.Infof("web: web directory will be delivered")
 
 	static := middleware.StaticWithConfig(middleware.StaticConfig{
@@ -77,18 +89,6 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 			return c.Blob(http.StatusOK, "image/vnd.microsoft.icon", favicon)
 		})
 	}
-
-	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
-
-	ec.GET("/data.json", PublishedData(w.HostPattern, false))               // for prod / dev
-	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true)) // for oss / localhost
-
-	ec.GET("/api/published/:name", PublishedMetadata())
-
-	// BasicAuth endpoint
-	publishedGroup := ec.Group("/p", PublishedAuthMiddleware())
-	publishedGroup.GET("/:name/data.json", PublishedData(w.HostPattern, true))
-	publishedGroup.GET("/:name/", PublishedIndex(w.HostPattern, true))
 
 	ec.GET("/index.html", func(c echo.Context) error {
 		return c.Redirect(http.StatusPermanentRedirect, "/")
