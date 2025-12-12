@@ -13,7 +13,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/util"
@@ -35,7 +34,6 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 
 	c := &repo.Container{
 		Asset:           NewAsset(client),
-		AuthRequest:     authserver.NewMongo(client.WithCollection("authRequest")),
 		Config:          NewConfig(db.Collection("config"), lock),
 		NLSLayer:        NewNLSLayer(client),
 		Style:           NewStyle(client),
@@ -110,7 +108,6 @@ func Init(r *repo.Container) error {
 	ctx := context.Background()
 	return util.Try(
 		func() error { return r.Asset.(*Asset).Init(ctx) },
-		func() error { return r.AuthRequest.(*authserver.Mongo).Init(ctx) },
 		func() error { return r.Plugin.(*Plugin).Init(ctx) },
 		func() error { return r.Project.(*Project).Init(ctx) },
 		func() error { return r.Property.(*Property).Init(ctx) },
