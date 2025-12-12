@@ -292,6 +292,8 @@ message GetProjectRequest {
 message GetProjectByAliasRequest {
   // Scene alias
   string alias = 1;
+  // Workspace alias
+  string workspace_id = 2;
 }
 
 // Determines if an alias is valid.
@@ -376,6 +378,9 @@ message UpdateProjectRequest {
   optional string tracking_id = 20;
 
   optional string project_alias = 21;
+
+  // Additional required field
+  string workspace_id = 22;
 }
 
 // Update project publish fields.
@@ -408,6 +413,8 @@ message UpdateProjectMetadataRequest {
 message DeleteProjectRequest {
   // Project ID
   string project_id = 1;
+  // Workspace ID
+  string workspace_id = 2;
 }
 
 // Find a project by project alias.
