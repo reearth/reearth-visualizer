@@ -101,22 +101,27 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 
 	// Policy Checker - configurable via environment
 	var policyChecker gateway.PolicyChecker
-	switch conf.Visualizer.Policy.Checker.Type {
-	case "http":
-		if conf.Visualizer.Policy.Checker.Endpoint == "" {
-			log.Fatalf("policy checker HTTP endpoint is required")
-		}
-		policyChecker = policy.NewHTTPPolicyChecker(
-			conf.Visualizer.Policy.Checker.Endpoint,
-			conf.Visualizer.Policy.Checker.Token,
-			conf.Visualizer.Policy.Checker.Timeout,
-		)
-		log.Infof("policy checker: using HTTP checker with endpoint: %s", conf.Visualizer.Policy.Checker.Endpoint)
-	case "permissive":
-		fallthrough
-	default:
+	if conf.Visualizer.Policy.Disabled {
 		policyChecker = policy.NewPermissiveChecker()
-		log.Infof("policy checker: using permissive checker (OSS mode)")
+		log.Infof("policy checker: disabled via config, using permissive checker")
+	} else {
+		switch conf.Visualizer.Policy.Checker.Type {
+		case "http":
+			if conf.Visualizer.Policy.Checker.Endpoint == "" {
+				log.Fatalf("policy checker HTTP endpoint is required")
+			}
+			policyChecker = policy.NewHTTPPolicyChecker(
+				conf.Visualizer.Policy.Checker.Endpoint,
+				conf.Visualizer.Policy.Checker.Token,
+				conf.Visualizer.Policy.Checker.Timeout,
+			)
+			log.Infof("policy checker: using HTTP checker with endpoint: %s", conf.Visualizer.Policy.Checker.Endpoint)
+		case "permissive":
+			fallthrough
+		default:
+			policyChecker = policy.NewPermissiveChecker()
+			log.Infof("policy checker: using permissive checker (OSS mode)")
+		}
 	}
 	gateways.PolicyChecker = policyChecker
 
