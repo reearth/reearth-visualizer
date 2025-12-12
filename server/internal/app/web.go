@@ -29,9 +29,6 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 		publishedHost = w.hostWithSchema()
 	}
 
-	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
-	ec.GET("/data.json", PublishedData(w.HostPattern, false)) // for prod / dev
-
 	ec.GET("/api/published/:name", PublishedMetadata())
 	ec.GET("/api/published_data/:name", PublishedData(w.HostPattern, true)) // for oss / localhost
 
@@ -42,6 +39,7 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	publishedGroup.GET("/:name/", PublishedIndex(w.HostPattern, true))
 
 	if w.Disabled {
+		ec.Any("/*", func(c echo.Context) error { return echo.ErrNotFound })
 		return
 	}
 
@@ -83,6 +81,9 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 		Filesystem: hfs,
 	})
 	notFound := func(c echo.Context) error { return echo.ErrNotFound }
+
+	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
+	ec.GET("/data.json", PublishedData(w.HostPattern, false)) // for prod / dev
 
 	if favicon != nil && faviconPath != "" {
 		ec.GET(faviconPath, func(c echo.Context) error {
