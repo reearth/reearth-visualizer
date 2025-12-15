@@ -1116,8 +1116,6 @@ extensions:
       general:
         title: 一般設定
         fields:
-          initialTime:
-            title: 初期時刻
           displayTimezone:
             title: 表示タイムゾーン
       timelineChannels:

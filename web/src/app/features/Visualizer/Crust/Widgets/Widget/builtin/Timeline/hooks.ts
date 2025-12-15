@@ -159,7 +159,6 @@ export default ({ widget, context }: TimelineProps) => {
     }
   }, [isPlaying, play, pause]);
 
-  const initializedRef = useRef(false);
   const currentTimeRef = useRef<number>(currentTime);
   currentTimeRef.current = currentTime;
   useEffect(() => {
@@ -170,25 +169,7 @@ export default ({ widget, context }: TimelineProps) => {
       pause();
       updateTimeline(endTime);
     }
-
-    const initialStartTime = widget.property?.general?.initialTime;
-    if (!initializedRef.current && initialStartTime) {
-      const initial = new Date(initialStartTime).getTime();
-      if (initial >= startTime && initial <= endTime) {
-        // Manually delay the initialization to avoid the effect from core's default setup.
-        setTimeout(() => {
-          updateTimeline(new Date(initialStartTime).getTime());
-          initializedRef.current = true;
-        }, 100);
-      }
-    }
-  }, [
-    startTime,
-    endTime,
-    updateTimeline,
-    pause,
-    widget.property?.general?.initialTime
-  ]);
+  }, [startTime, endTime, updateTimeline, pause]);
 
   // Play finish check
   useEffect(() => {

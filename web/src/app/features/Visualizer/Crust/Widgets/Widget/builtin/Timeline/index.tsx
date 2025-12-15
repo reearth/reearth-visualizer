@@ -37,7 +37,6 @@ const CHANNEL_STYLE = {
 
 type Property = CommonBuiltInWidgetProperty & {
   general?: {
-    initialTime?: string;
     displayTimezone?: string;
   };
   timelineChannels?: WidgetTimelineChannelsProperty[];

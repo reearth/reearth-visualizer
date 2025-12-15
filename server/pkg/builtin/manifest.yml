@@ -2231,10 +2231,6 @@ extensions:
         - id: general
           title: General
           fields:
-            - id: initialTime
-              title: Initial Time
-              type: string
-              ui: datetime
             - id: displayTimezone
               title: Display Timezone
               type: string
