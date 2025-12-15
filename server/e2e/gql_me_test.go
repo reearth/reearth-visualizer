@@ -143,12 +143,12 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) 
 	}
 
 	// Create additional users and workspaces
-	_, err := createUserAndWorkspace(ctx, r, wID2, uID2, uName2, uEmail2)
+	_, err := createUserAndWorkspace(ctx, r, wID2, wAlias2, uID2, uName2, uEmail2)
 	if err != nil {
 		return err
 	}
 
-	u3, err := createUserAndWorkspace(ctx, r, wID3, uID3, uName3, uEmail3)
+	u3, err := createUserAndWorkspace(ctx, r, wID3, wAlias3, uID3, uName3, uEmail3)
 	if err != nil {
 		return err
 	}

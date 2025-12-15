@@ -140,30 +140,35 @@ func initEcho(
 	// public apis
 	apiRoot := e.Group("/api")
 	apiRoot.GET("/ping", Ping(), privateCache)
-	apiRoot.GET("/published/:name", PublishedMetadata())
 	apiRoot.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
-	apiRoot.GET("/published_data/:name", PublishedData("", true))
+
+	// Registering an initial mock user (for local development)
 	apiRoot.GET("/mockuser", MockUser())
 
-	published := e.Group("/p", PublishedAuthMiddleware())
-	published.GET("/:name/data.json", PublishedData("", true))
-	published.GET("/:name/", PublishedIndex("", true))
+	// Asset API for handling GCP files
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	apiPrivateRoute := apiRoot.Group("", privateCache)
-
 	if cfg.Config.UseMockAuth() {
 		apiPrivateRoute.Use(attachOpMiddlewareMockUser(cfg))
 	} else if cfg.Config.UseReearthAccountAuth() {
 		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 	}
 
+	// Main backend API
 	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))
 
+	// Registering an initial auth0 user (for local development)
 	apiPrivateRoute.POST("/signup", Signup(cfg))
 
-	servSplitUploadFiles(apiPrivateRoute, cfg)
-	servSignatureUploadFiles(apiRoot, apiPrivateRoute, cfg)
+	// Project Import API direct upload version
+	servSplitUploadFiles(apiPrivateRoute, cfg) // /split-import
+	// Project Import API using GCP trriger version
+	servSignatureUploadFiles(
+		apiRoot,         // for /api/import-project
+		apiPrivateRoute, // for /api/signature-url
+		cfg,
+	)
 
 	(&WebHandler{
 		Disabled:    cfg.Config.Web_Disabled,

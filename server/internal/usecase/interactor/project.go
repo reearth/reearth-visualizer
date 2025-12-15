@@ -209,8 +209,25 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
-func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
-	pj, err := i.projectRepo.FindByProjectAlias(ctx, alias)
+func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
+	}
+
+	if operator != nil && !operator.IsReadableWorkspace(ws.ID()) {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", interfaces.ErrOperationDenied)
+	}
+
+	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
+}
+
+func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	if operator != nil && !operator.IsReadableWorkspace(workspaceID) {
+		return nil, interfaces.ErrOperationDenied
+	}
+
+	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
 	if err != nil {
 		return nil, err
 	}
