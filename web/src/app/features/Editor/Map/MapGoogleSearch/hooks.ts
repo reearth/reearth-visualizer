@@ -175,6 +175,7 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
 
   // Dropdown position tracking
   const containerRef = useRef<HTMLDivElement>(null);
+  const searchBoxRef = useRef<HTMLDivElement>(null);
   const [dropdownPosition, setDropdownPosition] = useState<{
     top: number;
     left: number;
@@ -223,31 +224,90 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
     });
   }, [debouncedQuery, isServiceReady, selectedPlace]);
 
-  // Track dropdown position
+  // Update dropdown position based on SearchBox position (not Container, to account for padding)
+  const updateDropdownPosition = useCallback(() => {
+    if (!searchBoxRef.current || suggestions.length === 0) {
+      setDropdownPosition(null);
+      return;
+    }
+
+    const rect = searchBoxRef.current.getBoundingClientRect();
+    setDropdownPosition({
+      top: rect.bottom + DROPDOWN_OFFSET_PX,
+      left: rect.left,
+      width: rect.width
+    });
+  }, [suggestions.length]);
+
+  // Track dropdown position - initial positioning and window events
   useLayoutEffect(() => {
-    if (!containerRef.current || suggestions.length === 0) return;
+    if (suggestions.length === 0) return;
 
-    const updatePosition = () => {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (rect) {
-        setDropdownPosition({
-          top: rect.bottom + DROPDOWN_OFFSET_PX,
-          left: rect.left,
-          width: rect.width
-        });
-      }
-    };
+    updateDropdownPosition();
 
-    updatePosition();
-
-    window.addEventListener("resize", updatePosition);
-    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updateDropdownPosition);
+    window.addEventListener("scroll", updateDropdownPosition, true);
 
     return () => {
-      window.removeEventListener("resize", updatePosition);
-      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updateDropdownPosition);
+      window.removeEventListener("scroll", updateDropdownPosition, true);
     };
-  }, [suggestions]);
+  }, [suggestions.length, updateDropdownPosition]);
+
+  // Track SearchBox resize changes (e.g., when Inspector panel is resized)
+  useEffect(() => {
+    if (suggestions.length === 0) return;
+
+    const searchBox = searchBoxRef.current;
+    if (!searchBox) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      updateDropdownPosition();
+    });
+
+    // Observe the SearchBox element directly since we calculate position from it
+    resizeObserver.observe(searchBox);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [suggestions.length, updateDropdownPosition]);
+
+  // Track SearchBox position changes using requestAnimationFrame
+  // This is necessary because ResizeObserver only detects size changes, not position changes
+  // When Inspector panel is collapsed/expanded, SearchBox position (left) changes but size may not
+  useEffect(() => {
+    if (suggestions.length === 0) return;
+
+    let animationFrameId: number;
+    let lastLeft = 0;
+    let lastTop = 0;
+
+    const checkPosition = () => {
+      const searchBox = searchBoxRef.current;
+      if (!searchBox) {
+        animationFrameId = requestAnimationFrame(checkPosition);
+        return;
+      }
+
+      const rect = searchBox.getBoundingClientRect();
+
+      // Only update if position actually changed (avoid unnecessary re-renders)
+      if (rect.left !== lastLeft || rect.top !== lastTop) {
+        lastLeft = rect.left;
+        lastTop = rect.top;
+        updateDropdownPosition();
+      }
+
+      animationFrameId = requestAnimationFrame(checkPosition);
+    };
+
+    animationFrameId = requestAnimationFrame(checkPosition);
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [suggestions.length, updateDropdownPosition]);
 
   // Event handlers
 
@@ -338,6 +398,7 @@ export const useMapSearch = ({ apiKey }: UseMapSearchParams) => {
     suggestions,
     selectedPlace,
     containerRef,
+    searchBoxRef,
     dropdownPosition,
 
     // Event handlers

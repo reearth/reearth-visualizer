@@ -16,6 +16,7 @@ const MapGoogleSearch: FC = () => {
     suggestions,
     selectedPlace,
     containerRef,
+    searchBoxRef,
     dropdownPosition,
     handleInputChange,
     handleKeyDown,
@@ -66,7 +67,7 @@ const MapGoogleSearch: FC = () => {
       data-testid="map-search-container"
       show={!tempDisabled}
     >
-      <SearchBox data-testid="map-search-box">
+      <SearchBox ref={searchBoxRef} data-testid="map-search-box">
         <InputWrapper>
           <StyledInput
             role="combobox"

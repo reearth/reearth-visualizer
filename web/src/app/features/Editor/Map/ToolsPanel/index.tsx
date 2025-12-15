@@ -227,7 +227,6 @@ const ToolsPanel: FC = () => {
             />
           </SketchFeatureButtons>
         </SketchToolsWrapper>
-        {/* <MapGoogleSearch /> */}
       </ToolsPanelContent>
       {showDeleteFeatureConfirmModal && (
         <ConfirmModal
