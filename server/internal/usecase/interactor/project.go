@@ -209,21 +209,6 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
-func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
-	pj, err := i.projectRepo.FindByProjectAlias(ctx, alias)
-	if err != nil {
-		return nil, err
-	}
-
-	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
-	if err != nil {
-		return nil, err
-	}
-
-	pj.SetMetadata(meta)
-	return pj, nil
-}
-
 func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
 	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
 	if err != nil {
@@ -234,13 +219,17 @@ func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, works
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	pj, err := i.projectRepo.FindByProjectAlias(ctx, projectAlias)
-	if err != nil {
-		return nil, err
+	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
+}
+
+func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	if operator != nil && !operator.IsReadableWorkspace(workspaceID) {
+		return nil, interfaces.ErrOperationDenied
 	}
 
-	if pj.Workspace() != ws.ID() {
-		return nil, repo.ErrResourceNotFound
+	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
+	if err != nil {
+		return nil, err
 	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())

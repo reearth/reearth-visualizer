@@ -568,7 +568,12 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 func (s server) GetProjectByProjectAlias(ctx context.Context, req *pb.GetProjectByProjectAliasRequest) (*pb.GetProjectByProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	workspaceID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err
 	}
@@ -586,7 +591,12 @@ func (s server) GetProjectByProjectAlias(ctx context.Context, req *pb.GetProject
 func (s server) UpdateByProjectAlias(ctx context.Context, req *pb.UpdateByProjectAliasRequest) (*pb.UpdateByProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	workspaceID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err
 	}
@@ -642,7 +652,12 @@ func (s server) UpdateByProjectAlias(ctx context.Context, req *pb.UpdateByProjec
 func (s server) DeleteByProjectAlias(ctx context.Context, req *pb.DeleteByProjectAliasRequest) (*pb.DeleteByProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	workspaceID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err
 	}
@@ -654,7 +669,6 @@ func (s server) DeleteByProjectAlias(ctx context.Context, req *pb.DeleteByProjec
 	return &pb.DeleteByProjectAliasResponse{
 		ProjectAlias: req.ProjectAlias,
 	}, nil
-
 }
 
 func (s server) GetProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, req *pb.GetProjectByWorkspaceAliasAndProjectAliasRequest) (*pb.GetProjectByWorkspaceAliasAndProjectAliasResponse, error) {
@@ -800,7 +814,12 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		return nil, errors.New("user not found in context")
 	}
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	workspaceID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err
 	}

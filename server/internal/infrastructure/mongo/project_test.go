@@ -1525,6 +1525,63 @@ func TestProject_FindAll_MixedStarCounts_SecondarySort(t *testing.T) {
 	})
 }
 
+func TestProject_FindByWorkspaceIDAndProjectAlias(t *testing.T) {
+	now := time.Now().UTC().Truncate(time.Second)
+	defer util.MockNow(now)()
+	c := mongotest.Connect(t)(t)
+	ctx := context.Background()
+
+	wid1 := accountdomain.NewWorkspaceID()
+	wid2 := accountdomain.NewWorkspaceID()
+
+	// Create projects with different workspace IDs and project aliases
+	prj1 := project.New().NewID().Workspace(wid1).UpdatedAt(now).ProjectAlias("my-project").MustBuild()
+	prj2 := project.New().NewID().Workspace(wid1).UpdatedAt(now).ProjectAlias("another-project").MustBuild()
+	prj3 := project.New().NewID().Workspace(wid2).UpdatedAt(now).ProjectAlias("my-project").MustBuild() // Same alias, different workspace
+
+	_, _ = c.Collection("project").InsertMany(ctx, []any{
+		util.DR(mongodoc.NewProject(prj1)),
+		util.DR(mongodoc.NewProject(prj2)),
+		util.DR(mongodoc.NewProject(prj3)),
+	})
+
+	r := NewProject(mongox.NewClientWithDatabase(c))
+
+	t.Run("Find project by workspace ID and project alias", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "my-project")
+		assert.NoError(t, err)
+		assert.NotNil(t, got)
+		assert.Equal(t, prj1.ID(), got.ID())
+	})
+
+	t.Run("Find project with same alias in different workspace", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid2, "my-project")
+		assert.NoError(t, err)
+		assert.NotNil(t, got)
+		assert.Equal(t, prj3.ID(), got.ID())
+	})
+
+	t.Run("Return error for non-existent project alias", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "non-existent")
+		assert.Error(t, err)
+		assert.Nil(t, got)
+	})
+
+	t.Run("Return error for non-existent workspace ID", func(t *testing.T) {
+		nonExistentWid := accountdomain.NewWorkspaceID()
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, nonExistentWid, "my-project")
+		assert.Error(t, err)
+		assert.Nil(t, got)
+	})
+
+	t.Run("Find another project alias in same workspace", func(t *testing.T) {
+		got, err := r.FindByWorkspaceIDAndProjectAlias(ctx, wid1, "another-project")
+		assert.NoError(t, err)
+		assert.NotNil(t, got)
+		assert.Equal(t, prj2.ID(), got.ID())
+	})
+}
+
 func TestProject_FindAll_SameStarCount_DifferentUpdatedat(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()

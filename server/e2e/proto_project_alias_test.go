@@ -253,6 +253,7 @@ func TestInternalAPI_ProjectAlias_CRUD(t *testing.T) {
 		projectAlias := pj.GetProjectAlias()
 
 		res2, err := client.GetProjectByProjectAlias(ctx, &pb.GetProjectByProjectAliasRequest{
+			WorkspaceId:  wID.String(),
 			ProjectAlias: projectAlias,
 		})
 		require.Nil(t, err)
@@ -262,6 +263,7 @@ func TestInternalAPI_ProjectAlias_CRUD(t *testing.T) {
 		newProjectAlias := "test-new-projectalias"
 
 		res3, err := client.UpdateByProjectAlias(ctx, &pb.UpdateByProjectAliasRequest{
+			WorkspaceId:     wID.String(),
 			ProjectAlias:    projectAlias,
 			Name:            lo.ToPtr(newName),
 			NewProjectAlias: lo.ToPtr(newProjectAlias),
@@ -270,6 +272,7 @@ func TestInternalAPI_ProjectAlias_CRUD(t *testing.T) {
 		require.NotNil(t, res3)
 
 		res4, err := client.GetProjectByProjectAlias(ctx, &pb.GetProjectByProjectAliasRequest{
+			WorkspaceId:  wID.String(),
 			ProjectAlias: newProjectAlias,
 		})
 		require.Nil(t, err)
@@ -279,12 +282,14 @@ func TestInternalAPI_ProjectAlias_CRUD(t *testing.T) {
 		require.Equal(t, newName, pj.GetName())
 
 		res5, err := client.DeleteByProjectAlias(ctx, &pb.DeleteByProjectAliasRequest{
+			WorkspaceId:  wID.String(),
 			ProjectAlias: newProjectAlias,
 		})
 		require.Nil(t, err)
 		require.Equal(t, newProjectAlias, res5.GetProjectAlias())
 
 		res6, err := client.GetProjectByProjectAlias(ctx, &pb.GetProjectByProjectAliasRequest{
+			WorkspaceId:  wID.String(),
 			ProjectAlias: newProjectAlias,
 		})
 		require.NotNil(t, err)
