@@ -31,6 +31,8 @@ type Project interface {
 	FindStarredByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindDeletedByWorkspace(context.Context, accountdomain.WorkspaceID) ([]*project.Project, error)
 	FindActiveById(context.Context, id.ProjectID) (*project.Project, error)
+
+	// TODO should be removed because project id is not unique
 	FindActiveByAlias(context.Context, string) (*project.Project, error)
 	FindByWorkspaceIDAndProjectAlias(context.Context, accountdomain.WorkspaceID, string) (*project.Project, error)
 	FindByPublicName(context.Context, string) (*project.Project, error)

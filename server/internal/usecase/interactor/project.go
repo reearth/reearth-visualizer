@@ -212,11 +212,11 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
 	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
 
 	if operator != nil && !operator.IsReadableWorkspace(ws.ID()) {
-		return nil, interfaces.ErrOperationDenied
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", interfaces.ErrOperationDenied)
 	}
 
 	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)

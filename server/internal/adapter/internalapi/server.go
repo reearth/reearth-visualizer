@@ -676,7 +676,7 @@ func (s server) GetProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, r
 
 	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, op)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
 
 	prj, err := s.getSceneAndStorytelling(ctx, pj)
