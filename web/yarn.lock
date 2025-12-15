@@ -6381,7 +6381,7 @@ __metadata:
     lint-staged: "npm:16.2.7"
     localforage: "npm:1.10.0"
     lodash-es: "npm:4.17.21"
-    lucide-react: "npm:^0.556.0"
+    lucide-react: "npm:0.556.0"
     lz-string: "npm:1.5.0"
     npm-run-all: "npm:4.1.5"
     path-browserify: "npm:1.0.1"
@@ -6414,8 +6414,8 @@ __metadata:
     rollup-plugin-visualizer: "npm:6.0.5"
     sortablejs: "npm:1.15.6"
     storybook: "npm:10.0.8"
-    tailwind-merge: "npm:^3.4.0"
-    tailwindcss: "npm:^4.1.17"
+    tailwind-merge: "npm:3.4.0"
+    tailwindcss: "npm:4.1.17"
     tinycolor2: "npm:1.6.0"
     ts-easing: "npm:0.2.0"
     ts-node: "npm:10.9.2"
@@ -16652,7 +16652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lucide-react@npm:^0.556.0":
+"lucide-react@npm:0.556.0":
   version: 0.556.0
   resolution: "lucide-react@npm:0.556.0"
   peerDependencies:
@@ -21240,7 +21240,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwind-merge@npm:^3.4.0":
+"tailwind-merge@npm:3.4.0":
   version: 3.4.0
   resolution: "tailwind-merge@npm:3.4.0"
   checksum: 10c0/eaf17bb695c51c7bb7a90366a9c62be295473ee97fcfd1da54287714d4a5788a88ff4ad1ab9e0128638257fda777d6c9ea88682e36195e31a7fa2cf43f45e310
@@ -21289,7 +21289,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:4.1.17, tailwindcss@npm:^4.1.17":
+"tailwindcss@npm:4.1.17":
   version: 4.1.17
   resolution: "tailwindcss@npm:4.1.17"
   checksum: 10c0/1fecf618ba9895e068e5a6d842b978f56a815bc849a28338cebbcb07b13df763715c2f8848def938403c73d59f08ffff33a4b83a977a9e38fa56adc60d1d56c8
