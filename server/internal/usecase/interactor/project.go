@@ -224,6 +224,30 @@ func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator
 	return pj, nil
 }
 
+func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
+	}
+
+	if operator != nil && !operator.IsReadableWorkspace(ws.ID()) {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", interfaces.ErrOperationDenied)
+	}
+
+	pj, err := i.projectRepo.FindByProjectAliasAndWorkspaceID(ctx, ws.ID().String(), projectAlias)
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
 func (i *Project) MemberWorkspaces(ctx context.Context, uId accountdomain.UserID) (wsList workspace.List, ownedWs []string, memberWs []string) {
 	wsList, err := i.workspaceRepo.FindByUser(ctx, uId)
 	if err != nil {
