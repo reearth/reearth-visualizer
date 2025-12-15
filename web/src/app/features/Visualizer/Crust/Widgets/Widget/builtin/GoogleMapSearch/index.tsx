@@ -83,7 +83,8 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
 }) => {
   const systemTheme = useSystemTheme();
   const themeClass = useMemo(
-    () => resolveTheme(widget.property?.appearance?.theme, systemTheme),
+    () =>
+      resolveTheme(widget.property?.appearance?.theme ?? "light", systemTheme),
     [widget.property?.appearance?.theme, systemTheme]
   );
   const apiToken = useMemo(
