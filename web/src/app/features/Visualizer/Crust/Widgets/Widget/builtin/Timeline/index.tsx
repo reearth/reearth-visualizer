@@ -102,7 +102,7 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
               <SelectTrigger size="sm" className="">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className={themeClass}>
                 {TIMELINE_PLAY_SPEED_OPTIONS.map((option) => (
                   <SelectItem key={option.seconds} value={option.seconds}>
                     {option.timeString}

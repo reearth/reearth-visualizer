@@ -62,8 +62,8 @@
   --color-muted-foreground: oklch(56.9% 0 215.4);
   --color-accent: oklch(30% 0 216);
   --color-accent-foreground: oklch(98% 0 210);
-  --color-popover: oklch(4% 0.142 224);
-  --color-popover-foreground: oklch(65.1% 0.032 215);
+  --color-popover: oklch(0.24 0 0);
+  --color-popover-foreground: oklch(91% 0 213);
   --color-border: oklch(17% 0.058 216);
   --color-input: oklch(17% 0.058 216);
   --color-card: oklch(10% 0 224);
