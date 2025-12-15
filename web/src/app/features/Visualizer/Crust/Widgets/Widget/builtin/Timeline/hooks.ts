@@ -1,5 +1,7 @@
+import { TimelineCommitter } from "@reearth/core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { TIMELINE_COMMITER } from "./constants";
 import useChannels from "./useChannels";
 import useIndicator from "./useIndicator";
 import usePanel from "./usePanel";
@@ -11,10 +13,8 @@ export default ({ widget, context }: TimelineProps) => {
   const { channels, toggleChannelVisibility } = useChannels({ widget });
 
   const displayTimezoneOffset = useMemo(() => {
-    return (
-      widget.property?.general?.display_timezone ?? getUserTimezoneOffset()
-    );
-  }, [widget.property?.general?.display_timezone]);
+    return widget.property?.general?.displayTimezone ?? getUserTimezoneOffset();
+  }, [widget.property?.general?.displayTimezone]);
 
   const timelineManagerRef = context?.timelineManagerRef;
 
@@ -48,7 +48,6 @@ export default ({ widget, context }: TimelineProps) => {
     endTime
   });
 
-  // Update timeline and commit changes
   const updateTimeline = useCallback(
     (newTime: number) => {
       const clampedTime = Math.max(startTime, Math.min(newTime, endTime));
@@ -60,7 +59,7 @@ export default ({ widget, context }: TimelineProps) => {
           start: new Date(startTime),
           stop: new Date(endTime)
         },
-        committer: "timelineWidget" as any
+        committer: TIMELINE_COMMITER
       });
 
       setCurrentTime(clampedTime);
@@ -102,7 +101,7 @@ export default ({ widget, context }: TimelineProps) => {
       payload: {
         rangeType: "bounced"
       },
-      committer: "timelineWidget" as any
+      committer: TIMELINE_COMMITER
     });
   }, [timelineManagerRef]);
 
@@ -113,7 +112,7 @@ export default ({ widget, context }: TimelineProps) => {
       payload: {
         rangeType: "clamped"
       },
-      committer: "timelineWidget" as any
+      committer: TIMELINE_COMMITER
     });
   }, [timelineManagerRef]);
 
@@ -140,7 +139,7 @@ export default ({ widget, context }: TimelineProps) => {
     setIsPlaying(true);
     timelineManagerRef?.current?.commit({
       cmd: "PLAY",
-      committer: "timelineWidget" as any
+      committer: TIMELINE_COMMITER
     });
   }, [timelineManagerRef, applyLoop]);
 
@@ -148,7 +147,7 @@ export default ({ widget, context }: TimelineProps) => {
     setIsPlaying(false);
     timelineManagerRef?.current?.commit({
       cmd: "PAUSE",
-      committer: "timelineWidget" as any
+      committer: TIMELINE_COMMITER
     });
   }, [timelineManagerRef]);
 
@@ -160,6 +159,7 @@ export default ({ widget, context }: TimelineProps) => {
     }
   }, [isPlaying, play, pause]);
 
+  const initializedRef = useRef(false);
   const currentTimeRef = useRef<number>(currentTime);
   currentTimeRef.current = currentTime;
   useEffect(() => {
@@ -170,36 +170,60 @@ export default ({ widget, context }: TimelineProps) => {
       pause();
       updateTimeline(endTime);
     }
-  }, [startTime, endTime, updateTimeline, pause]);
+
+    const initialStartTime = widget.property?.general?.initialTime;
+    if (!initializedRef.current && initialStartTime) {
+      const initial = new Date(initialStartTime).getTime();
+      if (initial >= startTime && initial <= endTime) {
+        // Manually delay the initialization to avoid the effect from core's default setup.
+        setTimeout(() => {
+          updateTimeline(new Date(initialStartTime).getTime());
+          initializedRef.current = true;
+        }, 100);
+      }
+    }
+  }, [
+    startTime,
+    endTime,
+    updateTimeline,
+    pause,
+    widget.property?.general?.initialTime
+  ]);
+
+  // Play finish check
+  useEffect(() => {
+    if (currentTime >= endTime && isPlaying && !isLooping) {
+      pause();
+    }
+  }, [currentTime, endTime, isPlaying, isLooping, pause]);
 
   // Listen to timeline tick
   const handleTick = useCallback((currentTime: Date) => {
     const time = currentTime.getTime();
     setCurrentTime(time);
   }, []);
+
+  const isPlayingRef = useRef(isPlaying);
+  isPlayingRef.current = isPlaying;
+  const handleTimelineCommit = useCallback((commiter: TimelineCommitter) => {
+    if (
+      commiter?.source !== TIMELINE_COMMITER.source &&
+      commiter?.id !== TIMELINE_COMMITER.id &&
+      isPlayingRef.current
+    ) {
+      setIsPlaying(false);
+    }
+  }, []);
+
   useEffect(() => {
     const timelineManager = timelineManagerRef?.current;
     timelineManager?.onTick(handleTick);
+    timelineManager?.onCommit(handleTimelineCommit);
     return () => {
       timelineManager?.offTick(handleTick);
+      timelineManager?.offCommit(handleTimelineCommit);
     };
-  }, [handleTick, timelineManagerRef]);
-
-  // Initialize
-  const initialized = useRef(false);
-  useEffect(() => {
-    if (initialized.current) return;
-    const initialStartTime = widget.property?.general?.initial_time;
-    if (!initialStartTime || !startTime || !endTime) return;
-    updateTimeline(new Date(initialStartTime).getTime());
-    console.log("initialized currentTime:", initialStartTime);
-    initialized.current = true;
-  }, [
-    widget.property?.general?.initial_time,
-    startTime,
-    endTime,
-    updateTimeline
-  ]);
+  }, [handleTick, timelineManagerRef, handleTimelineCommit]);
 
   updateIndicatorPosition(currentTime);
 

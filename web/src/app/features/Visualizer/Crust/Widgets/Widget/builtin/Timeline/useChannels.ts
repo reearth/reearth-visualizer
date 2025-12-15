@@ -13,14 +13,14 @@ export default ({ widget }: TimelineProps) => {
   const t = useT();
 
   useEffect(() => {
-    if (widget.property?.timeline_channels) {
-      const newChannels = widget.property.timeline_channels.map((channel) => ({
+    if (widget.property?.timelineChannels) {
+      const newChannels = widget.property.timelineChannels.map((channel) => ({
         id: channel.id,
-        title: channel.timeline_title || t("New Channel"),
-        startTime: channel.timeline_range?.startTime || "",
-        endTime: channel.timeline_range?.endTime || "",
-        currentTime: channel.timeline_range?.currentTime || "",
-        valid: isTimelineValid(channel.timeline_range || {}),
+        title: channel.channelTitle || t("New Channel"),
+        startTime: channel.channelRange?.startTime || "",
+        endTime: channel.channelRange?.endTime || "",
+        currentTime: channel.channelRange?.currentTime || "",
+        valid: isTimelineValid(channel.channelRange || {}),
         hidden: hiddenChannelIds.includes(channel.id)
       }));
       setChannels(newChannels);
@@ -37,7 +37,7 @@ export default ({ widget }: TimelineProps) => {
         }
       ]);
     }
-  }, [widget.property?.timeline_channels, t, hiddenChannelIds]);
+  }, [widget.property?.timelineChannels, t, hiddenChannelIds]);
 
   const toggleChannelVisibility = (id: string) => {
     setHiddenChannelIds((prev) =>

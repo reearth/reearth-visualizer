@@ -13,6 +13,9 @@ export default ({
     (newTime: number) => {
       if (!indicatorRef.current) return;
 
+      const inRange = newTime >= startTime && newTime <= endTime;
+      indicatorRef.current.style.display = inRange ? "block" : "none";
+
       const clampedTime = Math.max(startTime, Math.min(newTime, endTime));
       const leftPercent =
         ((clampedTime - startTime) / (endTime - startTime)) * 100;

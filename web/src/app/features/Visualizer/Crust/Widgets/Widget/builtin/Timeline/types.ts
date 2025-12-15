@@ -1,7 +1,7 @@
 export type WidgetTimelineChannelsProperty = {
   id: string;
-  timeline_title: string;
-  timeline_range: {
+  channelTitle: string;
+  channelRange: {
     startTime: string;
     endTime: string;
     currentTime: string;

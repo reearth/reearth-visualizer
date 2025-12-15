@@ -16,8 +16,6 @@ import { ComponentProps } from "../..";
 import { CommonBuiltInWidgetProperty } from "../types";
 
 import Channel from "./Channel";
-// import ChannelBar from "./ChannelBar";
-// import ChannelItem from "./ChannelItem";
 import {
   TIMELINE_CHANNEL_DISPLAY_MAX,
   TIMELINE_CHANNEL_LABEL_WIDTH,
@@ -28,19 +26,30 @@ import TicksBar from "./TicksBar";
 import { WidgetTimelineChannelsProperty } from "./types";
 import { formatTimelineTime } from "./utils";
 
+const TIMELINE_MIN_WIDTH_STYLE = {
+  minWidth: `${TIMELINE_MIN_WIDTH}px`
+};
+
+const CHANNEL_STYLE = {
+  maxHeight: `${TIMELINE_CHANNEL_DISPLAY_MAX * 24}px`,
+  paddingLeft: `${TIMELINE_CHANNEL_LABEL_WIDTH}px`
+};
+
 type Property = CommonBuiltInWidgetProperty & {
   general?: {
-    initial_time?: string;
-    display_timezone?: string;
+    initialTime?: string;
+    displayTimezone?: string;
   };
-  timeline_channels?: WidgetTimelineChannelsProperty[];
+  timelineChannels?: WidgetTimelineChannelsProperty[];
 };
+
 export type TimelineProps = ComponentProps<Property>;
 
 const Timeline: FC<TimelineProps> = ({ widget, context }) => {
   const systemTheme = useSystemTheme();
   const themeClass = useMemo(
-    () => resolveTheme(widget.property?.appearance?.theme, systemTheme),
+    () =>
+      resolveTheme(widget.property?.appearance?.theme ?? "light", systemTheme),
     [widget.property?.appearance?.theme, systemTheme]
   );
 
@@ -72,7 +81,10 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
   return (
     <div className={themeClass}>
       <div
-        className={`w-full min-w-[${TIMELINE_MIN_WIDTH}px] bg-background text-foreground rounded-md overflow-hidden text-xs`}
+        className={
+          "w-full bg-background text-foreground rounded-md overflow-hidden text-xs"
+        }
+        style={TIMELINE_MIN_WIDTH_STYLE}
       >
         <div className="flex items-center justify-between px-2 py-1 border-b border-accent">
           <div>{formatTimelineTime(currentTime, displayTimezoneOffset)}</div>
@@ -124,9 +136,7 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
               />
             </div>
           </div>
-          <div
-            className={`max-h-[${TIMELINE_CHANNEL_DISPLAY_MAX * 24}px] overflow-y-auto pl-[${TIMELINE_CHANNEL_LABEL_WIDTH}px]`}
-          >
+          <div className="overflow-y-auto" style={CHANNEL_STYLE}>
             <div className="relative float-right w-full px-1">
               <div
                 className="relative flex flex-col w-full "
@@ -148,11 +158,7 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
                 <div
                   ref={indicatorRef}
                   className={`absolute w-0.5 h-full top-0 -translate-x-px rounded-xs bg-[#4770FF] ${
-                    isDragging
-                      ? "bg-[#4770FF] shadow-lg"
-                      : !isPlaying
-                        ? "transition-all"
-                        : ""
+                    isDragging ? "bg-[#4770FF] shadow-lg" : ""
                   }`}
                 />
               </div>

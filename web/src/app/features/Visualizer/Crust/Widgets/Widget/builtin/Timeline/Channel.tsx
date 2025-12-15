@@ -12,6 +12,11 @@ type ChannelProps = {
   onToggleVisibility: (id: string) => void;
 };
 
+const LABEL_STYLE = {
+  width: `${TIMELINE_CHANNEL_LABEL_WIDTH}px`,
+  left: `-${TIMELINE_CHANNEL_LABEL_WIDTH + 4}px`
+};
+
 const Channel: FC<ChannelProps> = ({
   channel,
   startTime,
@@ -33,7 +38,8 @@ const Channel: FC<ChannelProps> = ({
   return (
     <div className="relative flex h-6">
       <div
-        className={`absolute w-[${TIMELINE_CHANNEL_LABEL_WIDTH}px] -left-[${TIMELINE_CHANNEL_LABEL_WIDTH + 4}px] border-r border-accent py-1 px-2 flex items-center justify-between h-6 gap-2 z-10 ${channel.hidden ? "opacity-50" : ""}`}
+        className={`absolute border-r border-accent py-1 px-2 flex items-center justify-between h-6 gap-2 z-10 ${channel.hidden ? "opacity-50" : ""}`}
+        style={LABEL_STYLE}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => e.stopPropagation()}
       >
