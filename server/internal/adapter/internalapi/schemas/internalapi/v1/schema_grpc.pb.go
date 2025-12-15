@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.33.0
-// source: schemas/internalapi/v1/schema.proto
+// source: v1/schema.proto
 
 package v1
 
@@ -22,7 +22,6 @@ const (
 	ReEarthVisualizer_GetProjectList_FullMethodName                               = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectList"
 	ReEarthVisualizer_GetAllProjects_FullMethodName                               = "/reearth.visualizer.v1.ReEarthVisualizer/GetAllProjects"
 	ReEarthVisualizer_GetProject_FullMethodName                                   = "/reearth.visualizer.v1.ReEarthVisualizer/GetProject"
-	ReEarthVisualizer_GetProjectByAlias_FullMethodName                            = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByAlias"
 	ReEarthVisualizer_ValidateProjectAlias_FullMethodName                         = "/reearth.visualizer.v1.ReEarthVisualizer/ValidateProjectAlias"
 	ReEarthVisualizer_ValidateSceneAlias_FullMethodName                           = "/reearth.visualizer.v1.ReEarthVisualizer/ValidateSceneAlias"
 	ReEarthVisualizer_CreateProject_FullMethodName                                = "/reearth.visualizer.v1.ReEarthVisualizer/CreateProject"
@@ -31,9 +30,6 @@ const (
 	ReEarthVisualizer_UpdateProjectMetadata_FullMethodName                        = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectMetadata"
 	ReEarthVisualizer_DeleteProject_FullMethodName                                = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProject"
 	ReEarthVisualizer_ExportProject_FullMethodName                                = "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject"
-	ReEarthVisualizer_GetProjectByProjectAlias_FullMethodName                     = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByProjectAlias"
-	ReEarthVisualizer_UpdateByProjectAlias_FullMethodName                         = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateByProjectAlias"
-	ReEarthVisualizer_DeleteByProjectAlias_FullMethodName                         = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteByProjectAlias"
 	ReEarthVisualizer_GetProjectByWorkspaceAliasAndProjectAlias_FullMethodName    = "/reearth.visualizer.v1.ReEarthVisualizer/GetProjectByWorkspaceAliasAndProjectAlias"
 	ReEarthVisualizer_UpdateProjectByWorkspaceAliasAndProjectAlias_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/UpdateProjectByWorkspaceAliasAndProjectAlias"
 	ReEarthVisualizer_DeleteProjectByWorkspaceAliasAndProjectAlias_FullMethodName = "/reearth.visualizer.v1.ReEarthVisualizer/DeleteProjectByWorkspaceAliasAndProjectAlias"
@@ -52,9 +48,6 @@ type ReEarthVisualizerClient interface {
 	// Retrieves a specific project regardless of authentication.
 	// Request headers: user-id: <User ID>
 	GetProject(ctx context.Context, in *GetProjectRequest, opts ...grpc.CallOption) (*GetProjectResponse, error)
-	// Find a project by alias.
-	// Request headers: user-id: <User ID>
-	GetProjectByAlias(ctx context.Context, in *GetProjectByAliasRequest, opts ...grpc.CallOption) (*GetProjectByAliasResponse, error)
 	// Determines if an project alias is valid.
 	// Request headers: user-id: <User ID>
 	ValidateProjectAlias(ctx context.Context, in *ValidateProjectAliasRequest, opts ...grpc.CallOption) (*ValidateProjectAliasResponse, error)
@@ -79,15 +72,6 @@ type ReEarthVisualizerClient interface {
 	// Export a project.
 	// Request headers: user-id: <User ID>
 	ExportProject(ctx context.Context, in *ExportProjectRequest, opts ...grpc.CallOption) (*ExportProjectResponse, error)
-	// Find a project by project alias.
-	// Request headers: user-id: <User ID>
-	GetProjectByProjectAlias(ctx context.Context, in *GetProjectByProjectAliasRequest, opts ...grpc.CallOption) (*GetProjectByProjectAliasResponse, error)
-	// Update a project by project alias.
-	// Request headers: user-id: <User ID>
-	UpdateByProjectAlias(ctx context.Context, in *UpdateByProjectAliasRequest, opts ...grpc.CallOption) (*UpdateByProjectAliasResponse, error)
-	// Deletes a project by project alias.
-	// Request headers: user-id: <User ID>
-	DeleteByProjectAlias(ctx context.Context, in *DeleteByProjectAliasRequest, opts ...grpc.CallOption) (*DeleteByProjectAliasResponse, error)
 	// Find a project by workspace alias and project alias.
 	// Request headers: user-id: <User ID>
 	GetProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, in *GetProjectByWorkspaceAliasAndProjectAliasRequest, opts ...grpc.CallOption) (*GetProjectByWorkspaceAliasAndProjectAliasResponse, error)
@@ -134,16 +118,6 @@ func (c *reEarthVisualizerClient) GetProject(ctx context.Context, in *GetProject
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProjectResponse)
 	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetProject_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *reEarthVisualizerClient) GetProjectByAlias(ctx context.Context, in *GetProjectByAliasRequest, opts ...grpc.CallOption) (*GetProjectByAliasResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetProjectByAliasResponse)
-	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetProjectByAlias_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -230,36 +204,6 @@ func (c *reEarthVisualizerClient) ExportProject(ctx context.Context, in *ExportP
 	return out, nil
 }
 
-func (c *reEarthVisualizerClient) GetProjectByProjectAlias(ctx context.Context, in *GetProjectByProjectAliasRequest, opts ...grpc.CallOption) (*GetProjectByProjectAliasResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetProjectByProjectAliasResponse)
-	err := c.cc.Invoke(ctx, ReEarthVisualizer_GetProjectByProjectAlias_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *reEarthVisualizerClient) UpdateByProjectAlias(ctx context.Context, in *UpdateByProjectAliasRequest, opts ...grpc.CallOption) (*UpdateByProjectAliasResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(UpdateByProjectAliasResponse)
-	err := c.cc.Invoke(ctx, ReEarthVisualizer_UpdateByProjectAlias_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *reEarthVisualizerClient) DeleteByProjectAlias(ctx context.Context, in *DeleteByProjectAliasRequest, opts ...grpc.CallOption) (*DeleteByProjectAliasResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(DeleteByProjectAliasResponse)
-	err := c.cc.Invoke(ctx, ReEarthVisualizer_DeleteByProjectAlias_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *reEarthVisualizerClient) GetProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, in *GetProjectByWorkspaceAliasAndProjectAliasRequest, opts ...grpc.CallOption) (*GetProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetProjectByWorkspaceAliasAndProjectAliasResponse)
@@ -312,9 +256,6 @@ type ReEarthVisualizerServer interface {
 	// Retrieves a specific project regardless of authentication.
 	// Request headers: user-id: <User ID>
 	GetProject(context.Context, *GetProjectRequest) (*GetProjectResponse, error)
-	// Find a project by alias.
-	// Request headers: user-id: <User ID>
-	GetProjectByAlias(context.Context, *GetProjectByAliasRequest) (*GetProjectByAliasResponse, error)
 	// Determines if an project alias is valid.
 	// Request headers: user-id: <User ID>
 	ValidateProjectAlias(context.Context, *ValidateProjectAliasRequest) (*ValidateProjectAliasResponse, error)
@@ -339,15 +280,6 @@ type ReEarthVisualizerServer interface {
 	// Export a project.
 	// Request headers: user-id: <User ID>
 	ExportProject(context.Context, *ExportProjectRequest) (*ExportProjectResponse, error)
-	// Find a project by project alias.
-	// Request headers: user-id: <User ID>
-	GetProjectByProjectAlias(context.Context, *GetProjectByProjectAliasRequest) (*GetProjectByProjectAliasResponse, error)
-	// Update a project by project alias.
-	// Request headers: user-id: <User ID>
-	UpdateByProjectAlias(context.Context, *UpdateByProjectAliasRequest) (*UpdateByProjectAliasResponse, error)
-	// Deletes a project by project alias.
-	// Request headers: user-id: <User ID>
-	DeleteByProjectAlias(context.Context, *DeleteByProjectAliasRequest) (*DeleteByProjectAliasResponse, error)
 	// Find a project by workspace alias and project alias.
 	// Request headers: user-id: <User ID>
 	GetProjectByWorkspaceAliasAndProjectAlias(context.Context, *GetProjectByWorkspaceAliasAndProjectAliasRequest) (*GetProjectByWorkspaceAliasAndProjectAliasResponse, error)
@@ -379,9 +311,6 @@ func (UnimplementedReEarthVisualizerServer) GetAllProjects(context.Context, *Get
 func (UnimplementedReEarthVisualizerServer) GetProject(context.Context, *GetProjectRequest) (*GetProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProject not implemented")
 }
-func (UnimplementedReEarthVisualizerServer) GetProjectByAlias(context.Context, *GetProjectByAliasRequest) (*GetProjectByAliasResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProjectByAlias not implemented")
-}
 func (UnimplementedReEarthVisualizerServer) ValidateProjectAlias(context.Context, *ValidateProjectAliasRequest) (*ValidateProjectAliasResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ValidateProjectAlias not implemented")
 }
@@ -405,15 +334,6 @@ func (UnimplementedReEarthVisualizerServer) DeleteProject(context.Context, *Dele
 }
 func (UnimplementedReEarthVisualizerServer) ExportProject(context.Context, *ExportProjectRequest) (*ExportProjectResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExportProject not implemented")
-}
-func (UnimplementedReEarthVisualizerServer) GetProjectByProjectAlias(context.Context, *GetProjectByProjectAliasRequest) (*GetProjectByProjectAliasResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProjectByProjectAlias not implemented")
-}
-func (UnimplementedReEarthVisualizerServer) UpdateByProjectAlias(context.Context, *UpdateByProjectAliasRequest) (*UpdateByProjectAliasResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateByProjectAlias not implemented")
-}
-func (UnimplementedReEarthVisualizerServer) DeleteByProjectAlias(context.Context, *DeleteByProjectAliasRequest) (*DeleteByProjectAliasResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteByProjectAlias not implemented")
 }
 func (UnimplementedReEarthVisualizerServer) GetProjectByWorkspaceAliasAndProjectAlias(context.Context, *GetProjectByWorkspaceAliasAndProjectAliasRequest) (*GetProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProjectByWorkspaceAliasAndProjectAlias not implemented")
@@ -498,24 +418,6 @@ func _ReEarthVisualizer_GetProject_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ReEarthVisualizerServer).GetProject(ctx, req.(*GetProjectRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ReEarthVisualizer_GetProjectByAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProjectByAliasRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReEarthVisualizerServer).GetProjectByAlias(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ReEarthVisualizer_GetProjectByAlias_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReEarthVisualizerServer).GetProjectByAlias(ctx, req.(*GetProjectByAliasRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -664,60 +566,6 @@ func _ReEarthVisualizer_ExportProject_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ReEarthVisualizer_GetProjectByProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProjectByProjectAliasRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReEarthVisualizerServer).GetProjectByProjectAlias(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ReEarthVisualizer_GetProjectByProjectAlias_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReEarthVisualizerServer).GetProjectByProjectAlias(ctx, req.(*GetProjectByProjectAliasRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ReEarthVisualizer_UpdateByProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateByProjectAliasRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReEarthVisualizerServer).UpdateByProjectAlias(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ReEarthVisualizer_UpdateByProjectAlias_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReEarthVisualizerServer).UpdateByProjectAlias(ctx, req.(*UpdateByProjectAliasRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _ReEarthVisualizer_DeleteByProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteByProjectAliasRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ReEarthVisualizerServer).DeleteByProjectAlias(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: ReEarthVisualizer_DeleteByProjectAlias_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ReEarthVisualizerServer).DeleteByProjectAlias(ctx, req.(*DeleteByProjectAliasRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _ReEarthVisualizer_GetProjectByWorkspaceAliasAndProjectAlias_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetProjectByWorkspaceAliasAndProjectAliasRequest)
 	if err := dec(in); err != nil {
@@ -810,10 +658,6 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ReEarthVisualizer_GetProject_Handler,
 		},
 		{
-			MethodName: "GetProjectByAlias",
-			Handler:    _ReEarthVisualizer_GetProjectByAlias_Handler,
-		},
-		{
 			MethodName: "ValidateProjectAlias",
 			Handler:    _ReEarthVisualizer_ValidateProjectAlias_Handler,
 		},
@@ -846,18 +690,6 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ReEarthVisualizer_ExportProject_Handler,
 		},
 		{
-			MethodName: "GetProjectByProjectAlias",
-			Handler:    _ReEarthVisualizer_GetProjectByProjectAlias_Handler,
-		},
-		{
-			MethodName: "UpdateByProjectAlias",
-			Handler:    _ReEarthVisualizer_UpdateByProjectAlias_Handler,
-		},
-		{
-			MethodName: "DeleteByProjectAlias",
-			Handler:    _ReEarthVisualizer_DeleteByProjectAlias_Handler,
-		},
-		{
 			MethodName: "GetProjectByWorkspaceAliasAndProjectAlias",
 			Handler:    _ReEarthVisualizer_GetProjectByWorkspaceAliasAndProjectAlias_Handler,
 		},
@@ -875,5 +707,5 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "schemas/internalapi/v1/schema.proto",
+	Metadata: "v1/schema.proto",
 }

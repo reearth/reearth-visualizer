@@ -21,6 +21,7 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 // export REEARTH_DB=mongodb://localhost
@@ -530,6 +531,10 @@ func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	require.Nil(t, err)
 	require.NotNil(t, res.GetProject())
 
+	wsID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	require.Nil(t, err)
+	ws, err := r.Workspace.FindByID(ctx, wsID)
+	require.Nil(t, err)
 	pid, err := id.ProjectIDFrom(res.GetProject().Id)
 	assert.Nil(t, err)
 	prj, err := r.Project.FindByID(ctx, pid)
@@ -542,15 +547,17 @@ func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	assert.Equal(t, 1, len(*s))
 
 	// test GetProject
-	res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
-		ProjectId: res.Project.Id,
+	res2, err := client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
+		WorkspaceAlias: ws.Alias(),
+		ProjectAlias:   *req.ProjectAlias,
 	})
 	assert.Nil(t, err)
 	assert.Equal(t, visibility, res2.Project.Visibility)
 
 	// test GetProjectByAlias
-	res3, err := client.GetProjectByAlias(ctx, &pb.GetProjectByAliasRequest{
-		Alias: res2.Project.Alias,
+	res3, err := client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
+		WorkspaceAlias: ws.Alias(),
+		ProjectAlias:   res2.Project.Alias,
 	})
 	assert.Nil(t, err)
 	assert.Equal(t, res2.Project.Alias, res3.Project.Alias)
