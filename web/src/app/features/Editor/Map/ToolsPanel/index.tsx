@@ -273,6 +273,6 @@ const Divider = styled("div")(({ theme }) => ({
 
 const SketchFeatureButtons = styled("div")(({ theme }) => ({
   display: "flex",
-  // padding: theme.spacing.smallest,
+  padding: theme.spacing.smallest,
   gap: theme.spacing.small
 }));
