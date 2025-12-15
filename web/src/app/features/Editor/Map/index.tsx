@@ -61,7 +61,7 @@ const Map: FC = () => {
           <LayersPanel />
         </Area>
         <Area direction="column" extend asWrapper>
-          <Area initialHeight={28} hidden={hideNormalPanels}>
+          <Area initialHeight={30} hidden={hideNormalPanels}>
             <ToolsPanel />
             <MapGoogleSearch />
           </Area>
