@@ -3,7 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   TIMELINE_COMMITER,
-  TIMELINE_DEFAULT_TIMEZONE_OFFSET
+  TIMELINE_DEFAULT_TIMEZONE_OFFSET,
+  TIMELINE_PLAY_SPEED_OPTIONS
 } from "./constants";
 import useChannels from "./useChannels";
 import useIndicator from "./useIndicator";
@@ -137,16 +138,48 @@ export default ({ widget, context }: TimelineProps) => {
     }
   }, [isLooping, setLoop, setNoLoop]);
 
+  const [speed, setSpeed] = useState(TIMELINE_PLAY_SPEED_OPTIONS[0].seconds);
+
+  const changeSpeed = useCallback(
+    (speed: number) => {
+      timelineManagerRef?.current?.commit({
+        cmd: "SET_OPTIONS",
+        payload: {
+          multiplier: speed,
+          stepType: "rate"
+        },
+        committer: TIMELINE_COMMITER
+      });
+    },
+    [timelineManagerRef]
+  );
+
+  const handleSpeedChange = useCallback(
+    (speed: string) => {
+      changeSpeed(0);
+      setTimeout(() => {
+        changeSpeed(Number(speed));
+        setSpeed(speed);
+      }, 0);
+    },
+    [changeSpeed]
+  );
+
+  const applySpeed = useCallback(() => {
+    changeSpeed(Number(speed));
+  }, [changeSpeed, speed]);
+
   const [isPlaying, setIsPlaying] = useState(false);
 
   const play = useCallback(() => {
     applyLoop();
+    applySpeed();
     setIsPlaying(true);
     timelineManagerRef?.current?.commit({
       cmd: "PLAY",
       committer: TIMELINE_COMMITER
     });
-  }, [timelineManagerRef, applyLoop]);
+  }, [timelineManagerRef, applyLoop, applySpeed]);
 
   const pause = useCallback(() => {
     setIsPlaying(false);
@@ -235,6 +268,8 @@ export default ({ widget, context }: TimelineProps) => {
     skipBack,
     skipForward,
     isLooping,
-    toggleLoop
+    toggleLoop,
+    speed,
+    handleSpeedChange
   };
 };

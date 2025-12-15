@@ -123,6 +123,7 @@
     "@lexical/utils": "0.38.2",
     "@monaco-editor/react": "4.7.0",
     "@popperjs/core": "2.11.8",
+    "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-slot": "1.2.4",
     "@reearth/core": "0.0.7-alpha.49",
     "@rot1024/use-transition": "1.0.0",

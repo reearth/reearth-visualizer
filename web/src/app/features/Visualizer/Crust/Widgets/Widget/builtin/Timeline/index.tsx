@@ -1,5 +1,12 @@
 import { Button } from "@reearth/app/lib/reearth-widget-ui/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@reearth/app/lib/reearth-widget-ui/components/ui/select";
+import {
   resolveTheme,
   useSystemTheme
 } from "@reearth/app/lib/reearth-widget-ui/hooks/useSystemTheme";
@@ -19,7 +26,8 @@ import Channel from "./Channel";
 import {
   TIMELINE_CHANNEL_DISPLAY_MAX,
   TIMELINE_CHANNEL_LABEL_WIDTH,
-  TIMELINE_MIN_WIDTH
+  TIMELINE_MIN_WIDTH,
+  TIMELINE_PLAY_SPEED_OPTIONS
 } from "./constants";
 import useHooks from "./hooks";
 import TicksBar from "./TicksBar";
@@ -71,7 +79,9 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
     skipBack,
     skipForward,
     isLooping,
-    toggleLoop
+    toggleLoop,
+    speed,
+    handleSpeedChange
   } = useHooks({
     widget,
     context
@@ -88,6 +98,18 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
         <div className="flex items-center justify-between px-2 py-1 border-b border-accent">
           <div>{formatTimelineTime(currentTime, displayTimezoneOffset)}</div>
           <div className="flex gap-2">
+            <Select value={speed} onValueChange={handleSpeedChange}>
+              <SelectTrigger size="sm" className="">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {TIMELINE_PLAY_SPEED_OPTIONS.map((option) => (
+                  <SelectItem key={option.seconds} value={option.seconds}>
+                    {option.timeString}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button
               size="icon"
               variant="ghost"
