@@ -36,9 +36,9 @@ const Label: FC<LabelProps> = ({ time, left, timezone, level }) => {
   );
 
   return (
-    <div className="absolute bottom-0 leading-3" style={styles}>
-      <div className="whitespace-nowrap">{dateString}</div>
+    <div className="absolute leading-3 top-px" style={styles}>
       <div className="whitespace-nowrap">{timeString}</div>
+      <div className="whitespace-nowrap">{dateString}</div>
     </div>
   );
 };

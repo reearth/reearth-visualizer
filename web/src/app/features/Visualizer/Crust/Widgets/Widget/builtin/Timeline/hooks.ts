@@ -1,11 +1,13 @@
 import { TimelineCommitter } from "@reearth/core";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { TIMELINE_COMMITER } from "./constants";
+import {
+  TIMELINE_COMMITER,
+  TIMELINE_DEFAULT_TIMEZONE_OFFSET
+} from "./constants";
 import useChannels from "./useChannels";
 import useIndicator from "./useIndicator";
 import usePanel from "./usePanel";
-import { getUserTimezoneOffset } from "./utils";
 
 import { TimelineProps } from ".";
 
@@ -13,7 +15,10 @@ export default ({ widget, context }: TimelineProps) => {
   const { channels, toggleChannelVisibility } = useChannels({ widget });
 
   const displayTimezoneOffset = useMemo(() => {
-    return widget.property?.general?.displayTimezone ?? getUserTimezoneOffset();
+    return (
+      widget.property?.general?.displayTimezone ??
+      TIMELINE_DEFAULT_TIMEZONE_OFFSET
+    );
   }, [widget.property?.general?.displayTimezone]);
 
   const timelineManagerRef = context?.timelineManagerRef;
@@ -153,11 +158,14 @@ export default ({ widget, context }: TimelineProps) => {
 
   const togglePlay = useCallback(() => {
     if (!isPlaying) {
+      if (currentTime < startTime || currentTime > endTime) {
+        updateTimeline(startTime);
+      }
       play();
     } else {
       pause();
     }
-  }, [isPlaying, play, pause]);
+  }, [isPlaying, play, pause, currentTime, startTime, endTime, updateTimeline]);
 
   const currentTimeRef = useRef<number>(currentTime);
   currentTimeRef.current = currentTime;

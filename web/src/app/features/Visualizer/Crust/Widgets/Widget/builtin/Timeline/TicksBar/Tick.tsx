@@ -34,7 +34,7 @@ const Tick = ({ left, level }: { left: number; level: number }) => {
 
   return (
     <div
-      className={`absolute bottom-0 w-px ${colorClass}`}
+      className={`absolute top-0 w-px ${colorClass}`}
       style={positionStyles}
     />
   );
