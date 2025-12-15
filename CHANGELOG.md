@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.5 - 2025-12-12
+
+### Server
+
+#### 🚀 Features
+
+- Add internal alias api ([#1970](https://github.com/reearth/reearth-visualizer/pull/1970)) [`8c2d88`](https://github.com/reearth/reearth-visualizer/commit/8c2d88)
+- Remove authserv ([#1966](https://github.com/reearth/reearth-visualizer/pull/1966)) [`8defb1`](https://github.com/reearth/reearth-visualizer/commit/8defb1)
+
+#### 🔧 Bug Fixes
+
+- Fix internal api for GetProjectByWorkspaceAliasAndProjectAlias ([#1972](https://github.com/reearth/reearth-visualizer/pull/1972)) [`2d6ee0`](https://github.com/reearth/reearth-visualizer/commit/2d6ee0)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.13.5 ([#1973](https://github.com/reearth/reearth-visualizer/pull/1973)) [`6d3106`](https://github.com/reearth/reearth-visualizer/commit/6d3106)
+
 ## 1.0.0-beta.13.4 - 2025-12-10
 
 ### Web
