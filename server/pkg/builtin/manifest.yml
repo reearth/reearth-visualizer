@@ -1913,7 +1913,7 @@ extensions:
     description: Button widget
     widgetLayout:
       defaultLocation:
-        zone: outer
+        zone: inner
         section: left
         area: top
     schema:
@@ -2231,14 +2231,14 @@ extensions:
         - id: general
           title: General
           fields:
-            - id: initial_time
+            - id: initialTime
               title: Initial Time
               type: string
               ui: datetime
-            - id: display_timezone
+            - id: displayTimezone
               title: Display Timezone
               type: string
-              defaultValue: +0900
+              defaultValue: +09:00
               choices:
                 - key: -12:00
                   label: -12:00
@@ -2318,16 +2318,16 @@ extensions:
                   label: +13:00
                 - key: +14:00
                   label: +14:00
-        - id: timeline_channels
+        - id: timelineChannels
           title: Timeline Channels
           list: true
-          representativeField: timeline_title
+          representativeField: channelTitle
           fields:
-            - id: timeline_title
+            - id: channelTitle
               type: string
               title: Display Title
               defaultValue: New Channel
-            - id: timeline_range
+            - id: channelRange
               type: timeline
               title: Time Range Setting
         - id: appearance
@@ -2351,7 +2351,7 @@ extensions:
     singleOnly: true
     widgetLayout:
       defaultLocation:
-        zone: outer
+        zone: inner
         section: right
         area: top
     schema:
@@ -2377,8 +2377,8 @@ extensions:
     singleOnly: true
     widgetLayout:
       defaultLocation:
-        zone: outer
-        section: left
+        zone: inner
+        section: center
         area: bottom
     schema:
       groups:
@@ -2405,8 +2405,8 @@ extensions:
     singleOnly: true
     widgetLayout:
       defaultLocation:
-        zone: outer
-        section: left
+        zone: inner
+        section: center
         area: top
     schema:
       groups:
