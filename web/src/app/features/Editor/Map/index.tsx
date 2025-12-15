@@ -7,6 +7,7 @@ import { useMapPage } from "./context";
 import InspectorPanel from "./InspectorPanel";
 import LayersPanel from "./LayersPanel";
 import LayerStylePanel from "./LayerStylePanel";
+import MapGoogleSearch from "./MapGoogleSearch";
 import PhotoOverlayEditor from "./PhotoOverlayEditor";
 import ScenePanel from "./ScenePanel";
 import {
@@ -60,8 +61,9 @@ const Map: FC = () => {
           <LayersPanel />
         </Area>
         <Area direction="column" extend asWrapper>
-          <Area initialHeight={34} hidden={hideNormalPanels}>
+          <Area initialHeight={30} hidden={hideNormalPanels}>
             <ToolsPanel />
+            <MapGoogleSearch />
           </Area>
           <Area
             extend
