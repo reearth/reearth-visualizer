@@ -460,24 +460,6 @@ func callGrpc(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx
 	testFunc(client, ctx)
 }
 
-func runTestWithUserNoToken(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"user-id": userID,
-	}))
-
-	conn, err := grpc.NewClient("localhost:"+internalApiConfig.Visualizer.InternalApi.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		t.Fatalf("failed to connect: %v", err)
-	}
-	defer SafeClose(conn)
-
-	client := pb.NewReEarthVisualizerClient(conn)
-	testFunc(client, ctx)
-}
-
 // go test -v -run TestCreateProjectForInternal ./e2e/...
 func TestCreateProjectForInternal(t *testing.T) {
 
@@ -549,7 +531,7 @@ func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	// test GetProject
 	res2, err := client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
 		WorkspaceAlias: ws.Alias(),
-		ProjectAlias:   *req.ProjectAlias,
+		ProjectAlias:   res.Project.ProjectAlias,
 	})
 	assert.Nil(t, err)
 	assert.Equal(t, visibility, res2.Project.Visibility)
@@ -557,10 +539,10 @@ func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	// test GetProjectByAlias
 	res3, err := client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
 		WorkspaceAlias: ws.Alias(),
-		ProjectAlias:   res2.Project.Alias,
+		ProjectAlias:   res2.Project.ProjectAlias,
 	})
 	assert.Nil(t, err)
-	assert.Equal(t, res2.Project.Alias, res3.Project.Alias)
+	assert.Equal(t, res2.Project.ProjectAlias, res3.Project.ProjectAlias)
 
 	return pid
 }
