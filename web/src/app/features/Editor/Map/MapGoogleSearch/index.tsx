@@ -173,7 +173,8 @@ const SuggestionsList = styled("ul")(({ theme }) => ({
   background: theme.bg[2],
   border: `1px solid ${theme.outline.weak}`,
   boxShadow: "0 4px 12px rgba(0, 0, 0, 0.2)",
-  zIndex: 10000
+  zIndex: theme.zIndexes.editor.popover,
+  ...theme.scrollBar
 }));
 
 const SuggestionItem = styled("li")(({ theme }) => ({

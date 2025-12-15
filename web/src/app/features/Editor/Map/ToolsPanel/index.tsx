@@ -10,7 +10,6 @@ import { RESET } from "jotai/utils";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
-import MapGoogleSearch from "../MapGoogleSearch";
 import { SketchFeatureTooltipAtom } from "../state";
 
 type SketchTool = {
@@ -228,7 +227,7 @@ const ToolsPanel: FC = () => {
             />
           </SketchFeatureButtons>
         </SketchToolsWrapper>
-        <MapGoogleSearch />
+        {/* <MapGoogleSearch /> */}
       </ToolsPanelContent>
       {showDeleteFeatureConfirmModal && (
         <ConfirmModal
@@ -285,6 +284,6 @@ const Divider = styled("div")(({ theme }) => ({
 
 const SketchFeatureButtons = styled("div")(({ theme }) => ({
   display: "flex",
-  padding: theme.spacing.smallest,
+  // padding: theme.spacing.smallest,
   gap: theme.spacing.small
 }));
