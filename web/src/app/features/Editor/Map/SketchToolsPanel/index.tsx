@@ -20,7 +20,7 @@ type SketchTool = {
   onClick: () => void;
 };
 
-const ToolsPanel: FC = () => {
+const SketchToolsPanel: FC = () => {
   const {
     sketchEnabled,
     sketchType,
@@ -257,7 +257,7 @@ const ToolsPanel: FC = () => {
   );
 };
 
-export default ToolsPanel;
+export default SketchToolsPanel;
 
 const SketchToolsWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -273,6 +273,6 @@ const Divider = styled("div")(({ theme }) => ({
 
 const SketchFeatureButtons = styled("div")(({ theme }) => ({
   display: "flex",
-  padding: theme.spacing.smallest,
+  padding: `${theme.spacing.smallest / 2}px ${theme.spacing.small}px`,
   gap: theme.spacing.small
 }));
