@@ -11,5 +11,4 @@
 !published.html
 !vite.config.ts
 !yarn.lock
-!tailwind.config.js
 !postcss.config.js

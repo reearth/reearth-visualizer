@@ -23,7 +23,6 @@ RUN --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
     --mount=type=bind,source=published.html,target=published.html \
     --mount=type=bind,source=tsconfig.json,target=tsconfig.json \
     --mount=type=bind,source=vite.config.ts,target=vite.config.ts \
-    --mount=type=bind,source=tailwind.config.js,target=tailwind.config.js \
     --mount=type=bind,source=postcss.config.js,target=postcss.config.js \
     --mount=type=bind,source=src,target=src \
     --mount=type=cache,target=/root/.yarn,sharing=locked \
