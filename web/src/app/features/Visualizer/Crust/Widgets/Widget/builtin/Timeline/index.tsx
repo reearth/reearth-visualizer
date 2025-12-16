@@ -99,10 +99,14 @@ const Timeline: FC<TimelineProps> = ({ widget, context }) => {
           <div>{formatTimelineTime(currentTime, displayTimezoneOffset)}</div>
           <div className="flex gap-2">
             <Select value={speed} onValueChange={handleSpeedChange}>
-              <SelectTrigger size="sm" className="">
+              <SelectTrigger size="sm" className="text-xs">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className={themeClass}>
+              <SelectContent
+                className={themeClass}
+                avoidCollisions
+                position="popper"
+              >
                 {TIMELINE_PLAY_SPEED_OPTIONS.map((option) => (
                   <SelectItem key={option.seconds} value={option.seconds}>
                     {option.timeString}
