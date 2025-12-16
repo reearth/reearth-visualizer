@@ -15,7 +15,7 @@ import {
   PhotoOverlayPreviewAtom,
   SketchFeatureTooltipAtom
 } from "./state";
-import ToolsPanel from "./ToolsPanel";
+import SketchToolsPanel from "./SketchToolsPanel";
 
 const Map: FC = () => {
   const { handleVisualizerResize, handleSketchGeometryEditCancel } =
@@ -62,7 +62,7 @@ const Map: FC = () => {
         </Area>
         <Area direction="column" extend asWrapper>
           <Area initialHeight={30} hidden={hideNormalPanels}>
-            <ToolsPanel />
+            <SketchToolsPanel />
             <MapGoogleSearch />
           </Area>
           <Area
