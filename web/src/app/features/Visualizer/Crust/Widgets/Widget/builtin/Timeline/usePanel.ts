@@ -98,7 +98,11 @@ export default ({
       if (!isDragging) return;
 
       event.preventDefault();
-      const newTime = calculateTimeFromPosition(event.clientX);
+      let newTime = calculateTimeFromPosition(event.clientX);
+
+      if (newTime < startTime) {
+        newTime = startTime;
+      }
 
       // During drag: only update indicator position directly (fast)
       updateIndicatorPosition(newTime);
@@ -110,7 +114,8 @@ export default ({
       isDragging,
       calculateTimeFromPosition,
       updateIndicatorPosition,
-      updateTimeline
+      updateTimeline,
+      startTime
     ]
   );
 
