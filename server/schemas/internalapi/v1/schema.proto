@@ -18,11 +18,6 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc GetProject(GetProjectRequest) returns (GetProjectResponse) {}
 
-  // Find a project by alias.
-  // Request headers: user-id: <User ID>
-  rpc GetProjectByAlias(GetProjectByAliasRequest)
-      returns (GetProjectByAliasResponse) {}
-
   // Determines if an project alias is valid.
   // Request headers: user-id: <User ID>
   rpc ValidateProjectAlias(ValidateProjectAliasRequest)
@@ -58,20 +53,23 @@ service ReEarthVisualizer {
   // Request headers: user-id: <User ID>
   rpc ExportProject(ExportProjectRequest) returns (ExportProjectResponse) {}
 
-  // Find a project by project alias.
+  // Find a project by workspace alias and project alias.
   // Request headers: user-id: <User ID>
-  rpc GetProjectByProjectAlias(GetProjectByProjectAliasRequest)
-      returns (GetProjectByProjectAliasResponse) {}
+  rpc GetProjectByWorkspaceAliasAndProjectAlias(
+      GetProjectByWorkspaceAliasAndProjectAliasRequest)
+      returns (GetProjectByWorkspaceAliasAndProjectAliasResponse) {}
 
-  // Update a project by project alias.
+  // Update a project by workspace alias and project alias.
   // Request headers: user-id: <User ID>
-  rpc UpdateByProjectAlias(UpdateByProjectAliasRequest)
-      returns (UpdateByProjectAliasResponse) {}
+  rpc UpdateProjectByWorkspaceAliasAndProjectAlias(
+      UpdateProjectByWorkspaceAliasAndProjectAliasRequest)
+      returns (UpdateProjectByWorkspaceAliasAndProjectAliasResponse) {}
 
-  // Deletes a project by project alias.
+  // Delete a project by workspace alias and project alias.
   // Request headers: user-id: <User ID>
-  rpc DeleteByProjectAlias(DeleteByProjectAliasRequest)
-      returns (DeleteByProjectAliasResponse) {}
+  rpc DeleteProjectByWorkspaceAliasAndProjectAlias(
+      DeleteProjectByWorkspaceAliasAndProjectAliasRequest)
+      returns (DeleteProjectByWorkspaceAliasAndProjectAliasResponse) {}
 
   // Update a project's star count
   // Request headers: user-id: <User ID>
@@ -288,12 +286,6 @@ message GetProjectRequest {
   string project_id = 1;
 }
 
-// Find a project by alias.
-message GetProjectByAliasRequest {
-  // Scene alias
-  string alias = 1;
-}
-
 // Determines if an alias is valid.
 message ValidateProjectAliasRequest {
   // Workspace ID
@@ -410,50 +402,56 @@ message DeleteProjectRequest {
   string project_id = 1;
 }
 
-// Find a project by project alias.
-message GetProjectByProjectAliasRequest {
+// Find a project by workspace alias and project alias.
+message GetProjectByWorkspaceAliasAndProjectAliasRequest {
+  // Workspace alias
+  string workspace_alias = 1;
   // Project alias
-  string project_alias = 1;
+  string project_alias = 2;
 }
 
-// Update project fields.
+// Update project fields by workspace alias and project alias.
 // Only the project owner can operate this
-message UpdateByProjectAliasRequest {
+message UpdateProjectByWorkspaceAliasAndProjectAliasRequest {
+  // Workspace alias (required)
+  string workspace_alias = 1;
   // Project alias (required)
-  string project_alias = 1;
+  string project_alias = 2;
 
   // Project basic info (optional)
-  optional string name = 2;
-  optional string description = 3;
-  optional bool archived = 4;
-  optional string image_url = 5;
-  optional bool delete_image_url = 6;
-  optional string scene_id = 7;
-  optional bool starred = 8;
-  optional bool deleted = 9;
-  optional string visibility = 10;
+  optional string name = 3;
+  optional string description = 4;
+  optional bool archived = 5;
+  optional string image_url = 6;
+  optional bool delete_image_url = 7;
+  optional string scene_id = 8;
+  optional bool starred = 9;
+  optional bool deleted = 10;
+  optional string visibility = 11;
 
   // Publishment settings (optional)
-  optional string public_title = 11;
-  optional string public_description = 12;
-  optional string public_image = 13;
-  optional bool public_no_index = 14;
-  optional bool delete_public_image = 15;
-  optional bool is_basic_auth_active = 16;
-  optional string basic_auth_username = 17;
-  optional string basic_auth_password = 18;
-  optional bool enable_ga = 19;
-  optional string tracking_id = 20;
+  optional string public_title = 12;
+  optional string public_description = 13;
+  optional string public_image = 14;
+  optional bool public_no_index = 15;
+  optional bool delete_public_image = 16;
+  optional bool is_basic_auth_active = 17;
+  optional string basic_auth_username = 18;
+  optional string basic_auth_password = 19;
+  optional bool enable_ga = 20;
+  optional string tracking_id = 21;
 
-  optional string new_project_alias = 21;
+  optional string new_project_alias = 22;
 }
 
-// Deletes a project.
+// Delete a project by workspace alias and project alias.
 // This is a physical deletion, not a logical deletion. Data cannot be restored.
 // Only the project owner can operate this
-message DeleteByProjectAliasRequest {
+message DeleteProjectByWorkspaceAliasAndProjectAliasRequest {
+  // Workspace alias
+  string workspace_alias = 1;
   // Project alias
-  string project_alias = 1;
+  string project_alias = 2;
 }
 
 // Export a project.
@@ -466,6 +464,8 @@ message ExportProjectRequest {
 message PatchStarCountRequest {
   // Project alias
   string project_alias = 1;
+  // Workspace ID
+  string workspace_id = 2;
 }
 
 // Response messages
@@ -529,12 +529,6 @@ message ExportProjectResponse {
 }
 
 // Response messages
-message GetProjectByAliasResponse {
-  // Project
-  Project project = 1;
-}
-
-// Response messages
 message ValidateProjectAliasResponse {
   // Workspace ID
   string workspace_id = 1;
@@ -555,19 +549,19 @@ message ValidateSceneAliasResponse {
 }
 
 // Response messages
-message GetProjectByProjectAliasResponse {
+message GetProjectByWorkspaceAliasAndProjectAliasResponse {
   // Project
   Project project = 1;
 }
 
 // Response messages
-message UpdateByProjectAliasResponse {
+message UpdateProjectByWorkspaceAliasAndProjectAliasResponse {
   // Project
   Project project = 1;
 }
 
 // Response messages
-message DeleteByProjectAliasResponse {
+message DeleteProjectByWorkspaceAliasAndProjectAliasResponse {
   // Project alias
   string project_alias = 1;
 }

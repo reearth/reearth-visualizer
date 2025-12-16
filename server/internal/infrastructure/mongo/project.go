@@ -517,10 +517,10 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	return prj, nil
 }
 
-func (r *Project) FindByProjectAlias(ctx context.Context, alias string) (*project.Project, error) {
-
+func (r *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string) (*project.Project, error) {
 	prj, err := r.findOne(ctx, bson.M{
-		"projectalias": alias,
+		"projectalias": projectAlias,
+		"workspace":    workspaceID.String(),
 	}, false)
 
 	if err != nil {

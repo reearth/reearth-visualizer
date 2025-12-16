@@ -212,24 +212,6 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 	}, nil
 }
 
-func (s server) GetProjectByAlias(ctx context.Context, req *pb.GetProjectByAliasRequest) (*pb.GetProjectByAliasResponse, error) {
-	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
-
-	pj, err := uc.Project.FindActiveByAlias(ctx, req.Alias, op)
-	if err != nil {
-		return nil, err
-	}
-
-	prj, err := s.getSceneAndStorytelling(ctx, pj)
-	if err != nil {
-		return nil, err
-	}
-
-	return &pb.GetProjectByAliasResponse{
-		Project: prj,
-	}, nil
-}
-
 func (s server) ValidateProjectAlias(ctx context.Context, req *pb.ValidateProjectAliasRequest) (*pb.ValidateProjectAliasResponse, error) {
 	uc := adapter.Usecases(ctx)
 
@@ -565,12 +547,12 @@ func (s server) ExportProject(ctx context.Context, req *pb.ExportProjectRequest)
 	}, nil
 }
 
-func (s server) GetProjectByProjectAlias(ctx context.Context, req *pb.GetProjectByProjectAliasRequest) (*pb.GetProjectByProjectAliasResponse, error) {
+func (s server) GetProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, req *pb.GetProjectByWorkspaceAliasAndProjectAliasRequest) (*pb.GetProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, op)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
 
 	prj, err := s.getSceneAndStorytelling(ctx, pj)
@@ -578,15 +560,15 @@ func (s server) GetProjectByProjectAlias(ctx context.Context, req *pb.GetProject
 		return nil, err
 	}
 
-	return &pb.GetProjectByProjectAliasResponse{
+	return &pb.GetProjectByWorkspaceAliasAndProjectAliasResponse{
 		Project: prj,
 	}, nil
 }
 
-func (s server) UpdateByProjectAlias(ctx context.Context, req *pb.UpdateByProjectAliasRequest) (*pb.UpdateByProjectAliasResponse, error) {
+func (s server) UpdateProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, req *pb.UpdateProjectByWorkspaceAliasAndProjectAliasRequest) (*pb.UpdateProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err
 	}
@@ -634,15 +616,15 @@ func (s server) UpdateByProjectAlias(ctx context.Context, req *pb.UpdateByProjec
 		return nil, err
 	}
 
-	return &pb.UpdateByProjectAliasResponse{
+	return &pb.UpdateProjectByWorkspaceAliasAndProjectAliasResponse{
 		Project: prj,
 	}, nil
 }
 
-func (s server) DeleteByProjectAlias(ctx context.Context, req *pb.DeleteByProjectAliasRequest) (*pb.DeleteByProjectAliasResponse, error) {
+func (s server) DeleteProjectByWorkspaceAliasAndProjectAlias(ctx context.Context, req *pb.DeleteProjectByWorkspaceAliasAndProjectAliasRequest) (*pb.DeleteProjectByWorkspaceAliasAndProjectAliasResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	pj, err := uc.Project.FindByWorkspaceAliasAndProjectAlias(ctx, req.WorkspaceAlias, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err
 	}
@@ -651,10 +633,9 @@ func (s server) DeleteByProjectAlias(ctx context.Context, req *pb.DeleteByProjec
 		return nil, err
 	}
 
-	return &pb.DeleteByProjectAliasResponse{
+	return &pb.DeleteProjectByWorkspaceAliasAndProjectAliasResponse{
 		ProjectAlias: req.ProjectAlias,
 	}, nil
-
 }
 
 func (s server) getScenesAndStorytellings(ctx context.Context, res []*project.Project) ([]*pb.Project, error) {
@@ -709,7 +690,12 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		return nil, errors.New("user not found in context")
 	}
 
-	pj, err := uc.Project.FindByProjectAlias(ctx, req.ProjectAlias, op)
+	workspaceID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	if err != nil {
+		return nil, err
+	}
+
+	pj, err := uc.Project.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, req.ProjectAlias, op)
 	if err != nil {
 		return nil, err
 	}

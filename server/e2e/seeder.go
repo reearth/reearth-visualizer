@@ -37,18 +37,21 @@ var (
 
 	// ---------------- user1
 	wID    = accountdomain.NewWorkspaceID()
+	wAlias = "workspace-alias"
 	uID    = user.NewID()
 	uName  = "e2e"
 	uEmail = "e2e@e2e.com"
 
 	// ---------------- user2
 	wID2    = accountdomain.NewWorkspaceID()
+	wAlias2 = "workspace-alias-2"
 	uID2    = user.NewID()
 	uName2  = "e3e"
 	uEmail2 = "e3e@e3e.com"
 
 	// ---------------- user3
 	wID3    = accountdomain.NewWorkspaceID()
+	wAlias3 = "workspace-alias-3"
 	uID3    = user.NewID()
 	uName3  = "e4e"
 	uEmail3 = "e4e@e4e.com"
@@ -68,7 +71,7 @@ var (
 
 func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.File) error {
 
-	_, err := createUserAndWorkspace(ctx, r, wID, uID, uName, uEmail)
+	_, err := createUserAndWorkspace(ctx, r, wID, wAlias, uID, uName, uEmail)
 	if err != nil {
 		return err
 	}
@@ -77,12 +80,12 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 		return err
 	}
 
-	_, err = createUserAndWorkspace(ctx, r, wID2, uID2, uName2, uEmail2)
+	_, err = createUserAndWorkspace(ctx, r, wID2, wAlias2, uID2, uName2, uEmail2)
 	if err != nil {
 		return err
 	}
 
-	u3, err := createUserAndWorkspace(ctx, r, wID3, uID3, uName3, uEmail3)
+	u3, err := createUserAndWorkspace(ctx, r, wID3, wAlias3, uID3, uName3, uEmail3)
 	if err != nil {
 		return err
 	}
@@ -99,6 +102,7 @@ func createUserAndWorkspace(
 	ctx context.Context,
 	r *repo.Container,
 	wid accountdomain.WorkspaceID,
+	wAlias string,
 	uid accountdomain.UserID,
 	name string,
 	email string) (*user.User, error) {
@@ -118,6 +122,7 @@ func createUserAndWorkspace(
 	}
 	w := workspace.New().ID(wid).
 		Name(name).
+		Alias(wAlias).
 		Personal(false).
 		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
 		Metadata(workspace.NewMetadata()).
@@ -175,13 +180,13 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 	for k, v := range members.Users() {
 		newMembers[k] = v
 	}
-	metadata := workspace.NewMetadata()
 	w2 := workspace.New().
 		ID(w.ID()).
 		Name(w.Name()).
+		Alias(w.Alias()).
 		Personal(w.IsPersonal()).
 		Members(newMembers).
-		Metadata(metadata).
+		Metadata(w.Metadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w2); err != nil {
 		return err
