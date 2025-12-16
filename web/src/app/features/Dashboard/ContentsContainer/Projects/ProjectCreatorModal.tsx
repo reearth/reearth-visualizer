@@ -24,7 +24,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project } from "../../type";
 
-const VALIDATION_DEBOUNCE_MS = 500;
+const VALIDATION_DEBOUNCE_MS = 600;
 
 type ProjectCreatorModalProps = {
   onClose?: () => void;
@@ -197,7 +197,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                     </Typography>
                   ) : (
                     t(
-                      "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+                      "Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
                     )
                   )
                 }
