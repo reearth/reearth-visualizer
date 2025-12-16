@@ -40,4 +40,5 @@ var migrations = migration.Migrations[DBClient]{
 	251022100000: ConvertTopicsToString,
 	251022100100: UpdateProjectMetadataFields,
 	251113173239: GcschangeEsriToDefault,
+	251216142332: RemoveTimeline,
 }
