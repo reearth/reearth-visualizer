@@ -21,7 +21,8 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // export REEARTH_DB=mongodb://localhost
@@ -513,7 +514,7 @@ func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	require.Nil(t, err)
 	require.NotNil(t, res.GetProject())
 
-	wsID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	wsID, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
 	require.Nil(t, err)
 	ws, err := r.Workspace.FindByID(ctx, wsID)
 	require.Nil(t, err)

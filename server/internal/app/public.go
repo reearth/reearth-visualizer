@@ -3,7 +3,6 @@ package app
 import (
 	"context"
 	"crypto/subtle"
-	"fmt"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -11,7 +10,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http1 "github.com/reearth/reearth/server/internal/adapter/http"
 	"github.com/reearth/reearth/server/internal/app/config"
@@ -22,70 +20,6 @@ import (
 func Ping() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "pong")
-	}
-}
-
-func Signup(cfg *ServerConfig) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		var inp http1.SignupInput
-		if err := c.Bind(&inp); err != nil {
-			return &echo.HTTPError{Code: http.StatusBadRequest, Message: fmt.Errorf("failed to parse request body: %w", err)}
-		}
-
-		ctx := c.Request().Context()
-
-		// Call reearth-accounts service for signup
-		if cfg.Config.UseReearthAccountAuth() && cfg.AccountsAPIClient != nil {
-			var u *accountsUser.User
-			var err error
-
-			// Check if this is OIDC signup (sub is provided)
-			if inp.Sub != nil && *inp.Sub != "" {
-				// Use SignupOIDC for OIDC-based signup
-				secret := ""
-				if inp.Secret != nil {
-					secret = *inp.Secret
-				}
-				u, err = cfg.AccountsAPIClient.UserRepo.SignupOIDC(ctx, inp.Name,
-					inp.Email, *inp.Sub, secret)
-			} else {
-				// Use regular Signup for password-based signup
-				userID := ""
-				if inp.UserID != nil {
-					userID = inp.UserID.String()
-				}
-				workspaceID := ""
-				if inp.WorkspaceID != nil {
-					workspaceID = inp.WorkspaceID.String()
-				}
-				secret := ""
-				if inp.Secret != nil {
-					secret = *inp.Secret
-				}
-				u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
-					inp.Email, inp.Password, secret, workspaceID)
-			}
-
-			if err != nil {
-				return &echo.HTTPError{Code: http.StatusInternalServerError, Message: fmt.Sprintf("signup failed: %v", err)}
-			}
-
-			return c.JSON(http.StatusOK, http1.SignupOutput{
-				ID:    u.ID().String(),
-				Name:  u.Name(),
-				Email: u.Email(),
-			})
-		}
-
-		uc := adapter.Usecases(ctx)
-		controller := http1.NewUserController(uc.User)
-
-		output, err := controller.Signup(ctx, inp)
-		if err != nil {
-			return err
-		}
-
-		return c.JSON(http.StatusOK, output)
 	}
 }
 
@@ -193,25 +127,6 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 
 			return c.HTML(http.StatusOK, index)
 		}
-	}
-}
-
-func MockUser() echo.HandlerFunc {
-	return func(c echo.Context) error {
-		uc := adapter.Usecases(c.Request().Context())
-		controller := http1.NewUserController(uc.User)
-
-		input := http1.SignupInput{
-			Username: "Mock User",
-			Email:    "mock@example.com",
-		}
-
-		output, err := controller.Signup(c.Request().Context(), input)
-		if err != nil {
-			return err
-		}
-
-		return c.JSON(http.StatusOK, output)
 	}
 }
 

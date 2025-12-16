@@ -3,20 +3,21 @@ package accounts
 import (
 	"net/http"
 
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearthx/log"
+
+	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 )
 
 type dynamicAuthTransport struct {
-	transport *gqlclient.AccountsTransport
+	transport *accountsGQLclient.AccountsTransport
 }
 
 func NewDynamicAuthTransport() *dynamicAuthTransport {
 	return &dynamicAuthTransport{
-		transport: gqlclient.NewAccountsTransport(
+		transport: accountsGQLclient.NewAccountsTransport(
 			http.DefaultTransport,
-			gqlclient.InternalServiceVisualizerAPI,
+			accountsGQLclient.InternalServiceVisualizerAPI,
 		),
 	}
 }

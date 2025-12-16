@@ -2,9 +2,11 @@ package gql
 
 import (
 	"context"
+	"errors"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearthx/usecasex"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func (r *Resolver) Workspace() WorkspaceResolver {
@@ -38,5 +40,19 @@ func (r *workspaceResolver) Projects(ctx context.Context, obj *gqlmodel.Workspac
 type workspaceMemberResolver struct{ *Resolver }
 
 func (r *workspaceMemberResolver) User(ctx context.Context, obj *gqlmodel.WorkspaceMember) (*gqlmodel.User, error) {
-	return dataloaders(ctx).User.Load(obj.UserID)
+	if r.AccountsAPIClient != nil {
+		userID, err := gqlmodel.ToID[accountsID.User](obj.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		user, err := r.AccountsAPIClient.UserRepo.FindByID(ctx, userID.String())
+		if err != nil {
+			return nil, err
+		}
+
+		return gqlmodel.ToUser(user), nil
+	}
+
+	return nil, errors.New("accounts API client not available")
 }

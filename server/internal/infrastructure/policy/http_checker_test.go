@@ -9,12 +9,13 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestHTTPPolicyChecker_CheckPolicy(t *testing.T) {
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 	tests := []struct {
 		name           string
 		serverResponse *gateway.PolicyCheckResponse
@@ -124,7 +125,7 @@ func TestHTTPPolicyChecker_CheckPolicy(t *testing.T) {
 }
 
 func TestHTTPPolicyChecker_Timeout(t *testing.T) {
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 	// Create slow server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Sleep for 2 seconds, longer than the 1 second timeout

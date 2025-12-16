@@ -17,11 +17,12 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestWeb(t *testing.T) {
@@ -35,7 +36,7 @@ func TestWeb(t *testing.T) {
 	const testJS = `console.log("hello, world");`
 	const dataJSON = `{"data":"data"}`
 	const alias = "alias"
-	prj := project.New().NewID().Workspace(accountdomain.NewWorkspaceID()).
+	prj := project.New().NewID().Workspace(accountsID.NewWorkspaceID()).
 		PublicTitle("TITLE").
 		PublicDescription("DESC").
 		Alias(alias).

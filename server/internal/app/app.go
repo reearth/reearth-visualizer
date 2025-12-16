@@ -11,7 +11,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/reearth/reearth/server/internal/adapter"
 	appmiddleware "github.com/reearth/reearth/server/internal/adapter/middleware"
 	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
@@ -64,29 +63,6 @@ func initEcho(
 				AllowOrigins: origins,
 			}),
 		)
-	}
-
-	var wrapHandler func(http.Handler) http.Handler
-	if cfg.Config.UseMockAuth() {
-		// Mock User Mode
-		log.Infof("[Auth] Mock User Mode")
-
-		log.Infof("Using mock auth for local development")
-		wrapHandler = func(next http.Handler) http.Handler {
-			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx := r.Context()
-				// Set the flag for Mock authentication
-				ctx = adapter.AttachMockAuth(ctx, true)
-				next.ServeHTTP(w, r.WithContext(ctx))
-			})
-		}
-
-		e.Use(echo.WrapMiddleware(wrapHandler))
-
-	} else if cfg.Config.UseReearthAccountAuth() {
-		// Re:Earth Accounts Mode
-		log.Infof("[Auth] Re:Earth Accounts Mode")
-		// The token verification is performed by reearth-accounts.
 	}
 
 	// enable pprof
@@ -142,24 +118,14 @@ func initEcho(
 	apiRoot.GET("/ping", Ping(), privateCache)
 	apiRoot.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
 
-	// Registering an initial mock user (for local development)
-	apiRoot.GET("/mockuser", MockUser())
-
 	// Asset API for handling GCP files
 	serveFiles(e, allowedOrigins(cfg), cfg.Gateways.DomainChecker, cfg.Gateways.File)
 
 	apiPrivateRoute := apiRoot.Group("", privateCache)
-	if cfg.Config.UseMockAuth() {
-		apiPrivateRoute.Use(attachOpMiddlewareMockUser(cfg))
-	} else if cfg.Config.UseReearthAccountAuth() {
-		apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
-	}
+	apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 
 	// Main backend API
 	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))
-
-	// Registering an initial auth0 user (for local development)
-	apiPrivateRoute.POST("/signup", Signup(cfg))
 
 	// Project Import API direct upload version
 	servSplitUploadFiles(apiPrivateRoute, cfg) // /split-import
