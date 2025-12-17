@@ -127,6 +127,9 @@ func initEcho(
 	// Main backend API
 	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))
 
+	// Registering an initial user (for local development)
+	apiPrivateRoute.POST("/signup", Signup(cfg))
+
 	// Project Import API direct upload version
 	servSplitUploadFiles(apiPrivateRoute, cfg) // /split-import
 	// Project Import API using GCP trriger version

@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"crypto/subtle"
+	"fmt"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -15,11 +16,90 @@ import (
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/rerror"
+
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func Ping() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "pong")
+	}
+}
+
+// Call reearth-accounts service for signup
+func Signup(cfg *ServerConfig) echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		var inp http1.SignupInput
+		if err := c.Bind(&inp); err != nil {
+			return &echo.HTTPError{Code: http.StatusBadRequest, Message: fmt.Errorf("failed to parse request body: %w", err)}
+		}
+
+		ctx := c.Request().Context()
+
+		// Handle Username as an alias of Name
+		name := inp.Name
+		if name == "" && inp.Username != "" {
+			name = inp.Username
+		}
+
+		// Handle TeamID as an alias of WorkspaceID
+		workspaceID := inp.WorkspaceID
+		if workspaceID == nil && inp.TeamID != nil {
+			workspaceID = inp.TeamID
+		}
+
+		// Handle empty password in debug mode
+		password := inp.Password
+		if cfg.Debug && password == "" && (inp.Sub == nil || *inp.Sub == "") {
+			password = "Password123"
+		}
+
+		var u *accountsUser.User
+		var err error
+
+		// Check if this is OIDC signup (sub is provided)
+		if inp.Sub != nil && *inp.Sub != "" {
+
+			// Use SignupOIDC for OIDC-based signup
+			secret := ""
+			if inp.Secret != nil {
+				secret = *inp.Secret
+			}
+
+			u, err = cfg.AccountsAPIClient.UserRepo.SignupOIDC(ctx, name, inp.Email, *inp.Sub, secret)
+
+		} else {
+
+			// Use regular Signup for password-based signup
+			userID := accountsUser.NewID().String()
+			if inp.UserID != nil {
+				userID = inp.UserID.String()
+			}
+			workspaceIDStr := accountsWorkspace.NewID().String()
+			if workspaceID != nil {
+				workspaceIDStr = workspaceID.String()
+			}
+			secret := ""
+			if inp.Secret != nil {
+				secret = *inp.Secret
+			}
+
+			u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, name, inp.Email, password, secret, workspaceIDStr)
+
+		}
+
+		if err != nil {
+			return &echo.HTTPError{Code: http.StatusInternalServerError, Message: fmt.Sprintf("signup failed: %v", err)}
+		}
+
+		return c.JSON(http.StatusOK, http1.SignupOutput{
+			ID:    u.ID().String(),
+			Name:  u.Name(),
+			Email: u.Email(),
+		})
+
 	}
 }
 
