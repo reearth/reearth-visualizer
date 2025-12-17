@@ -20,9 +20,11 @@ import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project } from "../../type";
+
+const VALIDATION_DEBOUNCE_MS = 600;
 
 type ProjectCreatorModalProps = {
   onClose?: () => void;
@@ -90,19 +92,30 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 
   const [aliasValid, setAliasValid] = useState<boolean>(false);
   const [aliasWarning, setAliasWarning] = useState<string>("");
-  const handleAliasChange = useCallback(() => {
-    setAliasValid(false);
-    setAliasWarning("");
-  }, []);
+  const [debouncedAlias, setDebouncedAlias] = useState<string>("");
 
-  const handleProjectAliasCheck = useCallback(
-    async (alias: string) => {
-      if (!currentWorkspace) return;
-      handleFieldChange("projectAlias", alias);
+  // Debounce project alias changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedAlias(formState.projectAlias);
+    }, VALIDATION_DEBOUNCE_MS);
+
+    return () => clearTimeout(timer);
+  }, [formState.projectAlias]);
+
+  // Validate project alias when debounced value changes
+  useEffect(() => {
+    const validateAlias = async () => {
+      if (!currentWorkspace || !debouncedAlias.trim()) {
+        setAliasValid(false);
+        setAliasWarning("");
+        return;
+      }
+
       setAliasValid(false);
 
       const result = await validateProjectAlias?.(
-        alias.trim(),
+        debouncedAlias.trim(),
         currentWorkspace?.id,
         undefined
       );
@@ -116,9 +129,10 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
           (result?.errors?.[0]?.extensions?.description as string) ?? ""
         );
       }
-    },
-    [validateProjectAlias, currentWorkspace, handleFieldChange]
-  );
+    };
+
+    validateAlias();
+  }, [debouncedAlias, currentWorkspace, validateProjectAlias]);
 
   const onSubmit = useCallback(() => {
     const license = getLicenseContent(formState?.license);
@@ -174,8 +188,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 title={t("Project Alias *")}
                 value={formState.projectAlias}
                 placeholder={t("Text")}
-                onChange={handleAliasChange}
-                onChangeComplete={handleProjectAliasCheck}
+                onChange={(value) => handleFieldChange("projectAlias", value)}
                 data-testid="project-alias-input"
                 description={
                   aliasWarning ? (
@@ -184,7 +197,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                     </Typography>
                   ) : (
                     t(
-                      "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+                      "Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
                     )
                   )
                 }

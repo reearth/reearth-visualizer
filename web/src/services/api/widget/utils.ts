@@ -1,5 +1,6 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
 import { DeviceType } from "@reearth/app/utils/device";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 
 import {
   GetSceneQuery,
@@ -14,13 +15,14 @@ export const BUTTON_BUILTIN_WIDGET_ID = "reearth/button";
 export const NAVIGATOR_BUILTIN_WIDGET_ID = "reearth/navigator";
 export const DATA_ATTRIBUTION_WIDGET_ID = "reearth/dataAttribution";
 export const GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID = "reearth/googleMapSearch";
-// export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
+export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
 
 export const AVAILABLE_WIDGET_IDS = [
   BUTTON_BUILTIN_WIDGET_ID,
   NAVIGATOR_BUILTIN_WIDGET_ID,
   DATA_ATTRIBUTION_WIDGET_ID,
-  GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID
+  GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID,
+  TIMELINE_BUILTIN_WIDGET_ID
 ];
 
 const getWidgetIdsFromWAS = (
@@ -67,6 +69,12 @@ export const getInstallableWidgets = (
     .map((w) => w.extensionId)
     .filter(Boolean);
 
+  const { builtinTimelineWidget } = appFeature();
+
+  const avaliableWidgetIds = builtinTimelineWidget
+    ? AVAILABLE_WIDGET_IDS
+    : AVAILABLE_WIDGET_IDS.filter((id) => id !== TIMELINE_BUILTIN_WIDGET_ID);
+
   return scene?.plugins
     ?.map((p) => {
       const plugin = p.plugin;
@@ -74,7 +82,7 @@ export const getInstallableWidgets = (
         .filter(
           (e) =>
             e.type === PluginExtensionType.Widget &&
-            (AVAILABLE_WIDGET_IDS.includes(`reearth/${e.extensionId}`) ||
+            (avaliableWidgetIds.includes(`reearth/${e.extensionId}`) ||
               plugin.id !== "reearth")
         )
         .map((e): InstallableWidget => {
@@ -114,6 +122,8 @@ function getBuiltinExtensionIcon(
       return "listDashes";
     case GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID:
       return "magnifyingGlass";
+    case TIMELINE_BUILTIN_WIDGET_ID:
+      return "timeline";
     default:
       return undefined;
   }

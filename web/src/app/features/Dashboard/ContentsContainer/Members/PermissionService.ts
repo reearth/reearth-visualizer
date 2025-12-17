@@ -165,6 +165,7 @@ export const PermissionService = {
   },
 
   getRoleLabel(t: (key: string) => string, role: Role): string {
+    if (!role) return "";
     const memerRoleTranslation = {
       MAINTAINER: t("MAINTAINER"),
       OWNER: t("OWNER"),
