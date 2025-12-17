@@ -1,6 +1,8 @@
 package gqlmodel
 
 import (
+	"strings"
+
 	workspacepkg "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
@@ -54,14 +56,15 @@ func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
 }
 
 func ToRole(r workspace.Role) Role {
-	switch r {
-	case workspace.RoleReader:
+	// Handle both lowercase (from domain) and uppercase (from GraphQL API) role values
+	switch strings.ToLower(string(r)) {
+	case string(workspace.RoleReader):
 		return RoleReader
-	case workspace.RoleWriter:
+	case string(workspace.RoleWriter):
 		return RoleWriter
-	case workspace.RoleMaintainer:
+	case string(workspace.RoleMaintainer):
 		return RoleMaintainer
-	case workspace.RoleOwner:
+	case string(workspace.RoleOwner):
 		return RoleOwner
 	}
 	return Role("")
