@@ -230,17 +230,10 @@ func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspac
 		return nil, err
 	}
 
-	// Check access permissions based on project visibility
-	if pj.Visibility() == string(project.VisibilityPrivate) {
-		// Private projects require authenticated user with workspace access
-		if operator == nil {
-			return nil, errors.New("project is private")
-		}
-		if !operator.IsReadableWorkspace(workspaceID) {
-			return nil, interfaces.ErrOperationDenied
-		}
-	}
 	// Public projects can be accessed by anyone (authenticated or not)
+	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
+		return nil, errors.New("project is private")
+	}
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
 	if err != nil {
