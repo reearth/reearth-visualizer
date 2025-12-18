@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -25,6 +26,7 @@ import (
 	"golang.org/x/text/language"
 
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 const (
@@ -33,10 +35,10 @@ const (
 	maxMemorySize     = 100 * 1024 * 1024       // 100MB
 )
 
-func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *accountsGQLclient.Client, dev bool) echo.HandlerFunc {
+func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *accountsGQLclient.Client, accountsAPIHost string, accountRepos *accountsRepo.Container, dev bool) echo.HandlerFunc {
 
 	schema := gql.NewExecutableSchema(gql.Config{
-		Resolvers: gql.NewResolver(accountsAPIClient),
+		Resolvers: gql.NewResolver(accountsAPIClient, accountsAPIHost, accountRepos),
 	})
 
 	srv := handler.New(schema)
@@ -138,6 +140,15 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 		systemError = e.Error()
 	}
 
+	if normalized := normalizeAccountsErrorMessage(graphqlErr.Message); normalized != "" {
+		graphqlErr.Message = normalized
+		if graphqlErr.Extensions != nil {
+			if _, ok := graphqlErr.Extensions["message"]; ok {
+				graphqlErr.Extensions["message"] = normalized
+			}
+		}
+	}
+
 	if graphqlErr.Extensions == nil {
 		graphqlErr.Extensions = make(map[string]interface{})
 	}
@@ -159,4 +170,21 @@ func customErrorPresenter(ctx context.Context, e error, devMode bool) *gqlerror.
 	log.Warnfc(ctx, "graphqlErr: %+v", graphqlErr)
 
 	return graphqlErr
+}
+
+func normalizeAccountsErrorMessage(msg string) string {
+	lower := strings.ToLower(msg)
+	switch {
+	case strings.Contains(lower, "alias") && strings.Contains(lower, "already") && strings.Contains(lower, "workspace"):
+		return "alias is already used in another workspace"
+	case strings.Contains(lower, "alias") && strings.Contains(lower, "already"):
+		return "alias is already used in another workspace"
+	case !strings.Contains(lower, "message: input:"):
+		return ""
+	case strings.Contains(lower, "operation denied"):
+		return "operation denied"
+	case strings.Contains(lower, "not found"):
+		return "not found"
+	}
+	return ""
 }

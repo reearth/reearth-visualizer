@@ -29,9 +29,9 @@ workspace {
 // go test -v -run TestCreateWorkspace ./e2e/...
 
 func TestCreateWorkspace(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
+	e, _, result := StartGQLServerAndRepos(t, baseSeederUser)
 
-	res := Request(e, uId1.String(), GraphQLRequest{
+	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			createWorkspace(input: {name: "test"}){ %s } 
 		}`, workspaceNode),
@@ -42,7 +42,7 @@ func TestCreateWorkspace(t *testing.T) {
 	res.Path("$.data.createWorkspace.workspace.enableToCreatePrivateProject").IsEqual(false)
 	res.Path("$.data.createWorkspace.workspace.alias").IsEqual("w-" + wid)
 
-	res = Request(e, uId1.String(), GraphQLRequest{
+	res = Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			createWorkspace(input: {name: "test" alias: "test-alias"}){ %s } 
 		}`, workspaceNode),
@@ -53,7 +53,7 @@ func TestCreateWorkspace(t *testing.T) {
 	res.Path("$.data.createWorkspace.workspace.enableToCreatePrivateProject").IsEqual(false)
 	res.Path("$.data.createWorkspace.workspace.alias").IsEqual("test-alias")
 
-	res = Request(e, uId1.String(), GraphQLRequest{
+	res = Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			createWorkspace(input: {name: "test" alias: "test-alias"}){ %s } 
 		}`, workspaceNode),
@@ -63,22 +63,22 @@ func TestCreateWorkspace(t *testing.T) {
 }
 
 func TestDeleteWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, result := StartGQLServerAndRepos(t, baseSeederUser)
 
-	_, err := r.Workspace.FindByID(context.Background(), wId1)
+	_, err := r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Nil(t, err)
 
-	res := Request(e, uId1.String(), GraphQLRequest{
+	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			deleteWorkspace(input: {workspaceId: "%s"}){ workspaceId }}`,
-			wId1),
+			result.WID),
 	})
-	res.Path("$.data.deleteWorkspace.workspaceId").IsEqual(wId1.String())
+	res.Path("$.data.deleteWorkspace.workspaceId").IsEqual(result.WID.String())
 
-	_, err = r.Workspace.FindByID(context.Background(), wId1)
+	_, err = r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Equal(t, rerror.ErrNotFound, err)
 
-	res = Request(e, uId1.String(), GraphQLRequest{
+	res = Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			deleteWorkspace(input: {workspaceId: "%s"}){ workspaceId }}`,
 			accountsID.NewWorkspaceID()),
@@ -89,25 +89,25 @@ func TestDeleteWorkspace(t *testing.T) {
 // go test -v -run TestUpdateWorkspace ./e2e/...
 
 func TestUpdateWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, result := StartGQLServerAndRepos(t, baseSeederUser)
 
-	w, err := r.Workspace.FindByID(context.Background(), wId1)
+	w, err := r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Nil(t, err)
-	assert.Equal(t, "e2e", w.Name())
+	assert.Equal(t, result.UName, w.Name())
 
-	res := Request(e, uId1.String(), GraphQLRequest{
+	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateWorkspace(input: { workspaceId: "%s", name: "%s", alias: "%s" }) { %s } }`,
-			wId1, "updated", "updated-alias", workspaceNode),
+			result.WID, "updated", "updated-alias", workspaceNode),
 	})
 	res.Path("$.data.updateWorkspace.workspace.name").IsEqual("updated")
 	res.Path("$.data.updateWorkspace.workspace.alias").IsEqual("updated-alias")
 
-	w, err = r.Workspace.FindByID(context.Background(), wId1)
+	w, err = r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Nil(t, err)
 	assert.Equal(t, "updated", w.Name())
 
-	res = Request(e, uId1.String(), GraphQLRequest{
+	res = Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateWorkspace(input: { workspaceId: "%s", name: "%s" }) { %s } }`,
 			accountsID.NewWorkspaceID(), "updated", workspaceNode),
@@ -115,7 +115,7 @@ func TestUpdateWorkspace(t *testing.T) {
 
 	res.Path("$.errors[0].message").IsEqual("not found")
 
-	res = Request(e, uId2.String(), GraphQLRequest{
+	res = Request(e, result.UID2.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation { 
 			createWorkspace(input: {name: "test2"}){ %s } 
 		}`, workspaceNode),
@@ -123,7 +123,7 @@ func TestUpdateWorkspace(t *testing.T) {
 	wid2 := res.Path("$.data.createWorkspace.workspace.id").Raw().(string)
 	res.Path("$.data.createWorkspace.workspace.alias").IsEqual("w-" + wid2)
 
-	res = Request(e, uId2.String(), GraphQLRequest{
+	res = Request(e, result.UID2.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateWorkspace(input: { workspaceId: "%s", name: "%s", alias: "%s" }) { %s } }`,
 			wid2, "updated", "updated-alias", workspaceNode),
@@ -133,77 +133,77 @@ func TestUpdateWorkspace(t *testing.T) {
 }
 
 func TestAddMemberToWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, result := StartGQLServerAndRepos(t, baseSeederUser)
 
-	w, err := r.Workspace.FindByID(context.Background(), wId1)
+	w, err := r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Nil(t, err)
-	assert.False(t, w.Members().HasUser(uId2))
+	assert.False(t, w.Members().HasUser(result.UID2))
 
-	Request(e, uId1.String(), GraphQLRequest{
+	Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			addMemberToWorkspace( input: { workspaceId: "%s", userId: "%s", role: READER } ) { %s } }`,
-			wId1, uId2, workspaceNode),
+			result.WID, result.UID2, workspaceNode),
 	})
 
-	w, err = r.Workspace.FindByID(context.Background(), wId1)
+	w, err = r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Nil(t, err)
-	assert.True(t, w.Members().HasUser(uId2))
-	assert.Equal(t, w.Members().User(uId2).Role, accountsWorkspace.RoleReader)
+	assert.True(t, w.Members().HasUser(result.UID2))
+	assert.Equal(t, w.Members().User(result.UID2).Role, accountsWorkspace.RoleReader)
 
-	res := Request(e, uId1.String(), GraphQLRequest{
+	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			addMemberToWorkspace( input: { workspaceId: "%s", userId: "%s", role: READER } ) { %s } }`,
-			wId1, uId2, workspaceNode),
+			result.WID, result.UID2, workspaceNode),
 	})
 	res.Path("$.errors[0].message").IsEqual("user already joined")
 }
 
 func TestRemoveMemberFromWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, result := StartGQLServerAndRepos(t, baseSeederUser)
 
-	w, err := r.Workspace.FindByID(context.Background(), wId2)
+	w, err := r.Workspace.FindByID(context.Background(), result.WID2)
 	assert.Nil(t, err)
-	assert.True(t, w.Members().HasUser(uId3))
+	assert.True(t, w.Members().HasUser(result.UID3))
 
-	Request(e, uId1.String(), GraphQLRequest{
+	Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			removeMemberFromWorkspace(input: { workspaceId: "%s", userId: "%s" }) { %s } }`,
-			wId2, uId3, workspaceNode),
+			result.WID2, result.UID3, workspaceNode),
 	})
 
-	w, err = r.Workspace.FindByID(context.Background(), wId1)
+	w, err = r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Nil(t, err)
-	assert.False(t, w.Members().HasUser(uId3))
+	assert.False(t, w.Members().HasUser(result.UID3))
 
-	res := Request(e, uId1.String(), GraphQLRequest{
+	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			removeMemberFromWorkspace(input: { workspaceId: "%s", userId: "%s" }) { %s } }`,
-			wId2, uId3, workspaceNode),
+			result.WID2, result.UID3, workspaceNode),
 	})
 	res.Path("$.errors[0].message").IsEqual("target user does not exist in the workspace")
 }
 
 func TestUpdateMemberOfWorkspace(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
+	e, r, result := StartGQLServerAndRepos(t, baseSeederUser)
 
-	w, err := r.Workspace.FindByID(context.Background(), wId2)
+	w, err := r.Workspace.FindByID(context.Background(), result.WID2)
 	assert.Nil(t, err)
-	assert.Equal(t, w.Members().User(uId3).Role, accountsWorkspace.RoleReader)
+	assert.Equal(t, w.Members().User(result.UID3).Role, accountsWorkspace.RoleReader)
 
-	Request(e, uId1.String(), GraphQLRequest{
+	Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: WRITER } ) { %s } }`,
-			wId2, uId3, workspaceNode),
+			result.WID2, result.UID3, workspaceNode),
 	})
 
-	w, err = r.Workspace.FindByID(context.Background(), wId2)
+	w, err = r.Workspace.FindByID(context.Background(), result.WID2)
 	assert.Nil(t, err)
-	assert.Equal(t, w.Members().User(uId3).Role, accountsWorkspace.RoleWriter)
+	assert.Equal(t, w.Members().User(result.UID3).Role, accountsWorkspace.RoleWriter)
 
-	res := Request(e, uId1.String(), GraphQLRequest{
+	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
 			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: WRITER } ) { %s } }`,
-			accountsID.NewWorkspaceID(), uId3, workspaceNode),
+			accountsID.NewWorkspaceID(), result.UID3, workspaceNode),
 	})
 	res.Path("$.errors[0].message").IsEqual("operation denied")
 }

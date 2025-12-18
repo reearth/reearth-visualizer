@@ -31,8 +31,10 @@ import (
 	"golang.org/x/text/language"
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 )
 
 var (
@@ -41,10 +43,18 @@ var (
 	disabledAuthConfig = &config.Config{
 		Origins: []string{"https://example.com"},
 		Dev:     true,
+		AccountsAPI: config.AccountsAPIConfig{
+			Host:    "http://reearth-accounts-dev:8090",
+			Timeout: 30,
+		},
 	}
 
 	internalApiConfig = &config.Config{
 		Origins: []string{"https://example.com"},
+		AccountsAPI: config.AccountsAPIConfig{
+			Host:    "http://reearth-accounts-dev:8090",
+			Timeout: 30,
+		},
 		Visualizer: config.VisualizerConfig{
 			InternalApi: config.InternalApiConfig{
 				Active: true,
@@ -55,14 +65,33 @@ var (
 	}
 )
 
-type Seeder func(ctx context.Context, r *repo.Container, f gateway.File) error
+type Seeder func(ctx context.Context, r *repo.Container, f gateway.File, accountsClient *accountsGQLclient.Client, result *SeederResult) error
+
+type accountsHostKey struct{}
+
+func attachAccountsHost(ctx context.Context, host string) context.Context {
+	if host == "" {
+		return ctx
+	}
+	return context.WithValue(ctx, accountsHostKey{}, host)
+}
+
+func accountsHostFromContext(ctx context.Context) string {
+	if host, ok := ctx.Value(accountsHostKey{}).(string); ok {
+		return host
+	}
+	return ""
+}
 
 func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container, file gateway.File, ctx context.Context) {
+func initRepos(t *testing.T, useMongo bool, seeder Seeder, cfg *config.Config) (repos *repo.Container, file gateway.File, ctx context.Context, accountsClient *accountsGQLclient.Client, seederResult *SeederResult) {
 	ctx = context.Background()
+	if cfg != nil {
+		ctx = attachAccountsHost(ctx, cfg.AccountsAPI.Host)
+	}
 
 	if useMongo {
 		db := mongotest.Connect(t)(t)
@@ -86,13 +115,25 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 		fr = &file
 	}
 
+	// Initialize AccountsAPIClient for seeding
+	if cfg != nil && cfg.AccountsAPI.Host != "" {
+		accountsClient = accountsGQLclient.NewClient(
+			cfg.AccountsAPI.Host,
+			cfg.AccountsAPI.Timeout,
+			adpaccounts.NewDynamicAuthTransport(),
+		)
+	}
+
+	// Create seeder result with unique IDs
+	seederResult = newSeederResult()
+
 	if seeder != nil {
-		if err := seeder(ctx, repos, *fr); err != nil {
+		if err := seeder(ctx, repos, *fr, accountsClient, seederResult); err != nil {
 			t.Fatalf("failed to seed the db: %s", err)
 		}
 	}
 
-	return repos, *fr, ctx
+	return repos, *fr, ctx, accountsClient, seederResult
 }
 
 func initGateway() *gateway.Container {
@@ -119,13 +160,22 @@ func initAccountGateway(ctx context.Context) *accountsGateway.Container {
 func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container, *accountsGateway.Container) {
 	gateways := initGateway()
 	accountGateway := initAccountGateway(ctx)
+
+	// Initialize AccountsAPIClient for e2e tests
+	accountsAPIClient := accountsGQLclient.NewClient(
+		cfg.AccountsAPI.Host,
+		cfg.AccountsAPI.Timeout,
+		adpaccounts.NewDynamicAuthTransport(),
+	)
+
 	return app.NewServer(ctx, &app.ServerConfig{
-		Config:          cfg,
-		Repos:           repos,
-		AccountRepos:    repos.AccountRepos(),
-		Gateways:        gateways,
-		AccountGateways: accountGateway,
-		Debug:           true,
+		Config:            cfg,
+		Repos:             repos,
+		AccountRepos:      repos.AccountRepos(),
+		Gateways:          gateways,
+		AccountGateways:   accountGateway,
+		AccountsAPIClient: accountsAPIClient,
+		Debug:             true,
 	}), gateways, accountGateway
 }
 
@@ -182,62 +232,58 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
 }
 
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountsRepo.Container) {
-	repos, _, _ := initRepos(t, true, seeder)
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountsRepo.Container, *SeederResult) {
+	repos, _, _, _, seederResult := initRepos(t, true, seeder, disabledAuthConfig)
 	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
-	return e, repos.AccountRepos()
+	return e, repos.AccountRepos(), seederResult
 }
 
-func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	repos, _, _ := initRepos(t, useMongo, seeder)
+func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, *SeederResult) {
+	repos, _, _, _, seederResult := initRepos(t, useMongo, seeder, cfg)
 	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
-	return e, repos, gateways
+	return e, repos, gateways, seederResult
 }
 
-func startServerWithCtx(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, context.Context) {
-	repos, _, ctx := initRepos(t, useMongo, seeder)
-	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
-	return e, repos, gateways, ctx
-}
-
-func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, *SeederResult) {
 	return startServer(t, disabledAuthConfig, true, seeder)
 }
 
-func GRPCServer(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+func GRPCServer(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, *SeederResult) {
 	return startServer(t, internalApiConfig, true, seeder)
 }
 
-func GRPCServeWithCtx(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, context.Context) {
-	return startServerWithCtx(t, internalApiConfig, true, seeder)
+func GRPCServeWithCtx(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, context.Context, *accountsGQLclient.Client, *SeederResult) {
+	repos, _, ctx, accountsClient, seederResult := initRepos(t, true, seeder, internalApiConfig)
+	e, gateways, _ := StartGQLServerWithRepos(t, internalApiConfig, repos)
+	return e, repos, gateways, ctx, accountsClient, seederResult
 }
 
-func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
-	e, _, _ := startServer(t, disabledAuthConfig, true, seeder)
-	return e
+func Server(t *testing.T, seeder Seeder) (*httpexpect.Expect, *SeederResult) {
+	e, _, _, seederResult := startServer(t, disabledAuthConfig, true, seeder)
+	return e, seederResult
 }
 
-func ServerPingTest(t *testing.T) *httpexpect.Expect {
-	e, _, _ := startServer(t, disabledAuthConfig, false, nil)
-	return e
+func ServerPingTest(t *testing.T) (*httpexpect.Expect, *SeederResult) {
+	e, _, _, seederResult := startServer(t, disabledAuthConfig, false, nil)
+	return e, seederResult
 }
 
-func ServerMockTest(t *testing.T) *httpexpect.Expect {
+func ServerMockTest(t *testing.T) (*httpexpect.Expect, *SeederResult) {
 	c := &config.Config{
 		Dev:     true,
 		Origins: []string{"https://example.com"},
 	}
-	e, _, _ := startServer(t, c, true, nil)
-	return e
+	e, _, _, seederResult := startServer(t, c, true, nil)
+	return e, seederResult
 }
 
-func ServerLanguage(t *testing.T, lang language.Tag) *httpexpect.Expect {
-	e, _, _ := startServer(t, disabledAuthConfig, true,
-		func(ctx context.Context, r *repo.Container, f gateway.File) error {
-			return baseSeederWithLang(ctx, r, f, lang)
+func ServerLanguage(t *testing.T, lang language.Tag) (*httpexpect.Expect, *SeederResult) {
+	e, _, _, seederResult := startServer(t, disabledAuthConfig, true,
+		func(ctx context.Context, r *repo.Container, f gateway.File, accountsClient *accountsGQLclient.Client, result *SeederResult) error {
+			return baseSeederWithLang(ctx, r, f, lang, accountsClient, result)
 		},
 	)
-	return e
+	return e, seederResult
 }
 
 type GraphQLRequest struct {

@@ -8,7 +8,7 @@ import (
 // go test -v -run TestMockAuth ./e2e/...
 
 func TestMockAuth(t *testing.T) {
-	e := ServerMockTest(t)
+	e, _ := ServerMockTest(t)
 
 	requestBody := map[string]interface{}{
 		"email":    "mock@example.com",

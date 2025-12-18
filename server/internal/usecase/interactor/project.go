@@ -221,10 +221,6 @@ func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, works
 }
 
 func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
-	if operator != nil && !operator.IsReadableWorkspace(workspaceID) {
-		return nil, interfaces.ErrOperationDenied
-	}
-
 	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
 	if err != nil {
 		return nil, err

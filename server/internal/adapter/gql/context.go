@@ -7,11 +7,9 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 
-	"golang.org/x/text/language"
-
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	"golang.org/x/text/language"
 )
 
 type ContextKey string
@@ -42,13 +40,6 @@ func getLang(ctx context.Context, lang *language.Tag) string {
 
 func getOperator(ctx context.Context) *usecase.Operator {
 	return adapter.Operator(ctx)
-}
-
-func getAcOperator(ctx context.Context) *accountsUsecase.Operator {
-	if op := getOperator(ctx); op != nil {
-		return op.AcOperator
-	}
-	return nil
 }
 
 func usecases(ctx context.Context) *interfaces.Container {

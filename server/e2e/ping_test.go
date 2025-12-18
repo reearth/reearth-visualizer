@@ -6,7 +6,7 @@ import (
 )
 
 func TestPingAPI(t *testing.T) {
-	e := ServerPingTest(t)
+	e, _ := ServerPingTest(t)
 
 	e.OPTIONS("/api/ping").
 		WithHeader("Origin", "https://example.com").

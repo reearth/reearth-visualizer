@@ -12,17 +12,17 @@ import (
 // go test -v -run TestCreateAndGetProjectMetadata ./e2e/...
 
 func TestCreateAndGetProjectMetadata(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	projectID := createProject(e, uID, map[string]any{
+	projectID := createProject(e, result.UID, map[string]any{
 		"name":        "project1-test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 
-	updateProjectMetadata(e, uID, map[string]any{
+	updateProjectMetadata(e, result.UID, map[string]any{
 		"input": map[string]any{
 			"project": projectID,
 			"readme":  "readme test",
@@ -35,7 +35,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 		OperationName: "GetProjects",
 		Query:         GetProjectsQuery,
 		Variables: map[string]any{
-			"workspaceId": wID.String(),
+			"workspaceId": result.WID.String(),
 			"pagination": map[string]any{
 				"first": 16,
 			},
@@ -46,7 +46,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody).
+	res := Request(e, result.UID.String(), requestBody).
 		Path("$.data.projects.edges[0].node.metadata").Object()
 
 	res.Value("readme").String().IsEqual("readme test")

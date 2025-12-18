@@ -440,7 +440,7 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 	uc := createNewProjectUC(client)
 
 	// Create workspace with alias
-	ws := factory.NewWorkspace(func(b *workspace.Builder) {
+	ws := factory.NewWorkspace(func(b *accountsWorkspace.Builder) {
 		b.Alias("test-workspace")
 	})
 	_ = uc.workspaceRepo.Save(ctx, ws)
@@ -453,8 +453,8 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 		ProjectAlias: lo.ToPtr("public-project"),
 		Visibility:   lo.ToPtr(project.VisibilityPublic),
 	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	})
 
@@ -466,8 +466,8 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 		ProjectAlias: lo.ToPtr("private-project"),
 		Visibility:   lo.ToPtr(project.VisibilityPrivate),
 	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	})
 
@@ -490,8 +490,8 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 
 	t.Run("authenticated access to private project should succeed", func(t *testing.T) {
 		operator := &usecase.Operator{
-			AcOperator: &accountusecase.Operator{
-				ReadableWorkspaces: workspace.IDList{ws.ID()},
+			AcOperator: &accountsUsecase.Operator{
+				ReadableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 			},
 		}
 

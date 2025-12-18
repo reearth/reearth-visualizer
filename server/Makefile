@@ -28,6 +28,7 @@ help:
 	@echo "  test-docker       Run unit tests in Docker container"
 	@echo "  test-debug        Run unit tests with verbose output"
 	@echo "  e2e               Run end-to-end tests"
+	@echo "  e2e-docker        Run e2e tests with Docker config"
 	@echo "  build             Build the project"
 	@echo "  dev-install       Install dev tools"
 	@echo "  dev               Run the application with hot reload"
@@ -83,7 +84,10 @@ test-debug:
 	go test -v -timeout 10s ${TEST_DIR} | tee test.log
 
 e2e:
-	go test -v ./e2e/...
+	docker exec -it reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
+
+e2e-docker:
+	set -a && . ./.env.docker && set +a && go test ./e2e/...
 
 # =======================
 # Build & Run

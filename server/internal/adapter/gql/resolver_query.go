@@ -3,6 +3,7 @@ package gql
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 
@@ -154,6 +155,9 @@ func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gq
 	if r.AccountsAPIClient != nil {
 		user, err := r.AccountsAPIClient.UserRepo.FindByAlias(ctx, nameOrEmail)
 		if err != nil {
+			if isAccountsUserNotFound(err) {
+				return nil, nil
+			}
 			return nil, err
 		}
 		return gqlmodel.ToUser(user), nil
@@ -184,6 +188,23 @@ func (r *queryResolver) DeletedProjects(ctx context.Context, workspaceId gqlmode
 
 func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bool, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
 	return loaders(ctx).Project.VisibilityByWorkspace(ctx, workspaceId, authenticated)
+}
+
+func isAccountsUserNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := strings.ToLower(err.Error())
+	if strings.Contains(msg, "userbynameoremail") && strings.Contains(msg, "not found") {
+		return true
+	}
+	if strings.Contains(msg, "user by name or email") && strings.Contains(msg, "not found") {
+		return true
+	}
+	if strings.Contains(msg, "user not found") {
+		return true
+	}
+	return strings.Contains(msg, "not found") && strings.Contains(msg, "user")
 }
 
 func (r *queryResolver) WorkspacePolicyCheck(ctx context.Context, input gqlmodel.PolicyCheckInput) (*gqlmodel.PolicyCheckPayload, error) {

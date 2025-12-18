@@ -20,9 +20,9 @@ import (
 // go test -v -run TestProjectImportSplit ./e2e/...
 
 func TestProjectImportSplit(t *testing.T) {
-	e := Server(t, fullSeeder)
-	projectZipFilePath := GenProjectZipFile(t, e)
-	workspaceId := wID.String()
+	e, result := Server(t, fullSeeder)
+	projectZipFilePath := GenProjectZipFile(t, e, result)
+	workspaceId := result.WID.String()
 
 	const CHUNK_SIZE = 1024 * 1024
 	const CHUNK_CONCURRENCY = 4
@@ -83,7 +83,7 @@ func TestProjectImportSplit(t *testing.T) {
 		}
 
 		resp := e.POST("http://localhost:8080/api/split-import").
-			WithHeader("X-Reearth-Debug-User", uID.String()).
+			WithHeader("X-Reearth-Debug-User", result.UID.String()).
 			WithMultipart().
 			WithFile("file", fileName, bytes.NewReader(chunkData)).
 			WithFormField("file_id", fileId).

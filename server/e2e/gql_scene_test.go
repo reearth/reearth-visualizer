@@ -5,12 +5,14 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestGetScenePlaceholderEnglish(t *testing.T) {
-	e := ServerLanguage(t, language.English)
-	_, sceneId, _ := createProjectSet(e)
-	r := getScene(e, sceneId, language.English.String())
+	e, result := ServerLanguage(t, language.English)
+	_, sceneId, _ := createProjectSet(e, result)
+	r := getScene(e, result.UID, sceneId, language.English.String())
 
 	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
 		for _, field := range group.Object().Value("fields").Array().Iter() {
@@ -33,10 +35,10 @@ func TestGetScenePlaceholderEnglish(t *testing.T) {
 }
 
 func TestGetScenePlaceholderJapanese(t *testing.T) {
-	e := ServerLanguage(t, language.Japanese)
-	pID := createProjectWithExternalImage(e, "test")
-	sID := createScene(e, pID)
-	r := getScene(e, sID, language.Japanese.String())
+	e, result := ServerLanguage(t, language.Japanese)
+	pID := createProjectWithExternalImage(e, result, "test")
+	sID := createScene(e, result.UID, pID)
+	r := getScene(e, result.UID, sID, language.Japanese.String())
 
 	for _, group := range r.Object().Value("property").Object().Value("schema").Object().Value("groups").Array().Iter() {
 		for _, field := range group.Object().Value("fields").Array().Iter() {
@@ -61,48 +63,48 @@ func TestGetScenePlaceholderJapanese(t *testing.T) {
 // go test -v -run TestGetScene ./e2e/...
 
 func TestGetSceneNLSLayer(t *testing.T) {
-	e := Server(t, baseSeeder)
-	pId := createProject(e, uID, map[string]any{
+	e, result := Server(t, baseSeeder)
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	sId := createScene(e, pId)
-	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99)
+	sId := createScene(e, result.UID, pId)
+	_, _, lId := addNLSLayerSimple(e, sId, "someTitle99", 99, result.UID.String())
 
-	r := getScene(e, sId, language.Und.String())
+	r := getScene(e, result.UID, sId, language.Und.String())
 	r.Object().Value("newLayers").Array().Value(0).Object().HasValue("id", lId)
 	r.Object().Value("newLayers").Array().Value(0).Object().HasValue("title", "someTitle99")
 	r.Object().Value("newLayers").Array().Value(0).Object().HasValue("index", 99)
 
 }
 
-func createProjectWithExternalImage(e *httpexpect.Expect, name string) string {
+func createProjectWithExternalImage(e *httpexpect.Expect, result *SeederResult, name string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateProject",
 		Query:         CreateProjectMutation,
 		Variables: map[string]any{
 			"name":        name,
 			"description": "abc",
-			"workspaceId": wID.String(),
+			"workspaceId": result.WID.String(),
 			"visualizer":  "CESIUM",
 			"coreSupport": true,
 		},
 	}
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, result.UID.String(), requestBody)
 	return res.Path("$.data.createProject.project.id").Raw().(string)
 }
 
-func createScene(e *httpexpect.Expect, pID string) string {
+func createScene(e *httpexpect.Expect, u accountsID.UserID, pID string) string {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateScene",
 		Query: `mutation CreateScene($projectId: ID!) {
-			createScene( input: {projectId: $projectId} ) { 
-				scene { 
+			createScene( input: {projectId: $projectId} ) {
+				scene {
 					id
-				} 
+				}
 			}
 		}`,
 		Variables: map[string]any{
@@ -110,11 +112,11 @@ func createScene(e *httpexpect.Expect, pID string) string {
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, u.String(), requestBody)
 	return res.Path("$.data.createScene.scene.id").Raw().(string)
 }
 
-func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Value {
+func getScene(e *httpexpect.Expect, u accountsID.UserID, s string, l string) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "GetScene",
 		Query:         GetSceneQuery,
@@ -124,7 +126,7 @@ func getScene(e *httpexpect.Expect, s string, l string) *httpexpect.Value {
 		},
 	}
 
-	r := Request(e, uID.String(), requestBody)
+	r := Request(e, u.String(), requestBody)
 	// ValueDump(r)
 	v := r.Object().Value("data").Object().Value("node")
 	v.NotNull()

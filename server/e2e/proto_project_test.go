@@ -29,11 +29,11 @@ import (
 // go test -v -run TestInternalAPI_Basic ./e2e/...
 
 func TestInternalAPI_Basic(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
 		pid1 := createProjectInternal(
@@ -101,7 +101,7 @@ func TestInternalAPI_Basic(t *testing.T) {
 	})
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: false,
 			WorkspaceId:   &testWorkspace,
@@ -119,7 +119,7 @@ func TestInternalAPI_Basic(t *testing.T) {
 	})
 
 	// user3 call api (menber)
-	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: true,
@@ -132,10 +132,10 @@ func TestInternalAPI_Basic(t *testing.T) {
 }
 
 func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// Create 15 test projects for pagination testing
 		projectIDs := make([]id.ProjectID, 15)
 		for i := range [15]int{} {
@@ -251,10 +251,10 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 }
 
 func TestInternalAPI_create(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		res, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
 			WorkspaceId: testWorkspace,
 			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
@@ -302,10 +302,10 @@ func TestInternalAPI_create(t *testing.T) {
 }
 
 func TestInternalAPI_unit(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// Create Project
 		pid := createProjectInternal(
 			t, ctx, r, client, "public",
@@ -464,13 +464,13 @@ func callGrpc(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx
 // go test -v -run TestCreateProjectForInternal ./e2e/...
 func TestCreateProjectForInternal(t *testing.T) {
 
-	GRPCServer(t, baseSeeder)
+	_, _, _, result := GRPCServer(t, baseSeeder)
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		res, err := client.CreateProject(ctx,
 			&pb.CreateProjectRequest{
-				WorkspaceId:  wID.String(),
+				WorkspaceId:  result.WID.String(),
 				Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
 				Name:         lo.ToPtr("Test Project1"),
 				Description:  lo.ToPtr("Test Description1"),

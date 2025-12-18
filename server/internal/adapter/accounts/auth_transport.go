@@ -37,6 +37,12 @@ func (t dynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 
+	if debugUserID := adapter.UserID(req.Context()); debugUserID != nil {
+		req.Header.Set("X-Reearth-Debug-User", *debugUserID)
+	} else if u := adapter.User(req.Context()); u != nil {
+		req.Header.Set("X-Reearth-Debug-User", u.ID().String())
+	}
+
 	resp, err := t.transport.RoundTrip(req)
 	if err != nil {
 		log.Errorfc(req.Context(), "[Accounts API] Request failed: %v", err)

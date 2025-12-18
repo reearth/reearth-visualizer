@@ -24,18 +24,18 @@ import (
 // go test -v -run TestInternalAPI_GetProjectList_Owner ./e2e/...
 
 func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
-	_, r, _, _ := GRPCServeWithCtx(t, baseSeeder)
+	_, r, _, _, _, result := GRPCServeWithCtx(t, baseSeeder)
 
 	testDataCount := 20
-	testWorkspace2 := wID2.String()
+	testWorkspace2 := result.WID2.String()
 	limit := 5
 
 	// user2(Owner) call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		//####################################
 		// Add TestData for user2 workspace
-		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		SetupTestProjectDatas(t, ctx, r, result, result.WID2, testDataCount)
 		//####################################
 
 		// ASC UpdateAt
@@ -101,29 +101,34 @@ func TestInternalAPI_GetProjectList_Owner(t *testing.T) {
 
 // go test -v -run TestInternalAPI_GetProjectList_Member ./e2e/...
 func TestInternalAPI_GetProjectList_Member(t *testing.T) {
-	_, r, _, ctx := GRPCServeWithCtx(t, baseSeeder)
+	_, r, _, ctx, accountsClient, result := GRPCServeWithCtx(t, baseSeeder)
 
 	testDataCount := 20
-	testWorkspace2 := wID2.String()
+	testWorkspace2 := result.WID2.String()
 	limit := 5
 
 	// user2(Owner) call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		//####################################
 		// Add TestData for user2 workspace
-		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		SetupTestProjectDatas(t, ctx, r, result, result.WID2, testDataCount)
 		//####################################
 
 	})
 
 	// add user1 to workspace2(user2)
-	user1, err := r.User.FindByID(ctx, uID)
+	err := addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID, "READER", result.UID2)
 	assert.Nil(t, err)
-	assert.Nil(t, JoinMembers(ctx, r, wID2, user1, accountsWorkspace.RoleReader, uID2))
+	if err == nil {
+		user1, userErr := r.User.FindByID(ctx, result.UID)
+		if userErr == nil && user1 != nil {
+			_ = JoinMembers(ctx, r, result.WID2, user1, accountsWorkspace.RoleReader, result.UID2)
+		}
+	}
 
 	// user1(Member) call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// ASC UpdateAt
 		checkGetProjectsASC(t, client, ctx, true,
@@ -188,24 +193,24 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 
 // go test -v -run TestInternalAPI_GetProjectList_Anonymous ./e2e/...
 func TestInternalAPI_GetProjectList_Anonymous(t *testing.T) {
-	_, r, _, _ := GRPCServeWithCtx(t, baseSeeder)
+	_, r, _, _, _, result := GRPCServeWithCtx(t, baseSeeder)
 
 	testDataCount := 20
-	testWorkspace2 := wID2.String()
+	testWorkspace2 := result.WID2.String()
 	limit := 5
 
 	// user2(Owner) call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		//####################################
 		// Add TestData for user2 workspace
-		SetupTestProjectDatas(t, ctx, r, wID2, testDataCount)
+		SetupTestProjectDatas(t, ctx, r, result, result.WID2, testDataCount)
 		//####################################
 
 	})
 
 	// user3(Anonymous) call api
-	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// ASC UpdateAt
 		checkGetProjectsASC(t, client, ctx, true,
@@ -468,7 +473,7 @@ type ProjectConfig struct {
 	updatedAt   time.Time
 }
 
-func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container, workspace accountsID.WorkspaceID, dataCount int) {
+func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container, result *SeederResult, workspace accountsID.WorkspaceID, dataCount int) {
 
 	startTime := time.Now()
 
@@ -482,7 +487,7 @@ func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container,
 			visibility:  "public",
 			updatedAt:   startTime.Add(time.Duration(i-1000) * time.Second),
 		}
-		AddProjectSceneStorytelling(t, ctx, r, conf)
+		AddProjectSceneStorytelling(t, ctx, r, result, conf)
 	}
 
 	startCount = 2000 // isDeleted: false visibility: "private"
@@ -495,7 +500,7 @@ func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container,
 			visibility:  "private",
 			updatedAt:   startTime.Add(time.Duration(i-1000) * time.Second),
 		}
-		AddProjectSceneStorytelling(t, ctx, r, conf)
+		AddProjectSceneStorytelling(t, ctx, r, result, conf)
 	}
 
 	startCount = 3000 // isDeleted: true visibility: "public"
@@ -508,7 +513,7 @@ func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container,
 			visibility:  "public",
 			updatedAt:   startTime.Add(time.Duration(i-1000) * time.Second),
 		}
-		AddProjectSceneStorytelling(t, ctx, r, conf)
+		AddProjectSceneStorytelling(t, ctx, r, result, conf)
 	}
 
 	startCount = 4000 // isDeleted: true visibility: "private"
@@ -521,12 +526,12 @@ func SetupTestProjectDatas(t *testing.T, ctx context.Context, r *repo.Container,
 			visibility:  "private",
 			updatedAt:   startTime.Add(time.Duration(i-1000) * time.Second),
 		}
-		AddProjectSceneStorytelling(t, ctx, r, conf)
+		AddProjectSceneStorytelling(t, ctx, r, result, conf)
 	}
 
 }
 
-func AddProjectSceneStorytelling(t *testing.T, ctx context.Context, r *repo.Container, conf ProjectConfig) {
+func AddProjectSceneStorytelling(t *testing.T, ctx context.Context, r *repo.Container, result *SeederResult, conf ProjectConfig) {
 
 	// project
 	pj := project.New().
@@ -543,7 +548,8 @@ func AddProjectSceneStorytelling(t *testing.T, ctx context.Context, r *repo.Cont
 	assert.Nil(t, err)
 
 	schema := builtin.GetPropertySchemaByVisualizer(visualizer.VisualizerCesiumBeta)
-	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sID).Build()
+	sceneID := id.NewSceneID()
+	prop, err := property.New().NewID().Schema(schema.ID()).Scene(sceneID).Build()
 
 	assert.Nil(t, err)
 	ps := scene.NewPlugins([]*scene.Plugin{
@@ -568,7 +574,7 @@ func AddProjectSceneStorytelling(t *testing.T, ctx context.Context, r *repo.Cont
 	prop2, err := property.New().NewID().Schema(schema2.ID()).Scene(sc.ID()).Build()
 	assert.Nil(t, err)
 	pages := []*storytelling.Page{}
-	page, err := _createPage(ctx, r)
+	page, err := _createPage(ctx, r, result)
 	assert.Nil(t, err)
 	pages = append(pages, page)
 

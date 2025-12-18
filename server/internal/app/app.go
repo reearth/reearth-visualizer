@@ -125,7 +125,7 @@ func initEcho(
 	apiPrivateRoute.Use(attachOpMiddlewareReearthAccounts(cfg))
 
 	// Main backend API
-	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, gqldev))
+	apiPrivateRoute.POST("/graphql", GraphqlAPI(cfg.Config.GraphQL, cfg.AccountsAPIClient, cfg.Config.AccountsAPI.Host, cfg.AccountRepos, gqldev))
 
 	// Registering an initial user (for local development)
 	apiPrivateRoute.POST("/signup", Signup(cfg))

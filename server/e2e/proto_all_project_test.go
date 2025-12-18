@@ -17,11 +17,11 @@ import (
 // go test -v -run TestGetAllProjects ./e2e/...
 
 func TestGetAllProjects(t *testing.T) {
-	GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, _, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
 	// user1 creates projects and tests public project listing
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// Create 10 public projects with different names, varying star counts, and topics
 		publicProjects := make([]string, 10)

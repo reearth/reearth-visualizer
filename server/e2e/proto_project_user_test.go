@@ -14,17 +14,17 @@ import (
 // go test -v -run TestInternalAPI_private ./e2e/...
 
 func TestInternalAPI_private(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
+	_, r, _, result := GRPCServer(t, baseSeeder)
 
 	// ------------------------------------------
 
-	// user1: workspaceId: wID   userId: uID
-	testWorkspace1 := wID.String()
+	// user1: workspaceId: result.WID   userId: result.UID
+	testWorkspace1 := result.WID.String()
 
 	var user1PublicProjectId id.ProjectID
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create default Project -> public
 		createProjectInternal(t, ctx, r, client, "public", &pb.CreateProjectRequest{
@@ -82,11 +82,11 @@ func TestInternalAPI_private(t *testing.T) {
 
 	// ------------------------------------------
 
-	// user2: workspaceId: wID2  userId: uID2
-	testWorkspace2 := wID2.String()
+	// user2: workspaceId: result.WID2  userId: result.UID2
+	testWorkspace2 := result.WID2.String()
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create default Project -> public
 		createProjectInternal(t, ctx, r, client, "public", &pb.CreateProjectRequest{
@@ -159,7 +159,7 @@ func TestInternalAPI_private(t *testing.T) {
 	// ------------------------------------------
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// get User2 Workspace => list size 1 public only
 		res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
@@ -183,7 +183,7 @@ func TestInternalAPI_private(t *testing.T) {
 	// ------------------------------------------
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// get list size 1 public only
 		res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{

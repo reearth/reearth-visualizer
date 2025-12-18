@@ -7,7 +7,7 @@ import (
 	"github.com/samber/lo"
 )
 
-func addNLSLayerSimple(e *httpexpect.Expect, sId string, title string, index int) (GraphQLRequest, *httpexpect.Value, string) {
+func addNLSLayerSimple(e *httpexpect.Expect, sId string, title string, index int, userID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "AddNLSLayerSimple",
 		Query: `mutation AddNLSLayerSimple($layerType: String!, $sceneId: ID!, $config: JSON, $index: Int, $title: String!, $schema: JSON) {
@@ -70,7 +70,7 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string, title string, index int
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	layerId := res.Path("$.data.addNLSLayerSimple.layers.id").Raw().(string)
 	res.Path("$.data.addNLSLayerSimple.layers").Object().HasValue("title", title)
@@ -79,7 +79,7 @@ func addNLSLayerSimple(e *httpexpect.Expect, sId string, title string, index int
 	return requestBody, res, layerId
 }
 
-func addNLSLayerSimpleByGeojson(e *httpexpect.Expect, sId string, url string, title string, index int) *httpexpect.Value {
+func addNLSLayerSimpleByGeojson(e *httpexpect.Expect, sId string, url string, title string, index int, userID string) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "AddNLSLayerSimple",
 		Query: `mutation AddNLSLayerSimple($input: AddNLSLayerSimpleInput!) {
@@ -112,10 +112,10 @@ func addNLSLayerSimpleByGeojson(e *httpexpect.Expect, sId string, url string, ti
 		},
 	}
 
-	return Request(e, uID.String(), requestBody)
+	return Request(e, userID, requestBody)
 }
 
-func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+func removeNLSLayer(e *httpexpect.Expect, layerId string, userID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveNLSLayer",
 		Query: `mutation RemoveNLSLayer($layerId: ID!) {
@@ -128,12 +128,12 @@ func removeNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	return requestBody, res
 }
 
-func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+func updateNLSLayer(e *httpexpect.Expect, layerId string, userID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateNLSLayer",
 		Query: `mutation UpdateNLSLayer($layerId: ID!, $name: String, $visible: Boolean, $config: JSON) {
@@ -178,12 +178,12 @@ func updateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *http
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	return requestBody, res
 }
 
-func duplicateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value) {
+func duplicateNLSLayer(e *httpexpect.Expect, layerId string, userID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "DuplicateNLSLayer",
 		Query: `mutation DuplicateNLSLayer($layerId: ID!) {
@@ -200,12 +200,12 @@ func duplicateNLSLayer(e *httpexpect.Expect, layerId string) (GraphQLRequest, *h
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	return requestBody, res
 }
 
-func fetchProjectForNewLayers(e *httpexpect.Expect, pID string) (GraphQLRequest, *httpexpect.Value) {
+func fetchProjectForNewLayers(e *httpexpect.Expect, pID string, userID string) (GraphQLRequest, *httpexpect.Value) {
 	fetchProjectRequestBody := GraphQLRequest{
 		OperationName: "GetProject",
 		Query: `query GetProject($projectId: ID!) {
@@ -250,12 +250,12 @@ func fetchProjectForNewLayers(e *httpexpect.Expect, pID string) (GraphQLRequest,
 		},
 	}
 
-	res := Request(e, uID.String(), fetchProjectRequestBody)
+	res := Request(e, userID, fetchProjectRequestBody)
 
 	return fetchProjectRequestBody, res
 }
 
-func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *httpexpect.Value) {
+func fetchSceneForNewLayers(e *httpexpect.Expect, sID string, userID string) (GraphQLRequest, *httpexpect.Value) {
 	fetchSceneRequestBody := GraphQLRequest{
 		OperationName: "GetScene",
 		Query: `query GetScene($sceneId: ID!) {
@@ -377,31 +377,31 @@ func fetchSceneForNewLayers(e *httpexpect.Expect, sID string) (GraphQLRequest, *
 		},
 	}
 
-	res := Request(e, uID.String(), fetchSceneRequestBody)
+	res := Request(e, userID, fetchSceneRequestBody)
 
 	return fetchSceneRequestBody, res
 }
 
 func TestNLSLayerCRUD(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	pId := createProject(e, uID, map[string]any{
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 
-	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
+	_, notUpdatedProject := fetchProjectForNewLayers(e, pId, result.UID.String())
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	sId := createScene(e, pId)
+	sId := createScene(e, result.UID, pId)
 
-	_, res := fetchSceneForNewLayers(e, sId)
+	_, res := fetchSceneForNewLayers(e, sId, result.UID.String())
 
 	res.Object().
 		Value("data").Object().
@@ -410,11 +410,11 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Length().IsEqual(0)
 
 	// Add NLSLayer
-	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle1", 1)
-	_, _, layerId2 := addNLSLayerSimple(e, sId, "someTitle2", 2)
-	_, _, layerId3 := addNLSLayerSimple(e, sId, "someTitle3", 3)
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle1", 1, result.UID.String())
+	_, _, layerId2 := addNLSLayerSimple(e, sId, "someTitle2", 2, result.UID.String())
+	_, _, layerId3 := addNLSLayerSimple(e, sId, "someTitle3", 3, result.UID.String())
 
-	_, res2 := fetchSceneForNewLayers(e, sId)
+	_, res2 := fetchSceneForNewLayers(e, sId, result.UID.String())
 
 	orderCheck1(res2)
 
@@ -432,10 +432,10 @@ func TestNLSLayerCRUD(t *testing.T) {
 			"layerId": layerId3,
 			"index":   1,
 		},
-	})
+	}, result.UID.String())
 
 	// refetch res2
-	_, res2 = fetchSceneForNewLayers(e, sId)
+	_, res2 = fetchSceneForNewLayers(e, sId, result.UID.String())
 
 	orderCheck2(res2)
 
@@ -454,9 +454,9 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("extrudedHeight").IsEqual(1)
 
 	// Update NLSLayer
-	_, _ = updateNLSLayer(e, layerId)
+	_, _ = updateNLSLayer(e, layerId, result.UID.String())
 
-	_, res3 := fetchSceneForNewLayers(e, sId)
+	_, res3 := fetchSceneForNewLayers(e, sId, result.UID.String())
 
 	res3.Object().
 		Value("data").Object().
@@ -484,12 +484,12 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("config").Raw()
 
 	// Perform update with nil config
-	updateReq, _ := updateNLSLayer(e, layerId)
+	updateReq, _ := updateNLSLayer(e, layerId, result.UID.String())
 	updateReq.Variables["config"] = nil
-	Request(e, uID.String(), updateReq)
+	Request(e, result.UID.String(), updateReq)
 
 	// Fetch the layer again and compare the config with the saved config
-	_, res4 := fetchSceneForNewLayers(e, sId)
+	_, res4 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res4.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -497,10 +497,10 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Value("config").IsEqual(savedConfig)
 
 	// Duplicate NLSLayer
-	_, duplicateRes := duplicateNLSLayer(e, layerId)
+	_, duplicateRes := duplicateNLSLayer(e, layerId, result.UID.String())
 	duplicatedLayerId := duplicateRes.Path("$.data.duplicateNLSLayer.layer.id").Raw().(string)
 
-	_, res5 := fetchSceneForNewLayers(e, sId)
+	_, res5 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res5.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -508,32 +508,32 @@ func TestNLSLayerCRUD(t *testing.T) {
 		Length().IsEqual(4)
 
 	// Remove NLSLayer
-	_, _ = removeNLSLayer(e, layerId)
+	_, _ = removeNLSLayer(e, layerId, result.UID.String())
 
-	_, res6 := fetchSceneForNewLayers(e, sId)
+	_, res6 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res6.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().IsEqual(3)
 
-	_, _ = removeNLSLayer(e, duplicatedLayerId)
+	_, _ = removeNLSLayer(e, duplicatedLayerId, result.UID.String())
 
-	_, res7 := fetchSceneForNewLayers(e, sId)
+	_, res7 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res7.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().IsEqual(2)
 
-	_, updatedProject := fetchProjectForNewLayers(e, pId)
+	_, updatedProject := fetchProjectForNewLayers(e, pId, result.UID.String())
 	updatedProject.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }
 
-func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string, string) {
+func createInfobox(e *httpexpect.Expect, layerId string, userID string) (GraphQLRequest, *httpexpect.Value, string, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateNLSInfobox",
 		Query: `mutation CreateNLSInfobox($layerId: ID!) {
@@ -553,7 +553,7 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -568,7 +568,7 @@ func createInfobox(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpe
 	return requestBody, res, lId, pId
 }
 
-func createPhotoOverlay(e *httpexpect.Expect, layerId string) (GraphQLRequest, *httpexpect.Value, string, string) {
+func createPhotoOverlay(e *httpexpect.Expect, layerId string, userID string) (GraphQLRequest, *httpexpect.Value, string, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "CreateNLSPhotoOverlay",
 		Query: `mutation CreateNLSPhotoOverlay($layerId: ID!) {
@@ -588,7 +588,7 @@ func createPhotoOverlay(e *httpexpect.Expect, layerId string) (GraphQLRequest, *
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -621,12 +621,12 @@ func createPhotoOverlay(e *httpexpect.Expect, layerId string) (GraphQLRequest, *
 // 		},
 // 	}
 
-// 	res := Request(e, uID.String(), requestBody)
+// 	res := Request(e, userID, requestBody)
 
 // 	return requestBody, res
 // }
 
-func addInfoboxBlock(e *httpexpect.Expect, layerId, pluginId, extensionId string, idx *int) (GraphQLRequest, *httpexpect.Value, string) {
+func addInfoboxBlock(e *httpexpect.Expect, layerId, pluginId, extensionId string, idx *int, userID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "AddNLSInfoboxBlock",
 		Query: `mutation AddNLSInfoboxBlock($layerId: ID!, $pluginId: ID!, $extensionId: ID!, $index: Int) {
@@ -667,7 +667,7 @@ func addInfoboxBlock(e *httpexpect.Expect, layerId, pluginId, extensionId string
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	res.Object().
 		Value("data").Object().
@@ -679,7 +679,7 @@ func addInfoboxBlock(e *httpexpect.Expect, layerId, pluginId, extensionId string
 	return requestBody, res, res.Path("$.data.addNLSInfoboxBlock.infoboxBlock.id").Raw().(string)
 }
 
-func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, last bool) (GraphQLRequest, *httpexpect.Value, string) {
+func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, last bool, userID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveNLSInfoboxBlock",
 		Query: `mutation RemoveNLSInfoboxBlock($layerId: ID!, $infoboxBlockId: ID!) {
@@ -716,7 +716,7 @@ func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, la
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	if last {
 		res.Object().
@@ -729,7 +729,7 @@ func removeInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, la
 	return requestBody, res, res.Path("$.data.removeNLSInfoboxBlock.infoboxBlockId").Raw().(string)
 }
 
-func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, index int) (GraphQLRequest, *httpexpect.Value, string) {
+func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, index int, userID string) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "MoveNLSInfoboxBlock",
 		Query: `mutation MoveNLSInfoboxBlock($layerId: ID!, $infoboxBlockId: ID!, $index: Int!) {
@@ -767,7 +767,7 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	res.Object().
 		Path("$.data.moveNLSInfoboxBlock.layer.infobox.blocks[:].id").Array().ContainsAll(infoboxBlockId)
@@ -776,26 +776,26 @@ func moveInfoboxBlock(e *httpexpect.Expect, layerId, infoboxBlockId string, inde
 }
 
 func TestInfoboxBlocksCRUD(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	pId := createProject(e, uID, map[string]any{
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 
-	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
+	_, notUpdatedProject := fetchProjectForNewLayers(e, pId, result.UID.String())
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	sId := createScene(e, pId)
+	sId := createScene(e, result.UID, pId)
 
 	// fetch scene
-	_, res := fetchSceneForNewLayers(e, sId)
+	_, res := fetchSceneForNewLayers(e, sId, result.UID.String())
 
 	res.Object().
 		Value("data").Object().
@@ -804,8 +804,8 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Length().IsEqual(0)
 
 	// Add NLSLayer
-	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1, result.UID.String())
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 
 	res.Object().
 		Value("data").Object().
@@ -813,40 +813,40 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 		Value("newLayers").Array().
 		Length().IsEqual(1)
 
-	_, _, _, _ = createInfobox(e, layerId)
+	_, _, _, _ = createInfobox(e, layerId, result.UID.String())
 
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks").IsEqual([]any{})
 
-	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textInfoboxBetaBlock", nil)
-	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyInfoboxBetaBlock", nil)
+	_, _, blockID1 := addInfoboxBlock(e, layerId, "reearth", "textInfoboxBetaBlock", nil, result.UID.String())
+	_, _, blockID2 := addInfoboxBlock(e, layerId, "reearth", "propertyInfoboxBetaBlock", nil, result.UID.String())
 
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID1, blockID2})
 
-	_, _, _ = moveInfoboxBlock(e, layerId, blockID1, 1)
+	_, _, _ = moveInfoboxBlock(e, layerId, blockID1, 1, result.UID.String())
 
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID2, blockID1})
 
-	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageInfoboxBetaBlock", lo.ToPtr(1))
+	_, _, blockID3 := addInfoboxBlock(e, layerId, "reearth", "imageInfoboxBetaBlock", lo.ToPtr(1), result.UID.String())
 
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks[:].id").IsEqual([]string{blockID2, blockID3, blockID1})
 
-	removeInfoboxBlock(e, layerId, blockID1, false)
-	removeInfoboxBlock(e, layerId, blockID2, false)
-	removeInfoboxBlock(e, layerId, blockID3, true)
+	removeInfoboxBlock(e, layerId, blockID1, false, result.UID.String())
+	removeInfoboxBlock(e, layerId, blockID2, false, result.UID.String())
+	removeInfoboxBlock(e, layerId, blockID3, true, result.UID.String())
 
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Path("$.data.node.newLayers[0].infobox.blocks").IsEqual([]any{})
 
-	_, updatedProject := fetchProjectForNewLayers(e, pId)
+	_, updatedProject := fetchProjectForNewLayers(e, pId, result.UID.String())
 	updatedProject.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -854,19 +854,19 @@ func TestInfoboxBlocksCRUD(t *testing.T) {
 }
 
 func TestInfoboxProperty(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	pId := createProject(e, uID, map[string]any{
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	sId := createScene(e, pId)
+	sId := createScene(e, result.UID, pId)
 
 	// fetch scene
-	_, res := fetchSceneForNewLayers(e, sId)
+	_, res := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -874,22 +874,22 @@ func TestInfoboxProperty(t *testing.T) {
 		Length().IsEqual(0)
 
 	// Add NLSLayer
-	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1, result.UID.String())
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().IsEqual(1)
 
-	_, _, _, propertyId := createInfobox(e, layerId)
+	_, _, _, propertyId := createInfobox(e, layerId, result.UID.String())
 
 	// --- position Property
-	_, r := updatePropertyValue(e, propertyId, "default", "", "position", "left", "STRING")
+	_, r := updatePropertyValue(e, result.UID, propertyId, "default", "", "position", "left", "STRING")
 	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual("left")
 
 	// --- padding Property
-	_, r = updatePropertyValue(e, propertyId, "default", "", "padding", map[string]any{
+	_, r = updatePropertyValue(e, result.UID, propertyId, "default", "", "padding", map[string]any{
 		"top":    11,
 		"bottom": 12,
 		"left":   13,
@@ -903,28 +903,28 @@ func TestInfoboxProperty(t *testing.T) {
 	})
 
 	// --- gap Property
-	_, r = updatePropertyValue(e, propertyId, "default", "", "gap", 10, "NUMBER")
+	_, r = updatePropertyValue(e, result.UID, propertyId, "default", "", "gap", 10, "NUMBER")
 	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(10)
 
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Path("$.data.node.newLayers[0].infobox.property.items[0].fields").
 		Array().Length().IsEqual(3)
 }
 
 func TestPhotoOverlayProperty(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	pId := createProject(e, uID, map[string]any{
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	sId := createScene(e, pId)
+	sId := createScene(e, result.UID, pId)
 
 	// fetch scene
-	_, res := fetchSceneForNewLayers(e, sId)
+	_, res := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -932,25 +932,25 @@ func TestPhotoOverlayProperty(t *testing.T) {
 		Length().IsEqual(0)
 
 	// Add NLSLayer
-	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1, result.UID.String())
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().IsEqual(1)
 
-	_, _, _, propertyId := createPhotoOverlay(e, layerId)
+	_, _, _, propertyId := createPhotoOverlay(e, layerId, result.UID.String())
 
 	// --- enabled Property
-	_, r := updatePropertyValue(e, propertyId, "default", "", "enabled", true, "BOOL")
+	_, r := updatePropertyValue(e, result.UID, propertyId, "default", "", "enabled", true, "BOOL")
 	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(true)
 
 	// --- cameraDuration Property
-	_, r = updatePropertyValue(e, propertyId, "default", "", "cameraDuration", 3, "NUMBER")
+	_, r = updatePropertyValue(e, result.UID, propertyId, "default", "", "cameraDuration", 3, "NUMBER")
 	r.Path("$.data.updatePropertyValue.propertyField.value").IsEqual(3)
 
-	_, res = fetchSceneForNewLayers(e, sId)
+	_, res = fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Path("$.data.node.newLayers[0].photoOverlay.property.items[0].fields").
 		Array().Length().IsEqual(2)
 }
@@ -959,6 +959,7 @@ func updateCustomProperties(
 	e *httpexpect.Expect,
 	layerId string,
 	schema map[string]any,
+	userID string,
 ) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateCustomProperties",
@@ -980,40 +981,40 @@ func updateCustomProperties(
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	return requestBody, res
 }
 
 func TestCustomProperties(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	pId := createProject(e, uID, map[string]any{
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 
-	_, notUpdatedProject := fetchProjectForNewLayers(e, pId)
+	_, notUpdatedProject := fetchProjectForNewLayers(e, pId, result.UID.String())
 	notUpdatedProjectUpdatedAt := notUpdatedProject.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("updatedAt").Raw().(string)
 
-	sId := createScene(e, pId)
+	sId := createScene(e, result.UID, pId)
 
-	_, res := fetchSceneForNewLayers(e, sId)
+	_, res := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().IsEqual(0)
 
-	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1, result.UID.String())
 
-	_, res2 := fetchSceneForNewLayers(e, sId)
+	_, res2 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res2.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -1034,9 +1035,9 @@ func TestCustomProperties(t *testing.T) {
 		"extrudedHeight": 0,
 		"positions":      []float64{1, 2, 3},
 	}
-	updateCustomProperties(e, layerId, schema1)
+	updateCustomProperties(e, layerId, schema1, result.UID.String())
 
-	_, res3 := fetchSceneForNewLayers(e, sId)
+	_, res3 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -1057,9 +1058,9 @@ func TestCustomProperties(t *testing.T) {
 		"extrudedHeight": 10,
 		"positions":      []float64{4, 5, 6},
 	}
-	updateCustomProperties(e, layerId, schema2)
+	updateCustomProperties(e, layerId, schema2, result.UID.String())
 
-	_, res4 := fetchSceneForNewLayers(e, sId)
+	_, res4 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res4.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -1068,14 +1069,14 @@ func TestCustomProperties(t *testing.T) {
 		Value("customPropertySchema").Object().
 		Value("extrudedHeight").IsEqual(10)
 
-	_, updatedProject := fetchProjectForNewLayers(e, pId)
+	_, updatedProject := fetchProjectForNewLayers(e, pId, result.UID.String())
 	updatedProject.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("updatedAt").NotEqual(notUpdatedProjectUpdatedAt)
 }
 
-func updateNLSLayers(e *httpexpect.Expect, layers []map[string]interface{}) (GraphQLRequest, *httpexpect.Value) {
+func updateNLSLayers(e *httpexpect.Expect, layers []map[string]interface{}, userID string) (GraphQLRequest, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateNLSLayers",
 		Query: `mutation UpdateNLSLayers($input: UpdateNLSLayersInput!) {
@@ -1093,7 +1094,7 @@ func updateNLSLayers(e *httpexpect.Expect, layers []map[string]interface{}) (Gra
 			},
 		},
 	}
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 	return requestBody, res
 }
 

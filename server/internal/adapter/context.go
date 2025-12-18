@@ -66,6 +66,10 @@ func AttachJwtToken(ctx context.Context, token string) context.Context {
 	return context.WithValue(ctx, contextJwtToken, token)
 }
 
+func AttachUserID(ctx context.Context, userID string) context.Context {
+	return context.WithValue(ctx, contextUserID, userID)
+}
+
 func JwtToken(ctx context.Context) string {
 	if token, ok := ctx.Value(contextJwtToken).(string); ok {
 		return token

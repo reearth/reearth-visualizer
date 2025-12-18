@@ -44,6 +44,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 			if cfg.Debug {
 
 				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
+					ctx = adapter.AttachUserID(ctx, userID)
 
 					userModel, err := cfg.AccountsAPIClient.UserRepo.FindByID(ctx, userID)
 					if err != nil {

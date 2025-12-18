@@ -48,6 +48,18 @@ jobs:
             -v /tmp/gcs:/storage \
             fsouza/fake-gcs-server:1.52.1 \
             -scheme http
+      - name: Start reearth-accounts service
+        run: |
+          docker run -d --name reearth-accounts \
+            -p 8090:8080 \
+            -e REEARTH_DB=mongodb://host.docker.internal:27017 \
+            -e REEARTH_DB_ACCOUNT=reearth_account \
+            -e REEARTH_HOST=http://localhost:8090 \
+            --add-host=host.docker.internal:host-gateway \
+            ghcr.io/reearth/reearth-accounts:latest || echo "Warning: reearth-accounts image not available, tests may use fallback"
+      - name: Wait for reearth-accounts to be ready
+        run: |
+          timeout 30 bash -c 'until curl -f http://localhost:8090/health 2>/dev/null; do sleep 1; done' || echo "Warning: reearth-accounts not ready, tests will use fallback"
       - name: checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: set up
@@ -59,6 +71,8 @@ jobs:
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
         env:
           REEARTH_DB: mongodb://localhost
+          REEARTH_ACCOUNTSAPI_HOST: http://localhost:8090
+          REEARTH_ACCOUNTSAPI_TIMEOUT: 30
         working-directory: server
       - name: Send coverage report
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3

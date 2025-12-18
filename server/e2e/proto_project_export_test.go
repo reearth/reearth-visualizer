@@ -14,16 +14,16 @@ import (
 // go test -v -run TestInternalAPI_export ./e2e/...
 
 func TestInternalAPI_export(t *testing.T) {
-	e := Server(t, fullSeeder)
-	GRPCServer(t, fullSeeder)
+	e, result := Server(t, fullSeeder)
+	_, _, _, _ = GRPCServer(t, fullSeeder)
 
-	testWorkspace := wID.String()
+	testWorkspace := result.WID.String()
 
 	var publicProjectId string
 	var privateProjectId string
 
 	// call api by User1
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public
 		res, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
@@ -101,7 +101,7 @@ func TestInternalAPI_export(t *testing.T) {
 	})
 
 	// call api by User2 (no member)
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// private => Error!
 		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
@@ -114,7 +114,7 @@ func TestInternalAPI_export(t *testing.T) {
 	})
 
 	// call api by User3(member)
-	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// private => OK
 		exp, err := client.ExportProject(ctx, &pb.ExportProjectRequest{
