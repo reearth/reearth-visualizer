@@ -215,29 +215,30 @@ func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, works
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
 
-	if operator != nil && !operator.IsReadableWorkspace(ws.ID()) {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", interfaces.ErrOperationDenied)
-	}
-
 	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
 }
 
 func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
-	if operator != nil && !operator.IsReadableWorkspace(workspaceID) {
-		return nil, interfaces.ErrOperationDenied
-	}
-
 	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
 	if err != nil {
 		return nil, err
 	}
 
-	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
-		return nil, errors.New("project is private")
+	// Check access permissions based on project visibility
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		// Private projects require authenticated user with workspace access
+		if operator == nil {
+			return nil, errors.New("project is private")
+		}
+		if !operator.IsReadableWorkspace(workspaceID) {
+			return nil, interfaces.ErrOperationDenied
+		}
 	}
+	// Public projects can be accessed by anyone (authenticated or not)
 
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
 	if err != nil {
+		log.Errorf("project metadata not found for project ID %s: %v", pj.ID(), err)
 		return nil, err
 	}
 
