@@ -232,6 +232,10 @@ func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspac
 		return nil, err
 	}
 
+	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
+		return nil, errors.New("project is private")
+	}
+
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
 	if err != nil {
 		return nil, err

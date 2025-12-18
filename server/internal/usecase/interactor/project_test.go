@@ -429,3 +429,73 @@ func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {
 		assert.True(t, pageInfo.HasPreviousPage)
 	})
 }
+
+func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.T) {
+	ctx := context.Background()
+	
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	// Create workspace
+	ws := factory.NewWorkspace()
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	// Create public project
+	publicProject, _ := uc.createProject(ctx, createProjectInput{
+		WorkspaceID:  ws.ID(),
+		Visualizer:   visualizer.VisualizerCesium,
+		Name:         lo.ToPtr("Public Project"),
+		ProjectAlias: lo.ToPtr("public-project"),
+		Visibility:   lo.ToPtr(project.VisibilityPublic),
+	}, &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	})
+
+	// Create private project
+	privateProject, _ := uc.createProject(ctx, createProjectInput{
+		WorkspaceID:  ws.ID(),
+		Visualizer:   visualizer.VisualizerCesium,
+		Name:         lo.ToPtr("Private Project"),
+		ProjectAlias: lo.ToPtr("private-project"),
+		Visibility:   lo.ToPtr(project.VisibilityPrivate),
+	}, &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	})
+
+	t.Run("unauthenticated access to public project should succeed", func(t *testing.T) {
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), publicProject.ProjectAlias(), nil)
+		
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Equal(t, publicProject.ID(), result.ID())
+		assert.Equal(t, "Public Project", result.Name())
+	})
+
+	t.Run("unauthenticated access to private project should fail", func(t *testing.T) {
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), nil)
+		
+		assert.Error(t, err)
+		assert.Equal(t, "project is private", err.Error())
+		assert.Nil(t, result)
+	})
+
+	t.Run("authenticated access to private project should succeed", func(t *testing.T) {
+		operator := &usecase.Operator{
+			AcOperator: &accountusecase.Operator{
+				ReadableWorkspaces: workspace.IDList{ws.ID()},
+			},
+		}
+		
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), operator)
+		
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Equal(t, privateProject.ID(), result.ID())
+		assert.Equal(t, "Private Project", result.Name())
+	})
+}
