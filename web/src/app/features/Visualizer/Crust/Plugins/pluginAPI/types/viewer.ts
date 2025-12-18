@@ -53,6 +53,7 @@ export declare type Viewer = {
     type?: string,
     encoderOptions?: number
   ) => string | undefined;
+  readonly open: (url: string) => void;
   readonly on: ViewerEvents["on"];
   readonly off: ViewerEvents["off"];
 };
