@@ -215,10 +215,6 @@ func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, works
 		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
 	}
 
-	if operator != nil && !operator.IsReadableWorkspace(ws.ID()) {
-		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", interfaces.ErrOperationDenied)
-	}
-
 	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
 }
 
