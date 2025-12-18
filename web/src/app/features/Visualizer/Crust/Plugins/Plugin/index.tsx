@@ -1,5 +1,5 @@
 import type { Layer } from "@reearth/core";
-import { type RefObject } from "react";
+import { type RefObject, type JSX } from "react";
 
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
@@ -36,7 +36,7 @@ export type ExternalPluginProps = Pick<
 >;
 
 export type Props = {
-  mapRef?: RefObject<MapRef>;
+  mapRef?: RefObject<MapRef | null>;
   className?: string;
   sourceCode?: string;
   pluginId?: string;

@@ -1,7 +1,7 @@
 import { Icon, IconName, Typography } from "@reearth/app/lib/reearth-ui";
 import { styled, mask } from "@reearth/services/theme";
 import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
-import { useRef, useCallback, useState } from "react";
+import { useRef, useCallback, useState, type JSX } from "react";
 import { usePopper } from "react-popper";
 
 import type { Camera, FlyToDestination, Theme } from "../../types";

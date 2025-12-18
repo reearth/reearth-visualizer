@@ -54,14 +54,14 @@ export function usePluginAPI({
   pluginId: string | undefined;
   extensionId: string | undefined;
   extensionType: string | undefined;
-  mapRef?: RefObject<MapRef>;
+  mapRef?: RefObject<MapRef | null>;
   pluginProperty: unknown;
   layer: Layer | undefined;
   block: Block | undefined;
   widget: Widget | undefined;
   modalVisible?: boolean;
   popupVisible?: boolean;
-  externalRef: RefObject<HTMLIFrameElement> | undefined;
+  externalRef: RefObject<HTMLIFrameElement | null> | undefined;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
   setUIVisibility: (visible: boolean) => void;
@@ -93,7 +93,7 @@ export function usePluginAPI({
   const getWidget = useGet(widget);
 
   const useEventRef = <T extends Record<string, unknown[]>>() =>
-    useRef<[Events<T>, EventEmitter<T>, (() => void) | undefined]>();
+    useRef<[Events<T>, EventEmitter<T>, (() => void) | undefined]>(undefined);
   const viewerEventsRef = useEventRef<ViewerEventType>();
   const selectionModeEventsRef = useEventRef<SelectionModeEventType>();
   const cameraEventsRef = useEventRef<CameraEventType>();
@@ -101,13 +101,13 @@ export function usePluginAPI({
   const layersEventsRef = useEventRef<LayersEventType>();
   const sketchEventsRef = useEventRef<SketchEventType>();
 
-  const uiEvents = useRef<[Events<UIEventType>, EventEmitter<UIEventType>]>();
+  const uiEvents = useRef<[Events<UIEventType>, EventEmitter<UIEventType>]>(undefined);
   const modalEvents =
-    useRef<[Events<ModalEventType>, EventEmitter<ModalEventType>]>();
+    useRef<[Events<ModalEventType>, EventEmitter<ModalEventType>]>(undefined);
   const popupEvents =
-    useRef<[Events<PopupEventType>, EventEmitter<PopupEventType>]>();
+    useRef<[Events<PopupEventType>, EventEmitter<PopupEventType>]>(undefined);
   const extensionEvents =
-    useRef<[Events<ExtensionEventType>, EventEmitter<ExtensionEventType>]>();
+    useRef<[Events<ExtensionEventType>, EventEmitter<ExtensionEventType>]>(undefined);
 
   const pluginMessageSender = useCallback((msg: ExtensionMessage) => {
     extensionEvents.current?.[1]("extensionMessage", msg);

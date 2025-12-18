@@ -69,7 +69,7 @@ class ResizeObserver {
 global.ResizeObserver = ResizeObserver;
 
 const render = (
-  ui: React.ReactElement,
+  ui: React.ReactElement<any>,
   queryMocks?: readonly MockedResponse<Record<string, unknown>>[],
   { ...renderOptions } = {}
 ) => {

@@ -48,7 +48,7 @@ type Props = {
 const Content: FC<Props> = ({ block, isEditable, ...props }) => {
   const context = useContext(BlockContext);
 
-  const { selectedComputedFeature } = useContext(coreContext);
+  const { selectedComputedFeature } = useContext(coreContext as React.Context<any>);
 
   const displayTypeField: DisplayTypeField =
     block?.property?.default?.displayType;

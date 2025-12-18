@@ -27,7 +27,7 @@ export type Props = {
   popupContainer?: HTMLElement | DocumentFragment;
   modalVisible?: boolean;
   popupVisible?: boolean;
-  externalRef?: RefObject<HTMLIFrameElement>;
+  externalRef?: RefObject<HTMLIFrameElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
   exposed?: ((api: API) => Record<string, unknown>) | Record<string, unknown>;
   onMessage?: (message: unknown) => void;

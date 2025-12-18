@@ -17,7 +17,7 @@ export default ({
   setCurrentTime,
   updateTimeline
 }: {
-  indicatorRef: RefObject<HTMLDivElement>;
+  indicatorRef: RefObject<HTMLDivElement | null>;
   updateIndicatorPosition: (newTime: number) => void;
   startTime: number;
   endTime: number;

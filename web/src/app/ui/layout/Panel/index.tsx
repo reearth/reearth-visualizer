@@ -12,7 +12,7 @@ export type PanelProps = {
   noPadding?: boolean;
   alwaysOpen?: boolean;
   background?: "default" | "normal" | string;
-  areaRef?: React.RefObject<AreaRef>;
+  areaRef?: React.RefObject<AreaRef | null>;
   showCollapseArea?: boolean;
   dataTestid?: string;
   children?: ReactNode;
