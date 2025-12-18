@@ -432,13 +432,15 @@ func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {
 
 func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.T) {
 	ctx := context.Background()
-	
+
 	db := mongotest.Connect(t)(t)
 	client := mongox.NewClient(db.Name(), db.Client())
 	uc := createNewProjectUC(client)
 
-	// Create workspace
-	ws := factory.NewWorkspace()
+	// Create workspace with alias
+	ws := factory.NewWorkspace(func(b *workspace.Builder) {
+		b.Alias("test-workspace")
+	})
 	_ = uc.workspaceRepo.Save(ctx, ws)
 
 	// Create public project
@@ -469,7 +471,7 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 
 	t.Run("unauthenticated access to public project should succeed", func(t *testing.T) {
 		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), publicProject.ProjectAlias(), nil)
-		
+
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Equal(t, publicProject.ID(), result.ID())
@@ -478,7 +480,7 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 
 	t.Run("unauthenticated access to private project should fail", func(t *testing.T) {
 		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), nil)
-		
+
 		assert.Error(t, err)
 		assert.Equal(t, "project is private", err.Error())
 		assert.Nil(t, result)
@@ -490,9 +492,9 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 				ReadableWorkspaces: workspace.IDList{ws.ID()},
 			},
 		}
-		
+
 		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), operator)
-		
+
 		assert.NoError(t, err)
 		assert.NotNil(t, result)
 		assert.Equal(t, privateProject.ID(), result.ID())
