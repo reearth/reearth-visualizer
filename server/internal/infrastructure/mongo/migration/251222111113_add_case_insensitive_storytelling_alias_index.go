@@ -40,7 +40,7 @@ func AddCaseInsensitiveStorytellingAliasIndex(ctx context.Context, c DBClient) e
 		if err := GenerateNewAliasesForDuplicateStorytelling(ctx, colStorytelling, duplicates); err != nil {
 			return fmt.Errorf("failed to generate new aliases for duplicates: %w", err)
 		}
-		fmt.Println("Generated new random aliases for duplicate storytelling.")
+		fmt.Println("Generated new ID-based aliases for duplicate storytelling.")
 	}
 
 	aliasIndexModel := mongo.IndexModel{

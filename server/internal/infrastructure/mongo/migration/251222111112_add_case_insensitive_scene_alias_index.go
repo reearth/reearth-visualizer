@@ -40,7 +40,7 @@ func AddCaseInsensitiveSceneAliasIndex(ctx context.Context, c DBClient) error {
 		if err := GenerateNewAliasesForDuplicateScenes(ctx, colScene, duplicates); err != nil {
 			return fmt.Errorf("failed to generate new aliases for duplicates: %w", err)
 		}
-		fmt.Println("Generated new random aliases for duplicate scenes.")
+		fmt.Println("Generated new ID-based aliases for duplicate scenes.")
 	}
 
 	aliasIndexModel := mongo.IndexModel{
