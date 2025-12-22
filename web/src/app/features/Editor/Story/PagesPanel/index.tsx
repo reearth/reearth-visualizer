@@ -16,14 +16,10 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const { storyPages, handleStoryPageAdd, handleStoryPageMove } =
     useStoryPage();
 
-  const [openedPageId, setOpenedPageId] = useState<string | undefined>(
-    undefined
-  );
-
   const [isDragging, setIsDragging] = useState(false);
   const [storyPageitems, setStoryPageitems] = useState(storyPages ?? []);
 
-  const DraggableStoryPageItems = useMemo(
+  const draggableStoryPageItems = useMemo(
     () =>
       storyPageitems?.map((storyPage, index) => ({
         id: storyPage.id,
@@ -87,12 +83,10 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           onClick={() => handleStoryPageAdd(false)}
         />
       </ButtonWrapper>
-      <Wrapper
-        onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}
-      >
-        {!!DraggableStoryPageItems && (
+      <Wrapper>
+        {!!draggableStoryPageItems && (
           <DragAndDropList
-            items={DraggableStoryPageItems}
+            items={draggableStoryPageItems}
             handleClassName={PAGES_DRAG_HANDLE_CLASS_NAME}
             onMoveEnd={handleMoveEnd}
             onMoveStart={handleMoveStart}
