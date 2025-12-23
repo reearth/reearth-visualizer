@@ -157,7 +157,6 @@ const Wrapper = styled("div")<{
     : "none",
   padding: "1px",
   position: "relative",
-  transition: "all 0.3s",
   "&:hover": {
     borderColor: !hideHoverUI && !isSelected ? theme.select.weaker : "none"
   }
