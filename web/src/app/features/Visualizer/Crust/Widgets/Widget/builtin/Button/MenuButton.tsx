@@ -54,7 +54,7 @@ export default function MenuButton({
 }: Props): JSX.Element {
   const [visibleMenuButton, setVisibleMenuButton] = useState(false);
 
-  const referenceElement = useRef<HTMLDivElement>(null);
+  const referenceElement = useRef<HTMLButtonElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
   const { styles, attributes } = usePopper(
     referenceElement.current,
@@ -172,7 +172,7 @@ export default function MenuButton({
         )}
         style={customStyles}
         onClick={b && handleClick(b)}
-        ref={referenceElement as unknown as React.RefObject<HTMLButtonElement>}
+        ref={referenceElement}
       >
         {/* Icon */}
         {(b?.buttonStyle === "icon" || b?.buttonStyle === "texticon") &&
@@ -212,7 +212,8 @@ export default function MenuButton({
             className="min-w-[35px] w-full whitespace-nowrap"
             style={{
               ...customStyles,
-              backgroundColor: b?.buttonBgcolor || theme?.background || undefined
+              backgroundColor:
+                b?.buttonBgcolor || theme?.background || undefined
             }}
           >
             {menuItems?.map((item) => (
