@@ -160,8 +160,8 @@ func TestAddUnifiedCaseInsensitiveAliasIndex(t *testing.T) {
 
 		// Insert storytelling with same aliases (case-insensitive conflicts)
 		_, err = db.Collection("storytelling").InsertMany(ctx, []interface{}{
-			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1", "alias": "conflicted-alias"}, // Exact match
-			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "ANOTHER-CONFLICT"}, // Case insensitive match
+			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1", "alias": "conflicted-alias"},   // Exact match
+			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "ANOTHER-CONFLICT"},   // Case insensitive match
 			bson.M{"_id": storyID3, "id": "story3", "name": "Story 3", "alias": "unique-story-alias"}, // No conflict
 		})
 		require.NoError(t, err)
@@ -221,16 +221,16 @@ func TestAddUnifiedCaseInsensitiveAliasIndex(t *testing.T) {
 
 		// Insert scenes
 		_, err = db.Collection("scene").InsertMany(ctx, []interface{}{
-			bson.M{"_id": sceneID1, "id": "scene1", "name": "Scene 1", "alias": ""}, // Empty alias
-			bson.M{"_id": sceneID2, "id": "scene2", "name": "Scene 2", "alias": "shared-name"}, // Will conflict with story
+			bson.M{"_id": sceneID1, "id": "scene1", "name": "Scene 1", "alias": ""},                  // Empty alias
+			bson.M{"_id": sceneID2, "id": "scene2", "name": "Scene 2", "alias": "shared-name"},       // Will conflict with story
 			bson.M{"_id": sceneID3, "id": "scene3", "name": "Scene 3", "alias": "valid-scene-alias"}, // Unique
 		})
 		require.NoError(t, err)
 
 		// Insert storytelling
 		_, err = db.Collection("storytelling").InsertMany(ctx, []interface{}{
-			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1"}, // Missing alias
-			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "SHARED-NAME"}, // Conflicts with scene (case insensitive)
+			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1"},                               // Missing alias
+			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "SHARED-NAME"},       // Conflicts with scene (case insensitive)
 			bson.M{"_id": storyID3, "id": "story3", "name": "Story 3", "alias": "valid-story-alias"}, // Unique
 		})
 		require.NoError(t, err)
@@ -363,13 +363,13 @@ func TestAddUnifiedCaseInsensitiveAliasIndex(t *testing.T) {
 		// Insert scenes with different field scenarios
 		_, err = db.Collection("scene").InsertMany(ctx, []interface{}{
 			bson.M{"_id": sceneID1, "id": "scene1", "name": "Scene 1", "alias": nil}, // nil alias
-			bson.M{"_id": sceneID2, "id": "scene2", "name": "Scene 2"}, // missing alias field
+			bson.M{"_id": sceneID2, "id": "scene2", "name": "Scene 2"},               // missing alias field
 		})
 		require.NoError(t, err)
 
 		// Insert storytelling with different field scenarios
 		_, err = db.Collection("storytelling").InsertMany(ctx, []interface{}{
-			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1", "alias": ""}, // empty string alias
+			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1", "alias": ""},    // empty string alias
 			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "   "}, // whitespace alias
 		})
 		require.NoError(t, err)
