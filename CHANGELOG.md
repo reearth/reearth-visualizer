@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.7 - 2025-12-18
+
+### Web
+
+#### 🚀 Features
+
+- Add new plugin api to open url in new tab ([#1984](https://github.com/reearth/reearth-visualizer/pull/1984)) [`ad06b0`](https://github.com/reearth/reearth-visualizer/commit/ad06b0)
+
+### Server
+
+#### 🚀 Features
+
+- Bump up version to 1.0.0-beta.13.7 ([#1982](https://github.com/reearth/reearth-visualizer/pull/1982)) [`994483`](https://github.com/reearth/reearth-visualizer/commit/994483)
+
+#### 🔧 Bug Fixes
+
+- Allow public project access without workspace permissions for GetProjectByWorkspaceAliasAndProjectAlias ([#1985](https://github.com/reearth/reearth-visualizer/pull/1985)) [`f9d37b`](https://github.com/reearth/reearth-visualizer/commit/f9d37b)
+- Remove condition to check operator  ([#1983](https://github.com/reearth/reearth-visualizer/pull/1983)) [`b59546`](https://github.com/reearth/reearth-visualizer/commit/b59546)
+- Add GetProjectByWorkspaceAliasAndProjectAlias to read-only methods ([#1981](https://github.com/reearth/reearth-visualizer/pull/1981)) [`66dfe8`](https://github.com/reearth/reearth-visualizer/commit/66dfe8)
+
 ## 1.0.0-beta.13.6 - 2025-12-17
 
 ### Web
