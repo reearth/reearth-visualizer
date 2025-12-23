@@ -181,15 +181,20 @@ const StoryPanel: FC<Props> = ({
     const pageId = pageElement?.id;
     if (!pageId) return;
 
+    let didScheduleTimeout = false;
+
     if (intersectionRatio >= 0.5) {
       clearTimeout(pageChangeTimeoutRef.current);
       pageChangeTimeoutRef.current = setTimeout(() => {
         onCurrentPageChange?.(pageId, true);
       }, 150);
+      didScheduleTimeout = true;
     }
 
     return () => {
-      clearTimeout(pageChangeTimeoutRef.current);
+      if (didScheduleTimeout) {
+        clearTimeout(pageChangeTimeoutRef.current);
+      }
     };
   }, [
     isIntersecting,
