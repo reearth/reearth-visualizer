@@ -41,6 +41,5 @@ var migrations = migration.Migrations[DBClient]{
 	251022100100: UpdateProjectMetadataFields,
 	251113173239: GcschangeEsriToDefault,
 	251216142332: RemoveTimeline,
-	251222111112: AddCaseInsensitiveSceneAliasIndex,
-	251222111113: AddCaseInsensitiveStorytellingAliasIndex,
+	251222111114: AddUnifiedCaseInsensitiveAliasIndex,
 }
