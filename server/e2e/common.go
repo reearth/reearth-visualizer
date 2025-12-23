@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"os"
 	"reflect"
 	"regexp"
 	"strings"
@@ -44,7 +45,7 @@ var (
 		Origins: []string{"https://example.com"},
 		Dev:     true,
 		AccountsAPI: config.AccountsAPIConfig{
-			Host:    "http://reearth-accounts-dev:8090",
+			Host:    getAccountsAPIHost(),
 			Timeout: 30,
 		},
 	}
@@ -52,7 +53,7 @@ var (
 	internalApiConfig = &config.Config{
 		Origins: []string{"https://example.com"},
 		AccountsAPI: config.AccountsAPIConfig{
-			Host:    "http://reearth-accounts-dev:8090",
+			Host:    getAccountsAPIHost(),
 			Timeout: 30,
 		},
 		Visualizer: config.VisualizerConfig{
@@ -85,6 +86,15 @@ func accountsHostFromContext(ctx context.Context) string {
 
 func init() {
 	mongotest.Env = "REEARTH_DB"
+}
+
+// getAccountsAPIHost returns the Accounts API host from environment variable or default
+func getAccountsAPIHost() string {
+	if host := os.Getenv("REEARTH_ACCOUNTSAPI_HOST"); host != "" {
+		return host
+	}
+	// Default for local Docker environment
+	return "http://reearth-accounts-dev:8090"
 }
 
 func initRepos(t *testing.T, useMongo bool, seeder Seeder, cfg *config.Config) (repos *repo.Container, file gateway.File, ctx context.Context, accountsClient *accountsGQLclient.Client, seederResult *SeederResult) {
