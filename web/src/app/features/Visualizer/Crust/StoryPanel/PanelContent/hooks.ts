@@ -55,10 +55,10 @@ export default ({
     if (!pageWrapperElement) return;
 
     const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        const { height } = entry.contentRect;
-        setPageGap(height - 40); // 40px is the height of the page title block
-      }
+      const entry = entries[0];
+      if (!entry) return;
+      const { height } = entry.contentRect;
+      setPageGap(height - 40); // 40px is the height of the page title block
     });
 
     resizeObserver.observe(pageWrapperElement);
