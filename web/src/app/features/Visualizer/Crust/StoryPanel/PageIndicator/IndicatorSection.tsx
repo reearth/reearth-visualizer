@@ -1,6 +1,6 @@
 import { Popup } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 type Props = {
   title?: string;
@@ -15,9 +15,24 @@ const IndicatorSection: FC<Props> = ({
   title,
   onPageChange
 }) => {
-  const handleClick = useCallback(() => {
-    onPageChange(pageNumber);
-  }, [pageNumber, onPageChange]);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      onPageChange(pageNumber);
+    },
+    [pageNumber, onPageChange]
+  );
+
+  const handleMouseEnter = useCallback(() => {
+    setIsPopupOpen(true);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setIsPopupOpen(false);
+  }, []);
 
   const isHighlighted = useMemo(
     () => pageNumber <= currentPageNumber,
@@ -31,10 +46,12 @@ const IndicatorSection: FC<Props> = ({
         <Indicator
           highlighted={isHighlighted}
           onClick={handleClick}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
           isFirstChild={pageNumber === 1}
         />
       }
-      triggerOnHover
+      open={isPopupOpen}
       placement="bottom"
       extendTriggerWidth
     >
