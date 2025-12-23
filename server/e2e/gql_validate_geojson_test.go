@@ -6,6 +6,17 @@ import (
 
 func TestValidateGeoJsonExternal(t *testing.T) {
 	// just only check the URL format
+	e, result := Server(t, baseSeeder)
+
+	pId := createProject(e, result.UID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"workspaceId": result.WID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, result.UID, pId)
+
 	tests := []struct {
 		name     string
 		url      string
@@ -27,18 +38,9 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 			hasError: false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e, result := Server(t, baseSeeder)
-			pId := createProject(e, result.UID, map[string]any{
-				"name":        "test",
-				"description": "abc",
-				"workspaceId": result.WID.String(),
-				"visualizer":  "CESIUM",
-				"coreSupport": true,
-			})
-
-			sId := createScene(e, result.UID, pId)
 			res := addNLSLayerSimpleByGeojson(e, sId, tt.url, "test", 0, result.UID.String())
 			if tt.hasError {
 				res.Object().Value("errors").Array().NotEmpty()
