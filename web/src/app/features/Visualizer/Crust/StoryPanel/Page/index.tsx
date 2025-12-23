@@ -130,11 +130,7 @@ const StoryPanel: FC<Props> = ({
     onBlockMove
   });
 
-  // Memoize the root element to avoid DOM query on every render
-  const rootElement = useMemo(
-    () => document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID),
-    []
-  );
+  const rootElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
 
   const minHeight = useMemo(() => {
     if (!rootElement) return "100%";
