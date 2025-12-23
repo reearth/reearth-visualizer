@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -29,8 +31,14 @@ func TestMockAuth(t *testing.T) {
 	// checkj query GetMe
 	requestBody2 := GraphQLRequest{
 		OperationName: "GetMe",
-		Query:         "query GetMe { \n me { \n id \n name \n email\n } \n}",
-		Variables:     map[string]any{},
+		Query: `query GetMe {
+ me {
+ id
+ name
+ email
+ }
+}`,
+		Variables: map[string]any{},
 	}
 	response2 := Request(e, userId, requestBody2).
 		Object()

@@ -67,8 +67,15 @@ jobs:
         with:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
-      - name: test
+      - name: test (unit tests only)
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+        env:
+          REEARTH_DB: mongodb://localhost
+          REEARTH_ACCOUNTSAPI_HOST: http://localhost:8090
+          REEARTH_ACCOUNTSAPI_TIMEOUT: 30
+        working-directory: server
+      - name: test (e2e tests)
+        run: go test -tags=e2e ./e2e/... -v -timeout 15m
         env:
           REEARTH_DB: mongodb://localhost
           REEARTH_ACCOUNTSAPI_HOST: http://localhost:8090

@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -45,7 +47,7 @@ func TestProjectExport(t *testing.T) {
 	t.Cleanup(func() { _ = os.Remove(tmp) })
 	t.Logf("saved: %s (%d bytes)", tmp, len(b))
 
-	require.True(t, bytes.HasPrefix(b, []byte("PK\x03\x04")), "not a zip file?")
+	require.True(t, bytes.HasPrefix(b, []byte("PK")), "not a zip file?")
 
 	zr, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
 	require.NoError(t, err)

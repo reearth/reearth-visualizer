@@ -24,11 +24,11 @@ help:
 	@echo "Targets:"
 	@echo "  lint              Run golangci-lint with auto-fix (local)"
 	@echo "  lint-docker       Run golangci-lint in Docker container"
-	@echo "  test              Run unit tests (local)"
-	@echo "  test-docker       Run unit tests in Docker container"
+	@echo "  test              Run unit tests only (excludes e2e tests)"
+	@echo "  test-docker       Run unit tests in Docker container (excludes e2e tests)"
 	@echo "  test-debug        Run unit tests with verbose output"
-	@echo "  e2e               Run end-to-end tests"
-	@echo "  e2e-docker        Run e2e tests with Docker config"
+	@echo "  e2e               Run end-to-end tests in Docker"
+	@echo "  e2e-docker        Run e2e tests with Docker config (run inside container)"
 	@echo "  build             Build the project"
 	@echo "  dev-install       Install dev tools"
 	@echo "  dev               Run the application with hot reload"
@@ -70,8 +70,7 @@ test:
 	REEARTH_DB=${REEARTH_DB} go test ${TEST_DIR} -run ${TARGET_TEST}
 
 test-docker:
-	@echo "Running tests in Docker container..."
-	@echo "Note: Some e2e tests may fail due to MongoDB permission issues in Docker."
+	@echo "Running unit tests in Docker container (excluding e2e tests)..."
 	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
 		${DOCKER_EXEC} go test ${TEST_DIR} -run ${TARGET_TEST}; \
 	else \
@@ -87,7 +86,7 @@ e2e:
 	docker exec -it reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
 
 e2e-docker:
-	set -a && . ./.env.docker && set +a && go test ./e2e/...
+	set -a && . ./.env.docker && set +a && go test -tags=e2e ./e2e/...
 
 # =======================
 # Build & Run
