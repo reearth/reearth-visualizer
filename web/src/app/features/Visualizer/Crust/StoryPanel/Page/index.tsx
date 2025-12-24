@@ -148,7 +148,7 @@ const StoryPanel: FC<Props> = ({
     useElementOnScreen(intersectionOptions);
 
   // Debounce timer for page changes to prevent rapid switching
-  const pageChangeTimeoutRef = useRef<NodeJS.Timeout>();
+  const pageChangeTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
     const pageWrapperElement = document.getElementById(
