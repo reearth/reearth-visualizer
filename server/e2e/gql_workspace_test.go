@@ -143,7 +143,7 @@ func TestAddMemberToWorkspace(t *testing.T) {
 
 	Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
-			addMemberToWorkspace( input: { workspaceId: "%s", userId: "%s", role: READER } ) { %s } }`,
+			addMemberToWorkspace( input: { workspaceId: "%s", userId: "%s", role: reader } ) { %s } }`,
 			result.WID, result.UID2, workspaceNode),
 	})
 
@@ -154,7 +154,7 @@ func TestAddMemberToWorkspace(t *testing.T) {
 
 	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
-			addMemberToWorkspace( input: { workspaceId: "%s", userId: "%s", role: READER } ) { %s } }`,
+			addMemberToWorkspace( input: { workspaceId: "%s", userId: "%s", role: reader } ) { %s } }`,
 			result.WID, result.UID2, workspaceNode),
 	})
 	res.Path("$.errors[0].message").IsEqual("user already joined")
@@ -194,7 +194,7 @@ func TestUpdateMemberOfWorkspace(t *testing.T) {
 
 	Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
-			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: WRITER } ) { %s } }`,
+			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: writer } ) { %s } }`,
 			result.WID2, result.UID3, workspaceNode),
 	})
 
@@ -204,7 +204,7 @@ func TestUpdateMemberOfWorkspace(t *testing.T) {
 
 	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
-			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: WRITER } ) { %s } }`,
+			updateMemberOfWorkspace( input: { workspaceId: "%s", userId: "%s", role: writer } ) { %s } }`,
 			accountsID.NewWorkspaceID(), result.UID3, workspaceNode),
 	})
 	res.Path("$.errors[0].message").IsEqual("operation denied")

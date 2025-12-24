@@ -83,7 +83,7 @@ test-debug:
 	go test -v -timeout 10s ${TEST_DIR} | tee test.log
 
 e2e:
-	docker exec -it reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
+	docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
 
 e2e-docker:
 	set -a && . ./.env.docker && set +a && go test -tags=e2e ./e2e/...

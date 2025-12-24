@@ -74,7 +74,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File, acco
 	}
 
 	// Add user3 to workspace2 as reader (local repo is the source of truth for tests).
-	_ = addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID3, "READER", result.UID2)
+	_ = addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID3, "reader", result.UID2)
 	if user3 != nil {
 		if err := JoinMembers(ctx, r, result.WID2, user3, accountsWorkspace.RoleReader, result.UID2); err != nil {
 			return err
@@ -82,7 +82,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File, acco
 	}
 
 	// Add user1 to workspace2 as owner (local repo is the source of truth for tests).
-	_ = addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID, "OWNER", result.UID2)
+	_ = addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID, "owner", result.UID2)
 	if user1 != nil {
 		if err := JoinMembers(ctx, r, result.WID2, user1, accountsWorkspace.RoleOwner, result.UID2); err != nil {
 			return err

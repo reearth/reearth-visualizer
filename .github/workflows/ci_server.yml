@@ -114,7 +114,7 @@ jobs:
           timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-visualizer-dev-1 echo "ready" 2>/dev/null; do echo "Waiting for reearth-visualizer..."; sleep 2; done'
 
       - name: Run e2e tests
-        run: docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
+        run: make e2e
         working-directory: server
 
       - name: Show logs on failure

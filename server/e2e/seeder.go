@@ -184,7 +184,7 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 	}
 
 	// assign user3 to user1's workspace
-	if err := addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID, result.UID3, "READER", result.UID); err != nil {
+	if err := addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID, result.UID3, "reader", result.UID); err != nil {
 		return err
 	}
 	if user1 != nil && user3 != nil {

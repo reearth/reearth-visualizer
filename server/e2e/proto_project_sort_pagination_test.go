@@ -120,7 +120,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 	})
 
 	// add user1 to workspace2(user2)
-	err := addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID, "READER", result.UID2)
+	err := addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID, "reader", result.UID2)
 	assert.Nil(t, err)
 	if err == nil {
 		user1, userErr := r.User.FindByID(ctx, result.UID)
