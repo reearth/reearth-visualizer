@@ -68,22 +68,30 @@ jobs:
           echo "REEARTH_MOCK_AUTH=true" >> .env.docker
           echo "RUN_MIGRATION=true" >> .env.docker
 
-      - name: Start reearth-accounts services
+      - name: Run database migrations
         run: |
           cd reearth-accounts
           docker compose -f docker-compose.dev.yml up -d
+          echo "Waiting for migrations to complete..."
+          sleep 15
+          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -20
+
+      - name: Remove migration flag and restart
+        run: |
+          cd reearth-accounts/server
+          sed -i '/RUN_MIGRATION=true/d' .env.docker
+          cd ..
+          docker compose -f docker-compose.dev.yml restart reearth-accounts-dev
           docker ps -a
 
       - name: Wait for reearth-accounts to be ready
         run: |
-          echo "Waiting for reearth-accounts container to start..."
+          echo "Waiting for reearth-accounts service to start..."
           for i in {1..30}; do
-            if docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{.State.Status}}' 2>/dev/null | grep -q "running"; then
-              echo "Container is running, checking port 8090..."
-              if nc -z localhost 8090 2>/dev/null; then
-                echo "reearth-accounts is ready on port 8090!"
-                break
-              fi
+            if nc -z localhost 8090 2>/dev/null; then
+              echo "reearth-accounts is ready on port 8090!"
+              curl -s http://localhost:8090/health || echo "Health check endpoint not available"
+              break
             fi
             if [ $i -eq 30 ]; then
               echo "Timeout waiting for reearth-accounts to be ready"

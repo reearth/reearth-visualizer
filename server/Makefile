@@ -121,31 +121,31 @@ run-clean-start: clean run-app
 run-db:
 	${DOCKER_COMPOSE} up -d reearth-mongo
 
-run-reset:
-	docker stop reearth-visualizer-reearth-mongo-1
-	rm -rf ../mongo data
-	make run-db
-	make mockuser
+# run-reset:
+# 	docker stop reearth-visualizer-reearth-mongo-1
+# 	rm -rf ../mongo data
+# 	make run-db
+# 	make mockuser
 
-reset:
-	@echo "==== Stopping database and GCS services ===="
-	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
-	@echo ""
-	@echo "==== Removing data directory (requires sudo password) ===="
-	sudo rm -rf tmp/gcs tmp/mongo 
-	@echo ""
-	@echo "==== Starting database and GCS services ===="
-	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
-	@echo ""
-	@echo "==== Waiting for services to be ready (3 seconds) ===="
-	@echo "3..."
-	sleep 1
-	@echo "2..."
-	sleep 1
-	@echo "1..."
-	sleep 1
-	make init
-	@echo "✓ Reset complete!"
+# reset:
+# 	@echo "==== Stopping database and GCS services ===="
+# 	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
+# 	@echo ""
+# 	@echo "==== Removing data directory (requires sudo password) ===="
+# 	sudo rm -rf tmp/gcs tmp/mongo 
+# 	@echo ""
+# 	@echo "==== Starting database and GCS services ===="
+# 	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
+# 	@echo ""
+# 	@echo "==== Waiting for services to be ready (3 seconds) ===="
+# 	@echo "3..."
+# 	sleep 1
+# 	@echo "2..."
+# 	sleep 1
+# 	@echo "1..."
+# 	sleep 1
+# 	make init
+# 	@echo "✓ Reset complete!"
 
 up-gcs:
 	${DOCKER_COMPOSE} up -d gcs
@@ -208,18 +208,18 @@ dev-install:
 # Others
 # =======================
 
-init:
-	@echo "==== Initializing GCS bucket ===="
-	make init-gcs
-	@echo ""
-	@echo "==== Creating mock user ===="
-	make mockuser
-	@echo ""
+# init:
+# 	@echo "==== Initializing GCS bucket ===="
+# 	make init-gcs
+# 	@echo ""
+# 	@echo "==== Creating mock user ===="
+# 	make mockuser
+# 	@echo ""
 
-mockuser:
-	curl -s -D - -o /dev/null \
-		-H 'Content-Type: application/json' \
-		http://localhost:8080/api/mockuser | head -n 1
+# mockuser:
+# 	curl -s -D - -o /dev/null \
+# 		-H 'Content-Type: application/json' \
+# 		http://localhost:8080/api/mockuser | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \

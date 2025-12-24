@@ -284,6 +284,10 @@ func ServerMockTest(t *testing.T) (*httpexpect.Expect, *SeederResult) {
 	c := &config.Config{
 		Dev:     true,
 		Origins: []string{"https://example.com"},
+		AccountsAPI: config.AccountsAPIConfig{
+			Host:    getAccountsAPIHost(),
+			Timeout: 30,
+		},
 	}
 	e, _, _, seederResult := startServer(t, c, true, nil)
 	return e, seederResult
