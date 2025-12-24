@@ -101,14 +101,18 @@ export function usePluginAPI({
   const layersEventsRef = useEventRef<LayersEventType>();
   const sketchEventsRef = useEventRef<SketchEventType>();
 
-  const uiEvents = useRef<[Events<UIEventType>, EventEmitter<UIEventType>]>(undefined);
-  const modalEvents =
-    useRef<[Events<ModalEventType>, EventEmitter<ModalEventType>]>(undefined);
-  const popupEvents =
-    useRef<[Events<PopupEventType>, EventEmitter<PopupEventType>]>(undefined);
-  const extensionEvents =
-    useRef<[Events<ExtensionEventType>, EventEmitter<ExtensionEventType>]>(undefined);
-
+  const uiEvents = useRef<
+    [Events<UIEventType>, EventEmitter<UIEventType>] | undefined
+  >(undefined);
+  const modalEvents = useRef<
+    [Events<ModalEventType>, EventEmitter<ModalEventType>] | undefined
+  >(undefined);
+  const popupEvents = useRef<
+    [Events<PopupEventType>, EventEmitter<PopupEventType>] | undefined
+  >(undefined);
+  const extensionEvents = useRef<
+    [Events<ExtensionEventType>, EventEmitter<ExtensionEventType>] | undefined
+  >(undefined);
   const pluginMessageSender = useCallback((msg: ExtensionMessage) => {
     extensionEvents.current?.[1]("extensionMessage", msg);
   }, []);

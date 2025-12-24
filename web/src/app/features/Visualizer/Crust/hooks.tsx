@@ -31,10 +31,10 @@ export default function useHook({
   pluginProperty
 }: { mapRef?: RefObject<MapRef | null> } & ExternalPluginProps) {
   const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
-  const pluginModalContainerRef = useRef<HTMLDivElement>(undefined);
+  const pluginModalContainerRef = useRef<HTMLDivElement | null>(null);
 
   const [shownPluginPopupInfo, onPluginPopupShow] = useState<PluginPopupInfo>();
-  const pluginPopupContainerRef = useRef<HTMLDivElement>(undefined);
+  const pluginPopupContainerRef = useRef<HTMLDivElement | null>(null);
 
   const commonPluginProps = useMemo(
     () => ({

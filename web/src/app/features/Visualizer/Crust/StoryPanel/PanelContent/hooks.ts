@@ -22,7 +22,9 @@ export default ({
   ) => Promise<void>;
 }) => {
   const editModeContext = useEditModeContext();
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>(undefined);
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
 
   const [pageGap, setPageGap] = useState<number>();
 

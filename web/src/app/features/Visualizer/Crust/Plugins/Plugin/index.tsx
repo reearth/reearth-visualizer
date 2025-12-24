@@ -22,9 +22,9 @@ export {
 export type CommonProps = {
   pluginProperty?: unknown; // Taken from Visualizer
   pluginBaseUrl?: string; // Taken from Visualizer
-  pluginModalContainer?: HTMLElement | DocumentFragment;
+  pluginModalContainer?: HTMLElement | DocumentFragment | null;
   shownPluginModalInfo?: PluginModalInfo;
-  pluginPopupContainer?: HTMLElement | DocumentFragment;
+  pluginPopupContainer?: HTMLElement | DocumentFragment | null;
   shownPluginPopupInfo?: PluginPopupInfo;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;

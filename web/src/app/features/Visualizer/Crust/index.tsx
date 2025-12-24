@@ -12,7 +12,13 @@ import {
   type MapRef
 } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useMemo, type RefObject, useContext, useCallback, type JSX } from "react";
+import {
+  useMemo,
+  type RefObject,
+  useContext,
+  useCallback,
+  type JSX
+} from "react";
 
 import { Viewport } from "../hooks/useViewport";
 
@@ -238,7 +244,7 @@ export default function Crust({
     onLayerSelectWithRectStart,
     onLayerSelectWithRectMove,
     onLayerSelectWithRectEnd
-  } = useContext(coreContext as React.Context<any>);
+  } = useContext(coreContext);
 
   const widgetTheme = usePublishTheme(widgetThemeOptions);
 
