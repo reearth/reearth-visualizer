@@ -98,15 +98,12 @@ func (r *mutationResolver) AddMemberToWorkspace(ctx context.Context, input gqlmo
 		return nil, err
 	}
 
-	workspace, err := r.addUsersToWorkspaceViaHTTP(ctx, tid.String(), uid.String(), string(input.Role))
+	workspace, err := r.addUsersToWorkspaceViaHTTP(ctx, tid.String(), uid.String(), strings.ToLower(string(input.Role)))
 	if err != nil {
 		return nil, err
 	}
 
-	role, err := accountsWorkspace.RoleFrom(string(input.Role))
-	if err != nil {
-		return nil, err
-	}
+	role := gqlmodel.FromRole(input.Role)
 
 	localWorkspace, err := r.addMemberToLocalWorkspace(ctx, tid, uid, role)
 	if err != nil {
@@ -149,14 +146,11 @@ func (r *mutationResolver) UpdateMemberOfWorkspace(ctx context.Context, input gq
 	}
 
 	// Call reearth-accounts API
-	workspace, err := r.updateUserOfWorkspaceViaHTTP(ctx, tid.String(), uid.String(), string(input.Role))
+	workspace, err := r.updateUserOfWorkspaceViaHTTP(ctx, tid.String(), uid.String(), strings.ToLower(string(input.Role)))
 	if err != nil {
 		return nil, err
 	}
-	role, err := accountsWorkspace.RoleFrom(string(input.Role))
-	if err != nil {
-		return nil, err
-	}
+	role := gqlmodel.FromRole(input.Role)
 
 	localWorkspace, err := r.updateMemberInLocalWorkspace(ctx, tid, uid, role)
 	if err != nil {
