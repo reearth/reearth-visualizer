@@ -58,6 +58,7 @@ jobs:
         with:
           repository: reearth/reearth-accounts
           ref: 2834493b49b8
+          fetch-depth: 0
           path: reearth-accounts
 
       - name: Start reearth-accounts services
