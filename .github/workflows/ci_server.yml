@@ -35,52 +35,73 @@ jobs:
 
   ci-server-test:
     runs-on: ubuntu-latest
-    services:
-      mongo:
-        image: mongo:7
-        ports:
-          - 27017:27017
     steps:
-      - name: Start Fake GCS Server
+      - name: checkout reearth-visualizer
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Start reearth-visualizer services (mongo, gcs)
         run: |
-          docker run -d --name fake-gcs-server \
-            -p 4443:4443 \
-            -v /tmp/gcs:/storage \
-            fsouza/fake-gcs-server:1.52.1 \
-            -scheme http
-      - name: Start reearth-accounts service
+          docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
+          docker network ls
+
+      - name: Wait for MongoDB to be ready
         run: |
-          docker run -d --name reearth-accounts \
-            -p 8090:8080 \
-            -e REEARTH_DB=mongodb://host.docker.internal:27017 \
-            -e REEARTH_DB_ACCOUNT=reearth_account \
-            -e REEARTH_HOST=http://localhost:8090 \
-            --add-host=host.docker.internal:host-gateway \
-            ghcr.io/reearth/reearth-accounts:latest || echo "Warning: reearth-accounts image not available, tests may use fallback"
+          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "db.adminCommand({ ping: 1 })" 2>/dev/null; do echo "Waiting for MongoDB..."; sleep 2; done'
+
+      - name: Initialize MongoDB replica set
+        run: |
+          docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'reearth-mongo:27017'}]})" || echo "Replica set already initialized"
+          sleep 5
+
+      - name: Checkout reearth-accounts
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: reearth/reearth-accounts
+          path: reearth-accounts
+
+      - name: Start reearth-accounts services
+        run: |
+          cd reearth-accounts
+          docker compose -f docker-compose.dev.yml up -d
+          docker ps -a
+
       - name: Wait for reearth-accounts to be ready
         run: |
-          timeout 30 bash -c 'until curl -f http://localhost:8090/health 2>/dev/null; do sleep 1; done' || echo "Warning: reearth-accounts not ready, tests will use fallback"
-      - name: checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - name: set up
+          timeout 60 bash -c 'until curl -f http://localhost:8090/health 2>/dev/null; do echo "Waiting for reearth-accounts..."; sleep 2; done'
+
+      - name: Build reearth-visualizer-dev container
+        run: |
+          docker compose -f docker-compose.dev.yml up -d reearth-visualizer-dev
+
+      - name: Wait for reearth-visualizer to be ready
+        run: |
+          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-visualizer-dev-1 echo "ready" 2>/dev/null; do echo "Waiting for reearth-visualizer..."; sleep 2; done'
+
+      - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
         with:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
-      - name: test (unit tests only)
-        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
-        env:
-          REEARTH_DB: mongodb://localhost
-          REEARTH_ACCOUNTSAPI_HOST: http://localhost:8090
-          REEARTH_ACCOUNTSAPI_TIMEOUT: 30
-        working-directory: server
-      - name: test (e2e tests)
-        run: go test -tags=e2e ./e2e/... -v -timeout 15m
-        env:
-          REEARTH_DB: mongodb://localhost
-          REEARTH_ACCOUNTSAPI_HOST: http://localhost:8090
-          REEARTH_ACCOUNTSAPI_TIMEOUT: 30
-        working-directory: server
+
+      - name: Run unit tests
+        run: docker exec reearth-visualizer-reearth-visualizer-dev-1 go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+
+      - name: Copy coverage file from container
+        run: docker cp reearth-visualizer-reearth-visualizer-dev-1:/reearth-visualizer/coverage.txt server/coverage.txt
+
+      - name: Run e2e tests
+        run: cd server && make e2e
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== reearth-visualizer logs ==="
+          docker logs reearth-visualizer-reearth-visualizer-dev-1
+          echo "=== reearth-accounts logs ==="
+          docker logs reearth-accounts-reearth-accounts-dev-1
+          echo "=== reearth-cerbos logs ==="
+          docker logs reearth-accounts-reearth-cerbos-1
+
       - name: Send coverage report
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
