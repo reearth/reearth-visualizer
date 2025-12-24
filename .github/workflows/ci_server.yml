@@ -60,6 +60,13 @@ jobs:
           ref: feat/reearthx-to-reearth-accounts3
           path: reearth-accounts
 
+      - name: Configure reearth-accounts for E2E tests
+        run: |
+          cd reearth-accounts/server
+          echo "" >> .env.docker
+          echo "# Mock Authentication for E2E tests" >> .env.docker
+          echo "REEARTH_MOCK_AUTH=true" >> .env.docker
+
       - name: Start reearth-accounts services
         run: |
           cd reearth-accounts
