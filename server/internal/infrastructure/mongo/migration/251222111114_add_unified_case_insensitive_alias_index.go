@@ -5,12 +5,24 @@ import (
 	"fmt"
 
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/mongodoc"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// AddUnifiedCaseInsensitiveAliasIndex creates case-insensitive unique indexes on alias fields
+// for both scene and storytelling collections, ensuring global alias uniqueness.
+//
+// The migration handles:
+// 1. Empty/missing aliases: Generates new aliases with format "{prefix}-{id}"
+// 2. Whitespace-only aliases: Treated as empty and replaced with generated aliases
+// 3. Within-collection duplicates: All duplicates get new generated aliases 
+// 4. Cross-collection conflicts: Scene aliases take priority, storytelling aliases are updated
+// 5. Index creation: Creates case-insensitive unique indexes on both collections
+//
+// Alias generation uses prefixes: "c-" for scenes, "s-" for storytelling
 func AddUnifiedCaseInsensitiveAliasIndex(ctx context.Context, c DBClient) error {
 	sceneCol := c.Database().Collection("scene")
 	storytellingCol := c.Database().Collection("storytelling")
@@ -18,7 +30,7 @@ func AddUnifiedCaseInsensitiveAliasIndex(ctx context.Context, c DBClient) error 
 	storytellingColMongox := c.Collection("storytelling")
 
 	// Handle empty aliases for both collections
-	fmt.Println("Handling empty aliases...")
+	log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Handling empty aliases...")
 	if err := handleEmptyAliases(ctx, sceneCol, sceneColMongox, "scene"); err != nil {
 		return fmt.Errorf("failed to handle empty scene aliases: %w", err)
 	}
@@ -27,7 +39,7 @@ func AddUnifiedCaseInsensitiveAliasIndex(ctx context.Context, c DBClient) error 
 	}
 
 	// Handle duplicates within each collection
-	fmt.Println("Handling duplicates within collections...")
+	log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Handling duplicates within collections...")
 	if err := handleDuplicatesWithinCollection(ctx, sceneCol, sceneColMongox, "scene"); err != nil {
 		return fmt.Errorf("failed to handle scene duplicates: %w", err)
 	}
@@ -36,13 +48,13 @@ func AddUnifiedCaseInsensitiveAliasIndex(ctx context.Context, c DBClient) error 
 	}
 
 	// Handle conflicts between collections
-	fmt.Println("Checking for cross-collection alias conflicts...")
+	log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Checking for cross-collection alias conflicts...")
 	if err := handleCrossCollectionConflicts(ctx, sceneCol, storytellingCol, sceneColMongox, storytellingColMongox); err != nil {
 		return fmt.Errorf("failed to handle cross-collection conflicts: %w", err)
 	}
 
 	// Create unique indexes for both collections
-	fmt.Println("Creating unique indexes...")
+	log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Creating unique indexes...")
 	if err := createUniqueAliasIndex(ctx, sceneCol, "scene"); err != nil {
 		return fmt.Errorf("failed to create scene alias index: %w", err)
 	}
@@ -50,22 +62,22 @@ func AddUnifiedCaseInsensitiveAliasIndex(ctx context.Context, c DBClient) error 
 		return fmt.Errorf("failed to create storytelling alias index: %w", err)
 	}
 
-	fmt.Println("Successfully created unified case-insensitive alias indexes")
+	log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Successfully created unified case-insensitive alias indexes")
 	return nil
 }
 
-// handleEmptyAliases finds and assigns new aliases to documents with empty aliases
+// handleEmptyAliases finds and assigns new aliases to documents with empty, missing, or whitespace-only aliases
 func handleEmptyAliases(ctx context.Context, col *mongo.Collection, colMongox *mongox.Collection, collectionType string) error {
 	emptyAliasIDs, err := findEmptyAliases(ctx, col)
 	if err != nil {
 		return fmt.Errorf("failed to scan for empty %s aliases: %w", collectionType, err)
 	}
 	if len(emptyAliasIDs) > 0 {
-		fmt.Printf("Empty %s aliases found: %d documents\n", collectionType, len(emptyAliasIDs))
+		log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Empty %s aliases found: %d documents", collectionType, len(emptyAliasIDs))
 		if err := generateAliasesForEmpty(ctx, colMongox, emptyAliasIDs, collectionType); err != nil {
 			return fmt.Errorf("failed to generate aliases for empty %s: %w", collectionType, err)
 		}
-		fmt.Printf("Generated new aliases for empty %s aliases.\n", collectionType)
+		log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Generated new aliases for empty %s aliases", collectionType)
 	}
 	return nil
 }
@@ -77,14 +89,14 @@ func handleDuplicatesWithinCollection(ctx context.Context, col *mongo.Collection
 		return fmt.Errorf("failed to scan for duplicate %s aliases: %w", collectionType, err)
 	}
 	if len(duplicates) > 0 {
-		fmt.Printf("Duplicate %s aliases found (case-insensitive):\n", collectionType)
+		log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Duplicate %s aliases found (case-insensitive)", collectionType)
 		for alias, ids := range duplicates {
-			fmt.Printf("Alias: %s, %s IDs: %v\n", alias, collectionType, ids)
+			log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Alias: %s, %s IDs: %v", alias, collectionType, ids)
 		}
 		if err := generateNewAliasesForDuplicates(ctx, colMongox, duplicates, collectionType); err != nil {
 			return fmt.Errorf("failed to generate new aliases for duplicate %s: %w", collectionType, err)
 		}
-		fmt.Printf("Generated new ID-based aliases for duplicate %s.\n", collectionType)
+		log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Generated new ID-based aliases for duplicate %s", collectionType)
 	}
 	return nil
 }
@@ -97,16 +109,16 @@ func handleCrossCollectionConflicts(ctx context.Context, sceneCol, storytellingC
 	}
 
 	if len(conflicts) > 0 {
-		fmt.Printf("Cross-collection alias conflicts found: %d aliases\n", len(conflicts))
+		log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Cross-collection alias conflicts found: %d aliases", len(conflicts))
 		for alias, conflict := range conflicts {
-			fmt.Printf("Conflicting alias: %s (scenes: %v, storytelling: %v)\n", alias, conflict.SceneIDs, conflict.StorytellingIDs)
+			log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Conflicting alias: %s (scenes: %v, storytelling: %v)", alias, conflict.SceneIDs, conflict.StorytellingIDs)
 		}
 
 		// Resolve conflicts by updating storytelling aliases (keeping scene aliases as primary)
 		if err := resolveCrossCollectionConflicts(ctx, storytellingColMongox, conflicts); err != nil {
 			return fmt.Errorf("failed to resolve cross-collection conflicts: %w", err)
 		}
-		fmt.Println("Resolved cross-collection alias conflicts.")
+		log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Resolved cross-collection alias conflicts")
 	}
 	return nil
 }
@@ -191,27 +203,40 @@ func getAllAliases(ctx context.Context, col *mongo.Collection) (map[interface{}]
 
 // resolveCrossCollectionConflicts updates storytelling aliases that conflict with scene aliases
 func resolveCrossCollectionConflicts(ctx context.Context, storytellingCol *mongox.Collection, conflicts map[string]*aliasConflict) error {
+	// Collect all storytelling document IDs that need to be updated
+	var allStorytellingIDs []interface{}
+	for _, conflict := range conflicts {
+		allStorytellingIDs = append(allStorytellingIDs, conflict.StorytellingIDs...)
+	}
+
+	if len(allStorytellingIDs) == 0 {
+		return nil
+	}
+
 	var ids []string
 	var newRows []interface{}
 
-	for _, conflict := range conflicts {
-		// Update all storytelling documents with conflicting aliases
-		for _, id := range conflict.StorytellingIDs {
-			var doc mongodoc.StorytellingDocument
-			filter := bson.M{"_id": id}
-			err := storytellingCol.Client().FindOne(ctx, filter).Decode(&doc)
-			if err != nil {
-				return fmt.Errorf("failed to find storytelling with id %v: %w", id, err)
-			}
+	// Fetch all storytelling documents in a single query
+	filter := bson.M{"_id": bson.M{"$in": allStorytellingIDs}}
+	cursor, err := storytellingCol.Client().Find(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("failed to find storytelling documents for conflict resolution: %w", err)
+	}
+	defer cursor.Close(ctx)
 
-			oldAlias := doc.Alias
-			newAlias := fmt.Sprintf("s-%s", doc.Id)
-			doc.Alias = newAlias
+	var stories []mongodoc.StorytellingDocument
+	if err := cursor.All(ctx, &stories); err != nil {
+		return fmt.Errorf("failed to decode storytelling documents: %w", err)
+	}
 
-			ids = append(ids, doc.Id)
-			newRows = append(newRows, doc)
-			fmt.Printf("Updated storytelling %v alias from '%s' to '%s' (conflict resolution)\n", doc.Id, oldAlias, newAlias)
-		}
+	for _, doc := range stories {
+		oldAlias := doc.Alias
+		newAlias := fmt.Sprintf("s-%s", doc.Id)
+		doc.Alias = newAlias
+
+		ids = append(ids, doc.Id)
+		newRows = append(newRows, doc)
+		log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Updated storytelling %v alias from '%s' to '%s' (conflict resolution)", doc.Id, oldAlias, newAlias)
 	}
 
 	if len(ids) > 0 {
@@ -222,13 +247,14 @@ func resolveCrossCollectionConflicts(ctx context.Context, storytellingCol *mongo
 	return nil
 }
 
-// findEmptyAliases finds documents with empty or missing aliases
+// findEmptyAliases finds documents with empty, missing, or whitespace-only aliases
 func findEmptyAliases(ctx context.Context, col *mongo.Collection) ([]interface{}, error) {
 	filter := bson.M{
 		"$or": []bson.M{
 			{"alias": ""},
 			{"alias": bson.M{"$exists": false}},
 			{"alias": nil},
+			{"alias": bson.M{"$regex": "^\\s*$"}}, // Matches empty string or whitespace-only
 		},
 	}
 
@@ -253,37 +279,50 @@ func findEmptyAliases(ctx context.Context, col *mongo.Collection) ([]interface{}
 
 // generateAliasesForEmpty assigns new aliases to documents with empty aliases
 func generateAliasesForEmpty(ctx context.Context, col *mongox.Collection, docIDs []interface{}, collectionType string) error {
+	if len(docIDs) == 0 {
+		return nil
+	}
+
+	prefix := getAliasPrefix(collectionType)
 	var ids []string
 	var newRows []interface{}
-	prefix := getAliasPrefix(collectionType)
 
-	for _, id := range docIDs {
-		filter := bson.M{"_id": id}
+	// Fetch all documents in a single query
+	filter := bson.M{"_id": bson.M{"$in": docIDs}}
+	cursor, err := col.Client().Find(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("failed to find %s documents for empty alias processing: %w", collectionType, err)
+	}
+	defer cursor.Close(ctx)
 
-		if collectionType == "scene" {
-			var doc mongodoc.SceneDocument
-			err := col.Client().FindOne(ctx, filter).Decode(&doc)
-			if err != nil {
-				return fmt.Errorf("failed to find scene with id %v: %w", id, err)
-			}
+	// Process all documents based on collection type
+	if collectionType == "scene" {
+		var scenes []mongodoc.SceneDocument
+		if err := cursor.All(ctx, &scenes); err != nil {
+			return fmt.Errorf("failed to decode scene documents: %w", err)
+		}
+
+		for _, doc := range scenes {
 			oldAlias := doc.Alias
 			newAlias := fmt.Sprintf("%s-%s", prefix, doc.ID)
 			doc.Alias = newAlias
 			ids = append(ids, doc.ID)
 			newRows = append(newRows, doc)
-			fmt.Printf("Updated scene %v alias from '%s' to '%s'\n", doc.ID, oldAlias, newAlias)
-		} else {
-			var doc mongodoc.StorytellingDocument
-			err := col.Client().FindOne(ctx, filter).Decode(&doc)
-			if err != nil {
-				return fmt.Errorf("failed to find storytelling with id %v: %w", id, err)
-			}
+			log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Updated scene %v alias from '%s' to '%s'", doc.ID, oldAlias, newAlias)
+		}
+	} else {
+		var stories []mongodoc.StorytellingDocument
+		if err := cursor.All(ctx, &stories); err != nil {
+			return fmt.Errorf("failed to decode storytelling documents: %w", err)
+		}
+
+		for _, doc := range stories {
 			oldAlias := doc.Alias
 			newAlias := fmt.Sprintf("%s-%s", prefix, doc.Id)
 			doc.Alias = newAlias
 			ids = append(ids, doc.Id)
 			newRows = append(newRows, doc)
-			fmt.Printf("Updated storytelling %v alias from '%s' to '%s'\n", doc.Id, oldAlias, newAlias)
+			log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Updated storytelling %v alias from '%s' to '%s'", doc.Id, oldAlias, newAlias)
 		}
 	}
 
@@ -344,39 +383,56 @@ func findDuplicateAliases(ctx context.Context, col *mongo.Collection) (map[strin
 
 // generateNewAliasesForDuplicates assigns new aliases to documents with duplicate aliases
 func generateNewAliasesForDuplicates(ctx context.Context, col *mongox.Collection, duplicates map[string][]interface{}, collectionType string) error {
+	// Collect all document IDs that need to be updated
+	var allDocIDs []interface{}
+	for _, docIDs := range duplicates {
+		allDocIDs = append(allDocIDs, docIDs...)
+	}
+
+	if len(allDocIDs) == 0 {
+		return nil
+	}
+
+	prefix := getAliasPrefix(collectionType)
 	var ids []string
 	var newRows []interface{}
-	prefix := getAliasPrefix(collectionType)
 
-	for _, docIDs := range duplicates {
-		for _, id := range docIDs {
-			filter := bson.M{"_id": id}
+	// Fetch all documents in a single query
+	filter := bson.M{"_id": bson.M{"$in": allDocIDs}}
+	cursor, err := col.Client().Find(ctx, filter)
+	if err != nil {
+		return fmt.Errorf("failed to find %s documents for duplicate processing: %w", collectionType, err)
+	}
+	defer cursor.Close(ctx)
 
-			if collectionType == "scene" {
-				var doc mongodoc.SceneDocument
-				err := col.Client().FindOne(ctx, filter).Decode(&doc)
-				if err != nil {
-					return fmt.Errorf("failed to find scene with id %v: %w", id, err)
-				}
-				oldAlias := doc.Alias
-				newAlias := fmt.Sprintf("%s-%s", prefix, doc.ID)
-				doc.Alias = newAlias
-				ids = append(ids, doc.ID)
-				newRows = append(newRows, doc)
-				fmt.Printf("Updated scene %v alias from '%s' to '%s'\n", doc.ID, oldAlias, newAlias)
-			} else {
-				var doc mongodoc.StorytellingDocument
-				err := col.Client().FindOne(ctx, filter).Decode(&doc)
-				if err != nil {
-					return fmt.Errorf("failed to find storytelling with id %v: %w", id, err)
-				}
-				oldAlias := doc.Alias
-				newAlias := fmt.Sprintf("%s-%s", prefix, doc.Id)
-				doc.Alias = newAlias
-				ids = append(ids, doc.Id)
-				newRows = append(newRows, doc)
-				fmt.Printf("Updated storytelling %v alias from '%s' to '%s'\n", doc.Id, oldAlias, newAlias)
-			}
+	// Process all documents based on collection type
+	if collectionType == "scene" {
+		var scenes []mongodoc.SceneDocument
+		if err := cursor.All(ctx, &scenes); err != nil {
+			return fmt.Errorf("failed to decode scene documents: %w", err)
+		}
+
+		for _, doc := range scenes {
+			oldAlias := doc.Alias
+			newAlias := fmt.Sprintf("%s-%s", prefix, doc.ID)
+			doc.Alias = newAlias
+			ids = append(ids, doc.ID)
+			newRows = append(newRows, doc)
+			log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Updated scene %v alias from '%s' to '%s'", doc.ID, oldAlias, newAlias)
+		}
+	} else {
+		var stories []mongodoc.StorytellingDocument
+		if err := cursor.All(ctx, &stories); err != nil {
+			return fmt.Errorf("failed to decode storytelling documents: %w", err)
+		}
+
+		for _, doc := range stories {
+			oldAlias := doc.Alias
+			newAlias := fmt.Sprintf("%s-%s", prefix, doc.Id)
+			doc.Alias = newAlias
+			ids = append(ids, doc.Id)
+			newRows = append(newRows, doc)
+			log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Updated storytelling %v alias from '%s' to '%s'", doc.Id, oldAlias, newAlias)
 		}
 	}
 
@@ -416,6 +472,6 @@ func createUniqueAliasIndex(ctx context.Context, col *mongo.Collection, collecti
 	if err != nil {
 		return fmt.Errorf("failed to create unique index on %s.alias: %w", collectionType, err)
 	}
-	fmt.Printf("Created unique case-insensitive index on %s.alias\n", collectionType)
+	log.Infofc(ctx, "migration: AddUnifiedCaseInsensitiveAliasIndex: Created unique case-insensitive index on %s.alias", collectionType)
 	return nil
 }

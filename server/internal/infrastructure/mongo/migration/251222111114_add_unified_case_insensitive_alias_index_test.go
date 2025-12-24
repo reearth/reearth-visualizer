@@ -397,9 +397,8 @@ func TestAddUnifiedCaseInsensitiveAliasIndex(t *testing.T) {
 		var story2 bson.M
 		err = db.Collection("storytelling").FindOne(ctx, bson.M{"id": "story2"}).Decode(&story2)
 		require.NoError(t, err)
-		// Note: whitespace alias should be treated as valid if not empty, but this tests current behavior
-		alias := story2["alias"].(string)
-		assert.True(t, alias == "   " || alias == "s-story2", "alias should be either preserved whitespace or generated")
+		// Whitespace-only alias is treated as empty and replaced with generated alias
+		assert.Equal(t, "s-story2", story2["alias"])
 	})
 
 	t.Run("creates indexes successfully", func(t *testing.T) {
@@ -511,4 +510,75 @@ func TestGetAliasPrefix(t *testing.T) {
 	assert.Equal(t, "c", getAliasPrefix("scene"))
 	assert.Equal(t, "s", getAliasPrefix("storytelling"))
 	assert.Equal(t, "x", getAliasPrefix("unknown"))
+}
+
+func TestWhitespaceAliasHandling(t *testing.T) {
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClientWithDatabase(db)
+	ctx := context.Background()
+
+	t.Run("handles various whitespace-only aliases", func(t *testing.T) {
+		// Clean collections
+		err := db.Collection("scene").Drop(ctx)
+		require.NoError(t, err)
+		err = db.Collection("storytelling").Drop(ctx)
+		require.NoError(t, err)
+
+		sceneID1 := primitive.NewObjectID()
+		sceneID2 := primitive.NewObjectID()
+		sceneID3 := primitive.NewObjectID()
+		storyID1 := primitive.NewObjectID()
+		storyID2 := primitive.NewObjectID()
+		storyID3 := primitive.NewObjectID()
+
+		// Insert documents with various whitespace aliases
+		_, err = db.Collection("scene").InsertMany(ctx, []interface{}{
+			bson.M{"_id": sceneID1, "id": "scene1", "name": "Scene 1", "alias": "   "},     // 3 spaces
+			bson.M{"_id": sceneID2, "id": "scene2", "name": "Scene 2", "alias": "\t\t"},   // 2 tabs
+			bson.M{"_id": sceneID3, "id": "scene3", "name": "Scene 3", "alias": " \t \n"}, // mixed whitespace
+		})
+		require.NoError(t, err)
+
+		_, err = db.Collection("storytelling").InsertMany(ctx, []interface{}{
+			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1", "alias": "    "},   // 4 spaces
+			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "\n\n"},  // 2 newlines  
+			bson.M{"_id": storyID3, "id": "story3", "name": "Story 3", "alias": " \r\n "}, // mixed with CRLF
+		})
+		require.NoError(t, err)
+
+		// Execute migration
+		err = AddUnifiedCaseInsensitiveAliasIndex(ctx, client)
+		assert.NoError(t, err)
+
+		// Verify all whitespace aliases were replaced with generated aliases
+		var scene1 bson.M
+		err = db.Collection("scene").FindOne(ctx, bson.M{"id": "scene1"}).Decode(&scene1)
+		require.NoError(t, err)
+		assert.Equal(t, "c-scene1", scene1["alias"])
+
+		var scene2 bson.M
+		err = db.Collection("scene").FindOne(ctx, bson.M{"id": "scene2"}).Decode(&scene2)
+		require.NoError(t, err)
+		assert.Equal(t, "c-scene2", scene2["alias"])
+
+		var scene3 bson.M
+		err = db.Collection("scene").FindOne(ctx, bson.M{"id": "scene3"}).Decode(&scene3)
+		require.NoError(t, err)
+		assert.Equal(t, "c-scene3", scene3["alias"])
+
+		var story1 bson.M
+		err = db.Collection("storytelling").FindOne(ctx, bson.M{"id": "story1"}).Decode(&story1)
+		require.NoError(t, err)
+		assert.Equal(t, "s-story1", story1["alias"])
+
+		var story2 bson.M
+		err = db.Collection("storytelling").FindOne(ctx, bson.M{"id": "story2"}).Decode(&story2)
+		require.NoError(t, err)
+		assert.Equal(t, "s-story2", story2["alias"])
+
+		var story3 bson.M
+		err = db.Collection("storytelling").FindOne(ctx, bson.M{"id": "story3"}).Decode(&story3)
+		require.NoError(t, err)
+		assert.Equal(t, "s-story3", story3["alias"])
+	})
 }
