@@ -2,7 +2,7 @@ import { Icon, IconName, Typography } from "@reearth/app/lib/reearth-ui";
 import { Button } from "@reearth/app/lib/reearth-widget-ui/components/ui/button";
 import { cn } from "@reearth/app/lib/reearth-widget-ui/utils";
 import { mask } from "@reearth/services/theme";
-import { useRef, useCallback, useState, useMemo } from "react";
+import { useMemo, useRef, useCallback, useState, type JSX } from "react";
 import { usePopper } from "react-popper";
 
 import type { Camera, FlyToDestination, Theme } from "../../types";
