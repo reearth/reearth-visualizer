@@ -126,7 +126,7 @@ export const RadioButton: FC<RadioButtonProps> = ({
             selected={isSelected}
             disabled={isDisabled}
             onClick={() => handleItemClick(item.id, item.disabled)}
-            onKeyDown={(event) => handleKeyDown(event, item.id, item.disabled)}
+            onKeyDown={(event: React.KeyboardEvent) => handleKeyDown(event, item.id, item.disabled)}
             tabIndex={isDisabled ? -1 : 0}
             role="radio"
             aria-checked={isSelected}

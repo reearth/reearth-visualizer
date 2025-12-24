@@ -1,4 +1,4 @@
-import { Fragment, ReactNode, useCallback } from "react";
+import { Fragment, ReactNode, useCallback, type JSX } from "react";
 
 import type {
   InternalWidget,

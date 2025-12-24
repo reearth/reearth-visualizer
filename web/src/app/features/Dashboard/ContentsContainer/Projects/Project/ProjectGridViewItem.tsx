@@ -54,7 +54,7 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
           data-testid={`project-grid-item-image-${project.name}`}
           backgroundImage={project.imageUrl ?? defaultProjectBackgroundImage}
           onDoubleClick={onProjectOpen}
-          onClick={(e) => onProjectSelect?.(e, project.id)}
+          onClick={(e: React.MouseEvent) => onProjectSelect?.(e, project.id)}
           isHovered={isHovered ?? false}
           onMouseEnter={() => handleProjectHover?.(true)}
           onMouseLeave={() => handleProjectHover?.(false)}
