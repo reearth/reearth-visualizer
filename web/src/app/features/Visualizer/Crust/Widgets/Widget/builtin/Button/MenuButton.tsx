@@ -164,11 +164,10 @@ export default function MenuButton({
     >
       <Button
         variant="ghost"
-        size="widget"
         customTheme={!!customStyles}
         className={cn(
-          "rounded-[4px] select-none leading-[35px]",
-          b?.buttonStyle === "icon" && "p-0"
+          "h-9 min-w-9 rounded-[4px] select-none leading-[35px]",
+          b?.buttonStyle === "icon" ? "p-0" : "px-2.5 py-0"
         )}
         style={customStyles}
         onClick={b && handleClick(b)}
@@ -201,7 +200,7 @@ export default function MenuButton({
       <div
         ref={popperElement}
         className={cn(
-          "z-[200] rounded-[3px] max-h-[30vh] overflow-auto",
+          "z-(--z-widget) rounded-[3px] max-h-[30vh] overflow-auto",
           "[-webkit-overflow-scrolling:touch]"
         )}
         style={styles.popper}
