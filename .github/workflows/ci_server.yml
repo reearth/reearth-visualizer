@@ -57,6 +57,7 @@ jobs:
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: reearth/reearth-accounts
+          ref: 2834493b49b8
           path: reearth-accounts
 
       - name: Start reearth-accounts services
@@ -69,14 +70,6 @@ jobs:
         run: |
           timeout 60 bash -c 'until curl -f http://localhost:8090/health 2>/dev/null; do echo "Waiting for reearth-accounts..."; sleep 2; done'
 
-      - name: Build reearth-visualizer-dev container
-        run: |
-          docker compose -f docker-compose.dev.yml up -d reearth-visualizer-dev
-
-      - name: Wait for reearth-visualizer to be ready
-        run: |
-          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-visualizer-dev-1 echo "ready" 2>/dev/null; do echo "Waiting for reearth-visualizer..."; sleep 2; done'
-
       - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
         with:
@@ -84,23 +77,38 @@ jobs:
           cache-dependency-path: server/go.sum
 
       - name: Run unit tests
-        run: docker exec reearth-visualizer-reearth-visualizer-dev-1 go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+        run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
+        env:
+          REEARTH_DB: mongodb://localhost
+          REEARTH_ACCOUNTSAPI_HOST: http://localhost:8090
+          REEARTH_ACCOUNTSAPI_TIMEOUT: 30
+        working-directory: server
 
-      - name: Copy coverage file from container
-        run: docker cp reearth-visualizer-reearth-visualizer-dev-1:/reearth-visualizer/coverage.txt server/coverage.txt
+      - name: Build reearth-visualizer-dev container
+        run: docker compose -f docker-compose.dev.yml up -d reearth-visualizer-dev
+
+      - name: Wait for reearth-visualizer to be ready
+        run: |
+          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-visualizer-dev-1 echo "ready" 2>/dev/null; do echo "Waiting for reearth-visualizer..."; sleep 2; done'
 
       - name: Run e2e tests
-        run: cd server && make e2e
+        run: make e2e
+        working-directory: server
 
       - name: Show logs on failure
         if: failure()
         run: |
           echo "=== reearth-visualizer logs ==="
-          docker logs reearth-visualizer-reearth-visualizer-dev-1
+          docker logs reearth-visualizer-reearth-visualizer-dev-1 2>&1 || echo "Container not found"
+          echo ""
           echo "=== reearth-accounts logs ==="
-          docker logs reearth-accounts-reearth-accounts-dev-1
+          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 || echo "Container not found"
+          echo ""
           echo "=== reearth-cerbos logs ==="
-          docker logs reearth-accounts-reearth-cerbos-1
+          docker logs reearth-accounts-reearth-cerbos-1 2>&1 || echo "Container not found"
+          echo ""
+          echo "=== MongoDB logs ==="
+          docker logs reearth-visualizer-reearth-mongo-1 2>&1 || echo "Container not found"
 
       - name: Send coverage report
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
