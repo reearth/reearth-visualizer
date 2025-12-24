@@ -67,7 +67,30 @@ jobs:
 
       - name: Wait for reearth-accounts to be ready
         run: |
-          timeout 60 bash -c 'until curl -f http://localhost:8090/health 2>/dev/null; do echo "Waiting for reearth-accounts..."; sleep 2; done'
+          echo "Waiting for reearth-accounts container to start..."
+          for i in {1..30}; do
+            if docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{.State.Status}}' 2>/dev/null | grep -q "running"; then
+              echo "Container is running, checking port 8090..."
+              if nc -z localhost 8090 2>/dev/null; then
+                echo "reearth-accounts is ready on port 8090!"
+                break
+              fi
+            fi
+            if [ $i -eq 30 ]; then
+              echo "Timeout waiting for reearth-accounts to be ready"
+              echo "=== Container status ==="
+              docker ps -a
+              echo "=== reearth-accounts logs ==="
+              docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 || echo "Container not found"
+              echo "=== reearth-cerbos logs ==="
+              docker logs reearth-accounts-reearth-cerbos-1 2>&1 || echo "Container not found"
+              exit 1
+            fi
+            echo "Waiting for reearth-accounts... ($i/30)"
+            sleep 2
+          done
+          echo "Additional wait for stability..."
+          sleep 5
 
       - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
