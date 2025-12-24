@@ -66,6 +66,7 @@ jobs:
           echo "" >> .env.docker
           echo "# Mock Authentication for E2E tests" >> .env.docker
           echo "REEARTH_MOCK_AUTH=true" >> .env.docker
+          echo "RUN_MIGRATION=true" >> .env.docker
 
       - name: Start reearth-accounts services
         run: |
