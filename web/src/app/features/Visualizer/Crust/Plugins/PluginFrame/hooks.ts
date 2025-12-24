@@ -19,7 +19,7 @@ export type Options = {
   skip?: boolean;
   isMarshalable?: boolean | "json" | ((obj: unknown) => boolean | "json");
   ref?: ForwardedRef<Ref>;
-  mainIFrameRef?: RefObject<IFrameRef>;
+  mainIFrameRef?: RefObject<IFrameRef | null>;
   exposed?: ((api: API) => Record<string, unknown>) | Record<string, unknown>;
   onError?: (err: unknown) => void;
   onPreInit?: () => void;
@@ -76,8 +76,8 @@ export default function useHook({
   onDispose,
   onMessage: rawOnMessage
 }: Options = {}) {
-  const arena = useRef<Arena | undefined>();
-  const eventLoop = useRef<number>();
+  const arena = useRef<Arena | undefined>(undefined);
+  const eventLoop = useRef<number | undefined>(undefined);
   const [loaded, setLoaded] = useState(false);
   const [code, setCode] = useState("");
 

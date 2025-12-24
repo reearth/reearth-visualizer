@@ -4,7 +4,7 @@ import ColorPicker from "./ColorPicker";
 import DropDown from "./DropDown";
 
 type Props = {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   disabled?: boolean;
   buttonAriaLabel?: string;

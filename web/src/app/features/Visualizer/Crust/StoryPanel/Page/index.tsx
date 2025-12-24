@@ -12,8 +12,8 @@ import { styled } from "@reearth/services/theme";
 import {
   FC,
   Fragment,
-  MutableRefObject,
   ReactNode,
+  RefObject,
   useEffect,
   useMemo,
   useRef
@@ -38,8 +38,8 @@ type Props = {
   installableStoryBlocks?: InstallableStoryBlock[];
   showPageSettings?: boolean;
   isEditable?: boolean;
-  isAutoScrolling?: MutableRefObject<boolean>;
-  scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  isAutoScrolling?: RefObject<boolean>;
+  scrollTimeoutRef: RefObject<ReturnType<typeof setTimeout> | undefined>;
   children?: ReactNode;
   onCurrentPageChange?: (
     pageId: string,
@@ -148,7 +148,7 @@ const StoryPanel: FC<Props> = ({
     useElementOnScreen(intersectionOptions);
 
   // Debounce timer for page changes to prevent rapid switching
-  const pageChangeTimeoutRef = useRef<NodeJS.Timeout>();
+  const pageChangeTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
     const pageWrapperElement = document.getElementById(

@@ -66,7 +66,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     <>
       <ListWrapper
         data-testid={`project-list-item-${project.name}`}
-        onClick={(e) => onProjectSelect?.(e, project.id)}
+        onClick={(e: React.MouseEvent) => onProjectSelect?.(e, project.id)}
         isHovered={isHovered ?? false}
         onDoubleClick={onProjectOpen}
         onMouseEnter={() => handleProjectHover?.(true)}

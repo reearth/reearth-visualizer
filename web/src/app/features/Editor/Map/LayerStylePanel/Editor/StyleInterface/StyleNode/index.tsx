@@ -113,7 +113,7 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
           ))}
           {!!optionsMenu && (
             <OptionsWrapper
-              onClick={(e) => e.stopPropagation()}
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
               data-testid={`style-node-options-wrapper-${node.id}`}
             >
               <PopupMenu

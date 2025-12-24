@@ -21,7 +21,7 @@ interface Props extends HTMLAttributes<HTMLElement> {
   focusEvent?: FocusEvents;
   mouseEvent?: MouseEvents;
   touchEvent?: TouchEvents;
-  children: ReactElement;
+  children: ReactElement<any>;
 }
 
 const eventTypeMapping = {

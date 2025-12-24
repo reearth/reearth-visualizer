@@ -82,7 +82,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
         <Wrapper>
           <Label data-testid="time-edit-timezone-label">{t("Time Zone")}</Label>
           <InputWrapper
-            onMouseDown={(e) => {
+            onMouseDown={(e: React.MouseEvent) => {
               e.stopPropagation();
             }}
           >
