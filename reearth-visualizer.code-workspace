@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "name": "Root",
+      "path": "."
+    },
+    {
+      "name": "Server",
+      "path": "./server"
+    },
+    {
+      "name": "Web",
+      "path": "./web"
+    },
+    {
+      "name": "E2E",
+      "path": "./e2e"
+    }
+  ],
+}

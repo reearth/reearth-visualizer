@@ -2,6 +2,66 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.7 - 2025-12-18
+
+### Web
+
+#### 🚀 Features
+
+- Add new plugin api to open url in new tab ([#1984](https://github.com/reearth/reearth-visualizer/pull/1984)) [`ad06b0`](https://github.com/reearth/reearth-visualizer/commit/ad06b0)
+
+### Server
+
+#### 🚀 Features
+
+- Bump up version to 1.0.0-beta.13.7 ([#1982](https://github.com/reearth/reearth-visualizer/pull/1982)) [`994483`](https://github.com/reearth/reearth-visualizer/commit/994483)
+
+#### 🔧 Bug Fixes
+
+- Allow public project access without workspace permissions for GetProjectByWorkspaceAliasAndProjectAlias ([#1985](https://github.com/reearth/reearth-visualizer/pull/1985)) [`f9d37b`](https://github.com/reearth/reearth-visualizer/commit/f9d37b)
+- Remove condition to check operator  ([#1983](https://github.com/reearth/reearth-visualizer/pull/1983)) [`b59546`](https://github.com/reearth/reearth-visualizer/commit/b59546)
+- Add GetProjectByWorkspaceAliasAndProjectAlias to read-only methods ([#1981](https://github.com/reearth/reearth-visualizer/pull/1981)) [`66dfe8`](https://github.com/reearth/reearth-visualizer/commit/66dfe8)
+
+## 1.0.0-beta.13.6 - 2025-12-17
+
+### Web
+
+#### 🚀 Features
+
+- New builtin timeline widget ([#1968](https://github.com/reearth/reearth-visualizer/pull/1968)) [`06a86d`](https://github.com/reearth/reearth-visualizer/commit/06a86d)
+- Add google search funtion to editor[VIZ-2352] ([#1965](https://github.com/reearth/reearth-visualizer/pull/1965)) [`14c71b`](https://github.com/reearth/reearth-visualizer/commit/14c71b)
+
+#### 🔧 Bug Fixes
+
+- Avoid members page crash when missing role ([#1978](https://github.com/reearth/reearth-visualizer/pull/1978)) [`5707b4`](https://github.com/reearth/reearth-visualizer/commit/5707b4)
+- Correct sketch tools panel style ([#1977](https://github.com/reearth/reearth-visualizer/pull/1977)) [`d47476`](https://github.com/reearth/reearth-visualizer/commit/d47476)
+
+#### ✨ Refactor
+
+- Debounce validation on new project alias ([#1975](https://github.com/reearth/reearth-visualizer/pull/1975)) [`f43a9a`](https://github.com/reearth/reearth-visualizer/commit/f43a9a)
+
+### Server
+
+#### 🚀 Features
+
+- Remove timeline ([#1976](https://github.com/reearth/reearth-visualizer/pull/1976)) [`3c9b70`](https://github.com/reearth/reearth-visualizer/commit/3c9b70)
+
+#### 🔧 Bug Fixes
+
+- Delete unused function and update patch start count ([#1974](https://github.com/reearth/reearth-visualizer/pull/1974)) [`451c18`](https://github.com/reearth/reearth-visualizer/commit/451c18)
+
+### Misc
+
+#### 🚀 Features
+
+- Bump up version to 1.0.0-beta.13.6 ([#1980](https://github.com/reearth/reearth-visualizer/pull/1980)) [`470f68`](https://github.com/reearth/reearth-visualizer/commit/470f68)
+
+### 
+
+#### 🚀 Features
+
+- Bump up version to 1.0.0-beta.13.6 ([#1980](https://github.com/reearth/reearth-visualizer/pull/1980)) [`470f68`](https://github.com/reearth/reearth-visualizer/commit/470f68)
+
 ## 1.0.0-beta.13.5 - 2025-12-12
 
 ### Server

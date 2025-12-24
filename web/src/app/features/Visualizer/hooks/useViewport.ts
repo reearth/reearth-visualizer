@@ -12,7 +12,7 @@ export type Viewport = {
 export type Device = "mobile" | "desktop";
 
 type Props = {
-  wrapperRef: RefObject<HTMLDivElement>;
+  wrapperRef: RefObject<HTMLDivElement | null>;
   forceDevice?: Device | undefined;
   onDeviceChange?: (device: Device) => void;
 };

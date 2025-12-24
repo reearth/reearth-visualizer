@@ -85,9 +85,7 @@ Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
 Project Alias *: プロジェクト別名 *
-'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': >-
-  プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例:
-  https://reearth.io/team-alias/project-alias
+'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': '使用できるのは英字、数字、ハイフンのみです。例: https://reearth.io/team-alias/project-alias'
 Project Visibility *: プロジェクトの公開範囲 *
 For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
 Description: 説明
@@ -235,7 +233,7 @@ italic: イタリック
 New node: 新しいノード
 Assign style: スタイルの割り当て
 New style: 新しいスタイル
-Search Map: 'マップを検索'
+Search Map: マップを検索
 Contain: 収める
 Fixed: 固定
 Photo transparency: フォト透過度
@@ -422,6 +420,9 @@ README: リードミー
 License: ライセンス
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
+'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': >-
+  プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例:
+  https://reearth.io/team-alias/project-alias
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Change project visibility: プロジェクトの公開範囲を変更
@@ -504,6 +505,8 @@ aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
+New Channel: 新しいチャンネル
+Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ

@@ -110,7 +110,8 @@ const Wrapper = styled("div")(({ theme }) => ({
 }));
 
 const EntryItemWrapper = styled("div")(() => ({
-  flex: 1
+  flex: 1,
+  width: 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({

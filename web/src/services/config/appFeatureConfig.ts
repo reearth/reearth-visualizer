@@ -53,6 +53,7 @@ export type AppFeatureConfig = {
   accountManagement?: boolean;
   externalAccountManagementUrl?: string;
   projectVisibility?: boolean;
+  builtinTimelineWidget?: boolean;
 };
 
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
@@ -62,7 +63,8 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   externalWorkspaceManagementUrl: undefined,
   accountManagement: true,
   projectVisibility: false,
-  externalAccountManagementUrl: undefined
+  externalAccountManagementUrl: undefined,
+  builtinTimelineWidget: true
 };
 
 let appFeatureConfig: AppFeatureConfig = {

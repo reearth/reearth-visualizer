@@ -12,7 +12,13 @@ import {
   type MapRef
 } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useMemo, type RefObject, useContext, useCallback } from "react";
+import {
+  useMemo,
+  type RefObject,
+  useContext,
+  useCallback,
+  type JSX
+} from "react";
 
 import { Viewport } from "../hooks/useViewport";
 
@@ -67,7 +73,7 @@ export type Props = {
   isEditable?: boolean;
   inEditor?: boolean;
   isBuilt?: boolean;
-  mapRef?: RefObject<MapRef>;
+  mapRef?: RefObject<MapRef | null>;
   mapAPIReady?: boolean;
   layers?: Layer[];
   camera?: Camera;
@@ -138,8 +144,8 @@ export type Props = {
   ) => Promise<void>;
   // Story
   showStoryPanel?: boolean;
-  storyPanelRef?: RefObject<StoryPanelRef>;
-  storyWrapperRef?: RefObject<HTMLDivElement>;
+  storyPanelRef?: RefObject<StoryPanelRef | null>;
+  storyWrapperRef?: RefObject<HTMLDivElement | null>;
   selectedStory?: Story;
   installableStoryBlocks?: InstallableStoryBlock[];
   onStoryPageChange?: (id?: string, disableScrollIntoView?: boolean) => void;
@@ -165,7 +171,7 @@ export type Props = {
   // photoOverlay
   photoOverlayPreview?: PhotoOverlayPreview;
   nlsLayers?: NLSLayer[];
-  currentCameraRef?: RefObject<Camera | undefined>;
+  currentCameraRef?: RefObject<Camera | undefined | null>;
   //sketchLayer
   sketchFeatureTooltip?: SketchFeatureTooltip;
 };
@@ -276,7 +282,7 @@ export default function Crust({
       (selectedDataLayer?.type === "simple" &&
       selectedDataLayer?.data?.isSketchLayer
         ? selectedLayer?.layer?.features?.find(
-            (f) => f.id === selectedLayerId.featureId
+            (f: any) => f.id === selectedLayerId.featureId
           )
         : selectedComputedFeature) ?? selectedComputedFeature;
 

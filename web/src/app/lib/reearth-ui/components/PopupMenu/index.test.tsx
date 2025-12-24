@@ -46,7 +46,7 @@ const mockCustomSubMenuItems = [
   }
 ];
 
-const renderWithRouter = (ui: React.ReactElement) => {
+const renderWithRouter = (ui: React.ReactElement<any>) => {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 };
 
