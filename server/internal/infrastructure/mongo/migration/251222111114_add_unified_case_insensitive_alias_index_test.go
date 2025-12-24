@@ -533,7 +533,7 @@ func TestWhitespaceAliasHandling(t *testing.T) {
 
 		// Insert documents with various whitespace aliases
 		_, err = db.Collection("scene").InsertMany(ctx, []interface{}{
-			bson.M{"_id": sceneID1, "id": "scene1", "name": "Scene 1", "alias": "   "},     // 3 spaces
+			bson.M{"_id": sceneID1, "id": "scene1", "name": "Scene 1", "alias": "   "},    // 3 spaces
 			bson.M{"_id": sceneID2, "id": "scene2", "name": "Scene 2", "alias": "\t\t"},   // 2 tabs
 			bson.M{"_id": sceneID3, "id": "scene3", "name": "Scene 3", "alias": " \t \n"}, // mixed whitespace
 		})
@@ -541,7 +541,7 @@ func TestWhitespaceAliasHandling(t *testing.T) {
 
 		_, err = db.Collection("storytelling").InsertMany(ctx, []interface{}{
 			bson.M{"_id": storyID1, "id": "story1", "name": "Story 1", "alias": "    "},   // 4 spaces
-			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "\n\n"},  // 2 newlines  
+			bson.M{"_id": storyID2, "id": "story2", "name": "Story 2", "alias": "\n\n"},   // 2 newlines
 			bson.M{"_id": storyID3, "id": "story3", "name": "Story 3", "alias": " \r\n "}, // mixed with CRLF
 		})
 		require.NoError(t, err)

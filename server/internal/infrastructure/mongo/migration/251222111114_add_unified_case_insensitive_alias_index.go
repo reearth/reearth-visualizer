@@ -18,7 +18,7 @@ import (
 // The migration handles:
 // 1. Empty/missing aliases: Generates new aliases with format "{prefix}-{id}"
 // 2. Whitespace-only aliases: Treated as empty and replaced with generated aliases
-// 3. Within-collection duplicates: All duplicates get new generated aliases 
+// 3. Within-collection duplicates: All duplicates get new generated aliases
 // 4. Cross-collection conflicts: Scene aliases take priority, storytelling aliases are updated
 // 5. Index creation: Creates case-insensitive unique indexes on both collections
 //
