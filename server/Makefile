@@ -24,10 +24,11 @@ help:
 	@echo "Targets:"
 	@echo "  lint              Run golangci-lint with auto-fix (local)"
 	@echo "  lint-docker       Run golangci-lint in Docker container"
-	@echo "  test              Run unit tests (local)"
-	@echo "  test-docker       Run unit tests in Docker container"
+	@echo "  test              Run unit tests only (excludes e2e tests)"
+	@echo "  test-docker       Run unit tests in Docker container (excludes e2e tests)"
 	@echo "  test-debug        Run unit tests with verbose output"
-	@echo "  e2e               Run end-to-end tests"
+	@echo "  e2e               Run end-to-end tests in Docker"
+	@echo "  e2e-docker        Run e2e tests with Docker config (run inside container)"
 	@echo "  build             Build the project"
 	@echo "  dev-install       Install dev tools"
 	@echo "  dev               Run the application with hot reload"
@@ -69,8 +70,7 @@ test:
 	REEARTH_DB=${REEARTH_DB} go test ${TEST_DIR} -run ${TARGET_TEST}
 
 test-docker:
-	@echo "Running tests in Docker container..."
-	@echo "Note: Some e2e tests may fail due to MongoDB permission issues in Docker."
+	@echo "Running unit tests in Docker container (excluding e2e tests)..."
 	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
 		${DOCKER_EXEC} go test ${TEST_DIR} -run ${TARGET_TEST}; \
 	else \
@@ -83,7 +83,10 @@ test-debug:
 	go test -v -timeout 10s ${TEST_DIR} | tee test.log
 
 e2e:
-	go test -v ./e2e/...
+	docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
+
+e2e-docker:
+	set -a && . ./.env.docker && set +a && go test -tags=e2e ./e2e/...
 
 # =======================
 # Build & Run
@@ -118,31 +121,31 @@ run-clean-start: clean run-app
 run-db:
 	${DOCKER_COMPOSE} up -d reearth-mongo
 
-run-reset:
-	docker stop reearth-visualizer-reearth-mongo-1
-	rm -rf ../mongo data
-	make run-db
-	make mockuser
+# run-reset:
+# 	docker stop reearth-visualizer-reearth-mongo-1
+# 	rm -rf ../mongo data
+# 	make run-db
+# 	make mockuser
 
-reset:
-	@echo "==== Stopping database and GCS services ===="
-	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
-	@echo ""
-	@echo "==== Removing data directory (requires sudo password) ===="
-	sudo rm -rf tmp/gcs tmp/mongo 
-	@echo ""
-	@echo "==== Starting database and GCS services ===="
-	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
-	@echo ""
-	@echo "==== Waiting for services to be ready (3 seconds) ===="
-	@echo "3..."
-	sleep 1
-	@echo "2..."
-	sleep 1
-	@echo "1..."
-	sleep 1
-	make init
-	@echo "✓ Reset complete!"
+# reset:
+# 	@echo "==== Stopping database and GCS services ===="
+# 	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
+# 	@echo ""
+# 	@echo "==== Removing data directory (requires sudo password) ===="
+# 	sudo rm -rf tmp/gcs tmp/mongo 
+# 	@echo ""
+# 	@echo "==== Starting database and GCS services ===="
+# 	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
+# 	@echo ""
+# 	@echo "==== Waiting for services to be ready (3 seconds) ===="
+# 	@echo "3..."
+# 	sleep 1
+# 	@echo "2..."
+# 	sleep 1
+# 	@echo "1..."
+# 	sleep 1
+# 	make init
+# 	@echo "✓ Reset complete!"
 
 up-gcs:
 	${DOCKER_COMPOSE} up -d gcs
@@ -205,18 +208,18 @@ dev-install:
 # Others
 # =======================
 
-init:
-	@echo "==== Initializing GCS bucket ===="
-	make init-gcs
-	@echo ""
-	@echo "==== Creating mock user ===="
-	make mockuser
-	@echo ""
+# init:
+# 	@echo "==== Initializing GCS bucket ===="
+# 	make init-gcs
+# 	@echo ""
+# 	@echo "==== Creating mock user ===="
+# 	make mockuser
+# 	@echo ""
 
-mockuser:
-	curl -s -D - -o /dev/null \
-		-H 'Content-Type: application/json' \
-		http://localhost:8080/api/mockuser | head -n 1
+# mockuser:
+# 	curl -s -D - -o /dev/null \
+# 		-H 'Content-Type: application/json' \
+# 		http://localhost:8080/api/mockuser | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \

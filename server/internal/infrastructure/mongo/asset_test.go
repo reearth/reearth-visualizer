@@ -7,11 +7,12 @@ import (
 
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/asset"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestFindByID(t *testing.T) {
@@ -30,7 +31,7 @@ func TestFindByID(t *testing.T) {
 				Asset: asset.New().
 					NewID().
 					CreatedAt(time.Now()).
-					Workspace(accountdomain.NewWorkspaceID()).
+					Workspace(accountsID.NewWorkspaceID()).
 					Name("name").
 					Size(10).
 					URL("hxxps://https://reearth.io/").
@@ -71,8 +72,8 @@ func TestFindByID(t *testing.T) {
 func TestAsset_TotalSizeByWorkspace(t *testing.T) {
 	c := mongotest.Connect(t)(t)
 	ctx := context.Background()
-	wid := accountdomain.NewWorkspaceID()
-	wid2 := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
+	wid2 := accountsID.NewWorkspaceID()
 	_, _ = c.Collection("asset").InsertMany(ctx, []any{
 		bson.M{"id": "x", "workspace": wid.String(), "size": 10000000},
 		bson.M{"id": "y", "workspace": wid.String(), "size": 1},
@@ -85,7 +86,7 @@ func TestAsset_TotalSizeByWorkspace(t *testing.T) {
 	assert.NoError(t, err)
 
 	r2 := r.Filtered(repo.WorkspaceFilter{
-		Readable: accountdomain.WorkspaceIDList{wid2},
+		Readable: accountsID.WorkspaceIDList{wid2},
 	})
 	got, err = r2.TotalSizeByWorkspace(ctx, wid)
 	assert.Equal(t, repo.ErrOperationDenied, err)

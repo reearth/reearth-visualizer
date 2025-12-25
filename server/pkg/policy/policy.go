@@ -3,15 +3,15 @@ package policy
 import (
 	"errors"
 
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
-type ID = workspace.PolicyID
+type ID = accountsWorkspace.PolicyID
 
 var ErrPolicyViolation = errors.New("policy violation")
 
 type WorkspacePolicy struct {
-	WorkspaceID                    workspace.ID
+	WorkspaceID                    accountsWorkspace.ID
 	EnableToCreatePrivateProject   bool
 	DisableOperationByOverUsedSeat bool
 }
