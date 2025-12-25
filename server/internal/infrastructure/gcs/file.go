@@ -490,7 +490,7 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 	}
 
 	writer := object.NewWriter(ctx)
-	writer.ObjectAttrs.CacheControl = f.cacheControl
+	writer.CacheControl = f.cacheControl
 
 	size, err := io.Copy(writer, content)
 	if err != nil {

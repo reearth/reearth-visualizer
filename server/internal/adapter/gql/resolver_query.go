@@ -2,9 +2,12 @@ package gql
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -52,18 +55,12 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 			return nil, nil
 		}
 		return result, err
+	// Workspace and User nodes are no longer supported via DataLoader
+	// Use AccountsAPIClient directly instead
 	case gqlmodel.NodeTypeWorkspace:
-		result, err := dataloaders.Workspace.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
+		return nil, fmt.Errorf("workspace nodes via Node query are not supported, use direct queries instead")
 	case gqlmodel.NodeTypeUser:
-		result, err := dataloaders.User.Load(i)
-		if result == nil {
-			return nil, nil
-		}
-		return result, err
+		return nil, fmt.Errorf("user nodes via Node query are not supported, use direct queries instead")
 	}
 	return nil, nil
 }
@@ -111,26 +108,12 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 			nodes[i] = data[i]
 		}
 		return nodes, nil
+	// Workspace and User nodes are no longer supported via DataLoader
+	// Use AccountsAPIClient directly instead
 	case gqlmodel.NodeTypeWorkspace:
-		data, err := dataloaders.Workspace.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
+		return nil, fmt.Errorf("workspace nodes via Nodes query are not supported, use direct queries instead")
 	case gqlmodel.NodeTypeUser:
-		data, err := dataloaders.User.LoadAll(ids)
-		if len(err) > 0 && err[0] != nil {
-			return nil, err[0]
-		}
-		nodes := make([]gqlmodel.Node, len(data))
-		for i := range data {
-			nodes[i] = data[i]
-		}
-		return nodes, nil
+		return nil, fmt.Errorf("user nodes via Nodes query are not supported, use direct queries instead")
 	default:
 		return nil, nil
 	}
@@ -169,7 +152,18 @@ func (r *queryResolver) Projects(ctx context.Context, workspaceID gqlmodel.ID, p
 }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
-	return loaders(ctx).User.SearchUser(ctx, nameOrEmail)
+	if r.AccountsAPIClient != nil {
+		user, err := r.AccountsAPIClient.UserRepo.FindByAlias(ctx, nameOrEmail)
+		if err != nil {
+			if isAccountsUserNotFound(err) {
+				return nil, nil
+			}
+			return nil, err
+		}
+		return gqlmodel.ToUser(user), nil
+	}
+
+	return nil, fmt.Errorf("accounts API client not available")
 }
 
 func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string, workspaceId gqlmodel.ID, projectId *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
@@ -196,8 +190,25 @@ func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bo
 	return loaders(ctx).Project.VisibilityByWorkspace(ctx, workspaceId, authenticated)
 }
 
+func isAccountsUserNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := strings.ToLower(err.Error())
+	if strings.Contains(msg, "userbynameoremail") && strings.Contains(msg, "not found") {
+		return true
+	}
+	if strings.Contains(msg, "user by name or email") && strings.Contains(msg, "not found") {
+		return true
+	}
+	if strings.Contains(msg, "user not found") {
+		return true
+	}
+	return strings.Contains(msg, "not found") && strings.Contains(msg, "user")
+}
+
 func (r *queryResolver) WorkspacePolicyCheck(ctx context.Context, input gqlmodel.PolicyCheckInput) (*gqlmodel.PolicyCheckPayload, error) {
-	wid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
+	wid, err := gqlmodel.ToID[accountsID.Workspace](input.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}

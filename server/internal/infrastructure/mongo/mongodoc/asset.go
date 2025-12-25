@@ -5,9 +5,10 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
 	"golang.org/x/exp/slices"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type AssetDocument struct {
@@ -24,7 +25,7 @@ type AssetDocument struct {
 
 type AssetConsumer = Consumer[*AssetDocument, *asset.Asset]
 
-func NewAssetConsumer(workspaces []accountdomain.WorkspaceID) *AssetConsumer {
+func NewAssetConsumer(workspaces []accountsID.WorkspaceID) *AssetConsumer {
 	return NewConsumer[*AssetDocument, *asset.Asset](func(a *asset.Asset) bool {
 		return workspaces == nil || slices.Contains(workspaces, a.Workspace())
 	})
@@ -57,7 +58,7 @@ func (d *AssetDocument) Model() (*asset.Asset, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
+	tid, err := accountsID.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}
