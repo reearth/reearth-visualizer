@@ -15,11 +15,12 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 )
 
 const mockPluginManifest = `{
@@ -86,7 +87,7 @@ func mockFS(files map[string]string) afero.Fs {
 func TestPlugin_Upload_New(t *testing.T) {
 	// upload a new plugin
 	ctx := context.Background()
-	ws := accountdomain.NewWorkspaceID()
+	ws := accountsID.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 
@@ -106,8 +107,8 @@ func TestPlugin_Upload_New(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: []accountsID.WorkspaceID{ws},
 		},
 		WritableScenes: []id.SceneID{sid},
 	}
@@ -143,7 +144,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 	// old plugin files should be deleted
 
 	ctx := context.Background()
-	ws := accountdomain.NewWorkspaceID()
+	ws := accountsID.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := mockPluginID.WithScene(sid.Ref())
 	eid1 := id.PluginExtensionID("marker")
@@ -186,8 +187,8 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: []accountsID.WorkspaceID{ws},
 		},
 		WritableScenes: []id.SceneID{sid},
 	}
@@ -237,7 +238,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 	// plugin ID of property and layers should be updated
 
 	ctx := context.Background()
-	ws := accountdomain.NewWorkspaceID()
+	ws := accountsID.NewWorkspaceID()
 	sid := id.NewSceneID()
 	oldpid := id.MustPluginID("testplugin~1.0.0").WithScene(sid.Ref())
 	pid := mockPluginID.WithScene(sid.Ref())
@@ -292,8 +293,8 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: []accountdomain.WorkspaceID{ws},
+		AcOperator: &accountsUsecase.Operator{
+			WritableWorkspaces: []accountsID.WorkspaceID{ws},
 		},
 		WritableScenes: []id.SceneID{sid},
 	}

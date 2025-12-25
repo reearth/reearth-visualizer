@@ -12,9 +12,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type Project struct {
@@ -37,7 +38,7 @@ func (r *Project) Filtered(f repo.WorkspaceFilter) repo.Project {
 	}
 }
 
-func (r *Project) FindByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, filter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
+func (r *Project) FindByWorkspace(ctx context.Context, id accountsID.WorkspaceID, filter repo.ProjectFilter) ([]*project.Project, *usecasex.PageInfo, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -89,7 +90,7 @@ func (r *Project) FindByWorkspaces(ctx context.Context, authenticated bool, pFil
 	return nil, nil, nil
 }
 
-func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountsID.WorkspaceID) ([]*project.Project, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -111,7 +112,7 @@ func (r *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.W
 	return result, nil
 }
 
-func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) ([]*project.Project, error) {
+func (r *Project) FindDeletedByWorkspace(ctx context.Context, id accountsID.WorkspaceID) ([]*project.Project, error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -151,7 +152,7 @@ func (r *Project) FindActiveByAlias(ctx context.Context, alias string) (*project
 	return nil, nil
 }
 
-func (r *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string) (*project.Project, error) {
+func (r *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountsID.WorkspaceID, projectAlias string) (*project.Project, error) {
 	for _, p := range r.data {
 		if p.ProjectAlias() == projectAlias && p.Workspace() == workspaceID {
 			return p, nil
@@ -160,7 +161,7 @@ func (r *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspac
 	return nil, nil
 }
 
-func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountdomain.WorkspaceID) (res []id.ProjectID, _ error) {
+func (r *Project) FindIDsByWorkspace(ctx context.Context, id accountsID.WorkspaceID) (res []id.ProjectID, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -336,7 +337,7 @@ func (r *Project) FindAll(ctx context.Context, pFilter repo.ProjectFilter) ([]*p
 	return result, pageInfo, nil
 }
 
-func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountdomain.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
+func (r *Project) CheckProjectAliasUnique(ctx context.Context, ws accountsID.WorkspaceID, newAlias string, excludeSelfProjectID *id.ProjectID) error {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -362,7 +363,7 @@ func (r *Project) CheckSceneAliasUnique(ctx context.Context, name string) error 
 	return nil
 }
 
-func (r *Project) CountByWorkspace(_ context.Context, ws accountdomain.WorkspaceID) (n int, _ error) {
+func (r *Project) CountByWorkspace(_ context.Context, ws accountsID.WorkspaceID) (n int, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
@@ -374,7 +375,7 @@ func (r *Project) CountByWorkspace(_ context.Context, ws accountdomain.Workspace
 	return
 }
 
-func (r *Project) CountPublicByWorkspace(_ context.Context, ws accountdomain.WorkspaceID) (n int, _ error) {
+func (r *Project) CountPublicByWorkspace(_ context.Context, ws accountsID.WorkspaceID) (n int, _ error) {
 	r.lock.Lock()
 	defer r.lock.Unlock()
 
