@@ -200,33 +200,43 @@ jobs:
           echo "Waiting for reearth-accounts service to start..."
           for i in {1..30}; do
             if nc -z localhost 8090 2>/dev/null; then
-              echo "reearth-accounts is ready on port 8090!"
-              curl -s http://localhost:8090/health || echo "Health check endpoint not available"
+              echo "Port 8090 is open, checking HTTP endpoint..."
               break
             fi
             if [ $i -eq 30 ]; then
-              echo "Timeout waiting for reearth-accounts to be ready"
+              echo "Timeout waiting for port 8090 to open"
               echo "=== Container status ==="
               docker ps -a
               echo "=== reearth-accounts logs (full) ==="
               docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 || echo "Container not found"
               echo "=== reearth-cerbos logs ==="
               docker logs reearth-accounts-reearth-cerbos-1 2>&1 || echo "Container not found"
-              echo "=== Checking if process is listening inside container ==="
-              docker exec reearth-accounts-reearth-accounts-dev-1 netstat -tlnp 2>/dev/null || echo "netstat not available"
               exit 1
             fi
-            echo "Waiting for reearth-accounts... ($i/30)"
+            echo "Waiting for port 8090... ($i/30)"
             sleep 2
           done
-          echo "Additional wait for stability..."
-          sleep 5
-          echo "=== Final verification - checking port 8090 inside container ==="
-          docker exec reearth-accounts-reearth-accounts-dev-1 netstat -tlnp 2>/dev/null | grep 8090 || echo "Port 8090 not listening"
-          echo "=== Checking full reearth-accounts logs for mock auth and startup ==="
-          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | grep -i "mock\|auth\|server.*start\|listening\|graphql" || echo "No relevant log entries found"
-          echo "=== Full reearth-accounts logs (last 100 lines) ==="
-          docker logs --tail 100 reearth-accounts-reearth-accounts-dev-1 2>&1
+
+          echo "Port is open, waiting for HTTP server to be ready..."
+          for i in {1..30}; do
+            if curl -sf http://localhost:8090/api/graphql -X POST -H "Content-Type: application/json" -d '{"query":"{ __typename }"}' >/dev/null 2>&1; then
+              echo "✓ reearth-accounts GraphQL API is responding!"
+              break
+            fi
+            if [ $i -eq 30 ]; then
+              echo "✗ Timeout waiting for reearth-accounts API to respond"
+              echo "=== Checking if process is listening inside container ==="
+              docker exec reearth-accounts-reearth-accounts-dev-1 netstat -tlnp 2>/dev/null | grep 8090 || echo "Port 8090 not listening"
+              echo "=== Full reearth-accounts logs (last 100 lines) ==="
+              docker logs --tail 100 reearth-accounts-reearth-accounts-dev-1 2>&1
+              exit 1
+            fi
+            echo "Waiting for API to respond... ($i/30)"
+            sleep 2
+          done
+
+          echo "=== Verifying REEARTH_MOCK_AUTH ==="
+          docker exec reearth-accounts-reearth-accounts-dev-1 sh -c 'echo "REEARTH_MOCK_AUTH=$REEARTH_MOCK_AUTH"'
 
       - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
@@ -245,17 +255,34 @@ jobs:
       - name: Wait for reearth-visualizer to be ready
         run: |
           timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-visualizer-dev-1 echo "ready" 2>/dev/null; do echo "Waiting for reearth-visualizer..."; sleep 2; done'
+          echo "Container is accessible, waiting for application to start..."
+          sleep 10
+          docker logs reearth-visualizer-reearth-visualizer-dev-1 2>&1 | tail -20
 
       - name: Verify connectivity before e2e tests
         run: |
-          echo "=== Container Status ==="
-          docker ps -a | grep -E "reearth-accounts|reearth-visualizer"
-          echo ""
-          echo "=== Testing connectivity from visualizer to accounts ==="
-          docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "curl -s http://reearth-accounts-dev:8090/health || echo 'Connection failed'"
-          echo ""
-          echo "=== Checking REEARTH_MOCK_AUTH in accounts container ==="
-          docker exec reearth-accounts-reearth-accounts-dev-1 sh -c 'echo "REEARTH_MOCK_AUTH=$REEARTH_MOCK_AUTH"'
+          echo "=== Testing connectivity from visualizer to accounts API ==="
+          for i in {1..10}; do
+            if docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "curl -sf http://reearth-accounts-dev:8090/api/graphql -X POST -H 'Content-Type: application/json' -d '{\"query\":\"{ __typename }\"}'" >/dev/null 2>&1; then
+              echo "✓ GraphQL API connection successful on attempt $i"
+              break
+            fi
+            if [ $i -eq 10 ]; then
+              echo "✗ Connection failed after 10 attempts"
+              echo "=== Testing direct connection from host ==="
+              curl -sf http://localhost:8090/api/graphql -X POST -H "Content-Type: application/json" -d '{"query":"{ __typename }"}' || echo "Direct connection also failed"
+              echo ""
+              echo "=== Network configuration ==="
+              docker exec reearth-visualizer-reearth-visualizer-dev-1 cat /etc/resolv.conf || echo "Cannot read resolv.conf"
+              echo ""
+              echo "=== reearth-accounts logs ==="
+              docker logs --tail 50 reearth-accounts-reearth-accounts-dev-1 2>&1
+              exit 1
+            fi
+            echo "Connection attempt $i failed, retrying..."
+            sleep 2
+          done
+          echo "✓ All connectivity checks passed"
 
       - name: Run e2e tests
         run: |
