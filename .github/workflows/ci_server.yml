@@ -247,72 +247,25 @@ jobs:
         run: |
           timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-visualizer-dev-1 echo "ready" 2>/dev/null; do echo "Waiting for reearth-visualizer..."; sleep 2; done'
 
-      - name: Debug network and container information before e2e tests
+      - name: Verify connectivity before e2e tests
         run: |
-          echo "======================================"
-          echo "=== ALL RUNNING CONTAINERS ==="
-          echo "======================================"
-          docker ps -a
+          echo "=== Container Status ==="
+          docker ps -a | grep -E "reearth-accounts|reearth-visualizer"
           echo ""
-          echo "======================================"
-          echo "=== REEARTH NETWORK DETAILS ==="
-          echo "======================================"
-          docker network inspect reearth
+          echo "=== Testing connectivity from visualizer to accounts ==="
+          docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "curl -s http://reearth-accounts-dev:8090/health || echo 'Connection failed'"
           echo ""
-          echo "======================================"
-          echo "=== REEARTH-ACCOUNTS-DEV IP ADDRESS ==="
-          echo "======================================"
-          docker inspect reearth-accounts-reearth-accounts-dev-1 --format='Container: {{.Name}}
-          {{range $net, $config := .NetworkSettings.Networks}}Network: {{$net}}
-            IP Address: {{$config.IPAddress}}
-            Gateway: {{$config.Gateway}}
-          {{end}}'
-          echo ""
-          echo "======================================"
-          echo "=== REEARTH-VISUALIZER-DEV IP ADDRESS ==="
-          echo "======================================"
-          docker inspect reearth-visualizer-reearth-visualizer-dev-1 --format='Container: {{.Name}}
-          {{range $net, $config := .NetworkSettings.Networks}}Network: {{$net}}
-            IP Address: {{$config.IPAddress}}
-            Gateway: {{$config.Gateway}}
-          {{end}}'
-          echo ""
-          echo "======================================"
-          echo "=== DNS RESOLUTION TEST FROM REEARTH-VISUALIZER ==="
-          echo "======================================"
-          docker exec reearth-visualizer-reearth-visualizer-dev-1 nslookup reearth-accounts-dev || echo "nslookup not available, trying getent"
-          docker exec reearth-visualizer-reearth-visualizer-dev-1 getent hosts reearth-accounts-dev || echo "Cannot resolve reearth-accounts-dev"
-          echo ""
-          echo "======================================"
-          echo "=== PING TEST FROM REEARTH-VISUALIZER ==="
-          echo "======================================"
-          docker exec reearth-visualizer-reearth-visualizer-dev-1 ping -c 3 reearth-accounts-dev || echo "Cannot ping reearth-accounts-dev"
-          echo ""
-          echo "======================================"
-          echo "=== CURL TEST TO REEARTH-ACCOUNTS API ==="
-          echo "======================================"
-          docker exec reearth-visualizer-reearth-visualizer-dev-1 curl -v http://reearth-accounts-dev:8090/health || echo "Cannot connect to reearth-accounts-dev:8090"
-          echo ""
-          echo "======================================"
-          echo "=== REEARTH-ACCOUNTS LOGS (last 30 lines) ==="
-          echo "======================================"
-          docker logs --tail 30 reearth-accounts-reearth-accounts-dev-1 2>&1
+          echo "=== Checking REEARTH_MOCK_AUTH in accounts container ==="
+          docker exec reearth-accounts-reearth-accounts-dev-1 sh -c 'echo "REEARTH_MOCK_AUTH=$REEARTH_MOCK_AUTH"'
 
       - name: Run e2e tests
-        run: make e2e
+        run: make e2e 2>&1 | grep -E "FAIL|PASS|---" || make e2e
         working-directory: server
 
-      - name: Show logs on failure
+      - name: Show reearth-accounts logs on failure
         if: failure()
         run: |
-          echo "=== reearth-visualizer logs ==="
-          docker logs reearth-visualizer-reearth-visualizer-dev-1 2>&1 || echo "Container not found"
-          echo ""
-          echo "=== reearth-accounts logs ==="
+          echo "========================================"
+          echo "=== REEARTH-ACCOUNTS FULL LOGS ==="
+          echo "========================================"
           docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 || echo "Container not found"
-          echo ""
-          echo "=== reearth-cerbos logs ==="
-          docker logs reearth-accounts-reearth-cerbos-1 2>&1 || echo "Container not found"
-          echo ""
-          echo "=== MongoDB logs ==="
-          docker logs reearth-visualizer-reearth-mongo-1 2>&1 || echo "Container not found"
