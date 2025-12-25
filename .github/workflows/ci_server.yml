@@ -39,12 +39,14 @@ jobs:
       - name: checkout reearth-visualizer
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Start MongoDB for unit tests
+      - name: Start MongoDB and GCS for unit tests
         run: |
-          docker compose -f docker-compose.dev.yml up -d reearth-mongo
+          docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
           timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "db.adminCommand({ ping: 1 })" 2>/dev/null; do echo "Waiting for MongoDB..."; sleep 2; done'
           docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'reearth-mongo:27017'}]})" || echo "Replica set already initialized"
           sleep 5
+          echo "Initializing GCS bucket..."
+          curl -X POST -H "Content-Type: application/json" -d '{"name": "test-bucket"}' http://localhost:4443/storage/v1/b || echo "Bucket creation failed"
 
       - name: Checkout reearth-accounts
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
@@ -166,7 +168,7 @@ jobs:
           sleep 15
           docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -20
 
-      - name: Remove migration flag and restart
+      - name: Remove migration flag and restart with explicit env vars
         run: |
           cd reearth-accounts/server
           sed -i '/RUN_MIGRATION=true/d' .env.docker
@@ -175,20 +177,21 @@ jobs:
           echo "=== Verifying REEARTH_MOCK_AUTH is present ==="
           grep "REEARTH_MOCK_AUTH" .env.docker || echo "ERROR: REEARTH_MOCK_AUTH not found in .env.docker!"
           cd ..
-          echo "=== Stopping reearth-accounts-dev ==="
+          echo "=== Stopping and removing reearth-accounts-dev ==="
           docker compose -f docker-compose.dev.yml stop reearth-accounts-dev
-          echo "=== Removing container to force recreation ==="
           docker compose -f docker-compose.dev.yml rm -f reearth-accounts-dev
-          echo "=== Starting reearth-accounts-dev with fresh container ==="
-          docker compose -f docker-compose.dev.yml up -d reearth-accounts-dev
+          echo "=== Starting reearth-accounts-dev with explicit environment variables ==="
+          REEARTH_MOCK_AUTH=true REEARTH_AUTH_ISS=https://reearth.io docker compose -f docker-compose.dev.yml up -d reearth-accounts-dev
           echo "=== Waiting for container to fully start ==="
-          sleep 3
+          sleep 5
           echo "=== Container status ==="
           docker ps -a | grep reearth-accounts
           echo "=== Checking ALL environment variables inside container ==="
           docker exec reearth-accounts-reearth-accounts-dev-1 env | sort
           echo "=== Specifically checking REEARTH env vars ==="
           docker exec reearth-accounts-reearth-accounts-dev-1 env | grep REEARTH || echo "ERROR: No REEARTH env vars found!"
+          echo "=== Checking if REEARTH_MOCK_AUTH is set ==="
+          docker exec reearth-accounts-reearth-accounts-dev-1 sh -c 'echo "REEARTH_MOCK_AUTH=$REEARTH_MOCK_AUTH"'
           echo "=== Checking reearth-accounts-dev logs after restart ==="
           sleep 5
           docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -50
