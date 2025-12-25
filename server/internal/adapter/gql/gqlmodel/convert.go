@@ -103,11 +103,12 @@ func FromFile(f *graphql.Upload) *file.File {
 }
 
 func FromListOperation(op ListOperation) interfaces.ListOperation {
-	if op == ListOperationAdd {
+	switch op {
+	case ListOperationAdd:
 		return interfaces.ListOperationAdd
-	} else if op == ListOperationMove {
+	case ListOperationMove:
 		return interfaces.ListOperationMove
-	} else if op == ListOperationRemove {
+	case ListOperationRemove:
 		return interfaces.ListOperationRemove
 	}
 	return interfaces.ListOperation("")

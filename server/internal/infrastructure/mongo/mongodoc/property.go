@@ -193,7 +193,8 @@ func toModelPropertyItem(f *PropertyItemDocument) (property.Item, error) {
 	}
 	gid := id.PropertySchemaGroupID(f.SchemaGroup)
 
-	if f.Type == typePropertyItemGroup {
+	switch f.Type {
+	case typePropertyItemGroup:
 		fields := make([]*property.Field, 0, len(f.Fields))
 		for _, i := range f.Fields {
 			fields = append(fields, toModelPropertyField(i))
@@ -204,7 +205,7 @@ func toModelPropertyItem(f *PropertyItemDocument) (property.Item, error) {
 			SchemaGroup(gid).
 			Fields(fields).
 			Build()
-	} else if f.Type == typePropertyItemGroupList {
+	case typePropertyItemGroupList:
 		items := make([]*property.Group, 0, len(f.Groups))
 		for _, i := range f.Groups {
 			i2, err := toModelPropertyItem(i)

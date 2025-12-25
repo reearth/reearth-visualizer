@@ -8,9 +8,10 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/reearth/reearthx/util"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type ProjectLoader struct {
@@ -41,7 +42,7 @@ func (c *ProjectLoader) Fetch(ctx context.Context, ids []gqlmodel.ID) ([]*gqlmod
 }
 
 func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, keyword *string, sort *project.SortType, pagination *gqlmodel.Pagination) (*gqlmodel.ProjectConnection, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, k
 }
 
 func (c *ProjectLoader) CheckProjectAlias(ctx context.Context, alias string, wsID gqlmodel.ID, pID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
@@ -96,7 +97,7 @@ func (c *ProjectLoader) CheckSceneAlias(ctx context.Context, alias string, proje
 }
 
 func (c *ProjectLoader) FindStarredByWorkspace(ctx context.Context, wsID gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +119,7 @@ func (c *ProjectLoader) FindStarredByWorkspace(ctx context.Context, wsID gqlmode
 }
 
 func (c *ProjectLoader) FindDeletedByWorkspace(ctx context.Context, wsID gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +141,7 @@ func (c *ProjectLoader) FindDeletedByWorkspace(ctx context.Context, wsID gqlmode
 }
 
 func (c *ProjectLoader) VisibilityByWorkspace(ctx context.Context, wsID gqlmodel.ID, authenticated bool) (*gqlmodel.ProjectConnection, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](wsID)
 	if err != nil {
 		return nil, err
 	}

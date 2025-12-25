@@ -5,8 +5,10 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"golang.org/x/exp/slices"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type ProjectMetadataDocument struct {
@@ -26,7 +28,7 @@ type ProjectMetadataDocument struct {
 
 type ProjectMetadataConsumer = Consumer[*ProjectMetadataDocument, *project.ProjectMetadata]
 
-func NewProjectMetadataConsumer(workspaces []accountdomain.WorkspaceID) *ProjectMetadataConsumer {
+func NewProjectMetadataConsumer(workspaces []accountsID.WorkspaceID) *ProjectMetadataConsumer {
 	return NewConsumer[*ProjectMetadataDocument, *project.ProjectMetadata](func(s *project.ProjectMetadata) bool {
 		return workspaces == nil || slices.Contains(workspaces, s.Workspace())
 	})
@@ -64,7 +66,7 @@ func (d *ProjectMetadataDocument) Model() (*project.ProjectMetadata, error) {
 		return nil, err
 	}
 
-	wid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
+	wid, err := accountsID.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}

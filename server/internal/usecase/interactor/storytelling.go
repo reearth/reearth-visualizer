@@ -21,38 +21,39 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
 type Storytelling struct {
 	common
 	commonSceneLock
-	storytellingRepo repo.Storytelling
-	pluginRepo       repo.Plugin
-	propertyRepo     repo.Property
-	workspaceRepo    accountrepo.Workspace
-	projectRepo      repo.Project
-	sceneRepo        repo.Scene
-	file             gateway.File
-	transaction      usecasex.Transaction
-	nlsLayerRepo     repo.NLSLayer
-	layerStyles      repo.Style
-	policyChecker    gateway.PolicyChecker
-
+	storytellingRepo   repo.Storytelling
+	pluginRepo         repo.Plugin
+	propertyRepo       repo.Property
+	projectRepo        repo.Project
+	sceneRepo          repo.Scene
+	file               gateway.File
+	transaction        usecasex.Transaction
+	nlsLayerRepo       repo.NLSLayer
+	layerStyles        repo.Style
+	policyChecker      gateway.PolicyChecker
 	propertySchemaRepo repo.PropertySchema
+
+	workspaceRepo accountsRepo.Workspace
 }
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
+
 	return &Storytelling{
 		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
 		storytellingRepo:   r.Storytelling,
 		pluginRepo:         r.Plugin,
 		propertyRepo:       r.Property,
-		workspaceRepo:      r.Workspace,
 		projectRepo:        r.Project,
 		sceneRepo:          r.Scene,
 		file:               gr.File,
@@ -61,6 +62,8 @@ func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storyt
 		layerStyles:        r.Style,
 		policyChecker:      gr.PolicyChecker,
 		propertySchemaRepo: r.PropertySchema,
+
+		workspaceRepo: r.Workspace,
 	}
 }
 
