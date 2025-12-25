@@ -107,8 +107,15 @@ jobs:
           cd reearth-accounts/server
           sed -i '/RUN_MIGRATION=true/d' .env.docker
           cd ..
-          docker compose -f docker-compose.dev.yml restart reearth-accounts-dev
+          echo "=== Stopping reearth-accounts-dev ==="
+          docker compose -f docker-compose.dev.yml stop reearth-accounts-dev
+          echo "=== Starting reearth-accounts-dev ==="
+          docker compose -f docker-compose.dev.yml up -d reearth-accounts-dev
+          echo "=== Container status ==="
           docker ps -a
+          echo "=== Checking reearth-accounts-dev logs after restart ==="
+          sleep 5
+          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -20
 
       - name: Wait for reearth-accounts to be ready
         run: |
@@ -123,10 +130,12 @@ jobs:
               echo "Timeout waiting for reearth-accounts to be ready"
               echo "=== Container status ==="
               docker ps -a
-              echo "=== reearth-accounts logs ==="
+              echo "=== reearth-accounts logs (full) ==="
               docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 || echo "Container not found"
               echo "=== reearth-cerbos logs ==="
               docker logs reearth-accounts-reearth-cerbos-1 2>&1 || echo "Container not found"
+              echo "=== Checking if process is listening inside container ==="
+              docker exec reearth-accounts-reearth-accounts-dev-1 netstat -tlnp 2>/dev/null || echo "netstat not available"
               exit 1
             fi
             echo "Waiting for reearth-accounts... ($i/30)"
@@ -134,6 +143,8 @@ jobs:
           done
           echo "Additional wait for stability..."
           sleep 5
+          echo "=== Final verification - checking port 8090 inside container ==="
+          docker exec reearth-accounts-reearth-accounts-dev-1 netstat -tlnp 2>/dev/null | grep 8090 || echo "Port 8090 not listening"
 
       - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
