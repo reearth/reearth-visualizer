@@ -7,16 +7,17 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 const retry = 2
 
 type uc struct {
 	tx                 bool
-	readableWorkspaces accountdomain.WorkspaceIDList
-	writableWorkspaces accountdomain.WorkspaceIDList
+	readableWorkspaces accountsID.WorkspaceIDList
+	writableWorkspaces accountsID.WorkspaceIDList
 	readableScenes     id.SceneIDList
 	writableScenes     id.SceneIDList
 }
@@ -25,13 +26,13 @@ func Usecase() *uc {
 	return &uc{}
 }
 
-func (u *uc) WithReadableWorkspaces(ids ...accountdomain.WorkspaceID) *uc {
-	u.readableWorkspaces = accountdomain.WorkspaceIDList(ids).Clone()
+func (u *uc) WithReadableWorkspaces(ids ...accountsID.WorkspaceID) *uc {
+	u.readableWorkspaces = accountsID.WorkspaceIDList(ids).Clone()
 	return u
 }
 
-func (u *uc) WithWritableWorkspaces(ids ...accountdomain.WorkspaceID) *uc {
-	u.writableWorkspaces = accountdomain.WorkspaceIDList(ids).Clone()
+func (u *uc) WithWritableWorkspaces(ids ...accountsID.WorkspaceID) *uc {
+	u.writableWorkspaces = accountsID.WorkspaceIDList(ids).Clone()
 	return u
 }
 

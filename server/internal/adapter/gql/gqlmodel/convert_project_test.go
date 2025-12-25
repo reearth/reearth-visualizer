@@ -8,9 +8,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestFromPublishmentStatus(t *testing.T) {
@@ -46,7 +47,7 @@ func TestFromPublishmentStatus(t *testing.T) {
 
 func TestToProject(t *testing.T) {
 	pId := id.NewProjectID()
-	wsId := workspace.NewID()
+	wsId := accountsID.NewWorkspaceID()
 	now := time.Now().Truncate(time.Millisecond)
 
 	tests := []struct {

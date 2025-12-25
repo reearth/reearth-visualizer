@@ -10,18 +10,19 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/plugin/manifest"
 	"github.com/reearth/reearth/server/pkg/property"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/util"
 	"github.com/samber/lo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
-func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool) (*repo.Container, error) {
+func New(ctx context.Context, db *mongo.Database, account *accountsRepo.Container, useTransaction bool) (*repo.Container, error) {
 	lock, err := NewLock(db.Collection("locks"))
 	if err != nil {
 		return nil, err
@@ -45,13 +46,14 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 		Property:        NewProperty(client),
 		Scene:           NewScene(client),
 		SceneLock:       NewSceneLock(client),
-		Workspace:       account.Workspace,
-		User:            account.User,
 		Storytelling:    NewStorytelling(client),
 		Transaction:     client.Transaction(),
 		Extensions:      nil,
-		Role:            account.Role,
-		Permittable:     account.Permittable,
+
+		Workspace:   account.Workspace,
+		User:        account.User,
+		Role:        account.Role,
+		Permittable: account.Permittable,
 	}
 
 	// init
@@ -62,7 +64,7 @@ func New(ctx context.Context, db *mongo.Database, account *accountrepo.Container
 	return c, nil
 }
 
-func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountrepo.Container, useTransaction bool, src []string) (*repo.Container, error) {
+func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountsRepo.Container, useTransaction bool, src []string) (*repo.Container, error) {
 	c, err := New(ctx, db, account, useTransaction)
 	if err != nil {
 		return nil, err
@@ -113,12 +115,12 @@ func Init(r *repo.Container) error {
 		func() error { return r.Property.(*Property).Init(ctx) },
 		func() error { return r.PropertySchema.(*PropertySchema).Init(ctx) },
 		func() error { return r.Scene.(*Scene).Init(ctx) },
-		func() error { return r.User.(*accountmongo.User).Init() },
-		func() error { return r.Workspace.(*accountmongo.Workspace).Init() },
+		// func() error { return r.User.(*accountsMongo.User).Init() },
+		// func() error { return r.Workspace.(*accountsMongo.Workspace).Init() },
 	)
 }
 
-func applyWorkspaceFilter(filter interface{}, ids user.WorkspaceIDList) interface{} {
+func applyWorkspaceFilter(filter interface{}, ids accountsUser.WorkspaceIDList) interface{} {
 	if ids == nil {
 		return filter
 	}

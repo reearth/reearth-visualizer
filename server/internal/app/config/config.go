@@ -30,7 +30,7 @@ type Config struct {
 	Host_Web               string            `pp:",omitempty"`
 	Dev                    bool              `pp:",omitempty"`
 	DB                     string            `default:"mongodb://localhost"`
-	DB_Account             string            `default:"reearth_account" pp:",omitempty"`
+	DB_Account             string            `default:"reearth-account" pp:",omitempty"`
 	DB_Users               []appx.NamedURI   `pp:",omitempty"`
 	DB_Vis                 string            `default:"reearth" pp:",omitempty"`
 	GraphQL                GraphQLConfig     `pp:",omitempty"`
@@ -77,8 +77,6 @@ type Config struct {
 	// system extensions
 	Ext_Plugin []string `pp:",omitempty"`
 
-	MockAuth bool `pp:",omitempty"`
-
 	// Health Check Configuration
 	HealthCheck HealthCheckConfig `pp:",omitempty"`
 
@@ -89,7 +87,6 @@ type Config struct {
 }
 
 type AccountsAPIConfig struct {
-	Enabled bool   `default:"false"`
 	Host    string `default:"http://localhost:8081"`
 	Timeout int    `default:"30"`
 }
@@ -174,14 +171,6 @@ func (c *Config) Print() string {
 	return s
 }
 
-func (c *Config) UseMockAuth() bool {
-	return c.Dev && c.MockAuth
-}
-
-func (c *Config) UseReearthAccountAuth() bool {
-	return c.AccountsAPI.Enabled
-}
-
 func (c *Config) secrets() []string {
 	s := []string{c.DB, c.Auth0.ClientSecret}
 	for _, ac := range c.DB_Users {
@@ -230,29 +219,10 @@ func (c *Config) Auths() (res AuthConfigs) {
 }
 
 func (c *Config) JWTProviders() (res []appx.JWTProvider) {
-	if c.UseMockAuth() {
-		return []appx.JWTProvider{
-			{
-				ISS: "mock_issuer",
-				AUD: []string{"mock_audience"},
-				ALG: strPtr("RS256"),
-				TTL: intPtr(3600),
-			},
-		}
-	}
 	return c.Auths().JWTProviders()
 }
 
 func (c *Config) AuthForWeb() *AuthConfig {
-	if c.UseMockAuth() {
-		return &AuthConfig{
-			ISS: "mock_issuer",
-			AUD: []string{"mock_audience"},
-			ALG: strPtr("RS256"),
-			TTL: intPtr(3600),
-		}
-	}
-
 	if ac := c.Auth0.AuthConfigForWeb(); ac != nil {
 		return ac
 	}

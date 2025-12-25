@@ -1,27 +1,28 @@
+//go:build e2e
+
 package e2e
 
 import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestCreateAndGetProjectMetadata ./e2e/...
-
+// make e2e-test TEST_NAME=TestCreateAndGetProjectMetadata
 func TestCreateAndGetProjectMetadata(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	projectID := createProject(e, uID, map[string]any{
+	projectID := createProject(e, result.UID, map[string]any{
 		"name":        "project1-test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 
-	updateProjectMetadata(e, uID, map[string]any{
+	updateProjectMetadata(e, result.UID, map[string]any{
 		"input": map[string]any{
 			"project": projectID,
 			"readme":  "readme test",
@@ -34,7 +35,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 		OperationName: "GetProjects",
 		Query:         GetProjectsQuery,
 		Variables: map[string]any{
-			"workspaceId": wID.String(),
+			"workspaceId": result.WID.String(),
 			"pagination": map[string]any{
 				"first": 16,
 			},
@@ -45,7 +46,7 @@ func TestCreateAndGetProjectMetadata(t *testing.T) {
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody).
+	res := Request(e, result.UID.String(), requestBody).
 		Path("$.data.projects.edges[0].node.metadata").Object()
 
 	res.Value("readme").String().IsEqual("readme test")
@@ -73,7 +74,7 @@ mutation UpdateProjectMetadata($input: UpdateProjectMetadataInput!) {
 }
 `
 
-func updateProjectMetadata(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateProjectMetadata(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateProjectMetadata",
 		Query:         UpdateProjectMetadataMutation,

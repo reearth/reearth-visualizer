@@ -655,7 +655,7 @@ func (i *Scene) ImportSceneData(ctx context.Context, sce *scene.Scene, data *[]b
 		newWidgetID := id.NewWidgetID()
 
 		// Replace new widget id
-		*data = bytes.Replace(*data, []byte(widgetJSON.ID), []byte(newWidgetID.String()), -1)
+		*data = bytes.ReplaceAll(*data, []byte(widgetJSON.ID), []byte(newWidgetID.String()))
 
 		widget, err := scene.NewWidget(
 			newWidgetID,

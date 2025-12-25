@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/reearth/reearth/server/internal/testutil"
@@ -67,7 +68,9 @@ func TestFile_UploadAsset(t *testing.T) {
 }
 
 func TestFSFile_UploadAssetFromURL(t *testing.T) {
-	ctx := context.Background()
+	// Add timeout to prevent hanging in CI
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 
 	gcsHost := testutil.GetFakeGCSTestHost()
 	srcBucketName := uuid.New().String()

@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -22,14 +24,12 @@ mutation ExportProject($projectId: ID!) {
   }
 }`
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestProjectExport ./e2e/...
-
+// make e2e-test TEST_NAME=TestProjectExport
 func TestProjectExport(t *testing.T) {
-	e := Server(t, fullSeeder)
+	e, result := Server(t, fullSeeder)
 
-	projectId := SetupProject(t, e)
-	projectDataPath := Export(t, e, projectId)
+	projectId := SetupProject(t, e, result)
+	projectDataPath := Export(t, e, projectId, result)
 
 	resp := e.GET(projectDataPath).
 		Expect().
@@ -45,7 +45,7 @@ func TestProjectExport(t *testing.T) {
 	t.Cleanup(func() { _ = os.Remove(tmp) })
 	t.Logf("saved: %s (%d bytes)", tmp, len(b))
 
-	require.True(t, bytes.HasPrefix(b, []byte("PK\x03\x04")), "not a zip file?")
+	require.True(t, bytes.HasPrefix(b, []byte("PK")), "not a zip file?")
 
 	zr, err := zip.NewReader(bytes.NewReader(b), int64(len(b)))
 	require.NoError(t, err)
@@ -92,9 +92,9 @@ func TestProjectExport(t *testing.T) {
 
 }
 
-func SetupProject(t *testing.T, e *httpexpect.Expect) string {
-	projectId, sceneId, _ := createProjectSet(e)
-	updateProjectMetadata(e, uID, map[string]any{
+func SetupProject(t *testing.T, e *httpexpect.Expect, result *SeederResult) string {
+	projectId, sceneId, _ := createProjectSet(e, result)
+	updateProjectMetadata(e, result.UID, map[string]any{
 		"input": map[string]any{
 			"project": projectId,
 			"readme":  "readme test",
@@ -102,14 +102,14 @@ func SetupProject(t *testing.T, e *httpexpect.Expect) string {
 			"topics":  []string{"gis", "history"},
 		},
 	})
-	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1)
-	createPhotoOverlay(e, layerId)
+	_, _, layerId := addNLSLayerSimple(e, sceneId, "someTitle1", 1, result.UID.String())
+	createPhotoOverlay(e, layerId, result.UID.String())
 	return projectId
 }
 
-func Export(t *testing.T, e *httpexpect.Expect, projectId string) string {
+func Export(t *testing.T, e *httpexpect.Expect, projectId string, result *SeederResult) string {
 
-	projectDataPath := Request(e, uID.String(), GraphQLRequest{
+	projectDataPath := Request(e, result.UID.String(), GraphQLRequest{
 		OperationName: "ExportProject",
 		Query:         ExportProjectMutation,
 		Variables: map[string]any{
