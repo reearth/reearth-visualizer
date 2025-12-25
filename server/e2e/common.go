@@ -37,6 +37,7 @@ import (
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 )
 
@@ -90,6 +91,43 @@ func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
+// initializeRoles creates the required roles for E2E tests
+func initializeRoles(ctx context.Context, accountRepos *accountsRepo.Container) error {
+	if accountRepos == nil || accountRepos.Role == nil {
+		return fmt.Errorf("accountRepos or Role repository is nil")
+	}
+
+	// Required roles for the accounts system
+	// The 'self' role is critical for signup to work
+	requiredRoles := []string{
+		"self",
+		"owner",
+		"maintainer",
+		"writer",
+		"reader",
+	}
+
+	for _, roleName := range requiredRoles {
+		// Create role using the builder pattern
+		role := accountsRole.New().
+			NewID().
+			Name(roleName).
+			MustBuild()
+
+		// Save role to repository (dereference pointer to value)
+		if err := accountRepos.Role.Save(ctx, *role); err != nil {
+			// If the role already exists, continue
+			if strings.Contains(err.Error(), "already exists") ||
+			   strings.Contains(err.Error(), "duplicate") {
+				continue
+			}
+			return fmt.Errorf("failed to save role %s: %w", roleName, err)
+		}
+	}
+
+	return nil
+}
+
 // getAccountsAPIHost returns the Accounts API host from environment variable or default
 func getAccountsAPIHost() string {
 	if host := os.Getenv("REEARTH_ACCOUNTSAPI_HOST"); host != "" {
@@ -115,6 +153,11 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder, cfg *config.Config) (
 			Workspace:   accountsInfra.NewMemoryWorkspace(),
 			Role:        accountsInfra.NewMemoryRole(),
 			Permittable: accountsInfra.NewMemoryPermittable(),
+		}
+
+		// Initialize required roles for E2E tests
+		if err := initializeRoles(ctx, accountRepos); err != nil {
+			t.Fatalf("failed to initialize roles: %s", err)
 		}
 
 		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
