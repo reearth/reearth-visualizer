@@ -25,9 +25,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type server struct {
@@ -75,7 +76,7 @@ func (s server) GetProjectList(ctx context.Context, req *pb.GetProjectListReques
 
 	} else {
 
-		wId, err := accountdomain.WorkspaceIDFrom(*req.WorkspaceId)
+		wId, err := accountsID.WorkspaceIDFrom(*req.WorkspaceId)
 		if err != nil {
 			return nil, err
 		}
@@ -215,7 +216,7 @@ func (s server) GetProject(ctx context.Context, req *pb.GetProjectRequest) (*pb.
 func (s server) ValidateProjectAlias(ctx context.Context, req *pb.ValidateProjectAliasRequest) (*pb.ValidateProjectAliasResponse, error) {
 	uc := adapter.Usecases(ctx)
 
-	wsid, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	wsid, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
 	if err != nil {
 		return nil, err
 	}
@@ -258,7 +259,7 @@ func (s server) ValidateSceneAlias(ctx context.Context, req *pb.ValidateSceneAli
 func (s server) CreateProject(ctx context.Context, req *pb.CreateProjectRequest) (*pb.CreateProjectResponse, error) {
 	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
 
-	wId, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	wId, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
 	if err != nil {
 		return nil, err
 	}
@@ -690,7 +691,7 @@ func (s server) PatchStarCount(ctx context.Context, req *pb.PatchStarCountReques
 		return nil, errors.New("user not found in context")
 	}
 
-	workspaceID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	workspaceID, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
 	if err != nil {
 		return nil, err
 	}

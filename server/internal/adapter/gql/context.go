@@ -6,9 +6,9 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 
-	"github.com/reearth/reearthx/account/accountusecase"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"golang.org/x/text/language"
 )
 
@@ -30,7 +30,7 @@ func AttachUsecases(ctx context.Context, u *interfaces.Container, enableDataLoad
 	return ctx
 }
 
-func getUser(ctx context.Context) *user.User {
+func getUser(ctx context.Context) *accountsUser.User {
 	return adapter.User(ctx)
 }
 
@@ -40,13 +40,6 @@ func getLang(ctx context.Context, lang *language.Tag) string {
 
 func getOperator(ctx context.Context) *usecase.Operator {
 	return adapter.Operator(ctx)
-}
-
-func getAcOperator(ctx context.Context) *accountusecase.Operator {
-	if op := getOperator(ctx); op != nil {
-		return op.AcOperator
-	}
-	return nil
 }
 
 func usecases(ctx context.Context) *interfaces.Container {
@@ -59,4 +52,14 @@ func loaders(ctx context.Context) *Loaders {
 
 func dataloaders(ctx context.Context) *DataLoaders {
 	return ctx.Value(contextDataloaders).(*DataLoaders)
+}
+
+// findWorkspaceFromListByID finds a workspace from a list by ID
+func findWorkspaceFromListByID(workspaces accountsWorkspace.List, workspaceID string) *accountsWorkspace.Workspace {
+	for _, ws := range workspaces {
+		if ws.ID().String() == workspaceID {
+			return ws
+		}
+	}
+	return nil
 }

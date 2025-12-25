@@ -7,8 +7,10 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
+
 	"golang.org/x/exp/slices"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 type ProjectDocument struct {
@@ -42,7 +44,7 @@ type ProjectDocument struct {
 
 type ProjectConsumer = Consumer[*ProjectDocument, *project.Project]
 
-func NewProjectConsumer(workspaces []accountdomain.WorkspaceID) *ProjectConsumer {
+func NewProjectConsumer(workspaces []accountsID.WorkspaceID) *ProjectConsumer {
 	return NewConsumer[*ProjectDocument, *project.Project](func(a *project.Project) bool {
 		return workspaces == nil || slices.Contains(workspaces, a.Workspace())
 	})
@@ -91,7 +93,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
+	tid, err := accountsID.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}

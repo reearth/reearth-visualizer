@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -7,22 +9,23 @@ import (
 
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/pkg/alias"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 // go test -v -run TestDefaultAlias ./e2e/...
 
 func TestDefaultAlias(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	projectId, sceneId, storyId := createProjectSet(e)
+	projectId, sceneId, storyId := createProjectSet(e, result)
 
 	requestBody := GraphQLRequest{
 		OperationName: "GetProjects",
 		Query:         GetProjectsQuery,
 		Variables: map[string]any{
-			"workspaceId": wID.String(),
+			"workspaceId": result.WID.String(),
 			"pagination": map[string]any{
 				"first": 16,
 			},
@@ -33,7 +36,7 @@ func TestDefaultAlias(t *testing.T) {
 		},
 	}
 
-	edges := Request(e, uID.String(), requestBody).
+	edges := Request(e, result.UID.String(), requestBody).
 		Path("$.data.projects.edges").Array()
 
 	// Project/Scene alias
@@ -45,7 +48,7 @@ func TestDefaultAlias(t *testing.T) {
 			node.Value("alias").IsEqual("c-" + sceneId)          // sceneId
 		}
 	}
-	r := getScene(e, sceneId, language.English.String())
+	r := getScene(e, result.UID, sceneId, language.English.String())
 	r.Object().Value("alias").IsEqual("c-" + sceneId) // sceneId
 
 	// Story alias
@@ -57,12 +60,12 @@ func TestDefaultAlias(t *testing.T) {
 /////// TestPublish Project ///////
 
 func TestPublishProject(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	projectId, sceneId, _ := createProjectSet(e)
+	projectId, sceneId, _ := createProjectSet(e, result)
 
 	// default
-	res := publishProject(e, uID, map[string]any{
+	res := publishProject(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     "",
 		"status":    "LIMITED",
@@ -73,10 +76,10 @@ func TestPublishProject(t *testing.T) {
 		"publishmentStatus": "LIMITED",
 	})
 
-	projectId, sceneId, _ = createProjectSet(e)
+	projectId, sceneId, _ = createProjectSet(e, result)
 
 	// self sceneId
-	res = publishProject(e, uID, map[string]any{
+	res = publishProject(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     sceneId,
 		"status":    "LIMITED",
@@ -88,7 +91,7 @@ func TestPublishProject(t *testing.T) {
 	})
 
 	// publish
-	res = publishProject(e, uID, map[string]any{
+	res = publishProject(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     "xxxxxxxx", // update
 		"status":    "LIMITED",
@@ -100,7 +103,7 @@ func TestPublishProject(t *testing.T) {
 	})
 
 	// unpublish
-	res = publishProject(e, uID, map[string]any{
+	res = publishProject(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     "", // empty
 		"status":    "PRIVATE",
@@ -112,7 +115,7 @@ func TestPublishProject(t *testing.T) {
 	})
 
 	// publish
-	res = publishProject(e, uID, map[string]any{
+	res = publishProject(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     "", // empty
 		"status":    "LIMITED",
@@ -126,9 +129,9 @@ func TestPublishProject(t *testing.T) {
 }
 
 func TestPublishProjectAliasPattern(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	projectId, _, _ := createProjectSet(e)
+	projectId, _, _ := createProjectSet(e, result)
 
 	tests := []struct {
 		name  string
@@ -144,7 +147,7 @@ func TestPublishProjectAliasPattern(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := publishProjectErrors(e, uID, map[string]any{
+			res, err := publishProjectErrors(e, result.UID, map[string]any{
 				"projectId": projectId,
 				"alias":     tt.alias,
 				"status":    "LIMITED",
@@ -173,8 +176,8 @@ func checkProjectInvalidAlias(alias string, res *httpexpect.Value, err *httpexpe
 }
 
 func TestPublishProjectAliasReserved(t *testing.T) {
-	e := Server(t, baseSeeder)
-	projectId, _, _ := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	projectId, _, _ := createProjectSet(e, result)
 
 	tests := []struct {
 		name  string
@@ -186,7 +189,7 @@ func TestPublishProjectAliasReserved(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := publishProjectErrors(e, uID, map[string]any{
+			res, err := publishProjectErrors(e, result.UID, map[string]any{
 				"projectId": projectId,
 				"alias":     tt.alias,
 				"status":    "LIMITED",
@@ -214,9 +217,9 @@ func checkProjectInvalidReservedAlias(alias string, res *httpexpect.Value, err *
 }
 
 func TestPublishProjectUniqueAlias(t *testing.T) {
-	e := Server(t, baseSeeder)
-	projectId1, _, storyId1 := createProjectSet(e)
-	_, sceneId2, storyId2 := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	projectId1, _, storyId1 := createProjectSet(e, result)
+	_, sceneId2, storyId2 := createProjectSet(e, result)
 
 	testCases := []struct {
 		name   string
@@ -230,7 +233,7 @@ func TestPublishProjectUniqueAlias(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			res, err := publishProjectErrors(e, uID, map[string]any{
+			res, err := publishProjectErrors(e, result.UID, map[string]any{
 				"projectId": projectId1,
 				"alias":     tc.alias,
 				"status":    "LIMITED",
@@ -257,12 +260,12 @@ func checkSceneAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) 
 }
 
 func TestReservedReearthPrefixScene(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	projectId, sceneId, _ := createProjectSet(e)
+	projectId, sceneId, _ := createProjectSet(e, result)
 
 	// prefix 'c-'
-	res, err := publishProjectErrors(e, uID, map[string]any{
+	res, err := publishProjectErrors(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     "c-test",
 		"status":    "LIMITED",
@@ -270,7 +273,7 @@ func TestReservedReearthPrefixScene(t *testing.T) {
 	checkReservedReearthPrefixScene("c-test", res, err)
 
 	// prefix 's-'
-	res, err = publishProjectErrors(e, uID, map[string]any{
+	res, err = publishProjectErrors(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     "s-test",
 		"status":    "LIMITED",
@@ -278,7 +281,7 @@ func TestReservedReearthPrefixScene(t *testing.T) {
 	checkReservedReearthPrefixScene("s-test", res, err)
 
 	// prefix + self id
-	res = publishProject(e, uID, map[string]any{
+	res = publishProject(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     alias.ReservedReearthPrefixScene + sceneId,
 		"status":    "LIMITED",
@@ -311,12 +314,12 @@ func checkReservedReearthPrefixScene(alias string, res *httpexpect.Value, err *h
 /////// TestPublishStory ///////
 
 func TestPublishStory(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	_, _, storyId := createProjectSet(e)
+	_, _, storyId := createProjectSet(e, result)
 
 	// default
-	res := publishStory(e, uID, map[string]any{
+	res := publishStory(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   "",
 		"status":  "LIMITED",
@@ -327,10 +330,10 @@ func TestPublishStory(t *testing.T) {
 		"publishmentStatus": "LIMITED",
 	})
 
-	_, _, storyId = createProjectSet(e)
+	_, _, storyId = createProjectSet(e, result)
 
 	// self story id
-	res = publishStory(e, uID, map[string]any{
+	res = publishStory(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   storyId,
 		"status":  "LIMITED",
@@ -342,7 +345,7 @@ func TestPublishStory(t *testing.T) {
 	})
 
 	// publish
-	res = publishStory(e, uID, map[string]any{
+	res = publishStory(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   "xxxxxxxx", // update
 		"status":  "LIMITED",
@@ -354,7 +357,7 @@ func TestPublishStory(t *testing.T) {
 	})
 
 	// unpublish
-	res = publishStory(e, uID, map[string]any{
+	res = publishStory(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   "", // empty
 		"status":  "PRIVATE",
@@ -366,7 +369,7 @@ func TestPublishStory(t *testing.T) {
 	})
 
 	// publish
-	res = publishStory(e, uID, map[string]any{
+	res = publishStory(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   "", // empty
 		"status":  "LIMITED",
@@ -380,9 +383,9 @@ func TestPublishStory(t *testing.T) {
 }
 
 func TestPublishStoryAliasPattern(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	_, _, storyId := createProjectSet(e)
+	_, _, storyId := createProjectSet(e, result)
 
 	tests := []struct {
 		name  string
@@ -398,7 +401,7 @@ func TestPublishStoryAliasPattern(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := publishStoryErrors(e, uID, map[string]any{
+			res, err := publishStoryErrors(e, result.UID, map[string]any{
 				"storyId": storyId,
 				"alias":   tt.alias,
 				"status":  "LIMITED",
@@ -427,8 +430,8 @@ func checkStoryInvalidAlias(alias string, res *httpexpect.Value, err *httpexpect
 }
 
 func TestPublishStoryAliasReserved(t *testing.T) {
-	e := Server(t, baseSeeder)
-	_, _, storyId := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	_, _, storyId := createProjectSet(e, result)
 
 	tests := []struct {
 		name  string
@@ -440,7 +443,7 @@ func TestPublishStoryAliasReserved(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := publishStoryErrors(e, uID, map[string]any{
+			res, err := publishStoryErrors(e, result.UID, map[string]any{
 				"storyId": storyId,
 				"alias":   tt.alias,
 				"status":  "LIMITED",
@@ -468,9 +471,9 @@ func checkStoryInvalidReservedAlias(alias string, res *httpexpect.Value, err *ht
 }
 
 func TestPublishStoryUniqueAlias(t *testing.T) {
-	e := Server(t, baseSeeder)
-	_, sceneId1, storyId1 := createProjectSet(e)
-	_, sceneId2, storyId2 := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	_, sceneId1, storyId1 := createProjectSet(e, result)
+	_, sceneId2, storyId2 := createProjectSet(e, result)
 
 	testCases := []struct {
 		name   string
@@ -484,7 +487,7 @@ func TestPublishStoryUniqueAlias(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			res, err := publishStoryErrors(e, uID, map[string]any{
+			res, err := publishStoryErrors(e, result.UID, map[string]any{
 				"storyId": storyId1,
 				"alias":   tc.alias,
 				"status":  "LIMITED",
@@ -511,12 +514,12 @@ func checkStoryAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) 
 }
 
 func TestReservedReearthPrefixStory(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	_, _, storyId := createProjectSet(e)
+	_, _, storyId := createProjectSet(e, result)
 
 	// prefix 'c-'
-	res, err := publishStoryErrors(e, uID, map[string]any{
+	res, err := publishStoryErrors(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   "c-test",
 		"status":  "LIMITED",
@@ -524,7 +527,7 @@ func TestReservedReearthPrefixStory(t *testing.T) {
 	checkReservedReearthPrefixStory("c-test", res, err)
 
 	// prefix 's-'
-	res, err = publishStoryErrors(e, uID, map[string]any{
+	res, err = publishStoryErrors(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   "s-test",
 		"status":  "LIMITED",
@@ -532,7 +535,7 @@ func TestReservedReearthPrefixStory(t *testing.T) {
 	checkReservedReearthPrefixStory("s-test", res, err)
 
 	// prefix + self id
-	res = publishStory(e, uID, map[string]any{
+	res = publishStory(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   alias.ReservedReearthPrefixStory + storyId,
 		"status":  "LIMITED",
@@ -565,8 +568,8 @@ func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *h
 /////// Test CheckSceneAlias ///////
 
 func TestCheckSceneAlias(t *testing.T) {
-	e := Server(t, baseSeeder)
-	projectId, sceneID, _ := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	projectId, sceneID, _ := createProjectSet(e, result)
 
 	type args struct {
 		alias     string
@@ -601,7 +604,7 @@ func TestCheckSceneAlias(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt // capture
 		t.Run(tt.name, func(t *testing.T) {
-			res := checkSceneAlias(e, uID, map[string]any{
+			res := checkSceneAlias(e, result.UID, map[string]any{
 				"alias":     tt.args.alias,
 				"projectId": tt.args.projectId,
 			})
@@ -613,12 +616,12 @@ func TestCheckSceneAlias(t *testing.T) {
 	}
 
 	// Check with the alias set once
-	publishProject(e, uID, map[string]any{
+	publishProject(e, result.UID, map[string]any{
 		"projectId": projectId,
 		"alias":     "test-xxxxxx",
 		"status":    "LIMITED",
 	})
-	res := checkSceneAlias(e, uID, map[string]any{
+	res := checkSceneAlias(e, result.UID, map[string]any{
 		"alias":     "test-xxxxxx", // current self alias
 		"projectId": projectId,
 	})
@@ -630,8 +633,8 @@ func TestCheckSceneAlias(t *testing.T) {
 }
 
 func TestCheckSceneAliasError(t *testing.T) {
-	e := Server(t, baseSeeder)
-	projectId, sceneId, storyId := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	projectId, sceneId, storyId := createProjectSet(e, result)
 
 	type args struct {
 		alias     string
@@ -671,7 +674,7 @@ func TestCheckSceneAliasError(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt // capture loop var
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := checkSceneAliasError(e, uID, map[string]any{
+			res, err := checkSceneAliasError(e, result.UID, map[string]any{
 				"alias":     tt.args.alias,
 				"projectId": tt.args.projectId,
 			})
@@ -685,8 +688,8 @@ func TestCheckSceneAliasError(t *testing.T) {
 
 // // go test -v -run TestCheckStoryAlias ./e2e/...
 func TestCheckStoryAlias(t *testing.T) {
-	e := Server(t, baseSeeder)
-	_, _, storyId := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	_, _, storyId := createProjectSet(e, result)
 
 	type args struct {
 		alias   string
@@ -721,7 +724,7 @@ func TestCheckStoryAlias(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt // capture
 		t.Run(tt.name, func(t *testing.T) {
-			res := checkStoryAlias(e, uID, map[string]any{
+			res := checkStoryAlias(e, result.UID, map[string]any{
 				"alias":   tt.args.alias,
 				"storyId": tt.args.storyId,
 			})
@@ -733,12 +736,12 @@ func TestCheckStoryAlias(t *testing.T) {
 	}
 
 	// Check with the alias set once
-	publishStory(e, uID, map[string]any{
+	publishStory(e, result.UID, map[string]any{
 		"storyId": storyId,
 		"alias":   "test-xxxxxx",
 		"status":  "LIMITED",
 	})
-	res := checkStoryAlias(e, uID, map[string]any{
+	res := checkStoryAlias(e, result.UID, map[string]any{
 		"alias":   "test-xxxxxx", // current self alias
 		"storyId": storyId,
 	})
@@ -749,8 +752,8 @@ func TestCheckStoryAlias(t *testing.T) {
 }
 
 func TestCheckStoryAliasError(t *testing.T) {
-	e := Server(t, baseSeeder)
-	_, sceneId, storyId := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	_, sceneId, storyId := createProjectSet(e, result)
 
 	type args struct {
 		alias   string
@@ -795,7 +798,7 @@ func TestCheckStoryAliasError(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt // capture loop var
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := checkStoryAliasError(e, uID, map[string]any{
+			res, err := checkStoryAliasError(e, result.UID, map[string]any{
 				"alias":   tt.args.alias,
 				"storyId": tt.args.storyId,
 			})
@@ -855,16 +858,16 @@ query CheckStoryAlias($alias: String!, $storyId: ID) {
   }
 }`
 
-func createProjectSet(e *httpexpect.Expect) (string, string, string) {
-	projectId := createProject(e, uID, map[string]any{
+func createProjectSet(e *httpexpect.Expect, result *SeederResult) (string, string, string) {
+	projectId := createProject(e, result.UID, map[string]any{
 		"name":        "test project",
 		"description": "test description",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	sceneId := createScene(e, projectId)
-	storyId := createStory(e, map[string]any{
+	sceneId := createScene(e, result.UID, projectId)
+	storyId := createStory(e, result.UID, map[string]any{
 		"sceneId": sceneId,
 		"title":   "test title",
 		"index":   1,
@@ -873,7 +876,7 @@ func createProjectSet(e *httpexpect.Expect) (string, string, string) {
 	return projectId, sceneId, storyId
 }
 
-func publishProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func publishProject(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishProject",
 		Query:         PublishProjectMutation,
@@ -883,7 +886,7 @@ func publishProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[
 	return res.Path("$.data.publishProject.project")
 }
 
-func publishProjectErrors(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func publishProjectErrors(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishProject",
 		Query:         PublishProjectMutation,
@@ -893,7 +896,7 @@ func publishProjectErrors(e *httpexpect.Expect, u accountdomain.UserID, variable
 	return res.Path("$.data.publishProject"), res.Path("$.errors")
 }
 
-func publishStory(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func publishStory(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishStory",
 		Query:         PublishStoryMutation,
@@ -903,7 +906,7 @@ func publishStory(e *httpexpect.Expect, u accountdomain.UserID, variables map[st
 	return res.Path("$.data.publishStory.story")
 }
 
-func publishStoryErrors(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func publishStoryErrors(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "PublishStory",
 		Query:         PublishStoryMutation,
@@ -913,7 +916,7 @@ func publishStoryErrors(e *httpexpect.Expect, u accountdomain.UserID, variables 
 	return res.Path("$.data"), res.Path("$.errors")
 }
 
-func checkSceneAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func checkSceneAlias(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckSceneAlias",
 		Query:         CheckSceneAliasQuery,
@@ -923,7 +926,7 @@ func checkSceneAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map
 	return res.Path("$.data.checkSceneAlias")
 }
 
-func checkSceneAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func checkSceneAliasError(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckSceneAlias",
 		Query:         CheckSceneAliasQuery,
@@ -933,7 +936,7 @@ func checkSceneAliasError(e *httpexpect.Expect, u accountdomain.UserID, variable
 	return res.Path("$.data"), res.Path("$.errors")
 }
 
-func checkStoryAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func checkStoryAlias(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckStoryAlias",
 		Query:         CheckStoryAliasQuery,
@@ -943,7 +946,7 @@ func checkStoryAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map
 	return res.Path("$.data.checkStoryAlias")
 }
 
-func checkStoryAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func checkStoryAliasError(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "CheckStoryAlias",
 		Query:         CheckStoryAliasQuery,
