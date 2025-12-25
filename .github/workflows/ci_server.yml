@@ -132,13 +132,18 @@ jobs:
       - name: Configure reearth-accounts for E2E tests
         run: |
           cd reearth-accounts/server
+          # Remove any existing E2E configuration lines
+          sed -i '/^REEARTH_MOCK_AUTH=/d' .env.docker
+          sed -i '/^REEARTH_AUTH_ISS=/d' .env.docker
+          sed -i '/^RUN_MIGRATION=/d' .env.docker
+          # Add E2E test configuration
           echo "" >> .env.docker
           echo "# E2E test configuration" >> .env.docker
           echo "REEARTH_MOCK_AUTH=true" >> .env.docker
           echo "REEARTH_AUTH_ISS=https://reearth.io" >> .env.docker
           echo "RUN_MIGRATION=true" >> .env.docker
           echo "=== Contents of .env.docker after configuration ==="
-          tail -10 .env.docker
+          tail -15 .env.docker
           cd ..
           echo "=== Verifying docker-compose.dev.yml network configuration ==="
           grep -A 2 "networks:" docker-compose.dev.yml || echo "No networks section found"
