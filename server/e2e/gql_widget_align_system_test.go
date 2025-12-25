@@ -1,25 +1,26 @@
+//go:build e2e
+
 package e2e
 
 import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"golang.org/x/text/language"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestWidgetAlignSystemDesktop ./e2e/...
-
+// make e2e-test TEST_NAME=TestWidgetAlignSystemDesktop
 func getString(obj *httpexpect.Value, key string) string {
 	return obj.Object().Value(key).Raw().(string)
 }
 
 func TestWidgetAlignSystemDesktop(t *testing.T) {
-	e := Server(t, baseSeeder)
-	_, sceneId, _ := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	_, sceneId, _ := createProjectSet(e, result)
 
-	_, sceneWidget := addWidgetMutation(e, uID, map[string]any{
+	_, sceneWidget := addWidgetMutation(e, result.UID, map[string]any{
 		"type":        "DESKTOP",
 		"sceneId":     sceneId,
 		"pluginId":    "reearth",
@@ -28,7 +29,7 @@ func TestWidgetAlignSystemDesktop(t *testing.T) {
 
 	widgetId := getString(sceneWidget, "id")
 
-	updateWidgetMutation(e, uID, map[string]any{
+	updateWidgetMutation(e, result.UID, map[string]any{
 		"type":     "DESKTOP",
 		"sceneId":  sceneId,
 		"widgetId": widgetId,
@@ -41,7 +42,7 @@ func TestWidgetAlignSystemDesktop(t *testing.T) {
 		"index": 0,
 	})
 
-	updateWidgetAlignSystemMutation(e, uID, map[string]any{
+	updateWidgetAlignSystemMutation(e, result.UID, map[string]any{
 		"type":    "DESKTOP",
 		"sceneId": sceneId,
 		"location": map[string]any{
@@ -52,30 +53,30 @@ func TestWidgetAlignSystemDesktop(t *testing.T) {
 		"align": "END",
 	})
 
-	res := getScene(e, sceneId, language.Und.String())
+	res := getScene(e, result.UID, sceneId, language.Und.String())
 
 	desktop := res.Path("$.widgetAlignSystem.desktop")
 	desktop.Path("$.outer.left.middle.align").IsEqual("END")
 	desktop.Path("$.inner.left.middle.widgetIds[0]").IsEqual(widgetId)
 
-	removeWidgetMutation(e, uID, map[string]any{
+	removeWidgetMutation(e, result.UID, map[string]any{
 		"type":     "DESKTOP",
 		"sceneId":  sceneId,
 		"widgetId": widgetId,
 	})
 
-	res = getScene(e, sceneId, language.Und.String())
+	res = getScene(e, result.UID, sceneId, language.Und.String())
 
 	desktop = res.Path("$.widgetAlignSystem.desktop")
 	desktop.Path("$.inner.left.middle.widgetIds").Array().Length().IsEqual(0)
 }
 
-// go test -v -run TestWidgetAlignSystemMobile ./e2e/...
+// make e2e-test TEST_NAME=TestWidgetAlignSystemMobile
 func TestWidgetAlignSystemMobile(t *testing.T) {
-	e := Server(t, baseSeeder)
-	_, sceneId, _ := createProjectSet(e)
+	e, result := Server(t, baseSeeder)
+	_, sceneId, _ := createProjectSet(e, result)
 
-	_, sceneWidget := addWidgetMutation(e, uID, map[string]any{
+	_, sceneWidget := addWidgetMutation(e, result.UID, map[string]any{
 		"type":        "MOBILE",
 		"sceneId":     sceneId,
 		"pluginId":    "reearth",
@@ -84,7 +85,7 @@ func TestWidgetAlignSystemMobile(t *testing.T) {
 
 	widgetId := getString(sceneWidget, "id")
 
-	updateWidgetMutation(e, uID, map[string]any{
+	updateWidgetMutation(e, result.UID, map[string]any{
 		"type":     "MOBILE",
 		"sceneId":  sceneId,
 		"widgetId": widgetId,
@@ -97,7 +98,7 @@ func TestWidgetAlignSystemMobile(t *testing.T) {
 		"index": 0,
 	})
 
-	updateWidgetAlignSystemMutation(e, uID, map[string]any{
+	updateWidgetAlignSystemMutation(e, result.UID, map[string]any{
 		"type":    "MOBILE",
 		"sceneId": sceneId,
 		"location": map[string]any{
@@ -108,19 +109,19 @@ func TestWidgetAlignSystemMobile(t *testing.T) {
 		"align": "END",
 	})
 
-	res := getScene(e, sceneId, language.Und.String())
+	res := getScene(e, result.UID, sceneId, language.Und.String())
 
 	mobile := res.Path("$.widgetAlignSystem.mobile")
 	mobile.Path("$.outer.left.middle.align").IsEqual("END")
 	mobile.Path("$.inner.left.middle.widgetIds[0]").IsEqual(widgetId)
 
-	removeWidgetMutation(e, uID, map[string]any{
+	removeWidgetMutation(e, result.UID, map[string]any{
 		"type":     "MOBILE",
 		"sceneId":  sceneId,
 		"widgetId": widgetId,
 	})
 
-	res = getScene(e, sceneId, language.Und.String())
+	res = getScene(e, result.UID, sceneId, language.Und.String())
 
 	mobile = res.Path("$.widgetAlignSystem.mobile")
 	mobile.Path("$.inner.left.middle.widgetIds").Array().Length().IsEqual(0)
@@ -267,7 +268,7 @@ fragment PropertyFragment on Property {
   __typename
 }`
 
-func addWidgetMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) ([]httpexpect.Value, *httpexpect.Value) {
+func addWidgetMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) ([]httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
 		OperationName: "AddWidget",
 		Query:         AddWidgetMutation,
@@ -299,7 +300,7 @@ const UpdateWidgetMutation = `mutation UpdateWidget($type: WidgetAlignSystemType
   }
 }`
 
-func updateWidgetMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateWidgetMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateWidget",
 		Query:         UpdateWidgetMutation,
@@ -397,7 +398,7 @@ fragment WidgetAlignSystemFragment on WidgetAlignSystem {
   __typename
 }`
 
-func updateWidgetAlignSystemMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func updateWidgetAlignSystemMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateWidgetAlignSystem",
 		Query:         UpdateWidgetAlignSystemMutation,
@@ -425,7 +426,7 @@ const RemoveWidgetMutation = `mutation RemoveWidget($type: WidgetAlignSystemType
   }
 }`
 
-func removeWidgetMutation(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func removeWidgetMutation(e *httpexpect.Expect, u accountsID.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "RemoveWidget",
 		Query:         RemoveWidgetMutation,
