@@ -39,10 +39,17 @@ jobs:
       - name: checkout reearth-visualizer
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Start reearth-visualizer services (mongo, gcs)
+      - name: Create reearth network and start services
         run: |
+          echo "=== Creating reearth network by initializing docker-compose ==="
+          docker compose -f docker-compose.dev.yml config --quiet
+          docker network create reearth 2>/dev/null || echo "Network reearth already exists"
+          echo "=== Starting reearth-visualizer services (mongo, gcs) ==="
           docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
+          echo "=== Docker networks ==="
           docker network ls
+          echo "=== Verifying reearth network exists ==="
+          docker network inspect reearth
 
       - name: Wait for MongoDB to be ready
         run: |
@@ -71,7 +78,12 @@ jobs:
       - name: Run database migrations
         run: |
           cd reearth-accounts
+          echo "=== Verifying reearth network before starting reearth-accounts ==="
+          docker network inspect reearth || echo "reearth network not found!"
           docker compose -f docker-compose.dev.yml up -d
+          echo "=== Checking which networks reearth-accounts containers are connected to ==="
+          docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' || echo "Container not found"
+          docker inspect reearth-accounts-reearth-cerbos-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' || echo "Container not found"
           echo "Waiting for migrations to complete..."
           sleep 15
           docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -20
@@ -124,7 +136,12 @@ jobs:
         working-directory: server
 
       - name: Build reearth-visualizer-dev container
-        run: docker compose -f docker-compose.dev.yml up -d reearth-visualizer-dev
+        run: |
+          docker compose -f docker-compose.dev.yml up -d reearth-visualizer-dev
+          echo "=== Verifying network connectivity ==="
+          docker network inspect reearth | grep -A 3 "reearth-accounts-reearth-accounts-dev-1" || echo "reearth-accounts not found in reearth network"
+          docker network inspect reearth | grep -A 3 "reearth-visualizer-reearth-visualizer-dev-1" || echo "reearth-visualizer not found in reearth network"
+          docker exec reearth-visualizer-reearth-visualizer-dev-1 ping -c 2 reearth-accounts-dev || echo "Cannot ping reearth-accounts-dev"
 
       - name: Wait for reearth-visualizer to be ready
         run: |
