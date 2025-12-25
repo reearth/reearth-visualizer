@@ -259,7 +259,13 @@ jobs:
           docker exec reearth-accounts-reearth-accounts-dev-1 sh -c 'echo "REEARTH_MOCK_AUTH=$REEARTH_MOCK_AUTH"'
 
       - name: Run e2e tests
-        run: make e2e 2>&1 | grep -E "FAIL|PASS|---" || make e2e
+        run: |
+          set +e
+          make e2e > e2e_output.log 2>&1
+          EXIT_CODE=$?
+          echo "=== E2E Test Results ==="
+          grep -E "FAIL|PASS|---|^FAIL$" e2e_output.log || cat e2e_output.log
+          exit $EXIT_CODE
         working-directory: server
 
       - name: Show reearth-accounts logs on failure
