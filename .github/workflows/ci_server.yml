@@ -106,6 +106,8 @@ jobs:
         run: |
           cd reearth-accounts/server
           sed -i '/RUN_MIGRATION=true/d' .env.docker
+          echo "=== Verifying .env.docker after removing RUN_MIGRATION ==="
+          grep "REEARTH_MOCK_AUTH" .env.docker || echo "REEARTH_MOCK_AUTH not found in .env.docker!"
           cd ..
           echo "=== Stopping reearth-accounts-dev ==="
           docker compose -f docker-compose.dev.yml stop reearth-accounts-dev
@@ -113,9 +115,11 @@ jobs:
           docker compose -f docker-compose.dev.yml up -d reearth-accounts-dev
           echo "=== Container status ==="
           docker ps -a
+          echo "=== Checking environment variables inside container ==="
+          docker exec reearth-accounts-reearth-accounts-dev-1 env | grep REEARTH || echo "No REEARTH env vars found"
           echo "=== Checking reearth-accounts-dev logs after restart ==="
           sleep 5
-          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -20
+          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -30
 
       - name: Wait for reearth-accounts to be ready
         run: |
@@ -145,6 +149,8 @@ jobs:
           sleep 5
           echo "=== Final verification - checking port 8090 inside container ==="
           docker exec reearth-accounts-reearth-accounts-dev-1 netstat -tlnp 2>/dev/null | grep 8090 || echo "Port 8090 not listening"
+          echo "=== Checking full reearth-accounts logs for mock auth status ==="
+          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | grep -i "mock\|auth\|server.*start\|listening" || echo "No relevant log entries found"
 
       - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
