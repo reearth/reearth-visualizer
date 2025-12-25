@@ -5,8 +5,9 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestNewPermissiveChecker(t *testing.T) {
@@ -18,7 +19,7 @@ func TestPermissiveChecker_CheckPolicy(t *testing.T) {
 	ctx := context.Background()
 	checker := NewPermissiveChecker()
 
-	wid := accountdomain.NewWorkspaceID()
+	wid := accountsID.NewWorkspaceID()
 
 	tests := []struct {
 		name string
@@ -118,7 +119,7 @@ func TestPermissiveChecker_AlwaysAllows(t *testing.T) {
 
 	// Test with extreme values to ensure it always allows
 	req := gateway.PolicyCheckRequest{
-		WorkspaceID: accountdomain.NewWorkspaceID(),
+		WorkspaceID: accountsID.NewWorkspaceID(),
 		CheckType:   gateway.PolicyCheckUploadAssetsSize,
 		Value:       int64(1 << 62), // Extremely large value
 	}

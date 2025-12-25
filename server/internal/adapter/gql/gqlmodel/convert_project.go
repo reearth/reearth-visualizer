@@ -72,11 +72,11 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 	}
 
 	return &ProjectMetadata{
-		ID:           IDFrom(pm.ID()),
-		Workspace:    IDFrom(pm.Workspace()),
-		Project:      IDFrom(pm.Project()),
-		Readme:       pm.Readme(),
-		License:      pm.License(),
+		ID:        IDFrom(pm.ID()),
+		Workspace: IDFrom(pm.Workspace()),
+		Project:   IDFrom(pm.Project()),
+		Readme:    pm.Readme(),
+		License:   pm.License(),
 		Topics: func() []string {
 			if pm.Topics() == nil {
 				return nil
@@ -180,8 +180,8 @@ type ProjectExport struct {
 
 	Visibility string `json:"visibility,omitempty"`
 
-	License *string `json:"license,omitempty"`
-	Readme  *string `json:"readme,omitempty"`
+	License *string   `json:"license,omitempty"`
+	Readme  *string   `json:"readme,omitempty"`
 	Topics  *[]string `json:"topics,omitempty"`
 }
 

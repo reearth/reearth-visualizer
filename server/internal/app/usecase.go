@@ -8,11 +8,18 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 )
 
-func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
+func UsecaseMiddleware(
+	r *repo.Container,
+	g *gateway.Container,
+	ar *accountsRepo.Container,
+	ag *accountsGateway.Container,
+	config interactor.ContainerConfig,
+) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		repos := r
 
@@ -28,10 +35,10 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 			)
 		}
 
-		var ar2 *accountrepo.Container
-		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
+		var ar2 *accountsRepo.Container
+		if op := adapter.AccountsOperator(ctx); op != nil && ar != nil {
 			// apply filters to repos
-			ar2 = ar.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
+			ar2 = ar.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
 		} else {
 			ar2 = ar
 		}

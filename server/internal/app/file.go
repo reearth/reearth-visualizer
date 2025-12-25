@@ -6,6 +6,7 @@ import (
 	"mime"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -33,8 +34,11 @@ func serveFiles(
 				return err
 			}
 			ct := "application/octet-stream"
-			if ext := path.Ext(filename); ext != "" {
+			if ext := strings.ToLower(path.Ext(filename)); ext != "" {
 				ct2 := mime.TypeByExtension(ext)
+				if ct2 == "" && ext == ".zip" {
+					ct2 = "application/zip"
+				}
 				if ct2 != "" {
 					ct = ct2
 				}

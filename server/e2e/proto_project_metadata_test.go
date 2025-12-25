@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -11,19 +13,17 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI_metadata_update ./e2e/...
-
+// make e2e-test TEST_NAME=TestInternalAPI_metadata_update
 func TestInternalAPI_metadata_update(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
+	_, r, _, result := GRPCServer(t, baseSeeder)
 
 	// call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// create public Project
 		projectID := createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: result.WID.String(),
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),

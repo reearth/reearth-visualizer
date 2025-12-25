@@ -6,8 +6,9 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/samber/lo"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 var (
@@ -18,7 +19,7 @@ var (
 
 type ProjectMetadata struct {
 	id              id.ProjectMetadataID
-	workspace       accountdomain.WorkspaceID
+	workspace       accountsID.WorkspaceID
 	project         id.ProjectID
 	importStatus    *ProjectImportStatus
 	importResultLog *map[string]any
@@ -35,9 +36,9 @@ func (r *ProjectMetadata) ID() id.ProjectMetadataID {
 	return r.id
 }
 
-func (r *ProjectMetadata) Workspace() accountdomain.WorkspaceID {
+func (r *ProjectMetadata) Workspace() accountsID.WorkspaceID {
 	if r == nil {
-		return accountdomain.WorkspaceID{}
+		return accountsID.WorkspaceID{}
 	}
 	return r.workspace
 }

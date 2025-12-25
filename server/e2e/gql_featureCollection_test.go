@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -11,6 +13,7 @@ func addGeoJSONFeature(
 	layerId string,
 	geometry map[string]any,
 	properties map[string]any,
+	userID string,
 ) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "AddGeoJSONFeature",
@@ -70,7 +73,7 @@ func addGeoJSONFeature(
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	featureId := res.Path("$.data.addGeoJSONFeature.id").Raw().(string)
 	return requestBody, res, featureId
@@ -82,6 +85,7 @@ func updateGeoJSONFeature(
 	featureId string,
 	geometry map[string]any,
 	properties map[string]any,
+	userID string,
 ) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "UpdateGeoJSONFeature",
@@ -141,7 +145,7 @@ func updateGeoJSONFeature(
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	fId := res.Path("$.data.updateGeoJSONFeature.id").Raw().(string)
 	return requestBody, res, fId
@@ -151,6 +155,7 @@ func deleteGeoJSONFeature(
 	e *httpexpect.Expect,
 	layerId string,
 	featureId string,
+	userID string,
 ) (GraphQLRequest, *httpexpect.Value, string) {
 	requestBody := GraphQLRequest{
 		OperationName: "DeleteGeoJSONFeature",
@@ -167,34 +172,34 @@ func deleteGeoJSONFeature(
 		},
 	}
 
-	res := Request(e, uID.String(), requestBody)
+	res := Request(e, userID, requestBody)
 
 	fId := res.Path("$.data.deleteGeoJSONFeature.deletedFeatureId").Raw().(string)
 	return requestBody, res, fId
 }
 
 func TestFeatureCollectionCRUD(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	pId := createProject(e, uID, map[string]any{
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	sId := createScene(e, pId)
+	sId := createScene(e, result.UID, pId)
 
-	_, res := fetchSceneForNewLayers(e, sId)
+	_, res := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res.Object().
 		Value("data").Object().
 		Value("node").Object().
 		Value("newLayers").Array().
 		Length().IsEqual(0)
 
-	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1)
+	_, _, layerId := addNLSLayerSimple(e, sId, "someTitle", 1, result.UID.String())
 
-	_, res2 := fetchSceneForNewLayers(e, sId)
+	_, res2 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res2.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -211,9 +216,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		"extrudedHeight": 0,
 		"positions":      []float64{1, 2, 3},
 	}
-	_, _, fid1 := addGeoJSONFeature(e, layerId, geometry1, properties1)
+	_, _, fid1 := addGeoJSONFeature(e, layerId, geometry1, properties1, result.UID.String())
 
-	_, res3 := fetchSceneForNewLayers(e, sId)
+	_, res3 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res3.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -268,9 +273,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		"extrudedHeight": 0,
 		"positions":      []float64{4, 5, 6},
 	}
-	_, _, fid2 := addGeoJSONFeature(e, layerId, geometry2, properties2)
+	_, _, fid2 := addGeoJSONFeature(e, layerId, geometry2, properties2, result.UID.String())
 
-	_, res4 := fetchSceneForNewLayers(e, sId)
+	_, res4 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res4.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -300,9 +305,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		"extrudedHeight": 0,
 		"positions":      []float64{7, 8, 9},
 	}
-	_, _, fid3 := addGeoJSONFeature(e, layerId, geometry3, properties3)
+	_, _, fid3 := addGeoJSONFeature(e, layerId, geometry3, properties3, result.UID.String())
 
-	_, res5 := fetchSceneForNewLayers(e, sId)
+	_, res5 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res5.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -332,9 +337,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		"extrudedHeight": 0,
 		"positions":      []float64{10, 11, 12},
 	}
-	_, _, fid4 := addGeoJSONFeature(e, layerId, geometry4, properties4)
+	_, _, fid4 := addGeoJSONFeature(e, layerId, geometry4, properties4, result.UID.String())
 
-	_, res6 := fetchSceneForNewLayers(e, sId)
+	_, res6 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res6.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -364,9 +369,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		"extrudedHeight": 0,
 		"positions":      []float64{13, 14, 15},
 	}
-	_, _, fid5 := addGeoJSONFeature(e, layerId, geometry5, properties5)
+	_, _, fid5 := addGeoJSONFeature(e, layerId, geometry5, properties5, result.UID.String())
 
-	_, res7 := fetchSceneForNewLayers(e, sId)
+	_, res7 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res7.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -407,9 +412,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		"extrudedHeight": 10,
 		"positions":      []float64{16, 17, 18},
 	}
-	_, _, fid6 := updateGeoJSONFeature(e, layerId, fid1, geometry6, properties6)
+	_, _, fid6 := updateGeoJSONFeature(e, layerId, fid1, geometry6, properties6, result.UID.String())
 
-	_, res8 := fetchSceneForNewLayers(e, sId)
+	_, res8 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res8.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -448,9 +453,9 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("properties").Object().
 		Value("extrudedHeight").IsEqual(10)
 
-	deleteGeoJSONFeature(e, layerId, fid6)
+	deleteGeoJSONFeature(e, layerId, fid6, result.UID.String())
 
-	_, res9 := fetchSceneForNewLayers(e, sId)
+	_, res9 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res9.Object().
 		Value("data").Object().
 		Value("node").Object().
@@ -469,12 +474,12 @@ func TestFeatureCollectionCRUD(t *testing.T) {
 		Value("features").Array().Value(0).Object().
 		Value("id").IsEqual(fid2)
 
-	deleteGeoJSONFeature(e, layerId, fid2)
-	deleteGeoJSONFeature(e, layerId, fid3)
-	deleteGeoJSONFeature(e, layerId, fid4)
-	deleteGeoJSONFeature(e, layerId, fid5)
+	deleteGeoJSONFeature(e, layerId, fid2, result.UID.String())
+	deleteGeoJSONFeature(e, layerId, fid3, result.UID.String())
+	deleteGeoJSONFeature(e, layerId, fid4, result.UID.String())
+	deleteGeoJSONFeature(e, layerId, fid5, result.UID.String())
 
-	_, res10 := fetchSceneForNewLayers(e, sId)
+	_, res10 := fetchSceneForNewLayers(e, sId, result.UID.String())
 	res10.Object().
 		Value("data").Object().
 		Value("node").Object().

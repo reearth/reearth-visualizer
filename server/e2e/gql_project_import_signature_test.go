@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -17,7 +19,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// go test -v -run TestProjectImport ./e2e/...
+// make e2e-test TEST_NAME=TestProjectImport
 
 // !!! To run this test, you need to create an environment.
 
@@ -37,12 +39,12 @@ func TestProjectImportSignature(t *testing.T) {
 	// t.Cleanup(func() { _ = os.Remove(projectZipFilePath) })
 }
 
-func GenProjectZipFile(t *testing.T, e *httpexpect.Expect) (projectZipFilePath string) {
+func GenProjectZipFile(t *testing.T, e *httpexpect.Expect, result *SeederResult) (projectZipFilePath string) {
 
 	projectZipFilePath = filepath.Join(t.TempDir(), "project.zip")
 
-	projectId := SetupProject(t, e)
-	projectDataPath := Export(t, e, projectId)
+	projectId := SetupProject(t, e, result)
+	projectDataPath := Export(t, e, projectId, result)
 	resp := e.GET(projectDataPath).
 		Expect().
 		Status(200)
