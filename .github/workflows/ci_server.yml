@@ -73,16 +73,31 @@ jobs:
           echo "# Mock Authentication for E2E tests" >> .env.docker
           echo "REEARTH_MOCK_AUTH=true" >> .env.docker
           echo "RUN_MIGRATION=true" >> .env.docker
+          cd ..
+          echo "=== Verifying docker-compose.dev.yml network configuration ==="
+          grep -A 2 "networks:" docker-compose.dev.yml || echo "No networks section found"
 
       - name: Run database migrations
         run: |
           cd reearth-accounts
           echo "=== Verifying reearth network before starting reearth-accounts ==="
           docker network inspect reearth || echo "reearth network not found!"
-          docker compose -f docker-compose.dev.yml up -d
+          echo "=== Starting reearth-accounts services ==="
+          docker compose -f docker-compose.dev.yml up -d --force-recreate
           echo "=== Checking which networks reearth-accounts containers are connected to ==="
           docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' || echo "Container not found"
           docker inspect reearth-accounts-reearth-cerbos-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' || echo "Container not found"
+          echo "=== Manually connecting to reearth network if needed ==="
+          if ! docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' | grep -q "reearth"; then
+            echo "reearth-accounts-dev not in reearth network, connecting..."
+            docker network connect reearth reearth-accounts-reearth-accounts-dev-1
+          fi
+          if ! docker inspect reearth-accounts-reearth-cerbos-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' | grep -q "reearth"; then
+            echo "reearth-cerbos not in reearth network, connecting..."
+            docker network connect reearth reearth-accounts-reearth-cerbos-1
+          fi
+          echo "=== Final network check ==="
+          docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}'
           echo "Waiting for migrations to complete..."
           sleep 15
           docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 | tail -20
