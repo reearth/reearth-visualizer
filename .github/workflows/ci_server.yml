@@ -41,9 +41,8 @@ jobs:
 
       - name: Create reearth network and start services
         run: |
-          echo "=== Creating reearth network by initializing docker-compose ==="
-          docker compose -f docker-compose.dev.yml config --quiet
-          docker network create reearth 2>/dev/null || echo "Network reearth already exists"
+          echo "=== Creating reearth network by running docker-compose ==="
+          docker compose -f docker-compose.dev.yml up --no-start
           echo "=== Starting reearth-visualizer services (mongo, gcs) ==="
           docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
           echo "=== Docker networks ==="
