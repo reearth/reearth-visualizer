@@ -24,7 +24,7 @@ func (l *NLSLayerGroup) LayerType() LayerType {
 }
 
 func (l *NLSLayerGroup) Scene() id.SceneID {
-	return l.layerBase.scene
+	return l.scene
 }
 
 func (l *NLSLayerGroup) Title() string {
@@ -35,49 +35,49 @@ func (l *NLSLayerGroup) IsVisible() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.visible
+	return l.visible
 }
 
 func (l *NLSLayerGroup) HasInfobox() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.infobox != nil
+	return l.infobox != nil
 }
 
 func (l *NLSLayerGroup) Infobox() *Infobox {
 	if l == nil {
 		return nil
 	}
-	return l.layerBase.infobox
+	return l.infobox
 }
 
 func (l *NLSLayerGroup) PhotoOverlay() *PhotoOverlay {
 	if l == nil {
 		return nil
 	}
-	return l.layerBase.photoOverlay
+	return l.photoOverlay
 }
 
 func (l *NLSLayerGroup) SetVisible(visible bool) {
 	if l == nil {
 		return
 	}
-	l.layerBase.visible = visible
+	l.visible = visible
 }
 
 func (l *NLSLayerGroup) SetInfobox(infobox *Infobox) {
 	if l == nil {
 		return
 	}
-	l.layerBase.infobox = infobox
+	l.infobox = infobox
 }
 
 func (l *NLSLayerGroup) SetPhotoOverlay(photooverlay *PhotoOverlay) {
 	if l == nil {
 		return
 	}
-	l.layerBase.photoOverlay = photooverlay
+	l.photoOverlay = photooverlay
 }
 
 func (l *NLSLayerGroup) Children() *IDList {
@@ -135,33 +135,33 @@ func (l *NLSLayerGroup) IsSketch() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.isSketch
+	return l.isSketch
 }
 
 func (l *NLSLayerGroup) SetIsSketch(isSketch bool) {
 	if l == nil {
 		return
 	}
-	l.layerBase.isSketch = isSketch
+	l.isSketch = isSketch
 }
 
 func (l *NLSLayerGroup) HasSketch() bool {
 	if l == nil {
 		return false
 	}
-	return l.layerBase.sketch != nil
+	return l.sketch != nil
 }
 
 func (l *NLSLayerGroup) Sketch() *SketchInfo {
 	if l == nil {
 		return nil
 	}
-	return l.layerBase.sketch
+	return l.sketch
 }
 
 func (l *NLSLayerGroup) SetSketch(sketch *SketchInfo) {
 	if l == nil {
 		return
 	}
-	l.layerBase.sketch = sketch
+	l.sketch = sketch
 }

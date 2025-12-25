@@ -226,7 +226,7 @@ func (i *Style) ImportStyles(ctx context.Context, sceneID idx.ID[id.Scene], data
 		styleIDs = append(styleIDs, newStyleID)
 
 		// Replace new style id
-		*data = bytes.Replace(*data, []byte(layerStyleJson.ID), []byte(newStyleID.String()), -1)
+		*data = bytes.ReplaceAll(*data, []byte(layerStyleJson.ID), []byte(newStyleID.String()))
 
 		style, err := scene.NewStyle().
 			ID(newStyleID).

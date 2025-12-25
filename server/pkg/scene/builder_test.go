@@ -5,13 +5,14 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
 func TestBuilder_IDs(t *testing.T) {
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 	b := New().NewID().Workspace(tid).MustBuild()
 	assert.NotNil(t, b.ID())
 	assert.Equal(t, tid, b.Workspace())
@@ -22,13 +23,13 @@ func TestBuilder_IDs(t *testing.T) {
 
 func TestBuilder_UpdatedAt(t *testing.T) {
 	ti := time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC)
-	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).UpdatedAt(ti).MustBuild()
+	b := New().NewID().Workspace(accountsID.NewWorkspaceID()).UpdatedAt(ti).MustBuild()
 	assert.Equal(t, ti, b.UpdatedAt())
 }
 
 func TestBuilder_Property(t *testing.T) {
 	pid := id.NewPropertyID()
-	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Property(pid).MustBuild()
+	b := New().NewID().Workspace(accountsID.NewWorkspaceID()).Property(pid).MustBuild()
 	assert.Equal(t, pid, b.Property())
 }
 
@@ -36,13 +37,13 @@ func TestBuilder_Plugins(t *testing.T) {
 	ps := NewPlugins([]*Plugin{
 		NewPlugin(id.OfficialPluginID, id.NewPropertyID().Ref()),
 	})
-	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Plugins(ps).MustBuild()
+	b := New().NewID().Workspace(accountsID.NewWorkspaceID()).Plugins(ps).MustBuild()
 	assert.Equal(t, ps, b.Plugins())
 }
 
 func TestBuilder_Project(t *testing.T) {
 	pid := id.NewProjectID()
-	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Project(pid).MustBuild()
+	b := New().NewID().Workspace(accountsID.NewWorkspaceID()).Project(pid).MustBuild()
 	assert.Equal(t, pid, b.Project())
 }
 
@@ -50,12 +51,12 @@ func TestBuilder_Widgets(t *testing.T) {
 	ws := NewWidgets([]*Widget{
 		MustWidget(id.NewWidgetID(), id.OfficialPluginID, "xxx", id.NewPropertyID(), true, false),
 	}, nil)
-	b := New().NewID().Workspace(accountdomain.NewWorkspaceID()).Widgets(ws).MustBuild()
+	b := New().NewID().Workspace(accountsID.NewWorkspaceID()).Widgets(ws).MustBuild()
 	assert.Equal(t, ws, b.Widgets())
 }
 
 func TestBuilder_Build(t *testing.T) {
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := id.NewProjectID()
 	ppid := id.NewPropertyID()
@@ -69,7 +70,7 @@ func TestBuilder_Build(t *testing.T) {
 	type args struct {
 		ID        id.SceneID
 		Project   id.ProjectID
-		Workspace accountdomain.WorkspaceID
+		Workspace accountsID.WorkspaceID
 		Widgets   *Widgets
 		Plugins   *Plugins
 		UpdatedAt time.Time
@@ -100,7 +101,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID:        sid,
 				Project:   pid,
-				Workspace: accountdomain.WorkspaceID{},
+				Workspace: accountsID.WorkspaceID{},
 				Widgets:   ws,
 				Plugins:   ps,
 				UpdatedAt: time.Date(2000, 1, 1, 1, 1, 0, 0, time.UTC),
@@ -155,7 +156,7 @@ func TestBuilder_Build(t *testing.T) {
 }
 
 func TestBuilder_MustBuild(t *testing.T) {
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 	sid := id.NewSceneID()
 	pid := id.NewProjectID()
 	ppid := id.NewPropertyID()
@@ -170,7 +171,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 	type args struct {
 		ID                id.SceneID
 		Project           id.ProjectID
-		Workspace         accountdomain.WorkspaceID
+		Workspace         accountsID.WorkspaceID
 		Widgets           *Widgets
 		WidgetAlignSystem *WidgetAlignSystem
 		Plugins           *Plugins
@@ -203,7 +204,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 			Args: args{
 				ID:                sid,
 				Project:           pid,
-				Workspace:         accountdomain.WorkspaceID{},
+				Workspace:         accountsID.WorkspaceID{},
 				Widgets:           ws,
 				WidgetAlignSystem: was,
 				Plugins:           ps,

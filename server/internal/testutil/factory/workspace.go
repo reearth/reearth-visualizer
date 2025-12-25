@@ -2,15 +2,16 @@ package factory
 
 import (
 	"github.com/go-faker/faker/v4"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
-type WorkspaceOption func(*workspace.Builder)
+type WorkspaceOption func(*accountsWorkspace.Builder)
 
-func NewWorkspace(opts ...WorkspaceOption) *workspace.Workspace {
-	p := workspace.New().
-		ID(accountdomain.NewWorkspaceID()).
+func NewWorkspace(opts ...WorkspaceOption) *accountsWorkspace.Workspace {
+	p := accountsWorkspace.New().
+		ID(accountsID.NewWorkspaceID()).
 		Name(faker.Name())
 	for _, opt := range opts {
 		opt(p)

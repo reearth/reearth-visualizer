@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -6,7 +8,7 @@ import (
 )
 
 func TestPingAPI(t *testing.T) {
-	e := ServerPingTest(t)
+	e, _ := ServerPingTest(t)
 
 	e.OPTIONS("/api/ping").
 		WithHeader("Origin", "https://example.com").
