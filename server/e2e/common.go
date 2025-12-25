@@ -163,6 +163,13 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder, cfg *config.Config) (
 		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
 	} else {
 		repos = memory.New()
+
+		// Initialize required roles for in-memory tests
+		if repos.AccountRepos() != nil {
+			if err := initializeRoles(ctx, repos.AccountRepos()); err != nil {
+				t.Fatalf("failed to initialize roles: %s", err)
+			}
+		}
 	}
 
 	if fr == nil {
