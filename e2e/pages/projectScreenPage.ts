@@ -113,7 +113,9 @@ export class ProjectScreenPage {
 
   async selectPropertyType(propertyType: string) {
     await this.customPropertyTypeSelect.click();
-    await this.page.getByRole("option", { name: propertyType, exact: true }).click();
+    await this.page
+      .getByRole("option", { name: propertyType, exact: true })
+      .click();
   }
   async layerExists(layerName: string) {
     const layerItem = this.getLayerByName(layerName);
@@ -155,7 +157,7 @@ export class ProjectScreenPage {
     await this.page.waitForTimeout(2000);
   }
 
-  async addPolylineOnMap(w: number, x: number, y: number, z: number) {
+  async addPolylineOnMap(w: number, x: number, _y: number, _z: number) {
     await this.polylineButton.click();
     await this.page.waitForTimeout(1500);
 
@@ -203,6 +205,24 @@ export class ProjectScreenPage {
     await this.page.waitForTimeout(500);
 
     await canvas.click({ position: corner2, force: true });
+    await this.page.waitForTimeout(2000);
+  }
+
+  async addPolygonOnMap(points: { x: number; y: number }[]) {
+    await this.polygonButton.click();
+    await this.page.waitForTimeout(1000);
+
+    const canvas = this.page.locator("canvas").first();
+    await canvas.waitFor({ state: "visible" });
+
+    // Click each point in the polygon
+    for (const point of points) {
+      await canvas.click({ position: point, force: true });
+      await this.page.waitForTimeout(500);
+    }
+
+    // Double-click the last point to close the polygon
+    await canvas.dblclick({ position: points[points.length - 1], force: true });
     await this.page.waitForTimeout(2000);
   }
 
