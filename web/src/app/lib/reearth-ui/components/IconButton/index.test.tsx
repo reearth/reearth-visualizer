@@ -3,6 +3,8 @@ import { vi, describe, test, expect, beforeEach } from "vitest";
 
 import { IconButton } from "./index";
 
+import type { JSX } from "react";
+
 vi.mock("../Icon", () => ({
   Icon: ({ icon, color }: { icon: string; color?: string }) => (
     <div data-testid="mock-icon" data-icon={icon} data-color={color}>

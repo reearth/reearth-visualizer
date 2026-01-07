@@ -16,7 +16,6 @@ type Loaders struct {
 	usecases  interfaces.Container
 	Asset     *AssetLoader
 	Plugin    *PluginLoader
-	Policy    *PolicyLoader
 	Project   *ProjectLoader
 	Property  *PropertyLoader
 	Scene     *SceneLoader
@@ -28,7 +27,6 @@ type Loaders struct {
 type DataLoaders struct {
 	Asset           AssetDataLoader
 	Plugin          PluginDataLoader
-	Policy          PolicyDataLoader
 	Project         ProjectDataLoader
 	ProjectMetadata ProjectMetadataLoader
 	Property        PropertyDataLoader
@@ -47,7 +45,6 @@ func NewLoaders(usecases *interfaces.Container) *Loaders {
 		usecases:  *usecases,
 		Asset:     NewAssetLoader(usecases.Asset),
 		Plugin:    NewPluginLoader(usecases.Plugin),
-		Policy:    NewPolicyLoader(usecases.Policy),
 		Project:   NewProjectLoader(usecases.Project),
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),

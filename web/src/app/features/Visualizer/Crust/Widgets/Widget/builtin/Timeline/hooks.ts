@@ -1,255 +1,275 @@
-import type { TimeEventHandler } from "@reearth/app/features/Visualizer/Crust/Widgets/Widget/builtin/Timeline/UI";
+import { TimelineCommitter } from "@reearth/core";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
 import {
-  TickEvent,
-  TickEventCallback,
-  TimelineManagerRef
-} from "@reearth/core";
-import { useState, useCallback, useEffect, useRef } from "react";
+  TIMELINE_COMMITER,
+  TIMELINE_DEFAULT_TIMEZONE_OFFSET,
+  TIMELINE_PLAY_SPEED_OPTIONS
+} from "./constants";
+import useChannels from "./useChannels";
+import useIndicator from "./useIndicator";
+import usePanel from "./usePanel";
 
-import type { Widget } from "../../types";
+import { TimelineProps } from ".";
 
-const MAX_RANGE = 86400000; // a day
-const getOrNewDate = (d?: Date) => d ?? new Date();
-const makeRange = (startTime?: number, stopTime?: number) => {
-  // To avoid out of range error in Cesium, we need to turn back a hour.
-  const now = Date.now() - 3600000;
-  return {
-    start: startTime || now - MAX_RANGE,
-    end: stopTime || now
-  };
-};
+export default ({ widget, context }: TimelineProps) => {
+  const { channels, toggleChannelVisibility } = useChannels({ widget });
 
-const DEFAULT_SPEED = 1;
-
-export const useTimeline = ({
-  widget,
-  timelineManagerRef,
-  isMobile,
-  onPlay,
-  onPause,
-  onTimeChange,
-  onSpeedChange,
-  onTick,
-  removeTickEventListener,
-  onExtend
-}: {
-  widget: Widget;
-  timelineManagerRef?: TimelineManagerRef;
-  isMobile?: boolean;
-  onPlay?: () => void;
-  onPause?: () => void;
-  onSpeedChange?: (speed: number) => void;
-  onTimeChange?: (time: Date) => void;
-  onTick?: TickEvent;
-  removeTickEventListener?: TickEvent;
-  onExtend?: (id: string, extended: boolean | undefined) => void;
-}) => {
-  const widgetId = widget.id;
-  const [range, setRange] = useState(() =>
-    makeRange(
-      timelineManagerRef?.current?.timeline?.start?.getTime(),
-      timelineManagerRef?.current?.timeline?.stop?.getTime()
-    )
-  );
-  const [isOpened, setIsOpened] = useState(true);
-  const [currentTime, setCurrentTime] = useState(() =>
-    getOrNewDate(timelineManagerRef?.current?.timeline?.current).getTime()
-  );
-  const isClockInitialized = useRef(false);
-  const clockStartTime =
-    timelineManagerRef?.current?.timeline?.start?.getTime();
-  const clockStopTime = timelineManagerRef?.current?.timeline?.stop?.getTime();
-  const clockSpeed =
-    timelineManagerRef?.current?.options?.multiplier || DEFAULT_SPEED;
-
-  const [speed, setSpeed] = useState(clockSpeed);
-
-  const handleOnOpen = useCallback(() => {
-    onExtend?.(widgetId, undefined);
-    setIsOpened(true);
-  }, [widgetId, onExtend]);
-
-  const handleOnClose = useCallback(() => {
-    onExtend?.(widgetId, false);
-    setIsOpened(false);
-  }, [widgetId, onExtend]);
-
-  const lastTime = useRef<number>();
-  const switchCurrentTimeToStart = useCallback(
-    (t: number, isRangeChanged: boolean) => {
-      const cur = isRangeChanged
-        ? t
-        : t > range.end
-          ? range.start
-          : t < range.start
-            ? range.end
-            : t;
-
-      if (lastTime.current !== cur) {
-        lastTime.current = cur;
-        onTimeChange?.(new Date(cur));
-      }
-      return cur;
-    },
-    [range, onTimeChange]
-  );
-
-  const handleTimeEvent: TimeEventHandler = useCallback(
-    (currentTime) => {
-      const t = new Date(currentTime);
-      onTimeChange?.(t);
-      setCurrentTime(currentTime);
-    },
-    [onTimeChange]
-  );
-
-  const handleOnPlay = useCallback(
-    (playing: boolean) => {
-      // Stop cesium animation
-      if (playing) {
-        onPlay?.();
-      } else {
-        onPause?.();
-      }
-      onSpeedChange?.(Math.abs(speed));
-    },
-    [onPause, onPlay, onSpeedChange, speed]
-  );
-
-  const handleOnPlayReversed = useCallback(
-    (playing: boolean) => {
-      // Stop cesium animation
-      if (playing) {
-        onPlay?.();
-      } else {
-        onPause?.();
-      }
-      onSpeedChange?.(Math.abs(speed) * -1);
-    },
-    [onPause, onPlay, onSpeedChange, speed]
-  );
-
-  const handleOnSpeedChange = useCallback(
-    (speed: number) => {
-      setSpeed(speed);
-
-      const absSpeed = Math.abs(speed);
-      // Maybe we need to throttle changing speed.
-      onSpeedChange?.(
-        (timelineManagerRef?.current?.options?.multiplier ?? 1) > 0
-          ? absSpeed
-          : absSpeed * -1
-      );
-    },
-    [onSpeedChange, timelineManagerRef]
-  );
-
-  // Initialize clock value
-  useEffect(() => {
-    if (!isClockInitialized.current) {
-      isClockInitialized.current = true;
-      queueMicrotask(() => {
-        onSpeedChange?.(1);
-      });
-    }
-  }, [onSpeedChange, onTick]);
-
-  const handleRange = useCallback(
-    (start: number | undefined, stop: number | undefined) => {
-      setRange((prev) => {
-        const next = makeRange(start, stop);
-        if (prev.start !== next.start || prev.end !== next.end) {
-          return next;
-        }
-        return prev;
-      });
-    },
-    []
-  );
-
-  const overriddenStart =
-    timelineManagerRef?.current?.computedTimeline?.start?.getTime();
-  const overriddenStop =
-    timelineManagerRef?.current?.computedTimeline?.stop?.getTime();
-
-  // Sync cesium clock.
-  useEffect(() => {
-    handleRange(
-      overriddenStart ?? clockStartTime,
-      overriddenStop ?? clockStopTime
+  const displayTimezoneOffset = useMemo(() => {
+    return (
+      widget.property?.general?.displayTimezone ??
+      TIMELINE_DEFAULT_TIMEZONE_OFFSET
     );
-    setSpeed(Math.abs(clockSpeed));
-  }, [
-    clockStartTime,
-    clockStopTime,
-    clockSpeed,
-    overriddenStart,
-    overriddenStop,
-    handleRange
-  ]);
+  }, [widget.property?.general?.displayTimezone]);
 
-  useEffect(() => {
-    const h: TickEventCallback = (d, c) => {
-      const isDifferentRange =
-        range.start !== c.start.getTime() || range.end !== c.stop.getTime();
-      if (isDifferentRange) {
-        handleRange(c.start.getTime(), c.stop.getTime());
-      }
-      setCurrentTime(switchCurrentTimeToStart(d.getTime(), isDifferentRange));
-    };
-    onTick?.(h);
-    return () => {
-      removeTickEventListener?.(h);
-    };
-  }, [
-    onTick,
-    removeTickEventListener,
-    switchCurrentTimeToStart,
-    handleRange,
-    range.start,
-    range.end
-  ]);
+  const timelineManagerRef = context?.timelineManagerRef;
 
-  const onTimeChangeRef = useRef<typeof onTimeChange>();
-
-  useEffect(() => {
-    onTimeChangeRef.current = onTimeChange;
-  }, [onTimeChange]);
-
-  const overriddenCurrentTime =
-    timelineManagerRef?.current?.computedTimeline?.current?.getTime();
-  useEffect(() => {
-    if (overriddenCurrentTime) {
-      const t = Math.max(
-        Math.min(range.end, overriddenCurrentTime),
-        range.start
-      );
-      setCurrentTime(t);
-      // onTimeChangeRef.current?.(new Date(t));
+  const [currentTime, setCurrentTime] = useState<number>(0);
+  const { startTime, endTime } = useMemo(() => {
+    const validAndVisibleChannels = channels?.filter(
+      (channel) => channel.valid && !channel.hidden
+    );
+    if (!validAndVisibleChannels || validAndVisibleChannels.length === 0) {
+      return {
+        startTime: new Date().getTime(),
+        endTime: new Date().getTime() + 86400000
+      };
     }
-  }, [overriddenCurrentTime, range]);
 
-  useEffect(() => {
-    if (isMobile) {
-      onExtend?.(widgetId, true);
+    const start = Math.min(
+      ...validAndVisibleChannels.map((channel) =>
+        new Date(channel.startTime).getTime()
+      )
+    );
+    const end = Math.max(
+      ...validAndVisibleChannels.map((channel) =>
+        new Date(channel.endTime).getTime()
+      )
+    );
+    return { startTime: start, endTime: end };
+  }, [channels]);
+
+  const { indicatorRef, updateIndicatorPosition } = useIndicator({
+    startTime,
+    endTime
+  });
+
+  const updateTimeline = useCallback(
+    (newTime: number) => {
+      const clampedTime = Math.max(startTime, Math.min(newTime, endTime));
+
+      timelineManagerRef?.current?.commit({
+        cmd: "SET_TIME",
+        payload: {
+          current: new Date(clampedTime),
+          start: new Date(startTime),
+          stop: new Date(endTime)
+        },
+        committer: TIMELINE_COMMITER
+      });
+
+      setCurrentTime(clampedTime);
+    },
+    [startTime, endTime, timelineManagerRef]
+  );
+
+  const {
+    timelinePanelRef,
+    isDragging,
+    panelWidthStyle,
+    handleTimelinePanelMouseDown,
+    handleTimelinePanelMouseMove,
+    handleTimelinePanelMouseUp
+  } = usePanel({
+    indicatorRef,
+    updateIndicatorPosition,
+    startTime,
+    endTime,
+    currentTime,
+    setCurrentTime,
+    updateTimeline
+  });
+
+  const skipBack = useCallback(() => {
+    updateTimeline(startTime);
+  }, [startTime, updateTimeline]);
+
+  const skipForward = useCallback(() => {
+    updateTimeline(endTime);
+  }, [endTime, updateTimeline]);
+
+  const [isLooping, setIsLooping] = useState(false);
+
+  const setLoop = useCallback(() => {
+    setIsLooping(true);
+    timelineManagerRef?.current?.commit({
+      cmd: "SET_OPTIONS",
+      payload: {
+        rangeType: "bounced"
+      },
+      committer: TIMELINE_COMMITER
+    });
+  }, [timelineManagerRef]);
+
+  const setNoLoop = useCallback(() => {
+    setIsLooping(false);
+    timelineManagerRef?.current?.commit({
+      cmd: "SET_OPTIONS",
+      payload: {
+        rangeType: "clamped"
+      },
+      committer: TIMELINE_COMMITER
+    });
+  }, [timelineManagerRef]);
+
+  const applyLoop = useCallback(() => {
+    if (isLooping) {
+      setLoop();
     } else {
-      onExtend?.(widgetId, undefined);
+      setNoLoop();
     }
-  }, [widgetId, onExtend, isMobile]);
+  }, [isLooping, setLoop, setNoLoop]);
+
+  const toggleLoop = useCallback(() => {
+    if (!isLooping) {
+      setLoop();
+    } else {
+      setNoLoop();
+    }
+  }, [isLooping, setLoop, setNoLoop]);
+
+  const [speed, setSpeed] = useState(TIMELINE_PLAY_SPEED_OPTIONS[0].seconds);
+
+  const changeSpeed = useCallback(
+    (speed: number) => {
+      timelineManagerRef?.current?.commit({
+        cmd: "SET_OPTIONS",
+        payload: {
+          multiplier: speed,
+          stepType: "rate"
+        },
+        committer: TIMELINE_COMMITER
+      });
+    },
+    [timelineManagerRef]
+  );
+
+  const handleSpeedChange = useCallback(
+    (speed: string) => {
+      changeSpeed(0);
+      setTimeout(() => {
+        changeSpeed(Number(speed));
+        setSpeed(speed);
+      }, 0);
+    },
+    [changeSpeed]
+  );
+
+  const applySpeed = useCallback(() => {
+    changeSpeed(Number(speed));
+  }, [changeSpeed, speed]);
+
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const play = useCallback(() => {
+    applyLoop();
+    applySpeed();
+    setIsPlaying(true);
+    timelineManagerRef?.current?.commit({
+      cmd: "PLAY",
+      committer: TIMELINE_COMMITER
+    });
+  }, [timelineManagerRef, applyLoop, applySpeed]);
+
+  const pause = useCallback(() => {
+    setIsPlaying(false);
+    timelineManagerRef?.current?.commit({
+      cmd: "PAUSE",
+      committer: TIMELINE_COMMITER
+    });
+  }, [timelineManagerRef]);
+
+  const togglePlay = useCallback(() => {
+    if (!isPlaying) {
+      if (currentTime < startTime || currentTime > endTime) {
+        updateTimeline(startTime);
+      }
+      play();
+    } else {
+      pause();
+    }
+  }, [isPlaying, play, pause, currentTime, startTime, endTime, updateTimeline]);
+
+  const currentTimeRef = useRef<number>(currentTime);
+  currentTimeRef.current = currentTime;
+  useEffect(() => {
+    if (currentTimeRef.current < startTime) {
+      pause();
+      updateTimeline(startTime);
+    } else if (currentTimeRef.current > endTime) {
+      pause();
+      updateTimeline(endTime);
+    }
+  }, [startTime, endTime, updateTimeline, pause]);
+
+  // Play finish check
+  useEffect(() => {
+    if (currentTime >= endTime && isPlaying && !isLooping) {
+      pause();
+    }
+  }, [currentTime, endTime, isPlaying, isLooping, pause]);
+
+  // Listen to timeline tick
+  const handleTick = useCallback((currentTime: Date) => {
+    const time = currentTime.getTime();
+    setCurrentTime(time);
+  }, []);
+
+  const isPlayingRef = useRef(isPlaying);
+  isPlayingRef.current = isPlaying;
+  const handleTimelineCommit = useCallback((commiter: TimelineCommitter) => {
+    if (
+      commiter?.source !== TIMELINE_COMMITER.source &&
+      commiter?.id !== TIMELINE_COMMITER.id &&
+      isPlayingRef.current
+    ) {
+      setIsPlaying(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const timelineManager = timelineManagerRef?.current;
+    timelineManager?.onTick(handleTick);
+    timelineManager?.onCommit(handleTimelineCommit);
+    return () => {
+      timelineManager?.offTick(handleTick);
+      timelineManager?.offCommit(handleTimelineCommit);
+    };
+  }, [handleTick, timelineManagerRef, handleTimelineCommit]);
+
+  updateIndicatorPosition(currentTime);
 
   return {
-    speed,
-    range,
-    isOpened,
+    channels,
+    toggleChannelVisibility,
+    startTime,
+    endTime,
     currentTime,
-    events: {
-      onOpen: handleOnOpen,
-      onClose: handleOnClose,
-      onClick: handleTimeEvent,
-      onDrag: handleTimeEvent,
-      onPlay: handleOnPlay,
-      onPlayReversed: handleOnPlayReversed,
-      onSpeedChange: handleOnSpeedChange
-    }
+    displayTimezoneOffset,
+    timelinePanelRef,
+    indicatorRef,
+    isDragging,
+    panelWidthStyle,
+    handleTimelinePanelMouseDown,
+    handleTimelinePanelMouseMove,
+    handleTimelinePanelMouseUp,
+    isPlaying,
+    togglePlay,
+    skipBack,
+    skipForward,
+    isLooping,
+    toggleLoop,
+    speed,
+    handleSpeedChange
   };
 };

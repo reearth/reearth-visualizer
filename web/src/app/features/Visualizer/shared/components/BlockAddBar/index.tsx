@@ -63,8 +63,8 @@ const BlockAddBar: FC<Props> = ({
         id={id}
         height={showAreaHeight}
         persist={persist}
-        onClick={(e) => e.stopPropagation()}
-        onMouseOver={(e) => e.stopPropagation()}
+        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+        onMouseOver={(e: React.MouseEvent) => e.stopPropagation()}
       >
         <PopupMenu
           placement="bottom-start"

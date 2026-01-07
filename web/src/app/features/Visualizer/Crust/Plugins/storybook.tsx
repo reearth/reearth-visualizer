@@ -4,9 +4,11 @@ import type { ReactNode } from "react";
 import { PluginProvider } from "./context";
 import type { Context } from "./types";
 
-// Mock function for actions  
+// Mock function for actions
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fn = () => (..._args: any[]) => {};
+const fn =
+  () =>
+  (..._args: any[]) => {};
 
 const layers: Layer[] = [
   {
@@ -116,6 +118,7 @@ export const context: Context = {
         isBuilt: false
       },
       capture: act("captureScreen"),
+      open: act("open"),
       tools: {
         getLocationFromScreenCoordinate: act("getLocationFromScreenCoordinate"),
         getScreenCoordinateFromPosition: act("getScreenCoordinateFromPosition"),

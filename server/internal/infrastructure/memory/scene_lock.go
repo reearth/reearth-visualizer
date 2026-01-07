@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearthx/idx"
 )
 
 type sceneLock struct {
@@ -19,7 +20,7 @@ func NewSceneLock() repo.SceneLock {
 
 func (r *sceneLock) GetLock(ctx context.Context, sceneID id.SceneID) (scene.LockMode, error) {
 	if sceneID.IsNil() {
-		return "", id.ErrInvalidID
+		return "", idx.ErrInvalidID
 	}
 	if v, ok := r.lock.Load(sceneID); ok {
 		if v2, ok2 := v.(scene.LockMode); ok2 {
@@ -33,7 +34,7 @@ func (r *sceneLock) GetAllLock(ctx context.Context, sceneID id.SceneIDList) ([]s
 	res := make([]scene.LockMode, 0, len(sceneID))
 	for _, si := range sceneID {
 		if si.IsNil() {
-			return nil, id.ErrInvalidID
+			return nil, idx.ErrInvalidID
 		}
 		if v, ok := r.lock.Load(si); ok {
 			if v2, ok2 := v.(scene.LockMode); ok2 {

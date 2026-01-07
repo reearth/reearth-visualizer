@@ -9,7 +9,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/verror"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/authserver"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -20,7 +19,6 @@ var (
 
 type Container struct {
 	Asset           Asset
-	AuthRequest     authserver.RequestRepo
 	Config          Config
 	NLSLayer        NLSLayer
 	Style           Style
@@ -34,7 +32,6 @@ type Container struct {
 	SceneLock       SceneLock
 	Workspace       accountrepo.Workspace
 	User            accountrepo.User
-	Policy          Policy
 	Storytelling    Storytelling
 	Transaction     usecasex.Transaction
 	Extensions      []id.PluginID
@@ -59,13 +56,11 @@ func (c *Container) Filtered(workspace WorkspaceFilter, scene SceneFilter) *Cont
 	}
 	return &Container{
 		Asset:           c.Asset.Filtered(workspace),
-		AuthRequest:     c.AuthRequest,
 		Config:          c.Config,
 		NLSLayer:        c.NLSLayer.Filtered(scene),
 		Style:           c.Style.Filtered(scene),
 		Lock:            c.Lock,
 		Plugin:          c.Plugin.Filtered(scene),
-		Policy:          c.Policy,
 		Storytelling:    c.Storytelling.Filtered(scene),
 		Project:         c.Project.Filtered(workspace),
 		ProjectMetadata: c.ProjectMetadata.Filtered(workspace),

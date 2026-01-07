@@ -174,10 +174,7 @@ extensions:
               default: デフォルト
               default_label: ラベル付き地図
               default_road: 道路地図
-              stamen_watercolor: Stamen Watercolor
-              stamen_toner: Stamen Toner
               open_street_map: OpenStreetMap
-              esri_world_topo: ESRI Topography
               black_marble: Black Marble
               japan_gsi_standard: 地理院地図 標準地図
               url: URL
@@ -1116,15 +1113,28 @@ extensions:
     name: タイムライン
     description: 時系列データを表示するために、時刻を変更したり時間を再生したりすることができます。
     propertySchema:
-      default:
-        title: デフォルト
+      general:
+        title: 一般設定
         fields:
-          visible:
-            title: 表示
+          displayTimezone:
+            title: 表示タイムゾーン
+      timelineChannels:
+        title: タイムラインチャンネル
+        fields:
+          channelTitle:
+            title: チャンネル名
+            defaultValue: 新しいチャンネル
+          channelRange:
+            title: 表示範囲
+      appearance:
+        title: 外観
+        fields:
+          theme:
+            title: テーマ
             choices:
-              always: 常に
-              desktop: デスクトップのみのみ
-              mobile: モバイルのみ
+              light: 明るい
+              dark: 暗い
+              auto: 自動
   navigator:
     name: ナビゲーター
     description: ナビゲータを操作することで地球を様々な角度から見ることができます。
@@ -1439,6 +1449,7 @@ extensions:
             choices:
               light: 明るい
               dark: 暗い
+              auto: 自動
       languageSetting:
         title: 言語設定
         fields:

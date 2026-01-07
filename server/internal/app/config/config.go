@@ -49,7 +49,6 @@ type Config struct {
 	Marketplace            MarketplaceConfig `pp:",omitempty"`
 	AssetBaseURL           string            `default:"http://localhost:8080/assets"`
 	Origins                []string          `pp:",omitempty"`
-	Policy                 PolicyConfig      `pp:",omitempty"`
 	Web_Disabled           bool              `pp:",omitempty"`
 	Web_App_Disabled       bool              `pp:",omitempty"`
 	Web                    map[string]string `pp:",omitempty"`
@@ -68,7 +67,6 @@ type Config struct {
 	Auth          AuthConfigs   `pp:",omitempty"`
 	Auth0         Auth0Config   `pp:",omitempty"`
 	Cognito       CognitoConfig `pp:",omitempty"`
-	AuthSrv       AuthSrvConfig `pp:",omitempty"`
 	Auth_ISS      string        `pp:",omitempty"`
 	Auth_AUD      string        `pp:",omitempty"`
 	Auth_ALG      *string       `pp:",omitempty"`
@@ -158,20 +156,8 @@ func ReadConfig(debug bool) (*Config, error) {
 		c.Host_Web = addHTTPScheme(c.Host_Web)
 	}
 
-	if c.AuthSrv.Domain == "" {
-		c.AuthSrv.Domain = c.Host
-	} else {
-		c.AuthSrv.Domain = addHTTPScheme(c.AuthSrv.Domain)
-	}
-
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
-	}
-
-	if c.AuthSrv.UIDomain == "" {
-		c.AuthSrv.UIDomain = c.Host_Web
-	} else {
-		c.AuthSrv.UIDomain = addHTTPScheme(c.AuthSrv.UIDomain)
 	}
 
 	return &c, err
@@ -240,9 +226,6 @@ func (c *Config) Auths() (res AuthConfigs) {
 			JWKSURI:  c.Auth_JWKSURI,
 		})
 	}
-	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
-		res = append(res, *ac)
-	}
 	return append(res, c.Auth...)
 }
 
@@ -285,9 +268,6 @@ func (c *Config) AuthForWeb() *AuthConfig {
 			TTL:      c.Auth_TTL,
 			ClientID: c.Auth_ClientID,
 		}
-	}
-	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
-		return ac
 	}
 	return nil
 }

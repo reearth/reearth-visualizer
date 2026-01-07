@@ -33,7 +33,7 @@ export default function ({
   onRender,
   onResize
 }: {
-  mapRef?: RefObject<MapRef>;
+  mapRef?: RefObject<MapRef | null>;
   pluginId?: string;
   extensionId?: string;
   pluginBaseUrl?: string;

@@ -2,6 +2,123 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.7 - 2025-12-18
+
+### Web
+
+#### 🚀 Features
+
+- Add new plugin api to open url in new tab ([#1984](https://github.com/reearth/reearth-visualizer/pull/1984)) [`ad06b0`](https://github.com/reearth/reearth-visualizer/commit/ad06b0)
+
+### Server
+
+#### 🚀 Features
+
+- Bump up version to 1.0.0-beta.13.7 ([#1982](https://github.com/reearth/reearth-visualizer/pull/1982)) [`994483`](https://github.com/reearth/reearth-visualizer/commit/994483)
+
+#### 🔧 Bug Fixes
+
+- Allow public project access without workspace permissions for GetProjectByWorkspaceAliasAndProjectAlias ([#1985](https://github.com/reearth/reearth-visualizer/pull/1985)) [`f9d37b`](https://github.com/reearth/reearth-visualizer/commit/f9d37b)
+- Remove condition to check operator  ([#1983](https://github.com/reearth/reearth-visualizer/pull/1983)) [`b59546`](https://github.com/reearth/reearth-visualizer/commit/b59546)
+- Add GetProjectByWorkspaceAliasAndProjectAlias to read-only methods ([#1981](https://github.com/reearth/reearth-visualizer/pull/1981)) [`66dfe8`](https://github.com/reearth/reearth-visualizer/commit/66dfe8)
+
+## 1.0.0-beta.13.6 - 2025-12-17
+
+### Web
+
+#### 🚀 Features
+
+- New builtin timeline widget ([#1968](https://github.com/reearth/reearth-visualizer/pull/1968)) [`06a86d`](https://github.com/reearth/reearth-visualizer/commit/06a86d)
+- Add google search funtion to editor[VIZ-2352] ([#1965](https://github.com/reearth/reearth-visualizer/pull/1965)) [`14c71b`](https://github.com/reearth/reearth-visualizer/commit/14c71b)
+
+#### 🔧 Bug Fixes
+
+- Avoid members page crash when missing role ([#1978](https://github.com/reearth/reearth-visualizer/pull/1978)) [`5707b4`](https://github.com/reearth/reearth-visualizer/commit/5707b4)
+- Correct sketch tools panel style ([#1977](https://github.com/reearth/reearth-visualizer/pull/1977)) [`d47476`](https://github.com/reearth/reearth-visualizer/commit/d47476)
+
+#### ✨ Refactor
+
+- Debounce validation on new project alias ([#1975](https://github.com/reearth/reearth-visualizer/pull/1975)) [`f43a9a`](https://github.com/reearth/reearth-visualizer/commit/f43a9a)
+
+### Server
+
+#### 🚀 Features
+
+- Remove timeline ([#1976](https://github.com/reearth/reearth-visualizer/pull/1976)) [`3c9b70`](https://github.com/reearth/reearth-visualizer/commit/3c9b70)
+
+#### 🔧 Bug Fixes
+
+- Delete unused function and update patch start count ([#1974](https://github.com/reearth/reearth-visualizer/pull/1974)) [`451c18`](https://github.com/reearth/reearth-visualizer/commit/451c18)
+
+### Misc
+
+#### 🚀 Features
+
+- Bump up version to 1.0.0-beta.13.6 ([#1980](https://github.com/reearth/reearth-visualizer/pull/1980)) [`470f68`](https://github.com/reearth/reearth-visualizer/commit/470f68)
+
+### 
+
+#### 🚀 Features
+
+- Bump up version to 1.0.0-beta.13.6 ([#1980](https://github.com/reearth/reearth-visualizer/pull/1980)) [`470f68`](https://github.com/reearth/reearth-visualizer/commit/470f68)
+
+## 1.0.0-beta.13.5 - 2025-12-12
+
+### Server
+
+#### 🚀 Features
+
+- Add internal alias api ([#1970](https://github.com/reearth/reearth-visualizer/pull/1970)) [`8c2d88`](https://github.com/reearth/reearth-visualizer/commit/8c2d88)
+- Remove authserv ([#1966](https://github.com/reearth/reearth-visualizer/pull/1966)) [`8defb1`](https://github.com/reearth/reearth-visualizer/commit/8defb1)
+
+#### 🔧 Bug Fixes
+
+- Fix internal api for GetProjectByWorkspaceAliasAndProjectAlias ([#1972](https://github.com/reearth/reearth-visualizer/pull/1972)) [`2d6ee0`](https://github.com/reearth/reearth-visualizer/commit/2d6ee0)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.13.5 ([#1973](https://github.com/reearth/reearth-visualizer/pull/1973)) [`6d3106`](https://github.com/reearth/reearth-visualizer/commit/6d3106)
+
+## 1.0.0-beta.13.4 - 2025-12-10
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Wasm mime type error on dev server ([#1962](https://github.com/reearth/reearth-visualizer/pull/1962)) [`d40a6d`](https://github.com/reearth/reearth-visualizer/commit/d40a6d)
+- Delete unused query and properties ([#1957](https://github.com/reearth/reearth-visualizer/pull/1957)) [`157249`](https://github.com/reearth/reearth-visualizer/commit/157249)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.13.4 ([#1963](https://github.com/reearth/reearth-visualizer/pull/1963)) [`9ec7de`](https://github.com/reearth/reearth-visualizer/commit/9ec7de)
+- Upgrade web package[VIZ-2349] ([#1950](https://github.com/reearth/reearth-visualizer/pull/1950)) [`d870e7`](https://github.com/reearth/reearth-visualizer/commit/d870e7)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Fix go version to 1.25.5 on Dockerfile ([#1964](https://github.com/reearth/reearth-visualizer/pull/1964)) [`3d9255`](https://github.com/reearth/reearth-visualizer/commit/3d9255)
+- Delete unused tiletype from manifest ([#1956](https://github.com/reearth/reearth-visualizer/pull/1956)) [`e3e102`](https://github.com/reearth/reearth-visualizer/commit/e3e102)
+
+#### Miscellaneous Tasks
+
+- Remove database policy ([#1954](https://github.com/reearth/reearth-visualizer/pull/1954)) [`466129`](https://github.com/reearth/reearth-visualizer/commit/466129)
+- Reference ErrInvalidID directly ([#1953](https://github.com/reearth/reearth-visualizer/pull/1953)) [`96d0c9`](https://github.com/reearth/reearth-visualizer/commit/96d0c9)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update dependency golang to v1.25.5 ([#1958](https://github.com/reearth/reearth-visualizer/pull/1958)) [`7a88ef`](https://github.com/reearth/reearth-visualizer/commit/7a88ef)
+- Update go dependencies ([#1841](https://github.com/reearth/reearth-visualizer/pull/1841)) [`edd817`](https://github.com/reearth/reearth-visualizer/commit/edd817)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update dependency golang to v1.25.5 ([#1958](https://github.com/reearth/reearth-visualizer/pull/1958)) [`7a88ef`](https://github.com/reearth/reearth-visualizer/commit/7a88ef)
+- Update go dependencies ([#1841](https://github.com/reearth/reearth-visualizer/pull/1841)) [`edd817`](https://github.com/reearth/reearth-visualizer/commit/edd817)
+
 ## 1.0.0-beta.13.3 - 2025-12-03
 
 ### Web

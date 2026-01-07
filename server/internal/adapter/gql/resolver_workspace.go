@@ -17,13 +17,6 @@ func (r *Resolver) WorkspaceMember() WorkspaceMemberResolver {
 
 type workspaceResolver struct{ *Resolver }
 
-func (r *workspaceResolver) Policy(ctx context.Context, obj *gqlmodel.Workspace) (*gqlmodel.Policy, error) {
-	if obj.PolicyID == nil {
-		return nil, nil
-	}
-	return single(loaders(ctx).Policy.Fetch(ctx, []gqlmodel.ID{*obj.PolicyID}))
-}
-
 func (r *workspaceResolver) Assets(ctx context.Context, obj *gqlmodel.Workspace, projectID *gqlmodel.ID, first *int, last *int, after *usecasex.Cursor, before *usecasex.Cursor) (*gqlmodel.AssetConnection, error) {
 	return loaders(ctx).Asset.FindByWorkspace(ctx, obj.ID, projectID, nil, nil, &gqlmodel.Pagination{
 		First:  first,

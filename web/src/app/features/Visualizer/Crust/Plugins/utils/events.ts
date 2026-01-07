@@ -6,11 +6,11 @@ import { getFunctionFingerprintString } from "./fingerprint";
 
 export type EventCallback<T extends any[] = any[]> = (...args: T) => void;
 export type EventEmitter<
-  E extends { [P in string]: any[] } = { [P in string]: any[] }
+  E extends Record<string, any[]> = Record<string, any[]>
 > = <T extends keyof E>(type: T, ...args: E[T]) => void;
 
 export type Events<
-  E extends { [P in string]: any[] } = { [P in string]: any[] }
+  E extends Record<string, any[]> = Record<string, any[]>
 > = {
   readonly on: <T extends keyof E>(
     type: T,
@@ -27,7 +27,7 @@ export type Events<
 };
 
 export function events<
-  E extends { [P in string]: any[] } = { [P in string]: any[] }
+  E extends Record<string, any[]> = Record<string, any[]>
 >(): [Events<E>, EventEmitter<E>] {
   const e = new EventTarget();
   const callbacks = new Map<
@@ -167,7 +167,7 @@ export function mergeEvents<
   };
 }
 
-export function useEmit<T extends { [K in string]: any[] }>(
+export function useEmit<T extends Record<string, any[]>>(
   values: { [K in keyof T]?: T[K] | undefined },
   emit: (<K extends keyof T>(key: K, ...args: T[K]) => void) | undefined
 ) {

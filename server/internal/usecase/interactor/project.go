@@ -54,7 +54,6 @@ type Project struct {
 	sceneRepo           repo.Scene
 	propertyRepo        repo.Property
 	propertySchemaRepo  repo.PropertySchema
-	policyRepo          repo.Policy
 	nlsLayerRepo        repo.NLSLayer
 	layerStyles         repo.Style
 	pluginRepo          repo.Plugin
@@ -74,7 +73,6 @@ func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 		sceneRepo:           r.Scene,
 		propertyRepo:        r.Property,
 		transaction:         r.Transaction,
-		policyRepo:          r.Policy,
 		nlsLayerRepo:        r.NLSLayer,
 		layerStyles:         r.Style,
 		pluginRepo:          r.Plugin,
@@ -211,14 +209,36 @@ func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator 
 	return pj, nil
 }
 
-func (i *Project) FindByProjectAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
-	pj, err := i.projectRepo.FindByProjectAlias(ctx, alias)
+func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
+	}
+
+	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
+}
+
+func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
 	if err != nil {
 		return nil, err
 	}
 
+	// Check access permissions based on project visibility
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		// Private projects require authenticated user with workspace access
+		if operator == nil {
+			return nil, errors.New("project is private")
+		}
+		if !operator.IsReadableWorkspace(workspaceID) {
+			return nil, interfaces.ErrOperationDenied
+		}
+	}
+	// Public projects can be accessed by anyone (authenticated or not)
+
 	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
 	if err != nil {
+		log.Errorf("project metadata not found for project ID %s: %v", pj.ID(), err)
 		return nil, err
 	}
 
@@ -872,44 +892,7 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	return prj, nil
 }
 
-func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) error {
-
-	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
-	if err != nil {
-		return err
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return err
-		}
-
-		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return err
-		}
-
-		// newrly published
-		if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-			projectCount += 1
-		}
-
-		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s *scene.Scene, op *usecase.Operator) error {
-
-	// enforce policy
-	if err := i.checkPublishPolicy(ctx, p, op); err != nil {
-		return err
-	}
 
 	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
 		return err

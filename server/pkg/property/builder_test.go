@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -154,7 +155,7 @@ func TestBuilder_Build(t *testing.T) {
 			Args: args{
 				ID: id.PropertyID{},
 			},
-			Err: id.ErrInvalidID,
+			Err: idx.ErrInvalidID,
 		},
 		{
 			Name: "fail invalid scene",
