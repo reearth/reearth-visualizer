@@ -215,6 +215,12 @@ init-gcs:
 		-d '{"name": "test-bucket"}' \
 		http://localhost:4443/storage/v1/b | head -n 1
 
+mockuser:
+	curl -s -D - -o /dev/null \
+		-H 'Content-Type: application/json' \
+		-d '{"email": "demo@example.com", "username": "Demo user"}' \
+		http://localhost:8080/api/signup | head -n 1
+
 destroy:
 	@echo "WARNING: This will remove ALL Docker resources!"
 	@echo "This includes containers, images, volumes, and networks."
@@ -240,4 +246,4 @@ destroy:
 
 .PHONY: default help lint test test-docker e2e e2e-docker e2e-test build run run-internal down \
         migrate migrate-with-key generate gql grpc grpc-doc schematyper deep-copy error-msg dev-install \
-        mockuser-accounts init init-gcs destroy
+        mockuser-accounts mockuser init init-gcs destroy
