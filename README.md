@@ -46,10 +46,34 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
 ### 🖥️ macOS / Linux
 
 1. Navigate to the `server` directory and start the backend server.  
-   This command will automatically start the database and mock GCS storage:
+   This command will automatically start the database and mock GCS storage service:
 
    ```bash
-   cd server
+   git clone https://github.com/reearth/reearth-visualizer.git
+   cd reearth-visualizer/server
+   make run
+   ```
+
+   Next, start the authentication service:
+
+   ```bash
+   git clone https://github.com/reearth/reearth-accounts.git
+   cd reearth-accounts/server
+   ```
+
+   reearth-accounts supports two authentication modes: Identity Provider (IDP) or mock users.
+   To use mock users, modify `server/.env.docker`:
+
+   ```diff
+   # Mock auth for demo
+   -REEARTH_MOCK_AUTH=false
+   +REEARTH_MOCK_AUTH=true
+   ```
+
+   Run migrations to add required master data (such as roles), then start the service:
+
+   ```bash
+   make run-migration
    make run
    ```
 
@@ -58,7 +82,8 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    This step is only required for the first-time setup:
 
    ```bash
-   make init
+   make init-gcs
+   make mockuser
    ```
 
 ### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
@@ -197,6 +222,5 @@ Re:Earth core committers: [community@reearth.io](mailto:community@reearth.io)
 ## License
 
 Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more information.
-
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer?ref=badge_large)
