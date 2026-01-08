@@ -174,11 +174,14 @@ Visualizer is compatible with the following storage interfaces:
 
 ### Storage Configuration
 
-To use these storage interfaces, you need to set the following environment variables in order of priority: 1. `REEARTH_GCS_BUCKETNAME`: Set this to use Google Cloud Storage. 2. `REEARTH_S3_BUCKET_NAME`: Set this to use Amazon S3.
+To use these storage interfaces, you need to set the following environment variables in order of priority:
+
+1. **`REEARTH_GCS_BUCKETNAME`**: Set this to use Google Cloud Storage
+2. **`REEARTH_S3_BUCKET_NAME`**: Set this to use Amazon S3
 
 If neither `REEARTH_GCS_BUCKETNAME` nor `REEARTH_S3_BUCKET_NAME` is configured, the local file system will be used as the default storage interface.
 
-Additionally, `REEARTH_ASSETBASEURL` is a required environment variable that is used across all storage types. This should be set to the base URL for accessing your stored assets.
+Additionally, **`REEARTH_ASSETBASEURL`** is a required environment variable that is used across all storage types. This should be set to the base URL for accessing your stored assets.
 
 ### Testing GCS Locally
 
