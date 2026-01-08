@@ -3,7 +3,7 @@ import {
   LayerNameUpdateProps
 } from "@reearth/app/features/Editor/hooks/useLayers";
 import { Collapse } from "@reearth/app/lib/reearth-ui";
-import { InputField } from "@reearth/app/ui/fields";
+import { InputField, SwitchField } from "@reearth/app/ui/fields";
 import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
@@ -85,6 +85,24 @@ const DataSource: FC<Props> = ({
     [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
   );
 
+  const handleCzmlUpdateClockOnLoadChange = useCallback(
+    (updateClockOnLoad: boolean) => {
+      onLayerConfigUpdate?.({
+        layerId: selectedLayer.id,
+        config: {
+          data: {
+            ...selectedLayer.config.data,
+            time: {
+              ...selectedLayer.config.data?.time,
+              updateClockOnLoad
+            }
+          }
+        }
+      });
+    },
+    [onLayerConfigUpdate, selectedLayer.config, selectedLayer.id]
+  );
+
   return (
     <Wrapper data-testid="data-source-wrapper">
       <Collapse
@@ -116,6 +134,17 @@ const DataSource: FC<Props> = ({
               value={localUrl}
               onSubmit={handleLayerUrlUpdate}
               data-testid="data-source-resource-url"
+            />
+          )}
+          {selectedLayer.config?.data?.type === "czml" && (
+            <SwitchField
+              title={t("Auto Update Time")}
+              value={selectedLayer.config?.data?.time?.updateClockOnLoad}
+              onChange={(v) => handleCzmlUpdateClockOnLoadChange(v)}
+              data-testid="data-source-czml-auto-update-time-switcher"
+              description={t(
+                "When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer."
+              )}
             />
           )}
         </InputWrapper>

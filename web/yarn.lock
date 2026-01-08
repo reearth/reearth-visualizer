@@ -1655,14 +1655,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.26.10, @babel/runtime@npm:^7.9.2":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.1, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.26.10":
   version: 7.27.6
   resolution: "@babel/runtime@npm:7.27.6"
   checksum: 10c0/89726be83f356f511dcdb74d3ea4d873a5f0cf0017d4530cb53aa27380c01ca102d573eff8b8b77815e624b1f8c24e7f0311834ad4fb632c90a770fda00bd4c8
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.11.1, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.25.0, @babel/runtime@npm:^7.26.7, @babel/runtime@npm:^7.27.6, @babel/runtime@npm:^7.28.4":
+"@babel/runtime@npm:^7.11.1, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.25.0, @babel/runtime@npm:^7.26.7, @babel/runtime@npm:^7.27.6, @babel/runtime@npm:^7.28.4, @babel/runtime@npm:^7.9.2":
   version: 7.28.4
   resolution: "@babel/runtime@npm:7.28.4"
   checksum: 10c0/792ce7af9750fb9b93879cc9d1db175701c4689da890e6ced242ea0207c9da411ccf16dc04e689cc01158b28d7898c40d75598f4559109f761c12ce01e959bf7
@@ -5683,9 +5683,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reearth/core@npm:0.0.7-alpha.51":
-  version: 0.0.7-alpha.51
-  resolution: "@reearth/core@npm:0.0.7-alpha.51"
+"@reearth/core@npm:0.0.7-alpha.53":
+  version: 0.0.7-alpha.53
+  resolution: "@reearth/core@npm:0.0.7-alpha.53"
   dependencies:
     "@radix-ui/react-checkbox": "npm:1.3.3"
     "@radix-ui/react-dialog": "npm:1.1.15"
@@ -5740,7 +5740,7 @@ __metadata:
     cesium: 1.118.x
     react: ^19.0.0
     react-dom: ^19.0.0
-  checksum: 10c0/ffc522b6269f488790ff7a05977b2c2fc75c5defc3b0ca654bb9a2a668c15ff29bd8bbeb26e6719027fb33e111db568c48a54d45958b83ba47d5c7f199f46ee7
+  checksum: 10c0/64c0a5d0d63b85d37fdfa4725373ac8a9defad6839f74bea71566f1dca4eeadbfb375b921de4b1a7a28caf4ff828cc9efe63e2c51605c36962761d7559b5e90d
   languageName: node
   linkType: hard
 
@@ -5792,7 +5792,7 @@ __metadata:
     "@popperjs/core": "npm:2.11.8"
     "@radix-ui/react-select": "npm:2.2.6"
     "@radix-ui/react-slot": "npm:1.2.4"
-    "@reearth/core": "npm:0.0.7-alpha.51"
+    "@reearth/core": "npm:0.0.7-alpha.53"
     "@rollup/plugin-yaml": "npm:4.1.2"
     "@rot1024/use-transition": "npm:1.0.0"
     "@sentry/browser": "npm:7.77.0"
@@ -20119,9 +20119,9 @@ __metadata:
   linkType: hard
 
 "splaytree@npm:^3.1.0":
-  version: 3.1.2
-  resolution: "splaytree@npm:3.1.2"
-  checksum: 10c0/ba82da4e4185d692eb2b1c9e000a9dde6cd713ec447f5c90ec97264ce9de19ba1f5f90fbef8a9ffa37bbbe2e9f4b031c6ee45d4119acbf1cddb93112ec5ecf86
+  version: 3.2.3
+  resolution: "splaytree@npm:3.2.3"
+  checksum: 10c0/b37e0dc4555b018142e0142e5cf576fd2eec7ababb5149947b731f7137728fe799da2fad60b110709aec44f3a7986451d9a9e451c9559601b8ce1d1195dace1a
   languageName: node
   linkType: hard
 

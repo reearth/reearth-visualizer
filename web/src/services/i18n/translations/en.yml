@@ -146,6 +146,8 @@ Support for the CZML format is currently experimental and remains somewhat unsta
 Input Text: ''
 Value: ''
 Input data here: ''
+Auto Update Time: ''
+'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': ''
 Invalid GeoJSON format: ''
 Please enter valid GeoJSON: ''
 Prioritize Performance: ''
