@@ -4,181 +4,141 @@
 
 A back-end API server application for Re:Earth
 
-## 🛠️ Useful Development Commands
+## Quick Start
 
-### Starting the Development Server
+### Prerequisites
 
-There are two ways to start the development server depending on your workflow:
+- Docker and Docker Compose
+- Go 1.23 or later (for local development)
 
-#### Default: Using Docker Hub image for accounts API
+### Running the Server
 
-Starts all services including the accounts API from Docker Hub (`reearth/reearth-accounts-api`):
+**macOS / Linux:**
 
 ```bash
+# Start the development server with Docker
 make run
-```
 
-This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+# Initialize GCS bucket
+make init-gcs
 
-#### Local accounts development: Using local reearth-accounts repo
-
-If you are developing `reearth-accounts` locally and want to run it from source:
-
-**Terminal 1** — Start visualizer (without accounts API):
-
-```bash
-# In ~/reearth-visualizer/server
-make run-local
-```
-
-This starts: **visualizer** + **MongoDB** + **GCS** (no accounts API)
-
-**Terminal 2** — Start accounts API from local repo:
-
-```bash
-# In ~/reearth-accounts/server
-make run
-```
-
-The accounts API will join the `reearth` Docker network automatically.
-
-#### After startup: Initialize the environment
-
-After the services are running, initialize GCS and create the demo user:
-
-```bash
-make init
-```
-
-### Database and Environment Reset
-
-Reset the development environment including database and GCS:
-
-**Unix/Linux/macOS:**
-
-```bash
-make reset
+# Create a mock user
+make mockuser
 ```
 
 **Windows:**
 
 ```cmd
-dev.bat reset
+# Start the development server with Docker
+dev.bat run
+
+# Initialize GCS bucket
+dev.bat init-gcs
+
+# Create a mock user
+dev.bat mockuser
 ```
 
-This command will:
+The server will be available at `http://localhost:8080`
 
-- Stop MongoDB and GCS services
-- Remove all data directories
-- Restart services
-- Initialize GCS bucket
-- Create mock user
+## Development Commands
 
-### Complete Environment Cleanup
+### Testing
 
-Remove all Docker resources and data (use with caution):
+| Command                        | Description                                    |
+| ------------------------------ | ---------------------------------------------- |
+| `make lint`                    | Run golangci-lint in Docker container          |
+| `make test`                    | Run unit tests (local, excludes e2e)           |
+| `make test-docker`             | Run unit tests in Docker container             |
+| `make e2e`                     | Run all e2e tests in Docker                    |
+| `make e2e-test TEST_NAME=Name` | Run specific e2e test                          |
+| `dev.bat lint`                 | Run golangci-lint with auto-fix (local)        |
+| `dev.bat lint-docker`          | Run golangci-lint in Docker container          |
+| `dev.bat test`                 | Run unit tests (local)                         |
+| `dev.bat test-docker`          | Run unit tests in Docker container             |
+| `dev.bat test-debug`           | Run unit tests with verbose output             |
+| `dev.bat e2e`                  | Run end-to-end tests                           |
 
-**Unix/Linux/macOS:**
+> **Note:** Docker-based commands require the development container to be running (`make run` or `dev.bat run`)
 
-```bash
-make destroy
-```
+### Build & Run
 
-**Windows:**
+| Command           | Description                            |
+| ----------------- | -------------------------------------- |
+| `make build`      | Build the reearth binary               |
+| `make run`        | Start dev server with Docker Compose   |
+| `make down`       | Stop Docker Compose services           |
+| `dev.bat build`   | Build the project                      |
+| `dev.bat run`     | Start dev server with Docker Compose   |
+| `dev.bat down`    | Stop Docker Compose services           |
+| `dev.bat dev`     | Run the application with hot reload    |
+| `dev.bat run-app` | Run the application                    |
 
-```cmd
-dev.bat destroy
-```
+### Code Generation
 
-This command will:
+| Command                | Description                           |
+| ---------------------- | ------------------------------------- |
+| `make generate`        | Run all code generation               |
+| `make gql`             | Generate GraphQL code                 |
+| `make grpc`            | Generate gRPC code                    |
+| `make grpc-doc`        | Generate gRPC documentation           |
+| `make schematyper`     | Generate plugin manifest schema       |
+| `make deep-copy`       | Generate deep-copy code               |
+| `make error-msg`       | Generate i18n error messages          |
+| `dev.bat generate`     | Run all code generation               |
+| `dev.bat gql`          | Generate GraphQL code                 |
+| `dev.bat schematyper`  | Generate schema using schematyper     |
+| `dev.bat deep-copy`    | Generate deep-copy code for Initializer |
 
-- Stop all Docker containers
-- Remove all Docker images, volumes, and networks
-- Delete all data directories
-- **⚠️ WARNING:** This is a destructive operation and cannot be undone
+### Development Tools
 
-> **Note:** This command will prompt for confirmation before proceeding.
+| Command               | Description                                        |
+| --------------------- | -------------------------------------------------- |
+| `make dev-install`    | Install dev tools (air, stringer, etc.)            |
+| `make init-gcs`       | Initialize GCS bucket                              |
+| `make mockuser`       | Create a mock user                                 |
+| `dev.bat dev-install` | Install dev tools                                  |
+| `dev.bat init`        | Initialize GCS bucket and create mock user         |
+| `dev.bat init-gcs`    | Initialize GCS bucket                              |
+| `dev.bat mockuser`    | Create a mock user                                 |
+| `dev.bat reset`       | Reset database and GCS, reinitialize with mock data |
+| `dev.bat clean`       | Clean Go cache                                     |
+| `dev.bat destroy`     | ⚠️ Remove all Docker resources and data            |
 
-### Code Quality and Testing in Docker
+## Authentication Modes
 
-Run linting and tests inside the Docker container (same environment as CI/CD):
-
-**Unix/Linux/macOS:**
-
-```bash
-# Run linter with auto-fix
-make lint-docker
-
-# Run tests
-make test-docker
-```
-
-**Windows:**
-
-```cmd
-# Run linter with auto-fix
-dev.bat lint-docker
-
-# Run tests
-dev.bat test-docker
-```
-
-> **Note:**
->
-> - These commands require the development container to be running (`make run` or `dev.bat run`)
-> - Some e2e tests may fail in Docker due to MongoDB permission constraints
-> - For local e2e testing, use `make test` or `dev.bat test` instead
-
-### Quick Reference
-
-| Command                                    | Description                                                    |
-| ------------------------------------------ | -------------------------------------------------------------- |
-| `make run`                                 | Start all services including accounts API from Docker Hub      |
-| `make run-local`                           | Start without accounts API (for local reearth-accounts dev)    |
-| `make init`                                | Initialize GCS bucket and create demo user                     |
-| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data            |
-| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive)          |
-| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                          |
-| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                                  |
-
-## 🔐 Authentication
-
-Authentication is handled by the shared service [Re:Earth Accounts](https://github.com/reearth/reearth-accounts).
-When using `make run`, a pre-built `reearth/reearth-accounts-api` container from Docker Hub is started automatically.
-
-There are two authentication modes: **Mock User** (default) and **Identity Provider (IdP)**.
+The server supports two authentication modes:
 
 ### 1. Mock User Mode (Default)
 
-Uses a demo user for local development without requiring an external IdP.
-No additional configuration is needed — this is the default.
+Mock authentication is enabled by default for development. No real authentication is required.
 
-**web/.env**
-
-```bash
-REEARTH_WEB_AUTH_PROVIDER=mock
-```
-
-### 2. Identity Provider (IdP) Mode
-
-To use an IdP (e.g. Auth0), edit `accounts/.env.docker` with your Auth0 credentials:
+**Configuration:**
 
 ```bash
-REEARTH_MOCK_AUTH=false
-REEARTH_AUTH0_DOMAIN=https://your-tenant.auth0.com/
-REEARTH_AUTH0_AUDIENCE=https://api.your-domain.com
-REEARTH_AUTH0_CLIENTID=your-auth0-client-id
-REEARTH_AUTH0_CLIENTSECRET=your-auth0-client-secret
-REEARTH_AUTH0_WEBCLIENTID=your-auth0-web-client-id
+# server/.env.docker
+REEARTH_MOCKAUTH=true
 ```
 
-Also update **web/.env**:
+### 2. Re:Earth Accounts Mode
+
+Uses [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) for production-grade user authentication.
+
+**Configuration:**
 
 ```bash
-REEARTH_WEB_AUTH_PROVIDER=auth0
+# server/.env.docker
+REEARTH_MOCKAUTH=false
+REEARTH_ACCOUNTSAPI_ENABLED=true
 ```
 
-After starting the server, you need to register the IdP user by providing the `sub` claim:
+> **Note:** You need to start the `reearth-accounts` service separately. See the [reearth-accounts documentation](https://github.com/reearth/reearth-accounts) for setup instructions.
+
+### Registering Users with Identity Provider
+
+When using an Identity Provider (like Auth0), you need to register users via the signup API:
+
+**Unix/Linux/macOS:**
 
 ```bash
 curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- << EOF
@@ -214,7 +174,7 @@ The local accounts API will join the `reearth` Docker network automatically.
 
 ## Storage
 
-Visualizer is compatible with the following storage interfaces:
+Re:Earth Visualizer supports multiple storage backends:
 
 - [Google Cloud Storage](https://cloud.google.com/storage)
 - [Amazon S3](https://aws.amazon.com/s3/)
@@ -222,77 +182,47 @@ Visualizer is compatible with the following storage interfaces:
 
 ### Storage Configuration
 
-To use these storage interfaces, you need to set the following environment variables in order of priority:
+Configure storage by setting environment variables in order of priority:
 
-1. **`REEARTH_GCS_BUCKETNAME`**: Set this to use Google Cloud Storage
-2. **`REEARTH_S3_BUCKET_NAME`**: Set this to use Amazon S3
+1. **`REEARTH_GCS_BUCKETNAME`**: Use Google Cloud Storage
+2. **`REEARTH_S3_BUCKET_NAME`**: Use Amazon S3
 
-If neither `REEARTH_GCS_BUCKETNAME` nor `REEARTH_S3_BUCKET_NAME` is configured, the local file system will be used as the default storage interface.
+If neither is configured, the local file system is used as the default storage backend.
 
-Additionally, **`REEARTH_ASSETBASEURL`** is a required environment variable that is used across all storage types. This should be set to the base URL for accessing your stored assets.
+Additionally, **`REEARTH_ASSETBASEURL`** is required for all storage types. Set this to the base URL for accessing stored assets.
 
 ### Testing GCS Locally
 
-1. Start the fake-gcs-server ([fake-gcs-server](https://github.com/fsouza/fake-gcs-server)):
+For local development, you can use [fake-gcs-server](https://github.com/fsouza/fake-gcs-server):
 
-   ```bash
-   make up-gcs
-   ```
+**Start fake-gcs-server:**
 
-2. Create a bucket:
+```bash
+# Unix/Linux/macOS
+docker compose -f ../docker-compose.dev.yml up -d reearth-gcs
 
-   **Using Make/dev.bat (Recommended):**
+# Windows
+dev.bat up-gcs
+```
 
-   ```bash
-   # Unix/Linux/macOS
-   make init-gcs
+**Initialize GCS bucket:**
 
-   # Windows
-   dev.bat init-gcs
-   ```
+```bash
+# Unix/Linux/macOS
+make init-gcs
 
-   **Manual Creation (Advanced):**
+# Windows
+dev.bat init-gcs
+```
 
-   If you need to create a bucket with a custom name or project ID:
+**Set environment variable:**
 
-   <details>
-   <summary>Unix/Linux/macOS</summary>
+```bash
+# server/.env.docker
+REEARTH_GCS_BUCKETNAME=test-bucket
+```
 
-   ```shell
-   curl -X POST http://localhost:4443/storage/v1/b\?project\=your-project-id \
-       -H "Content-Type: application/json" \
-       -d '{
-             "name": "test-bucket"
-           }'
-   ```
-
-   </details>
-
-   <details>
-   <summary>Windows (Command Prompt)</summary>
-
-   ```cmd
-   curl -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" ^
-       -H "Content-Type: application/json" ^
-       -d "{\"name\": \"test-bucket\"}"
-   ```
-
-   </details>
-
-   <details>
-   <summary>Windows (PowerShell)</summary>
-
-   ```powershell
-   curl.exe -X POST "http://localhost:4443/storage/v1/b?project=your-project-id" `
-       -H "Content-Type: application/json" `
-       -d '{"name": "test-bucket"}'
-   ```
-
-   </details>
-
-3. Set `REEARTH_GCS_BUCKETNAME` to `test-bucket`
-
-> **Note:** The default bucket name is `test-bucket`. You can use a different name if needed.
+> **Note:** The default bucket name is `test-bucket`. You can customize this if needed.
 
 ## Project Export and Import
 
