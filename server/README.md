@@ -171,16 +171,13 @@ Re:Earth Visualizer supports multiple storage backends:
 
 - [Google Cloud Storage](https://cloud.google.com/storage)
 - [Amazon S3](https://aws.amazon.com/s3/)
-- Local File System
 
 ### Storage Configuration
 
-Configure storage by setting environment variables in order of priority:
+Configure storage by setting environment variables:
 
-1. **`REEARTH_GCS_BUCKETNAME`**: Use Google Cloud Storage
-2. **`REEARTH_S3_BUCKET_NAME`**: Use Amazon S3
-
-If neither is configured, the local file system is used as the default storage backend.
+- **`REEARTH_GCS_BUCKETNAME`**: Use Google Cloud Storage
+- **`REEARTH_S3_BUCKET_NAME`**: Use Amazon S3
 
 Additionally, **`REEARTH_ASSETBASEURL`** is required for all storage types. Set this to the base URL for accessing stored assets.
 
