@@ -148,5 +148,5 @@ func (l *NLSLayerSimple) DataSourceName() *string {
 	if l == nil {
 		return nil
 	}
-	return l.layerBase.dataSourceName
+	return l.dataSourceName
 }
