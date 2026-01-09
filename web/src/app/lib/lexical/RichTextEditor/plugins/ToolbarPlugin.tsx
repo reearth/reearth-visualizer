@@ -51,7 +51,14 @@ import {
   TextNode,
   UNDO_COMMAND
 } from "lexical";
-import { useCallback, useEffect, useState, useMemo, RefObject, type JSX } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  RefObject,
+  type JSX
+} from "react";
 
 import DropDown, { DropDownItem } from "../ui/DropDown";
 import DropdownColorPicker from "../ui/DropdownColorPicker";
@@ -88,8 +95,7 @@ const FONT_SIZE_OPTIONS: [string, string][] = [
   ["28px", "28px"],
   ["32px", "32px"],
   ["36px", "36px"],
-  ["40px", "40px"],
-  ["64px", "64px"]
+  ["40px", "40px"]
 ];
 
 const LINE_HEIGHT_OPTIONS: [string, string][] = [
@@ -180,10 +186,7 @@ function BlockFormatDropDown({
   const formatParagraph = () => {
     editor.update(() => {
       const selection = $getSelection();
-      if (
-        $isRangeSelection(selection) ||
-        $isTableSelection(selection)
-      ) {
+      if ($isRangeSelection(selection) || $isTableSelection(selection)) {
         $setBlocksType(selection, () => $createParagraphNode());
       }
     });
@@ -193,10 +196,7 @@ function BlockFormatDropDown({
     if (blockType !== headingSize) {
       editor.update(() => {
         const selection = $getSelection();
-        if (
-          $isRangeSelection(selection) ||
-          $isTableSelection(selection)
-        ) {
+        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
           $setBlocksType(selection, () => $createHeadingNode(headingSize));
         }
       });
@@ -223,10 +223,7 @@ function BlockFormatDropDown({
     if (blockType !== "quote") {
       editor.update(() => {
         const selection = $getSelection();
-        if (
-          $isRangeSelection(selection) ||
-          $isTableSelection(selection)
-        ) {
+        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
           $setBlocksType(selection, () => $createQuoteNode());
         }
       });
@@ -595,7 +592,6 @@ export default function ToolbarPlugin({
       setIsSubscript(selection.hasFormat("subscript"));
       setIsSuperscript(selection.hasFormat("superscript"));
       setIsCode(selection.hasFormat("code"));
-      setIsRTL($isParentElementRTL(selection));
 
       // Update links
       const node = getSelectedNode(selection);
