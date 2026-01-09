@@ -223,7 +223,7 @@ goto :eof
 
 :mockuser
 curl -H "Content-Type: application/json" ^
-     -d "{\"email\":\"mock@example.com\",\"username\":\"Mock User\"}" ^
+     -d "{\"email\":\"demo@example.com\",\"username\":\"Demo User\"}" ^
      http://localhost:8080/api/signup
 goto :eof
 
