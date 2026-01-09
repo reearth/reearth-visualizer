@@ -73,6 +73,7 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    Run migrations to add required master data (such as roles), then start the service:
 
    ```bash
+   cd reearth-accounts/server
    make run-migration
    make run
    ```
@@ -82,6 +83,7 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    This step is only required for the first-time setup:
 
    ```bash
+   cd reearth-visualizer/server
    make init-gcs
    make mockuser
    ```
