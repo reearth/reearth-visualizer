@@ -92,6 +92,7 @@ input AddNLSLayerSimpleInput {
   index: Int
   visible: Boolean
   schema: JSON
+  dataSourceName: String
 }
 
 input RemoveNLSLayerInput {

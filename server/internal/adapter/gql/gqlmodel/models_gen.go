@@ -73,13 +73,14 @@ type AddNLSInfoboxBlockPayload struct {
 }
 
 type AddNLSLayerSimpleInput struct {
-	LayerType string `json:"layerType"`
-	Title     string `json:"title"`
-	SceneID   ID     `json:"sceneId"`
-	Config    JSON   `json:"config,omitempty"`
-	Index     *int   `json:"index,omitempty"`
-	Visible   *bool  `json:"visible,omitempty"`
-	Schema    JSON   `json:"schema,omitempty"`
+	LayerType      string  `json:"layerType"`
+	Title          string  `json:"title"`
+	SceneID        ID      `json:"sceneId"`
+	Config         JSON    `json:"config,omitempty"`
+	Index          *int    `json:"index,omitempty"`
+	Visible        *bool   `json:"visible,omitempty"`
+	Schema         JSON    `json:"schema,omitempty"`
+	DataSourceName *string `json:"dataSourceName,omitempty"`
 }
 
 type AddNLSLayerSimplePayload struct {

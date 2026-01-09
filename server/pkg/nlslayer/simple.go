@@ -143,3 +143,10 @@ func (l *NLSLayerSimple) SetSketch(sketch *SketchInfo) {
 	}
 	l.layerBase.sketch = sketch
 }
+
+func (l *NLSLayerSimple) DataSourceName() *string {
+	if l == nil {
+		return nil
+	}
+	return l.layerBase.dataSourceName
+}
