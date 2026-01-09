@@ -51,13 +51,15 @@ The server will be available at `http://localhost:8080`
 | `make test`                    | Run unit tests (local, excludes e2e)           |
 | `make test-docker`             | Run unit tests in Docker container             |
 | `make e2e`                     | Run all e2e tests in Docker                    |
+| `make e2e-docker`              | Run all e2e tests in Docker                    |
 | `make e2e-test TEST_NAME=Name` | Run specific e2e test                          |
 | `dev.bat lint`                 | Run golangci-lint with auto-fix (local)        |
 | `dev.bat lint-docker`          | Run golangci-lint in Docker container          |
 | `dev.bat test`                 | Run unit tests (local)                         |
 | `dev.bat test-docker`          | Run unit tests in Docker container             |
-| `dev.bat test-debug`           | Run unit tests with verbose output             |
 | `dev.bat e2e`                  | Run end-to-end tests                           |
+| `dev.bat e2e-docker`           | Run all e2e tests in Docker                    |
+| `dev.bat e2e-test TEST_NAME=Name` | Run specific e2e test                       |
 
 > **Note:** Docker-based commands require the development container to be running (`make run` or `dev.bat run`)
 
@@ -87,8 +89,11 @@ The server will be available at `http://localhost:8080`
 | `make error-msg`       | Generate i18n error messages          |
 | `dev.bat generate`     | Run all code generation               |
 | `dev.bat gql`          | Generate GraphQL code                 |
+| `dev.bat grpc`         | Generate gRPC code                    |
+| `dev.bat grpc-doc`     | Generate gRPC documentation           |
 | `dev.bat schematyper`  | Generate schema using schematyper     |
-| `dev.bat deep-copy`    | Generate deep-copy code for Initializer |
+| `dev.bat deep-copy`    | Generate deep-copy code               |
+| `dev.bat error-msg`    | Generate i18n error messages          |
 
 ### Development Tools
 
@@ -97,42 +102,56 @@ The server will be available at `http://localhost:8080`
 | `make dev-install`    | Install dev tools (air, stringer, etc.)            |
 | `make init-gcs`       | Initialize GCS bucket                              |
 | `make mockuser`       | Create a mock user                                 |
+| `make up-gcs`         | Start fake GCS server                              |
+| `make down-gcs`       | Stop fake GCS server                               |
 | `dev.bat dev-install` | Install dev tools                                  |
-| `dev.bat init`        | Initialize GCS bucket and create mock user         |
 | `dev.bat init-gcs`    | Initialize GCS bucket                              |
 | `dev.bat mockuser`    | Create a mock user                                 |
-| `dev.bat reset`       | Reset database and GCS, reinitialize with mock data |
-| `dev.bat clean`       | Clean Go cache                                     |
-| `dev.bat destroy`     | ⚠️ Remove all Docker resources and data            |
+| `dev.bat up-gcs`      | Start fake GCS server                              |
+| `dev.bat down-gcs`    | Stop fake GCS server                               |
+
+### Utility
+
+| Command           | Description                                           |
+| ----------------- | ----------------------------------------------------- |
+| `make clean`      | Clean Go cache                                        |
+| `make reset`      | Reset database and GCS, reinitialize with mock data   |
+| `make destroy`    | ⚠️ Remove all Docker resources and data (destructive) |
+| `dev.bat clean`   | Clean Go cache                                        |
+| `dev.bat reset`   | Reset database and GCS, reinitialize with mock data   |
+| `dev.bat destroy` | ⚠️ Remove all Docker resources and data (destructive) |
 
 ## Authentication Modes
 
-The server supports two authentication modes:
+The server requires [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) service for authentication. Configure the authentication mode in the reearth-accounts service:
 
 ### 1. Mock User Mode (Default)
 
 Mock authentication is enabled by default for development. No real authentication is required.
 
-**Configuration:**
+**Configuration in reearth-accounts:**
 
 ```bash
-# server/.env.docker
-REEARTH_MOCKAUTH=true
+# reearth-accounts/server/.env.docker
+REEARTH_MOCK_AUTH=true
 ```
 
-### 2. Re:Earth Accounts Mode
+### 2. Auth0 Integration Mode
 
-Uses [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) for production-grade user authentication.
+Uses Auth0 for production-grade user authentication.
 
-**Configuration:**
+**Configuration in reearth-accounts:**
 
 ```bash
-# server/.env.docker
-REEARTH_MOCKAUTH=false
-REEARTH_ACCOUNTSAPI_ENABLED=true
+# reearth-accounts/server/.env.docker
+REEARTH_MOCK_AUTH=false
+REEARTH_AUTH0_DOMAIN=your-domain.auth0.com
+REEARTH_AUTH0_AUDIENCE=your-audience
+REEARTH_AUTH0_CLIENTID=your-client-id
+REEARTH_AUTH0_CLIENTSECRET=your-client-secret
 ```
 
-> **Note:** You need to start the `reearth-accounts` service separately. See the [reearth-accounts documentation](https://github.com/reearth/reearth-accounts) for setup instructions.
+> **Note:** You need to start the `reearth-accounts` service separately. See the [reearth-accounts documentation](https://github.com/reearth/reearth-accounts) for detailed setup instructions.
 
 ### Registering Users with Identity Provider
 
