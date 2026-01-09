@@ -2,6 +2,7 @@ import BlockAddBar from "@reearth/app/features/Visualizer/shared/components/Bloc
 import ContentWrapper from "@reearth/app/features/Visualizer/shared/components/ContentWrapper";
 import SelectableArea from "@reearth/app/features/Visualizer/shared/components/SelectableArea";
 import { useElementOnScreen } from "@reearth/app/features/Visualizer/shared/hooks/useElementOnScreen";
+import { useStableIntersectionOptions } from "@reearth/app/features/Visualizer/shared/hooks/useStableIntersectionOptions";
 import { DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layer";
@@ -11,10 +12,11 @@ import { styled } from "@reearth/services/theme";
 import {
   FC,
   Fragment,
-  MutableRefObject,
   ReactNode,
+  RefObject,
   useEffect,
-  useMemo
+  useMemo,
+  useRef
 } from "react";
 
 import { BlockProps } from "../../../shared/types";
@@ -36,8 +38,8 @@ type Props = {
   installableStoryBlocks?: InstallableStoryBlock[];
   showPageSettings?: boolean;
   isEditable?: boolean;
-  isAutoScrolling?: MutableRefObject<boolean>;
-  scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  isAutoScrolling?: RefObject<boolean>;
+  scrollTimeoutRef: RefObject<ReturnType<typeof setTimeout> | undefined>;
   children?: ReactNode;
   onCurrentPageChange?: (
     pageId: string,
@@ -128,38 +130,103 @@ const StoryPanel: FC<Props> = ({
     onBlockMove
   });
 
-  const { containerRef, isIntersecting } = useElementOnScreen({
-    root: document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID),
-    threshold: 0.2
-  });
+  const rootElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+
+  const minHeight = useMemo(() => {
+    if (!rootElement) return "100%";
+    const height = rootElement.getBoundingClientRect().height;
+    return height > 0 ? `${height - 40}px` : "100%";
+  }, [rootElement]);
+
+  const intersectionOptions = useStableIntersectionOptions(
+    rootElement,
+    [0, 0.1, 0.5, 0.9, 1.0],
+    "0px"
+  );
+
+  const { containerRef, isIntersecting, intersectionRatio } =
+    useElementOnScreen(intersectionOptions);
+
+  // Debounce timer for page changes to prevent rapid switching
+  const pageChangeTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
-    if (isIntersecting) {
-      const id = containerRef.current?.id;
-      if (id) {
-        if (isAutoScrolling?.current) {
-          const wrapperElement = document.getElementById(
-            STORY_PANEL_CONTENT_ELEMENT_ID
-          );
+    const pageWrapperElement = document.getElementById(
+      STORY_PANEL_CONTENT_ELEMENT_ID
+    );
 
-          wrapperElement?.addEventListener("scroll", () => {
-            clearTimeout(scrollTimeoutRef.current);
-            scrollTimeoutRef.current = setTimeout(function () {
-              isAutoScrolling.current = false;
-            }, 100);
-          });
-        } else {
-          onCurrentPageChange?.(id, true);
-        }
-      }
+    if (!pageWrapperElement) return;
+
+    const resizeObserver = new ResizeObserver(() => {
+      clearTimeout(pageChangeTimeoutRef.current);
+    });
+
+    resizeObserver.observe(pageWrapperElement);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [pageChangeTimeoutRef]);
+
+  useEffect(() => {
+    if (isAutoScrolling?.current) return;
+
+    if (!isIntersecting || intersectionRatio < 0.1) return;
+
+    const pageElement = containerRef.current;
+    const pageId = pageElement?.id;
+    if (!pageId) return;
+
+    let didScheduleTimeout = false;
+
+    if (intersectionRatio >= 0.5) {
+      clearTimeout(pageChangeTimeoutRef.current);
+      pageChangeTimeoutRef.current = setTimeout(() => {
+        onCurrentPageChange?.(pageId, true);
+      }, 150);
+      didScheduleTimeout = true;
     }
+
+    return () => {
+      if (didScheduleTimeout) {
+        clearTimeout(pageChangeTimeoutRef.current);
+      }
+    };
   }, [
     isIntersecting,
+    intersectionRatio,
     containerRef,
     isAutoScrolling,
     scrollTimeoutRef,
     onCurrentPageChange
   ]);
+
+  // Effect to handle resetting auto-scroll flag after any scroll completes
+  useEffect(() => {
+    const wrapperElement = document.getElementById(
+      STORY_PANEL_CONTENT_ELEMENT_ID
+    );
+    if (!wrapperElement) return;
+
+    const handleScroll = () => {
+      // If auto-scrolling, reset the flag after scroll stops
+      if (isAutoScrolling?.current) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(() => {
+          isAutoScrolling.current = false;
+        }, 100); // Reset auto-scroll flag 100ms after scroll stops
+      }
+    };
+
+    wrapperElement.addEventListener("scroll", handleScroll, {
+      passive: true
+    });
+
+    return () => {
+      clearTimeout(scrollTimeoutRef.current);
+      wrapperElement.removeEventListener("scroll", handleScroll);
+    };
+  }, [isAutoScrolling, scrollTimeoutRef]);
 
   const DraggableStoryBlockItems = useMemo(
     () =>
@@ -251,6 +318,7 @@ const StoryPanel: FC<Props> = ({
         padding={panelSettings?.padding?.value}
         minGapInEditor={MIN_STORY_PAGE_GAP_IN_EDITOR}
         gap={panelSettings?.gap?.value}
+        minHeight={minHeight}
       >
         <PageTitleWrapper>
           {(isEditable || titleProperty?.title?.title?.value) && (
@@ -302,8 +370,9 @@ const StoryPanel: FC<Props> = ({
             gap={20}
           />
         )}
+
+        {children}
       </ContentWrapper>
-      {children}
     </SelectableArea>
   );
 };

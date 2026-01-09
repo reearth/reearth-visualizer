@@ -30,12 +30,17 @@ const buttonVariants = cva(
       active: {
         true: "[background-color:var(--color-primary)!important] text-primary-foreground shadow hover:[background-color:color-mix(in_oklch,var(--color-primary),transparent_10%)!important] hover:text-primary-foreground",
         false: ""
+      },
+      customTheme: {
+        true: "[color:var(--widget-button-color)] [background-color:var(--widget-button-bg)!important] hover:[background-color:var(--widget-button-hover)!important]",
+        false: ""
       }
     },
     defaultVariants: {
       variant: "default",
       size: "default",
-      active: false
+      active: false,
+      customTheme: false
     }
   }
 );
@@ -47,11 +52,24 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, active, asChild = false, ...props }, ref) => {
+  (
+    {
+      className,
+      variant,
+      size,
+      active,
+      customTheme,
+      asChild = false,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, active, className }))}
+        className={cn(
+          buttonVariants({ variant, size, active, customTheme, className })
+        )}
         ref={ref}
         {...props}
       />

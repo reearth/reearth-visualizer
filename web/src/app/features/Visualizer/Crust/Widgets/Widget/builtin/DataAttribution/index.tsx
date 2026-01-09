@@ -2,7 +2,7 @@ import { Modal } from "@reearth/app/lib/reearth-ui";
 import { Credits } from "@reearth/core";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type JSX } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
 

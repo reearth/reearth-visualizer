@@ -7,6 +7,8 @@ import MenuButton, {
   MenuItem as MenuItemType
 } from "./MenuButton";
 
+import type { JSX } from "react";
+
 export type Props = WidgetProps<Property>;
 export type Button = ButtonType;
 export type MenuItem = MenuItemType;

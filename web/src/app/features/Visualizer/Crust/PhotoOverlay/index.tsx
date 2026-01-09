@@ -25,9 +25,9 @@ type PhotoOverlayProps = {
   preview?: PhotoOverlayPreview;
   selectedLayer?: ComputedLayer;
   selectedFeature?: ComputedFeature;
-  mapRef?: RefObject<MapRef> | undefined;
+  mapRef?: RefObject<MapRef | null> | undefined;
   nlsLayers?: NLSLayer[];
-  currentCameraRef?: RefObject<Camera | undefined>;
+  currentCameraRef?: RefObject<Camera | undefined | null>;
 };
 
 const PhotoOverlay: FC<PhotoOverlayProps> = ({

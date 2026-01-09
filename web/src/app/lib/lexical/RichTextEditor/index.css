@@ -1,5 +1,24 @@
 @import "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap";
 
+.lexical ol {
+  list-style-type: decimal;
+  padding-left: 0;
+}
+
+.lexical ul {
+  list-style-type: disc;
+  padding-left: 0;
+}
+
+.lexical li {
+  margin: 0 1rem;
+  line-height: var(--listitem-marker-line-height);
+}
+
+.lexical li::marker {
+  font-size: var(--listitem-marker-font-size);
+}
+
 .lexical.editor-container {
   position: relative;
   display: block;

@@ -24,7 +24,7 @@ export type InstallableStoryBlock = InstallableBlock & {
 };
 
 export type StoryPanelProps = {
-  storyWrapperRef?: RefObject<HTMLDivElement>;
+  storyWrapperRef?: RefObject<HTMLDivElement | null>;
   selectedStory?: Story;
   isEditable?: boolean;
   isMobile?: boolean;
@@ -128,7 +128,7 @@ export const StoryPanel = memo(
             setLayerOverride(undefined);
             element.scrollIntoView({
               behavior: "instant"
-            } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
+            });
           }
         }),
         [selectedStory?.pages, setCurrentPageId, setLayerOverride]
