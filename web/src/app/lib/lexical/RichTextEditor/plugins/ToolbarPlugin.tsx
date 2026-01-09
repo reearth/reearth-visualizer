@@ -17,7 +17,6 @@ import {
 } from "@lexical/rich-text";
 import {
   $getSelectionStyleValueForProperty,
-  $isParentElementRTL,
   $patchStyleText,
   $setBlocksType
 } from "@lexical/selection";
@@ -548,7 +547,6 @@ export default function ToolbarPlugin({
   const [isCode, setIsCode] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
-  const [isRTL, setIsRTL] = useState(false);
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const t = useT();
 
@@ -842,7 +840,7 @@ export default function ToolbarPlugin({
           disabled={!isEditable}
           value={elementFormat}
           editor={editor}
-          isRTL={isRTL}
+          isRTL={false}
         />
       </div>
 
