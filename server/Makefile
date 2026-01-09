@@ -31,6 +31,7 @@ help:
 	@echo "  test              Run unit tests (local, excludes e2e)"
 	@echo "  test-docker       Run unit tests in Docker container"
 	@echo "  e2e               Run all e2e tests in Docker"
+	@echo "  e2e-docker        Run all e2e tests in Docker"
 	@echo "  e2e-test          Run specific e2e test (TEST_NAME=TestName)"
 	@echo ""
 	@echo "Build & Run:"
@@ -52,10 +53,18 @@ help:
 	@echo "  deep-copy         Generate deep-copy code"
 	@echo "  error-msg         Generate i18n error messages"
 	@echo ""
-	@echo "Tools:"
+	@echo "Development Tools:"
 	@echo "  dev-install       Install dev tools (air, stringer, etc.)"
 	@echo "  mockuser-accounts Create a mock user via accounts API"
 	@echo "  init-gcs          Initialize GCS bucket"
+	@echo "  mockuser          Create a mock user"
+	@echo "  up-gcs            Start fake GCS server"
+	@echo "  down-gcs          Stop fake GCS server"
+	@echo ""
+	@echo "Utility:"
+	@echo "  clean             Clean Go cache"
+	@echo "  reset             Reset database and GCS, reinitialize with mock data"
+	@echo "  destroy           ⚠️ Remove all Docker resources and data"
 
 # =======================
 # Test
@@ -218,27 +227,59 @@ init-gcs:
 mockuser:
 	curl -s -D - -o /dev/null \
 		-H 'Content-Type: application/json' \
-		-d '{"email": "demo@example.com", "username": "Demo user"}' \
+		-d '{"email": "demo@example.com", "username": "Demo User"}' \
 		http://localhost:8080/api/signup | head -n 1
+
+# =======================
+# Utility
+# =======================
+
+clean:
+	go clean -modcache
+	go clean -cache
+	go clean -testcache
+
+up-gcs:
+	docker compose -f ../docker-compose.yml up -d gcs
+
+down-gcs:
+	docker compose -f ../docker-compose.yml down gcs
+
+reset:
+	@echo "==== Stopping database and GCS services ===="
+	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
+	@echo ""
+	@echo "==== Removing data directory ===="
+	rm -rf ../tmp/gcs
+	rm -rf ../tmp/mongo
+	@echo ""
+	@echo "==== Starting database and GCS services ===="
+	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
+	@echo ""
+	@echo "==== Waiting for services to be ready (3 seconds) ===="
+	@sleep 3
+	@echo ""
+	@echo "==== Initializing GCS bucket ===="
+	@$(MAKE) init-gcs
+	@echo ""
+	@echo "==== Creating mock user ===="
+	@$(MAKE) mockuser
+	@echo ""
+	@echo "Reset complete!"
 
 destroy:
 	@echo "WARNING: This will remove ALL Docker resources!"
 	@echo "This includes containers, images, volumes, and networks."
 	@echo ""
-	@read -p "Are you sure you want to continue? [y/N] " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		containers=$$(docker ps -q); \
-		if [ -n "$$containers" ]; then \
-			docker stop $$containers; \
-		else \
-			echo "No running containers to stop."; \
-		fi; \
+	@read -p "Are you sure you want to continue? [y/N] " REPLY; \
+	if [ "$$REPLY" = "y" ] || [ "$$REPLY" = "Y" ]; then \
+		docker ps -q | xargs -r docker stop; \
 		docker system prune -a --volumes -f; \
 		docker network prune -f; \
 		echo "All Docker resources have been removed"; \
-		echo "==== Removing data directory (requires sudo password) ===="; \
-		sudo rm -rf tmp/gcs tmp/mongo; \
+		echo "==== Removing data directory ===="; \
+		rm -rf ../tmp/gcs; \
+		rm -rf ../tmp/mongo; \
 		echo "All data resources have been cleared"; \
 	else \
 		echo "Operation cancelled"; \
@@ -246,4 +287,4 @@ destroy:
 
 .PHONY: default help lint test test-docker e2e e2e-docker e2e-test build run run-internal down \
         migrate migrate-with-key generate gql grpc grpc-doc schematyper deep-copy error-msg dev-install \
-        mockuser-accounts mockuser init init-gcs destroy
+        mockuser-accounts mockuser init init-gcs clean up-gcs down-gcs reset destroy
