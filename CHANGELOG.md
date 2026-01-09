@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.13.8 - 2026-01-09
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Style missing on rich text editor list element ([#1997](https://github.com/reearth/reearth-visualizer/pull/1997)) [`b949d1`](https://github.com/reearth/reearth-visualizer/commit/b949d1)
+- Cannot delete show layers button on story block ([#1996](https://github.com/reearth/reearth-visualizer/pull/1996)) [`9105b9`](https://github.com/reearth/reearth-visualizer/commit/9105b9)
+- Current story page could keep switching in loop on some edge cases ([#1988](https://github.com/reearth/reearth-visualizer/pull/1988)) [`9ed9a7`](https://github.com/reearth/reearth-visualizer/commit/9ed9a7)
+
+#### ✨ Refactor
+
+- Remove style padding left of rich text editor ul and ol ([#1998](https://github.com/reearth/reearth-visualizer/pull/1998)) [`ef92ce`](https://github.com/reearth/reearth-visualizer/commit/ef92ce)
+- Refactor button widget to using tailwindcss and shadcn ([#1989](https://github.com/reearth/reearth-visualizer/pull/1989)) [`ef2ce3`](https://github.com/reearth/reearth-visualizer/commit/ef2ce3)
+- Migrate to react 19 ([#1990](https://github.com/reearth/reearth-visualizer/pull/1990)) [`79a634`](https://github.com/reearth/reearth-visualizer/commit/79a634)
+
+#### 🧪 Testing
+
+- Fixes for the failed tests ([#1993](https://github.com/reearth/reearth-visualizer/pull/1993)) [`823a16`](https://github.com/reearth/reearth-visualizer/commit/823a16)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.13.8 ([#1999](https://github.com/reearth/reearth-visualizer/pull/1999)) [`06f346`](https://github.com/reearth/reearth-visualizer/commit/06f346)
+- Update mdast-util-to-hast and storybook dependency ([#1994](https://github.com/reearth/reearth-visualizer/pull/1994)) [`a162a4`](https://github.com/reearth/reearth-visualizer/commit/a162a4)
+
+### Server
+
+#### 🚀 Features
+
+- Add unique index support for scenes and storytelling ([#1987](https://github.com/reearth/reearth-visualizer/pull/1987)) [`61eb28`](https://github.com/reearth/reearth-visualizer/commit/61eb28)
+
 ## 1.0.0-beta.13.7 - 2025-12-18
 
 ### Web
