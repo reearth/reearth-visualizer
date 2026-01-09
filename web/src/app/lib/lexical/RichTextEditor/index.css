@@ -1,11 +1,5 @@
 @import "https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap";
 
-/* Override Tailwind's list reset for rich text editor */
-.lexical ol,
-.lexical ul {
-  list-style: revert;
-}
-
 .lexical ol {
   list-style-type: decimal;
   padding-left: 1rem;
@@ -221,7 +215,7 @@
 
 .lexical .typeahead-popover ul {
   padding: 0;
-  /* list-style: none; */
+  list-style: none;
   margin: 0;
   border-radius: 8px;
   max-height: 200px;
