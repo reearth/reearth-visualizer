@@ -411,35 +411,37 @@ type ComplexityRoot struct {
 	}
 
 	NLSLayerGroup struct {
-		Children     func(childComplexity int) int
-		ChildrenIds  func(childComplexity int) int
-		Config       func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Index        func(childComplexity int) int
-		Infobox      func(childComplexity int) int
-		IsSketch     func(childComplexity int) int
-		LayerType    func(childComplexity int) int
-		PhotoOverlay func(childComplexity int) int
-		Scene        func(childComplexity int) int
-		SceneID      func(childComplexity int) int
-		Sketch       func(childComplexity int) int
-		Title        func(childComplexity int) int
-		Visible      func(childComplexity int) int
+		Children       func(childComplexity int) int
+		ChildrenIds    func(childComplexity int) int
+		Config         func(childComplexity int) int
+		DataSourceName func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Index          func(childComplexity int) int
+		Infobox        func(childComplexity int) int
+		IsSketch       func(childComplexity int) int
+		LayerType      func(childComplexity int) int
+		PhotoOverlay   func(childComplexity int) int
+		Scene          func(childComplexity int) int
+		SceneID        func(childComplexity int) int
+		Sketch         func(childComplexity int) int
+		Title          func(childComplexity int) int
+		Visible        func(childComplexity int) int
 	}
 
 	NLSLayerSimple struct {
-		Config       func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Index        func(childComplexity int) int
-		Infobox      func(childComplexity int) int
-		IsSketch     func(childComplexity int) int
-		LayerType    func(childComplexity int) int
-		PhotoOverlay func(childComplexity int) int
-		Scene        func(childComplexity int) int
-		SceneID      func(childComplexity int) int
-		Sketch       func(childComplexity int) int
-		Title        func(childComplexity int) int
-		Visible      func(childComplexity int) int
+		Config         func(childComplexity int) int
+		DataSourceName func(childComplexity int) int
+		ID             func(childComplexity int) int
+		Index          func(childComplexity int) int
+		Infobox        func(childComplexity int) int
+		IsSketch       func(childComplexity int) int
+		LayerType      func(childComplexity int) int
+		PhotoOverlay   func(childComplexity int) int
+		Scene          func(childComplexity int) int
+		SceneID        func(childComplexity int) int
+		Sketch         func(childComplexity int) int
+		Title          func(childComplexity int) int
+		Visible        func(childComplexity int) int
 	}
 
 	NLSPhotoOverlay struct {
@@ -2932,6 +2934,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.NLSLayerGroup.Config(childComplexity), true
+	case "NLSLayerGroup.dataSourceName":
+		if e.complexity.NLSLayerGroup.DataSourceName == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerGroup.DataSourceName(childComplexity), true
 	case "NLSLayerGroup.id":
 		if e.complexity.NLSLayerGroup.ID == nil {
 			break
@@ -3005,6 +3013,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.NLSLayerSimple.Config(childComplexity), true
+	case "NLSLayerSimple.dataSourceName":
+		if e.complexity.NLSLayerSimple.DataSourceName == nil {
+			break
+		}
+
+		return e.complexity.NLSLayerSimple.DataSourceName(childComplexity), true
 	case "NLSLayerSimple.id":
 		if e.complexity.NLSLayerSimple.ID == nil {
 			break
@@ -6019,6 +6033,7 @@ interface NLSLayer {
   photoOverlay: NLSPhotoOverlay
   isSketch: Boolean!
   sketch: SketchInfo
+  dataSourceName: String
 }
 
 type NLSLayerSimple implements NLSLayer {
@@ -6034,6 +6049,7 @@ type NLSLayerSimple implements NLSLayer {
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
+  dataSourceName: String
 }
 
 type NLSLayerGroup implements NLSLayer {
@@ -6051,6 +6067,7 @@ type NLSLayerGroup implements NLSLayer {
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
+  dataSourceName: String
 }
 
 type NLSInfobox {
@@ -9011,6 +9028,8 @@ func (ec *executionContext) fieldContext_AddNLSLayerSimplePayload_layers(_ conte
 				return ec.fieldContext_NLSLayerSimple_isSketch(ctx, field)
 			case "sketch":
 				return ec.fieldContext_NLSLayerSimple_sketch(ctx, field)
+			case "dataSourceName":
+				return ec.fieldContext_NLSLayerSimple_dataSourceName(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type NLSLayerSimple", field.Name)
 		},
@@ -17570,6 +17589,35 @@ func (ec *executionContext) fieldContext_NLSLayerGroup_sketch(_ context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _NLSLayerGroup_dataSourceName(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerGroup) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_NLSLayerGroup_dataSourceName,
+		func(ctx context.Context) (any, error) {
+			return obj.DataSourceName, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerGroup_dataSourceName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerGroup",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _NLSLayerSimple_id(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -17983,6 +18031,35 @@ func (ec *executionContext) fieldContext_NLSLayerSimple_sketch(_ context.Context
 				return ec.fieldContext_SketchInfo_featureCollection(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type SketchInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NLSLayerSimple_dataSourceName(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.NLSLayerSimple) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_NLSLayerSimple_dataSourceName,
+		func(ctx context.Context) (any, error) {
+			return obj.DataSourceName, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_NLSLayerSimple_dataSourceName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NLSLayerSimple",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -39949,6 +40026,8 @@ func (ec *executionContext) _NLSLayerGroup(ctx context.Context, sel ast.Selectio
 			}
 		case "sketch":
 			out.Values[i] = ec._NLSLayerGroup_sketch(ctx, field, obj)
+		case "dataSourceName":
+			out.Values[i] = ec._NLSLayerGroup_dataSourceName(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -40056,6 +40135,8 @@ func (ec *executionContext) _NLSLayerSimple(ctx context.Context, sel ast.Selecti
 			}
 		case "sketch":
 			out.Values[i] = ec._NLSLayerSimple_sketch(ctx, field, obj)
+		case "dataSourceName":
+			out.Values[i] = ec._NLSLayerSimple_dataSourceName(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
