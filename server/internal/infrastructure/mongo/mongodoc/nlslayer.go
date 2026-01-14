@@ -257,7 +257,7 @@ func (d *NLSLayerDocument) ModelGroup() (*nlslayer.NLSLayerGroup, error) {
 		// group
 		Root(d.Group != nil && d.Group.Root).
 		Layers(nlslayer.NewIDList(ids)).
-		Config(NewNLSLayerConfig(d.Simple.Config)).
+		Config(NewNLSLayerConfig(d.Group.Config)).
 		DataSourceName(d.DataSourceName).
 		IsSketch(d.IsSketch).
 		Sketch(sketchInfo).
