@@ -11,6 +11,7 @@ interface NLSLayer {
   photoOverlay: NLSPhotoOverlay
   isSketch: Boolean!
   sketch: SketchInfo
+  dataSourceName: String
 }
 
 type NLSLayerSimple implements NLSLayer {
@@ -26,6 +27,7 @@ type NLSLayerSimple implements NLSLayer {
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
+  dataSourceName: String
 }
 
 type NLSLayerGroup implements NLSLayer {
@@ -43,6 +45,7 @@ type NLSLayerGroup implements NLSLayer {
   scene: Scene
   isSketch: Boolean!
   sketch: SketchInfo
+  dataSourceName: String
 }
 
 type NLSInfobox {
