@@ -1,3 +1,4 @@
+import { BUILTIN_DATA_SOURCES } from "@reearth/services/dataSource/builtin";
 import { useDatasetById, useDatasets } from "@reearth/services/plateau/graphql";
 import { DatasetFormat } from "@reearth/services/plateau/graphql/types/catalog";
 import { useSetAtom } from "jotai";
@@ -80,7 +81,8 @@ export default ({
           url: selectedPlateauDatasetItem.url,
           layers: selectedPlateauDatasetItem.layers ?? []
         }
-      }
+      },
+      dataSourceName: BUILTIN_DATA_SOURCES.plateau.name
     });
 
     showPlateauAssetLayerCreater(false);
