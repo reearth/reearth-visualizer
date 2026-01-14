@@ -26,6 +26,7 @@ type NLSLayer interface {
 	HasSketch() bool
 	Sketch() *SketchInfo
 	SetSketch(*SketchInfo)
+	DataSourceName() *string
 }
 
 func ToNLSLayerGroup(l NLSLayer) *NLSLayerGroup {

@@ -10,18 +10,19 @@ import (
 )
 
 type NLSLayerDocument struct {
-	ID           string
-	Index        *int
-	Title        string
-	Visible      bool
-	Scene        string
-	LayerType    string
-	Infobox      *NLSLayerInfoboxDocument
-	PhotoOverlay *NLSLayerPhotoOverlayDocument
-	Simple       *NLSLayerSimpleDocument
-	Group        *NLSLayerGroupDocument
-	IsSketch     bool
-	Sketch       *NLSLayerSketchInfoDocument
+	ID             string
+	Index          *int
+	Title          string
+	Visible        bool
+	Scene          string
+	LayerType      string
+	Infobox        *NLSLayerInfoboxDocument
+	PhotoOverlay   *NLSLayerPhotoOverlayDocument
+	Simple         *NLSLayerSimpleDocument
+	Group          *NLSLayerGroupDocument
+	IsSketch       bool
+	Sketch         *NLSLayerSketchInfoDocument
+	DataSourceName *string
 }
 
 type NLSLayerSimpleDocument struct {
@@ -122,18 +123,19 @@ func NewNLSLayer(l nlslayer.NLSLayer) (*NLSLayerDocument, string) {
 
 	id := l.ID().String()
 	return &NLSLayerDocument{
-		ID:           id,
-		Index:        l.Index(),
-		Title:        l.Title(),
-		Visible:      l.IsVisible(),
-		Scene:        l.Scene().String(),
-		Infobox:      NewNLSInfobox(l.Infobox()),
-		PhotoOverlay: NewNLSPhotoOverlay(l.PhotoOverlay()),
-		LayerType:    string(l.LayerType()),
-		Group:        group,
-		Simple:       simple,
-		IsSketch:     l.IsSketch(),
-		Sketch:       NewNLSLayerSketchInfo(l.Sketch()),
+		ID:             id,
+		Index:          l.Index(),
+		Title:          l.Title(),
+		Visible:        l.IsVisible(),
+		Scene:          l.Scene().String(),
+		Infobox:        NewNLSInfobox(l.Infobox()),
+		PhotoOverlay:   NewNLSPhotoOverlay(l.PhotoOverlay()),
+		LayerType:      string(l.LayerType()),
+		Group:          group,
+		Simple:         simple,
+		IsSketch:       l.IsSketch(),
+		Sketch:         NewNLSLayerSketchInfo(l.Sketch()),
+		DataSourceName: l.DataSourceName(),
 	}, id
 }
 
@@ -206,6 +208,7 @@ func (d *NLSLayerDocument) ModelSimple() (*nlslayer.NLSLayerSimple, error) {
 		Scene(sid).
 		// Simple
 		Config(NewNLSLayerConfig(d.Simple.Config)).
+		DataSourceName(d.DataSourceName).
 		IsSketch(d.IsSketch).
 		Sketch(sketchInfo).
 		Build()
@@ -255,6 +258,7 @@ func (d *NLSLayerDocument) ModelGroup() (*nlslayer.NLSLayerGroup, error) {
 		Root(d.Group != nil && d.Group.Root).
 		Layers(nlslayer.NewIDList(ids)).
 		Config(NewNLSLayerConfig(d.Simple.Config)).
+		DataSourceName(d.DataSourceName).
 		IsSketch(d.IsSketch).
 		Sketch(sketchInfo).
 		Build()
