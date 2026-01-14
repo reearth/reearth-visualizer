@@ -16,13 +16,14 @@ func (r *mutationResolver) AddNLSLayerSimple(ctx context.Context, input gqlmodel
 	}
 
 	inp := interfaces.AddNLSLayerSimpleInput{
-		SceneID:   sId,
-		Title:     input.Title,
-		Index:     input.Index,
-		LayerType: gqlmodel.ToNLSLayerType(input.LayerType),
-		Config:    gqlmodel.ToNLSConfig(input.Config),
-		Visible:   input.Visible,
-		Schema:    gqlmodel.ToGoJsonRef(input.Schema),
+		SceneID:        sId,
+		Title:          input.Title,
+		Index:          input.Index,
+		LayerType:      gqlmodel.ToNLSLayerType(input.LayerType),
+		Config:         gqlmodel.ToNLSConfig(input.Config),
+		Visible:        input.Visible,
+		Schema:         gqlmodel.ToGoJsonRef(input.Schema),
+		DataSourceName: input.DataSourceName,
 	}
 
 	layer, err := usecases(ctx).NLSLayer.AddLayerSimple(ctx, inp, getOperator(ctx))
