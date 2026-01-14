@@ -127,7 +127,8 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		Config(inp.Config).
 		LayerType(inp.LayerType).
 		Title(inp.Title).
-		Index(inp.Index)
+		Index(inp.Index).
+		DataSourceName(inp.DataSourceName)
 	if inp.Visible != nil {
 		builder.IsVisible(*inp.Visible)
 	} else {

@@ -1,6 +1,6 @@
 {
   "name": "@reearth/visualizer",
-  "version": "1.0.0-beta.13.8",
+  "version": "1.0.0-beta.13.9",
   "repository": "https://github.com/reearth/reearth-visualizer.git",
   "author": "Re:Earth contributors <community@reearth.io>",
   "license": "Apache-2.0",
@@ -159,7 +159,7 @@
     "lz-string": "1.5.0",
     "quickjs-emscripten": "0.31.0",
     "quickjs-emscripten-sync": "1.5.2",
-    "rc-slider": "9.7.5",
+    "rc-slider": "11.1.7",
     "react": "19.2.3",
     "react-accessible-accordion": "5.0.1",
     "react-align": "2.3.0",
