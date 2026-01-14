@@ -102,6 +102,11 @@ func (b *NLSLayerSimpleBuilder) Config(c *Config) *NLSLayerSimpleBuilder {
 	return b
 }
 
+func (b *NLSLayerSimpleBuilder) DataSourceName(d *string) *NLSLayerSimpleBuilder {
+	b.l.dataSourceName = d
+	return b
+}
+
 func (b *NLSLayerSimpleBuilder) IsSketch(i bool) *NLSLayerSimpleBuilder {
 	b.l.isSketch = i
 	return b

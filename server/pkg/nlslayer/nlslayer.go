@@ -65,17 +65,18 @@ func ToLayerSimpleRef(l *NLSLayer) *NLSLayerSimple {
 }
 
 type layerBase struct {
-	id           id.NLSLayerID
-	index        *int
-	layerType    LayerType
-	scene        id.SceneID
-	title        string
-	visible      bool
-	infobox      *Infobox
-	photoOverlay *PhotoOverlay
-	config       *Config
-	isSketch     bool
-	sketch       *SketchInfo
+	id             id.NLSLayerID
+	index          *int
+	layerType      LayerType
+	scene          id.SceneID
+	title          string
+	visible        bool
+	infobox        *Infobox
+	photoOverlay   *PhotoOverlay
+	config         *Config
+	isSketch       bool
+	sketch         *SketchInfo
+	dataSourceName *string
 }
 
 func (l *layerBase) ID() id.NLSLayerID {
@@ -293,4 +294,11 @@ func (l *layerBase) SetSketchInfo(sketch *SketchInfo) {
 		return
 	}
 	l.sketch = sketch
+}
+
+func (l *layerBase) DataSourceName() *string {
+	if l == nil {
+		return nil
+	}
+	return l.dataSourceName
 }

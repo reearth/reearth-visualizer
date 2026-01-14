@@ -375,6 +375,54 @@ func TestAddLayerSimple(t *testing.T) {
 		assert.NotNil(t, layer)
 		assert.Equal(t, layerName, layer.Title())
 	})
+
+	t.Run("should add layer with DataSourceName", func(t *testing.T) {
+		layerName := "Test Layer with DataSourceName"
+		dataSourceName := "test-data-source"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "csv",
+				"url":  "https://example.com/data.csv",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:        scene.ID(),
+			Config:         &config,
+			LayerType:      "simple",
+			Title:          layerName,
+			DataSourceName: &dataSourceName,
+		}, operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, layer)
+		assert.Equal(t, layerName, layer.Title())
+		assert.NotNil(t, layer.DataSourceName())
+		assert.Equal(t, dataSourceName, *layer.DataSourceName())
+	})
+
+	t.Run("should add layer without DataSourceName", func(t *testing.T) {
+		layerName := "Test Layer without DataSourceName"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "csv",
+				"url":  "https://example.com/data.csv",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:        scene.ID(),
+			Config:         &config,
+			LayerType:      "simple",
+			Title:          layerName,
+			DataSourceName: nil, // Explicitly nil
+		}, operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, layer)
+		assert.Equal(t, layerName, layer.Title())
+		assert.Nil(t, layer.DataSourceName())
+	})
 }
 
 func TestDeleteGeoJSONFeature(t *testing.T) {
