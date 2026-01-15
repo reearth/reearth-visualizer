@@ -12,6 +12,7 @@ import (
 
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -76,7 +77,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File, acco
 	// Add user3 to workspace2 as reader (local repo is the source of truth for tests).
 	_ = addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID3, "reader", result.UID2)
 	if user3 != nil {
-		if err := JoinMembers(ctx, r, result.WID2, user3, accountsWorkspace.RoleReader, result.UID2); err != nil {
+		if err := JoinMembers(ctx, r, result.WID2, user3, accountsRole.RoleReader, result.UID2); err != nil {
 			return err
 		}
 	}
@@ -84,7 +85,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File, acco
 	// Add user1 to workspace2 as owner (local repo is the source of truth for tests).
 	_ = addUserToWorkspaceViaAPI(ctx, accountsClient, result.WID2, result.UID, "owner", result.UID2)
 	if user1 != nil {
-		if err := JoinMembers(ctx, r, result.WID2, user1, accountsWorkspace.RoleOwner, result.UID2); err != nil {
+		if err := JoinMembers(ctx, r, result.WID2, user1, accountsRole.RoleOwner, result.UID2); err != nil {
 			return err
 		}
 	}

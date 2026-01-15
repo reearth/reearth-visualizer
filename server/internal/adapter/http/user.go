@@ -6,15 +6,15 @@ import (
 	"golang.org/x/text/language"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces"
+	accountsInterfaces "github.com/reearth/reearth-accounts/server/pkg/interfaces/usecase"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
 type UserController struct {
-	usecase accountsInterfaces.User
+	usecase accountsInterfaces.UserUseCase
 }
 
-func NewUserController(usecase accountsInterfaces.User) *UserController {
+func NewUserController(usecase accountsInterfaces.UserUseCase) *UserController {
 	return &UserController{
 		usecase: usecase,
 	}

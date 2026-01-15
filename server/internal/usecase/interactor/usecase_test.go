@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func TestUc_checkPermission(t *testing.T) {
@@ -43,7 +43,7 @@ func TestUc_checkPermission(t *testing.T) {
 			name:               "can read a workspace",
 			readableWorkspaces: accountsID.WorkspaceIDList{wid},
 			op: &usecase.Operator{
-				AcOperator: &accountsUsecase.Operator{
+				AcOperator: &accountsWorkspace.Operator{
 					ReadableWorkspaces: accountsID.WorkspaceIDList{wid}},
 			},
 			wantErr: false,
@@ -52,7 +52,7 @@ func TestUc_checkPermission(t *testing.T) {
 			name:               "cannot read a workspace",
 			readableWorkspaces: accountsID.WorkspaceIDList{accountsID.NewWorkspaceID()},
 			op: &usecase.Operator{
-				AcOperator: &accountsUsecase.Operator{
+				AcOperator: &accountsWorkspace.Operator{
 					ReadableWorkspaces: accountsID.WorkspaceIDList{}}},
 			wantErr: true,
 		},
@@ -60,7 +60,7 @@ func TestUc_checkPermission(t *testing.T) {
 			name:               "can write a workspace",
 			writableWorkspaces: accountsID.WorkspaceIDList{wid},
 			op: &usecase.Operator{
-				AcOperator: &accountsUsecase.Operator{
+				AcOperator: &accountsWorkspace.Operator{
 					WritableWorkspaces: accountsID.WorkspaceIDList{wid},
 				},
 			},
@@ -70,7 +70,7 @@ func TestUc_checkPermission(t *testing.T) {
 			name:               "cannot write a workspace",
 			writableWorkspaces: accountsID.WorkspaceIDList{wid},
 			op: &usecase.Operator{
-				AcOperator: &accountsUsecase.Operator{
+				AcOperator: &accountsWorkspace.Operator{
 					WritableWorkspaces: accountsID.WorkspaceIDList{},
 				}},
 			wantErr: true,

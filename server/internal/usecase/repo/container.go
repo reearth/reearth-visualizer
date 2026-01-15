@@ -10,7 +10,11 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsPermittable "github.com/reearth/reearth-accounts/server/pkg/permittable"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 var (
@@ -35,14 +39,14 @@ type Container struct {
 	Transaction     usecasex.Transaction
 	Extensions      []id.PluginID
 
-	Workspace   accountsRepo.Workspace
-	User        accountsRepo.User
-	Role        accountsRepo.Role
-	Permittable accountsRepo.Permittable
+	Workspace   accountsWorkspace.Repo
+	User        accountsUser.Repo
+	Role        accountsRole.Repo
+	Permittable accountsPermittable.Repo
 }
 
-func (c *Container) AccountRepos() *accountsRepo.Container {
-	return &accountsRepo.Container{
+func (c *Container) AccountRepos() *accountsInfra.Container {
+	return &accountsInfra.Container{
 		Workspace:   c.Workspace,
 		User:        c.User,
 		Role:        c.Role,
