@@ -13,7 +13,6 @@ import (
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
-	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 const GetMeQuery = `
