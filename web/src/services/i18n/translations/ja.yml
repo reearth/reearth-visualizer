@@ -166,7 +166,7 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
-Data source: データソース
+Layer: レイヤー
 Layer Name: レイヤー名
 Format: 形式
 Custom property schema: カスタムプロパティスキーマ
@@ -197,7 +197,6 @@ Properties: プロパティ
 Photo Overlay: フォトオーバーレイ
 Photo Overlay Set: フォトオーバーレイ設定
 Not set: 設定されていません
-Layer: レイヤー
 Feature: 地物
 Layer Style: レイヤースタイル
 Infobox: インフォボックス
