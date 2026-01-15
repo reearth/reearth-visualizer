@@ -39,7 +39,7 @@ help:
 	@echo "  run-reset         Reset MongoDB data and add mock user"
 	@echo "  reset             Reset database and GCS, reinitialize with mock data"
 	@echo "  migrate           Run database migration"
-	@echo "  migrate-key       Run database migration with specific MIGRATION_KEY"
+	@echo "  migrate-with-key  Run database migration with specific MIGRATION_KEY"
 	@echo "  init              Initialize GCS bucket and create mock user"
 	@echo "  init-gcs          Initialize GCS bucket only"
 	@echo "  destroy           Remove ALL Docker resources and data (destructive)"
@@ -163,10 +163,10 @@ migrate:
 	RUN_MIGRATION=true REEARTH_DB=${REEARTH_DB} REEARTH_DB_VIS=${REEARTH_DB_VIS} go run ./cmd/reearth
 	@echo "✓ Migration complete!"
 
-migrate-key:
+migrate-with-key:
 	@if [ -z "$(MIGRATION_KEY)" ]; then \
 		echo "Error: MIGRATION_KEY is not set."; \
-		echo "Usage: make migrate-key MIGRATION_KEY=<key>"; \
+		echo "Usage: make migrate-with-key MIGRATION_KEY=<key>"; \
 		exit 1; \
 	fi
 	@echo "==== Running database migration with MIGRATION_KEY=$(MIGRATION_KEY) ===="
@@ -271,4 +271,4 @@ destroy:
 	fi
 
 .PHONY: default help lint lint-docker test test-docker test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-key
+        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-with-key
