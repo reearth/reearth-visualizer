@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func TestProperty_AddItem(t *testing.T) {
@@ -139,7 +139,7 @@ func TestProperty_UpdateValue_FieldOfGroupInList(t *testing.T) {
 		transaction:        memory.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: []accountsID.WorkspaceID{ws},
 		},
 		WritableScenes: []id.SceneID{scene.ID()},

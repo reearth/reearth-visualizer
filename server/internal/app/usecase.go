@@ -10,13 +10,14 @@ import (
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func UsecaseMiddleware(
 	r *repo.Container,
 	g *gateway.Container,
-	ar *accountsRepo.Container,
+	ar *accountsInfra.Container,
 	ag *accountsGateway.Container,
 	config interactor.ContainerConfig,
 ) echo.MiddlewareFunc {
@@ -35,10 +36,10 @@ func UsecaseMiddleware(
 			)
 		}
 
-		var ar2 *accountsRepo.Container
+		var ar2 *accountsInfra.Container
 		if op := adapter.AccountsOperator(ctx); op != nil && ar != nil {
 			// apply filters to repos
-			ar2 = ar.Filtered(accountsRepo.WorkspaceFilterFromOperator(op))
+			ar2 = ar.Filtered(accountsWorkspace.WorkspaceFilterFromOperator(op))
 		} else {
 			ar2 = ar
 		}

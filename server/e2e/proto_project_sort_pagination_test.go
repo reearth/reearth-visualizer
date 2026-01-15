@@ -20,6 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -124,7 +125,7 @@ func TestInternalAPI_GetProjectList_Member(t *testing.T) {
 	if err == nil {
 		user1, userErr := r.User.FindByID(ctx, result.UID)
 		if userErr == nil && user1 != nil {
-			_ = JoinMembers(ctx, r, result.WID2, user1, accountsWorkspace.RoleReader, result.UID2)
+			_ = JoinMembers(ctx, r, result.WID2, user1, accountsRole.RoleReader, result.UID2)
 		}
 	}
 

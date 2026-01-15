@@ -26,7 +26,7 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 type Storytelling struct {
@@ -44,7 +44,7 @@ type Storytelling struct {
 	policyChecker      gateway.PolicyChecker
 	propertySchemaRepo repo.PropertySchema
 
-	workspaceRepo accountsRepo.Workspace
+	workspaceRepo accountsWorkspace.Repo
 }
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {

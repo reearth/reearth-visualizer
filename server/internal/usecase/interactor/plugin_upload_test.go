@@ -20,7 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 const mockPluginManifest = `{
@@ -107,7 +107,7 @@ func TestPlugin_Upload_New(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: []accountsID.WorkspaceID{ws},
 		},
 		WritableScenes: []id.SceneID{sid},
@@ -187,7 +187,7 @@ func TestPlugin_Upload_SameVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: []accountsID.WorkspaceID{ws},
 		},
 		WritableScenes: []id.SceneID{sid},
@@ -293,7 +293,7 @@ func TestPlugin_Upload_DiffVersion(t *testing.T) {
 		transaction:        repos.Transaction,
 	}
 	op := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: []accountsID.WorkspaceID{ws},
 		},
 		WritableScenes: []id.SceneID{sid},

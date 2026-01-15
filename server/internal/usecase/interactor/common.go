@@ -18,7 +18,7 @@ import (
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 )
 
 type ContainerConfig struct {
@@ -31,7 +31,7 @@ type ContainerConfig struct {
 func NewContainer(
 	r *repo.Container,
 	g *gateway.Container,
-	ar *accountsRepo.Container,
+	ar *accountInfra.Container,
 	ag *accountsGateway.Container,
 	config ContainerConfig,
 ) interfaces.Container {
