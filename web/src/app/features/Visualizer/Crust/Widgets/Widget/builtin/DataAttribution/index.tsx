@@ -1,4 +1,5 @@
 import { Modal } from "@reearth/app/lib/reearth-ui";
+import { Credit } from "@reearth/app/utils/value";
 import { Credits } from "@reearth/core";
 import {
   BUILTIN_DATA_SOURCES,
@@ -45,24 +46,21 @@ const DataAttribution = ({
     };
   }, [getCredits, visible]);
 
-  const layerCredits = useMemo(() => {
+  const layerCredits: Credit[] = useMemo(() => {
     if (!nlsLayers) return [];
-    return nlsLayers
-      .map((l) =>
-        l.dataSourceName
-          ? {
-              description:
-                BUILTIN_DATA_SOURCES[l.dataSourceName as BuiltinDataSourceName]
-                  ?.label,
-              logo: BUILTIN_DATA_SOURCES[
-                l.dataSourceName as BuiltinDataSourceName
-              ]?.icon,
-              creditUrl:
-                BUILTIN_DATA_SOURCES[l.dataSourceName as BuiltinDataSourceName]
-                  ?.url
-            }
-          : undefined
-      )
+
+    const dataSourceNames = nlsLayers
+      .map((l) => l.dataSourceName)
+      .filter((name): name is BuiltinDataSourceName => name !== undefined);
+    if (dataSourceNames.length === 0) return [];
+
+    return Array.from(new Set(dataSourceNames))
+      .map((name) => ({
+        description: BUILTIN_DATA_SOURCES[name]?.label,
+        logo: BUILTIN_DATA_SOURCES[name]?.icon,
+        creditUrl: BUILTIN_DATA_SOURCES[name]?.url,
+        disableLogoBackground: true
+      }))
       .filter((c): c is NonNullable<typeof c> => !!c);
   }, [nlsLayers]);
 

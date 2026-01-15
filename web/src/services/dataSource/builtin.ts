@@ -17,6 +17,6 @@ export const BUILTIN_DATA_SOURCES: Record<
     name: "plateau",
     label: "国土交通省 Project PLATEAU",
     icon: "https://www.mlit.go.jp/plateau/assets/img/common/logo.svg",
-    url: "https://www.mlit.go.jp/plateau/open-data/"
+    url: "https://www.mlit.go.jp/plateau/site-policy/"
   }
 };
