@@ -20,7 +20,6 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -60,7 +59,7 @@ func TestAsset_Create(t *testing.T) {
 			Size:        buflen,
 		},
 	}, &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	})

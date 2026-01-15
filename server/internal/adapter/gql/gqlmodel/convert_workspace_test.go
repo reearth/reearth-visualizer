@@ -3,22 +3,22 @@ package gqlmodel
 import (
 	"testing"
 
-	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestToRole(t *testing.T) {
-	assert.Equal(t, Role(RoleOwner), ToRole(accountsWorkspace.RoleOwner))
-	assert.Equal(t, Role(RoleMaintainer), ToRole(accountsWorkspace.RoleMaintainer))
-	assert.Equal(t, Role(RoleWriter), ToRole(accountsWorkspace.RoleWriter))
-	assert.Equal(t, Role(RoleReader), ToRole(accountsWorkspace.RoleReader))
-	assert.Equal(t, Role(""), ToRole(accountsWorkspace.Role("unknown")))
+	assert.Equal(t, Role(RoleOwner), ToRole(accountsRole.RoleOwner))
+	assert.Equal(t, Role(RoleMaintainer), ToRole(accountsRole.RoleMaintainer))
+	assert.Equal(t, Role(RoleWriter), ToRole(accountsRole.RoleWriter))
+	assert.Equal(t, Role(RoleReader), ToRole(accountsRole.RoleReader))
+	assert.Equal(t, Role(""), ToRole(accountsRole.RoleType("unknown")))
 }
 
 func TestFromRole(t *testing.T) {
-	assert.Equal(t, accountsWorkspace.RoleOwner, FromRole(RoleOwner))
-	assert.Equal(t, accountsWorkspace.RoleMaintainer, FromRole(RoleMaintainer))
-	assert.Equal(t, accountsWorkspace.RoleWriter, FromRole(RoleWriter))
-	assert.Equal(t, accountsWorkspace.RoleReader, FromRole(RoleReader))
-	assert.Equal(t, accountsWorkspace.Role(""), FromRole("unknown"))
+	assert.Equal(t, accountsRole.RoleOwner, FromRole(RoleOwner))
+	assert.Equal(t, accountsRole.RoleMaintainer, FromRole(RoleMaintainer))
+	assert.Equal(t, accountsRole.RoleWriter, FromRole(RoleWriter))
+	assert.Equal(t, accountsRole.RoleReader, FromRole(RoleReader))
+	assert.Equal(t, accountsRole.RoleType(""), FromRole("unknown"))
 }
