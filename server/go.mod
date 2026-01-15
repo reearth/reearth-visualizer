@@ -30,7 +30,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
-	github.com/reearth/reearth-accounts/server v0.0.0-20260106045302-e5f87c607116
+	github.com/reearth/reearth-accounts/server v0.0.0-20260115013320-6d763f9b6cb1
 	github.com/reearth/reearthx v0.0.0-20251202081949-5abca579aec6 // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
 	github.com/samber/lo v1.52.0
 	github.com/spf13/afero v1.15.0
@@ -213,6 +213,7 @@ require (
 	go.opentelemetry.io/otel/sdk/metric v1.38.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.7.1 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
+	go.uber.org/mock v0.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.1 // indirect
 	golang.org/x/crypto v0.46.0 // indirect

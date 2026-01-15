@@ -8,8 +8,8 @@ import (
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
 
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 type ContextKey string
@@ -121,9 +121,9 @@ func Operator(ctx context.Context) *usecase.Operator {
 }
 
 // reearth-accounts Operator
-func AccountsOperator(ctx context.Context) *accountsUsecase.Operator {
+func AccountsOperator(ctx context.Context) *accountsWorkspace.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
-		if v2, ok := v.(*accountsUsecase.Operator); ok {
+		if v2, ok := v.(*accountsWorkspace.Operator); ok {
 			return v2
 		}
 	}

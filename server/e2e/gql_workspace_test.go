@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 )
 
 const workspaceNode = `
@@ -151,7 +151,7 @@ func TestAddMemberToWorkspace(t *testing.T) {
 	w, err = r.Workspace.FindByID(context.Background(), result.WID)
 	assert.Nil(t, err)
 	assert.True(t, w.Members().HasUser(result.UID2))
-	assert.Equal(t, w.Members().User(result.UID2).Role, accountsWorkspace.RoleReader)
+	assert.Equal(t, w.Members().User(result.UID2).Role, accountsRole.RoleReader)
 
 	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
@@ -191,7 +191,7 @@ func TestUpdateMemberOfWorkspace(t *testing.T) {
 
 	w, err := r.Workspace.FindByID(context.Background(), result.WID2)
 	assert.Nil(t, err)
-	assert.Equal(t, w.Members().User(result.UID3).Role, accountsWorkspace.RoleReader)
+	assert.Equal(t, w.Members().User(result.UID3).Role, accountsRole.RoleReader)
 
 	Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {
@@ -201,7 +201,7 @@ func TestUpdateMemberOfWorkspace(t *testing.T) {
 
 	w, err = r.Workspace.FindByID(context.Background(), result.WID2)
 	assert.Nil(t, err)
-	assert.Equal(t, w.Members().User(result.UID3).Role, accountsWorkspace.RoleWriter)
+	assert.Equal(t, w.Members().User(result.UID3).Role, accountsRole.RoleWriter)
 
 	res := Request(e, result.UID.String(), GraphQLRequest{
 		Query: fmt.Sprintf(`mutation {

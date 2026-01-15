@@ -17,6 +17,7 @@ import (
 
 	accountsGqlWorkspace "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -604,7 +605,7 @@ func (r *mutationResolver) updateUserOfWorkspaceViaHTTP(ctx context.Context, wor
 	return workspace, nil
 }
 
-func (r *mutationResolver) addMemberToLocalWorkspace(ctx context.Context, wid accountsID.WorkspaceID, uid accountsID.UserID, role accountsWorkspace.Role) (*accountsWorkspace.Workspace, error) {
+func (r *mutationResolver) addMemberToLocalWorkspace(ctx context.Context, wid accountsID.WorkspaceID, uid accountsID.UserID, role accountsRole.RoleType) (*accountsWorkspace.Workspace, error) {
 	if r.AccountRepos == nil || r.AccountRepos.Workspace == nil || r.AccountRepos.User == nil {
 		return nil, nil
 	}
@@ -655,7 +656,7 @@ func (r *mutationResolver) removeMemberFromLocalWorkspace(ctx context.Context, w
 	return ws, nil
 }
 
-func (r *mutationResolver) updateMemberInLocalWorkspace(ctx context.Context, wid accountsID.WorkspaceID, uid accountsID.UserID, role accountsWorkspace.Role) (*accountsWorkspace.Workspace, error) {
+func (r *mutationResolver) updateMemberInLocalWorkspace(ctx context.Context, wid accountsID.WorkspaceID, uid accountsID.UserID, role accountsRole.RoleType) (*accountsWorkspace.Workspace, error) {
 	if r.AccountRepos == nil || r.AccountRepos.Workspace == nil {
 		return nil, nil
 	}

@@ -4,33 +4,33 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 type Operator struct {
-	AcOperator        *accountsUsecase.Operator
+	AcOperator        *accountsWorkspace.Operator
 	ReadableScenes    id.SceneIDList
 	WritableScenes    id.SceneIDList
 	MaintainingScenes id.SceneIDList
 	OwningScenes      id.SceneIDList
 }
 
-func (o *Operator) Workspaces(r accountsWorkspace.Role) accountsID.WorkspaceIDList {
+func (o *Operator) Workspaces(r accountsRole.RoleType) accountsID.WorkspaceIDList {
 	if o == nil {
 		return nil
 	}
-	if r == accountsWorkspace.RoleReader {
+	if r == accountsRole.RoleReader {
 		return o.AcOperator.ReadableWorkspaces
 	}
-	if r == accountsWorkspace.RoleWriter {
+	if r == accountsRole.RoleWriter {
 		return o.AcOperator.WritableWorkspaces
 	}
-	if r == accountsWorkspace.RoleMaintainer {
+	if r == accountsRole.RoleMaintainer {
 		return o.AcOperator.MaintainableWorkspaces
 	}
-	if r == accountsWorkspace.RoleOwner {
+	if r == accountsRole.RoleOwner {
 		return o.AcOperator.OwningWorkspaces
 	}
 	return nil

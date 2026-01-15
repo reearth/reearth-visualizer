@@ -26,7 +26,7 @@ import (
 	"golang.org/x/text/language"
 
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 )
 
 const (
@@ -35,7 +35,7 @@ const (
 	maxMemorySize     = 100 * 1024 * 1024       // 100MB
 )
 
-func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *accountsGQLclient.Client, accountsAPIHost string, accountRepos *accountsRepo.Container, dev bool) echo.HandlerFunc {
+func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *accountsGQLclient.Client, accountsAPIHost string, accountRepos *accountsInfra.Container, dev bool) echo.HandlerFunc {
 
 	schema := gql.NewExecutableSchema(gql.Config{
 		Resolvers: gql.NewResolver(accountsAPIClient, accountsAPIHost, accountRepos),

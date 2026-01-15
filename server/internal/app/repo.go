@@ -26,35 +26,35 @@ import (
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
-	accountsMongo "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 )
 
-func initAccountDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *accountsRepo.Container {
+func initAccountDatabase(client *mongo.Client, txAvailable bool, ctx context.Context, conf *config.Config) *accountsInfra.Container {
 	accountDatabase := conf.DB_Account
 	log.Infof("accountDatabase: %s", accountDatabase)
 
-	accountUsers := make([]accountsRepo.User, 0, len(conf.DB_Users))
+	accountUsers := make([]accountsUser.Repo, 0, len(conf.DB_Users))
 	for _, u := range conf.DB_Users {
 		c, err := mongo.Connect(ctx, options.Client().ApplyURI(u.URI).SetMonitor(otelmongo.NewMonitor()))
 		if err != nil {
 			log.Fatalf("mongo error: %+v\n", err)
 		}
-		accountUsers = append(accountUsers, accountsMongo.NewMongoUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
+		accountUsers = append(accountUsers, accountsInfra.NewMongoUserWithHost(mongox.NewClient(accountDatabase, c), u.Name))
 	}
 
 	// this flag is for old database structure compatibility
 	// on this service, it is always false
 	useLegacyStructure := false
-	accountRepos, err := accountsMongo.New(ctx, client, accountDatabase, txAvailable, useLegacyStructure, accountUsers)
+	accountRepos, err := accountsInfra.New(ctx, client, accountDatabase, txAvailable, useLegacyStructure, accountUsers)
 	if err != nil {
 		log.Fatalf("Failed to init mongo database account: %+v\n", err)
 	}
 	return accountRepos
 }
 
-func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accountsRepo.Container, ctx context.Context, conf *config.Config) *repo.Container {
+func initVisDatabase(client *mongo.Client, txAvailable bool, accountRepos *accountsInfra.Container, ctx context.Context, conf *config.Config) *repo.Container {
 	visDatabase := conf.DB_Vis
 	log.Infof("visDatabase: %s", visDatabase)
 
@@ -72,7 +72,7 @@ func initReposAndGateways(
 ) (
 	*repo.Container,
 	*gateway.Container,
-	*accountsRepo.Container, // reearth-accounts repos using MongoDB (library mode)
+	*accountsInfra.Container, // reearth-accounts repos using MongoDB (library mode)
 	*accountsGateway.Container,
 	*accountsGQLclient.Client, // reearth-accounts externals invoke using api client (microservice mode)
 ) {

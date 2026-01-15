@@ -15,7 +15,6 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsMongo "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -38,7 +37,7 @@ func TestProjectMetadata_CreateAndFindByProjectID(t *testing.T) {
 	_ = accountsMongo.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	}
@@ -88,7 +87,7 @@ func TestProjectMetadata_Update(t *testing.T) {
 	_ = accountsMongo.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	}
@@ -149,7 +148,7 @@ func TestProjectMetadata_FindByProjectID_NotFound(t *testing.T) {
 	_ = accountsMongo.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	}
@@ -170,7 +169,7 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 	_ = accountsMongo.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	}

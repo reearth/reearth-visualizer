@@ -18,11 +18,11 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 )
 
-func New(ctx context.Context, db *mongo.Database, account *accountsRepo.Container, useTransaction bool) (*repo.Container, error) {
+func New(ctx context.Context, db *mongo.Database, account *accountsInfra.Container, useTransaction bool) (*repo.Container, error) {
 	lock, err := NewLock(db.Collection("locks"))
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func New(ctx context.Context, db *mongo.Database, account *accountsRepo.Containe
 	return c, nil
 }
 
-func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountsRepo.Container, useTransaction bool, src []string) (*repo.Container, error) {
+func NewWithExtensions(ctx context.Context, db *mongo.Database, account *accountsInfra.Container, useTransaction bool, src []string) (*repo.Container, error) {
 	c, err := New(ctx, db, account, useTransaction)
 	if err != nil {
 		return nil, err

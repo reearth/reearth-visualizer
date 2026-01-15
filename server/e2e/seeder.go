@@ -33,6 +33,7 @@ import (
 
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
@@ -188,7 +189,7 @@ func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.Fil
 		return err
 	}
 	if user1 != nil && user3 != nil {
-		if err := JoinMembers(ctx, r, result.WID, user3, accountsWorkspace.RoleReader, result.UID); err != nil {
+		if err := JoinMembers(ctx, r, result.WID, user3, accountsRole.RoleReader, result.UID); err != nil {
 			return err
 		}
 	}
@@ -222,7 +223,7 @@ func seedAccountRepoUserWorkspace(
 
 	members := map[accountsID.UserID]accountsWorkspace.Member{
 		uid: {
-			Role:      accountsWorkspace.RoleOwner,
+			Role:      accountsRole.RoleOwner,
 			InvitedBy: uid,
 		},
 	}
@@ -272,7 +273,7 @@ func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File, accounts
 func JoinMembers(ctx context.Context, r *repo.Container,
 	targetWorkspace accountsID.WorkspaceID,
 	newUser *accountsUser.User,
-	grantRole accountsWorkspace.Role,
+	grantRole accountsRole.RoleType,
 	invitedUserId accountsID.UserID,
 ) error {
 	// Find workspace by ID
