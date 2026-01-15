@@ -166,7 +166,7 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
-Data source: データソース
+Layer: レイヤー
 Layer Name: レイヤー名
 Format: 形式
 Custom property schema: カスタムプロパティスキーマ
@@ -197,7 +197,6 @@ Properties: プロパティ
 Photo Overlay: フォトオーバーレイ
 Photo Overlay Set: フォトオーバーレイ設定
 Not set: 設定されていません
-Layer: レイヤー
 Feature: 地物
 Layer Style: レイヤースタイル
 Infobox: インフォボックス
@@ -209,6 +208,7 @@ Show photo overlay when the user clicks on a layer: レイヤーをクリック�
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
+Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
@@ -244,6 +244,12 @@ Photo size type: フォトサイズタイプ
 Photo size: フォトサイズ
 Photo description: フォト説明
 Camera: カメラ
+Area: 都道府県
+Dataset Type: カテゴリー
+PLATEAU Data Catalog: PLATEAUデータカタログ
+Search by name: 名前で検索
+No results found: 結果が見つかりません
+Loading...: ロード中...
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -543,7 +549,6 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-Loading...: ロード中...
 Please select: 選択してください
 This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
 'Sort:': '並び替え:'
