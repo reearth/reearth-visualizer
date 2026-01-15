@@ -21,7 +21,6 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
-	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 // make e2e-test TEST_NAME=TestInternalAPI_GetProjectList_Owner
