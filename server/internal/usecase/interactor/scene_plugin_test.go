@@ -20,7 +20,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func TestScene_InstallPlugin(t *testing.T) {
@@ -83,7 +83,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			name: "operation denied",
 			args: args{
 				operator: &usecase.Operator{
-					AcOperator: &accountsUsecase.Operator{},
+					AcOperator: &accountsWorkspace.Operator{},
 				},
 			},
 			wantErr: interfaces.ErrOperationDenied,
@@ -121,7 +121,7 @@ func TestScene_InstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					AcOperator: &accountsUsecase.Operator{
+					AcOperator: &accountsWorkspace.Operator{
 						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}
@@ -197,7 +197,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			name: "operation denied",
 			args: args{
 				operator: &usecase.Operator{
-					AcOperator: &accountsUsecase.Operator{},
+					AcOperator: &accountsWorkspace.Operator{},
 				}},
 			wantErr: interfaces.ErrOperationDenied,
 		},
@@ -245,7 +245,7 @@ func TestScene_UninstallPlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					AcOperator: &accountsUsecase.Operator{
+					AcOperator: &accountsWorkspace.Operator{
 						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}
@@ -332,7 +332,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			name: "operation denied",
 			args: args{
 				operator: &usecase.Operator{
-					AcOperator: &accountsUsecase.Operator{},
+					AcOperator: &accountsWorkspace.Operator{},
 				}},
 			wantErr: interfaces.ErrOperationDenied,
 		},
@@ -378,7 +378,7 @@ func TestScene_UpgradePlugin(t *testing.T) {
 			o := tt.args.operator
 			if o == nil {
 				o = &usecase.Operator{
-					AcOperator: &accountsUsecase.Operator{
+					AcOperator: &accountsWorkspace.Operator{
 						WritableWorkspaces: accountsID.WorkspaceIDList{tid},
 					},
 				}

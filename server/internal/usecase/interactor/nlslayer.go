@@ -33,7 +33,7 @@ import (
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	workspaceRepo "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 var (
@@ -66,7 +66,7 @@ type NLSLayer struct {
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
 	file          gateway.File
-	workspaceRepo accountsRepo.Workspace
+	workspaceRepo workspaceRepo.Repo
 	transaction   usecasex.Transaction
 
 	propertySchemaRepo repo.PropertySchema

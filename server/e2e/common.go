@@ -36,7 +36,6 @@ import (
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	adpaccounts "github.com/reearth/reearth/server/internal/adapter/accounts"
 )
@@ -92,7 +91,7 @@ func init() {
 }
 
 // initializeRoles creates the required roles for E2E tests
-func initializeRoles(ctx context.Context, accountRepos *accountsRepo.Container) error {
+func initializeRoles(ctx context.Context, accountRepos *accountsInfra.Container) error {
 	if accountRepos == nil || accountRepos.Role == nil {
 		return fmt.Errorf("accountRepos or Role repository is nil")
 	}
@@ -118,7 +117,7 @@ func initializeRoles(ctx context.Context, accountRepos *accountsRepo.Container) 
 		if err := accountRepos.Role.Save(ctx, *role); err != nil {
 			// If the role already exists, continue
 			if strings.Contains(err.Error(), "already exists") ||
-			   strings.Contains(err.Error(), "duplicate") {
+				strings.Contains(err.Error(), "duplicate") {
 				continue
 			}
 			return fmt.Errorf("failed to save role %s: %w", roleName, err)
@@ -148,7 +147,7 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder, cfg *config.Config) (
 		fmt.Println("db.Name():", db.Name())
 
 		// Create account container for mongo
-		accountRepos := &accountsRepo.Container{
+		accountRepos := &accountsInfra.Container{
 			User:        accountsInfra.NewMemoryUser(),
 			Workspace:   accountsInfra.NewMemoryWorkspace(),
 			Role:        accountsInfra.NewMemoryRole(),
@@ -294,7 +293,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
 }
 
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountsRepo.Container, *SeederResult) {
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountsInfra.Container, *SeederResult) {
 	repos, _, _, _, seederResult := initRepos(t, true, seeder, disabledAuthConfig)
 	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos(), seederResult

@@ -25,7 +25,6 @@ import (
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
@@ -92,7 +91,7 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 
 	// Create operator
 	operator := &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			WritableWorkspaces: accountsWorkspace.IDList{wsID},
 			OwningWorkspaces:   accountsWorkspace.IDList{wsID},
 		},
