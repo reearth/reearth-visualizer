@@ -106,7 +106,7 @@ const DataSource: FC<Props> = ({
   return (
     <Wrapper data-testid="data-source-wrapper">
       <Collapse
-        title={t("Data source")}
+        title={t("Layer")}
         size="small"
         background={theme.relative.dim}
         headerBg={theme.relative.dim}
