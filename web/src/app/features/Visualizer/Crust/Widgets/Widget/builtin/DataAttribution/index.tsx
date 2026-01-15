@@ -70,7 +70,7 @@ const DataAttribution = ({
   });
 
   const credits = useMemo(() => {
-    return [...layerCredits, ...(otherCredits ?? [])];
+    return [...(otherCredits ?? []), ...layerCredits];
   }, [layerCredits, otherCredits]);
 
   return (
