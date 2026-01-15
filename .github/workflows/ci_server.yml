@@ -33,35 +33,90 @@ jobs:
         run: |
           git diff --exit-code
 
-  ci-server-test:
+  ci-server-unit-test:
     runs-on: ubuntu-latest
-    services:
-      mongo:
-        image: mongo:7
-        ports:
-          - 27017:27017
     steps:
-      - name: Start Fake GCS Server
-        run: |
-          docker run -d --name fake-gcs-server \
-            -p 4443:4443 \
-            -v /tmp/gcs:/storage \
-            fsouza/fake-gcs-server:1.52.1 \
-            -scheme http
-      - name: checkout
+      - name: checkout reearth-visualizer
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - name: set up
+
+      - name: Start MongoDB and Fake GCS
+        run: |
+          docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
+          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "db.adminCommand({ ping: 1 })" 2>/dev/null; do sleep 2; done'
+          docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'reearth-mongo:27017'}]})" || true
+          timeout 30 bash -c 'until nc -z localhost 4443 2>/dev/null; do sleep 2; done'
+          sleep 5
+
+      - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
         with:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
-      - name: test
+
+      - name: Run unit tests
         run: go test ./... -v -race -coverprofile=coverage.txt -covermode=atomic -timeout 10m
         env:
           REEARTH_DB: mongodb://localhost
         working-directory: server
+
       - name: Send coverage report
         uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: server
+
+  ci-server-e2e-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout reearth-visualizer
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Create reearth network and start services
+        run: |
+          docker compose -f docker-compose.dev.yml up --no-start
+          docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
+          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "db.adminCommand({ ping: 1 })" 2>/dev/null; do sleep 2; done'
+          docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'reearth-mongo:27017'}]})" || true
+          sleep 5
+
+      - name: Checkout reearth-accounts
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: reearth/reearth-accounts
+          ref: feat/reearthx-to-reearth-accounts4
+          path: reearth-accounts
+
+      - name: Start reearth-accounts
+        run: |
+          cd reearth-accounts/server
+          echo "REEARTH_MOCK_AUTH=true" >> .env.docker
+          echo "REEARTH_AUTH_ISS=https://reearth.io" >> .env.docker
+          cd ..
+          docker compose -f docker-compose.dev.yml up -d
+          docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' | grep -q "reearth" || docker network connect reearth reearth-accounts-reearth-accounts-dev-1
+          docker inspect reearth-accounts-reearth-cerbos-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' | grep -q "reearth" || docker network connect reearth reearth-accounts-reearth-cerbos-1
+          sleep 10
+          timeout 60 bash -c 'until nc -z localhost 8090 2>/dev/null; do sleep 2; done'
+
+      - name: set up Go
+        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        with:
+          go-version-file: server/go.mod
+          cache-dependency-path: server/go.sum
+
+      - name: Start reearth-visualizer
+        run: |
+          docker compose -f docker-compose.dev.yml up -d reearth-visualizer-dev
+          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-visualizer-dev-1 echo "ready" 2>/dev/null; do sleep 2; done'
+
+      - name: Run e2e tests
+        run: make e2e
+        working-directory: server
+
+      - name: Show logs on failure
+        if: failure()
+        run: |
+          echo "=== reearth-accounts logs ==="
+          docker logs reearth-accounts-reearth-accounts-dev-1 2>&1 || true
+          echo "=== reearth-visualizer logs ==="
+          docker logs reearth-visualizer-reearth-visualizer-dev-1 2>&1 || true

@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -11,17 +13,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI_projectAlias ./e2e/...
-
+// make e2e-test TEST_NAME=TestInternalAPI_projectAlias
 func TestInternalAPI_projectAlias(t *testing.T) {
 	// _, r, _ :=
-	GRPCServer(t, baseSeeder)
+	_, _, _, result := GRPCServer(t, baseSeeder)
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		res, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
-			WorkspaceId:  wID.String(),
+			WorkspaceId:  result.WID.String(),
 			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
 			Name:         lo.ToPtr("Test Project1"),
 			Description:  lo.ToPtr("Test Description1"),
@@ -34,7 +34,7 @@ func TestInternalAPI_projectAlias(t *testing.T) {
 		pj := res.GetProject()
 
 		res2, err := client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
-			WorkspaceId: wID.String(),
+			WorkspaceId: result.WID.String(),
 			Alias:       "xxxxx",
 			ProjectId:   &pj.Id,
 		})
@@ -42,14 +42,14 @@ func TestInternalAPI_projectAlias(t *testing.T) {
 		require.Equal(t, res2.Available, true)
 
 		res2, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
-			WorkspaceId: wID.String(),
+			WorkspaceId: result.WID.String(),
 			Alias:       "xxxxx",
 		})
 		require.Nil(t, err)
 		require.Equal(t, *res2.ErrorMessage, "The alias is already in use within the workspace. Please try a different value.")
 
 		res2, err = client.ValidateProjectAlias(ctx, &pb.ValidateProjectAliasRequest{
-			WorkspaceId: wID.String(),
+			WorkspaceId: result.WID.String(),
 			Alias:       "test/xxxx",
 			ProjectId:   &pj.Id,
 		})
@@ -59,15 +59,15 @@ func TestInternalAPI_projectAlias(t *testing.T) {
 }
 
 func TestInternalAPI_sceneAlias(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
+	_, r, _, result := GRPCServer(t, baseSeeder)
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		//-------------------------------------
 		// create public Project1
 		//-------------------------------------
 		res1, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
-			WorkspaceId: wID.String(),
+			WorkspaceId: result.WID.String(),
 			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 			Name:        lo.ToPtr("Test Project1"),
 			Description: lo.ToPtr("Test Description1"),
@@ -130,7 +130,7 @@ func TestInternalAPI_sceneAlias(t *testing.T) {
 		// create public Project2
 		//-------------------------------------
 		res2, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
-			WorkspaceId: wID.String(),
+			WorkspaceId: result.WID.String(),
 			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 			Name:        lo.ToPtr("Test Project1"),
 			Description: lo.ToPtr("Test Description1"),
@@ -189,17 +189,15 @@ func TestInternalAPI_sceneAlias(t *testing.T) {
 	})
 }
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI_publish ./e2e/...
-
+// make e2e-test TEST_NAME=TestInternalAPI_publish
 func TestInternalAPI_publish(t *testing.T) {
-	GRPCServer(t, baseSeeder)
+	_, _, _, result := GRPCServer(t, baseSeeder)
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
 		res1, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
-			WorkspaceId: wID.String(),
+			WorkspaceId: result.WID.String(),
 			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 			Name:        lo.ToPtr("Test Project1"),
 			Description: lo.ToPtr("Test Description1"),
@@ -230,4 +228,3 @@ func TestInternalAPI_publish(t *testing.T) {
 
 	})
 }
-

@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -6,6 +8,17 @@ import (
 
 func TestValidateGeoJsonExternal(t *testing.T) {
 	// just only check the URL format
+	e, result := Server(t, baseSeeder)
+
+	pId := createProject(e, result.UID, map[string]any{
+		"name":        "test",
+		"description": "abc",
+		"workspaceId": result.WID.String(),
+		"visualizer":  "CESIUM",
+		"coreSupport": true,
+	})
+	sId := createScene(e, result.UID, pId)
+
 	tests := []struct {
 		name     string
 		url      string
@@ -27,19 +40,10 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 			hasError: false,
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := Server(t, baseSeeder)
-			pId := createProject(e, uID, map[string]any{
-				"name":        "test",
-				"description": "abc",
-				"workspaceId": wID.String(),
-				"visualizer":  "CESIUM",
-				"coreSupport": true,
-			})
-
-			sId := createScene(e, pId)
-			res := addNLSLayerSimpleByGeojson(e, sId, tt.url, "test", 0)
+			res := addNLSLayerSimpleByGeojson(e, sId, tt.url, "test", 0, result.UID.String())
 			if tt.hasError {
 				res.Object().Value("errors").Array().NotEmpty()
 			} else {
@@ -50,16 +54,16 @@ func TestValidateGeoJsonExternal(t *testing.T) {
 }
 
 func TestValidateGeoFormData(t *testing.T) {
-	e := Server(t, baseSeeder)
+	e, result := Server(t, baseSeeder)
 
-	pId := createProject(e, uID, map[string]any{
+	pId := createProject(e, result.UID, map[string]any{
 		"name":        "test",
 		"description": "abc",
-		"workspaceId": wID.String(),
+		"workspaceId": result.WID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	sId := createScene(e, pId)
+	sId := createScene(e, result.UID, pId)
 	tests := []struct {
 		name     string
 		geometry map[string]any
@@ -122,7 +126,7 @@ func TestValidateGeoFormData(t *testing.T) {
 				},
 			}
 
-			res := Request(e, uID.String(), requestBody)
+			res := Request(e, result.UID.String(), requestBody)
 			if tt.hasError {
 				res.Object().Value("errors").Array().NotEmpty()
 			} else {

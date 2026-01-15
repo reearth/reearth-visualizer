@@ -46,10 +46,35 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
 ### 🖥️ macOS / Linux
 
 1. Navigate to the `server` directory and start the backend server.  
-   This command will automatically start the database and mock GCS storage:
+   This command will automatically start the database and mock GCS storage service:
 
    ```bash
-   cd server
+   git clone https://github.com/reearth/reearth-visualizer.git
+   cd reearth-visualizer/server
+   make run
+   ```
+
+   Next, start the authentication service:
+
+   ```bash
+   git clone https://github.com/reearth/reearth-accounts.git
+   cd reearth-accounts/server
+   ```
+
+   reearth-accounts supports two authentication modes: Identity Provider (IDP) or mock users.
+   To use mock users, modify `server/.env.docker`:
+
+   ```diff
+   # Mock auth for demo
+   -REEARTH_MOCK_AUTH=false
+   +REEARTH_MOCK_AUTH=true
+   ```
+
+   Run migrations to add required master data (such as roles), then start the service:
+
+   ```bash
+   cd reearth-accounts/server
+   make run-migration
    make run
    ```
 
@@ -58,36 +83,64 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    This step is only required for the first-time setup:
 
    ```bash
-   make init
+   cd reearth-visualizer/server
+   make init-gcs
+   make mockuser
    ```
 
 ### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
 
-1. Open PowerShell and navigate to the `server` directory:
+1. Clone the repository and navigate to the `server` directory:
 
    ```powershell
-   cd server
+   git clone https://github.com/reearth/reearth-visualizer.git
+   cd reearth-visualizer\server
    ```
 
-2. Set an alias to use `dv` as a shortcut for `make`:
+2. Set an alias to use `dv` as a shortcut for running dev.bat:
 
    ```powershell
    Set-Alias dv .\dev.bat
    ```
 
-3. Start the backend server.  
-   This will automatically start the database and mock GCS storage:
+3. Start the backend server.
+   This will automatically start the database and mock GCS storage service:
 
    ```powershell
    dv run
    ```
 
-4. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
+   Next, start the authentication service:
+
+   ```powershell
+   git clone https://github.com/reearth/reearth-accounts.git
+   cd reearth-accounts\server
+   ```
+
+   reearth-accounts supports two authentication modes: Identity Provider (IDP) or mock users.
+   To use mock users, modify `server\.env.docker`:
+
+   ```diff
+   # Mock auth for demo
+   -REEARTH_MOCK_AUTH=false
+   +REEARTH_MOCK_AUTH=true
+   ```
+
+   Run migrations to add required master data (such as roles), then start the service:
+
+   ```powershell
+   Set-Alias dv .\dev.bat
+   dv run-migration
+   dv run
+   ```
+
+4. Initialize the development environment.
+   This creates a mock user and sets up the mock GCS bucket.
    This step is only required for the first-time setup:
 
    ```powershell
-   dv init
+   dv init-gcs
+   dv mockuser
    ```
 
 ---
@@ -197,6 +250,5 @@ Re:Earth core committers: [community@reearth.io](mailto:community@reearth.io)
 ## License
 
 Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more information.
-
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer?ref=badge_large)
