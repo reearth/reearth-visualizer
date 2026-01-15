@@ -11,6 +11,7 @@ import (
 	"github.com/reearth/reearthx/util"
 
 	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
@@ -180,7 +181,7 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File, 
 		return err
 	}
 	if user1 != nil && user3 != nil {
-		if err := JoinMembers(ctx, r, result.WID, user3, accountsWorkspace.RoleReader, result.UID); err != nil {
+		if err := JoinMembers(ctx, r, result.WID, user3, accountsRole.RoleReader, result.UID); err != nil {
 			return err
 		}
 	}

@@ -38,7 +38,7 @@ import (
 	"github.com/spf13/afero"
 
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
-	accountsRepo "github.com/reearth/reearth-accounts/server/pkg/repo"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
@@ -47,8 +47,8 @@ type Project struct {
 	common
 	commonSceneLock
 	transaction         usecasex.Transaction
-	userRepo            accountsRepo.User
-	workspaceRepo       accountsRepo.Workspace
+	userRepo            accountsUser.Repo
+	workspaceRepo       accountsWorkspace.Repo
 	assetRepo           repo.Asset
 	projectRepo         repo.Project
 	projectMetadataRepo repo.ProjectMetadata
@@ -251,10 +251,10 @@ func (i *Project) MemberWorkspaces(ctx context.Context, uId accountsID.UserID) (
 	for _, ws := range wsList {
 		for userId, member := range ws.Members().Users() {
 			if uId.String() == userId.String() {
-				if member.Role == accountsWorkspace.RoleOwner {
+				if member.Role == accountsRole.RoleOwner {
 					ownedWs = append(ownedWs, ws.ID().String())
 				}
-				if member.Role == accountsWorkspace.RoleWriter || member.Role == accountsWorkspace.RoleReader || member.Role == accountsWorkspace.RoleMaintainer {
+				if member.Role == accountsRole.RoleWriter || member.Role == accountsRole.RoleReader || member.Role == accountsRole.RoleMaintainer {
 					memberWs = append(memberWs, ws.ID().String())
 
 				}

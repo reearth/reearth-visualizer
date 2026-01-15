@@ -14,7 +14,7 @@ import (
 	"github.com/reearth/reearthx/rerror"
 
 	accountsGqlError "github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
-	accountsUsecase "github.com/reearth/reearth-accounts/server/pkg/usecase"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
@@ -171,13 +171,13 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.Us
 		return nil, err
 	}
 
-	readableWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleReader).IDs()
-	writableWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleWriter).IDs()
-	maintainingWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleMaintainer).IDs()
-	owningWorkspaces := wsList.FilterByUserRole(uid, accountsWorkspace.RoleOwner).IDs()
+	readableWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleReader).IDs()
+	writableWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleWriter).IDs()
+	maintainingWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleMaintainer).IDs()
+	owningWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleOwner).IDs()
 
 	return &usecase.Operator{
-		AcOperator: &accountsUsecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			User:                   &uid,
 			ReadableWorkspaces:     readableWorkspaces,
 			WritableWorkspaces:     writableWorkspaces,
