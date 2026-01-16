@@ -6,7 +6,7 @@ import { styled } from "@reearth/services/theme";
 import { GraphiQL } from "graphiql";
 import { ReactNode, useEffect, useState } from "react";
 import "graphiql/graphiql.css";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 
 const fetcher = createGraphiQLFetcher({
   url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql"

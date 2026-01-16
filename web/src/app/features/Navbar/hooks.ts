@@ -7,7 +7,7 @@ import {
 } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 import { useMemo, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default ({
   projectId,
