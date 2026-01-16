@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 )
 
@@ -33,6 +34,8 @@ func (h *HTTPPolicyChecker) CheckPolicy(ctx context.Context, req gateway.PolicyC
 	if err != nil {
 		return nil, rerror.ErrInternalBy(fmt.Errorf("failed to marshal policy request: %w", err))
 	}
+
+	log.Debugc(ctx, "policy check request: %s", string(body))
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, h.endpoint, bytes.NewBuffer(body))
 	if err != nil {
