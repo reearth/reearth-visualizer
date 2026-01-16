@@ -9,7 +9,7 @@ import { toPublishmentStatus } from "@reearth/services/api/utils";
 import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import useScene from "../Editor/hooks/useScene";
 

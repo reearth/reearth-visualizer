@@ -8,7 +8,7 @@ import {
 } from "@reearth/services/state";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export type Mode = "layer" | "widget";
 
