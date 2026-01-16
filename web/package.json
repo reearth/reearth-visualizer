@@ -27,18 +27,6 @@
     "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc",
     "scan:lock": "sh ./bin/scan-yarn-lock.sh"
   },
-  "resolutions": {
-    "@types/node-fetch": "2.6.13",
-    "@types/react": "19.2.7",
-    "@types/react-dom": "19.2.3",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
-    "glob": "^11.1.0",
-    "graphql": "16.12.0",
-    "js-yaml": "4.1.1",
-    "mdast-util-to-hast": "13.2.1",
-    "@zip.js/zip.js": "2.7.62"
-  },
   "engines": {
     "node": ">=20.11.0"
   },
@@ -194,6 +182,18 @@
     "ts-easing": "0.2.0",
     "use-file-input": "1.0.0",
     "uuid": "13.0.0"
+  },
+  "resolutions": {
+    "@types/node-fetch": "2.6.13",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "glob": "^11.1.0",
+    "graphql": "16.12.0",
+    "js-yaml": "4.1.1",
+    "mdast-util-to-hast": "13.2.1",
+    "@zip.js/zip.js": "2.7.62"
   },
   "packageManager": "yarn@4.6.0"
 }
