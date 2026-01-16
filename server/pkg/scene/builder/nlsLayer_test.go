@@ -14,7 +14,7 @@ import (
 func TestGetNLSLayerJSON_DataSourceName(t *testing.T) {
 	ctx := context.Background()
 
-	t.Run("with DataSourceName", func(t *testing.T) {
+	t.Run("with DataSourceName included", func(t *testing.T) {
 		dataSourceName := "test-data-source"
 		layer := nlslayer.NewNLSLayerSimple().
 			NewID().
