@@ -2,7 +2,7 @@ import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layer";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
 import { styled } from "@reearth/services/theme";
-import { FC, MutableRefObject, ReactNode } from "react";
+import { FC, MutableRefObject, ReactNode, useRef } from "react";
 
 import { BlockProps } from "../../../shared/types";
 import StoryPage from "../Page";
@@ -103,16 +103,20 @@ const StoryContent: FC<Props> = ({
     onBlockDelete
   });
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   return (
     <PagesWrapper
       id={STORY_PANEL_CONTENT_ELEMENT_ID}
       showingIndicator={showingIndicator}
       isEditable={isEditable && !disableSelection}
+      ref={wrapperRef}
     >
       {pages?.map((p) => (
         <StoryPage
           key={p.id}
           page={p}
+          wrapperRef={wrapperRef}
           selectedPageId={selectedPageId}
           installableStoryBlocks={installableStoryBlocks}
           selectedStoryBlockId={selectedStoryBlockId}

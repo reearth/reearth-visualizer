@@ -2,7 +2,6 @@ import BlockAddBar from "@reearth/app/features/Visualizer/shared/components/Bloc
 import ContentWrapper from "@reearth/app/features/Visualizer/shared/components/ContentWrapper";
 import SelectableArea from "@reearth/app/features/Visualizer/shared/components/SelectableArea";
 import { useElementOnScreen } from "@reearth/app/features/Visualizer/shared/hooks/useElementOnScreen";
-import { useStableIntersectionOptions } from "@reearth/app/features/Visualizer/shared/hooks/useStableIntersectionOptions";
 import { DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layer";
@@ -33,6 +32,7 @@ import useHooks, { type StoryPage } from "./hooks";
 
 type Props = {
   page?: StoryPage;
+  wrapperRef: RefObject<HTMLDivElement | null>;
   selectedPageId?: string;
   selectedStoryBlockId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
@@ -87,6 +87,7 @@ const PAGE_DRAG_HANDLE_CLASS_NAME =
 
 const StoryPanel: FC<Props> = ({
   page,
+  wrapperRef,
   selectedPageId,
   selectedStoryBlockId,
   installableStoryBlocks,
@@ -138,48 +139,26 @@ const StoryPanel: FC<Props> = ({
     return height > 0 ? `${height - 40}px` : "100%";
   }, [rootElement]);
 
-  const intersectionOptions = useStableIntersectionOptions(
-    rootElement,
-    [0, 0.1, 0.5, 0.9, 1.0],
-    "0px"
-  );
+  const pageRef = useRef<HTMLDivElement | null>(null);
 
-  const { containerRef, isIntersecting, intersectionRatio } =
-    useElementOnScreen(intersectionOptions);
+  const isActive = useElementOnScreen({
+    wrapperRef,
+    elementRef: pageRef
+  });
 
   // Debounce timer for page changes to prevent rapid switching
   const pageChangeTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
   useEffect(() => {
-    const pageWrapperElement = document.getElementById(
-      STORY_PANEL_CONTENT_ELEMENT_ID
-    );
+    if (isAutoScrolling?.current || !isActive) return;
 
-    if (!pageWrapperElement) return;
-
-    const resizeObserver = new ResizeObserver(() => {
-      clearTimeout(pageChangeTimeoutRef.current);
-    });
-
-    resizeObserver.observe(pageWrapperElement);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [pageChangeTimeoutRef]);
-
-  useEffect(() => {
-    if (isAutoScrolling?.current) return;
-
-    if (!isIntersecting || intersectionRatio < 0.1) return;
-
-    const pageElement = containerRef.current;
+    const pageElement = pageRef.current;
     const pageId = pageElement?.id;
     if (!pageId) return;
 
     let didScheduleTimeout = false;
 
-    if (intersectionRatio >= 0.5) {
+    if (isActive) {
       clearTimeout(pageChangeTimeoutRef.current);
       pageChangeTimeoutRef.current = setTimeout(() => {
         onCurrentPageChange?.(pageId, true);
@@ -193,9 +172,8 @@ const StoryPanel: FC<Props> = ({
       }
     };
   }, [
-    isIntersecting,
-    intersectionRatio,
-    containerRef,
+    isActive,
+    pageRef,
     isAutoScrolling,
     scrollTimeoutRef,
     onCurrentPageChange
@@ -312,7 +290,7 @@ const StoryPanel: FC<Props> = ({
     >
       <ContentWrapper
         id={page?.id}
-        ref={containerRef}
+        ref={pageRef}
         isEditable={isEditable}
         minPaddingInEditor={MIN_STORY_PAGE_PADDING_IN_EDITOR}
         padding={panelSettings?.padding?.value}
