@@ -98,7 +98,6 @@ export const StoryPanel = memo(
         isAutoScrolling,
         layerOverride,
         disableSelection,
-        setCurrentPageId,
         setLayerOverride,
         handleSelectionDisable,
         handleLayerOverride,
@@ -124,14 +123,13 @@ export const StoryPanel = memo(
             if (!pageId) return;
             const element = document.getElementById(pageId);
             if (!element) return;
-            setCurrentPageId(pageId);
             setLayerOverride(undefined);
             element.scrollIntoView({
-              behavior: "instant"
+              behavior: "smooth"
             });
           }
         }),
-        [selectedStory?.pages, setCurrentPageId, setLayerOverride]
+        [selectedStory?.pages, setLayerOverride]
       );
 
       const editModeContext = useMemo(
