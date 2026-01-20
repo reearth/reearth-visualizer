@@ -88,7 +88,11 @@ export default ({
       id: "rename",
       title: t("Rename"),
       icon: "pencilLine",
-      onClick: () => handleProjectNameEdit?.()
+      onClick: () => {
+        setTimeout(() => {
+          handleProjectNameEdit?.();
+        }, 0);
+      }
     },
     {
       id: "setting",

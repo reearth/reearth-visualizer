@@ -71,7 +71,12 @@ const PageItem: FC<PageItemProps> = ({
         id: "rename",
         title: t("Rename"),
         icon: "pencilSimple" as const,
-        onClick: () => setEditingPageNameId(storyPage.id)
+        onClick: () => {
+          // Delay entering edit mode until popup has fully closed and finished focus management
+          setTimeout(() => {
+            setEditingPageNameId(storyPage.id);
+          }, 0);
+        }
       },
       {
         id: "delete",
