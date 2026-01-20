@@ -1,7 +1,7 @@
-import type { Credits, TickEvent } from "@reearth/core";
+import type { Credits, MapRef, TickEvent } from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layer";
-import { ComponentType, ReactNode, useMemo, type JSX } from "react";
+import { ComponentType, ReactNode, RefObject, useMemo, type JSX } from "react";
 
 import type { WidgetProperty } from "../types";
 
@@ -41,6 +41,7 @@ export type Props = {
 };
 
 export type Context = {
+  mapRef?: RefObject<MapRef | null>;
   clock?: Clock;
   timelineManagerRef?: TimelineManagerRef;
   updateClockOnLoad?: boolean;

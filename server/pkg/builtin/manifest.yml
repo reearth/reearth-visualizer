@@ -2443,6 +2443,25 @@ extensions:
                   label: Japanese
                 - key: cn
                   label: Chinese
+  - id: googleMapStreetView
+    type: widget
+    name: Google Map Street View
+    description: A widget that allows you to view streets, buildings, and surroundings remotely without being physically there.
+    singleOnly: true
+    widgetLayout:
+      defaultLocation:
+        zone: inner
+        section: center
+        area: top
+    schema:
+      groups:
+        - id: default
+          title: Google Map Street View Widget
+          fields:
+            - id: apiToken
+              type: string
+              title: API Token
+              description: Google Map Api Key
   - id: story
     name: Story
     type: story

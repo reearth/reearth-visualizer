@@ -48,6 +48,7 @@ export function widgetContextFromMapRef({
     get clock() {
       return engine()?.getClock();
     },
+    mapRef,
     timelineManagerRef,
     initialCamera,
     nlsLayers,
