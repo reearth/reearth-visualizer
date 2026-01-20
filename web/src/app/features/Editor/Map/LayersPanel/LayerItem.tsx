@@ -87,7 +87,12 @@ const LayerItem: FC<LayerItemProps> = ({
       id: "rename",
       title: t("Rename"),
       icon: "pencilSimple" as const,
-      onClick: () => setEditingLayerNameId(layer.id)
+      onClick: () => {
+        // Delay entering edit mode until popup has fully closed and finished focus management
+        setTimeout(() => {
+          setEditingLayerNameId(layer.id);
+        }, 0);
+      }
     },
     {
       id: "delete",
@@ -169,10 +174,10 @@ const LayerItem: FC<LayerItemProps> = ({
   handleTitleUpdateRef.current = handleTitleUpdate;
 
   useEffect(() => {
-    if (selectedLayerId !== layer.id) {
+    if (selectedLayerId !== layer.id && editingLayerNameId !== layer.id) {
       handleTitleUpdateRef.current();
     }
-  }, [selectedLayerId, layer.id, handleTitleUpdateRef]);
+  }, [selectedLayerId, layer.id, editingLayerNameId, handleTitleUpdateRef]);
 
   return (
     <>
