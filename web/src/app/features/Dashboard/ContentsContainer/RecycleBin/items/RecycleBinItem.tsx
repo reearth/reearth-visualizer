@@ -6,7 +6,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 

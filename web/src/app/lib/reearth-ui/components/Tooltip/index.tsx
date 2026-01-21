@@ -1,6 +1,6 @@
 import { Placement } from "@floating-ui/react";
 import { Icon, IconName, Popup, Typography } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, ReactNode, useMemo } from "react";
 

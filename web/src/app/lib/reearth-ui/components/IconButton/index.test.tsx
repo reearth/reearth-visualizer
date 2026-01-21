@@ -1,9 +1,8 @@
 import { render, screen, fireEvent } from "@reearth/test/utils";
+import type { JSX } from "react";
 import { vi, describe, test, expect, beforeEach } from "vitest";
 
 import { IconButton } from "./index";
-
-import type { JSX } from "react";
 
 vi.mock("../Icon", () => ({
   Icon: ({ icon, color }: { icon: string; color?: string }) => (
@@ -143,7 +142,7 @@ describe("IconButton Component", () => {
     // Test that the button is rendered and clickable instead of testing computed styles
     expect(button).toBeInTheDocument();
     expect(button).not.toBeDisabled();
-    
+
     // Test that the hasBorder prop affects the component by checking it's still functional
     fireEvent.click(button);
     expect(button).toBeInTheDocument();

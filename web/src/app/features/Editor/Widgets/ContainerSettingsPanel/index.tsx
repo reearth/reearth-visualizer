@@ -1,6 +1,6 @@
 import { ColorField, NumberField, SwitchField } from "@reearth/app/ui/fields";
 import { Panel } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { WidgetAreaPadding } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";

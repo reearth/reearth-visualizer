@@ -5,7 +5,7 @@ import {
   ListField
 } from "@reearth/app/ui/fields";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 

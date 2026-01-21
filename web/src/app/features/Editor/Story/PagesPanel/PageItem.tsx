@@ -3,7 +3,7 @@ import { TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
 import { isEmptyString } from "@reearth/app/utils/string";
 import type { Page } from "@reearth/services/api/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 

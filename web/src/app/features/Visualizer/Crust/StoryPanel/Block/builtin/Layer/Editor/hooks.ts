@@ -1,6 +1,6 @@
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { debounce } from "lodash-es";
 import { useCallback, useMemo } from "react";
 

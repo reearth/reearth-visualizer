@@ -27,7 +27,7 @@ import {
   $getNearestNodeOfType,
   mergeRegister
 } from "@lexical/utils";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import type { ElementFormatType, LexicalEditor, RangeSelection } from "lexical";
 import {
   $createParagraphNode,

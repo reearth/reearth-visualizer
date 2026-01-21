@@ -1,6 +1,6 @@
-import { useEditModeContext } from "@reearth/app/features/Visualizer/shared/contexts/editModeContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useEditModeContext } from "../../../shared/contexts/useEditModeContext";
 import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 
 export type { StoryPage } from "../hooks";

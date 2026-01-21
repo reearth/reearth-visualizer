@@ -10,7 +10,7 @@ import {
 import { useSearchUser } from "@reearth/services/api/user";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { Role } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { Workspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useRef, useState } from "react";

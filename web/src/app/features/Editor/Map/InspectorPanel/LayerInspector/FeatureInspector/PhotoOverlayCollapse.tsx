@@ -5,7 +5,7 @@ import {
   getPhotoOverlayValue,
   PhotoOverlayValue
 } from "@reearth/app/utils/sketch";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { useSetAtom } from "jotai";
 import { FC, useCallback, useMemo } from "react";

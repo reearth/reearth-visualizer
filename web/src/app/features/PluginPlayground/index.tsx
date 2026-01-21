@@ -1,6 +1,6 @@
 import { Tabs } from "@reearth/app/lib/reearth-ui";
 import { Area, Panel, Window } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { FC } from "react";
 
 import useHooks from "./hooks";
