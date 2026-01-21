@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.14.0 - 2026-01-21
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Rename edit got exit unexpected when trigger from option menu ([#2012](https://github.com/reearth/reearth-visualizer/pull/2012)) [`0ed2fc`](https://github.com/reearth/reearth-visualizer/commit/0ed2fc)
+
+#### Miscellaneous Tasks
+
+- Bump up version to 1.0.0-beta.14.0 ([#2014](https://github.com/reearth/reearth-visualizer/pull/2014)) [`079f29`](https://github.com/reearth/reearth-visualizer/commit/079f29)
+
 ## 1.0.0-beta.13.9 - 2026-01-19
 
 ### Web
