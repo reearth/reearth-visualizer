@@ -1,7 +1,15 @@
-import type { Credits, MapRef, TickEvent } from "@reearth/core";
+import type {
+  CameraOptions,
+  Credits,
+  Layer,
+  LazyLayer,
+  NaiveLayer,
+  SketchType,
+  TickEvent
+} from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layer";
-import { ComponentType, ReactNode, RefObject, useMemo, type JSX } from "react";
+import { ComponentType, ReactNode, useMemo, type JSX } from "react";
 
 import type { WidgetProperty } from "../types";
 
@@ -41,7 +49,6 @@ export type Props = {
 };
 
 export type Context = {
-  mapRef?: RefObject<MapRef | null>;
   clock?: Clock;
   timelineManagerRef?: TimelineManagerRef;
   updateClockOnLoad?: boolean;
@@ -55,6 +62,11 @@ export type Context = {
   onFlyTo?: (
     target: string | FlyToDestination,
     options?: { duration?: number }
+  ) => void;
+  onFlyToGround?: (
+    destination: FlyToDestination,
+    options?: CameraOptions,
+    offset?: number
   ) => void;
   onLookAt?: (
     camera: LookAtDestination,
@@ -75,10 +87,19 @@ export type Context = {
   onZoomOut?: (amount: number) => void;
   onCameraOrbit?: (radians: number) => void;
   onCameraRotateRight?: (radians: number) => void;
+  onMoveForward?: (amount: number) => void;
   findPhotooverlayLayer?: (
     id: string
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
   getCredits?: () => Credits | undefined;
+  onSketchSetType?: (type: SketchType | undefined, from: "editor") => void;
+  onLayerAdd?: (layer: NaiveLayer) => LazyLayer | undefined;
+  onLayerOverride?: (
+    id: string,
+    layer: Partial<Layer> & {
+      property?: unknown;
+    }
+  ) => void;
 };
 
 export type ComponentProps<P = WidgetProperty> = Omit<

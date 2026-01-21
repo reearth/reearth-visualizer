@@ -2458,10 +2458,24 @@ extensions:
         - id: default
           title: Google Map Street View Widget
           fields:
-            - id: apiToken
+            - id: apiKey
               type: string
-              title: API Token
+              title: API Key
               description: Google Map Api Key
+        - id: appearance
+          title: Appearance
+          fields:
+            - id: theme
+              type: string
+              title: Theme
+              defaultValue: light
+              choices:
+                - key: light
+                  label: Light
+                - key: dark
+                  label: Dark
+                - key: auto
+                  label: Auto
   - id: story
     name: Story
     type: story

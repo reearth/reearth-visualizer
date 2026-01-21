@@ -56,7 +56,7 @@ const reearthBuiltin: BuiltinWidgets<Component> = {
   [GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID]: GoogleMapSearch,
   [TIMELINE_BUILTIN_WIDGET_ID]: Timeline,
   [GOOGLE_MAP_STREET_VIEW_ID]: GoogleMapStreetView,
-}
+};
 
 let cachedBuiltin:
   | (ReEarthBuiltinWidgets<Component> & UnsafeBuiltinWidgets<Component>)

@@ -44,3 +44,24 @@ export function useGet<T>(value: T): () => T {
   ref.current = value;
   return useCallback(() => ref.current, []);
 }
+
+export function normalizeHex(input: string) {
+  let v = input.trim();
+  if (!v) return "#FFFFFF";
+  if (!v.startsWith("#")) v = `#${v}`;
+  v = v.toUpperCase().slice(0, 7);
+  if (v.length === 1) return "#";
+  return v;
+}
+
+export function isValidHex(v: string) {
+  return /^#[0-9A-F]{6}$/.test(v);
+}
+
+export const extractLines = (l: any): [number, number][][] => {
+  if (l?.type === "LineString") return [l.coordinates ?? []];
+  if (l?.type === "MultiLineString") return l.coordinates ?? [];
+  if (l?.type === "FeatureCollection")
+    return (l.features ?? []).flatMap((f: any) => extractLines(f.geometry));
+  return [];
+};
