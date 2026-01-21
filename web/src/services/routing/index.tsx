@@ -1,7 +1,7 @@
 import RootPage from "@reearth/app/pages/RootPage";
 import { styled } from "@reearth/services/theme";
 import { lazy } from "react";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router";
 
 const Dashboard = lazy(() => import("@reearth/app/pages/Dashboard"));
 const Editor = lazy(() => import("@reearth/app/pages/EditorPage"));

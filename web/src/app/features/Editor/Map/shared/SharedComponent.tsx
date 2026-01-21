@@ -1,6 +1,6 @@
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 export const InputGroup: FC<{
   label: string | ReactNode;

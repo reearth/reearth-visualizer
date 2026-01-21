@@ -1,5 +1,6 @@
 import { Camera } from "@reearth/app/utils/value";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
+import { NLSLayer } from "@reearth/services/api/layer";
 import { RefObject, useMemo } from "react";
 
 import { MapRef } from "./types";
@@ -9,7 +10,8 @@ export const useWidgetContext = ({
   mapRef,
   selectedLayerId,
   initialCamera,
-  timelineManagerRef
+  timelineManagerRef,
+  nlsLayers
 }: Parameters<typeof widgetContextFromMapRef>[0]) =>
   useMemo(
     () =>
@@ -17,16 +19,18 @@ export const useWidgetContext = ({
         mapRef,
         selectedLayerId,
         initialCamera,
-        timelineManagerRef
+        timelineManagerRef,
+        nlsLayers
       }),
-    [mapRef, selectedLayerId, initialCamera, timelineManagerRef]
+    [mapRef, selectedLayerId, initialCamera, timelineManagerRef, nlsLayers]
   );
 
 export function widgetContextFromMapRef({
   mapRef,
   selectedLayerId,
   initialCamera,
-  timelineManagerRef
+  timelineManagerRef,
+  nlsLayers
 }: {
   mapRef?: RefObject<MapRef | null>;
   selectedLayerId?: {
@@ -35,6 +39,7 @@ export function widgetContextFromMapRef({
   };
   initialCamera?: Camera;
   timelineManagerRef?: TimelineManagerRef;
+  nlsLayers?: NLSLayer[];
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
@@ -45,6 +50,7 @@ export function widgetContextFromMapRef({
     },
     timelineManagerRef,
     initialCamera,
+    nlsLayers,
     selectedLayerId,
     findPhotooverlayLayer: (id: string) => {
       const l = layers()?.findById(id);

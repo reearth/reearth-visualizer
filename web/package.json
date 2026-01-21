@@ -1,6 +1,6 @@
 {
   "name": "@reearth/visualizer",
-  "version": "1.0.0-beta.13.9",
+  "version": "1.0.0-beta.14.0",
   "repository": "https://github.com/reearth/reearth-visualizer.git",
   "author": "Re:Earth contributors <community@reearth.io>",
   "license": "Apache-2.0",
@@ -22,6 +22,7 @@
     "storybook": "storybook dev -p 9001",
     "storybook:build": "storybook build --quiet -o dist/storybook",
     "gql": "graphql-codegen",
+    "gql:plateau": "graphql-codegen --config ./src/services/plateau/graphql/codegen_catelog.ts",
     "i18n": "i18next",
     "gen:doc:plugin": "ts-node -O '{\"module\":\"CommonJS\"}' ./bin/pluginDoc",
     "scan:lock": "sh ./bin/scan-yarn-lock.sh"
@@ -125,7 +126,7 @@
     "@popperjs/core": "2.11.8",
     "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-slot": "1.2.4",
-    "@reearth/core": "0.0.7-alpha.51",
+    "@reearth/core": "0.0.7-alpha.53",
     "@rot1024/use-transition": "1.0.0",
     "@sentry/browser": "7.77.0",
     "@seznam/compose-react-refs": "1.0.6",
@@ -169,7 +170,7 @@
     "react-markdown": "9.0.1",
     "react-player": "2.16.0",
     "react-popper": "2.3.0",
-    "react-router-dom": "6.26.1",
+    "react-router": "7.12.0",
     "react-sortablejs": "6.1.4",
     "react-spinners": "0.17.0",
     "react-use": "17.6.0",
@@ -191,7 +192,8 @@
     "glob": "^11.1.0",
     "graphql": "16.12.0",
     "js-yaml": "4.1.1",
-    "mdast-util-to-hast": "13.2.1"
+    "mdast-util-to-hast": "13.2.1",
+    "@zip.js/zip.js": "2.7.62"
   },
   "packageManager": "yarn@4.6.0"
 }

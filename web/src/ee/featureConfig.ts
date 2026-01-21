@@ -12,6 +12,6 @@ export const getFeatureConfig = (): AppFeatureConfig => {
     accountManagement: false,
     projectVisibility: true,
     externalAccountManagementUrl: `${c?.platformUrl}/settings/profile`,
-    builtinTimelineWidget: false
+    builtinTimelineWidget: true
   };
 };

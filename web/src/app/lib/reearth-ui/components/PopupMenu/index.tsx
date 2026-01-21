@@ -1,7 +1,7 @@
 import { Popup, Icon, IconName, PopupProps } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;

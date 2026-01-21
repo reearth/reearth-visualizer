@@ -121,3 +121,8 @@ func (b *NLSLayerGroupBuilder) Sketch(sketch *SketchInfo) *NLSLayerGroupBuilder 
 	b.l.sketch = sketch
 	return b
 }
+
+func (b *NLSLayerGroupBuilder) DataSourceName(d *string) *NLSLayerGroupBuilder {
+	b.l.dataSourceName = d
+	return b
+}

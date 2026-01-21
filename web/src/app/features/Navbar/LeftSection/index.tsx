@@ -10,7 +10,7 @@ import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { useCallback, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 import { Project, Workspace } from "../types";
 

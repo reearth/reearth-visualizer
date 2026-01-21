@@ -10,7 +10,7 @@ import { useT } from "@reearth/services/i18n";
 import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 type DeleteWorkspaceModalProps = {
   visible: boolean;

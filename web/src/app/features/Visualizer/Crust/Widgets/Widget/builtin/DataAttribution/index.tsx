@@ -1,8 +1,13 @@
 import { Modal } from "@reearth/app/lib/reearth-ui";
+import { Credit } from "@reearth/app/utils/value";
 import { Credits } from "@reearth/core";
+import {
+  BUILTIN_DATA_SOURCES,
+  BuiltinDataSourceName
+} from "@reearth/services/dataSource/builtin";
 import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { useCallback, useEffect, useState, type JSX } from "react";
+import { useCallback, useEffect, useMemo, useState, type JSX } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
 
@@ -14,7 +19,7 @@ export type Props = WidgetProps;
 const DataAttribution = ({
   theme,
   widget,
-  context: { getCredits } = {}
+  context: { getCredits, nlsLayers } = {}
 }: Props): JSX.Element | null => {
   const t = useT();
   const [visible, setVisible] = useState(false);
@@ -41,10 +46,32 @@ const DataAttribution = ({
     };
   }, [getCredits, visible]);
 
+  const layerCredits: Credit[] = useMemo(() => {
+    if (!nlsLayers) return [];
+
+    const dataSourceNames = nlsLayers
+      .map((l) => l.dataSourceName)
+      .filter((name): name is BuiltinDataSourceName => name !== undefined);
+    if (dataSourceNames.length === 0) return [];
+
+    return Array.from(new Set(dataSourceNames))
+      .map((name) => ({
+        description: BUILTIN_DATA_SOURCES[name]?.label,
+        logo: BUILTIN_DATA_SOURCES[name]?.icon,
+        creditUrl: BUILTIN_DATA_SOURCES[name]?.url,
+        disableLogoBackground: true
+      }))
+      .filter((c): c is NonNullable<typeof c> => !!c);
+  }, [nlsLayers]);
+
   const { cesiumCredit, otherCredits, googleCredit } = useDataAttribution({
     credits: visualizerCredits,
     widget
   });
+
+  const credits = useMemo(() => {
+    return [...(otherCredits ?? []), ...layerCredits];
+  }, [layerCredits, otherCredits]);
 
   return (
     <Wrapper>
@@ -67,7 +94,7 @@ const DataAttribution = ({
         <DataAttributionUI
           onClose={handleModalClose}
           theme={theme}
-          credits={otherCredits}
+          credits={credits}
         />
       </Modal>
     </Wrapper>
