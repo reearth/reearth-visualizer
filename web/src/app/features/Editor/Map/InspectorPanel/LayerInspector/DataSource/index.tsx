@@ -133,6 +133,7 @@ const DataSource: FC<Props> = ({
               title={t("Resource URL")}
               value={localUrl}
               onSubmit={handleLayerUrlUpdate}
+              disabled={!!selectedLayer.dataSourceName}
               data-testid="data-source-resource-url"
             />
           )}
