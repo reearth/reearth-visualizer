@@ -20,7 +20,7 @@ jobs:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v8
+        uses: golangci/golangci-lint-action@v9
         with:
           version: latest
           args: --new-from-rev=origin/main --timeout=10m
