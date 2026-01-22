@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.14.1 - 2026-01-22
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Cannot rename layer when multiple layers exist ([#2015](https://github.com/reearth/reearth-visualizer/pull/2015)) [`92c125`](https://github.com/reearth/reearth-visualizer/commit/92c125)
+
+#### Miscellaneous Tasks
+
+- Bump up to v1.0.0-beta.14.1 ([#2016](https://github.com/reearth/reearth-visualizer/pull/2016)) [`696e8b`](https://github.com/reearth/reearth-visualizer/commit/696e8b)
+
 ## 1.0.0-beta.14.0 - 2026-01-21
 
 ### Web
