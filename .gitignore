@@ -8,3 +8,8 @@ server/.env.docker
 *.log
 mongo/
 tmp/
+
+# Ignore environment files but allow example files
+.env.docker
+!.env*.example
+!**/.env*.example
