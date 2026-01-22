@@ -45,24 +45,45 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
 
 ### 🖥️ macOS / Linux
 
-1. Navigate to the `server` directory and start the backend server.  
-   This command will automatically start the database and mock GCS storage service:
+1. Clone and set up the visualizer backend server:
 
    ```bash
    git clone https://github.com/reearth/reearth-visualizer.git
    cd reearth-visualizer/server
+   ```
+
+   **Configure environment variables:**
+
+   ```bash
+   # Copy the example environment file
+   cp .env.docker.example .env.docker
+   ```
+
+   Edit `.env.docker` and update the following values:
+   - `REEARTH_AUTH0_DOMAIN` - Your Auth0 domain
+   - `REEARTH_AUTH0_CLIENTID` - Your Auth0 client ID
+   - `REEARTH_AUTH0_WEBCLIENTID` - Your Auth0 web client ID
+   - `REEARTH_AUTH0_CLIENTSECRET` - Your Auth0 client secret
+   - In `REEARTH_WEB_CONFIG`, replace `YOUR_CESIUM_ION_ACCESS_TOKEN` with your [Cesium Ion token](https://cesium.com/learn/ion/cesium-ion-access-tokens/)
+
+   **Start the backend server:**
+
+   ```bash
    make run
    ```
 
-   Next, start the authentication service:
+   This command will automatically start the database and mock GCS storage service.
+
+2. Set up and start the authentication service:
 
    ```bash
    git clone https://github.com/reearth/reearth-accounts.git
    cd reearth-accounts/server
    ```
 
-   reearth-accounts supports two authentication modes: Identity Provider (IDP) or mock users.
-   To use mock users, modify `server/.env.docker`:
+   **Configure environment (for mock authentication):**
+
+   Modify `server/.env.docker`:
 
    ```diff
    # Mock auth for demo
@@ -70,17 +91,16 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    +REEARTH_MOCK_AUTH=true
    ```
 
-   Run migrations to add required master data (such as roles), then start the service:
+   **Run migrations and start the service:**
 
    ```bash
-   cd reearth-accounts/server
    make run-migration
    make run
    ```
 
-2. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
-   This step is only required for the first-time setup:
+3. Initialize the development environment (first-time setup only):
+
+   This creates a mock user and sets up the mock GCS bucket:
 
    ```bash
    cd reearth-visualizer/server
@@ -90,35 +110,46 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
 
 ### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
 
-1. Clone the repository and navigate to the `server` directory:
+1. Clone and set up the visualizer backend server:
 
    ```powershell
    git clone https://github.com/reearth/reearth-visualizer.git
    cd reearth-visualizer\server
    ```
 
-2. Set an alias to use `dv` as a shortcut for running dev.bat:
+   **Configure environment variables:**
+
+   ```powershell
+   # Copy the example environment file
+   Copy-Item .env.docker.example .env.docker
+   ```
+
+   Edit `.env.docker` using your preferred text editor (e.g., `notepad .env.docker`) and update:
+   - `REEARTH_AUTH0_DOMAIN` - Your Auth0 domain
+   - `REEARTH_AUTH0_CLIENTID` - Your Auth0 client ID
+   - `REEARTH_AUTH0_WEBCLIENTID` - Your Auth0 web client ID
+   - `REEARTH_AUTH0_CLIENTSECRET` - Your Auth0 client secret
+   - In `REEARTH_WEB_CONFIG`, replace `YOUR_CESIUM_ION_ACCESS_TOKEN` with your [Cesium Ion token](https://cesium.com/learn/ion/cesium-ion-access-tokens/)
+
+2. Set an alias and start the backend server:
 
    ```powershell
    Set-Alias dv .\dev.bat
-   ```
-
-3. Start the backend server.
-   This will automatically start the database and mock GCS storage service:
-
-   ```powershell
    dv run
    ```
 
-   Next, start the authentication service:
+   This will automatically start the database and mock GCS storage service.
+
+3. Set up and start the authentication service:
 
    ```powershell
    git clone https://github.com/reearth/reearth-accounts.git
    cd reearth-accounts\server
    ```
 
-   reearth-accounts supports two authentication modes: Identity Provider (IDP) or mock users.
-   To use mock users, modify `server\.env.docker`:
+   **Configure environment (for mock authentication):**
+
+   Modify `server\.env.docker`:
 
    ```diff
    # Mock auth for demo
@@ -126,7 +157,7 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    +REEARTH_MOCK_AUTH=true
    ```
 
-   Run migrations to add required master data (such as roles), then start the service:
+   **Run migrations and start the service:**
 
    ```powershell
    Set-Alias dv .\dev.bat
@@ -134,9 +165,9 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
    dv run
    ```
 
-4. Initialize the development environment.
-   This creates a mock user and sets up the mock GCS bucket.
-   This step is only required for the first-time setup:
+4. Initialize the development environment (first-time setup only):
+
+   This creates a mock user and sets up the mock GCS bucket:
 
    ```powershell
    dv init-gcs
