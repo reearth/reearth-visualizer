@@ -427,15 +427,49 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 		return resp.Body, nil
 	}
 
-	reader, err := bucket.Object(filename).NewReader(ctx)
+	obj := bucket.Object(filename)
+
+	attrs, err := obj.Attrs(ctx)
 	if err != nil {
 		if errors.Is(err, storage.ErrObjectNotExist) {
 			return nil, rerror.ErrNotFound
 		}
-		return nil, visualizer.ErrorWithCallerLogging(ctx, "gcs: read object err", rerror.ErrInternalByWithContext(ctx, err))
+		log.Errorfc(ctx, "gcs: attrs err: %+v\n", err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
+	}
+
+	reader, err := obj.Generation(attrs.Generation).NewReader(ctx)
+	if err != nil {
+		if errors.Is(err, storage.ErrObjectNotExist) {
+			if OK := f.exists(ctx, bucket, filename); OK {
+				return nil, errors.New("no read permission")
+			}
+			return nil, rerror.ErrNotFound
+		}
+		log.Errorfc(ctx, "gcs: generation read err: %+v\n", err)
+		return nil, rerror.ErrInternalByWithContext(ctx, err)
 	}
 
 	return reader, nil
+}
+
+func (f *fileRepo) exists(ctx context.Context, bucket *storage.BucketHandle, filename string) bool {
+	fmt.Printf("Checking existence: %s\n", filename)
+
+	obj := bucket.Object(filename)
+	attrs, err := obj.Attrs(ctx)
+	if err != nil {
+		if errors.Is(err, storage.ErrObjectNotExist) {
+			fmt.Printf("File does NOT exist: %s\n", filename)
+			return false
+		}
+		fmt.Printf("Error checking existence: %+v\n", err)
+		return false
+	}
+
+	fmt.Printf("OK! File exist: %s , Updated: %v (Size: %d bytes, Generation: %d)\n",
+		filename, attrs.Updated, attrs.Size, attrs.Generation)
+	return true
 }
 
 func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reader) (int64, error) {
