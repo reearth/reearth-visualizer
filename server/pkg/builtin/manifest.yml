@@ -2462,6 +2462,18 @@ extensions:
               type: string
               title: API Key
               description: Google Map Api Key
+        - id: routeFile
+          title: Route File
+          list: true
+          representativeField: title
+          fields:
+            - id: title
+              type: string
+              title: Title
+            - id: fileUrl
+              type: url
+              title: File
+              ui: file
         - id: appearance
           title: Appearance
           fields:
@@ -2476,6 +2488,7 @@ extensions:
                   label: Dark
                 - key: auto
                   label: Auto
+        
   - id: story
     name: Story
     type: story

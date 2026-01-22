@@ -92,7 +92,10 @@ export type Context = {
     id: string
   ) => { title?: string; lat: number; lng: number; height: number } | undefined;
   getCredits?: () => Credits | undefined;
-  onSketchSetType?: (type: SketchType | undefined, from: "editor") => void;
+  onSketchSetType?: (
+    type: SketchType | undefined,
+    from: "plugin" | "editor"
+  ) => void;
   onLayerAdd?: (layer: NaiveLayer) => LazyLayer | undefined;
   onLayerOverride?: (
     id: string,
@@ -100,6 +103,7 @@ export type Context = {
       property?: unknown;
     }
   ) => void;
+  onLayerDelete?: (...ids: string[]) => void;
 };
 
 export type ComponentProps<P = WidgetProperty> = Omit<

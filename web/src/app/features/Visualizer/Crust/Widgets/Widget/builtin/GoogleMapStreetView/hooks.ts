@@ -2,44 +2,26 @@ import {
   resolveTheme,
   useSystemTheme
 } from "@reearth/app/lib/reearth-widget-ui/hooks/useSystemTheme";
-import * as turf from "@turf/turf";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { coreContext, SketchEventProps } from "@reearth/core";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from "react";
 
 import { Context } from "../..";
-import { extractLines } from "../../../../utils";
 import { Widget } from "../../types";
 
+import { Property, RouteFeature } from "./types";
 import { loadGoogleMaps } from "./useStreetViewPlayer";
-
-import { Property } from ".";
-
-type LngLat = [number, number];
+import { extractLines, toRouteFeature } from "./utils";
 
 export type Props = {
   widget: Widget<Property>;
 } & Context;
-
-function dividesRoute(route: any) {
-  const result: { lat: number; lng: number }[] = [];
-
-  if (turf.getType(route) !== "LineString") {
-    console.error("Route is not LineString");
-    return result;
-  }
-
-  const lineChunk = turf.lineChunk(route, 0.05, { units: "kilometers" });
-
-  turf.coordEach(lineChunk, (currentCoord) => {
-    const tempCoord = { lat: currentCoord[1], lng: currentCoord[0] };
-    const last = result[result.length - 1];
-
-    if (!last || last.lat !== tempCoord.lat || last.lng !== tempCoord.lng) {
-      result.push(tempCoord);
-    }
-  });
-
-  return result;
-}
 
 export default function useHooks({
   widget,
@@ -47,7 +29,10 @@ export default function useHooks({
   onLayerAdd,
   onFlyTo,
   onLayerOverride,
+  onLayerDelete
 }: Props) {
+  const { onSketchPluginFeatureCreate } = useContext(coreContext);
+
   const systemTheme = useSystemTheme();
   const themeClass = useMemo(
     () =>
@@ -55,137 +40,156 @@ export default function useHooks({
     [widget.property?.appearance?.theme, systemTheme]
   );
 
+  const [routeFeature, setRouteFeature] = useState<RouteFeature>();
+  const [selectedRoute, setSelectedRoute] = useState<string>("");
+  const [routeLayerId, setRouteLayerId] = useState<string>();
+  const [routeWidth, setRouteWidth] = useState(1);
+  const [routeColor, setRouteColor] = useState("#ffffff");
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [mode, setMode] = useState("upload");
+  const [showPano, setShowPano] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+
+  const panoDivRef = useRef<HTMLDivElement | null>(null);
+  const panoRef = useRef<google.maps.StreetViewPanorama | null>(null);
+
   const apiKey = useMemo(
     () => widget.property?.default?.apiKey,
     [widget.property?.default?.apiKey]
   );
 
-  const [routeWidth, setRouteWidth] = useState(1);
-  const [routeHex, setRouteHex] = useState("#FFFFFF");
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [mode, setMode] = useState<string>("upload");
-  const [points, setPoints] = useState<LngLat[]>([]);
-  const [selectedRouteId, setSelectedRouteId] = useState<string>("");
-  const [routeSteps, setRouteSteps] = useState<{ lat: number; lng: number }[]>(
-    []
+  const selectRoutes = useMemo(
+    () => widget.property?.routeFile,
+    [widget.property?.routeFile]
   );
-
-  const [routeLayerId, setRouteLayerId] = useState<string | undefined>();
-  const [showPano, setShowPano] = useState(false);
-  const panoDivRef = useRef<HTMLDivElement | null>(null);
-  const panoRef = useRef<google.maps.StreetViewPanorama | null>(null);
 
   const firstCoord = useMemo(() => {
-    const first = points?.[0];
-    if (!first) return undefined;
-
-    const [lng, lat] = first;
+    const c = routeFeature?.geometry?.coordinates?.[0];
+    if (!c) return;
+    const [lng, lat] = c;
     return { lat, lng };
-  }, [points]);
+  }, [routeFeature]);
 
-  const addLineLayer = useCallback(
-    (coords: LngLat[]) => {
-      const routeFeature = {
-        type: "Feature",
-        geometry: { type: "LineString", coordinates: coords },
-        properties: {}
-      } as const;
+  const handleChangeMode = useCallback((nextMode: string) => {
+    setMode(nextMode);
+    if (nextMode !== "upload") setFile(null);
+    if (nextMode !== "select") setSelectedRoute("");
+  }, []);
 
-      const layer = onLayerAdd?.({
-        type: "simple",
-        data: { type: "geojson", value: routeFeature },
-        polyline: {
-          clampToGround: true,
-          hideIndicator: false,
-          strokeColor: routeHex,
-          strokeWidth: routeWidth || 1
-        }
-      });
+  const addLineLayer = useCallback(() => {
+    if (!routeFeature) return;
 
-      setPoints(coords);
-      setRouteLayerId(layer?.id);
-      const steps = dividesRoute(routeFeature);
-      setRouteSteps(steps);
-    },
-    [onLayerAdd, routeHex, routeWidth]
-  );
+    const layer = onLayerAdd?.({
+      type: "simple",
+      data: { type: "geojson", value: routeFeature },
+      polyline: {
+        clampToGround: true,
+        hideIndicator: false,
+        strokeColor: routeColor,
+        strokeWidth: routeWidth || 1
+      }
+    });
+
+    setRouteLayerId(layer?.id);
+  }, [onLayerAdd, routeFeature, routeColor, routeWidth]);
+
+  useEffect(() => {
+    addLineLayer();
+  }, [addLineLayer]);
+
+  useEffect(() => {
+    if (!routeLayerId) return;
+    onLayerOverride?.(routeLayerId, {
+      polyline: {
+        strokeColor: routeColor,
+        strokeWidth: routeWidth || 1
+      }
+    });
+  }, [routeColor, routeWidth, routeLayerId, onLayerOverride]);
 
   const handleStartSketchRoute = useCallback(() => {
-    onSketchSetType?.("polyline", "editor");
+    onSketchSetType?.("polyline", "plugin");
     setIsDrawing(true);
-    setPoints([]);
-  }, [onSketchSetType]);
+    onLayerDelete?.(routeLayerId || "");
+    handleChangeMode("draw");
+  }, [handleChangeMode, onLayerDelete, onSketchSetType, routeLayerId]);
 
-  const finishDrawing = useCallback(() => {
-    // NOTE:
-    // Replace this with real sketch output when you wire sketch events.
-    const coords: LngLat[] = [
-      [13.608068822490395, -4.306859780511303],
-      [23.936520262510157, 20.20929026138755]
-    ];
+  const routeFeatureCreateHandler = useCallback(
+    (e: SketchEventProps) => {
+      if (!e.feature) return;
 
-    addLineLayer(coords);
-    setPoints(coords); // ✅ store for street view
+      const route = toRouteFeature(e.feature);
+      if (!route) return;
+      setRouteFeature(route);
+      onSketchSetType?.(undefined, "plugin");
+    },
+    [onSketchSetType]
+  );
 
-    const [lng, lat] = coords[0];
-    onFlyTo?.({ lat, lng, height: 20000 }, { duration: 2 });
+  useEffect(() => {
+    onSketchPluginFeatureCreate?.(routeFeatureCreateHandler);
+  }, [onSketchPluginFeatureCreate, routeFeatureCreateHandler]);
 
+  const handleFinishSketchRoute = useCallback(() => {
+    if (!firstCoord) return;
     setIsDrawing(false);
-    onSketchSetType?.(undefined, "editor");
-  }, [addLineLayer, onFlyTo, onSketchSetType]);
+    onFlyTo?.({ ...firstCoord, height: 2000 }, { duration: 2 });
+  }, [firstCoord, onFlyTo]);
 
   const handleUploadFile = useCallback(
     async (file: File) => {
       try {
         const json = JSON.parse(await file.text());
-
-        const lines = extractLines(json).filter(
-          (l) => Array.isArray(l) && l.length >= 2
-        );
-        if (!lines.length) throw new Error("No routes found in this file.");
-        lines.forEach((coords) => addLineLayer(coords));
-        const current = lines[0];
-        setPoints(current);
-
-        const first = current?.[0];
-        if (first) {
-          const [lng, lat] = first;
-          onFlyTo?.(
-            {
-              lat,
-              lng,
-              height: 2000
-            },
-            { duration: 2 }
-          );
+        const lines = extractLines(json);
+        const route = toRouteFeature(lines[0]);
+        if (!route) return;
+        if (routeLayerId) {
+          onLayerDelete?.(routeLayerId || "");
         }
+        setRouteFeature(route);
+
+        const [lng, lat] = route.geometry.coordinates[0];
+        onFlyTo?.({ lat, lng, height: 2000 }, { duration: 2 });
+        handleChangeMode("upload");
       } catch (e) {
         console.error(e);
       }
     },
-    [addLineLayer, onFlyTo]
+    [handleChangeMode, onFlyTo, onLayerDelete, routeLayerId]
+  );
+
+  const handleSelectRoute = useCallback(
+    async (value: string) => {
+      try {
+        setSelectedRoute(value);
+
+        const res = await fetch(value);
+        const json = await res.json();
+
+        const lines = extractLines(json);
+        if (!lines.length) return;
+
+        const route = toRouteFeature(lines[0]);
+        if (!route) return;
+        if (routeLayerId) {
+          onLayerDelete?.(routeLayerId || "");
+        }
+
+        setRouteFeature(route);
+        handleChangeMode("select");
+
+        const [lng, lat] = route.geometry.coordinates[0];
+        onFlyTo?.({ lat, lng, height: 2000 }, { duration: 2 });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [handleChangeMode, onFlyTo, onLayerDelete, routeLayerId]
   );
 
   useEffect(() => {
-    if (!routeLayerId) return;
-    onLayerOverride?.(routeLayerId, {
-      polyline: { strokeColor: routeHex, strokeWidth: routeWidth || 1 }
-    });
-  }, [routeHex, routeWidth, routeLayerId, onLayerOverride]);
-
-  const disabled = useMemo(() => {
-    if (
-      (mode === "upload" && points.length > 1) ||
-      (mode === "draw" && !isDrawing && points.length > 1) ||
-      (mode === "select" && !!selectedRouteId)
-    )
-      return true;
-    return false;
-  }, [mode, isDrawing, points.length, selectedRouteId]);
-
-  useEffect(() => {
     if (!showPano || !firstCoord || !panoDivRef.current) return;
-    const { lat, lng } = firstCoord;
+
     (async () => {
       try {
         await loadGoogleMaps(apiKey);
@@ -194,15 +198,13 @@ export default function useHooks({
           panoRef.current = new google.maps.StreetViewPanorama(
             panoDivRef.current as HTMLElement,
             {
-              position: { lat, lng },
+              position: firstCoord,
               pov: { heading: 0, pitch: 0 },
-              zoom: 1,
-              addressControl: true,
-              fullscreenControl: true
+              zoom: 1
             }
           );
         } else {
-          panoRef.current.setPosition({ lat, lng });
+          panoRef.current.setPosition(firstCoord);
         }
       } catch (e) {
         console.error(e);
@@ -211,27 +213,39 @@ export default function useHooks({
   }, [showPano, firstCoord, apiKey]);
 
   const handleStreetViewStart = useCallback(() => {
-    setShowPano(true);
     if (!firstCoord) return;
+    setShowPano(true);
   }, [firstCoord]);
 
+  const disabled = useMemo(() => {
+    if (
+      (mode === "upload" && !!routeFeature) ||
+      (mode === "draw" && !isDrawing && !!routeFeature) ||
+      (mode === "select" && !!selectedRoute)
+    )
+      return true;
+    return false;
+  }, [mode, isDrawing, routeFeature, selectedRoute]);
+
   return {
-    routeSteps,
     themeClass,
     routeWidth,
-    disabled,
-    panoDivRef,
-    isDrawing,
     setRouteWidth,
-    routeHex,
-    setRouteHex,
+    routeColor,
+    setRouteColor,
+    isDrawing,
     mode,
     setMode,
-    selectedRouteId,
-    setSelectedRouteId,
+    file,
+    setFile,
+    disabled,
+    panoDivRef,
     showPano,
+    selectRoutes,
+    selectedRoute,
+    handleSelectRoute,
     handleStartSketchRoute,
-    finishDrawing,
+    handleFinishSketchRoute,
     handleUploadFile,
     handleStreetViewStart
   };

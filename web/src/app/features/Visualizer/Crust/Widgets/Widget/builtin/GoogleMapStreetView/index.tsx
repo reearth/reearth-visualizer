@@ -1,4 +1,3 @@
-import { isValidHex, normalizeHex } from "@reearth/app/features/Visualizer/Crust/utils";
 import { Button } from "@reearth/app/lib/reearth-widget-ui/components/ui/button";
 import {
   Card,
@@ -18,15 +17,11 @@ import { Close, StreetView } from "@reearth/app/lib/reearth-widget-ui/icons";
 import { FC, useRef, useState } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
-import { CommonBuiltInWidgetProperty } from "../types";
 
 import useHooks from "./hooks";
+import { Property } from "./types";
+import { normalizeHex } from "./utils";
 
-export type Property = CommonBuiltInWidgetProperty & {
-  default?: {
-    apiKey?: string;
-  };
-};
 type GoogleMapStreetViewProps = WidgetProps<Property>;
 
 const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
@@ -36,10 +31,10 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
     onLayerAdd,
     onFlyTo,
     onLayerOverride,
+    onLayerDelete
   } = {}
 }) => {
   const [collapsed, setCollapsed] = useState(true);
-  const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const {
@@ -48,31 +43,36 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
     disabled,
     panoDivRef,
     setRouteWidth,
-    routeHex,
-    setRouteHex,
+    routeColor,
+    setRouteColor,
     isDrawing,
     mode,
     setMode,
-    selectedRouteId,
-    setSelectedRouteId,
+    file,
+    setFile,
+    selectRoutes,
     showPano,
+    selectedRoute,
+    handleSelectRoute,
     handleStartSketchRoute,
-    finishDrawing,
+    handleFinishSketchRoute,
     handleUploadFile,
-    handleStreetViewStart,
+    handleStreetViewStart
   } = useHooks({
     widget,
     onSketchSetType,
     onLayerAdd,
     onFlyTo,
     onLayerOverride,
+    onLayerDelete
   });
 
   if (collapsed) {
     return (
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="top-4 p-2 rounded-sm cursor-pointer"
+        className="p-2 w-8 h-8 rounded-sm cursor-pointer flex items-center justify-center"
+        style={{ backgroundColor: "#171618" }}
       >
         <StreetView />
       </button>
@@ -81,20 +81,20 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
 
   return (
     <div className={themeClass} data-theme-debug={themeClass}>
-      <Card className="p-0 left-4 w-[340px] rounded-sm border-none">
+      <Card className="p-0 left-4 w-[320px] rounded-sm border-none">
         <CardHeader className="p-3 flex flex-row items-center justify-between border-white/10 shadow-sm">
           <div className="flex items-center gap-2 m-0">
             <StreetView />
-            <div>Street View</div>
+            <h4 className="text-sm">Street View</h4>
           </div>
           <div onClick={() => setCollapsed(true)}>
             <Close className="w-5 h-5 cursor-pointer" />
           </div>
         </CardHeader>
 
-        <CardContent className="p-3 pt-4 space-y-3">
+        <CardContent className="p-3 pt-4 space-y-3 text-xs">
           <div className="grid grid-cols-[1fr_200px] items-center gap-3">
-            <div className="text-sm">Route Width</div>
+            <div>Route Width</div>
             <Input
               type="number"
               min={1}
@@ -107,31 +107,34 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
               style={{
                 padding: "0 4px"
               }}
-              className="h-7 p-4 border border-gray-300 rounded-sm shadow-sm"
+              className="h-7 border border-gray-300 rounded-sm shadow-sm"
             />
           </div>
 
           <div className="grid grid-cols-[1fr_200px] items-center gap-3">
-            <div className="text-sm">Route Color</div>
+            <div>Route Color</div>
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={isValidHex(routeHex) ? routeHex : "#FFFFFF"}
-                onChange={(e) => setRouteHex(e.target.value.toUpperCase())}
+                value={routeColor ? routeColor : "#FFFFFF"}
+                onChange={(e) => setRouteColor(e.target.value)}
                 aria-label="Route color"
                 className="h-8 w-10 p-0 rounded-sm border border-gray-300 cursor-pointer"
               />
               <Input
-                value={routeHex}
-                onChange={(e) => setRouteHex(normalizeHex(e.target.value))}
+                value={routeColor}
+                onChange={(e) => setRouteColor(normalizeHex(e.target.value))}
                 placeholder="#FFFFFF"
-                className="h-7 px-2 bg-white border border-gray-300 rounded-sm shadow-sm"
+                style={{
+                  padding: "0 4px"
+                }}
+                className="h-7 border border-gray-300 rounded-sm shadow-sm "
               />
             </div>
           </div>
 
           <div className="grid grid-cols-[1fr_200px] items-center gap-3">
-            <div className="text-sm">Make a route</div>
+            <div>Make a route</div>
             <Select value={mode} onValueChange={setMode}>
               <SelectTrigger
                 style={{
@@ -139,25 +142,25 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
                   border: "1px solid #d1d5dc",
                   padding: "0 4px"
                 }}
-                className="rounded-sm w-auto shadow-sm"
+                className="h-7 rounded-sm w-auto shadow-sm text-xs py-4"
               >
                 <SelectValue placeholder="Select…" />
               </SelectTrigger>
-              <SelectContent className="top-9">
+              <SelectContent className="top-8">
                 <SelectItem
-                  className="data-[state=checked]:bg-blue-500 data-[state=checked]:text-white"
+                  className="data-[state=checked]:bg-[#3b3cd0] data-[state=checked]:text-white text-xs"
                   value="upload"
                 >
                   Upload a file
                 </SelectItem>
                 <SelectItem
-                  className="data-[state=checked]:bg-blue-500 data-[state=checked]:text-white"
+                  className="data-[state=checked]:bg-[#3b3cd0] data-[state=checked]:text-white text-xs"
                   value="draw"
                 >
                   Draw a route
                 </SelectItem>
                 <SelectItem
-                  className="data-[state=checked]:bg-blue-500 data-[state=checked]:text-white"
+                  className="data-[state=checked]:bg-[#3b3cd0] data-[state=checked]:text-white text-xs"
                   value="select"
                 >
                   Select a route
@@ -179,7 +182,7 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
               />
               <Button
                 type="button"
-                className="w-full h-8 rounded-sm cursor-pointer"
+                className="w-full h-8 rounded-sm cursor-pointer text-xs"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={mode !== "upload"}
               >
@@ -187,9 +190,7 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
               </Button>
 
               {file ? (
-                <div className="mt-2 text-xs truncate">
-                  Uploaded file: {file.name}
-                </div>
+                <div className="mt-2  truncate">Uploaded file: {file.name}</div>
               ) : null}
             </div>
           )}
@@ -197,9 +198,11 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
             <div className="pt-1">
               <Button
                 type="button"
-                className="w-full h-8 rounded-sm cursor-pointer"
+                className="w-full h-8 rounded-sm cursor-pointer text-xs"
                 onClick={() =>
-                  isDrawing ? finishDrawing() : handleStartSketchRoute()
+                  isDrawing
+                    ? handleFinishSketchRoute()
+                    : handleStartSketchRoute()
                 }
               >
                 {isDrawing ? "Finish" : "Start Drawing"}
@@ -208,37 +211,33 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
           )}
           {mode === "select" && (
             <div className="grid grid-cols-[1fr_200px] items-center gap-3 pt-1">
-              <div className="text-sm">Route</div>
-
-              <Select
-                value={selectedRouteId}
-                onValueChange={setSelectedRouteId}
-              >
+              Route
+              <Select value={selectedRoute} onValueChange={handleSelectRoute}>
                 <SelectTrigger
                   style={{
                     height: "30px",
                     border: "1px solid #d1d5dc",
                     padding: "0 4px"
                   }}
-                  className="rounded-sm w-auto"
+                  className="rounded-sm  w-auto"
                 >
                   <SelectValue placeholder="Select route…" />
                 </SelectTrigger>
-                {/* <SelectContent className="top-8">
-                  {routes.length > 0 ? (
-                    routes.map((route) => (
+                <SelectContent className="top-8">
+                  {selectRoutes && selectRoutes.length > 0 ? (
+                    selectRoutes.map((route) => (
                       <SelectItem
-                        className=" data-[state=checked]:bg-blue-500 data-[state=checked]:text-white"
+                        className="data-[state=checked]:bg-[#3b3cd0] data-[state=checked]:text-white text-xs "
                         key={route.id}
-                        value={route.id}
+                        value={route.fileUrl}
                       >
-                        {route.label}
+                        {route.title}
                       </SelectItem>
                     ))
                   ) : (
-                    <div className="px-2 py-2 text-xs">No routes available</div>
+                    <div className="px-2 py-2 ">No routes available</div>
                   )}
-                </SelectContent> */}
+                </SelectContent>
               </Select>
             </div>
           )}
@@ -247,8 +246,11 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
         <CardFooter className="p-3 pt-2 gap-3">
           <Button
             type="button"
-            variant="secondary"
-            className="flex-1 h-8 rounded-sm bg-gray-400"
+            variant="outline"
+            className="flex-1 h-8 rounded-sm text-xs"
+            style={{
+              border: "1px solid #3b3cd0"
+            }}
             disabled={!disabled}
             onClick={() => {
               // restart logic
@@ -258,8 +260,7 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
           </Button>
           <Button
             type="button"
-            variant={`${disabled ? "default" : "secondary"}`}
-            className="flex-1 h-8 rounded-sm bg-gray-400"
+            className="flex-1 h-8 rounded-sm text-xs"
             disabled={!disabled}
             style={{
               cursor: !disabled ? "not-allowed" : "pointer"

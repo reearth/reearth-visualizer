@@ -130,8 +130,11 @@ export function widgetContextFromMapRef({
     onZoomIn: (...args) => engine()?.zoomIn(...args),
     onZoomOut: (...args) => engine()?.zoomOut(...args),
     getCredits: () => engine()?.getCredits(),
-    onSketchSetType: (type: SketchType | undefined, from: "editor") => {
-      if (from === "editor") sketch()?.setType?.(type);
+    onSketchSetType: (
+      type: SketchType | undefined,
+      from: "plugin" | "editor"
+    ) => {
+      if (from === "plugin") sketch()?.setType?.(type, from);
       sketch()?.overrideOptions?.({
         autoResetInteractionMode: false
       });
@@ -141,6 +144,10 @@ export function widgetContextFromMapRef({
     },
     onLayerOverride: (...args) => {
       layers()?.override(...args);
+    },
+    onLayerDelete: (...args) => {
+      layers()?.deleteLayer(...args);
     }
+
   };
 }
