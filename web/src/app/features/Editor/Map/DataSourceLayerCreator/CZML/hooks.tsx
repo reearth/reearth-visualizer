@@ -4,10 +4,11 @@ import { useState, useMemo, useCallback } from "react";
 import { DataProps, DataSourceOptType, SourceType } from "..";
 import { generateTitle } from "../util";
 
-export default ({ sceneId, onClose, onSubmit }: DataProps) => {
+const useHooks = ({ sceneId, onClose, onSubmit }: DataProps) => {
   const t = useT();
 
   const [sourceType, setSourceType] = useState<SourceType>("local");
+  const [autoUpdateTime, setAutoUpdateTime] = useState(true);
 
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
@@ -35,7 +36,10 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
       config: {
         data: {
           url: sourceType === "value" ? encodeUrl : value || undefined,
-          type: "czml"
+          type: "czml",
+          time: {
+            updateClockOnLoad: autoUpdateTime
+          }
         }
       }
     });
@@ -58,6 +62,10 @@ export default ({ sceneId, onClose, onSubmit }: DataProps) => {
     sourceType,
     handleValueChange,
     handleDataSourceTypeChange,
-    handleSubmit
+    handleSubmit,
+    autoUpdateTime,
+    setAutoUpdateTime
   };
 };
+
+export default useHooks;

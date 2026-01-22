@@ -3,7 +3,7 @@ import { useAuth } from "@reearth/services/auth";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useWorkspace } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router";
 
 import { TabItems, Workspace } from "./type";
 

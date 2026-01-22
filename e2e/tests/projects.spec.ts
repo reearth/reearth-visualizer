@@ -13,10 +13,10 @@ const REEARTH_WEB_E2E_BASEURL = process.env.REEARTH_WEB_E2E_BASEURL;
 if (!REEARTH_E2E_EMAIL || !REEARTH_E2E_PASSWORD || !REEARTH_WEB_E2E_BASEURL) {
   throw new Error("Missing required variables.");
 }
-const projectName = faker.lorem.word(5);
+const projectName = faker.string.alpha(15);
 const projectDescription = faker.lorem.sentence();
-const layerName = faker.lorem.word(5);
-const projectAlias = faker.lorem.word(5);
+const layerName = faker.string.alpha(5);
+const projectAlias = faker.string.alpha(20);
 test.describe.configure({ mode: "serial" });
 
 test.describe("Project Management", () => {
@@ -138,5 +138,176 @@ test.describe("Project Management", () => {
         }
       }
     });
+  });
+
+  test.skip("Should verify sketch tools are visible after adding style", async () => {
+    test.setTimeout(60000);
+    await projectScreen.verifySketchToolsVisible();
+  });
+
+  test.skip("Should draw a polyline on the map", async () => {
+    test.setTimeout(90000);
+    const polylineLayerName = faker.string.alpha(5);
+
+    await projectScreen.createNewLayer(polylineLayerName);
+    await projectScreen.verifyLayerAdded(polylineLayerName);
+    await projectScreen.clickLayer(polylineLayerName);
+
+    await projectScreen.addPolylineStyle();
+    await page.waitForTimeout(1000);
+    await page.locator("canvas").click({
+      position: {
+        x: 84,
+        y: 224
+      }
+    });
+    await page.locator("canvas").click({
+      position: {
+        x: 231,
+        y: 225
+      }
+    });
+    await page.locator("canvas").click({
+      position: {
+        x: 191,
+        y: 299
+      }
+    });
+    await page.locator("canvas").dblclick({
+      position: {
+        x: 100,
+        y: 250
+      }
+    });
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (r) =>
+          r.url().includes("/graphql") &&
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false),
+        { timeout: 45000 }
+      )
+    ]);
+
+    const responseBody = await response.json();
+    expect(responseBody.data.addGeoJSONFeature).toBeDefined();
+    expect(responseBody.data.addGeoJSONFeature.id).toBeDefined();
+  });
+
+  test.skip("Should draw a polygon on the map", async () => {
+    test.setTimeout(90000);
+    const polygonLayerName = faker.string.alpha(5);
+
+    await projectScreen.createNewLayer(polygonLayerName);
+    await projectScreen.verifyLayerAdded(polygonLayerName);
+    await projectScreen.clickLayer(polygonLayerName);
+
+    await projectScreen.addPolygonStyle();
+    await page.waitForTimeout(1000);
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (r) =>
+          r.url().includes("/graphql") &&
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false),
+        { timeout: 45000 }
+      ),
+      projectScreen.addPolygonOnMap([
+        { x: 350, y: 250 },
+        { x: 450, y: 250 },
+        { x: 450, y: 350 },
+        { x: 350, y: 350 }
+      ])
+    ]);
+
+    const responseBody = await response.json();
+    expect(responseBody.data.addGeoJSONFeature).toBeDefined();
+    expect(responseBody.data.addGeoJSONFeature.type).toBe("Feature");
+  });
+
+  test.skip("Should draw a circle on the map", async () => {
+    test.setTimeout(90000);
+    const circleLayerName = faker.string.alpha(5);
+
+    await projectScreen.createNewLayer(circleLayerName);
+    await projectScreen.verifyLayerAdded(circleLayerName);
+    await projectScreen.clickLayer(circleLayerName);
+
+    await projectScreen.addPolygonStyle();
+    await page.waitForTimeout(1000);
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (r) =>
+          r.url().includes("/graphql") &&
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false),
+        { timeout: 45000 }
+      ),
+      projectScreen.addCircleOnMap({ x: 400, y: 400 }, { x: 450, y: 400 })
+    ]);
+
+    const responseBody = await response.json();
+    expect(responseBody.data.addGeoJSONFeature).toBeDefined();
+  });
+
+  test.skip("Should draw a square on the map", async () => {
+    test.setTimeout(90000);
+    const squareLayerName = faker.string.alpha(5);
+
+    await projectScreen.createNewLayer(squareLayerName);
+    await projectScreen.verifyLayerAdded(squareLayerName);
+    await projectScreen.clickLayer(squareLayerName);
+
+    await projectScreen.addPolygonStyle();
+    await page.waitForTimeout(1000);
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (r) =>
+          r.url().includes("/graphql") &&
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false),
+        { timeout: 45000 }
+      ),
+      projectScreen.addSquareOnMap({ x: 350, y: 350 }, { x: 450, y: 450 })
+    ]);
+
+    const responseBody = await response.json();
+    expect(responseBody.data.addGeoJSONFeature).toBeDefined();
+  });
+
+  test("Should create layer with custom text property", async () => {
+    test.setTimeout(60000);
+    const customLayerName = faker.string.alpha(5);
+
+    await projectScreen.createLayerWithCustomProperty(
+      customLayerName,
+      "Description",
+      "Text"
+    );
+    await projectScreen.verifyLayerAdded(customLayerName);
+  });
+
+  test("Should create layer with custom number property", async () => {
+    test.setTimeout(60000);
+    const customLayerName = faker.string.alpha(5);
+
+    await projectScreen.createLayerWithCustomProperty(
+      customLayerName,
+      "Count",
+      "Int"
+    );
+    await projectScreen.verifyLayerAdded(customLayerName);
+  });
+
+  test.skip("Should navigate to Scene panel and verify scene items", async () => {
+    test.setTimeout(60000);
+    await projectScreen.scenePanel.click();
+    await page.waitForTimeout(1000);
+
+    await expect(projectScreen.getSceneItemByName("Main")).toBeVisible();
+    await expect(projectScreen.getSceneItemByName("Tiles")).toBeVisible();
+    await expect(projectScreen.getSceneItemByName("Terrain")).toBeVisible();
+    await expect(projectScreen.getSceneItemByName("Globe")).toBeVisible();
+    await expect(projectScreen.getSceneItemByName("Sky")).toBeVisible();
+    await expect(projectScreen.getSceneItemByName("Camera")).toBeVisible();
   });
 });

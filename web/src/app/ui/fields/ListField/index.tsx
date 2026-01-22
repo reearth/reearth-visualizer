@@ -17,6 +17,7 @@ export type ListItemProps = {
 };
 
 export type ListFieldProps = CommonFieldProps & {
+  showTitle?: boolean;
   items: ListItemProps[];
   selected?: string;
   atLeastOneItem?: boolean;
@@ -30,6 +31,7 @@ export type ListFieldProps = CommonFieldProps & {
 
 const ListField: FC<ListFieldProps> = ({
   title,
+  showTitle = false,
   description,
   items,
   selected,
@@ -112,7 +114,7 @@ const ListField: FC<ListFieldProps> = ({
 
   return (
     <CommonField
-      title={title}
+      title={showTitle ? title : undefined}
       description={description}
       data-testid="listfield-commonfield"
     >

@@ -73,7 +73,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         language: "javascript"
       }),
-      expect.anything()
+      undefined
     );
   });
 
@@ -86,7 +86,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         language: "json"
       }),
-      expect.anything()
+      undefined
     );
   });
 
@@ -101,7 +101,7 @@ describe("CodeInput", () => {
           readOnly: true
         })
       }),
-      expect.anything()
+      undefined
     );
   });
 
@@ -116,7 +116,7 @@ describe("CodeInput", () => {
           lineNumbers: "off"
         })
       }),
-      expect.anything()
+      undefined
     );
   });
 
@@ -165,7 +165,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         value: "new value"
       }),
-      expect.anything()
+      undefined
     );
   });
 
@@ -229,7 +229,7 @@ describe("CodeInput", () => {
       expect.objectContaining({
         height: 500
       }),
-      expect.anything()
+      undefined
     );
   });
 });

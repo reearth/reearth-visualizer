@@ -325,14 +325,8 @@ extensions:
                   label: Labelled
                 - key: default_road
                   label: Road Map
-                - key: stamen_watercolor
-                  label: Stamen Watercolor
-                - key: stamen_toner
-                  label: Stamen Toner
                 - key: open_street_map
                   label: OpenStreetMap
-                - key: esri_world_topo
-                  label: ESRI Topography
                 - key: black_marble
                   label: Earth at night
                 - key: japan_gsi_standard
@@ -1919,7 +1913,7 @@ extensions:
     description: Button widget
     widgetLayout:
       defaultLocation:
-        zone: outer
+        zone: inner
         section: left
         area: top
     schema:
@@ -2234,20 +2228,118 @@ extensions:
         area: bottom
     schema:
       groups:
-        - id: default
-          title: Timeline
+        - id: general
+          title: General
           fields:
-            - id: visible
-              title: Visible
+            - id: displayTimezone
+              title: Display Timezone
               type: string
-              defaultValue: always
+              defaultValue: +09:00
               choices:
-                - key: always
-                  label: Always
-                - key: desktop
-                  label: Desktop only
-                - key: mobile
-                  label: Mobile only
+                - key: -12:00
+                  label: -12:00
+                - key: -11:00
+                  label: -11:00
+                - key: -10:00
+                  label: -10:00
+                - key: -09:30
+                  label: -09:30
+                - key: -09:00
+                  label: -09:00
+                - key: -08:00
+                  label: -08:00
+                - key: -07:00
+                  label: -07:00
+                - key: -06:00
+                  label: -06:00
+                - key: -05:00
+                  label: -05:00
+                - key: -04:30
+                  label: -04:30
+                - key: -04:00
+                  label: -04:00
+                - key: -03:30
+                  label: -03:30
+                - key: -03:00
+                  label: -03:00
+                - key: -02:00
+                  label: -02:00
+                - key: -01:00
+                  label: -01:00
+                - key: +00:00
+                  label: +00:00
+                - key: +01:00
+                  label: +01:00
+                - key: +02:00
+                  label: +02:00
+                - key: +03:00
+                  label: +03:00
+                - key: +03:30
+                  label: +03:30
+                - key: +04:00
+                  label: +04:00
+                - key: +04:30
+                  label: +04:30
+                - key: +05:00
+                  label: +05:00
+                - key: +05:30
+                  label: +05:30
+                - key: +05:45
+                  label: +05:45
+                - key: +06:00
+                  label: +06:00
+                - key: +06:30
+                  label: +06:30
+                - key: +07:00
+                  label: +07:00
+                - key: +08:00
+                  label: +08:00
+                - key: +08:45
+                  label: +08:45
+                - key: +09:00
+                  label: +09:00
+                - key: +09:30
+                  label: +09:30
+                - key: +10:00
+                  label: +10:00
+                - key: +10:30
+                  label: +10:30
+                - key: +11:00
+                  label: +11:00
+                - key: +12:00
+                  label: +12:00
+                - key: +12:45
+                  label: +12:45
+                - key: +13:00
+                  label: +13:00
+                - key: +14:00
+                  label: +14:00
+        - id: timelineChannels
+          title: Timeline Channels
+          list: true
+          representativeField: channelTitle
+          fields:
+            - id: channelTitle
+              type: string
+              title: Display Title
+              defaultValue: New Channel
+            - id: channelRange
+              type: timeline
+              title: Time Range Setting
+        - id: appearance
+          title: Widget Appearance
+          fields:
+            - id: theme
+              type: string
+              title: Theme
+              defaultValue: light
+              choices:
+                - key: light
+                  label: Light
+                - key: dark
+                  label: Dark
+                - key: auto
+                  label: Auto
   - id: navigator
     type: widget
     name: Navigator
@@ -2255,7 +2347,7 @@ extensions:
     singleOnly: true
     widgetLayout:
       defaultLocation:
-        zone: outer
+        zone: inner
         section: right
         area: top
     schema:
@@ -2281,8 +2373,8 @@ extensions:
     singleOnly: true
     widgetLayout:
       defaultLocation:
-        zone: outer
-        section: left
+        zone: inner
+        section: center
         area: bottom
     schema:
       groups:
@@ -2309,8 +2401,8 @@ extensions:
     singleOnly: true
     widgetLayout:
       defaultLocation:
-        zone: outer
-        section: left
+        zone: inner
+        section: center
         area: top
     schema:
       groups:
@@ -2333,6 +2425,8 @@ extensions:
                   label: Light
                 - key: dark
                   label: Dark
+                - key: auto
+                  label: Auto
         - id: languageSetting
           title: Language Setting
           fields:
@@ -2349,7 +2443,6 @@ extensions:
                   label: Japanese
                 - key: cn
                   label: Chinese
-
   - id: story
     name: Story
     type: story

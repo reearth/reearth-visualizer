@@ -11,10 +11,11 @@ import { styled } from "@reearth/services/theme";
 import {
   FC,
   Fragment,
-  MutableRefObject,
   ReactNode,
+  RefObject,
   useEffect,
-  useMemo
+  useMemo,
+  useRef
 } from "react";
 
 import { BlockProps } from "../../../shared/types";
@@ -31,13 +32,14 @@ import useHooks, { type StoryPage } from "./hooks";
 
 type Props = {
   page?: StoryPage;
+  wrapperRef: RefObject<HTMLDivElement | null>;
   selectedPageId?: string;
   selectedStoryBlockId?: string;
   installableStoryBlocks?: InstallableStoryBlock[];
   showPageSettings?: boolean;
   isEditable?: boolean;
-  isAutoScrolling?: MutableRefObject<boolean>;
-  scrollTimeoutRef: MutableRefObject<NodeJS.Timeout | undefined>;
+  isAutoScrolling?: RefObject<boolean>;
+  scrollTimeoutRef: RefObject<ReturnType<typeof setTimeout> | undefined>;
   children?: ReactNode;
   onCurrentPageChange?: (
     pageId: string,
@@ -85,6 +87,7 @@ const PAGE_DRAG_HANDLE_CLASS_NAME =
 
 const StoryPanel: FC<Props> = ({
   page,
+  wrapperRef,
   selectedPageId,
   selectedStoryBlockId,
   installableStoryBlocks,
@@ -128,38 +131,80 @@ const StoryPanel: FC<Props> = ({
     onBlockMove
   });
 
-  const { containerRef, isIntersecting } = useElementOnScreen({
-    root: document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID),
-    threshold: 0.2
+  const rootElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+
+  const minHeight = useMemo(() => {
+    if (!rootElement) return "100%";
+    const height = rootElement.getBoundingClientRect().height;
+    return height > 0 ? `${height - 40}px` : "100%";
+  }, [rootElement]);
+
+  const pageRef = useRef<HTMLDivElement | null>(null);
+
+  const isActive = useElementOnScreen({
+    wrapperRef,
+    elementRef: pageRef
   });
 
-  useEffect(() => {
-    if (isIntersecting) {
-      const id = containerRef.current?.id;
-      if (id) {
-        if (isAutoScrolling?.current) {
-          const wrapperElement = document.getElementById(
-            STORY_PANEL_CONTENT_ELEMENT_ID
-          );
+  // Debounce timer for page changes to prevent rapid switching
+  const pageChangeTimeoutRef = useRef<NodeJS.Timeout>(undefined);
 
-          wrapperElement?.addEventListener("scroll", () => {
-            clearTimeout(scrollTimeoutRef.current);
-            scrollTimeoutRef.current = setTimeout(function () {
-              isAutoScrolling.current = false;
-            }, 100);
-          });
-        } else {
-          onCurrentPageChange?.(id, true);
-        }
-      }
+  useEffect(() => {
+    if (isAutoScrolling?.current || !isActive) return;
+
+    const pageElement = pageRef.current;
+    const pageId = pageElement?.id;
+    if (!pageId) return;
+
+    let didScheduleTimeout = false;
+
+    if (isActive) {
+      clearTimeout(pageChangeTimeoutRef.current);
+      pageChangeTimeoutRef.current = setTimeout(() => {
+        onCurrentPageChange?.(pageId, true);
+      }, 150);
+      didScheduleTimeout = true;
     }
+
+    return () => {
+      if (didScheduleTimeout) {
+        clearTimeout(pageChangeTimeoutRef.current);
+      }
+    };
   }, [
-    isIntersecting,
-    containerRef,
+    isActive,
+    pageRef,
     isAutoScrolling,
     scrollTimeoutRef,
     onCurrentPageChange
   ]);
+
+  // Effect to handle resetting auto-scroll flag after any scroll completes
+  useEffect(() => {
+    const wrapperElement = document.getElementById(
+      STORY_PANEL_CONTENT_ELEMENT_ID
+    );
+    if (!wrapperElement) return;
+
+    const handleScroll = () => {
+      // If auto-scrolling, reset the flag after scroll stops
+      if (isAutoScrolling?.current) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(() => {
+          isAutoScrolling.current = false;
+        }, 100); // Reset auto-scroll flag 100ms after scroll stops
+      }
+    };
+
+    wrapperElement.addEventListener("scroll", handleScroll, {
+      passive: true
+    });
+
+    return () => {
+      clearTimeout(scrollTimeoutRef.current);
+      wrapperElement.removeEventListener("scroll", handleScroll);
+    };
+  }, [isAutoScrolling, scrollTimeoutRef]);
 
   const DraggableStoryBlockItems = useMemo(
     () =>
@@ -245,12 +290,13 @@ const StoryPanel: FC<Props> = ({
     >
       <ContentWrapper
         id={page?.id}
-        ref={containerRef}
+        ref={pageRef}
         isEditable={isEditable}
         minPaddingInEditor={MIN_STORY_PAGE_PADDING_IN_EDITOR}
         padding={panelSettings?.padding?.value}
         minGapInEditor={MIN_STORY_PAGE_GAP_IN_EDITOR}
         gap={panelSettings?.gap?.value}
+        minHeight={minHeight}
       >
         <PageTitleWrapper>
           {(isEditable || titleProperty?.title?.title?.value) && (
@@ -302,8 +348,9 @@ const StoryPanel: FC<Props> = ({
             gap={20}
           />
         )}
+
+        {children}
       </ContentWrapper>
-      {children}
     </SelectableArea>
   );
 };

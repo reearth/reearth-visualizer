@@ -68,7 +68,11 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
           id: "rename",
           title: t("Rename"),
           icon: "pencilSimple" as const,
-          onClick: () => setIsEditing(true)
+          onClick: () => {
+            setTimeout(() => {
+              setIsEditing(true);
+            }, 0);
+          }
         },
         {
           id: "delete",

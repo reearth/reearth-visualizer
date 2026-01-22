@@ -391,10 +391,8 @@ func TestStoryPublishing(t *testing.T) {
   "trackingId": "",
   "widgetAlignSystems": {
     "desktop": {
-      "inner": null,
-      "outer": {
-        "center": null,
-        "left": {
+      "inner": {
+        "center": {
           "bottom": {
             "align": "start",
             "background": null,
@@ -408,14 +406,14 @@ func TestStoryPublishing(t *testing.T) {
           "middle": null,
           "top": null
         },
+        "left": null,
         "right": null
-      }
+      },
+      "outer": null
     },
     "mobile": {
-      "inner": null,
-      "outer": {
-        "center": null,
-        "left": {
+      "inner": {
+        "center": {
           "bottom": {
             "align": "start",
             "background": null,
@@ -429,8 +427,10 @@ func TestStoryPublishing(t *testing.T) {
           "middle": null,
           "top": null
         },
+        "left": null,
         "right": null
-      }
+      },
+      "outer": null
     }
   },
   "widgets": [

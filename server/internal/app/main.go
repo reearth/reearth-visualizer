@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/app/otel"
 	mongorepo "github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo/migration"
 	"github.com/reearth/reearthx/log"
@@ -32,14 +33,32 @@ func Start(debug bool, version string) {
 	initProfiler(conf.Profiler, version)
 
 	// Init tracer
-	closer := initTracer(ctx, conf, version)
-	defer func() {
-		if closer != nil {
-			if err := closer.Close(); err != nil {
-				log.Errorf("Failed to close tracer: %s\n", err.Error())
-			}
+	serviceName := otel.OtelVisualizerServiceName
+	if conf.Visualizer.InternalApi.Active {
+		serviceName = otel.OtelVisualizerInternalApiServiceName
+	}
+	if conf.OtelEnabled {
+		closer, err := otel.InitTracer(ctx, &otel.Config{
+			BatchTimeout:       conf.OtelBatchTimeout,
+			Enabled:            conf.OtelEnabled,
+			Endpoint:           conf.OtelEndpoint,
+			ExporterType:       otel.ExporterType(conf.OtelExporterType),
+			MaxExportBatchSize: conf.OtelMaxExportBatchSize,
+			MaxQueueSize:       conf.OtelMaxQueueSize,
+			SamplingRatio:      conf.OtelSamplingRatio,
+			ServiceName:        serviceName,
+		})
+
+		if err != nil {
+			log.Warnfc(ctx, "failed to init tracer: %v", err)
+		} else {
+			defer func() {
+				if err := closer.Shutdown(ctx); err != nil {
+					log.Errorfc(ctx, "Failed to shutdown tracer: %s\n", err.Error())
+				}
+			}()
 		}
-	}()
+	}
 
 	// run migration
 	if os.Getenv("RUN_MIGRATION") == "true" {
@@ -91,5 +110,5 @@ func Start(debug bool, version string) {
 	}
 
 	// run server
-	runServer(ctx, conf, debug)
+	runServer(ctx, conf, serviceName, debug)
 }

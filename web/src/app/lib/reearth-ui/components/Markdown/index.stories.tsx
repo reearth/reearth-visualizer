@@ -1,5 +1,5 @@
 import { styled } from "@reearth/services/theme";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { Markdown, MarkdownProps } from ".";
 

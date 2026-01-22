@@ -24,7 +24,7 @@ export type InstallableStoryBlock = InstallableBlock & {
 };
 
 export type StoryPanelProps = {
-  storyWrapperRef?: RefObject<HTMLDivElement>;
+  storyWrapperRef?: RefObject<HTMLDivElement | null>;
   selectedStory?: Story;
   isEditable?: boolean;
   isMobile?: boolean;
@@ -98,7 +98,6 @@ export const StoryPanel = memo(
         isAutoScrolling,
         layerOverride,
         disableSelection,
-        setCurrentPageId,
         setLayerOverride,
         handleSelectionDisable,
         handleLayerOverride,
@@ -124,14 +123,13 @@ export const StoryPanel = memo(
             if (!pageId) return;
             const element = document.getElementById(pageId);
             if (!element) return;
-            setCurrentPageId(pageId);
             setLayerOverride(undefined);
             element.scrollIntoView({
-              behavior: "instant"
-            } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
+              behavior: "smooth"
+            });
           }
         }),
-        [selectedStory?.pages, setCurrentPageId, setLayerOverride]
+        [selectedStory?.pages, setLayerOverride]
       );
 
       const editModeContext = useMemo(

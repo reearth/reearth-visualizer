@@ -23,11 +23,11 @@ export type Props = {
   renderPlaceholder?: ReactNode;
   autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
-  modalContainer?: HTMLElement | DocumentFragment;
-  popupContainer?: HTMLElement | DocumentFragment;
+  modalContainer?: HTMLElement | DocumentFragment | null;
+  popupContainer?: HTMLElement | DocumentFragment | null;
   modalVisible?: boolean;
   popupVisible?: boolean;
-  externalRef?: RefObject<HTMLIFrameElement>;
+  externalRef?: RefObject<HTMLIFrameElement | null>;
   isMarshalable?: boolean | "json" | ((target: unknown) => boolean | "json");
   exposed?: ((api: API) => Record<string, unknown>) | Record<string, unknown>;
   onMessage?: (message: unknown) => void;

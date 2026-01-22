@@ -16,6 +16,7 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
@@ -38,17 +39,13 @@ var (
 	fr *gateway.File
 
 	disabledAuthConfig = &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
+		Origins:  []string{"https://example.com"},
+		Dev:      true,
+		MockAuth: true,
 	}
 
 	internalApiConfig = &config.Config{
 		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
 		Visualizer: config.VisualizerConfig{
 			InternalApi: config.InternalApiConfig{
 				Active: true,
@@ -122,6 +119,7 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 		Gateways:        gateways,
 		AccountGateways: accountGateway,
 		Debug:           true,
+		ServiceName:     otel.OtelVisualizerServiceName,
 	}), gateways, accountGateway
 }
 
@@ -223,9 +221,6 @@ func ServerMockTest(t *testing.T) *httpexpect.Expect {
 		Dev:      true,
 		MockAuth: true,
 		Origins:  []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
 	}
 	e, _, _ := startServer(t, c, true, nil)
 	return e

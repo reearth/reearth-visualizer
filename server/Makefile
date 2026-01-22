@@ -5,6 +5,8 @@
 TEST_DIR ?= ./...
 TARGET_TEST := ./...
 REEARTH_DB := mongodb://localhost
+REEARTH_DB_VIS := reearth
+MIGRATION_KEY ?=
 SCHEMATYPER := github.com/idubinskiy/schematyper
 MANIFEST_DIR := pkg/plugin/manifest
 DOCKER_COMPOSE := docker compose -f ../docker-compose.yml
@@ -36,6 +38,8 @@ help:
 	@echo "  run-db            Start MongoDB with Docker Compose"
 	@echo "  run-reset         Reset MongoDB data and add mock user"
 	@echo "  reset             Reset database and GCS, reinitialize with mock data"
+	@echo "  migrate           Run database migration"
+	@echo "  migrate-with-key  Run database migration with specific MIGRATION_KEY"
 	@echo "  init              Initialize GCS bucket and create mock user"
 	@echo "  init-gcs          Initialize GCS bucket only"
 	@echo "  destroy           Remove ALL Docker resources and data (destructive)"
@@ -151,6 +155,25 @@ down-gcs:
 	${DOCKER_COMPOSE} down gcs
 
 # =======================
+# Migration
+# =======================
+
+migrate:
+	@echo "==== Running database migration ===="
+	RUN_MIGRATION=true REEARTH_DB=${REEARTH_DB} REEARTH_DB_VIS=${REEARTH_DB_VIS} go run ./cmd/reearth
+	@echo "✓ Migration complete!"
+
+migrate-with-key:
+	@if [ -z "$(MIGRATION_KEY)" ]; then \
+		echo "Error: MIGRATION_KEY is not set."; \
+		echo "Usage: make migrate-with-key MIGRATION_KEY=<key>"; \
+		exit 1; \
+	fi
+	@echo "==== Running database migration with MIGRATION_KEY=$(MIGRATION_KEY) ===="
+	RUN_MIGRATION=true MIGRATION_KEY=$(MIGRATION_KEY) REEARTH_DB=${REEARTH_DB} REEARTH_DB_VIS=${REEARTH_DB_VIS} go run ./cmd/reearth
+	@echo "✓ Migration complete!"
+
+# =======================
 # Code Generation
 # =======================
 
@@ -192,9 +215,9 @@ dev-install:
 			echo "$$bin is not installed. Installing..."; \
 			case $$bin in \
 				air) go install github.com/air-verse/air@v1.61.5 ;; \
-				stringer) go install golang.org/x/tools/cmd/stringer@v0.29.0 ;; \
+				stringer) go install golang.org/x/tools/cmd/stringer@v0.39.0 ;; \
 				schematyper) go install github.com/idubinskiy/schematyper ;; \
-				deep-copy) go install github.com/globusdigital/deep-copy@dc4a8d91ed65656858cd53e6e83bbf7b83d5b7cb ;; \
+				deep-copy) go install github.com/globusdigital/deep-copy@v0.5.5-0.20251122193020-7cda106f7b4b ;; \
 			esac; \
 		else \
 			echo "$$bin is already installed."; \
@@ -216,8 +239,7 @@ init:
 mockuser:
 	curl -s -D - -o /dev/null \
 		-H 'Content-Type: application/json' \
-		-d '{"email": "mock@example.com", "username": "Mock User"}' \
-		http://localhost:8080/api/signup | head -n 1
+		http://localhost:8080/api/mockuser | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \
@@ -232,16 +254,21 @@ destroy:
 	@read -p "Are you sure you want to continue? [y/N] " -n 1 -r; \
 	echo; \
 	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		docker stop $(docker ps -q); \
+		containers=$$(docker ps -q); \
+		if [ -n "$$containers" ]; then \
+			docker stop $$containers; \
+		else \
+			echo "No running containers to stop."; \
+		fi; \
 		docker system prune -a --volumes -f; \
 		docker network prune -f; \
 		echo "✓ All Docker resources have been removed"; \
 		echo "==== Removing data directory (requires sudo password) ===="; \
-		sudo rm -rf tmp/gcs tmp/mongo 
+		sudo rm -rf tmp/gcs tmp/mongo; \
 		echo "✓ All data resources have been cleared"; \
 	else \
 		echo "✗ Operation cancelled"; \
 	fi
 
 .PHONY: default help lint lint-docker test test-docker test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down
+        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-with-key

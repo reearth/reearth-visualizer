@@ -87,7 +87,12 @@ const LayerItem: FC<LayerItemProps> = ({
       id: "rename",
       title: t("Rename"),
       icon: "pencilSimple" as const,
-      onClick: () => setEditingLayerNameId(layer.id)
+      onClick: () => {
+        // Delay entering edit mode until popup has fully closed and finished focus management
+        setTimeout(() => {
+          setEditingLayerNameId(layer.id);
+        }, 0);
+      }
     },
     {
       id: "delete",
@@ -168,11 +173,18 @@ const LayerItem: FC<LayerItemProps> = ({
   const handleTitleUpdateRef = useRef(handleTitleUpdate);
   handleTitleUpdateRef.current = handleTitleUpdate;
 
+  // Store latest editingLayerNameId in ref to avoid triggering effect when it changes
+  const editingLayerNameIdRef = useRef(editingLayerNameId);
+  editingLayerNameIdRef.current = editingLayerNameId;
+
+  // Only exit edit mode when selectedLayerId changes, not when editingLayerNameId changes
+  // This prevents other (non-editing) layers from clearing the editingLayerNameId state
   useEffect(() => {
-    if (selectedLayerId !== layer.id) {
+    const currentEditingId = editingLayerNameIdRef.current;
+    if (selectedLayerId !== layer.id && currentEditingId !== layer.id) {
       handleTitleUpdateRef.current();
     }
-  }, [selectedLayerId, layer.id, handleTitleUpdateRef]);
+  }, [selectedLayerId, layer.id]);
 
   return (
     <>

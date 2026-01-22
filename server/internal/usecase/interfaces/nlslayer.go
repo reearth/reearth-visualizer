@@ -10,14 +10,15 @@ import (
 )
 
 type AddNLSLayerSimpleInput struct {
-	ParentLayerID id.NLSLayerID
-	Title         string
-	SceneID       id.SceneID
-	Index         *int
-	LayerType     nlslayer.LayerType
-	Config        *nlslayer.Config
-	Visible       *bool
-	Schema        *map[string]any
+	ParentLayerID  id.NLSLayerID
+	Title          string
+	SceneID        id.SceneID
+	Index          *int
+	LayerType      nlslayer.LayerType
+	Config         *nlslayer.Config
+	Visible        *bool
+	Schema         *map[string]any
+	DataSourceName *string
 }
 
 type UpdateNLSLayerInput struct {

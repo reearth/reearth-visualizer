@@ -1,7 +1,9 @@
-import { action } from "@storybook/addon-actions";
-import { Meta, StoryObj } from "@storybook/react";
+import { Meta, StoryObj } from "@storybook/react-vite";
 
 import { CodeInput, CodeInputProps } from ".";
+
+// Mock function for actions
+const fn = () => () => {};
 
 const meta: Meta<CodeInputProps> = {
   component: CodeInput
@@ -21,8 +23,8 @@ export const Default: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value={JSON.stringify(TEST_JSON)}
-        onChange={action("onChange")}
-        onBlur={action("onBlur")}
+        onChange={fn()}
+        onBlur={fn()}
       />
     </div>
   )
@@ -33,8 +35,8 @@ export const Disabled: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value={JSON.stringify(TEST_JSON)}
-        onChange={action("onChange")}
-        onBlur={action("onBlur")}
+        onChange={fn()}
+        onBlur={fn()}
         disabled={true}
       />
     </div>
@@ -46,8 +48,8 @@ export const HideLineNumber: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value={JSON.stringify(TEST_JSON)}
-        onChange={action("onChange")}
-        onBlur={action("onBlur")}
+        onChange={fn()}
+        onBlur={fn()}
         showLines={false}
       />
     </div>
@@ -59,8 +61,8 @@ export const JavascriptInput: Story = {
     <div style={{ height: "500px", width: "300px" }}>
       <CodeInput
         value="console.log('codeinput')"
-        onChange={action("onChange")}
-        onBlur={action("onBlur")}
+        onChange={fn()}
+        onBlur={fn()}
         language="javascript"
       />
     </div>

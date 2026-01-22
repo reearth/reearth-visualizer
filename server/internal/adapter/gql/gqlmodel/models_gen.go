@@ -32,6 +32,7 @@ type NLSLayer interface {
 	GetPhotoOverlay() *NLSPhotoOverlay
 	GetIsSketch() bool
 	GetSketch() *SketchInfo
+	GetDataSourceName() *string
 }
 
 type Node interface {
@@ -73,13 +74,14 @@ type AddNLSInfoboxBlockPayload struct {
 }
 
 type AddNLSLayerSimpleInput struct {
-	LayerType string `json:"layerType"`
-	Title     string `json:"title"`
-	SceneID   ID     `json:"sceneId"`
-	Config    JSON   `json:"config,omitempty"`
-	Index     *int   `json:"index,omitempty"`
-	Visible   *bool  `json:"visible,omitempty"`
-	Schema    JSON   `json:"schema,omitempty"`
+	LayerType      string  `json:"layerType"`
+	Title          string  `json:"title"`
+	SceneID        ID      `json:"sceneId"`
+	Config         JSON    `json:"config,omitempty"`
+	Index          *int    `json:"index,omitempty"`
+	Visible        *bool   `json:"visible,omitempty"`
+	Schema         JSON    `json:"schema,omitempty"`
+	DataSourceName *string `json:"dataSourceName,omitempty"`
 }
 
 type AddNLSLayerSimplePayload struct {
@@ -261,14 +263,6 @@ type DeleteGeoJSONFeatureInput struct {
 
 type DeleteGeoJSONFeaturePayload struct {
 	DeletedFeatureID ID `json:"deletedFeatureId"`
-}
-
-type DeleteMeInput struct {
-	UserID ID `json:"userId"`
-}
-
-type DeleteMePayload struct {
-	UserID ID `json:"userId"`
 }
 
 type DeleteProjectInput struct {
@@ -524,20 +518,21 @@ type NLSInfobox struct {
 }
 
 type NLSLayerGroup struct {
-	ID           ID               `json:"id"`
-	Index        *int             `json:"index,omitempty"`
-	LayerType    string           `json:"layerType"`
-	SceneID      ID               `json:"sceneId"`
-	Children     []NLSLayer       `json:"children"`
-	ChildrenIds  []ID             `json:"childrenIds"`
-	Config       JSON             `json:"config,omitempty"`
-	Title        string           `json:"title"`
-	Visible      bool             `json:"visible"`
-	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
-	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
-	Scene        *Scene           `json:"scene,omitempty"`
-	IsSketch     bool             `json:"isSketch"`
-	Sketch       *SketchInfo      `json:"sketch,omitempty"`
+	ID             ID               `json:"id"`
+	Index          *int             `json:"index,omitempty"`
+	LayerType      string           `json:"layerType"`
+	SceneID        ID               `json:"sceneId"`
+	Children       []NLSLayer       `json:"children"`
+	ChildrenIds    []ID             `json:"childrenIds"`
+	Config         JSON             `json:"config,omitempty"`
+	Title          string           `json:"title"`
+	Visible        bool             `json:"visible"`
+	Infobox        *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay   *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene          *Scene           `json:"scene,omitempty"`
+	IsSketch       bool             `json:"isSketch"`
+	Sketch         *SketchInfo      `json:"sketch,omitempty"`
+	DataSourceName *string          `json:"dataSourceName,omitempty"`
 }
 
 func (NLSLayerGroup) IsNLSLayer()                            {}
@@ -552,20 +547,22 @@ func (this NLSLayerGroup) GetInfobox() *NLSInfobox           { return this.Infob
 func (this NLSLayerGroup) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
 func (this NLSLayerGroup) GetIsSketch() bool                 { return this.IsSketch }
 func (this NLSLayerGroup) GetSketch() *SketchInfo            { return this.Sketch }
+func (this NLSLayerGroup) GetDataSourceName() *string        { return this.DataSourceName }
 
 type NLSLayerSimple struct {
-	ID           ID               `json:"id"`
-	Index        *int             `json:"index,omitempty"`
-	LayerType    string           `json:"layerType"`
-	SceneID      ID               `json:"sceneId"`
-	Config       JSON             `json:"config,omitempty"`
-	Title        string           `json:"title"`
-	Visible      bool             `json:"visible"`
-	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
-	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
-	Scene        *Scene           `json:"scene,omitempty"`
-	IsSketch     bool             `json:"isSketch"`
-	Sketch       *SketchInfo      `json:"sketch,omitempty"`
+	ID             ID               `json:"id"`
+	Index          *int             `json:"index,omitempty"`
+	LayerType      string           `json:"layerType"`
+	SceneID        ID               `json:"sceneId"`
+	Config         JSON             `json:"config,omitempty"`
+	Title          string           `json:"title"`
+	Visible        bool             `json:"visible"`
+	Infobox        *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay   *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene          *Scene           `json:"scene,omitempty"`
+	IsSketch       bool             `json:"isSketch"`
+	Sketch         *SketchInfo      `json:"sketch,omitempty"`
+	DataSourceName *string          `json:"dataSourceName,omitempty"`
 }
 
 func (NLSLayerSimple) IsNLSLayer()                            {}
@@ -580,6 +577,7 @@ func (this NLSLayerSimple) GetInfobox() *NLSInfobox           { return this.Info
 func (this NLSLayerSimple) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
 func (this NLSLayerSimple) GetIsSketch() bool                 { return this.IsSketch }
 func (this NLSLayerSimple) GetSketch() *SketchInfo            { return this.Sketch }
+func (this NLSLayerSimple) GetDataSourceName() *string        { return this.DataSourceName }
 
 type NLSPhotoOverlay struct {
 	ID         ID        `json:"id"`
@@ -657,19 +655,6 @@ type Point struct {
 }
 
 func (Point) IsGeometry() {}
-
-type Policy struct {
-	ID                    ID     `json:"id"`
-	Name                  string `json:"name"`
-	ProjectCount          *int   `json:"projectCount,omitempty"`
-	MemberCount           *int   `json:"memberCount,omitempty"`
-	PublishedProjectCount *int   `json:"publishedProjectCount,omitempty"`
-	LayerCount            *int   `json:"layerCount,omitempty"`
-	AssetStorageSize      *int64 `json:"assetStorageSize,omitempty"`
-	NlsLayersCount        *int   `json:"nlsLayersCount,omitempty"`
-	PageCount             *int   `json:"pageCount,omitempty"`
-	BlocksCount           *int   `json:"blocksCount,omitempty"`
-}
 
 type PolicyCheckInput struct {
 	WorkspaceID ID `json:"workspaceId"`
@@ -932,10 +917,6 @@ type RemoveMemberFromWorkspacePayload struct {
 	Workspace *Workspace `json:"workspace"`
 }
 
-type RemoveMyAuthInput struct {
-	Auth string `json:"auth"`
-}
-
 type RemoveNLSInfoboxBlockInput struct {
 	LayerID        ID `json:"layerId"`
 	InfoboxBlockID ID `json:"infoboxBlockId"`
@@ -1058,19 +1039,6 @@ type SceneWidget struct {
 	Plugin      *Plugin          `json:"plugin,omitempty"`
 	Extension   *PluginExtension `json:"extension,omitempty"`
 	Property    *Property        `json:"property,omitempty"`
-}
-
-type SignupInput struct {
-	Lang        *language.Tag `json:"lang,omitempty"`
-	Theme       *Theme        `json:"theme,omitempty"`
-	UserID      *ID           `json:"userId,omitempty"`
-	WorkspaceID *ID           `json:"workspaceId,omitempty"`
-	Secret      *string       `json:"secret,omitempty"`
-}
-
-type SignupPayload struct {
-	User      *User      `json:"user"`
-	Workspace *Workspace `json:"workspace"`
 }
 
 type SketchInfo struct {
@@ -1520,8 +1488,6 @@ type Workspace struct {
 	Members                      []*WorkspaceMember `json:"members"`
 	Personal                     bool               `json:"personal"`
 	PhotoURL                     *string            `json:"photoURL,omitempty"`
-	PolicyID                     *ID                `json:"policyId,omitempty"`
-	Policy                       *Policy            `json:"policy,omitempty"`
 	Assets                       *AssetConnection   `json:"assets"`
 	Projects                     *ProjectConnection `json:"projects"`
 	EnableToCreatePrivateProject bool               `json:"enableToCreatePrivateProject"`

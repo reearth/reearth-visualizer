@@ -2,7 +2,7 @@ import NotFound from "@reearth/app/features/NotFound";
 import WorkspaceSetting from "@reearth/app/features/WorkspaceSetting";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { FC, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 
 import Page from "../Page";
 

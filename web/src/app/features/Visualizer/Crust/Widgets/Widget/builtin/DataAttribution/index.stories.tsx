@@ -1,5 +1,5 @@
-import { Meta, StoryFn } from "@storybook/react";
-import { MemoryRouter } from "react-router-dom";
+import { Meta, StoryFn } from "@storybook/react-vite";
+import { MemoryRouter } from "react-router";
 
 import Component, { Props } from ".";
 

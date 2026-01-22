@@ -52,7 +52,12 @@ const ListItem: FC<ItemProps> = ({
         id: "rename",
         title: "Rename",
         icon: "pencilSimple" as const,
-        onClick: () => setItemNameRenameId(item.id)
+        onClick: () => {
+          // Delay entering edit mode until popup has fully closed and finished focus management
+          setTimeout(() => {
+            setItemNameRenameId(item.id);
+          }, 0);
+        }
       });
     }
 
@@ -110,7 +115,8 @@ const Wrapper = styled("div")(({ theme }) => ({
 }));
 
 const EntryItemWrapper = styled("div")(() => ({
-  flex: 1
+  flex: 1,
+  width: 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({

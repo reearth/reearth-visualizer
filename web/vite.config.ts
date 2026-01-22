@@ -75,10 +75,27 @@ export default defineConfig({
     },
     minify: NO_MINIFY ? false : "esbuild"
   },
+  optimizeDeps: {
+    exclude: ["quickjs-emscripten"]
+  },
   resolve: {
     alias: [
       { find: "crypto", replacement: "crypto-js" }, // quickjs-emscripten
-      { find: "path", replacement: "path-browserify" } // Browser polyfill for path
+      { find: "path", replacement: "path-browserify" }, // Browser polyfill for path
+      {
+        find: "quickjs-emscripten-sync",
+        replacement: resolve(
+          __dirname,
+          "node_modules/quickjs-emscripten-sync/dist/quickjs-emscripten-sync.mjs"
+        )
+      },
+      {
+        find: "react-align",
+        replacement: resolve(
+          __dirname,
+          "node_modules/react-align/dist/react-align.mjs"
+        )
+      }
     ]
   }
 });

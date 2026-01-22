@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/blang/semver"
+	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -730,7 +731,7 @@ func TestPluginIDsFrom(t *testing.T) {
 				"Test",
 			},
 			expected: nil,
-			err:      ErrInvalidID,
+			err:      idx.ErrInvalidID,
 		},
 	}
 

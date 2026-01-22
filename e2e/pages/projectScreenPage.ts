@@ -3,7 +3,6 @@ import { Locator, Page, expect } from "@playwright/test";
 export class ProjectScreenPage {
   constructor(private page: Page) {}
 
-  // left sidebar
   scenePanel: Locator = this.page.getByText("Scene");
   sceneItems: Locator = this.page.locator(
     '[data-testid="editor-map-scene-item"]'
@@ -23,7 +22,6 @@ export class ProjectScreenPage {
   addLayerFromResourceButton: Locator = this.page.getByRole("menuitem", {
     name: "Add Layer from Resource"
   });
-
   layerNameInput: Locator = this.page
     .getByTestId("sketch-layer-creator-name-input")
     .locator("input");
@@ -32,15 +30,15 @@ export class ProjectScreenPage {
   );
   customPropertyTitleInput: Locator =
     this.page.getByPlaceholder("Type Title here");
-  customPropertyTypeSelect: Locator = this.page.getByTestId("select-input");
+  customPropertyTypeSelect: Locator = this.page
+    .getByTestId("property-table-body")
+    .getByTestId("select-input");
   createNewLayerButton: Locator = this.page.getByTestId(
     "sketch-layer-creator-create-btn"
   );
   cancelNewLayerButton: Locator = this.page.getByTestId(
     "sketch-layer-creator-cancel-btn"
   );
-  // right sidebar
-
   addNewStyleButton: Locator = this.page.getByTestId("icon-button-plus");
   assignNewStyleButton: Locator = this.page.getByTestId("icon-button-return");
 
@@ -102,17 +100,21 @@ export class ProjectScreenPage {
   );
 
   async createNewLayer(layerName: string) {
+    await this.page.keyboard.press("Escape");
+    await this.page.waitForTimeout(500);
     await this.newLayerButton.click();
+    await this.page.waitForTimeout(500);
     await this.addSketchLayerButton.click();
+    await this.layerNameInput.first().waitFor({ state: "visible" });
     await this.layerNameInput.first().fill(layerName);
     await this.createNewLayerButton.click();
+    await this.page.waitForTimeout(3000);
   }
 
   async selectPropertyType(propertyType: string) {
     await this.customPropertyTypeSelect.click();
     await this.page
-      .getByRole("option")
-      .filter({ hasText: propertyType })
+      .getByRole("option", { name: propertyType, exact: true })
       .click();
   }
   async layerExists(layerName: string) {
@@ -141,29 +143,130 @@ export class ProjectScreenPage {
   }
 
   async addPointsOnMap(x: number, y: number) {
-    // Click the map pin button to activate drawing mode
     await this.mapPinButton.click();
-
-    // Wait for the drawing mode to be activated
     await this.page.waitForTimeout(1000);
 
-    // Get the canvas element
     const canvas = this.page.locator("canvas").first();
-
-    // Ensure canvas is visible and ready
     await canvas.waitFor({ state: "visible" });
 
-    // Click on the canvas to place the point
-    // Use force: true to ensure the click goes through even if there are overlays
     await canvas.click({
-      position: {
-        x,
-        y
-      },
+      position: { x, y },
       force: true
     });
 
-    // Wait for the point to be added
     await this.page.waitForTimeout(2000);
+  }
+
+  async addPolylineOnMap(w: number, x: number, _y: number, _z: number) {
+    await this.polylineButton.click();
+    await this.page.waitForTimeout(1500);
+
+    const canvas = this.page.locator("canvas").first();
+    await canvas.waitFor({ state: "visible" });
+
+    await this.page.waitForTimeout(500);
+    await canvas.click({
+      position: { x: w, y: x },
+      force: true
+    });
+    await this.page.waitForTimeout(500);
+
+    await this.page.waitForTimeout(2000);
+  }
+
+  async addCircleOnMap(
+    center: { x: number; y: number },
+    edge: { x: number; y: number }
+  ) {
+    await this.circleButton.click();
+    await this.page.waitForTimeout(1000);
+
+    const canvas = this.page.locator("canvas").first();
+    await canvas.waitFor({ state: "visible" });
+
+    await canvas.click({ position: center, force: true });
+    await this.page.waitForTimeout(500);
+
+    await canvas.click({ position: edge, force: true });
+    await this.page.waitForTimeout(2000);
+  }
+
+  async addSquareOnMap(
+    corner1: { x: number; y: number },
+    corner2: { x: number; y: number }
+  ) {
+    await this.squareButton.click();
+    await this.page.waitForTimeout(1000);
+
+    const canvas = this.page.locator("canvas").first();
+    await canvas.waitFor({ state: "visible" });
+
+    await canvas.click({ position: corner1, force: true });
+    await this.page.waitForTimeout(500);
+
+    await canvas.click({ position: corner2, force: true });
+    await this.page.waitForTimeout(2000);
+  }
+
+  async addPolygonOnMap(points: { x: number; y: number }[]) {
+    await this.polygonButton.click();
+    await this.page.waitForTimeout(1000);
+
+    const canvas = this.page.locator("canvas").first();
+    await canvas.waitFor({ state: "visible" });
+
+    // Click each point in the polygon
+    for (const point of points) {
+      await canvas.click({ position: point, force: true });
+      await this.page.waitForTimeout(500);
+    }
+
+    // Double-click the last point to close the polygon
+    await canvas.dblclick({ position: points[points.length - 1], force: true });
+    await this.page.waitForTimeout(2000);
+  }
+
+  async addPolylineStyle() {
+    await this.addNewStyleButton.click();
+    await expect(this.basicGeometryState).toBeVisible();
+    await this.basicGeometryState.hover();
+    await this.page.waitForTimeout(500);
+    await this.polylineState.click();
+    await this.assignNewStyleButton.click();
+  }
+
+  async addPolygonStyle() {
+    await this.addNewStyleButton.click();
+    await expect(this.basicGeometryState).toBeVisible();
+    await this.basicGeometryState.hover();
+    await this.page.waitForTimeout(500);
+    await this.polygonState.first().click();
+    await this.assignNewStyleButton.click();
+  }
+
+  async verifySketchToolsVisible() {
+    await expect(this.sketchToolsWrapper).toBeVisible();
+    await expect(this.mapPinButton).toBeVisible();
+    await expect(this.polylineButton).toBeVisible();
+    await expect(this.circleButton).toBeVisible();
+    await expect(this.squareButton).toBeVisible();
+    await expect(this.polygonButton).toBeVisible();
+  }
+
+  async createLayerWithCustomProperty(
+    layerName: string,
+    propertyTitle: string,
+    propertyType: string
+  ) {
+    await this.newLayerButton.click();
+    await this.addSketchLayerButton.click();
+    await this.layerNameInput.first().fill(layerName);
+
+    await this.newCustomPropertyButton.click();
+    await this.customPropertyTitleInput.fill(propertyTitle);
+    await this.selectPropertyType(propertyType);
+
+    await this.createNewLayerButton.click();
+    await this.page.waitForTimeout(1000);
   }
 }

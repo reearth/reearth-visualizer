@@ -5,6 +5,7 @@ export type ModalProps = {
   visible: boolean;
   children: ReactNode;
   size?: "small" | "medium" | "large";
+  width?: number;
   ariaLabelledby?: string;
   ariaDescribedby?: string;
   dataTestid?: string;
@@ -18,6 +19,7 @@ export const Modal: FC<ModalProps> = ({
   visible,
   children,
   size,
+  width,
   ariaLabelledby,
   ariaDescribedby,
   dataTestid
@@ -26,12 +28,14 @@ export const Modal: FC<ModalProps> = ({
 
   const modalWidth = useMemo(
     () =>
-      size === "small"
-        ? DEFAULT_SMALL_WIDTH
-        : size === "large"
-          ? DEFAULT_LARGE_WIDTH
-          : DEFAULT_MEDIUM_WIDTH,
-    [size]
+      width
+        ? width
+        : size === "small"
+          ? DEFAULT_SMALL_WIDTH
+          : size === "large"
+            ? DEFAULT_LARGE_WIDTH
+            : DEFAULT_MEDIUM_WIDTH,
+    [size, width]
   );
 
   return !visible ? null : (
