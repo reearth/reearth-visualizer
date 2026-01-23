@@ -173,11 +173,18 @@ const LayerItem: FC<LayerItemProps> = ({
   const handleTitleUpdateRef = useRef(handleTitleUpdate);
   handleTitleUpdateRef.current = handleTitleUpdate;
 
+  // Store latest editingLayerNameId in ref to avoid triggering effect when it changes
+  const editingLayerNameIdRef = useRef(editingLayerNameId);
+  editingLayerNameIdRef.current = editingLayerNameId;
+
+  // Only exit edit mode when selectedLayerId changes, not when editingLayerNameId changes
+  // This prevents other (non-editing) layers from clearing the editingLayerNameId state
   useEffect(() => {
-    if (selectedLayerId !== layer.id && editingLayerNameId !== layer.id) {
+    const currentEditingId = editingLayerNameIdRef.current;
+    if (selectedLayerId !== layer.id && currentEditingId !== layer.id) {
       handleTitleUpdateRef.current();
     }
-  }, [selectedLayerId, layer.id, editingLayerNameId, handleTitleUpdateRef]);
+  }, [selectedLayerId, layer.id]);
 
   return (
     <>

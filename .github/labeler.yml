@@ -1,4 +1,6 @@
 web:
-  - web/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'web/**/*'
 server:
-  - server/**/*
+  - changed-files:
+      - any-glob-to-any-file: 'server/**/*'
