@@ -30,7 +30,7 @@ require (
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
-	github.com/reearth/reearth-accounts/server v0.0.0-20260123012152-55f5ec58288f
+	github.com/reearth/reearth-accounts/server v0.0.0-20260123014509-4cfeadfdddbd
 	github.com/reearth/reearthx v0.0.0-20251202081949-5abca579aec6 // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
 	github.com/samber/lo v1.52.0
 	github.com/spf13/afero v1.15.0
