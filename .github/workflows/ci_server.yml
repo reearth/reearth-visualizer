@@ -58,7 +58,7 @@ jobs:
         run: |
           cd reearth-accounts/server
           cp .env.docker.example .env.docker
-          echo "REEARTH_MOCK_AUTH=true" >> .env.docker
+          sed -i 's/REEARTH_MOCK_AUTH=false/REEARTH_MOCK_AUTH=true/' .env.docker
           cd ..
           docker compose -f docker-compose.dev.yml up -d
           timeout 60 bash -c 'until nc -z localhost 8090 2>/dev/null; do sleep 2; done'
@@ -108,7 +108,7 @@ jobs:
         run: |
           cd reearth-accounts/server
           cp .env.docker.example .env.docker
-          echo "REEARTH_MOCK_AUTH=true" >> .env.docker
+          sed -i 's/REEARTH_MOCK_AUTH=false/REEARTH_MOCK_AUTH=true/' .env.docker
           echo "REEARTH_AUTH_ISS=https://reearth.io" >> .env.docker
           cd ..
           docker compose -f docker-compose.dev.yml up -d
