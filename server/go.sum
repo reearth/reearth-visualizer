@@ -415,6 +415,8 @@ github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355 h1:hmQfd74d4+CdE7vz72n
 github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355/go.mod h1:YWoaA2PfCxtfLyH9+pz5tZh9kwKbPEbRoaIA/DSCt10=
 github.com/reearth/reearth-accounts/server v0.0.0-20260123015530-e9372d029a26 h1:zJ9pOcXRKLK99tuYc4DIqPSKTAZZ0kwM22rx98SSA2c=
 github.com/reearth/reearth-accounts/server v0.0.0-20260123015530-e9372d029a26/go.mod h1:QsSV8aNxPZG0hk7gX/h3oOdeBwqwd5jqqT+6Z9JcvW4=
+github.com/reearth/reearth-accounts/server v0.0.0-20260123042409-ae61a8aa9691 h1:fMLUOChWb3NKsH0zXppVifGqNujMPvOFDCOJnNBpyMM=
+github.com/reearth/reearth-accounts/server v0.0.0-20260123042409-ae61a8aa9691/go.mod h1:QsSV8aNxPZG0hk7gX/h3oOdeBwqwd5jqqT+6Z9JcvW4=
 github.com/reearth/reearthx v0.0.0-20251202081949-5abca579aec6 h1:Aoy/50A1vlpm3H8mWGee8QBPjntfy4It5G49TB5o3mQ=
 github.com/reearth/reearthx v0.0.0-20251202081949-5abca579aec6/go.mod h1:z4JjOCy4MZZglLSrJx+btJ1ZLltESDZfSWJCnONwRS4=
 github.com/rodaine/protogofakeit v0.1.1 h1:ZKouljuRM3A+TArppfBqnH8tGZHOwM/pjvtXe9DaXH8=
