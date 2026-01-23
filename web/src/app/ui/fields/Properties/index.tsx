@@ -5,7 +5,7 @@ import type {
   GroupListItem,
   Item
 } from "@reearth/services/api/property";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo, useState } from "react";
 

@@ -17,7 +17,7 @@ import {
   UPDATE_PROJECT_METADATA
 } from "@reearth/services/gql/queries/project";
 import { CREATE_SCENE } from "@reearth/services/gql/queries/scene";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback } from "react";
 
 import { useNotification } from "../../state";

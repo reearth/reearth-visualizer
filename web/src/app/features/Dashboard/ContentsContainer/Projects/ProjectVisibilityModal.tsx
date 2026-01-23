@@ -7,7 +7,7 @@ import {
 import { SelectField } from "@reearth/app/ui/fields";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { Workspace } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useState } from "react";
 

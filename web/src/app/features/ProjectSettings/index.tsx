@@ -7,7 +7,7 @@ import {
   SidebarWrapper,
   SidebarButtonsWrapper
 } from "@reearth/app/ui/components/Sidebar";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 

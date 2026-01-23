@@ -1,7 +1,7 @@
 import { Button } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
 import { Panel } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";
 

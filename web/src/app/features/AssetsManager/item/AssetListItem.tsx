@@ -1,6 +1,6 @@
 import { Icon, IconButton, Typography } from "@reearth/app/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/app/utils/time";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useMemo } from "react";

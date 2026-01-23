@@ -5,12 +5,12 @@ import { AssetField, InputField, SwitchField } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
 import type { Story } from "@reearth/services/api/storytelling";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import {
   ProjectPublicationExtensionProps,
   StoryPublicationExtensionProps
 } from "@reearth/services/config/extensions";
-import { useLang, useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import {
   NotificationType,
   useCurrentTheme,

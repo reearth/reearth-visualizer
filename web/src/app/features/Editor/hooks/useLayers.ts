@@ -17,7 +17,7 @@ import {
   UpdateCustomPropertySchemaInput,
   Scalars
 } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   MutableRefObject,
   useCallback,

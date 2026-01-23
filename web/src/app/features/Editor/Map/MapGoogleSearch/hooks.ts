@@ -1,5 +1,5 @@
 import { Loader } from "@googlemaps/js-api-loader";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   useCallback,
   useEffect,

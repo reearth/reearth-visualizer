@@ -6,7 +6,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { isValidUrl } from "@reearth/app/utils/url";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { ProjectType } from "@reearth/types";
 import { FC, useMemo, useState } from "react";

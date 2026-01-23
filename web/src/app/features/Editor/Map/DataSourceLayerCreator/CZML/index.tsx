@@ -14,7 +14,7 @@ import {
   Switcher
 } from "@reearth/app/lib/reearth-ui";
 import { AssetField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 

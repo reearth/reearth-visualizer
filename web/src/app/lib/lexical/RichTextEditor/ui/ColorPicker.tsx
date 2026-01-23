@@ -231,7 +231,7 @@ interface Color {
   rgb: RGB;
 }
 
-export function toHex(value: string): string {
+function toHex(value: string): string {
   if (!value.startsWith("#")) {
     const ctx = document.createElement("canvas").getContext("2d");
 

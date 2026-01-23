@@ -5,7 +5,7 @@ import {
   MutationCreateNlsInfoboxArgs
 } from "@reearth/services/gql";
 import { CREATE_NLSINFOBOX } from "@reearth/services/gql/queries/infobox";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

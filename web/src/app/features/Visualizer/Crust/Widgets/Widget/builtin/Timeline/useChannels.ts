@@ -1,4 +1,4 @@
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useEffect, useState } from "react";
 
 import { TimelineChannel } from "./types";

@@ -1,4 +1,4 @@
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import dayjs from "dayjs";
 import { ReactNode, useEffect } from "react";
 import { I18nextProvider } from "react-i18next";

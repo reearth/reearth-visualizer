@@ -1,6 +1,6 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 

@@ -1,6 +1,6 @@
 import { TabItem } from "@reearth/app/lib/reearth-ui";
 import { MapRef } from "@reearth/core";
-import { useT, useLang, useChangeLanguage } from "@reearth/services/i18n";
+import { useT, useLang, useChangeLanguage } from "@reearth/services/i18n/hooks";
 import { FC, useCallback, useMemo, useRef, useState } from "react";
 
 import Code from "./Code";

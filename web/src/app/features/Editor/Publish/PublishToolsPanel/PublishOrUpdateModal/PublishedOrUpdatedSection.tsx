@@ -1,7 +1,7 @@
 import { useSettingsNavigation } from "@reearth/app/hooks";
 import { Button, Icon, Typography } from "@reearth/app/lib/reearth-ui";
 import { CommonField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 

@@ -1,6 +1,6 @@
 import { TabItem, Tabs } from "@reearth/app/lib/reearth-ui";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";

@@ -1,6 +1,6 @@
 import { useWorkspaces } from "@reearth/services/api/workspace";
-import { useAuth, useCleanUrl } from "@reearth/services/auth";
-import { useT } from "@reearth/services/i18n";
+import { useAuth, useCleanUrl } from "@reearth/services/auth/useAuth";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   useWorkspace,
   useNotification,

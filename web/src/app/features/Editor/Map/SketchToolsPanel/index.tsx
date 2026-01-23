@@ -3,7 +3,7 @@ import { Button, IconButton, IconName } from "@reearth/app/lib/reearth-ui";
 import ConfirmModal from "@reearth/app/ui/components/ConfirmModal";
 import { Panel } from "@reearth/app/ui/layout";
 import { SketchType } from "@reearth/core";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";

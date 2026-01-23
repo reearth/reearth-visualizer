@@ -1,5 +1,5 @@
 import { useMe } from "@reearth/services/api/user";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useWorkspace } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo } from "react";

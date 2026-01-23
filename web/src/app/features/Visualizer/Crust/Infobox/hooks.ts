@@ -1,5 +1,6 @@
-import type { EditModeContext } from "@reearth/app/features/Visualizer/shared/contexts/editModeContext";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { EditModeContextType } from "../../shared/contexts/editModeContext";
 
 import { Infobox } from "./types";
 
@@ -97,7 +98,7 @@ export default ({
     [disableSelection]
   );
 
-  const editModeContext: EditModeContext = useMemo(
+  const editModeContext: EditModeContextType = useMemo(
     () => ({
       disableSelection,
       onSelectionDisable: handleSelectionDisable
