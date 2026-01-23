@@ -5,7 +5,7 @@ import {
   TextInput,
   PopupPanel
 } from "@reearth/app/lib/reearth-ui/components";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC } from "react";
 import { RgbaColorPicker } from "react-colorful";

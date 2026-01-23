@@ -8,17 +8,18 @@ import (
 )
 
 type nlsLayerJSON struct {
-	ID           string               `json:"id"`
-	Index        *int                 `json:"index,omitempty"`
-	Title        string               `json:"title,omitempty"`
-	LayerType    string               `json:"layerType,omitempty"`
-	Config       *configJSON          `json:"config,omitempty"`
-	IsVisible    bool                 `json:"isVisible"`
-	Infobox      *nlsInfoboxJSON      `json:"nlsInfobox,omitempty"`
-	PhotoOverlay *nlsPhotoOverlayJSON `json:"nlsPhotoOverlay,omitempty"`
-	IsSketch     bool                 `json:"isSketch"`
-	SketchInfo   *sketchInfoJSON      `json:"sketchInfo,omitempty"`
-	Children     []*nlsLayerJSON      `json:"children,omitempty"`
+	ID             string               `json:"id"`
+	Index          *int                 `json:"index,omitempty"`
+	Title          string               `json:"title,omitempty"`
+	LayerType      string               `json:"layerType,omitempty"`
+	Config         *configJSON          `json:"config,omitempty"`
+	IsVisible      bool                 `json:"isVisible"`
+	Infobox        *nlsInfoboxJSON      `json:"nlsInfobox,omitempty"`
+	PhotoOverlay   *nlsPhotoOverlayJSON `json:"nlsPhotoOverlay,omitempty"`
+	IsSketch       bool                 `json:"isSketch"`
+	SketchInfo     *sketchInfoJSON      `json:"sketchInfo,omitempty"`
+	DataSourceName *string              `json:"dataSourceName,omitempty"`
+	Children       []*nlsLayerJSON      `json:"children,omitempty"`
 }
 
 type configJSON map[string]any
@@ -119,17 +120,18 @@ func (b *Builder) getNLSLayerJSON(ctx context.Context, layer nlslayer.NLSLayer) 
 	}
 
 	return &nlsLayerJSON{
-		ID:           layer.ID().String(),
-		Index:        layer.Index(),
-		Title:        layer.Title(),
-		LayerType:    string(layer.LayerType()),
-		Config:       (*configJSON)(layer.Config()),
-		IsVisible:    layer.IsVisible(),
-		Infobox:      b.nlsInfoboxJSON(ctx, layer.Infobox()),
-		PhotoOverlay: b.nlsPhotoOverlayJSON(ctx, layer.PhotoOverlay()),
-		IsSketch:     layer.IsSketch(),
-		SketchInfo:   b.sketchInfoJSON(ctx, layer.Sketch()),
-		Children:     children,
+		ID:             layer.ID().String(),
+		Index:          layer.Index(),
+		Title:          layer.Title(),
+		LayerType:      string(layer.LayerType()),
+		Config:         (*configJSON)(layer.Config()),
+		IsVisible:      layer.IsVisible(),
+		Infobox:        b.nlsInfoboxJSON(ctx, layer.Infobox()),
+		PhotoOverlay:   b.nlsPhotoOverlayJSON(ctx, layer.PhotoOverlay()),
+		IsSketch:       layer.IsSketch(),
+		SketchInfo:     b.sketchInfoJSON(ctx, layer.Sketch()),
+		DataSourceName: layer.DataSourceName(),
+		Children:       children,
 	}, nil
 }
 

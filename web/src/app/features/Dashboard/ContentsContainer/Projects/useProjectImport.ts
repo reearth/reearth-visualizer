@@ -3,7 +3,7 @@ import {
   useProjectImportExportMutations
 } from "@reearth/services/api/project";
 import { ProjectImportStatus } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 

@@ -1,7 +1,10 @@
 package e2e
 
 import (
+	"archive/zip"
+	"bytes"
 	"context"
+	"encoding/json"
 	"testing"
 
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
@@ -88,7 +91,8 @@ func TestInternalAPI_export(t *testing.T) {
 
 		resp.Header("Content-Type").Contains("application/zip")
 		body := resp.Body().Raw()
-		assert.Greater(t, len(body), 0)
+		assert.Greater(t, len(body), 4)
+		assert.Equal(t, "PK\x03\x04", string(body[:4])) // check zip file hedder
 
 		// private => Error!
 		exp, err = client.ExportProject(ctx, &pb.ExportProjectRequest{
@@ -131,7 +135,40 @@ func TestInternalAPI_export(t *testing.T) {
 
 		resp.Header("Content-Type").Contains("application/zip")
 		body := resp.Body().Raw()
-		assert.Greater(t, len(body), 0)
+		assert.Greater(t, len(body), 4)
+		assert.Equal(t, "PK\x03\x04", string(body[:4])) // zip header
+
+		data := []byte(body)
+
+		r, err := zip.NewReader(bytes.NewReader(data), int64(len(data)))
+		require.NoError(t, err)
+
+		var pjBytes []byte
+		for _, f := range r.File {
+			if f.Name == "project.json" {
+				rc, err := f.Open()
+				require.NoError(t, err)
+
+				var buf bytes.Buffer
+				_, err = buf.ReadFrom(rc)
+				rc.Close()
+				require.NoError(t, err)
+
+				pjBytes = buf.Bytes()
+				break
+			}
+		}
+		require.NotNil(t, pjBytes, "project.json should exist in the zip")
+		assert.True(t, json.Valid(pjBytes), "project.json must be valid JSON")
+
+		var doc map[string]any
+		require.NoError(t, json.Unmarshal(pjBytes, &doc))
+
+		_, ok := doc["project"].(map[string]any)
+		assert.True(t, ok, "`project` must exist and be an object")
+
+		_, ok = doc["scene"].(map[string]any)
+		assert.True(t, ok, "`scene` must exist and be an object")
 
 	})
 }

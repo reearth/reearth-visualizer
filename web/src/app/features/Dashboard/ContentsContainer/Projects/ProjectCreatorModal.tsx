@@ -17,7 +17,7 @@ import TextAreaField from "@reearth/app/ui/fields/TextareaField";
 import { useValidateProjectAlias } from "@reearth/services/api/project";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";

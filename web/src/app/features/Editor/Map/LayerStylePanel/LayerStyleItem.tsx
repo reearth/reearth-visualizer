@@ -1,6 +1,6 @@
 import { TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useState } from "react";
 
@@ -68,7 +68,11 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
           id: "rename",
           title: t("Rename"),
           icon: "pencilSimple" as const,
-          onClick: () => setIsEditing(true)
+          onClick: () => {
+            setTimeout(() => {
+              setIsEditing(true);
+            }, 0);
+          }
         },
         {
           id: "delete",

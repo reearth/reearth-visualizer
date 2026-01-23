@@ -2,7 +2,7 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import { CommonBlockProps as BlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { isEmptyString } from "@reearth/app/utils/string";
 import { ValueTypes } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 

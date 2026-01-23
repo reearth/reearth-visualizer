@@ -1,7 +1,7 @@
 import { useMutation } from "@apollo/client";
 import { EXPORT_PROJECT } from "@reearth/services/gql/queries/project";
-import { useT } from "@reearth/services/i18n";
-import { useRestful } from "@reearth/services/restful";
+import { useT } from "@reearth/services/i18n/hooks";
+import useRestful from "@reearth/services/restful/useRestful";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 import { v4 as uuidv4 } from "uuid";

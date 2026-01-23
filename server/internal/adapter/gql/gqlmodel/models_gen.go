@@ -32,6 +32,7 @@ type NLSLayer interface {
 	GetPhotoOverlay() *NLSPhotoOverlay
 	GetIsSketch() bool
 	GetSketch() *SketchInfo
+	GetDataSourceName() *string
 }
 
 type Node interface {
@@ -73,13 +74,14 @@ type AddNLSInfoboxBlockPayload struct {
 }
 
 type AddNLSLayerSimpleInput struct {
-	LayerType string `json:"layerType"`
-	Title     string `json:"title"`
-	SceneID   ID     `json:"sceneId"`
-	Config    JSON   `json:"config,omitempty"`
-	Index     *int   `json:"index,omitempty"`
-	Visible   *bool  `json:"visible,omitempty"`
-	Schema    JSON   `json:"schema,omitempty"`
+	LayerType      string  `json:"layerType"`
+	Title          string  `json:"title"`
+	SceneID        ID      `json:"sceneId"`
+	Config         JSON    `json:"config,omitempty"`
+	Index          *int    `json:"index,omitempty"`
+	Visible        *bool   `json:"visible,omitempty"`
+	Schema         JSON    `json:"schema,omitempty"`
+	DataSourceName *string `json:"dataSourceName,omitempty"`
 }
 
 type AddNLSLayerSimplePayload struct {
@@ -516,20 +518,21 @@ type NLSInfobox struct {
 }
 
 type NLSLayerGroup struct {
-	ID           ID               `json:"id"`
-	Index        *int             `json:"index,omitempty"`
-	LayerType    string           `json:"layerType"`
-	SceneID      ID               `json:"sceneId"`
-	Children     []NLSLayer       `json:"children"`
-	ChildrenIds  []ID             `json:"childrenIds"`
-	Config       JSON             `json:"config,omitempty"`
-	Title        string           `json:"title"`
-	Visible      bool             `json:"visible"`
-	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
-	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
-	Scene        *Scene           `json:"scene,omitempty"`
-	IsSketch     bool             `json:"isSketch"`
-	Sketch       *SketchInfo      `json:"sketch,omitempty"`
+	ID             ID               `json:"id"`
+	Index          *int             `json:"index,omitempty"`
+	LayerType      string           `json:"layerType"`
+	SceneID        ID               `json:"sceneId"`
+	Children       []NLSLayer       `json:"children"`
+	ChildrenIds    []ID             `json:"childrenIds"`
+	Config         JSON             `json:"config,omitempty"`
+	Title          string           `json:"title"`
+	Visible        bool             `json:"visible"`
+	Infobox        *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay   *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene          *Scene           `json:"scene,omitempty"`
+	IsSketch       bool             `json:"isSketch"`
+	Sketch         *SketchInfo      `json:"sketch,omitempty"`
+	DataSourceName *string          `json:"dataSourceName,omitempty"`
 }
 
 func (NLSLayerGroup) IsNLSLayer()                            {}
@@ -544,20 +547,22 @@ func (this NLSLayerGroup) GetInfobox() *NLSInfobox           { return this.Infob
 func (this NLSLayerGroup) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
 func (this NLSLayerGroup) GetIsSketch() bool                 { return this.IsSketch }
 func (this NLSLayerGroup) GetSketch() *SketchInfo            { return this.Sketch }
+func (this NLSLayerGroup) GetDataSourceName() *string        { return this.DataSourceName }
 
 type NLSLayerSimple struct {
-	ID           ID               `json:"id"`
-	Index        *int             `json:"index,omitempty"`
-	LayerType    string           `json:"layerType"`
-	SceneID      ID               `json:"sceneId"`
-	Config       JSON             `json:"config,omitempty"`
-	Title        string           `json:"title"`
-	Visible      bool             `json:"visible"`
-	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
-	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
-	Scene        *Scene           `json:"scene,omitempty"`
-	IsSketch     bool             `json:"isSketch"`
-	Sketch       *SketchInfo      `json:"sketch,omitempty"`
+	ID             ID               `json:"id"`
+	Index          *int             `json:"index,omitempty"`
+	LayerType      string           `json:"layerType"`
+	SceneID        ID               `json:"sceneId"`
+	Config         JSON             `json:"config,omitempty"`
+	Title          string           `json:"title"`
+	Visible        bool             `json:"visible"`
+	Infobox        *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay   *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene          *Scene           `json:"scene,omitempty"`
+	IsSketch       bool             `json:"isSketch"`
+	Sketch         *SketchInfo      `json:"sketch,omitempty"`
+	DataSourceName *string          `json:"dataSourceName,omitempty"`
 }
 
 func (NLSLayerSimple) IsNLSLayer()                            {}
@@ -572,6 +577,7 @@ func (this NLSLayerSimple) GetInfobox() *NLSInfobox           { return this.Info
 func (this NLSLayerSimple) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
 func (this NLSLayerSimple) GetIsSketch() bool                 { return this.IsSketch }
 func (this NLSLayerSimple) GetSketch() *SketchInfo            { return this.Sketch }
+func (this NLSLayerSimple) GetDataSourceName() *string        { return this.DataSourceName }
 
 type NLSPhotoOverlay struct {
 	ID         ID        `json:"id"`

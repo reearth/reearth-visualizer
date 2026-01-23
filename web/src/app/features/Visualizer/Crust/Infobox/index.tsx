@@ -1,11 +1,12 @@
 import BlockAddBar from "@reearth/app/features/Visualizer/shared/components/BlockAddBar";
-import { EditModeProvider } from "@reearth/app/features/Visualizer/shared/contexts/editModeContext";
 import { InstallableBlock } from "@reearth/app/features/Visualizer/shared/types";
 import { DragAndDropList, Icon } from "@reearth/app/lib/reearth-ui";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { Layer, Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
 import { FC, Fragment, ReactNode, memo, useMemo } from "react";
+
+import { EditModeProvider } from "../../shared/contexts/EditModeProvider";
 
 import InfoboxBlockComponent from "./Block";
 import {

@@ -270,7 +270,8 @@ export default function Crust({
     mapRef,
     initialCamera,
     selectedLayerId,
-    timelineManagerRef: mapRef?.current?.timeline
+    timelineManagerRef: mapRef?.current?.timeline,
+    nlsLayers
   });
 
   const featuredInfobox = useMemo(() => {

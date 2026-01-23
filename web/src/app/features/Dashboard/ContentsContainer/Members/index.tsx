@@ -3,7 +3,7 @@ import { useMe } from "@reearth/services/api/user";
 import { useWorkspace } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { WorkspaceMember } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useEffect, useMemo, useState } from "react";
 

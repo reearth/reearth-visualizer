@@ -152,6 +152,7 @@ export type Credit = {
   description?: string;
   logo?: string;
   creditUrl?: string;
+  disableLogoBackground?: boolean;
 };
 
 export type ValueType = keyof ValueTypes;

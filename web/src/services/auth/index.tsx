@@ -7,7 +7,6 @@ import { config } from "../config";
 import { useAuthenticationRequired } from "./useAuth";
 
 export { AuthProvider } from "./authProvider";
-export { useAuth, useCleanUrl, useAuthenticationRequired } from "./useAuth";
 
 const AuthenticationRequiredPage: React.FC<{ children?: ReactNode }> = ({
   children

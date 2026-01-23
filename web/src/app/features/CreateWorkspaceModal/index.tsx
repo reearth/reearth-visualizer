@@ -10,11 +10,11 @@ import {
   useWorkspaceMutations,
   useWorkspaces
 } from "@reearth/services/api/workspace";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useAddWorkspaceModal } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 const AddWorkspaceModal: FC = () => {
   const t = useT();

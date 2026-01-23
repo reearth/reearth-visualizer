@@ -1,33 +1,56 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState, RefObject } from "react";
 
-export const useElementOnScreen = (options: IntersectionObserverInit) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const [intersectionRatio, setIntersectionRatio] = useState(0);
-  
-  // Memoize the callback to prevent observer recreation
-  const handleIntersection = useCallback((entries: IntersectionObserverEntry[]) => {
-    const [entry] = entries;
-    setIsIntersecting(entry.isIntersecting);
-    setIntersectionRatio(entry.intersectionRatio);
-  }, []);
+interface UseElementOnScreenProps {
+  wrapperRef: RefObject<HTMLElement | null>;
+  elementRef: RefObject<HTMLElement | null>;
+  threshold?: number; // Default 0.5 (50% of wrapper height)
+}
+
+export const useElementOnScreen = ({
+  wrapperRef,
+  elementRef,
+  threshold = 0.5
+}: UseElementOnScreenProps) => {
+  const [isActive, setIsActive] = useState(false);
 
   useEffect(() => {
-    const elementRef = containerRef.current;
-    if (!elementRef) return;
+    const wrapper = wrapperRef.current;
+    const element = elementRef.current;
 
-    const observer = new IntersectionObserver(handleIntersection, options);
-    observer.observe(elementRef);
+    if (!wrapper || !element) return;
+
+    const checkVisibility = () => {
+      const wrapperRect = wrapper.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
+
+      // Calculate the visible portion of the element within the wrapper
+      const visibleTop = Math.max(elementRect.top, wrapperRect.top);
+      const visibleBottom = Math.min(elementRect.bottom, wrapperRect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+      // Check if visible height is more than threshold of wrapper height
+      const wrapperHeight = wrapperRect.height;
+      const isVisible = visibleHeight >= wrapperHeight * threshold;
+
+      setIsActive(isVisible);
+    };
+
+    // Check immediately
+    checkVisibility();
+
+    // Check on scroll
+    wrapper.addEventListener("scroll", checkVisibility, { passive: true });
+
+    // Check on resize (wrapper or element size changes)
+    const resizeObserver = new ResizeObserver(checkVisibility);
+    resizeObserver.observe(wrapper);
+    resizeObserver.observe(element);
 
     return () => {
-      observer.unobserve(elementRef);
-      observer.disconnect();
+      wrapper.removeEventListener("scroll", checkVisibility);
+      resizeObserver.disconnect();
     };
-  }, [handleIntersection, options]);
+  }, [wrapperRef, elementRef, threshold]);
 
-  return { 
-    containerRef, 
-    isIntersecting, 
-    intersectionRatio 
-  };
+  return isActive;
 };

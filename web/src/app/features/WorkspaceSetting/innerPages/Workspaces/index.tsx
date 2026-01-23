@@ -4,7 +4,7 @@ import { useProjects } from "@reearth/services/api/project";
 import { useMe } from "@reearth/services/api/user";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { Role } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace, type Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";

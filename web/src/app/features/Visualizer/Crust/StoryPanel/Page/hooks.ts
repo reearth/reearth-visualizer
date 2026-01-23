@@ -1,7 +1,7 @@
-import { useEditModeContext } from "@reearth/app/features/Visualizer/shared/contexts/editModeContext";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useEditModeContext } from "../../../shared/contexts/useEditModeContext";
 import {
   DEFAULT_STORY_PAGE_GAP,
   DEFAULT_STORY_PAGE_PADDING

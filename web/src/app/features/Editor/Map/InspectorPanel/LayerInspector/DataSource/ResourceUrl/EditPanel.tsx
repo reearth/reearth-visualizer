@@ -1,6 +1,6 @@
 import { Button, PopupPanel } from "@reearth/app/lib/reearth-ui";
 import AssetField from "@reearth/app/ui/fields/AssetField";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 

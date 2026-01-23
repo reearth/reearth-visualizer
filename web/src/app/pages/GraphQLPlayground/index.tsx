@@ -1,12 +1,12 @@
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { Typography } from "@reearth/app/lib/reearth-ui";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import { config } from "@reearth/services/config";
 import { styled } from "@reearth/services/theme";
 import { GraphiQL } from "graphiql";
 import { ReactNode, useEffect, useState } from "react";
 import "graphiql/graphiql.css";
-import { Navigate } from "react-router-dom";
+import { Navigate } from "react-router";
 
 const fetcher = createGraphiQLFetcher({
   url: `${window.REEARTH_CONFIG?.api || "/api"}` + "/graphql"

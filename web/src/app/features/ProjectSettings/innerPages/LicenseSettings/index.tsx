@@ -11,7 +11,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { SelectField } from "@reearth/app/ui/fields";
 import { ProjectMetadata } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";

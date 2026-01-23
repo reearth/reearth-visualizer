@@ -3,13 +3,16 @@ import { processNewProperty } from "../property/processNewProperty";
 
 import type { NLSLayer } from "./types";
 
-
 // Helper function to safely extract photo overlay values
-function extractPhotoOverlayValues(property: Record<string, unknown> | undefined) {
+function extractPhotoOverlayValues(
+  property: Record<string, unknown> | undefined
+) {
   const defaultProp = property?.default as Record<string, unknown> | undefined;
   const enabled = defaultProp?.enabled as { value?: boolean } | undefined;
-  const cameraDuration = defaultProp?.cameraDuration as { value?: number } | undefined;
-  
+  const cameraDuration = defaultProp?.cameraDuration as
+    | { value?: number }
+    | undefined;
+
   return {
     enabled: enabled?.value,
     cameraDuration: cameraDuration?.value
@@ -90,7 +93,8 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
             property: l.infobox.property,
             blocks: l.infobox.blocks
           }
-        : undefined
+        : undefined,
+      dataSourceName: l.dataSourceName ?? undefined
     };
 
     // append photoOverlay property
@@ -99,9 +103,10 @@ export const getLayers = (rawScene?: GetSceneQuery) => {
         undefined,
         l.photoOverlay.property
       );
-      
-      const { enabled, cameraDuration } = extractPhotoOverlayValues(processedProperty);
-      
+
+      const { enabled, cameraDuration } =
+        extractPhotoOverlayValues(processedProperty);
+
       layer.photoOverlay = {
         layerId: l.photoOverlay.layerId,
         propertyId: l.photoOverlay.propertyId,

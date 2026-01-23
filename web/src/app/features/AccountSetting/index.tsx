@@ -2,7 +2,7 @@ import useAccountSettingsTabs from "@reearth/app/hooks/useAccountSettingsTabs";
 import { TextInput, Typography, IconButton } from "@reearth/app/lib/reearth-ui";
 import SettingBase from "@reearth/app/ui/components/SettingBase";
 import { InputField, SelectField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useState } from "react";

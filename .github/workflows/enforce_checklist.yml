@@ -7,10 +7,11 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.head_ref, 'renovate/') }}
     steps:
       - name: Get PR body
         id: pr
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const body = context.payload.pull_request.body || "";

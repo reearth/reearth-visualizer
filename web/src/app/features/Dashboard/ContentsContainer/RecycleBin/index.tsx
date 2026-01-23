@@ -4,7 +4,7 @@ import {
   ManagerWrapper
 } from "@reearth/app/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/app/ui/components/ManagerBase/ManagerEmptyContent";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC } from "react";
 

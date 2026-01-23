@@ -4,8 +4,6 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import "rc-slider/assets/index.css";
 
-const SliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider);
-
 export type SliderProps = {
   value: number | undefined;
   min?: number;
@@ -45,23 +43,32 @@ export const Slider: FC<SliderProps> = ({
   }, [value]);
 
   const handleChange = useCallback(
-    (val: number) => {
-      setCurrentValue(val);
-      onChange?.(val);
+    (val: number | number[]) => {
+      const numValue = Array.isArray(val) ? val[0] : val;
+      setCurrentValue(numValue);
+      onChange?.(numValue);
     },
     [onChange]
   );
 
+  const handleChangeComplete = useCallback(
+    (val: number | number[]) => {
+      const numValue = Array.isArray(val) ? val[0] : val;
+      onChangeComplete?.(numValue);
+    },
+    [onChangeComplete]
+  );
+
   return (
     <SliderStyled disabled={!!disabled}>
-      <SliderWithTooltip
+      <RCSlider
         value={currentValue}
         min={min}
         max={max}
         disabled={disabled}
         step={calculatedStep}
         onChange={handleChange}
-        onAfterChange={onChangeComplete}
+        onChangeComplete={handleChangeComplete}
       />
     </SliderStyled>
   );

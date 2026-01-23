@@ -1,6 +1,6 @@
 import { useWorkspaces } from "@reearth/services/api/workspace";
-import { useAuth, useCleanUrl } from "@reearth/services/auth";
-import { useT } from "@reearth/services/i18n";
+import { useAuth, useCleanUrl } from "@reearth/services/auth/useAuth";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   useWorkspace,
   useNotification,
@@ -8,7 +8,7 @@ import {
 } from "@reearth/services/state";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export type Mode = "layer" | "widget";
 

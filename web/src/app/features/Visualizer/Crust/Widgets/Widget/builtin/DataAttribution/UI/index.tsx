@@ -1,6 +1,6 @@
 import { IconButton } from "@reearth/app/lib/reearth-ui";
 import { Credit } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { fonts, styled } from "@reearth/services/theme";
 import { FC } from "react";
 
@@ -44,7 +44,7 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                     rel="noopener noreferrer"
                   >
                     {credit.logo && (
-                      <LogoWrapper>
+                      <LogoWrapper noBg={credit.disableLogoBackground}>
                         <StyledImage src={credit.logo} />
                       </LogoWrapper>
                     )}
@@ -55,7 +55,7 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                 ) : (
                   <CreditItem>
                     {credit.logo && (
-                      <LogoWrapper>
+                      <LogoWrapper noBg={credit.disableLogoBackground}>
                         <StyledImage src={credit.logo} />
                       </LogoWrapper>
                     )}
@@ -148,10 +148,10 @@ const CreditText = styled("span")(({ theme }) => ({
   display: "block"
 }));
 
-const LogoWrapper = styled("div")(({ theme }) => ({
+const LogoWrapper = styled("div")<{ noBg?: boolean }>(({ theme, noBg }) => ({
   position: "relative",
   boxSizing: "border-box",
-  background: theme.bg[3],
+  background: noBg ? "transparent" : theme.bg[3],
   padding: theme.spacing.micro,
   borderRadius: theme.radius.small,
   display: "flex",

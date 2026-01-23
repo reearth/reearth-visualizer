@@ -14,7 +14,7 @@ import {
   getPhotoOverlayValue
 } from "@reearth/app/utils/sketch";
 import { Camera } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { useAtom } from "jotai";
 import { RESET } from "jotai/utils";

@@ -6,7 +6,7 @@ import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProject
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
 import { useValidateProjectAlias } from "@reearth/services/api/project";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { useCallback, useState, FC } from "react";
 
