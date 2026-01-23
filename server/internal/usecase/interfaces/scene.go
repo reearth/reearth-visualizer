@@ -8,6 +8,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
+	"github.com/reearth/reearth/server/pkg/storytelling"
 )
 
 var (
@@ -20,19 +21,21 @@ var (
 type Scene interface {
 	Fetch(context.Context, []id.SceneID, *usecase.Operator) ([]*scene.Scene, error)
 	FindByProject(context.Context, id.ProjectID, *usecase.Operator) (*scene.Scene, error)
+	FindByProjectsWithStory(context.Context, []id.ProjectID, *usecase.Operator) ([]*scene.Scene, *storytelling.StoryList, error)
 	Create(context.Context, id.ProjectID, bool, *usecase.Operator) (*scene.Scene, error)
-	AddWidget(context.Context, id.SceneID, id.PluginID, id.PluginExtensionID, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
+	AddWidget(context.Context, scene.WidgetAlignSystemType, id.SceneID, id.PluginID, id.PluginExtensionID, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
 	UpdateWidget(context.Context, UpdateWidgetParam, *usecase.Operator) (*scene.Scene, *scene.Widget, error)
 	UpdateWidgetAlignSystem(context.Context, UpdateWidgetAlignSystemParam, *usecase.Operator) (*scene.Scene, error)
-	RemoveWidget(context.Context, id.SceneID, id.WidgetID, *usecase.Operator) (*scene.Scene, error)
+	RemoveWidget(context.Context, scene.WidgetAlignSystemType, id.SceneID, id.WidgetID, *usecase.Operator) (*scene.Scene, error)
 	InstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, *id.PropertyID, error)
 	UninstallPlugin(context.Context, id.SceneID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
 	UpgradePlugin(context.Context, id.SceneID, id.PluginID, id.PluginID, *usecase.Operator) (*scene.Scene, error)
-	ExportScene(context.Context, *project.Project) (*scene.Scene, map[string]any, error)
-	ImportScene(context.Context, *scene.Scene, *[]byte) (*scene.Scene, error)
+	ExportSceneData(context.Context, *project.Project) (*scene.Scene, map[string]any, error)
+	ImportSceneData(context.Context, *scene.Scene, *[]byte) (*scene.Scene, error)
 }
 
 type UpdateWidgetParam struct {
+	Type     scene.WidgetAlignSystemType
 	SceneID  id.SceneID
 	WidgetID id.WidgetID
 	Enabled  *bool
@@ -42,6 +45,7 @@ type UpdateWidgetParam struct {
 }
 
 type UpdateWidgetAlignSystemParam struct {
+	Type       scene.WidgetAlignSystemType
 	SceneID    id.SceneID
 	Location   scene.WidgetLocation
 	Align      *scene.WidgetAlignType

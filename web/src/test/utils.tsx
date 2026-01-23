@@ -42,7 +42,7 @@ vitest.mock("@reearth/services/state", () => ({
   useAddWorkspaceModal: () => [false, vitest.fn()]
 }));
 
-vitest.mock("@reearth/beta/ui/fields/CommonField", () => ({
+vitest.mock("@reearth/app/ui/fields/CommonField", () => ({
   default: ({
     children,
     title,
@@ -69,7 +69,7 @@ class ResizeObserver {
 global.ResizeObserver = ResizeObserver;
 
 const render = (
-  ui: React.ReactElement,
+  ui: React.ReactElement<unknown>,
   queryMocks?: readonly MockedResponse<Record<string, unknown>>[],
   { ...renderOptions } = {}
 ) => {
@@ -85,6 +85,7 @@ const render = (
   return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export * from "@testing-library/react";
 
 export { render };

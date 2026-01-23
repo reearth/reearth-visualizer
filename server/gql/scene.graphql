@@ -1,19 +1,20 @@
 type Scene implements Node {
   id: ID!
+  workspaceId: ID!
   projectId: ID!
-  teamId: ID!
   propertyId: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
   widgets: [SceneWidget!]!
   plugins: [ScenePlugin!]!
-  widgetAlignSystem: WidgetAlignSystem
+  widgetAlignSystem: WidgetAlignSystems
   project: Project
-  team: Team
+  workspace: Workspace
   property: Property
   newLayers: [NLSLayer!]!
   stories: [Story!]!
   styles: [Style!]!
+  alias: String!
 }
 
 type SceneWidget {

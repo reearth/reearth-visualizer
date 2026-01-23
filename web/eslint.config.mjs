@@ -1,4 +1,6 @@
+// For more info, see https://github.com/storybookjs/eslint-plugin-storybook#configuration-flat-config-format
 import config from "eslint-config-reearth";
+import storybook from "eslint-plugin-storybook";
 
 /** @type { import("eslint").Linter.Config[] } */
 
@@ -20,10 +22,7 @@ export default [
   ...config("@reearth"),
   ...themeConfig,
   {
-    ignores: [
-      "bin/pluginDoc.ts",
-      // e2e playwright-tests is a nested project, eslint will be managed independently
-      "e2e/playwright-tests"
-    ]
-  }
+    ignores: ["bin/pluginDoc.ts"]
+  },
+  ...storybook.configs["flat/recommended"]
 ];

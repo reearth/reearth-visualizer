@@ -1,7 +1,7 @@
 import { atom, useAtom, useSetAtom } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 
-import { TeamMember } from "../gql";
+import { WorkspaceMember, GetAssetsQuery, Project } from "../gql";
 
 export * from "./devPlugins";
 
@@ -36,27 +36,14 @@ export type Notification = {
   duration?: number | "persistent";
 };
 
-export type Policy = {
-  id: string;
-  name: string;
-  projectCount?: number | null;
-  memberCount?: number | null;
-  publishedProjectCount?: number | null;
-  layerCount?: number | null;
-  assetStorageSize?: number | null;
-  datasetSchemaCount?: number | null;
-  datasetCount?: number | null;
-};
-
 export type Workspace = {
   id: string;
   name: string;
-  members?: TeamMember[];
-  assets?: any;
-  projects?: any;
+  members?: WorkspaceMember[];
+  assets?: NonNullable<GetAssetsQuery["assets"]["nodes"][number]>[];
+  projects?: Project[];
   personal?: boolean;
-  policyId?: string | null;
-  policy?: Policy | null;
+  alias?: string;
 };
 
 const widgetAlignEditor = atom<boolean | undefined>(undefined);

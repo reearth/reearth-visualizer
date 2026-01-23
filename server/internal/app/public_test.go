@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -12,6 +13,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
+	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/stretchr/testify/assert"
@@ -190,6 +192,82 @@ func TestPublishedIndex(t *testing.T) {
 	}
 }
 
+func TestWebConfigHandler(t *testing.T) {
+	strPtr := func(s string) *string { return &s }
+	tests := []struct {
+		name       string
+		auth       *config.AuthConfig
+		webCfg     map[string]any
+		published  string
+		want       map[string]any
+		statusCode int
+	}{
+		{
+			name: "with auth and published",
+			auth: &config.AuthConfig{
+				ISS:      "https://iss.example.com/",
+				AUD:      []string{"https://aud.example.com"},
+				ClientID: strPtr("client"),
+			},
+			webCfg: map[string]any{"a": "b"},
+			want: map[string]any{
+				"auth0Domain":   "https://iss.example.com",
+				"auth0Audience": "https://aud.example.com",
+				"auth0ClientId": "client",
+				"published":     "https://{}.example.com",
+				"a":             "b",
+			},
+			published:  "https://{}.example.com",
+			statusCode: http.StatusOK,
+		},
+		{
+			name: "web overrides auth fields and no published",
+			auth: &config.AuthConfig{
+				ISS:      "https://iss.example.com/",
+				AUD:      []string{"https://aud.example.com"},
+				ClientID: strPtr("client"),
+			},
+			webCfg: map[string]any{
+				"auth0Domain": "override",
+				"x":           "y",
+			},
+			want: map[string]any{
+				"auth0Domain":   "override",
+				"auth0Audience": "https://aud.example.com",
+				"auth0ClientId": "client",
+				"x":             "y",
+			},
+			statusCode: http.StatusOK,
+		},
+		{
+			name:   "no auth and no published",
+			webCfg: map[string]any{"a": "b"},
+			want:   map[string]any{"a": "b"},
+		},
+	}
+
+	for _, tt := range tests {
+		tt := tt
+		t.Run(tt.name, func(t *testing.T) {
+			e := echo.New()
+			req := httptest.NewRequest(http.MethodGet, "/reearth_config.json", nil)
+			rec := httptest.NewRecorder()
+			c := e.NewContext(req, rec)
+
+			err := WebConfigHandler(tt.auth, tt.webCfg, tt.published)(c)
+			assert.NoError(t, err)
+			if tt.statusCode != 0 {
+				assert.Equal(t, tt.statusCode, rec.Code)
+			} else {
+				assert.Equal(t, http.StatusOK, rec.Code)
+			}
+			var got map[string]any
+			assert.NoError(t, json.Unmarshal(rec.Body.Bytes(), &got))
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
 func mockPublishedUsecaseMiddleware(emptyIndex bool) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		return adapter.AttachUsecases(ctx, &interfaces.Container{
@@ -204,13 +282,14 @@ type mockPublished struct {
 }
 
 func (p *mockPublished) Metadata(ctx context.Context, name string) (interfaces.PublishedMetadata, error) {
-	if name == "active" {
+	switch name {
+	case "active":
 		return interfaces.PublishedMetadata{
 			IsBasicAuthActive: true,
 			BasicAuthUsername: "fooo",
 			BasicAuthPassword: "baar",
 		}, nil
-	} else if name == "inactive" {
+	case "inactive":
 		return interfaces.PublishedMetadata{
 			IsBasicAuthActive: false,
 			BasicAuthUsername: "fooo",

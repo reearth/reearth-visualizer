@@ -7,12 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"strings"
 	"time"
 
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
+	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/visualizer"
@@ -21,7 +21,7 @@ import (
 )
 
 func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.CreateProjectInput) (*gqlmodel.ProjectPayload, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.TeamID)
+	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,18 @@ func (r *mutationResolver) CreateProject(ctx context.Context, input gqlmodel.Cre
 		CoreSupport:  input.CoreSupport,
 		Visibility:   input.Visibility,
 		ImportStatus: project.ProjectImportStatusNone,
-	}, getOperator(ctx))
+		ProjectAlias: input.ProjectAlias,
+		Readme:       input.Readme,
+		License:      input.License,
+		Topics: func() *[]string {
+			if input.Topics == nil {
+				return nil
+			}
+			return &input.Topics
+		}(),
+	},
+		getOperator(ctx),
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -69,6 +80,7 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		Deleted:        input.Deleted,
 		SceneID:        gqlmodel.ToIDRef[id.Scene](input.SceneID),
 		Visibility:     input.Visibility,
+		ProjectAlias:   input.ProjectAlias,
 
 		// publishment
 		PublicTitle:       input.PublicTitle,
@@ -87,6 +99,30 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 	}
 
 	return &gqlmodel.ProjectPayload{Project: gqlmodel.ToProject(res)}, nil
+}
+
+func (r *mutationResolver) UpdateProjectMetadata(ctx context.Context, input gqlmodel.UpdateProjectMetadataInput) (*gqlmodel.ProjectMetadataPayload, error) {
+	pid, err := gqlmodel.ToID[id.Project](input.Project)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := usecases(ctx).ProjectMetadata.Update(ctx, interfaces.UpdateProjectMetadataParam{
+		ID:      pid,
+		Readme:  input.Readme,
+		License: input.License,
+		Topics: func() *[]string {
+			if input.Topics == nil {
+				return nil
+			}
+			return &input.Topics
+		}(),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.ProjectMetadataPayload{Metadata: gqlmodel.ToProjectMetadata(res)}, nil
 }
 
 func (r *mutationResolver) PublishProject(ctx context.Context, input gqlmodel.PublishProjectInput) (*gqlmodel.ProjectPayload, error) {
@@ -121,9 +157,16 @@ func (r *mutationResolver) DeleteProject(ctx context.Context, input gqlmodel.Del
 }
 
 func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.ExportProjectInput) (*gqlmodel.ExportProjectPayload, error) {
+	op, uc := adapter.Operator(ctx), adapter.Usecases(ctx)
+
+	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
+	if err != nil {
+		return nil, err
+	}
+
 	fs := afero.NewOsFs()
 
-	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", strings.ToLower(string(input.ProjectID))))
+	zipFile, err := fs.Create(fmt.Sprintf("%s.zip", pid.String()))
 	if err != nil {
 		return nil, errors.New("Fail Zip Create :" + err.Error())
 	}
@@ -136,6 +179,7 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 			err = cerr
 		}
 	}()
+
 	zipWriter := zip.NewWriter(zipFile)
 	defer func() {
 		if cerr := zipWriter.Close(); cerr != nil && err == nil {
@@ -143,21 +187,17 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 		}
 	}()
 
-	pid, err := gqlmodel.ToID[id.Project](input.ProjectID)
-	if err != nil {
-		return nil, err
-	}
-	prj, err := usecases(ctx).Project.ExportProjectData(ctx, pid, zipWriter, getOperator(ctx))
+	prj, err := uc.Project.ExportProjectData(ctx, pid, zipWriter, op)
 	if err != nil {
 		return nil, errors.New("Fail ExportProject :" + err.Error())
 	}
 
-	sce, exportData, err := usecases(ctx).Scene.ExportScene(ctx, prj)
+	sce, exportData, err := uc.Scene.ExportSceneData(ctx, prj)
 	if err != nil {
-		return nil, errors.New("Fail ExportScene :" + err.Error())
+		return nil, errors.New("Fail ExportSceneData :" + err.Error())
 	}
 
-	plugins, schemas, err := usecases(ctx).Plugin.ExportPlugins(ctx, sce, zipWriter)
+	plugins, schemas, err := uc.Plugin.ExportPlugins(ctx, sce, zipWriter)
 	if err != nil {
 		return nil, errors.New("Fail ExportPlugins :" + err.Error())
 	}
@@ -166,27 +206,25 @@ func (r *mutationResolver) ExportProject(ctx context.Context, input gqlmodel.Exp
 	exportData["plugins"] = gqlmodel.ToPlugins(plugins)
 	exportData["schemas"] = gqlmodel.ToPropertySchemas(schemas)
 	exportData["exportedInfo"] = map[string]string{
-		"host":      adapter.CurrentHost(ctx),
-		"project":   prj.ID().String(),
-		"timestamp": time.Now().Format(time.RFC3339),
+		"host":              adapter.CurrentHost(ctx),
+		"project":           prj.ID().String(),
+		"timestamp":         time.Now().Format(time.RFC3339),
+		"exportDataVersion": file.EXPORT_DATA_VERSION,
 	}
-
-	err = usecases(ctx).Project.UploadExportProjectZip(ctx, zipWriter, zipFile, Normalize(exportData), prj)
+	b, err := json.Marshal(exportData)
 	if err != nil {
-		return nil, errors.New("Fail UploadExportProjectZip :" + err.Error())
+		return nil, errors.New("failed normalize export data marshal: " + err.Error())
+	}
+	var data map[string]any
+	if err := json.Unmarshal(b, &data); err != nil {
+		return nil, errors.New("failed normalize export data unmarshal: " + err.Error())
+	}
+	err = uc.Project.SaveExportProjectZip(ctx, zipWriter, zipFile, data, prj)
+	if err != nil {
+		return nil, errors.New("Fail SaveExportProjectZip :" + err.Error())
 	}
 
 	return &gqlmodel.ExportProjectPayload{
 		ProjectDataPath: "/export/" + zipFile.Name(),
 	}, nil
-}
-
-func Normalize(data any) map[string]any {
-	if b, err := json.Marshal(data); err == nil {
-		var result map[string]any
-		if err := json.Unmarshal(b, &result); err == nil {
-			return result
-		}
-	}
-	return nil
 }

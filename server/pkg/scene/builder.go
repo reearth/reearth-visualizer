@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 )
 
 type Builder struct {
@@ -17,10 +18,10 @@ func New() *Builder {
 
 func (b *Builder) Build() (*Scene, error) {
 	if b.scene.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.scene.workspace.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.scene.widgets == nil {
 		b.scene.widgets = NewWidgets(nil, nil)
@@ -84,5 +85,12 @@ func (b *Builder) Property(p id.PropertyID) *Builder {
 
 func (b *Builder) Styles(sl *StyleList) *Builder {
 	b.scene.styles = sl
+	return b
+}
+
+// publishment ---------------------
+
+func (b *Builder) Alias(alias string) *Builder {
+	b.scene.alias = alias
 	return b
 }

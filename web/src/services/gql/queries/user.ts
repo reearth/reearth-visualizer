@@ -18,23 +18,18 @@ export const GET_ME = gql(`
       email
       lang
       theme
-      myTeam {
-        id
-        name
-        policyId
-        policy {
-          id
-          name
-          projectCount
-          memberCount
-          publishedProjectCount
-          layerCount
-          assetStorageSize
-        }
+      metadata {
+        photoURL
       }
-      teams {
+      myWorkspace {
         id
         name
+        alias
+      }
+      workspaces {
+        id
+        name
+        alias
         personal
         members {
           user {
@@ -45,16 +40,7 @@ export const GET_ME = gql(`
           userId
           role
         }
-        policyId
-        policy {
-          id
-          name
-          projectCount
-          memberCount
-          publishedProjectCount
-          layerCount
-          assetStorageSize
-        }
+        photoURL
       }
       auths
     }
@@ -86,19 +72,11 @@ export const UPDATE_ME = gql(`
         email
         lang
         theme
-        myTeam {
+        myWorkspace {
           id
           name
         }
       }
-    }
-  }
-`);
-
-export const DELETE_ME = gql(`
-  mutation DeleteMe($userId: ID!) {
-    deleteMe(input: { userId: $userId }) {
-      userId
     }
   }
 `);

@@ -36,22 +36,25 @@ import (
 var (
 
 	// ---------------- user1
-	uID    = user.NewID()
-	uEmail = "e2e@e2e.com"
-	uName  = "e2e"
 	wID    = accountdomain.NewWorkspaceID()
+	wAlias = "workspace-alias"
+	uID    = user.NewID()
+	uName  = "e2e"
+	uEmail = "e2e@e2e.com"
 
 	// ---------------- user2
-	uID2    = user.NewID()
 	wID2    = accountdomain.NewWorkspaceID()
-	uEmail2 = "e3e@e3e.com"
+	wAlias2 = "workspace-alias-2"
+	uID2    = user.NewID()
 	uName2  = "e3e"
+	uEmail2 = "e3e@e3e.com"
 
 	// ---------------- user3
-	uID3    = user.NewID()
 	wID3    = accountdomain.NewWorkspaceID()
-	uEmail3 = "e4e@e4e.com"
+	wAlias3 = "workspace-alias-3"
+	uID3    = user.NewID()
 	uName3  = "e4e"
+	uEmail3 = "e4e@e4e.com"
 
 	pID    = id.NewProjectID()
 	pName  = "p1"
@@ -66,39 +69,24 @@ var (
 	blockID    = id.NewBlockID()
 )
 
-func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
-	defer util.MockNow(now)()
+func setupUserAndWorkspace(ctx context.Context, r *repo.Container, f gateway.File) error {
 
-	u := user.New().
-		ID(uID).
-		Workspace(wID).
-		Name(uName).
-		Email(uEmail).
-		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
-		return err
-	}
-	u2 := user.New().
-		ID(uID2).
-		Workspace(wID2).
-		Name(uName2).
-		Email(uEmail2).
-		MustBuild()
-	if err := r.User.Save(ctx, u2); err != nil {
+	_, err := createUserAndWorkspace(ctx, r, wID, wAlias, uID, uName, uEmail)
+	if err != nil {
 		return err
 	}
 
-	u3 := user.New().
-		ID(uID3).
-		Workspace(wID3).
-		Name(uName3).
-		Email(uEmail3).
-		MustBuild()
-	if err := r.User.Save(ctx, u3); err != nil {
+	if err := baseSetup(ctx, r, f); err != nil {
 		return err
 	}
 
-	if err := baseSetup(ctx, r, u, f); err != nil {
+	_, err = createUserAndWorkspace(ctx, r, wID2, wAlias2, uID2, uName2, uEmail2)
+	if err != nil {
+		return err
+	}
+
+	u3, err := createUserAndWorkspace(ctx, r, wID3, wAlias3, uID3, uName3, uEmail3)
+	if err != nil {
 		return err
 	}
 
@@ -108,6 +96,69 @@ func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
 	}
 
 	return nil
+}
+
+func createUserAndWorkspace(
+	ctx context.Context,
+	r *repo.Container,
+	wid accountdomain.WorkspaceID,
+	wAlias string,
+	uid accountdomain.UserID,
+	name string,
+	email string) (*user.User, error) {
+	u := user.New().
+		ID(uid).
+		Workspace(wid).
+		Name(name).
+		Email(email).
+		Metadata(user.NewMetadata()).
+		MustBuild()
+	if err := r.User.Save(ctx, u); err != nil {
+		return nil, err
+	}
+
+	m := workspace.Member{
+		Role: workspace.RoleOwner,
+	}
+	w := workspace.New().ID(wid).
+		Name(name).
+		Alias(wAlias).
+		Personal(false).
+		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Metadata(workspace.NewMetadata()).
+		MustBuild()
+	if err := r.Workspace.Save(ctx, w); err != nil {
+		return nil, err
+	}
+	return u, nil
+}
+
+func baseSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
+	defer util.MockNow(now)()
+
+	if err := setupUserAndWorkspace(ctx, r, f); err != nil {
+		return err
+	}
+
+	if err := baseSetup(ctx, r, f); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
+	defer util.MockNow(now)()
+
+	if err := setupUserAndWorkspace(ctx, r, f); err != nil {
+		return err
+	}
+
+	if err := baseSetup(ctx, r, f); err != nil {
+		return err
+	}
+
+	return fullSetup(ctx, r)
 }
 
 func JoinMembers(ctx context.Context, r *repo.Container,
@@ -132,8 +183,10 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 	w2 := workspace.New().
 		ID(w.ID()).
 		Name(w.Name()).
+		Alias(w.Alias()).
 		Personal(w.IsPersonal()).
 		Members(newMembers).
+		Metadata(w.Metadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w2); err != nil {
 		return err
@@ -144,31 +197,34 @@ func JoinMembers(ctx context.Context, r *repo.Container,
 func baseSeederWithLang(ctx context.Context, r *repo.Container, f gateway.File, lang language.Tag) error {
 	defer util.MockNow(now)()
 
+	metadata := user.NewMetadata()
+	metadata.SetLang(lang)
+
 	u := user.New().ID(uID).
 		Workspace(wID).
 		Name(uName).
 		Email(uEmail).
-		Lang(lang).
+		Metadata(metadata).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
 		return err
 	}
-	return baseSetup(ctx, r, u, f)
-}
-
-func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.File) error {
-
 	m := workspace.Member{
 		Role: workspace.RoleOwner,
 	}
 	w := workspace.New().ID(wID).
-		Name("e2e").
+		Name(uName).
 		Personal(false).
 		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
+		Metadata(workspace.NewMetadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err
 	}
+	return baseSetup(ctx, r, f)
+}
+
+func baseSetup(ctx context.Context, r *repo.Container, f gateway.File) error {
 
 	url, err := addAsset("test.png", ctx, r, f)
 	if err != nil {
@@ -179,7 +235,7 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		Name(pName).
 		Description(pDesc).
 		ImageURL(url).
-		Workspace(w.ID()).
+		Workspace(wID).
 		Alias(pAlias).
 		Visualizer(visualizer.VisualizerCesiumBeta).
 		Visibility("private").
@@ -191,12 +247,21 @@ func baseSetup(ctx context.Context, r *repo.Container, u *user.User, f gateway.F
 		return err
 	}
 
+	readme := "xxx readme"
+	license := "yyy license"
+	topics := []string{"gis", "history"}
+	importResultLog := map[string]any{}
+
 	st := project.ProjectImportStatusNone
 	metadata, err := project.NewProjectMetadata().
 		NewID().
-		Workspace(w.ID()).
+		Workspace(wID).
 		Project(pID).
 		ImportStatus(&st).
+		Readme(&readme).
+		License(&license).
+		Topics(&topics).
+		ImportResultLog(&importResultLog).
 		Build()
 	if err != nil {
 		return err
@@ -251,22 +316,6 @@ func addAsset(path string, ctx context.Context, r *repo.Container, gf gateway.Fi
 		CoreSupport(true).
 		MustBuild()
 	return u, r.Asset.Save(ctx, a)
-}
-
-func fullSeeder(ctx context.Context, r *repo.Container, f gateway.File) error {
-	defer util.MockNow(now)()
-	u := user.New().ID(uID).
-		Workspace(wID).
-		Name(uName).
-		Email(uEmail).
-		MustBuild()
-	if err := r.User.Save(ctx, u); err != nil {
-		return err
-	}
-	if err := baseSetup(ctx, r, u, f); err != nil {
-		return err
-	}
-	return fullSetup(ctx, r)
 }
 
 func fullSetup(ctx context.Context, r *repo.Container) error {
@@ -346,7 +395,8 @@ func addWidget(ctx context.Context, s *scene.Scene, r *repo.Container) error {
 		Section: scene.WidgetSectionType(location.Section),
 		Area:    scene.WidgetAreaType(location.Area),
 	}
-	s.Widgets().Alignment().Area(loc).Add(widget.ID(), -1)
+	s.Widgets().Alignment().System(scene.WidgetAlignSystemTypeDesktop).Area(loc).Add(widget.ID(), -1)
+	s.Widgets().Alignment().System(scene.WidgetAlignSystemTypeMobile).Area(loc).Add(widget.ID(), -1)
 	if err = r.Property.Save(ctx, prop); err != err {
 		return err
 	}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 )
 
 type MetadataBuilder struct {
@@ -17,7 +18,7 @@ func NewProjectMetadata() *MetadataBuilder {
 
 func (b *MetadataBuilder) Build() (*ProjectMetadata, error) {
 	if b.r.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.r.updatedAt == nil || b.r.updatedAt.IsZero() {
 		b.r.updatedAt = b.r.UpdatedAt()
@@ -56,18 +57,38 @@ func (b *MetadataBuilder) Project(project id.ProjectID) *MetadataBuilder {
 	return b
 }
 
-func (b *MetadataBuilder) Readme(readme *string) *MetadataBuilder {
-	b.r.readme = readme
-	return b
-}
-
 func (b *MetadataBuilder) ImportStatus(importStatus *ProjectImportStatus) *MetadataBuilder {
 	b.r.importStatus = importStatus
 	return b
 }
 
+func (b *MetadataBuilder) ImportResultLog(importResultLog *map[string]any) *MetadataBuilder {
+	b.r.importResultLog = importResultLog
+	return b
+}
+
+func (b *MetadataBuilder) Readme(readme *string) *MetadataBuilder {
+	b.r.readme = readme
+	return b
+}
+
 func (b *MetadataBuilder) License(license *string) *MetadataBuilder {
 	b.r.license = license
+	return b
+}
+
+func (b *MetadataBuilder) Topics(topics *[]string) *MetadataBuilder {
+	b.r.topics = topics
+	return b
+}
+
+func (b *MetadataBuilder) StarCount(starCount *int64) *MetadataBuilder {
+	b.r.starCount = starCount
+	return b
+}
+
+func (b *MetadataBuilder) StarredBy(starredBy *[]string) *MetadataBuilder {
+	b.r.starredBy = starredBy
 	return b
 }
 

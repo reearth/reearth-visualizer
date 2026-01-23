@@ -6,6 +6,7 @@ import (
 
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
+	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -204,6 +205,224 @@ func TestUpdateGeoJSONFeature(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, "LineString", lineStringGeometry.LineStringType())
 	assert.Equal(t, [][]float64{{1.0, 2.0}, {3.0, 4.0}}, lineStringGeometry.Coordinates())
+}
+
+func TestAddLayerSimple(t *testing.T) {
+	ctx := context.Background()
+
+	db := memory.New()
+	workspace := factory.NewWorkspace()
+	_ = db.Workspace.Save(ctx, workspace)
+
+	prj, _ := project.New().NewID().Workspace(workspace.ID()).Build()
+	_ = db.Project.Save(ctx, prj)
+	scene, _ := scene.New().NewID().Workspace(workspace.ID()).Project(prj.ID()).Build()
+	_ = db.Scene.Save(ctx, scene)
+	il := NewNLSLayer(db, &gateway.Container{
+		File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com")),
+	})
+
+	operator := &usecase.Operator{
+		WritableScenes: []id.SceneID{scene.ID()},
+	}
+
+	t.Run("should add layer with GeoJSON value data", func(t *testing.T) {
+		layerName := "Test GeoJSON Layer"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "geojson",
+				"value": map[string]interface{}{
+					"type": "FeatureCollection",
+					"features": []interface{}{
+						map[string]interface{}{
+							"type": "Feature",
+							"geometry": map[string]interface{}{
+								"type":        "Point",
+								"coordinates": []interface{}{139.7, 35.7},
+							},
+							"properties": map[string]interface{}{
+								"name": "Tokyo",
+							},
+						},
+					},
+				},
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:   scene.ID(),
+			Config:    &config,
+			LayerType: "simple",
+			Title:     layerName,
+		}, operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, layer)
+		assert.Equal(t, layerName, layer.Title())
+	})
+
+	t.Run("should add layer with valid GeoJSON URL", func(t *testing.T) {
+		layerName := "Test GeoJSON URL Layer"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "geojson",
+				"url":  "https://example.com/data.geojson",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:   scene.ID(),
+			Config:    &config,
+			LayerType: "simple",
+			Title:     layerName,
+		}, operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, layer)
+		assert.Equal(t, layerName, layer.Title())
+	})
+
+	t.Run("should reject invalid URL format", func(t *testing.T) {
+		layerName := "Test Invalid URL"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "geojson",
+				"url":  "not-a-url",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:   scene.ID(),
+			Config:    &config,
+			LayerType: "simple",
+			Title:     layerName,
+		}, operator)
+
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid GeoJSON URL format")
+		assert.Nil(t, layer)
+	})
+
+	t.Run("should reject empty URL", func(t *testing.T) {
+		layerName := "Test Empty URL"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "geojson",
+				"url":  "",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:   scene.ID(),
+			Config:    &config,
+			LayerType: "simple",
+			Title:     layerName,
+		}, operator)
+
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "invalid GeoJSON URL format")
+		assert.Nil(t, layer)
+	})
+
+	t.Run("should reject invalid GeoJSON value data", func(t *testing.T) {
+		layerName := "Test Invalid GeoJSON"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "geojson",
+				"value": map[string]interface{}{
+					"type": "FeatureCollection",
+					"features": []interface{}{
+						map[string]interface{}{
+							"type": "Feature",
+							"geometry": map[string]interface{}{
+								"type":        "InvalidType",
+								"coordinates": []interface{}{139.7, 35.7},
+							},
+						},
+					},
+				},
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:   scene.ID(),
+			Config:    &config,
+			LayerType: "simple",
+			Title:     layerName,
+		}, operator)
+
+		assert.Error(t, err)
+		assert.Nil(t, layer)
+	})
+
+	t.Run("should add layer with non-GeoJSON data", func(t *testing.T) {
+		layerName := "Test CSV Layer"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "csv",
+				"url":  "https://example.com/data.csv",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:   scene.ID(),
+			Config:    &config,
+			LayerType: "simple",
+			Title:     layerName,
+		}, operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, layer)
+		assert.Equal(t, layerName, layer.Title())
+	})
+
+	t.Run("should add layer with DataSourceName", func(t *testing.T) {
+		layerName := "Test Layer with DataSourceName"
+		dataSourceName := "test-data-source"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "csv",
+				"url":  "https://example.com/data.csv",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:        scene.ID(),
+			Config:         &config,
+			LayerType:      "simple",
+			Title:          layerName,
+			DataSourceName: &dataSourceName,
+		}, operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, layer)
+		assert.Equal(t, layerName, layer.Title())
+		assert.NotNil(t, layer.DataSourceName())
+		assert.Equal(t, dataSourceName, *layer.DataSourceName())
+	})
+
+	t.Run("should add layer without DataSourceName", func(t *testing.T) {
+		layerName := "Test Layer without DataSourceName"
+		config := nlslayer.Config{
+			"data": map[string]interface{}{
+				"type": "csv",
+				"url":  "https://example.com/data.csv",
+			},
+		}
+
+		layer, err := il.AddLayerSimple(ctx, interfaces.AddNLSLayerSimpleInput{
+			SceneID:        scene.ID(),
+			Config:         &config,
+			LayerType:      "simple",
+			Title:          layerName,
+			DataSourceName: nil, // Explicitly nil
+		}, operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, layer)
+		assert.Equal(t, layerName, layer.Title())
+		assert.Nil(t, layer.DataSourceName())
+	})
 }
 
 func TestDeleteGeoJSONFeature(t *testing.T) {

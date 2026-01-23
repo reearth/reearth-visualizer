@@ -40,12 +40,15 @@ func ToScene(scene *scene.Scene) *Scene {
 		ID:                IDFrom(scene.ID()),
 		ProjectID:         IDFrom(scene.Project()),
 		PropertyID:        IDFrom(scene.Property()),
-		TeamID:            IDFrom(scene.Workspace()),
+		WorkspaceID:       IDFrom(scene.Workspace()),
 		CreatedAt:         scene.CreatedAt(),
 		UpdatedAt:         scene.UpdatedAt(),
 		Plugins:           util.Map(scene.Plugins().Plugins(), ToScenePlugin),
 		Widgets:           util.Map(scene.Widgets().Widgets(), ToSceneWidget),
-		WidgetAlignSystem: ToWidgetAlignSystem(scene.Widgets().Alignment()),
+		WidgetAlignSystem: ToWidgetAlignSystems(scene.Widgets().Alignment()),
+
+		// publishment ---------------------
+		Alias: scene.Alias(),
 	}
 }
 

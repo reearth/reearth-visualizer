@@ -44,18 +44,19 @@ func NewContainer(
 	}
 
 	return interfaces.Container{
-		Asset:        NewAsset(r, g),
-		NLSLayer:     NewNLSLayer(r, g),
-		Style:        NewStyle(r),
-		Plugin:       NewPlugin(r, g),
-		Policy:       NewPolicy(r),
-		Project:      NewProject(r, g),
-		Property:     NewProperty(r, g),
-		Published:    published,
-		Scene:        NewScene(r, g),
-		StoryTelling: NewStorytelling(r, g),
-		Workspace:    accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
-		User:         accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
+		Asset:           NewAsset(r, g),
+		NLSLayer:        NewNLSLayer(r, g),
+		Style:           NewStyle(r),
+		Plugin:          NewPlugin(r, g),
+		Policy:          NewPolicy(r, g.PolicyChecker),
+		Project:         NewProject(r, g),
+		ProjectMetadata: NewProjectMetadata(r, g),
+		Property:        NewProperty(r, g),
+		Published:       published,
+		Scene:           NewScene(r, g),
+		StoryTelling:    NewStorytelling(r, g),
+		Workspace:       accountinteractor.NewWorkspace(ar, workspaceMemberCountEnforcer(r)),
+		User:            accountinteractor.NewMultiUser(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
 	}
 }
 
@@ -268,10 +269,10 @@ func (d ProjectDeleter) Delete(ctx context.Context, prj *project.Project, force 
 }
 
 func IsCurrentHostAssets(ctx context.Context, u string) bool {
-	if strings.HasPrefix(u, "assets/") || strings.HasPrefix(u, "/assets") {
+	if strings.HasPrefix(u, "assets/") && strings.HasPrefix(u, adapter.CurrentHost(ctx)) {
 		return true
 	}
-	return strings.HasPrefix(u, adapter.CurrentHost(ctx))
+	return false
 }
 
 func ReplaceToCurrentHost(ctx context.Context, urlString string) string {

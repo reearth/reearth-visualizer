@@ -5,6 +5,7 @@ import (
 
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/idx"
 )
 
 type StoryBuilder struct {
@@ -17,7 +18,7 @@ func NewStory() *StoryBuilder {
 
 func (b *StoryBuilder) Build() (*Story, error) {
 	if b.s.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.s.alias == "" {
 		b.s.alias = alias.ReservedReearthPrefixStory + b.s.id.String()
@@ -52,6 +53,11 @@ func (b *StoryBuilder) NewID() *StoryBuilder {
 
 func (b *StoryBuilder) Property(property id.PropertyID) *StoryBuilder {
 	b.s.property = property
+	return b
+}
+
+func (b *StoryBuilder) Project(project id.ProjectID) *StoryBuilder {
+	b.s.project = project
 	return b
 }
 

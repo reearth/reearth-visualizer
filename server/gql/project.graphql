@@ -1,7 +1,7 @@
 type Project implements Node {
   id: ID!
-  teamId: ID!
-  team: Team
+  workspaceId: ID!
+  workspace: Workspace
   scene: Scene
   name: String!
   description: String!
@@ -16,6 +16,8 @@ type Project implements Node {
   visibility: String!
 
   metadata: ProjectMetadata
+
+  projectAlias: String!
 
   # publishment
   alias: String!
@@ -38,13 +40,16 @@ type ProjectMetadata {
   workspace: ID!
   readme: String
   license: String
+  topics: [String!]
   importStatus: ProjectImportStatus
+  importResultLog: JSON
   createdAt: DateTime
   updatedAt: DateTime
 }
 
 enum ProjectImportStatus {
   NONE
+  UPLOADING
   PROCESSING
   FAILED
   SUCCESS
@@ -69,12 +74,18 @@ enum ProjectSortField {
 # InputType
 
 input CreateProjectInput {
-  teamId: ID!
+  workspaceId: ID!
   visualizer: Visualizer!
   name: String
   description: String
   coreSupport: Boolean
   visibility: String
+  projectAlias: String
+
+  # metadata
+  readme: String
+  license: String
+  topics: [String!]
 }
 
 input UpdateProjectInput {
@@ -88,6 +99,7 @@ input UpdateProjectInput {
   starred: Boolean
   deleted: Boolean
   visibility: String
+  projectAlias: String
 
   # publishment
   publicTitle: String
@@ -100,6 +112,13 @@ input UpdateProjectInput {
   basicAuthPassword: String
   enableGa: Boolean
   trackingId: String
+}
+
+input UpdateProjectMetadataInput {
+  project: ID!
+  readme: String
+  license: String
+  topics: [String!]
 }
 
 input PublishProjectInput {
@@ -140,6 +159,15 @@ type ProjectAliasAvailability {
   available: Boolean!
 }
 
+type SceneAliasAvailability {
+  alias: String!
+  available: Boolean!
+}
+
+type ProjectMetadataPayload {
+  metadata: ProjectMetadata!
+}
+
 # Connection
 
 type ProjectConnection {
@@ -156,14 +184,19 @@ type ProjectEdge {
 
 extend type Query {
   projects(
-    teamId: ID!
+    workspaceId: ID!
     pagination: Pagination
     keyword: String
     sort: ProjectSort
   ): ProjectConnection! # not included deleted projects
-  checkProjectAlias(alias: String!, projectId: ID): ProjectAliasAvailability!
-  starredProjects(teamId: ID!): ProjectConnection!
-  deletedProjects(teamId: ID!): ProjectConnection!
+  checkProjectAlias(
+    alias: String!
+    workspaceId: ID!
+    projectId: ID
+  ): ProjectAliasAvailability!
+  checkSceneAlias(alias: String!, projectId: ID): SceneAliasAvailability!
+  starredProjects(workspaceId: ID!): ProjectConnection!
+  deletedProjects(workspaceId: ID!): ProjectConnection!
 }
 
 extend type Mutation {
@@ -172,4 +205,7 @@ extend type Mutation {
   publishProject(input: PublishProjectInput!): ProjectPayload
   deleteProject(input: DeleteProjectInput!): DeleteProjectPayload
   exportProject(input: ExportProjectInput!): ExportProjectPayload
+  updateProjectMetadata(
+    input: UpdateProjectMetadataInput!
+  ): ProjectMetadataPayload
 }

@@ -274,8 +274,7 @@ func TestStoryPublishing(t *testing.T) {
 	rc, err := g.File.ReadStoryFile(context.Background(), "test-alias")
 	assert.NoError(t, err)
 
-	expected := fmt.Sprintf(`
-{
+	expected := fmt.Sprintf(`{
   "coreSupport": true,
   "enableGa": false,
   "id": "%s",
@@ -390,25 +389,48 @@ func TestStoryPublishing(t *testing.T) {
     "title": "test page"
   },
   "trackingId": "",
-  "widgetAlignSystem": {
-    "inner": null,
-    "outer": {
-      "center": null,
-      "left": {
-        "bottom": {
-          "align": "start",
-          "background": null,
-          "centered": false,
-          "gap": null,
-          "padding": null,
-          "widgetIds": [
-            ".*"
-          ]
+  "widgetAlignSystems": {
+    "desktop": {
+      "inner": {
+        "center": {
+          "bottom": {
+            "align": "start",
+            "background": null,
+            "centered": false,
+            "gap": null,
+            "padding": null,
+            "widgetIds": [
+              ".*"
+            ]
+          },
+          "middle": null,
+          "top": null
         },
-        "middle": null,
-        "top": null
+        "left": null,
+        "right": null
       },
-      "right": null
+      "outer": null
+    },
+    "mobile": {
+      "inner": {
+        "center": {
+          "bottom": {
+            "align": "start",
+            "background": null,
+            "centered": false,
+            "gap": null,
+            "padding": null,
+            "widgetIds": [
+              ".*"
+            ]
+          },
+          "middle": null,
+          "top": null
+        },
+        "left": null,
+        "right": null
+      },
+      "outer": null
     }
   },
   "widgets": [
@@ -421,8 +443,7 @@ func TestStoryPublishing(t *testing.T) {
       "property": {}
     }
   ]
-}
-`, sceneID, storyID1, blockID1, pageID1)
+}`, sceneID, storyID1, blockID1, pageID1)
 
 	RegexpJSONEReadCloser(t, rc, expected)
 
@@ -503,13 +524,18 @@ func createStory(e *httpexpect.Expect, variables map[string]any) string {
 			createStory( input: {sceneId: $sceneId, title: $title, index: $index} ) { 
 				story { 
 					id
+					projectId
+					sceneId
 				} 
 			}
 		}`,
 		Variables: variables,
 	}
 	res := Request(e, uID.String(), requestBody)
-	return res.Path("$.data.createStory.story.id").Raw().(string)
+	st := res.Path("$.data.createStory.story")
+	st.Object().Value("projectId").IsString()
+	st.Object().Value("sceneId").IsString()
+	return st.Path("$.id").Raw().(string)
 }
 
 func updateStory(e *httpexpect.Expect, storyID, sID string) (GraphQLRequest, *httpexpect.Value) {

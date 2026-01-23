@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -12,8 +13,8 @@ func (r *Resolver) Query() QueryResolver {
 
 type queryResolver struct{ *Resolver }
 
-func (r *queryResolver) Assets(ctx context.Context, teamID gqlmodel.ID, projectId *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
-	return loaders(ctx).Asset.FindByWorkspace(ctx, teamID, projectId, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
+func (r *queryResolver) Assets(ctx context.Context, workspaceID gqlmodel.ID, projectId *gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.AssetSort) (*gqlmodel.AssetConnection, error) {
+	return loaders(ctx).Asset.FindByWorkspace(ctx, workspaceID, projectId, keyword, gqlmodel.AssetSortTypeFrom(sortType), pagination)
 }
 
 func (r *queryResolver) Me(ctx context.Context) (*gqlmodel.Me, error) {
@@ -51,7 +52,7 @@ func (r *queryResolver) Node(ctx context.Context, i gqlmodel.ID, typeArg gqlmode
 			return nil, nil
 		}
 		return result, err
-	case gqlmodel.NodeTypeTeam:
+	case gqlmodel.NodeTypeWorkspace:
 		result, err := dataloaders.Workspace.Load(i)
 		if result == nil {
 			return nil, nil
@@ -110,7 +111,7 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []gqlmodel.ID, typeArg gq
 			nodes[i] = data[i]
 		}
 		return nodes, nil
-	case gqlmodel.NodeTypeTeam:
+	case gqlmodel.NodeTypeWorkspace:
 		data, err := dataloaders.Workspace.LoadAll(ids)
 		if len(err) > 0 && err[0] != nil {
 			return nil, err[0]
@@ -163,30 +164,50 @@ func (r *queryResolver) Scene(ctx context.Context, projectID gqlmodel.ID) (*gqlm
 	return loaders(ctx).Scene.FindByProject(ctx, projectID)
 }
 
-func (r *queryResolver) Projects(ctx context.Context, teamID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindByWorkspace(ctx, teamID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
+func (r *queryResolver) Projects(ctx context.Context, workspaceID gqlmodel.ID, pagination *gqlmodel.Pagination, keyword *string, sortType *gqlmodel.ProjectSort) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindByWorkspace(ctx, workspaceID, keyword, gqlmodel.ProjectSortTypeFrom(sortType), pagination)
 }
 
 func (r *queryResolver) SearchUser(ctx context.Context, nameOrEmail string) (*gqlmodel.User, error) {
 	return loaders(ctx).User.SearchUser(ctx, nameOrEmail)
 }
 
-func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string, projectId *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
-	return loaders(ctx).Project.CheckAlias(ctx, alias, projectId)
+func (r *queryResolver) CheckProjectAlias(ctx context.Context, alias string, workspaceId gqlmodel.ID, projectId *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
+	return loaders(ctx).Project.CheckProjectAlias(ctx, alias, workspaceId, projectId)
+}
+
+func (r *queryResolver) CheckSceneAlias(ctx context.Context, alias string, projectId *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error) {
+	return loaders(ctx).Project.CheckSceneAlias(ctx, alias, projectId)
 }
 
 func (r *queryResolver) CheckStoryAlias(ctx context.Context, alias string, storyId *gqlmodel.ID) (*gqlmodel.StoryAliasAvailability, error) {
-	return loaders(ctx).Story.CheckAlias(ctx, alias, storyId)
+	return loaders(ctx).Story.CheckStorytellingAlias(ctx, alias, storyId)
 }
 
-func (r *queryResolver) StarredProjects(ctx context.Context, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindStarredByWorkspace(ctx, teamId)
+func (r *queryResolver) StarredProjects(ctx context.Context, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindStarredByWorkspace(ctx, workspaceId)
 }
 
-func (r *queryResolver) DeletedProjects(ctx context.Context, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.FindDeletedByWorkspace(ctx, teamId)
+func (r *queryResolver) DeletedProjects(ctx context.Context, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.FindDeletedByWorkspace(ctx, workspaceId)
 }
 
-func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bool, teamId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
-	return loaders(ctx).Project.VisibilityByWorkspace(ctx, teamId, authenticated)
+func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bool, workspaceId gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
+	return loaders(ctx).Project.VisibilityByWorkspace(ctx, workspaceId, authenticated)
+}
+
+func (r *queryResolver) WorkspacePolicyCheck(ctx context.Context, input gqlmodel.PolicyCheckInput) (*gqlmodel.PolicyCheckPayload, error) {
+	wid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	policy, err := usecases(ctx).Policy.GetWorkspacePolicy(ctx, wid)
+	if err != nil {
+		return nil, err
+	}
+	return &gqlmodel.PolicyCheckPayload{
+		WorkspaceID:                  input.WorkspaceID,
+		EnableToCreatePrivateProject: policy.EnableToCreatePrivateProject,
+	}, nil
 }

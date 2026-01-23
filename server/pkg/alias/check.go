@@ -12,7 +12,9 @@ import (
 )
 
 var (
-	ReservedReearthPrefixProject = "c-"
+	ReservedReearthPrefixProject = "p-"
+
+	ReservedReearthPrefixScene = "c-"
 
 	ReservedReearthPrefixStory = "s-"
 
@@ -77,12 +79,27 @@ var (
 		errmsg.ErrKeyPkgProjectInvalidAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidAlias],
 		message.MultiLocaleTemplateData(map[string]interface{}{
+			"aliasName": "",
 			"minLength": 5,
 			"maxLength": 32,
 			"allowedChars": func(locale language.Tag) string {
 				return entitymsg.GetLocalizedEntityMessage(entitymsg.EntityKeyPkgProjectAliasAllowedChars, locale)
 			},
 		}),
+		nil,
+	)
+
+	ErrExistsProjectAliasAlreadyExists = verror.NewVError(
+		errmsg.ErrKeyPkgProjectProjectAliasAlreadyExists,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectProjectAliasAlreadyExists],
+		nil,
+		nil,
+	)
+
+	ErrProjectInvalidProjectAlias = verror.NewVError(
+		errmsg.ErrKeyPkgProjectInvalidProjectAlias,
+		errmsg.ErrorMessages[errmsg.ErrKeyPkgProjectInvalidProjectAlias],
+		nil,
 		nil,
 	)
 
@@ -111,6 +128,7 @@ var (
 		errmsg.ErrKeyPkgStorytellingInvalidAlias,
 		errmsg.ErrorMessages[errmsg.ErrKeyPkgStorytellingInvalidAlias],
 		message.MultiLocaleTemplateData(map[string]interface{}{
+			"aliasName": "",
 			"minLength": 5,
 			"maxLength": 32,
 			"allowedChars": func(locale language.Tag) string {
@@ -142,7 +160,7 @@ var (
 	)
 )
 
-func CheckProjectAliasPattern(alias string) error {
+func CheckAliasPatternScene(alias string) error {
 	if alias != "" && !subdomainRegex.Match([]byte(alias)) {
 		return ErrInvalidProjectAlias.AddTemplateData("aliasName", alias)
 	}

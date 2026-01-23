@@ -12,15 +12,14 @@ import "web-streams-polyfill/es2018";
 
 declare global {
   namespace Vi {
-    interface JestAssertion<T = any>
-      extends jest.Matchers<void, T>,
-        EmotionMatchers {
+    interface JestAssertion<T> extends jest.Matchers<void, T>, EmotionMatchers {
       toHaveStyleRule: EmotionMatchers["toHaveStyleRule"];
     }
   }
 }
 
 expect.extend(domMatchers);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 expect.extend(emotionMatchers as any);
 
 Object.defineProperty(window, "matchMedia", {
@@ -40,6 +39,24 @@ Object.defineProperty(window, "matchMedia", {
 Object.defineProperty(window, "requestIdleCallback", {
   writable: true,
   value: vi.fn()
+});
+
+const MockResizeObserver = vi.fn(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn()
+  };
+});
+
+Object.defineProperty(window, "ResizeObserver", {
+  writable: true,
+  value: MockResizeObserver
+});
+
+Object.defineProperty(global, "ResizeObserver", {
+  writable: true,
+  value: MockResizeObserver
 });
 
 afterEach(cleanup);

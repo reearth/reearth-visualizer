@@ -16,9 +16,12 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
+	"github.com/reearth/reearth/server/internal/app/otel"
+	"github.com/reearth/reearth/server/internal/infrastructure/domain"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
+	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
@@ -36,20 +39,18 @@ var (
 	fr *gateway.File
 
 	disabledAuthConfig = &config.Config{
-		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
+		Origins:  []string{"https://example.com"},
+		Dev:      true,
+		MockAuth: true,
 	}
 
 	internalApiConfig = &config.Config{
 		Origins: []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
 		Visualizer: config.VisualizerConfig{
 			InternalApi: config.InternalApiConfig{
 				Active: true,
+				Port:   "50051",
+				Token:  "token",
 			},
 		},
 	}
@@ -61,8 +62,8 @@ func init() {
 	mongotest.Env = "REEARTH_DB"
 }
 
-func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container, file gateway.File) {
-	ctx := context.Background()
+func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Container, file gateway.File, ctx context.Context) {
+	ctx = context.Background()
 
 	if useMongo {
 		db := mongotest.Connect(t)(t)
@@ -73,25 +74,32 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 		repos = memory.New()
 	}
 
-	file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
-	fr = &file
+	if fr == nil {
+		file = lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/"))
+		fr = &file
+	}
+
 	if seeder != nil {
-		if err := seeder(ctx, repos, file); err != nil {
+		if err := seeder(ctx, repos, *fr); err != nil {
 			t.Fatalf("failed to seed the db: %s", err)
 		}
 	}
 
-	return repos, file
+	return repos, *fr, ctx
 }
 
 func initGateway() *gateway.Container {
 	if fr == nil {
 		return &gateway.Container{
-			File: lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
+			File:          lo.Must(fs.NewFile(afero.NewMemMapFs(), "https://example.com/")),
+			PolicyChecker: policy.NewPermissiveChecker(),
+			DomainChecker: domain.NewDefaultChecker(),
 		}
 	}
 	return &gateway.Container{
-		File: *fr,
+		File:          *fr,
+		PolicyChecker: policy.NewPermissiveChecker(),
+		DomainChecker: domain.NewDefaultChecker(),
 	}
 }
 
@@ -111,6 +119,7 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 		Gateways:        gateways,
 		AccountGateways: accountGateway,
 		Debug:           true,
+		ServiceName:     otel.OtelVisualizerServiceName,
 	}), gateways, accountGateway
 }
 
@@ -131,7 +140,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	var err error
 
 	if cfg.Visualizer.InternalApi.Active {
-		l, err = net.Listen("tcp", ":8080")
+		l, err = net.Listen("tcp", ":"+cfg.Visualizer.InternalApi.Port)
 		if err != nil {
 			t.Fatalf("server failed to listen: %v", err)
 		}
@@ -168,15 +177,21 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 }
 
 func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
-	repos, _ := initRepos(t, true, seeder)
+	repos, _, _ := initRepos(t, true, seeder)
 	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos()
 }
 
 func startServer(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
-	repos, _ := initRepos(t, useMongo, seeder)
+	repos, _, _ := initRepos(t, useMongo, seeder)
 	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
 	return e, repos, gateways
+}
+
+func startServerWithCtx(t *testing.T, cfg *config.Config, useMongo bool, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, context.Context) {
+	repos, _, ctx := initRepos(t, useMongo, seeder)
+	e, gateways, _ := StartGQLServerWithRepos(t, cfg, repos)
+	return e, repos, gateways, ctx
 }
 
 func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
@@ -185,6 +200,10 @@ func ServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Cont
 
 func GRPCServer(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
 	return startServer(t, internalApiConfig, true, seeder)
+}
+
+func GRPCServeWithCtx(t *testing.T, seeder Seeder) (*httpexpect.Expect, *repo.Container, *gateway.Container, context.Context) {
+	return startServerWithCtx(t, internalApiConfig, true, seeder)
 }
 
 func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
@@ -202,9 +221,6 @@ func ServerMockTest(t *testing.T) *httpexpect.Expect {
 		Dev:      true,
 		MockAuth: true,
 		Origins:  []string{"https://example.com"},
-		AuthSrv: config.AuthSrvConfig{
-			Disabled: true,
-		},
 	}
 	e, _, _ := startServer(t, c, true, nil)
 	return e
@@ -226,16 +242,18 @@ type GraphQLRequest struct {
 }
 
 func Request(e *httpexpect.Expect, user string, requestBody GraphQLRequest) *httpexpect.Value {
-	// RequestDump(requestBody)
-	return e.POST("/api/graphql").
+	response := e.POST("/api/graphql").
 		WithHeader("Origin", "https://example.com").
 		WithHeader("authorization", "Bearer test").
 		WithHeader("X-Reearth-Debug-User", user).
 		WithHeader("Content-Type", "application/json").
 		WithJSON(requestBody).
-		Expect().
-		Status(http.StatusOK).
-		JSON()
+		Expect()
+	if response.Raw().StatusCode != http.StatusOK {
+		RequestDump(requestBody)
+	}
+
+	return response.Status(http.StatusOK).JSON()
 }
 
 func RequestQuery(t *testing.T, e *httpexpect.Expect, query string, user string) *httpexpect.Value {
@@ -316,6 +334,12 @@ func aligningJSON(t *testing.T, str string) string {
 func RequestDump(requestBody GraphQLRequest) {
 	if jsonData, err := json.MarshalIndent(requestBody, "", "  "); err == nil {
 		fmt.Println(string(jsonData))
+	}
+}
+
+func ArrayDump(arrayVal *httpexpect.Array) {
+	for _, val := range arrayVal.Iter() {
+		ValueDump(&val)
 	}
 }
 

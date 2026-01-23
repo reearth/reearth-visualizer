@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
+
 	"net/url"
 	"regexp"
 	"strings"
@@ -16,6 +16,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -24,7 +25,7 @@ import (
 )
 
 var (
-	assetIndexes       = []string{"team"}
+	assetIndexes       = []string{"workspace"}
 	assetUniqueIndexes = []string{"id"}
 )
 
@@ -86,7 +87,7 @@ func (r *Asset) FindByWorkspaceProject(ctx context.Context, id accountdomain.Wor
 	if projectId != nil {
 		filter["project"] = projectId.String()
 	} else {
-		filter["team"] = id.String()
+		filter["workspace"] = id.String()
 	}
 
 	if uFilter.Keyword != nil {
@@ -118,7 +119,7 @@ func (r *Asset) TotalSizeByWorkspace(ctx context.Context, wid accountdomain.Work
 	}
 
 	c, err := r.client.Client().Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"team": wid.String()}},
+		{"$match": bson.M{"workspace": wid.String()}},
 		{"$group": bson.M{"_id": nil, "size": bson.M{"$sum": "$size"}}},
 	})
 	if err != nil {
@@ -151,9 +152,11 @@ func (r *Asset) Save(ctx context.Context, asset *asset.Asset) error {
 }
 
 func (r *Asset) Remove(ctx context.Context, id id.AssetID) error {
-	return r.client.RemoveOne(ctx, r.writeFilter(bson.M{
+	writeFilter := applyWorkspaceFilter(bson.M{
 		"id": id.String(),
-	}))
+	}, r.f.Writable)
+
+	return r.client.RemoveOne(ctx, writeFilter)
 }
 
 func (r *Asset) RemoveByProjectWithFile(ctx context.Context, pid id.ProjectID, f gateway.File) error {
@@ -241,12 +244,4 @@ func filterAssets(ids []id.AssetID, rows []*asset.Asset) []*asset.Asset {
 		res = append(res, r2)
 	}
 	return res
-}
-
-// func (r *Asset) readFilter(filter any) any {
-// 	return applyTeamFilter(filter, r.f.Readable)
-// }
-
-func (r *Asset) writeFilter(filter any) any {
-	return applyTeamFilter(filter, r.f.Writable)
 }

@@ -7,7 +7,12 @@ import (
 	"fmt"
 	"io"
 	"strings"
+	"time"
+
+	"github.com/reearth/reearthx/log"
 )
+
+const EXPORT_DATA_VERSION = "1"
 
 type ZipReader struct {
 	zr *zip.Reader
@@ -104,27 +109,28 @@ func FileSizeCheck(sizeMB int, file io.ReadSeeker) error {
 	return nil
 }
 
-func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[string]*zip.File, map[string]*zip.File, error) {
+func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[string]*zip.File, map[string]*zip.File, *string, error) {
 	// 500MB
 	if err := FileSizeCheck(500, file); err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 	fileBytes, err := io.ReadAll(file)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 	reader, err := zip.NewReader(bytes.NewReader(fileBytes), int64(len(fileBytes)))
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, nil, err
 	}
 	var data []byte
+	var version *string
 	assets := make(map[string]*zip.File)
 	plugins := make(map[string]*zip.File)
 	for _, file := range reader.File {
 		if file.Name == "project.json" {
 			rc, err := file.Open()
 			if err != nil {
-				return nil, nil, nil, err
+				return nil, nil, nil, nil, err
 			}
 			defer func(rc io.ReadCloser) {
 				if cerr := rc.Close(); cerr != nil {
@@ -133,15 +139,29 @@ func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[s
 			}(rc)
 			data, err = io.ReadAll(rc)
 			if err != nil {
-				return nil, nil, nil, err
+				return nil, nil, nil, nil, err
+			}
+			if !json.Valid(data) {
+				return nil, nil, nil, nil, fmt.Errorf("invalid json data: %s", file.Name)
 			}
 			var d map[string]any
 			if err := json.Unmarshal(data, &d); err == nil {
 				if e, ok := d["exportedInfo"].(map[string]any); ok {
 					if host, ok := e["host"].(string); ok {
-
-						// Replace to current host
-						data = bytes.Replace(data, []byte(host), []byte(currentHost), -1)
+						if host != "" {
+							// Replace to current host
+							data = bytes.ReplaceAll(data, []byte(host), []byte(currentHost))
+						}
+					}
+					if ts, ok := e["timestamp"].(string); ok {
+						if t, err := time.Parse(time.RFC3339, ts); err == nil {
+							log.Infof("[Import] export data time: %v", t)
+						} else {
+							fmt.Println("Invalid timestamp format:", err)
+						}
+					}
+					if v, ok := e["exportDataVersion"].(string); ok {
+						version = &v
 					}
 				}
 			}
@@ -152,11 +172,11 @@ func UncompressExportZip(currentHost string, file io.ReadSeeker) (*[]byte, map[s
 			trimmedName := strings.TrimPrefix(file.Name, "plugins/")
 			plugins[trimmedName] = file
 		} else {
-			return nil, nil, nil, fmt.Errorf("invalid file in zip: %s", file.Name)
+			return nil, nil, nil, version, fmt.Errorf("invalid file in zip: %s", file.Name)
 		}
 	}
 	if len(data) == 0 {
-		return nil, nil, nil, fmt.Errorf("project.json not found in the zip file")
+		return nil, nil, nil, version, fmt.Errorf("project.json not found in the zip file")
 	}
-	return &data, assets, plugins, nil
+	return &data, assets, plugins, version, nil
 }

@@ -1,0 +1,362 @@
+import BlockAddBar from "@reearth/app/features/Visualizer/shared/components/BlockAddBar";
+import ContentWrapper from "@reearth/app/features/Visualizer/shared/components/ContentWrapper";
+import SelectableArea from "@reearth/app/features/Visualizer/shared/components/SelectableArea";
+import { useElementOnScreen } from "@reearth/app/features/Visualizer/shared/hooks/useElementOnScreen";
+import { DragAndDropList } from "@reearth/app/lib/reearth-ui";
+import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
+import type { NLSLayer } from "@reearth/services/api/layer";
+import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
+import { useT } from "@reearth/services/i18n/hooks";
+import { styled } from "@reearth/services/theme";
+import {
+  FC,
+  Fragment,
+  ReactNode,
+  RefObject,
+  useEffect,
+  useMemo,
+  useRef
+} from "react";
+
+import { BlockProps } from "../../../shared/types";
+import StoryBlock from "../Block";
+import {
+  STORY_PANEL_CONTENT_ELEMENT_ID,
+  MIN_STORY_PAGE_PADDING_IN_EDITOR,
+  MIN_STORY_PAGE_GAP_IN_EDITOR,
+  STORY_PANEL_WIDTH
+} from "../constants";
+import { StoryBlock as StoryBlockType } from "../types";
+
+import useHooks, { type StoryPage } from "./hooks";
+
+type Props = {
+  page?: StoryPage;
+  wrapperRef: RefObject<HTMLDivElement | null>;
+  selectedPageId?: string;
+  selectedStoryBlockId?: string;
+  installableStoryBlocks?: InstallableStoryBlock[];
+  showPageSettings?: boolean;
+  isEditable?: boolean;
+  isAutoScrolling?: RefObject<boolean>;
+  scrollTimeoutRef: RefObject<ReturnType<typeof setTimeout> | undefined>;
+  children?: ReactNode;
+  onCurrentPageChange?: (
+    pageId: string,
+    disableScrollIntoView?: boolean
+  ) => void;
+  onPageSettingsToggle?: () => void;
+  onPageSelect?: (pageId?: string | undefined) => void;
+  onBlockCreate?: (
+    extensionId?: string | undefined,
+    pluginId?: string | undefined,
+    index?: number | undefined
+  ) => Promise<void> | undefined;
+  onBlockDelete?: (blockId?: string | undefined) => Promise<void> | undefined;
+  onBlockSelect?: (blockId?: string) => void;
+  onPropertyUpdate?: (
+    propertyId?: string,
+    schemaItemId?: string,
+    fieldId?: string,
+    itemId?: string,
+    vt?: ValueType,
+    v?: ValueTypes[ValueType]
+  ) => Promise<void>;
+  onBlockMove?: (id: string, targetIndex: number, blockId: string) => void;
+  onBlockDoubleClick?: (blockId?: string) => void;
+  onPropertyItemAdd?: (
+    propertyId?: string,
+    schemaGroupId?: string
+  ) => Promise<void>;
+  onPropertyItemMove?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string,
+    index?: number
+  ) => Promise<void>;
+  onPropertyItemDelete?: (
+    propertyId?: string,
+    schemaGroupId?: string,
+    itemId?: string
+  ) => Promise<void>;
+  renderBlock?: (block: BlockProps<StoryBlockType>) => ReactNode;
+  nlsLayers?: NLSLayer[];
+};
+const PAGE_DRAG_HANDLE_CLASS_NAME =
+  "reearth-visualizer-editor-page-drag-handle";
+
+const StoryPanel: FC<Props> = ({
+  page,
+  wrapperRef,
+  selectedPageId,
+  selectedStoryBlockId,
+  installableStoryBlocks,
+  showPageSettings,
+  isEditable,
+  scrollTimeoutRef,
+  isAutoScrolling,
+  children,
+  onCurrentPageChange,
+  onPageSettingsToggle,
+  onPageSelect,
+  onBlockCreate,
+  onBlockDelete,
+  onBlockSelect,
+  onBlockDoubleClick,
+  onBlockMove,
+  onPropertyUpdate,
+  onPropertyItemAdd,
+  onPropertyItemMove,
+  onPropertyItemDelete,
+  renderBlock,
+  nlsLayers
+}) => {
+  const t = useT();
+
+  const {
+    openBlocksIndex,
+    titleId,
+    titleProperty,
+    propertyId,
+    panelSettings,
+    storyBlocks,
+    disableSelection,
+    handleBlockOpen,
+    handleBlockCreate,
+    handleMoveEnd
+  } = useHooks({
+    page,
+    isEditable,
+    onBlockCreate,
+    onBlockMove
+  });
+
+  const rootElement = document.getElementById(STORY_PANEL_CONTENT_ELEMENT_ID);
+
+  const minHeight = useMemo(() => {
+    if (!rootElement) return "100%";
+    const height = rootElement.getBoundingClientRect().height;
+    return height > 0 ? `${height - 40}px` : "100%";
+  }, [rootElement]);
+
+  const pageRef = useRef<HTMLDivElement | null>(null);
+
+  const isActive = useElementOnScreen({
+    wrapperRef,
+    elementRef: pageRef
+  });
+
+  // Debounce timer for page changes to prevent rapid switching
+  const pageChangeTimeoutRef = useRef<NodeJS.Timeout>(undefined);
+
+  useEffect(() => {
+    if (isAutoScrolling?.current || !isActive) return;
+
+    const pageElement = pageRef.current;
+    const pageId = pageElement?.id;
+    if (!pageId) return;
+
+    let didScheduleTimeout = false;
+
+    if (isActive) {
+      clearTimeout(pageChangeTimeoutRef.current);
+      pageChangeTimeoutRef.current = setTimeout(() => {
+        onCurrentPageChange?.(pageId, true);
+      }, 150);
+      didScheduleTimeout = true;
+    }
+
+    return () => {
+      if (didScheduleTimeout) {
+        clearTimeout(pageChangeTimeoutRef.current);
+      }
+    };
+  }, [
+    isActive,
+    pageRef,
+    isAutoScrolling,
+    scrollTimeoutRef,
+    onCurrentPageChange
+  ]);
+
+  // Effect to handle resetting auto-scroll flag after any scroll completes
+  useEffect(() => {
+    const wrapperElement = document.getElementById(
+      STORY_PANEL_CONTENT_ELEMENT_ID
+    );
+    if (!wrapperElement) return;
+
+    const handleScroll = () => {
+      // If auto-scrolling, reset the flag after scroll stops
+      if (isAutoScrolling?.current) {
+        clearTimeout(scrollTimeoutRef.current);
+        scrollTimeoutRef.current = setTimeout(() => {
+          isAutoScrolling.current = false;
+        }, 100); // Reset auto-scroll flag 100ms after scroll stops
+      }
+    };
+
+    wrapperElement.addEventListener("scroll", handleScroll, {
+      passive: true
+    });
+
+    return () => {
+      clearTimeout(scrollTimeoutRef.current);
+      wrapperElement.removeEventListener("scroll", handleScroll);
+    };
+  }, [isAutoScrolling, scrollTimeoutRef]);
+
+  const DraggableStoryBlockItems = useMemo(
+    () =>
+      storyBlocks.map((b, idx) => ({
+        id: b.id,
+        content: (
+          <Fragment>
+            <StoryBlock
+              block={b}
+              pageId={page?.id}
+              isSelected={selectedStoryBlockId === b.id}
+              isEditable={isEditable}
+              dragHandleClassName={PAGE_DRAG_HANDLE_CLASS_NAME}
+              onClick={() => onBlockSelect?.(b.id)}
+              onBlockDoubleClick={() => onBlockDoubleClick?.(b.id)}
+              onClickAway={onBlockSelect}
+              onRemove={onBlockDelete}
+              onPropertyUpdate={onPropertyUpdate}
+              onPropertyItemAdd={onPropertyItemAdd}
+              onPropertyItemMove={onPropertyItemMove}
+              onPropertyItemDelete={onPropertyItemDelete}
+              renderBlock={renderBlock}
+              padding={panelSettings?.padding?.value}
+              nlsLayers={nlsLayers}
+            />
+            {isEditable && !disableSelection && (
+              <BlockAddBar
+                id={b.id + "below-bar"}
+                openBlocks={openBlocksIndex === idx}
+                installableBlocks={installableStoryBlocks}
+                showAreaHeight={panelSettings?.gap?.value}
+                parentWidth={STORY_PANEL_WIDTH}
+                onBlockOpen={() => handleBlockOpen(idx)}
+                onBlockAdd={handleBlockCreate(idx + 1)}
+              />
+            )}
+          </Fragment>
+        )
+      })),
+    [
+      storyBlocks,
+      page?.id,
+      selectedStoryBlockId,
+      isEditable,
+      onBlockSelect,
+      onBlockDelete,
+      onPropertyUpdate,
+      onPropertyItemAdd,
+      onPropertyItemMove,
+      onPropertyItemDelete,
+      renderBlock,
+      panelSettings?.padding?.value,
+      panelSettings?.gap?.value,
+      nlsLayers,
+      disableSelection,
+      openBlocksIndex,
+      installableStoryBlocks,
+      handleBlockCreate,
+      onBlockDoubleClick,
+      handleBlockOpen
+    ]
+  );
+  return (
+    <SelectableArea
+      title={page?.title !== "Untitled" ? page?.title : t("Page")}
+      position="left-bottom"
+      icon="storyPage"
+      noBorder
+      isSelected={selectedPageId === page?.id}
+      propertyId={propertyId}
+      contentSettings={panelSettings}
+      showSettings={showPageSettings}
+      isEditable={isEditable}
+      hideHoverUI={disableSelection}
+      domId={`story-page-${page?.id}`}
+      onClick={() => onPageSelect?.(page?.id)}
+      onClickAway={onPageSelect}
+      onSettingsToggle={onPageSettingsToggle}
+      onPropertyUpdate={onPropertyUpdate}
+      onPropertyItemAdd={onPropertyItemAdd}
+      onPropertyItemDelete={onPropertyItemDelete}
+      onPropertyItemMove={onPropertyItemMove}
+    >
+      <ContentWrapper
+        id={page?.id}
+        ref={pageRef}
+        isEditable={isEditable}
+        minPaddingInEditor={MIN_STORY_PAGE_PADDING_IN_EDITOR}
+        padding={panelSettings?.padding?.value}
+        minGapInEditor={MIN_STORY_PAGE_GAP_IN_EDITOR}
+        gap={panelSettings?.gap?.value}
+        minHeight={minHeight}
+      >
+        <PageTitleWrapper>
+          {(isEditable || titleProperty?.title?.title?.value) && (
+            // The title block is a pseudo block.
+            // It is not saved in the story block list and not draggable because
+            // it is actually a field on the story page.
+            <StoryBlock
+              block={{
+                id: titleId,
+                pluginId: "reearth",
+                extensionId: "titleStoryBlock",
+                name: t("Title"),
+                propertyId,
+                property: titleProperty
+              }}
+              isEditable={isEditable}
+              isSelected={selectedStoryBlockId === titleId}
+              onClick={() => onBlockSelect?.(titleId)}
+              onBlockDoubleClick={() => onBlockDoubleClick?.(titleId)}
+              onClickAway={onBlockSelect}
+              onPropertyUpdate={onPropertyUpdate}
+              onPropertyItemAdd={onPropertyItemAdd}
+              onPropertyItemMove={onPropertyItemMove}
+              onPropertyItemDelete={onPropertyItemDelete}
+              renderBlock={renderBlock}
+              nlsLayers={nlsLayers}
+            />
+          )}
+          {isEditable && !disableSelection && (
+            <BlockAddBar
+              id={titleId + "below-bar"}
+              alwaysShow={storyBlocks && storyBlocks.length < 1}
+              openBlocks={openBlocksIndex === -1}
+              installableBlocks={installableStoryBlocks}
+              showAreaHeight={panelSettings?.gap?.value}
+              parentWidth={STORY_PANEL_WIDTH}
+              onBlockOpen={() => handleBlockOpen(-1)}
+              onBlockAdd={handleBlockCreate(0)}
+            />
+          )}
+        </PageTitleWrapper>
+
+        {storyBlocks && storyBlocks.length > 0 && (
+          <DragAndDropList
+            items={DraggableStoryBlockItems}
+            handleClassName={PAGE_DRAG_HANDLE_CLASS_NAME}
+            onMoveEnd={handleMoveEnd}
+            dragDisabled={false}
+            gap={20}
+          />
+        )}
+
+        {children}
+      </ContentWrapper>
+    </SelectableArea>
+  );
+};
+
+export default StoryPanel;
+
+const PageTitleWrapper = styled("div")(() => ({
+  position: "relative"
+}));

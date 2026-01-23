@@ -69,6 +69,7 @@ Search project: プロジェクトを検索
 All projects: すべてのプロジェクト
 Search Result for: 検索結果
 Project Name: プロジェクト名
+Visibility: 表示・非表示切り替え
 Updated At: 更新日時
 Created At: 作成日時
 No Project has been created yet: まだプロジェクトが作成されていません
@@ -77,15 +78,38 @@ Project Setting: プロジェクト設定
 Project Assets: プロジェクトアセット
 Export: エクスポート
 Move to Recycle Bin: ゴミ箱に移動
+Public: 公開
+Private: 非公開
 Create new project: 新しいプロジェクトを作成
 Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
+Project Alias *: プロジェクト別名 *
+'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': '使用できるのは英字、数字、ハイフンのみです。例: https://reearth.io/team-alias/project-alias'
+Project Visibility *: プロジェクトの公開範囲 *
+For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
 Description: 説明
 Write down your content: 内容を書き込む
+Provide a short summary (within 200 characters) describing the purpose or key features of this project.: このプロジェクトの目的や主な特徴を200文字以内で簡潔に説明してください。
+We strongly recommend selecting a license to clarify how others can use your work and to protect your rights as the creator.: 他の人があなたの作品をどのように使用できるかを明確にし、創作者としての権利を保護するために、ライセンスを選択することを強くお勧めします。
+Download Error Log: エラーログをダウンロード
+Ok: 確認
+Import Failed: インポート失敗
+We were unable to import the project.: プロジェクトをインポートできませんでした。
+'Since this file was exported from the system, the structure should be valid. The issue may be caused by:': 'このファイルはシステムからエクスポートされたため、構造は有効であるはずです。問題の原因として考えられるのは以下の通りです:'
+File corruption or incomplete upload: ファイルの破損またはアップロードの不完全
+Version incompatibility: バージョンの互換性の問題
+Permission restrictions: 権限の制限
+A temporary system error: 一時的なシステムエラー
+Please check the issue and try importing again from the start.: 問題を確認し、最初からインポートを再試行してください。
 Your project will be moved to Recycle Bin.: プロジェクトはゴミ箱に移動されます。
 This means the project will no longer be published. But you can still see and recover your project from the Recycle bin.: これによりプロジェクトは公開されなくなりますが、ゴミ箱から閲覧と復元が可能です。
+Change Visibility: 表示を変更する
+Confirm visibility: 表示を確認する
+Project Visibility: プロジェクトの公開範囲
+Private projects are only available on paid plans. Please upgrade your plan.: 非公開プロジェクトは有料プランでのみ利用可能です。プランをアップグレードしてください。
 Starred: スター付き
+Successfully imported project!: プロジェクトのインポートに成功しました！
 No Project in Recycle bin.: ゴミ箱にプロジェクトはありません。
 Recover: 復元
 Delete: 削除
@@ -98,12 +122,14 @@ Members: メンバー
 Recycle bin: ゴミ箱
 Plugin Playground: プラグインプレイグラウンド
 Documentation: ドキュメント
-Community: コミュニティ
-Help & Support: ヘルプ＆サポート
+Discord: ''
+FAQ: ''
 Switch workspace: ワークスペース切り替え
 Personal: 個人
 Team Workspace: チームワークスペース
 Log out: ログアウト
+Desktop: デスクトップ
+Mobile: モバイル
 Page: ページ
 From Assets: アセットから
 From Web: ウェブから
@@ -121,6 +147,8 @@ Support for the CZML format is currently experimental and remains somewhat unsta
 Input Text: テキストを入力
 Value: 値
 Input data here: ここにデータを入力
+Auto Update Time: 自動時間更新
+'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': 有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
 Invalid GeoJSON format: 不正なGeoJSON形式
 Please enter valid GeoJSON: 有効なGeoJSONを入力してください
 Prioritize Performance: パフォーマンスを優先
@@ -138,7 +166,7 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
-Data source: データソース
+Layer: レイヤー
 Layer Name: レイヤー名
 Format: 形式
 Custom property schema: カスタムプロパティスキーマ
@@ -169,7 +197,6 @@ Properties: プロパティ
 Photo Overlay: フォトオーバーレイ
 Photo Overlay Set: フォトオーバーレイ設定
 Not set: 設定されていません
-Layer: レイヤー
 Feature: 地物
 Layer Style: レイヤースタイル
 Infobox: インフォボックス
@@ -181,10 +208,10 @@ Show photo overlay when the user clicks on a layer: レイヤーをクリック�
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
+Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
-Visibility: 表示・非表示切り替え
 Delete this Layer?: このレイヤーを削除しますか？
 Are you sure you want to remove this Layer? If deleted, all data of this layer will be lost and you can not recover it again.: 本当にこのレイヤーを削除しますか？削除すると、このレイヤーのデータはすべて失われ、二度と復元できません。
 Interface: インターフェース
@@ -207,6 +234,7 @@ italic: イタリック
 New node: 新しいノード
 Assign style: スタイルの割り当て
 New style: 新しいスタイル
+Search Map: マップを検索
 Contain: 収める
 Fixed: 固定
 Photo transparency: フォト透過度
@@ -216,6 +244,12 @@ Photo size type: フォトサイズタイプ
 Photo size: フォトサイズ
 Photo description: フォト説明
 Camera: カメラ
+Area: 都道府県
+Dataset Type: カテゴリー
+PLATEAU Data Catalog: PLATEAUデータカタログ
+Search by name: 名前で検索
+No results found: 結果が見つかりません
+Loading...: ロード中...
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -258,7 +292,6 @@ Publish your story: ストーリーを公開する
 Publish your scene: シーンを公開する
 Update your story: ストーリーを更新する
 Update your scene: シーンを更新する
-Ok: 確認
 Congratulations! 🎊 Your story has been published: 🎊おめでとうございます！あなたのストーリーが公開されました。
 Congratulations! 🎊 Your scene has been published: 🎊おめでとうございます！あなたのシーンが公開されました。
 Congratulations! 🎊 Your story has been updated: 🎊おめでとうございます！あなたのストーリーが更新されました。
@@ -299,7 +332,6 @@ Plugin: プラグイン
 Dashboard: ダッシュボード
 Editor: エディタ
 Unknown: 不明
-Asset management: アセット管理
 Map: マップ
 Widgets: ウィジェット
 Re:Earth Visualizer: Re:Earthビジュアライザー
@@ -344,6 +376,7 @@ Enable Terrain: 3D地形を有効にする
 Show Label: ラベルを表示
 Take Screenshot: スクリーンショットを撮る
 Mouse Events: マウスイベント
+Get Current Location: 現在位置を取得
 Add GeoJSON: GeoJSONを追加
 Add Large Geojson: 大容量のGeoJSONを追加
 Add CSV: CSVを追加
@@ -384,13 +417,30 @@ Plugin link copied to clipboard: プラグインのリンクがクリップボ�
 Show Story Panel: ストーリーパネルを表示
 UI Language: UI言語
 General: 一般
-Public: 公開
+README: リードミー
+License: ライセンス
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
+'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': >-
+  プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例:
+  https://reearth.io/team-alias/project-alias
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
+Change project visibility: プロジェクトの公開範囲を変更
+You can choose whether your project is Public or Private.: あなたのプロジェクトを公開または非公開にすることができます。
+Public projects are visible to everyone and can be discovered by others.: 公開プロジェクトは誰でも閲覧可能で、他の人に発見されることがあります。
+Private projects are only accessible to members of the workspace and are available only for workspaces on a paid plan.: 非公開プロジェクトはワークスペースのメンバーのみがアクセスでき、有料プランのワークスペースでのみ利用可能です。
+This setting helps you control who can view and collaborate on your project. You can change the visibility at any time.: この設定により、プロジェクトを閲覧および共同作業できる人を制御できます。表示はいつでも変更可能です。
+Change visibility: 表示を変更する
 Remove this project: このプロジェクトを削除
 This process will move this project to Recycle bin.: この操作によりプロジェクトがゴミ箱に移動します。
+Preview: プレビュー
+Choose a template: テンプレートを選択してください
+Save License: ライセンスを保存
+Write down your license: ライセンスを書き込む
+You can select a license from the following templates to apply to your current project.: 以下のテンプレートからライセンスを選択して、現在のプロジェクトに適用できます。
+Once selected, it will replace the current license setting. Please make sure you understand the implications of the new license.: 選択すると、現在のライセンス設定が置き換えられます。新しいライセンスの影響を十分に理解していることを確認してください。
+Select a license: ライセンスを選択してください
 Plugin Marketplace: プラグインマーケットプレイス
 Public Installed: 公開インストール済み
 Personal Installed: 個人インストール済み
@@ -431,6 +481,8 @@ Username: ユーザー名
 Google Analytics: Googleアナリティクス
 Enable Google Analytics: Googleアナリティクスを有効にする
 Tracking ID: トラッキングID
+README Editing: READMEの編集
+Save README: READMEを保存
 Left: 左
 Right: 右
 Story Panel settings: ストーリーパネル設定
@@ -454,6 +506,8 @@ aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
+New Channel: 新しいチャンネル
+Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
@@ -495,7 +549,6 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-Loading...: ロード中...
 Please select: 選択してください
 This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
 'Sort:': '並び替え:'
@@ -539,6 +592,9 @@ Date: 日付
 Time: 時刻
 Time Zone: タイムゾーン
 Zoom Level Editor: ズームレベルエディター
+Member Limit Exceeded: メンバー上限を超えました
+This workspace has exceeded the member limit for its current plan. Editing is temporarily disabled for all members. Please ask the workspace owner to remove extra members or upgrade the plan to restore access.: >-
+  このワークスペースは、現在のプランのメンバー上限を超えています。すべてのメンバーの編集が一時的に無効になっています。ワークスペースの所有者に、追加のメンバーを削除するか、プランをアップグレードしてアクセスを復元するよう依頼してください。
 Failed to add one or more assets.: アセットの追加に失敗しました。
 Successfully added one or more assets.: アセットの追加に成功しました。
 Failed to delete one or more assets.: アセットの削除に失敗しました。
@@ -555,26 +611,20 @@ Failed to delete block.: ブロックの削除に失敗しました。
 Block was successfully deleted.: ブロックの削除に成功しました。
 Failed to move block.: ブロックの移動に失敗しました。
 Block was successfully moved.: ブロックの移動に成功しました。
-Failed to remove the layer.: レイヤーの削除に失敗しました。
-Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to update the custom property schema.: カスタムプロパティスキーマの更新に失敗しました。
 Successfully updated the custom property schema!: カスタムプロパティスキーマの更新に成功しました！
 Failed to update the custom property title.: カスタムプロパティタイトルの更新に失敗しました
 Successfully updated the custom property title!: カスタムプロパティタイトルの更新に成功しました！
 Failed to remove the custom property.: カスタムプロパティの削除に失敗しました
 Successfully removed the custom property!: カスタムプロパティの削除に成功しました！
+Failed to remove the layer.: レイヤーの削除に失敗しました。
+Successfully removed the layer!: レイヤーの削除に成功しました！
 Failed to add layer style.: レイヤースタイルの追加に失敗しました。
 Successfully added a new layer style!: 新しいレイヤースタイルの追加に成功しました！
 Failed to update the layerStyle.: レイヤースタイルの更新に失敗しました。
 Successfully updated a the layerStyle!: レイヤースタイルの更新に成功しました！
 Failed to delete the layer style.: レイヤースタイルの削除に失敗しました。
 Successfully deleted the layer style!: レイヤースタイルの削除に成功しました！
-Failed to update user password.: ユーザーパスワードの更新に失敗しました。
-Successfully updated user password!: ユーザーパスワードの更新に成功しました！
-Failed to delete user.: ユーザーの削除に失敗しました。
-Successfully delete user!: ユーザーの削除に成功しました！
-Failed to change language.: 言語の変更に失敗しました。
-Successfully updated user language!: ユーザーの言語が更新されました！
 Successfully enabled photo overlay: フォトオーバーレイが有効になりました
 Failed to install plugin.: プラグインのインストールに失敗しました。
 Successfully installed plugin!: プラグインがインストールされました。
@@ -582,7 +632,11 @@ Failed to upgrade plugin.: プラグインのアップグレードに失敗し�
 Successfully upgraded plugin!: プラグインのアップグレードに成功しました！
 Failed to uninstall plugin.: プラグインの削除に失敗しました。
 Successfully uninstalled plugin.: プラグインのアンインストールに成功しました。
-Successfully checked alias!: ''
+Failed to export project.: プロジェクトのエクスポートに失敗しました。
+Successfully exported project!: プロジェクトのエクスポートに成功しました！
+Failed to upload the file.: ファイルのアップロードに失敗しました。
+Failed to upload chunk 0.: チャンク 0 のアップロードに失敗しました。
+Failed to import project.: プロジェクトのインポートに失敗しました。
 Failed to create project.: プロジェクトの作成に失敗しました。
 Default: デフォルト
 Failed to create story page on project creation.: プロジェクト作成時にストーリーページの作成に失敗しました。
@@ -606,10 +660,9 @@ Successfully archive project!: プロジェクトのアーカイブに成功し�
 Successfully unarchived the project. You can now edit this project.: プロジェクトの非編集化が解除されました。このプロジェクトは編集可能です。
 Failed to delete project.: プロジェクトの削除に失敗しました。
 Successfully delete project!: プロジェクトの削除に成功しました！
-Failed to export project.: プロジェクトのエクスポートに失敗しました。
-Successfully exported project!: プロジェクトのエクスポートに成功しました！
-Failed to import project.: プロジェクトのインポートに失敗しました。
-Successfully imported project!: プロジェクトのインポートに成功しました！
+Failed to update project metadata.: プロジェクトのメタデータの更新に失敗しました。
+Successfully updated project metadata!: プロジェクトのメタデータを正常に更新しました！
+Successfully checked alias!: エイリアスを正常に確認しました！
 Failed to update property.: プロパティのアップデートに失敗しました。
 Successfully updated the property value!: プロパティの値が更新されました！
 Failed to create story.: ストーリーの作成に失敗しました。
@@ -631,6 +684,10 @@ Failed to move page.: ページの移動に失敗しました。
 Page was successfully moved.: ページの移動に成功しました。
 Failed to update page.: ページの更新に失敗しました。
 Successfully updated a page!: ページの更新に成功しました！
+Failed to update user password.: ユーザーパスワードの更新に失敗しました。
+Successfully updated user password!: ユーザーパスワードの更新に成功しました！
+Failed to change language.: 言語の変更に失敗しました。
+Successfully updated user language!: ユーザーの言語が更新されました！
 Failed to add widget.: ウィジェットの追加に失敗しました。
 Failed to update widget.: ウィジェットの更新に失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。

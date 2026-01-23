@@ -20,7 +20,9 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
@@ -33,32 +35,31 @@ type Storytelling struct {
 	pluginRepo       repo.Plugin
 	propertyRepo     repo.Property
 	workspaceRepo    accountrepo.Workspace
-	policyRepo       repo.Policy
 	projectRepo      repo.Project
 	sceneRepo        repo.Scene
 	file             gateway.File
 	transaction      usecasex.Transaction
 	nlsLayerRepo     repo.NLSLayer
 	layerStyles      repo.Style
+	policyChecker    gateway.PolicyChecker
 
 	propertySchemaRepo repo.PropertySchema
 }
 
 func NewStorytelling(r *repo.Container, gr *gateway.Container) interfaces.Storytelling {
 	return &Storytelling{
-		commonSceneLock:  commonSceneLock{sceneLockRepo: r.SceneLock},
-		storytellingRepo: r.Storytelling,
-		pluginRepo:       r.Plugin,
-		propertyRepo:     r.Property,
-		workspaceRepo:    r.Workspace,
-		policyRepo:       r.Policy,
-		projectRepo:      r.Project,
-		sceneRepo:        r.Scene,
-		file:             gr.File,
-		transaction:      r.Transaction,
-		nlsLayerRepo:     r.NLSLayer,
-		layerStyles:      r.Style,
-
+		commonSceneLock:    commonSceneLock{sceneLockRepo: r.SceneLock},
+		storytellingRepo:   r.Storytelling,
+		pluginRepo:         r.Plugin,
+		propertyRepo:       r.Property,
+		workspaceRepo:      r.Workspace,
+		projectRepo:        r.Project,
+		sceneRepo:          r.Scene,
+		file:               gr.File,
+		transaction:        r.Transaction,
+		nlsLayerRepo:       r.NLSLayer,
+		layerStyles:        r.Style,
+		policyChecker:      gr.PolicyChecker,
 		propertySchemaRepo: r.PropertySchema,
 	}
 }
@@ -94,8 +95,21 @@ func (i *Storytelling) Create(ctx context.Context, inp interfaces.CreateStoryInp
 		return nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
+	if err != nil {
+		return nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by overused seat", errors.New("operation is disabled by overused seat"))
+	}
+
 	builder := storytelling.NewStory().
 		NewID().
+		Project(sc.Project()).
 		Title(inp.Title).
 		Scene(inp.SceneID).
 		Property(prop.ID()).
@@ -139,6 +153,18 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 	}
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, err
+	}
+
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	if inp.Title != nil && *inp.Title != "" {
@@ -220,11 +246,23 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 		return nil, err
 	}
 
-	// TODO: Handel ordering
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
 
 	if err := i.storytellingRepo.Remove(ctx, inp.StoryID); err != nil {
 		return nil, err
 	}
+
+	// TODO: Handle ordering
 
 	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
@@ -234,7 +272,7 @@ func (i *Storytelling) Remove(ctx context.Context, inp interfaces.RemoveStoryInp
 	return &inp.StoryID, nil
 }
 
-func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.StoryID) (bool, error) {
+func (i *Storytelling) CheckStorytellingAlias(ctx context.Context, newAlias string, sid *id.StoryID) (bool, error) {
 	aliasName := strings.ToLower(newAlias)
 
 	if sid == nil {
@@ -242,16 +280,13 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 		if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
 			return false, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
 			return false, err
 		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+		if err := i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
 			return false, err
 		}
-		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixScene) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
 			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		}
 
@@ -267,7 +302,7 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 			return true, nil
 		}
 
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixScene) {
 			// error 'c-' prefix
 			return false, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
@@ -285,13 +320,10 @@ func (i *Storytelling) CheckAlias(ctx context.Context, newAlias string, sid *id.
 			if err := alias.CheckAliasPatternStorytelling(aliasName); err != nil {
 				return false, err
 			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
 				return false, err
 			}
-			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
+			if err = i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
 				return false, err
 			}
 		}
@@ -323,6 +355,18 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		return nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	prevAlias := story.Alias()
 
 	// if StoryID is not specified
@@ -335,7 +379,7 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	} else {
 		newAlias := strings.ToLower(*inp.Alias)
 
-		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
+		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixScene) {
 			// error 'c-' prefix
 			return nil, alias.ErrInvalidStorytellingInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
 		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
@@ -356,13 +400,10 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 		if err := alias.CheckAliasPatternStorytelling(story.Alias()); err != nil {
 			return nil, err
 		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, story.Alias()); err != nil {
 			return nil, err
 		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
-			return nil, err
-		}
-		if err = i.storytellingRepo.CheckAliasUnique(ctx, story.Alias()); err != nil {
+		if err = i.storytellingRepo.CheckStorytellingAlias(ctx, story.Alias()); err != nil {
 			return nil, err
 		}
 	}
@@ -398,36 +439,9 @@ func (i *Storytelling) Publish(ctx context.Context, inp interfaces.PublishStoryI
 	return story, nil
 }
 
-func (i *Storytelling) checkPublishPolicy(ctx context.Context, story *storytelling.Story, op *usecase.Operator) (*scene.Scene, error) {
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
-	if err != nil {
-		return nil, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, err
-	}
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-		s, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-		if err := p.EnforcePublishedProjectCount(s + 1); err != nil {
-			return nil, err
-		}
-	}
-	return s, nil
-}
-
 func (i *Storytelling) uploadPublishStory(ctx context.Context, story *storytelling.Story, op *usecase.Operator) error {
 
-	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, story, op)
+	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
 	if err != nil {
 		return err
 	}
@@ -511,6 +525,18 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 		return nil, nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	storyPageSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
 	prop, err := i.addNewProperty(ctx, storyPageSchema.ID(), inp.SceneID, &filter)
 	if err != nil {
@@ -539,28 +565,6 @@ func (i *Storytelling) CreatePage(ctx context.Context, inp interfaces.CreatePage
 	page, err := builder.Build()
 	if err != nil {
 		return nil, nil, err
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, nil, err
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		var pageCount = len(story.Pages().Pages())
-		if err := p.EnforcePageCount(pageCount + 1); err != nil {
-			return nil, nil, err
-		}
 	}
 
 	story.Pages().AddAt(page, inp.Index)
@@ -598,6 +602,18 @@ func (i *Storytelling) UpdatePage(ctx context.Context, inp interfaces.UpdatePage
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	page := story.Pages().Page(inp.PageID)
@@ -658,6 +674,18 @@ func (i *Storytelling) RemovePage(ctx context.Context, inp interfaces.RemovePage
 		return nil, nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
 		return nil, nil, interfaces.ErrPageNotFound
@@ -694,6 +722,18 @@ func (i *Storytelling) MovePage(ctx context.Context, inp interfaces.MovePagePara
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, 0, err
+	}
+
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, 0, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
@@ -738,6 +778,18 @@ func (i *Storytelling) DuplicatePage(ctx context.Context, inp interfaces.Duplica
 		return nil, nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
@@ -779,6 +831,18 @@ func (i *Storytelling) AddPageLayer(ctx context.Context, inp interfaces.PageLaye
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
 		return nil, nil, err
+	}
+
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
@@ -831,6 +895,18 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 		return nil, nil, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, interfaces.ErrOperationDenied
 	}
@@ -866,7 +942,7 @@ func (i *Storytelling) RemovePageLayer(ctx context.Context, inp interfaces.PageL
 func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlockParam, op *usecase.Operator) (*storytelling.Story, *storytelling.Page, *storytelling.Block, int, error) {
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to begin transaction", err)
 	}
 
 	ctx = tx.Context()
@@ -878,52 +954,32 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 
 	story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find story", err)
 	}
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to check scene", err)
 	}
 
-	s, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to find scene", err)
 	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
 	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, nil, nil, -1, err
-		}
-
-		story, err := i.storytellingRepo.FindByID(ctx, inp.StoryID)
-		if err != nil {
-			return nil, nil, nil, -1, err
-		}
-
-		page := story.Pages().Page(inp.PageID)
-		if page == nil {
-			return nil, nil, nil, -1, interfaces.ErrPageNotFound
-		}
-
-		var s = page.Count()
-		if err := p.EnforceBlocksCount(s + 1); err != nil {
-			return nil, nil, nil, -1, err
-		}
+	if !operationAllowed.Allowed {
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	_, extension, err := i.getStoryBlockPlugin(ctx, story.Scene(), inp.PluginID.String(), inp.ExtensionID.String())
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to get story block plugin", err)
 	}
 
 	prop, err := i.addNewProperty(ctx, extension.Schema(), story.Scene(), nil)
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to add new property", err)
 	}
 
 	block, err := storytelling.NewBlock().
@@ -933,7 +989,7 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 		Property(prop.ID()).
 		Build()
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to build block", err)
 	}
 
 	index := -1
@@ -950,12 +1006,12 @@ func (i *Storytelling) CreateBlock(ctx context.Context, inp interfaces.CreateBlo
 
 	err = i.storytellingRepo.Save(ctx, *story)
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to save story", err)
 	}
 
 	err = updateProjectUpdatedAtByScene(ctx, story.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, nil, nil, -1, err
+		return nil, nil, nil, -1, visualizer.ErrorWithCallerLogging(ctx, "failed to update project updated at", err)
 	}
 
 	tx.Commit()
@@ -981,6 +1037,18 @@ func (i *Storytelling) RemoveBlock(ctx context.Context, inp interfaces.RemoveBlo
 	}
 	if err := i.CanWriteScene(story.Scene(), op); err != nil {
 		return nil, nil, nil, err
+	}
+
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	page := story.Pages().Page(inp.PageID)
@@ -1033,6 +1101,18 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 		return nil, nil, nil, inp.Index, err
 	}
 
+	sc, err := i.sceneRepo.FindByID(ctx, story.Scene())
+	if err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, nil, nil, inp.Index, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, nil, nil, inp.Index, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	page := story.Pages().Page(inp.PageID)
 	if page == nil {
 		return nil, nil, nil, inp.Index, interfaces.ErrPageNotFound
@@ -1057,37 +1137,53 @@ func (i *Storytelling) MoveBlock(ctx context.Context, inp interfaces.MoveBlockPa
 	return story, page, &inp.BlockID, inp.Index, nil
 }
 
-func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data *[]byte) (*storytelling.Story, error) {
+func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data *[]byte) (map[string]any, error) {
 
 	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
 		return nil, err
 	}
 
-	filter := Filter(sceneID)
+	sc, err := i.sceneRepo.FindByID(ctx, sceneID)
+	if err != nil {
+		return nil, err
+	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(sc.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
 
+	filter := Filter(sceneID)
 	storyJSON := sceneJSON.Story
+	result := map[string]any{}
 
 	pages := []*storytelling.Page{}
-	for _, pageJSON := range storyJSON.Pages {
+	resultPages := map[string]any{}
+	for pIndex, pageJSON := range storyJSON.Pages {
 
 		blocks := storytelling.BlockList{}
-		for _, blockJSON := range pageJSON.Blocks {
+		resultBlocks := map[string]any{}
+		for bIndex, blockJSON := range pageJSON.Blocks {
 
 			plg, extension, err := i.getStoryBlockPlugin(ctx, sceneID, blockJSON.PluginId, blockJSON.ExtensionId)
 			if err != nil {
-				return nil, err
+				log.Errorf("fail StoryBlock plugin : %v\n", err)
+				return result, err
 			}
 
 			propB, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 			if err != nil {
-				return nil, err
+				log.Errorf("fail StoryBlock add property: %v", err)
+				return result, err
 			}
 			builder.PropertyUpdate(ctx, propB, i.propertyRepo, i.propertySchemaRepo, blockJSON.Property)
-			for k, v := range blockJSON.Plugins {
-				fmt.Println("Unsupported blockJSON.Plugins ", k, v)
-			}
 
+			for k, v := range blockJSON.Plugins {
+				log.Errorf("Unsupported StoryBlock plugin: %s value: %v", k, v)
+			}
 			block, err := storytelling.NewBlock().
 				ID(id.NewBlockID()).
 				Property(propB.ID()).
@@ -1095,18 +1191,21 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 				Extension(id.PluginExtensionID(blockJSON.ExtensionId)).
 				Build()
 			if err != nil {
-				return nil, err
+				log.Errorf("fail StoryBlock Build: %v", err)
+				return result, err
 			}
-
 			blocks = append(blocks, block)
 
+			fmt.Println("[Import StoryPageBlock]", extension.Name())
+			resultBlocks[fmt.Sprintf("block%d", bIndex)] = extension.Name()
 		}
 
 		storyPageSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStoryPage)
 
 		propP, err := i.addNewProperty(ctx, storyPageSchema.ID(), sceneID, &filter)
 		if err != nil {
-			return nil, err
+			log.Errorf("fail StoryPage add property: %v", err)
+			return result, err
 		}
 
 		builder.PropertyUpdate(ctx, propP, i.propertyRepo, i.propertySchemaRepo, pageJSON.Property)
@@ -1124,7 +1223,6 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 				layers = append(layers, id)
 			}
 		}
-
 		page, err := storytelling.NewPage().
 			ID(id.NewPageID()).
 			Property(propP.ID()).
@@ -1135,17 +1233,22 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 			Layers(layers).
 			Build()
 		if err != nil {
-			return nil, err
+			log.Errorf("fail save StoryPage : %v", err)
+			return result, err
 		}
 
 		pages = append(pages, page)
 
+		fmt.Println("[Import StoryPage]", pageJSON.Title)
+		resultPages[fmt.Sprintf("page%d", pIndex)] = pageJSON.Title
+		resultPages[fmt.Sprintf("page%d_blocks", pIndex)] = resultBlocks
 	}
 
 	storySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDStory)
 	propS, err := i.addNewProperty(ctx, storySchema.ID(), sceneID, &filter)
 	if err != nil {
-		return nil, err
+		log.Errorf("fail Story add property: %v", err)
+		return result, err
 	}
 
 	builder.PropertyUpdate(ctx, propS, i.propertyRepo, i.propertySchemaRepo, storyJSON.Property)
@@ -1160,17 +1263,18 @@ func (i *Storytelling) ImportStory(ctx context.Context, sceneID id.SceneID, data
 		BgColor(storyJSON.BgColor).
 		Build()
 	if err != nil {
-		return nil, err
+		log.Errorf("fail Story build : %v", err)
+		return result, err
 	}
 
 	if err := i.storytellingRepo.Filtered(filter).Save(ctx, *story); err != nil {
-		return nil, err
+		log.Errorf("fail save Story : %v", err)
+		return result, err
 	}
 
-	result, err := i.storytellingRepo.Filtered(filter).FindByID(ctx, story.Id())
-	if err != nil {
-		return nil, err
-	}
+	fmt.Println("[Import Story]", storyJSON.Title)
+	result["name"] = storyJSON.Title
+	result["pages"] = resultPages
 	return result, nil
 }
 

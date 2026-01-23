@@ -139,7 +139,7 @@ type Storytelling interface {
 	Move(context.Context, MoveStoryInput, *usecase.Operator) (*id.StoryID, int, error)
 
 	Publish(context.Context, PublishStoryInput, *usecase.Operator) (*storytelling.Story, error)
-	CheckAlias(context.Context, string, *id.StoryID) (bool, error)
+	CheckStorytellingAlias(context.Context, string, *id.StoryID) (bool, error)
 
 	CreatePage(context.Context, CreatePageParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
 	UpdatePage(context.Context, UpdatePageParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, error)
@@ -154,5 +154,5 @@ type Storytelling interface {
 	RemoveBlock(context.Context, RemoveBlockParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, error)
 	MoveBlock(context.Context, MoveBlockParam, *usecase.Operator) (*storytelling.Story, *storytelling.Page, *id.BlockID, int, error)
 
-	ImportStory(context.Context, id.SceneID, *[]byte) (*storytelling.Story, error)
+	ImportStory(context.Context, id.SceneID, *[]byte) (map[string]any, error)
 }

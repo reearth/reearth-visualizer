@@ -4,6 +4,7 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/joho/godotenv"
 	"github.com/k0kubun/pp/v3"
@@ -23,34 +24,40 @@ func init() {
 type Mailer mailer.Mailer
 type Config struct {
 	mailer.Config
-	Port             string            `default:"8080" envconfig:"PORT"`
-	ServerHost       string            `pp:",omitempty"`
-	Host             string            `default:"http://localhost:8080"`
-	Host_Web         string            `pp:",omitempty"`
-	Dev              bool              `pp:",omitempty"`
-	DB               string            `default:"mongodb://localhost"`
-	DB_Account       string            `default:"reearth_account" pp:",omitempty"`
-	DB_Users         []appx.NamedURI   `pp:",omitempty"`
-	DB_Vis           string            `default:"reearth" pp:",omitempty"`
-	GraphQL          GraphQLConfig     `pp:",omitempty"`
-	Published        PublishedConfig   `pp:",omitempty"`
-	GCPProject       string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
-	Profiler         string            `pp:",omitempty"`
-	Tracer           string            `pp:",omitempty"`
-	TracerSample     float64           `pp:",omitempty"`
-	Marketplace      MarketplaceConfig `pp:",omitempty"`
-	AssetBaseURL     string            `default:"http://localhost:8080/assets"`
-	Origins          []string          `pp:",omitempty"`
-	Policy           PolicyConfig      `pp:",omitempty"`
-	Web_Disabled     bool              `pp:",omitempty"`
-	Web_App_Disabled bool              `pp:",omitempty"`
-	Web              map[string]string `pp:",omitempty"`
-	Web_Config       JSON              `pp:",omitempty"`
-	Web_Title        string            `pp:",omitempty"`
-	Web_FaviconURL   string            `pp:",omitempty"`
-	SignupSecret     string            `pp:",omitempty"`
-	SignupDisabled   bool              `pp:",omitempty"`
-	HTTPSREDIRECT    bool              `pp:",omitempty"`
+	Port                   string            `default:"8080" envconfig:"PORT"`
+	ServerHost             string            `pp:",omitempty"`
+	Host                   string            `default:"http://localhost:8080"`
+	Host_Web               string            `pp:",omitempty"`
+	Dev                    bool              `pp:",omitempty"`
+	DB                     string            `default:"mongodb://localhost"`
+	DB_Account             string            `default:"reearth_account" pp:",omitempty"`
+	DB_Users               []appx.NamedURI   `pp:",omitempty"`
+	DB_Vis                 string            `default:"reearth" pp:",omitempty"`
+	GraphQL                GraphQLConfig     `pp:",omitempty"`
+	Published              PublishedConfig   `pp:",omitempty"`
+	GCPProject             string            `envconfig:"GOOGLE_CLOUD_PROJECT" pp:",omitempty"`
+	OtelEnabled            bool              `envconfig:"REEARTH_OTEL_ENABLED" default:"false"`
+	OtelEndpoint           string            `envconfig:"REEARTH_OTEL_ENDPOINT" default:"localhost:4317"`
+	OtelExporterType       string            `envconfig:"REEARTH_OTEL_EXPORTER_TYPE" default:"otlp"` // otlp, jaeger, or gcp
+	OtelBatchTimeout       time.Duration     `envconfig:"REEARTH_OTEL_BATCH_TIMEOUT" default:"1s"`   // seconds
+	OtelMaxExportBatchSize int               `envconfig:"REEARTH_OTEL_MAX_EXPORT_BATCH_SIZE" default:"512"`
+	OtelMaxQueueSize       int               `envconfig:"REEARTH_OTEL_MAX_QUEUE_SIZE" default:"2048"`
+	OtelSamplingRatio      float64           `envconfig:"REEARTH_OTEL_SAMPLING_RATIO" default:"1.0"` // 0.0 to 1.0
+	Profiler               string            `pp:",omitempty"`
+	Tracer                 string            `pp:",omitempty"`
+	TracerSample           float64           `default:"0.01" envconfig:"REEARTH_TRACER_SAMPLE" pp:",omitempty"`
+	Marketplace            MarketplaceConfig `pp:",omitempty"`
+	AssetBaseURL           string            `default:"http://localhost:8080/assets"`
+	Origins                []string          `pp:",omitempty"`
+	Web_Disabled           bool              `pp:",omitempty"`
+	Web_App_Disabled       bool              `pp:",omitempty"`
+	Web                    map[string]string `pp:",omitempty"`
+	Web_Config             JSON              `pp:",omitempty"`
+	Web_Title              string            `pp:",omitempty"`
+	Web_FaviconURL         string            `pp:",omitempty"`
+	SignupSecret           string            `pp:",omitempty"`
+	SignupDisabled         bool              `pp:",omitempty"`
+	HTTPSREDIRECT          bool              `pp:",omitempty"`
 
 	// storage
 	GCS GCSConfig `pp:",omitempty"`
@@ -60,7 +67,6 @@ type Config struct {
 	Auth          AuthConfigs   `pp:",omitempty"`
 	Auth0         Auth0Config   `pp:",omitempty"`
 	Cognito       CognitoConfig `pp:",omitempty"`
-	AuthSrv       AuthSrvConfig `pp:",omitempty"`
 	Auth_ISS      string        `pp:",omitempty"`
 	Auth_AUD      string        `pp:",omitempty"`
 	Auth_ALG      *string       `pp:",omitempty"`
@@ -77,6 +83,15 @@ type Config struct {
 	HealthCheck HealthCheckConfig `pp:",omitempty"`
 
 	Visualizer VisualizerConfig `pp:",omitempty"`
+
+	// Accounts API Configuration
+	AccountsAPI AccountsAPIConfig `pp:",omitempty"`
+}
+
+type AccountsAPIConfig struct {
+	Enabled bool   `default:"false"`
+	Host    string `default:"http://localhost:8081"`
+	Timeout int    `default:"30"`
 }
 
 type HealthCheckConfig struct {
@@ -86,18 +101,44 @@ type HealthCheckConfig struct {
 
 type VisualizerConfig struct {
 	InternalApi InternalApiConfig `pp:",omitempty"`
+
+	// Policy Checker Configuration
+	Policy        Policy              `pp:",omitempty"`
+	DomainChecker DomainCheckerConfig `pp:",omitempty"`
+}
+
+type Policy struct {
+	Checker CheckerConfig
+}
+
+type CheckerConfig struct {
+	Type     string `default:"permissive"`
+	Endpoint string
+	Token    string
+	Timeout  int `default:"30"`
+}
+
+type DomainCheckerConfig struct {
+	Type     string `default:"default"`
+	Endpoint string
+	Token    string
+	Timeout  int `default:"30"`
 }
 
 type InternalApiConfig struct {
-	Active bool `default:"false" pp:",omitempty"`
+	Active bool   `default:"false" pp:",omitempty"`
+	Port   string `default:"50051" pp:",omitempty"`
+	Token  string `default:"" pp:",omitempty"`
 }
 
 func ReadConfig(debug bool) (*Config, error) {
-	// load .env
-	if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
-		return nil, err
-	} else if err == nil {
-		log.Infof("config: .env loaded")
+	// load .env (skip if SKIP_DOTENV is set, e.g., when using docker-compose with env_file)
+	if os.Getenv("SKIP_DOTENV") == "" {
+		if err := godotenv.Load(".env"); err != nil && !os.IsNotExist(err) {
+			return nil, err
+		} else if err == nil {
+			log.Infof("config: .env loaded")
+		}
 	}
 
 	var c Config
@@ -115,20 +156,8 @@ func ReadConfig(debug bool) (*Config, error) {
 		c.Host_Web = addHTTPScheme(c.Host_Web)
 	}
 
-	if c.AuthSrv.Domain == "" {
-		c.AuthSrv.Domain = c.Host
-	} else {
-		c.AuthSrv.Domain = addHTTPScheme(c.AuthSrv.Domain)
-	}
-
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
-	}
-
-	if c.AuthSrv.UIDomain == "" {
-		c.AuthSrv.UIDomain = c.Host_Web
-	} else {
-		c.AuthSrv.UIDomain = addHTTPScheme(c.AuthSrv.UIDomain)
 	}
 
 	return &c, err
@@ -147,6 +176,10 @@ func (c *Config) Print() string {
 
 func (c *Config) UseMockAuth() bool {
 	return c.Dev && c.MockAuth
+}
+
+func (c *Config) UseReearthAccountAuth() bool {
+	return c.AccountsAPI.Enabled
 }
 
 func (c *Config) secrets() []string {
@@ -193,9 +226,6 @@ func (c *Config) Auths() (res AuthConfigs) {
 			JWKSURI:  c.Auth_JWKSURI,
 		})
 	}
-	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
-		res = append(res, *ac)
-	}
 	return append(res, c.Auth...)
 }
 
@@ -238,9 +268,6 @@ func (c *Config) AuthForWeb() *AuthConfig {
 			TTL:      c.Auth_TTL,
 			ClientID: c.Auth_ClientID,
 		}
-	}
-	if ac := c.AuthSrv.AuthConfig(c.Dev, c.Host); ac != nil {
-		return ac
 	}
 	return nil
 }

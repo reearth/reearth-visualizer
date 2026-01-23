@@ -5,8 +5,9 @@ export const GET_SCENE = gql(`
     node(id: $sceneId, type: SCENE) {
       id
       ... on Scene {
-        teamId
+        workspaceId
         projectId
+        alias
         property {
           id
           ...PropertyFragment
@@ -32,7 +33,12 @@ export const GET_SCENE = gql(`
           }
         }
         widgetAlignSystem {
-          ...WidgetAlignSystemFragment
+          desktop {
+            ...WidgetAlignSystemFragment
+          }
+          mobile {
+            ...WidgetAlignSystemFragment
+          }
         }
         stories {
           ...StoryFragment
@@ -54,6 +60,15 @@ export const CREATE_SCENE = gql(`
       scene {
         id
       }
+    }
+  }
+`);
+
+export const CHECK_SCENE_ALIAS = gql(`
+  query CheckSceneAlias($alias: String!, $projectId: ID){
+    checkSceneAlias(alias: $alias, projectId: $projectId) {
+      alias
+      available
     }
   }
 `);

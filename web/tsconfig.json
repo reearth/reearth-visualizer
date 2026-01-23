@@ -4,14 +4,10 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "noEmit": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "Bundler",
     "noImplicitReturns": true,
     "noImplicitAny": true,
     "pretty": true,
@@ -22,15 +18,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {
-      "@reearth/e2e/*": [
-        "e2e/*"
-      ],
-      "@reearth/*": [
-        "src/*"
-      ],
-      "@reearth-widget-ui/*": [
-        "src/beta/lib/reearth-widget-ui/*"
-      ]
+      "@reearth/*": ["src/*"],
+      "@reearth-widget-ui/*": ["src/app/lib/reearth-widget-ui/*"],
+      "react-align": ["node_modules/react-align/dist/index.d.ts"],
+      "quickjs-emscripten-sync": ["node_modules/quickjs-emscripten-sync/dist/index.d.ts"]
     },
     "plugins": [
       {
@@ -38,14 +29,8 @@
       }
     ]
   },
-  "exclude": [
-    "src/beta/lib/unsafeBuiltinPlugins",
-    "dist"
-  ],
-  "include": [
-    "src",
-    "eslint.config.mjs"
-  ],
+  "exclude": ["src/app/lib/unsafeBuiltinPlugins", "dist"],
+  "include": ["src", "eslint.config.mjs"],
   "ts-node": {
     "compilerOptions": {
       "module": "CommonJS"

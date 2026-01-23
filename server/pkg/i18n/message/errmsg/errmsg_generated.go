@@ -10,7 +10,9 @@ const (
 	ErrKeyPkgProjectAliasAlreadyExists message.ErrKey = "pkg.project.alias_already_exists"
 	ErrKeyPkgProjectInvalidAlias message.ErrKey = "pkg.project.invalid_alias"
 	ErrKeyPkgProjectInvalidPrefixAlias message.ErrKey = "pkg.project.invalid_prefix_alias"
+	ErrKeyPkgProjectInvalidProjectAlias message.ErrKey = "pkg.project.invalid_project_alias"
 	ErrKeyPkgProjectInvalidReservedAlias message.ErrKey = "pkg.project.invalid_reserved_alias"
+	ErrKeyPkgProjectProjectAliasAlreadyExists message.ErrKey = "pkg.project.project_alias_already_exists"
 	ErrKeyPkgStorytellingAliasAlreadyExists message.ErrKey = "pkg.storytelling.alias_already_exists"
 	ErrKeyPkgStorytellingInvalidAlias message.ErrKey = "pkg.storytelling.invalid_alias"
 	ErrKeyPkgStorytellingInvalidPrefixAlias message.ErrKey = "pkg.storytelling.invalid_prefix_alias"
@@ -48,6 +50,16 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 			Description: "エイリアス名の先頭が 'c-' または 's-' で始まるものは予約されており、使用できません。",
 		},
 	},
+	ErrKeyPkgProjectInvalidProjectAlias: {
+		language.English: {
+			Message:     "Invalid alias name: {{.aliasName}}",
+			Description: "The entered alias contains characters that are not allowed.",
+		},
+		language.Japanese: {
+			Message:     "不正なエイリアス名です: {{.aliasName}}",
+			Description: "入力されたエイリアスに使用できない文字が含まれています。",
+		},
+	},
 	ErrKeyPkgProjectInvalidReservedAlias: {
 		language.English: {
 			Message:     "The alias '{{.aliasName}}' is reserved and cannot be used.",
@@ -56,6 +68,16 @@ var ErrorMessages = map[message.ErrKey]map[language.Tag]message.ErrorMessage{
 		language.Japanese: {
 			Message:     "予約済みのエイリアス名は使用できません: {{.aliasName}}",
 			Description: "次のようなエイリアス名は予約されており、使用できません: administrator,development",
+		},
+	},
+	ErrKeyPkgProjectProjectAliasAlreadyExists: {
+		language.English: {
+			Message:     "The alias is already in use within the workspace. Please try a different value.",
+			Description: "Project aliases must be unique within a workspace.",
+		},
+		language.Japanese: {
+			Message:     "そのエイリアスはワークスペース内で既に使用されています。別の値を試してください",
+			Description: "ワークスペース内でプロジェクトのエイリアスは一意である必要があります。",
 		},
 	},
 	ErrKeyPkgStorytellingAliasAlreadyExists: {

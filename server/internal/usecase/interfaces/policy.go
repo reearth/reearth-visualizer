@@ -4,8 +4,9 @@ import (
 	"context"
 
 	"github.com/reearth/reearth/server/pkg/policy"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
 type Policy interface {
-	FetchPolicy(ctx context.Context, ids []policy.ID) ([]*policy.Policy, error)
+	GetWorkspacePolicy(ctx context.Context, workspaceID workspace.ID) (*policy.WorkspacePolicy, error)
 }

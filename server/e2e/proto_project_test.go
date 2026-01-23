@@ -2,6 +2,8 @@ package e2e
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"testing"
@@ -13,89 +15,30 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 // export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI ./e2e/...
+// go test -v -run TestInternalAPI_Basic ./e2e/...
 
-func TestInternalAPI_private(t *testing.T) {
+func TestInternalAPI_Basic(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
-
-	// user1: workspaceId: wID   userId: uID
-	// user2: workspaceId: wID2  userId: uID2
-
-	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// create default Project -> private
-		CreateProjectInternal(
-			t, ctx, r, client, "private",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				// Visibility:  nil,
-			})
-
-		// create private Project
-		CreateProjectInternal(
-			t, ctx, r, client, "private",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				Visibility:  lo.ToPtr("private"),
-			})
-
-		// 0: creante seeder => private
-		// 1: creante default => private
-		// 2: creante private => private
-
-		// get list size 3
-		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
-		assert.Equal(t, "private", res3.Projects[0].Visibility)
-		assert.Equal(t, "private", res3.Projects[1].Visibility)
-		assert.Equal(t, "private", res3.Projects[2].Visibility)
-
-	})
-
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-		// get list size 0
-		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 0, len(res4.Projects))
-	})
-
-}
-
-func TestInternalAPI_public(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-
-	var publicProjectId string
+	testWorkspace := wID.String()
 
 	// user1 call api
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
-		CreateProjectInternal(
+		pid1 := createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -104,102 +47,10 @@ func TestInternalAPI_public(t *testing.T) {
 			})
 
 		// create private Project
-		CreateProjectInternal(
+		pid2 := createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				Visibility:  lo.ToPtr("private"),
-			})
-
-		// 0: creante seeder => private
-		// 1: creante public => public
-		// 2: creante private => private
-
-		// get list size 3
-		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
-		assert.Equal(t, "private", res3.Projects[0].Visibility)
-		assert.Equal(t, "public", res3.Projects[1].Visibility)
-		assert.Equal(t, "private", res3.Projects[2].Visibility)
-
-		publicProjectId = res3.Projects[1].Id
-
-	})
-
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-		// get list size 1
-		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res4.Projects))
-
-		// test DeleteProject
-		res5, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
-			ProjectId: publicProjectId,
-		})
-		assert.Equal(t, "rpc error: code = Unknown desc = operation denied", err.Error())
-		assert.Nil(t, res5)
-
-	})
-
-	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// test DeleteProject
-		res6, err := client.DeleteProject(ctx, &pb.DeleteProjectRequest{
-			ProjectId: publicProjectId,
-		})
-		assert.Nil(t, err)
-		assert.NotNil(t, res6)
-
-	})
-
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// get list size 0
-		res7, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(), // not wID2
-		})
-		assert.Nil(t, err)
-		assert.Equal(t, 0, len(res7.Projects))
-
-	})
-
-}
-
-func TestInternalAPI(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-
-	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-
-		// create public Project
-		pid1 := CreateProjectInternal(
-			t, ctx, r, client, "public",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
-				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
-				Name:        lo.ToPtr("Test Project1"),
-				Description: lo.ToPtr("Test Description1"),
-				CoreSupport: lo.ToPtr(true),
-				Visibility:  lo.ToPtr("public"),
-			})
-
-		// create private Project
-		pid2 := CreateProjectInternal(
-			t, ctx, r, client, "private",
-			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -208,10 +59,10 @@ func TestInternalAPI(t *testing.T) {
 			})
 
 		// create public Project2
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -219,10 +70,10 @@ func TestInternalAPI(t *testing.T) {
 				Visibility:  lo.ToPtr("public"),
 			})
 
-		CreateProjectInternal(
+		createProjectInternal(
 			t, ctx, r, client, "private",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
@@ -230,111 +81,376 @@ func TestInternalAPI(t *testing.T) {
 				Visibility:  lo.ToPtr("private"),
 			})
 
-		LogicalDeleteProject(t, ctx, r, pid1)
-		LogicalDeleteProject(t, ctx, r, pid2)
+		logicalDeleteProject(t, ctx, r, pid1)
+		logicalDeleteProject(t, ctx, r, pid2)
 
-		// 0: creante seeder  => private  delete => false
-		// 1: creante public  => public   delete => true !!
-		// 2: creante private => private  delete => true !!
-		// 3: creante public  => public   delete => false
-		// 4: creante private => private  delete => false
+		// 0: creante public  => public   delete => true
+		// 1: creante private => private  delete => true
+		// 2: creante public  => public   delete => false
+		// 3: creante private => private  delete => false
 
 		// get list size 5
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 5, len(res3.Projects))
+		assert.Equal(t, 4, len(res3.Projects))
 
 	})
 
 	// user2 call api
 	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
-		// get list size 1
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: false,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(res3.Projects))
-		// 3: creante public  => public   delete => false
+		assert.Equal(t, 2, len(res3.Projects))
 
-		// Authenticated => get list size 5
 		res4, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId:   wID.String(),
 			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 5, len(res4.Projects))
+		assert.Equal(t, 2, len(res4.Projects))
 
 	})
 
 	// user3 call api (menber)
 	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
-		// get list size 3
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
-			WorkspaceId: wID.String(),
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, 3, len(res3.Projects))
-
-		// 0: creante seeder  => private  delete => false
-		// 3: creante public  => public   delete => false
-		// 4: creante private => private  delete => false
+		assert.Equal(t, 4, len(res3.Projects))
 	})
 
 }
 
-func TestInternalAPI_update(t *testing.T) {
+func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
 
-	var pid1 id.ProjectID
-	// user1 call api
 	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+		// Create 15 test projects for pagination testing
+		projectIDs := make([]id.ProjectID, 15)
+		for i := range [15]int{} {
+			pid := createProjectInternal(
+				t, ctx, r, client, "public",
+				&pb.CreateProjectRequest{
+					WorkspaceId: testWorkspace,
+					Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+					Name:        lo.ToPtr(fmt.Sprintf("Test Project %d", i)),
+					Description: lo.ToPtr(fmt.Sprintf("Test Description %d", i)),
+					CoreSupport: lo.ToPtr(true),
+					Visibility:  lo.ToPtr("public"),
+				})
+			projectIDs[i] = pid
+		}
 
-		// create public Project
-		pid1 = CreateProjectInternal(
+		t.Run("First page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(0)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.True(t, res.PageInfo.HasNextPage)
+			assert.False(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Middle page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(5)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.True(t, res.PageInfo.HasNextPage)
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Last page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(10)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.False(t, res.PageInfo.HasNextPage)           // 16 > 10+5 = 16 > 15 is true, but this represents the exact last page
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Beyond last page with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(15)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 0, len(res.Projects))               // No projects remaining (offset 15 is beyond items 0-15)
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.False(t, res.PageInfo.HasNextPage)
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Offset beyond total count", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: true,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(20)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 0, len(res.Projects))
+			assert.Equal(t, int64(16), res.PageInfo.TotalCount) // 15 + 1 from baseSeeder
+			assert.False(t, res.PageInfo.HasNextPage)
+			assert.True(t, res.PageInfo.HasPreviousPage)
+		})
+
+		t.Run("Authenticated false with offset pagination", func(t *testing.T) {
+			res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+				Authenticated: false,
+				WorkspaceId:   &testWorkspace,
+				Pagination: &pb.Pagination{
+					Offset: lo.ToPtr(int64(0)),
+					Limit:  lo.ToPtr(int64(5)),
+				},
+			})
+			assert.Nil(t, err)
+			assert.Equal(t, 5, len(res.Projects))               // All projects are public
+			assert.Equal(t, int64(15), res.PageInfo.TotalCount) // baseSeeder project is private, so not counted
+			assert.True(t, res.PageInfo.HasNextPage)
+			assert.False(t, res.PageInfo.HasPreviousPage)
+		})
+	})
+}
+
+func TestInternalAPI_create(t *testing.T) {
+	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+		res, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId: testWorkspace,
+			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+			Name:        lo.ToPtr("Test Project1"),
+			Description: lo.ToPtr("Test Description1"),
+			CoreSupport: lo.ToPtr(true),
+			Visibility:  lo.ToPtr("public"),
+		})
+		require.Nil(t, err)
+		require.NotNil(t, res.GetProject())
+		pid, err := id.ProjectIDFrom(res.GetProject().Id)
+		assert.Nil(t, err)
+		prj, err := r.Project.FindByID(ctx, pid)
+		assert.Nil(t, err)
+		assert.Equal(t, "p-"+pid.String(), prj.ProjectAlias())
+
+		res, err = client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId:  testWorkspace,
+			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
+			Name:         lo.ToPtr("Test Project1"),
+			Description:  lo.ToPtr("Test Description1"),
+			CoreSupport:  lo.ToPtr(true),
+			Visibility:   lo.ToPtr("public"),
+			ProjectAlias: lo.ToPtr("test-xxxxxxx"),
+		})
+		require.Nil(t, err)
+		require.NotNil(t, res.GetProject())
+		pid, err = id.ProjectIDFrom(res.GetProject().Id)
+		assert.Nil(t, err)
+		prj, err = r.Project.FindByID(ctx, pid)
+		assert.Nil(t, err)
+		assert.Equal(t, "test-xxxxxxx", prj.ProjectAlias())
+
+		_, err = client.CreateProject(ctx, &pb.CreateProjectRequest{
+			WorkspaceId:  testWorkspace,
+			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
+			Name:         lo.ToPtr("Test Project1"),
+			Description:  lo.ToPtr("Test Description1"),
+			CoreSupport:  lo.ToPtr(true),
+			ProjectAlias: lo.ToPtr("test-xxxxxxx"), // Already Exists
+		})
+		require.NotNil(t, err)
+		assert.Equal(t, "rpc error: code = Unknown desc = The alias is already in use within the workspace. Please try a different value.", err.Error())
+	})
+}
+
+func TestInternalAPI_unit(t *testing.T) {
+	_, r, _ := GRPCServer(t, baseSeeder)
+	testWorkspace := wID.String()
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+		// Create Project
+		pid := createProjectInternal(
 			t, ctx, r, client, "public",
 			&pb.CreateProjectRequest{
-				WorkspaceId: wID.String(),
+				WorkspaceId: testWorkspace,
 				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
 				Name:        lo.ToPtr("Test Project1"),
 				Description: lo.ToPtr("Test Description1"),
 				CoreSupport: lo.ToPtr(true),
 				Visibility:  lo.ToPtr("public"),
 			})
-		v := "private"
-		res, err := client.UpdateProjectVisibility(ctx, &pb.UpdateProjectVisibilityRequest{
-			ProjectId:  pid1.String(),
-			Visibility: &v,
+		createProjectInternal(
+			t, ctx, r, client, "public",
+			&pb.CreateProjectRequest{
+				WorkspaceId: testWorkspace,
+				Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
+				Name:        lo.ToPtr("Test Project1"),
+				Description: lo.ToPtr("Test Description1"),
+				CoreSupport: lo.ToPtr(true),
+				Visibility:  lo.ToPtr("public"),
+			})
+		UpdateProjectMetadata(
+			t, ctx, r, client,
+			&pb.UpdateProjectMetadataRequest{
+				ProjectId: pid.String(),
+				Readme:    lo.ToPtr("test readme"),
+				License:   lo.ToPtr("test license"),
+				Topics:    &pb.Topics{Values: []string{"test topics"}},
+			},
+		)
+		res, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
+			Authenticated: true,
+			WorkspaceId:   &testWorkspace,
 		})
 		assert.Nil(t, err)
-		assert.Equal(t, v, res.Project.Visibility)
-	})
+		assert.Equal(t, 2, len(res.Projects))
 
-	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+		for _, pj := range res.Projects {
+			if pj.Id == pid.String() {
+				checkProjectFields(t, pj)
+			}
+		}
 
-		v := "public"
-		res, err := client.UpdateProjectVisibility(ctx, &pb.UpdateProjectVisibilityRequest{
-			ProjectId:  pid1.String(),
-			Visibility: &v,
+		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
+			ProjectId: pid.String(),
 		})
-		assert.NotNil(t, err) // error!
-		assert.Nil(t, res)
-	})
+		assert.Nil(t, err)
 
+		checkProjectFields(t, res2.Project)
+		// PbDump(res2.Project)
+
+	})
+}
+
+func checkProjectFields(t *testing.T, project *pb.Project) {
+	b, err := protojson.MarshalOptions{
+		EmitUnpopulated: true,
+	}.Marshal(project)
+	assert.Nil(t, err)
+
+	var m map[string]any
+	err = json.Unmarshal(b, &m)
+	assert.Nil(t, err)
+
+	// top-level fields
+	assert.Contains(t, m, "id")
+	assert.Contains(t, m, "workspaceId")
+	assert.Contains(t, m, "sceneId")
+	assert.Contains(t, m, "name")
+	assert.Contains(t, m, "description")
+	assert.Contains(t, m, "visualizer")
+	assert.Contains(t, m, "createdAt")
+	assert.Contains(t, m, "updatedAt")
+	assert.Contains(t, m, "isArchived")
+	assert.Contains(t, m, "coreSupport")
+	assert.Contains(t, m, "starred")
+	assert.Contains(t, m, "isDeleted")
+	assert.Contains(t, m, "visibility")
+	assert.Contains(t, m, "projectAlias")
+
+	assert.Contains(t, m, "editorUrl")
+
+	// metadata
+	meta, ok := m["metadata"].(map[string]any)
+	assert.True(t, ok, "metadata should be a map")
+	assert.Contains(t, meta, "id")
+	assert.Contains(t, meta, "projectId")
+	assert.Contains(t, meta, "workspaceId")
+	assert.Contains(t, meta, "readme")
+	assert.Contains(t, meta, "license")
+	assert.Contains(t, meta, "topics")
+	assert.Contains(t, meta, "importStatus")
+	assert.Contains(t, meta, "createdAt")
+	assert.Contains(t, meta, "updatedAt")
+
+	// Scene publishment field
+	assert.Contains(t, m, "alias")
+	assert.Contains(t, m, "publishmentStatus")
+	assert.Contains(t, m, "publishedUrl")
+
+	// Story publishment fields
+	assert.Contains(t, m, "stories")
+	stories, ok := m["stories"].([]any)
+	assert.True(t, ok, "stories should be an array")
+
+	assert.Equal(t, 1, len(stories))
+
+	if len(stories) > 0 {
+		story, ok := stories[0].(map[string]any)
+		assert.True(t, ok, "story should be a map")
+		assert.Contains(t, story, "storyAlias")
+		assert.Contains(t, story, "storyPublishmentStatus")
+		assert.Contains(t, story, "storyPublishedUrl")
+	}
+}
+
+func PbDump(m proto.Message) string {
+	jsonBytes, _ := protojson.MarshalOptions{
+		Multiline:       true,
+		Indent:          "  ",
+		UseProtoNames:   true,
+		EmitUnpopulated: true,
+	}.Marshal(m)
+	res := string(jsonBytes)
+	fmt.Println(res)
+	return res
 }
 
 func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+	callGrpc(t, testFunc, metadata.New(map[string]string{
+		"authorization": fmt.Sprintf("Bearer %s", internalApiConfig.Visualizer.InternalApi.Token),
+		"user-id":       userID,
+	}))
+}
+
+func runTestVisitor(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context)) {
+	callGrpc(t, testFunc, metadata.New(map[string]string{}))
+}
+
+func callGrpc(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx context.Context), op metadata.MD) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	ctx = metadata.NewOutgoingContext(ctx, metadata.New(map[string]string{
-		"user-id": userID,
-	}))
+	ctx = metadata.NewOutgoingContext(ctx, op)
 
-	conn, err := grpc.NewClient("localhost:8080", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient("localhost:"+internalApiConfig.Visualizer.InternalApi.Port, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		t.Fatalf("failed to connect: %v", err)
 	}
@@ -344,12 +460,63 @@ func runTestWithUser(t *testing.T, userID string, testFunc func(client pb.ReEart
 	testFunc(client, ctx)
 }
 
-func CreateProjectInternal(t *testing.T, ctx context.Context, r *repo.Container, client pb.ReEarthVisualizerClient, visibility string, req *pb.CreateProjectRequest) id.ProjectID {
+// go test -v -run TestCreateProjectForInternal ./e2e/...
+func TestCreateProjectForInternal(t *testing.T) {
+
+	GRPCServer(t, baseSeeder)
+
+	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+
+		res, err := client.CreateProject(ctx,
+			&pb.CreateProjectRequest{
+				WorkspaceId:  wID.String(),
+				Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
+				Name:         lo.ToPtr("Test Project1"),
+				Description:  lo.ToPtr("Test Description1"),
+				CoreSupport:  lo.ToPtr(true),
+				Visibility:   lo.ToPtr("public"),
+				ProjectAlias: lo.ToPtr("projectalias-xxxxxxxxxxxx"),
+				Readme:       lo.ToPtr("readme-xxxxxxxxxxx"),
+				License:      lo.ToPtr("license-xxxxxxxxxxx"),
+				Topics:       []string{"gis", "history"},
+			})
+		require.Nil(t, err)
+
+		prj := res.GetProject()
+		assert.Equal(t, "projectalias-xxxxxxxxxxxx", prj.ProjectAlias)
+
+		metadata := prj.GetMetadata()
+		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
+		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
+		assert.Equal(t, []string{"gis", "history"}, metadata.Topics)
+
+		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
+			ProjectId: res.Project.Id,
+		})
+		require.Nil(t, err)
+
+		prj = res2.GetProject()
+		assert.Equal(t, "projectalias-xxxxxxxxxxxx", prj.ProjectAlias)
+
+		metadata = prj.GetMetadata()
+		assert.Equal(t, "readme-xxxxxxxxxxx", *metadata.Readme)
+		assert.Equal(t, "license-xxxxxxxxxxx", *metadata.License)
+		assert.Equal(t, []string{"gis", "history"}, metadata.Topics)
+
+	})
+
+}
+
+func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container, client pb.ReEarthVisualizerClient, visibility string, req *pb.CreateProjectRequest) id.ProjectID {
 	// test CreateProject
 	res, err := client.CreateProject(ctx, req)
 	require.Nil(t, err)
 	require.NotNil(t, res.GetProject())
 
+	wsID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	require.Nil(t, err)
+	ws, err := r.Workspace.FindByID(ctx, wsID)
+	require.Nil(t, err)
 	pid, err := id.ProjectIDFrom(res.GetProject().Id)
 	assert.Nil(t, err)
 	prj, err := r.Project.FindByID(ctx, pid)
@@ -360,16 +527,27 @@ func CreateProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	s, err := r.Storytelling.FindByScene(ctx, c.ID())
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(*s))
+
 	// test GetProject
-	res2, err := client.GetProject(ctx, &pb.GetProjectRequest{
-		ProjectId: res.Project.Id,
+	res2, err := client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
+		WorkspaceAlias: ws.Alias(),
+		ProjectAlias:   res.Project.ProjectAlias,
 	})
 	assert.Nil(t, err)
 	assert.Equal(t, visibility, res2.Project.Visibility)
+
+	// test GetProjectByAlias
+	res3, err := client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
+		WorkspaceAlias: ws.Alias(),
+		ProjectAlias:   res2.Project.ProjectAlias,
+	})
+	assert.Nil(t, err)
+	assert.Equal(t, res2.Project.ProjectAlias, res3.Project.ProjectAlias)
+
 	return pid
 }
 
-func LogicalDeleteProject(t *testing.T, ctx context.Context, r *repo.Container, pid id.ProjectID) {
+func logicalDeleteProject(t *testing.T, ctx context.Context, r *repo.Container, pid id.ProjectID) {
 	prj, err := r.Project.FindByID(ctx, pid)
 	assert.Nil(t, err)
 	prj.SetDeleted(true)

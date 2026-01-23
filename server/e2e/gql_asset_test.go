@@ -17,9 +17,9 @@ import (
 func TestCoreSupportGetAssets(t *testing.T) {
 	e, r, _ := ServerAndRepos(t, baseSeeder)
 
-	teamId := wID.String()
+	workspaceId := wID.String()
 
-	res := createAsset(t, e, "test.png", true, teamId, nil)
+	res := createAsset(t, e, "test.png", true, workspaceId, nil)
 	a := res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
@@ -29,11 +29,11 @@ func TestCoreSupportGetAssets(t *testing.T) {
 		"name": "test.png",
 		"projectId": null,
 		"size": 30438,
-		"teamId": ".*",
+		"workspaceId": ".*",
 		"url": ".*"
 	}`)
 
-	res = createAsset(t, e, "test.png", false, teamId, nil)
+	res = createAsset(t, e, "test.png", false, workspaceId, nil)
 	a = res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
@@ -43,11 +43,11 @@ func TestCoreSupportGetAssets(t *testing.T) {
 		"name": "test.png",
 		"projectId": null,
 		"size": 30438,
-		"teamId": ".*",
+		"workspaceId": ".*",
 		"url": ".*"
 	}`)
 
-	res = createAsset(t, e, "test.csv", true, teamId, nil)
+	res = createAsset(t, e, "test.csv", true, workspaceId, nil)
 	a = res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
@@ -57,11 +57,11 @@ func TestCoreSupportGetAssets(t *testing.T) {
 		"name": "test.csv",
 		"projectId": null,
 		"size": 231,
-		"teamId": ".*",
+		"workspaceId": ".*",
 		"url": ".*"
 	}`)
 
-	res = createAsset(t, e, "test.csv", false, teamId, nil)
+	res = createAsset(t, e, "test.csv", false, workspaceId, nil)
 	a = res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
@@ -71,7 +71,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 		"name": "test.csv",
 		"projectId": null,
 		"size": 231,
-		"teamId": ".*",
+		"workspaceId": ".*",
 		"url": ".*"
 	}`)
 
@@ -109,9 +109,9 @@ func TestCoreSupportGetAssets(t *testing.T) {
 		}.Wrap(),
 	})
 	assert.Nil(t, err)
-	assert.Equal(t, len(as), 4)
+	assert.Equal(t, len(as), 5)
 
-	res = getAssets(e, teamId, nil)
+	res = getAssets(e, workspaceId, nil)
 	assets := res.Path("$.data.assets.nodes").Array().Iter()
 	for _, a := range assets {
 		a.Object().HasValue("coreSupport", true) // coreSupport true only
@@ -123,44 +123,50 @@ func TestCoreSupportGetAssets(t *testing.T) {
 
 func TestAssociateProjectGetAssets(t *testing.T) {
 	e, _, _ := ServerAndRepos(t, baseSeeder)
-	teamId := wID.String()
+	workspaceId := wID.String()
 
 	// Create projectA >>> test.png
 	pidA := createProject(e, uID, map[string]any{
 		"name":        "projectA",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createAsset(t, e, "test.png", true, teamId, &pidA)
+	res := createAsset(t, e, "test.png", true, workspaceId, &pidA)
+	res.Path("$.data.createAsset.asset.workspaceId").IsEqual(wID.String())
+	res.Path("$.data.createAsset.asset.projectId").IsEqual(pidA)
 
 	// Create projectB >>> test.csv
 	pidB := createProject(e, uID, map[string]any{
 		"name":        "projectB",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createAsset(t, e, "test.csv", true, teamId, &pidB)
+	res = createAsset(t, e, "test.csv", true, workspaceId, &pidB)
+	res.Path("$.data.createAsset.asset.workspaceId").IsEqual(wID.String())
+	res.Path("$.data.createAsset.asset.projectId").IsEqual(pidB)
 
 	// Get projectA >>> test.png
-	res := getAssets(e, teamId, &pidA)
+	res = getAssets(e, workspaceId, &pidA)
 	assets := res.Path("$.data.assets.nodes").Array()
 	assets.Length().IsEqual(1)
+	assets.Value(0).Object().HasValue("projectId", pidA)
 	assets.Value(0).Object().HasValue("name", "test.png")
 
 	// Get projectB >>> test.csv
-	res = getAssets(e, teamId, &pidB)
+	res = getAssets(e, workspaceId, &pidB)
 	assets = res.Path("$.data.assets.nodes").Array()
 	assets.Length().IsEqual(1)
+	assets.Value(0).Object().HasValue("projectId", pidB)
 	assets.Value(0).Object().HasValue("name", "test.csv")
 
 	// Get none project(Workspace) >>> test.png, test.csv
-	res = getAssets(e, teamId, nil)
+	res = getAssets(e, workspaceId, nil)
 	assets = res.Path("$.data.assets.nodes").Array()
-	assets.Length().IsEqual(3)
+	assets.Length().IsEqual(4)
 	assets.Value(0).Object().HasValue("name", "test.csv")
 	assets.Value(1).Object().HasValue("name", "test.png")
 
@@ -169,7 +175,7 @@ func TestAssociateProjectGetAssets(t *testing.T) {
 
 	// Move projectA(test.png) >>> projectB
 	updateAsset(e, assetId1, &pidB)
-	res = getAssets(e, teamId, &pidB)
+	res = getAssets(e, workspaceId, &pidB)
 	assets = res.Path("$.data.assets.nodes").Array()
 	assets.Length().IsEqual(2) // projectB  >>> test.png, test.csv
 
@@ -177,7 +183,7 @@ func TestAssociateProjectGetAssets(t *testing.T) {
 	updateAsset(e, assetId0, nil) // projectID > null
 	updateAsset(e, assetId1, nil) // projectID > null
 
-	res = getAssets(e, teamId, &pidB)
+	res = getAssets(e, workspaceId, &pidB)
 	assets = res.Path("$.data.assets.nodes").Array()
 	assets.Length().IsEqual(0) // projectB >>> none
 
@@ -185,18 +191,18 @@ func TestAssociateProjectGetAssets(t *testing.T) {
 	removeAsset(e, assetId0)
 	removeAsset(e, assetId1)
 
-	res = getAssets(e, teamId, nil)
+	res = getAssets(e, workspaceId, nil)
 	assets = res.Path("$.data.assets.nodes").Array()
-	assets.Length().IsEqual(1)
+	assets.Length().IsEqual(2)
 }
 
-const CreateAssetMutation = `mutation CreateAsset($teamId: ID!, $projectId: ID, $file: Upload!, $coreSupport: Boolean!) {
+const CreateAssetMutation = `mutation CreateAsset($workspaceId: ID!, $projectId: ID, $file: Upload!, $coreSupport: Boolean!) {
   createAsset(
-    input: {teamId: $teamId, projectId: $projectId, file: $file, coreSupport: $coreSupport}
+    input: {workspaceId: $workspaceId, projectId: $projectId, file: $file, coreSupport: $coreSupport}
   ) {
     asset {
       id
-      teamId
+      workspaceId
       projectId
       name
       size
@@ -209,7 +215,7 @@ const CreateAssetMutation = `mutation CreateAsset($teamId: ID!, $projectId: ID, 
   }
 }`
 
-func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSupport bool, teamId string, projectId *string) *httpexpect.Value {
+func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSupport bool, workspaceId string, projectId *string) *httpexpect.Value {
 	file, err := os.Open(filePath)
 	if err != nil {
 		t.Fatalf("failed to open file: %v", err)
@@ -222,7 +228,7 @@ func createAsset(t *testing.T, e *httpexpect.Expect, filePath string, coreSuppor
 	requestBody := map[string]interface{}{
 		"operationName": "CreateAsset",
 		"variables": map[string]interface{}{
-			"teamId":      teamId,
+			"workspaceId": workspaceId,
 			"projectId":   projectId,
 			"coreSupport": coreSupport,
 			"file":        nil,
@@ -267,7 +273,7 @@ func removeAsset(e *httpexpect.Expect, assetId string) *httpexpect.Value {
 	return Request(e, uID.String(), requestBody)
 }
 
-func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte, coreSupport bool, teamId string, projectId *string) *httpexpect.Value {
+func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte, coreSupport bool, workspaceId string, projectId *string) *httpexpect.Value {
 	tempFile, err := os.CreateTemp("", "requestBody-*.json")
 	if err != nil {
 		t.Fatalf("failed to create temp file: %v", err)
@@ -286,7 +292,7 @@ func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte
 	requestBody := map[string]interface{}{
 		"operationName": "CreateAsset",
 		"variables": map[string]interface{}{
-			"teamId":      teamId,
+			"workspaceId": workspaceId,
 			"projectId":   projectId,
 			"coreSupport": coreSupport,
 			"file":        nil,
@@ -296,12 +302,12 @@ func createAssetFromFileData(t *testing.T, e *httpexpect.Expect, fileData []byte
 	return RequestWithMultipart(e, uID.String(), requestBody, tempFile.Name())
 }
 
-func getAssets(e *httpexpect.Expect, teamId string, projectId *string) *httpexpect.Value {
+func getAssets(e *httpexpect.Expect, workspaceId string, projectId *string) *httpexpect.Value {
 	requestBody := GraphQLRequest{
 		OperationName: "GetAssets",
-		Query: `query GetAssets($teamId: ID!, $projectId: ID, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
+		Query: `query GetAssets($workspaceId: ID!, $projectId: ID, $pagination: Pagination, $keyword: String, $sort: AssetSort) {
   assets(
-    teamId: $teamId
+    workspaceId: $workspaceId
     projectId: $projectId
     pagination: $pagination
     keyword: $keyword
@@ -311,7 +317,7 @@ func getAssets(e *httpexpect.Expect, teamId string, projectId *string) *httpexpe
       cursor
       node {
         id
-        teamId
+        workspaceId
         projectId
         name
         size
@@ -325,7 +331,7 @@ func getAssets(e *httpexpect.Expect, teamId string, projectId *string) *httpexpe
     }
     nodes {
       id
-      teamId
+      workspaceId
       projectId
       name
       size
@@ -347,8 +353,8 @@ func getAssets(e *httpexpect.Expect, teamId string, projectId *string) *httpexpe
   }
 }`,
 		Variables: map[string]any{
-			"teamId":    teamId,
-			"projectId": projectId,
+			"workspaceId": workspaceId,
+			"projectId":   projectId,
 			"pagination": map[string]any{
 				"first": 20,
 			},

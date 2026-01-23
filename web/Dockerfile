@@ -23,7 +23,6 @@ RUN --mount=type=bind,source=.yarnrc.yml,target=.yarnrc.yml \
     --mount=type=bind,source=published.html,target=published.html \
     --mount=type=bind,source=tsconfig.json,target=tsconfig.json \
     --mount=type=bind,source=vite.config.ts,target=vite.config.ts \
-    --mount=type=bind,source=tailwind.config.js,target=tailwind.config.js \
     --mount=type=bind,source=postcss.config.js,target=postcss.config.js \
     --mount=type=bind,source=src,target=src \
     --mount=type=cache,target=/root/.yarn,sharing=locked \
@@ -52,16 +51,17 @@ ENV REEARTH_BRAND=null
 ENV REEARTH_CESIUM_ION_ACCESS_TOKEN=null
 ENV REEARTH_CLOUD_API=null
 ENV REEARTH_CURRENT_TOS=null
-ENV REEARTH_DEVELOPER_MODE=null
-ENV REEARTH_DISABLE_WORKSPACE_MANAGEMENT=null
 ENV REEARTH_DOCUMENTATION_URL=null
 ENV REEARTH_EARLY_ACCESS_ADMINS=[]
+ENV REEARTH_ENABLE_GQL_PLAYGROUND=false
 ENV REEARTH_EXTENSION_URLS=[]
 ENV REEARTH_FAVICON_URL=
+ENV REEARTH_FEATURE_COLLECTION=null
 ENV REEARTH_IP=null
 ENV REEARTH_MARKETPLACE_URL=null
 ENV REEARTH_MULTI_TENANT=null
 ENV REEARTH_PASSWORD_POLICY=null
+ENV REEARTH_PLATFORM_URL=null
 ENV REEARTH_PLUGINS=null
 ENV REEARTH_POLICY=null
 ENV REEARTH_PUBLISHED=null

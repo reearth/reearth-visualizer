@@ -8,13 +8,14 @@ import (
 	"fmt"
 	"io"
 	"math"
+	"net/url"
 	"time"
 
 	"net/http"
-	"path"
 
 	"github.com/reearth/orb"
 	"github.com/reearth/orb/geojson"
+	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
@@ -25,9 +26,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
+	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
+	"github.com/samber/lo"
 )
 
 var (
@@ -59,7 +64,6 @@ type NLSLayer struct {
 	sceneRepo     repo.Scene
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
-	policyRepo    repo.Policy
 	file          gateway.File
 	workspaceRepo accountrepo.Workspace
 	transaction   usecasex.Transaction
@@ -76,7 +80,6 @@ func NewNLSLayer(r *repo.Container, gr *gateway.Container) interfaces.NLSLayer {
 		sceneRepo:       r.Scene,
 		propertyRepo:    r.Property,
 		pluginRepo:      r.Plugin,
-		policyRepo:      r.Policy,
 		file:            gr.File,
 		workspaceRepo:   r.Workspace,
 		transaction:     r.Transaction,
@@ -115,7 +118,7 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	}()
 
 	if err := i.CanWriteScene(inp.SceneID, operator); err != nil {
-		return nil, interfaces.ErrOperationDenied
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", interfaces.ErrOperationDenied), interfaces.ErrOperationDenied)
 	}
 
 	builder := nlslayer.NewNLSLayerSimple().
@@ -124,7 +127,8 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 		Config(inp.Config).
 		LayerType(inp.LayerType).
 		Title(inp.Title).
-		Index(inp.Index)
+		Index(inp.Index).
+		DataSourceName(inp.DataSourceName)
 	if inp.Visible != nil {
 		builder.IsVisible(*inp.Visible)
 	} else {
@@ -134,63 +138,33 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 	if inp.LayerType.IsValidLayerType() {
 		layerSimple, err = builder.Build()
 		if err != nil {
-			return nil, err
+			return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 		}
 	} else {
 		return nil, errors.New("layer type must be 'simple' or 'group'")
 	}
 
 	if err != nil {
-		return nil, err
-	}
-
-	s, err := i.sceneRepo.FindByID(ctx, inp.SceneID)
-	if err != nil {
-		return nil, err
-	}
-
-	ws, err := i.workspaceRepo.FindByID(ctx, s.Workspace())
-	if err != nil {
-		return nil, err
-	}
-
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-		s, err := i.nlslayerRepo.CountByScene(ctx, s.ID())
-		if err != nil {
-			return nil, err
-		}
-		if err := p.EnforceNLSLayersCount(s + 1); err != nil {
-			return nil, err
-		}
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	// geojson validate
 	if data, ok := (*inp.Config)["data"].(map[string]interface{}); ok {
 		if type_, ok := data["type"].(string); ok && type_ == "geojson" {
 			if url, ok := data["url"].(string); ok {
-				maxDownloadSize := 10 * 1024 * 1024 // 10MB
-				buf, err := downloadToBuffer(url, int64(maxDownloadSize))
-				if err != nil {
-					// If the download fails, it will be downloaded directly from the Asset repository.
-					if err := i.validateGeoJsonOfAssets(ctx, path.Base(url)); err != nil {
-						return nil, err
-					}
-				} else {
-					if err := validateGeoJSONFeatureCollection(buf.Bytes()); err != nil {
-						return nil, err
-					}
+				if url == "" {
+					return nil, visualizer.ErrorWithCallerLogging(ctx, "invalid GeoJSON URL format", errors.New("invalid GeoJSON URL format"))
+				}
+				if !isValidURL(url) {
+					return nil, visualizer.ErrorWithCallerLogging(ctx, "invalid GeoJSON URL format", errors.New("invalid GeoJSON URL format"))
 				}
 			} else if value, ok := data["value"].(map[string]interface{}); ok {
 				geojsonData, err := json.Marshal(value)
 				if err != nil {
-					return nil, err
+					return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: json.Marshal err: %v", err), err)
 				}
 				if err := validateGeoJSONFeatureCollection(geojsonData); err != nil {
-					return nil, err
+					return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 				}
 			}
 		}
@@ -212,12 +186,12 @@ func (i *NLSLayer) AddLayerSimple(ctx context.Context, inp interfaces.AddNLSLaye
 
 	err = i.nlslayerRepo.Save(ctx, layerSimple)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	err = updateProjectUpdatedAtByScene(ctx, layerSimple.Scene(), i.projectRepo, i.sceneRepo)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, fmt.Sprintf("nlslayer: validateGeoJSONFeatureCollection err: %v", err), err)
 	}
 
 	tx.Commit()
@@ -458,6 +432,30 @@ func (i *NLSLayer) CreateNLSPhotoOverlay(ctx context.Context, lid id.NLSLayerID,
 	if err != nil {
 		return nil, err
 	}
+
+	prop, err := i.propertyRepo.FindByID(ctx, property.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	DefaultSchemaGroup := idx.StringIDFromRef[id.PropertySchemaGroup](lo.ToPtr("default"))
+	EnabledField := idx.StringIDFromRef[id.PropertyField](lo.ToPtr("enabled"))
+	BoolTrue := gqlmodel.FromPropertyValueAndType(true, gqlmodel.ValueTypeBool)
+	CameraDurationField := idx.StringIDFromRef[id.PropertyField](lo.ToPtr("cameraDuration"))
+	NumberOne := gqlmodel.FromPropertyValueAndType(1, gqlmodel.ValueTypeNumber)
+	_, _, _, err = prop.UpdateValue(schema, gqlmodel.FromPointer(DefaultSchemaGroup, nil, EnabledField), BoolTrue)
+	if err != nil {
+		return nil, err
+	}
+	_, _, _, err = prop.UpdateValue(schema, gqlmodel.FromPointer(DefaultSchemaGroup, nil, CameraDurationField), NumberOne)
+	if err != nil {
+		return nil, err
+	}
+	err = i.propertyRepo.Save(ctx, prop)
+	if err != nil {
+		return nil, err
+	}
+
 	err = i.nlslayerRepo.Save(ctx, l)
 	if err != nil {
 		return nil, err
@@ -1191,24 +1189,26 @@ func (i *NLSLayer) DeleteGeoJSONFeature(ctx context.Context, inp interfaces.Dele
 	return inp.FeatureID, nil
 }
 
-func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data *[]byte) (nlslayer.NLSLayerList, error) {
+func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data *[]byte) (map[string]any, error) {
 
 	sceneJSON, err := builder.ParseSceneJSONByByte(data)
 	if err != nil {
 		return nil, err
 	}
 
+	result := map[string]any{}
 	if sceneJSON.NLSLayers == nil {
-		return nil, nil
+		return result, nil
 	}
 
 	filter := Filter(sceneID)
 
 	nlayerIDs := id.NLSLayerIDList{}
-	for _, nlsLayerJSON := range sceneJSON.NLSLayers {
+
+	for nIndex, nlsLayerJSON := range sceneJSON.NLSLayers {
 
 		for k, v := range nlsLayerJSON.Children {
-			fmt.Println("Unsupported nlsLayerJSON.Children ", k, v)
+			log.Errorf("[Import Error] Unsupported nlsLayer: %s value: %v", k, v)
 		}
 
 		newNLSLayerID := id.NewNLSLayerID()
@@ -1234,7 +1234,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			betaInfoboxSchema := builtin.GetPropertySchema(builtin.PropertySchemaIDBetaInfobox)
 			propI, err := i.addNewProperty(ctx, betaInfoboxSchema.ID(), sceneID, &filter)
 			if err != nil {
-				return nil, err
+				log.Errorf("[Import Error] fail nlsLayer add property: %v", err)
+				return result, err
 			}
 			builder.PropertyUpdate(ctx, propI, i.propertyRepo, i.propertySchemaRepo, nlsInfoboxJSON.Property)
 
@@ -1246,16 +1247,18 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 
 				pluginId, extensionId, extension, err := i.getInfoboxBlockPlugin(ctx, nlsInfoboxBlockJSON.PluginId, nlsInfoboxBlockJSON.ExtensionId, &filter)
 				if err != nil {
-					return nil, err
+					log.Errorf("[Import Error] fail nlsLayer Infobox block: %v", err)
+					return result, err
 				}
 
 				propB, err := i.addNewProperty(ctx, extension.Schema(), sceneID, &filter)
 				if err != nil {
-					return nil, err
+					log.Errorf("[Import Error] fail nlsLayer Infobox add property: %v", err)
+					return result, err
 				}
 				builder.PropertyUpdate(ctx, propB, i.propertyRepo, i.propertySchemaRepo, nlsInfoboxBlockJSON.Property)
 				for k, v := range nlsInfoboxBlockJSON.Plugins {
-					fmt.Println("Unsupported nlsInfoboxBlockJSON.Plugins ", k, v)
+					log.Errorf("[Import Error] Unsupported nlsLayer InfoboxBlock: %s value: %v", k, v)
 				}
 
 				block, err := nlslayer.NewInfoboxBlock().
@@ -1265,7 +1268,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 					Property(propB.ID()).
 					Build()
 				if err != nil {
-					return nil, err
+					log.Errorf("[Import Error] fail save nlsLayer Infobox : %v", err)
+					return result, err
 				}
 
 				blocks = append(blocks, block)
@@ -1281,7 +1285,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 			betaPhotoOverlaySchema := builtin.GetPropertySchema(builtin.PropertySchemaIDPhotoOverlay)
 			propI, err := i.addNewProperty(ctx, betaPhotoOverlaySchema.ID(), sceneID, &filter)
 			if err != nil {
-				return nil, err
+				log.Errorf("[Import Error] fail nlsLayer PhotoOverlay add property: %v", err)
+				return result, err
 			}
 			builder.PropertyUpdate(ctx, propI, i.propertyRepo, i.propertySchemaRepo, nlsPhotoOverlayJSON.Property)
 
@@ -1305,7 +1310,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 					if geometryMap, ok := g.(map[string]any); ok {
 						geometry, err = nlslayer.NewGeometryFromMap(geometryMap)
 						if err != nil {
-							return nil, err
+							log.Errorf("[Import Error] fail nlsLayer Geometry : %v", err)
+							return result, err
 						}
 					}
 				}
@@ -1316,7 +1322,8 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 					geometry,
 				)
 				if err != nil {
-					return nil, err
+					log.Errorf("[Import Error] fail nlsLayer feature : %v", err)
+					return result, err
 				}
 
 				feature.UpdateProperties(featureJSON.Properties)
@@ -1338,20 +1345,20 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 
 		nlayer, err := nlBuilder.Build()
 		if err != nil {
-			return nil, err
+			log.Errorf("[Import Error] fail nlsLayer build : %v", err)
+			return result, err
 		}
 
 		if err := i.nlslayerRepo.Filtered(filter).Save(ctx, nlayer); err != nil {
-			return nil, err
+			log.Errorf("[Import Error] fail nlsLayer save : %v", err)
+			return result, err
 		}
 
+		fmt.Println("[Import NLSLayer]  ", nlsLayerJSON.Title)
+		result[fmt.Sprintf("NLSLayer%d", nIndex)] = nlsLayerJSON.Title
 	}
 
-	results, err := i.nlslayerRepo.Filtered(filter).FindByIDs(ctx, nlayerIDs)
-	if err != nil {
-		return nil, err
-	}
-	return results, nil
+	return result, nil
 }
 
 func downloadToBuffer(url string, maxDownloadSize int64) (*bytes.Buffer, error) {
@@ -1542,4 +1549,20 @@ func isValidLatLon(coords orb.Point) bool {
 	}
 	lat, lon := coords[1], coords[0]
 	return lat >= -90-epsilon && lat <= 90+epsilon && lon >= -180-epsilon && lon <= 180+epsilon
+}
+
+func isValidURL(urlStr string) bool {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return false
+	}
+	// Check if the URL has a valid scheme (http or https)
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return false
+	}
+	// Check if the URL has a host
+	if u.Host == "" {
+		return false
+	}
+	return true
 }

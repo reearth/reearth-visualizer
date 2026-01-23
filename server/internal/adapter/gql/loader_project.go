@@ -70,15 +70,29 @@ func (c *ProjectLoader) FindByWorkspace(ctx context.Context, wsID gqlmodel.ID, k
 	}, nil
 }
 
-func (c *ProjectLoader) CheckAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
-	pid := gqlmodel.ToIDRef[id.Project](projectID)
+func (c *ProjectLoader) CheckProjectAlias(ctx context.Context, alias string, wsID gqlmodel.ID, pID *gqlmodel.ID) (*gqlmodel.ProjectAliasAvailability, error) {
+	tid, err := gqlmodel.ToID[accountdomain.Workspace](wsID)
+	if err != nil {
+		return nil, err
+	}
 
-	ok, err := c.usecase.CheckAlias(ctx, alias, pid)
+	ok, err := c.usecase.CheckProjectAlias(ctx, alias, tid, gqlmodel.ToIDRef[id.Project](pID))
 	if err != nil {
 		return nil, err
 	}
 
 	return &gqlmodel.ProjectAliasAvailability{Alias: alias, Available: ok}, nil
+}
+
+func (c *ProjectLoader) CheckSceneAlias(ctx context.Context, alias string, projectID *gqlmodel.ID) (*gqlmodel.SceneAliasAvailability, error) {
+	pid := gqlmodel.ToIDRef[id.Project](projectID)
+
+	ok, err := c.usecase.CheckSceneAlias(ctx, alias, pid)
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.SceneAliasAvailability{Alias: alias, Available: ok}, nil
 }
 
 func (c *ProjectLoader) FindStarredByWorkspace(ctx context.Context, wsID gqlmodel.ID) (*gqlmodel.ProjectConnection, error) {
@@ -131,7 +145,7 @@ func (c *ProjectLoader) VisibilityByWorkspace(ctx context.Context, wsID gqlmodel
 		return nil, err
 	}
 
-	res, err := c.usecase.FindVisibilityByWorkspace(ctx, tid, authenticated, getOperator(ctx))
+	res, _, err := c.usecase.FindVisibilityByWorkspace(ctx, tid, authenticated, getOperator(ctx), nil, nil, nil, nil)
 	if err != nil {
 		return nil, err
 	}

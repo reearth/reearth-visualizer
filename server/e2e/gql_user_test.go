@@ -11,8 +11,6 @@ import (
 	"github.com/reearth/reearthx/account/accountdomain/user"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/idx"
-	"github.com/reearth/reearthx/rerror"
-	"github.com/stretchr/testify/assert"
 	"golang.org/x/text/language"
 )
 
@@ -27,12 +25,16 @@ var (
 
 func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) error {
 	auth := user.ReearthSub(uId1.String())
+
+	metadata := user.NewMetadata()
+	metadata.SetLang(language.Japanese)
+	metadata.SetTheme(user.ThemeDark)
+
 	u := user.New().ID(uId1).
 		Name("e2e").
 		Email("e2e@e2e.com").
 		Auths([]user.Auth{*auth}).
-		Theme(user.ThemeDark).
-		Lang(language.Japanese).
+		Metadata(metadata).
 		Workspace(wId1).
 		MustBuild()
 	if err := r.User.Save(ctx, u); err != nil {
@@ -42,6 +44,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 		Name("e2e2").
 		Workspace(wId2).
 		Email("e2e2@e2e.com").
+		Metadata(metadata).
 		MustBuild()
 	if err := r.User.Save(ctx, u2); err != nil {
 		return err
@@ -50,6 +53,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 		Name("e2e3").
 		Workspace(wId2).
 		Email("e2e3@e2e.com").
+		Metadata(metadata).
 		MustBuild()
 	if err := r.User.Save(ctx, u3); err != nil {
 		return err
@@ -63,6 +67,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 		InvitedBy: uId2,
 	}
 
+	wMetadata := workspace.NewMetadata()
 	w := workspace.New().ID(wId1).
 		Name("e2e").
 		Members(map[idx.ID[accountdomain.User]]workspace.Member{
@@ -71,6 +76,7 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
 			iId1: roleOwner,
 		}).
+		Metadata(wMetadata).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err
@@ -85,58 +91,13 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 		Integrations(map[idx.ID[accountdomain.Integration]]workspace.Member{
 			iId1: roleOwner,
 		}).
+		Metadata(wMetadata).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w2); err != nil {
 		return err
 	}
 
 	return nil
-}
-
-func TestUpdateMe(t *testing.T) {
-	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
-	query := `mutation { updateMe(input: {name: "updated",email:"hoge@test.com",lang: "ja",theme: DEFAULT,password: "Ajsownndww1",passwordConfirmation: "Ajsownndww1"}){ me{ id name email lang theme } }}`
-	request := GraphQLRequest{
-		Query: query,
-	}
-	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("updateMe").Object().Value("me").Object()
-	o.Value("name").String().IsEqual("updated")
-	o.Value("email").String().IsEqual("hoge@test.com")
-	o.Value("lang").String().IsEqual("ja")
-	o.Value("theme").String().IsEqual("default")
-}
-
-func TestRemoveMyAuth(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
-	u, err := r.User.FindByID(context.Background(), uId1)
-	assert.Nil(t, err)
-	assert.Equal(t, &user.Auth{Provider: "reearth", Sub: "reearth|" + uId1.String()}, u.Auths().GetByProvider("reearth"))
-
-	query := `mutation { removeMyAuth(input: {auth: "reearth"}){ me{ id name email lang theme } }}`
-	request := GraphQLRequest{
-		Query: query,
-	}
-	Request(e, uId1.String(), request).Object()
-
-	u, err = r.User.FindByID(context.Background(), uId1)
-	assert.Nil(t, err)
-	assert.Nil(t, u.Auths().Get("sub"))
-}
-
-func TestDeleteMe(t *testing.T) {
-	e, r := StartGQLServerAndRepos(t, baseSeederUser)
-	u, err := r.User.FindByID(context.Background(), uId1)
-	assert.Nil(t, err)
-	assert.NotNil(t, u)
-
-	query := fmt.Sprintf(`mutation { deleteMe(input: {userId: "%s"}){ userId }}`, uId1)
-	request := GraphQLRequest{
-		Query: query,
-	}
-	Request(e, uId1.String(), request).Object()
-
-	_, err = r.User.FindByID(context.Background(), uId1)
-	assert.Equal(t, rerror.ErrNotFound, err)
 }
 
 func TestSearchUser(t *testing.T) {

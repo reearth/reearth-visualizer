@@ -8,4 +8,6 @@ type Container struct {
 	PluginRegistry PluginRegistry
 	File           File
 	Google         Google
+	PolicyChecker  PolicyChecker
+	DomainChecker  DomainChecker
 }

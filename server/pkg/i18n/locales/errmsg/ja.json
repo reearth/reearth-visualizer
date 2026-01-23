@@ -5,6 +5,14 @@
         "message": "不正なエイリアス名です: {{.aliasName}}",
         "description": "エイリアス名は{{.minLength}}-{{.maxLength}}文字で、{{.allowedChars}}のみ使用できます。"
       },
+      "invalid_project_alias": {
+        "message": "不正なエイリアス名です: {{.aliasName}}",
+        "description": "入力されたエイリアスに使用できない文字が含まれています。"
+      },
+      "project_alias_already_exists": {
+        "message": "そのエイリアスはワークスペース内で既に使用されています。別の値を試してください",
+        "description": "ワークスペース内でプロジェクトのエイリアスは一意である必要があります。"
+      },
       "alias_already_exists": {
         "message": "そのエイリアスは既に使用されています。別の値を試してください",
         "description": "プロジェクトやストーリーのエイリアスは一意である必要があります。"

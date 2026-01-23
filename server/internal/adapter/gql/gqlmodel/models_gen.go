@@ -3,6 +3,7 @@
 package gqlmodel
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/url"
@@ -31,6 +32,7 @@ type NLSLayer interface {
 	GetPhotoOverlay() *NLSPhotoOverlay
 	GetIsSketch() bool
 	GetSketch() *SketchInfo
+	GetDataSourceName() *string
 }
 
 type Node interface {
@@ -49,14 +51,14 @@ type AddGeoJSONFeatureInput struct {
 	LayerID    ID     `json:"layerId"`
 }
 
-type AddMemberToTeamInput struct {
-	TeamID ID   `json:"teamId"`
-	UserID ID   `json:"userId"`
-	Role   Role `json:"role"`
+type AddMemberToWorkspaceInput struct {
+	WorkspaceID ID   `json:"workspaceId"`
+	UserID      ID   `json:"userId"`
+	Role        Role `json:"role"`
 }
 
-type AddMemberToTeamPayload struct {
-	Team *Team `json:"team"`
+type AddMemberToWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type AddNLSInfoboxBlockInput struct {
@@ -72,13 +74,14 @@ type AddNLSInfoboxBlockPayload struct {
 }
 
 type AddNLSLayerSimpleInput struct {
-	LayerType string `json:"layerType"`
-	Title     string `json:"title"`
-	SceneID   ID     `json:"sceneId"`
-	Config    JSON   `json:"config,omitempty"`
-	Index     *int   `json:"index,omitempty"`
-	Visible   *bool  `json:"visible,omitempty"`
-	Schema    JSON   `json:"schema,omitempty"`
+	LayerType      string  `json:"layerType"`
+	Title          string  `json:"title"`
+	SceneID        ID      `json:"sceneId"`
+	Config         JSON    `json:"config,omitempty"`
+	Index          *int    `json:"index,omitempty"`
+	Visible        *bool   `json:"visible,omitempty"`
+	Schema         JSON    `json:"schema,omitempty"`
+	DataSourceName *string `json:"dataSourceName,omitempty"`
 }
 
 type AddNLSLayerSimplePayload struct {
@@ -104,9 +107,10 @@ type AddStylePayload struct {
 }
 
 type AddWidgetInput struct {
-	SceneID     ID `json:"sceneId"`
-	PluginID    ID `json:"pluginId"`
-	ExtensionID ID `json:"extensionId"`
+	Type        WidgetAlignSystemType `json:"type"`
+	SceneID     ID                    `json:"sceneId"`
+	PluginID    ID                    `json:"pluginId"`
+	ExtensionID ID                    `json:"extensionId"`
 }
 
 type AddWidgetPayload struct {
@@ -115,16 +119,16 @@ type AddWidgetPayload struct {
 }
 
 type Asset struct {
-	ID          ID        `json:"id"`
-	CreatedAt   time.Time `json:"createdAt"`
-	TeamID      ID        `json:"teamId"`
-	ProjectID   *ID       `json:"projectId,omitempty"`
-	Name        string    `json:"name"`
-	Size        int64     `json:"size"`
-	URL         string    `json:"url"`
-	ContentType string    `json:"contentType"`
-	Team        *Team     `json:"team,omitempty"`
-	CoreSupport bool      `json:"coreSupport"`
+	ID          ID         `json:"id"`
+	WorkspaceID ID         `json:"workspaceId"`
+	Workspace   *Workspace `json:"workspace,omitempty"`
+	ProjectID   *ID        `json:"projectId,omitempty"`
+	Name        string     `json:"name"`
+	Size        int64      `json:"size"`
+	URL         string     `json:"url"`
+	ContentType string     `json:"contentType"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	CoreSupport bool       `json:"coreSupport"`
 }
 
 func (Asset) IsNode()        {}
@@ -165,7 +169,7 @@ type ChangeCustomPropertyTitleInput struct {
 }
 
 type CreateAssetInput struct {
-	TeamID      ID             `json:"teamId"`
+	WorkspaceID ID             `json:"workspaceId"`
 	ProjectID   *ID            `json:"projectId,omitempty"`
 	CoreSupport bool           `json:"coreSupport"`
 	File        graphql.Upload `json:"file"`
@@ -192,12 +196,16 @@ type CreateNLSPhotoOverlayPayload struct {
 }
 
 type CreateProjectInput struct {
-	TeamID      ID         `json:"teamId"`
-	Visualizer  Visualizer `json:"visualizer"`
-	Name        *string    `json:"name,omitempty"`
-	Description *string    `json:"description,omitempty"`
-	CoreSupport *bool      `json:"coreSupport,omitempty"`
-	Visibility  *string    `json:"visibility,omitempty"`
+	WorkspaceID  ID         `json:"workspaceId"`
+	Visualizer   Visualizer `json:"visualizer"`
+	Name         *string    `json:"name,omitempty"`
+	Description  *string    `json:"description,omitempty"`
+	CoreSupport  *bool      `json:"coreSupport,omitempty"`
+	Visibility   *string    `json:"visibility,omitempty"`
+	ProjectAlias *string    `json:"projectAlias,omitempty"`
+	Readme       *string    `json:"readme,omitempty"`
+	License      *string    `json:"license,omitempty"`
+	Topics       []string   `json:"topics,omitempty"`
 }
 
 type CreateSceneInput struct {
@@ -239,12 +247,13 @@ type CreateStoryPageInput struct {
 	Index           *int    `json:"index,omitempty"`
 }
 
-type CreateTeamInput struct {
-	Name string `json:"name"`
+type CreateWorkspaceInput struct {
+	Name  string  `json:"name"`
+	Alias *string `json:"alias,omitempty"`
 }
 
-type CreateTeamPayload struct {
-	Team *Team `json:"team"`
+type CreateWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type DeleteGeoJSONFeatureInput struct {
@@ -254,14 +263,6 @@ type DeleteGeoJSONFeatureInput struct {
 
 type DeleteGeoJSONFeaturePayload struct {
 	DeletedFeatureID ID `json:"deletedFeatureId"`
-}
-
-type DeleteMeInput struct {
-	UserID ID `json:"userId"`
-}
-
-type DeleteMePayload struct {
-	UserID ID `json:"userId"`
 }
 
 type DeleteProjectInput struct {
@@ -292,12 +293,12 @@ type DeleteStoryPayload struct {
 	StoryID ID `json:"storyId"`
 }
 
-type DeleteTeamInput struct {
-	TeamID ID `json:"teamId"`
+type DeleteWorkspaceInput struct {
+	WorkspaceID ID `json:"workspaceId"`
 }
 
-type DeleteTeamPayload struct {
-	TeamID ID `json:"teamId"`
+type DeleteWorkspacePayload struct {
+	WorkspaceID ID `json:"workspaceId"`
 }
 
 type DuplicateNLSLayerInput struct {
@@ -391,15 +392,16 @@ type LineString struct {
 func (LineString) IsGeometry() {}
 
 type Me struct {
-	ID       ID           `json:"id"`
-	Name     string       `json:"name"`
-	Email    string       `json:"email"`
-	Lang     language.Tag `json:"lang"`
-	Theme    Theme        `json:"theme"`
-	MyTeamID ID           `json:"myTeamId"`
-	Auths    []string     `json:"auths"`
-	Teams    []*Team      `json:"teams"`
-	MyTeam   *Team        `json:"myTeam,omitempty"`
+	ID            ID            `json:"id"`
+	Name          string        `json:"name"`
+	Email         string        `json:"email"`
+	Lang          language.Tag  `json:"lang"`
+	Theme         Theme         `json:"theme"`
+	Metadata      *UserMetadata `json:"metadata,omitempty"`
+	MyWorkspaceID ID            `json:"myWorkspaceId"`
+	Auths         []string      `json:"auths"`
+	Workspaces    []*Workspace  `json:"workspaces"`
+	MyWorkspace   *Workspace    `json:"myWorkspace,omitempty"`
 }
 
 type MergedProperty struct {
@@ -516,20 +518,21 @@ type NLSInfobox struct {
 }
 
 type NLSLayerGroup struct {
-	ID           ID               `json:"id"`
-	Index        *int             `json:"index,omitempty"`
-	LayerType    string           `json:"layerType"`
-	SceneID      ID               `json:"sceneId"`
-	Children     []NLSLayer       `json:"children"`
-	ChildrenIds  []ID             `json:"childrenIds"`
-	Config       JSON             `json:"config,omitempty"`
-	Title        string           `json:"title"`
-	Visible      bool             `json:"visible"`
-	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
-	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
-	Scene        *Scene           `json:"scene,omitempty"`
-	IsSketch     bool             `json:"isSketch"`
-	Sketch       *SketchInfo      `json:"sketch,omitempty"`
+	ID             ID               `json:"id"`
+	Index          *int             `json:"index,omitempty"`
+	LayerType      string           `json:"layerType"`
+	SceneID        ID               `json:"sceneId"`
+	Children       []NLSLayer       `json:"children"`
+	ChildrenIds    []ID             `json:"childrenIds"`
+	Config         JSON             `json:"config,omitempty"`
+	Title          string           `json:"title"`
+	Visible        bool             `json:"visible"`
+	Infobox        *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay   *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene          *Scene           `json:"scene,omitempty"`
+	IsSketch       bool             `json:"isSketch"`
+	Sketch         *SketchInfo      `json:"sketch,omitempty"`
+	DataSourceName *string          `json:"dataSourceName,omitempty"`
 }
 
 func (NLSLayerGroup) IsNLSLayer()                            {}
@@ -544,20 +547,22 @@ func (this NLSLayerGroup) GetInfobox() *NLSInfobox           { return this.Infob
 func (this NLSLayerGroup) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
 func (this NLSLayerGroup) GetIsSketch() bool                 { return this.IsSketch }
 func (this NLSLayerGroup) GetSketch() *SketchInfo            { return this.Sketch }
+func (this NLSLayerGroup) GetDataSourceName() *string        { return this.DataSourceName }
 
 type NLSLayerSimple struct {
-	ID           ID               `json:"id"`
-	Index        *int             `json:"index,omitempty"`
-	LayerType    string           `json:"layerType"`
-	SceneID      ID               `json:"sceneId"`
-	Config       JSON             `json:"config,omitempty"`
-	Title        string           `json:"title"`
-	Visible      bool             `json:"visible"`
-	Infobox      *NLSInfobox      `json:"infobox,omitempty"`
-	PhotoOverlay *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
-	Scene        *Scene           `json:"scene,omitempty"`
-	IsSketch     bool             `json:"isSketch"`
-	Sketch       *SketchInfo      `json:"sketch,omitempty"`
+	ID             ID               `json:"id"`
+	Index          *int             `json:"index,omitempty"`
+	LayerType      string           `json:"layerType"`
+	SceneID        ID               `json:"sceneId"`
+	Config         JSON             `json:"config,omitempty"`
+	Title          string           `json:"title"`
+	Visible        bool             `json:"visible"`
+	Infobox        *NLSInfobox      `json:"infobox,omitempty"`
+	PhotoOverlay   *NLSPhotoOverlay `json:"photoOverlay,omitempty"`
+	Scene          *Scene           `json:"scene,omitempty"`
+	IsSketch       bool             `json:"isSketch"`
+	Sketch         *SketchInfo      `json:"sketch,omitempty"`
+	DataSourceName *string          `json:"dataSourceName,omitempty"`
 }
 
 func (NLSLayerSimple) IsNLSLayer()                            {}
@@ -572,6 +577,7 @@ func (this NLSLayerSimple) GetInfobox() *NLSInfobox           { return this.Info
 func (this NLSLayerSimple) GetPhotoOverlay() *NLSPhotoOverlay { return this.PhotoOverlay }
 func (this NLSLayerSimple) GetIsSketch() bool                 { return this.IsSketch }
 func (this NLSLayerSimple) GetSketch() *SketchInfo            { return this.Sketch }
+func (this NLSLayerSimple) GetDataSourceName() *string        { return this.DataSourceName }
 
 type NLSPhotoOverlay struct {
 	ID         ID        `json:"id"`
@@ -650,17 +656,14 @@ type Point struct {
 
 func (Point) IsGeometry() {}
 
-type Policy struct {
-	ID                    ID     `json:"id"`
-	Name                  string `json:"name"`
-	ProjectCount          *int   `json:"projectCount,omitempty"`
-	MemberCount           *int   `json:"memberCount,omitempty"`
-	PublishedProjectCount *int   `json:"publishedProjectCount,omitempty"`
-	LayerCount            *int   `json:"layerCount,omitempty"`
-	AssetStorageSize      *int64 `json:"assetStorageSize,omitempty"`
-	NlsLayersCount        *int   `json:"nlsLayersCount,omitempty"`
-	PageCount             *int   `json:"pageCount,omitempty"`
-	BlocksCount           *int   `json:"blocksCount,omitempty"`
+type PolicyCheckInput struct {
+	WorkspaceID ID `json:"workspaceId"`
+}
+
+type PolicyCheckPayload struct {
+	WorkspaceID                    ID   `json:"workspaceId"`
+	EnableToCreatePrivateProject   bool `json:"enableToCreatePrivateProject"`
+	DisableOperationByOverUsedSeat bool `json:"disableOperationByOverUsedSeat"`
 }
 
 type Polygon struct {
@@ -672,8 +675,8 @@ func (Polygon) IsGeometry() {}
 
 type Project struct {
 	ID                ID                `json:"id"`
-	TeamID            ID                `json:"teamId"`
-	Team              *Team             `json:"team,omitempty"`
+	WorkspaceID       ID                `json:"workspaceId"`
+	Workspace         *Workspace        `json:"workspace,omitempty"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	Name              string            `json:"name"`
 	Description       string            `json:"description"`
@@ -687,6 +690,7 @@ type Project struct {
 	IsDeleted         bool              `json:"isDeleted"`
 	Visibility        string            `json:"visibility"`
 	Metadata          *ProjectMetadata  `json:"metadata,omitempty"`
+	ProjectAlias      string            `json:"projectAlias"`
 	Alias             string            `json:"alias"`
 	PublishmentStatus PublishmentStatus `json:"publishmentStatus"`
 	PublishedAt       *time.Time        `json:"publishedAt,omitempty"`
@@ -722,14 +726,20 @@ type ProjectEdge struct {
 }
 
 type ProjectMetadata struct {
-	ID           ID                   `json:"id"`
-	Project      ID                   `json:"project"`
-	Workspace    ID                   `json:"workspace"`
-	Readme       *string              `json:"readme,omitempty"`
-	License      *string              `json:"license,omitempty"`
-	ImportStatus *ProjectImportStatus `json:"importStatus,omitempty"`
-	CreatedAt    *time.Time           `json:"createdAt,omitempty"`
-	UpdatedAt    *time.Time           `json:"updatedAt,omitempty"`
+	ID              ID                   `json:"id"`
+	Project         ID                   `json:"project"`
+	Workspace       ID                   `json:"workspace"`
+	Readme          *string              `json:"readme,omitempty"`
+	License         *string              `json:"license,omitempty"`
+	Topics          []string             `json:"topics,omitempty"`
+	ImportStatus    *ProjectImportStatus `json:"importStatus,omitempty"`
+	ImportResultLog JSON                 `json:"importResultLog,omitempty"`
+	CreatedAt       *time.Time           `json:"createdAt,omitempty"`
+	UpdatedAt       *time.Time           `json:"updatedAt,omitempty"`
+}
+
+type ProjectMetadataPayload struct {
+	Metadata *ProjectMetadata `json:"metadata"`
 }
 
 type ProjectPayload struct {
@@ -898,17 +908,13 @@ type RemoveCustomPropertyInput struct {
 	RemovedTitle string `json:"removedTitle"`
 }
 
-type RemoveMemberFromTeamInput struct {
-	TeamID ID `json:"teamId"`
-	UserID ID `json:"userId"`
+type RemoveMemberFromWorkspaceInput struct {
+	WorkspaceID ID `json:"workspaceId"`
+	UserID      ID `json:"userId"`
 }
 
-type RemoveMemberFromTeamPayload struct {
-	Team *Team `json:"team"`
-}
-
-type RemoveMyAuthInput struct {
-	Auth string `json:"auth"`
+type RemoveMemberFromWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type RemoveNLSInfoboxBlockInput struct {
@@ -979,8 +985,9 @@ type RemoveStylePayload struct {
 }
 
 type RemoveWidgetInput struct {
-	SceneID  ID `json:"sceneId"`
-	WidgetID ID `json:"widgetId"`
+	Type     WidgetAlignSystemType `json:"type"`
+	SceneID  ID                    `json:"sceneId"`
+	WidgetID ID                    `json:"widgetId"`
 }
 
 type RemoveWidgetPayload struct {
@@ -989,25 +996,31 @@ type RemoveWidgetPayload struct {
 }
 
 type Scene struct {
-	ID                ID                 `json:"id"`
-	ProjectID         ID                 `json:"projectId"`
-	TeamID            ID                 `json:"teamId"`
-	PropertyID        ID                 `json:"propertyId"`
-	CreatedAt         time.Time          `json:"createdAt"`
-	UpdatedAt         time.Time          `json:"updatedAt"`
-	Widgets           []*SceneWidget     `json:"widgets"`
-	Plugins           []*ScenePlugin     `json:"plugins"`
-	WidgetAlignSystem *WidgetAlignSystem `json:"widgetAlignSystem,omitempty"`
-	Project           *Project           `json:"project,omitempty"`
-	Team              *Team              `json:"team,omitempty"`
-	Property          *Property          `json:"property,omitempty"`
-	NewLayers         []NLSLayer         `json:"newLayers"`
-	Stories           []*Story           `json:"stories"`
-	Styles            []*Style           `json:"styles"`
+	ID                ID                  `json:"id"`
+	WorkspaceID       ID                  `json:"workspaceId"`
+	ProjectID         ID                  `json:"projectId"`
+	PropertyID        ID                  `json:"propertyId"`
+	CreatedAt         time.Time           `json:"createdAt"`
+	UpdatedAt         time.Time           `json:"updatedAt"`
+	Widgets           []*SceneWidget      `json:"widgets"`
+	Plugins           []*ScenePlugin      `json:"plugins"`
+	WidgetAlignSystem *WidgetAlignSystems `json:"widgetAlignSystem,omitempty"`
+	Project           *Project            `json:"project,omitempty"`
+	Workspace         *Workspace          `json:"workspace,omitempty"`
+	Property          *Property           `json:"property,omitempty"`
+	NewLayers         []NLSLayer          `json:"newLayers"`
+	Stories           []*Story            `json:"stories"`
+	Styles            []*Style            `json:"styles"`
+	Alias             string              `json:"alias"`
 }
 
 func (Scene) IsNode()        {}
 func (this Scene) GetID() ID { return this.ID }
+
+type SceneAliasAvailability struct {
+	Alias     string `json:"alias"`
+	Available bool   `json:"available"`
+}
 
 type ScenePlugin struct {
 	PluginID   ID        `json:"pluginId"`
@@ -1028,19 +1041,6 @@ type SceneWidget struct {
 	Property    *Property        `json:"property,omitempty"`
 }
 
-type SignupInput struct {
-	Lang   *language.Tag `json:"lang,omitempty"`
-	Theme  *Theme        `json:"theme,omitempty"`
-	UserID *ID           `json:"userId,omitempty"`
-	TeamID *ID           `json:"teamId,omitempty"`
-	Secret *string       `json:"secret,omitempty"`
-}
-
-type SignupPayload struct {
-	User *User `json:"user"`
-	Team *Team `json:"team"`
-}
-
 type SketchInfo struct {
 	CustomPropertySchema JSON               `json:"customPropertySchema,omitempty"`
 	FeatureCollection    *FeatureCollection `json:"featureCollection,omitempty"`
@@ -1055,6 +1055,7 @@ type Spacing struct {
 
 type Story struct {
 	ID                ID                `json:"id"`
+	ProjectID         ID                `json:"projectId"`
 	SceneID           ID                `json:"sceneId"`
 	Scene             *Scene            `json:"scene,omitempty"`
 	Title             string            `json:"title"`
@@ -1134,26 +1135,6 @@ type Style struct {
 	Scene   *Scene `json:"scene,omitempty"`
 }
 
-type Team struct {
-	ID       ID                 `json:"id"`
-	Name     string             `json:"name"`
-	Members  []*TeamMember      `json:"members"`
-	Personal bool               `json:"personal"`
-	PolicyID *ID                `json:"policyId,omitempty"`
-	Policy   *Policy            `json:"policy,omitempty"`
-	Assets   *AssetConnection   `json:"assets"`
-	Projects *ProjectConnection `json:"projects"`
-}
-
-func (Team) IsNode()        {}
-func (this Team) GetID() ID { return this.ID }
-
-type TeamMember struct {
-	UserID ID    `json:"userId"`
-	Role   Role  `json:"role"`
-	User   *User `json:"user,omitempty"`
-}
-
 type Timeline struct {
 	CurrentTime *string `json:"currentTime,omitempty"`
 	StartTime   *string `json:"startTime,omitempty"`
@@ -1223,14 +1204,14 @@ type UpdateMePayload struct {
 	Me *Me `json:"me"`
 }
 
-type UpdateMemberOfTeamInput struct {
-	TeamID ID   `json:"teamId"`
-	UserID ID   `json:"userId"`
-	Role   Role `json:"role"`
+type UpdateMemberOfWorkspaceInput struct {
+	WorkspaceID ID   `json:"workspaceId"`
+	UserID      ID   `json:"userId"`
+	Role        Role `json:"role"`
 }
 
-type UpdateMemberOfTeamPayload struct {
-	Team *Team `json:"team"`
+type UpdateMemberOfWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type UpdateNLSLayerInput struct {
@@ -1264,6 +1245,7 @@ type UpdateProjectInput struct {
 	Starred           *bool    `json:"starred,omitempty"`
 	Deleted           *bool    `json:"deleted,omitempty"`
 	Visibility        *string  `json:"visibility,omitempty"`
+	ProjectAlias      *string  `json:"projectAlias,omitempty"`
 	PublicTitle       *string  `json:"publicTitle,omitempty"`
 	PublicDescription *string  `json:"publicDescription,omitempty"`
 	PublicImage       *string  `json:"publicImage,omitempty"`
@@ -1274,6 +1256,13 @@ type UpdateProjectInput struct {
 	BasicAuthPassword *string  `json:"basicAuthPassword,omitempty"`
 	EnableGa          *bool    `json:"enableGa,omitempty"`
 	TrackingID        *string  `json:"trackingId,omitempty"`
+}
+
+type UpdateProjectMetadataInput struct {
+	Project ID       `json:"project"`
+	Readme  *string  `json:"readme,omitempty"`
+	License *string  `json:"license,omitempty"`
+	Topics  []string `json:"topics,omitempty"`
 }
 
 type UpdatePropertyItemInput struct {
@@ -1339,16 +1328,8 @@ type UpdateStylePayload struct {
 	Style *Style `json:"style"`
 }
 
-type UpdateTeamInput struct {
-	TeamID ID     `json:"teamId"`
-	Name   string `json:"name"`
-}
-
-type UpdateTeamPayload struct {
-	Team *Team `json:"team"`
-}
-
 type UpdateWidgetAlignSystemInput struct {
+	Type       WidgetAlignSystemType   `json:"type"`
 	SceneID    ID                      `json:"sceneId"`
 	Location   *WidgetLocationInput    `json:"location"`
 	Align      *WidgetAreaAlign        `json:"align,omitempty"`
@@ -1363,17 +1344,28 @@ type UpdateWidgetAlignSystemPayload struct {
 }
 
 type UpdateWidgetInput struct {
-	SceneID  ID                   `json:"sceneId"`
-	WidgetID ID                   `json:"widgetId"`
-	Enabled  *bool                `json:"enabled,omitempty"`
-	Location *WidgetLocationInput `json:"location,omitempty"`
-	Extended *bool                `json:"extended,omitempty"`
-	Index    *int                 `json:"index,omitempty"`
+	Type     WidgetAlignSystemType `json:"type"`
+	SceneID  ID                    `json:"sceneId"`
+	WidgetID ID                    `json:"widgetId"`
+	Enabled  *bool                 `json:"enabled,omitempty"`
+	Location *WidgetLocationInput  `json:"location,omitempty"`
+	Extended *bool                 `json:"extended,omitempty"`
+	Index    *int                  `json:"index,omitempty"`
 }
 
 type UpdateWidgetPayload struct {
 	Scene       *Scene       `json:"scene"`
 	SceneWidget *SceneWidget `json:"sceneWidget"`
+}
+
+type UpdateWorkspaceInput struct {
+	WorkspaceID ID      `json:"workspaceId"`
+	Name        string  `json:"name"`
+	Alias       *string `json:"alias,omitempty"`
+}
+
+type UpdateWorkspacePayload struct {
+	Workspace *Workspace `json:"workspace"`
 }
 
 type UpgradePluginInput struct {
@@ -1417,9 +1409,18 @@ type User struct {
 func (User) IsNode()        {}
 func (this User) GetID() ID { return this.ID }
 
+type UserMetadata struct {
+	PhotoURL *string `json:"photoURL,omitempty"`
+}
+
 type WidgetAlignSystem struct {
 	Inner *WidgetZone `json:"inner,omitempty"`
 	Outer *WidgetZone `json:"outer,omitempty"`
+}
+
+type WidgetAlignSystems struct {
+	Desktop *WidgetAlignSystem `json:"desktop,omitempty"`
+	Mobile  *WidgetAlignSystem `json:"mobile,omitempty"`
 }
 
 type WidgetArea struct {
@@ -1481,6 +1482,27 @@ type WidgetZone struct {
 	Right  *WidgetSection `json:"right,omitempty"`
 }
 
+type Workspace struct {
+	ID                           ID                 `json:"id"`
+	Name                         string             `json:"name"`
+	Members                      []*WorkspaceMember `json:"members"`
+	Personal                     bool               `json:"personal"`
+	PhotoURL                     *string            `json:"photoURL,omitempty"`
+	Assets                       *AssetConnection   `json:"assets"`
+	Projects                     *ProjectConnection `json:"projects"`
+	EnableToCreatePrivateProject bool               `json:"enableToCreatePrivateProject"`
+	Alias                        string             `json:"alias"`
+}
+
+func (Workspace) IsNode()        {}
+func (this Workspace) GetID() ID { return this.ID }
+
+type WorkspaceMember struct {
+	UserID ID    `json:"userId"`
+	Role   Role  `json:"role"`
+	User   *User `json:"user,omitempty"`
+}
+
 type AssetSortField string
 
 const (
@@ -1522,6 +1544,20 @@ func (e *AssetSortField) UnmarshalGQL(v any) error {
 
 func (e AssetSortField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *AssetSortField) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e AssetSortField) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type ListOperation string
@@ -1567,12 +1603,26 @@ func (e ListOperation) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *ListOperation) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ListOperation) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type NodeType string
 
 const (
 	NodeTypeAsset          NodeType = "ASSET"
 	NodeTypeUser           NodeType = "USER"
-	NodeTypeTeam           NodeType = "TEAM"
+	NodeTypeWorkspace      NodeType = "WORKSPACE"
 	NodeTypeProject        NodeType = "PROJECT"
 	NodeTypePlugin         NodeType = "PLUGIN"
 	NodeTypeScene          NodeType = "SCENE"
@@ -1585,7 +1635,7 @@ const (
 var AllNodeType = []NodeType{
 	NodeTypeAsset,
 	NodeTypeUser,
-	NodeTypeTeam,
+	NodeTypeWorkspace,
 	NodeTypeProject,
 	NodeTypePlugin,
 	NodeTypeScene,
@@ -1597,7 +1647,7 @@ var AllNodeType = []NodeType{
 
 func (e NodeType) IsValid() bool {
 	switch e {
-	case NodeTypeAsset, NodeTypeUser, NodeTypeTeam, NodeTypeProject, NodeTypePlugin, NodeTypeScene, NodeTypePropertySchema, NodeTypeProperty, NodeTypeLayerGroup, NodeTypeLayerItem:
+	case NodeTypeAsset, NodeTypeUser, NodeTypeWorkspace, NodeTypeProject, NodeTypePlugin, NodeTypeScene, NodeTypePropertySchema, NodeTypeProperty, NodeTypeLayerGroup, NodeTypeLayerItem:
 		return true
 	}
 	return false
@@ -1622,6 +1672,20 @@ func (e *NodeType) UnmarshalGQL(v any) error {
 
 func (e NodeType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *NodeType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e NodeType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type PluginExtensionType string
@@ -1681,6 +1745,20 @@ func (e PluginExtensionType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *PluginExtensionType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e PluginExtensionType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type Position string
 
 const (
@@ -1722,10 +1800,25 @@ func (e Position) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *Position) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Position) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type ProjectImportStatus string
 
 const (
 	ProjectImportStatusNone       ProjectImportStatus = "NONE"
+	ProjectImportStatusUploading  ProjectImportStatus = "UPLOADING"
 	ProjectImportStatusProcessing ProjectImportStatus = "PROCESSING"
 	ProjectImportStatusFailed     ProjectImportStatus = "FAILED"
 	ProjectImportStatusSuccess    ProjectImportStatus = "SUCCESS"
@@ -1733,6 +1826,7 @@ const (
 
 var AllProjectImportStatus = []ProjectImportStatus{
 	ProjectImportStatusNone,
+	ProjectImportStatusUploading,
 	ProjectImportStatusProcessing,
 	ProjectImportStatusFailed,
 	ProjectImportStatusSuccess,
@@ -1740,7 +1834,7 @@ var AllProjectImportStatus = []ProjectImportStatus{
 
 func (e ProjectImportStatus) IsValid() bool {
 	switch e {
-	case ProjectImportStatusNone, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
+	case ProjectImportStatusNone, ProjectImportStatusUploading, ProjectImportStatusProcessing, ProjectImportStatusFailed, ProjectImportStatusSuccess:
 		return true
 	}
 	return false
@@ -1765,6 +1859,20 @@ func (e *ProjectImportStatus) UnmarshalGQL(v any) error {
 
 func (e ProjectImportStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ProjectImportStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ProjectImportStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type ProjectSortField string
@@ -1808,6 +1916,20 @@ func (e *ProjectSortField) UnmarshalGQL(v any) error {
 
 func (e ProjectSortField) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *ProjectSortField) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ProjectSortField) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type PropertySchemaFieldUI string
@@ -1877,6 +1999,20 @@ func (e PropertySchemaFieldUI) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *PropertySchemaFieldUI) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e PropertySchemaFieldUI) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type PublishmentStatus string
 
 const (
@@ -1918,6 +2054,20 @@ func (e *PublishmentStatus) UnmarshalGQL(v any) error {
 
 func (e PublishmentStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *PublishmentStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e PublishmentStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type Role string
@@ -1965,6 +2115,20 @@ func (e Role) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *Role) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Role) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type SortDirection string
 
 const (
@@ -2004,6 +2168,20 @@ func (e *SortDirection) UnmarshalGQL(v any) error {
 
 func (e SortDirection) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *SortDirection) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e SortDirection) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type TextAlign string
@@ -2053,6 +2231,20 @@ func (e TextAlign) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *TextAlign) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e TextAlign) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type Theme string
 
 const (
@@ -2094,6 +2286,20 @@ func (e *Theme) UnmarshalGQL(v any) error {
 
 func (e Theme) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Theme) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Theme) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type ValueType string
@@ -2163,6 +2369,20 @@ func (e ValueType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *ValueType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e ValueType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type Visualizer string
 
 const (
@@ -2200,6 +2420,75 @@ func (e *Visualizer) UnmarshalGQL(v any) error {
 
 func (e Visualizer) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Visualizer) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Visualizer) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
+type WidgetAlignSystemType string
+
+const (
+	WidgetAlignSystemTypeDesktop WidgetAlignSystemType = "DESKTOP"
+	WidgetAlignSystemTypeMobile  WidgetAlignSystemType = "MOBILE"
+)
+
+var AllWidgetAlignSystemType = []WidgetAlignSystemType{
+	WidgetAlignSystemTypeDesktop,
+	WidgetAlignSystemTypeMobile,
+}
+
+func (e WidgetAlignSystemType) IsValid() bool {
+	switch e {
+	case WidgetAlignSystemTypeDesktop, WidgetAlignSystemTypeMobile:
+		return true
+	}
+	return false
+}
+
+func (e WidgetAlignSystemType) String() string {
+	return string(e)
+}
+
+func (e *WidgetAlignSystemType) UnmarshalGQL(v any) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WidgetAlignSystemType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WidgetAlignSystemType", str)
+	}
+	return nil
+}
+
+func (e WidgetAlignSystemType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *WidgetAlignSystemType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetAlignSystemType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type WidgetAreaAlign string
@@ -2245,6 +2534,20 @@ func (e WidgetAreaAlign) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *WidgetAreaAlign) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetAreaAlign) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type WidgetAreaType string
 
 const (
@@ -2286,6 +2589,20 @@ func (e *WidgetAreaType) UnmarshalGQL(v any) error {
 
 func (e WidgetAreaType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *WidgetAreaType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetAreaType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type WidgetSectionType string
@@ -2331,6 +2648,20 @@ func (e WidgetSectionType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
+func (e *WidgetSectionType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetSectionType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
+}
+
 type WidgetZoneType string
 
 const (
@@ -2370,4 +2701,18 @@ func (e *WidgetZoneType) UnmarshalGQL(v any) error {
 
 func (e WidgetZoneType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *WidgetZoneType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e WidgetZoneType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }

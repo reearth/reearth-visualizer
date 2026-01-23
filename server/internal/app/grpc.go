@@ -11,11 +11,10 @@ import (
 	"github.com/reearth/reearth/server/internal/adapter/internalapi"
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
-	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )
@@ -27,11 +26,14 @@ func initGrpc(cfg *ServerConfig) *grpc.Server {
 
 	ui := grpc.ChainUnaryInterceptor(
 		unaryLogInterceptor(cfg),
-		// unaryAuthInterceptor(cfg), // TODO: When using M2M token
+		unaryAuthInterceptor(cfg),
 		unaryAttachOperatorInterceptor(cfg),
 		unaryAttachUsecaseInterceptor(cfg),
 	)
-	s := grpc.NewServer(ui)
+	s := grpc.NewServer(
+		ui,
+		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+	)
 	pb.RegisterReEarthVisualizerServer(s, internalapi.NewServer())
 
 	return s
@@ -62,37 +64,65 @@ func unaryLogInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	}
 }
 
-// func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
-// 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
-// 		md, ok := metadata.FromIncomingContext(ctx)
-// 		if !ok {
-// 			log.Errorf("unaryAuthInterceptor: no metadata found")
-// 			return nil, errors.New("unauthorized")
-// 		}
+func unaryAuthInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		// Check if this is a read-only GET method that should be allowed without auth
+		if isReadOnlyMethod(info.FullMethod) {
+			// Special case: GetAllProjects with private visibility requires authentication
+			if info.FullMethod == "/reearth.visualizer.v1.ReEarthVisualizer/GetAllProjects" {
+				if getProjectsReq, ok := req.(*pb.GetAllProjectsRequest); ok && getProjectsReq.GetVisibility() == pb.ProjectVisibility_PROJECT_VISIBILITY_PRIVATE {
+					// TODO: Private projects require authentication, will continue to auth check below
+				} else {
+					return handler(ctx, req)
+				}
+			} else {
+				return handler(ctx, req)
+			}
+		}
 
-// 		token := tokenFromGrpcMetadata(md)
-// 		if token == "" {
-// 			log.Errorf("unaryAuthInterceptor: no token found")
-// 			return nil, errors.New("unauthorized")
-// 		}
+		md, ok := metadata.FromIncomingContext(ctx)
+		if !ok {
+			log.Errorf("unaryAuthInterceptor: no metadata found")
+			return nil, errors.New("unauthorized")
+		}
 
-// 		if token != cfg.Config.InternalApi.Token {
-// 			log.Errorf("unaryAuthInterceptor: invalid token")
-// 			return nil, errors.New("unauthorized")
-// 		}
+		// Allow ExportProject without a token.
+		if info.FullMethod != "/reearth.visualizer.v1.ReEarthVisualizer/ExportProject" {
+			token := tokenFromGrpcMetadata(md)
+			if token == "" {
+				log.Errorf("unaryAuthInterceptor: no token found")
+				return nil, errors.New("unauthorized")
+			}
 
-// 		return handler(ctx, req)
-// 	}
-// }
+			if token != cfg.Config.Visualizer.InternalApi.Token {
+				log.Errorf("unaryAuthInterceptor: invalid token")
+				return nil, errors.New("unauthorized")
+			}
+		} else {
+			log.Infof("Skip token check.")
+		}
+
+		return handler(ctx, req)
+	}
+}
 
 func unaryAttachOperatorInterceptor(cfg *ServerConfig) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
+		ctx = adapter.AttachCurrentHost(ctx, cfg.Config.Host)
 		md, ok := metadata.FromIncomingContext(ctx)
 		if !ok {
+			// For read-only methods, we can proceed without metadata
+			if isReadOnlyMethod(info.FullMethod) {
+				return handler(ctx, req)
+			}
 			log.Errorf("unaryAttachOperatorInterceptor: no metadata found")
 			return nil, errors.New("unauthorized")
 		}
 		if len(md["user-id"]) < 1 {
+			// For read-only methods, we can proceed without user-id
+			if isReadOnlyMethod(info.FullMethod) {
+				return handler(ctx, req)
+			}
 			log.Errorf("unaryAttachOperatorInterceptor: no user id found")
 			return nil, errors.New("unauthorized")
 		}
@@ -130,42 +160,43 @@ func unaryAttachUsecaseInterceptor(cfg *ServerConfig) grpc.UnaryServerIntercepto
 		ar := cfg.AccountRepos
 		ag := cfg.AccountGateways
 
-		if op := adapter.Operator(ctx); op != nil {
-
-			ws := repo.WorkspaceFilterFromOperator(op)
-			sc := repo.SceneFilterFromOperator(op)
-
-			// apply filters to repos
-			r = r.Filtered(
-				ws,
-				sc,
-			)
-		}
-
-		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
-			// apply filters to repos
-			ar = ar.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
-		}
-
 		uc := interactor.NewContainer(r, g, ar, ag, interactor.ContainerConfig{})
 		ctx = adapter.AttachUsecases(ctx, &uc)
+		ctx = adapter.AttachInternal(ctx, true)
 		return handler(ctx, req)
 	}
 }
 
-// func tokenFromGrpcMetadata(md metadata.MD) string {
-// 	// The keys within metadata.MD are normalized to lowercase.
-// 	// See: https://godoc.org/google.golang.org/grpc/metadata#New
-// 	if len(md["m2m-token"]) < 1 {
-// 		return ""
-// 	}
-// 	token := md["m2m-token"][0]
-// 	if !strings.HasPrefix(token, "Bearer ") {
-// 		return ""
-// 	}
-// 	token = strings.TrimPrefix(md["m2m-token"][0], "Bearer ")
-// 	if token == "" {
-// 		return ""
-// 	}
-// 	return token
-// }
+func isReadOnlyMethod(method string) bool {
+	readOnlyMethods := []string{
+		"v1.ReEarthVisualizer/GetAllProjects",
+		"v1.ReEarthVisualizer/GetProjectList",
+		"v1.ReEarthVisualizer/GetProject",
+		"v1.ReEarthVisualizer/GetProjectByWorkspaceAliasAndProjectAlias",
+		"v1.ReEarthVisualizer/ExportProject",
+	}
+
+	for _, readOnlyMethod := range readOnlyMethods {
+		if strings.Contains(method, readOnlyMethod) {
+			return true
+		}
+	}
+	return false
+}
+
+func tokenFromGrpcMetadata(md metadata.MD) string {
+	// The keys within metadata.MD are normalized to lowercase.
+	// See: https://godoc.org/google.golang.org/grpc/metadata#New
+	if len(md["authorization"]) < 1 {
+		return ""
+	}
+	token := md["authorization"][0]
+	if !strings.HasPrefix(token, "Bearer ") {
+		return ""
+	}
+	token = strings.TrimPrefix(md["authorization"][0], "Bearer ")
+	if token == "" {
+		return ""
+	}
+	return token
+}

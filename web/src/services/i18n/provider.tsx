@@ -1,17 +1,16 @@
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import dayjs from "dayjs";
 import { ReactNode, useEffect } from "react";
 import { I18nextProvider } from "react-i18next";
 import "dayjs/locale/ja";
 
-import { useMeFetcher } from "../api";
+import { useMe } from "../api/user";
 
 import i18n from "./i18n";
 
 export default function Provider({ children }: { children?: ReactNode }) {
   const { isAuthenticated } = useAuth();
-  const { useMeQuery } = useMeFetcher();
-  const { me } = useMeQuery({ skip: !isAuthenticated });
+  const { me } = useMe({ skip: !isAuthenticated });
   const locale = me?.lang;
 
   dayjs.locale(locale);

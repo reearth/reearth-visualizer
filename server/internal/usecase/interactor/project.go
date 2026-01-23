@@ -9,8 +9,17 @@ import (
 	"io"
 	"net/url"
 	"path"
+	"slices"
 	"strings"
 	"time"
+
+	"github.com/reearth/reearthx/account/accountdomain/user"
+	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/idx"
+	"github.com/reearth/reearthx/log"
+	"github.com/reearth/reearthx/rerror"
+	"github.com/reearth/reearthx/util"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -28,7 +37,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
-	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/spf13/afero"
 )
@@ -36,99 +44,127 @@ import (
 type Project struct {
 	common
 	commonSceneLock
+	transaction         usecasex.Transaction
+	userRepo            accountrepo.User
+	workspaceRepo       accountrepo.Workspace
 	assetRepo           repo.Asset
 	projectRepo         repo.Project
 	projectMetadataRepo repo.ProjectMetadata
 	storytellingRepo    repo.Storytelling
-	userRepo            accountrepo.User
-	workspaceRepo       accountrepo.Workspace
 	sceneRepo           repo.Scene
 	propertyRepo        repo.Property
 	propertySchemaRepo  repo.PropertySchema
-	transaction         usecasex.Transaction
-	policyRepo          repo.Policy
-	file                gateway.File
 	nlsLayerRepo        repo.NLSLayer
 	layerStyles         repo.Style
 	pluginRepo          repo.Plugin
+	file                gateway.File
+	policyChecker       gateway.PolicyChecker
 }
 
 func NewProject(r *repo.Container, gr *gateway.Container) interfaces.Project {
 	return &Project{
 		commonSceneLock:     commonSceneLock{sceneLockRepo: r.SceneLock},
+		userRepo:            r.User,
+		workspaceRepo:       r.Workspace,
 		assetRepo:           r.Asset,
 		projectRepo:         r.Project,
 		projectMetadataRepo: r.ProjectMetadata,
 		storytellingRepo:    r.Storytelling,
-		userRepo:            r.User,
-		workspaceRepo:       r.Workspace,
 		sceneRepo:           r.Scene,
 		propertyRepo:        r.Property,
 		transaction:         r.Transaction,
-		policyRepo:          r.Policy,
-		file:                gr.File,
 		nlsLayerRepo:        r.NLSLayer,
 		layerStyles:         r.Style,
 		pluginRepo:          r.Plugin,
 		propertySchemaRepo:  r.PropertySchema,
+		file:                gr.File,
+		policyChecker:       gr.PolicyChecker,
 	}
 }
 
-func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, _ *usecase.Operator) ([]*project.Project, error) {
+// GetProject invoked by loader
+func (i *Project) Fetch(ctx context.Context, ids []id.ProjectID, op *usecase.Operator) ([]*project.Project, error) {
 
 	projects, err := i.projectRepo.FindByIDs(ctx, ids)
 	if err != nil {
 		return []*project.Project{}, err
 	}
 
-	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	projects, err = i.addMetadatas(ctx, projects, false, op)
 	if err != nil {
-		return []*project.Project{}, err
-	}
-
-	for _, project := range projects {
-		for _, metadata := range metadatas {
-			if project.ID() == metadata.Project() {
-				project.SetMetadata(metadata)
-				break
-			}
-		}
+		return nil, err
 	}
 
 	return projects, nil
 }
 
-func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, operator *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
+// GetProjects invoked by loader
+func (i *Project) FindByWorkspace(ctx context.Context, wid accountdomain.WorkspaceID, keyword *string, sort *project.SortType, p *usecasex.Pagination, op *usecase.Operator) ([]*project.Project, *usecasex.PageInfo, error) {
 
-	pList, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
+	projects, pInfo, err := i.projectRepo.FindByWorkspace(ctx, wid, repo.ProjectFilter{
 		Pagination: p,
 		Sort:       sort,
 		Keyword:    keyword,
 	})
 	if err != nil {
-		return pList, pInfo, err
+		return projects, pInfo, err
 	}
 
-	ids := make(id.ProjectIDList, 0, len(pList))
-	for _, p := range pList {
-		ids = append(ids, p.ID())
+	projects, err = i.addMetadatas(ctx, projects, true, op)
+	if err != nil {
+		return projects, pInfo, err
+	}
+
+	return projects, pInfo, nil
+}
+
+func (i *Project) addMetadatas(ctx context.Context, projects []*project.Project, exclude bool, op *usecase.Operator) ([]*project.Project, error) {
+
+	ids := make(id.ProjectIDList, 0, len(projects))
+	for _, p := range projects {
+		if p != nil {
+			ids = append(ids, p.ID())
+		}
+	}
+
+	if len(ids) == 0 {
+		return []*project.Project{}, nil
 	}
 
 	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	for _, p := range pList {
-		for _, metadata := range metadatas {
-			if p.ID() == metadata.Project() {
-				p.SetMetadata(metadata)
-				break
+	// projects with a FAILED status will be deleted and excluded.
+	excludedProjects := make([]*project.Project, 0)
+	for _, p := range projects {
+		metadata := matchMetadata(p.ID(), metadatas)
+		if metadata == nil {
+			continue
+		}
+		if *metadata.ImportStatus() == project.ProjectImportStatusFailed {
+			if err := i.Delete(ctx, p.ID(), op); err != nil {
+				return nil, err
+			}
+			if exclude {
+				continue
 			}
 		}
+		p.SetMetadata(metadata)
+		excludedProjects = append(excludedProjects, p)
 	}
 
-	return pList, pInfo, err
+	return excludedProjects, nil
+}
+
+func matchMetadata(pid id.ProjectID, metadatas []*project.ProjectMetadata) *project.ProjectMetadata {
+	for _, metadata := range metadatas {
+		if pid == metadata.Project() {
+			return metadata
+		}
+	}
+	return nil
 }
 
 func (i *Project) FindStarredByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, operator *usecase.Operator) ([]*project.Project, error) {
@@ -140,36 +176,295 @@ func (i *Project) FindDeletedByWorkspace(ctx context.Context, id accountdomain.W
 }
 
 func (i *Project) FindActiveById(ctx context.Context, pid id.ProjectID, operator *usecase.Operator) (*project.Project, error) {
-	return i.projectRepo.FindActiveById(ctx, pid)
-}
-
-func (i *Project) FindVisibilityByWorkspace(ctx context.Context, id accountdomain.WorkspaceID, authenticated bool, operator *usecase.Operator) ([]*project.Project, error) {
-
-	isWorkspaceOwner := false
-
-	if len(operator.AcOperator.OwningWorkspaces) > 0 {
-		isWorkspaceOwner = operator.AcOperator.OwningWorkspaces[0] == id
+	pj, err := i.projectRepo.FindActiveById(ctx, pid)
+	if err != nil {
+		return nil, err
 	}
 
-	return i.projectRepo.FindVisibilityByWorkspace(ctx, authenticated, isWorkspaceOwner, id)
+	if operator == nil && pj.Visibility() == string(project.VisibilityPrivate) {
+		return nil, errors.New("project is private")
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) FindActiveByAlias(ctx context.Context, alias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindActiveByAlias(ctx, alias)
+	if err != nil {
+		return nil, err
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) FindByWorkspaceAliasAndProjectAlias(ctx context.Context, workspaceAlias, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	ws, err := i.workspaceRepo.FindByAlias(ctx, workspaceAlias)
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "Fail FindByWorkspaceAliasAndProjectAlias", err)
+	}
+
+	return i.FindByWorkspaceIDAndProjectAlias(ctx, ws.ID(), projectAlias, operator)
+}
+
+func (i *Project) FindByWorkspaceIDAndProjectAlias(ctx context.Context, workspaceID accountdomain.WorkspaceID, projectAlias string, operator *usecase.Operator) (*project.Project, error) {
+	pj, err := i.projectRepo.FindByWorkspaceIDAndProjectAlias(ctx, workspaceID, projectAlias)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check access permissions based on project visibility
+	if pj.Visibility() == string(project.VisibilityPrivate) {
+		// Private projects require authenticated user with workspace access
+		if operator == nil {
+			return nil, errors.New("project is private")
+		}
+		if !operator.IsReadableWorkspace(workspaceID) {
+			return nil, interfaces.ErrOperationDenied
+		}
+	}
+	// Public projects can be accessed by anyone (authenticated or not)
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pj.ID())
+	if err != nil {
+		log.Errorf("project metadata not found for project ID %s: %v", pj.ID(), err)
+		return nil, err
+	}
+
+	pj.SetMetadata(meta)
+	return pj, nil
+}
+
+func (i *Project) MemberWorkspaces(ctx context.Context, uId accountdomain.UserID) (wsList workspace.List, ownedWs []string, memberWs []string) {
+	wsList, err := i.workspaceRepo.FindByUser(ctx, uId)
+	if err != nil {
+		return nil, nil, nil
+	}
+	ownedWs = []string{}
+	memberWs = []string{}
+	for _, ws := range wsList {
+		for userId, member := range ws.Members().Users() {
+			if uId.String() == userId.String() {
+				if member.Role == workspace.RoleOwner {
+					ownedWs = append(ownedWs, ws.ID().String())
+				}
+				if member.Role == workspace.RoleWriter || member.Role == workspace.RoleReader || member.Role == workspace.RoleMaintainer {
+					memberWs = append(memberWs, ws.ID().String())
+
+				}
+			}
+		}
+	}
+	return
+}
+
+func toIdStrings(wsList accountdomain.WorkspaceIDList) []string {
+	var ret []string
+	for _, wsID := range wsList {
+		ret = append(ret, wsID.String())
+	}
+	return ret
+}
+
+func (i *Project) FindVisibilityByUser(
+	ctx context.Context,
+	u *user.User,
+	authenticated bool,
+	operator *usecase.Operator,
+	keyword *string,
+	sort *project.SortType,
+	pagination *usecasex.Pagination,
+	param *interfaces.ProjectListParam,
+) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	pFilter := repo.ProjectFilter{
+		Keyword:    keyword,
+		Sort:       sort,
+		Pagination: pagination,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
+	}
+
+	wsList, ownedWs, memberWs := i.MemberWorkspaces(ctx, u.ID())
+
+	targetWsList := make(accountdomain.WorkspaceIDList, 0, len(wsList))
+	for _, ws := range wsList {
+		wsId, err := workspace.IDFrom(ws.ID().String())
+		if err != nil {
+			return nil, nil, err
+		}
+		targetWsList = append(targetWsList, wsId)
+	}
+
+	prjList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWs, memberWs, toIdStrings(targetWsList))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, prjList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, err
+}
+
+func (i *Project) FindVisibilityByWorkspace(
+	ctx context.Context,
+	aid accountdomain.WorkspaceID,
+	authenticated bool,
+	operator *usecase.Operator,
+	keyword *string,
+	sort *project.SortType,
+	pagination *usecasex.Pagination,
+	param *interfaces.ProjectListParam,
+) ([]*project.Project, *usecasex.PageInfo, error) {
+
+	pFilter := repo.ProjectFilter{
+		Keyword:    keyword,
+		Sort:       sort,
+		Pagination: pagination,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
+	}
+
+	ownedWs := []string{}
+	memberWs := []string{}
+
+	if operator != nil && operator.AcOperator != nil {
+		_, ownedWs, memberWs = i.MemberWorkspaces(ctx, *operator.AcOperator.User)
+	}
+
+	targetWsList := accountdomain.WorkspaceIDList{aid}
+
+	pList, pInfo, err := i.projectRepo.FindByWorkspaces(ctx, authenticated, pFilter, ownedWs, memberWs, toIdStrings(targetWsList))
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, pList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, err
+}
+
+func (i *Project) FindAll(ctx context.Context, keyword *string, sort *project.SortType, pagination *usecasex.Pagination, param *interfaces.ProjectListParam, topics *[]string, visibility *string) ([]*project.Project, *usecasex.PageInfo, error) {
+	topicsFilter := []string{}
+	if topics != nil {
+		topicsFilter = *topics
+	}
+
+	pFilter := repo.ProjectFilter{
+		Keyword:    keyword,
+		Sort:       sort,
+		Pagination: pagination,
+		Topics:     topicsFilter,
+		Visibility: visibility,
+	}
+
+	if param != nil {
+		pFilter.Limit = param.Limit
+		pFilter.Offset = param.Offset
+	}
+
+	pList, pInfo, err := i.projectRepo.FindAll(ctx, pFilter)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	result, err := i.getMetadata(ctx, pList)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return result, pInfo, nil
+}
+
+func (i *Project) getMetadata(ctx context.Context, pList []*project.Project) ([]*project.Project, error) {
+	ids := make(id.ProjectIDList, 0, len(pList))
+	for _, p := range pList {
+		ids = append(ids, p.ID())
+	}
+
+	metadatas, err := i.projectMetadataRepo.FindByProjectIDList(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, p := range pList {
+		for _, metadata := range metadatas {
+			if p.ID() == metadata.Project() {
+				p.SetMetadata(metadata)
+				break
+			}
+		}
+	}
+
+	return pList, err
 }
 
 func (i *Project) Create(ctx context.Context, input interfaces.CreateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+	visibility := project.VisibilityPublic
+
+	if i.policyChecker != nil {
+		operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(input.WorkspaceID))
+		if err != nil {
+			return nil, err
+		}
+		if !operationAllowed.Allowed {
+			return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by overused seat", errors.New("operation is disabled by overused seat"))
+		}
+
+		errPrivate := i.checkGeneralPolicy(ctx, input.WorkspaceID, project.VisibilityPrivate)
+		if errPrivate != nil {
+			visibility = project.VisibilityPublic
+		} else {
+			if input.Visibility != nil {
+				visibility = project.Visibility(*input.Visibility)
+			}
+		}
+	}
+
 	return i.createProject(ctx, createProjectInput{
 		WorkspaceID:  input.WorkspaceID,
 		Visualizer:   input.Visualizer,
 		Name:         input.Name,
 		Description:  input.Description,
 		CoreSupport:  input.CoreSupport,
-		Visibility:   input.Visibility,
+		IsDeleted:    input.IsDeleted,
+		Visibility:   &visibility,
 		ImportStatus: input.ImportStatus,
+		ProjectAlias: input.ProjectAlias,
+		Readme:       input.Readme,
+		License:      input.License,
+		Topics:       input.Topics,
 	}, operator)
 }
 
 func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, operator *usecase.Operator) (_ *project.Project, err error) {
+	log.Debugfc(ctx, "Update project: %v", p)
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
-		return
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to begin transaction", err)
 	}
 
 	ctx = tx.Context()
@@ -181,10 +476,20 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 
 	prj, err := i.projectRepo.FindByID(ctx, p.ID)
 	if err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to find project", err)
 	}
+
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+
+	if err != nil {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
-		return nil, err
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "failed to check policy", err)
 	}
 
 	if p.Name != nil {
@@ -261,13 +566,40 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 	}
 
 	if p.Visibility != nil {
+
+		visibility := project.Visibility(*p.Visibility)
+
+		if i.policyChecker != nil {
+
+			// If the visibility is going to change
+			if !strings.EqualFold(*p.Visibility, prj.Visibility()) {
+				if err = i.checkGeneralPolicy(ctx, prj.Workspace(), visibility); err != nil {
+					return nil, err
+				}
+			}
+
+		}
+
 		if err := prj.UpdateVisibility(*p.Visibility); err != nil {
 			return nil, err
 		}
+
 	}
 
-	if len(graphql.GetErrors(ctx)) > 0 {
-		return prj, nil
+	if p.ProjectAlias != nil {
+
+		_, err = i.CheckProjectAlias(ctx, *p.ProjectAlias, prj.Workspace(), prj.ID().Ref())
+		if err != nil {
+			return nil, err
+		}
+
+		prj.UpdateProjectAlias(*p.ProjectAlias)
+	}
+
+	if !adapter.IsInternal(ctx) {
+		if errs := graphql.GetErrors(ctx); len(errs) > 0 {
+			return prj, nil
+		}
 	}
 
 	currentTime := time.Now().UTC()
@@ -287,6 +619,13 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err != nil {
 		return nil, err
 	}
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
 
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return nil, err
@@ -299,6 +638,12 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 	if err := prj.UpdateVisibility(visibility); err != nil {
 		return nil, err
 	}
+	if i.policyChecker != nil {
+		if err = i.checkGeneralPolicy(ctx, prj.Workspace(), project.Visibility(visibility)); err != nil {
+			return nil, err
+		}
+	}
+
 	currentTime := time.Now().UTC()
 	prj.SetUpdatedAt(currentTime)
 
@@ -309,96 +654,127 @@ func (i *Project) UpdateVisibility(ctx context.Context, pid id.ProjectID, visibi
 
 }
 
-func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) UpdateImportStatus(ctx context.Context, pid id.ProjectID, importStatus project.ProjectImportStatus, importResultLog *map[string]any, operator *usecase.Operator) (*project.ProjectMetadata, error) {
 
-	prj, err := i.projectRepo.FindByID(ctx, pid)
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
 	if err != nil {
 		return nil, err
 	}
 
-	currentTime := time.Now().UTC()
-
-	metadata := prj.Metadata()
-	if metadata != nil {
-		metadata.SetImportStatus(&importStatus)
-		metadata.SetUpdatedAt(&currentTime)
+	if meta != nil {
+		currentTime := time.Now().UTC()
+		meta.SetImportStatus(&importStatus)
+		meta.SetImportResultLog(importResultLog)
+		meta.SetUpdatedAt(&currentTime)
 	}
-	prj.SetMetadata(metadata)
 
-	if err := i.projectRepo.Save(ctx, prj); err != nil {
+	if err := i.projectMetadataRepo.Save(ctx, meta); err != nil {
 		return nil, err
 	}
-	return prj, nil
+	return meta, nil
 
 }
 
-func (i *Project) CheckAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
-	aliasName := strings.ToLower(newAlias)
+func (i *Project) dedicatedID(ctx context.Context, pid *id.ProjectID) (*project.Project, string, string, error) {
 
-	if pid == nil {
+	prj, err := i.projectRepo.FindByID(ctx, *pid)
+	if err != nil {
+		return nil, "", "", err
+	}
 
-		if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
-			return false, err
-		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
-		if err := i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-			return false, err
-		}
+	sce, err := i.sceneRepo.FindByProject(ctx, *pid)
+	if err != nil {
+		return nil, "", "", err
+	}
 
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
-			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-		}
+	dedicatedID1 := alias.ReservedReearthPrefixScene + sce.ID().String()
+	dedicatedID2 := sce.ID().String()
 
-	} else {
+	return prj, dedicatedID1, dedicatedID2, err
+}
+
+func (i *Project) CheckProjectAlias(ctx context.Context, newAlias string, wsid accountdomain.WorkspaceID, pid *id.ProjectID) (bool, error) {
+
+	if pid != nil {
+		if alias.ReservedReearthPrefixProject+pid.String() == newAlias || pid.String() == newAlias {
+			return true, nil
+		}
 
 		prj, err := i.projectRepo.FindByID(ctx, *pid)
 		if err != nil {
 			return false, err
 		}
 
-		if aliasName == prj.Alias() {
-			// current alias
+		if prj.ProjectAlias() == newAlias {
 			return true, nil
 		}
+	}
 
-		sce, err := i.sceneRepo.FindByProject(ctx, *pid)
+	ok := util.IsSafePathName(newAlias)
+	if !ok {
+		return false, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newAlias)
+	}
+
+	err := i.projectRepo.CheckProjectAliasUnique(ctx, wsid, newAlias, pid)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
+func (i *Project) CheckSceneAlias(ctx context.Context, newAlias string, pid *id.ProjectID) (bool, error) {
+	aliasName := strings.ToLower(newAlias)
+	if pid == nil {
+
+		if err := alias.CheckAliasPatternScene(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err := i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
+			return false, err
+		}
+
+		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixScene) || strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+	} else {
+
+		prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, pid)
 		if err != nil {
 			return false, err
 		}
 
-		if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixStory) {
-			// error 's-' prefix
-			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-		} else if strings.HasPrefix(aliasName, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(aliasName, alias.ReservedReearthPrefixProject)
-			// only allow self ID
-			if id != sce.ID().String() {
-				// error 'c-' prefix
-				return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
-			}
+		if aliasName == dedicatedID1 || aliasName == dedicatedID2 || aliasName == prj.Alias() {
+			// allow self sceneId or current alias
+			return true, nil
 		}
 
-		if sce.ID().String() == aliasName || sce.DefaultAlias() == aliasName {
-			// allow self ProjectID
-		} else {
-			if err := alias.CheckProjectAliasPattern(aliasName); err != nil {
-				return false, err
-			}
-			if err := i.projectRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err := i.sceneRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
-			if err = i.storytellingRepo.CheckAliasUnique(ctx, aliasName); err != nil {
-				return false, err
-			}
+		// story prefix check
+		if _, found := strings.CutPrefix(aliasName, alias.ReservedReearthPrefixStory); found {
+			// error 's-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
 		}
+
+		// scene prefix check
+		if _, found := strings.CutPrefix(aliasName, alias.ReservedReearthPrefixScene); found {
+			// error 'c-' prefix
+			return false, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", aliasName)
+		}
+
+		if err := alias.CheckAliasPatternScene(aliasName); err != nil {
+			return false, err
+		}
+		if err := i.projectRepo.CheckSceneAliasUnique(ctx, aliasName); err != nil {
+			return false, err
+		}
+		if err = i.storytellingRepo.CheckStorytellingAlias(ctx, aliasName); err != nil {
+			return false, err
+		}
+
 	}
 
 	return true, nil
@@ -417,17 +793,25 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		}
 	}()
 
-	prj, err := i.projectRepo.FindByID(ctx, params.ID)
-	if err != nil {
-		return nil, err
-	}
-
-	sce, err := i.sceneRepo.FindByProject(ctx, params.ID)
+	prj, dedicatedID1, dedicatedID2, err := i.dedicatedID(ctx, &params.ID)
 	if err != nil {
 		return nil, err
 	}
 
 	if err := i.CanWriteWorkspace(prj.Workspace(), op); err != nil {
+		return nil, err
+	}
+
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
+	sc, err := i.sceneRepo.FindByProject(ctx, prj.ID())
+	if err != nil {
 		return nil, err
 	}
 
@@ -437,49 +821,50 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 	if params.Alias == nil || *params.Alias == "" {
 		// if you don't have an alias, set it to default alias
 		if prj.Alias() == "" {
-			prj.UpdateAlias(sce.DefaultAlias())
+			prj.UpdateAlias(dedicatedID1)
 		}
 		// if anything is set, do nothing
 	} else {
+
 		newAlias := strings.ToLower(*params.Alias)
 
-		if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixStory) {
-			// error 's-' prefix
-			return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
-		} else if strings.HasPrefix(newAlias, alias.ReservedReearthPrefixProject) {
-			id := strings.TrimPrefix(newAlias, alias.ReservedReearthPrefixProject)
-			// only allow self ID
-			if id != sce.ID().String() {
+		if newAlias == dedicatedID1 || newAlias == dedicatedID2 || prevAlias == newAlias {
+
+			// allow self sceneId or current alias
+
+		} else {
+
+			// story prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixStory); found {
+				// error 's-' prefix
+				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			// scene prefix check
+			if _, found := strings.CutPrefix(newAlias, alias.ReservedReearthPrefixScene); found {
 				// error 'c-' prefix
 				return nil, alias.ErrInvalidProjectInvalidPrefixAlias.AddTemplateData("aliasName", newAlias)
+			}
+
+			if err := alias.CheckAliasPatternScene(newAlias); err != nil {
+				return nil, err
+			}
+			if err := i.projectRepo.CheckSceneAliasUnique(ctx, newAlias); err != nil {
+				return nil, err
+			}
+			if err = i.storytellingRepo.CheckStorytellingAlias(ctx, newAlias); err != nil {
+				return nil, err
 			}
 		}
 
 		prj.UpdateAlias(newAlias)
 	}
 
-	if prevAlias == prj.Alias() || sce.ID().String() == prj.Alias() || sce.DefaultAlias() == prj.Alias() {
-		// if do not change alias or self ProjectID, do nothing
-	} else {
-		if err := alias.CheckProjectAliasPattern(prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err := i.projectRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err := i.sceneRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-		if err = i.storytellingRepo.CheckAliasUnique(ctx, prj.Alias()); err != nil {
-			return nil, err
-		}
-	}
-
 	prj.UpdatePublishmentStatus(params.Status)
 
 	// publish
 	if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-		if err := i.uploadPublishScene(ctx, prj, op); err != nil {
+		if err := i.uploadPublishScene(ctx, prj, sc, op); err != nil {
 			return nil, err
 		}
 		prj.SetPublishedAt(time.Now())
@@ -497,51 +882,18 @@ func (i *Project) Publish(ctx context.Context, params interfaces.PublishProjectP
 		return nil, err
 	}
 
+	sc.UpdateAlias(prj.Alias())
+
+	if err := i.sceneRepo.Save(ctx, sc); err != nil {
+		return nil, err
+	}
+
 	tx.Commit()
 	return prj, nil
 }
 
-func (i *Project) checkPublishPolicy(ctx context.Context, prj *project.Project, op *usecase.Operator) (*scene.Scene, error) {
+func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, s *scene.Scene, op *usecase.Operator) error {
 
-	ws, err := i.workspaceRepo.FindByID(ctx, prj.Workspace())
-	if err != nil {
-		return nil, err
-	}
-
-	if policyID := op.Policy(ws.Policy()); policyID != nil {
-
-		p, err := i.policyRepo.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-
-		projectCount, err := i.projectRepo.CountPublicByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-
-		// newrly published
-		if prj.PublishmentStatus() != project.PublishmentStatusPrivate {
-			projectCount += 1
-		}
-
-		if err := p.EnforcePublishedProjectCount(projectCount); err != nil {
-			return nil, err
-		}
-	}
-
-	return i.sceneRepo.FindByProject(ctx, prj.ID())
-}
-
-func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, op *usecase.Operator) error {
-
-	// enforce policy
-	s, err := i.checkPublishPolicy(ctx, p, op)
-	if err != nil {
-		return err
-	}
-
-	// Lock
 	if err := i.CheckSceneLock(ctx, s.ID()); err != nil {
 		return err
 	}
@@ -592,6 +944,8 @@ func (i *Project) uploadPublishScene(ctx context.Context, p *project.Project, op
 }
 
 func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *usecase.Operator) (err error) {
+	log.Warnf("Deleting a project %s", projectID.String())
+
 	tx, err := i.transaction.Begin(ctx)
 	if err != nil {
 		return
@@ -610,6 +964,14 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	}
 	if err := i.CanWriteWorkspace(prj.Workspace(), operator); err != nil {
 		return err
+	}
+
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return err
+	}
+	if !operationAllowed.Allowed {
+		return visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
 	}
 
 	deleter := ProjectDeleter{
@@ -637,18 +999,53 @@ func (i *Project) Delete(ctx context.Context, projectID id.ProjectID, operator *
 	return nil
 }
 
-func (i *Project) ExportProjectData(ctx context.Context, projectID id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
+func (i *Project) ExportProjectData(ctx context.Context, pid id.ProjectID, zipWriter *zip.Writer, operator *usecase.Operator) (*project.Project, error) {
 
-	prj, err := i.projectRepo.FindByID(ctx, projectID)
+	prj, err := i.projectRepo.FindByID(ctx, pid)
 	if err != nil {
 		return nil, errors.New("project " + err.Error())
 	}
+
+	operationAllowed, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralOperationAllowedCheckRequest(prj.Workspace()))
+	if err != nil {
+		return nil, err
+	}
+	if !operationAllowed.Allowed {
+		return nil, visualizer.ErrorWithCallerLogging(ctx, "operation is disabled by over used seat", errors.New("operation is disabled by over used seat"))
+	}
+
 	if prj.IsDeleted() {
 		fmt.Printf("Error Deleted project: %v\n", prj.ID())
 		return nil, errors.New("This project is deleted")
 	}
 
+	// In the case of private, only the owner or members are allowed.
+	if prj.Visibility() == string(project.VisibilityPrivate) {
+
+		if operator == nil || operator.AcOperator == nil {
+			return nil, errors.New("Unauthorized project : " + prj.Name())
+		}
+
+		_, ownedWs, memberWs := i.MemberWorkspaces(ctx, *operator.AcOperator.User)
+		targetWs := prj.Workspace().String()
+
+		if !slices.Contains(ownedWs, targetWs) {
+			if !slices.Contains(memberWs, targetWs) {
+				return nil, errors.New("Unauthorized project : " + prj.Name())
+			}
+		}
+
+	}
+
+	meta, err := i.projectMetadataRepo.FindByProjectID(ctx, pid)
+	if err != nil {
+		return nil, errors.New("project metadate " + err.Error())
+	}
+
+	prj.SetMetadata(meta)
+
 	return prj, nil
+
 }
 
 func SearchAssetURL(ctx context.Context, data any, assetRepo repo.Asset, file gateway.File, zipWriter *zip.Writer, assetNames map[string]string) error {
@@ -716,7 +1113,7 @@ func AddZipAsset(ctx context.Context, assetRepo repo.Asset, file gateway.File, z
 	return nil
 }
 
-func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
+func (i *Project) SaveExportProjectZip(ctx context.Context, zipWriter *zip.Writer, zipFile afero.File, data map[string]interface{}, prj *project.Project) error {
 
 	assetNames := make(map[string]string)
 	if project, ok := data["project"].(map[string]interface{}); ok {
@@ -764,6 +1161,7 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 			fmt.Println("Failed to close zip file:", err)
 		}
 	}()
+
 	if err := i.file.UploadExportProjectZip(ctx, zipFile); err != nil {
 		return err
 	}
@@ -771,6 +1169,7 @@ func (i *Project) UploadExportProjectZip(ctx context.Context, zipWriter *zip.Wri
 }
 
 func (i *Project) ImportProjectData(ctx context.Context, workspace string, projectId *string, data *[]byte, op *usecase.Operator) (*project.Project, error) {
+	log.Infof("[ImportProjectData] workspace: %s project: %s", workspace, *projectId)
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
@@ -779,10 +1178,11 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 
 	projectData, ok := d["project"].(map[string]any)
 	if !ok {
+		log.Errorf("[Import Error] project parse error")
 		return nil, errors.New("project parse error")
 	}
 
-	var input = jsonmodel.ToProjectExportFromJSON(projectData)
+	var input = jsonmodel.ToProjectExportDataFromJSON(projectData)
 
 	alias := ""
 	archived := false
@@ -791,6 +1191,29 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 	workspaceId, err := accountdomain.WorkspaceIDFrom(workspace)
 	if err != nil {
 		return nil, err
+	}
+
+	var readme *string
+	if ret, ok := projectData["readme"].(string); ok {
+		readme = &ret
+	}
+	var license *string
+	if ret, ok := projectData["license"].(string); ok {
+		license = &ret
+	}
+	topics := input.Topics
+
+	visibility := project.VisibilityPublic
+	if i.policyChecker != nil {
+		errPrivate := i.checkGeneralPolicy(ctx, workspaceId, project.VisibilityPrivate)
+		if errPrivate == nil {
+			if ret, ok := projectData["visibility"].(string); ok {
+				vis := project.Visibility(ret)
+				visibility = vis
+			}
+		} else {
+			visibility = project.VisibilityPublic
+		}
 	}
 
 	result, err := i.createProject(ctx, createProjectInput{
@@ -804,11 +1227,14 @@ func (i *Project) ImportProjectData(ctx context.Context, workspace string, proje
 		Alias:        &alias,
 		Archived:     &archived,
 		CoreSupport:  &coreSupport,
+		Readme:       readme,
+		License:      license,
+		Topics:       topics,
+		Visibility:   &visibility,
 	}, op)
 	if err != nil {
 		return nil, err
 	}
-
 	return result, nil
 }
 
@@ -843,18 +1269,30 @@ func updateProjectUpdatedAtByScene(ctx context.Context, sceneID id.SceneID, r re
 }
 
 type createProjectInput struct {
-	WorkspaceID  accountdomain.WorkspaceID
-	ProjectID    *string
-	Visualizer   visualizer.Visualizer
-	ImportStatus project.ProjectImportStatus
-	Name         *string
-	Description  *string
-	ImageURL     *url.URL
-	Alias        *string
-	Archived     *bool
-	CoreSupport  *bool
-	Visibility   *string
+	WorkspaceID     accountdomain.WorkspaceID
+	ProjectID       *string
+	Visualizer      visualizer.Visualizer
+	ImportStatus    project.ProjectImportStatus
+	ImportResultLog *map[string]any
+	Name            *string
+	Description     *string
+	ImageURL        *url.URL
+	Alias           *string
+	IsDeleted       *bool
+	Archived        *bool
+	CoreSupport     *bool
+	Visibility      *project.Visibility
+	ProjectAlias    *string
+
+	// metadata
+	Readme  *string
+	License *string
+	Topics  *[]string
 }
+
+var (
+	ErrProjectCreationLimitExceeded error = rerror.NewE(i18n.T("project creation limit exceeded"))
+)
 
 func (i *Project) createProject(ctx context.Context, input createProjectInput, operator *usecase.Operator) (_ *project.Project, err error) {
 	if err := i.CanWriteWorkspace(input.WorkspaceID, operator); err != nil {
@@ -873,27 +1311,6 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		}
 	}()
 
-	ws, err := i.workspaceRepo.FindByID(txCtx, input.WorkspaceID)
-	if err != nil {
-		return nil, err
-	}
-
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err := i.policyRepo.FindByID(txCtx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-
-		projectCount, err := i.projectRepo.CountByWorkspace(txCtx, ws.ID())
-		if err != nil {
-			return nil, err
-		}
-
-		if err := p.EnforceProjectCount(projectCount + 1); err != nil {
-			return nil, err
-		}
-	}
-
 	var prjID idx.ID[id.Project]
 	if input.ProjectID != nil {
 		prjID, err = id.ProjectIDFrom(*input.ProjectID)
@@ -906,20 +1323,35 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	metadata, err := i.projectMetadataRepo.FindByProjectID(ctx, prjID)
 	if metadata == nil || err != nil { // if not found
+		starCount := int64(0)
+		starredBy := []string{}
 		metadata, err = project.NewProjectMetadata().
 			NewID().
 			Workspace(input.WorkspaceID).
 			Project(prjID).
 			ImportStatus(&input.ImportStatus).
+			ImportResultLog(input.ImportResultLog).
+			StarCount(&starCount).
+			StarredBy(&starredBy).
 			Build()
 		if err != nil {
 			return nil, err
 		}
+	}
 
-		err = i.projectMetadataRepo.Save(ctx, metadata)
-		if err != nil {
-			return nil, err
-		}
+	if input.Readme != nil {
+		metadata.SetReadme(input.Readme)
+	}
+	if input.License != nil {
+		metadata.SetLicense(input.License)
+	}
+	if input.Topics != nil {
+		metadata.SetTopics(input.Topics)
+	}
+
+	err = i.projectMetadataRepo.Save(ctx, metadata)
+	if err != nil {
+		return nil, err
 	}
 
 	prj := project.New().
@@ -927,6 +1359,24 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 		Workspace(input.WorkspaceID).
 		Visualizer(input.Visualizer).
 		Metadata(metadata)
+
+	newProjectAlias := alias.ReservedReearthPrefixProject + prjID.String()
+	if input.ProjectAlias != nil {
+
+		newProjectAlias = *input.ProjectAlias
+
+		err = i.projectRepo.CheckProjectAliasUnique(ctx, input.WorkspaceID, newProjectAlias, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		ok := util.IsSafePathName(newProjectAlias)
+		if !ok {
+			return nil, alias.ErrProjectInvalidProjectAlias.AddTemplateData("aliasName", newProjectAlias)
+		}
+	}
+
+	prj.ProjectAlias(newProjectAlias)
 
 	if input.Archived != nil {
 		prj = prj.IsArchived(*input.Archived)
@@ -950,8 +1400,12 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 
 	if input.Visibility != nil {
 		prj = prj.Visibility(*input.Visibility)
+	}
+
+	if input.IsDeleted != nil {
+		prj = prj.Deleted(*input.IsDeleted)
 	} else {
-		prj = prj.Visibility("private")
+		prj = prj.Deleted(false) // default is false
 	}
 
 	proj, err := prj.Build()
@@ -967,4 +1421,29 @@ func (i *Project) createProject(ctx context.Context, input createProjectInput, o
 	tx.Commit()
 
 	return proj, nil
+}
+
+func (i *Project) checkGeneralPolicy(ctx context.Context, workspaceID accountdomain.WorkspaceID, visibility project.Visibility) error {
+
+	var checkType gateway.PolicyCheckType
+	if visibility == project.VisibilityPublic {
+		checkType = gateway.PolicyCheckGeneralPublicProjectCreation
+	} else {
+		checkType = gateway.PolicyCheckGeneralPrivateProjectCreation
+	}
+
+	policyReq := gateway.PolicyCheckRequest{
+		WorkspaceID: workspaceID,
+		CheckType:   checkType,
+		Value:       1,
+	}
+
+	policyResp, err := i.policyChecker.CheckPolicy(ctx, policyReq)
+	if err != nil {
+		return err
+	}
+	if !policyResp.Allowed {
+		return ErrProjectCreationLimitExceeded
+	}
+	return nil
 }

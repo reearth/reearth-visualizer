@@ -34,6 +34,8 @@ func ToPublishmentStatus(v project.PublishmentStatus) PublishmentStatus {
 
 func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus {
 	switch v {
+	case ProjectImportStatusUploading:
+		return project.ProjectImportStatusUploading
 	case ProjectImportStatusProcessing:
 		return project.ProjectImportStatusProcessing
 	case ProjectImportStatusFailed:
@@ -46,6 +48,8 @@ func FromProjectImportStatus(v ProjectImportStatus) project.ProjectImportStatus 
 
 func ToProjectImportStatus(v project.ProjectImportStatus) ProjectImportStatus {
 	switch v {
+	case project.ProjectImportStatusUploading:
+		return ProjectImportStatusUploading
 	case project.ProjectImportStatusProcessing:
 		return ProjectImportStatusProcessing
 	case project.ProjectImportStatusFailed:
@@ -60,8 +64,12 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 	if pm == nil {
 		return nil
 	}
-
-	importStatus := ToProjectImportStatus(*pm.ImportStatus())
+	var importStatus ProjectImportStatus
+	if pm.ImportStatus() != nil {
+		importStatus = ToProjectImportStatus(*pm.ImportStatus())
+	} else {
+		importStatus = ProjectImportStatusNone
+	}
 
 	return &ProjectMetadata{
 		ID:           IDFrom(pm.ID()),
@@ -69,9 +77,21 @@ func ToProjectMetadata(pm *project.ProjectMetadata) *ProjectMetadata {
 		Project:      IDFrom(pm.Project()),
 		Readme:       pm.Readme(),
 		License:      pm.License(),
+		Topics: func() []string {
+			if pm.Topics() == nil {
+				return nil
+			}
+			return *pm.Topics()
+		}(),
 		ImportStatus: &importStatus,
-		CreatedAt:    pm.CreatedAt(),
-		UpdatedAt:    pm.UpdatedAt(),
+		ImportResultLog: func() map[string]any {
+			if pm.ImportResultLog() == nil {
+				return nil
+			}
+			return *pm.ImportResultLog()
+		}(),
+		CreatedAt: pm.CreatedAt(),
+		UpdatedAt: pm.UpdatedAt(),
 	}
 }
 
@@ -86,20 +106,21 @@ func ToProject(p *project.Project) *Project {
 	}
 
 	return &Project{
-		ID:          IDFrom(p.ID()),
-		TeamID:      IDFrom(p.Workspace()),
-		Name:        p.Name(),
-		Description: p.Description(),
-		ImageURL:    p.ImageURL(),
-		CreatedAt:   p.CreatedAt(),
-		UpdatedAt:   p.UpdatedAt(),
-		Visualizer:  Visualizer(p.Visualizer()),
-		IsArchived:  p.IsArchived(),
-		CoreSupport: p.CoreSupport(),
-		Starred:     p.Starred(),
-		IsDeleted:   p.IsDeleted(),
-		Visibility:  p.Visibility(),
-		Metadata:    ToProjectMetadata(p.Metadata()),
+		ID:           IDFrom(p.ID()),
+		WorkspaceID:  IDFrom(p.Workspace()),
+		Name:         p.Name(),
+		Description:  p.Description(),
+		ImageURL:     p.ImageURL(),
+		CreatedAt:    p.CreatedAt(),
+		UpdatedAt:    p.UpdatedAt(),
+		Visualizer:   Visualizer(p.Visualizer()),
+		IsArchived:   p.IsArchived(),
+		CoreSupport:  p.CoreSupport(),
+		Starred:      p.Starred(),
+		IsDeleted:    p.IsDeleted(),
+		Visibility:   p.Visibility(),
+		Metadata:     ToProjectMetadata(p.Metadata()),
+		ProjectAlias: p.ProjectAlias(),
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: ToPublishmentStatus(p.PublishmentStatus()),
@@ -156,21 +177,39 @@ type ProjectExport struct {
 	Name        string     `json:"name"`
 	Description string     `json:"description"`
 	ImageURL    *url.URL   `json:"imageUrl,omitempty"`
+
+	Visibility string `json:"visibility,omitempty"`
+
+	License *string `json:"license,omitempty"`
+	Readme  *string `json:"readme,omitempty"`
+	Topics  *[]string `json:"topics,omitempty"`
 }
 
 func ToProjectExport(p *project.Project) *ProjectExport {
 	if p == nil {
 		return nil
 	}
-	return &ProjectExport{
+
+	export := &ProjectExport{
 		Visualizer:  Visualizer(p.Visualizer()),
 		Name:        p.Name(),
 		Description: p.Description(),
 		ImageURL:    p.ImageURL(),
+		Visibility:  p.Visibility(),
 	}
+
+	if pm := p.Metadata(); pm != nil {
+		export.License = pm.License()
+		export.Readme = pm.Readme()
+		if pm.Topics() != nil {
+			export.Topics = pm.Topics()
+		}
+	}
+
+	return export
 }
 
-func ToProjectExportFromJSON(data map[string]any) *ProjectExport {
+func ToProjectExportDataFromJSON(data map[string]any) *ProjectExport {
 	var p ProjectExport
 	bytes, err := json.MarshalIndent(data, "", "  ")
 	if err != nil {

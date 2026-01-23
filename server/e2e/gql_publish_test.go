@@ -8,7 +8,51 @@ import (
 	"github.com/gavv/httpexpect/v2"
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"golang.org/x/text/language"
 )
+
+// go test -v -run TestDefaultAlias ./e2e/...
+
+func TestDefaultAlias(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	projectId, sceneId, storyId := createProjectSet(e)
+
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
+		Variables: map[string]any{
+			"workspaceId": wID.String(),
+			"pagination": map[string]any{
+				"first": 16,
+			},
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC",
+			},
+		},
+	}
+
+	edges := Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+
+	// Project/Scene alias
+	for _, edge := range edges.Iter() {
+		node := edge.Object().Value("node").Object()
+		id := node.Value("id").Raw().(string)
+		if id == projectId {
+			node.Value("projectAlias").IsEqual("p-" + projectId) // projectId
+			node.Value("alias").IsEqual("c-" + sceneId)          // sceneId
+		}
+	}
+	r := getScene(e, sceneId, language.English.String())
+	r.Object().Value("alias").IsEqual("c-" + sceneId) // sceneId
+
+	// Story alias
+	r = r.Path("$.stories[0]")
+	r.Object().Value("alias").IsEqual("s-" + storyId) // storyId
+
+}
 
 /////// TestPublish Project ///////
 
@@ -25,7 +69,7 @@ func TestPublishProject(t *testing.T) {
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             alias.ReservedReearthPrefixProject + sceneId, // default prefix + self id
+		"alias":             alias.ReservedReearthPrefixScene + sceneId, // default prefix + self id
 		"publishmentStatus": "LIMITED",
 	})
 
@@ -179,9 +223,9 @@ func TestPublishProjectUniqueAlias(t *testing.T) {
 		alias  string
 		expect func(res *httpexpect.Value, err *httpexpect.Value)
 	}{
-		{"self storyId", storyId1, checkProjectAliasAlreadyExists},
-		{"other projectId", sceneId2, checkProjectAliasAlreadyExists},
-		{"other storyId", storyId2, checkProjectAliasAlreadyExists},
+		{"self storyId", storyId1, checkSceneAliasAlreadyExists},
+		{"other projectId", sceneId2, checkSceneAliasAlreadyExists},
+		{"other storyId", storyId2, checkSceneAliasAlreadyExists},
 	}
 
 	for _, tc := range testCases {
@@ -196,7 +240,7 @@ func TestPublishProjectUniqueAlias(t *testing.T) {
 	}
 }
 
-func checkProjectAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) {
+func checkSceneAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value) {
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
 		{
@@ -212,7 +256,7 @@ func checkProjectAliasAlreadyExists(res *httpexpect.Value, err *httpexpect.Value
 	})
 }
 
-func TestReservedReearthPrefixProject(t *testing.T) {
+func TestReservedReearthPrefixScene(t *testing.T) {
 	e := Server(t, baseSeeder)
 
 	projectId, sceneId, _ := createProjectSet(e)
@@ -223,7 +267,7 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 		"alias":     "c-test",
 		"status":    "LIMITED",
 	})
-	checkReservedReearthPrefixProject("c-test", res, err)
+	checkReservedReearthPrefixScene("c-test", res, err)
 
 	// prefix 's-'
 	res, err = publishProjectErrors(e, uID, map[string]any{
@@ -231,23 +275,23 @@ func TestReservedReearthPrefixProject(t *testing.T) {
 		"alias":     "s-test",
 		"status":    "LIMITED",
 	})
-	checkReservedReearthPrefixProject("s-test", res, err)
+	checkReservedReearthPrefixScene("s-test", res, err)
 
 	// prefix + self id
 	res = publishProject(e, uID, map[string]any{
 		"projectId": projectId,
-		"alias":     alias.ReservedReearthPrefixProject + sceneId,
+		"alias":     alias.ReservedReearthPrefixScene + sceneId,
 		"status":    "LIMITED",
 	})
 	res.Object().IsEqual(map[string]any{
 		"id":                projectId,
-		"alias":             alias.ReservedReearthPrefixProject + sceneId, // ok
+		"alias":             alias.ReservedReearthPrefixScene + sceneId, // ok
 		"publishmentStatus": "LIMITED",
 	})
 
 }
 
-func checkReservedReearthPrefixProject(alias string, res *httpexpect.Value, err *httpexpect.Value) {
+func checkReservedReearthPrefixScene(alias string, res *httpexpect.Value, err *httpexpect.Value) {
 	message := fmt.Sprintf("Aliases starting with 'c-' or 's-' are not allowed: %s", alias)
 	res.IsNull()
 	err.Array().IsEqual([]map[string]any{
@@ -518,9 +562,9 @@ func checkReservedReearthPrefixStory(alias string, res *httpexpect.Value, err *h
 	})
 }
 
-/////// Test CheckProjectAlias ///////
+/////// Test CheckSceneAlias ///////
 
-func TestCheckProjectAlias(t *testing.T) {
+func TestCheckSceneAlias(t *testing.T) {
 	e := Server(t, baseSeeder)
 	projectId, sceneID, _ := createProjectSet(e)
 
@@ -549,15 +593,15 @@ func TestCheckProjectAlias(t *testing.T) {
 		},
 		{
 			name: "reserved prefix ok for self project",
-			args: args{alias.ReservedReearthPrefixProject + sceneID, projectId},
-			want: want{alias.ReservedReearthPrefixProject + sceneID, true},
+			args: args{alias.ReservedReearthPrefixScene + sceneID, projectId},
+			want: want{alias.ReservedReearthPrefixScene + sceneID, true},
 		},
 	}
 
 	for _, tt := range tests {
 		tt := tt // capture
 		t.Run(tt.name, func(t *testing.T) {
-			res := checkProjectAlias(e, uID, map[string]any{
+			res := checkSceneAlias(e, uID, map[string]any{
 				"alias":     tt.args.alias,
 				"projectId": tt.args.projectId,
 			})
@@ -574,7 +618,7 @@ func TestCheckProjectAlias(t *testing.T) {
 		"alias":     "test-xxxxxx",
 		"status":    "LIMITED",
 	})
-	res := checkProjectAlias(e, uID, map[string]any{
+	res := checkSceneAlias(e, uID, map[string]any{
 		"alias":     "test-xxxxxx", // current self alias
 		"projectId": projectId,
 	})
@@ -585,7 +629,7 @@ func TestCheckProjectAlias(t *testing.T) {
 
 }
 
-func TestCheckProjectAliasError(t *testing.T) {
+func TestCheckSceneAliasError(t *testing.T) {
 	e := Server(t, baseSeeder)
 	projectId, sceneId, storyId := createProjectSet(e)
 
@@ -614,11 +658,11 @@ func TestCheckProjectAliasError(t *testing.T) {
 		},
 		{
 			name: "reserved prefix + storyId as alias with project id",
-			args: args{alias.ReservedReearthPrefixProject + storyId, projectId},
+			args: args{alias.ReservedReearthPrefixScene + storyId, projectId},
 			want: want{
 				fmt.Sprintf(
 					"Aliases starting with 'c-' or 's-' are not allowed: %s",
-					alias.ReservedReearthPrefixProject+storyId,
+					alias.ReservedReearthPrefixScene+storyId,
 				),
 			},
 		},
@@ -627,7 +671,7 @@ func TestCheckProjectAliasError(t *testing.T) {
 	for _, tt := range tests {
 		tt := tt // capture loop var
 		t.Run(tt.name, func(t *testing.T) {
-			res, err := checkProjectAliasError(e, uID, map[string]any{
+			res, err := checkSceneAliasError(e, uID, map[string]any{
 				"alias":     tt.args.alias,
 				"projectId": tt.args.projectId,
 			})
@@ -795,9 +839,9 @@ mutation PublishStory(
   }
 }`
 
-const CheckProjectAliasQuery = `
-query CheckProjectAlias($alias: String!, $projectId: ID) {
-  checkProjectAlias(alias: $alias, projectId: $projectId) {
+const CheckSceneAliasQuery = `
+query CheckSceneAlias($alias: String!, $projectId: ID) {
+  checkSceneAlias(alias: $alias, projectId: $projectId) {
     alias
     available
   }
@@ -815,7 +859,7 @@ func createProjectSet(e *httpexpect.Expect) (string, string, string) {
 	projectId := createProject(e, uID, map[string]any{
 		"name":        "test project",
 		"description": "test description",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -869,20 +913,20 @@ func publishStoryErrors(e *httpexpect.Expect, u accountdomain.UserID, variables 
 	return res.Path("$.data"), res.Path("$.errors")
 }
 
-func checkProjectAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+func checkSceneAlias(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
 	requestBody := GraphQLRequest{
-		OperationName: "CheckProjectAlias",
-		Query:         CheckProjectAliasQuery,
+		OperationName: "CheckSceneAlias",
+		Query:         CheckSceneAliasQuery,
 		Variables:     variables,
 	}
 	res := Request(e, u.String(), requestBody)
-	return res.Path("$.data.checkProjectAlias")
+	return res.Path("$.data.checkSceneAlias")
 }
 
-func checkProjectAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
+func checkSceneAliasError(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) (*httpexpect.Value, *httpexpect.Value) {
 	requestBody := GraphQLRequest{
-		OperationName: "CheckProjectAlias",
-		Query:         CheckProjectAliasQuery,
+		OperationName: "CheckSceneAlias",
+		Query:         CheckSceneAliasQuery,
 		Variables:     variables,
 	}
 	res := Request(e, u.String(), requestBody)

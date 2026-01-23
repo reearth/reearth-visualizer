@@ -189,12 +189,30 @@ func (f *fileRepo) UploadExportProjectZip(ctx context.Context, zipFile afero.Fil
 	if !ok {
 		return errors.New("invalid file type: expected *os.File")
 	}
-	_, err := f.upload(ctx, path.Join(exportDir, sanitize.Path(file.Name())), file)
+
+	fname := sanitize.Path(file.Name())
+	size, err := f.upload(ctx, path.Join(exportDir, fname), file)
+	fmt.Println("[export] save file name:", fname, " size:", size)
+
 	return err
 }
 
 func (f *fileRepo) RemoveExportProjectZip(ctx context.Context, filename string) error {
 	return f.delete(ctx, filepath.Join(exportDir, sanitize.Path(filename)))
+}
+
+// import
+
+func (f *fileRepo) GenerateSignedUploadUrl(context.Context, string) (*string, int, *string, error) {
+	return nil, 0, nil, nil
+}
+
+func (f *fileRepo) ReadImportProjectZip(context.Context, string) (io.ReadCloser, error) {
+	return nil, nil
+}
+
+func (f *fileRepo) RemoveImportProjectZip(context.Context, string) error {
+	return nil
 }
 
 // helpers
@@ -203,6 +221,8 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 	if filename == "" {
 		return nil, rerror.ErrNotFound
 	}
+
+	// f.debug()
 
 	file, err := f.fs.Open(filename)
 	if err != nil {
@@ -237,6 +257,8 @@ func (f *fileRepo) upload(ctx context.Context, filename string, content io.Reade
 	if err != nil {
 		return 0, gateway.ErrFailedToUploadFile
 	}
+
+	// f.debug()
 
 	return size, nil
 }
@@ -275,6 +297,25 @@ func (f *fileRepo) delete(ctx context.Context, filename string) error {
 	}
 	return nil
 }
+
+// func (f *fileRepo) debug() error {
+// 	fs := f.fs
+// 	root := "."
+// 	fmt.Printf("------------- current afero -> %p ------------- \n", f.fs)
+// 	return afero.Walk(fs, root, func(path string, info os.FileInfo, err error) error {
+// 		if err != nil {
+// 			return err
+// 		}
+// 		relPath, _ := filepath.Rel(root, path)
+// 		depth := 0
+// 		if relPath != "." {
+// 			depth = strings.Count(relPath, string(os.PathSeparator))
+// 		}
+// 		prefix := strings.Repeat("  ", depth)
+// 		fmt.Println(prefix + info.Name())
+// 		return nil
+// 	})
+// }
 
 func getAssetFileURL(base *url.URL, filename string) *url.URL {
 	if base == nil {

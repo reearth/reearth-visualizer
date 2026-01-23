@@ -35,7 +35,7 @@ models:
     model: github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel.Array
   Asset:
     fields:
-      team:
+      workspace:
         resolver: true
   LayerItem:
     fields:
@@ -143,7 +143,7 @@ models:
         resolver: true
   Project:
     fields:
-      team:
+      workspace:
         resolver: true
       scene:
         resolver: true
@@ -235,7 +235,7 @@ models:
     fields:
       project:
         resolver: true
-      team:
+      workspace:
         resolver: true
       property:
         resolver: true
@@ -261,23 +261,21 @@ models:
         resolver: true
       property:
         resolver: true
-  Team:
+  Workspace:
     fields:
-      policy:
-        resolver: true
       assets:
         resolver: true
       projects:
         resolver: true
-  TeamMember:
+  WorkspaceMember:
     fields:
       user:
         resolver: true
   Me:
     fields:
-      teams:
+      workspaces:
         resolver: true
-      myTeam:
+      myWorkspace:
         resolver: true
   Story:
     fields:

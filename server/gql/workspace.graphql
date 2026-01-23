@@ -1,43 +1,19 @@
-type Team implements Node {
+type Workspace implements Node {
   id: ID!
   name: String!
-  members: [TeamMember!]!
+  members: [WorkspaceMember!]!
   personal: Boolean!
-  policyId: ID
-  policy: Policy
-  assets(
-    projectId: ID
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): AssetConnection!
-  projects(
-    includeArchived: Boolean
-    first: Int
-    last: Int
-    after: Cursor
-    before: Cursor
-  ): ProjectConnection!
+  photoURL: String
+  assets(projectId: ID, first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
+  projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+  enableToCreatePrivateProject: Boolean!
+  alias: String!
 }
 
-type TeamMember {
+type WorkspaceMember {
   userId: ID!
   role: Role!
   user: User
-}
-
-type Policy {
-  id: ID!
-  name: String!
-  projectCount: Int
-  memberCount: Int
-  publishedProjectCount: Int
-  layerCount: Int
-  assetStorageSize: FileSize
-  nlsLayersCount: Int
-  pageCount: Int
-  blocksCount: Int
 }
 
 enum Role {
@@ -53,71 +29,83 @@ enum Role {
 
 # InputType
 
-input CreateTeamInput {
+input CreateWorkspaceInput {
   name: String!
+  alias: String
 }
 
-input UpdateTeamInput {
-  teamId: ID!
-  name: String!
+input PolicyCheckInput {
+  workspaceId: ID!
 }
 
-input AddMemberToTeamInput {
-  teamId: ID!
+input UpdateWorkspaceInput {
+  workspaceId: ID!
+  name: String!
+  alias: String
+}
+
+input AddMemberToWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
-input RemoveMemberFromTeamInput {
-  teamId: ID!
+input RemoveMemberFromWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
 }
 
-input UpdateMemberOfTeamInput {
-  teamId: ID!
+input UpdateMemberOfWorkspaceInput {
+  workspaceId: ID!
   userId: ID!
   role: Role!
 }
 
-input DeleteTeamInput {
-  teamId: ID!
+input DeleteWorkspaceInput {
+  workspaceId: ID!
 }
 
 # Payload
 
-type CreateTeamPayload {
-  team: Team!
+type CreateWorkspacePayload {
+  workspace: Workspace!
 }
 
-type UpdateTeamPayload {
-  team: Team!
+type PolicyCheckPayload {
+  workspaceId: ID!
+  enableToCreatePrivateProject: Boolean!
+  disableOperationByOverUsedSeat: Boolean!
 }
 
-type AddMemberToTeamPayload {
-  team: Team!
+type UpdateWorkspacePayload {
+  workspace: Workspace!
 }
 
-type RemoveMemberFromTeamPayload {
-  team: Team!
+type AddMemberToWorkspacePayload {
+  workspace: Workspace!
 }
 
-type UpdateMemberOfTeamPayload {
-  team: Team!
+type RemoveMemberFromWorkspacePayload {
+  workspace: Workspace!
 }
 
-type DeleteTeamPayload {
-  teamId: ID!
+type UpdateMemberOfWorkspacePayload {
+  workspace: Workspace!
 }
 
-#extend type Query{ }
+type DeleteWorkspacePayload {
+  workspaceId: ID!
+}
+
+extend type Query {
+  workspacePolicyCheck(input: PolicyCheckInput!): PolicyCheckPayload
+}
 
 extend type Mutation {
-  createTeam(input: CreateTeamInput!): CreateTeamPayload
-  deleteTeam(input: DeleteTeamInput!): DeleteTeamPayload
-  updateTeam(input: UpdateTeamInput!): UpdateTeamPayload
-  addMemberToTeam(input: AddMemberToTeamInput!): AddMemberToTeamPayload
-  removeMemberFromTeam(
-    input: RemoveMemberFromTeamInput!
-  ): RemoveMemberFromTeamPayload
-  updateMemberOfTeam(input: UpdateMemberOfTeamInput!): UpdateMemberOfTeamPayload
+  createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
+  deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
+  updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
+  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
+  removeMemberFromWorkspace(input: RemoveMemberFromWorkspaceInput!): RemoveMemberFromWorkspacePayload
+  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
 }

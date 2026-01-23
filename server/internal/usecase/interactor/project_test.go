@@ -45,7 +45,6 @@ func createNewProjectUC(client *mongox.Client) *Project {
 		propertyRepo:        mongo.NewProperty(client),
 		propertySchemaRepo:  mongo.NewPropertySchema(client),
 		transaction:         client.Transaction(),
-		policyRepo:          mongo.NewPolicy(client),
 		nlsLayerRepo:        mongo.NewNLSLayer(client),
 		layerStyles:         mongo.NewStyle(client),
 		pluginRepo:          mongo.NewPlugin(client),
@@ -222,19 +221,19 @@ func TestProject_CheckAlias(t *testing.T) {
 	t.Run("when alias is valid", func(t *testing.T) {
 
 		t.Run("when alias length is valid max length", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 32), &pid)
+			ok, err := uc.CheckSceneAlias(ctx, strings.Repeat("a", 32), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
 		t.Run("when alias length is valid min length", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 5), &pid)
+			ok, err := uc.CheckSceneAlias(ctx, strings.Repeat("a", 5), &pid)
 			assert.NoError(t, err)
 			assert.True(t, ok)
 		})
 	})
 
 	t.Run("when alias update to same alias", func(t *testing.T) {
-		ok, err := uc.CheckAlias(ctx, testAlias, &pid)
+		ok, err := uc.CheckSceneAlias(ctx, testAlias, &pid)
 		assert.NoError(t, err)
 		assert.True(t, ok)
 	})
@@ -242,20 +241,263 @@ func TestProject_CheckAlias(t *testing.T) {
 	t.Run("when alias is invalid", func(t *testing.T) {
 		t.Run("when alias include not allowed characters", func(t *testing.T) {
 			for _, c := range []string{"!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "+", "=", "|", "~", "`", ".", ",", ":", ";", "'", "\"", "/", "\\", "?"} {
-				ok, err := uc.CheckAlias(ctx, "alias2"+c, &pid)
+				ok, err := uc.CheckSceneAlias(ctx, "alias2"+c, &pid)
 				assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 				assert.False(t, ok)
 			}
 		})
 		t.Run("when alias is too short", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, "aaaa", &pid)
+			ok, err := uc.CheckSceneAlias(ctx, "aaaa", &pid)
 			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
 		t.Run("when alias is too long", func(t *testing.T) {
-			ok, err := uc.CheckAlias(ctx, strings.Repeat("a", 33), &pid)
+			ok, err := uc.CheckSceneAlias(ctx, strings.Repeat("a", 33), &pid)
 			assert.EqualError(t, err, alias.ErrInvalidProjectAlias.Error())
 			assert.False(t, ok)
 		})
+	})
+}
+
+func TestProject_FindActiveById(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace(func(w *workspace.Builder) {
+		w.Members(map[accountdomain.UserID]workspace.Member{
+			accountdomain.NewUserID(): {
+				Role:      workspace.RoleOwner,
+				Disabled:  false,
+				InvitedBy: workspace.UserID(us.ID()),
+				Host:      "",
+			},
+		})
+	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	pj := factory.NewProject(func(p *project.Builder) {
+		p.Workspace(ws.ID()).
+			Visibility(project.VisibilityPublic)
+	})
+	_ = uc.projectRepo.Save(ctx, pj)
+
+	meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
+		m.Project(pj.ID())
+		m.Workspace(ws.ID())
+	})
+	_ = uc.projectMetadataRepo.Save(ctx, meta)
+
+	t.Run("when project is public", func(t *testing.T) {
+		result, err := uc.FindActiveById(ctx, pj.ID(), &usecase.Operator{
+			AcOperator: &accountusecase.Operator{
+				WritableWorkspaces: workspace.IDList{ws.ID()},
+			},
+		})
+		assert.NoError(t, err)
+		assert.Equal(t, pj.ID(), result.ID())
+	})
+
+	t.Run("when project is private", func(t *testing.T) {
+		err := pj.UpdateVisibility(string(project.VisibilityPrivate))
+		assert.NoError(t, err)
+		_ = uc.projectRepo.Save(ctx, pj)
+		result, err := uc.FindActiveById(ctx, pj.ID(), &usecase.Operator{
+			AcOperator: &accountusecase.Operator{
+				WritableWorkspaces: workspace.IDList{ws.ID()},
+			},
+		})
+		assert.NoError(t, err)
+		assert.Equal(t, pj.ID(), result.ID())
+	})
+
+	t.Run("when project is private and no operator", func(t *testing.T) {
+		result, err := uc.FindActiveById(ctx, pj.ID(), nil)
+		assert.Error(t, err)
+		assert.Nil(t, result)
+		assert.Equal(t, "project is private", err.Error())
+	})
+}
+
+func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	us := factory.NewUser()
+	_ = uc.userRepo.Save(ctx, us)
+
+	ws := factory.NewWorkspace(func(w *workspace.Builder) {
+		w.Members(map[accountdomain.UserID]workspace.Member{
+			us.ID(): {
+				Role:      workspace.RoleOwner,
+				Disabled:  false,
+				InvitedBy: workspace.UserID(us.ID()),
+				Host:      "",
+			},
+		})
+	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	// Create 15 test projects
+	projects := make([]*project.Project, 15)
+	for i := 0; i < 15; i++ {
+		pj := factory.NewProject(func(p *project.Builder) {
+			p.Workspace(ws.ID()).
+				Visibility(project.VisibilityPublic)
+		})
+		_ = uc.projectRepo.Save(ctx, pj)
+		projects[i] = pj
+
+		meta := factory.NewProjectMeta(func(m *project.MetadataBuilder) {
+			m.Project(pj.ID())
+			m.Workspace(ws.ID())
+		})
+		_ = uc.projectMetadataRepo.Save(ctx, meta)
+	}
+
+	operator := &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	}
+
+	t.Run("First page with offset pagination", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(0)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 5, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.True(t, pageInfo.HasNextPage)
+		assert.False(t, pageInfo.HasPreviousPage)
+	})
+
+	t.Run("Middle page with offset pagination", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(5)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 5, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.True(t, pageInfo.HasNextPage)
+		assert.True(t, pageInfo.HasPreviousPage)
+	})
+
+	t.Run("Last page with offset pagination", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(10)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 5, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.False(t, pageInfo.HasNextPage)
+		assert.True(t, pageInfo.HasPreviousPage)
+	})
+
+	t.Run("Offset beyond total count", func(t *testing.T) {
+		param := &interfaces.ProjectListParam{
+			Offset: lo.ToPtr(int64(20)),
+			Limit:  lo.ToPtr(int64(5)),
+		}
+
+		result, pageInfo, err := uc.FindVisibilityByUser(ctx, us, true, operator, nil, nil, nil, param)
+
+		assert.NoError(t, err)
+		assert.Equal(t, 0, len(result))
+		assert.Equal(t, int64(15), pageInfo.TotalCount)
+		assert.False(t, pageInfo.HasNextPage)
+		assert.True(t, pageInfo.HasPreviousPage)
+	})
+}
+
+func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.T) {
+	ctx := context.Background()
+
+	db := mongotest.Connect(t)(t)
+	client := mongox.NewClient(db.Name(), db.Client())
+	uc := createNewProjectUC(client)
+
+	// Create workspace with alias
+	ws := factory.NewWorkspace(func(b *workspace.Builder) {
+		b.Alias("test-workspace")
+	})
+	_ = uc.workspaceRepo.Save(ctx, ws)
+
+	// Create public project
+	publicProject, _ := uc.createProject(ctx, createProjectInput{
+		WorkspaceID:  ws.ID(),
+		Visualizer:   visualizer.VisualizerCesium,
+		Name:         lo.ToPtr("Public Project"),
+		ProjectAlias: lo.ToPtr("public-project"),
+		Visibility:   lo.ToPtr(project.VisibilityPublic),
+	}, &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	})
+
+	// Create private project
+	privateProject, _ := uc.createProject(ctx, createProjectInput{
+		WorkspaceID:  ws.ID(),
+		Visualizer:   visualizer.VisualizerCesium,
+		Name:         lo.ToPtr("Private Project"),
+		ProjectAlias: lo.ToPtr("private-project"),
+		Visibility:   lo.ToPtr(project.VisibilityPrivate),
+	}, &usecase.Operator{
+		AcOperator: &accountusecase.Operator{
+			WritableWorkspaces: workspace.IDList{ws.ID()},
+		},
+	})
+
+	t.Run("unauthenticated access to public project should succeed", func(t *testing.T) {
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), publicProject.ProjectAlias(), nil)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Equal(t, publicProject.ID(), result.ID())
+		assert.Equal(t, "Public Project", result.Name())
+	})
+
+	t.Run("unauthenticated access to private project should fail", func(t *testing.T) {
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), nil)
+
+		assert.Error(t, err)
+		assert.Equal(t, "project is private", err.Error())
+		assert.Nil(t, result)
+	})
+
+	t.Run("authenticated access to private project should succeed", func(t *testing.T) {
+		operator := &usecase.Operator{
+			AcOperator: &accountusecase.Operator{
+				ReadableWorkspaces: workspace.IDList{ws.ID()},
+			},
+		}
+
+		result, err := uc.FindByWorkspaceAliasAndProjectAlias(ctx, ws.Alias(), privateProject.ProjectAlias(), operator)
+
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
+		assert.Equal(t, privateProject.ID(), result.ID())
+		assert.Equal(t, "Private Project", result.Name())
 	})
 }

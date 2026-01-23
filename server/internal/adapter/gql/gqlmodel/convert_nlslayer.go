@@ -13,17 +13,18 @@ func ToNLSLayerSimple(l *nlslayer.NLSLayerSimple) *NLSLayerSimple {
 	}
 
 	return &NLSLayerSimple{
-		ID:           IDFrom(l.ID()),
-		Index:        l.Index(),
-		SceneID:      IDFrom(l.Scene()),
-		Title:        l.Title(),
-		Visible:      l.IsVisible(),
-		Infobox:      ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
-		PhotoOverlay: ToNLSPhotoOverlay(l.PhotoOverlay(), l.ID(), l.Scene()),
-		LayerType:    string(l.LayerType()),
-		Config:       JSON(*l.Config()),
-		IsSketch:     l.IsSketch(),
-		Sketch:       ToNLSLayerSketchInfo(l.Sketch()),
+		ID:             IDFrom(l.ID()),
+		Index:          l.Index(),
+		SceneID:        IDFrom(l.Scene()),
+		Title:          l.Title(),
+		Visible:        l.IsVisible(),
+		Infobox:        ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
+		PhotoOverlay:   ToNLSPhotoOverlay(l.PhotoOverlay(), l.ID(), l.Scene()),
+		LayerType:      string(l.LayerType()),
+		Config:         JSON(*l.Config()),
+		IsSketch:       l.IsSketch(),
+		Sketch:         ToNLSLayerSketchInfo(l.Sketch()),
+		DataSourceName: l.DataSourceName(),
 	}
 }
 
@@ -53,15 +54,16 @@ func ToNLSLayerGroup(l *nlslayer.NLSLayerGroup, parent *id.NLSLayerID) *NLSLayer
 	}
 
 	return &NLSLayerGroup{
-		ID:           IDFrom(l.ID()),
-		Index:        l.Index(),
-		SceneID:      IDFrom(l.Scene()),
-		Title:        l.Title(),
-		Visible:      l.IsVisible(),
-		Config:       JSON(*l.Config()),
-		Infobox:      ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
-		PhotoOverlay: ToNLSPhotoOverlay(l.PhotoOverlay(), l.ID(), l.Scene()),
-		ChildrenIds:  util.Map(l.Children().Layers(), IDFrom[id.NLSLayer]),
+		ID:             IDFrom(l.ID()),
+		Index:          l.Index(),
+		SceneID:        IDFrom(l.Scene()),
+		Title:          l.Title(),
+		Visible:        l.IsVisible(),
+		Config:         JSON(*l.Config()),
+		Infobox:        ToNLSInfobox(l.Infobox(), l.ID(), l.Scene()),
+		PhotoOverlay:   ToNLSPhotoOverlay(l.PhotoOverlay(), l.ID(), l.Scene()),
+		ChildrenIds:    util.Map(l.Children().Layers(), IDFrom[id.NLSLayer]),
+		DataSourceName: l.DataSourceName(),
 	}
 }
 

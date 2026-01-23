@@ -12,18 +12,19 @@ import (
 )
 
 type ProjectDocument struct {
-	ID          string
-	Team        string // DON'T CHANGE NAME'
-	Name        string
-	Description string
-	ImageURL    string
-	UpdatedAt   time.Time
-	Visualizer  string
-	Archived    bool
-	CoreSupport bool
-	Starred     bool
-	Deleted     bool
-	Visibility  string
+	ID           string
+	Workspace    string
+	Name         string
+	Description  string
+	ImageURL     string
+	UpdatedAt    time.Time
+	Visualizer   string
+	Archived     bool
+	CoreSupport  bool
+	Starred      bool
+	Deleted      bool
+	Visibility   string
+	ProjectAlias string
 	// publishment
 	Alias             string
 	PublishmentStatus string
@@ -56,18 +57,19 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 	}
 
 	return &ProjectDocument{
-		ID:          pid,
-		Team:        p.Workspace().String(),
-		Name:        p.Name(),
-		Description: p.Description(),
-		ImageURL:    imageURL,
-		UpdatedAt:   p.UpdatedAt(),
-		Visualizer:  string(p.Visualizer()),
-		Archived:    p.IsArchived(),
-		CoreSupport: p.CoreSupport(),
-		Starred:     p.Starred(),
-		Deleted:     p.IsDeleted(),
-		Visibility:  p.Visibility(),
+		ID:           pid,
+		Workspace:    p.Workspace().String(),
+		Name:         p.Name(),
+		Description:  p.Description(),
+		ImageURL:     imageURL,
+		UpdatedAt:    p.UpdatedAt(),
+		Visualizer:   string(p.Visualizer()),
+		Archived:     p.IsArchived(),
+		CoreSupport:  p.CoreSupport(),
+		Starred:      p.Starred(),
+		Deleted:      p.IsDeleted(),
+		Visibility:   p.Visibility(),
+		ProjectAlias: p.ProjectAlias(),
 		// publishment
 		Alias:             p.Alias(),
 		PublishmentStatus: string(p.PublishmentStatus()),
@@ -89,7 +91,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 	if err != nil {
 		return nil, err
 	}
-	tid, err := accountdomain.WorkspaceIDFrom(d.Team)
+	tid, err := accountdomain.WorkspaceIDFrom(d.Workspace)
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +108,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		}
 	}
 
-	return project.New().
+	p, err := project.New().
 		ID(pid).
 		Workspace(tid).
 		Name(d.Name).
@@ -118,7 +120,8 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		CoreSupport(d.CoreSupport).
 		Starred(d.Starred).
 		Deleted(d.Deleted).
-		Visibility(d.Visibility).
+		Visibility(project.Visibility(d.Visibility)).
+		ProjectAlias(d.ProjectAlias).
 		// publishment
 		Alias(d.Alias).
 		PublishmentStatus(project.PublishmentStatus(d.PublishmentStatus)).
@@ -133,4 +136,9 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		EnableGA(d.EnableGA).
 		TrackingID(d.TrackingID).
 		Build()
+	if err != nil {
+		return nil, err
+	}
+
+	return p, nil
 }

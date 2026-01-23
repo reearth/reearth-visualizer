@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"path"
 
+	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
@@ -18,10 +19,11 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearth/server/pkg/policy"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
+	"github.com/reearth/reearthx/i18n"
+	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -69,15 +71,7 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 		return nil, interfaces.ErrOperationDenied
 	}
 
-	var p *policy.Policy
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err = i.repos.Policy.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	result, _, err := i.uploadAndSave(ctx, inp.File, ws, inp.ProjectID, p, inp.CoreSupport)
+	result, _, err := i.uploadAndSave(ctx, inp.File, ws, inp.ProjectID, inp.CoreSupport)
 	return result, err
 }
 
@@ -127,12 +121,12 @@ func (i *Asset) Remove(ctx context.Context, aid id.AssetID, operator *usecase.Op
 	)
 }
 
-func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data *[]byte, newProject *project.Project, operator *usecase.Operator) (*[]byte, error) {
+func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.File, data *[]byte, newProject *project.Project, operator *usecase.Operator) (*[]byte, map[string]any, error) {
 	currentHost := adapter.CurrentHost(ctx)
 
 	var d map[string]any
 	if err := json.Unmarshal(*data, &d); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	assetNames := make(map[string]string)
@@ -144,16 +138,11 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 
 	ws, err := i.repos.Workspace.FindByID(ctx, newProject.Workspace())
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	var p *policy.Policy
-	if policyID := operator.Policy(ws.Policy()); policyID != nil {
-		p, err = i.repos.Policy.FindByID(ctx, *policyID)
-		if err != nil {
-			return nil, err
-		}
-	}
+	result := map[string]any{}
+
 	for beforeName, zipFile := range assets {
 		if zipFile.UncompressedSize64 == 0 {
 			continue
@@ -161,13 +150,13 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		realName := assetNames[beforeName]
 		readCloser, err := zipFile.Open()
 		if err != nil {
-			fmt.Printf("!!! Open failed for %s: %v", realName, err.Error())
-			continue
+			fmt.Printf("open failed for %s: %v", realName, err.Error())
+			return nil, result, err
 		}
 
 		defer func() {
 			if cerr := readCloser.Close(); cerr != nil {
-				fmt.Printf("Error closing file: %v\n", cerr)
+				log.Errorf("[Import Error] closing file: %v\n", cerr)
 			}
 		}()
 
@@ -179,14 +168,15 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		}
 
 		pid := newProject.ID()
-		_, url, err := i.uploadAndSave(ctx, file, ws, &pid, p, true)
+		_, url, err := i.uploadAndSave(ctx, file, ws, &pid, true)
 		if err != nil {
-			return nil, err
+			log.Errorf("[Import Error] asset upload failed for %s: %v", realName, err.Error())
+			return nil, result, err
 		}
 
 		// Project logo update will be at this time
 		if err := i.updateProjectImage(ctx, newProject, url, beforeName); err != nil {
-			return nil, err
+			return nil, result, err
 		}
 
 		afterName := path.Base(url.Path)
@@ -195,9 +185,12 @@ func (i *Asset) ImportAssetFiles(ctx context.Context, assets map[string]*zip.Fil
 		beforeUrl := fmt.Sprintf("%s/assets/%s", currentHost, beforeName)
 		afterUrl := fmt.Sprintf("%s/assets/%s", currentHost, afterName)
 		*data = bytes.Replace(*data, []byte(beforeUrl), []byte(afterUrl), -1)
+
+		result[afterName] = fmt.Sprintf("name: %s ", realName)
+		fmt.Println("[Import Asset] ", afterName, " name: ", realName)
 	}
 
-	return data, nil
+	return data, result, nil
 }
 
 func (i *Asset) updateProjectImage(ctx context.Context, newProject *project.Project, url *url.URL, beforeName string) error {
@@ -210,7 +203,11 @@ func (i *Asset) updateProjectImage(ctx context.Context, newProject *project.Proj
 	return nil
 }
 
-func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, p *policy.Policy, coreSupport bool) (*asset.Asset, *url.URL, error) {
+var (
+	ErrAssetUploadSizeLimitExceeded error = rerror.NewE(i18n.T("asset upload size limit exceeded"))
+)
+
+func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.Workspace, pid *id.ProjectID, coreSupport bool) (*asset.Asset, *url.URL, error) {
 
 	// upload
 	u, size, err := i.gateways.File.UploadAsset(ctx, f)
@@ -218,15 +215,18 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.W
 		return nil, nil, err
 	}
 
-	// enforce policy
-	if p != nil {
-		s, err := i.repos.Asset.TotalSizeByWorkspace(ctx, ws.ID())
-		if err != nil {
-			return nil, nil, err
+	if i.gateways != nil && i.gateways.PolicyChecker != nil {
+		policyReq := gateway.PolicyCheckRequest{
+			WorkspaceID: ws.ID(),
+			CheckType:   gateway.PolicyCheckUploadAssetsSize,
+			Value:       size,
 		}
-		if err := p.EnforceAssetStorageSize(s + size); err != nil {
-			_ = i.gateways.File.RemoveAsset(ctx, u)
-			return nil, nil, err
+		policyResp, err := i.gateways.PolicyChecker.CheckPolicy(ctx, policyReq)
+		if err != nil {
+			return nil, nil, rerror.NewE(i18n.T("policy check failed"))
+		}
+		if !policyResp.Allowed {
+			return nil, nil, ErrAssetUploadSizeLimitExceeded
 		}
 	}
 
@@ -241,10 +241,12 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.W
 		CoreSupport(coreSupport).
 		Build()
 	if err != nil {
+		log.Errorf("[Import Error] asset build")
 		return nil, nil, err
 	}
 
 	if err := i.repos.Asset.Save(ctx, a); err != nil {
+		log.Errorf("[Import Error] save asset")
 		return nil, nil, err
 	}
 

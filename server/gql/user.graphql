@@ -5,16 +5,21 @@ type User implements Node {
   host: String
 }
 
+type UserMetadata {
+  photoURL: String
+}
+
 type Me {
   id: ID!
   name: String!
   email: String!
   lang: Lang!
   theme: Theme!
-  myTeamId: ID!
+  metadata: UserMetadata
+  myWorkspaceId: ID!
   auths: [String!]!
-  teams: [Team!]!
-  myTeam: Team
+  workspaces: [Workspace!]!
+  myWorkspace: Workspace
 }
 
 enum Theme {
@@ -25,14 +30,6 @@ enum Theme {
 
 # InputType
 
-input SignupInput {
-  lang: Lang
-  theme: Theme
-  userId: ID
-  teamId: ID
-  secret: String
-}
-
 input UpdateMeInput {
   name: String
   email: String
@@ -42,27 +39,10 @@ input UpdateMeInput {
   passwordConfirmation: String
 }
 
-input RemoveMyAuthInput {
-  auth: String!
-}
-
-input DeleteMeInput {
-  userId: ID!
-}
-
 # Payload
 
 type UpdateMePayload {
   me: Me!
-}
-
-type SignupPayload {
-  user: User!
-  team: Team!
-}
-
-type DeleteMePayload {
-  userId: ID!
 }
 
 extend type Query {
@@ -71,8 +51,5 @@ extend type Query {
 }
 
 extend type Mutation {
-  signup(input: SignupInput!): SignupPayload
   updateMe(input: UpdateMeInput!): UpdateMePayload
-  removeMyAuth(input: RemoveMyAuthInput!): UpdateMePayload
-  deleteMe(input: DeleteMeInput!): DeleteMePayload
 }

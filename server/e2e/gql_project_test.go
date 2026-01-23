@@ -19,7 +19,7 @@ import (
 const ProjectFragment = `
 fragment ProjectFragment on Project {
   id
-  teamId
+  workspaceId
   name
   description
   imageUrl
@@ -31,6 +31,7 @@ fragment ProjectFragment on Project {
   starred
   isDeleted
   visibility
+  projectAlias
   metadata {
     id
     ...ProjectMetadataFragment
@@ -56,6 +57,7 @@ fragment ProjectMetadataFragment on ProjectMetadata {
   workspace
   readme
   license
+  topics
   importStatus
   createdAt
   updatedAt
@@ -64,13 +66,13 @@ fragment ProjectMetadataFragment on ProjectMetadata {
 
 const GetProjectsQuery = `
 query GetProjects(
-  $teamId: ID!
+  $workspaceId: ID!
   $pagination: Pagination
   $keyword: String
   $sort: ProjectSort
 ) {
   projects(
-    teamId: $teamId
+    workspaceId: $workspaceId
     pagination: $pagination
     keyword: $keyword
     sort: $sort
@@ -111,21 +113,29 @@ query GetProjects(
 
 const CreateProjectMutation = `
 mutation CreateProject(
-  $teamId: ID!
+  $workspaceId: ID!
   $visualizer: Visualizer!
   $name: String
   $description: String
   $coreSupport: Boolean
   $visibility: String
+  $projectAlias: String
+  $readme: String
+  $license: String
+  $topics: [String!]
 ) {
   createProject(
     input: {
-      teamId: $teamId
+      workspaceId: $workspaceId
       visualizer: $visualizer
       name: $name
       description: $description
       coreSupport: $coreSupport
 	  visibility: $visibility
+	  projectAlias: $projectAlias
+	  readme: $readme
+	  license: $license
+	  topics: $topics
     }
   ) {
     project {
@@ -179,8 +189,154 @@ func updateProject(e *httpexpect.Expect, u accountdomain.UserID, variables map[s
 		Path("$.data.updateProject.project")
 }
 
+func updateProject2(e *httpexpect.Expect, u accountdomain.UserID, variables map[string]any) *httpexpect.Value {
+	requestBody := GraphQLRequest{
+		OperationName: "UpdateProject",
+		Query:         UpdateProjectMutation,
+		Variables:     variables,
+	}
+	return Request(e, u.String(), requestBody)
+}
+
 // export REEARTH_DB=mongodb://localhost
-// go test -v -run TestCreateAndGetProject ./e2e/...
+// go test -v -run TestCreateUpdateProject ./e2e/...
+
+func TestCreateUpdateProject(t *testing.T) {
+	e := Server(t, baseSeeder)
+
+	// cerate
+	res := Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"workspaceId":  wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "test-xxxxxx",
+
+			"readme":  "readme-xxxxxx",
+			"license": "license-xxxxxx",
+			"topics":  []string{"gis", "history"},
+		},
+	})
+
+	res.Path("$.data.createProject.project.metadata.readme").IsEqual("readme-xxxxxx")
+	res.Path("$.data.createProject.project.metadata.license").IsEqual("license-xxxxxx")
+	res.Path("$.data.createProject.project.metadata.topics").IsEqual([]string{"gis", "history"})
+
+	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
+	projectID := res.Path("$.data.createProject.project.id").Raw().(string)
+
+	requestBody := GraphQLRequest{
+		OperationName: "GetProjects",
+		Query:         GetProjectsQuery,
+		Variables: map[string]any{
+			"workspaceId": wID.String(),
+			"pagination": map[string]any{
+				"first": 16,
+			},
+			"sort": map[string]string{
+				"field":     "UPDATEDAT",
+				"direction": "DESC",
+			},
+		},
+	}
+	edges := Request(e, uID.String(), requestBody).
+		Path("$.data.projects.edges").Array()
+
+	for _, edge := range edges.Iter() {
+		if edge.Path("$.node.id").Raw().(string) == projectID {
+			edge.Path("$.node.metadata.readme").IsEqual("readme-xxxxxx")
+			edge.Path("$.node.metadata.license").IsEqual("license-xxxxxx")
+			edge.Path("$.node.metadata.topics").IsEqual([]string{"gis", "history"})
+		}
+	}
+
+	// cerate
+	res = Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"workspaceId":  wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "test-xxxxxx", // Already Exists
+		},
+	})
+	res.Path("$.errors[0].message").IsEqual("The alias is already in use within the workspace. Please try a different value.")
+
+	// update
+	res = updateProject(e, uID, map[string]any{
+		"input": map[string]any{
+			"projectId":    projectID,
+			"projectAlias": "test-yyyyy",
+		},
+	})
+	res.Object().Value("projectAlias").IsEqual("test-yyyyy")
+
+	// cerate
+	res = Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"workspaceId":  wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "test-xxxxxx",
+		},
+	})
+	res.Path("$.data.createProject.project.projectAlias").IsEqual("test-xxxxxx")
+	projectID = res.Path("$.data.createProject.project.id").Raw().(string)
+
+	// update
+	res = updateProject2(e, uID, map[string]any{
+		"input": map[string]any{
+			"projectId":    projectID,
+			"projectAlias": "test-yyyyy", // Already Exists
+		},
+	})
+	res.Path("$.errors[0].message").IsEqual("The alias is already in use within the workspace. Please try a different value.")
+
+	res = Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"workspaceId":  wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "あいうえお",
+		},
+	})
+	res.Path("$.errors[0].message").IsEqual("Invalid alias name: あいうえお")
+
+	res = Request(e, uID.String(), GraphQLRequest{
+		OperationName: "CreateProject",
+		Query:         CreateProjectMutation,
+		Variables: map[string]any{
+			"name":         "test",
+			"description":  "abc",
+			"workspaceId":  wID.String(),
+			"visualizer":   "CESIUM",
+			"coreSupport":  true,
+			"visibility":   "public",
+			"projectAlias": "test/bad-alias",
+		},
+	})
+	res.Path("$.errors[0].message").IsEqual("Invalid alias name: test/bad-alias")
+
+}
 
 func TestCreateAndGetProject(t *testing.T) {
 	e := Server(t, baseSeeder)
@@ -191,7 +347,7 @@ func TestCreateAndGetProject(t *testing.T) {
 		OperationName: "GetProjects",
 		Query:         GetProjectsQuery,
 		Variables: map[string]any{
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"pagination": map[string]any{
 				"first": 16,
 			},
@@ -221,31 +377,31 @@ func TestCreateAndGetProject(t *testing.T) {
 func TestSortByName(t *testing.T) {
 	e := Server(t, baseSeeder)
 
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "a-project",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "b-project",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "A-project",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
-	createProject(e, uID, map[string]any{
+	createProject(e, uID2, map[string]any{
 		"name":        "B-project",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID2.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -257,7 +413,7 @@ func TestSortByName(t *testing.T) {
 			"pagination": map[string]any{
 				"last": 5,
 			},
-			"teamId": wID.String(),
+			"workspaceId": wID2.String(),
 			"sort": map[string]string{
 				"field":     "NAME",
 				"direction": "ASC",
@@ -265,14 +421,14 @@ func TestSortByName(t *testing.T) {
 		},
 	}
 
-	edges := Request(e, uID.String(), requestBody).
+	edges := Request(e, uID2.String(), requestBody).
 		Path("$.data.projects.edges").Array()
 
-	edges.Length().IsEqual(5)
-	edges.Value(0).Object().Value("node").Object().Value("name").IsEqual("a-project")
-	edges.Value(1).Object().Value("node").Object().Value("name").IsEqual("A-project")
-	edges.Value(2).Object().Value("node").Object().Value("name").IsEqual("b-project")
-	edges.Value(3).Object().Value("node").Object().Value("name").IsEqual("B-project")
+	edges.Length().IsEqual(4)
+	edges.Value(0).Path("$.node.name").IsEqual("a-project")
+	edges.Value(1).Path("$.node.name").IsEqual("A-project")
+	edges.Value(2).Path("$.node.name").IsEqual("b-project")
+	edges.Value(3).Path("$.node.name").IsEqual("B-project")
 
 }
 
@@ -282,35 +438,35 @@ func TestFindStarredByWorkspace(t *testing.T) {
 	project1ID := createProject(e, uID, map[string]any{
 		"name":        "Project 1",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	project2ID := createProject(e, uID, map[string]any{
 		"name":        "Project 2",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	project3ID := createProject(e, uID, map[string]any{
 		"name":        "Project 3",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	project4ID := createProject(e, uID, map[string]any{
 		"name":        "Project 4",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	project5ID := createProject(e, uID, map[string]any{
 		"name":        "Project 5",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -325,8 +481,8 @@ func TestFindStarredByWorkspace(t *testing.T) {
 	requestBody := GraphQLRequest{
 		OperationName: "GetStarredProjects",
 		Query: `
-		query GetStarredProjects($teamId: ID!) {
-			starredProjects(teamId: $teamId) {
+		query GetStarredProjects($workspaceId: ID!) {
+			starredProjects(workspaceId: $workspaceId) {
 				nodes {
 					id
 					name
@@ -337,7 +493,7 @@ func TestFindStarredByWorkspace(t *testing.T) {
 			}
 		}`,
 		Variables: map[string]any{
-			"teamId": wID,
+			"workspaceId": wID,
 		},
 	}
 
@@ -362,13 +518,14 @@ func TestFindStarredByWorkspace(t *testing.T) {
 
 		starredProjectsMap[id] = true
 
-		if id == project1ID {
+		switch id {
+		case project1ID:
 			assert.Equal(t, "Project 1", name)
 			assert.True(t, starred)
-		} else if id == project3ID {
+		case project3ID:
 			assert.Equal(t, "Project 3", name)
 			assert.True(t, starred)
-		} else {
+		default:
 			t.Errorf("Unexpected project in starred projects: %s", id)
 		}
 	}
@@ -397,7 +554,7 @@ func TestFindVisibilityProjects(t *testing.T) {
 	project1ID := createProject(e, uID, map[string]any{
 		"name":        "Project 1",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -409,7 +566,7 @@ func TestFindVisibilityProjects(t *testing.T) {
 			"pagination": map[string]any{
 				"last": 5,
 			},
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"sort": map[string]string{
 				"field":     "NAME",
 				"direction": "ASC",
@@ -417,10 +574,10 @@ func TestFindVisibilityProjects(t *testing.T) {
 		},
 	}
 
-	// default private
+	// default public
 	edges := Request(e, uID.String(), requestBody).
 		Path("$.data.projects.edges").Array()
-	edges.Value(1).Path("$.node.visibility").IsEqual("private")
+	edges.Value(1).Path("$.node.visibility").IsEqual("public")
 
 	// update public
 	updateVisibilityProject(e, project1ID)
@@ -434,7 +591,7 @@ func TestFindVisibilityProjects(t *testing.T) {
 	createProject(e, uID, map[string]any{
 		"name":        "Project 1",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 		"visibility":  "public",
@@ -464,21 +621,21 @@ func TestSortByUpdatedAt(t *testing.T) {
 	createProject(e, uID, map[string]any{
 		"name":        "project1-test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	project2ID := createProject(e, uID, map[string]any{
 		"name":        "project2-test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	createProject(e, uID, map[string]any{
 		"name":        "project3-test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
@@ -498,7 +655,7 @@ func TestSortByUpdatedAt(t *testing.T) {
 			"pagination": map[string]any{
 				"first": 3, // Get first 3 itme
 			},
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"sort": map[string]string{
 				"field":     "UPDATEDAT",
 				"direction": "DESC", // Sort DESC by UPDATEDAT
@@ -523,8 +680,8 @@ func TestDeleteProjects(t *testing.T) {
 	requestBody := GraphQLRequest{
 		OperationName: "GetDeletedProjects",
 		Query: `
-			query GetDeletedProjects($teamId: ID!) {
-				deletedProjects(teamId: $teamId) {
+			query GetDeletedProjects($workspaceId: ID!) {
+				deletedProjects(workspaceId: $workspaceId) {
 					nodes {
 						id
 						name
@@ -535,7 +692,7 @@ func TestDeleteProjects(t *testing.T) {
 				}
 			}`,
 		Variables: map[string]any{
-			"teamId": wID,
+			"workspaceId": wID,
 		},
 	}
 
@@ -572,23 +729,23 @@ func testData(e *httpexpect.Expect) {
 	createProject2(e, uID, map[string]any{
 		"name":        "test1-1",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 	}).Object().
 		HasValue("name", "test1-1").
-		HasValue("coreSupport", false).   //default(=false)
-		HasValue("visibility", "private") //default(=private)
+		HasValue("coreSupport", false).  //default(=false)
+		HasValue("visibility", "public") //default(=private)
 
-	// create coreSupport default(=false) visibility default(=private) `delete` project
+	// create coreSupport default(=false) visibility default(=public) `delete` project
 	id := createProject2(e, uID, map[string]any{
 		"name":        "test1-2",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 	}).Object().
 		HasValue("name", "test1-2").
-		HasValue("coreSupport", false).    //default(=false)
-		HasValue("visibility", "private"). //default(=private)
+		HasValue("coreSupport", false).   //default(=false)
+		HasValue("visibility", "public"). //default(=public)
 		Value("id").Raw().(string)
 
 	deleteProject(e, id) // delete
@@ -597,7 +754,7 @@ func testData(e *httpexpect.Expect) {
 	createProject2(e, uID, map[string]any{
 		"name":        "test2-1",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 		"visibility":  "public",
@@ -610,7 +767,7 @@ func testData(e *httpexpect.Expect) {
 	id = createProject2(e, uID, map[string]any{
 		"name":        "test2-2",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 		"visibility":  "public",
@@ -626,7 +783,7 @@ func testData(e *httpexpect.Expect) {
 	createProject2(e, uID, map[string]any{
 		"name":        "test3-1",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": false,
 		"visibility":  "private",
@@ -639,7 +796,7 @@ func testData(e *httpexpect.Expect) {
 	id = createProject2(e, uID, map[string]any{
 		"name":        "test3-2",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": false,
 		"visibility":  "private",
@@ -666,6 +823,26 @@ func projects(t *testing.T, ctx context.Context, r *repo.Container, count int, w
 			CoreSupport(coreSupport).
 			MustBuild()
 		err := r.Project.Save(ctx, p)
+		assert.Nil(t, err)
+
+		readme := "xxx readme"
+		license := "yyy license"
+		topics := []string{"gis", "history"}
+		log := map[string]any{}
+		st := project.ProjectImportStatusNone
+
+		m, err := project.NewProjectMetadata().
+			NewID().
+			Workspace(p.Workspace()).
+			Project(p.ID()).
+			ImportStatus(&st).
+			Readme(&readme).
+			License(&license).
+			Topics(&topics).
+			ImportResultLog(&log).
+			Build()
+		assert.Nil(t, err)
+		err = r.ProjectMetadata.Save(ctx, m)
 		assert.Nil(t, err)
 	}
 }
@@ -703,7 +880,7 @@ func TestGetProjectPagination(t *testing.T) {
 			"pagination": map[string]any{
 				"first": 16,
 			},
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"sort": map[string]string{
 				"field":     "UPDATEDAT",
 				"direction": "DESC",
@@ -720,8 +897,8 @@ func TestGetProjectPagination(t *testing.T) {
 	edges := projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 16)
 	for _, v := range edges {
-		//Only the same teamId
-		v.Object().Value("node").Object().HasValue("teamId", wID.String())
+		//Only the same workspaceId
+		v.Object().Value("node").Object().HasValue("workspaceId", wID.String())
 	}
 
 	pageInfo := projects.Value("pageInfo").Object()
@@ -738,7 +915,7 @@ func TestGetProjectPagination(t *testing.T) {
 				"after": endCursor,
 				"first": 16,
 			},
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"sort": map[string]string{
 				"field":     "UPDATEDAT",
 				"direction": "DESC",
@@ -754,8 +931,8 @@ func TestGetProjectPagination(t *testing.T) {
 	edges = projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 5)
 	for _, v := range edges {
-		//Only the same teamId
-		v.Object().Value("node").Object().HasValue("teamId", wID.String())
+		//Only the same workspaceId
+		v.Object().Value("node").Object().HasValue("workspaceId", wID.String())
 	}
 
 	pageInfo = projects.Value("pageInfo").Object()
@@ -787,7 +964,7 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 			"pagination": map[string]any{
 				"first": 16,
 			},
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"sort": map[string]string{
 				"field":     "UPDATEDAT",
 				"direction": "DESC",
@@ -804,8 +981,8 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 	edges := projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 16)
 	for _, v := range edges {
-		//Only the same teamId
-		v.Object().Value("node").Object().HasValue("teamId", wID.String())
+		//Only the same workspaceId
+		v.Object().Value("node").Object().HasValue("workspaceId", wID.String())
 	}
 
 	pageInfo := projects.Value("pageInfo").Object()
@@ -822,7 +999,7 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 				"after": endCursor,
 				"first": 16,
 			},
-			"teamId": wID.String(),
+			"workspaceId": wID.String(),
 			"sort": map[string]string{
 				"field":     "UPDATEDAT",
 				"direction": "DESC",
@@ -838,8 +1015,8 @@ func TestGetProjectPaginationKeyword(t *testing.T) {
 	edges = projects.Value("edges").Array().Iter()
 	assert.Equal(t, len(edges), 4)
 	for _, v := range edges {
-		//Only the same teamId
-		v.Object().Value("node").Object().HasValue("teamId", wID.String())
+		//Only the same workspaceId
+		v.Object().Value("node").Object().HasValue("workspaceId", wID.String())
 	}
 
 	pageInfo = projects.Value("pageInfo").Object()
@@ -853,21 +1030,21 @@ func TestProjectVisibility(t *testing.T) {
 	createProject(e, uID, map[string]any{
 		"name":        "project1-test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	createProject(e, uID, map[string]any{
 		"name":        "project2-test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})
 	createProject(e, uID, map[string]any{
 		"name":        "project3-test",
 		"description": "abc",
-		"teamId":      wID.String(),
+		"workspaceId": wID.String(),
 		"visualizer":  "CESIUM",
 		"coreSupport": true,
 	})

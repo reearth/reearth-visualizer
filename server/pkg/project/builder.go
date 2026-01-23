@@ -7,6 +7,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
 	"github.com/reearth/reearthx/account/accountdomain"
+	"github.com/reearth/reearthx/idx"
 )
 
 type Builder struct {
@@ -17,9 +18,16 @@ func New() *Builder {
 	return &Builder{p: &Project{publishmentStatus: PublishmentStatusPrivate}}
 }
 
+type Visibility string
+
+const (
+	VisibilityPublic  Visibility = "public"
+	VisibilityPrivate Visibility = "private"
+)
+
 func (b *Builder) Build() (*Project, error) {
 	if b.p.id.IsNil() {
-		return nil, id.ErrInvalidID
+		return nil, idx.ErrInvalidID
 	}
 	if b.p.updatedAt.IsZero() {
 		b.p.updatedAt = b.p.CreatedAt()
@@ -106,13 +114,18 @@ func (b *Builder) Deleted(deleted bool) *Builder {
 	return b
 }
 
-func (b *Builder) Visibility(visibility string) *Builder {
-	b.p.visibility = visibility
+func (b *Builder) Visibility(visibility Visibility) *Builder {
+	b.p.visibility = string(visibility)
 	return b
 }
 
 func (b *Builder) Metadata(metadata *ProjectMetadata) *Builder {
 	b.p.metadata = metadata
+	return b
+}
+
+func (b *Builder) ProjectAlias(projectAlias string) *Builder {
+	b.p.projectAlias = projectAlias
 	return b
 }
 
