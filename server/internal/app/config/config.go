@@ -1,6 +1,7 @@
 package config
 
 import (
+	"context"
 	"net/url"
 	"os"
 	"strings"
@@ -155,6 +156,20 @@ func ReadConfig(debug bool) (*Config, error) {
 
 	if c.Host_Web == "" {
 		c.Host_Web = c.Host
+	}
+
+	// Fetch auth config from accounts API if not configured locally
+	if c.Auth0.Domain == "" && c.AccountsAPI.Host != "" {
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		defer cancel()
+
+		auth0Cfg, err := FetchAuthConfigFromAccounts(ctx, c.AccountsAPI.Host)
+		if err != nil {
+			log.Warnf("config: failed to fetch auth config from accounts API: %v", err)
+		} else if auth0Cfg != nil {
+			c.Auth0 = *auth0Cfg
+			log.Infof("config: using auth config from accounts API")
+		}
 	}
 
 	return &c, err
