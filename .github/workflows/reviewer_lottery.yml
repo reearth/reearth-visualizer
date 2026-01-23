@@ -10,6 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-      - uses: uesteibar/reviewer-lottery@v3
+      - uses: uesteibar/reviewer-lottery@v4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
