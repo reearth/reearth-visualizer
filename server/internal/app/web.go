@@ -38,15 +38,16 @@ func (w *WebHandler) Handler(ec *echo.Echo) {
 	publishedGroup.GET("/:name/data.json", PublishedData(w.HostPattern, true))
 	publishedGroup.GET("/:name/", PublishedIndex(w.HostPattern, true))
 
-	// Register /reearth_config.json endpoint early, before web directory check
-	// This endpoint should be available regardless of web directory presence
-	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
 	ec.GET("/data.json", PublishedData(w.HostPattern, false)) // for prod / dev
 
 	if w.Disabled {
 		ec.Any("/*", func(c echo.Context) error { return echo.ErrNotFound })
 		return
 	}
+
+	// Register /reearth_config.json endpoint after Disabled check
+	// This endpoint should only be available when web is not disabled
+	ec.GET("/reearth_config.json", WebConfigHandler(w.AuthConfig, w.WebConfig, publishedHost))
 
 	if w.FS == nil {
 		w.FS = afero.NewOsFs()

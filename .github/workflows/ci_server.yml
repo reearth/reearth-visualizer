@@ -89,6 +89,11 @@ jobs:
       - name: checkout reearth-visualizer
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
+      - name: Setup .env.docker for reearth-visualizer
+        run: |
+          cd server
+          cp .env.docker.example .env.docker
+
       - name: Create reearth network and start services
         run: |
           docker compose -f docker-compose.dev.yml up --no-start
