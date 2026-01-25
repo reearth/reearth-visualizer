@@ -39,25 +39,25 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
 
   const {
     themeClass,
-    routeWidth,
+    routeInputData,
+    updateRouteInputData,
     disabled,
     panoDivRef,
-    setRouteWidth,
-    routeColor,
-    setRouteColor,
     isDrawing,
     mode,
-    setMode,
-    file,
-    setFile,
     selectRoutes,
     showPano,
-    selectedRoute,
+    playState,
+    handlePause,
+    handleRestart,
     handleSelectRoute,
     handleStartSketchRoute,
     handleFinishSketchRoute,
     handleUploadFile,
-    handleStreetViewStart
+    handleStreetViewStart,
+    handleResume,
+    handleChangeMode,
+    resetOnClose
   } = useHooks({
     widget,
     onSketchSetType,
@@ -87,7 +87,12 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
             <StreetView />
             <h4 className="text-sm">Street View</h4>
           </div>
-          <div onClick={() => setCollapsed(true)}>
+          <div
+            onClick={() => {
+              setCollapsed(true);
+              resetOnClose();
+            }}
+          >
             <Close className="w-5 h-5 cursor-pointer" />
           </div>
         </CardHeader>
@@ -99,14 +104,12 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
               type="number"
               min={1}
               step={1}
-              defaultValue={routeWidth}
+              defaultValue={routeInputData.routeWidth}
               onBlur={(e) => {
                 const v = e.currentTarget.valueAsNumber;
-                setRouteWidth(Number.isNaN(v) ? 1 : v);
+                updateRouteInputData({ routeWidth: Number.isNaN(v) ? 1 : v });
               }}
-              style={{
-                padding: "0 4px"
-              }}
+              style={{ padding: "0 4px" }}
               className="h-7 border border-gray-300 rounded-sm shadow-sm"
             />
           </div>
@@ -116,26 +119,34 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
             <div className="flex items-center gap-2">
               <input
                 type="color"
-                value={routeColor ? routeColor : "#FFFFFF"}
-                onChange={(e) => setRouteColor(e.target.value)}
+                value={
+                  routeInputData.routeColor
+                    ? routeInputData.routeColor
+                    : "#FFFFFF"
+                }
+                onChange={(e) =>
+                  updateRouteInputData({ routeColor: e.target.value })
+                }
                 aria-label="Route color"
                 className="h-8 w-10 p-0 rounded-sm border border-gray-300 cursor-pointer"
               />
               <Input
-                value={routeColor}
-                onChange={(e) => setRouteColor(normalizeHex(e.target.value))}
+                value={routeInputData.routeColor}
+                onChange={(e) =>
+                  updateRouteInputData({
+                    routeColor: normalizeHex(e.target.value)
+                  })
+                }
                 placeholder="#FFFFFF"
-                style={{
-                  padding: "0 4px"
-                }}
-                className="h-7 border border-gray-300 rounded-sm shadow-sm "
+                style={{ padding: "0 4px" }}
+                className="h-7 border border-gray-300 rounded-sm shadow-sm"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-[1fr_200px] items-center gap-3">
             <div>Make a route</div>
-            <Select value={mode} onValueChange={setMode}>
+            <Select value={mode} onValueChange={handleChangeMode}>
               <SelectTrigger
                 style={{
                   height: "30px",
@@ -168,6 +179,7 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
               </SelectContent>
             </Select>
           </div>
+
           {mode === "upload" && (
             <div className="pt-1">
               <input
@@ -176,8 +188,11 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
                 className="hidden"
                 onChange={(e) => {
                   const f = e.target.files?.[0] ?? null;
-                  setFile(f);
-                  if (f) void handleUploadFile(f);
+                  if (!f) {
+                    updateRouteInputData({ file: null });
+                    return;
+                  }
+                  void handleUploadFile(f);
                 }}
               />
               <Button
@@ -189,11 +204,14 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
                 Choose File
               </Button>
 
-              {file ? (
-                <div className="mt-2  truncate">Uploaded file: {file.name}</div>
+              {routeInputData.file ? (
+                <div className="mt-2 truncate">
+                  Uploaded file: {routeInputData.file.name}
+                </div>
               ) : null}
             </div>
           )}
+
           {mode === "draw" && (
             <div className="pt-1">
               <Button
@@ -209,17 +227,21 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
               </Button>
             </div>
           )}
+
           {mode === "select" && (
             <div className="grid grid-cols-[1fr_200px] items-center gap-3 pt-1">
               Route
-              <Select value={selectedRoute} onValueChange={handleSelectRoute}>
+              <Select
+                value={routeInputData.selectedRoute}
+                onValueChange={handleSelectRoute}
+              >
                 <SelectTrigger
                   style={{
                     height: "30px",
                     border: "1px solid #d1d5dc",
                     padding: "0 4px"
                   }}
-                  className="rounded-sm  w-auto"
+                  className="rounded-sm w-auto"
                 >
                   <SelectValue placeholder="Select route…" />
                 </SelectTrigger>
@@ -227,7 +249,7 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
                   {selectRoutes && selectRoutes.length > 0 ? (
                     selectRoutes.map((route) => (
                       <SelectItem
-                        className="data-[state=checked]:bg-[#3b3cd0] data-[state=checked]:text-white text-xs "
+                        className="data-[state=checked]:bg-[#3b3cd0] data-[state=checked]:text-white text-xs"
                         key={route.id}
                         value={route.fileUrl}
                       >
@@ -235,7 +257,7 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
                       </SelectItem>
                     ))
                   ) : (
-                    <div className="px-2 py-2 ">No routes available</div>
+                    <div className="px-2 py-2">No routes available</div>
                   )}
                 </SelectContent>
               </Select>
@@ -248,30 +270,38 @@ const GoogleMapStreetView: FC<GoogleMapStreetViewProps> = ({
             type="button"
             variant="outline"
             className="flex-1 h-8 rounded-sm text-xs"
-            style={{
-              border: "1px solid #3b3cd0"
-            }}
-            disabled={!disabled}
-            onClick={() => {
-              // restart logic
-            }}
+            disabled={playState !== "playing"}
+            onClick={handleRestart}
           >
             Restart
           </Button>
-          <Button
-            type="button"
-            className="flex-1 h-8 rounded-sm text-xs"
-            disabled={!disabled}
-            style={{
-              cursor: !disabled ? "not-allowed" : "pointer"
-            }}
-            onClick={() => {
-              handleStreetViewStart();
-            }}
-          >
-            Start
-          </Button>
+
+          {playState === "playing" ? (
+            <Button
+              type="button"
+              className="flex-1 h-8 rounded-sm text-xs"
+              onClick={handlePause}
+            >
+              Pause
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              className="flex-1 h-8 rounded-sm text-xs"
+              disabled={!disabled}
+              onClick={() => {
+                if (!showPano) {
+                  handleStreetViewStart();
+                } else {
+                  handleResume();
+                }
+              }}
+            >
+              Start
+            </Button>
+          )}
         </CardFooter>
+
         {showPano ? (
           <div className="px-3 pb-3">
             <div

@@ -1,4 +1,3 @@
-// useStreetViewPlayer.ts (loader) - MUST include geometry library
 let googleMapsPromise: Promise<void> | null = null;
 
 export function loadGoogleMaps(apiKey?: string): Promise<void> {
@@ -26,7 +25,6 @@ export function loadGoogleMaps(apiKey?: string): Promise<void> {
     script.async = true;
     script.defer = true;
 
-    // ✅ geometry library is required for computeHeading
     const src = new URL("https://maps.googleapis.com/maps/api/js");
     src.searchParams.set("key", apiKey);
     src.searchParams.set("libraries", "geometry");

@@ -24,3 +24,11 @@ export type RouteFeature = {
 };
 
 export type RouteInput = RouteFeature | string ;
+
+export type RouteInputData = {
+  routeWidth: number;
+  routeColor: string;
+  file: File | null;
+  selectedRoute: string;
+};
+
