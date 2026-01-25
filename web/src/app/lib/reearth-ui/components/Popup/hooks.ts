@@ -11,11 +11,13 @@ import {
   safePolygon,
   arrow
 } from "@floating-ui/react";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useMemo, useRef, useState } from "react";
+
+import { PopoverContext } from "./context";
 
 import { PopupProps } from ".";
 
-const usePopover = ({
+export const usePopover = ({
   placement = "bottom",
   open: controlledOpen,
   offset: offsetProps,
@@ -80,4 +82,11 @@ const usePopover = ({
   );
 };
 
-export default usePopover;
+export const usePopoverContext = () => {
+  const context = useContext(PopoverContext);
+
+  if (context === null) {
+    throw new Error("Popover components must be wrapped in <Popover.Root />");
+  }
+  return context;
+};

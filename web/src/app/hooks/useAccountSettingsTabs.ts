@@ -1,5 +1,5 @@
 import { IconName } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useMemo } from "react";
 
 export const accountSettingTabs: {

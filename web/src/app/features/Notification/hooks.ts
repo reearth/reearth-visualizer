@@ -1,4 +1,4 @@
-import { useT, useLang } from "@reearth/services/i18n";
+import { useT, useLang } from "@reearth/services/i18n/hooks";
 import { useNotification, Notification } from "@reearth/services/state";
 import { useErrors } from "@reearth/services/state/gqlErrorHandling";
 import { useState, useEffect, useCallback, useMemo } from "react";

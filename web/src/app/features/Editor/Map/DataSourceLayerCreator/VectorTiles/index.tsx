@@ -9,7 +9,7 @@ import {
   Wrapper
 } from "@reearth/app/features/Editor/Map/shared/SharedComponent";
 import { Button, TextInput } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 

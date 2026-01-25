@@ -1,7 +1,7 @@
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import Button from "@reearth/app/ui/widgetui/Button";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useContext, useState } from "react";
 

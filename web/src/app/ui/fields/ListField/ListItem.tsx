@@ -1,6 +1,6 @@
 import { PopupMenuItem, TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 
@@ -52,7 +52,12 @@ const ListItem: FC<ItemProps> = ({
         id: "rename",
         title: "Rename",
         icon: "pencilSimple" as const,
-        onClick: () => setItemNameRenameId(item.id)
+        onClick: () => {
+          // Delay entering edit mode until popup has fully closed and finished focus management
+          setTimeout(() => {
+            setItemNameRenameId(item.id);
+          }, 0);
+        }
       });
     }
 

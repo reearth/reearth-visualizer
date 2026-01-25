@@ -5,7 +5,7 @@ import {
 import { Collapse } from "@reearth/app/lib/reearth-ui";
 import { InputField, SwitchField } from "@reearth/app/ui/fields";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -133,6 +133,7 @@ const DataSource: FC<Props> = ({
               title={t("Resource URL")}
               value={localUrl}
               onSubmit={handleLayerUrlUpdate}
+              disabled={!!selectedLayer.dataSourceName}
               data-testid="data-source-resource-url"
             />
           )}

@@ -1,5 +1,5 @@
 import { setContext } from "@apollo/client/link/context";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 
 export default () => {
   const { getAccessToken } = useAuth();

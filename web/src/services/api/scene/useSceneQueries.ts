@@ -3,10 +3,10 @@ import {
   CHECK_SCENE_ALIAS,
   GET_SCENE
 } from "@reearth/services/gql/queries/scene";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useMemo } from "react";
 
 import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "../../gql";
-import { useLang, useT } from "../../i18n";
 import { useNotification } from "../../state";
 
 import { Scene, SceneQueryProps } from "./types";

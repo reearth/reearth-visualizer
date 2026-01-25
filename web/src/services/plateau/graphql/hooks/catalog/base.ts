@@ -7,30 +7,33 @@ import {
   QueryHookOptions,
   NoInfer,
   QueryResult,
-  LazyQueryResultTuple,
+  LazyQueryResultTuple
 } from "@apollo/client";
 
 import { catalogClient } from "../../clients";
 
-export const useQuery = <TData = any, TVariables extends OperationVariables = OperationVariables>(
+export const useQuery = <
+  TData = unknown,
+  TVariables extends OperationVariables = OperationVariables
+>(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
-  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>,
+  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>
 ): QueryResult<TData, TVariables> => {
   return useApolloQuery(query, {
     ...options,
-    client: catalogClient,
+    client: catalogClient
   });
 };
 
 export const useLazyQuery = <
-  TData = any,
-  TVariables extends OperationVariables = OperationVariables,
+  TData = unknown,
+  TVariables extends OperationVariables = OperationVariables
 >(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
-  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>,
+  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>
 ): LazyQueryResultTuple<TData, TVariables> => {
   return useApolloLazyQuery(query, {
     ...options,
-    client: catalogClient,
+    client: catalogClient
   });
 };

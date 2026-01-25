@@ -7,7 +7,7 @@ import {
 import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
@@ -16,9 +16,15 @@ import EditPanel from "./EditPanel";
 
 export type ResourceUrlProp = {
   value: string;
+  disabled?: boolean;
   onSubmit: (url: string) => void;
 } & CommonFieldProps;
-const ResourceUrl: FC<ResourceUrlProp> = ({ value, title, onSubmit }) => {
+const ResourceUrl: FC<ResourceUrlProp> = ({
+  value,
+  title,
+  onSubmit,
+  disabled
+}) => {
   const t = useT();
   const theme = useTheme();
   const [, setNotification] = useNotification();
@@ -62,6 +68,7 @@ const ResourceUrl: FC<ResourceUrlProp> = ({ value, title, onSubmit }) => {
               title={t("Edit")}
               icon="pencilSimple"
               size="small"
+              disabled={disabled}
               onClick={handleOpen}
             />
           }

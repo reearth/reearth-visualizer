@@ -9,7 +9,7 @@ import {
 import { CommonField } from "@reearth/app/ui/fields";
 import { useValidateSceneAlias } from "@reearth/services/api/scene";
 import { useValidateStoryAlias } from "@reearth/services/api/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 

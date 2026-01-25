@@ -6,7 +6,7 @@ import { DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layer";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import {
   FC,

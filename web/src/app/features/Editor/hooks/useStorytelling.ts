@@ -5,7 +5,7 @@ import {
   useStoryBlockMutations,
   useStoryPageMutations
 } from "@reearth/services/api/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useState, useCallback, useMemo, useRef } from "react";
 
 type Props = {

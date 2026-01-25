@@ -9,7 +9,7 @@ import { TabItem, Tabs } from "@reearth/app/lib/reearth-ui";
 import { ComputedFeature, Geometry } from "@reearth/core";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layer/types";
 import type { LayerStyle as LayerStyleType } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import DataSource from "./DataSource";

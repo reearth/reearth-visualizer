@@ -12,12 +12,12 @@ jobs:
       server: ${{ steps.server.outputs.any_modified }}
       e2e: ${{ steps.e2e.outputs.any_modified }}
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           fetch-depth: 0
       - name: changed files for web
         id: web
-        uses: step-security/changed-files@95b56dadb92a30ca9036f16423fd3c088a71ee94 # v46.0.5
+        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
         with:
           files: |
             web/
@@ -28,7 +28,7 @@ jobs:
 
       - name: changed files for server
         id: server
-        uses: step-security/changed-files@95b56dadb92a30ca9036f16423fd3c088a71ee94 # v46.0.5
+        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
         with:
           files: |
             server/
@@ -39,7 +39,7 @@ jobs:
 
       - name: changed files for e2e
         id: e2e
-        uses: step-security/changed-files@95b56dadb92a30ca9036f16423fd3c088a71ee94 # v46.0.5
+        uses: step-security/changed-files@60967b822d3001fa82242f8d6b4ed46bc3600a68 # v47.0.1
         with:
           files: |
             e2e/

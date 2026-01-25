@@ -3,7 +3,7 @@ import { EntryItem } from "@reearth/app/ui/components";
 import CheckBoxField from "@reearth/app/ui/fields/CheckBoxField";
 import PropertyItem from "@reearth/app/ui/fields/Properties";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 

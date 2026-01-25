@@ -1,5 +1,5 @@
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { debounce } from "lodash-es";
 import {

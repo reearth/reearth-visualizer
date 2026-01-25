@@ -53,7 +53,12 @@ const FileListItem: FC<Props> = ({
               id: "rename",
               title: "Rename",
               icon: "pencilSimple" as const,
-              onClick: () => setIsEditing(true)
+              onClick: () => {
+                // Delay entering edit mode until popup has fully closed and finished focus management
+                setTimeout(() => {
+                  setIsEditing(true);
+                }, 0);
+              }
             }
           ]
         : [])
