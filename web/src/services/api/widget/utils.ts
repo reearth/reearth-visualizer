@@ -18,7 +18,6 @@ export const GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID = "reearth/googleMapSearch";
 export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
 export const GOOGLE_MAP_STREET_VIEW_ID = "reearth/googleMapStreetView";
 
-
 export const AVAILABLE_WIDGET_IDS = [
   BUTTON_BUILTIN_WIDGET_ID,
   NAVIGATOR_BUILTIN_WIDGET_ID,

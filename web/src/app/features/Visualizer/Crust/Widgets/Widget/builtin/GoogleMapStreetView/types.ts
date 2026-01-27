@@ -20,10 +20,10 @@ export type RouteFeature = {
     type: "LineString";
     coordinates: LngLat[];
   };
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 };
 
-export type RouteInput = RouteFeature | string ;
+export type RouteInput = RouteFeature | string;
 
 export type RouteInputData = {
   routeWidth: number;

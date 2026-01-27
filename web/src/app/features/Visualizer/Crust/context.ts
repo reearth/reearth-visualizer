@@ -148,6 +148,5 @@ export function widgetContextFromMapRef({
     onLayerDelete: (...args) => {
       layers()?.deleteLayer(...args);
     }
-
   };
 }

@@ -298,14 +298,23 @@ export default function useHooks({
     async (file: File) => {
       updateRouteInputData({ file });
 
-      const json = JSON.parse(await file.text());
+      let json: unknown;
+      try {
+        const text = await file.text();
+        json = JSON.parse(text);
+      } catch (error) {
+        console.error("Failed to parse uploaded route file as JSON.", error);
+        return;
+      }
       const route = toRouteFeature(extractLines(json)[0]);
+
       if (!route) return;
 
       if (routeState.layerId) onLayerDelete?.(routeState.layerId);
 
       setRouteState({ feature: route });
 
+      if (!route.geometry.coordinates.length) return;
       const [lng, lat] = route.geometry.coordinates[0];
       onFlyTo?.({ lat, lng, height: 2000 }, { duration: 2 });
 
@@ -332,6 +341,7 @@ export default function useHooks({
 
       setRouteState({ feature: route });
 
+      if (!route.geometry.coordinates.length) return;
       const [lng, lat] = route.geometry.coordinates[0];
       onFlyTo?.({ lat, lng, height: 2000 }, { duration: 2 });
 
@@ -412,7 +422,6 @@ export default function useHooks({
     flyIndexRef.current = 0;
     setStreetViewCoords([]);
   }, [clearAnimation, onLayerDelete, routeState.layerId, trackingPointId]);
-
 
   const disabled = useMemo(
     () =>
