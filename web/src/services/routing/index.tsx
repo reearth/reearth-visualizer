@@ -23,54 +23,54 @@ const GraphQLPlayground = lazy(
   () => import("@reearth/app/pages/GraphQLPlayground")
 );
 
-export const AppRoutes = () => {
-  const router = createBrowserRouter([
-    {
-      path: "dashboard/:workspaceId/",
-      element: <Dashboard />
-    },
-    {
-      path: "dashboard/:workspaceId/:tab",
-      element: <Dashboard />
-    },
-    {
-      path: "scene/:sceneId/:tab",
-      element: <Editor />
-    },
-    {
-      path: "settings/projects/:projectId/:tab?/:subId?",
-      element: <ProjectSettings />
-    },
-    {
-      path: "settings/account",
-      element: <AccountSettingPage />
-    },
-    {
-      path: "settings/workspaces/:workspaceId",
-      element: <WorkspaceSettingPage tab="workspace" />
-    },
-    {
-      path: "graphql",
-      element: <GraphQLPlayground />
-    },
-    {
-      index: true,
-      element: <RootPage />
-    },
-    {
-      path: "auth/*",
-      element: <RootPage />
-    },
-    {
-      path: "plugin-playground",
-      element: <PluginPlaygroundPage />
-    },
-    {
-      path: "*",
-      element: <NotFoundPage />
-    }
-  ]);
+const router = createBrowserRouter([
+  {
+    path: "dashboard/:workspaceId/",
+    element: <Dashboard />
+  },
+  {
+    path: "dashboard/:workspaceId/:tab",
+    element: <Dashboard />
+  },
+  {
+    path: "scene/:sceneId/:tab",
+    element: <Editor />
+  },
+  {
+    path: "settings/projects/:projectId/:tab?/:subId?",
+    element: <ProjectSettings />
+  },
+  {
+    path: "settings/account",
+    element: <AccountSettingPage />
+  },
+  {
+    path: "settings/workspaces/:workspaceId",
+    element: <WorkspaceSettingPage tab="workspace" />
+  },
+  {
+    path: "graphql",
+    element: <GraphQLPlayground />
+  },
+  {
+    index: true,
+    element: <RootPage />
+  },
+  {
+    path: "auth/*",
+    element: <RootPage />
+  },
+  {
+    path: "plugin-playground",
+    element: <PluginPlaygroundPage />
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />
+  }
+]);
 
+export const AppRoutes = () => {
   return <StyledRouter router={router} />;
 };
 
