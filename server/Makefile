@@ -38,6 +38,7 @@ help:
 	@echo "  build             Build the reearth binary"
 	@echo "  run               Start dev server with Docker Compose"
 	@echo "  down              Stop Docker Compose services"
+	@echo "  restart           Restart dev server (down + run)"
 	@echo ""
 	@echo "Database:"
 	@echo "  migrate           Run database migration"
@@ -124,6 +125,10 @@ run:
 
 down:
 	${DOCKER_COMPOSE_DEV} down
+
+restart:
+	@$(MAKE) down
+	@$(MAKE) run
 
 # =======================
 # Migration
@@ -263,6 +268,6 @@ destroy:
 		echo "✗ Operation cancelled"; \
 	fi
 
-.PHONY: default help lint test test-docker e2e e2e-docker e2e-test build run down \
+.PHONY: default help lint test test-docker e2e e2e-docker e2e-test build run down restart \
         migrate migrate-with-key generate gql grpc grpc-doc schematyper deep-copy error-msg dev-install init-gcs \
         mockuser clean up-gcs down-gcs reset destroy

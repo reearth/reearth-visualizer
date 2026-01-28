@@ -1,195 +1,112 @@
 [![ci-server](https://github.com/reearth/reearth-visualizer/actions/workflows/ci_server.yml/badge.svg)](https://github.com/reearth/reearth-visualizer/actions/workflows/ci_server.yml) [![codecov](https://codecov.io/gh/reearth/reearth/branch/main/graph/badge.svg?flag=server)](https://codecov.io/gh/reearth/reearth)
 
-# reearth/server
+# Re:Earth Visualizer Server
 
-A back-end API server application for Re:Earth
+A back-end API server application for Re:Earth Visualizer.
 
-## Quick Start
+## Table of Contents
 
-### Prerequisites
+- [Overview](#overview)
+- [Configuration Guide](#configuration-guide)
+  - [Authentication Setup](#authentication-setup)
+  - [User Synchronization](#user-synchronization)
+  - [Web Application Configuration](#web-application-configuration)
+- [Development Commands](#development-commands)
+- [Glossary](#glossary)
 
-- Docker and Docker Compose
-- Go 1.23 or later (for local development)
+## Overview
 
-### Running the Server
+The Re:Earth Visualizer server provides the backend API for the Re:Earth platform, handling data management, authentication, and business logic.
 
-**macOS / Linux:**
+## Configuration Guide
 
-```bash
-# Start the development server with Docker
-make run
+### Authentication Setup
 
-# Initialize GCS bucket
-make init-gcs
+The application supports multiple authentication providers including **Auth0** and **Cognito**. Authentication is configured through the `reearth-accounts` service.
 
-# Create a mock user
-make mockuser
-```
+> **Important**: Authentication configuration is automatically fetched from the reearth-accounts API. You only need to configure Auth0 in reearth-accounts, not in reearth-visualizer.
 
-**Windows:**
+#### 1. Configure Authentication Provider
 
-```cmd
-# Start the development server with Docker
-dev.bat run
-
-# Initialize GCS bucket
-dev.bat init-gcs
-
-# Create a mock user
-dev.bat mockuser
-```
-
-The server will be available at `http://localhost:8080`
-
-## Development Commands
-
-### Testing
-
-| Command                        | Description                                    |
-| ------------------------------ | ---------------------------------------------- |
-| `make lint`                    | Run golangci-lint in Docker container          |
-| `make test`                    | Run unit tests (local, excludes e2e)           |
-| `make test-docker`             | Run unit tests in Docker container             |
-| `make e2e`                     | Run all e2e tests in Docker                    |
-| `make e2e-docker`              | Run all e2e tests in Docker                    |
-| `make e2e-test TEST_NAME=Name` | Run specific e2e test                          |
-| `dev.bat lint`                 | Run golangci-lint with auto-fix (local)        |
-| `dev.bat lint-docker`          | Run golangci-lint in Docker container          |
-| `dev.bat test`                 | Run unit tests (local)                         |
-| `dev.bat test-docker`          | Run unit tests in Docker container             |
-| `dev.bat e2e`                  | Run end-to-end tests                           |
-| `dev.bat e2e-docker`           | Run all e2e tests in Docker                    |
-| `dev.bat e2e-test TEST_NAME=Name` | Run specific e2e test                       |
-
-> **Note:** Docker-based commands require the development container to be running (`make run` or `dev.bat run`)
-
-### Build & Run
-
-| Command           | Description                            |
-| ----------------- | -------------------------------------- |
-| `make build`      | Build the reearth binary               |
-| `make run`        | Start dev server with Docker Compose   |
-| `make down`       | Stop Docker Compose services           |
-| `dev.bat build`   | Build the project                      |
-| `dev.bat run`     | Start dev server with Docker Compose   |
-| `dev.bat down`    | Stop Docker Compose services           |
-| `dev.bat dev`     | Run the application with hot reload    |
-| `dev.bat run-app` | Run the application                    |
-
-### Code Generation
-
-| Command                | Description                           |
-| ---------------------- | ------------------------------------- |
-| `make generate`        | Run all code generation               |
-| `make gql`             | Generate GraphQL code                 |
-| `make grpc`            | Generate gRPC code                    |
-| `make grpc-doc`        | Generate gRPC documentation           |
-| `make schematyper`     | Generate plugin manifest schema       |
-| `make deep-copy`       | Generate deep-copy code               |
-| `make error-msg`       | Generate i18n error messages          |
-| `dev.bat generate`     | Run all code generation               |
-| `dev.bat gql`          | Generate GraphQL code                 |
-| `dev.bat grpc`         | Generate gRPC code                    |
-| `dev.bat grpc-doc`     | Generate gRPC documentation           |
-| `dev.bat schematyper`  | Generate schema using schematyper     |
-| `dev.bat deep-copy`    | Generate deep-copy code               |
-| `dev.bat error-msg`    | Generate i18n error messages          |
-
-### Development Tools
-
-| Command               | Description                                        |
-| --------------------- | -------------------------------------------------- |
-| `make dev-install`    | Install dev tools (air, stringer, etc.)            |
-| `make init-gcs`       | Initialize GCS bucket                              |
-| `make mockuser`       | Create a mock user                                 |
-| `make up-gcs`         | Start fake GCS server                              |
-| `make down-gcs`       | Stop fake GCS server                               |
-| `dev.bat dev-install` | Install dev tools                                  |
-| `dev.bat init-gcs`    | Initialize GCS bucket                              |
-| `dev.bat mockuser`    | Create a mock user                                 |
-| `dev.bat up-gcs`      | Start fake GCS server                              |
-| `dev.bat down-gcs`    | Stop fake GCS server                               |
-
-### Utility
-
-| Command           | Description                                           |
-| ----------------- | ----------------------------------------------------- |
-| `make clean`      | Clean Go cache                                        |
-| `make reset`      | Reset database and GCS, reinitialize with mock data   |
-| `make destroy`    | ⚠️ Remove all Docker resources and data (destructive) |
-| `dev.bat clean`   | Clean Go cache                                        |
-| `dev.bat reset`   | Reset database and GCS, reinitialize with mock data   |
-| `dev.bat destroy` | ⚠️ Remove all Docker resources and data (destructive) |
-
-## Authentication Modes
-
-The server requires [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) service for authentication. Configure the authentication mode in the reearth-accounts service:
-
-### 1. Mock User Mode (Default)
-
-Mock authentication is enabled by default for development. No real authentication is required.
-
-**Configuration in reearth-accounts:**
-
-```bash
-# reearth-accounts/server/.env.docker
-REEARTH_MOCK_AUTH=true
-```
-
-### 2. Auth0 Integration Mode
-
-Uses Auth0 for production-grade user authentication.
-
-**Configuration in reearth-accounts:**
+Edit the configuration file for the reearth-accounts service:
 
 ```bash
 # reearth-accounts/server/.env.docker
 REEARTH_MOCK_AUTH=false
+
+# Required settings
 REEARTH_AUTH0_DOMAIN=your-domain.auth0.com
-REEARTH_AUTH0_AUDIENCE=your-audience
 REEARTH_AUTH0_CLIENTID=your-client-id
-REEARTH_AUTH0_CLIENTSECRET=your-client-secret
+
+# Optional settings (depending on your Auth0 setup)
+REEARTH_AUTH0_AUDIENCE=your-audience           # Required if calling Auth0 Management API
+REEARTH_AUTH0_CLIENTSECRET=your-client-secret  # Required for M2M (Machine-to-Machine) applications
 ```
 
-> **Note:** You need to start the `reearth-accounts` service separately. See the [reearth-accounts documentation](https://github.com/reearth/reearth-accounts) for detailed setup instructions.
+**Configuration Notes:**
 
-### Registering Users with Identity Provider
+- **REEARTH_AUTH0_DOMAIN**: Your Auth0 tenant domain (required)
+- **REEARTH_AUTH0_CLIENTID**: Your Auth0 application's Client ID (required)
+- **REEARTH_AUTH0_AUDIENCE**: API identifier (optional)
+  - Required if you need to call Auth0 Management API
+  - Not needed for simple authentication flows
+- **REEARTH_AUTH0_CLIENTSECRET**: Application's Client Secret (optional)
+  - Required for **M2M (Machine-to-Machine)** applications
+  - Required for server-side confidential clients
+  - Not needed for public clients (SPAs) using PKCE flow
 
-When using an Identity Provider (like Auth0), you need to register users via the signup API:
+#### 2. Restart the Accounts Service
 
-**Unix/Linux/macOS:**
+After modifying the configuration, restart the reearth-accounts service:
+
+```bash
+cd reearth-accounts/server
+make restart
+```
+
+### User Synchronization
+
+Users must be synchronized between the authentication provider's database and the Re:Earth database. Use the signup API to add users to the Re:Earth database. The `sub` field must match the user identifier from your authentication provider.
+
+#### Register a User (Unix/Linux/macOS)
 
 ```bash
 curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- << EOF
 {
   "sub": "auth0|xxxxxxxx1234567890xxxxxx",
   "email": "user@example.com",
-  "username": "example user",
+  "username": "Your Name",
   "secret": "@Hoge123@Hoge123"
 }
 EOF
 ```
 
-**Windows (Command Prompt):**
+#### Register a User (Windows Command Prompt)
 
 ```cmd
 curl -H "Content-Type: application/json" http://localhost:8080/api/signup ^
-  -d "{\"sub\": \"auth0|xxxxxxxx1234567890xxxxxx\", \"email\": \"user@example.com\", \"username\": \"example user\", \"secret\": \"@Hoge123@Hoge123\"}"
+  -d "{\"sub\": \"auth0|xxxxxxxx1234567890xxxxxx\", \"email\": \"user@example.com\", \"username\": \"Your Name\", \"secret\": \"@Hoge123@Hoge123\"}"
 ```
 
-**Windows (PowerShell):**
+**Field Descriptions:**
+- `sub`: User identifier from your authentication provider (e.g., Auth0, Cognito)
+- `email`: User's email address
+- `username`: Display name for the user
+- `secret`: Registration secret (must meet security requirements)
 
-```powershell
-curl.exe -H "Content-Type: application/json" http://localhost:8080/api/signup `
-  -d '{"sub": "auth0|xxxxxxxx1234567890xxxxxx", "email": "user@example.com", "username": "example user", "secret": "@Hoge123@Hoge123"}'
+### Web Application Configuration
+
+Configure the web application to use your chosen authentication provider:
+
+```bash
+# reearth-visualizer/web/.env
+REEARTH_WEB_AUTH_PROVIDER=auth0
 ```
 
-## Storage
-
-Re:Earth Visualizer supports multiple storage backends:
-
-- [Google Cloud Storage](https://cloud.google.com/storage)
-- [Amazon S3](https://aws.amazon.com/s3/)
+Supported providers:
+- `auth0` - Auth0 authentication
+- `cognito` - AWS Cognito authentication
+- `mock` - Mock authentication (development only)
 
 ### Storage Configuration
 
@@ -200,189 +117,44 @@ Configure storage by setting environment variables:
 
 Additionally, **`REEARTH_ASSETBASEURL`** is required for all storage types. Set this to the base URL for accessing stored assets.
 
-### Testing GCS Locally
+## Development Commands
 
-For local development, you can use [fake-gcs-server](https://github.com/fsouza/fake-gcs-server):
-
-**Start fake-gcs-server:**
+For a complete list of available development commands, run:
 
 ```bash
-# Unix/Linux/macOS
-docker compose -f ../docker-compose.dev.yml up -d reearth-gcs
-
-# Windows
-dev.bat up-gcs
+make help
 ```
 
-**Initialize GCS bucket:**
+Common commands:
+- `make run` - Start the development server
+- `make down` - Stop the development server
+- `make restart` - Restart the development server
+- `make test` - Run unit tests
+- `make lint` - Run code linting
 
-```bash
-# Unix/Linux/macOS
-make init-gcs
+## Glossary
 
-# Windows
-dev.bat init-gcs
-```
+### M2M (Machine-to-Machine) Authentication
 
-**Set environment variable:**
+**M2M** is an authentication flow designed for server-to-server communication where no user interaction is involved.
 
-```bash
-# server/.env.docker
-REEARTH_GCS_BUCKETNAME=test-bucket
-```
+**Key Characteristics:**
+- Uses the OAuth 2.0 Client Credentials flow
+- Requires both Client ID and Client Secret
+- Authenticates applications rather than users
+- Ideal for backend services, daemons, and CLI tools
 
-> **Note:** The default bucket name is `test-bucket`. You can customize this if needed.
+**Use Cases in Re:Earth:**
+- Communication between reearth-visualizer and reearth-accounts services
+- Automated data synchronization
+- Scheduled background jobs
+- Third-party service integrations
 
-## Project Export and Import
+**Security Note:** Client Secrets must be kept confidential and never exposed in client-side code (browsers, mobile apps).
 
-Re:Earth provides functionality to export and import complete projects including all associated data.
+### PKCE (Proof Key for Code Exchange)
 
-### Export
+An extension to the OAuth 2.0 Authorization Code flow that provides additional security for public clients (SPAs, mobile apps) that cannot securely store client secrets.
 
-Projects can be exported via the GraphQL API using the `ExportProject` mutation.
+For more information, refer to the [main documentation](../README.md).
 
-#### Export Process Flow
-
-1. **Create temporary zip file** - A zip archive is created with project ID as filename
-2. **Export project data** - Project metadata and settings
-3. **Export scene data** - Scene configuration and visualization settings
-4. **Export plugins** - All plugins used in the project
-5. **Export assets** - Images, 3D models, and other assets
-6. **Add metadata** - Export information including:
-   - `host`: Current host URL
-   - `project`: Project ID
-   - `timestamp`: Export timestamp (RFC3339 format)
-   - `exportDataVersion`: Data format version (current: `"1"`)
-7. **Upload to storage** - The completed zip file is uploaded to configured storage
-8. **Return path** - Returns download path: `/export/{projectId}.zip`
-
-#### Exported Zip Structure
-
-```
-project.zip
-├── project.json       # Complete project data with metadata
-├── assets/           # Project assets
-│   ├── image1.png
-│   └── model.gltf
-└── plugins/          # Plugin files
-    └── plugin1/
-```
-
-#### Export Data Version
-
-The `exportDataVersion` field enables compatibility management for future format changes:
-
-- Current version: `"1"`
-- Version is embedded in `exportedInfo` section of `project.json`
-- Future versions can support schema migrations and new features
-
-**File**: `internal/adapter/gql/resolver_mutation_project.go:149`
-
-### Import
-
-Projects can be imported via two methods:
-
-#### 1. Split Upload API (`POST /api/split-import`)
-
-Handles chunked file uploads for large project files.
-
-**Process Flow**:
-
-1. **Chunk Upload** - Client uploads file in chunks (16MB each)
-2. **Session Management** - Server tracks upload progress per file ID
-3. **Temporary Project Creation** - On first chunk, creates placeholder project with status `UPLOADING`
-4. **Chunk Assembly** - When all chunks received, assembles complete file
-5. **Async Processing** - Spawns goroutine to process import
-6. **Import Execution** - Calls `ImportProject()` with assembled data
-
-**File**: `internal/app/file_split_uploader.go:69`
-
-#### 2. Storage Trigger API (`POST /api/import-project`)
-
-Triggered automatically when a project zip file is uploaded directly to storage (e.g., GCS/S3 bucket notification).
-
-**Authentication**:
-
-- No auth token required (triggered by storage service)
-- User context extracted from filename: `{workspaceId}-{projectId}-{userId}.zip`
-- Operator context automatically generated from user ID
-
-**File**: `internal/app/file_import_common.go:95`
-
-### ImportProject() Implementation
-
-Core import logic that processes the extracted project data.
-
-**Processing Order**:
-
-1. **Project Data** - `ImportProjectData()` - Project metadata and configuration
-2. **Assets** - `ImportAssetFiles()` - Upload and register asset files
-3. **Scene Creation** - Create new scene for imported project
-4. **ID Replacement** - Replace old scene ID with new scene ID throughout data
-5. **Plugins** - `ImportPlugins()` - Install required plugins and schemas
-6. **Scene Data** - `ImportSceneData()` - Scene configuration and layers
-7. **Styles** - `ImportStyles()` - Layer styling information
-8. **NLS Layers** - `ImportNLSLayers()` - New layer system data
-9. **Story** - `ImportStory()` - Storytelling configuration
-10. **Status Update** - Mark import as `SUCCESS` or `FAILED`
-
-**Version Handling**:
-
-The `version` parameter (from `exportDataVersion`) enables format-specific processing:
-
-```go
-func ImportProject(
-    ctx context.Context,
-    usecases *interfaces.Container,
-    op *usecase.Operator,
-    wsId accountdomain.WorkspaceID,
-    pid id.ProjectID,
-    importData *[]byte,
-    assetsZip map[string]*zip.File,
-    pluginsZip map[string]*zip.File,
-    result map[string]any,
-    version *string,  // Export data version for compatibility
-) bool
-```
-
-**Current Implementation**:
-
-- Version `"1"` is the current format
-- Version parameter is extracted but not yet used for branching
-- Future versions can implement migration logic based on version value
-
-**Future Usage Example**:
-
-```go
-if version != nil && *version == "2" {
-    // Handle version 2 format with new features
-    return importV2(...)
-}
-// Default to version 1 processing
-return importV1(...)
-```
-
-**File**: `internal/app/file_import_common.go:193`
-
-### Error Handling
-
-All import steps update project status on failure:
-
-- Status: `ProjectImportStatusFailed`
-- Error message logged to `importResultLog`
-- Processing stops at first error
-
-### Import Status Values
-
-- `ProjectImportStatusNone` - Not imported
-- `ProjectImportStatusUploading` - Upload in progress
-- `ProjectImportStatusSuccess` - Import completed successfully
-- `ProjectImportStatusFailed` - Import failed (check `importResultLog`)
-
-### Configuration
-
-**File Size Limit**: 500MB (enforced in `pkg/file/zip.go:114`)
-
-**Chunk Size**: 16MB (split upload)
-
-**Cleanup**: Stale upload sessions (>24 hours) are automatically cleaned up
