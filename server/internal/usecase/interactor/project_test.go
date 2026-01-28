@@ -18,14 +18,15 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
 	"github.com/stretchr/testify/assert"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsMongo "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 func init() {
@@ -39,8 +40,8 @@ func createNewProjectUC(client *mongox.Client) *Project {
 		projectRepo:         mongo.NewProject(client),
 		projectMetadataRepo: mongo.NewProjectMetadata(client),
 		storytellingRepo:    mongo.NewStorytelling(client),
-		userRepo:            accountmongo.NewUser(client),
-		workspaceRepo:       accountmongo.NewWorkspace(client),
+		userRepo:            accountsMongo.NewMongoUser(client),
+		workspaceRepo:       accountsMongo.NewMongoWorkspace(client),
 		sceneRepo:           mongo.NewScene(client),
 		propertyRepo:        mongo.NewProperty(client),
 		propertySchemaRepo:  mongo.NewPropertySchema(client),
@@ -51,6 +52,7 @@ func createNewProjectUC(client *mongox.Client) *Project {
 		file:                gw,
 	}
 }
+
 func TestProject_createProject(t *testing.T) {
 	ctx := context.Background()
 
@@ -61,12 +63,12 @@ func TestProject_createProject(t *testing.T) {
 	us := factory.NewUser()
 	_ = uc.userRepo.Save(ctx, us)
 
-	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
-				Role:      workspace.RoleOwner,
+	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
+		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
+			accountsID.NewUserID(): {
+				Role:      accountsRole.RoleOwner,
 				Disabled:  false,
-				InvitedBy: workspace.UserID(us.ID()),
+				InvitedBy: accountsWorkspace.UserID(us.ID()),
 				Host:      "",
 			},
 		})
@@ -85,8 +87,8 @@ func TestProject_createProject(t *testing.T) {
 				Archived:    lo.ToPtr(true),
 			}
 			got, err := uc.createProject(ctx, input, &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{ws.ID()},
+				AcOperator: &accountsWorkspace.Operator{
+					WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 				},
 			})
 
@@ -105,8 +107,8 @@ func TestProject_createProject(t *testing.T) {
 				WorkspaceID: ws.ID(),
 			}
 			got, err := uc.createProject(ctx, input, &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{ws.ID()},
+				AcOperator: &accountsWorkspace.Operator{
+					WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 				},
 			})
 
@@ -134,8 +136,8 @@ func TestProject_createProject(t *testing.T) {
 			}
 
 			got, err := uc.createProject(ctx, input, &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{ws.ID()},
+				AcOperator: &accountsWorkspace.Operator{
+					WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 				},
 			})
 
@@ -158,8 +160,8 @@ func TestProject_createProject(t *testing.T) {
 			}
 
 			got, err := uc.createProject(ctx, input, &usecase.Operator{
-				AcOperator: &accountusecase.Operator{
-					WritableWorkspaces: workspace.IDList{ws.ID()},
+				AcOperator: &accountsWorkspace.Operator{
+					WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 				},
 			})
 
@@ -179,12 +181,12 @@ func TestProject_CheckAlias(t *testing.T) {
 	us := factory.NewUser()
 	_ = uc.userRepo.Save(ctx, us)
 
-	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
-				Role:      workspace.RoleOwner,
+	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
+		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
+			accountsID.NewUserID(): {
+				Role:      accountsRole.RoleOwner,
 				Disabled:  false,
-				InvitedBy: workspace.UserID(us.ID()),
+				InvitedBy: accountsWorkspace.UserID(us.ID()),
 				Host:      "",
 			},
 		})
@@ -269,12 +271,12 @@ func TestProject_FindActiveById(t *testing.T) {
 	us := factory.NewUser()
 	_ = uc.userRepo.Save(ctx, us)
 
-	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
-			accountdomain.NewUserID(): {
-				Role:      workspace.RoleOwner,
+	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
+		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
+			accountsID.NewUserID(): {
+				Role:      accountsRole.RoleOwner,
 				Disabled:  false,
-				InvitedBy: workspace.UserID(us.ID()),
+				InvitedBy: accountsWorkspace.UserID(us.ID()),
 				Host:      "",
 			},
 		})
@@ -295,8 +297,8 @@ func TestProject_FindActiveById(t *testing.T) {
 
 	t.Run("when project is public", func(t *testing.T) {
 		result, err := uc.FindActiveById(ctx, pj.ID(), &usecase.Operator{
-			AcOperator: &accountusecase.Operator{
-				WritableWorkspaces: workspace.IDList{ws.ID()},
+			AcOperator: &accountsWorkspace.Operator{
+				WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 			},
 		})
 		assert.NoError(t, err)
@@ -308,8 +310,8 @@ func TestProject_FindActiveById(t *testing.T) {
 		assert.NoError(t, err)
 		_ = uc.projectRepo.Save(ctx, pj)
 		result, err := uc.FindActiveById(ctx, pj.ID(), &usecase.Operator{
-			AcOperator: &accountusecase.Operator{
-				WritableWorkspaces: workspace.IDList{ws.ID()},
+			AcOperator: &accountsWorkspace.Operator{
+				WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 			},
 		})
 		assert.NoError(t, err)
@@ -334,12 +336,12 @@ func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {
 	us := factory.NewUser()
 	_ = uc.userRepo.Save(ctx, us)
 
-	ws := factory.NewWorkspace(func(w *workspace.Builder) {
-		w.Members(map[accountdomain.UserID]workspace.Member{
+	ws := factory.NewWorkspace(func(w *accountsWorkspace.Builder) {
+		w.Members(map[accountsID.UserID]accountsWorkspace.Member{
 			us.ID(): {
-				Role:      workspace.RoleOwner,
+				Role:      accountsRole.RoleOwner,
 				Disabled:  false,
-				InvitedBy: workspace.UserID(us.ID()),
+				InvitedBy: accountsWorkspace.UserID(us.ID()),
 				Host:      "",
 			},
 		})
@@ -364,8 +366,8 @@ func TestProject_FindVisibilityByUser_OffsetPagination(t *testing.T) {
 	}
 
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	}
 
@@ -438,7 +440,7 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 	uc := createNewProjectUC(client)
 
 	// Create workspace with alias
-	ws := factory.NewWorkspace(func(b *workspace.Builder) {
+	ws := factory.NewWorkspace(func(b *accountsWorkspace.Builder) {
 		b.Alias("test-workspace")
 	})
 	_ = uc.workspaceRepo.Save(ctx, ws)
@@ -451,8 +453,8 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 		ProjectAlias: lo.ToPtr("public-project"),
 		Visibility:   lo.ToPtr(project.VisibilityPublic),
 	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	})
 
@@ -464,8 +466,8 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 		ProjectAlias: lo.ToPtr("private-project"),
 		Visibility:   lo.ToPtr(project.VisibilityPrivate),
 	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 		},
 	})
 
@@ -488,8 +490,8 @@ func TestProject_FindByWorkspaceAliasAndProjectAlias_VisibilityCheck(t *testing.
 
 	t.Run("authenticated access to private project should succeed", func(t *testing.T) {
 		operator := &usecase.Operator{
-			AcOperator: &accountusecase.Operator{
-				ReadableWorkspaces: workspace.IDList{ws.ID()},
+			AcOperator: &accountsWorkspace.Operator{
+				ReadableWorkspaces: accountsWorkspace.IDList{ws.ID()},
 			},
 		}
 

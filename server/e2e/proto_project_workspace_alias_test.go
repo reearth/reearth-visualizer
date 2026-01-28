@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -10,16 +12,15 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI_ProjectWorkspaceAlias ./e2e/...
+// make e2e-test TEST_NAME=TestInternalAPI_ProjectWorkspaceAlias
 func TestInternalAPI_ProjectWorkspaceAlias(t *testing.T) {
-	GRPCServer(t, baseSeeder)
+	_, _, _, result := GRPCServer(t, baseSeeder)
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		projectAlias := "ws-project-alias"
 
 		createRes, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
-			WorkspaceId:  wID.String(),
+			WorkspaceId:  result.WID.String(),
 			Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
 			Name:         lo.ToPtr("Workspace Alias Project"),
 			Description:  lo.ToPtr("Workspace Alias Project Description"),
@@ -32,7 +33,7 @@ func TestInternalAPI_ProjectWorkspaceAlias(t *testing.T) {
 		created := createRes.GetProject()
 
 		getRes, err := client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
-			WorkspaceAlias: wAlias,
+			WorkspaceAlias: result.WAlias,
 			ProjectAlias:   projectAlias,
 		})
 		require.NoError(t, err)
@@ -41,7 +42,7 @@ func TestInternalAPI_ProjectWorkspaceAlias(t *testing.T) {
 		updatedAlias := "ws-project-alias-updated"
 		updatedName := "Workspace Alias Project Updated"
 		updateRes, err := client.UpdateProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.UpdateProjectByWorkspaceAliasAndProjectAliasRequest{
-			WorkspaceAlias:  wAlias,
+			WorkspaceAlias:  result.WAlias,
 			ProjectAlias:    projectAlias,
 			Name:            lo.ToPtr(updatedName),
 			NewProjectAlias: lo.ToPtr(updatedAlias),
@@ -51,14 +52,14 @@ func TestInternalAPI_ProjectWorkspaceAlias(t *testing.T) {
 		assert.Equal(t, updatedName, updateRes.Project.Name)
 
 		delRes, err := client.DeleteProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.DeleteProjectByWorkspaceAliasAndProjectAliasRequest{
-			WorkspaceAlias: wAlias,
+			WorkspaceAlias: result.WAlias,
 			ProjectAlias:   updatedAlias,
 		})
 		require.NoError(t, err)
 		assert.Equal(t, updatedAlias, delRes.ProjectAlias)
 
 		_, err = client.GetProjectByWorkspaceAliasAndProjectAlias(ctx, &pb.GetProjectByWorkspaceAliasAndProjectAliasRequest{
-			WorkspaceAlias: wAlias,
+			WorkspaceAlias: result.WAlias,
 			ProjectAlias:   updatedAlias,
 		})
 		require.Error(t, err)

@@ -4,23 +4,30 @@ tmp_dir = "tmp"
 
 [build]
 # execute command
-cmd = "go build -ldflags=\"-X main.version=0.0.1\" -o ./tmp/api ./cmd/reearth"
+# -trimpath: removes file system paths from compiled executable
+# -p: number of programs to build in parallel (adjust based on CPU cores)
+cmd = "go build -trimpath -p 4 -ldflags=\"-X main.version=0.0.1\" -o ./tmp/api ./cmd/reearth"
 bin = "tmp/api"
 full_bin = "tmp/api"
-delay = 1000 # ms
+delay = 500 # ms - reduced for faster rebuild
 stop_on_error = true
 send_interrupt = false
-kill_delay = 1000 # ms
+kill_delay = 500 # ms
+rerun = true # rerun binary if it's already running
+rerun_delay = 500 # ms
 
 # include file extensions
 include_ext = ["go", "json"]
 
 # exclude directories
-exclude_dir = ["e2e", "tmp"]
+exclude_dir = ["e2e", "tmp", "testdata", "tools"]
 
 # exclude files
-exclude_file = ["*_test.go"]
+exclude_file = ["*_test.go", "*_gen.go"]
+
+# watch these directories only (speeds up file watching)
+include_dir = ["cmd", "internal", "pkg"]
 
 [log]
 # Air log settings
-level = "debug"
+level = "info" # changed from debug to reduce log noise

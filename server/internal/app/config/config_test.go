@@ -7,6 +7,9 @@ import (
 )
 
 func TestReadConfig(t *testing.T) {
+	// Clear REEARTH_ACCOUNTSAPI_HOST to prevent auto-fetch during tests
+	t.Setenv("REEARTH_ACCOUNTSAPI_HOST", "")
+
 	clientID := "client"
 
 	cfg, err := ReadConfig(false)

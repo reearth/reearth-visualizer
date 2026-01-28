@@ -3,20 +3,21 @@ package accounts
 import (
 	"net/http"
 
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearthx/log"
+
+	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 )
 
 type dynamicAuthTransport struct {
-	transport *gqlclient.AccountsTransport
+	transport *accountsGQLclient.AccountsTransport
 }
 
 func NewDynamicAuthTransport() *dynamicAuthTransport {
 	return &dynamicAuthTransport{
-		transport: gqlclient.NewAccountsTransport(
+		transport: accountsGQLclient.NewAccountsTransport(
 			http.DefaultTransport,
-			gqlclient.InternalServiceVisualizerAPI,
+			accountsGQLclient.InternalServiceVisualizerAPI,
 		),
 	}
 }
@@ -34,6 +35,12 @@ func (t dynamicAuthTransport) RoundTrip(req *http.Request) (*http.Response, erro
 
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
+	}
+
+	if debugUserID := adapter.UserID(req.Context()); debugUserID != nil {
+		req.Header.Set("X-Reearth-Debug-User", *debugUserID)
+	} else if u := adapter.User(req.Context()); u != nil {
+		req.Header.Set("X-Reearth-Debug-User", u.ID().String())
 	}
 
 	resp, err := t.transport.RoundTrip(req)

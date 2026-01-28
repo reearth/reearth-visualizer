@@ -21,19 +21,15 @@ if "%1"=="lint" goto lint
 if "%1"=="lint-docker" goto lintdocker
 if "%1"=="test" goto test
 if "%1"=="test-docker" goto testdocker
-if "%1"=="test-debug" goto testdebug
 if "%1"=="e2e" goto e2e
+if "%1"=="e2e-docker" goto e2edocker
+if "%1"=="e2e-test" goto e2etest
 if "%1"=="build" goto build
 if "%1"=="dev-install" goto devinstall
-if "%1"=="dev" goto dev
 if "%1"=="run" goto run
 if "%1"=="down" goto down
-if "%1"=="run-app" goto runapp
-if "%1"=="run-db" goto rundb
-if "%1"=="run-reset" goto runreset
-if "%1"=="run-clean-start" goto runclean
+if "%1"=="restart" goto restart
 if "%1"=="reset" goto reset
-if "%1"=="init" goto init
 if "%1"=="init-gcs" goto initgcs
 if "%1"=="up-gcs" goto upgcs
 if "%1"=="down-gcs" goto downgcs
@@ -41,6 +37,9 @@ if "%1"=="gql" goto gql
 if "%1"=="generate" goto generate
 if "%1"=="schematyper" goto schematyper
 if "%1"=="deep-copy" goto deepcopy
+if "%1"=="error-msg" goto errormsg
+if "%1"=="grpc" goto grpc
+if "%1"=="grpc-doc" goto grpcdoc
 if "%1"=="mockuser" goto mockuser
 if "%1"=="clean" goto clean
 if "%1"=="destroy" goto destroy
@@ -51,31 +50,41 @@ echo Usage:
 echo   dev.bat ^<target^>
 echo.
 echo Targets:
+echo.
+echo Testing:
 echo   lint              Run golangci-lint with auto-fix (local)
 echo   lint-docker       Run golangci-lint in Docker container
 echo   test              Run unit tests (local)
 echo   test-docker       Run unit tests in Docker container
-echo   test-debug        Run unit tests with verbose output
 echo   e2e               Run end-to-end tests
-echo   build             Build the project
-echo   dev-install       Install dev tools
-echo   dev               Run the application with hot reload
+echo   e2e-docker        Run all e2e tests in Docker
+echo   e2e-test          Run specific e2e test (TEST_NAME=TestName)
+echo.
+echo Build ^& Run:
+echo   build             Build the reearth binary
 echo   run               Start dev server with Docker Compose
 echo   down              Stop Docker Compose services
-echo   run-app           Run the application
-echo   run-db            Start MongoDB with Docker Compose
-echo   run-reset         Reset MongoDB data and add mock user
-echo   run-clean-start   Clean Go cache and run app
-echo   reset             Reset database and GCS, reinitialize with mock data
-echo   init              Initialize GCS bucket and create mock user
-echo   init-gcs          Initialize GCS bucket
+echo   restart           Restart dev server (down + run)
+echo.
+echo Code Generation:
+echo   generate          Run all code generation
 echo   gql               Generate GraphQL code
-echo   schematyper       Generate schema using schematyper
-echo   deep-copy         Generate deep-copy code for Initializer
+echo   grpc              Generate gRPC code
+echo   grpc-doc          Generate gRPC documentation
+echo   schematyper       Generate plugin manifest schema
+echo   deep-copy         Generate deep-copy code
+echo   error-msg         Generate i18n error messages
+echo.
+echo Development Tools:
+echo   dev-install       Install dev tools (air, stringer, etc.)
+echo   init-gcs          Initialize GCS bucket
 echo   mockuser          Create a mock user
 echo   up-gcs            Start fake GCS server
 echo   down-gcs          Stop fake GCS server
+echo.
+echo Utility:
 echo   clean             Clean Go cache
+echo   reset             Reset database and GCS, reinitialize with mock data
 echo   destroy           Remove all Docker resources and data
 goto :eof
 
@@ -112,21 +121,33 @@ if %errorlevel% equ 0 (
 )
 goto :eof
 
-:testdebug
-go test -v -timeout 10s %TEST_DIR%
-goto :eof
-
 :e2e
 go test -v ./e2e/...
 goto :eof
 
-:build
-go build ./cmd/reearth
+:e2edocker
+docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
 goto :eof
 
-:dev
-call dev.bat dev-install
-air
+:e2etest
+if "%TEST_NAME%"=="" (
+  echo Error: TEST_NAME is required
+  echo Usage: dev.bat e2e-test TEST_NAME=TestMockAuth
+  exit /b 1
+)
+echo Running e2e test: %TEST_NAME%
+docker ps --format "{{.Names}}" | findstr /R "^reearth-visualizer-reearth-visualizer-dev-1$" >nul 2>nul
+if %errorlevel% equ 0 (
+  %DOCKER_EXEC% sh -c "set -a && . ./.env.docker && set +a && go test -v -tags=e2e -run %TEST_NAME% ./e2e"
+) else (
+  echo Error: reearth-visualizer-dev container is not running.
+  echo Please start the container with 'dev.bat run' first.
+  exit /b 1
+)
+goto :eof
+
+:build
+go build ./cmd/reearth
 goto :eof
 
 :run
@@ -137,25 +158,9 @@ goto :eof
 %DOCKER_COMPOSE_DEV% down
 goto :eof
 
-:runapp
-go run ./cmd/reearth
-goto :eof
-
-:runclean
-call dev.bat clean
-call dev.bat run-app
-goto :eof
-
-:rundb
-docker compose -f ../docker-compose.yml up -d reearth-mongo
-goto :eof
-
-:runreset
-docker stop reearth-visualizer-reearth-mongo-1
-rmdir /s /q ..\mongo
-rmdir /s /q data
-call dev.bat run-db
-call dev.bat mockuser
+:restart
+call dev.bat down
+call dev.bat run
 goto :eof
 
 :reset
@@ -176,17 +181,14 @@ echo 2...
 timeout /t 1 /nobreak >nul
 echo 1...
 timeout /t 1 /nobreak >nul
-call dev.bat init
-echo ✓ Reset complete!
-goto :eof
-
-:init
+echo.
 echo ==== Initializing GCS bucket ====
 call dev.bat init-gcs
 echo.
 echo ==== Creating mock user ====
 call dev.bat mockuser
 echo.
+echo ✓ Reset complete!
 goto :eof
 
 :initgcs
@@ -206,6 +208,19 @@ go generate ./internal/adapter/gql/gqldataloader
 go generate ./internal/adapter/gql
 goto :eof
 
+:grpc
+protoc --go_out=./internal/adapter/internalapi/ --go_opt=paths=source_relative ^
+  --go-grpc_out=./internal/adapter/internalapi/ --go-grpc_opt=paths=source_relative ^
+  ./schemas/internalapi/v1/schema.proto
+goto :eof
+
+:grpcdoc
+protoc -I . ^
+  --doc_out=schemas/internalapi/docs ^
+  --doc_opt=markdown,schema.md ^
+  schemas/internalapi/v1/schema.proto
+goto :eof
+
 :schematyper
 go run %SCHEMATYPER% -o %MANIFEST_DIR%/schema_translation.go --package manifest --prefix Translation ./schemas/plugin_manifest_translation.json
 go run %SCHEMATYPER% -o %MANIFEST_DIR%/schema_gen.go --package manifest ./schemas/plugin_manifest.json
@@ -217,13 +232,17 @@ deep-copy --type Initializer --pointer-receiver -o initializer_gen.go .
 popd
 goto :eof
 
+:errormsg
+go generate ./pkg/i18n/...
+goto :eof
+
 :generate
 go generate ./...
 goto :eof
 
 :mockuser
 curl -H "Content-Type: application/json" ^
-     -d "{\"email\":\"mock@example.com\",\"username\":\"Mock User\"}" ^
+     -d "{\"email\":\"demo@example.com\",\"username\":\"Demo User\"}" ^
      http://localhost:8080/api/signup
 goto :eof
 
@@ -254,9 +273,9 @@ goto :eof
 
 :devinstall
 call :install air github.com/air-verse/air@v1.61.5
-call :install stringer golang.org/x/tools/cmd/stringer@v0.29.0
+call :install stringer golang.org/x/tools/cmd/stringer@v0.39.0
 call :install schematyper github.com/idubinskiy/schematyper
-call :install deep-copy github.com/globusdigital/deep-copy@dc4a8d91ed65656858cd53e6e83bbf7b83d5b7cb
+call :install deep-copy github.com/globusdigital/deep-copy@v0.5.5-0.20251122193020-7cda106f7b4b
 goto :eof
 
 :install

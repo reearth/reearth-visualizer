@@ -1,3 +1,5 @@
+//go:build e2e
+
 package e2e
 
 import (
@@ -21,18 +23,17 @@ import (
 	pb "github.com/reearth/reearth/server/internal/adapter/internalapi/schemas/internalapi/v1"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
+
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 )
 
-// export REEARTH_DB=mongodb://localhost
-// go test -v -run TestInternalAPI_Basic ./e2e/...
-
+// make e2e-test TEST_NAME=TestInternalAPI_Basic
 func TestInternalAPI_Basic(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
 	// user1 call api
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		// create public Project
 		pid1 := createProjectInternal(
@@ -100,7 +101,7 @@ func TestInternalAPI_Basic(t *testing.T) {
 	})
 
 	// user2 call api
-	runTestWithUser(t, uID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID2.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: false,
 			WorkspaceId:   &testWorkspace,
@@ -118,7 +119,7 @@ func TestInternalAPI_Basic(t *testing.T) {
 	})
 
 	// user3 call api (menber)
-	runTestWithUser(t, uID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID3.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		res3, err := client.GetProjectList(ctx, &pb.GetProjectListRequest{
 			Authenticated: true,
@@ -131,10 +132,10 @@ func TestInternalAPI_Basic(t *testing.T) {
 }
 
 func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// Create 15 test projects for pagination testing
 		projectIDs := make([]id.ProjectID, 15)
 		for i := range [15]int{} {
@@ -250,10 +251,10 @@ func TestInternalAPI_GetProjectList_OffsetPagination(t *testing.T) {
 }
 
 func TestInternalAPI_create(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		res, err := client.CreateProject(ctx, &pb.CreateProjectRequest{
 			WorkspaceId: testWorkspace,
 			Visualizer:  pb.Visualizer_VISUALIZER_CESIUM,
@@ -301,10 +302,10 @@ func TestInternalAPI_create(t *testing.T) {
 }
 
 func TestInternalAPI_unit(t *testing.T) {
-	_, r, _ := GRPCServer(t, baseSeeder)
-	testWorkspace := wID.String()
+	_, r, _, result := GRPCServer(t, baseSeeder)
+	testWorkspace := result.WID.String()
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 		// Create Project
 		pid := createProjectInternal(
 			t, ctx, r, client, "public",
@@ -460,16 +461,16 @@ func callGrpc(t *testing.T, testFunc func(client pb.ReEarthVisualizerClient, ctx
 	testFunc(client, ctx)
 }
 
-// go test -v -run TestCreateProjectForInternal ./e2e/...
+// make e2e-test TEST_NAME=TestCreateProjectForInternal
 func TestCreateProjectForInternal(t *testing.T) {
 
-	GRPCServer(t, baseSeeder)
+	_, _, _, result := GRPCServer(t, baseSeeder)
 
-	runTestWithUser(t, uID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
+	runTestWithUser(t, result.UID.String(), func(client pb.ReEarthVisualizerClient, ctx context.Context) {
 
 		res, err := client.CreateProject(ctx,
 			&pb.CreateProjectRequest{
-				WorkspaceId:  wID.String(),
+				WorkspaceId:  result.WID.String(),
 				Visualizer:   pb.Visualizer_VISUALIZER_CESIUM,
 				Name:         lo.ToPtr("Test Project1"),
 				Description:  lo.ToPtr("Test Description1"),
@@ -513,7 +514,7 @@ func createProjectInternal(t *testing.T, ctx context.Context, r *repo.Container,
 	require.Nil(t, err)
 	require.NotNil(t, res.GetProject())
 
-	wsID, err := accountdomain.WorkspaceIDFrom(req.WorkspaceId)
+	wsID, err := accountsID.WorkspaceIDFrom(req.WorkspaceId)
 	require.Nil(t, err)
 	ws, err := r.Workspace.FindByID(ctx, wsID)
 	require.Nil(t, err)

@@ -7,16 +7,17 @@ import (
 	"os/signal"
 
 	"github.com/labstack/echo/v4"
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
+
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	accountsGQLclient "github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 )
 
 func runServer(ctx context.Context, conf *config.Config, otelServiceName otel.OtelServiceName, debug bool) {
@@ -46,9 +47,9 @@ type ServerConfig struct {
 	Debug             bool
 	Repos             *repo.Container
 	Gateways          *gateway.Container
-	AccountRepos      *accountrepo.Container
-	AccountGateways   *accountgateway.Container
-	AccountsAPIClient *gqlclient.Client
+	AccountRepos      *accountsInfra.Container
+	AccountGateways   *accountsGateway.Container
+	AccountsAPIClient *accountsGQLclient.Client
 	ServiceName       otel.OtelServiceName
 }
 

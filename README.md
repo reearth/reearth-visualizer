@@ -41,53 +41,110 @@ Visualizer is a powerful tool for visualizing GIS data, offering a range of feat
 
 ### Setup Server and Database
 
-Before you begin, please ensure that **Docker** is properly installed and running on your machine.
+Before you begin, please ensure that **Docker** **node.js** **golang** is properly installed and running on your machine.
 
 ### 🖥️ macOS / Linux
 
-1. Navigate to the `server` directory and start the backend server.  
-   This command will automatically start the database and mock GCS storage:
+1. Clone and set up the visualizer and accounts backend servers:
+
+   **reearth-visualizer (api service):**
 
    ```bash
-   cd server
+   git clone https://github.com/reearth/reearth-visualizer.git
+   cd reearth-visualizer/server
+
+   # Configure environment variables
+   cp .env.docker.example .env.docker
+
+   # Start the visualizer server
    make run
    ```
 
-2. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
-   This step is only required for the first-time setup:
+   **reearth-accounts (authentication service):**
 
    ```bash
-   make init
+   git clone https://github.com/reearth/reearth-accounts.git
+   cd reearth-accounts/server
+
+   # Configure environment variables
+   cp .env.docker.example .env.docker
+
+   # (Optional) To test with demo user without Auth0 IDP:
+   # Modify server/.env.docker
+   REEARTH_MOCK_AUTH=true
+
+   # Run migrations and start the accounts server
+   make run-migration
+   make run
+   ```
+
+   This command will automatically start the database, mock GCS storage service, and Cerbos.
+
+2. Initialize the development environment (first-time setup only):
+
+   This creates a mock user and sets up the mock GCS bucket:
+
+   ```bash
+   cd reearth-visualizer/server
+
+   # Create FakeGCS bucket
+   make init-gcs
+
+   # Register demo user
+   make mockuser
    ```
 
 ### <img src="https://raw.githubusercontent.com/EgoistDeveloper/operating-system-logos/master/src/16x16/WIN.png" /> Windows (PowerShell)
 
-1. Open PowerShell and navigate to the `server` directory:
+1. Clone and set up the visualizer and accounts backend servers:
+
+   **reearth-visualizer (api service):**
 
    ```powershell
-   cd server
-   ```
+   git clone https://github.com/reearth/reearth-visualizer.git
+   cd reearth-visualizer\server
 
-2. Set an alias to use `dv` as a shortcut for `make`:
+   # Configure environment variables
+   Copy-Item .env.docker.example .env.docker
 
-   ```powershell
+   # Start the visualizer server
    Set-Alias dv .\dev.bat
-   ```
-
-3. Start the backend server.  
-   This will automatically start the database and mock GCS storage:
-
-   ```powershell
    dv run
    ```
 
-4. Initialize the development environment.  
-   This creates a mock user and sets up the mock GCS bucket.  
-   This step is only required for the first-time setup:
+   **reearth-accounts (authentication service):**
 
    ```powershell
-   dv init
+   git clone https://github.com/reearth/reearth-accounts.git
+   cd reearth-accounts\server
+
+   # Configure environment variables
+   Copy-Item .env.docker.example .env.docker
+
+   # (Optional) To test with demo user without Auth0 IDP:
+   # Modify server\.env.docker
+   REEARTH_MOCK_AUTH=true
+
+   # Run migrations and start the accounts server
+   Set-Alias dv .\dev.bat
+   dv run-migration
+   dv run
+   ```
+
+   This command will automatically start the database, mock GCS storage service, and Cerbos.
+
+2. Initialize the development environment (first-time setup only):
+
+   This creates a mock user and sets up the mock GCS bucket:
+
+   ```powershell
+   cd reearth-visualizer\server
+
+   # Create FakeGCS bucket
+   dv init-gcs
+
+   # Register demo user
+   dv mockuser
    ```
 
 ---
@@ -156,8 +213,15 @@ Before you begin, please ensure that **Docker** is properly installed and runnin
 
 ## ✅ Done!
 
-You should now be able to access the **Re:Earth Visualizer** locally at:  
+You should now be able to access the **Re:Earth Visualizer** locally at:
 👉 [http://localhost:3000](http://localhost:3000)
+
+### 💡Additional Development Configuration
+
+For more detailed development setup and configuration options, please refer to:
+
+- **Server Configuration**: [server/README.md](server/README.md)
+- **Web Configuration**: [web/README.md](web/README.md)
 
 ---
 
@@ -197,6 +261,5 @@ Re:Earth core committers: [community@reearth.io](mailto:community@reearth.io)
 ## License
 
 Distributed under the Apache-2.0 License. See [LICENSE](LICENSE) for more information.
-
 
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Freearth%2Freearth-visualizer?ref=badge_large)
