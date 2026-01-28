@@ -28,6 +28,7 @@ if "%1"=="build" goto build
 if "%1"=="dev-install" goto devinstall
 if "%1"=="run" goto run
 if "%1"=="down" goto down
+if "%1"=="restart" goto restart
 if "%1"=="reset" goto reset
 if "%1"=="init-gcs" goto initgcs
 if "%1"=="up-gcs" goto upgcs
@@ -63,6 +64,7 @@ echo Build ^& Run:
 echo   build             Build the reearth binary
 echo   run               Start dev server with Docker Compose
 echo   down              Stop Docker Compose services
+echo   restart           Restart dev server (down + run)
 echo.
 echo Code Generation:
 echo   generate          Run all code generation
@@ -154,6 +156,11 @@ goto :eof
 
 :down
 %DOCKER_COMPOSE_DEV% down
+goto :eof
+
+:restart
+call dev.bat down
+call dev.bat run
 goto :eof
 
 :reset
