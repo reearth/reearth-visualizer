@@ -30,15 +30,11 @@ const PageWrapper: FC<Props> = ({
   if (pageData.loading) return <Loading includeLogo />;
   if (pageData.isDeleted) return <NotFound />;
 
-  return (
-    <>
-      {renderItem({
-        sceneId,
-        projectId: pageData.projectId,
-        workspaceId: pageData.workspaceId
-      })}
-    </>
-  );
+  return renderItem({
+    sceneId,
+    projectId: pageData.projectId,
+    workspaceId: pageData.workspaceId
+  });
 };
 
 const Page: FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => {
