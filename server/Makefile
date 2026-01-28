@@ -39,6 +39,7 @@ help:
 	@echo "  run               Start dev server with Docker Compose (includes accounts API)"
 	@echo "  run-internal      Start internal gRPC API server with Docker Compose"
 	@echo "  down              Stop Docker Compose services"
+	@echo "  restart           Restart dev server (down + run)"
 	@echo ""
 	@echo "Database:"
 	@echo "  migrate           Run database migration"
@@ -129,6 +130,10 @@ run-internal:
 
 down:
 	${DOCKER_COMPOSE_DEV} --profile accounts down
+
+restart:
+	@$(MAKE) down
+	@$(MAKE) run
 
 # =======================
 # Migration
@@ -285,6 +290,6 @@ destroy:
 		echo "Operation cancelled"; \
 	fi
 
-.PHONY: default help lint test test-docker e2e e2e-docker e2e-test build run run-internal down \
+.PHONY: default help lint test test-docker e2e e2e-docker e2e-test build run run-internal down restart \
         migrate migrate-with-key generate gql grpc grpc-doc schematyper deep-copy error-msg dev-install \
         mockuser-accounts mockuser init init-gcs clean up-gcs down-gcs reset destroy
