@@ -51,7 +51,7 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           repository: reearth/reearth-accounts
-          ref: feat/reearthx-to-reearth-accounts5
+          ref: main
           path: reearth-accounts
 
       - name: Start reearth-accounts
@@ -106,7 +106,7 @@ jobs:
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
         with:
           repository: reearth/reearth-accounts
-          ref: feat/reearthx-to-reearth-accounts5
+          ref: main
           path: reearth-accounts
 
       - name: Start reearth-accounts
