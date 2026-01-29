@@ -13,5 +13,7 @@ var ErrPolicyViolation = errors.New("policy violation")
 type WorkspacePolicy struct {
 	WorkspaceID                    workspace.ID
 	EnableToCreatePrivateProject   bool
+	EnableCustomDomainCreation     bool
+	OverCustomDomainCount          bool
 	DisableOperationByOverUsedSeat bool
 }

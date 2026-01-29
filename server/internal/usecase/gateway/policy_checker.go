@@ -11,6 +11,7 @@ type PolicyCheckType string
 
 const (
 	PolicyCheckUploadAssetsSize              PolicyCheckType = "visualizer_asset_size"
+	PolicyCheckCustomDomainCreation          PolicyCheckType = "visualizer_custom_domain_creation"
 	PolicyCheckCustomDomainCount             PolicyCheckType = "visualizer_custom_domain_count"
 	PolicyCheckGeneralPrivateProjectCreation PolicyCheckType = "general_private_project_creation"
 	PolicyCheckGeneralPublicProjectCreation  PolicyCheckType = "general_public_project_creation"
@@ -54,6 +55,22 @@ func CreateGeneralOperationAllowedCheckRequest(workspaceID accountdomain.Workspa
 	return PolicyCheckRequest{
 		WorkspaceID: workspaceID,
 		CheckType:   PolicyCheckGeneralOperationAllowed,
+		Value:       1,
+	}
+}
+
+func CreateCustomDomainCreationCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+	return PolicyCheckRequest{
+		WorkspaceID: workspaceID,
+		CheckType:   PolicyCheckCustomDomainCreation,
+		Value:       1,
+	}
+}
+
+func CreateCustomDomainCountCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+	return PolicyCheckRequest{
+		WorkspaceID: workspaceID,
+		CheckType:   PolicyCheckCustomDomainCount,
 		Value:       1,
 	}
 }

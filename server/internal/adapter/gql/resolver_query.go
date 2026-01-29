@@ -207,7 +207,10 @@ func (r *queryResolver) WorkspacePolicyCheck(ctx context.Context, input gqlmodel
 		return nil, err
 	}
 	return &gqlmodel.PolicyCheckPayload{
-		WorkspaceID:                  input.WorkspaceID,
-		EnableToCreatePrivateProject: policy.EnableToCreatePrivateProject,
+		WorkspaceID:                    input.WorkspaceID,
+		EnableToCreatePrivateProject:   policy.EnableToCreatePrivateProject,
+		EnableCustomDomainCreation:     policy.EnableCustomDomainCreation,
+		OverCustomDomainCount:          policy.OverCustomDomainCount,
+		DisableOperationByOverUsedSeat: policy.DisableOperationByOverUsedSeat,
 	}, nil
 }

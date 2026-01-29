@@ -506,7 +506,9 @@ type ComplexityRoot struct {
 
 	PolicyCheckPayload struct {
 		DisableOperationByOverUsedSeat func(childComplexity int) int
+		EnableCustomDomainCreation     func(childComplexity int) int
 		EnableToCreatePrivateProject   func(childComplexity int) int
+		OverCustomDomainCount          func(childComplexity int) int
 		WorkspaceID                    func(childComplexity int) int
 	}
 
@@ -3397,12 +3399,24 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.PolicyCheckPayload.DisableOperationByOverUsedSeat(childComplexity), true
+	case "PolicyCheckPayload.enableCustomDomainCreation":
+		if e.complexity.PolicyCheckPayload.EnableCustomDomainCreation == nil {
+			break
+		}
+
+		return e.complexity.PolicyCheckPayload.EnableCustomDomainCreation(childComplexity), true
 	case "PolicyCheckPayload.enableToCreatePrivateProject":
 		if e.complexity.PolicyCheckPayload.EnableToCreatePrivateProject == nil {
 			break
 		}
 
 		return e.complexity.PolicyCheckPayload.EnableToCreatePrivateProject(childComplexity), true
+	case "PolicyCheckPayload.overCustomDomainCount":
+		if e.complexity.PolicyCheckPayload.OverCustomDomainCount == nil {
+			break
+		}
+
+		return e.complexity.PolicyCheckPayload.OverCustomDomainCount(childComplexity), true
 	case "PolicyCheckPayload.workspaceId":
 		if e.complexity.PolicyCheckPayload.WorkspaceID == nil {
 			break
@@ -7481,8 +7495,20 @@ extend type Mutation {
   members: [WorkspaceMember!]!
   personal: Boolean!
   photoURL: String
-  assets(projectId: ID, first: Int, last: Int, after: Cursor, before: Cursor): AssetConnection!
-  projects(includeArchived: Boolean, first: Int, last: Int, after: Cursor, before: Cursor): ProjectConnection!
+  assets(
+    projectId: ID
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): AssetConnection!
+  projects(
+    includeArchived: Boolean
+    first: Int
+    last: Int
+    after: Cursor
+    before: Cursor
+  ): ProjectConnection!
   enableToCreatePrivateProject: Boolean!
   alias: String!
 }
@@ -7551,6 +7577,8 @@ type CreateWorkspacePayload {
 type PolicyCheckPayload {
   workspaceId: ID!
   enableToCreatePrivateProject: Boolean!
+  enableCustomDomainCreation: Boolean!
+  overCustomDomainCount: Boolean!
   disableOperationByOverUsedSeat: Boolean!
 }
 
@@ -7582,9 +7610,15 @@ extend type Mutation {
   createWorkspace(input: CreateWorkspaceInput!): CreateWorkspacePayload
   deleteWorkspace(input: DeleteWorkspaceInput!): DeleteWorkspacePayload
   updateWorkspace(input: UpdateWorkspaceInput!): UpdateWorkspacePayload
-  addMemberToWorkspace(input: AddMemberToWorkspaceInput!): AddMemberToWorkspacePayload
-  removeMemberFromWorkspace(input: RemoveMemberFromWorkspaceInput!): RemoveMemberFromWorkspacePayload
-  updateMemberOfWorkspace(input: UpdateMemberOfWorkspaceInput!): UpdateMemberOfWorkspacePayload
+  addMemberToWorkspace(
+    input: AddMemberToWorkspaceInput!
+  ): AddMemberToWorkspacePayload
+  removeMemberFromWorkspace(
+    input: RemoveMemberFromWorkspaceInput!
+  ): RemoveMemberFromWorkspacePayload
+  updateMemberOfWorkspace(
+    input: UpdateMemberOfWorkspaceInput!
+  ): UpdateMemberOfWorkspacePayload
 }
 `, BuiltIn: false},
 }
@@ -19705,6 +19739,64 @@ func (ec *executionContext) fieldContext_PolicyCheckPayload_enableToCreatePrivat
 	return fc, nil
 }
 
+func (ec *executionContext) _PolicyCheckPayload_enableCustomDomainCreation(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PolicyCheckPayload_enableCustomDomainCreation,
+		func(ctx context.Context) (any, error) {
+			return obj.EnableCustomDomainCreation, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_PolicyCheckPayload_enableCustomDomainCreation(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PolicyCheckPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PolicyCheckPayload_overCustomDomainCount(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_PolicyCheckPayload_overCustomDomainCount,
+		func(ctx context.Context) (any, error) {
+			return obj.OverCustomDomainCount, nil
+		},
+		nil,
+		ec.marshalNBoolean2bool,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_PolicyCheckPayload_overCustomDomainCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PolicyCheckPayload",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PolicyCheckPayload_disableOperationByOverUsedSeat(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.PolicyCheckPayload) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -25184,6 +25276,10 @@ func (ec *executionContext) fieldContext_Query_workspacePolicyCheck(ctx context.
 				return ec.fieldContext_PolicyCheckPayload_workspaceId(ctx, field)
 			case "enableToCreatePrivateProject":
 				return ec.fieldContext_PolicyCheckPayload_enableToCreatePrivateProject(ctx, field)
+			case "enableCustomDomainCreation":
+				return ec.fieldContext_PolicyCheckPayload_enableCustomDomainCreation(ctx, field)
+			case "overCustomDomainCount":
+				return ec.fieldContext_PolicyCheckPayload_overCustomDomainCount(ctx, field)
 			case "disableOperationByOverUsedSeat":
 				return ec.fieldContext_PolicyCheckPayload_disableOperationByOverUsedSeat(ctx, field)
 			}
@@ -40857,6 +40953,16 @@ func (ec *executionContext) _PolicyCheckPayload(ctx context.Context, sel ast.Sel
 			}
 		case "enableToCreatePrivateProject":
 			out.Values[i] = ec._PolicyCheckPayload_enableToCreatePrivateProject(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "enableCustomDomainCreation":
+			out.Values[i] = ec._PolicyCheckPayload_enableCustomDomainCreation(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "overCustomDomainCount":
+			out.Values[i] = ec._PolicyCheckPayload_overCustomDomainCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
