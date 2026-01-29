@@ -30,7 +30,16 @@ func (i *Policy) GetWorkspacePolicy(ctx context.Context, wsid accountdomain.Work
 	}
 
 	createPrivateProject, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateGeneralPolicyCheckRequest(ws.ID(), project.VisibilityPrivate))
+	if err != nil {
+		return nil, err
+	}
 
+	customDomainCreation, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateCustomDomainCreationCheckRequest(ws.ID()))
+	if err != nil {
+		return nil, err
+	}
+
+	customDomainCount, err := i.policyChecker.CheckPolicy(ctx, gateway.CreateCustomDomainCountCheckRequest(ws.ID()))
 	if err != nil {
 		return nil, err
 	}
@@ -43,6 +52,8 @@ func (i *Policy) GetWorkspacePolicy(ctx context.Context, wsid accountdomain.Work
 	return &policy.WorkspacePolicy{
 		WorkspaceID:                    wsid,
 		EnableToCreatePrivateProject:   createPrivateProject.Allowed,
+		EnableCustomDomainCreation:     customDomainCreation.Allowed,
+		OverCustomDomainCount:          !customDomainCount.Allowed,
 		DisableOperationByOverUsedSeat: !operationAllowed.Allowed,
 	}, nil
 }
