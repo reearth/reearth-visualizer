@@ -2443,9 +2443,9 @@ extensions:
                   label: Japanese
                 - key: cn
                   label: Chinese
-  - id: googleMapStreetView
+  - id: streetView
     type: widget
-    name: Google Map Street View
+    name: Street View
     singleOnly: true
     widgetLayout:
       defaultLocation:
@@ -2455,12 +2455,12 @@ extensions:
     schema:
       groups:
         - id: default
-          title: Google Map Street View 
+          title: Street View 
           fields:
             - id: apiKey
               type: string
               title: API Key
-              description: Google Maps API Key
+              description: Google street view API Key
         - id: appearance
           title: Appearance
           fields:

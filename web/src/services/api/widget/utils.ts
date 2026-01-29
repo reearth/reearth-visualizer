@@ -16,7 +16,7 @@ export const NAVIGATOR_BUILTIN_WIDGET_ID = "reearth/navigator";
 export const DATA_ATTRIBUTION_WIDGET_ID = "reearth/dataAttribution";
 export const GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID = "reearth/googleMapSearch";
 export const TIMELINE_BUILTIN_WIDGET_ID = "reearth/timeline";
-export const GOOGLE_MAP_STREET_VIEW_WIDGET_ID = "reearth/googleMapStreetView";
+export const STREET_VIEW_WIDGET_ID = "reearth/streetView";
 
 export const AVAILABLE_WIDGET_IDS = [
   BUTTON_BUILTIN_WIDGET_ID,
@@ -24,7 +24,7 @@ export const AVAILABLE_WIDGET_IDS = [
   DATA_ATTRIBUTION_WIDGET_ID,
   GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID,
   TIMELINE_BUILTIN_WIDGET_ID,
-  GOOGLE_MAP_STREET_VIEW_WIDGET_ID
+  STREET_VIEW_WIDGET_ID
 ];
 
 const getWidgetIdsFromWAS = (
@@ -126,7 +126,7 @@ function getBuiltinExtensionIcon(
       return "magnifyingGlass";
     case TIMELINE_BUILTIN_WIDGET_ID:
       return "timeline";
-    case GOOGLE_MAP_STREET_VIEW_WIDGET_ID:
+    case STREET_VIEW_WIDGET_ID:
       return "pegman";
     default:
       return undefined;
