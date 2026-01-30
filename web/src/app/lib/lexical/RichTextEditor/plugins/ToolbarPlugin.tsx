@@ -594,13 +594,13 @@ export default function ToolbarPlugin({
       // Update links
       const node = getSelectedNode(selection);
       const parent = node.getParent();
-      if ($isLinkNode(parent) || $isLinkNode(node)) {
+      if ((parent && $isLinkNode(parent as unknown as Parameters<typeof $isLinkNode>[0])) || $isLinkNode(node as unknown as Parameters<typeof $isLinkNode>[0])) {
         setIsLink(true);
       } else {
         setIsLink(false);
       }
 
-      const tableNode = $findMatchingParent(node, $isTableNode);
+      const tableNode = $findMatchingParent(node as unknown as Parameters<typeof $findMatchingParent>[0], $isTableNode);
       if ($isTableNode(tableNode)) {
         setRootType("table");
       } else {
@@ -608,14 +608,14 @@ export default function ToolbarPlugin({
       }
 
       if (elementDOM !== null) {
-        if ($isListNode(element)) {
-          const parentList = $getNearestNodeOfType<ListNode>(
-            anchorNode,
-            ListNode
-          );
+        if ($isListNode(element as unknown as Parameters<typeof $isListNode>[0])) {
+          const parentList = $getNearestNodeOfType(
+            anchorNode as unknown as Parameters<typeof $getNearestNodeOfType>[0],
+            ListNode as unknown as Parameters<typeof $getNearestNodeOfType>[1]
+          ) as ListNode | null;
           const type = parentList
             ? parentList.getListType()
-            : element.getListType();
+            : (element as unknown as { getListType(): string }).getListType();
           if (type in blockTypeToBlockName) {
             setBlockType(type as keyof typeof blockTypeToBlockName);
           }

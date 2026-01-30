@@ -37,17 +37,17 @@ function isIndentPermitted(maxDepth: number) {
   let totalDepth = 0;
 
   for (const elementNode of elementNodesInSelection) {
-    if ($isListNode(elementNode)) {
-      totalDepth = Math.max($getListDepth(elementNode) + 1, totalDepth);
-    } else if ($isListItemNode(elementNode)) {
+    if ($isListNode(elementNode as unknown as Parameters<typeof $isListNode>[0])) {
+      totalDepth = Math.max($getListDepth(elementNode as unknown as Parameters<typeof $getListDepth>[0]) + 1, totalDepth);
+    } else if ($isListItemNode(elementNode as unknown as Parameters<typeof $isListItemNode>[0])) {
       const parent = elementNode.getParent();
-      if (!$isListNode(parent)) {
+      if (!$isListNode(parent as unknown as Parameters<typeof $isListNode>[0])) {
         throw new Error(
           "ListMaxIndentLevelPlugin: A ListItemNode must have a ListNode for a parent."
         );
       }
 
-      totalDepth = Math.max($getListDepth(parent) + 1, totalDepth);
+      totalDepth = Math.max($getListDepth(parent as unknown as Parameters<typeof $getListDepth>[0]) + 1, totalDepth);
     }
   }
 
