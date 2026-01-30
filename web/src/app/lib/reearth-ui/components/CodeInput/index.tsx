@@ -1,6 +1,7 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
 import { useT } from "@reearth/services/i18n/hooks";
 import { fonts, styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo, useCallback, useState, useEffect } from "react";
 
 export type CodeInputProps = {
@@ -122,8 +123,8 @@ const EditorWrapper = styled("div", {
 }>(({ theme, isActive, disabled }) => ({
   width: "100%",
   height: "100%",
-  overflow: "hidden",
-  boxSizing: "border-box",
+  overflow: css.overflow.hidden,
+  boxSizing: css.boxSizing.borderBox,
   border: disabled
     ? `1px solid ${theme.outline.weak}`
     : isActive

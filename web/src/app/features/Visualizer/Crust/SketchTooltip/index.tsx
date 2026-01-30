@@ -1,6 +1,7 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import { SketchFeatureTooltip } from "@reearth/app/utils/sketch";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 type SketchTooltipProp = {
@@ -49,7 +50,7 @@ const SketchTooltip: FC<SketchTooltipProp> = ({ sketchFeatureTooltip }) => {
 export default SketchTooltip;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  position: "absolute",
+  position: css.position.absolute,
   top: "6px",
   left: "6px",
   minHeight: "70px",
@@ -58,5 +59,5 @@ const Wrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   padding: theme.spacing.normal,
   zIndex: theme.zIndexes.visualizer.sketchLayerTooltip,
-  boxSizing: "border-box"
+  boxSizing: css.boxSizing.borderBox
 }));

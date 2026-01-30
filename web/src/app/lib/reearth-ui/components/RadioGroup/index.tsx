@@ -1,5 +1,6 @@
 import { Radio } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 
 export type RadioGroupProps = {
@@ -63,7 +64,7 @@ export const RadioGroup: FC<RadioGroupProps> = ({
 
 const RadioGroupWrapper = styled("div")<{ layout?: "vertical" | "horizontal" }>(
   ({ layout, theme }) => ({
-    display: "flex",
+    display: css.display.flex,
     flexDirection: layout === "vertical" ? "column" : "row",
     gap: theme.spacing.normal,
     width: "100%"

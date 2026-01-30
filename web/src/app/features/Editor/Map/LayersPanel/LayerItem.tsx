@@ -9,6 +9,7 @@ import ConfirmModal from "@reearth/app/ui/components/ConfirmModal";
 import type { NLSLayer } from "@reearth/services/api/layer";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   Dispatch,
   FC,
@@ -250,7 +251,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap
 }));

@@ -19,6 +19,7 @@ import {
 } from "@reearth/services/state";
 import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { SettingsFields, SettingsWrapper, TitleWrapper } from "../common";
@@ -391,15 +392,15 @@ const StyledImage = styled("img")(({ theme }) => ({
 
 const HeadingWraper = styled("div")(({ theme }) => ({
   width: "100%",
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small
 }));
 
 const ContentDescription = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   width: "100%",
   padding: `${theme.spacing.super}px 0`
 }));

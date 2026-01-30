@@ -8,6 +8,7 @@ import type { NLSLayer } from "@reearth/services/api/layer";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   Fragment,
@@ -358,5 +359,5 @@ const StoryPanel: FC<Props> = ({
 export default StoryPanel;
 
 const PageTitleWrapper = styled("div")(() => ({
-  position: "relative"
+  position: css.position.relative
 }));

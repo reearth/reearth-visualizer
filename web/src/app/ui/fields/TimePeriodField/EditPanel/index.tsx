@@ -1,6 +1,7 @@
 import { Button, Icon, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { TimePeriodFieldProp } from "..";
@@ -104,19 +105,19 @@ const EditModal: FC<EditPanelProps> = ({
 };
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.largest,
   padding: theme.spacing.super,
-  flexDirection: "column",
+  flexDirection: css.flexDirection.column,
   background: theme.bg[0]
 }));
 
 const Warning = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
   paddingTop: theme.spacing.small,
   color: theme.dangerous.main,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular
 }));
