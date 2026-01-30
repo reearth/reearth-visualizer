@@ -112,9 +112,10 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
             path: `/settings/projects/${projectId}/public`,
             active: tab === "public" && !subId
           },
+          // Memo: we only have one story now
           ...stories.map((s) => ({
             id: s.id,
-            text: `${t("Story")} ${s.title}`,
+            text: t("Story"),
             path: `/settings/projects/${projectId}/public/${s.id}`,
             active: tab === "public" && subId === s.id
           }))
