@@ -18,12 +18,16 @@ const EditorPage: FC = () => {
     };
   }, [sceneId]);
 
-  return !sceneId || !tab || !isTab(tab) ? (
-    <NotFound />
-  ) : (
+  if (!sceneId || !tab || !isTab(tab)) {
+    return <NotFound />;
+  }
+
+  return (
     <Page
       sceneId={sceneId}
-      renderItem={(props) => <Editor tab={tab} sceneId={sceneId} {...props} />}
+      renderItem={(props) => (
+        <Editor key={sceneId} tab={tab} sceneId={sceneId} {...props} />
+      )}
     />
   );
 };
