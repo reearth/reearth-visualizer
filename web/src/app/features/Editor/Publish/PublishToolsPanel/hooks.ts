@@ -46,12 +46,13 @@ export default ({
         publishmentStatus: project.publishmentStatus,
         isPublished: isPublished(project.publishmentStatus)
       },
+      // Memo: we only have one story now
       ...(stories ?? []).map((s) => ({
         id: s.id,
         projectId: project.id,
         storyId: s.id,
         type: "story" as const,
-        buttonTitle: `${t("Story")} ${s.title}`,
+        buttonTitle: t("Story"),
         alias: s.alias,
         publishmentStatus: s.publishmentStatus,
         isPublished: isPublished(s.publishmentStatus)
