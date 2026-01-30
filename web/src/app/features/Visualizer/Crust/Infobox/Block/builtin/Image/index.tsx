@@ -2,6 +2,7 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import type { CommonBlockProps as BlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import type { ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 import { InfoboxBlock } from "../../../types";
@@ -48,6 +49,6 @@ export default ImageBlock;
 const Image = styled("img")(() => ({
   width: "100%",
   height: "100%",
-  objectFit: "contain",
+  objectFit: css.objectFit.contain,
   objectPosition: "center"
 }));

@@ -1,5 +1,6 @@
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   MouseEvent,
@@ -249,11 +250,11 @@ const SelectInput = styled("div")<{
   width?: number;
   size: "normal" | "small";
 }>(({ isMultiple, isOpen, disabled, width, size, theme }) => ({
-  boxSizing: "border-box",
+  boxSizing: css.boxSizing.borderBox,
   backgroundColor: `${theme.bg[1]}`,
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center,
   gap: `${theme.spacing.small}px`,
   borderRadius: `${theme.radius.small}px`,
   border: `1px solid ${!disabled && isOpen ? theme.select.strong : theme.outline.weak}`,
@@ -272,15 +273,15 @@ const SelectInput = styled("div")<{
 
 const SelectedItems = styled("div")(({ theme }) => ({
   flex: 1,
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: `${theme.spacing.smallest}px`,
   flexWrap: "wrap"
 }));
 
 const SelectedItem = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: `${theme.spacing.smallest}px`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   backgroundColor: `${theme.bg[2]}`,
@@ -291,9 +292,9 @@ const DropDownWrapper = styled("div")<{
   width?: number;
   maxHeight?: number;
 }>(({ width, maxHeight, theme }) => ({
-  boxSizing: "border-box",
-  display: "flex",
-  flexDirection: "column",
+  boxSizing: css.boxSizing.borderBox,
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: `${theme.spacing.micro}px`,
   padding: `${theme.spacing.micro}px`,
   backgroundColor: `${theme.bg[1]}`,
@@ -309,16 +310,16 @@ const DropDownWrapper = styled("div")<{
 const DropDownItem = styled("div")<{
   isSelected?: boolean;
 }>(({ isSelected, theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.spaceBetween,
   gap: `${theme.spacing.small}px`,
   backgroundColor: !isSelected
     ? `${theme.bg[1]}`
     : `${theme.select.weak} !important`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   borderRadius: `${theme.radius.smallest}px`,
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   ["&:hover"]: {
     backgroundColor: `${theme.bg[2]}`
   }

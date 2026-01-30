@@ -1,5 +1,6 @@
 import { Button } from "@reearth/app/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 export type ModalPanelProps = {
@@ -61,16 +62,16 @@ export const ModalPanel: FC<ModalPanelProps> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   background: theme.bg[1],
   borderRadius: theme.radius.large
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center,
   alignSelf: "stretch",
   padding: `${theme.spacing.normal}px`,
   color: theme.content.main,
@@ -96,17 +97,17 @@ const ActionWrapper = styled("div")<{ showBorder: boolean }>(
     background: theme.bg[1],
     borderBottomRightRadius: theme.radius.large,
     borderBottomLeftRadius: theme.radius.large,
-    justifyContent: "flex-end",
-    display: "flex",
-    alignItems: "flex-start",
+    justifyContent: css.justifyContent.flexEnd,
+    display: css.display.flex,
+    alignItems: css.alignItems.flexStart,
     borderTop: showBorder ? `1px solid ${theme.outline.weaker}` : "none",
     gap: theme.spacing.normal
   })
 );
 
 const CommonLayout = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.large,
   padding: theme.spacing.large,
   background: theme.bg[1]

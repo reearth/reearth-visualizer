@@ -8,6 +8,7 @@ import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProject
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useState } from "react";
 
 import { DeletedProject } from "../../../type";
@@ -117,8 +118,8 @@ const RecycleBinItem: FC<Prop> = ({
 export default RecycleBinItem;
 
 const Card = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   height: "220px",
   "@media (max-width: 567px)": {
     height: "171px"
@@ -129,22 +130,22 @@ const CardImage = styled("div")<{
   backgroundImage?: string | null;
 }>(({ theme, backgroundImage }) => ({
   flex: 1,
-  position: "relative",
+  position: css.position.relative,
   background: backgroundImage ? `url(${backgroundImage}) center/cover` : "",
   backgroundColor: theme.bg[1],
   borderRadius: theme.radius.normal,
-  boxSizing: "border-box",
+  boxSizing: css.boxSizing.borderBox,
   border: `1px solid transparent`
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small + 2,
-  position: "absolute",
+  position: css.position.absolute,
   top: "10px",
   right: "10px",
-  pointerEvents: "none"
+  pointerEvents: css.pointerEvents.none
 }));
 
 const VisibilityButton = styled("div")<{ visibility?: string }>(
@@ -170,8 +171,8 @@ const StarButtonWrapper = styled("div")<{
 }));
 
 const CardFooter = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest,
   padding: `0 ${theme.spacing.smallest}`
 }));
@@ -187,9 +188,9 @@ const CardTitle = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   display: "-webkit-box",
-  WebkitBoxOrient: "vertical",
-  WebkitLineClamp: 1,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  cursor: "pointer"
+  WebkitBoxOrient: css.webkitBoxOrient.vertical,
+  WebkitLineClamp: css.webkitLineClamp["1"],
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  cursor: css.cursor.pointer
 }));

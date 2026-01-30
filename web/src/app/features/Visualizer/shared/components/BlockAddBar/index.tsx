@@ -1,5 +1,6 @@
 import { Icon, PopupMenu, PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useEffect, useMemo } from "react";
 
 import { getIconName } from "../../../Crust/StoryPanel/utils";
@@ -82,21 +83,21 @@ const BlockAddBar: FC<Props> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  position: "relative",
+  position: css.position.relative,
   padding: `${theme.spacing.micro}px 0`,
   zIndex: theme.zIndexes.visualizer.storyBlockAddBar
 }));
 
 const Bar = styled("div")<{ height?: number; persist?: boolean }>(
   ({ height, persist, theme }) => ({
-    position: "absolute",
+    position: css.position.absolute,
     left: 0,
     right: 0,
-    display: "flex",
-    alignItems: "center",
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
     gap: theme.spacing.small + 2,
     height: height ? `${height}px` : "1px",
-    cursor: "pointer",
+    cursor: css.cursor.pointer,
     "&:hover > *": {
       opacity: "100%"
     },

@@ -7,6 +7,7 @@ import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
 
 type commonTupleProps = [number, number];
@@ -77,17 +78,17 @@ const TwinInputField: FC<TwinInputFieldProps> = ({
 export default TwinInputField;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: `${theme.spacing.smallest}px`,
-  alignItems: "flex-start",
+  alignItems: css.alignItems.flexStart,
   width: "100%"
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest,
   width: "100%",
-  boxSizing: "border-box"
+  boxSizing: css.boxSizing.borderBox
 }));

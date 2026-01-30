@@ -1,5 +1,6 @@
 import { Icon, IconName, Typography } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 import { PopupMenuItem } from "../PopupMenu";
@@ -66,26 +67,26 @@ export const Breadcrumb: FC<BreadcrumbProp> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.smallest
 }));
 
 const ItemWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest,
-  cursor: "pointer"
+  cursor: css.cursor.pointer
 }));
 
 const Item = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.micro}px ${theme.spacing.small}px`,
   borderRadius: theme.radius.smallest,
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.smallest,
-  alignItems: "center"
+  alignItems: css.alignItems.center
 }));
 
 const Separator = styled("div")(({ theme }) => ({
   color: theme.content.weak,
-  userSelect: "none"
+  userSelect: css.userSelect.none
 }));

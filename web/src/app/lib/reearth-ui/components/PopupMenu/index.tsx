@@ -1,5 +1,6 @@
 import { Popup, Icon, IconName, PopupProps } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router";
 
@@ -277,10 +278,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
 
 const TriggerWrapper = styled("div")<{ nested?: boolean }>(
   ({ nested, theme }) => ({
-    cursor: "pointer",
-    display: "flex",
+    cursor: css.cursor.pointer,
+    display: css.display.flex,
     gap: theme.spacing.smallest,
-    alignItems: "center",
+    alignItems: css.alignItems.center,
     justifyContent: nested ? "space-between" : "normal"
   })
 );
@@ -290,8 +291,8 @@ const PopupMenuWrapper = styled("div")<{
   nested?: boolean;
   extendContentWidth?: boolean;
 }>(({ width, nested, extendContentWidth, theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: `${theme.spacing.micro}px`,
   padding: `${theme.spacing.micro}px`,
   backgroundColor: `${theme.bg[1]}`,
@@ -304,8 +305,8 @@ const PopupMenuWrapper = styled("div")<{
       ? `${width}px`
       : DEFAULT_MENU_WIDTH,
   maxHeight: "250px",
-  overflowY: "auto",
-  boxSizing: "border-box",
+  overflowY: css.overflow.auto,
+  boxSizing: css.boxSizing.borderBox,
   margin: nested ? "-7px 0 0 2px" : "inherit",
   ...theme.scrollBar
 }));
@@ -315,9 +316,9 @@ const Item = styled("div")<{
   size?: "small" | "normal";
   disabled?: boolean;
 }>(({ hasBorderBottom, size, disabled, theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   padding:
     size === "small"
       ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
@@ -332,9 +333,9 @@ const Item = styled("div")<{
 }));
 
 const StyledLink = styled(Link)(() => ({
-  textDecoration: "none",
+  textDecoration: css.textDecoration.none,
   flex: 1,
-  display: "flex"
+  display: css.display.flex
 }));
 
 const IconWrapper = styled("div")(() => ({
@@ -351,13 +352,13 @@ const SubMenuHeader = styled("div")(({ theme }) => ({
 }));
 
 const SubItem = styled("div")(() => ({
-  display: "flex",
-  justifyContent: "space-between",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
   justifyItems: "center",
   flexGrow: 1,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   width: "100%",
-  overflow: "hidden"
+  overflow: css.overflow.hidden
 }));
 
 const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
@@ -372,7 +373,7 @@ const LabelWrapper = styled("div")<{
   size?: "small" | "normal";
   nested: boolean;
 }>(({ size, nested, theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   padding: nested
     ? "0px"
     : size === "small"
@@ -380,7 +381,7 @@ const LabelWrapper = styled("div")<{
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: "4px",
   flex: 1,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   "&:hover": {
     background: theme.bg[2],
     p: {
@@ -390,8 +391,8 @@ const LabelWrapper = styled("div")<{
 }));
 
 const Group = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: `${theme.spacing.micro}px`
 }));
 
@@ -399,11 +400,11 @@ const TitleWrapper = styled("div")<{ disabled?: boolean; flex?: boolean }>(
   ({ theme, disabled, flex }) => ({
     fontSize: theme.fonts.sizes.body,
     color: disabled ? theme.content.weak : theme.content.main,
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    whiteSpace: css.whiteSpace.nowrap,
+    overflow: css.overflow.hidden,
+    textOverflow: css.textOverflow.ellipsis,
     gap: theme.spacing.small,
     flex: 1,
-    ...(flex ? { display: "flex", alignItems: "center" } : {})
+    ...(flex ? { display: css.display.flex, alignItems: css.alignItems.center } : {})
   })
 );

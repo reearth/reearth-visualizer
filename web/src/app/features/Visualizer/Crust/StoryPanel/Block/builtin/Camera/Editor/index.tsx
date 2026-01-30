@@ -9,6 +9,7 @@ import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { Camera } from "@reearth/core";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import useHooks, { type CameraBlock } from "./hooks";
@@ -147,15 +148,15 @@ const EditorWrapper = styled("div")(({ theme }) => ({
 }));
 
 const GroupWrapper = styled("div")(() => ({
-  display: "grid",
+  display: css.display.grid,
   gridTemplateColumns: "55% 42%",
   gridGap: "10px"
 }));
 
 const FieldGroup = styled("div")<{ disabled: boolean }>(
   ({ theme, disabled }) => ({
-    display: "flex",
-    flexDirection: "column",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
     gap: theme.spacing.small,
     opacity: disabled ? 0.6 : 1,
     cursor: disabled ? "not-allowed" : "inherit",

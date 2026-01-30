@@ -1,3 +1,4 @@
+import css from "./css";
 import fonts from "./fonts";
 import iconSizes, { IconsSizeType } from "./icons";
 import radiusSizes, { RadiusSizesType } from "./radius";
@@ -7,6 +8,7 @@ import spacingSizes, { SpacingSizesType } from "./spacing";
 import zIndexes, { ZIndex } from "./zIndex";
 
 export { default as GlobalStyles } from "./globalStyles";
+export { css };
 
 export type Common = {
   zIndexes: ZIndex;

@@ -15,6 +15,7 @@ import {
 import { AssetField } from "@reearth/app/ui/fields";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { DataProps } from "..";
@@ -114,9 +115,9 @@ const KML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 };
 
 const Warning = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center"
+  alignItems: css.alignItems.center
 }));
 
 const IconWrapper = styled(Icon)(() => ({

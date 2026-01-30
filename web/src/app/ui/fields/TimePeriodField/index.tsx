@@ -4,6 +4,7 @@ import CommonField, {
 } from "@reearth/app/ui/fields/CommonField";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import EditPanel from "./EditPanel";
@@ -135,7 +136,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.smallest,
   width: "100%"
 }));
@@ -144,34 +145,34 @@ const TimePeriodWrapper = styled("div")(({ theme }) => ({
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
-  display: "flex",
+  display: css.display.flex,
   width: "100%",
   boxShadow: theme.shadow.input
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.smallest,
   height: "30px",
-  whiteSpace: "nowrap"
+  whiteSpace: css.whiteSpace.nowrap
 }));
 
 const NoteIcon = styled("div")(({ theme }) => ({
-  position: "relative",
+  position: css.position.relative,
   flex: 1,
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   paddingTop: theme.spacing.smallest,
   gap: theme.spacing.small
 }));
 
 const ProgressSteps = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center,
   padding: theme.spacing.small,
   gap: theme.spacing.large,
-  position: "relative"
+  position: css.position.relative
 }));
 
 const Circle = styled("div")<{ filled?: boolean }>(({ theme, filled }) => ({
@@ -180,13 +181,13 @@ const Circle = styled("div")<{ filled?: boolean }>(({ theme, filled }) => ({
   borderRadius: "50%",
   background: filled ? theme.bg[3] : "transparent",
   border: `1px solid ${theme.outline.weak}`,
-  position: "relative",
+  position: css.position.relative,
   "&:not(:last-child)::after": {
     content: '""',
     width: "1px",
     height: "13px",
     background: theme.outline.weak,
-    position: "absolute",
+    position: css.position.absolute,
     top: "10px",
     left: "50%",
     transform: "translateX(-50%)",

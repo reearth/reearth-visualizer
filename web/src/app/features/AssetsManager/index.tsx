@@ -9,6 +9,7 @@ import {
 import ManagerEmptyContent from "@reearth/app/ui/components/ManagerBase/ManagerEmptyContent";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { AcceptedAssetsTypes } from "./constants";
@@ -207,8 +208,8 @@ export default AssetsManager;
 
 const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(
   ({ theme }) => ({
-    display: "flex",
-    flexDirection: "column",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
     gap: theme.spacing.normal,
     flex: 1,
     height: 0
@@ -216,18 +217,18 @@ const ContentWrapper = styled("div")<{ size: AssetsManagerSize }>(
 );
 
 const AssetsWrapper = styled("div")(() => ({
-  position: "relative",
-  display: "flex",
-  flexDirection: "column",
+  position: css.position.relative,
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   flex: 1,
   height: 0,
-  overflow: "auto"
+  overflow: css.overflow.auto
 }));
 
 const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
   ({ theme, size }) => ({
-    display: "flex",
-    flexDirection: "column",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
     gap: theme.spacing.normal,
     padding: `${theme.spacing.smallest}px ${
       size === "large" ? theme.spacing.large : theme.spacing.small
@@ -236,8 +237,8 @@ const AssetsContent = styled("div")<{ size: AssetsManagerSize }>(
 );
 
 const LayoutWrapper = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   flex: 1,
   height: 0
 }));
@@ -248,15 +249,15 @@ const AssetsGroup = styled("div")<{
 }>(({ theme, layout, size }) => ({
   ...(layout === "grid"
     ? {
-        display: "grid",
+        display: css.display.grid,
         gap: theme.spacing.normal,
         gridTemplateColumns: `repeat(auto-fill, minmax(${size === "medium" ? 96 : 144}px, 1fr))`
       }
     : {}),
   ...(layout === "list"
     ? {
-        display: "flex",
-        flexDirection: "column",
+        display: css.display.flex,
+        flexDirection: css.flexDirection.column,
         gap: theme.spacing.small
       }
     : {})
@@ -264,9 +265,9 @@ const AssetsGroup = styled("div")<{
 
 const ListHeader = styled("div")<{ size: AssetsManagerSize; width: number }>(
   ({ theme, size, width }) => ({
-    display: "flex",
-    alignItems: "center",
-    boxSizing: "border-box",
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
+    boxSizing: css.boxSizing.borderBox,
     padding: `${theme.spacing.smallest}px ${
       (size === "large" ? theme.spacing.large : theme.spacing.small) +
       theme.spacing.smallest

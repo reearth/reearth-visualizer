@@ -4,6 +4,7 @@ import CommonField, {
 } from "@reearth/app/ui/fields/CommonField";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import ListItem from "./ListItem";
@@ -143,8 +144,8 @@ const ListField: FC<ListFieldProps> = ({
 };
 
 const FieldContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest
 }));
 
@@ -153,7 +154,7 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.small,
   padding: theme.spacing.smallest,
   border: `1px solid ${theme.outline.weak}`,
-  overflow: "auto"
+  overflow: css.overflow.auto
 }));
 
 export default ListField;

@@ -2,6 +2,7 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import type { CommonBlockProps as BlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { Icon } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback } from "react";
 
 import { usePanelContext } from "../../../context";
@@ -44,9 +45,9 @@ const NextPage: FC<BlockProps<StoryBlock>> = ({
 export default NextPage;
 
 const Wrapper = styled("div")(() => ({
-  display: "flex",
+  display: css.display.flex,
   width: "100%",
-  justifyContent: "center"
+  justifyContent: css.justifyContent.center
 }));
 
 const StyledIcon = styled(Icon)(() => ({
@@ -54,14 +55,14 @@ const StyledIcon = styled(Icon)(() => ({
 }));
 
 const Button = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  alignItems: css.alignItems.center,
   padding: `${theme.spacing.smallest}px ${theme.spacing.normal}px`,
   border: "1px solid #2c2c2c",
   borderRadius: theme.radius.normal,
   transition: "none",
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   ["&:hover"]: {
     background: "#8d8d8d",
     border: "1px solid #8d8d8d",

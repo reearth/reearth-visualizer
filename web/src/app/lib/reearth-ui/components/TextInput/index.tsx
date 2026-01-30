@@ -1,4 +1,5 @@
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   useCallback,
@@ -148,10 +149,10 @@ const Wrapper = styled("div", {
     border: borderStyle,
     borderRadius: theme.radius.small,
     background: appearance === "present" ? "" : theme.bg[1],
-    display: "flex",
+    display: css.display.flex,
     flex: 1,
     gap: `${theme.spacing.smallest}px`,
-    alignItems: "center",
+    alignItems: css.alignItems.center,
     padding:
       size === "small"
         ? `0 ${theme.spacing.smallest}px`
@@ -177,18 +178,18 @@ const StyledInput = styled("input")<{
   colorScheme: theme.colorSchema,
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
-  textOverflow: "ellipsis",
+  textOverflow: css.textOverflow.ellipsis,
   pointerEvents: disabled ? "none" : "inherit",
   width: "100%",
-  overflow: "hidden",
+  overflow: css.overflow.hidden,
   "::placeholder": {
     color: theme.content.weak
   }
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: `${theme.spacing.smallest}px`,
   flexShrink: 0
 }));

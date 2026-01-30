@@ -2,6 +2,7 @@ import { IconButton } from "@reearth/app/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo } from "react";
 
 import { useMapPage } from "../context";
@@ -104,30 +105,30 @@ const StylesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 export default StylesPanel;
 
 const LayerStyleManager = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  alignItems: css.alignItems.flexStart,
   height: 154,
   gap: theme.spacing.small,
   padding: theme.spacing.small
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small
 }));
 
 const StylesWrapper = styled("div")(({ theme }) => ({
   width: "100%",
   height: "100%",
-  overflowY: "auto",
+  overflowY: css.overflow.auto,
   padding: `${theme.spacing.small}px`,
   background: theme.relative.darker,
   borderRadius: `${theme.radius.normal}px`
 }));
 
 const StylesGrid = styled("div")(({ theme }) => ({
-  display: "grid",
+  display: css.display.grid,
   gridTemplateColumns: "1fr 1fr",
   gap: `${theme.spacing.small}px`
 }));

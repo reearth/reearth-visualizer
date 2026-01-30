@@ -7,6 +7,7 @@ import {
 } from "@reearth/services/dataSource/builtin";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useCallback, useEffect, useMemo, useState, type JSX } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
@@ -102,13 +103,13 @@ const DataAttribution = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small
 }));
 
 const DataLink = styled("div")(({ theme }) => ({
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.bold,

@@ -9,6 +9,7 @@ import CommonField, {
 } from "@reearth/app/ui/fields/CommonField";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useState } from "react";
 
 import EditPanel from "./EditPanel";
@@ -92,7 +93,7 @@ const ZoomLevelField: FC<ZoomLevelFieldProps> = ({
 };
 
 const InputWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
   flexWrap: "wrap",
   width: "100%"

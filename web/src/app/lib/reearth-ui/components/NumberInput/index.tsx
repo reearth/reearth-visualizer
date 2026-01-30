@@ -1,4 +1,5 @@
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   useState,
   useCallback,
@@ -149,17 +150,17 @@ const Wrapper = styled("div", {
         : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
-    display: "flex",
+    display: css.display.flex,
     flex: 1,
     gap: theme.spacing.smallest,
-    alignItems: "center",
+    alignItems: css.alignItems.center,
     padding:
       size === "small"
         ? `0 ${theme.spacing.smallest}px`
         : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     boxShadow: theme.shadow.input,
     width: !extendWidth ? "" : "100%",
-    boxSizing: "border-box"
+    boxSizing: css.boxSizing.borderBox
   };
 });
 
@@ -178,9 +179,9 @@ const StyledInput = styled("input")<{
   cursor: disabled || appearance === "readonly" ? "not-allowed" : "auto",
   fontSize: fonts.sizes.body,
   lineHeight: `${fonts.lineHeights.body}px`,
-  textOverflow: "ellipsis",
+  textOverflow: css.textOverflow.ellipsis,
   pointerEvents: disabled ? "none" : "inherit",
-  overflow: "hidden",
+  overflow: css.overflow.hidden,
   "::placeholder": {
     color: theme.content.weak
   },

@@ -13,6 +13,7 @@ import { Role } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { Workspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useDebounce } from "react-use";
 
@@ -167,21 +168,21 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
 export default AddMemberModal;
 
 const ItemContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center,
   padding: `0 ${theme.spacing.normal}px`,
   fontSize: theme.fonts.sizes.body
 }));
 
 const UserInfo = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column"
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column
 }));
 
 const Warning = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.normal,
   color: theme.warning.main
 }));

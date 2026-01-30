@@ -1,5 +1,6 @@
 import { useDatasetTypes } from "@reearth/services/plateau/graphql";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { unionBy } from "lodash-es";
 import { FC, useMemo } from "react";
 
@@ -45,7 +46,7 @@ export default TypeBrowser;
 
 const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
-  overflow: "auto",
+  overflow: css.overflow.auto,
   padding: theme.spacing.smallest,
   ...theme.scrollBar
 }));

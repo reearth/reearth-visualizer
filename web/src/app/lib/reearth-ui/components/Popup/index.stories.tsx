@@ -1,4 +1,5 @@
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { Meta, StoryObj } from "@storybook/react-vite";
 import { FC, useCallback, useState } from "react";
 
@@ -55,9 +56,9 @@ const Content = styled("div")(() => ({
 }));
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center"
+  alignItems: css.alignItems.center
 }));
 
 export const BasicTrigger: Story = {
@@ -113,11 +114,11 @@ export const Placement: Story = {
       <div
         style={{
           height: 500,
-          display: "grid",
+          display: css.display.grid,
           gridTemplateRows: "1fr 1fr 1fr 1fr 1fr",
           gridTemplateColumns: "1fr 1fr 1fr",
           justifyItems: "center",
-          alignItems: "center"
+          alignItems: css.alignItems.center
         }}
       >
         <Popup {...args} trigger="top-start" placement="top-start" />

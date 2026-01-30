@@ -1,6 +1,7 @@
 import { Collapse } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 import { FileType } from "../Plugins/constants";
@@ -108,12 +109,12 @@ const Wrapper = styled("div")(({ theme }) => ({
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.normal
 }));
 
-const ErrorMessage = styled.p(({ theme }) => ({
+const ErrorMessage = styled("p")(({ theme }) => ({
   color: theme.content.weak,
   fontSize: theme.fonts.sizes.body
 }));

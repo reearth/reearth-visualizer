@@ -1,5 +1,6 @@
 import { Loading } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   brandBlue,
   brandRed
@@ -23,10 +24,10 @@ const RootPage: React.FC<Props> = ({ loading }) => {
 };
 
 const Wrapper = styled.div<{ bg?: string }>(({ bg }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   gap: 49,
   height: "100%",
   background:

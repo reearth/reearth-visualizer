@@ -1,4 +1,5 @@
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, ReactNode } from "react";
 
 import { IconName, Icon, IconProps } from "../Icon";
@@ -96,10 +97,10 @@ const StyledButton = styled("button", {
     background,
     theme
   }) => ({
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.row,
+    alignItems: css.alignItems.center,
+    justifyContent: css.justifyContent.center,
     gap: `${theme.spacing.small}px`,
     border:
       appearance === "simple"
@@ -160,7 +161,7 @@ const StyledButton = styled("button", {
       boxShadow: "none"
     },
     ["&:disabled"]: {
-      cursor: "not-allowed",
+      cursor: css.cursor.notAllowed,
       borderColor: "transparent",
       color: `${theme.content.weaker}`,
       backgroundColor:

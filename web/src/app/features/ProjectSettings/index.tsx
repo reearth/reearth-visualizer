@@ -9,6 +9,7 @@ import {
 } from "@reearth/app/ui/components/Sidebar";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 import CursorStatus from "../CursorStatus";
@@ -247,43 +248,43 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   height: "100%",
   width: "100%",
   color: theme.content.main,
   backgroundColor: theme.bg[0],
   ["*"]: {
-    boxSizing: "border-box"
+    boxSizing: css.boxSizing.borderBox
   },
   ...theme.scrollBar
 }));
 
 const MainSection = styled("div")(() => ({
-  display: "flex",
+  display: css.display.flex,
   flex: 1,
-  overflow: "auto",
-  position: "relative"
+  overflow: css.overflow.auto,
+  position: css.position.relative
 }));
 
 const LeftSidePanel = styled("div")(({ theme }) => ({
   width: DEFAULT_SIDEBAR_WIDTH,
   height: "100%",
   backgroundColor: theme.bg[1],
-  display: "flex",
+  display: css.display.flex,
   padding: `${theme.spacing.large}px 0`,
-  boxSizing: "border-box"
+  boxSizing: css.boxSizing.borderBox
 }));
 
 const Content = styled("div")<{ tab?: ProjectSettingsTab }>(
   ({ tab, theme }) => ({
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
+    position: css.position.relative,
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
     width: "100%",
     height: "100%",
-    alignItems: "center",
-    overflow: "auto",
+    alignItems: css.alignItems.center,
+    overflow: css.overflow.auto,
     padding: tab === "assets" ? 0 : `${theme.spacing.super}px`
   })
 );

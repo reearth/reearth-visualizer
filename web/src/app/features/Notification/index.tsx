@@ -1,5 +1,6 @@
 import { IconButton, Typography } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import useHooks from "./hooks";
@@ -59,9 +60,9 @@ const StyledNotificationBanner = styled("div")<{
   type?: NotificationType;
   visible?: boolean;
 }>(({ visible, type, theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  position: "absolute",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  position: css.position.absolute,
   top: 30,
   left: 0,
   right: 0,
@@ -90,8 +91,8 @@ const StyledNotificationBanner = styled("div")<{
 }));
 
 const HeadingArea = styled("div")(() => ({
-  display: "flex",
-  justifyContent: "space-between",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
   width: "100%"
 }));
 

@@ -1,6 +1,7 @@
 import { IconButton, IconName, PopupMenu } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { appearanceNodes } from "../appearanceNodes";
@@ -185,22 +186,22 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
 export default StyleNodeComp;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   borderRadius: theme.radius.small,
   width: "100%",
   background: "#ffffff08",
   gap: theme.spacing.micro,
-  alignItems: "flex-start",
+  alignItems: css.alignItems.flexStart,
   minHeight: 62,
   paddingLeft: theme.spacing.smallest,
-  overflow: "hidden"
+  overflow: css.overflow.hidden
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.spaceBetween,
   padding: `${theme.spacing.smallest}px ${theme.spacing.smallest}px 0 ${theme.spacing.smallest}px`,
   width: "100%"
 }));
@@ -209,15 +210,15 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap,
   flex: 1
 }));
 
 const Actions = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest
 }));
 
@@ -226,8 +227,8 @@ const OptionsWrapper = styled("div")(() => ({
 }));
 
 const ContentWrapper = styled("div")<{ active?: string }>(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   padding: theme.spacing.smallest,
   width: "100%"
 }));

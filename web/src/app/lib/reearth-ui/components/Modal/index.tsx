@@ -1,4 +1,5 @@
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useMemo, useRef } from "react";
 
 export type ModalProps = {
@@ -57,12 +58,12 @@ export const Modal: FC<ModalProps> = ({
 
 const Wrapper = styled("div")(({ theme }) => ({
   background: theme.bg.transparentBlack,
-  position: "fixed",
+  position: css.position.fixed,
   left: 0,
   top: 0,
   width: "100%",
   height: "100%",
-  overflow: "auto",
+  overflow: css.overflow.auto,
   opacity: 1,
   zIndex: theme.zIndexes.editor.modal.bg
 }));
@@ -72,9 +73,9 @@ const ContentWrapper = styled("div")<{ modalWidth?: number }>(
     margin: "0 auto",
     height: "100%",
     width: `${modalWidth}px`,
-    position: "relative",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center"
+    position: css.position.relative,
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
+    justifyContent: css.justifyContent.center
   })
 );

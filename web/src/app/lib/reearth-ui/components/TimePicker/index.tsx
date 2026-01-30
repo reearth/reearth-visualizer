@@ -1,4 +1,5 @@
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
 export type TimePickerProps = {
@@ -72,9 +73,9 @@ const Wrapper = styled("div")<{
         : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
-    display: "flex",
+    display: css.display.flex,
     gap: `${theme.spacing.smallest}px`,
-    alignItems: "center",
+    alignItems: css.alignItems.center,
     boxShadow: theme.shadow.input
   };
 });

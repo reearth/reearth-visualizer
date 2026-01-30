@@ -5,6 +5,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 type ConfirmModalProp = {
@@ -34,8 +35,8 @@ const ConfirmModal: FC<ConfirmModalProp> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   padding: theme.spacing.large,
   gap: theme.spacing.normal
 }));

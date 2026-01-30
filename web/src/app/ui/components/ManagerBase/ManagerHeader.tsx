@@ -6,6 +6,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   KeyboardEvent,
@@ -208,45 +209,45 @@ const Wrapper = styled("div")<{ size: ManagerHeaderSize }>(
   ({ theme, size }) => ({
     flex: 1,
     width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
+    justifyContent: css.justifyContent.spaceBetween,
     padding: size === "medium" ? theme.spacing.normal : theme.spacing.largest,
     minHeight: size === "medium" ? "56px" : "76px",
-    boxSizing: "border-box",
+    boxSizing: css.boxSizing.borderBox,
     flexGrow: 0
   })
 );
 
 const Actions = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small
 }));
 
 const Tools = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "flex-end",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.flexEnd,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.normal,
   flex: 1
 }));
 
 const Sort = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small,
   width: 200
 }));
 
 const Layouts = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small
 }));
 
 const Search = styled("div")<{ size: ManagerHeaderSize }>(
   ({ theme, size }) => ({
-    display: "flex",
+    display: css.display.flex,
     gap: theme.spacing.small,
     maxWidth: size === "large" ? 250 : undefined,
     flex: 1
@@ -254,8 +255,8 @@ const Search = styled("div")<{ size: ManagerHeaderSize }>(
 );
 
 const DeleteBar = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small,
   backgroundColor: theme.select.weak,
   borderRadius: theme.radius.small,

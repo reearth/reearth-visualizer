@@ -1,5 +1,6 @@
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import IndicatorSection from "./IndicatorSection";
@@ -38,6 +39,6 @@ const StoryPageIndicator: FC<Props> = ({
 export default StoryPageIndicator;
 
 const Wrapper = styled("div")(() => ({
-  display: "flex",
+  display: css.display.flex,
   height: "8px"
 }));

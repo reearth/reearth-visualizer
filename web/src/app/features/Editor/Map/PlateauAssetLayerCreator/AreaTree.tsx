@@ -1,6 +1,7 @@
 import { useAreas } from "@reearth/services/plateau/graphql";
 import { AreaType } from "@reearth/services/plateau/graphql/base/catalog/__gen__/graphql";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 import Loading from "./Loading";
@@ -45,7 +46,7 @@ export default AreaTree;
 
 const Wrapper = styled("div")(({ theme }) => ({
   height: "100%",
-  overflow: "auto",
+  overflow: css.overflow.auto,
   padding: theme.spacing.smallest,
   ...theme.scrollBar
 }));

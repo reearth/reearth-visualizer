@@ -1,5 +1,6 @@
 import { Button } from "@reearth/app/lib/reearth-ui";
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 const DEFAULT_PANEL_WIDTH = 286;
@@ -52,8 +53,8 @@ export const Panel: FC<PanelProps> = ({
 const Wrapper = styled("div")<{ width?: number }>(({ width, theme }) => ({
   width: `${width ?? DEFAULT_PANEL_WIDTH}px`,
   minWidth: "120px",
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
@@ -61,9 +62,9 @@ const Wrapper = styled("div")<{ width?: number }>(({ width, theme }) => ({
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center,
   alignSelf: "stretch",
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderBottom: `1px solid ${theme.outline.weak}`,

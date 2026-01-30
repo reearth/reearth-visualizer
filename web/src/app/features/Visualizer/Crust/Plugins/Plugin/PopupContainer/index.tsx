@@ -1,5 +1,6 @@
 import { computePosition, offset, autoUpdate } from "@floating-ui/dom";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   forwardRef,
   ForwardRefRenderFunction,
@@ -60,7 +61,7 @@ const PopupContainer: ForwardRefRenderFunction<
 };
 
 const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
-  position: "absolute",
+  position: css.position.absolute,
   visibility: visible ? "visible" : "hidden",
   zIndex: visible
     ? theme.zIndexes.visualizer.pluginPopup

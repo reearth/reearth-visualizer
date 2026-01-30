@@ -1,5 +1,6 @@
 import { Icon, IconName } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 export type TreeItemType = {
@@ -53,8 +54,8 @@ const Content = styled("div")<{
   disabled?: boolean;
   hasChildren?: boolean;
 }>(({ theme, selected, disabled, level }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest,
   cursor: disabled ? "not-allowed" : "pointer",
   padding: `${theme.spacing.smallest}px`,
@@ -62,7 +63,7 @@ const Content = styled("div")<{
   borderRadius: theme.radius.small,
   backgroundColor: selected ? theme.select.main : "transparent",
   color: selected ? theme.content.withBackground : theme.content.main,
-  userSelect: "none",
+  userSelect: css.userSelect.none,
   fontSize: theme.fonts.sizes.body,
 
   "&:hover":

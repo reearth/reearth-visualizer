@@ -1,6 +1,7 @@
 import { TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { FileType } from "./constants";
@@ -94,12 +95,12 @@ const FileListItem: FC<Props> = ({
 };
 
 const Wrapper = styled("li")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small,
   borderRadius: theme.radius.small,
-  cursor: "pointer"
+  cursor: css.cursor.pointer
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -107,9 +108,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap
 }));
 
 export default FileListItem;

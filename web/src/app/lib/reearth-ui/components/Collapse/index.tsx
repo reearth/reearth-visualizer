@@ -1,4 +1,5 @@
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
 
 import { Icon } from "../Icon";
@@ -74,7 +75,7 @@ export const Collapse: FC<CollapseProps> = ({
             size="body"
             weight={weight}
             otherProperties={{
-              whiteSpace: "nowrap"
+              whiteSpace: css.whiteSpace.nowrap
             }}
           >
             {title}
@@ -104,12 +105,12 @@ const StyledWrapper = styled("div")<{
   isCollapsed?: boolean;
   noShrink?: boolean;
 }>(({ theme, isCollapsed, noShrink }) => ({
-  position: "relative",
+  position: css.position.relative,
   borderRadius: `${theme.radius.small}px`,
   flexGrow: isCollapsed ? 0 : 1,
   flexShrink: noShrink ? 0 : 1,
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   minHeight: 0
 }));
 
@@ -120,7 +121,7 @@ const StyledHeader = styled("div")<{
   iconPosition?: "left" | "right";
   disabled?: boolean;
 }>(({ headerBg, size, isCollapsed, iconPosition, disabled, theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   flexDirection: iconPosition === "left" ? "row-reverse" : "row",
   borderRadius: isCollapsed
     ? `${theme.radius.small}px`
@@ -134,24 +135,24 @@ const StyledHeader = styled("div")<{
   minHeight: size === "normal" ? "34px" : "28px",
   gap: iconPosition === "left" ? "8px" : "0px",
   justifyContent: iconPosition === "left" ? "flex-end" : "space-between",
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   color: `${theme.content.main}`,
   cursor: disabled ? "auto" : "pointer",
   backgroundColor: headerBg ? headerBg : `${theme.bg[1]}`,
   fontSize: 0,
-  boxSizing: "border-box"
+  boxSizing: css.boxSizing.borderBox
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small,
-  overflow: "hidden"
+  overflow: css.overflow.hidden
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.micro
 }));
 
@@ -160,7 +161,7 @@ const ChildWrapper = styled("div")<{
   background?: string;
   noPadding?: boolean;
 }>(({ size, background, noPadding, theme }) => ({
-  position: "relative",
+  position: css.position.relative,
   backgroundColor: background ? background : `${theme.bg[1]}`,
   padding: noPadding
     ? 0
@@ -171,10 +172,10 @@ const ChildWrapper = styled("div")<{
         : `${theme.spacing.small}px`,
   borderRadius: `0px 0px ${theme.radius.small}px ${theme.radius.small}px`,
   flexGrow: 1,
-  display: "flex",
-  flexDirection: "column",
-  overflowY: "auto",
-  overflowX: "hidden"
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  overflowY: css.overflow.auto,
+  overflowX: css.overflow.hidden
 }));
 
 const IconWrapper = styled("div")<{
@@ -192,7 +193,7 @@ const IconWrapper = styled("div")<{
   transition: "rotate 0.2s ease-in",
   width: 16,
   height: 16,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center"
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center
 }));

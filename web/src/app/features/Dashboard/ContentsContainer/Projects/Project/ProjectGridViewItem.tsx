@@ -6,6 +6,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import ProjectRemoveModal from "../ProjectRemoveModal";
@@ -147,8 +148,8 @@ const ProjectGridViewItem: FC<ProjectProps> = ({
 export default ProjectGridViewItem;
 
 const Card = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   height: "220px",
   "@media (max-width: 567px)": {
     height: "171px"
@@ -161,20 +162,20 @@ const CardImage = styled("div")<{
   isHovered: boolean;
 }>(({ theme, backgroundImage, isHovered }) => ({
   flex: 1,
-  position: "relative",
+  position: css.position.relative,
   background: backgroundImage ? `url(${backgroundImage}) center/cover` : "",
   backgroundColor: theme.bg[1],
   borderRadius: theme.radius.normal,
-  boxSizing: "border-box",
-  cursor: "pointer",
+  boxSizing: css.boxSizing.borderBox,
+  cursor: css.cursor.pointer,
   boxShadow: `inset 0 0 0 1px ${isHovered ? theme.outline.weak : "transparent"}`
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small + 2,
-  position: "absolute",
+  position: css.position.absolute,
   top: "10px",
   right: "10px"
 }));
@@ -203,8 +204,8 @@ const StarButtonWrapper = styled("div")<{
 }));
 
 const CardFooter = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest,
   padding: `0 ${theme.spacing.smallest}`
 }));
@@ -227,9 +228,9 @@ const CardTitle = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   display: "-webkit-box",
-  WebkitBoxOrient: "vertical",
-  WebkitLineClamp: 1,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  cursor: "pointer"
+  WebkitBoxOrient: css.webkitBoxOrient.vertical,
+  WebkitLineClamp: css.webkitLineClamp["1"],
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  cursor: css.cursor.pointer
 }));

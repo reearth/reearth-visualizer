@@ -6,6 +6,7 @@ import {
 import { Panel } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useSetAtom } from "jotai";
 import { FC, useCallback, useMemo, useState } from "react";
 
@@ -154,8 +155,8 @@ const LayersPanel: FC = () => {
 export default LayersPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small,
   paddingTop: theme.spacing.smallest,
   height: "100%"
@@ -163,9 +164,9 @@ const Wrapper = styled("div")(({ theme }) => ({
 
 const LayersContainer = styled("div")(() => ({
   flex: 1,
-  overflowY: "auto",
-  display: "flex",
-  flexDirection: "column"
+  overflowY: css.overflow.auto,
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column
 }));
 
 const EmptySpace = styled("div")(() => ({
