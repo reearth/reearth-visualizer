@@ -130,6 +130,7 @@
     "@rot1024/use-transition": "1.0.0",
     "@sentry/browser": "7.77.0",
     "@seznam/compose-react-refs": "1.0.6",
+    "@turf/turf": "7.3.2",
     "@types/google.maps": "3.58.1",
     "@ungap/event-target": "0.2.4",
     "apollo-link-sentry": "3.2.3",

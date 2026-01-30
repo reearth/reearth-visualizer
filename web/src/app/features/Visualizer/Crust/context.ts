@@ -1,5 +1,9 @@
 import { Camera } from "@reearth/app/utils/value";
-import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
+import {
+  TimelineManagerRef,
+  TimelineCommitter,
+  SketchType
+} from "@reearth/core";
 import { NLSLayer } from "@reearth/services/api/layer";
 import { RefObject, useMemo } from "react";
 
@@ -43,6 +47,7 @@ export function widgetContextFromMapRef({
 }): WidgetContext {
   const engine = () => mapRef?.current?.engine;
   const layers = () => mapRef?.current?.layers;
+  const sketch = () => mapRef?.current?.sketch;
 
   return {
     get clock() {
@@ -70,6 +75,8 @@ export function widgetContextFromMapRef({
     onCameraOrbit: (...args) => engine()?.orbit(...args),
     onCameraRotateRight: (...args) => engine()?.rotateRight(...args),
     onFlyTo: (...args) => engine()?.flyTo(...args),
+    onFlyToGround: (...args) => engine()?.flyToGround(...args),
+    onMoveForward: (...args) => engine()?.moveForward(...args),
     onLookAt: (...args) => engine()?.lookAt(...args),
     onLayerSelect: (layerId, featureId, options) => {
       layers()?.selectFeatures(
@@ -122,6 +129,24 @@ export function widgetContextFromMapRef({
       }),
     onZoomIn: (...args) => engine()?.zoomIn(...args),
     onZoomOut: (...args) => engine()?.zoomOut(...args),
-    getCredits: () => engine()?.getCredits()
+    getCredits: () => engine()?.getCredits(),
+    onSketchSetType: (
+      type: SketchType | undefined,
+      from: "plugin" | "editor"
+    ) => {
+      if (from === "plugin") sketch()?.setType?.(type, from);
+      sketch()?.overrideOptions?.({
+        autoResetInteractionMode: false
+      });
+    },
+    onLayerAdd: (...args) => {
+      return layers()?.add(...args);
+    },
+    onLayerOverride: (...args) => {
+      layers()?.override(...args);
+    },
+    onLayerDelete: (...args) => {
+      layers()?.deleteLayer(...args);
+    }
   };
 }
