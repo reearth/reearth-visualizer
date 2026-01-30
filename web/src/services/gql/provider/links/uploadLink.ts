@@ -1,4 +1,3 @@
-// @ts-expect-error - apollo-upload-client/createUploadLink.mjs doesn't have type definitions
 import createUploadLink from "apollo-upload-client/createUploadLink.mjs";
 
 type RequestInitWithTimeout = RequestInit & { __timeout?: number };
