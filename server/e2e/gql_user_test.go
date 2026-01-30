@@ -102,23 +102,46 @@ func baseSeederUser(ctx context.Context, r *repo.Container, f gateway.File) erro
 
 func TestSearchUser(t *testing.T) {
 	e, _ := StartGQLServerAndRepos(t, baseSeederUser)
-	query := fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, "e2e")
-	request := GraphQLRequest{
-		Query: query,
-	}
-	o := Request(e, uId1.String(), request).Object().Value("data").Object().Value("searchUser").Object()
-	o.Value("id").String().IsEqual(uId1.String())
-	o.Value("name").String().IsEqual("e2e")
-	o.Value("email").String().IsEqual("e2e@e2e.com")
 
-	query = fmt.Sprintf(` { searchUser(nameOrEmail: "%s"){ id name email } }`, "notfound")
-	request = GraphQLRequest{
-		Query: query,
-	}
-	resp := Request(e, uId1.String(), request).Object()
-	resp.Value("data").Object().Value("searchUser").IsNull()
+    tests := []struct {
+		name string
+        input string
+        wantFound bool
+    }{
+        {
+			name: "exact match",
+            input:     "e2e",
+            wantFound:   true,
+        },
+        {
+			name: "trimming space",
+            input:     " e2e",
+            wantFound:   true,
+        },
+        {
+			name: "not found",
+            input:   "notfound",
+            wantFound: false,
+        },
+    }
 
-	resp.NotContainsKey("errors") // not exist
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            query := fmt.Sprintf(`{ searchUser(nameOrEmail: "%s"){ id name email } }`,tt.input)
+            request := GraphQLRequest{ Query: query }
+            resp := Request(e, uId1.String(), request).Object().Value("data").Object()
+
+            if tt.wantFound {
+				o := resp.Value("searchUser").Object()
+                o.Value("id").String().IsEqual(uId1.String())
+                o.Value("name").String().IsEqual("e2e")
+                o.Value("email").String().IsEqual("e2e@e2e.com")
+            } else {
+				resp.Value("searchUser").IsNull()
+                resp.NotContainsKey("errors")
+            }
+        })
+    }	
 }
 
 func TestNode(t *testing.T) {
