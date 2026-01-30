@@ -137,7 +137,7 @@ test.describe("Photo Overlay Feature", () => {
     await projectScreen.clickLayer(layerName);
     await page.waitForTimeout(1000);
     await photoOverlay.goToPhotoOverlaySettingsTab();
-    const switchEl = page.locator('[role="switch"]').last();
+    const switchEl = page.getByTestId("switcher");
     await expect(switchEl).toBeVisible();
     await switchEl.click();
     await page.waitForTimeout(3000);

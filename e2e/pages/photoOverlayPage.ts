@@ -62,7 +62,11 @@ export class PhotoOverlayPage {
     await this.transparencySlider.waitFor({ state: "visible" });
     const rail = this.transparencyPanel.locator(".rc-slider");
     const box = await rail.boundingBox();
-    if (!box) return;
+    if (!box) {
+      throw new Error(
+        `Failed to set transparency: slider rail bounding box is null for requested percent ${percent}.`
+      );
+    }
     const targetX = box.x + box.width * (percent / 100);
     const targetY = box.y + box.height / 2;
     await this.transparencySlider.hover();
