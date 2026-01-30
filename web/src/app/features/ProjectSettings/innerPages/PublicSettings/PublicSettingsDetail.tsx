@@ -183,7 +183,12 @@ const PublicSettingsDetail: FC<Props> = ({
   );
   const enableCustomDomainExtension =
     !!workspacePolicyCheckResultData?.workspacePolicyCheck
-      ?.enableToCreatePrivateProject;
+      ?.enableCustomDomainCreation;
+
+  // Memo: We don't provide UI for overCustomDomainCount limit now.
+  // const overCustomDomainCount =
+  //   !!workspacePolicyCheckResultData?.workspacePolicyCheck
+  //     ?.overCustomDomainCount;
 
   return (
     <SettingsWrapper>
