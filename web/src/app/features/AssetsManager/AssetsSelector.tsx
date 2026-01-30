@@ -33,18 +33,20 @@ const AssetsSelector: FC<AssetsSelectorProps> = ({
   }, [selectedAssets, onAssetSelect, onClose]);
 
   return (
-    <Modal size="large" visible={!!opened}>
+    <Modal size="large" visible={!!opened} dataTestid="asset-selector-modal">
       <ModalPanel
         title={t("Select Asset")}
         onCancel={onClose}
+        dataTestid="asset-selector-panel"
         actions={
           <>
-            <Button onClick={onClose} size="normal" title={t("Cancel")} />
+            <Button onClick={onClose} size="normal" title={t("Cancel")} data-testid="asset-selector-cancel-btn" />
             <Button
               size="normal"
               title="Select"
               appearance="primary"
               onClick={handleSelectFinish}
+              data-testid="asset-selector-select-btn"
             />
           </>
         }
