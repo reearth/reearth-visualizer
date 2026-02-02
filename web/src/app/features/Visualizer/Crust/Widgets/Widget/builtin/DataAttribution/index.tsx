@@ -5,7 +5,7 @@ import {
   BUILTIN_DATA_SOURCES,
   BuiltinDataSourceName
 } from "@reearth/services/dataSource/builtin";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { useCallback, useEffect, useMemo, useState, type JSX } from "react";
 

@@ -10,7 +10,7 @@ import { TextInput, Button, TextInputProps } from "@reearth/app/lib/reearth-ui";
 import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   useNotification,
   useProjectId,

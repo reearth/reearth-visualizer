@@ -10,7 +10,7 @@ import {
   TextInput
 } from "@reearth/app/lib/reearth-ui";
 import ConfirmModal from "@reearth/app/ui/components/ConfirmModal";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import {
   Dispatch,

@@ -6,7 +6,7 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useState } from "react";

@@ -14,7 +14,7 @@ import {
   getPhotoOverlayValue
 } from "@reearth/app/utils/sketch";
 import { Camera } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { useAtom } from "jotai";
 import { RESET } from "jotai/utils";
@@ -207,7 +207,7 @@ const PhotoOverlayEditor: FC = () => {
   return (
     <Wrapper>
       <InteractiveWrapper>
-        <Panel width={233}>
+        <Panel width={233} dataTestid="photooverlay-transparency-panel">
           <FieldsWrapper>
             <SliderField
               title={t("Photo transparency")}
@@ -225,14 +225,16 @@ const PhotoOverlayEditor: FC = () => {
           width={270}
           title={t("PhotoOverlay settings")}
           onCancel={handleCancel}
+          dataTestid="photooverlay-editor-panel"
           actions={
             <ActionWrapper>
-              <Button title={t("Cancel")} extendWidth onClick={handleCancel} />
+              <Button title={t("Cancel")} extendWidth onClick={handleCancel} data-testid="photooverlay-cancel-btn" />
               <Button
                 title={t("Submit")}
                 extendWidth
                 onClick={handleSave}
                 disabled={!preview?.value}
+                data-testid="photooverlay-submit-btn"
               />
             </ActionWrapper>
           }

@@ -1,6 +1,6 @@
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/app/ui/components/Sidebar";
 import WarningBanner from "@reearth/ee/features/WarningBanner";
-import { useLang, useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 

@@ -1,6 +1,6 @@
 import { Icon, IconButton, Typography } from "@reearth/app/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/app/utils/time";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
@@ -52,7 +52,7 @@ const AssetListItem: FC<AssetItemProps> = ({
   const formattedSize = useMemo(() => formatBytes(asset.size), [asset.size]);
 
   return (
-    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick}>
+    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick} data-testid={`asset-list-item-${asset.id}`}>
       <Thumbnail>
         <Icon
           icon={type === "image" ? "image" : "fileFilled"}

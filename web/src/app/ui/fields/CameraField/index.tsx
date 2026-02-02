@@ -10,7 +10,7 @@ import CommonField, {
 } from "@reearth/app/ui/fields/CommonField";
 import type { Camera } from "@reearth/app/utils/value";
 import type { FlyTo } from "@reearth/core";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
 import { useCallback, useState, FC } from "react";
 

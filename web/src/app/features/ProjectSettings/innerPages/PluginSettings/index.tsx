@@ -1,7 +1,7 @@
 import { TabItem, Tabs } from "@reearth/app/lib/reearth-ui";
 import { Extension } from "@reearth/services/config/extensions";
 import { ScenePlugin } from "@reearth/services/gql";
-import { useT, useLang } from "@reearth/services/i18n";
+import { useT, useLang } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { useMemo } from "react";
 

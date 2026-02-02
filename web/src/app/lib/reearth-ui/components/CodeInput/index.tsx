@@ -1,5 +1,5 @@
 import MonacoEditor, { OnMount } from "@monaco-editor/react";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { fonts, styled, useTheme } from "@reearth/services/theme";
 import { FC, useMemo, useCallback, useState, useEffect } from "react";
 

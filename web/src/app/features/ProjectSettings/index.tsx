@@ -7,7 +7,7 @@ import {
   SidebarWrapper,
   SidebarButtonsWrapper
 } from "@reearth/app/ui/components/Sidebar";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 
@@ -112,9 +112,10 @@ const ProjectSettings: FC<ProjectSettingsProps> = ({
             path: `/settings/projects/${projectId}/public`,
             active: tab === "public" && !subId
           },
+          // Memo: we only have one story now
           ...stories.map((s) => ({
             id: s.id,
-            text: `${t("Story")} ${s.title}`,
+            text: t("Story"),
             path: `/settings/projects/${projectId}/public/${s.id}`,
             active: tab === "public" && subId === s.id
           }))

@@ -4,7 +4,7 @@ import useHooks, {
 import useTimelineBlock from "@reearth/app/features/Visualizer/shared/hooks/useTimelineBlock";
 import { PaddingProp } from "@reearth/app/features/Visualizer/shared/types";
 import { Icon, Popup } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
 
 import { TimelineValues } from ".";

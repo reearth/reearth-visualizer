@@ -10,7 +10,7 @@ import {
   useStoryMutations
 } from "@reearth/services/api/storytelling";
 import { toPublishmentStatus } from "@reearth/services/api/utils";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { MouseEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project as ProjectType } from "../../../type";

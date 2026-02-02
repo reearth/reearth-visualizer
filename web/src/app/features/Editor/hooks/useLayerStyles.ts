@@ -3,7 +3,7 @@ import {
   useLayerStyleMutations,
   useLayerStyles
 } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useMemo, useState } from "react";
 
 type LayerStyleProps = {

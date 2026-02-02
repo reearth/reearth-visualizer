@@ -1,6 +1,6 @@
 import { useProject } from "@reearth/services/api/project";
 import { useWorkspaces, useWorkspace } from "@reearth/services/api/workspace";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import {
   useProjectId,
   useWorkspace as useWorkspaceState

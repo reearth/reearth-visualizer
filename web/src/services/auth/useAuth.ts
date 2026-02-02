@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 
 import { useAuth0Auth } from "./auth0Auth";
-import { AuthContext } from "./authProvider";
+import { AuthContext } from "./context";
 
 export const errorKey = "reeartherror";
 
