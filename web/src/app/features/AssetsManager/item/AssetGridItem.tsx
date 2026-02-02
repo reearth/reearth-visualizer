@@ -45,7 +45,7 @@ const AssetGridItem: FC<AssetItemProps> = ({
   );
 
   return (
-    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick}>
+    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick} data-testid={`asset-grid-item-${asset.id}`}>
       <ThumbnailWrapper>
         <Thumbnail>
           {type === "image" ? (

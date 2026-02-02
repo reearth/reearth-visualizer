@@ -53,7 +53,7 @@ const AssetListItem: FC<AssetItemProps> = ({
   const formattedSize = useMemo(() => formatBytes(asset.size), [asset.size]);
 
   return (
-    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick}>
+    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick} data-testid={`asset-list-item-${asset.id}`}>
       <Thumbnail>
         <Icon
           icon={type === "image" ? "image" : "fileFilled"}
