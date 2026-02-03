@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.14.3 - 2026-02-03
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up to 1.0.0-beta.14.3 ([#2043](https://github.com/reearth/reearth-visualizer/pull/2043)) [`ed74ad`](https://github.com/reearth/reearth-visualizer/commit/ed74ad)
+
 ## 1.0.0-beta.14.2 - 2026-02-02
 
 ### Web
