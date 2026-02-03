@@ -40,7 +40,6 @@ type Props = {
   isEditable?: boolean;
   isAutoScrolling?: RefObject<boolean>;
   scrollTimeoutRef: RefObject<ReturnType<typeof setTimeout> | undefined>;
-  resetKey?: string | number;
   children?: ReactNode;
   onCurrentPageChange?: (
     pageId: string,
@@ -96,7 +95,6 @@ const StoryPanel: FC<Props> = ({
   isEditable,
   scrollTimeoutRef,
   isAutoScrolling,
-  resetKey,
   children,
   onCurrentPageChange,
   onPageSettingsToggle,
@@ -145,8 +143,7 @@ const StoryPanel: FC<Props> = ({
 
   const isActive = useElementOnScreen({
     wrapperRef,
-    elementRef: pageRef,
-    resetKey
+    elementRef: pageRef
   });
 
   // Debounce timer for page changes to prevent rapid switching

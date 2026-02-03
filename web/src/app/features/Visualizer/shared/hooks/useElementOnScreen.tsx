@@ -1,19 +1,32 @@
-import { useEffect, useState, RefObject } from "react";
+import { useEffect, useState, RefObject, useRef } from "react";
 
 interface UseElementOnScreenProps {
   wrapperRef: RefObject<HTMLElement | null>;
   elementRef: RefObject<HTMLElement | null>;
   threshold?: number; // Default 0.5 (50% of wrapper height)
-  resetKey?: string | number; // Optional key to force reset of observers
 }
 
 export const useElementOnScreen = ({
   wrapperRef,
   elementRef,
-  threshold = 0.5,
-  resetKey
+  threshold = 0.5
 }: UseElementOnScreenProps) => {
   const [isActive, setIsActive] = useState(false);
+  const [updateCounter, setUpdateCounter] = useState(0);
+  const prevWrapperRef = useRef<HTMLElement | null>(null);
+  const prevElementRef = useRef<HTMLElement | null>(null);
+
+  // Check if refs have changed and trigger update
+  useEffect(() => {
+    if (
+      wrapperRef.current !== prevWrapperRef.current ||
+      elementRef.current !== prevElementRef.current
+    ) {
+      prevWrapperRef.current = wrapperRef.current;
+      prevElementRef.current = elementRef.current;
+      setUpdateCounter((c) => c + 1);
+    }
+  });
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -52,7 +65,7 @@ export const useElementOnScreen = ({
       wrapper.removeEventListener("scroll", checkVisibility);
       resizeObserver.disconnect();
     };
-  }, [wrapperRef, elementRef, threshold, resetKey]);
+  }, [updateCounter, threshold]);
 
   return isActive;
 };
