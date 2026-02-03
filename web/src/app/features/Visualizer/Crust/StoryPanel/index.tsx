@@ -176,6 +176,7 @@ export const StoryPanel = memo(
                       showingIndicator={!!pageInfo}
                       isAutoScrolling={isAutoScrolling}
                       isEditable={isEditable}
+                      scrollResetKey={isEditable ? "editor" : "viewer"}
                       onPageSettingsToggle={handlePageSettingsToggle}
                       onPageSelect={handlePageSelect}
                       onCurrentPageChange={handleCurrentPageChange}
