@@ -10,18 +10,13 @@ import { useEffect, FC, useCallback, useRef } from "react";
 import { LayerStyleAddProps } from "../../../hooks/useLayerStyles";
 
 import {
-  defaultStyle,
+  basicGeometryPresets,
+  geojsonPresets,
   professionalStyle,
-  pointStyle,
-  pointWithLabelStyle,
-  polylineStyle,
-  polygonStyle,
-  extrudedPolygonStyle,
-  threeDTilesStyle,
-  simpleStyle,
-  colorBuildingsByHeight,
-  getLayerStyleName
-} from "./presetLayerStyles";
+  defaultStyle,
+  plateauPresets
+} from "./presets";
+import { getLayerStyleName } from "./utils";
 
 type PresetLayerStyleProps = {
   layerStyles: LayerStyle[] | undefined;
@@ -69,95 +64,57 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
       dataTestid: "preset-style-empty"
     },
     {
-      id: "default",
-      title: "Default",
-      onClick: () => handleLayerStyleAddition(defaultStyle, "Default"),
-      dataTestid: "preset-style-default"
-    },
-    {
-      id: "professional",
-      title: "Professional",
+      id: defaultStyle.id,
+      title: defaultStyle.title,
       onClick: () =>
-        handleLayerStyleAddition(professionalStyle, "Professional"),
-      dataTestid: "preset-style-professional"
+        handleLayerStyleAddition(defaultStyle.style, defaultStyle.title),
+      dataTestid: defaultStyle.testId
     },
     {
-      id: "basicGeometry",
-      title: "Basic Geometry",
-      icon: "folderSimple",
-      dataTestid: "preset-style-basic-geometry",
-      subItem: [
-        {
-          id: "point",
-          title: "Points",
-          onClick: () => handleLayerStyleAddition(pointStyle, "Points"),
-          dataTestid: "preset-style-points"
-        },
-        {
-          id: "pointWithLabel",
-          title: "Point with label",
-          onClick: () =>
-            handleLayerStyleAddition(pointWithLabelStyle, "Point_with_label"),
-          dataTestid: "preset-style-point-with-label"
-        },
-        {
-          id: "polyline",
-          title: "Polyline",
-          onClick: () => handleLayerStyleAddition(polylineStyle, "Polyline"),
-          dataTestid: "preset-style-polyline"
-        },
-        {
-          id: "polygon",
-          title: "Polygon",
-          onClick: () => handleLayerStyleAddition(polygonStyle, "Polygon"),
-          dataTestid: "preset-style-polygon"
-        },
-        {
-          id: "extrudedPolygon",
-          title: "Extruded polygon",
-          onClick: () =>
-            handleLayerStyleAddition(extrudedPolygonStyle, "Extruded_polygon"),
-          dataTestid: "preset-style-extruded-polygon"
-        },
-        {
-          id: "threedTiles",
-          title: "3D Tiles",
-          onClick: () => handleLayerStyleAddition(threeDTilesStyle, "3D_tiles"),
-          dataTestid: "preset-style-3d-tiles"
-        }
-      ]
+      id: professionalStyle.id,
+      title: professionalStyle.title,
+      onClick: () =>
+        handleLayerStyleAddition(
+          professionalStyle.style,
+          professionalStyle.title
+        ),
+      dataTestid: professionalStyle.testId
     },
     {
-      id: "geojson",
-      title: "GeoJSON",
+      id: basicGeometryPresets.id,
+      title: basicGeometryPresets.title,
       icon: "folderSimple",
-      dataTestid: "preset-style-geojson",
-      subItem: [
-        {
-          id: "simpleStyle",
-          title: "Simple Style",
-          onClick: () => handleLayerStyleAddition(simpleStyle, "Simple_style"),
-          dataTestid: "preset-style-simple-style"
-        }
-      ]
+      dataTestid: basicGeometryPresets.testId,
+      subItem: basicGeometryPresets.subs.map((sub) => ({
+        id: sub.id,
+        title: sub.title,
+        onClick: () => handleLayerStyleAddition(sub.style, sub.title),
+        dataTestid: sub.testId
+      }))
     },
     {
-      id: "plateau",
-      title: "Plateau",
+      id: geojsonPresets.id,
+      title: geojsonPresets.title,
       icon: "folderSimple",
-      dataTestid: "preset-style-plateau",
-      subItem: [
-        {
-          id: "colorBuilding",
-          title: "Color buildings by height",
-          onClick: () =>
-            handleLayerStyleAddition(
-              colorBuildingsByHeight,
-              "Color_buildings_by_height"
-            ),
-          dataTestid: "preset-style-color-buildings"
-        }
-      ]
+      dataTestid: geojsonPresets.testId,
+      subItem: geojsonPresets.subs.map((sub) => ({
+        id: sub.id,
+        title: sub.title,
+        onClick: () => handleLayerStyleAddition(sub.style, sub.title),
+        dataTestid: sub.testId
+      }))
+    },
+    {
+      id: plateauPresets.id,
+      title: plateauPresets.title,
+      icon: "folderSimple",
+      dataTestid: plateauPresets.testId,
+      subItem: plateauPresets.subs.map((sub) => ({
+        id: sub.id,
+        title: sub.title,
+        onClick: () => handleLayerStyleAddition(sub.style, sub.title),
+        dataTestid: sub.testId
+      }))
     }
   ];
 
