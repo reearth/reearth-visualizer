@@ -4,12 +4,14 @@ interface UseElementOnScreenProps {
   wrapperRef: RefObject<HTMLElement | null>;
   elementRef: RefObject<HTMLElement | null>;
   threshold?: number; // Default 0.5 (50% of wrapper height)
+  resetKey?: string | number; // Optional key to force reset of observers
 }
 
 export const useElementOnScreen = ({
   wrapperRef,
   elementRef,
-  threshold = 0.5
+  threshold = 0.5,
+  resetKey
 }: UseElementOnScreenProps) => {
   const [isActive, setIsActive] = useState(false);
 
@@ -50,7 +52,7 @@ export const useElementOnScreen = ({
       wrapper.removeEventListener("scroll", checkVisibility);
       resizeObserver.disconnect();
     };
-  }, [wrapperRef, elementRef, threshold]);
+  }, [wrapperRef, elementRef, threshold, resetKey]);
 
   return isActive;
 };
