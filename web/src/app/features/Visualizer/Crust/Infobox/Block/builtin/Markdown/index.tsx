@@ -2,6 +2,7 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import { CommonBlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useMemo } from "react";
 import ReactMarkdown from "react-markdown";
 import gfm from "remark-gfm";
@@ -75,7 +76,7 @@ export default MarkdownBlock;
 
 const Wrapper = styled("div")(() => ({
   width: "100%",
-  position: "relative",
+  position: css.position.relative,
   ["*"]: {
     maxWidth: "100%",
     height: "auto"
@@ -84,7 +85,7 @@ const Wrapper = styled("div")(() => ({
 
 const MarkdownWrapper = styled("div")(() => ({
   "@media (prefers-color-scheme: dark)": {
-    all: "unset"
+    all: css.all.unset
   },
   "& ul": {
     listStyleType: "initial"

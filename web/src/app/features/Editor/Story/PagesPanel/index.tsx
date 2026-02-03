@@ -2,6 +2,7 @@ import { Button, DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useStoryPage } from "../context";
@@ -101,12 +102,12 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 export default PagesPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   height: "100%",
   gap: theme.spacing.normal,
-  overflowY: "auto",
-  boxSizing: "border-box"
+  overflowY: css.overflow.auto,
+  boxSizing: css.boxSizing.borderBox
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({

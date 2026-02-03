@@ -14,6 +14,7 @@ import {
 import { AssetField } from "@reearth/app/ui/fields";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { DataProps, SourceType, DataSourceOptType } from "..";
@@ -157,9 +158,9 @@ const CSV: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 };
 
 const Warning = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center"
+  alignItems: css.alignItems.center
 }));
 
 const TextWrapper = styled("div")(({ theme }) => ({
@@ -174,9 +175,9 @@ const IconWrapper = styled(Icon)(() => ({
 }));
 
 const CoordinateWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   width: "100%"
 }));
 

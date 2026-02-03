@@ -1,5 +1,6 @@
 import useVideoAspectRatio from "@reearth/app/features/Visualizer/hooks/useVideoAspectRatio";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 import Player from "react-player";
 
@@ -49,12 +50,12 @@ const Wrapper = styled("div")<{ aspectRatio: number }>`
 const Overlay = styled("div")(() => ({
   width: "100%",
   height: "100%",
-  position: "absolute",
+  position: css.position.absolute,
   top: 0
 }));
 
 const StyledPlayer = styled(Player)({
-  position: "absolute",
+  position: css.position.absolute,
   top: 0,
   left: 0
 });

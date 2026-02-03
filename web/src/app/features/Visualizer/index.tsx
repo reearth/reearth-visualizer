@@ -22,6 +22,7 @@ import {
 import type { NLSLayer } from "@reearth/services/api/layer";
 import { config } from "@reearth/services/config";
 import { WidgetAreaState } from "@reearth/services/state";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MutableRefObject, SetStateAction, useRef } from "react";
 
 import { VISUALIZER_CORE_DOM_ID } from "./constaints";
@@ -345,8 +346,8 @@ const Wrapper = styled("div")<{
   storyPanelPosition?: Position;
   isMobile: boolean;
 }>(({ storyPanelPosition, isMobile, theme }) => ({
-  display: "flex",
-  position: "relative",
+  display: css.display.flex,
+  position: css.position.relative,
   flexDirection: isMobile
     ? "column-reverse"
     : storyPanelPosition === "right"
@@ -355,17 +356,17 @@ const Wrapper = styled("div")<{
   background: theme.bg[0],
   width: "100%",
   height: "100%",
-  overflow: "hidden"
+  overflow: css.overflow.hidden
 }));
 
 const StoryWrapper = styled("div")(() => ({
-  display: "flex",
-  position: "relative",
+  display: css.display.flex,
+  position: css.position.relative,
   flexShrink: 0
 }));
 
 const CoreWrapper = styled("div")(() => ({
-  position: "relative",
+  position: css.position.relative,
   minHeight: 0,
   flex: 1
 }));

@@ -10,12 +10,12 @@ import LayerStylePanel from "./LayerStylePanel";
 import MapGoogleSearch from "./MapGoogleSearch";
 import PhotoOverlayEditor from "./PhotoOverlayEditor";
 import ScenePanel from "./ScenePanel";
+import SketchToolsPanel from "./SketchToolsPanel";
 import {
   photoOverlayEditingFeatureAtom,
   PhotoOverlayPreviewAtom,
   SketchFeatureTooltipAtom
 } from "./state";
-import SketchToolsPanel from "./SketchToolsPanel";
 
 const Map: FC = () => {
   const { handleVisualizerResize, handleSketchGeometryEditCancel } =
