@@ -22,6 +22,7 @@ export type Props = {
   showingIndicator?: boolean;
   isAutoScrolling?: MutableRefObject<boolean>;
   isEditable?: boolean;
+  scrollResetKey?: string | number;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onCurrentPageChange?: (
@@ -77,6 +78,7 @@ const StoryContent: FC<Props> = ({
   showingIndicator,
   isAutoScrolling,
   isEditable,
+  scrollResetKey,
   onPageSettingsToggle,
   onPageSelect,
   onCurrentPageChange,
@@ -124,6 +126,7 @@ const StoryContent: FC<Props> = ({
           isEditable={isEditable}
           scrollTimeoutRef={scrollTimeoutRef}
           isAutoScrolling={isAutoScrolling}
+          scrollResetKey={scrollResetKey}
           onCurrentPageChange={onCurrentPageChange}
           onPageSettingsToggle={onPageSettingsToggle}
           onPageSelect={onPageSelect}
