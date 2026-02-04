@@ -8,6 +8,7 @@ import {
 import { TIMEZONE_OFFSETS } from "@reearth/app/utils/time";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import useHooks from "./hooks";
@@ -104,16 +105,16 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
 };
 
 const EditorWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   width: "100%",
   gap: theme.spacing.normal
 }));
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.flexStart,
   gap: theme.spacing.small
 }));
 
@@ -127,9 +128,9 @@ const InputWrapper = styled("div")(() => ({
   width: "100%"
 }));
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  alignItems: css.alignItems.flexStart,
   gap: theme.spacing.small
 }));
 

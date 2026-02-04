@@ -5,6 +5,7 @@ import { Panel } from "@reearth/app/ui/layout";
 import { SketchType } from "@reearth/core";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useSetAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -260,9 +261,9 @@ const SketchToolsPanel: FC = () => {
 export default SketchToolsPanel;
 
 const SketchToolsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "flex-start",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.flexStart,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest
 }));
 
@@ -272,7 +273,7 @@ const Divider = styled("div")(({ theme }) => ({
 }));
 
 const SketchFeatureButtons = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   padding: `${theme.spacing.smallest / 2}px ${theme.spacing.small}px`,
   gap: theme.spacing.small
 }));

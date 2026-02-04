@@ -13,6 +13,7 @@ import {
 import { useT } from "@reearth/services/i18n/hooks";
 import { useAddWorkspaceModal } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -110,15 +111,15 @@ const AddWorkspaceModal: FC = () => {
 export default AddWorkspaceModal;
 
 const ModalContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   justifyContent: "start",
   gap: theme.spacing.normal
 }));
 
 const WarningContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.small,
   maxWidth: "100%",
   marginTop: theme.spacing.small

@@ -8,6 +8,7 @@ import {
 import { isValidUrl } from "@reearth/app/utils/url";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useCallback, useMemo } from "react";
 
 import { Workspace } from "../../types";
@@ -127,27 +128,27 @@ const AvatarOnMenu = styled("div")(({ theme }) => ({
   height: "18px",
   borderRadius: "50%",
   background: theme.relative.light,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   flexShrink: 0,
-  overflow: "hidden"
+  overflow: css.overflow.hidden
 }));
 
 const AvatarImage = styled("img")({
-  position: "relative",
+  position: css.position.relative,
   width: "100%",
   height: "100%",
-  objectFit: "cover"
+  objectFit: css.objectFit.cover
 });
 
 const LabelWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.smallest,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: "4px",
   flex: 1,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   "&:hover": {
     background: theme.bg[2],
     p: {

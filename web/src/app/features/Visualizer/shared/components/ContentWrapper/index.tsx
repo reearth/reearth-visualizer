@@ -1,5 +1,6 @@
 import { Spacing } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ForwardRefRenderFunction, ReactNode, forwardRef } from "react";
 
 export type Props = {
@@ -61,8 +62,8 @@ const Wrapper = styled("div")<{
     minHeight,
     theme
   }) => ({
-    display: "flex",
-    flexDirection: "column",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
     color: theme.content.weaker,
     gap:
       gap !== undefined && isEditable && gap < minGapInEditor
@@ -84,7 +85,7 @@ const Wrapper = styled("div")<{
       isEditable && padding.right < minPaddingInEditor.right
         ? `${minPaddingInEditor.right}px`
         : `${padding.right}px`,
-    boxSizing: "border-box",
+    boxSizing: css.boxSizing.borderBox,
     minHeight: minHeight
   })
 );
