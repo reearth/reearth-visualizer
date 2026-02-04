@@ -12,8 +12,8 @@ import { merge } from "lodash-es";
 import Button from "./Button";
 import DataAttribution from "./DataAttribution";
 import GoogleMapSearch from "./GoogleMapSearch";
-import GoogleStreetView from "./StreetView";
 import Navigator from "./Navigator";
+import GoogleStreetView from "./StreetView";
 import Timeline from "./Timeline";
 import {
   Component,

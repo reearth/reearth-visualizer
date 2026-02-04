@@ -144,6 +144,7 @@
     "crypto-js": "4.2.0",
     "dayjs": "1.11.19",
     "formik": "2.4.9",
+    "framer-motion": "10.16.1",
     "github-markdown-css": "5.8.1",
     "graphiql": "3.4.0",
     "graphql": "16.12.0",
