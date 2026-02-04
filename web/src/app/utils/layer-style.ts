@@ -19,5 +19,5 @@ export const getLayerStyleValue = (
 
   if (["czml", "kml"].includes(typeInLowercase)) return {};
 
-  return defaultStyle;
+  return defaultStyle.style;
 };

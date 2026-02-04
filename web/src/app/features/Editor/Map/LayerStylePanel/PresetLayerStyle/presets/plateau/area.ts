@@ -1,18 +1,15 @@
 import { PresetStyle } from "../types";
 
-export const plateauRoad: PresetStyle = {
-  id: "plateauRoad",
-  title: "Road",
-  testId: "preset-style-plateau-road",
+export const plateauArea: PresetStyle = {
+  id: "plateauArea",
+  title: "Area",
+  testId: "preset-style-plateau-area",
   style: {
     polygon: {
       fillColor: {
         expression: {
           conditions: [
-            [
-              '${attributes["tran:function"][0]} !== "a"',
-              'color("#969CB4", 1)'
-            ],
+            ['${urf_function} !== "a"', 'color("#BEEBAC", 1)'],
             ["true", 'color("#ffffff", 1)']
           ]
         }
@@ -23,6 +20,13 @@ export const plateauRoad: PresetStyle = {
         }
       },
       stroke: false
+    },
+    polyline: {
+      strokeColor: {
+        expression: {
+          conditions: [["true", 'color("#ffffff", 1)']]
+        }
+      }
     }
   }
 };
