@@ -10,6 +10,7 @@ import { WorkspaceMember } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback } from "react";
 
 type DeleteMemberWarningModalProps = {
@@ -77,8 +78,8 @@ const DeleteMemberWarningModal: FC<DeleteMemberWarningModalProps> = ({
 export default DeleteMemberWarningModal;
 
 const ModalContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.normal,
   padding: theme.spacing.large
 }));
@@ -90,5 +91,5 @@ const WarningIcon = styled(Icon)(({ theme }) => ({
 }));
 
 const CancelButton = styled(Button)(() => ({
-  whiteSpace: "nowrap"
+  whiteSpace: css.whiteSpace.nowrap
 }));

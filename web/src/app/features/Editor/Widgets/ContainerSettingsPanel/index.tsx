@@ -3,6 +3,7 @@ import { Panel } from "@reearth/app/ui/layout";
 import { useT } from "@reearth/services/i18n/hooks";
 import { WidgetAreaPadding } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { useWidgetsPage } from "../context";
@@ -127,8 +128,8 @@ const ContainerSettingsPanel: FC = () => {
 };
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.large
 }));
 

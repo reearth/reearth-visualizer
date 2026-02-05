@@ -8,6 +8,7 @@ import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useProjectImportExportMutations } from "@reearth/services/api/project";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { useCallback, useMemo } from "react";
 import { Link } from "react-router";
@@ -122,27 +123,27 @@ const LeftSection: React.FC<Props> = ({
 export default LeftSection;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
-  alignItems: "center",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.row,
+  alignItems: css.alignItems.center,
   height: 32,
   gap: theme.spacing.small
 }));
 
 const StyledLink = styled(Link)<{ disabled?: boolean }>(
   ({ theme, disabled }) => ({
-    display: "flex",
+    display: css.display.flex,
     color: theme.content.main,
-    textDecoration: "none",
+    textDecoration: css.textDecoration.none,
     pointerEvents: disabled ? "none" : "all",
     "&:hover": {
-      textDecoration: "none"
+      textDecoration: css.textDecoration.none
     }
   })
 );
 
-const Separator = styled.div(({ theme }) => ({
+const Separator = styled("div")(({ theme }) => ({
   color: theme.content.weak,
   margin: `0 ${theme.spacing.smallest}px`,
-  userSelect: "none"
+  userSelect: css.userSelect.none
 }));

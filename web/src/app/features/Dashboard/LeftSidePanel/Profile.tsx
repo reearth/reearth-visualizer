@@ -8,6 +8,7 @@ import {
 import { isValidUrl } from "@reearth/app/utils/url";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ProjectType } from "@reearth/types";
 import { FC, useMemo, useState } from "react";
 
@@ -143,21 +144,21 @@ const Profile: FC<ProfileProps> = ({
 export default Profile;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.normal,
-  alignContent: "center",
+  alignContent: css.alignContent.center,
   paddingLeft: theme.spacing.small,
   paddingRight: theme.spacing.normal,
   paddingTop: theme.spacing.largest,
   paddingBottom: theme.spacing.small,
-  justifyContent: "center"
+  justifyContent: css.justifyContent.center
 }));
 
 const ProfileWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center"
+  alignItems: css.alignItems.center
 }));
 
 const Avatar = styled("div")(({ theme }) => ({
@@ -165,11 +166,11 @@ const Avatar = styled("div")(({ theme }) => ({
   height: "25px",
   borderRadius: "50%",
   background: theme.bg[2],
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   flexShrink: 0,
-  overflow: "hidden"
+  overflow: css.overflow.hidden
 }));
 
 const AvatarOnMenu = styled("div")(({ theme }) => ({
@@ -177,27 +178,27 @@ const AvatarOnMenu = styled("div")(({ theme }) => ({
   height: "18px",
   borderRadius: "50%",
   background: theme.relative.light,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   flexShrink: 0,
-  overflow: "hidden"
+  overflow: css.overflow.hidden
 }));
 
 const AvatarImage = styled("img")({
-  position: "relative",
+  position: css.position.relative,
   width: "100%",
   height: "100%",
-  objectFit: "cover"
+  objectFit: css.objectFit.cover
 });
 
 const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.bold,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  wordBreak: "break-all"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  wordBreak: css.wordBreak.breakAll
 }));
 
 const PopupWrapper = styled("div")(() => ({}));

@@ -1,5 +1,6 @@
 import { Collapse, IconButton } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, ReactNode, useCallback, useMemo } from "react";
 
 import { AreaRef } from "../Area";
@@ -113,8 +114,8 @@ export const Panel: FC<PanelProps> = ({
 };
 
 const Wrapper = styled("div")<{ extend?: boolean }>(({ theme, extend }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   flex: extend ? 1 : "0 0 auto",
   borderRadius: theme.radius.small,
   minHeight: 0
@@ -122,7 +123,7 @@ const Wrapper = styled("div")<{ extend?: boolean }>(({ theme, extend }) => ({
 
 const ContentWrapper = styled("div")<{ background?: string; extend?: boolean }>(
   ({ background, extend, theme }) => ({
-    display: "flex",
+    display: css.display.flex,
     flex: extend ? 1 : "0 0 auto",
     background: background,
     borderRadius: theme.radius.small

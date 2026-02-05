@@ -2,6 +2,7 @@ import { Placement } from "@floating-ui/react";
 import { Icon, IconName, Popup, Typography } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useMemo } from "react";
 
 type TooltipProps = {
@@ -81,15 +82,15 @@ const Tooltip: FC<TooltipProps> = ({
 export default Tooltip;
 
 const IconWrapper = styled("div")(() => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center"
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  alignItems: css.alignItems.center
 }));
 
 const TipPanel = styled("div")(({ theme }) => ({
   maxWidth: "150px",
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   background: theme.bg[2],

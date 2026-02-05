@@ -10,6 +10,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { LayerAddProps } from "../../hooks/useLayers";
@@ -170,7 +171,7 @@ export default PlateauAssetLayerCreator;
 
 const Wrapper = styled("div")(() => ({
   height: `${MODAL_HEIGHT}px`,
-  display: "flex"
+  display: css.display.flex
 }));
 
 const Sidebar = styled("div")(({ theme }) => ({
@@ -178,9 +179,9 @@ const Sidebar = styled("div")(({ theme }) => ({
   flexShrink: 0,
   height: "100%",
   borderRight: `1px solid ${theme.outline.weaker}`,
-  boxSizing: "border-box",
-  display: "flex",
-  flexDirection: "column"
+  boxSizing: css.boxSizing.borderBox,
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column
 }));
 
 const SearchWrapper = styled("div")(({ theme }) => ({
@@ -190,14 +191,14 @@ const SearchWrapper = styled("div")(({ theme }) => ({
 
 const LoadingWrapper = styled("div")(() => ({
   height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center"
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  alignItems: css.alignItems.center
 }));
 
 const NoResult = styled("div")(({ theme }) => ({
   padding: theme.spacing.small,
-  textAlign: "center",
+  textAlign: css.textAlign.center,
   color: theme.content.weak,
   fontSize: theme.fonts.sizes.body
 }));
@@ -205,7 +206,7 @@ const NoResult = styled("div")(({ theme }) => ({
 const SearchResults = styled("div")(({ theme }) => ({
   minHeight: 0,
   flex: 1,
-  overflow: "auto",
+  overflow: css.overflow.auto,
   padding: theme.spacing.smallest,
   backgroundColor: theme.bg[0],
   fontSize: theme.fonts.sizes.body,
@@ -215,12 +216,12 @@ const SearchResults = styled("div")(({ theme }) => ({
 const Main = styled("div")(({ theme }) => ({
   height: "100%",
   width: "100%",
-  overflow: "auto",
-  display: "flex",
-  flexDirection: "column",
+  overflow: css.overflow.auto,
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   padding: theme.spacing.largest,
   gap: theme.spacing.normal,
-  boxSizing: "border-box",
+  boxSizing: css.boxSizing.borderBox,
   ...theme.scrollBar
 }));
 
@@ -229,8 +230,8 @@ const Title = styled("div")(({ theme }) => ({
 }));
 
 const ItemSelector = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest,
   backgroundColor: theme.bg[0],
   borderRadius: theme.radius.small,
@@ -265,10 +266,10 @@ const Linkify: FC<{ content: string | null | undefined }> = ({ content }) => {
 
 const Link = styled("span")(({ theme }) => ({
   color: theme.primary.main,
-  cursor: "pointer",
-  textDecoration: "underline"
+  cursor: css.cursor.pointer,
+  textDecoration: css.textDecoration.underline
 }));
 
 const StyledIcon = styled(Icon)(() => ({
-  display: "inline-block"
+  display: css.display.inlineBlock
 }));

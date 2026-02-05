@@ -1,4 +1,5 @@
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ReactNode, useCallback, useState } from "react";
 
 import { Icon, IconName } from "../Icon";
@@ -334,15 +335,15 @@ export const Tree = <T = unknown,>({
 };
 
 const TreeContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   width: "100%",
   color: theme.content.main
 }));
 
 const TreeNodeContainer = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column"
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column
 }));
 
 const TreeNodeContent = styled("div")<{
@@ -351,14 +352,14 @@ const TreeNodeContent = styled("div")<{
   disabled?: boolean;
   hasChildren?: boolean;
 }>(({ theme, selected, disabled }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   cursor: disabled ? "not-allowed" : "pointer",
   padding: `${theme.spacing.smallest}px`,
   borderRadius: theme.radius.small,
   backgroundColor: selected ? theme.select.main : "transparent",
   color: selected ? theme.content.withBackground : theme.content.main,
-  userSelect: "none",
+  userSelect: css.userSelect.none,
 
   "&:hover":
     !disabled && !selected
@@ -390,9 +391,9 @@ const FolderIcon = styled("div", {
 }>(({ expanded, isDefaultIcon, loading, theme }) => ({
   width: 16,
   height: 16,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   marginRight: theme.spacing.smallest,
   flexShrink: 0,
   // Only rotate the default triangle icon, not custom folder icons
@@ -417,21 +418,21 @@ const FolderIcon = styled("div", {
 const NodeIcon = styled("div")(({ theme }) => ({
   width: 16,
   height: 16,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   marginRight: theme.spacing.smallest,
   flexShrink: 0
 }));
 
 const NodeLabel = styled("div")(() => ({
   flex: 1,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap
 }));
 
 const TreeNodeChildren = styled("div")(() => ({
-  display: "flex",
-  flexDirection: "column"
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column
 }));

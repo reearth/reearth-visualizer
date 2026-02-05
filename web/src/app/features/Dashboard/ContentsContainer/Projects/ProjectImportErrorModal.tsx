@@ -6,6 +6,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 type Props = {
@@ -65,8 +66,8 @@ const ProjectImportErrorModal: FC<Props> = ({
 export default ProjectImportErrorModal;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   padding: theme.spacing.large,
   gap: theme.spacing.normal
 }));
@@ -76,7 +77,7 @@ const CausesList = styled("ul")(({ theme }) => ({
   marginBottom: theme.spacing.small,
   paddingLeft: theme.spacing.large,
   listStyleType: "disc",
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest
 }));

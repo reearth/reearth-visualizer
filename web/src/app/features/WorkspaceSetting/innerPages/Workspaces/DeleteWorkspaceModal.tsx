@@ -9,6 +9,7 @@ import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
@@ -92,5 +93,5 @@ const DeleteWorkspaceModal: FC<DeleteWorkspaceModalProps> = ({
 export default DeleteWorkspaceModal;
 
 const CancelButton = styled(Button)(() => ({
-  whiteSpace: "nowrap"
+  whiteSpace: css.whiteSpace.nowrap
 }));
