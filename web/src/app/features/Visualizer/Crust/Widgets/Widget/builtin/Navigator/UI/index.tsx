@@ -1,6 +1,7 @@
 import { Icon } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { memo } from "react";
 
 import type { Theme } from "../../../types";
@@ -119,34 +120,34 @@ const NavigatorUI: React.FC<Props> = memo(function NavigatorPresenterMemo({
 
 const Container = styled("div")(() => ({
   display: "inline-flex",
-  flexDirection: "column",
-  alignItems: "center"
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center
 }));
 
 const CompassContainer = styled("div")(() => ({
   display: "inline-grid",
-  position: "relative",
+  position: css.position.relative,
   placeItems: "center"
 }));
 
 const Help = styled("button")(({ theme }) => ({
-  position: "absolute",
+  position: css.position.absolute,
   height: 32,
   width: 32,
   borderRadius: `16px 0 0 16px`,
   left: "-28px",
   background: "#4a4a4a",
   color: theme.item.default,
-  userSelect: "none"
+  userSelect: css.userSelect.none
 }));
 
 const Compass = styled("div")(() => ({
-  position: "relative",
+  position: css.position.relative,
   display: "inline-grid",
   placeItems: "center",
   width: 64,
   height: 64,
-  cursor: "pointer"
+  cursor: css.cursor.pointer
 }));
 
 const CompassIconWrapper = styled(Icon)<{ compassDegree: number }>(
@@ -157,7 +158,7 @@ const CompassIconWrapper = styled(Icon)<{ compassDegree: number }>(
 
 const CompassIcon = styled("div")<{ publishedTheme?: Theme }>(
   ({ theme, publishedTheme }) => ({
-    position: "absolute",
+    position: css.position.absolute,
     top: 0,
     left: 0,
     width: 64,
@@ -173,7 +174,7 @@ const CompassIcon = styled("div")<{ publishedTheme?: Theme }>(
 );
 
 const CompassFocusIcon = styled("div")(() => ({
-  position: "absolute",
+  position: css.position.absolute,
   top: 0,
   left: 0,
   opacity: 0.8,
@@ -189,7 +190,7 @@ const AngleIcon = styled("div")<{ publishedTheme?: Theme }>(
     "& g": {
       stroke: publishedTheme?.mainText || theme.content.main
     },
-    display: "inline-block",
+    display: css.display.inlineBlock,
     height: 32,
     width: 32
   })
@@ -197,9 +198,9 @@ const AngleIcon = styled("div")<{ publishedTheme?: Theme }>(
 
 const Tool = styled("div")<{ publishedTheme?: Theme }>(
   ({ publishedTheme, theme }) => ({
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
+    alignItems: css.alignItems.center,
     background: publishedTheme?.background
       ? publishedTheme?.background
       : theme.bg[0],
@@ -212,7 +213,7 @@ const ToolIconButton = styled("button")<{ publishedTheme?: Theme }>(
   ({ publishedTheme, theme }) => ({
     height: 32,
     width: 32,
-    display: "grid",
+    display: css.display.grid,
     placeItems: "center",
     color: publishedTheme?.mainText
       ? publishedTheme?.mainText

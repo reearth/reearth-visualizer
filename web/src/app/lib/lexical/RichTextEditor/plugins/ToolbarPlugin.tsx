@@ -17,7 +17,6 @@ import {
 } from "@lexical/rich-text";
 import {
   $getSelectionStyleValueForProperty,
-  $isParentElementRTL,
   $patchStyleText,
   $setBlocksType
 } from "@lexical/selection";
@@ -28,7 +27,7 @@ import {
   $getNearestNodeOfType,
   mergeRegister
 } from "@lexical/utils";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import type { ElementFormatType, LexicalEditor, RangeSelection } from "lexical";
 import {
   $createParagraphNode,
@@ -51,7 +50,14 @@ import {
   TextNode,
   UNDO_COMMAND
 } from "lexical";
-import { useCallback, useEffect, useState, useMemo, RefObject } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  RefObject,
+  type JSX
+} from "react";
 
 import DropDown, { DropDownItem } from "../ui/DropDown";
 import DropdownColorPicker from "../ui/DropdownColorPicker";
@@ -88,8 +94,7 @@ const FONT_SIZE_OPTIONS: [string, string][] = [
   ["28px", "28px"],
   ["32px", "32px"],
   ["36px", "36px"],
-  ["40px", "40px"],
-  ["64px", "64px"]
+  ["40px", "40px"]
 ];
 
 const LINE_HEIGHT_OPTIONS: [string, string][] = [
@@ -168,7 +173,7 @@ function BlockFormatDropDown({
   blockType,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   blockTypeToBlockName: Record<string, string>;
   blockType: keyof typeof blockTypeToBlockName;
@@ -180,10 +185,7 @@ function BlockFormatDropDown({
   const formatParagraph = () => {
     editor.update(() => {
       const selection = $getSelection();
-      if (
-        $isRangeSelection(selection) ||
-        $isTableSelection(selection)
-      ) {
+      if ($isRangeSelection(selection) || $isTableSelection(selection)) {
         $setBlocksType(selection, () => $createParagraphNode());
       }
     });
@@ -193,10 +195,7 @@ function BlockFormatDropDown({
     if (blockType !== headingSize) {
       editor.update(() => {
         const selection = $getSelection();
-        if (
-          $isRangeSelection(selection) ||
-          $isTableSelection(selection)
-        ) {
+        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
           $setBlocksType(selection, () => $createHeadingNode(headingSize));
         }
       });
@@ -223,10 +222,7 @@ function BlockFormatDropDown({
     if (blockType !== "quote") {
       editor.update(() => {
         const selection = $getSelection();
-        if (
-          $isRangeSelection(selection) ||
-          $isTableSelection(selection)
-        ) {
+        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
           $setBlocksType(selection, () => $createQuoteNode());
         }
       });
@@ -308,7 +304,7 @@ function FontDropDown({
   style,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   editor: LexicalEditor;
   value: string;
@@ -372,7 +368,7 @@ function LineHeightDropDown({
   style,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   editor: LexicalEditor;
   value: string;
@@ -422,7 +418,7 @@ function ElementFormatDropdown({
   isRTL,
   disabled = false
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
   editor: LexicalEditor;
   value: ElementFormatType;
@@ -526,7 +522,7 @@ export default function ToolbarPlugin({
   containerRef,
   scrollableContainerId
 }: {
-  containerRef: RefObject<HTMLDivElement>;
+  containerRef: RefObject<HTMLDivElement | null>;
   scrollableContainerId?: string;
 }): JSX.Element {
   const [editor] = useLexicalComposerContext();
@@ -551,7 +547,6 @@ export default function ToolbarPlugin({
   const [isCode, setIsCode] = useState(false);
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
-  const [isRTL, setIsRTL] = useState(false);
   const [isEditable, setIsEditable] = useState(() => editor.isEditable());
   const t = useT();
 
@@ -595,18 +590,17 @@ export default function ToolbarPlugin({
       setIsSubscript(selection.hasFormat("subscript"));
       setIsSuperscript(selection.hasFormat("superscript"));
       setIsCode(selection.hasFormat("code"));
-      setIsRTL($isParentElementRTL(selection));
 
       // Update links
       const node = getSelectedNode(selection);
       const parent = node.getParent();
-      if ($isLinkNode(parent) || $isLinkNode(node)) {
+      if ((parent && $isLinkNode(parent as unknown as Parameters<typeof $isLinkNode>[0])) || $isLinkNode(node as unknown as Parameters<typeof $isLinkNode>[0])) {
         setIsLink(true);
       } else {
         setIsLink(false);
       }
 
-      const tableNode = $findMatchingParent(node, $isTableNode);
+      const tableNode = $findMatchingParent(node as unknown as Parameters<typeof $findMatchingParent>[0], $isTableNode);
       if ($isTableNode(tableNode)) {
         setRootType("table");
       } else {
@@ -614,14 +608,14 @@ export default function ToolbarPlugin({
       }
 
       if (elementDOM !== null) {
-        if ($isListNode(element)) {
-          const parentList = $getNearestNodeOfType<ListNode>(
-            anchorNode,
-            ListNode
-          );
+        if ($isListNode(element as unknown as Parameters<typeof $isListNode>[0])) {
+          const parentList = $getNearestNodeOfType(
+            anchorNode as unknown as Parameters<typeof $getNearestNodeOfType>[0],
+            ListNode as unknown as Parameters<typeof $getNearestNodeOfType>[1]
+          ) as ListNode | null;
           const type = parentList
             ? parentList.getListType()
-            : element.getListType();
+            : (element as unknown as { getListType(): string }).getListType();
           if (type in blockTypeToBlockName) {
             setBlockType(type as keyof typeof blockTypeToBlockName);
           }
@@ -846,7 +840,7 @@ export default function ToolbarPlugin({
           disabled={!isEditable}
           value={elementFormat}
           editor={editor}
-          isRTL={isRTL}
+          isRTL={false}
         />
       </div>
 

@@ -1,13 +1,6 @@
-import { useEditModeContext } from "@reearth/app/features/Visualizer/shared/contexts/editModeContext";
-import {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState
-} from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
+import { useEditModeContext } from "../../../shared/contexts/useEditModeContext";
 import { STORY_PANEL_CONTENT_ELEMENT_ID } from "../constants";
 
 export type { StoryPage } from "../hooks";
@@ -29,7 +22,9 @@ export default ({
   ) => Promise<void>;
 }) => {
   const editModeContext = useEditModeContext();
-  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
+  const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined
+  );
 
   const [pageGap, setPageGap] = useState<number>();
 
@@ -54,22 +49,25 @@ export default ({
     [onBlockDelete]
   );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const pageWrapperElement = document.getElementById(
       STORY_PANEL_CONTENT_ELEMENT_ID
     );
-    if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
-  }, [setPageGap]);
 
-  useEffect(() => {
-    const resizeCallback = () => {
-      const pageWrapperElement = document.getElementById(
-        STORY_PANEL_CONTENT_ELEMENT_ID
-      );
-      if (pageWrapperElement) setPageGap(pageWrapperElement.clientHeight - 40); // 40px is the height of the page title block
+    if (!pageWrapperElement) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const { height } = entry.contentRect;
+      setPageGap(height - 40); // 40px is the height of the page title block
+    });
+
+    resizeObserver.observe(pageWrapperElement);
+
+    return () => {
+      resizeObserver.disconnect();
     };
-    window.addEventListener("resize", resizeCallback);
-    return () => window.removeEventListener("resize", resizeCallback);
   }, []);
 
   return {

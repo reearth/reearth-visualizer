@@ -4,8 +4,9 @@ import {
   ManagerWrapper
 } from "@reearth/app/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/app/ui/components/ManagerBase/ManagerEmptyContent";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import useHooks from "./hooks";
@@ -65,15 +66,15 @@ const RecycleBin: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 export default RecycleBin;
 
 const ContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.normal,
   flex: 1,
   height: 0
 }));
 
 const ProjectsWrapper = styled("div")(() => ({
-  overflow: "auto"
+  overflow: css.overflow.auto
 }));
 
 const ProjectsContainer = styled("div")(({ theme }) => ({
@@ -81,7 +82,7 @@ const ProjectsContainer = styled("div")(({ theme }) => ({
 }));
 
 const ProjectsGroup = styled("div")(({ theme }) => ({
-  display: "grid",
+  display: css.display.grid,
   gap: theme.spacing.normal,
   width: "100%",
   gridTemplateColumns: "repeat(4, 1fr)",
@@ -98,9 +99,9 @@ const ProjectsGroup = styled("div")(({ theme }) => ({
 }));
 
 const LoadingWrapper = styled("div")(() => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  alignItems: css.alignItems.center,
   width: "100%",
   height: "100vh"
 }));

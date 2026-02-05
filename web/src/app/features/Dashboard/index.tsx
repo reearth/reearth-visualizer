@@ -1,7 +1,8 @@
 import { DEFAULT_SIDEBAR_WIDTH } from "@reearth/app/ui/components/Sidebar";
 import WarningBanner from "@reearth/ee/features/WarningBanner";
-import { useLang, useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 import AddWorkspaceModal from "../CreateWorkspaceModal";
@@ -108,30 +109,30 @@ const Dashboard: FC<DashboardProps> = ({ workspaceId }) => {
 export default Dashboard;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   height: "100%",
   width: "100%",
-  overflowX: "hidden",
+  overflowX: css.overflow.hidden,
   minWidth: "630px",
   ...theme.scrollBar,
   ["@media (max-width: 630px)"]: {
     width: "630px",
-    overflowX: "auto"
+    overflowX: css.overflow.auto
   }
 }));
 
 const LeftSideWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   width: DEFAULT_SIDEBAR_WIDTH,
   gap: theme.spacing.super,
   boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.50)"
 }));
 
 const RightSideWrapper = styled("div")({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   flex: 1,
   minWidth: 0
 });

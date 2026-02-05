@@ -2,8 +2,9 @@ import { BlockContext } from "@reearth/app/features/Visualizer/shared/components
 import Button from "@reearth/app/ui/widgetui/Button";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { useVisualizer } from "@reearth/core";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useContext, useMemo, useState } from "react";
 
 import CameraEditor, { type CameraBlock as CameraBlockType } from "./Editor";
@@ -114,7 +115,7 @@ const Wrapper = styled("div")(() => ({
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   width: "100%",
-  display: "flex",
+  display: css.display.flex,
   flexWrap: "wrap",
   gap: theme.spacing.smallest,
   maxWidth: "400px"

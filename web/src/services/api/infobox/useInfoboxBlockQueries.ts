@@ -1,8 +1,8 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { AVAILABLE_INFOBOX_BLOCK_IDS } from "@reearth/app/features/Visualizer/Crust/Infobox/constants";
 import { GetSceneQuery, PluginExtensionType } from "@reearth/services/gql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
-import { useLang } from "@reearth/services/i18n";
+import { useLang } from "@reearth/services/i18n/hooks";
 import { useMemo } from "react";
 
 import { SceneQueryProps } from "../scene";

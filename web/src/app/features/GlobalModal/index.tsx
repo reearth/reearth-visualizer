@@ -1,6 +1,6 @@
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import { config } from "@reearth/services/config";
-import { useLang as useCurrentLang } from "@reearth/services/i18n";
+import { useLang as useCurrentLang } from "@reearth/services/i18n/hooks";
 import {
   NotificationType,
   useCurrentTheme as useCurrentTheme,

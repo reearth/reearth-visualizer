@@ -1,6 +1,7 @@
 import { Collapse, Icon } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import useHooks from "./hooks";
@@ -50,27 +51,27 @@ const StarredProject: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 export default StarredProject;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   paddingLeft: theme.spacing.smallest,
   flexGrow: 1,
   height: 0
 }));
 
 const ProjectsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   padding: `0 ${theme.spacing.small}px`,
   flex: 1
 }));
 
 const Item = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
   padding: theme.spacing.small,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   alignSelf: "stretch",
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   "&:hover": {
     backgroundColor: theme.bg[2],
     borderRadius: theme.radius.small
@@ -85,7 +86,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap
 }));

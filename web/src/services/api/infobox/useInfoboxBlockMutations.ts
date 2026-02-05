@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   AddNlsInfoboxBlockInput,
   AddNlsInfoboxBlockMutation,
@@ -15,7 +15,7 @@ import {
   MOVE_NLSINFOBOX_BLOCK,
   REMOVE_NLSINFOBOX_BLOCK
 } from "@reearth/services/gql/queries/infobox";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

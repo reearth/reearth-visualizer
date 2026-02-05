@@ -21,7 +21,7 @@ import type {
   Timeline,
   Camera
 } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useMemo } from "react";
 
 import type { ContentSettingsField } from "../types";

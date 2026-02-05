@@ -1,7 +1,8 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 type WarningBannerProps = {
@@ -43,7 +44,7 @@ const Wrapper = styled("div")(({ theme }) => ({
   background: theme.dangerous.main,
   color: theme.content.main,
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest
 }));

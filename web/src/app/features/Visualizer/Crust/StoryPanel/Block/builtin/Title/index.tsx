@@ -2,8 +2,9 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import { CommonBlockProps as BlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { isEmptyString } from "@reearth/app/utils/string";
 import { ValueTypes } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 import { StoryBlock } from "../../../types";
@@ -54,7 +55,7 @@ const TitleWrapper = styled("div")<{ color?: string }>(({ color, theme }) => ({
   color: color,
   fontSize: theme.fonts.sizes.h2,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  wordBreak: "break-word"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  wordBreak: css.wordBreak.breakWord
 }));

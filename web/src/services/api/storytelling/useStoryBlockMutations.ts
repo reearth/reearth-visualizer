@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryBlockInput,
@@ -16,7 +16,7 @@ import {
   MOVE_STORY_BLOCK,
   REMOVE_STORY_BLOCK
 } from "@reearth/services/gql/queries/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

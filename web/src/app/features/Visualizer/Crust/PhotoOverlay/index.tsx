@@ -25,9 +25,9 @@ type PhotoOverlayProps = {
   preview?: PhotoOverlayPreview;
   selectedLayer?: ComputedLayer;
   selectedFeature?: ComputedFeature;
-  mapRef?: RefObject<MapRef> | undefined;
+  mapRef?: RefObject<MapRef | null> | undefined;
   nlsLayers?: NLSLayer[];
-  currentCameraRef?: RefObject<Camera | undefined>;
+  currentCameraRef?: RefObject<Camera | undefined | null>;
 };
 
 const PhotoOverlay: FC<PhotoOverlayProps> = ({
@@ -107,7 +107,7 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
       <div
         ref={photoWrapperRef}
         onClick={handleExit}
-        className={`tw-absolute tw-w-full tw-h-full tw-left-0 tw-top-0 tw-flex tw-justify-center tw-items-center tw-transition-opacity tw-duration-200 ${show && ready ? "tw-opacity-100" : "tw-opacity-0"}`}
+        className={`absolute w-full h-full left-0 top-0 flex justify-center items-center transition-opacity duration-200 ${show && ready ? "opacity-100" : "opacity-0"}`}
       >
         <PhotoInnerWrapper
           widthPct={value.widthPct}
@@ -128,7 +128,7 @@ const PhotoOverlay: FC<PhotoOverlayProps> = ({
         <Description visible={show && ready}>{value.description}</Description>
       )}
       {!preview && (
-        <div className={`tw-absolute tw-right-1 tw-top-1`}>
+        <div className={`absolute right-1 top-1`}>
           <Button size="icon" onClick={handleExit}>
             <Icon icon="close" />
           </Button>
@@ -145,7 +145,7 @@ const Wrapper: FC<{
   children: ReactNode;
 }> = ({ interactive, children }) => (
   <div
-    className={`tw-absolute tw-w-full tw-h-full tw-left-0 tw-top-0 tw-z-photoOverlay ${interactive ? "tw-pointer-events-auto" : "tw-pointer-events-none"}`}
+    className={`absolute w-full h-full left-0 top-0 z-(--z-photo-overlay) ${interactive ? "pointer-events-auto" : "pointer-events-none"}`}
   >
     {children}
   </div>
@@ -168,7 +168,7 @@ const PhotoInnerWrapper: FC<{
 
   return (
     <div
-      className={`tw-absolute tw-flex tw-justify-center tw-items-center`}
+      className={`absolute flex justify-center items-center`}
       style={sizeStyles}
     >
       {children}
@@ -189,9 +189,9 @@ const Photo: FC<{
     className={`${
       fixed
         ? sizeBase === "width"
-          ? "tw-w-full tw-h-auto tw-max-h-none"
-          : "tw-h-full tw-w-auto tw-max-w-none"
-        : "tw-max-w-[90%] tw-max-h-[90%]"
+          ? "w-full h-auto max-h-none"
+          : "h-full w-auto max-w-none"
+        : "max-w-[90%] max-h-[90%]"
     }`}
     onLoad={onLoad}
     draggable={false}
@@ -203,7 +203,7 @@ const Description: FC<{
   children: ReactNode;
 }> = ({ visible, children }) => (
   <div
-    className={`tw-absolute tw-bottom-0 tw-left-0 tw-w-full tw-p-2 tw-text-center tw-bg-[#00000099] tw-text-sm tw-text-white tw-pointer-events-auto tw-transition-opacity tw-duration-200 ${visible ? "tw-opacity-100" : "tw-opacity-0"} tw-whitespace-pre-wrap`}
+    className={`absolute bottom-0 left-0 w-full p-2 text-center bg-[#00000099] text-sm text-white pointer-events-auto transition-opacity duration-200 ${visible ? "opacity-100" : "opacity-0"} whitespace-pre-wrap`}
   >
     {children}
   </div>

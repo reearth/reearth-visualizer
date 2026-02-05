@@ -5,8 +5,9 @@ import {
   PopupMenu,
   PopupMenuItem
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   MouseEvent,
@@ -127,11 +128,11 @@ const Wrapper = styled("div", {
   highlight?: boolean;
   smallPaddingRight?: boolean;
 }>(({ theme, hovered, highlight, smallPaddingRight }) => ({
-  position: "relative",
-  boxSizing: "border-box",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
+  position: css.position.relative,
+  boxSizing: css.boxSizing.borderBox,
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.spaceBetween,
   padding: smallPaddingRight
     ? `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.small}px`
     : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
@@ -140,7 +141,7 @@ const Wrapper = styled("div", {
   minHeight: 28,
   flex: 1,
   minWidth: 0,
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   ...(hovered && {
     backgroundColor: theme.bg[1]
   }),
@@ -160,29 +161,29 @@ const MainContent = styled("div", {
   shouldForwardProp: (prop) => prop !== "asDragHandle"
 })<{ asDragHandle?: boolean }>(({ theme, asDragHandle }) => ({
   flex: 1,
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
   ...(asDragHandle && {
-    cursor: "pointer"
+    cursor: css.cursor.pointer
   })
 }));
 
 const Title = styled("div")(({ theme }) => ({
   width: "100%",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap,
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular
 }));
 
 const Actions = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.smallest
 }));
 

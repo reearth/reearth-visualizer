@@ -10,11 +10,13 @@ import {
   Button,
   TextInput,
   TextArea,
-  Icon
+  Icon,
+  Switcher
 } from "@reearth/app/lib/reearth-ui";
 import { AssetField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { DataProps } from "..";
@@ -30,7 +32,9 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
     dataSourceTypeOptions,
     handleValueChange,
     handleDataSourceTypeChange,
-    handleSubmit
+    handleSubmit,
+    autoUpdateTime,
+    setAutoUpdateTime
   } = useHooks({ sceneId, onSubmit, onClose });
 
   const theme = useTheme();
@@ -96,6 +100,18 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
             </InputsWrapper>
           </InputGroup>
         )}
+        <InputGroup
+          label={t("Auto Update Time")}
+          description={t(
+            "When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer."
+          )}
+        >
+          <Switcher
+            value={autoUpdateTime}
+            onChange={(v) => setAutoUpdateTime(v)}
+            data-testid="czml-auto-update-time-switcher"
+          />
+        </InputGroup>
       </ContentWrapper>
       <SubmitWrapper>
         <Button
@@ -111,9 +127,9 @@ const CZML: FC<DataProps> = ({ sceneId, onSubmit, onClose }) => {
 };
 
 const Warning = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center"
+  alignItems: css.alignItems.center
 }));
 
 const IconWrapper = styled(Icon)(() => ({

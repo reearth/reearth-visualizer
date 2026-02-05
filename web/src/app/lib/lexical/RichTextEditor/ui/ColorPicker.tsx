@@ -1,6 +1,6 @@
 import "./ColorPicker.css";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type JSX } from "react";
 import * as React from "react";
 
 import TextInput from "./TextInput";
@@ -231,7 +231,7 @@ interface Color {
   rgb: RGB;
 }
 
-export function toHex(value: string): string {
+function toHex(value: string): string {
   if (!value.startsWith("#")) {
     const ctx = document.createElement("canvas").getContext("2d");
 

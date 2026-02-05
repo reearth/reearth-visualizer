@@ -6,8 +6,9 @@ import {
 } from "@reearth/app/ui/fields";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import useHooks, { type LayerBlock } from "./hooks";
@@ -142,15 +143,15 @@ const EditorWrapper = styled("div")(({ theme }) => ({
 }));
 
 const GroupWrapper = styled("div")(() => ({
-  display: "grid",
+  display: css.display.grid,
   gridTemplateColumns: "55% 42%",
   gridGap: "10px"
 }));
 
 const FieldGroup = styled("div")<{ disabled: boolean }>(
   ({ theme, disabled }) => ({
-    display: "flex",
-    flexDirection: "column",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
     gap: theme.spacing.small,
     opacity: disabled ? 0.6 : 1,
     cursor: disabled ? "not-allowed" : "inherit",

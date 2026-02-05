@@ -1,11 +1,11 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   CreateNlsPhotoOverlayInput,
   CreateNlsPhotoOverlayMutation,
   MutationCreateNlsPhotoOverlayArgs
 } from "@reearth/services/gql";
 import { CREATE_NLSPHOTOOVERLAY } from "@reearth/services/gql/queries/photoOverlay";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

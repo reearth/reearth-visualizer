@@ -1,14 +1,15 @@
 import { Collapse, Typography } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 export const InnerPage = styled("div")<{
   wide?: boolean;
   transparent?: boolean;
 }>(({ wide, transparent, theme }) => ({
-  boxSizing: "border-box",
-  display: "flex",
+  boxSizing: css.boxSizing.borderBox,
+  display: css.display.flex,
   width: "100%",
   maxWidth: wide ? 950 : 750,
   backgroundColor: transparent ? "none" : theme.bg[1],
@@ -16,16 +17,16 @@ export const InnerPage = styled("div")<{
 }));
 
 export const InnerSidebar = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   width: 213,
   borderRight: `1px solid ${theme.outline.weaker}`,
   padding: `${theme.spacing.normal}px 0`
 }));
 
 export const SettingsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.largest,
   width: "100%",
   flex: 1,
@@ -35,16 +36,16 @@ export const SettingsWrapper = styled("div")(({ theme }) => ({
 }));
 
 export const SettingsFields = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.largest,
   padding: `${theme.spacing.normal}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));
 
 export const SettingsRow = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  flexDirection: "row",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  flexDirection: css.flexDirection.row,
   gap: theme.spacing.largest
 }));
 
@@ -62,8 +63,8 @@ export const Thumbnail = styled("div")<{ src?: string }>(({ src, theme }) => ({
 }));
 
 export const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "flex-end",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.flexEnd,
   gap: theme.spacing.small
 }));
 
@@ -85,22 +86,22 @@ export const ArchivedSettingNotice: FC = () => {
 };
 
 const CommonLayoutWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.largest,
   width: "100%",
   padding: theme.spacing.large
 }));
 
 const TabContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.spaceBetween,
   gap: theme.spacing.small
 }));
 
 const TabGroup = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   backgroundColor: theme.bg[0],
   borderRadius: theme.radius.normal,
   gap: theme.spacing.micro,
@@ -111,10 +112,10 @@ const TabGroup = styled("div")(({ theme }) => ({
 const Tab = styled("div")<{ active?: boolean }>(({ active, theme }) => ({
   background: active ? theme.bg[1] : "inherit",
   borderRadius: theme.radius.small,
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   color: active ? theme.content.main : theme.content.weak,
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular
 }));

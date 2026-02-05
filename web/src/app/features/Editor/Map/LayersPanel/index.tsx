@@ -4,11 +4,18 @@ import {
   DragAndDropList
 } from "@reearth/app/lib/reearth-ui";
 import { Panel } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
+import { useSetAtom } from "jotai";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { useMapPage } from "../context";
+import {
+  showDataSourceLayerCreatorAtom,
+  showPlateauAssetLayerCreatorAtom,
+  showSketchLayerCreatorAtom
+} from "../state";
 
 import LayerItem from "./LayerItem";
 
@@ -16,15 +23,28 @@ const LAYERS_DRAG_HANDLE_CLASS_NAME =
   "reearth-visualizer-editor-layers-drag-handle";
 
 const LayersPanel: FC = () => {
-  const {
-    layers,
-    handleLayerMove,
-    handleLayerSelect,
-    openDataSourceLayerCreator,
-    openSketchLayerCreator
-  } = useMapPage();
+  const { layers, handleLayerMove, handleLayerSelect } = useMapPage();
 
   const t = useT();
+
+  const setShowDataSourceLayerCreator = useSetAtom(
+    showDataSourceLayerCreatorAtom
+  );
+  const openDataSourceLayerCreator = useCallback(() => {
+    setShowDataSourceLayerCreator(true);
+  }, [setShowDataSourceLayerCreator]);
+
+  const setShowSketchLayerCreator = useSetAtom(showSketchLayerCreatorAtom);
+  const openSketchLayerCreator = useCallback(() => {
+    setShowSketchLayerCreator(true);
+  }, [setShowSketchLayerCreator]);
+
+  const setShowPlateauAssetLayerCreator = useSetAtom(
+    showPlateauAssetLayerCreatorAtom
+  );
+  const openPlateauAssetLayerCreator = useCallback(() => {
+    setShowPlateauAssetLayerCreator(true);
+  }, [setShowPlateauAssetLayerCreator]);
 
   const newLayerMenu = useMemo(() => {
     return [
@@ -32,20 +52,27 @@ const LayersPanel: FC = () => {
         id: "add-datasorce-layer",
         title: t("Add Layer from Resource"),
         icon: "file" as const,
-        onClick: () => {
-          openDataSourceLayerCreator();
-        }
+        onClick: openDataSourceLayerCreator
       },
       {
         id: "add-sketch-layer",
         title: t("Add Sketch Layer"),
         icon: "pencilSimple" as const,
-        onClick: () => {
-          openSketchLayerCreator();
-        }
+        onClick: openSketchLayerCreator
+      },
+      {
+        id: "add-plateau-asset-layer",
+        title: t("Add Layer from PLATEAU Asset"),
+        icon: "plateau" as const,
+        onClick: openPlateauAssetLayerCreator
       }
     ];
-  }, [openDataSourceLayerCreator, openSketchLayerCreator, t]);
+  }, [
+    openDataSourceLayerCreator,
+    openSketchLayerCreator,
+    openPlateauAssetLayerCreator,
+    t
+  ]);
 
   const [isDragging, setIsDragging] = useState(false);
   const [editingLayerNameId, setEditingLayerNameId] = useState("");
@@ -101,6 +128,7 @@ const LayersPanel: FC = () => {
             />
           }
           extendTriggerWidth
+          extendContentWidth
           placement="bottom-end"
           menu={newLayerMenu}
           data-testid="new-layer-menu"
@@ -127,8 +155,8 @@ const LayersPanel: FC = () => {
 export default LayersPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small,
   paddingTop: theme.spacing.smallest,
   height: "100%"
@@ -136,9 +164,9 @@ const Wrapper = styled("div")(({ theme }) => ({
 
 const LayersContainer = styled("div")(() => ({
   flex: 1,
-  overflowY: "auto",
-  display: "flex",
-  flexDirection: "column"
+  overflowY: css.overflow.auto,
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column
 }));
 
 const EmptySpace = styled("div")(() => ({

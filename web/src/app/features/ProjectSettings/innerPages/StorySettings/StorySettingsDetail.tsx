@@ -1,6 +1,6 @@
 import { ColorField, SelectField } from "@reearth/app/ui/fields";
 import { Position } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useState } from "react";
 
 import { SettingsFields, TitleWrapper } from "../common";

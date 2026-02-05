@@ -1,7 +1,8 @@
 import { Button, DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { useStoryPage } from "../context";
@@ -16,14 +17,10 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
   const { storyPages, handleStoryPageAdd, handleStoryPageMove } =
     useStoryPage();
 
-  const [openedPageId, setOpenedPageId] = useState<string | undefined>(
-    undefined
-  );
-
   const [isDragging, setIsDragging] = useState(false);
   const [storyPageitems, setStoryPageitems] = useState(storyPages ?? []);
 
-  const DraggableStoryPageItems = useMemo(
+  const draggableStoryPageItems = useMemo(
     () =>
       storyPageitems?.map((storyPage, index) => ({
         id: storyPage.id,
@@ -87,12 +84,10 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
           onClick={() => handleStoryPageAdd(false)}
         />
       </ButtonWrapper>
-      <Wrapper
-        onScroll={openedPageId ? () => setOpenedPageId(undefined) : undefined}
-      >
-        {!!DraggableStoryPageItems && (
+      <Wrapper>
+        {!!draggableStoryPageItems && (
           <DragAndDropList
-            items={DraggableStoryPageItems}
+            items={draggableStoryPageItems}
             handleClassName={PAGES_DRAG_HANDLE_CLASS_NAME}
             onMoveEnd={handleMoveEnd}
             onMoveStart={handleMoveStart}
@@ -107,12 +102,12 @@ const PagesPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 export default PagesPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   height: "100%",
   gap: theme.spacing.normal,
-  overflowY: "auto",
-  boxSizing: "border-box"
+  overflowY: css.overflow.auto,
+  boxSizing: css.boxSizing.borderBox
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({

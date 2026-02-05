@@ -2,8 +2,9 @@ import { Button, DragAndDropList } from "@reearth/app/lib/reearth-ui";
 import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import ListItem from "./ListItem";
@@ -17,6 +18,7 @@ export type ListItemProps = {
 };
 
 export type ListFieldProps = CommonFieldProps & {
+  showTitle?: boolean;
   items: ListItemProps[];
   selected?: string;
   atLeastOneItem?: boolean;
@@ -30,6 +32,7 @@ export type ListFieldProps = CommonFieldProps & {
 
 const ListField: FC<ListFieldProps> = ({
   title,
+  showTitle = false,
   description,
   items,
   selected,
@@ -112,7 +115,7 @@ const ListField: FC<ListFieldProps> = ({
 
   return (
     <CommonField
-      title={title}
+      title={showTitle ? title : undefined}
       description={description}
       data-testid="listfield-commonfield"
     >
@@ -141,8 +144,8 @@ const ListField: FC<ListFieldProps> = ({
 };
 
 const FieldContainer = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest
 }));
 
@@ -151,7 +154,7 @@ const FieldWrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.small,
   padding: theme.spacing.smallest,
   border: `1px solid ${theme.outline.weak}`,
-  overflow: "auto"
+  overflow: css.overflow.auto
 }));
 
 export default ListField;

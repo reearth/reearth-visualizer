@@ -1,7 +1,8 @@
 import { TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, useCallback, useState } from "react";
 
 import { LayerStyleNameUpdateProps } from "../../hooks/useLayerStyles";
@@ -68,7 +69,11 @@ const LayerStyleItem: FC<LayerStyleItemProps> = ({
           id: "rename",
           title: t("Rename"),
           icon: "pencilSimple" as const,
-          onClick: () => setIsEditing(true)
+          onClick: () => {
+            setTimeout(() => {
+              setIsEditing(true);
+            }, 0);
+          }
         },
         {
           id: "delete",
@@ -86,9 +91,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap
 }));
 
 export default LayerStyleItem;

@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryPageInput,
@@ -20,7 +20,7 @@ import {
   MOVE_STORY_PAGE,
   UPDATE_STORY_PAGE
 } from "@reearth/services/gql/queries/storytelling";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback } from "react";
 
 import { useNotification } from "../../state";

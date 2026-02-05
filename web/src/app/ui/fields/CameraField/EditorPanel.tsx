@@ -4,8 +4,9 @@ import {
   PopupPanel,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import SliderField from "../SliderField";
@@ -106,22 +107,22 @@ const EditPanel: FC<PanelProps> = ({
 };
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  alignItems: css.alignItems.flexStart,
   gap: theme.spacing.small
 }));
 
 const GroupWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "center",
-  flexDirection: "column",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.normal
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small
 }));
 

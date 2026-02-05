@@ -3,8 +3,9 @@ import { useMe } from "@reearth/services/api/user";
 import { useWorkspace } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { WorkspaceMember } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useEffect, useMemo, useState } from "react";
 
 import { Workspace } from "../../type";
@@ -151,15 +152,15 @@ const Members: FC<Props> = ({ currentWorkspace }) => {
 export default Members;
 
 const Wrapper = styled("div")({
-  display: "grid",
+  display: css.display.grid,
   gridTemplateRows: "auto auto 1fr",
   height: "100%"
 });
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center,
   padding: `${theme.spacing.super}px`
 }));
 
@@ -169,23 +170,23 @@ const Search = styled("div")(({ theme }) => ({
 }));
 
 const ListWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.normal,
-  overflowY: "auto",
+  overflowY: css.overflow.auto,
   padding: theme.spacing.largest
 }));
 
 const TemplateWrapper = styled("div")({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   height: "70vh"
 });
 
 const Table = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px 32px`,
-  display: "grid",
+  display: css.display.grid,
   gridTemplateColumns: "3fr 4fr 2fr 1fr",
   gap: theme.spacing.small,
   color: theme.content.main,
@@ -196,6 +197,6 @@ const TableHeaderCell = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   color: theme.content.weak,
   lineHeight: `${theme.fonts.lineHeights.body}px`,
-  display: "flex",
-  alignItems: "center"
+  display: css.display.flex,
+  alignItems: css.alignItems.center
 }));

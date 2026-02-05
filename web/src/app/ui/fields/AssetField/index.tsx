@@ -10,13 +10,14 @@ import { TextInput, Button, TextInputProps } from "@reearth/app/lib/reearth-ui";
 import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   useNotification,
   useProjectId,
   useWorkspace
 } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
 
 import useAssetUpload from "./useAssetUpload";
@@ -161,14 +162,14 @@ const AssetField: FC<AssetFieldProps> = ({
 export default AssetField;
 
 const AssetWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: `${theme.spacing.smallest}px`,
   width: "100%"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "row",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.row,
   gap: `${theme.spacing.smallest}px`
 }));

@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   AddNlsLayerSimpleMutation,
@@ -17,7 +17,7 @@ import {
   REMOVE_NLSLAYER,
   UPDATE_NLSLAYERS
 } from "@reearth/services/gql/queries/layer";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

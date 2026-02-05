@@ -2,7 +2,7 @@ import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
 import { useProjectMutations } from "@reearth/services/api/project";
 import { useStoryMutations } from "@reearth/services/api/storytelling";
 import { config } from "@reearth/services/config";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublishItem } from "../hooks";

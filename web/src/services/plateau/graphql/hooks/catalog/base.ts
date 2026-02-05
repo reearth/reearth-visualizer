@@ -1,0 +1,37 @@
+import { DocumentNode, TypedDocumentNode, OperationVariables } from "@apollo/client";
+import {
+  useQuery as useApolloQuery,
+  useLazyQuery as useApolloLazyQuery,
+  QueryHookOptions,
+  NoInfer,
+  QueryResult,
+  LazyQueryResultTuple
+} from "@apollo/client/react";
+
+import { catalogClient } from "../../clients";
+
+export const useQuery = <
+  TData = unknown,
+  TVariables extends OperationVariables = OperationVariables
+>(
+  query: DocumentNode | TypedDocumentNode<TData, TVariables>,
+  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>
+): QueryResult<TData, TVariables> => {
+  return useApolloQuery(query, {
+    ...options,
+    client: catalogClient
+  });
+};
+
+export const useLazyQuery = <
+  TData = unknown,
+  TVariables extends OperationVariables = OperationVariables
+>(
+  query: DocumentNode | TypedDocumentNode<TData, TVariables>,
+  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>
+): LazyQueryResultTuple<TData, TVariables> => {
+  return useApolloLazyQuery(query, {
+    ...options,
+    client: catalogClient
+  });
+};

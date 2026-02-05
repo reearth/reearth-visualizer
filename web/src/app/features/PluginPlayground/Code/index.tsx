@@ -1,7 +1,8 @@
 import { OnMount } from "@monaco-editor/react";
 import { Button, CodeInput, IconButton } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useState } from "react";
 
 import { getLanguageByFileExtension } from "../utils";
@@ -139,14 +140,14 @@ const Code: FC<Props> = ({
 };
 
 const Header = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between"
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.spaceBetween
 }));
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small,
   height: "100%"
 }));

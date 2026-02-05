@@ -5,12 +5,12 @@ import { AssetField, InputField, SwitchField } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
 import type { Story } from "@reearth/services/api/storytelling";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import {
   ProjectPublicationExtensionProps,
   StoryPublicationExtensionProps
 } from "@reearth/services/config/extensions";
-import { useLang, useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import {
   NotificationType,
   useCurrentTheme,
@@ -19,6 +19,7 @@ import {
 } from "@reearth/services/state";
 import { useTheme } from "@reearth/services/styled";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { SettingsFields, SettingsWrapper, TitleWrapper } from "../common";
@@ -111,9 +112,6 @@ const PublicSettingsDetail: FC<Props> = ({
     trackingId: settingsItem.trackingId
   });
 
-  //TODO: Removed after investigation
-  const hideGASettings = false;
-
   const handleTrackingIdChange = useCallback(() => {
     if (onUpdateGA) {
       onUpdateGA({
@@ -183,7 +181,12 @@ const PublicSettingsDetail: FC<Props> = ({
   );
   const enableCustomDomainExtension =
     !!workspacePolicyCheckResultData?.workspacePolicyCheck
-      ?.enableToCreatePrivateProject;
+      ?.enableCustomDomainCreation;
+
+  // Memo: We don't provide UI for overCustomDomainCount limit now.
+  // const overCustomDomainCount =
+  //   !!workspacePolicyCheckResultData?.workspacePolicyCheck
+  //     ?.overCustomDomainCount;
 
   return (
     <SettingsWrapper>
@@ -350,28 +353,26 @@ const PublicSettingsDetail: FC<Props> = ({
           </>
         )}
       </SettingsFields>
-      {!hideGASettings ? (
-        <SettingsFields>
-          <TitleWrapper size="body" weight="bold">
-            {t("Google Analytics")}
-          </TitleWrapper>
-          <SwitchField
-            title={t("Enable Google Analytics")}
-            value={localGA.enableGa ?? false}
-            onChange={handleGAEnableChange}
+      <SettingsFields>
+        <TitleWrapper size="body" weight="bold">
+          {t("Google Analytics")}
+        </TitleWrapper>
+        <SwitchField
+          title={t("Enable Google Analytics")}
+          value={localGA.enableGa ?? false}
+          onChange={handleGAEnableChange}
+        />
+        {localGA.enableGa && (
+          <InputField
+            title={t("Tracking ID")}
+            value={settingsItem.trackingId}
+            onChange={(trackingId: string) => {
+              setLocalGA((s) => ({ ...s, trackingId }));
+            }}
+            onChangeComplete={handleTrackingIdChange}
           />
-          {localGA.enableGa && (
-            <InputField
-              title={t("Tracking ID")}
-              value={settingsItem.trackingId}
-              onChange={(trackingId: string) => {
-                setLocalGA((s) => ({ ...s, trackingId }));
-              }}
-              onChangeComplete={handleTrackingIdChange}
-            />
-          )}
-        </SettingsFields>
-      ) : null}
+        )}
+      </SettingsFields>
     </SettingsWrapper>
   );
 };
@@ -391,15 +392,15 @@ const StyledImage = styled("img")(({ theme }) => ({
 
 const HeadingWraper = styled("div")(({ theme }) => ({
   width: "100%",
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.small
 }));
 
 const ContentDescription = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   width: "100%",
   padding: `${theme.spacing.super}px 0`
 }));

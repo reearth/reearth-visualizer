@@ -5,8 +5,9 @@ import {
   ModalPanel,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 type Props = {
@@ -59,8 +60,8 @@ const ProjectRemoveModal: FC<Props> = ({
 export default ProjectRemoveModal;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   padding: theme.spacing.large,
   gap: theme.spacing.normal
 }));

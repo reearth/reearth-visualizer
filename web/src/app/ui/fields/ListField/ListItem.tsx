@@ -1,7 +1,8 @@
 import { PopupMenuItem, TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { ListItemProps } from ".";
@@ -52,7 +53,12 @@ const ListItem: FC<ItemProps> = ({
         id: "rename",
         title: "Rename",
         icon: "pencilSimple" as const,
-        onClick: () => setItemNameRenameId(item.id)
+        onClick: () => {
+          // Delay entering edit mode until popup has fully closed and finished focus management
+          setTimeout(() => {
+            setItemNameRenameId(item.id);
+          }, 0);
+        }
       });
     }
 
@@ -104,13 +110,14 @@ const ListItem: FC<ItemProps> = ({
 export default ListItem;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.micro
 }));
 
 const EntryItemWrapper = styled("div")(() => ({
-  flex: 1
+  flex: 1,
+  width: 0
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -118,7 +125,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap
 }));

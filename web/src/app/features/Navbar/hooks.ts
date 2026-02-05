@@ -1,13 +1,13 @@
 import { useProject } from "@reearth/services/api/project";
 import { useWorkspaces, useWorkspace } from "@reearth/services/api/workspace";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import {
   useProjectId,
   useWorkspace as useWorkspaceState
 } from "@reearth/services/state";
 import { ProjectType } from "@reearth/types";
 import { useMemo, useCallback, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 export default ({
   projectId,

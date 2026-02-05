@@ -1,9 +1,9 @@
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import JSZip from "jszip";
 import LZString from "lz-string";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router";
 import useFileInput from "use-file-input";
 import { v4 as uuidv4 } from "uuid";
 

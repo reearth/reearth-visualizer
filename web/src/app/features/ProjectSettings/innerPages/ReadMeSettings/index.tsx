@@ -1,6 +1,6 @@
 import { Button, TextArea } from "@reearth/app/lib/reearth-ui";
 import { ProjectMetadata } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";

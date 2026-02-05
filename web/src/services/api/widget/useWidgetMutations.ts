@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   SceneWidget,
   WidgetAlignSystemType,
@@ -13,7 +13,7 @@ import {
   UPDATE_WIDGET,
   UPDATE_WIDGET_ALIGN_SYSTEM
 } from "@reearth/services/gql/queries/widget";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { WidgetAreaState, useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

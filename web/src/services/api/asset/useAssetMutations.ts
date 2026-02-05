@@ -1,10 +1,11 @@
-import { FetchResult, useApolloClient, useMutation } from "@apollo/client";
+import { FetchResult } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client/react";
 import { CreateAssetInput, CreateAssetMutation } from "@reearth/services/gql";
 import {
   CREATE_ASSET,
   REMOVE_ASSET
 } from "@reearth/services/gql/queries/asset";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

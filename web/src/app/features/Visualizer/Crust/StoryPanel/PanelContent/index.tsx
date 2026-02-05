@@ -2,7 +2,8 @@ import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import type { NLSLayer } from "@reearth/services/api/layer";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
 import { styled } from "@reearth/services/theme";
-import { FC, MutableRefObject, ReactNode } from "react";
+import { css } from "@reearth/services/theme/reearthTheme/common";
+import { FC, MutableRefObject, ReactNode, useRef } from "react";
 
 import { BlockProps } from "../../../shared/types";
 import StoryPage from "../Page";
@@ -22,6 +23,7 @@ export type Props = {
   showingIndicator?: boolean;
   isAutoScrolling?: MutableRefObject<boolean>;
   isEditable?: boolean;
+  scrollResetKey?: string | number;
   onPageSettingsToggle?: () => void;
   onPageSelect?: (pageId?: string | undefined) => void;
   onCurrentPageChange?: (
@@ -77,6 +79,7 @@ const StoryContent: FC<Props> = ({
   showingIndicator,
   isAutoScrolling,
   isEditable,
+  scrollResetKey,
   onPageSettingsToggle,
   onPageSelect,
   onCurrentPageChange,
@@ -103,16 +106,20 @@ const StoryContent: FC<Props> = ({
     onBlockDelete
   });
 
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   return (
     <PagesWrapper
       id={STORY_PANEL_CONTENT_ELEMENT_ID}
       showingIndicator={showingIndicator}
       isEditable={isEditable && !disableSelection}
+      ref={wrapperRef}
     >
       {pages?.map((p) => (
         <StoryPage
           key={p.id}
           page={p}
+          wrapperRef={wrapperRef}
           selectedPageId={selectedPageId}
           installableStoryBlocks={installableStoryBlocks}
           selectedStoryBlockId={selectedStoryBlockId}
@@ -120,6 +127,7 @@ const StoryContent: FC<Props> = ({
           isEditable={isEditable}
           scrollTimeoutRef={scrollTimeoutRef}
           isAutoScrolling={isAutoScrolling}
+          scrollResetKey={scrollResetKey}
           onCurrentPageChange={onCurrentPageChange}
           onPageSettingsToggle={onPageSettingsToggle}
           onPageSelect={onPageSelect}
@@ -149,10 +157,10 @@ const PagesWrapper = styled("div")<{
   isEditable?: boolean;
 }>(({ showingIndicator, isEditable }) => ({
   height: showingIndicator ? "calc(100% - 8px)" : "100%",
-  overflowY: "auto",
+  overflowY: css.overflow.auto,
   cursor: isEditable ? "pointer" : "default",
   ["::-webkit-scrollbar"]: {
-    display: "none"
+    display: css.display.none
   },
   scrollbarWidth: "none",
   msOverflowStyle: "none"

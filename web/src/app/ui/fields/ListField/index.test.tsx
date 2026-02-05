@@ -20,6 +20,7 @@ describe("ListField", () => {
           description="Test Description"
           items={mockItems}
           onItemAdd={mockOnItemAdd}
+          showTitle
         />
       </ThemeProvider>
     );

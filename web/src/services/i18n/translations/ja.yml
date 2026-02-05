@@ -85,9 +85,7 @@ Apply: 適用
 Project Name *: プロジェクト名 *
 Text: テキスト
 Project Alias *: プロジェクト別名 *
-'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': >-
-  プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例:
-  https://reearth.io/team-alias/project-alias
+'Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': '使用できるのは英字、数字、ハイフンのみです。例: https://reearth.io/team-alias/project-alias'
 Project Visibility *: プロジェクトの公開範囲 *
 For Open & Public projects, anyone can view the project. For Private projects, only members of the workspace can see it.: オープンおよび公開プロジェクトでは、誰でもプロジェクトを閲覧できます。非公開プロジェクトでは、ワークスペースのメンバーのみが閲覧できます。
 Description: 説明
@@ -149,6 +147,8 @@ Support for the CZML format is currently experimental and remains somewhat unsta
 Input Text: テキストを入力
 Value: 値
 Input data here: ここにデータを入力
+Auto Update Time: 自動時間更新
+'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': 有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
 Invalid GeoJSON format: 不正なGeoJSON形式
 Please enter valid GeoJSON: 有効なGeoJSONを入力してください
 Prioritize Performance: パフォーマンスを優先
@@ -166,7 +166,7 @@ Choose layer to add: 追加するレイヤーを選択
 layer name: レイヤー名
 Layer name: レイヤー名
 Inspector: インスペクター
-Data source: データソース
+Layer: レイヤー
 Layer Name: レイヤー名
 Format: 形式
 Custom property schema: カスタムプロパティスキーマ
@@ -197,7 +197,6 @@ Properties: プロパティ
 Photo Overlay: フォトオーバーレイ
 Photo Overlay Set: フォトオーバーレイ設定
 Not set: 設定されていません
-Layer: レイヤー
 Feature: 地物
 Layer Style: レイヤースタイル
 Infobox: インフォボックス
@@ -209,6 +208,7 @@ Show photo overlay when the user clicks on a layer: レイヤーをクリック�
 Settings: 設定
 Add Layer from Resource: リソースからレイヤーを追加
 Add Sketch Layer: スケッチレイヤーを追加
+Add Layer from PLATEAU Asset: PLATEAUアセットからレイヤーを追加
 Layers: レイヤー
 New Layer: 新しいレイヤー
 Fly to: 移動
@@ -234,6 +234,7 @@ italic: イタリック
 New node: 新しいノード
 Assign style: スタイルの割り当て
 New style: 新しいスタイル
+Search Map: マップを検索
 Contain: 収める
 Fixed: 固定
 Photo transparency: フォト透過度
@@ -243,6 +244,12 @@ Photo size type: フォトサイズタイプ
 Photo size: フォトサイズ
 Photo description: フォト説明
 Camera: カメラ
+Area: 都道府県
+Dataset Type: カテゴリー
+PLATEAU Data Catalog: PLATEAUデータカタログ
+Search by name: 名前で検索
+No results found: 結果が見つかりません
+Loading...: ロード中...
 Main: メイン
 Tiles: タイル
 Terrain: 地形
@@ -414,6 +421,9 @@ README: リードミー
 License: ライセンス
 Most project settings are hidden when the project is archived. Please unarchive the project to view and edit these settings.: プロジェクトをアーカイブすると、削除とアーカイブ解除以外の操作は行えません。再度編集可能な状態にするには、プロジェクトのアーカイブを解除してください。
 Basic settings: 基本設定
+'Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias': >-
+  プロジェクトURLの作成に使用されます。小文字の英字、数字、ハイフンのみ使用可能です。例:
+  https://reearth.io/team-alias/project-alias
 Thumbnail: サムネイル画像
 Danger Zone: 重要操作
 Change project visibility: プロジェクトの公開範囲を変更
@@ -496,6 +506,8 @@ aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
+New Channel: 新しいチャンネル
+Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定
 Block: ブロック
 Unsupported field type: サポートされていないフィールドタイプ
@@ -537,7 +549,6 @@ Strikethrough: 打ち消し線
 Subscript: 下付き文字
 Superscript: 上付き文字
 Clear Formatting: 書式をクリア
-Loading...: ロード中...
 Please select: 選択してください
 This function is currently experimental and remains somewhat unstable.: この機能は試験運用中です。不具合が生じる可能性があることをご了承ください。
 'Sort:': '並び替え:'
@@ -677,8 +688,6 @@ Failed to update user password.: ユーザーパスワードの更新に失敗�
 Successfully updated user password!: ユーザーパスワードの更新に成功しました！
 Failed to change language.: 言語の変更に失敗しました。
 Successfully updated user language!: ユーザーの言語が更新されました！
-Failed to delete user.: ユーザーの削除に失敗しました。
-Successfully delete user!: ユーザーの削除に成功しました！
 Failed to add widget.: ウィジェットの追加に失敗しました。
 Failed to update widget.: ウィジェットの更新に失敗しました。
 Failed to remove widget.: ウィジェットの削除に失敗しました。

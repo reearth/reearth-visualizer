@@ -1,8 +1,9 @@
 import { Button } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
 import { Panel } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useState } from "react";
 
 import { usePublishViewDevice } from "../../atoms";
@@ -119,20 +120,20 @@ export default PublishToolsPanel;
 const StyledSecondaryNav = styled("div")(({ theme }) => ({
   width: "100%",
   height: "44px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center,
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`
 }));
 
 const LeftSection = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.normal,
   height: "24px"
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
   height: "28px",
   zIndex: 1
@@ -141,15 +142,15 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
 const TabButton = styled(EntryItem)({
   width: "100px",
   height: "44px",
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center"
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center
 });
 
 const TabButtonWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   gap: theme.spacing.small,
   minWidth: "116px"
 }));
@@ -159,10 +160,10 @@ const StatusWrapper = styled("div")({
 });
 
 const CenterWrapper = styled("div")(() => ({
-  position: "absolute",
+  position: css.position.absolute,
   width: "100%",
   height: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center"
+  display: css.display.flex,
+  justifyContent: css.justifyContent.center,
+  alignItems: css.alignItems.center
 }));

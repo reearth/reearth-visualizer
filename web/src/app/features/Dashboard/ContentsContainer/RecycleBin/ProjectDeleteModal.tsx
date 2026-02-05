@@ -5,8 +5,9 @@ import {
   TextInput,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useState } from "react";
 
 type Props = {
@@ -69,8 +70,8 @@ const ProjectDeleteModal: FC<Props> = ({
 export default ProjectDeleteModal;
 
 const ModalContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.large,
   padding: theme.spacing.normal,
   background: theme.bg[1]

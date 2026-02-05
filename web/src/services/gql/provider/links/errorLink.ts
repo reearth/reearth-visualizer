@@ -1,13 +1,10 @@
 import { onError } from "@apollo/client/link/error";
 import { reportError } from "@reearth/sentry";
-import { useSetError } from "@reearth/services/state";
 import { GQLError } from "@reearth/services/state/gqlErrorHandling";
 
 import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "../..";
 
-export default () => {
-  const { setErrors } = useSetError();
-
+export default (setErrors: (errors: GQLError[]) => void) => {
   return onError(({ graphQLErrors, networkError, operation }) => {
     const skipGlobalError =
       operation.getContext()?.headers?.[

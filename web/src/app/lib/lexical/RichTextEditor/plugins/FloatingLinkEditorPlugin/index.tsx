@@ -18,7 +18,7 @@ import {
   LexicalEditor,
   SELECTION_CHANGE_COMMAND
 } from "lexical";
-import { Dispatch, useCallback, useEffect, useRef, useState } from "react";
+import { Dispatch, useCallback, useEffect, useRef, useState, type JSX } from "react";
 import * as React from "react";
 import { createPortal } from "react-dom";
 
@@ -53,10 +53,10 @@ function FloatingLinkEditor({
     if ($isRangeSelection(selection)) {
       const node = getSelectedNode(selection);
       const parent = node.getParent();
-      if ($isLinkNode(parent)) {
-        setLinkUrl(parent.getURL());
-      } else if ($isLinkNode(node)) {
-        setLinkUrl(node.getURL());
+      if (parent && $isLinkNode(parent as unknown as Parameters<typeof $isLinkNode>[0])) {
+        setLinkUrl((parent as unknown as { getURL(): string }).getURL());
+      } else if ($isLinkNode(node as unknown as Parameters<typeof $isLinkNode>[0])) {
+        setLinkUrl((node as unknown as { getURL(): string }).getURL());
       } else {
         setLinkUrl("");
       }
@@ -272,8 +272,14 @@ function useFloatingLinkEditorToolbar(
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
       const node = getSelectedNode(selection);
-      const linkParent = $findMatchingParent(node, $isLinkNode);
-      const autoLinkParent = $findMatchingParent(node, $isAutoLinkNode);
+      let linkParent: unknown = null;
+      let autoLinkParent: unknown = null;
+      try {
+        linkParent = ($findMatchingParent as unknown as (node: unknown, fn: unknown) => unknown)(node, $isLinkNode);
+        autoLinkParent = ($findMatchingParent as unknown as (node: unknown, fn: unknown) => unknown)(node, $isAutoLinkNode);
+      } catch {
+        // Handle type compatibility issues between different Lexical versions
+      }
 
       // We don't want this menu to open for auto links.
       if (linkParent != null && autoLinkParent == null) {

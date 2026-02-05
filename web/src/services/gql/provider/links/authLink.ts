@@ -1,9 +1,6 @@
 import { setContext } from "@apollo/client/link/context";
-import { useAuth } from "@reearth/services/auth";
 
-export default () => {
-  const { getAccessToken } = useAuth();
-
+export default (getAccessToken: () => Promise<string | null>) => {
   return setContext(async (_, { headers }) => {
     // get the authentication token from local storage if it exists
     const accessToken = await getAccessToken();

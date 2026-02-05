@@ -1,4 +1,4 @@
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { useProject } from "@reearth/services/api/project";
 import { useProjectMutations } from "@reearth/services/api/project/useProjectMutations";
 import {
@@ -6,10 +6,10 @@ import {
   useStoryMutations
 } from "@reearth/services/api/storytelling";
 import { toPublishmentStatus } from "@reearth/services/api/utils";
-import { useAuth } from "@reearth/services/auth";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 
 import useScene from "../Editor/hooks/useScene";
 

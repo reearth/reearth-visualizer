@@ -1,5 +1,6 @@
 import { Icon, IconName, Typography } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
 
 import { AssetItemProps } from "./type";
@@ -44,7 +45,7 @@ const AssetGridItem: FC<AssetItemProps> = ({
   );
 
   return (
-    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick}>
+    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick} data-testid={`asset-grid-item-${asset.id}`}>
       <ThumbnailWrapper>
         <Thumbnail>
           {type === "image" ? (
@@ -67,14 +68,14 @@ export default AssetGridItem;
 
 const Wrapper = styled("div")<{ selected?: boolean }>(
   ({ theme, selected }) => ({
-    display: "flex",
-    flexDirection: "column",
-    boxSizing: "border-box",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.column,
+    boxSizing: css.boxSizing.borderBox,
     width: "100%",
     padding: theme.spacing.smallest,
     borderRadius: theme.radius.small,
     gap: theme.spacing.smallest,
-    cursor: "pointer",
+    cursor: css.cursor.pointer,
     backgroundColor: selected ? theme.select.main : "transparent",
     transition: "background-color 0.1s ease",
     ["&:hover"]: {
@@ -85,12 +86,12 @@ const Wrapper = styled("div")<{ selected?: boolean }>(
 );
 
 const ThumbnailWrapper = styled("div")(() => ({
-  position: "relative",
+  position: css.position.relative,
   paddingBottom: "62.5%"
 }));
 
 const Thumbnail = styled("div")(({ theme }) => ({
-  position: "absolute",
+  position: css.position.absolute,
   top: 0,
   left: 0,
   right: 0,
@@ -98,8 +99,8 @@ const Thumbnail = styled("div")(({ theme }) => ({
   width: "100%",
   height: "100%",
   borderRadius: theme.radius.small,
-  overflow: "hidden",
-  display: "flex"
+  overflow: css.overflow.hidden,
+  display: css.display.flex
 }));
 
 const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({
@@ -109,17 +110,17 @@ const AssetImage = styled("div")<{ url?: string }>(({ theme, url }) => ({
 }));
 
 const IconWrapper = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   width: "100%"
 }));
 
 const AssetName = styled("div")(() => ({
-  textAlign: "center",
-  wordBreak: "break-word",
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
+  textAlign: css.textAlign.center,
+  wordBreak: css.wordBreak.breakWord,
+  whiteSpace: css.whiteSpace.nowrap,
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
   padding: "1px 0"
 }));

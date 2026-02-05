@@ -1,5 +1,3 @@
-import { BlockProvider } from "@reearth/app/features/Visualizer/shared/contexts/blockContext";
-import { EditModeProvider } from "@reearth/app/features/Visualizer/shared/contexts/editModeContext";
 import {
   BlockProps,
   InstallableBlock
@@ -9,6 +7,9 @@ import type { NLSLayer } from "@reearth/services/api/layer";
 import { styled } from "@reearth/services/theme";
 import { forwardRef, memo, ReactNode, Ref, RefObject, useMemo } from "react";
 import { createPortal } from "react-dom";
+
+import { BlockProvider } from "../../shared/contexts/BlockProvider";
+import { EditModeProvider } from "../../shared/contexts/EditModeProvider";
 
 import { STORY_PANEL_WIDTH } from "./constants";
 import { PanelProvider, StoryPanelContext } from "./context";
@@ -24,7 +25,7 @@ export type InstallableStoryBlock = InstallableBlock & {
 };
 
 export type StoryPanelProps = {
-  storyWrapperRef?: RefObject<HTMLDivElement>;
+  storyWrapperRef?: RefObject<HTMLDivElement | null>;
   selectedStory?: Story;
   isEditable?: boolean;
   isMobile?: boolean;
@@ -98,7 +99,6 @@ export const StoryPanel = memo(
         isAutoScrolling,
         layerOverride,
         disableSelection,
-        setCurrentPageId,
         setLayerOverride,
         handleSelectionDisable,
         handleLayerOverride,
@@ -124,14 +124,13 @@ export const StoryPanel = memo(
             if (!pageId) return;
             const element = document.getElementById(pageId);
             if (!element) return;
-            setCurrentPageId(pageId);
             setLayerOverride(undefined);
             element.scrollIntoView({
-              behavior: "instant"
-            } as unknown as ScrollToOptions); // TODO: when typescript is updated to 5.1, remove this cast
+              behavior: "smooth"
+            });
           }
         }),
-        [selectedStory?.pages, setCurrentPageId, setLayerOverride]
+        [selectedStory?.pages, setLayerOverride]
       );
 
       const editModeContext = useMemo(
@@ -177,6 +176,7 @@ export const StoryPanel = memo(
                       showingIndicator={!!pageInfo}
                       isAutoScrolling={isAutoScrolling}
                       isEditable={isEditable}
+                      scrollResetKey={isEditable ? "editor" : "viewer"}
                       onPageSettingsToggle={handlePageSettingsToggle}
                       onPageSelect={handlePageSelect}
                       onCurrentPageChange={handleCurrentPageChange}

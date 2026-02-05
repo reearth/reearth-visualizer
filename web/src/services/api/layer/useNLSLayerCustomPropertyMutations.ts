@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   UpdateCustomPropertySchemaInput,
@@ -13,7 +13,7 @@ import {
   CHANGE_CUSTOM_PROPERTY_TITLE,
   REMOVE_CUSTOM_PROPERTY
 } from "@reearth/services/gql/queries/layer";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

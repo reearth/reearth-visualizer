@@ -1,7 +1,8 @@
 import { IconButton } from "@reearth/app/lib/reearth-ui";
 import { Credit } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { Theme } from "../../../types";
@@ -44,7 +45,7 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                     rel="noopener noreferrer"
                   >
                     {credit.logo && (
-                      <LogoWrapper>
+                      <LogoWrapper noBg={credit.disableLogoBackground}>
                         <StyledImage src={credit.logo} />
                       </LogoWrapper>
                     )}
@@ -55,7 +56,7 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
                 ) : (
                   <CreditItem>
                     {credit.logo && (
-                      <LogoWrapper>
+                      <LogoWrapper noBg={credit.disableLogoBackground}>
                         <StyledImage src={credit.logo} />
                       </LogoWrapper>
                     )}
@@ -74,9 +75,9 @@ export const DataAttributionUI: FC<DataAttributionProps> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.flexStart,
   background: "#fff",
   color: "#000",
   boxShadow: theme.shadow.card,
@@ -89,14 +90,14 @@ const IconWrapper = styled("div")(() => ({
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   padding: `0 ${theme.spacing.largest}px`,
-  alignItems: "flex-start",
+  alignItems: css.alignItems.flexStart,
   gap: theme.spacing.small + 2,
   alignSelf: "stretch",
   maxHeight: 200,
-  overflowY: "auto"
+  overflowY: css.overflow.auto
 }));
 
 const Title = styled("div")(({ theme }) => ({
@@ -107,17 +108,17 @@ const Title = styled("div")(({ theme }) => ({
 
 const Content = styled("ul")(({ theme }) => ({
   width: "100%",
-  boxSizing: "border-box",
+  boxSizing: css.boxSizing.borderBox,
   margin: 0,
   padding: 0,
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.micro
 }));
 
 const ListItem = styled("li")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.normal
 }));
 
@@ -128,16 +129,16 @@ const ListMarker = styled("div")(() => ({
 }));
 
 const CreditItem = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-start",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.flexStart,
   gap: theme.spacing.small
 }));
 
 const CreditItemLink = styled("a")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-start",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.flexStart,
   gap: theme.spacing.small
 }));
 
@@ -145,18 +146,18 @@ const CreditText = styled("span")(({ theme }) => ({
   color: "#000",
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  display: "block"
+  display: css.display.block
 }));
 
-const LogoWrapper = styled("div")(({ theme }) => ({
-  position: "relative",
-  boxSizing: "border-box",
-  background: theme.bg[3],
+const LogoWrapper = styled("div")<{ noBg?: boolean }>(({ theme, noBg }) => ({
+  position: css.position.relative,
+  boxSizing: css.boxSizing.borderBox,
+  background: noBg ? "transparent" : theme.bg[3],
   padding: theme.spacing.micro,
   borderRadius: theme.radius.small,
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center"
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center
 }));
 
 const StyledImage = styled("img")(() => ({

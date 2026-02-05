@@ -1,9 +1,9 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import { CustomOptions } from "@reearth/services/api/types";
 import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "@reearth/services/gql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { CHECK_STORY_ALIAS } from "@reearth/services/gql/queries/storytelling";
-import { useLang, useT } from "@reearth/services/i18n";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 

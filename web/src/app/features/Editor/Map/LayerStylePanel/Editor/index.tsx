@@ -1,7 +1,8 @@
 import { Button, Tabs } from "@reearth/app/lib/reearth-ui";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { LayerStyleValueUpdateProps } from "../../../hooks/useLayerStyles";
@@ -80,10 +81,10 @@ const EditorContainer = styled("div")(({ theme }) => ({
   minHeight: 0,
   height: "auto",
   flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.spaceBetween,
   paddingTop: theme.spacing.smallest
 }));
 
@@ -93,8 +94,8 @@ const ButtonWrapper = styled("div")<{ isSelected?: boolean }>(
     padding: theme.spacing.small,
     width: "100%",
     background: theme.bg[1],
-    display: "flex",
-    flexDirection: "row",
+    display: css.display.flex,
+    flexDirection: css.flexDirection.row,
     gap: theme.spacing.small
   })
 );

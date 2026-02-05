@@ -1,6 +1,7 @@
 import type { Credits, TickEvent } from "@reearth/core";
 import { TimelineManagerRef, TimelineCommitter } from "@reearth/core";
-import { ComponentType, ReactNode, useMemo } from "react";
+import { NLSLayer } from "@reearth/services/api/layer";
+import { ComponentType, ReactNode, useMemo, type JSX } from "react";
 
 import type { WidgetProperty } from "../types";
 
@@ -49,6 +50,7 @@ export type Context = {
     layerId?: string;
     featureId?: string;
   };
+  nlsLayers?: NLSLayer[];
   onFlyTo?: (
     target: string | FlyToDestination,
     options?: { duration?: number }

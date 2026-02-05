@@ -134,7 +134,7 @@ Follow the component hierarchy:
 ```typescript
 // External libraries
 import React from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 
 // Internal services
 import { useAuth } from "@/services/auth";

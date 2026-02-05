@@ -1,7 +1,7 @@
 import { useProject } from "@reearth/services/api/project";
 import { useStories } from "@reearth/services/api/storytelling";
 import { PublishmentStatus } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback, useMemo, useState } from "react";
 
 import { SubProject } from "../../hooks/useUI";
@@ -46,12 +46,13 @@ export default ({
         publishmentStatus: project.publishmentStatus,
         isPublished: isPublished(project.publishmentStatus)
       },
+      // Memo: we only have one story now
       ...(stories ?? []).map((s) => ({
         id: s.id,
         projectId: project.id,
         storyId: s.id,
         type: "story" as const,
-        buttonTitle: `${t("Story")} ${s.title}`,
+        buttonTitle: t("Story"),
         alias: s.alias,
         publishmentStatus: s.publishmentStatus,
         isPublished: isPublished(s.publishmentStatus)

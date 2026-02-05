@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import {
   GetProjectsQueryVariables,
   HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION
@@ -10,7 +10,7 @@ import {
   GET_PROJECTS,
   GET_STARRED_PROJECTS
 } from "@reearth/services/gql/queries/project";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useMemo } from "react";
 

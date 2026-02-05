@@ -4,8 +4,9 @@ import useHooks, {
 import useTimelineBlock from "@reearth/app/features/Visualizer/shared/hooks/useTimelineBlock";
 import { PaddingProp } from "@reearth/app/features/Visualizer/shared/types";
 import { Icon, Popup } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 
 import { TimelineValues } from ".";
 
@@ -209,13 +210,13 @@ const Wrapper = styled("div")(({ theme }) => ({
   color: theme.content.weaker,
   borderRadius: theme.radius.large,
   border: `1px solid ${theme.bg[3]}`,
-  userSelect: "none"
+  userSelect: css.userSelect.none
 }));
 
 const TimelineWrapper = styled("div")<{ isMinimized: boolean }>(
   ({ isMinimized, theme }) => ({
-    display: "flex",
-    alignItems: "center",
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
     paddingBottom: theme.spacing.small - 2,
     gap: isMinimized ? "" : "25px",
     flexDirection: isMinimized ? "column" : "row"
@@ -224,9 +225,9 @@ const TimelineWrapper = styled("div")<{ isMinimized: boolean }>(
 
 const TimelineControl = styled("div")<{ isMinimized: boolean }>(
   ({ isMinimized }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
+    justifyContent: css.justifyContent.spaceBetween,
     gap: isMinimized ? "0" : "18px",
     width: isMinimized ? "100%" : "auto"
   })
@@ -235,7 +236,7 @@ const TimelineControl = styled("div")<{ isMinimized: boolean }>(
 const StyledIcon = styled("div")<{ activeBlock: boolean }>(
   ({ activeBlock, theme }) => ({
     color: theme.content.strong,
-    cursor: "pointer",
+    cursor: css.cursor.pointer,
     background: activeBlock ? theme.select.main : theme.bg[4],
     padding: `${theme.spacing.smallest}px ${theme.spacing.small - 2}px ${theme.spacing.micro}px `,
     borderRadius: `${theme.radius.normal}px 0 ${theme.radius.large}px 0`,
@@ -245,7 +246,7 @@ const StyledIcon = styled("div")<{ activeBlock: boolean }>(
 
 const PlayControl = styled("div")<{ isMinimized: boolean }>(
   ({ isMinimized, theme }) => ({
-    display: "flex",
+    display: css.display.flex,
     gap: theme.spacing.small + 2,
     marginLeft: isMinimized ? "auto" : "0"
   })
@@ -269,12 +270,12 @@ const PlayButton = styled("div")<{ isPlaying?: boolean; isClicked?: boolean }>(
 );
 
 const InputWrapper = styled("div")(() => ({
-  position: "relative",
-  cursor: "pointer"
+  position: css.position.relative,
+  cursor: css.cursor.pointer
 }));
 
 const ArrowIcon = styled(Icon)<{ open: boolean }>(({ open, theme }) => ({
-  position: "absolute",
+  position: css.position.absolute,
   right: "-6px",
   top: "60%",
   transform: open ? "translateY(-50%) scaleY(-1)" : "translateY(-50%)",
@@ -300,9 +301,9 @@ const SelectorWrapper = styled("div")(({ theme }) => ({
   outline: "none",
   borderRadius: theme.radius.small,
   background: theme.bg[3],
-  display: "flex",
-  flexDirection: "column",
-  justifyContent: "space-between",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  justifyContent: css.justifyContent.spaceBetween,
   zIndex: theme.zIndexes.visualizer.storyBlock,
   boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.25)"
 }));
@@ -310,7 +311,7 @@ const SelectorWrapper = styled("div")(({ theme }) => ({
 const InputOptions = styled("option")(({ theme }) => ({
   background: theme.bg[1],
   border: "none",
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   fontSize: " 12px",
   ["&:hover"]: {
@@ -324,8 +325,8 @@ const TimelineSlider = styled("div")(({ theme }) => ({
   height: "38px",
   width: "100%",
   borderRadius: `0 0 ${theme.radius.large}px ${theme.radius.large}px`,
-  position: "relative",
-  overflow: "hidden"
+  position: css.position.relative,
+  overflow: css.overflow.hidden
 }));
 
 const TimelineSliderIcon = styled("div")<{ isPlaying: boolean }>(
@@ -338,19 +339,19 @@ const TimelineSliderIcon = styled("div")<{ isPlaying: boolean }>(
 );
 
 const ScaleList = styled("div")(() => ({
-  display: "flex",
+  display: css.display.flex,
   height: "38px",
-  alignItems: "flex-end",
-  position: "absolute",
+  alignItems: css.alignItems.flexEnd,
+  position: css.position.absolute,
   left: "18px",
   right: "-12px",
-  cursor: "pointer"
+  cursor: css.cursor.pointer
 }));
 
 const IconWrapper = styled("div")(() => ({
-  position: "absolute",
+  position: css.position.absolute,
   top: "4px",
-  cursor: "pointer"
+  cursor: css.cursor.pointer
 }));
 
 const Scale = styled("div")(({ theme }) => ({
@@ -365,7 +366,7 @@ const Scale = styled("div")(({ theme }) => ({
 const ScaleLabel = styled("div")<{ isMinimized: boolean }>(
   ({ isMinimized }) => ({
     fontSize: isMinimized ? "8px" : "10px",
-    position: "relative",
+    position: css.position.relative,
     bottom: "28px",
     right: "16px",
     width: "34px"

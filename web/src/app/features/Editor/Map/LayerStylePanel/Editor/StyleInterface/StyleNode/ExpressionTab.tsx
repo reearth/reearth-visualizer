@@ -1,6 +1,7 @@
 import { TextInput, Typography } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 type Props = {
@@ -48,9 +49,9 @@ const ExpressionTab: FC<Props> = ({
 export default ExpressionTab;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.smallest,
-  alignItems: "center"
+  alignItems: css.alignItems.center
 }));
 
 const InfoWrapper = styled("div")(({ theme }) => ({

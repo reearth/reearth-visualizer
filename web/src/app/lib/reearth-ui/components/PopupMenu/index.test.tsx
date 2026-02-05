@@ -1,5 +1,5 @@
 import { screen, fireEvent, render } from "@reearth/test/utils";
-import { MemoryRouter } from "react-router-dom";
+import { MemoryRouter } from "react-router";
 import { describe, test, expect, vi } from "vitest";
 
 import { PopupMenu } from "./index";
@@ -46,7 +46,7 @@ const mockCustomSubMenuItems = [
   }
 ];
 
-const renderWithRouter = (ui: React.ReactElement) => {
+const renderWithRouter = (ui: React.ReactElement<unknown>) => {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 };
 

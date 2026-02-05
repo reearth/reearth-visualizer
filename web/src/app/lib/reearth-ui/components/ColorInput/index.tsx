@@ -5,8 +5,9 @@ import {
   TextInput,
   PopupPanel
 } from "@reearth/app/lib/reearth-ui/components";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { fonts, styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 import { RgbaColorPicker } from "react-colorful";
 
@@ -135,9 +136,9 @@ export const ColorInput: FC<ColorInputProps> = ({
 };
 
 const InputWrapper = styled("div")<{ width?: number }>(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.smallest,
-  alignItems: "flex-start",
+  alignItems: css.alignItems.flexStart,
   width: "100%"
 }));
 
@@ -148,8 +149,8 @@ const Swatch = styled("div")<{
   alphaDisabled?: boolean;
   size: "normal" | "small";
 }>(({ theme, color, status, size, disabled, alphaDisabled }) => ({
-  position: "relative",
-  boxSizing: "border-box",
+  position: css.position.relative,
+  boxSizing: css.boxSizing.borderBox,
   width: size === "small" ? 20 : 28,
   height: size === "small" ? 20 : 28,
   cursor: disabled ? "not-allowed" : "pointer",
@@ -166,12 +167,12 @@ const Swatch = styled("div")<{
   backgroundPosition: `0 0, 0 ${theme.spacing.small / 2}px, ${theme.spacing.small / 2}px -${
     theme.spacing.small / 2
   }px, -${theme.spacing.small / 2}px 0px`,
-  overflow: "hidden",
+  overflow: css.overflow.hidden,
 
   ["&:before"]: {
     content: '""',
-    display: "block",
-    position: "absolute",
+    display: css.display.block,
+    position: css.position.absolute,
     width: "100%",
     height: "100%",
     left: 0,
@@ -212,9 +213,9 @@ const ColorPicker = styled(RgbaColorPicker, {
 }));
 
 const ColorPickerWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.flexStart,
   gap: theme.spacing.normal
 }));
 
@@ -224,14 +225,14 @@ const Format = styled("div")(() => ({
 }));
 
 const ChannelsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  alignItems: css.alignItems.flexStart,
   gap: theme.spacing.smallest
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "flex-start",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.flexStart,
+  justifyContent: css.justifyContent.center,
   gap: theme.spacing.small
 }));

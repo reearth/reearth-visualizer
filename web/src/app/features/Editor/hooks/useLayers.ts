@@ -17,7 +17,7 @@ import {
   UpdateCustomPropertySchemaInput,
   Scalars
 } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import {
   MutableRefObject,
   useCallback,
@@ -49,6 +49,7 @@ export type LayerAddProps = {
   title: string;
   visible?: boolean;
   schema?: Scalars["JSON"]["input"];
+  dataSourceName?: string;
 };
 
 export type LayerNameUpdateProps = {
@@ -246,7 +247,8 @@ export default function ({
         layerType: inp.layerType,
         title: t(inp.title),
         index: nextIndex,
-        schema: inp.schema
+        schema: inp.schema,
+        dataSourceName: inp.dataSourceName
       });
     },
     [nlsLayers, t, addNLSLayerSimple]

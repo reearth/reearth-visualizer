@@ -7,14 +7,15 @@ import { useMapPage } from "./context";
 import InspectorPanel from "./InspectorPanel";
 import LayersPanel from "./LayersPanel";
 import LayerStylePanel from "./LayerStylePanel";
+import MapGoogleSearch from "./MapGoogleSearch";
 import PhotoOverlayEditor from "./PhotoOverlayEditor";
 import ScenePanel from "./ScenePanel";
+import SketchToolsPanel from "./SketchToolsPanel";
 import {
   photoOverlayEditingFeatureAtom,
   PhotoOverlayPreviewAtom,
   SketchFeatureTooltipAtom
 } from "./state";
-import ToolsPanel from "./ToolsPanel";
 
 const Map: FC = () => {
   const { handleVisualizerResize, handleSketchGeometryEditCancel } =
@@ -60,8 +61,9 @@ const Map: FC = () => {
           <LayersPanel />
         </Area>
         <Area direction="column" extend asWrapper>
-          <Area initialHeight={34} hidden={hideNormalPanels}>
-            <ToolsPanel />
+          <Area initialHeight={30} hidden={hideNormalPanels}>
+            <SketchToolsPanel />
+            <MapGoogleSearch />
           </Area>
           <Area
             extend

@@ -1,8 +1,9 @@
 import { useSettingsNavigation } from "@reearth/app/hooks";
 import { Button, Icon, Typography } from "@reearth/app/lib/reearth-ui";
 import { CommonField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import {
@@ -144,7 +145,7 @@ const PublishedOrUpdatedSection: FC<Props> = ({
 export default PublishedOrUpdatedSection;
 
 const SettingWrapper = styled("div")(() => ({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center"
+  display: css.display.flex,
+  justifyContent: css.justifyContent.spaceBetween,
+  alignItems: css.alignItems.center
 }));

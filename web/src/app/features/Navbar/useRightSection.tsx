@@ -1,7 +1,8 @@
 import { useEditorNavigation } from "@reearth/app/hooks/navigationHooks";
 import { IconButton } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n";
+import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useMemo } from "react";
 
 import useDevPlugins from "./useDevPlugins";
@@ -92,17 +93,17 @@ const useRightSide = ({ currentTab, page, sceneId }: Props) => {
 };
 
 const RightSection = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "flex-end",
-  justifyContent: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.flexEnd,
+  justifyContent: css.justifyContent.center,
   gap: theme.spacing.smallest
 }));
 
 const TabButton = styled("button")<{ selected?: boolean }>(
   ({ selected, theme }) => ({
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "center",
+    display: css.display.flex,
+    alignItems: css.alignItems.flexStart,
+    justifyContent: css.justifyContent.center,
     padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
     fontSize: `${theme.fonts.sizes.body}px`,
     gap: theme.spacing.small,
