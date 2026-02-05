@@ -5579,7 +5579,6 @@ __metadata:
     eslint-config-reearth: "npm:0.3.8"
     eslint-plugin-storybook: "npm:10.1.10"
     formik: "npm:2.4.9"
-    framer-motion: "npm:10.16.1"
     github-markdown-css: "npm:5.8.1"
     graphiql: "npm:3.4.0"
     graphql: "npm:16.12.0"
@@ -13505,27 +13504,6 @@ __metadata:
   version: 5.3.4
   resolution: "fraction.js@npm:5.3.4"
   checksum: 10c0/f90079fe9bfc665e0a07079938e8ff71115bce9462f17b32fc283f163b0540ec34dc33df8ed41bb56f028316b04361b9a9995b9ee9258617f8338e0b05c5f95a
-  languageName: node
-  linkType: hard
-
-"framer-motion@npm:10.16.1":
-  version: 10.16.1
-  resolution: "framer-motion@npm:10.16.1"
-  dependencies:
-    "@emotion/is-prop-valid": "npm:^0.8.2"
-    tslib: "npm:^2.4.0"
-  peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  dependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-dom:
-      optional: true
-  checksum: 10c0/c54a3ba886752e72d1d6935464b612a2a7c732d0e670c2f54f7afc801d8ae8e6cd88212ddfd870f6d36b766373975f0ed253bf58caebdd2eafd3835707007d15
   languageName: node
   linkType: hard
 
