@@ -6,18 +6,6 @@ export type Property = CommonBuiltInWidgetProperty & {
   };
 };
 
-export type LatLng = {
-  lat: number;
-  lng: number;
-  height?: number;
-};
-
-export type Position = {
-  x: number;
-  y: number;
-  z: number;
-};
-
 export type Location = {
   longitude: number;
   latitude: number;

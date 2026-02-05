@@ -7,14 +7,11 @@ import { Close, Pedman } from "@reearth/app/lib/reearth-widget-ui/icons";
 import { forwardRef } from "react";
 
 export interface StreetViewContentProps {
-  showPano: boolean;
   handleClosePano: () => void;
 }
 
 const StreetViewContent = forwardRef<HTMLDivElement, StreetViewContentProps>(
-  ({ showPano, handleClosePano }, ref) => {
-    if (!showPano) return null;
-
+  ({ handleClosePano }, ref) => {
     return (
       <Card className="p-0 w-[550px] rounded-sm border-none">
         <CardHeader className="flex flex-row p-2 justify-between items-center border-white/10 shadow-sm">

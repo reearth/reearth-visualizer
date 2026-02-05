@@ -11,25 +11,29 @@ import { useEvent } from "./useEvents";
 type Props = WidgetProps<Property>;
 
 const StreetView: FC<Props> = ({ widget }) => {
-  const { layer, showPano, setShowPano, handleTracking, handleClearLayer } =
-    useEvent();
-  const { themeClass, panoDivRef, collapsed, handleClosePano, setCollapsed } =
-    useHooks({
-      widget,
-      layer,
-      setShowPano
-    });
+  const {
+    layer,
+    showPano,
+    setShowPano,
+    isTracking,
+    handleTracking,
+    handleClearLayer
+  } = useEvent();
 
-  if (collapsed) {
+  const { themeClass, panoDivRef, handleClosePano } = useHooks({
+    widget,
+    layer,
+    setShowPano
+  });
+
+  if (!showPano) {
     return (
       <Button
         type="button"
         size="sm"
         className="w-20 rounded-sm text-xs"
-        onClick={() => {
-          handleTracking(true);
-          setCollapsed(false);
-        }}
+        disabled={isTracking}
+        onClick={() => handleTracking(true)}
       >
         Street View
       </Button>
@@ -39,7 +43,6 @@ const StreetView: FC<Props> = ({ widget }) => {
   return (
     <div className={themeClass} data-theme-debug={themeClass}>
       <StreetViewContent
-        showPano={showPano}
         ref={panoDivRef}
         handleClosePano={() => {
           handleClosePano();

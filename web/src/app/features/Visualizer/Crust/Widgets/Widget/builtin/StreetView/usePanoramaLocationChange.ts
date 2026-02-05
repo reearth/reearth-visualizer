@@ -4,15 +4,12 @@ import { Location } from "./types";
 
 export function usePanoramaLocationChange(
   panorama: google.maps.StreetViewPanorama | null | undefined,
-  onChange: (location: Location | null) => void,
-  ignoreRef?: React.MutableRefObject<boolean>
+  onChange: (location: Location | null) => void
 ) {
   useEffect(() => {
     if (!panorama) return;
 
     const listener = panorama.addListener("position_changed", () => {
-      if (ignoreRef?.current) return;
-
       const pos = panorama.getPosition();
       if (!pos) return;
 
@@ -26,5 +23,5 @@ export function usePanoramaLocationChange(
     return () => {
       listener.remove();
     };
-  }, [panorama, onChange, ignoreRef]);
+  }, [panorama, onChange]);
 }
