@@ -39,4 +39,5 @@ jobs:
         run: |
           gcloud run services update-traffic reearth-visualizer-web \
             --to-latest \
-            --region=${{ secrets.GC_REGION }}
+            --region=${{ secrets.GC_REGION }} \
+            --quiet
