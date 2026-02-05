@@ -6,9 +6,7 @@ import {
 } from "@apollo/client";
 import {
   useQuery as useApolloQuery,
-  useLazyQuery as useApolloLazyQuery,
-  QueryHookOptions,
-  LazyQueryHookOptions
+  useLazyQuery as useApolloLazyQuery
 } from "@apollo/client/react";
 
 import { getCatalogClient } from "../../clients";
@@ -30,7 +28,7 @@ export const useQuery = <
     ...options,
     client: client as ApolloClient,
     skip: options?.skip || !client
-  } as QueryHookOptions<TData, TVariables>);
+  } as useApolloQuery.Options<TData, TVariables>);
 };
 
 export const useLazyQuery = <
@@ -44,5 +42,5 @@ export const useLazyQuery = <
   return useApolloLazyQuery<TData, TVariables>(query, {
     ...options,
     client: client as ApolloClient
-  } as LazyQueryHookOptions<TData, TVariables>);
+  } as useApolloLazyQuery.Options<TData, TVariables>);
 };

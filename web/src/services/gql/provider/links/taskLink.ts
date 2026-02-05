@@ -1,6 +1,5 @@
-import { ApolloLink } from "@apollo/client/link";
+import { ApolloLink, Observable } from "@apollo/client";
 import { GQLTask } from "@reearth/services/state";
-import { Observable } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 
 export default (
