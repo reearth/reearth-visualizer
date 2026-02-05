@@ -9,7 +9,6 @@ import ArrowLongLeft from "./Icons/ArrowLongLeft.svg?react";
 import ArrowLongRight from "./Icons/ArrowLongRight.svg?react";
 import ArrowsHorizontalIn from "./Icons/ArrowsHorizontalIn.svg?react";
 import ArrowsHorizontalOut from "./Icons/ArrowsHorizontalOut.svg?react";
-import ArrowSquareOut from "./Icons/ArrowSquareOut.svg?react";
 import Article from "./Icons/Article.svg?react";
 import AToZ from "./Icons/AToZ.svg?react";
 import Book from "./Icons/Book.svg?react";
@@ -75,7 +74,6 @@ import Flask from "./Icons/Flask.svg?react";
 import Float from "./Icons/Float.svg?react";
 import FloppyDisk from "./Icons/FloppyDisk.svg?react";
 import FolderFilled from "./Icons/FolderFilled.svg?react";
-import FolderNotchOpen from "./Icons/FolderNotchOpen.svg?react";
 import FolderSimple from "./Icons/FolderSimple.svg?react";
 import FolderSimplePlus from "./Icons/FolderSimplePlus.svg?react";
 import GlobeSimple from "./Icons/GlobeSimple.svg?react";
@@ -122,29 +120,6 @@ import Pause from "./Icons/Pause.svg?react";
 import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
-import Plateau from "./Icons/Plateau.svg?react";
-import PlateauBorder from "./Icons/PlateauBorder.svg?react";
-import PlateauBridge from "./Icons/PlateauBridge.svg?react";
-import PlateauBuilding from "./Icons/PlateauBuilding.svg?react";
-import PlateauCityFurniture from "./Icons/PlateauCityFurniture.svg?react";
-import PlateauEmergencyRoute from "./Icons/PlateauEmergencyRoute.svg?react";
-import PlateauGenericCityObject from "./Icons/PlateauGenericCityObject.svg?react";
-import PlateauHighTideRisk from "./Icons/PlateauHighTideRisk.svg?react";
-import PlateauInlandFloodingRisk from "./Icons/PlateauInlandFloodingRisk.svg?react";
-import PlateauLandmark from "./Icons/PlateauLandmark.svg?react";
-import PlateauLandSlideRisk from "./Icons/PlateauLandSlideRisk.svg?react";
-import PlateauLandUse from "./Icons/PlateauLandUse.svg?react";
-import PlateauPark from "./Icons/PlateauPark.svg?react";
-import PlateauRailway from "./Icons/PlateauRailway.svg?react";
-import PlateauReservoirFloodingRisk from "./Icons/PlateauReservoirFloodingRisk.svg?react";
-import PlateauRiverFloodingRisk from "./Icons/PlateauRiverFloodingRisk.svg?react";
-import PlateauRoad from "./Icons/PlateauRoad.svg?react";
-import PlateauShelter from "./Icons/PlateauShelter.svg?react";
-import PlateauStation from "./Icons/PlateauStation.svg?react";
-import PlateauTsunamiRisk from "./Icons/PlateauTsunamiRisk.svg?react";
-import PlateauUrbanPlanning from "./Icons/PlateauUrbanPlanning.svg?react";
-import PlateauUseCase from "./Icons/PlateauUseCase.svg?react";
-import PlateauVegetation from "./Icons/PlateauVegetation.svg?react";
 import Play from "./Icons/Play.svg?react";
 import PlayLeft from "./Icons/PlayLeft.svg?react";
 import PlayLeftFilled from "./Icons/PlayLeftFilled.svg?react";
@@ -212,7 +187,6 @@ export default {
   arrowLongRight: ArrowLongRight,
   arrowsHorizontalIn: ArrowsHorizontalIn,
   arrowsHorizontalOut: ArrowsHorizontalOut,
-  arrowSquareOut: ArrowSquareOut,
   article: Article,
   aToZ: AToZ,
   book: Book,
@@ -278,7 +252,6 @@ export default {
   float: Float,
   floppyDisk: FloppyDisk,
   folderFilled: FolderFilled,
-  folderNotchOpen: FolderNotchOpen,
   folderSimple: FolderSimple,
   folderSimplePlus: FolderSimplePlus,
   globeSimple: GlobeSimple,
@@ -325,29 +298,6 @@ export default {
   pencilFilled: PencilFilled,
   pencilLine: PencilLilne,
   pencilSimple: PencilSimple,
-  plateau: Plateau,
-  plateauBorder: PlateauBorder,
-  plateauBridge: PlateauBridge,
-  plateauBuilding: PlateauBuilding,
-  plateauCityFurniture: PlateauCityFurniture,
-  plateauEmergencyRoute: PlateauEmergencyRoute,
-  plateauGenericCityObject: PlateauGenericCityObject,
-  plateauHighTideRisk: PlateauHighTideRisk,
-  plateauInlandFloodingRisk: PlateauInlandFloodingRisk,
-  plateauLandmark: PlateauLandmark,
-  plateauLandSlideRisk: PlateauLandSlideRisk,
-  plateauLandUse: PlateauLandUse,
-  plateauPark: PlateauPark,
-  plateauRailway: PlateauRailway,
-  plateauReservoirFloodingRisk: PlateauReservoirFloodingRisk,
-  plateauRiverFloodingRisk: PlateauRiverFloodingRisk,
-  plateauRoad: PlateauRoad,
-  plateauShelter: PlateauShelter,
-  plateauStation: PlateauStation,
-  plateauTsunamiRisk: PlateauTsunamiRisk,
-  plateauUrbanPlanning: PlateauUrbanPlanning,
-  plateauUseCase: PlateauUseCase,
-  plateauVegetation: PlateauVegetation,
   play: Play,
   playLeft: PlayLeft,
   playRight: PlayRight,

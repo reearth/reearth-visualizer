@@ -14,7 +14,7 @@ import {
   REMOVE_LAYERSTYLE,
   UPDATE_LAYERSTYLE
 } from "@reearth/services/gql/queries/layerStyle";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

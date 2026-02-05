@@ -3,9 +3,8 @@ import { EntryItem } from "@reearth/app/ui/components";
 import CheckBoxField from "@reearth/app/ui/fields/CheckBoxField";
 import PropertyItem from "@reearth/app/ui/fields/Properties";
 import { Panel, PanelProps } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { useStoryPage } from "../context";
@@ -113,21 +112,21 @@ const PageSettingsPanel: FC<Props> = ({ showCollapseArea, areaRef }) => {
 export default PageSettingsPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.small,
   padding: theme.spacing.smallest
 }));
 
 const LayerWrapper = styled("div")(() => ({
   width: "100%",
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column
+  display: "flex",
+  flexDirection: "column"
 }));
 
 const AllLayers = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   borderBottom: `1px solid ${theme.outline.weak}`,
   marginBottom: theme.spacing.small,
   paddingBottom: theme.spacing.small,
@@ -135,24 +134,24 @@ const AllLayers = styled("div")(({ theme }) => ({
 }));
 
 const LayerList = styled("div")(() => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   height: "352px",
-  overflowY: css.overflow.auto,
-  overflowX: css.overflow.hidden,
+  overflowY: "auto",
+  overflowX: "hidden",
   width: "100%"
 }));
 
 const Layer = styled("div")(() => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center
+  display: "flex",
+  alignItems: "center"
 }));
 
 const Title = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
 }));

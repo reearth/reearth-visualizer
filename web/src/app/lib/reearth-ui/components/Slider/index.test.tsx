@@ -1,5 +1,5 @@
 import { screen, render } from "@reearth/test/utils";
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect } from "vitest";
 
 import { Slider } from "./index";
 
@@ -31,17 +31,5 @@ describe("Slider Component", () => {
 
     sliderElement = screen.getByRole("slider");
     expect(sliderElement).toHaveAttribute("aria-valuenow", "75");
-  });
-
-  test("onChange handler accepts number | number[] and returns number", () => {
-    const handleChange = vi.fn();
-    render(<Slider value={50} onChange={handleChange} />);
-    expect(handleChange).toBeDefined();
-  });
-
-  test("onChangeComplete handler accepts number | number[] and returns number", () => {
-    const handleChangeComplete = vi.fn();
-    render(<Slider value={50} onChangeComplete={handleChangeComplete} />);
-    expect(handleChangeComplete).toBeDefined();
   });
 });

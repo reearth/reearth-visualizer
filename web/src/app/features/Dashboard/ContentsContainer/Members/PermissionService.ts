@@ -27,7 +27,9 @@ interface IPermissionEntry {
   default?: IRolePermissionConfig;
 }
 
-type PermissionMatrix = Partial<Record<Action, IPermissionEntry>>;
+type PermissionMatrix = {
+  [A in Action]?: IPermissionEntry;
+};
 
 const permissionMatrix: PermissionMatrix = {
   [Action.Invite]: {
@@ -165,7 +167,6 @@ export const PermissionService = {
   },
 
   getRoleLabel(t: (key: string) => string, role: Role): string {
-    if (!role) return "";
     const memerRoleTranslation = {
       MAINTAINER: t("MAINTAINER"),
       OWNER: t("OWNER"),

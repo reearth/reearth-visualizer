@@ -1,97 +1,52 @@
-@import "tailwindcss";
-@import "scrollbar.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* Base theme configuration */
-@theme {
-  /* Non-color utilities */
-  --radius: 0.5rem;
-
-  /* Border radius utilities */
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-
-  /* Z-index utilities */
-  /* usage: className="z-(--z-widget)" */
-  --z-widget: 200;
-  --z-story-panel: 200;
-  --z-story-block: 205;
-  --z-story-block-add-bar: 210;
-  --z-story-page-indicator-unselected: 210;
-  --z-story-page-indicator-selected: 215;
-  --z-plugin-popup: 300;
-  --z-plugin-modal: 305;
-  --z-infobox: 400;
-  --z-photo-overlay: 500;
-  --z-overlay: 600;
-
-  /* Custom animations */
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
-
-  /* Colors */
-  --color-background: oklch(100% 0 0);
-  --color-hover-background: oklch(95% 0 0);
-  --color-foreground: oklch(11.2% 0.047 222.2);
-  --color-muted: oklch(96.1% 0.032 210);
-  --color-muted-foreground: oklch(46.9% 0.027 215.4);
-  --color-accent: oklch(90% 0 210);
-  --color-accent-foreground: oklch(11.2% 0 222.2);
-  --color-popover: oklch(100% 0 0);
-  --color-popover-foreground: oklch(11.2% 0.047 222.2);
-  --color-border: oklch(91.4% 0.044 214.3);
-  --color-input: oklch(91.4% 0.044 214.3);
-  --color-card: oklch(100% 0 0);
-  --color-card-foreground: oklch(11.2% 0.047 222.2);
-  --color-primary: oklch(0.4633 0.2197 273.44);
-  --color-primary-foreground: oklch(100% 0.024 210);
-  --color-secondary: oklch(96.1% 0.024 210);
-  --color-secondary-foreground: oklch(11.2% 0.047 222.2);
-  --color-destructive: oklch(50% 0.227 0);
-  --color-destructive-foreground: oklch(98% 0.024 210);
-  --color-ring: oklch(65.1% 0.032 215);
-}
-
-/* Dark theme override for components */
-.dark,
-[data-theme="dark"] {
-  --color-background: oklch(0.2156 0 0);
-  --color-hover-background: oklch(0.28 0 0);
-  --color-foreground: oklch(91% 0 213);
-  --color-muted: oklch(11% 0.094 223);
-  --color-muted-foreground: oklch(56.9% 0 215.4);
-  --color-accent: oklch(30% 0 216);
-  --color-accent-foreground: oklch(98% 0 210);
-  --color-popover: oklch(0.24 0 0);
-  --color-popover-foreground: oklch(91% 0 213);
-  --color-border: oklch(17% 0.058 216);
-  --color-input: oklch(17% 0.058 216);
-  --color-card: oklch(10% 0 224);
-  --color-card-foreground: oklch(91% 0.062 213);
-  --color-primary: oklch(0.4633 0.2197 273.44);
-  --color-primary-foreground: oklch(100% 0.047 222.2);
-  --color-secondary: oklch(11.2% 0.047 222.2);
-  --color-secondary-foreground: oklch(98% 0.024 210);
-  --color-destructive: oklch(31% 0.127 0);
-  --color-destructive-foreground: oklch(98% 0.024 210);
-  --color-ring: oklch(17% 0.058 216);
-}
-
-/* Custom keyframes for animations */
-@keyframes accordion-down {
-  from {
-    height: 0;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --hover-background: 0 0% 90%;
+    --foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+    --primary: 222.2 0% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+    --ring: 215 20.2% 65.1%;
+    --radius: 0.5rem;
   }
-  to {
-    height: var(--radix-accordion-content-height);
-  }
-}
 
-@keyframes accordion-up {
-  from {
-    height: var(--radix-accordion-content-height);
-  }
-  to {
-    height: 0;
+  .dark {
+    --background: 224 0% 10%;
+    --hover-background: 224 0% 20%;
+    --foreground: 213 31% 91%;
+    --muted: 223 47% 11%;
+    --muted-foreground: 215.4 16.3% 56.9%;
+    --accent: 216 34% 17%;
+    --accent-foreground: 210 40% 98%;
+    --popover: 224 71% 4%;
+    --popover-foreground: 215 20.2% 65.1%;
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
+    --card: 224 0% 10%;
+    --card-foreground: 213 31% 91%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 1.2%;
+    --secondary: 222.2 47.4% 11.2%;
+    --secondary-foreground: 210 40% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --ring: 216 34% 17%;
   }
 }

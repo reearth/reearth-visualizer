@@ -67,5 +67,4 @@ export type NLSLayer = {
   isSketch?: boolean;
   infobox?: NLSInfobox;
   photoOverlay?: NLSPhotoOverlay;
-  dataSourceName?: string;
 };

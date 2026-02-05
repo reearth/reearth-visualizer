@@ -1,6 +1,5 @@
 // DragAndDropList.tsx
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import React, { useCallback } from "react";
 import {
   ReactSortable,
@@ -95,9 +94,9 @@ export default DragAndDropList;
 const StyledReactSortable = styled(ReactSortable)<{
   gap?: "normal" | "small" | number;
 }>(({ theme, gap }) => ({
-  position: css.position.relative,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
   gap:
     gap === "small"
       ? theme.spacing.smallest

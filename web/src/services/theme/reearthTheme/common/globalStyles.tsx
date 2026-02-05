@@ -4,7 +4,7 @@ import { css } from "@reearth/services/theme";
 
 import { fontFamilies } from "./fonts";
 
-const styles = css`
+export const styles = css`
   html,
   body,
   #root {

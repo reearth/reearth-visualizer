@@ -194,18 +194,19 @@ export default ({
     [installableInfoboxBlocks]
   );
 
-  const processedLayers = useMemo(
-    () => processLayers(nlsLayers, layerStyles, undefined, infoboxBlockNames),
-    [nlsLayers, layerStyles, infoboxBlockNames]
-  );
-
   const layers = useMemo(() => {
+    const processedLayers = processLayers(
+      nlsLayers,
+      layerStyles,
+      undefined,
+      infoboxBlockNames
+    );
     if (!showStoryPanel) return processedLayers;
     return processedLayers?.map((layer) => ({
       ...layer,
       visible: true
     }));
-  }, [processedLayers, showStoryPanel]);
+  }, [nlsLayers, layerStyles, infoboxBlockNames, showStoryPanel]);
   const handleCoreLayerSelect = useCallback(
     (
       layerId?: string,

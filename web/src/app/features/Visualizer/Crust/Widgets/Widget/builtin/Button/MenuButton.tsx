@@ -1,8 +1,7 @@
 import { Icon, IconName, Typography } from "@reearth/app/lib/reearth-ui";
-import { Button } from "@reearth/app/lib/reearth-widget-ui/components/ui/button";
-import { cn } from "@reearth/app/lib/reearth-widget-ui/utils";
-import { mask } from "@reearth/services/theme";
-import { useMemo, useRef, useCallback, useState, type JSX } from "react";
+import { styled, mask } from "@reearth/services/theme";
+import spacingSizes from "@reearth/services/theme/reearthTheme/common/spacing";
+import { useRef, useCallback, useState } from "react";
 import { usePopper } from "react-popper";
 
 import type { Camera, FlyToDestination, Theme } from "../../types";
@@ -54,7 +53,7 @@ export default function MenuButton({
 }: Props): JSX.Element {
   const [visibleMenuButton, setVisibleMenuButton] = useState(false);
 
-  const referenceElement = useRef<HTMLButtonElement>(null);
+  const referenceElement = useRef<HTMLDivElement>(null);
   const popperElement = useRef<HTMLDivElement>(null);
   const { styles, attributes } = usePopper(
     referenceElement.current,
@@ -137,49 +136,16 @@ export default function MenuButton({
     [onFlyTo, visibleMenuButton]
   );
 
-  // Create CSS variables for custom theme
-  const customStyles = useMemo(() => {
-    if (!b?.buttonColor && !b?.buttonBgcolor && !theme) return undefined;
-
-    return {
-      "--widget-button-color": b?.buttonColor || theme?.mainText || "#373737",
-      "--widget-button-bg": b?.buttonBgcolor || theme?.background || "#ECECEC",
-      "--widget-button-hover":
-        theme?.mask || mask(b?.buttonBgcolor) || "rgba(0,0,0,0.15)"
-    } as React.CSSProperties;
-  }, [b?.buttonColor, b?.buttonBgcolor, theme]);
-
   return (
-    <div
-      className="flex items-center gap-0.5 rounded-[4px]"
-      style={
-        customStyles
-          ? {
-              ...customStyles,
-              backgroundColor:
-                b?.buttonBgcolor || theme?.background || undefined
-            }
-          : undefined
-      }
-    >
+    <Wrapper publishedTheme={theme} button={b}>
       <Button
-        variant="ghost"
-        customTheme={!!customStyles}
-        className={cn(
-          "h-9 min-w-9 rounded-[4px] select-none leading-[35px]",
-          b?.buttonStyle === "icon" ? "p-0" : "px-2.5 py-0"
-        )}
-        style={customStyles}
+        publishedTheme={theme}
+        button={b}
         onClick={b && handleClick(b)}
         ref={referenceElement}
       >
-        {/* Icon */}
         {(b?.buttonStyle === "icon" || b?.buttonStyle === "texticon") &&
-          b?.buttonIcon && (
-            <img src={b.buttonIcon} width={20} height={20} alt="" />
-          )}
-
-        {/* Text */}
+          b?.buttonIcon && <img src={b?.buttonIcon} width={20} height={20} />}
         {b?.buttonStyle !== "icon" && (
           <Typography
             size="body"
@@ -187,7 +153,7 @@ export default function MenuButton({
             otherProperties={{
               marginLeft:
                 b?.buttonIcon && b?.buttonStyle === "texticon"
-                  ? "6px"
+                  ? "5px"
                   : undefined
             }}
           >
@@ -195,61 +161,120 @@ export default function MenuButton({
           </Typography>
         )}
       </Button>
-
-      {/* Menu Popper */}
-      <div
+      <MenuWrapper
         ref={popperElement}
-        className={cn(
-          "z-(--z-widget) rounded-[3px] max-h-[30vh] overflow-auto",
-          "[-webkit-overflow-scrolling:touch]"
-        )}
-        style={styles.popper}
+        style={{ ...styles.popper }}
         {...attributes.popper}
       >
         {visibleMenuButton && (
-          <div
-            className="min-w-[35px] w-full whitespace-nowrap"
-            style={{
-              ...customStyles,
-              backgroundColor:
-                b?.buttonBgcolor || theme?.background || undefined
-            }}
-          >
-            {menuItems?.map((item) => (
-              <div
-                key={item.id}
-                className={cn(
-                  "flex items-center justify-start select-none",
-                  item.menuType === "border"
-                    ? "px-2.5"
-                    : "min-h-[25px] rounded-[3px] px-2.5 py-0.5 cursor-pointer hover:bg-[var(--widget-button-hover)]"
-                )}
-                style={
-                  item.menuType === "border"
-                    ? {
-                        background:
-                          mask(b?.buttonBgcolor) || theme?.mask || undefined,
-                        borderBottom: `1px solid ${b?.buttonColor || theme?.weakText}`
-                      }
-                    : undefined
-                }
-                onClick={handleClick(item)}
+          <MenuInnerWrapper publishedTheme={theme} button={b}>
+            {menuItems?.map((i) => (
+              <MenuItem
+                publishedTheme={theme}
+                key={i.id}
+                item={i}
+                button={b}
+                onClick={handleClick(i)}
               >
-                {item.menuIcon && <Icon icon={item.menuIcon} size={20} />}
+                {i.menuIcon && <Icon icon={i.menuIcon} size={20} />}
                 <Typography
                   size="footnote"
                   color={b?.buttonColor}
                   otherProperties={{
-                    marginLeft: item.menuIcon ? "6px" : undefined
+                    marginLeft: i.menuIcon ? "5px" : undefined
                   }}
                 >
-                  {item.menuTitle}
+                  {i.menuTitle}
                 </Typography>
-              </div>
+              </MenuItem>
             ))}
-          </div>
+          </MenuInnerWrapper>
         )}
-      </div>
-    </div>
+      </MenuWrapper>
+    </Wrapper>
   );
 }
+const Wrapper = styled("div")<{ button?: Button; publishedTheme?: Theme }>(
+  ({ theme, button, publishedTheme }) => ({
+    borderRadius: `${spacingSizes["smallest"]}px`,
+    display: "flex",
+    alignItems: "center",
+    gap: theme.spacing.micro,
+    "&, > div": {
+      backgroundColor: button?.buttonBgcolor || publishedTheme?.background
+    }
+  })
+);
+
+const Button = styled("div")<{ button?: Button; publishedTheme?: Theme }>(
+  ({ theme, button, publishedTheme }) => ({
+    borderRadius: `${spacingSizes["smallest"]}px`,
+    display: "flex",
+    minWidth: 35,
+    height: 35,
+    padding: `0 ${theme.spacing.small + 2}px`,
+    lineHeight: 35,
+    boxSizing: "border-box",
+    color: button ? button?.buttonColor : publishedTheme?.mainText,
+    cursor: "pointer",
+    alignItems: "center",
+    userSelect: "none",
+    ["&:hover"]: {
+      background: publishedTheme
+        ? publishedTheme?.mask
+        : mask(button?.buttonBgcolor)
+    }
+  })
+);
+
+const MenuWrapper = styled("div")(({ theme }) => ({
+  zIndex: theme.zIndexes.visualizer.widget,
+  borderRadius: theme.radius.smallest + 1,
+  maxHeight: "30vh",
+  overflow: "auto",
+  WebkitOverflowScrolling: "touch"
+}));
+
+const MenuInnerWrapper = styled("div")<{
+  button?: Button;
+  publishedTheme?: Theme;
+}>(({ button, publishedTheme }) => ({
+  minWidth: 35,
+  width: "100%",
+  color: button?.buttonColor || publishedTheme?.mainText,
+  whiteSpace: "nowrap"
+}));
+
+const MenuItem = styled("div")<{
+  item?: MenuItem;
+  button?: Button;
+  publishedTheme?: Theme;
+}>(({ item, button, publishedTheme, theme }) => ({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-start",
+  minHeight: item?.menuType === "border" ? undefined : "25px",
+  borderRadius:
+    item?.menuType === "border" ? undefined : theme.radius.small - 1,
+  padding:
+    item?.menuType === "border"
+      ? `0 ${theme.spacing.small + 2}px`
+      : `${theme.spacing.micro}px ${theme.spacing.small + 2}px`,
+  cursor: item?.menuType === "border" ? undefined : "pointer",
+  background:
+    item?.menuType === "border"
+      ? mask(button?.buttonBgcolor) || publishedTheme?.mask
+      : undefined,
+  borderBottom:
+    item?.menuType === "border"
+      ? `1px solid ${button?.buttonColor || publishedTheme?.weakText}`
+      : undefined,
+  userSelect: "none",
+
+  "&:hover": {
+    background:
+      item?.menuType === "border"
+        ? undefined
+        : mask(button?.buttonBgcolor) || publishedTheme?.mask
+  }
+}));

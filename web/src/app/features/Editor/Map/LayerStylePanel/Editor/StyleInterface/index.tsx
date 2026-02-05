@@ -1,8 +1,7 @@
 import { TabItem, Tabs } from "@reearth/app/lib/reearth-ui";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { SetStateAction } from "jotai";
 import { Dispatch, FC, useCallback, useEffect, useMemo, useState } from "react";
 
@@ -162,8 +161,8 @@ export default StyleInterface;
 const Wrapper = styled("div")(({ theme }) => ({
   width: "100%",
   paddingTop: theme.spacing.small,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   minHeight: 0,
   flex: 1
 }));

@@ -24,7 +24,13 @@ export declare type Timeline = {
 };
 
 export declare type TimelineCommitter = {
-  source: string;
+  source:
+    | "widgetContext"
+    | "pluginAPI"
+    | "featureResource"
+    | "storyTimelineBlock"
+    | "storyPage"
+    | "initialize";
   id?: string;
 };
 

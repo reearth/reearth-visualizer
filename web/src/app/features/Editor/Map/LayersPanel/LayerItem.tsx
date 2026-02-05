@@ -7,9 +7,8 @@ import {
 import { EntryItem, EntryItemAction } from "@reearth/app/ui/components";
 import ConfirmModal from "@reearth/app/ui/components/ConfirmModal";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   Dispatch,
   FC,
@@ -88,12 +87,7 @@ const LayerItem: FC<LayerItemProps> = ({
       id: "rename",
       title: t("Rename"),
       icon: "pencilSimple" as const,
-      onClick: () => {
-        // Delay entering edit mode until popup has fully closed and finished focus management
-        setTimeout(() => {
-          setEditingLayerNameId(layer.id);
-        }, 0);
-      }
+      onClick: () => setEditingLayerNameId(layer.id)
     },
     {
       id: "delete",
@@ -174,18 +168,11 @@ const LayerItem: FC<LayerItemProps> = ({
   const handleTitleUpdateRef = useRef(handleTitleUpdate);
   handleTitleUpdateRef.current = handleTitleUpdate;
 
-  // Store latest editingLayerNameId in ref to avoid triggering effect when it changes
-  const editingLayerNameIdRef = useRef(editingLayerNameId);
-  editingLayerNameIdRef.current = editingLayerNameId;
-
-  // Only exit edit mode when selectedLayerId changes, not when editingLayerNameId changes
-  // This prevents other (non-editing) layers from clearing the editingLayerNameId state
   useEffect(() => {
-    const currentEditingId = editingLayerNameIdRef.current;
-    if (selectedLayerId !== layer.id && currentEditingId !== layer.id) {
+    if (selectedLayerId !== layer.id) {
       handleTitleUpdateRef.current();
     }
-  }, [selectedLayerId, layer.id]);
+  }, [selectedLayerId, layer.id, handleTitleUpdateRef]);
 
   return (
     <>
@@ -251,7 +238,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
 }));

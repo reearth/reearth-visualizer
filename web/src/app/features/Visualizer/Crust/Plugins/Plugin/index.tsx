@@ -1,5 +1,5 @@
 import type { Layer } from "@reearth/core";
-import { type RefObject, type JSX } from "react";
+import { type RefObject } from "react";
 
 import type { InfoboxBlock as Block } from "../../Infobox/types";
 import type { MapRef } from "../../types";
@@ -22,9 +22,9 @@ export {
 export type CommonProps = {
   pluginProperty?: unknown; // Taken from Visualizer
   pluginBaseUrl?: string; // Taken from Visualizer
-  pluginModalContainer?: HTMLElement | DocumentFragment | null;
+  pluginModalContainer?: HTMLElement | DocumentFragment;
   shownPluginModalInfo?: PluginModalInfo;
-  pluginPopupContainer?: HTMLElement | DocumentFragment | null;
+  pluginPopupContainer?: HTMLElement | DocumentFragment;
   shownPluginPopupInfo?: PluginPopupInfo;
   onPluginModalShow?: (modalInfo?: PluginModalInfo) => void;
   onPluginPopupShow?: (popupInfo?: PluginPopupInfo) => void;
@@ -36,7 +36,7 @@ export type ExternalPluginProps = Pick<
 >;
 
 export type Props = {
-  mapRef?: RefObject<MapRef | null>;
+  mapRef?: RefObject<MapRef>;
   className?: string;
   sourceCode?: string;
   pluginId?: string;

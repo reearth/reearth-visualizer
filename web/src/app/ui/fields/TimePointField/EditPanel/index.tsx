@@ -6,9 +6,8 @@ import {
   TimePicker
 } from "@reearth/app/lib/reearth-ui";
 import { TIMEZONE_OFFSETS } from "@reearth/app/utils/time";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import useHooks from "./hooks";
@@ -83,7 +82,7 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
         <Wrapper>
           <Label data-testid="time-edit-timezone-label">{t("Time Zone")}</Label>
           <InputWrapper
-            onMouseDown={(e: React.MouseEvent) => {
+            onMouseDown={(e) => {
               e.stopPropagation();
             }}
           >
@@ -105,16 +104,16 @@ const EditPanel: FC<Props> = ({ onChange, onClose, value }) => {
 };
 
 const EditorWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   width: "100%",
   gap: theme.spacing.normal
 }));
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.flexStart,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "flex-start",
   gap: theme.spacing.small
 }));
 
@@ -128,9 +127,9 @@ const InputWrapper = styled("div")(() => ({
   width: "100%"
 }));
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.flexStart,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start",
   gap: theme.spacing.small
 }));
 

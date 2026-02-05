@@ -4,10 +4,9 @@ import { useProjects } from "@reearth/services/api/project";
 import { useMe } from "@reearth/services/api/user";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { Role } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useWorkspace, type Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import DeleteWorkspaceModal from "./DeleteWorkspaceModal";
@@ -125,14 +124,14 @@ const WorkspaceSetting: FC<Props> = ({ workspace }) => {
 };
 
 const DangerItem = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.flexEnd,
+  display: "flex",
+  justifyContent: "flex-end",
   background: theme.bg[1],
   gap: theme.spacing.small
 }));
@@ -141,8 +140,8 @@ const InnerPage = styled("div")<{
   wide?: boolean;
   transparent?: boolean;
 }>(({ wide, transparent, theme }) => ({
-  boxSizing: css.boxSizing.borderBox,
-  display: css.display.flex,
+  boxSizing: "border-box",
+  display: "flex",
   width: "100%",
   maxWidth: wide ? 950 : 750,
   backgroundColor: transparent ? "none" : theme.bg[1],
@@ -150,8 +149,8 @@ const InnerPage = styled("div")<{
 }));
 
 const SettingsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   width: "100%",
   flex: 1,
   ["> div:not(:last-child)"]: {
@@ -160,8 +159,8 @@ const SettingsWrapper = styled("div")(({ theme }) => ({
 }));
 
 const SettingsFields = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.largest,
   padding: `${theme.spacing.normal}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));

@@ -1,9 +1,7 @@
 import { CheckBox, Typography } from "@reearth/app/lib/reearth-ui";
 import { SelectField } from "@reearth/app/ui/fields";
-import { SUPPORTED_LANGUAGES } from "@reearth/services/i18n";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT, SUPPORTED_LANGUAGES } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 type Props = {
@@ -60,17 +58,17 @@ const Settings: FC<Props> = ({
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+const Wrapper = styled.div(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
   overflow: "auto",
   gap: theme.spacing.small,
   padding: theme.spacing.smallest
 }));
 
-const Row = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+const Row = styled.div(({ theme }) => ({
+  display: "flex",
+  alignItems: "center",
   padding: theme.spacing.smallest,
   "&:hover": {
     backgroundColor: theme.bg[1]
@@ -79,8 +77,8 @@ const Row = styled("div")(({ theme }) => ({
   minHeight: 28
 }));
 
-const SelectorWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+const SelectorWrapper = styled.div(({ theme }) => ({
+  display: "flex",
   padding: theme.spacing.smallest
 }));
 

@@ -1,7 +1,6 @@
 import { Popup } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo } from "react";
 
 type Props = {
   title?: string;
@@ -16,24 +15,9 @@ const IndicatorSection: FC<Props> = ({
   title,
   onPageChange
 }) => {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  const handleClick = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      onPageChange(pageNumber);
-    },
-    [pageNumber, onPageChange]
-  );
-
-  const handleMouseEnter = useCallback(() => {
-    setIsPopupOpen(true);
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setIsPopupOpen(false);
-  }, []);
+  const handleClick = useCallback(() => {
+    onPageChange(pageNumber);
+  }, [pageNumber, onPageChange]);
 
   const isHighlighted = useMemo(
     () => pageNumber <= currentPageNumber,
@@ -47,12 +31,10 @@ const IndicatorSection: FC<Props> = ({
         <Indicator
           highlighted={isHighlighted}
           onClick={handleClick}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
           isFirstChild={pageNumber === 1}
         />
       }
-      open={isPopupOpen}
+      triggerOnHover
       placement="bottom"
       extendTriggerWidth
     >
@@ -72,7 +54,7 @@ const Indicator = styled("div")<{
   height: "100%",
   width: "100%",
   background: highlighted ? theme.primary.strong : "#78a9ff",
-  cursor: css.cursor.pointer,
+  cursor: "pointer",
   borderLeft: !isFirstChild ? "1px solid #ffffff" : "none"
 }));
 
@@ -87,8 +69,8 @@ const PageNameWrapper = styled("div")<{ isHighlighted: boolean }>(
 const TitleWrapper = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.footnote,
   fontWeight: theme.fonts.weight.regular,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap,
-  cursor: css.cursor.default
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  cursor: "default"
 }));

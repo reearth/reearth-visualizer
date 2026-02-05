@@ -4,12 +4,14 @@ import {
   getSignInCallbackUrl,
   logInToTenant
 } from "@reearth/services/config";
-import React, { ReactNode, useState } from "react";
+import React, { createContext, ReactNode, useState } from "react";
 
 import { useAuth0Auth } from "./auth0Auth";
+import type { AuthHook } from "./authHook";
 import { useCognitoAuth } from "./cognitoAuth";
-import { AuthContext } from "./context";
 import { useMockAuth } from "./mockAuth";
+
+export const AuthContext = createContext<AuthHook | null>(null);
 
 const Auth0Wrapper = ({ children }: { children: ReactNode }) => {
   const auth = useAuth0Auth();

@@ -2,10 +2,9 @@ import useAccountSettingsTabs from "@reearth/app/hooks/useAccountSettingsTabs";
 import { TextInput, Typography, IconButton } from "@reearth/app/lib/reearth-ui";
 import SettingBase from "@reearth/app/ui/components/SettingBase";
 import { InputField, SelectField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useState } from "react";
 
 import CursorStatus from "../CursorStatus";
@@ -114,32 +113,32 @@ const AccountSetting: FC = () => {
 export default AccountSetting;
 
 const PasswordWrapper = styled("div")(() => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   width: "100%"
 }));
 
 const PasswordInputWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: css.alignItems.center
+  alignItems: "center"
 }));
 
 const InnerPage = styled("div")<{
   wide?: boolean;
   transparent?: boolean;
 }>(({ wide, transparent, theme }) => ({
-  boxSizing: css.boxSizing.borderBox,
-  display: css.display.flex,
+  boxSizing: "border-box",
+  display: "flex",
   width: "100%",
   maxWidth: wide ? 950 : 750,
-  backgroundColor: transparent ? css.display.none : theme.bg[1],
+  backgroundColor: transparent ? "none" : theme.bg[1],
   borderRadius: theme.radius.normal
 }));
 
 const SettingsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   width: "100%",
   flex: 1,
   ["> div:not(:last-child)"]: {
@@ -149,8 +148,8 @@ const SettingsWrapper = styled("div")(({ theme }) => ({
 }));
 
 const SettingsFields = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.largest
 }));
 

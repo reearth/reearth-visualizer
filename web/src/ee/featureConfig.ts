@@ -11,7 +11,6 @@ export const getFeatureConfig = (): AppFeatureConfig => {
     externalWorkspaceManagementUrl: `${c?.platformUrl}/[WORKSPACE_ALIAS]/settings`,
     accountManagement: false,
     projectVisibility: true,
-    externalAccountManagementUrl: `${c?.platformUrl}/settings/profile`,
-    builtinTimelineWidget: true
+    externalAccountManagementUrl: `${c?.platformUrl}/settings/profile`
   };
 };

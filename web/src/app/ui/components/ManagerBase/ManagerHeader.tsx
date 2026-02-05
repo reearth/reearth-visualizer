@@ -4,9 +4,8 @@ import {
   TextInput,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   KeyboardEvent,
@@ -209,45 +208,45 @@ const Wrapper = styled("div")<{ size: ManagerHeaderSize }>(
   ({ theme, size }) => ({
     flex: 1,
     width: "100%",
-    display: css.display.flex,
-    alignItems: css.alignItems.center,
-    justifyContent: css.justifyContent.spaceBetween,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: size === "medium" ? theme.spacing.normal : theme.spacing.largest,
     minHeight: size === "medium" ? "56px" : "76px",
-    boxSizing: css.boxSizing.borderBox,
+    boxSizing: "border-box",
     flexGrow: 0
   })
 );
 
 const Actions = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small
 }));
 
 const Tools = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.flexEnd,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "flex-end",
+  alignItems: "center",
   gap: theme.spacing.normal,
   flex: 1
 }));
 
 const Sort = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small,
   width: 200
 }));
 
 const Layouts = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small
 }));
 
 const Search = styled("div")<{ size: ManagerHeaderSize }>(
   ({ theme, size }) => ({
-    display: css.display.flex,
+    display: "flex",
     gap: theme.spacing.small,
     maxWidth: size === "large" ? 250 : undefined,
     flex: 1
@@ -255,8 +254,8 @@ const Search = styled("div")<{ size: ManagerHeaderSize }>(
 );
 
 const DeleteBar = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small,
   backgroundColor: theme.select.weak,
   borderRadius: theme.radius.small,

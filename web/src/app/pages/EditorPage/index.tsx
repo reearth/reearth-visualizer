@@ -4,7 +4,7 @@ import { isTab } from "@reearth/app/features/Navbar";
 import NotFound from "@reearth/app/features/NotFound";
 import Page from "@reearth/app/pages/Page";
 import { FC, useEffect, useRef } from "react";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 const EditorPage: FC = () => {
   const { sceneId, tab } = useParams<{ sceneId: string; tab: string }>();
@@ -18,16 +18,12 @@ const EditorPage: FC = () => {
     };
   }, [sceneId]);
 
-  if (!sceneId || !tab || !isTab(tab)) {
-    return <NotFound />;
-  }
-
-  return (
+  return !sceneId || !tab || !isTab(tab) ? (
+    <NotFound />
+  ) : (
     <Page
       sceneId={sceneId}
-      renderItem={(props) => (
-        <Editor key={sceneId} tab={tab} sceneId={sceneId} {...props} />
-      )}
+      renderItem={(props) => <Editor tab={tab} sceneId={sceneId} {...props} />}
     />
   );
 };

@@ -46,7 +46,6 @@ export const nlsLayerSimpleFragment = gql`
         }
       }
     }
-    dataSourceName
     ... on NLSLayerGroup {
       children {
         id

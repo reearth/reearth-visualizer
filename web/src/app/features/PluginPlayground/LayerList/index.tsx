@@ -1,6 +1,5 @@
 import { Layer, MapRef } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MutableRefObject, useCallback } from "react";
 
 import LayerItem from "./LayerItem";
@@ -44,9 +43,9 @@ const LayerList: FC<Props> = ({
   );
 };
 
-const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+const Wrapper = styled.div(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
   overflow: "auto",
   padding: theme.spacing.smallest
 }));

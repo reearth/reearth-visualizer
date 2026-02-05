@@ -5,7 +5,7 @@ import {
   PopupMenu,
   PopupMenuItem
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, ReactNode, MouseEvent, useCallback } from "react";
 

@@ -1,6 +1,4 @@
 import styled from "@emotion/styled";
-import { css } from "@reearth/services/theme/reearthTheme/common";
-import { useAtom } from "jotai";
 import { FC } from "react";
 
 import CursorStatus from "../CursorStatus";
@@ -11,13 +9,7 @@ import useHooks from "./hooks";
 import Map from "./Map";
 import { MapPageProvider } from "./Map/context";
 import DataSourceLayerCreator from "./Map/DataSourceLayerCreator";
-import PlateauAssetLayerCreator from "./Map/PlateauAssetLayerCreator";
 import SketchLayerCreator from "./Map/SketchLayerCreator";
-import {
-  showDataSourceLayerCreatorAtom,
-  showPlateauAssetLayerCreatorAtom,
-  showSketchLayerCreatorAtom
-} from "./Map/state";
 import Publish from "./Publish";
 import { PublishPageProvider } from "./Publish/context";
 import Story from "./Story";
@@ -53,36 +45,20 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
     handleCoreLayerSelectFromMap,
     selectStoryPage,
     selectWidgetArea,
-    handleLayerAdd,
     mapPageValue,
     storyPageValue,
     widgetsPageValue,
     publishPageValue,
+    dataSourceLayerCreatorShown,
+    closeDataSourceLayerCreator,
+    handleLayerAdd,
+    sketchLayerCreatorShown,
+    closeSketchLayerCreator,
     handleCoreAPIReady
   } = useHooks({ sceneId, tab, projectId });
 
   const [widgetsViewDevice] = useWidgetsViewDevice();
   const [publishViewDevice] = usePublishViewDevice();
-
-  const [showDataSourceLayerCreator, setShowDataSourceLayerCreator] = useAtom(
-    showDataSourceLayerCreatorAtom
-  );
-  const closeDataSourceLayerCreator = () => {
-    setShowDataSourceLayerCreator(false);
-  };
-
-  const [showSketchLayerCreator, setShowSketchLayerCreator] = useAtom(
-    showSketchLayerCreatorAtom
-  );
-  const closeSketchLayerCreator = () => {
-    setShowSketchLayerCreator(false);
-  };
-
-  const [showPlateauAssetLayerCreator, setShowPlateauAssetLayerCreator] =
-    useAtom(showPlateauAssetLayerCreatorAtom);
-  const closePlateauAssetLayerCreator = () => {
-    setShowPlateauAssetLayerCreator(false);
-  };
 
   return (
     <Wrapper data-testid="editor-wrapper">
@@ -152,7 +128,7 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           )}
         </Workbench>
       </Content>
-      {showDataSourceLayerCreator && (
+      {dataSourceLayerCreatorShown && (
         <DataSourceLayerCreator
           sceneId={sceneId}
           onClose={closeDataSourceLayerCreator}
@@ -160,20 +136,12 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
           data-testid="editor-datasource-layer-creator"
         />
       )}
-      {showSketchLayerCreator && (
+      {sketchLayerCreatorShown && (
         <SketchLayerCreator
           onSubmit={handleLayerAdd}
           sceneId={sceneId}
           onClose={closeSketchLayerCreator}
           data-testid="editor-sketch-layer-creator"
-        />
-      )}
-      {showPlateauAssetLayerCreator && (
-        <PlateauAssetLayerCreator
-          sceneId={sceneId}
-          onClose={closePlateauAssetLayerCreator}
-          onLayerAdd={handleLayerAdd}
-          data-testid="editor-plateau-asset-layer-creator"
         />
       )}
       <CursorStatus data-testid="editor-cursor-status" />
@@ -184,28 +152,28 @@ const Editor: FC<Props> = ({ sceneId, projectId, workspaceId, tab }) => {
 export default Editor;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   height: "100vh",
   width: "100vw",
   color: theme.content.main
 }));
 
 const Content = styled("div")(() => ({
-  position: css.position.relative,
+  position: "relative",
   flexGrow: 1,
   height: 0
 }));
 
 const Workbench = styled("div")(() => ({
-  position: css.position.absolute,
+  position: "absolute",
   width: "100%",
   height: "100%",
-  pointerEvents: css.pointerEvents.none
+  pointerEvents: "none"
 }));
 
 const VisualizerArea = styled("div")(({ theme }) => ({
-  position: css.position.absolute,
+  position: "absolute",
   borderRadius: theme.radius.small,
-  overflow: css.overflow.hidden
+  overflow: "hidden"
 }));

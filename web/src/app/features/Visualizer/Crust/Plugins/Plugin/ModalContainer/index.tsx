@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   forwardRef,
   ForwardRefRenderFunction,
@@ -50,7 +49,7 @@ const ModalContainer: ForwardRefRenderFunction<
 };
 
 const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
-  position: css.position.absolute,
+  position: "absolute",
   left: "50%",
   top: " 50%",
   transform: "translate(-50%, -50%)",
@@ -64,8 +63,8 @@ const Wrapper = styled("div")<{ visible: boolean }>(({ visible, theme }) => ({
 
 const Background = styled("div")<{ visible: boolean; background?: string }>(
   ({ visible, background, theme }) => ({
-    display: css.display.block,
-    position: css.position.absolute,
+    display: "block",
+    position: "absolute",
     left: 0,
     top: 0,
     width: "100%",

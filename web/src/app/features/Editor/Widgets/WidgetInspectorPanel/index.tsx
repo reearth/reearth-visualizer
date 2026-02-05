@@ -1,7 +1,7 @@
 import { Collapse } from "@reearth/app/lib/reearth-ui";
 import PropertyItem from "@reearth/app/ui/fields/Properties";
 import { Panel } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 

@@ -9,9 +9,8 @@ import {
 import { CommonField } from "@reearth/app/ui/fields";
 import { useValidateSceneAlias } from "@reearth/services/api/scene";
 import { useValidateStoryAlias } from "@reearth/services/api/storytelling";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { extractPrefixSuffix } from "../../../hooks";
@@ -154,15 +153,15 @@ const EditPanel: FC<Prop> = ({
 export default EditPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.normal
 }));
 
 const InputWrapper = styled("div")<{ hasSuffix?: boolean }>(
   ({ theme, hasSuffix }) => ({
-    display: css.display.flex,
+    display: "flex",
     flexDirection: hasSuffix ? "row" : "column",
     alignItems: hasSuffix ? "center" : undefined,
     gap: theme.spacing.micro
@@ -171,7 +170,7 @@ const InputWrapper = styled("div")<{ hasSuffix?: boolean }>(
 
 const WarningMessage = styled("div")(({ theme }) => ({
   color: theme.dangerous.main,
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small,
-  alignItems: css.alignItems.center
+  alignItems: "center"
 }));

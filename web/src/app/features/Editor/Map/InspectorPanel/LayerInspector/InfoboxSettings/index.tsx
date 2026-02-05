@@ -1,7 +1,7 @@
 import { SwitchField } from "@reearth/app/ui/fields";
 import PropertyItem from "@reearth/app/ui/fields/Properties";
 import { NLSInfobox } from "@reearth/services/api/layer/types";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC } from "react";
 

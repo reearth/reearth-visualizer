@@ -6,12 +6,11 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import Tooltip from "@reearth/app/lib/reearth-ui/components/Tooltip";
 import { useProjectImportExportMutations } from "@reearth/services/api/project";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { useCallback, useMemo } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 import { Project, Workspace } from "../types";
 
@@ -123,27 +122,27 @@ const LeftSection: React.FC<Props> = ({
 export default LeftSection;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.row,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
   height: 32,
   gap: theme.spacing.small
 }));
 
 const StyledLink = styled(Link)<{ disabled?: boolean }>(
   ({ theme, disabled }) => ({
-    display: css.display.flex,
+    display: "flex",
     color: theme.content.main,
-    textDecoration: css.textDecoration.none,
+    textDecoration: "none",
     pointerEvents: disabled ? "none" : "all",
     "&:hover": {
-      textDecoration: css.textDecoration.none
+      textDecoration: "none"
     }
   })
 );
 
-const Separator = styled("div")(({ theme }) => ({
+const Separator = styled.div(({ theme }) => ({
   color: theme.content.weak,
   margin: `0 ${theme.spacing.smallest}px`,
-  userSelect: css.userSelect.none
+  userSelect: "none"
 }));

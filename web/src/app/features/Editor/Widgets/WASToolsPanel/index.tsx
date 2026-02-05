@@ -1,8 +1,7 @@
 import { Switcher, Typography } from "@reearth/app/lib/reearth-ui";
 import { Panel } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useEffect } from "react";
 
 import { useWidgetsViewDevice } from "../../atoms";
@@ -51,26 +50,26 @@ const WASToolsPanel: FC = () => {
 export default WASToolsPanel;
 
 const StyledSecondaryNav = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.flexEnd,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "flex-end",
   width: "100%",
   flex: 1,
   padding: theme.spacing.small
 }));
 
 const AlignSystem = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small + 2,
   zIndex: 1
 }));
 
 const CenterWrapper = styled("div")(() => ({
-  position: css.position.absolute,
+  position: "absolute",
   width: "100%",
   height: "100%",
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.center
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
 }));

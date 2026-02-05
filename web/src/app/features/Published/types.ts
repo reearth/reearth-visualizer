@@ -100,7 +100,6 @@ export type PublishedNLSLayer = {
       };
     };
   };
-  dataSourceName?: string;
 };
 
 export type SketchInfo = {

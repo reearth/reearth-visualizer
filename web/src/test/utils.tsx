@@ -69,7 +69,7 @@ class ResizeObserver {
 global.ResizeObserver = ResizeObserver;
 
 const render = (
-  ui: React.ReactElement<unknown>,
+  ui: React.ReactElement,
   queryMocks?: readonly MockedResponse<Record<string, unknown>>[],
   { ...renderOptions } = {}
 ) => {
@@ -85,7 +85,6 @@ const render = (
   return rtlRender(ui, { wrapper: Wrapper, ...renderOptions });
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
 export * from "@testing-library/react";
 
 export { render };

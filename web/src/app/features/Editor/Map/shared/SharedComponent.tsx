@@ -1,7 +1,6 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 export const InputGroup: FC<{
   label: string | ReactNode;
@@ -23,18 +22,18 @@ export const InputGroup: FC<{
 };
 
 const InputGroupWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   width: "100%",
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.flexStart,
+  flexDirection: "column",
+  alignItems: "flex-start",
   gap: theme.spacing.smallest
 }));
 
 export const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   height: "100%",
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.flexStart,
+  flexDirection: "column",
+  alignItems: "flex-start",
   gap: theme.spacing.large
 }));
 
@@ -56,43 +55,43 @@ export const InputsWrapper = styled("div")(() => ({
 
 export const SubmitWrapper = styled("div")(() => ({
   width: "100%",
-  display: css.display.flex,
-  justifyContent: css.justifyContent.flexEnd
+  display: "flex",
+  justifyContent: "flex-end"
 }));
 
 export const LayerWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small
 }));
 
 export const LayerNameListWrapper = styled("div")(() => ({
   maxHeight: "250px",
-  overflowY: css.overflow.auto,
+  overflowY: "auto",
   width: "100%"
 }));
 
 export const LayerNameList = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.small
 }));
 
 export const ContentWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   flex: 1,
   width: "100%",
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.flexStart,
+  flexDirection: "column",
+  alignItems: "flex-start",
   gap: theme.spacing.large,
-  boxSizing: css.boxSizing.borderBox,
+  boxSizing: "border-box",
   ["*"]: {
-    boxSizing: css.boxSizing.borderBox
+    boxSizing: "border-box"
   },
   ...theme.scrollBar
 }));
 
 export const LinkWrapper = styled(Link)(({ theme }) => ({
-  textDecoration: css.textDecoration.none,
+  textDecoration: "none",
   color: theme.select.strong,
   paddingRight: theme.spacing.micro
 }));

@@ -9,9 +9,8 @@ import {
 } from "@reearth/app/ui/components/ManagerBase";
 import ManagerEmptyContent from "@reearth/app/ui/components/ManagerBase/ManagerEmptyContent";
 import { ProjectImportStatus } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo, Fragment } from "react";
 
 import useHooks from "./hooks";
@@ -269,19 +268,19 @@ const Projects: FC<{ workspaceId?: string }> = ({ workspaceId }) => {
 export default Projects;
 
 const ContentWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.normal,
   flex: 1,
   height: 0
 }));
 
 const ProjectsWrapper = styled("div")(() => ({
-  position: css.position.relative,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
   flex: 1,
-  overflow: css.overflow.auto
+  overflow: "auto"
 }));
 
 const BreadcrumbContainer = styled("div")(({ theme }) => ({
@@ -289,9 +288,9 @@ const BreadcrumbContainer = styled("div")(({ theme }) => ({
 }));
 
 const ProjectsContainer = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.large,
-  flexDirection: css.flexDirection.column,
+  flexDirection: "column",
   padding: `0 ${theme.spacing.largest}px ${theme.spacing.largest}px ${theme.spacing.largest}px`
 }));
 
@@ -299,7 +298,7 @@ const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
   ({ theme, layout }) => ({
     ...(layout === "grid"
       ? {
-          display: css.display.grid,
+          display: "grid",
           gap: theme.spacing.normal,
           width: "100%",
           gridTemplateColumns: "repeat(4, 1fr)",
@@ -317,8 +316,8 @@ const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
       : {}),
     ...(layout === "list"
       ? {
-          display: css.display.flex,
-          flexDirection: css.flexDirection.column,
+          display: "flex",
+          flexDirection: "column",
           gap: theme.spacing.normal
         }
       : {})
@@ -326,9 +325,9 @@ const ProjectsGroup = styled("div")<{ layout: ManagerLayout }>(
 );
 
 const ListHeader = styled("div")<{ width: number }>(({ width, theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  boxSizing: css.boxSizing.borderBox,
+  display: "flex",
+  alignItems: "center",
+  boxSizing: "border-box",
   padding: `${theme.spacing.smallest}px ${theme.spacing.largest}px`,
   width: width === 0 ? "100%" : width
 }));
@@ -364,12 +363,12 @@ const LoadingWrapper = styled("div")(() => ({
 }));
 
 const HiddenFileInput = styled("input")({
-  display: css.display.none
+  display: "none"
 });
 
 const ImportingCardContainer = styled("div")(() => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column
+  display: "flex",
+  flexDirection: "column"
 }));
 
 const shimmerEffect = {
@@ -384,8 +383,8 @@ const shimmerEffect = {
 };
 
 const ImportingListContainer = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.small,
   height: "50px",
   borderRadius: theme.radius.normal,

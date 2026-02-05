@@ -1,6 +1,5 @@
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, ReactNode } from "react";
 
 import ClickAwayListener from "../../../Crust/StoryPanel/ClickAwayListener";
@@ -157,7 +156,8 @@ const Wrapper = styled("div")<{
     ? `1px solid ${isSelected ? theme.select.main : "transparent"}`
     : "none",
   padding: "1px",
-  position: css.position.relative,
+  position: "relative",
+  transition: "all 0.3s",
   "&:hover": {
     borderColor: !hideHoverUI && !isSelected ? theme.select.weaker : "none"
   }

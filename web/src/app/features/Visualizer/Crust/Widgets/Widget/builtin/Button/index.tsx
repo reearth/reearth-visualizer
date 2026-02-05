@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import type { JSX } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
 
@@ -7,7 +6,6 @@ import MenuButton, {
   Button as ButtonType,
   MenuItem as MenuItemType
 } from "./MenuButton";
-
 
 export type Props = WidgetProps<Property>;
 export type Button = ButtonType;

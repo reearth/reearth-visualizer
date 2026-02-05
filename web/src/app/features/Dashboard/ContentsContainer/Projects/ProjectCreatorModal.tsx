@@ -17,15 +17,12 @@ import TextAreaField from "@reearth/app/ui/fields/TextareaField";
 import { useValidateProjectAlias } from "@reearth/services/api/project";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 
 import { Project } from "../../type";
-
-const VALIDATION_DEBOUNCE_MS = 600;
 
 type ProjectCreatorModalProps = {
   onClose?: () => void;
@@ -93,30 +90,19 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 
   const [aliasValid, setAliasValid] = useState<boolean>(false);
   const [aliasWarning, setAliasWarning] = useState<string>("");
-  const [debouncedAlias, setDebouncedAlias] = useState<string>("");
+  const handleAliasChange = useCallback(() => {
+    setAliasValid(false);
+    setAliasWarning("");
+  }, []);
 
-  // Debounce project alias changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedAlias(formState.projectAlias);
-    }, VALIDATION_DEBOUNCE_MS);
-
-    return () => clearTimeout(timer);
-  }, [formState.projectAlias]);
-
-  // Validate project alias when debounced value changes
-  useEffect(() => {
-    const validateAlias = async () => {
-      if (!currentWorkspace || !debouncedAlias.trim()) {
-        setAliasValid(false);
-        setAliasWarning("");
-        return;
-      }
-
+  const handleProjectAliasCheck = useCallback(
+    async (alias: string) => {
+      if (!currentWorkspace) return;
+      handleFieldChange("projectAlias", alias);
       setAliasValid(false);
 
       const result = await validateProjectAlias?.(
-        debouncedAlias.trim(),
+        alias.trim(),
         currentWorkspace?.id,
         undefined
       );
@@ -130,10 +116,9 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
           (result?.errors?.[0]?.extensions?.description as string) ?? ""
         );
       }
-    };
-
-    validateAlias();
-  }, [debouncedAlias, currentWorkspace, validateProjectAlias]);
+    },
+    [validateProjectAlias, currentWorkspace, handleFieldChange]
+  );
 
   const onSubmit = useCallback(() => {
     const license = getLicenseContent(formState?.license);
@@ -189,7 +174,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                 title={t("Project Alias *")}
                 value={formState.projectAlias}
                 placeholder={t("Text")}
-                onChange={(value) => handleFieldChange("projectAlias", value)}
+                onChange={handleAliasChange}
+                onChangeComplete={handleProjectAliasCheck}
                 data-testid="project-alias-input"
                 description={
                   aliasWarning ? (
@@ -198,7 +184,7 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
                     </Typography>
                   ) : (
                     t(
-                      "Only letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
+                      "Used to create the project URL. Only lowercase letters, numbers, and hyphens are allowed. Example: https://reearth.io/team-alias/project-alias"
                     )
                   )
                 }
@@ -259,8 +245,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 export default ProjectCreatorModal;
 
 const Form = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.normal
 }));
@@ -272,8 +258,8 @@ const ContentWrapper = styled("div")(({ theme }) => ({
 }));
 
 const FormInputWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   width: "100%"
 }));

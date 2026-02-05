@@ -1,4 +1,4 @@
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useMemo } from "react";
 
 export default () => {

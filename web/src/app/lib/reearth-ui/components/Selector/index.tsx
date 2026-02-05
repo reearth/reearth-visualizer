@@ -1,6 +1,5 @@
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   MouseEvent,
@@ -250,11 +249,11 @@ const SelectInput = styled("div")<{
   width?: number;
   size: "normal" | "small";
 }>(({ isMultiple, isOpen, disabled, width, size, theme }) => ({
-  boxSizing: css.boxSizing.borderBox,
+  boxSizing: "border-box",
   backgroundColor: `${theme.bg[1]}`,
-  display: css.display.flex,
-  justifyContent: css.justifyContent.spaceBetween,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
   gap: `${theme.spacing.small}px`,
   borderRadius: `${theme.radius.small}px`,
   border: `1px solid ${!disabled && isOpen ? theme.select.strong : theme.outline.weak}`,
@@ -273,15 +272,15 @@ const SelectInput = styled("div")<{
 
 const SelectedItems = styled("div")(({ theme }) => ({
   flex: 1,
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
   flexWrap: "wrap"
 }));
 
 const SelectedItem = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: `${theme.spacing.smallest}px`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   backgroundColor: `${theme.bg[2]}`,
@@ -292,9 +291,9 @@ const DropDownWrapper = styled("div")<{
   width?: number;
   maxHeight?: number;
 }>(({ width, maxHeight, theme }) => ({
-  boxSizing: css.boxSizing.borderBox,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  boxSizing: "border-box",
+  display: "flex",
+  flexDirection: "column",
   gap: `${theme.spacing.micro}px`,
   padding: `${theme.spacing.micro}px`,
   backgroundColor: `${theme.bg[1]}`,
@@ -310,16 +309,16 @@ const DropDownWrapper = styled("div")<{
 const DropDownItem = styled("div")<{
   isSelected?: boolean;
 }>(({ isSelected, theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.spaceBetween,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   gap: `${theme.spacing.small}px`,
   backgroundColor: !isSelected
     ? `${theme.bg[1]}`
     : `${theme.select.weak} !important`,
   padding: `${theme.spacing.micro}px ${theme.spacing.smallest}px`,
   borderRadius: `${theme.radius.smallest}px`,
-  cursor: css.cursor.pointer,
+  cursor: "pointer",
   ["&:hover"]: {
     backgroundColor: `${theme.bg[2]}`
   }

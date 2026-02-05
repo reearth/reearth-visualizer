@@ -131,11 +131,39 @@ export default ({
     ]
   );
 
+  // modals
+  const [dataSourceLayerCreatorShown, setDataSourceLayerShown] =
+    useState(false);
+  const openDataSourceLayerCreator = useCallback(
+    () => setDataSourceLayerShown(true),
+    []
+  );
+  const closeDataSourceLayerCreator = useCallback(
+    () => setDataSourceLayerShown(false),
+    []
+  );
+
+  const [sketchLayerCreatorShown, setSketchLayerCreatorShown] = useState(false);
+  const openSketchLayerCreator = useCallback(
+    () => setSketchLayerCreatorShown(true),
+    []
+  );
+  const closeSketchLayerCreator = useCallback(
+    () => setSketchLayerCreatorShown(false),
+    []
+  );
+
   return {
     activeSubProject,
     handleActiveSubProjectChange,
     handleLayerSelectFromUI,
     handleCoreLayerSelectFromMap,
-    handleSceneSettingSelectFromUI
+    handleSceneSettingSelectFromUI,
+    dataSourceLayerCreatorShown,
+    openDataSourceLayerCreator,
+    closeDataSourceLayerCreator,
+    sketchLayerCreatorShown,
+    openSketchLayerCreator,
+    closeSketchLayerCreator
   };
 };

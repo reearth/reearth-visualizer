@@ -7,9 +7,8 @@ import {
   ModalPanel,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useState } from "react";
 
 import { type PluginItem } from ".";
@@ -139,34 +138,34 @@ const Wrapper = styled("div")(({ theme }) => ({
   borderRadius: theme.radius.large,
   padding: theme.spacing.normal,
   backgroundColor: theme.bg[1],
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.normal
 }));
 
 const Header = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.spaceBetween,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
   gap: theme.spacing.normal
 }));
 
 const InfoWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.normal,
   flex: 1
 }));
 
 const TitleWrapper = styled("div")(() => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   width: "70%"
 }));
 
 const VersionWrapper = styled("div")(() => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   flexShrink: 0
 }));
 

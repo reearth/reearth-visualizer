@@ -5,7 +5,7 @@ import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { EditorState } from "lexical";
 import { useMemo, useCallback, useRef } from "react";
@@ -37,9 +37,7 @@ const RichTextEditor: React.FC<Props> = ({
   onChange
 }) => {
   const t = useT();
-  const editorStateJSONStringRef = useRef<EditorStateJSONString | undefined>(
-    undefined
-  );
+  const editorStateJSONStringRef = useRef<EditorStateJSONString>();
 
   const editorConfig = useMemo(
     () => ({

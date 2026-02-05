@@ -57,7 +57,7 @@ const TextBlockEditor: FC<Props> = ({
   );
 
   const debouncedHandleTextUpdate = useMemo(
-    () => (handleTextUpdate ? debounce(handleTextUpdate, 2000) : undefined),
+    () => (handleTextUpdate ? debounce(handleTextUpdate, 1000) : undefined),
     [handleTextUpdate]
   );
 

@@ -5,7 +5,7 @@ import ProjectSettings, {
 } from "@reearth/app/features/ProjectSettings";
 import Page from "@reearth/app/pages/Page";
 import { FC } from "react";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 
 function isProjectSettingTab(
   tab: string | undefined

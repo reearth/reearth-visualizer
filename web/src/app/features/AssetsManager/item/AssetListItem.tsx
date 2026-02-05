@@ -1,9 +1,8 @@
 import { Icon, IconButton, Typography } from "@reearth/app/lib/reearth-ui";
 import { formatRelativeTime } from "@reearth/app/utils/time";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, useCallback, useMemo } from "react";
 
 import { AssetItemProps } from "./type";
@@ -53,7 +52,7 @@ const AssetListItem: FC<AssetItemProps> = ({
   const formattedSize = useMemo(() => formatBytes(asset.size), [asset.size]);
 
   return (
-    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick} data-testid={`asset-list-item-${asset.id}`}>
+    <Wrapper selected={selected} title={asset.name} onClick={handleAssetClick}>
       <Thumbnail>
         <Icon
           icon={type === "image" ? "image" : "fileFilled"}
@@ -91,17 +90,17 @@ export default AssetListItem;
 
 const Wrapper = styled("div")<{ selected?: boolean }>(
   ({ theme, selected }) => ({
-    display: css.display.flex,
+    display: "flex",
     width: "100%",
-    alignItems: css.alignItems.center,
-    boxSizing: css.boxSizing.borderBox,
+    alignItems: "center",
+    boxSizing: "border-box",
     padding: theme.spacing.smallest,
     borderRadius: theme.radius.small,
     gap: theme.spacing.small,
-    cursor: css.cursor.pointer,
+    cursor: "pointer",
     backgroundColor: selected ? theme.select.main : "transparent",
     transition: "background-color 0.1s ease",
-    overflow: css.overflow.hidden,
+    overflow: "hidden",
     ["&:hover"]: {
       background: selected ? theme.select.main : theme.relative.light,
       borderRadius: theme.radius.small
@@ -111,16 +110,16 @@ const Wrapper = styled("div")<{ selected?: boolean }>(
 
 const Thumbnail = styled("div")(() => ({
   width: 20,
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.center,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   flexShrink: 0
 }));
 
 const AssetName = styled("div")(() => ({
-  wordBreak: css.wordBreak.breakWord,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
+  wordBreak: "break-word",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
   width: "100%",
   flexGrow: 0,
   flexShrink: 0
@@ -132,13 +131,13 @@ const Col = styled("div")<{
   width: `${width}%`,
   flexGrow: 0,
   flexShrink: 0,
-  display: css.display.flex,
-  alignItems: css.alignItems.center
+  display: "flex",
+  alignItems: "center"
 }));
 
 const PathWrapper = styled("div")(() => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   width: "100%"
 }));
 

@@ -15,7 +15,7 @@ import {
   MOVE_NLSINFOBOX_BLOCK,
   REMOVE_NLSINFOBOX_BLOCK
 } from "@reearth/services/gql/queries/infobox";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

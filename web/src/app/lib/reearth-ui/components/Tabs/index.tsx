@@ -5,7 +5,6 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   ReactNode,
@@ -146,7 +145,7 @@ const Wrapper = styled("div")<{
   background?: string;
   flexHeight?: boolean;
 }>(({ position, background, flexHeight, theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   flexFlow: position === "top" ? "column nowrap" : "row nowrap",
   background: background || theme.bg[1],
   height: flexHeight ? "auto" : "100%",
@@ -161,7 +160,7 @@ const TabsMenu = styled("div")<{
   background?: string;
   edgeGap?: "small";
 }>(({ position, tabStyle, theme, alignment, background, edgeGap }) => ({
-  display: css.display.flex,
+  display: "flex",
   flexFlow: position === "top" ? "row nowrap" : "column nowrap",
   background: background || theme.bg[0],
   padding:
@@ -186,9 +185,9 @@ const Tab = styled("div")<{
   selected: boolean;
   tabStyle?: "normal" | "separated";
 }>(({ position, selected, tabStyle, theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  cursor: css.cursor.pointer,
+  display: "flex",
+  alignItems: "center",
+  cursor: "pointer",
   gap: theme.spacing.smallest,
   background: selected ? theme.bg[1] : "inherit",
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
@@ -209,6 +208,6 @@ const Content = styled("div")<{
   flex: 1,
   height: "auto",
   overflowY: noOverflowY ? "hidden" : "auto",
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column
+  display: "flex",
+  flexDirection: "column"
 }));

@@ -1,7 +1,6 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import PluginListItem from "./PluginListItem";
@@ -44,8 +43,8 @@ const PluginList: FC<PluginListProps> = ({ plugins, uninstallPlugin }) => {
 export default PluginList;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.super
 }));
 
@@ -55,7 +54,7 @@ const InstalledHeader = styled("div")(({ theme }) => ({
 }));
 
 const ListWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.normal
 }));

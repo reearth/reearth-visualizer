@@ -1,6 +1,5 @@
 import { Icon } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { getIconName } from "../utils";
@@ -21,10 +20,10 @@ const Template: FC<Props> = ({ icon, height }) => {
 export default Template;
 
 const Wrapper = styled("div")<{ height?: number }>(({ height }) => ({
-  display: css.display.flex,
+  display: "flex",
   height: height ? `${height}px` : "255px",
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.center,
+  justifyContent: "center",
+  alignItems: "center",
   flex: 1,
   backgroundColor: "#e0e0e0",
   color: "#a8a8a8"

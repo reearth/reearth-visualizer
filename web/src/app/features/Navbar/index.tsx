@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 
 import AddWorkspaceModal from "../CreateWorkspaceModal";
 
@@ -71,10 +70,10 @@ const Navbar: React.FC<Props> = ({
 export default Navbar;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.row,
-  justifyContent: css.justifyContent.spaceBetween,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  flexDirection: "row",
+  justifyContent: "space-between",
+  alignItems: "center",
   padding: "0 24px",
   height: NAVBAR_HEIGHT,
   flexShrink: 0,

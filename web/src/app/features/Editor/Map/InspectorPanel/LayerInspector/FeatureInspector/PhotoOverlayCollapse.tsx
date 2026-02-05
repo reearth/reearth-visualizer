@@ -5,7 +5,7 @@ import {
   getPhotoOverlayValue,
   PhotoOverlayValue
 } from "@reearth/app/utils/sketch";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { useSetAtom } from "jotai";
 import { FC, useCallback, useMemo } from "react";
@@ -77,7 +77,6 @@ const PhotoOverlayCollapse: FC<PhotoOverlayCollapseProps> = ({
               disabled={!value}
               onClick={onDelete}
               iconColor={value ? theme.content.main : theme.content.weak}
-              data-testid="photooverlay-delete-btn"
             />
           ]}
         />
@@ -87,7 +86,6 @@ const PhotoOverlayCollapse: FC<PhotoOverlayCollapseProps> = ({
           icon="pencilSimple"
           size="small"
           onClick={handleEdit}
-          data-testid="photooverlay-edit-btn"
         />
       </FieldWrapper>
     </Collapse>

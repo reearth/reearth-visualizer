@@ -1,7 +1,6 @@
 import { Button, PopupMenu } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo } from "react";
 
 import StyleNodeComp from "./StyleNode";
@@ -119,8 +118,8 @@ const StylePanel: FC<Props> = ({
 export { StylePanel };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.small,
   padding: `${theme.spacing.small}px 0`,
   minHeight: 0,
@@ -134,12 +133,12 @@ const ButtonWrapper = styled("div")(({ theme }) => ({
 const NodeListScrollArea = styled("div")(() => ({
   minHeight: 0,
   flex: 1,
-  overflowY: css.overflow.auto
+  overflowY: "auto"
 }));
 
 const NodeList = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.small,
   padding: `0 ${theme.spacing.small}px`
 }));

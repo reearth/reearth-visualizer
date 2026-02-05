@@ -7,9 +7,8 @@ import {
 import { SelectField } from "@reearth/app/ui/fields";
 import { useWorkspacePolicyCheck } from "@reearth/services/api/workspace";
 import { Workspace } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo, useState } from "react";
 
 type Props = {
@@ -93,8 +92,8 @@ const ProjectVisibilityModal: FC<Props> = ({
 export default ProjectVisibilityModal;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   padding: theme.spacing.large,
   gap: theme.spacing.normal
 }));

@@ -1,10 +1,12 @@
-import { useAuthenticationRequired } from "@reearth/services/auth/useAuth";
-import { FC, ReactNode } from "react";
+import { useProject } from "@reearth/services/api/project";
+import { useScene } from "@reearth/services/api/scene";
+import { useMe } from "@reearth/services/api/user";
+import { AuthenticatedPage } from "@reearth/services/auth";
+import { FC, ReactNode, useMemo } from "react";
 
 import { Loading } from "../lib/reearth-ui";
 
 import NotFound from "./NotFound";
-import { usePageData } from "./usePageData";
 
 type RenderItemProps = {
   sceneId?: string;
@@ -25,33 +27,57 @@ const PageWrapper: FC<Props> = ({
   workspaceId,
   renderItem
 }) => {
-  const pageData = usePageData(sceneId, projectId, workspaceId);
+  const { loading: loadingMe } = useMe();
+  const { scene, loading: loadingScene } = useScene({ sceneId });
 
-  if (pageData.loading) return <Loading includeLogo />;
-  if (pageData.isDeleted) return <NotFound />;
+  const currentProjectId = useMemo(
+    () => projectId ?? scene?.projectId,
+    [projectId, scene?.projectId]
+  );
 
-  return renderItem({
+  const currentWorkspaceId = useMemo(
+    () => workspaceId ?? scene?.workspaceId,
+    [workspaceId, scene?.workspaceId]
+  );
+
+  const { loading: loadingProject, project } = useProject(currentProjectId);
+
+  const loading = useMemo(
+    () => loadingMe || loadingScene || loadingProject,
+    [loadingMe, loadingScene, loadingProject]
+  );
+
+  const renderContent = useMemo(() => {
+    if (loading) return <Loading includeLogo />;
+
+    if (project?.isDeleted) return <NotFound />;
+
+    return renderItem({
+      sceneId,
+      projectId: currentProjectId,
+      workspaceId: currentWorkspaceId
+    });
+  }, [
+    loading,
+    project?.isDeleted,
     sceneId,
-    projectId: pageData.projectId,
-    workspaceId: pageData.workspaceId
-  });
+    currentProjectId,
+    currentWorkspaceId,
+    renderItem
+  ]);
+
+  return renderContent;
 };
 
-const Page: FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => {
-  const [isAuthenticated] = useAuthenticationRequired();
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  return (
+const Page: FC<Props> = ({ sceneId, projectId, workspaceId, renderItem }) => (
+  <AuthenticatedPage>
     <PageWrapper
       sceneId={sceneId}
       projectId={projectId}
       workspaceId={workspaceId}
       renderItem={renderItem}
     />
-  );
-};
+  </AuthenticatedPage>
+);
 
 export default Page;

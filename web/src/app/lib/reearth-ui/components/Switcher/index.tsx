@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useEffect, useState } from "react";
 
 export type SwitcherProps = {
@@ -55,13 +54,13 @@ const SwitcherContainer = styled.div<{ isOn: boolean; disabled?: boolean }>(
       : isOn
         ? theme.primary.main
         : theme.outline.weaker,
-    display: css.display.flex,
-    alignItems: css.alignItems.center,
+    display: "flex",
+    alignItems: "center",
     boxShadow: theme.shadow.input,
     cursor: disabled ? "not-allowed" : "pointer",
     transition: "background-color 0.3s",
     padding: "1px",
-    boxSizing: css.boxSizing.borderBox
+    boxSizing: "border-box"
   })
 );
 

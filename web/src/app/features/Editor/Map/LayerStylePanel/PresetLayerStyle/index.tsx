@@ -4,7 +4,7 @@ import {
   PopupMenuItem
 } from "@reearth/app/lib/reearth-ui";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useEffect, FC, useCallback, useRef } from "react";
 
 import { LayerStyleAddProps } from "../../../hooks/useLayerStyles";
@@ -77,8 +77,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
     {
       id: "professional",
       title: "Professional",
-      onClick: () =>
-        handleLayerStyleAddition(professionalStyle, "Professional"),
+      onClick: () => handleLayerStyleAddition(professionalStyle, "Professional"),
       dataTestid: "preset-style-professional"
     },
     {

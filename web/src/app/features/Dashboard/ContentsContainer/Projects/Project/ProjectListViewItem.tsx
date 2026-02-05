@@ -7,7 +7,6 @@ import {
 import { formatRelativeTime } from "@reearth/app/utils/time";
 import { useMe } from "@reearth/services/api/user";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, useMemo } from "react";
 
 import ProjectRemoveModal from "../ProjectRemoveModal";
@@ -67,7 +66,7 @@ const ProjectListViewItem: FC<ProjectProps> = ({
     <>
       <ListWrapper
         data-testid={`project-list-item-${project.name}`}
-        onClick={(e: React.MouseEvent) => onProjectSelect?.(e, project.id)}
+        onClick={(e) => onProjectSelect?.(e, project.id)}
         isHovered={isHovered ?? false}
         onDoubleClick={onProjectOpen}
         onMouseEnter={() => handleProjectHover?.(true)}
@@ -190,15 +189,15 @@ export default ProjectListViewItem;
 
 const ListWrapper = styled("div")<{ isSelected: boolean; isHovered: boolean }>(
   ({ theme, isHovered }) => ({
-    display: css.display.flex,
+    display: "flex",
     width: "100%",
-    cursor: css.cursor.pointer,
+    cursor: "pointer",
     borderRadius: theme.radius.small,
     border: `1px solid ${isHovered ? theme.outline.weak : "transparent"}`,
     padding: `${theme.spacing.small}px 0`,
-    alignItems: css.alignItems.center,
-    boxSizing: css.boxSizing.borderBox,
-    overflow: css.overflow.hidden
+    alignItems: "center",
+    boxSizing: "border-box",
+    overflow: "hidden"
   })
 );
 
@@ -219,14 +218,14 @@ const ThumbnailCol = styled("div")(() => ({
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small
 }));
 
 const ProjectNameCol = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.smallest,
   flex: 1,
   flexShrink: 0
@@ -266,14 +265,14 @@ const StarButtonWrapper = styled("div")<{
 const TitleWrapper = styled("div")(({ theme }) => ({
   padding: `0 ${theme.spacing.smallest + 1}px`,
   color: theme.content.main,
-  cursor: css.cursor.pointer,
+  cursor: "pointer",
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   display: "-webkit-box",
-  WebkitBoxOrient: css.webkitBoxOrient.vertical,
-  WebkitLineClamp: css.webkitLineClamp["1"],
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis
+  WebkitBoxOrient: "vertical",
+  WebkitLineClamp: 1,
+  overflow: "hidden",
+  textOverflow: "ellipsis"
 }));
 
 const VisibilityButton = styled("div")<{ visibility?: string }>(

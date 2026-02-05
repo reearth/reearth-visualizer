@@ -10,7 +10,7 @@ import {
 } from "react";
 
 import { calculatePaddingValue } from "../../../Crust/StoryPanel/utils";
-import { useEditModeContext } from "../../contexts/useEditModeContext";
+import { useEditModeContext } from "../../contexts/editModeContext";
 import type { BlockWrapperProperty, ContentSettings } from "../../types";
 
 export const DEFAULT_BLOCK_PADDING: Spacing = {

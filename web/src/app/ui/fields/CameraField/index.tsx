@@ -10,9 +10,8 @@ import CommonField, {
 } from "@reearth/app/ui/fields/CommonField";
 import type { Camera } from "@reearth/app/utils/value";
 import type { FlyTo } from "@reearth/core";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useCallback, useState, FC } from "react";
 
 import CapturePanel from "./CapturePanel";
@@ -183,7 +182,7 @@ const CameraField: FC<CameraFieldProps> = ({
 };
 
 const InputWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small,
   flexWrap: "wrap",
   width: "100%"

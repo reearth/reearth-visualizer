@@ -1,6 +1,5 @@
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import React from "react";
 
 import PluginList, { PluginItem } from "./PluginList";
@@ -49,13 +48,13 @@ const PluginInstall: React.FC<Props> = ({
 export default PluginInstall;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.super
 }));
 
 const ButtonsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.largest,
-  justifyContent: css.justifyContent.spaceBetween
+  justifyContent: "space-between"
 }));

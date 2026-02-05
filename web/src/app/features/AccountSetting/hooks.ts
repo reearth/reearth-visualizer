@@ -1,4 +1,8 @@
-import { useMe, useMeMutations } from "@reearth/services/api/user";
+import {
+  useMe,
+  useMeMutations,
+  useUserMutations
+} from "@reearth/services/api/user";
 import { useCallback } from "react";
 
 type UpdatePasswordType = {
@@ -8,6 +12,7 @@ type UpdatePasswordType = {
 
 export default () => {
   const { updatePassword, updateLanguage } = useMeMutations();
+  const { deleteUser } = useUserMutations();
   const { me: data } = useMe();
 
   const passwordPolicy = window.REEARTH_CONFIG?.passwordPolicy;
@@ -22,6 +27,15 @@ export default () => {
     },
     [updatePassword]
   );
+
+  const handleDeleteUser = useCallback(async () => {
+    try {
+      const userId = data.id;
+      if (userId) await deleteUser({ userId });
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    }
+  }, [data.id, deleteUser]);
 
   const handleUpdateUserLanguage = useCallback(
     async ({ lang }: { lang: string }) => {
@@ -38,6 +52,7 @@ export default () => {
     meData: data,
     passwordPolicy,
     handleUpdateUserPassword,
+    handleDeleteUser,
     handleUpdateUserLanguage
   };
 };

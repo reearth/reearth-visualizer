@@ -4,7 +4,7 @@ import type {
   BlockProps
 } from "@reearth/app/features/Visualizer/shared/types";
 import type { ComputedFeature, Layer } from "@reearth/core";
-import { useCallback, type ComponentType, type ReactNode, memo, type JSX } from "react";
+import { useCallback, type ComponentType, type ReactNode, memo } from "react";
 // import { styled } from "@reearth/services/theme";
 
 import { InfoboxBlock } from "../types";

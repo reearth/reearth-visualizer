@@ -1,6 +1,5 @@
 import { IconButton } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   MouseEvent as ReactMouseEvent,
   ReactNode,
@@ -34,7 +33,7 @@ export type AreaProps = {
   backgroundColor?: string;
   resizableEdge?: ResizableEdge;
   resizeHandleColor?: string;
-  windowRef?: RefObject<HTMLDivElement | null>;
+  windowRef?: RefObject<HTMLDivElement>;
   asWrapper?: boolean;
   storageId?: string;
   passive?: boolean;
@@ -373,21 +372,21 @@ const StyledArea = styled("div")<{
     asWrapper,
     passive
   }) => ({
-    position: css.position.relative,
+    position: "relative",
     display: hidden ? "none" : "flex",
     flexDirection: direction,
-    justifyContent: css.justifyContent.spaceBetween,
+    justifyContent: "space-between",
     height: direction === "row" && !extend ? height : "100%",
     width: direction === "column" && !extend ? width : "100%",
     flexGrow: extend ? 1 : 0,
     flexShrink: extend ? 1 : 0,
-    overflow: css.overflow.hidden,
+    overflow: "hidden",
     backgroundColor: backgroundColor
       ? backgroundColor
       : asWrapper || passive
         ? "transparent"
         : theme.bg.base,
-    boxSizing: css.boxSizing.borderBox,
+    boxSizing: "border-box",
     pointerEvents: asWrapper || passive ? "none" : "auto",
     ...(!asWrapper && {
       padding: theme.spacing.micro / 2,
@@ -401,7 +400,7 @@ const StyledArea = styled("div")<{
 
 const ResizeHandle = styled("div")<{ edge: ResizableEdge; color?: string }>(
   ({ edge, color }) => ({
-    position: css.position.absolute,
+    position: "absolute",
     width: edge === "left" || edge === "right" ? 4 : "100%",
     height: edge === "top" || edge === "bottom" ? 4 : "100%",
     left: edge === "right" ? "calc(100% - 4px)" : edge === "left" ? "0" : 0,
@@ -427,9 +426,9 @@ export const Window = styled("div")(({ theme }) => ({
   width: "100%",
   height: "100%",
   padding: 1,
-  boxSizing: css.boxSizing.borderBox,
+  boxSizing: "border-box",
   ["*"]: {
-    boxSizing: css.boxSizing.borderBox
+    boxSizing: "border-box"
   },
   ...theme.scrollBar
 }));

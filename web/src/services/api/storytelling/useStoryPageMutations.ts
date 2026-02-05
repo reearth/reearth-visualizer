@@ -20,7 +20,7 @@ import {
   MOVE_STORY_PAGE,
   UPDATE_STORY_PAGE
 } from "@reearth/services/gql/queries/storytelling";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useCallback } from "react";
 
 import { useNotification } from "../../state";

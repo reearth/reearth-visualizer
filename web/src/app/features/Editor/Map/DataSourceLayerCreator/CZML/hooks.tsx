@@ -1,14 +1,13 @@
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useState, useMemo, useCallback } from "react";
 
 import { DataProps, DataSourceOptType, SourceType } from "..";
 import { generateTitle } from "../util";
 
-const useHooks = ({ sceneId, onClose, onSubmit }: DataProps) => {
+export default ({ sceneId, onClose, onSubmit }: DataProps) => {
   const t = useT();
 
   const [sourceType, setSourceType] = useState<SourceType>("local");
-  const [autoUpdateTime, setAutoUpdateTime] = useState(true);
 
   const [value, setValue] = useState("");
   const [layerName, setLayerName] = useState("");
@@ -36,10 +35,7 @@ const useHooks = ({ sceneId, onClose, onSubmit }: DataProps) => {
       config: {
         data: {
           url: sourceType === "value" ? encodeUrl : value || undefined,
-          type: "czml",
-          time: {
-            updateClockOnLoad: autoUpdateTime
-          }
+          type: "czml"
         }
       }
     });
@@ -62,10 +58,6 @@ const useHooks = ({ sceneId, onClose, onSubmit }: DataProps) => {
     sourceType,
     handleValueChange,
     handleDataSourceTypeChange,
-    handleSubmit,
-    autoUpdateTime,
-    setAutoUpdateTime
+    handleSubmit
   };
 };
-
-export default useHooks;

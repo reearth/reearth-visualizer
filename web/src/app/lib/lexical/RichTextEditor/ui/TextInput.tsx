@@ -1,6 +1,6 @@
 import "./Input.css";
 
-import { HTMLInputTypeAttribute, type JSX } from "react";
+import { HTMLInputTypeAttribute } from "react";
 
 type Props = Readonly<{
   "data-test-id"?: string;

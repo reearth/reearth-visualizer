@@ -1,5 +1,5 @@
 export const zIndex = {
-  // NOTE: visualizer -> user interface, it should be managed by tailwind
+  // NOTE: visualizer -> user interface, it should be managed by tailwind, check tailwind.config.js
   visualizer: {
     widget: 200,
     storyPanel: 200,

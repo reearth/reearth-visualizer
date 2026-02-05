@@ -3,9 +3,8 @@ import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
 import { isValidDateTimeFormat } from "@reearth/app/utils/time";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
 
 import EditPanel from "./EditPanel";
@@ -112,7 +111,7 @@ const TimePointField: FC<TimePointFieldProps> = ({
 export default TimePointField;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   width: "100%",
   gap: theme.spacing.small,
   flexWrap: "wrap"

@@ -4,9 +4,8 @@ import {
   ModalPanel,
   TextInput
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useState } from "react";
 
 import { InputGroup, InputsWrapper } from "../shared/SharedComponent";
@@ -132,8 +131,8 @@ const Wrapper = styled("div")(({ theme }) => ({
   height: "440px",
   padding: theme.spacing.normal,
   background: theme.bg[1],
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.normal
 }));
 

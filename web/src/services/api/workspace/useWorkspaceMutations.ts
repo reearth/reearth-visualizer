@@ -15,7 +15,7 @@ import {
   UPDATE_MEMBER_OF_WORKSPACE,
   UPDATE_WORKSPACE
 } from "@reearth/services/gql/queries/workspace";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

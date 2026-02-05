@@ -24,8 +24,8 @@ export type Props = {
   autoResize?: AutoResize;
   iFrameProps?: IframeHTMLAttributes<HTMLIFrameElement>;
   renderPlaceholder?: ReactNode;
-  container?: HTMLElement | DocumentFragment | null;
-  externalRef?: RefObject<HTMLIFrameElement | null>;
+  container?: HTMLElement | DocumentFragment;
+  externalRef?: RefObject<HTMLIFrameElement>;
   onRender?: (type: string) => void;
   onClick?: () => void;
   onMessage?: (message: unknown) => void;

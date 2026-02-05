@@ -1,6 +1,6 @@
 import { Icon, Typography } from "@reearth/app/lib/reearth-ui";
 import { SwitchField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useMemo, useState } from "react";
 

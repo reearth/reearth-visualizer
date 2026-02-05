@@ -16,7 +16,3 @@ export const PhotoOverlayPreviewAtom = atomWithReset<
 export const SketchFeatureTooltipAtom = atomWithReset<
   SketchFeatureTooltip | undefined
 >(undefined);
-
-export const showDataSourceLayerCreatorAtom = atomWithReset<boolean>(false);
-export const showPlateauAssetLayerCreatorAtom = atomWithReset<boolean>(false);
-export const showSketchLayerCreatorAtom = atomWithReset<boolean>(false);

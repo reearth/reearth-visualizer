@@ -2,7 +2,7 @@ import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
 import { useAssetMutations, useAssets } from "@reearth/services/api/asset";
 import { AssetSortField, SortDirection } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useFileInput from "use-file-input";
 

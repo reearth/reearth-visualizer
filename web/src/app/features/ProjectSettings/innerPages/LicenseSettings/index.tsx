@@ -11,9 +11,8 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { SelectField } from "@reearth/app/ui/fields";
 import { ProjectMetadata } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useState } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -156,8 +155,8 @@ const ContentWrapper = styled("div")(({ theme }) => ({
   background: theme.bg[1],
   borderBottom: `1px solid ${theme.outline.weak}`,
   borderTop: `1px solid ${theme.outline.weak}`,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.normal
 }));

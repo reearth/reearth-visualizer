@@ -5,7 +5,6 @@ import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
 import type { Item } from "@reearth/services/api/property";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, createContext, memo } from "react";
 
 import Template from "../../../Crust/StoryPanel/Block/Template";
@@ -214,14 +213,14 @@ const Block = styled("div")<{
   isEditable?: boolean;
   disableSelection?: boolean;
 }>(({ padding, isEditable, disableSelection }) => ({
-  display: css.display.flex,
+  display: "flex",
   paddingTop: padding?.top ? `${padding.top}px` : 0,
   paddingBottom: padding?.bottom ? `${padding.bottom}px` : 0,
   paddingLeft: padding?.left ? `${padding.left}px` : 0,
   paddingRight: padding?.right ? `${padding.right}px` : 0,
   cursor: isEditable && !disableSelection ? "pointer" : "default",
   color: "black",
-  position: css.position.relative,
+  position: "relative",
   minHeight: isEditable ? "28px" : 0
 }));
 
@@ -233,7 +232,7 @@ const EditorPanel = styled("div")(({ theme }) => ({
 
 const Overlay = styled("div")<{ disableSelection?: boolean }>(
   ({ disableSelection }) => ({
-    position: css.position.absolute,
+    position: "absolute",
     height: "100%",
     width: "100%",
     cursor: !disableSelection ? "pointer" : undefined
@@ -241,8 +240,8 @@ const Overlay = styled("div")<{ disableSelection?: boolean }>(
 );
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large,
-  userSelect: css.userSelect.none
+  userSelect: "none"
 }));

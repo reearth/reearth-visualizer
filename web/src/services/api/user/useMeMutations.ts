@@ -1,8 +1,8 @@
 import { useMutation } from "@apollo/client";
 import { UPDATE_ME } from "@reearth/services/gql/queries/user";
-import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback } from "react";
 
+import { useT } from "../../i18n";
 import { useNotification } from "../../state";
 
 export const useMeMutations = () => {

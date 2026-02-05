@@ -1,11 +1,15 @@
-import { useAuth } from "@reearth/services/auth/useAuth";
-import axios from "axios";
-import { FC, ReactNode, useMemo } from "react";
+import { useAuth } from "@reearth/services/auth";
+import axios, { AxiosInstance } from "axios";
+import { createContext, FC, ReactNode, useContext, useMemo } from "react";
 import { v4 as uuidv4 } from "uuid";
 
 import { useAddApiTask, useRemoveApiTask } from "../state";
 
-import RestfulContext from "./context";
+type RestfulContextType = {
+  axios: AxiosInstance;
+};
+
+const RestfulContext = createContext<RestfulContextType | undefined>(undefined);
 
 export const RestfulProvider: FC<{ children?: ReactNode }> = ({ children }) => {
   const { getAccessToken } = useAuth();
@@ -71,3 +75,11 @@ export const RestfulProvider: FC<{ children?: ReactNode }> = ({ children }) => {
     </RestfulContext.Provider>
   );
 };
+
+export function useRestful() {
+  const context = useContext(RestfulContext);
+  if (!context) {
+    throw new Error("useRestful must be used within a RestfulProvider");
+  }
+  return context;
+}

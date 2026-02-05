@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 export type RadioProps = {
@@ -50,16 +49,16 @@ export const Radio: FC<RadioProps> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.flexStart
+  flexDirection: "column",
+  alignItems: "flex-start"
 }));
 
 const RadioWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: css.alignItems.center
+  alignItems: "center"
 }));
 
 const RadioIndicator = styled("div")<{ checked?: boolean }>(
@@ -83,7 +82,7 @@ const RadioLabel = styled("div")<{ disabled?: boolean }>(
 );
 
 const RadioInput = styled("input")(() => ({
-  position: css.position.absolute,
+  position: "absolute",
   opacity: 0,
   width: 0,
   height: 0
@@ -99,9 +98,9 @@ const RadioButton = styled("div")<{ checked?: boolean; disabled?: boolean }>(
       : checked
         ? `1px solid ${theme.select.main}`
         : `1px solid ${theme.content.main}`,
-    display: css.display.flex,
-    alignItems: css.alignItems.center,
-    justifyContent: css.justifyContent.center,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     cursor: disabled ? "not-allowed" : "pointer"
   })
 );

@@ -1,9 +1,8 @@
 import { EntryItem } from "@reearth/app/ui/components";
 import { Panel } from "@reearth/app/ui/layout";
 import type { ScenePropertyCollection } from "@reearth/services/api/scene";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback } from "react";
 
 import { useMapPage } from "../context";
@@ -67,7 +66,7 @@ const ScenePanel: FC = () => {
 export default ScenePanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest
 }));

@@ -7,7 +7,6 @@ import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
 
 export type RangeFieldProps = CommonFieldProps &
@@ -124,22 +123,22 @@ const RangeField: FC<RangeFieldProps> = ({
 export default RangeField;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: `${theme.spacing.smallest}px`,
-  alignItems: css.alignItems.flexStart,
+  alignItems: "flex-start",
   width: "100%"
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
   gap: theme.spacing.smallest,
-  boxSizing: css.boxSizing.borderBox,
+  boxSizing: "border-box",
   width: "100%"
 }));
 
 const Dash = styled("span")(() => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center
+  display: "flex",
+  alignItems: "center"
 }));

@@ -9,10 +9,10 @@ export default function LinkOnBlankPlugin() {
   useEffect(() => {
     if (!editor) return;
     const removeNodeListener = editor.registerNodeTransform(
-      LinkNode as unknown as Parameters<typeof editor.registerNodeTransform>[0],
+      LinkNode,
       (node) => {
         if (!node) return;
-        const dom = editor.getElementByKey(node.getKey());
+        const dom = editor.getElementByKey(node.__key);
         if (!dom) return;
         dom.setAttribute("target", "_blank");
       }

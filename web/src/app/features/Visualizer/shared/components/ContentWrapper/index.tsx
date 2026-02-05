@@ -1,6 +1,5 @@
 import { Spacing } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { ForwardRefRenderFunction, ReactNode, forwardRef } from "react";
 
 export type Props = {
@@ -9,7 +8,6 @@ export type Props = {
   isEditable?: boolean;
   minPaddingInEditor?: Spacing;
   minGapInEditor?: number;
-  minHeight: string;
   padding?: Spacing;
   gap?: number;
 };
@@ -22,7 +20,6 @@ const ContentWrapper: ForwardRefRenderFunction<HTMLDivElement, Props> = (
     minGapInEditor,
     padding,
     gap,
-    minHeight,
     children
   },
   ref
@@ -36,7 +33,6 @@ const ContentWrapper: ForwardRefRenderFunction<HTMLDivElement, Props> = (
     }
     padding={padding ?? { top: 0, left: 0, right: 0, bottom: 0 }}
     minGapInEditor={minGapInEditor ?? 0}
-    minHeight={minHeight}
     gap={gap}
   >
     {children}
@@ -51,7 +47,6 @@ const Wrapper = styled("div")<{
   isEditable?: boolean;
   minPaddingInEditor: Spacing;
   minGapInEditor: number;
-  minHeight: string;
 }>(
   ({
     padding,
@@ -59,11 +54,10 @@ const Wrapper = styled("div")<{
     isEditable,
     minGapInEditor,
     minPaddingInEditor,
-    minHeight,
     theme
   }) => ({
-    display: css.display.flex,
-    flexDirection: css.flexDirection.column,
+    display: "flex",
+    flexDirection: "column",
     color: theme.content.weaker,
     gap:
       gap !== undefined && isEditable && gap < minGapInEditor
@@ -85,7 +79,6 @@ const Wrapper = styled("div")<{
       isEditable && padding.right < minPaddingInEditor.right
         ? `${minPaddingInEditor.right}px`
         : `${padding.right}px`,
-    boxSizing: css.boxSizing.borderBox,
-    minHeight: minHeight
+    boxSizing: "border-box"
   })
 );

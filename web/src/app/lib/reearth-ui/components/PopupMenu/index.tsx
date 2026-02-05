@@ -1,8 +1,7 @@
 import { Popup, Icon, IconName, PopupProps } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useCallback, useEffect, useState } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 const MULTLEVEL_OFFSET = 12;
 const DEFAULT_OFFSET = 4;
@@ -278,10 +277,10 @@ export const PopupMenu: FC<PopupMenuProps> = ({
 
 const TriggerWrapper = styled("div")<{ nested?: boolean }>(
   ({ nested, theme }) => ({
-    cursor: css.cursor.pointer,
-    display: css.display.flex,
+    cursor: "pointer",
+    display: "flex",
     gap: theme.spacing.smallest,
-    alignItems: css.alignItems.center,
+    alignItems: "center",
     justifyContent: nested ? "space-between" : "normal"
   })
 );
@@ -291,8 +290,8 @@ const PopupMenuWrapper = styled("div")<{
   nested?: boolean;
   extendContentWidth?: boolean;
 }>(({ width, nested, extendContentWidth, theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: `${theme.spacing.micro}px`,
   padding: `${theme.spacing.micro}px`,
   backgroundColor: `${theme.bg[1]}`,
@@ -305,8 +304,8 @@ const PopupMenuWrapper = styled("div")<{
       ? `${width}px`
       : DEFAULT_MENU_WIDTH,
   maxHeight: "250px",
-  overflowY: css.overflow.auto,
-  boxSizing: css.boxSizing.borderBox,
+  overflowY: "auto",
+  boxSizing: "border-box",
   margin: nested ? "-7px 0 0 2px" : "inherit",
   ...theme.scrollBar
 }));
@@ -316,9 +315,9 @@ const Item = styled("div")<{
   size?: "small" | "normal";
   disabled?: boolean;
 }>(({ hasBorderBottom, size, disabled, theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small,
-  alignItems: css.alignItems.center,
+  alignItems: "center",
   padding:
     size === "small"
       ? `${theme.spacing.micro}px ${theme.spacing.smallest}px`
@@ -333,9 +332,9 @@ const Item = styled("div")<{
 }));
 
 const StyledLink = styled(Link)(() => ({
-  textDecoration: css.textDecoration.none,
+  textDecoration: "none",
   flex: 1,
-  display: css.display.flex
+  display: "flex"
 }));
 
 const IconWrapper = styled("div")(() => ({
@@ -352,13 +351,13 @@ const SubMenuHeader = styled("div")(({ theme }) => ({
 }));
 
 const SubItem = styled("div")(() => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.spaceBetween,
+  display: "flex",
+  justifyContent: "space-between",
   justifyItems: "center",
   flexGrow: 1,
-  alignItems: css.alignItems.center,
+  alignItems: "center",
   width: "100%",
-  overflow: css.overflow.hidden
+  overflow: "hidden"
 }));
 
 const Label = styled("p")<{ nested: boolean }>(({ nested, theme }) => ({
@@ -373,7 +372,7 @@ const LabelWrapper = styled("div")<{
   size?: "small" | "normal";
   nested: boolean;
 }>(({ size, nested, theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   padding: nested
     ? "0px"
     : size === "small"
@@ -381,7 +380,7 @@ const LabelWrapper = styled("div")<{
       : `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   borderRadius: "4px",
   flex: 1,
-  alignItems: css.alignItems.center,
+  alignItems: "center",
   "&:hover": {
     background: theme.bg[2],
     p: {
@@ -391,8 +390,8 @@ const LabelWrapper = styled("div")<{
 }));
 
 const Group = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: `${theme.spacing.micro}px`
 }));
 
@@ -400,11 +399,11 @@ const TitleWrapper = styled("div")<{ disabled?: boolean; flex?: boolean }>(
   ({ theme, disabled, flex }) => ({
     fontSize: theme.fonts.sizes.body,
     color: disabled ? theme.content.weak : theme.content.main,
-    whiteSpace: css.whiteSpace.nowrap,
-    overflow: css.overflow.hidden,
-    textOverflow: css.textOverflow.ellipsis,
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
     gap: theme.spacing.small,
     flex: 1,
-    ...(flex ? { display: css.display.flex, alignItems: css.alignItems.center } : {})
+    ...(flex ? { display: "flex", alignItems: "center" } : {})
   })
 );

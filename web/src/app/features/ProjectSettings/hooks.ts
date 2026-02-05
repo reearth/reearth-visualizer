@@ -6,10 +6,10 @@ import {
   useStoryMutations
 } from "@reearth/services/api/storytelling";
 import { toPublishmentStatus } from "@reearth/services/api/utils";
-import { useAuth } from "@reearth/services/auth/useAuth";
+import { useAuth } from "@reearth/services/auth";
 import { config } from "@reearth/services/config";
 import { useCallback, useMemo, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 import useScene from "../Editor/hooks/useScene";
 

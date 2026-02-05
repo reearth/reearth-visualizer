@@ -1,3 +1,4 @@
+import type CSS from "csstype";
 import {
   type FC,
   type ReactNode,
@@ -29,12 +30,12 @@ export default function useHook({
   mapRef,
   pluginBaseUrl,
   pluginProperty
-}: { mapRef?: RefObject<MapRef | null> } & ExternalPluginProps) {
+}: { mapRef?: RefObject<MapRef> } & ExternalPluginProps) {
   const [shownPluginModalInfo, onPluginModalShow] = useState<PluginModalInfo>();
-  const pluginModalContainerRef = useRef<HTMLDivElement | null>(null);
+  const pluginModalContainerRef = useRef<HTMLDivElement>();
 
   const [shownPluginPopupInfo, onPluginPopupShow] = useState<PluginPopupInfo>();
-  const pluginPopupContainerRef = useRef<HTMLDivElement | null>(null);
+  const pluginPopupContainerRef = useRef<HTMLDivElement>();
 
   const commonPluginProps = useMemo(
     () => ({
@@ -88,7 +89,7 @@ export default function useHook({
 }
 
 const Widget: FC<{
-  mapRef?: RefObject<MapRef | null>;
+  mapRef?: RefObject<MapRef>;
   commonPluginProps: CommonPluginProps;
   widgetProps: WidgetProps;
 }> = ({ mapRef, commonPluginProps, widgetProps }) => {
@@ -112,7 +113,7 @@ const Widget: FC<{
     },
     [onExtend, widget.id]
   );
-  const iframeProps = useMemo<{ style: React.CSSProperties }>(
+  const iframeProps = useMemo<{ style: CSS.Properties }>(
     () => ({
       style: { pointerEvents: widgetProps.editing ? "none" : "auto" }
     }),

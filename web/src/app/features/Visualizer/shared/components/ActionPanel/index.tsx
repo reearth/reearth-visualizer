@@ -9,7 +9,6 @@ import {
 import { stopClickPropagation } from "@reearth/app/utils/events";
 import type { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { Dispatch, FC, Fragment, MouseEvent, SetStateAction } from "react";
 
 import { FieldComponent } from "../../hooks/useFieldComponent";
@@ -209,11 +208,11 @@ const Wrapper = styled("div")<{
 }>(({ isSelected, position, theme }) => ({
   background: !isSelected ? "#f1f1f1" : "none",
   color: theme.select.main,
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.smallest,
   height: "24px",
-  position: css.position.absolute,
+  position: "absolute",
   maxWidth: "100%",
   left:
     position === "left-top"
@@ -231,10 +230,10 @@ const Wrapper = styled("div")<{
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.normal,
-  userSelect: css.userSelect.none
+  userSelect: "none"
 }));
 
 const BlockOptions = styled("div")<{
@@ -242,8 +241,8 @@ const BlockOptions = styled("div")<{
 }>(({ isSelected, theme }) => ({
   background: isSelected ? theme.select.main : "#f1f1f1",
   color: isSelected ? theme.content.main : theme.select.main,
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   height: "24px"
 }));
 
@@ -258,8 +257,8 @@ const PopupContent = styled("div")(({ theme }) => ({
 const OptionWrapper = styled("div")<{
   showPointer?: boolean;
 }>(({ showPointer }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   cursor: showPointer ? "pointer" : "default"
 }));
 
@@ -267,9 +266,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   paddingRight: theme.spacing.smallest,
   fontSize: theme.fonts.sizes.footnote,
   fontWeight: theme.fonts.weight.regular,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
   maxWidth: "150px"
 }));
 
@@ -286,12 +285,12 @@ const OptionIconWrapper = styled("div")<{ border?: boolean }>(
 
 const SettingsContent = styled("div")(() => ({
   minHeight: "120px",
-  boxSizing: css.boxSizing.borderBox
+  boxSizing: "border-box"
 }));
 
 const DndHandle = styled("div")(() => ({
   height: "100%",
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   cursor: "move"
 }));

@@ -41,6 +41,8 @@ export interface MapPageContextType {
   handleLayerNameUpdate: (inp: LayerNameUpdateProps) => void;
   handleLayerMove: (inp: LayerMoveProps) => void;
   handleLayerSelect: (id?: string) => void;
+  openDataSourceLayerCreator: () => void;
+  openSketchLayerCreator: () => void;
   layerId?: string;
   handleCustomPropertySchemaClick?: (id?: string) => void;
   handleCustomPropertySchemaUpdate?: (

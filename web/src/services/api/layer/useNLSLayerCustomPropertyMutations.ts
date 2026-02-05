@@ -13,7 +13,7 @@ import {
   CHANGE_CUSTOM_PROPERTY_TITLE,
   REMOVE_CUSTOM_PROPERTY
 } from "@reearth/services/gql/queries/layer";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

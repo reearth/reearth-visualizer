@@ -8,7 +8,6 @@ import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useEffect, useState } from "react";
 
 export type PropertySelectorProps = CommonFieldProps &
@@ -91,10 +90,10 @@ const PropertySelectorField: FC<PropertySelectorProps> = ({
 export default PropertySelectorField;
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: `${theme.spacing.smallest}px`,
   paddingRight: `${theme.spacing.normal}px`,
-  alignItems: css.alignItems.center
+  alignItems: "center"
 }));
 
 const InputWrapper = styled("div")(() => ({

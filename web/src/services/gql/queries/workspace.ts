@@ -16,6 +16,16 @@ export const CREATE_WORKSPACE = gql(`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+        }
       }
     }
   }
@@ -45,6 +55,16 @@ export const UPDATE_WORKSPACE = gql(`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+        }
       }
     }
   }
@@ -66,6 +86,16 @@ export const ADD_MEMBER_TO_WORKSPACE = gql(`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+        }
       }
     }
   }
@@ -87,6 +117,16 @@ export const REMOVE_MEMBER_FROM_WORKSPACE = gql(`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+        }
       }
     }
   }
@@ -110,6 +150,16 @@ export const UPDATE_MEMBER_OF_WORKSPACE = gql(`
           role
         }
         personal
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+        }
       }
     }
   }
@@ -121,8 +171,6 @@ export const WORKSPACE_POLICY_CHECK = gql(`
       workspaceId
       enableToCreatePrivateProject
       disableOperationByOverUsedSeat
-      enableCustomDomainCreation
-      overCustomDomainCount
     }
   }
 `);

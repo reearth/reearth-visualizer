@@ -1,8 +1,7 @@
 import { Button, PopupMenu, Typography } from "@reearth/app/lib/reearth-ui";
 import { Role, WorkspaceMember } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback } from "react";
 
 import { PermissionService } from "./PermissionService";
@@ -100,10 +99,10 @@ const ListItem: FC<{
 export default ListItem;
 
 const StyledListItem = styled("div")(({ theme }) => ({
-  display: css.display.grid,
+  display: "grid",
   gridTemplateColumns: "3.0fr 4fr 2fr 1fr",
   padding: `${theme.spacing.small}px ${theme.spacing.normal}px`,
-  alignItems: css.alignItems.center,
+  alignItems: "center",
   borderRadius: theme.radius.normal,
   gap: theme.spacing.small
 }));
@@ -113,22 +112,22 @@ const Avatar = styled("div")(({ theme }) => ({
   height: "25px",
   borderRadius: "50%",
   background: theme.bg[2],
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.center
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center"
 }));
 
 const TypographyWrapper = styled("div")(() => ({
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis
+  overflow: "hidden",
+  textOverflow: "ellipsis"
 }));
 
 const UserWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: `${theme.spacing.small}px`
 }));
 
 const TypographyOfMember = styled(Typography)(() => ({
-  textTransform: css.textTransform.capitalize
+  textTransform: "capitalize"
 }));

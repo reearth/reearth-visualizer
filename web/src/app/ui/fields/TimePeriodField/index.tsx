@@ -2,9 +2,8 @@ import { Button, Typography } from "@reearth/app/lib/reearth-ui";
 import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import EditPanel from "./EditPanel";
@@ -136,7 +135,7 @@ const TimePeriodField: FC<TimePeriodFieldProps> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
   width: "100%"
 }));
@@ -145,34 +144,34 @@ const TimePeriodWrapper = styled("div")(({ theme }) => ({
   border: `1px solid ${theme.outline.weak}`,
   borderRadius: theme.radius.small,
   background: theme.bg[1],
-  display: css.display.flex,
+  display: "flex",
   width: "100%",
   boxShadow: theme.shadow.input
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
   height: "30px",
-  whiteSpace: css.whiteSpace.nowrap
+  whiteSpace: "nowrap"
 }));
 
 const NoteIcon = styled("div")(({ theme }) => ({
-  position: css.position.relative,
+  position: "relative",
   flex: 1,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   paddingTop: theme.spacing.smallest,
   gap: theme.spacing.small
 }));
 
 const ProgressSteps = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
   padding: theme.spacing.small,
   gap: theme.spacing.large,
-  position: css.position.relative
+  position: "relative"
 }));
 
 const Circle = styled("div")<{ filled?: boolean }>(({ theme, filled }) => ({
@@ -181,13 +180,13 @@ const Circle = styled("div")<{ filled?: boolean }>(({ theme, filled }) => ({
   borderRadius: "50%",
   background: filled ? theme.bg[3] : "transparent",
   border: `1px solid ${theme.outline.weak}`,
-  position: css.position.relative,
+  position: "relative",
   "&:not(:last-child)::after": {
     content: '""',
     width: "1px",
     height: "13px",
     background: theme.outline.weak,
-    position: css.position.absolute,
+    position: "absolute",
     top: "10px",
     left: "50%",
     transform: "translateX(-50%)",

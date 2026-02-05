@@ -1,11 +1,12 @@
 import { RadioButton } from "@reearth/app/lib/reearth-ui";
 import { DeviceType } from "@reearth/app/utils/device";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
-export type Devices = Record<DeviceType, string | number>;
+export type Devices = {
+  [key in DeviceType]: string | number;
+};
 
 type Props = {
   selectedDevice?: DeviceType;
@@ -38,7 +39,7 @@ const Devices: FC<Props> = ({ selectedDevice, onDeviceChange }) => {
 export default Devices;
 
 const DeviceWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
+  display: "flex",
+  justifyContent: "center",
   gap: theme.spacing.micro
 }));

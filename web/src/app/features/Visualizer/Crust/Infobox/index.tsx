@@ -1,13 +1,11 @@
 import BlockAddBar from "@reearth/app/features/Visualizer/shared/components/BlockAddBar";
+import { EditModeProvider } from "@reearth/app/features/Visualizer/shared/contexts/editModeContext";
 import { InstallableBlock } from "@reearth/app/features/Visualizer/shared/types";
 import { DragAndDropList, Icon } from "@reearth/app/lib/reearth-ui";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { Layer, Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, Fragment, ReactNode, memo, useMemo } from "react";
-
-import { EditModeProvider } from "../../shared/contexts/EditModeProvider";
 
 import InfoboxBlockComponent from "./Block";
 import {
@@ -209,15 +207,15 @@ const Wrapper = styled("div")<{
   position?: InfoboxPosition;
   padding?: Spacing;
 }>(({ position, theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  position: css.position.absolute,
+  display: "flex",
+  flexDirection: "column",
+  position: "absolute",
   top: "37px",
   width: `${INFOBOX_WIDTH}px`,
   background: "#ffffff",
   borderRadius: theme.radius.normal,
   zIndex: theme.zIndexes.visualizer.infobox,
-  boxSizing: css.boxSizing.borderBox,
+  boxSizing: "border-box",
   [position ?? POSITION_DEFAULT_VALUE]: "13px"
 }));
 
@@ -226,15 +224,15 @@ const Content = styled("div")<{
 }>(({ padding }) => ({
   minHeight: "370px",
   maxHeight: "515px",
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: `${padding?.top ?? `${PADDING_DEFAULT_VALUE}px`}`,
   paddingTop: padding?.top ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingBottom: padding?.bottom ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingLeft: padding?.left ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingRight: padding?.right ?? `${PADDING_DEFAULT_VALUE}px`,
-  boxSizing: css.boxSizing.borderBox,
-  overflow: css.overflow.auto
+  boxSizing: "border-box",
+  overflow: "auto"
 }));
 
 const ItemWrapper = styled("div")(() => ({
@@ -245,9 +243,9 @@ const CloseButton: FC<{
   onClick?: () => void;
 }> = ({ onClick }) => {
   return (
-    <div className="p-2 flex justify-end text-black border-b border-gray-200">
+    <div className="tw-p-2 tw-flex tw-justify-end tw-text-black tw-border-b tw-border-gray-200">
       <div
-        className="cursor-pointer w-5 h-5 flex items-center justify-center"
+        className="tw-cursor-pointer tw-w-5 tw-h-5 tw-flex tw-items-center tw-justify-center"
         onClick={onClick}
       >
         <Icon icon="close" />

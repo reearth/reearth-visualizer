@@ -16,9 +16,9 @@ export default ({
 }: {
   value: PhotoOverlayValue | undefined;
   isPreview: boolean;
-  mapRef: RefObject<MapRef | null> | undefined;
-  currentCameraRef?: RefObject<Camera | undefined | null>;
-  cameraDurationRef: RefObject<number | null>;
+  mapRef: RefObject<MapRef> | undefined;
+  currentCameraRef?: RefObject<Camera | undefined>;
+  cameraDurationRef: RefObject<number>;
   onFlyEnd?: () => void;
 }) => {
   const lastFOVRef = useRef<number | undefined>(undefined);

@@ -2,10 +2,10 @@ import {
   appFeature,
   generateExternalUrl
 } from "@reearth/services/config/appFeatureConfig";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useAddWorkspaceModal } from "@reearth/services/state";
 import { useMemo } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 import { PopupMenuItem } from "../lib/reearth-ui";
 

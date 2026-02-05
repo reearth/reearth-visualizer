@@ -1,7 +1,6 @@
 import { IconButton, IconName, PopupMenu } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { appearanceNodes } from "../appearanceNodes";
@@ -114,7 +113,7 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
           ))}
           {!!optionsMenu && (
             <OptionsWrapper
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
               data-testid={`style-node-options-wrapper-${node.id}`}
             >
               <PopupMenu
@@ -186,22 +185,22 @@ const StyleNodeComp: FC<Props> = ({ node, editMode, onUpdate, onDelete }) => {
 export default StyleNodeComp;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   borderRadius: theme.radius.small,
   width: "100%",
   background: "#ffffff08",
   gap: theme.spacing.micro,
-  alignItems: css.alignItems.flexStart,
+  alignItems: "flex-start",
   minHeight: 62,
   paddingLeft: theme.spacing.smallest,
-  overflow: css.overflow.hidden
+  overflow: "hidden"
 }));
 
 const HeaderWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.spaceBetween,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   padding: `${theme.spacing.smallest}px ${theme.spacing.smallest}px 0 ${theme.spacing.smallest}px`,
   width: "100%"
 }));
@@ -210,15 +209,15 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
   flex: 1
 }));
 
 const Actions = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.smallest
 }));
 
@@ -227,8 +226,8 @@ const OptionsWrapper = styled("div")(() => ({
 }));
 
 const ContentWrapper = styled("div")<{ active?: string }>(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   padding: theme.spacing.smallest,
   width: "100%"
 }));

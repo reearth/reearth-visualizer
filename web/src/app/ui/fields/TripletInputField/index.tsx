@@ -7,7 +7,6 @@ import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
 
 type commonTurple = [number, number, number];
@@ -78,16 +77,16 @@ const TripletInputField: FC<TripletInputFieldProps> = ({
 export default TripletInputField;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: `${theme.spacing.smallest}px`,
-  alignItems: css.alignItems.flexStart,
+  alignItems: "flex-start",
   width: "100%"
 }));
 
 const InputWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
   gap: theme.spacing.smallest,
   width: "100%"
 }));

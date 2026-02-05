@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { AppearanceField, StyleSimpleValue } from "../types";
@@ -37,8 +36,8 @@ const ValueTab: FC<Props> = ({
 export default ValueTab;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   minHeight: 28
 }));

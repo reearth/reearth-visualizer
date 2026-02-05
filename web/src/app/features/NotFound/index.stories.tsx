@@ -1,5 +1,5 @@
 import { Meta } from "@storybook/react-vite";
-import { MemoryRouter } from "react-router";
+import { MemoryRouter } from "react-router-dom";
 
 import NotFound from ".";
 

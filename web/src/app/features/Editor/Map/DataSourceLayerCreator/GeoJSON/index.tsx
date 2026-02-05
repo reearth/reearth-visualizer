@@ -13,7 +13,7 @@ import {
   TextArea
 } from "@reearth/app/lib/reearth-ui";
 import { AssetField } from "@reearth/app/ui/fields";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { FC } from "react";
 
 import { DataProps } from "..";

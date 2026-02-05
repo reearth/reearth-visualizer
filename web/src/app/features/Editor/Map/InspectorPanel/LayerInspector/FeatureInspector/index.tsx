@@ -9,7 +9,7 @@ import {
   getPhotoOverlayValue
 } from "@reearth/app/utils/sketch";
 import { NLSLayer, SketchFeature } from "@reearth/services/api/layer/types";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import JsonView from "react18-json-view";

@@ -1,6 +1,5 @@
 import { Icon, PopupMenu, PopupMenuItem } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useEffect, useMemo } from "react";
 
 import { getIconName } from "../../../Crust/StoryPanel/utils";
@@ -64,8 +63,8 @@ const BlockAddBar: FC<Props> = ({
         id={id}
         height={showAreaHeight}
         persist={persist}
-        onClick={(e: React.MouseEvent) => e.stopPropagation()}
-        onMouseOver={(e: React.MouseEvent) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
+        onMouseOver={(e) => e.stopPropagation()}
       >
         <PopupMenu
           placement="bottom-start"
@@ -83,21 +82,21 @@ const BlockAddBar: FC<Props> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  position: css.position.relative,
+  position: "relative",
   padding: `${theme.spacing.micro}px 0`,
   zIndex: theme.zIndexes.visualizer.storyBlockAddBar
 }));
 
 const Bar = styled("div")<{ height?: number; persist?: boolean }>(
   ({ height, persist, theme }) => ({
-    position: css.position.absolute,
+    position: "absolute",
     left: 0,
     right: 0,
-    display: css.display.flex,
-    alignItems: css.alignItems.center,
+    display: "flex",
+    alignItems: "center",
     gap: theme.spacing.small + 2,
     height: height ? `${height}px` : "1px",
-    cursor: css.cursor.pointer,
+    cursor: "pointer",
     "&:hover > *": {
       opacity: "100%"
     },

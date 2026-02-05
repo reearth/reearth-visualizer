@@ -5,7 +5,7 @@ type RequestInitWithTimeout = RequestInit & { __timeout?: number };
 export default (endpoint: string) => {
   return createUploadLink({
     uri: endpoint,
-    fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+    fetch: (input, init) => {
       const timeout = (init as RequestInitWithTimeout)?.__timeout ?? 30000;
       return fetchWithTimeout(input, init, Number(timeout));
     }

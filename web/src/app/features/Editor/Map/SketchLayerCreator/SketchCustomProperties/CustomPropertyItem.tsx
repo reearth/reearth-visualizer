@@ -1,7 +1,6 @@
 import { Button, Selector, TextInput, Icon } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useState } from "react";
 
 import { dataTypes } from "../../SketchLayerCreator";
@@ -72,7 +71,7 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
       </ProjectItemCol>
       <ProjectItemCol
         style={{
-          justifyContent: css.justifyContent.spaceBetween
+          justifyContent: "space-between"
         }}
       >
         {customPropertyItem.value.trim() === "" || isEditType ? (
@@ -101,8 +100,8 @@ const CustomPropertyItem: FC<CustomPropertyItemProps> = ({
 };
 
 const PropertyFieldWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   alignSelf: "stretch",
   width: "100%",
   background: theme.bg[2],
@@ -121,9 +120,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   padding: theme.spacing.micro,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
 }));
 
 export default CustomPropertyItem;

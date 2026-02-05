@@ -1,5 +1,5 @@
 import { Button, Modal, ModalPanel } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useCallback, useState } from "react";
 
@@ -33,20 +33,18 @@ const AssetsSelector: FC<AssetsSelectorProps> = ({
   }, [selectedAssets, onAssetSelect, onClose]);
 
   return (
-    <Modal size="large" visible={!!opened} dataTestid="asset-selector-modal">
+    <Modal size="large" visible={!!opened}>
       <ModalPanel
         title={t("Select Asset")}
         onCancel={onClose}
-        dataTestid="asset-selector-panel"
         actions={
           <>
-            <Button onClick={onClose} size="normal" title={t("Cancel")} data-testid="asset-selector-cancel-btn" />
+            <Button onClick={onClose} size="normal" title={t("Cancel")} />
             <Button
               size="normal"
               title="Select"
               appearance="primary"
               onClick={handleSelectFinish}
-              data-testid="asset-selector-select-btn"
             />
           </>
         }

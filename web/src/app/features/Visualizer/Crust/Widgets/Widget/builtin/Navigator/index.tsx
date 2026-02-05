@@ -1,10 +1,7 @@
-import type { JSX } from "react";
-
 import type { ComponentProps as WidgetProps } from "../..";
 
 import useHooks from "./hooks";
 import NavigatorUI from "./UI";
-
 
 export type Props = WidgetProps;
 

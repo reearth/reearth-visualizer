@@ -6,7 +6,7 @@ import {
   ContentWrapper
 } from "@reearth/app/features/Editor/Map/shared/SharedComponent";
 import { Button, RadioGroup, TextInput } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { FC, ReactNode, useCallback, useMemo, useState } from "react";
 
 import { DataProps } from "..";

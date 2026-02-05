@@ -1,7 +1,7 @@
 import { Camera, LatLng } from "@reearth/app/utils/value";
 import { FlyTo } from "@reearth/core";
 import type { Field, SchemaField } from "@reearth/services/api/property";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { FC, useMemo } from "react";
 
 import {
@@ -17,11 +17,9 @@ import {
   TimePointField,
   TwinInputField,
   SliderField,
-  RangeField,
-  TimePeriodField
+  RangeField
 } from "..";
 import { SpacingValues } from "../SpacingField";
-import { TimePeriodFieldProp } from "../TimePeriodField";
 import ZoomLevelField from "../ZoomLevelField";
 
 import useHooks from "./hooks";
@@ -208,14 +206,6 @@ const PropertyField: FC<Props> = ({
           content={[t("min"), t("max")]}
           description={schema.description}
           onBlur={handleChange}
-        />
-      ) : schema.type === "timeline" ? (
-        <TimePeriodField
-          key={schema.id}
-          title={schema.title}
-          value={value as TimePeriodFieldProp}
-          description={schema.description}
-          onChange={handleChange}
         />
       ) : (
         <p key={schema.id}>{schema.title} field</p>

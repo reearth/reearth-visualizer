@@ -1,12 +1,10 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useMemo, useRef } from "react";
 
 export type ModalProps = {
   visible: boolean;
   children: ReactNode;
   size?: "small" | "medium" | "large";
-  width?: number;
   ariaLabelledby?: string;
   ariaDescribedby?: string;
   dataTestid?: string;
@@ -20,7 +18,6 @@ export const Modal: FC<ModalProps> = ({
   visible,
   children,
   size,
-  width,
   ariaLabelledby,
   ariaDescribedby,
   dataTestid
@@ -29,14 +26,12 @@ export const Modal: FC<ModalProps> = ({
 
   const modalWidth = useMemo(
     () =>
-      width
-        ? width
-        : size === "small"
-          ? DEFAULT_SMALL_WIDTH
-          : size === "large"
-            ? DEFAULT_LARGE_WIDTH
-            : DEFAULT_MEDIUM_WIDTH,
-    [size, width]
+      size === "small"
+        ? DEFAULT_SMALL_WIDTH
+        : size === "large"
+          ? DEFAULT_LARGE_WIDTH
+          : DEFAULT_MEDIUM_WIDTH,
+    [size]
   );
 
   return !visible ? null : (
@@ -58,12 +53,12 @@ export const Modal: FC<ModalProps> = ({
 
 const Wrapper = styled("div")(({ theme }) => ({
   background: theme.bg.transparentBlack,
-  position: css.position.fixed,
+  position: "fixed",
   left: 0,
   top: 0,
   width: "100%",
   height: "100%",
-  overflow: css.overflow.auto,
+  overflow: "auto",
   opacity: 1,
   zIndex: theme.zIndexes.editor.modal.bg
 }));
@@ -73,9 +68,9 @@ const ContentWrapper = styled("div")<{ modalWidth?: number }>(
     margin: "0 auto",
     height: "100%",
     width: `${modalWidth}px`,
-    position: css.position.relative,
-    display: css.display.flex,
-    flexDirection: css.flexDirection.column,
-    justifyContent: css.justifyContent.center
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center"
   })
 );

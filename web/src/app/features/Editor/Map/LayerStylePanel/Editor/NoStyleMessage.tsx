@@ -1,7 +1,6 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 const NoStyleMessage: FC = () => {
@@ -21,7 +20,7 @@ export default NoStyleMessage;
 
 const TextWrapper = styled("div")(() => ({
   height: "100%",
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.center
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center"
 }));

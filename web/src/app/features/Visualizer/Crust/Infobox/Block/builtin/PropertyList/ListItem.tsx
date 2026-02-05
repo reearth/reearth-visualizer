@@ -1,6 +1,5 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 const ListItem: FC<{ index?: number; keyValue?: string; value?: string }> = ({
@@ -29,13 +28,13 @@ export default ListItem;
 
 const PropertyWrapper = styled("div")<{ isEven?: boolean }>(
   ({ isEven, theme }) => ({
-    display: css.display.flex,
-    justifyContent: css.justifyContent.spaceBetween,
+    display: "flex",
+    justifyContent: "space-between",
     gap: theme.spacing.large,
     background: isEven ? "#F4F4F4" : "#ffffff",
     padding: `${theme.spacing.small}px ${theme.spacing.large}px`,
-    boxSizing: css.boxSizing.borderBox,
-    wordBreak: css.wordBreak.breakWord,
+    boxSizing: "border-box",
+    wordBreak: "break-word",
     width: "100%"
   })
 );

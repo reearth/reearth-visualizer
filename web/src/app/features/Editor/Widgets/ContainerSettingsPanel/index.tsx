@@ -1,9 +1,8 @@
 import { ColorField, NumberField, SwitchField } from "@reearth/app/ui/fields";
 import { Panel } from "@reearth/app/ui/layout";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { WidgetAreaPadding } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { useWidgetsPage } from "../context";
@@ -128,8 +127,8 @@ const ContainerSettingsPanel: FC = () => {
 };
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large
 }));
 

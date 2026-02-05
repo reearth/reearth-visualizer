@@ -5,9 +5,8 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { SelectField } from "@reearth/app/ui/fields";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 import useHooks from "./hooks";
@@ -167,24 +166,24 @@ const ListEditor: FC<Props> = ({
 export default ListEditor;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   background: theme.bg[1],
   gap: theme.spacing.small,
   padding: theme.spacing.normal
 }));
 
 const FieldWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  justifyContent: css.justifyContent.spaceBetween,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
   gap: theme.spacing.smallest,
-  boxSizing: css.boxSizing.borderBox
+  boxSizing: "border-box"
 }));
 
 const ActionsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: css.alignItems.center,
-  boxSizing: css.boxSizing.borderBox
+  alignItems: "center",
+  boxSizing: "border-box"
 }));

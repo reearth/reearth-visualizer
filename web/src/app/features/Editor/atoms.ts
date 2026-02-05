@@ -3,12 +3,6 @@ import { Camera } from "@reearth/app/utils/value";
 import { useAtom } from "jotai";
 import { atomWithReset, useResetAtom } from "jotai/utils";
 
-import {
-  expandedPlateauFolderIds,
-  selectedPlateauDatasetId,
-  selectedPlateauDatasetItem
-} from "./Map/PlateauAssetLayerCreator/atoms";
-
 const currentCamera = atomWithReset<Camera | undefined>(undefined);
 export const useCurrentCamera = () => useAtom(currentCamera);
 
@@ -26,18 +20,9 @@ export const useResetAllAtoms = () => {
   const resetWidgetsViewDevice = useResetAtom(widgetsViewDevice);
   const resetPublishViewDevice = useResetAtom(publishViewDevice);
 
-  const resetPlateauExpendedFolderIds = useResetAtom(expandedPlateauFolderIds);
-  const resetPlateauSelectedDatasetId = useResetAtom(selectedPlateauDatasetId);
-  const resetPlateauSelectedDatasetItem = useResetAtom(
-    selectedPlateauDatasetItem
-  );
-
   return () => {
     resetCurrentCamera();
     resetWidgetsViewDevice();
     resetPublishViewDevice();
-    resetPlateauExpendedFolderIds();
-    resetPlateauSelectedDatasetId();
-    resetPlateauSelectedDatasetItem();
   };
 };

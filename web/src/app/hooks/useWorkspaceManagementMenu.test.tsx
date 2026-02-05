@@ -1,12 +1,12 @@
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useAddWorkspaceModal } from "@reearth/services/state";
 import { renderHook } from "@reearth/test/utils";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { describe, it, expect, vi, beforeEach, afterEach, Mock } from "vitest";
 
 import useWorkspaceManagementMenu from "./useWorkspaceManagementMenu";
 
-vi.mock("react-router", () => ({
+vi.mock("react-router-dom", () => ({
   useNavigate: vi.fn(),
   Link: ({
     children,

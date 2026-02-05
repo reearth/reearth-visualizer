@@ -1,9 +1,8 @@
 import { IconName, Icon, Typography } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode, useState } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 
 export type SidebarMenuItemProps = {
   id?: string;
@@ -142,15 +141,15 @@ const StyledLinkButton = styled(
 )<{ disabled?: boolean; to: string; children?: React.ReactNode }>(
   ({ disabled }) => ({
     pointerEvents: disabled ? "none" : "auto",
-    textDecoration: css.textDecoration.none
+    textDecoration: "none"
   })
 );
 
 const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
   ({ active, theme, disabled }) => ({
-    display: css.display.flex,
-    alignItems: css.alignItems.center,
-    justifyContent: css.justifyContent.spaceBetween,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     alignSelf: "stretch",
     gap: theme.spacing.small,
     background: active ? theme.select.main : "",
@@ -165,52 +164,52 @@ const MenuWrapper = styled("div")<{ active?: boolean; disabled?: boolean }>(
 );
 
 const Info = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small
 }));
 
 const Tile = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small,
   flexShrink: 0
 }));
 
 const SubMenu = styled("div")(({ theme }) => ({
   padding: `${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.smallest}px ${theme.spacing.super}px`,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest
 }));
 
 export const SidebarWrapper = styled("div")(() => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   flex: 1,
-  justifyContent: css.justifyContent.spaceBetween,
+  justifyContent: "space-between",
   maxHeight: "100vh",
   minHeight: 542
 }));
 
 export const SidebarButtonsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
-  justifyContent: css.justifyContent.spaceBetween,
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "space-between",
   gap: theme.spacing.smallest,
   padding: `0 ${theme.spacing.smallest}px`
 }));
 
 export const SidebarMainSection = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   flex: 1
 }));
 
 export const SidebarFooterSection = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   flexShrink: 0
 }));

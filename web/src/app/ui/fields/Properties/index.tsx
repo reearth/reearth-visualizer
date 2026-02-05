@@ -5,9 +5,8 @@ import type {
   GroupListItem,
   Item
 } from "@reearth/services/api/property";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo, useState } from "react";
 
 import ListField, { ListItemProps } from "../ListField";
@@ -152,7 +151,7 @@ const valueToString = (
 };
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large
 }));

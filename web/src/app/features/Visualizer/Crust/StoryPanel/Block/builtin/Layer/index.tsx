@@ -47,7 +47,6 @@ const LayerBlock: React.FC<Props> = ({
         onPropertyUpdate={props.onPropertyUpdate}
         onPropertyItemAdd={onPropertyItemAdd}
         onPropertyItemMove={props.onPropertyItemMove}
-        onPropertyItemDelete={props.onPropertyItemDelete}
         nlsLayers={props.nlsLayers as NLSLayer[] | undefined}
       />
     </BlockWrapper>

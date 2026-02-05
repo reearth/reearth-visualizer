@@ -4,7 +4,7 @@ import {
   CREATE_ASSET,
   REMOVE_ASSET
 } from "@reearth/services/gql/queries/asset";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 

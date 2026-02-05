@@ -1,7 +1,6 @@
 import { Button, DragAndDropList, Icon } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 
 import { ContentWrapper, Label } from "../../shared/SharedComponent";
@@ -127,22 +126,22 @@ const Title = styled("div")(({ theme }) => ({
 }));
 
 const PropertyTable = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.small,
   width: "100%"
 }));
 
 const PropertyTableBody = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.normal,
   maxHeight: "260px",
-  overflowY: css.overflow.auto
+  overflowY: "auto"
 }));
 
 const PropertyTableRow = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   width: "100%",
   gap: theme.spacing.smallest
 }));
@@ -156,11 +155,11 @@ const PropertyHeaderCol = styled("div")(() => ({
 }));
 
 const Warning = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small,
   paddingTop: theme.spacing.small,
   color: theme.dangerous.main,
-  alignItems: css.alignItems.center,
+  alignItems: "center",
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
   padding: `${theme.spacing.smallest}px 0`

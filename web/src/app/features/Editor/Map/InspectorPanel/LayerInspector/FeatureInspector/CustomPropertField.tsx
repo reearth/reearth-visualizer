@@ -6,7 +6,7 @@ import {
   SwitchField
 } from "@reearth/app/ui/fields";
 import TextAreaField from "@reearth/app/ui/fields/TextareaField";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useCallback, useMemo } from "react";
 
 import { FieldProp, ValueProp } from ".";

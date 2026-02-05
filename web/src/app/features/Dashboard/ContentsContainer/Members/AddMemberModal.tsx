@@ -10,10 +10,9 @@ import {
 import { useSearchUser } from "@reearth/services/api/user";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
 import { Role } from "@reearth/services/gql";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { Workspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { useDebounce } from "react-use";
 
@@ -168,21 +167,21 @@ const AddMemberModal: FC<AddMemberModalProps> = ({
 export default AddMemberModal;
 
 const ItemContainer = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.spaceBetween,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
   padding: `0 ${theme.spacing.normal}px`,
   fontSize: theme.fonts.sizes.body
 }));
 
 const UserInfo = styled("div")(() => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column
+  display: "flex",
+  flexDirection: "column"
 }));
 
 const Warning = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.normal,
   color: theme.warning.main
 }));

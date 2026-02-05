@@ -3,7 +3,7 @@ import PropertyItem from "@reearth/app/ui/fields/Properties";
 import { filterVisibleItems } from "@reearth/app/ui/fields/utils";
 import type { FlyTo } from "@reearth/core";
 import type { Item } from "@reearth/services/api/property";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
 import { FC, useMemo } from "react";
 

@@ -1,6 +1,6 @@
 import { TabItem } from "@reearth/app/lib/reearth-ui";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback, useEffect, useMemo, useState } from "react";
 

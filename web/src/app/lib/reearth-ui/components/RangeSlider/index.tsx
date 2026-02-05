@@ -4,6 +4,8 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import "rc-slider/assets/index.css";
 
+const RangeSliderWithTooltip = RCSlider.createSliderWithTooltip(RCSlider.Range);
+
 export type RangeSliderProps = {
   value: number[] | undefined;
   min?: number;
@@ -54,33 +56,24 @@ export const RangeSlider: FC<RangeSliderProps> = ({
   }, [value]);
 
   const handleChange = useCallback(
-    (value: number | number[]) => {
-      const arrValue = Array.isArray(value) ? value : [value];
-      setCurrentValue(arrValue);
-      onChange?.(arrValue);
+    (value: number[]) => {
+      setCurrentValue(value);
+      onChange?.(value);
     },
     [onChange]
   );
 
-  const handleChangeComplete = useCallback(
-    (value: number | number[]) => {
-      const arrValue = Array.isArray(value) ? value : [value];
-      onChangeComplete?.(arrValue);
-    },
-    [onChangeComplete]
-  );
-
   return (
     <SliderStyled disabled={!!disabled} data-testid={dataTestid}>
-      <RCSlider
-        range
+      <RangeSliderWithTooltip
         value={currentValue}
         min={min}
         max={max}
         disabled={disabled}
         onChange={handleChange}
-        onChangeComplete={handleChangeComplete}
+        onAfterChange={onChangeComplete}
         step={calculatedStep}
+        draggableTrack
         aria-label={ariaLabel}
       />
     </SliderStyled>

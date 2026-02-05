@@ -6,9 +6,8 @@ import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProject
 import { InputField, AssetField, TextareaField } from "@reearth/app/ui/fields";
 import { useValidateProjectAlias } from "@reearth/services/api/project";
 import { appFeature } from "@reearth/services/config/appFeatureConfig";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useCallback, useState, FC } from "react";
 
 import {
@@ -312,14 +311,14 @@ const GeneralSettings: FC<Props> = ({
 export default GeneralSettings;
 
 const DangerItem = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large
 }));
 
 const DescriptionWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest
 }));
 

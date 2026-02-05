@@ -1,5 +1,5 @@
 import { render } from "@reearth/test/utils";
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect } from "vitest";
 
 import { RangeSlider } from "./index";
 
@@ -40,19 +40,5 @@ describe("RangeSlider Component", () => {
 
     const slider = sliderElement as HTMLElement;
     expect(slider.getAttribute("step") || "1").toBe("1");
-  });
-
-  test("onChange handler accepts number | number[] and returns number[]", () => {
-    const handleChange = vi.fn();
-    render(<RangeSlider value={[20, 80]} onChange={handleChange} />);
-
-    expect(handleChange).toBeDefined();
-  });
-
-  test("onChangeComplete handler accepts number | number[] and returns number[]", () => {
-    const handleChangeComplete = vi.fn();
-    render(<RangeSlider value={[20, 80]} onChangeComplete={handleChangeComplete} />);
-
-    expect(handleChangeComplete).toBeDefined();
   });
 });

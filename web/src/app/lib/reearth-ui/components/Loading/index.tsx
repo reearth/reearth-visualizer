@@ -1,6 +1,5 @@
 import logoWithText from "@reearth/app/lib/reearth-ui/components/Icon/Icons/LogoWithText.svg";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { brandRed } from "@reearth/services/theme/reearthTheme/common/colors";
 import { FC } from "react";
 import { BarLoader } from "react-spinners";
@@ -47,9 +46,9 @@ export const Loading: FC<LoadingProps> = ({
   );
 };
 
-const LogoWrapper = styled("div")(() => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center
+const LogoWrapper = styled.div(() => ({
+  display: "flex",
+  alignItems: "center"
 }));
 
 const LoadingWrapper = styled("div")<{
@@ -59,11 +58,11 @@ const LoadingWrapper = styled("div")<{
 }>(({ theme, fixed, relative, overlay }) => ({
   width: "100%",
   height: "100%",
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
   gap: 49,
-  flexDirection: css.flexDirection.column,
+  flexDirection: "column",
   background: overlay ? theme.bg[1] : "",
   position: fixed ? "fixed" : relative ? "relative" : "absolute",
   top: 0,

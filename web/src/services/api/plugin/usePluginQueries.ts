@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
-import { useLang } from "@reearth/services/i18n/hooks";
+import { useLang } from "@reearth/services/i18n";
 import { useMemo } from "react";
 
 import { Plugin } from "./types";

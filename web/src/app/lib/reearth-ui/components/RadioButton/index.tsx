@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 import { Icon, IconName } from "../Icon";
@@ -21,9 +20,9 @@ export type RadioButtonProps = {
 };
 
 const RadioButtonGroup = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   borderRadius: theme.radius.normal,
-  overflow: css.overflow.hidden,
+  overflow: "hidden",
   width: "fit-content",
   boxShadow: theme.shadow.button
 }));
@@ -34,8 +33,8 @@ const RadioButtonItem = styled("label", {
   selected?: boolean;
   disabled?: boolean;
 }>(({ theme, selected, disabled }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.smallest,
   padding: `${theme.spacing.smallest - 1}px ${theme.spacing.small}px`,
   backgroundColor: theme.bg[1],
@@ -45,8 +44,8 @@ const RadioButtonItem = styled("label", {
   fontWeight: theme.fonts.weight.regular,
   lineHeight: 1.5,
   cursor: disabled ? "not-allowed" : "pointer",
-  userSelect: css.userSelect.none,
-  boxSizing: css.boxSizing.borderBox,
+  userSelect: "none",
+  boxSizing: "border-box",
 
   "&:first-of-type": {
     borderTopLeftRadius: theme.radius.normal,
@@ -72,17 +71,17 @@ const RadioButtonItem = styled("label", {
 }));
 
 const HiddenRadioInput = styled("input")({
-  position: css.position.absolute,
+  position: "absolute",
   opacity: 0,
-  pointerEvents: css.pointerEvents.none,
+  pointerEvents: "none",
   width: 0,
   height: 0
 });
 
 const IconWrapper = styled("span")<{ disabled?: boolean }>(
   ({ theme, disabled }) => ({
-    display: css.display.flex,
-    alignItems: css.alignItems.center,
+    display: "flex",
+    alignItems: "center",
     color: disabled ? theme.content.weaker : "inherit"
   })
 );
@@ -127,7 +126,7 @@ export const RadioButton: FC<RadioButtonProps> = ({
             selected={isSelected}
             disabled={isDisabled}
             onClick={() => handleItemClick(item.id, item.disabled)}
-            onKeyDown={(event: React.KeyboardEvent) => handleKeyDown(event, item.id, item.disabled)}
+            onKeyDown={(event) => handleKeyDown(event, item.id, item.disabled)}
             tabIndex={isDisabled ? -1 : 0}
             role="radio"
             aria-checked={isSelected}

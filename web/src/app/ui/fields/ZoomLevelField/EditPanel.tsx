@@ -6,9 +6,8 @@ import {
   RangeSliderProps,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
 
 type EditPanelProps = {
@@ -94,21 +93,21 @@ const EditPanel: FC<EditPanelProps> = ({
 export default EditPanel;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest
 }));
 
 const SliderWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
   gap: theme.spacing.normal
 }));
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.flexStart,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start",
   gap: theme.spacing.small
 }));

@@ -1,6 +1,5 @@
 import { useHasActiveApiTasks } from "@reearth/services/state";
 import { keyframes, styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 
 const offsetX = 16;
@@ -57,10 +56,10 @@ export default CursorStatus;
 
 const Wrapper = styled("div")<{ left: number; top: number }>(
   ({ left, top, theme }) => ({
-    position: css.position.absolute,
+    position: "absolute",
     left: `${left}px`,
     top: `${top}px`,
-    pointerEvents: css.pointerEvents.none,
+    pointerEvents: "none",
     zIndex: theme.zIndexes.editor.loading
   })
 );

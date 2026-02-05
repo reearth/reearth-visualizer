@@ -1,5 +1,4 @@
 import { fonts, styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
 export type TextAreaProps = {
@@ -89,8 +88,8 @@ export const TextArea: FC<TextAreaProps> = ({
 };
 
 const Wrapper = styled("div")(() => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column
+  display: "flex",
+  flexDirection: "column"
 }));
 
 const TextAreaWrapper = styled("div")<{
@@ -105,7 +104,7 @@ const TextAreaWrapper = styled("div")<{
         : `1px solid ${theme.select.main}`,
   borderRadius: theme.radius.small,
   background: "transparent",
-  display: css.display.flex,
+  display: "flex",
   boxShadow: theme.shadow.input
 }));
 
@@ -118,7 +117,7 @@ const StyledTextArea = styled.textarea<{
   border: "none",
   background: theme.bg[1],
   resize: resizable === "height" ? "vertical" : "none",
-  overflow: css.overflow.auto,
+  overflow: "auto",
   flex: 1,
   color:
     disabled && appearance !== "readonly"
@@ -130,14 +129,14 @@ const StyledTextArea = styled.textarea<{
   lineHeight: `${fonts.lineHeights.body}px`,
   padding: `${theme.spacing.smallest}px ${theme.spacing.small}px`,
   minHeight: fonts.lineHeights.body * 2 + theme.spacing.smallest * 2,
-  overflowX: css.overflow.hidden,
-  boxSizing: css.boxSizing.borderBox,
+  overflowX: "hidden",
+  boxSizing: "border-box",
   "::placeholder": {
     color: theme.content.weak
   }
 }));
 
-const CharacterCount = styled("span")(({ theme }) => ({
+const CharacterCount = styled.span(({ theme }) => ({
   alignSelf: "flex-end",
   fontSize: fonts.sizes.body,
   color: theme.content.weak,

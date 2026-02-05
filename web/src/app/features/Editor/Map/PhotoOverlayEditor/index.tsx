@@ -14,9 +14,8 @@ import {
   getPhotoOverlayValue
 } from "@reearth/app/utils/sketch";
 import { Camera } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { FC, useCallback, useEffect, useMemo, useRef } from "react";
@@ -208,7 +207,7 @@ const PhotoOverlayEditor: FC = () => {
   return (
     <Wrapper>
       <InteractiveWrapper>
-        <Panel width={233} dataTestid="photooverlay-transparency-panel">
+        <Panel width={233}>
           <FieldsWrapper>
             <SliderField
               title={t("Photo transparency")}
@@ -226,16 +225,14 @@ const PhotoOverlayEditor: FC = () => {
           width={270}
           title={t("PhotoOverlay settings")}
           onCancel={handleCancel}
-          dataTestid="photooverlay-editor-panel"
           actions={
             <ActionWrapper>
-              <Button title={t("Cancel")} extendWidth onClick={handleCancel} data-testid="photooverlay-cancel-btn" />
+              <Button title={t("Cancel")} extendWidth onClick={handleCancel} />
               <Button
                 title={t("Submit")}
                 extendWidth
                 onClick={handleSave}
                 disabled={!preview?.value}
-                data-testid="photooverlay-submit-btn"
               />
             </ActionWrapper>
           }
@@ -290,22 +287,22 @@ const PhotoOverlayEditor: FC = () => {
 export default PhotoOverlayEditor;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  position: css.position.absolute,
+  position: "absolute",
   top: theme.spacing.small,
   right: theme.spacing.small,
   zIndex: theme.zIndexes.editor.overlay,
-  display: css.display.flex,
-  alignItems: css.alignItems.flexStart,
+  display: "flex",
+  alignItems: "flex-start",
   gap: theme.spacing.small
 }));
 
 const InteractiveWrapper = styled("div")(() => ({
-  pointerEvents: css.pointerEvents.all
+  pointerEvents: "all"
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.large,
   padding: theme.spacing.small
 }));
@@ -315,6 +312,6 @@ const Divider = styled("div")(({ theme }) => ({
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small
 }));

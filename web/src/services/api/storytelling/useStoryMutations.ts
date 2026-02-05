@@ -11,7 +11,7 @@ import {
   PUBLISH_STORY,
   UPDATE_STORY
 } from "@reearth/services/gql/queries/storytelling";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useCallback } from "react";
 
 import { useNotification } from "../../state";

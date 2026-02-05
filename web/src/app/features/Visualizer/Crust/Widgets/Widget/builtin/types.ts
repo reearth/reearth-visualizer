@@ -1,5 +1,5 @@
 export type CommonBuiltInWidgetProperty = {
   appearance?: {
-    theme?: "light" | "dark" | "auto";
+    theme?: "light" | "dark";
   };
 };

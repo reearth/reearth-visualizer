@@ -9,7 +9,6 @@ import {
   SidebarButtonsWrapper
 } from "@reearth/app/ui/components/Sidebar";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 type Props = {
@@ -56,42 +55,42 @@ const SettingBase: FC<Props> = ({ tabs, tab, children, workspaceId }) => {
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   height: "100%",
   width: "100%",
   color: theme.content.main,
   backgroundColor: theme.bg[0],
   ["*"]: {
-    boxSizing: css.boxSizing.borderBox
+    boxSizing: "border-box"
   },
   ...theme.scrollBar
 }));
 
 const MainSection = styled("div")(() => ({
-  display: css.display.flex,
+  display: "flex",
   flex: 1,
-  overflow: css.overflow.auto,
-  position: css.position.relative
+  overflow: "auto",
+  position: "relative"
 }));
 
 const LeftSidePanel = styled("div")(({ theme }) => ({
   width: DEFAULT_SIDEBAR_WIDTH,
   height: "100%",
   backgroundColor: theme.bg[1],
-  display: css.display.flex,
+  display: "flex",
   padding: `${theme.spacing.large}px 0`,
-  boxSizing: css.boxSizing.borderBox
+  boxSizing: "border-box"
 }));
 
 const Content = styled("div")(({ theme }) => ({
-  position: css.position.relative,
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  position: "relative",
+  display: "flex",
+  flexDirection: "column",
   width: "100%",
   height: "100%",
-  alignItems: css.alignItems.center,
-  overflow: css.overflow.auto,
+  alignItems: "center",
+  overflow: "auto",
   padding: `${theme.spacing.super}px`
 }));
 

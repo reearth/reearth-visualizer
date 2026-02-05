@@ -1,5 +1,4 @@
 import { fonts, styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState, ChangeEvent } from "react";
 
 export type DatePickerProps = {
@@ -78,9 +77,9 @@ const Wrapper = styled("div")<{
         : `1px solid ${theme.outline.weak}`,
     borderRadius: theme.radius.small,
     background: theme.bg[1],
-    display: css.display.flex,
+    display: "flex",
     gap: `${theme.spacing.smallest}px`,
-    alignItems: css.alignItems.center,
+    alignItems: "center",
     boxShadow: theme.shadow.input
   };
 });

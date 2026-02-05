@@ -3,7 +3,6 @@ import CommonField, {
   CommonFieldProps
 } from "@reearth/app/ui/fields/CommonField";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 export type SpacingValues = {
@@ -89,7 +88,7 @@ const SpacingField: FC<SpacingFieldProps> = ({
 export default SpacingField;
 
 const InputWrapper = styled("div")(({ theme }) => ({
-  display: css.display.grid,
+  display: "grid",
   gridTemplateAreas: `
     ". top ."
     "left . right"
@@ -98,13 +97,13 @@ const InputWrapper = styled("div")(({ theme }) => ({
   gap: `${theme.spacing.smallest}px`,
   height: "97px",
   width: "100%",
-  position: css.position.relative,
+  position: "relative",
   border: `1px dashed ${theme.outline.weak}`
 }));
 
 const CenteredInput = styled("div")<{ position: string }>(({ position }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.center,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
   gridArea: position
 }));

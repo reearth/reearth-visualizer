@@ -6,12 +6,11 @@ import {
   Typography
 } from "@reearth/app/lib/reearth-ui";
 import { useWorkspaceMutations } from "@reearth/services/api/workspace";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useWorkspace, Workspace } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 type DeleteWorkspaceModalProps = {
   visible: boolean;
@@ -93,5 +92,5 @@ const DeleteWorkspaceModal: FC<DeleteWorkspaceModalProps> = ({
 export default DeleteWorkspaceModal;
 
 const CancelButton = styled(Button)(() => ({
-  whiteSpace: css.whiteSpace.nowrap
+  whiteSpace: "nowrap"
 }));

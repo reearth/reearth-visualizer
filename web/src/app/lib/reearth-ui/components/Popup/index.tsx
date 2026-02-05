@@ -20,9 +20,22 @@ import {
   type HTMLProps,
   type ReactNode
 } from "react";
+import { createContext, useContext } from "react";
 
-import { PopoverContext } from "./context";
-import { usePopover, usePopoverContext } from "./hooks";
+import usePopover from "./hooks";
+
+type ContextType = ReturnType<typeof usePopover> | null;
+
+export const PopoverContext = createContext<ContextType>(null);
+
+export const usePopoverContext = () => {
+  const context = useContext(PopoverContext);
+
+  if (context === null) {
+    throw new Error("Popover components must be wrapped in <Popover.Root />");
+  }
+  return context;
+};
 
 type TriggerProps = {
   children?: ReactNode;

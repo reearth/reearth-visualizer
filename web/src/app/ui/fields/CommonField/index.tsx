@@ -1,6 +1,5 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import { styled, useTheme } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 export interface CommonFieldProps {
@@ -42,8 +41,8 @@ const CommonField: FC<CommonFieldProps & { children?: ReactNode }> = ({
 export default CommonField;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.small,
   ...theme.scrollBar
 }));

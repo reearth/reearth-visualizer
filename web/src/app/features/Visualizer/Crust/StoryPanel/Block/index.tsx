@@ -4,7 +4,7 @@ import type {
 } from "@reearth/app/features/Visualizer/shared/types";
 import type { Layer } from "@reearth/core";
 import type { NLSLayer } from "@reearth/services/api/layer";
-import { useCallback, type ComponentType, type ReactNode, type JSX } from "react";
+import { useCallback, type ComponentType, type ReactNode } from "react";
 
 import BlockWrapper from "../../../shared/components/BlockWrapper";
 import { StoryBlock } from "../types";

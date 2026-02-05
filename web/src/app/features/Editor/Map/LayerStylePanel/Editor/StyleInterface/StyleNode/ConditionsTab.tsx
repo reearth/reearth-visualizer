@@ -5,9 +5,8 @@ import {
   TextInput,
   Typography
 } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo } from "react";
 
 import {
@@ -256,8 +255,8 @@ const ConditionsTab: FC<Props> = ({
 export default ConditionsTab;
 
 const ConditionsWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   paddingBottom: theme.spacing.smallest
 }));
@@ -267,30 +266,30 @@ const InfoWrapper = styled("div")(({ theme }) => ({
 }));
 
 const IconButtonWrapper = styled("div")(() => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.flexEnd,
+  display: "flex",
+  justifyContent: "flex-end",
   width: "100%"
 }));
 
 const ContentWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: css.alignItems.center
+  alignItems: "center"
 }));
 
 const ConditionWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
-  alignItems: css.alignItems.flexStart,
+  alignItems: "flex-start",
   flex: 1,
   minWidth: 0
 }));
 
 const ConditionStatement = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.smallest,
-  alignItems: css.alignItems.center,
+  alignItems: "center",
   width: "100%"
 }));
 

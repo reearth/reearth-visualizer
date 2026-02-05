@@ -1,8 +1,7 @@
 import { Collapse, Typography, IconButton } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useState, useEffect } from "react";
 
 import { SHARED_PLUGIN_ID } from "./constants";
@@ -213,22 +212,22 @@ const Plugins: FC<Props> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   flexGrow: 1,
   gap: theme.spacing.small,
   minHeight: 0
 }));
 
 const Actions = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  alignItems: "center",
   gap: theme.spacing.small,
   flexShrink: 0
 }));
 
 const PluginBrowser = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   flexGrow: 1,
   marginLeft: -theme.spacing.smallest,
   minHeight: 0
@@ -236,38 +235,38 @@ const PluginBrowser = styled("div")(({ theme }) => ({
 
 const PluginList = styled("div")(({ theme }) => ({
   width: "50%",
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   paddingRight: theme.spacing.small,
-  overflowY: css.overflow.auto,
-  overflowX: css.overflow.hidden,
+  overflowY: "auto",
+  overflowX: "hidden",
   minHeight: 0
 }));
 
 const FileList = styled("div")(({ theme }) => ({
   width: "50%",
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   paddingLeft: theme.spacing.small,
   borderLeft: `1px solid ${theme.outline.weaker}`,
-  overflowY: css.overflow.auto,
-  overflowX: css.overflow.hidden,
+  overflowY: "auto",
+  overflowX: "hidden",
   minHeight: 0
 }));
 
 const PluginSubList = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   paddingLeft: 24,
   paddingTop: theme.spacing.smallest
 }));
 
 const FileSubList = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest
 }));
 

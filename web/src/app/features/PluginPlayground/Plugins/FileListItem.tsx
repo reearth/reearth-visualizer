@@ -1,7 +1,6 @@
 import { TextInput } from "@reearth/app/lib/reearth-ui";
 import { EntryItem } from "@reearth/app/ui/components";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { FileType } from "./constants";
@@ -54,12 +53,7 @@ const FileListItem: FC<Props> = ({
               id: "rename",
               title: "Rename",
               icon: "pencilSimple" as const,
-              onClick: () => {
-                // Delay entering edit mode until popup has fully closed and finished focus management
-                setTimeout(() => {
-                  setIsEditing(true);
-                }, 0);
-              }
+              onClick: () => setIsEditing(true)
             }
           ]
         : [])
@@ -95,12 +89,12 @@ const FileListItem: FC<Props> = ({
 };
 
 const Wrapper = styled("li")(({ theme }) => ({
-  display: css.display.flex,
-  justifyContent: css.justifyContent.spaceBetween,
-  alignItems: css.alignItems.center,
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
   gap: theme.spacing.small,
   borderRadius: theme.radius.small,
-  cursor: css.cursor.pointer
+  cursor: "pointer"
 }));
 
 const TitleWrapper = styled("div")(({ theme }) => ({
@@ -108,9 +102,9 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap"
 }));
 
 export default FileListItem;

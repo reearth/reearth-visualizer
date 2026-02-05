@@ -1,5 +1,4 @@
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, MouseEvent, useCallback } from "react";
 
 import { IconName, Icon, IconProps } from "../Icon";
@@ -87,10 +86,10 @@ const StyledButton = styled("button", {
   iconRotate?: string;
   hasBorder?: boolean;
 }>(({ appearance, size, active, iconRotate, theme, hasBorder }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.row,
-  alignItems: css.alignItems.center,
-  justifyContent: css.justifyContent.center,
+  display: "flex",
+  flexDirection: "row",
+  alignItems: "center",
+  justifyContent: "center",
   border: hasBorder ? `1px solid ${theme.outline.weak}` : "none",
   flexShrink: 0,
   width:
@@ -163,6 +162,6 @@ const StyledButton = styled("button", {
     color: `${theme.content.weaker}`,
     backgroundColor: appearance !== "simple" ? `${theme.bg[1]}` : "transparent",
     boxShadow: "none",
-    cursor: css.cursor.notAllowed
+    cursor: "not-allowed"
   }
 }));

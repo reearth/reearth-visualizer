@@ -3,7 +3,6 @@ import BlockWrapper from "@reearth/app/features/Visualizer/shared/components/Blo
 import { CommonBlockProps } from "@reearth/app/features/Visualizer/shared/types";
 import { ValueTypes } from "@reearth/app/utils/value";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useMemo } from "react";
 import Player from "react-player";
 
@@ -78,7 +77,7 @@ const Wrapper = styled("div")<{ aspectRatio: number }>`
 `;
 
 const StyledPlayer = styled(Player)({
-  position: css.position.absolute,
+  position: "absolute",
   top: 0,
   left: 0
 });

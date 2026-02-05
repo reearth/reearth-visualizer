@@ -1,9 +1,8 @@
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
 import Button from "@reearth/app/ui/widgetui/Button";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useContext, useState } from "react";
 
 import LinkEditor, { type LinkBlock as LinkBlockType } from "./Editor";
@@ -107,7 +106,7 @@ const Wrapper = styled("div")(() => ({
 
 const ButtonWrapper = styled("div")(({ theme }) => ({
   width: "100%",
-  display: css.display.flex,
+  display: "flex",
   flexWrap: "wrap",
   gap: theme.spacing.smallest,
   maxWidth: "400px"

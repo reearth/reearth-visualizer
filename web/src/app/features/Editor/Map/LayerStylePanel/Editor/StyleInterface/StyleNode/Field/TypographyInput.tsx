@@ -1,7 +1,6 @@
 import { ColorInput, NumberInput, Selector } from "@reearth/app/lib/reearth-ui";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, ReactNode } from "react";
 
 import { FontWeight, Typography } from "../../types";
@@ -101,8 +100,8 @@ const TypographyInput: FC<Props> = ({
 export default TypographyInput;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
-  flexDirection: css.flexDirection.column,
+  display: "flex",
+  flexDirection: "column",
   gap: theme.spacing.smallest,
   width: "100%"
 }));
@@ -120,19 +119,19 @@ const PropertyItem: FC<{ title: string; children?: ReactNode }> = ({
 };
 
 const PropertyItemWrapper = styled("div")(({ theme }) => ({
-  display: css.display.flex,
+  display: "flex",
   gap: theme.spacing.small,
   width: "100%",
-  alignItems: css.alignItems.center
+  alignItems: "center"
 }));
 
 const Title = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: css.overflow.hidden,
-  textOverflow: css.textOverflow.ellipsis,
-  whiteSpace: css.whiteSpace.nowrap,
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
   width: "50%",
   flexGrow: 0
 }));

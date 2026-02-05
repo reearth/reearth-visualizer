@@ -24,7 +24,6 @@ export const convertNLSLayers = (
             cameraDuration: l.nlsPhotoOverlay.property?.default?.cameraDuration
           }
         }
-      : undefined,
-    dataSourceName: l.dataSourceName ?? undefined
+      : undefined
   }));
 };

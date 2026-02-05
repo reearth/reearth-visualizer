@@ -25,6 +25,16 @@ export const GET_ME = gql(`
         id
         name
         alias
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+        }
       }
       workspaces {
         id
@@ -41,6 +51,16 @@ export const GET_ME = gql(`
           role
         }
         photoURL
+        policyId
+        policy {
+          id
+          name
+          projectCount
+          memberCount
+          publishedProjectCount
+          layerCount
+          assetStorageSize
+        }
       }
       auths
     }
@@ -77,6 +97,14 @@ export const UPDATE_ME = gql(`
           name
         }
       }
+    }
+  }
+`);
+
+export const DELETE_ME = gql(`
+  mutation DeleteMe($userId: ID!) {
+    deleteMe(input: { userId: $userId }) {
+      userId
     }
   }
 `);

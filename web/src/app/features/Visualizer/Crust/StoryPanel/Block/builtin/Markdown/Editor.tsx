@@ -1,7 +1,6 @@
 import { BlockContext } from "@reearth/app/features/Visualizer/shared/components/BlockWrapper";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { styled } from "@reearth/services/theme";
-import { css } from "@reearth/services/theme/reearthTheme/common";
 import { debounce } from "lodash-es";
 import {
   useContext,
@@ -68,8 +67,8 @@ const MdBlockEditor: FC<Props> = ({ text, onUpdate }) => {
 
 const StyledTextArea = styled("textarea")(() => ({
   width: "100%",
-  resize: css.resize.none,
-  overflow: css.overflow.hidden,
+  resize: "none",
+  overflow: "hidden",
   minHeight: "115px",
   border: "none",
   fontSize: "14px",
@@ -79,7 +78,7 @@ const StyledTextArea = styled("textarea")(() => ({
 
 const MarkdownWrapper = styled("div")(() => ({
   "@media (prefers-color-scheme: dark)": {
-    all: css.all.unset
+    all: "unset"
   },
   "& ul": {
     listStyleType: "initial"

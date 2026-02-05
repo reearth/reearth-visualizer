@@ -39,9 +39,9 @@ export const Icon: FC<IconProps> = ({
       size: "large" | "normal" | "small" | number;
     }>`
       width: ${({ size }) =>
-        `${typeof size === "string" ? theme.icon[size as keyof typeof theme.icon] : size}px`};
+        `${typeof size === "string" ? theme.icon[size] : size}px`};
       height: ${({ size }) =>
-        `${typeof size === "string" ? theme.icon[size as keyof typeof theme.icon] : size}px`};
+        `${typeof size === "string" ? theme.icon[size] : size}px`};
       color: ${({ color }) => color};
       transition-property: color, background;
     `;

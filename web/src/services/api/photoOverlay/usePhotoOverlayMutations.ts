@@ -5,7 +5,7 @@ import {
   MutationCreateNlsPhotoOverlayArgs
 } from "@reearth/services/gql";
 import { CREATE_NLSPHOTOOVERLAY } from "@reearth/services/gql/queries/photoOverlay";
-import { useT } from "@reearth/services/i18n/hooks";
+import { useT } from "@reearth/services/i18n";
 import { useNotification } from "@reearth/services/state";
 import { useCallback } from "react";
 
