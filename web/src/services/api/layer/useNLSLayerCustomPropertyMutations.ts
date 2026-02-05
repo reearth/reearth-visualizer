@@ -32,17 +32,17 @@ export const useNLSLayerCustomPropertyMutations = () => {
       input: UpdateCustomPropertySchemaInput
     ): Promise<MutationReturn<UpdateCustomPropertiesMutation>> => {
       if (!input.layerId) return { status: "error" };
-      const { data, errors } = await updateCustomPropertiesMutation({
+      const { data, error } = await updateCustomPropertiesMutation({
         variables: { input }
       });
 
-      if (errors || !data?.updateCustomProperties) {
+      if (error || !data?.updateCustomProperties) {
         setNotification({
           type: "error",
           text: t("Failed to update the custom property schema.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -66,16 +66,16 @@ export const useNLSLayerCustomPropertyMutations = () => {
       input: ChangeCustomPropertyTitleInput
     ): Promise<MutationReturn<ChangeCustomPropertyTitleMutation>> => {
       if (!input.layerId) return { status: "error" };
-      const { data, errors } = await changeCustomPropertyTitleMutation({
+      const { data, error } = await changeCustomPropertyTitleMutation({
         variables: { input }
       });
-      if (errors || !data?.changeCustomPropertyTitle) {
+      if (error || !data?.changeCustomPropertyTitle) {
         setNotification({
           type: "error",
           text: t("Failed to update the custom property title.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -95,16 +95,16 @@ export const useNLSLayerCustomPropertyMutations = () => {
       input: RemoveCustomPropertyInput
     ): Promise<MutationReturn<RemoveCustomPropertyMutation>> => {
       if (!input.layerId) return { status: "error" };
-      const { data, errors } = await removeCustomPropertyMutation({
+      const { data, error } = await removeCustomPropertyMutation({
         variables: { input }
       });
-      if (errors || !data?.removeCustomProperty) {
+      if (error || !data?.removeCustomProperty) {
         setNotification({
           type: "error",
           text: t("Failed to remove the custom property.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",

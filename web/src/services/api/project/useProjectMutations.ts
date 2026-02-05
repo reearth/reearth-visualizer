@@ -53,7 +53,7 @@ export const useProjectMutations = () => {
       readme?: string,
       topics?: string[]
     ): Promise<MutationReturn<Partial<Project>>> => {
-      const { data: projectResults, errors: projectErrors } =
+      const { data: projectResults, error: projectError } =
         await createNewProject({
           variables: {
             workspaceId: workspaceId,
@@ -68,7 +68,7 @@ export const useProjectMutations = () => {
             topics: topics ?? []
           }
         });
-      if (projectErrors || !projectResults?.createProject) {
+      if (projectError || !projectResults?.createProject) {
         setNotification({
           type: "error",
           text: t("Failed to create project.")
@@ -77,10 +77,10 @@ export const useProjectMutations = () => {
         return { status: "error" };
       }
 
-      const { data: sceneResults, errors: sceneErrors } = await createScene({
+      const { data: sceneResults, error: sceneError } = await createScene({
         variables: { projectId: projectResults?.createProject.project.id }
       });
-      if (sceneErrors || !sceneResults?.createScene) {
+      if (sceneError || !sceneResults?.createScene) {
         setNotification({
           type: "error",
           text: t("Failed to create project.")
@@ -88,23 +88,23 @@ export const useProjectMutations = () => {
         return { status: "error" };
       }
 
-      const { data: storyResult, errors: storyErrors } = await createStory({
+      const { data: storyResult, error: storyError } = await createStory({
         sceneId: sceneResults.createScene.scene.id,
         title: t("Default"),
         index: 0
       });
-      if (storyErrors || !storyResult?.createStory) {
+      if (storyError || !storyResult?.createStory) {
         setNotification({
           type: "error",
           text: t("Failed to create project.")
         });
         return { status: "error" };
       } else if (storyResult?.createStory?.story.id) {
-        const { errors: storyPageErrors } = await createStoryPage({
+        const { error: storyPageError } = await createStoryPage({
           sceneId: sceneResults.createScene.scene.id,
           storyId: storyResult?.createStory?.story.id
         });
-        if (storyPageErrors) {
+        if (storyPageError) {
           setNotification({
             type: "error",
             text: t("Failed to create story page on project creation.")
@@ -140,12 +140,12 @@ export const useProjectMutations = () => {
 
       const gqlStatus = toGqlStatus(s);
 
-      const { data, errors } = await publishProjectMutation({
+      const { data, error } = await publishProjectMutation({
         variables: { projectId, alias, status: gqlStatus }
       });
 
-      if (errors || !data?.publishProject) {
-        console.log("GraphQL: Failed to publish project", errors);
+      if (error || !data?.publishProject) {
+        console.log("GraphQL: Failed to publish project", error);
         setNotification({
           type: "error",
           text: t("Failed to publish project.")
@@ -179,12 +179,12 @@ export const useProjectMutations = () => {
 
       const gqlStatus = toGqlStatus(s);
 
-      const { data, errors } = await publishProjectMutation({
+      const { data, error } = await publishProjectMutation({
         variables: { projectId, alias, status: gqlStatus }
       });
 
-      if (errors || !data?.publishProject) {
-        console.log("GraphQL: Failed to update project", errors);
+      if (error || !data?.publishProject) {
+        console.log("GraphQL: Failed to update project", error);
         setNotification({
           type: "error",
           text: t("Failed to update project.")
@@ -219,12 +219,12 @@ export const useProjectMutations = () => {
     async (input: UpdateProjectInput) => {
       if (!input.projectId) return { status: "error" };
 
-      const { data, errors } = await updateProjectMutation({
+      const { data, error } = await updateProjectMutation({
         variables: { ...input }
       });
 
-      if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to update project", errors);
+      if (error || !data?.updateProject) {
+        console.log("GraphQL: Failed to update project", error);
         setNotification({
           type: "error",
           text: t("Failed to update project.")
@@ -248,12 +248,12 @@ export const useProjectMutations = () => {
   const updateProjectRecycleBin = useCallback(
     async (input: { projectId: string; deleted: boolean }) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectRemoveMutation({
+      const { data, error } = await updateProjectRemoveMutation({
         variables: { ...input }
       });
 
-      if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to move project to Recycle bin", errors);
+      if (error || !data?.updateProject) {
+        console.log("GraphQL: Failed to move project to Recycle bin", error);
         setNotification({
           type: "error",
           text: input.deleted
@@ -280,12 +280,12 @@ export const useProjectMutations = () => {
   const archiveProject = useCallback(
     async (input: ArchiveProjectMutationVariables) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await archiveProjectMutation({
+      const { data, error } = await archiveProjectMutation({
         variables: { ...input }
       });
 
-      if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to archive project", errors);
+      if (error || !data?.updateProject) {
+        console.log("GraphQL: Failed to archive project", error);
         setNotification({
           type: "error",
           text: input.archived
@@ -333,7 +333,7 @@ export const useProjectMutations = () => {
   const deleteProject = useCallback(
     async (input: DeleteProjectInput) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await deleteProjectMutation({
+      const { data, error } = await deleteProjectMutation({
         variables: { ...input },
         context: {
           fetchOptions: {
@@ -342,8 +342,8 @@ export const useProjectMutations = () => {
         }
       });
 
-      if (errors || !data?.deleteProject) {
-        console.log("GraphQL: Failed to delete project", errors);
+      if (error || !data?.deleteProject) {
+        console.log("GraphQL: Failed to delete project", error);
         setNotification({
           type: "error",
           text: t("Failed to delete project.")
@@ -370,12 +370,12 @@ export const useProjectMutations = () => {
   const updateProjectBasicAuth = useCallback(
     async (input: UpdateProjectBasicAuthMutationVariables) => {
       if (!input.projectId) return { status: "error" };
-      const { data, errors } = await updateProjectBasicAuthMutation({
+      const { data, error } = await updateProjectBasicAuthMutation({
         variables: { ...input }
       });
 
-      if (errors || !data?.updateProject) {
-        console.log("GraphQL: Failed to update project", errors);
+      if (error || !data?.updateProject) {
+        console.log("GraphQL: Failed to update project", error);
         setNotification({
           type: "error",
           text: t("Failed to update project.")
@@ -400,12 +400,12 @@ export const useProjectMutations = () => {
     async (input: UpdateProjectMetadataInput) => {
       if (!input.project) return { status: "error" };
 
-      const { data, errors } = await updateProjectMetadataMutation({
+      const { data, error } = await updateProjectMetadataMutation({
         variables: { ...input }
       });
 
-      if (errors || !data?.updateProjectMetadata) {
-        console.log("GraphQL: Failed to update project metadata", errors);
+      if (error || !data?.updateProjectMetadata) {
+        console.log("GraphQL: Failed to update project metadata", error);
         setNotification({
           type: "error",
           text: t("Failed to update project metadata.")

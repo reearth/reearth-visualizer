@@ -35,13 +35,13 @@ export const useNLSLayerMutations = () => {
     async (
       input: AddNlsLayerSimpleInput
     ): Promise<MutationReturn<AddNlsLayerSimpleMutation>> => {
-      const { data, errors } = await addNLSLayerSimpleMutation({
+      const { data, error } = await addNLSLayerSimpleMutation({
         variables: { input }
       });
-      if (errors || !data?.addNLSLayerSimple?.layers?.id) {
+      if (error || !data?.addNLSLayerSimple?.layers?.id) {
         setNotification({ type: "error", text: t("Failed to add layer.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -61,16 +61,16 @@ export const useNLSLayerMutations = () => {
       input: UpdateNlsLayerInput
     ): Promise<MutationReturn<UpdateNlsLayerMutation>> => {
       if (!input.layerId) return { status: "error" };
-      const { data, errors } = await updateNLSLayerMutation({
+      const { data, error } = await updateNLSLayerMutation({
         variables: { input }
       });
-      if (errors || !data?.updateNLSLayer) {
+      if (error || !data?.updateNLSLayer) {
         setNotification({
           type: "error",
           text: t("Failed to update the layer.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -90,16 +90,16 @@ export const useNLSLayerMutations = () => {
       input: UpdateNlsLayersInput
     ): Promise<MutationReturn<UpdateNlsLayersMutation>> => {
       if (!input) return { status: "error" };
-      const { data, errors } = await updateNLSLayersMutation({
+      const { data, error } = await updateNLSLayersMutation({
         variables: { input }
       });
-      if (errors || !data?.updateNLSLayers) {
+      if (error || !data?.updateNLSLayers) {
         setNotification({
           type: "error",
           text: t("Failed to update the layer.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -119,16 +119,16 @@ export const useNLSLayerMutations = () => {
       input: RemoveNlsLayerInput
     ): Promise<MutationReturn<RemoveNlsLayerMutation>> => {
       if (!input.layerId) return { status: "error" };
-      const { data, errors } = await removeNLSLayerMutation({
+      const { data, error } = await removeNLSLayerMutation({
         variables: { input }
       });
-      if (errors || !data?.removeNLSLayer) {
+      if (error || !data?.removeNLSLayer) {
         setNotification({
           type: "error",
           text: t("Failed to remove the layer.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",

@@ -13,7 +13,7 @@ test("usePostMessage", () => {
     }
   };
 
-  type HookProps = { iFrame: P; pending?: boolean };
+  type HookProps = { iFrame: P; pending: boolean };
   const { result, rerender } = renderHook(
     ({ iFrame, pending }: HookProps) =>
       usePostMessage(iFrame, pending),

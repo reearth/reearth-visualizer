@@ -34,13 +34,13 @@ export const useInfoboxBlockMutations = () => {
     async (
       input: AddNlsInfoboxBlockInput
     ): Promise<MutationReturn<AddNlsInfoboxBlockMutation>> => {
-      const { data, errors } = await createInfoboxBlockMutation({
+      const { data, error } = await createInfoboxBlockMutation({
         variables: { input }
       });
-      if (errors || !data?.addNLSInfoboxBlock) {
+      if (error || !data?.addNLSInfoboxBlock) {
         setNotification({ type: "error", text: t("Failed to create block.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -61,13 +61,13 @@ export const useInfoboxBlockMutations = () => {
     async (
       input: RemoveNlsInfoboxBlockInput
     ): Promise<MutationReturn<RemoveNlsInfoboxBlockMutation>> => {
-      const { data, errors } = await removeInfoboxBlockMutation({
+      const { data, error } = await removeInfoboxBlockMutation({
         variables: { input }
       });
-      if (errors || !data?.removeNLSInfoboxBlock) {
+      if (error || !data?.removeNLSInfoboxBlock) {
         setNotification({ type: "error", text: t("Failed to delete block.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "info",
@@ -88,13 +88,13 @@ export const useInfoboxBlockMutations = () => {
     async (
       input: MoveNlsInfoboxBlockInput
     ): Promise<MutationReturn<MoveNlsInfoboxBlockMutation>> => {
-      const { data, errors } = await moveInfoboxBlockMutation({
+      const { data, error } = await moveInfoboxBlockMutation({
         variables: { input }
       });
-      if (errors || !data?.moveNLSInfoboxBlock) {
+      if (error || !data?.moveNLSInfoboxBlock) {
         setNotification({ type: "error", text: t("Failed to move block.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "info",

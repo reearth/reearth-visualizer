@@ -24,13 +24,13 @@ export const useInfoboxMutations = () => {
     async (
       input: CreateNlsInfoboxInput
     ): Promise<MutationReturn<CreateNlsInfoboxMutation>> => {
-      const { data, errors } = await createNLSInfoboxMutation({
+      const { data, error } = await createNLSInfoboxMutation({
         variables: { input }
       });
-      if (errors || !data?.createNLSInfobox?.layer?.id) {
+      if (error || !data?.createNLSInfobox?.layer?.id) {
         setNotification({ type: "error", text: t("Failed to add layer.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",

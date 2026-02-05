@@ -88,7 +88,6 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
   const { setErrors } = useSetError();
 
   const client = new ApolloClient({
-    uri: endpoint,
     link: ApolloLink.from([
       taskLink(addTask, removeTask),
       errorLink(setErrors),
@@ -99,7 +98,7 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       uploadLink(endpoint) as unknown as ApolloLink
     ]),
     cache,
-    connectToDevTools: import.meta.env.DEV
+    devtools: { enabled: import.meta.env.DEV }
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

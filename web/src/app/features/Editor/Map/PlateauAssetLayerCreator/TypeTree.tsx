@@ -18,9 +18,14 @@ const TypeBrowser: FC = () => {
   const { data: datasetTypeOrder, loading } = useDatasetTypes();
   const types: DatasetType[] = useMemo(
     () =>
-      unionBy(datasetTypeOrder, "name").filter(
-        (type) => !EXCLUDE_TYPES.includes(type.code as PlateauDatasetType)
-      ) ?? [],
+      unionBy(datasetTypeOrder ?? [], "name")
+        .filter(
+          (type): type is NonNullable<typeof type> & { id: string; name: string; code: string } =>
+            !!type && !!type.id && !!type.name && !!type.code
+        )
+        .filter(
+          (type) => !EXCLUDE_TYPES.includes(type.code as PlateauDatasetType)
+        ),
     [datasetTypeOrder]
   );
 

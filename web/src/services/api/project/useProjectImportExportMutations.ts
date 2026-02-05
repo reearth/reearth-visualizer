@@ -40,7 +40,7 @@ export const useProjectImportExportMutations = () => {
       if (!projectId) return { status: "error" };
 
       try {
-        const { data, errors } = await exportProjectMutation({
+        const { data, error } = await exportProjectMutation({
           variables: { projectId },
           context: {
             fetchOptions: {
@@ -49,8 +49,8 @@ export const useProjectImportExportMutations = () => {
           }
         });
 
-        if (errors || !data?.exportProject?.projectDataPath) {
-          console.log("GraphQL: Failed to export project", errors);
+        if (error || !data?.exportProject?.projectDataPath) {
+          console.log("GraphQL: Failed to export project", error);
           setNotification({
             type: "error",
             text: t("Failed to export project.")

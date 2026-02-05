@@ -30,11 +30,16 @@ const City: FC<CityProps> = ({ id, areaCode, label, level = 0, type }) => {
   const datasets = useMemo(() => {
     if (!datasetData.data?.datasets) return [];
 
-    return datasetData.data.datasets?.map((dataset) => ({
-      id: dataset.id,
-      label: dataset.name,
-      type: dataset.type.code as PlateauDatasetType
-    }));
+    return datasetData.data.datasets
+      .filter(
+        (dataset): dataset is NonNullable<typeof dataset> =>
+          !!dataset && !!dataset.id && !!dataset.name
+      )
+      .map((dataset) => ({
+        id: dataset.id ?? "",
+        label: dataset.name ?? "",
+        type: dataset.type?.code as PlateauDatasetType
+      }));
   }, [datasetData]);
 
   return (

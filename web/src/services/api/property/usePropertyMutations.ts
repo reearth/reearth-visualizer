@@ -40,7 +40,7 @@ export const usePropertyMutations = () => {
       const gvt = valueTypeToGQL(vt);
       if (!gvt) return;
       const value = valueToGQL(v, vt);
-      const { data, errors } = await updatePropertyValueMutation({
+      const { data, error } = await updatePropertyValueMutation({
         variables: {
           propertyId,
           itemId,
@@ -53,8 +53,8 @@ export const usePropertyMutations = () => {
         refetchQueries: ["GetScene"]
       });
 
-      if (errors || !data?.updatePropertyValue) {
-        console.log("GraphQL: Failed to update property", errors);
+      if (error || !data?.updatePropertyValue) {
+        console.log("GraphQL: Failed to update property", error);
         setNotification({
           type: "error",
           text: t("Failed to update property.")
@@ -81,7 +81,7 @@ export const usePropertyMutations = () => {
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
-      const { data, errors } = await addPropertyItemMutation({
+      const { data, error } = await addPropertyItemMutation({
         variables: {
           propertyId,
           schemaGroupId
@@ -89,8 +89,8 @@ export const usePropertyMutations = () => {
         refetchQueries: ["GetScene"]
       });
 
-      if (errors || !data?.addPropertyItem?.property?.id) {
-        console.log("GraphQL: Failed to update property", errors);
+      if (error || !data?.addPropertyItem?.property?.id) {
+        console.log("GraphQL: Failed to update property", error);
         setNotification({
           type: "error",
           text: t("Failed to update property.")
@@ -115,7 +115,7 @@ export const usePropertyMutations = () => {
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
-      const { data, errors } = await removePropertyItemMutation({
+      const { data, error } = await removePropertyItemMutation({
         variables: {
           propertyId,
           schemaGroupId,
@@ -124,8 +124,8 @@ export const usePropertyMutations = () => {
         refetchQueries: ["GetScene"]
       });
 
-      if (errors || !data?.removePropertyItem?.property?.id) {
-        console.log("GraphQL: Failed to update property", errors);
+      if (error || !data?.removePropertyItem?.property?.id) {
+        console.log("GraphQL: Failed to update property", error);
         setNotification({
           type: "error",
           text: t("Failed to update property.")
@@ -151,7 +151,7 @@ export const usePropertyMutations = () => {
     ): Promise<
       MutationReturn<Partial<PropertyItemPayload["property"]["id"]>>
     > => {
-      const { data, errors } = await movePropertyItemMutation({
+      const { data, error } = await movePropertyItemMutation({
         variables: {
           propertyId,
           schemaGroupId,
@@ -161,8 +161,8 @@ export const usePropertyMutations = () => {
         refetchQueries: ["GetScene"]
       });
 
-      if (errors || !data?.movePropertyItem?.property?.id) {
-        console.log("GraphQL: Failed to update property", errors);
+      if (error || !data?.movePropertyItem?.property?.id) {
+        console.log("GraphQL: Failed to update property", error);
         setNotification({
           type: "error",
           text: t("Failed to update property.")

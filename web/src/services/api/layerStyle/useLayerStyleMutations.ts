@@ -30,16 +30,16 @@ export const useLayerStyleMutations = () => {
   });
   const addLayerStyle = useCallback(
     async (input: AddStyleInput): Promise<MutationReturn<AddStyleMutation>> => {
-      const { data, errors } = await addLayerStyleMutation({
+      const { data, error } = await addLayerStyleMutation({
         variables: { input }
       });
-      if (errors || !data?.addStyle?.style?.id) {
+      if (error || !data?.addStyle?.style?.id) {
         setNotification({
           type: "error",
           text: t("Failed to add layer style.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -59,16 +59,16 @@ export const useLayerStyleMutations = () => {
       input: UpdateStyleInput
     ): Promise<MutationReturn<UpdateStyleMutation>> => {
       if (!input.styleId) return { status: "error" };
-      const { data, errors } = await updateLayerStyleMutation({
+      const { data, error } = await updateLayerStyleMutation({
         variables: { input }
       });
-      if (errors || !data?.updateStyle) {
+      if (error || !data?.updateStyle) {
         setNotification({
           type: "error",
           text: t("Failed to update the layerStyle.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -88,16 +88,16 @@ export const useLayerStyleMutations = () => {
       input: RemoveStyleInput
     ): Promise<MutationReturn<RemoveStyleMutation>> => {
       if (!input.styleId) return { status: "error" };
-      const { data, errors } = await removeLayerStyleMutation({
+      const { data, error } = await removeLayerStyleMutation({
         variables: { input }
       });
-      if (errors || !data?.removeStyle) {
+      if (error || !data?.removeStyle) {
         setNotification({
           type: "error",
           text: t("Failed to delete the layer style.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",

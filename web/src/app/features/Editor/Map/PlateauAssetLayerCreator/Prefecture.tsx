@@ -35,13 +35,14 @@ const Prefecture: FC<PrefectureProps> = ({
     ...(type ? { datasetTypes: [type] } : {})
   });
   const cities: TreeItemType[] = useMemo(() => {
-    if (!cityData.data) return [];
+    if (!cityData.data?.areas) return [];
 
     return cityData.data.areas
+      .filter((area): area is NonNullable<typeof area> => !!area && !!area.name)
       .map((area) => ({
         id: `${id}-city-${area.code}`,
         areaCode: area.code,
-        label: area.name
+        label: area.name ?? ""
       }))
       .filter((area) => area.id !== EXCLUDE_CITY_CODE);
   }, [cityData, id]);

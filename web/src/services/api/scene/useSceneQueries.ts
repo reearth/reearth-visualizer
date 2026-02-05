@@ -51,9 +51,8 @@ export const useValidateSceneAlias = () => {
     async (alias: string, projectId?: string) => {
       if (!alias) return null;
 
-      const { data, errors } = await fetchCheckSceneAlias({
+      const { data, error } = await fetchCheckSceneAlias({
         variables: { alias, projectId },
-        errorPolicy: "all",
         context: {
           headers: {
             [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
@@ -61,8 +60,8 @@ export const useValidateSceneAlias = () => {
         }
       });
 
-      if (errors || !data?.checkSceneAlias) {
-        return { status: "error", errors };
+      if (error || !data?.checkSceneAlias) {
+        return { status: "error", error };
       }
 
       setNotification({

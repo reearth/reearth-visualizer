@@ -24,13 +24,13 @@ export const usePhotoOverlayMutations = () => {
     async (
       input: CreateNlsPhotoOverlayInput
     ): Promise<MutationReturn<CreateNlsPhotoOverlayMutation>> => {
-      const { data, errors } = await createNLSPhotoOverlayMutation({
+      const { data, error } = await createNLSPhotoOverlayMutation({
         variables: { input }
       });
-      if (errors || !data?.createNLSPhotoOverlay?.layer?.id) {
+      if (error || !data?.createNLSPhotoOverlay?.layer?.id) {
         setNotification({ type: "error", text: t("Failed to add layer.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",

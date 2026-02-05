@@ -38,9 +38,8 @@ export const useValidateStoryAlias = () => {
     async (alias: string, storyId?: string) => {
       if (!alias) return null;
 
-      const { data, errors } = await fetchCheckProjectAlias({
+      const { data, error } = await fetchCheckProjectAlias({
         variables: { alias, storyId },
-        errorPolicy: "all",
         context: {
           headers: {
             [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
@@ -48,8 +47,8 @@ export const useValidateStoryAlias = () => {
         }
       });
 
-      if (errors || !data?.checkStoryAlias) {
-        return { status: "error", errors };
+      if (error || !data?.checkStoryAlias) {
+        return { status: "error", error };
       }
 
       setNotification({

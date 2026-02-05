@@ -33,13 +33,13 @@ export const useStoryBlockMutations = () => {
     async (
       input: CreateStoryBlockInput
     ): Promise<MutationReturn<CreateStoryBlockMutation>> => {
-      const { data, errors } = await createStoryBlockMutation({
+      const { data, error } = await createStoryBlockMutation({
         variables: { input }
       });
-      if (errors || !data?.createStoryBlock) {
+      if (error || !data?.createStoryBlock) {
         setNotification({ type: "error", text: t("Failed to create block.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -60,13 +60,13 @@ export const useStoryBlockMutations = () => {
     async (
       input: RemoveStoryBlockInput
     ): Promise<MutationReturn<RemoveStoryBlockMutation>> => {
-      const { data, errors } = await removeStoryBlockMutation({
+      const { data, error } = await removeStoryBlockMutation({
         variables: { input }
       });
-      if (errors || !data?.removeStoryBlock) {
+      if (error || !data?.removeStoryBlock) {
         setNotification({ type: "error", text: t("Failed to delete block.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "info",
@@ -87,13 +87,13 @@ export const useStoryBlockMutations = () => {
     async (
       input: MoveStoryBlockInput
     ): Promise<MutationReturn<MoveStoryBlockMutation>> => {
-      const { data, errors } = await moveStoryBlockMutation({
+      const { data, error } = await moveStoryBlockMutation({
         variables: { input }
       });
-      if (errors || !data?.moveStoryBlock) {
+      if (error || !data?.moveStoryBlock) {
         setNotification({ type: "error", text: t("Failed to move block.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "info",

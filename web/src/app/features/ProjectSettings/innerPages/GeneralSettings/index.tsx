@@ -86,9 +86,7 @@ const GeneralSettings: FC<Props> = ({
       );
 
       if (!result?.available) {
-        const description = result?.errors?.find(
-          (e) => e?.extensions?.description
-        )?.extensions?.description;
+        const description = result?.error?.message;
 
         setWarning(description as string);
       } else {

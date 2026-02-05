@@ -1,8 +1,7 @@
-import { ApolloLink } from "@apollo/client";
+import { ApolloLink } from "@apollo/client/link";
 
 export default (_endpoint: string) => {
   return new ApolloLink((operation, forward) => {
-    if (!forward) return null;
     return forward(operation);
   });
 };

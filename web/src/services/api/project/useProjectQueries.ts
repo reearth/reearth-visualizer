@@ -98,9 +98,8 @@ export const useValidateProjectAlias = () => {
     async (alias: string, workspaceId: string, projectId?: string) => {
       if (!alias) return null;
 
-      const { data, errors } = await fetchCheckProjectAlias({
+      const { data, error } = await fetchCheckProjectAlias({
         variables: { alias, workspaceId, projectId },
-        errorPolicy: "all",
         context: {
           headers: {
             [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
@@ -108,8 +107,8 @@ export const useValidateProjectAlias = () => {
         }
       });
 
-      if (errors || !data?.checkProjectAlias) {
-        return { status: "error", errors };
+      if (error || !data?.checkProjectAlias) {
+        return { status: "error", error };
       }
 
       setNotification({

@@ -21,13 +21,15 @@ export const useDatasetTypes = (
   });
 
   const [datasetTypes, setDatasetTypes] = useState(
-    data?.datasetTypes.slice().sort((a, b) => a.order - b.order)
+    data?.datasetTypes?.slice().sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0))
   );
 
   useEffect(() => {
     if (data?.datasetTypes && !datasetTypes) {
       setDatasetTypes(
-        data.datasetTypes.slice().sort((a, b) => a.order - b.order)
+        data.datasetTypes
+          .slice()
+          .sort((a, b) => (a?.order ?? 0) - (b?.order ?? 0))
       );
     }
   }, [data?.datasetTypes, datasetTypes]);

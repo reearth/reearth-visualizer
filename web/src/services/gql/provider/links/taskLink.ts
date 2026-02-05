@@ -1,12 +1,14 @@
-import { ApolloLink, Operation, NextLink, Observable } from "@apollo/client";
+import { ApolloLink } from "@apollo/client/link";
 import { GQLTask } from "@reearth/services/state";
+import { Observable } from "rxjs";
 import { v4 as uuidv4 } from "uuid";
 
 export default (
   addTask: (task: GQLTask) => void,
   removeTask: (task: GQLTask) => void
 ): ApolloLink =>
-  new ApolloLink((operation: Operation, forward: NextLink) => {
+  new ApolloLink(
+    (operation: ApolloLink.Operation, forward: ApolloLink.ForwardFunction) => {
     const taskId = uuidv4();
     addTask({ id: taskId });
 

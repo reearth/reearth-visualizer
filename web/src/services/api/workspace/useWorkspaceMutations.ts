@@ -34,11 +34,11 @@ export const useWorkspaceMutations = () => {
     async (
       props: CreateWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Workspace>>> => {
-      const { data, errors } = await createWorkspaceMutation({
+      const { data, error } = await createWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.createWorkspace) {
-        console.log("GraphQL: Failed to create workspace", errors);
+      if (error || !data?.createWorkspace) {
+        console.log("GraphQL: Failed to create workspace", error);
         setNotification({
           type: "error",
           text: t("Failed to create workspace.")
@@ -63,11 +63,11 @@ export const useWorkspaceMutations = () => {
     async (
       props: DeleteWorkspaceMutationVariables
     ): Promise<MutationReturn<null>> => {
-      const { data, errors } = await deleteWorkspaceMutation({
+      const { data, error } = await deleteWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.deleteWorkspace) {
-        console.log("GraphQL: Failed to delete workspace", errors);
+      if (error || !data?.deleteWorkspace) {
+        console.log("GraphQL: Failed to delete workspace", error);
         setNotification({
           type: "error",
           text: t("Failed to delete workspace.")
@@ -92,11 +92,11 @@ export const useWorkspaceMutations = () => {
     async (
       props: UpdateWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Workspace>>> => {
-      const { data, errors } = await updateWorkspaceMutation({
+      const { data, error } = await updateWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.updateWorkspace) {
-        console.log("GraphQL: Failed to update workspace", errors);
+      if (error || !data?.updateWorkspace) {
+        console.log("GraphQL: Failed to update workspace", error);
         setNotification({
           type: "error",
           text: t("Failed to update workspace.")
@@ -121,11 +121,11 @@ export const useWorkspaceMutations = () => {
     async (
       props: AddMemberToWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Workspace>>> => {
-      const { data, errors } = await addMemberToWorkspaceMutation({
+      const { data, error } = await addMemberToWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.addMemberToWorkspace) {
-        console.log("GraphQL: Failed to add member to workspace", errors);
+      if (error || !data?.addMemberToWorkspace) {
+        console.log("GraphQL: Failed to add member to workspace", error);
         setNotification({
           type: "error",
           text: t("Failed to add member to workspace.")
@@ -153,11 +153,11 @@ export const useWorkspaceMutations = () => {
     async (
       props: RemoveMemberFromWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Workspace>>> => {
-      const { data, errors } = await removeMemberFromWorkspaceMutation({
+      const { data, error } = await removeMemberFromWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.removeMemberFromWorkspace) {
-        console.log("GraphQL: Failed to remove member from workspace", errors);
+      if (error || !data?.removeMemberFromWorkspace) {
+        console.log("GraphQL: Failed to remove member from workspace", error);
         setNotification({
           type: "error",
           text: t("Failed to remove member from workspace.")
@@ -188,11 +188,11 @@ export const useWorkspaceMutations = () => {
     async (
       props: UpdateMemberOfWorkspaceMutationVariables
     ): Promise<MutationReturn<Partial<Workspace>>> => {
-      const { data, errors } = await updateMemberOfWorkspaceMutation({
+      const { data, error } = await updateMemberOfWorkspaceMutation({
         variables: props
       });
-      if (errors || !data?.updateMemberOfWorkspace) {
-        console.log("GraphQL: Failed to update member in workspace", errors);
+      if (error || !data?.updateMemberOfWorkspace) {
+        console.log("GraphQL: Failed to update member in workspace", error);
         setNotification({
           type: "error",
           text: t("Failed to update member in workspace.")

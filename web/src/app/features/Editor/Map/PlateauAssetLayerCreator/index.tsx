@@ -143,7 +143,7 @@ const PlateauAssetLayerCreator: FC<PlateauAssetLayerCreatorProps> = ({
           </Sidebar>
           <Main>
             <Title>{dataset?.name}</Title>
-            {dataset?.items?.length > 0 && (
+            {(dataset?.items?.length ?? 0) > 0 && (
               <ItemSelector>
                 {dataset.items.map((item) => (
                   <TreeItem

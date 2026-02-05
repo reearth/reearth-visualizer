@@ -1,26 +1,36 @@
-import { DocumentNode, TypedDocumentNode, OperationVariables } from "@apollo/client";
+import {
+  DocumentNode,
+  TypedDocumentNode,
+  OperationVariables,
+  ApolloClient
+} from "@apollo/client";
 import {
   useQuery as useApolloQuery,
   useLazyQuery as useApolloLazyQuery,
   QueryHookOptions,
-  NoInfer,
-  QueryResult,
-  LazyQueryResultTuple
+  LazyQueryHookOptions
 } from "@apollo/client/react";
 
-import { catalogClient } from "../../clients";
+import { getCatalogClient } from "../../clients";
+
+type CatalogQueryOptions<TVariables extends OperationVariables> = {
+  skip?: boolean;
+  variables?: TVariables;
+};
 
 export const useQuery = <
   TData = unknown,
   TVariables extends OperationVariables = OperationVariables
 >(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
-  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>
-): QueryResult<TData, TVariables> => {
-  return useApolloQuery(query, {
+  options?: CatalogQueryOptions<TVariables>
+) => {
+  const client = getCatalogClient();
+  return useApolloQuery<TData, TVariables>(query, {
     ...options,
-    client: catalogClient
-  });
+    client: client as ApolloClient,
+    skip: options?.skip || !client
+  } as QueryHookOptions<TData, TVariables>);
 };
 
 export const useLazyQuery = <
@@ -28,10 +38,11 @@ export const useLazyQuery = <
   TVariables extends OperationVariables = OperationVariables
 >(
   query: DocumentNode | TypedDocumentNode<TData, TVariables>,
-  options?: QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>
-): LazyQueryResultTuple<TData, TVariables> => {
-  return useApolloLazyQuery(query, {
+  options?: CatalogQueryOptions<TVariables>
+) => {
+  const client = getCatalogClient();
+  return useApolloLazyQuery<TData, TVariables>(query, {
     ...options,
-    client: catalogClient
-  });
+    client: client as ApolloClient
+  } as LazyQueryHookOptions<TData, TVariables>);
 };

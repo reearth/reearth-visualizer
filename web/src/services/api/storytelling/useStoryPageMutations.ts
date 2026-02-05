@@ -38,15 +38,15 @@ export const useStoryPageMutations = () => {
     async (
       input: CreateStoryPageInput
     ): Promise<MutationReturn<CreateStoryPageMutation>> => {
-      const { data, errors } = await createStoryPageMutation({
+      const { data, error } = await createStoryPageMutation({
         variables: {
           input
         }
       });
-      if (errors || !data?.createStoryPage?.story?.id) {
+      if (error || !data?.createStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create page.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -67,15 +67,15 @@ export const useStoryPageMutations = () => {
     async (
       input: DeleteStoryPageInput
     ): Promise<MutationReturn<DeleteStoryPageMutation>> => {
-      const { data, errors } = await deleteStoryPageMutation({
+      const { data, error } = await deleteStoryPageMutation({
         variables: {
           input
         }
       });
-      if (errors || !data?.removeStoryPage?.story?.id) {
+      if (error || !data?.removeStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to delete page.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "info",
@@ -96,15 +96,15 @@ export const useStoryPageMutations = () => {
     async (
       input: MoveStoryPageInput
     ): Promise<MutationReturn<MoveStoryPageMutation>> => {
-      const { data, errors } = await moveStoryPageMutation({
+      const { data, error } = await moveStoryPageMutation({
         variables: {
           input
         }
       });
-      if (errors || !data?.moveStoryPage?.story?.id) {
+      if (error || !data?.moveStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to move page.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "info",
@@ -125,15 +125,15 @@ export const useStoryPageMutations = () => {
     async (
       input: UpdateStoryPageInput
     ): Promise<MutationReturn<UpdateStoryPageMutation>> => {
-      const { data, errors } = await updateStoryPageMutation({
+      const { data, error } = await updateStoryPageMutation({
         variables: {
           input
         }
       });
-      if (errors || !data?.updateStoryPage?.story?.id) {
+      if (error || !data?.updateStoryPage?.story?.id) {
         setNotification({ type: "error", text: t("Failed to update page.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
