@@ -34,4 +34,10 @@ jobs:
           skip_default_labels: true
           image: ${{ secrets.WEB_IMAGE_GC }}
           region: ${{ secrets.GC_REGION }}
-          revision_traffic: 'LATEST=100'
+          no_traffic: true
+      - name: Route traffic to latest revision
+        run: |
+          gcloud run services update-traffic reearth-visualizer-web \
+            --to-latest \
+            --region=${{ secrets.GC_REGION }} \
+            --quiet
