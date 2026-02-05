@@ -18,9 +18,22 @@ export type Position = {
   z: number;
 };
 
-export type XYZ = {
-  x: number;
-  y: number;
-  z: number;
-  radius?: number;
+export type Location = {
+  longitude: number;
+  latitude: number;
+  height?: number;
+};
+
+export type HeadingPitch = {
+  heading: number;
+  pitch: number;
+};
+
+export type GeoJSONPointFeature = {
+  type: "Feature";
+  geometry: {
+    type: "Point";
+    coordinates: [number, number];
+  };
+  properties: Record<string, unknown>;
 };
