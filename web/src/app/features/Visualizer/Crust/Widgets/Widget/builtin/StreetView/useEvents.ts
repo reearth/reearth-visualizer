@@ -5,6 +5,7 @@ import {
 } from "@reearth/core";
 import { useEffect, useRef, useCallback, useState } from "react";
 
+import { DEFAULT_PANO_ZOOM, FRUSTUM_LENGTH } from "./constant";
 import { GeoJSONPointFeature } from "./types";
 
 export function useEvent() {
@@ -18,8 +19,8 @@ export function useEvent() {
   const listenersRegisteredRef = useRef(false);
   const trackingRef = useRef(false);
   const clickedRef = useRef(false);
-  const trackingLayerIdRef = useRef<string | null>(null);
 
+  const trackingLayerIdRef = useRef<string | null>(null);
   const rafRef = useRef<number | null>(null);
   const lastPosRef = useRef<{ lng: number; lat: number } | null>(null);
 
@@ -30,12 +31,8 @@ export function useEvent() {
 
   const handleTracking = useCallback((next: boolean) => {
     trackingRef.current = next;
+    clickedRef.current = false;
     setIsTracking(next);
-    listenersRegisteredRef.current = true;
-
-    if (next) {
-      clickedRef.current = false;
-    }
   }, []);
 
   const pointFeature = useCallback((lng: number, lat: number) => {
@@ -56,12 +53,14 @@ export function useEvent() {
     const camera = engine.getCamera();
 
     const upsertTrackingPoint = (lng: number, lat: number) => {
-      lastPosRef.current = { lng, lat };
+      if (!listenersRegisteredRef.current) return;
 
+      lastPosRef.current = { lng, lat };
       if (rafRef.current !== null) return;
 
       rafRef.current = requestAnimationFrame(() => {
         rafRef.current = null;
+        if (!listenersRegisteredRef.current) return;
 
         const pos = lastPosRef.current;
         if (!pos) return;
@@ -76,7 +75,7 @@ export function useEvent() {
             fill: true,
             fillColor: "#87dd4e4d",
             classificationType: "both"
-          },
+          }
         } satisfies Pick<NaiveLayerSimple, "data" | "ellipse">;
 
         if (!trackingLayerIdRef.current) {
@@ -96,8 +95,21 @@ export function useEvent() {
       upsertTrackingPoint(e.lng, e.lat);
     });
 
-    const addedLayer = (lat: number, lng: number) => {
-      const feature = pointFeature(lng, lat);
+    engine.onClick((e: MouseEventProps) => {
+      if (!listenersRegisteredRef.current) return;
+      if (!trackingRef.current || clickedRef.current) return;
+      if (e.lat == null || e.lng == null) return;
+
+      clickedRef.current = true;
+      trackingRef.current = false;
+      setIsTracking(false);
+
+      if (trackingLayerIdRef.current) {
+        layers.deleteLayer(trackingLayerIdRef.current);
+        trackingLayerIdRef.current = null;
+      }
+
+      const feature = pointFeature(e.lng, e.lat);
 
       const layer = layers.add({
         type: "simple",
@@ -115,8 +127,8 @@ export function useEvent() {
         frustum: {
           color: "#00E0E0",
           opacity: 1,
-          zoom: 1,
-          length: 200,
+          zoom: DEFAULT_PANO_ZOOM,
+          length: FRUSTUM_LENGTH,
           aspectRatio: camera?.aspectRatio
         },
         transition: {
@@ -124,27 +136,7 @@ export function useEvent() {
         }
       });
 
-      setLayer({
-        layerId: layer?.id,
-        feature
-      });
-    };
-
-    engine.onClick((e: MouseEventProps) => {
-      if (!listenersRegisteredRef.current) return;
-      if (!trackingRef.current || clickedRef.current) return;
-      if (e.lat == null || e.lng == null) return;
-
-      clickedRef.current = true;
-      trackingRef.current = false;
-      setIsTracking(false);
-
-      if (trackingLayerIdRef.current) {
-        layers.deleteLayer(trackingLayerIdRef.current);
-        trackingLayerIdRef.current = null;
-      }
-
-      addedLayer(e.lat, e.lng);
+      setLayer({ layerId: layer?.id, feature });
       setShowPano(true);
     });
 
@@ -152,6 +144,7 @@ export function useEvent() {
       listenersRegisteredRef.current = false;
       trackingRef.current = false;
       setIsTracking(false);
+      clickedRef.current = false;
 
       if (trackingLayerIdRef.current) {
         layers.deleteLayer(trackingLayerIdRef.current);

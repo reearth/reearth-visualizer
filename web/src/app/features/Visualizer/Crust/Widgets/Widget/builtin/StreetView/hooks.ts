@@ -16,6 +16,11 @@ import {
 import { Context } from "../..";
 import { Widget } from "../../types";
 
+import {
+  DEFAULT_PANO_ZOOM,
+  PANORAMA_NAVIGATION_DEBOUNCE_MS,
+  STREET_VIEW_HEIGHT
+} from "./constant";
 import { GeoJSONPointFeature, Property, Location, HeadingPitch } from "./types";
 import { usePanoramaHeadingPitchChange } from "./usePanoramaHeadingPitchChange";
 import { usePanoramaLocationChange } from "./usePanoramaLocationChange";
@@ -57,7 +62,7 @@ export default ({ widget, layer, setShowPano }: Props) => {
       : [0, 0];
 
   const [panoState, setPanoState] = useState<PanoState>(() => ({
-    location: { longitude: lng, latitude: lat, height: 2.5 },
+    location: { longitude: lng, latitude: lat, height: STREET_VIEW_HEIGHT },
     headingPitch: { heading: 0, pitch: 0 },
     zoom: 1,
     pano: null
@@ -67,7 +72,7 @@ export default ({ widget, layer, setShowPano }: Props) => {
     if (layer.feature?.geometry.type !== "Point") return;
     setPanoState((s) => ({
       ...s,
-      location: { longitude: lng, latitude: lat, height: 2.5 }
+      location: { longitude: lng, latitude: lat, height: STREET_VIEW_HEIGHT }
     }));
   }, [lng, lat, layer.feature]);
 
@@ -95,43 +100,66 @@ export default ({ widget, layer, setShowPano }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (!panoDivRef.current || !panoState.location || panoramaRef.current)
+    if (
+      !panoDivRef.current ||
+      !panoState.location ||
+      panoramaRef.current ||
+      !apiKey
+    )
       return;
 
     const { latitude, longitude } = panoState.location;
-
     let cancelled = false;
+    let panoChangedListener: google.maps.MapsEventListener | null = null;
 
     (async () => {
-      await loadGoogleMaps(apiKey);
-      if (cancelled || !panoDivRef.current) return;
+      try {
+        await loadGoogleMaps(apiKey);
 
-      const panoInst = new google.maps.StreetViewPanorama(panoDivRef.current, {
-        position: {
-          lat: latitude,
-          lng: longitude
-        },
-        pov: panoState.headingPitch,
-        zoom: panoState.zoom
-      });
+        if (cancelled || !panoDivRef.current) return;
 
-      panoramaRef.current = panoInst;
-      setPanorama(panoInst);
+        const panoInst = new google.maps.StreetViewPanorama(
+          panoDivRef.current,
+          {
+            position: { lat: latitude, lng: longitude },
+            pov: panoState.headingPitch,
+            zoom: panoState.zoom
+          }
+        );
 
-      panoInst.addListener("pano_changed", () => {
-        lockRef.current.navigating = true;
-        if (lockRef.current.navTimeout)
-          clearTimeout(lockRef.current.navTimeout);
-        lockRef.current.navTimeout = window.setTimeout(() => {
-          lockRef.current.navigating = false;
-        }, 300);
-      });
+        panoramaRef.current = panoInst;
+        setPanorama(panoInst);
+
+        panoChangedListener = panoInst.addListener("pano_changed", () => {
+          lockRef.current.navigating = true;
+          if (lockRef.current.navTimeout) {
+            clearTimeout(lockRef.current.navTimeout);
+          }
+          lockRef.current.navTimeout = window.setTimeout(() => {
+            lockRef.current.navigating = false;
+          }, PANORAMA_NAVIGATION_DEBOUNCE_MS);
+        });
+      } catch (err) {
+        if (cancelled) return;
+        setShowPano?.(false);
+        console.error("Failed to load Google Maps Street View:", err);
+      }
     })();
 
     return () => {
       cancelled = true;
+      if (panoChangedListener) {
+        panoChangedListener.remove();
+        panoChangedListener = null;
+      }
     };
-  }, [apiKey, panoState.location, panoState.headingPitch, panoState.zoom]);
+  }, [
+    apiKey,
+    panoState.location,
+    panoState.headingPitch,
+    panoState.zoom,
+    setShowPano
+  ]);
 
   useEffect(() => {
     const panoInst = panoramaRef.current;
@@ -239,7 +267,7 @@ export default ({ widget, layer, setShowPano }: Props) => {
       location: null,
       pano: null,
       headingPitch: { heading: 0, pitch: 0 },
-      zoom: 1
+      zoom: DEFAULT_PANO_ZOOM
     });
   }, [setShowPano]);
 

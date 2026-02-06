@@ -6,4 +6,4 @@ export * from "./RepeatOnce";
 export * from "./SkipBack";
 export * from "./SkipForward";
 export * from "./Close";
-export * from "./Pedman";
+export * from "./Pegman";

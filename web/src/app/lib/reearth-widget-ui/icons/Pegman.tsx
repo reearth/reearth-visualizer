@@ -1,4 +1,4 @@
-export function Pedman({ className }: { className?: string }) {
+export function Pegman({ className }: { className?: string }) {
   return (
     <svg
       className={className}

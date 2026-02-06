@@ -3,7 +3,7 @@ import {
   CardContent,
   CardHeader
 } from "@reearth/app/lib/reearth-widget-ui/components/ui/card";
-import { Close, Pedman } from "@reearth/app/lib/reearth-widget-ui/icons";
+import { Close, Pegman } from "@reearth/app/lib/reearth-widget-ui/icons";
 import { forwardRef } from "react";
 
 export interface StreetViewContentProps {
@@ -16,7 +16,7 @@ const StreetViewContent = forwardRef<HTMLDivElement, StreetViewContentProps>(
       <Card className="p-0 w-[550px] rounded-sm border-none">
         <CardHeader className="flex flex-row p-2 justify-between items-center border-white/10 shadow-sm">
           <div className="flex items-center gap-2">
-            <Pedman />
+            <Pegman />
             <h4 className="text-sm m-0">Street View</h4>
           </div>
           <div onClick={handleClosePano} className="cursor-pointer">

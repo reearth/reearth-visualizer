@@ -1,7 +1,10 @@
 let googleMapsPromise: Promise<void> | null = null;
 
 export function loadGoogleMaps(apiKey?: string): Promise<void> {
-  if (!apiKey) return Promise.reject(new Error("Missing Google Maps API key."));
+  if (!apiKey) {
+    return Promise.reject(new Error("Missing Google Maps API key."));
+  }
+
   if (googleMapsPromise) return googleMapsPromise;
 
   googleMapsPromise = new Promise<void>((resolve, reject) => {
@@ -12,11 +15,15 @@ export function loadGoogleMaps(apiKey?: string): Promise<void> {
 
     const id = "google-maps-js";
     const existing = document.getElementById(id) as HTMLScriptElement | null;
+
+    const handleError = () => {
+      googleMapsPromise = null; 
+      reject(new Error("Failed to load Google Maps JS"));
+    };
+
     if (existing) {
-      existing.addEventListener("load", () => resolve());
-      existing.addEventListener("error", () =>
-        reject(new Error("Failed to load Google Maps JS"))
-      );
+      existing.addEventListener("load", () => resolve(), { once: true });
+      existing.addEventListener("error", handleError, { once: true });
       return;
     }
 
@@ -31,7 +38,7 @@ export function loadGoogleMaps(apiKey?: string): Promise<void> {
     script.src = src.toString();
 
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Failed to load Google Maps JS"));
+    script.onerror = handleError;
 
     document.head.appendChild(script);
   });
