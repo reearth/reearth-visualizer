@@ -1,5 +1,6 @@
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 const Loading: FC = () => {
@@ -12,16 +13,16 @@ const Loading: FC = () => {
   );
 };
 
-const LoadingContainer = styled.div(() => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
+const LoadingContainer = styled("div")(() => ({
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   padding: "20px",
   gap: "12px"
 }));
 
-const Spinner = styled.div(({ theme }) => ({
+const Spinner = styled("div")(({ theme }) => ({
   width: "24px",
   height: "24px",
   border: `2px solid ${theme.bg[2]}`,
@@ -35,7 +36,7 @@ const Spinner = styled.div(({ theme }) => ({
   }
 }));
 
-const LoadingText = styled.div(({ theme }) => ({
+const LoadingText = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.footnote,
   color: theme.content.weak,
   textAlign: "center"

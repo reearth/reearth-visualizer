@@ -11,6 +11,7 @@ import { config } from "@reearth/services/config";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { PublicAliasSettingsType } from "..";
@@ -158,7 +159,7 @@ const AliasSetting: FC<AliasSettingProps> = ({
 };
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
   flexWrap: "wrap",
   width: "100%"

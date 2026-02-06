@@ -9,6 +9,7 @@ import {
 } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import React, { useState, useCallback, useEffect } from "react";
 
 export type PasswordPolicy = {
@@ -181,8 +182,8 @@ const PasswordModal: React.FC<Props> = ({
 };
 
 const ModalContentWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.large,
   padding: theme.spacing.large,
   background: theme.bg[1]
@@ -201,7 +202,7 @@ const PasswordField = styled(Flex)(({ theme }) => ({
 
 const PasswordMessage = styled(Typography)(({ theme }) => ({
   marginTop: theme.spacing.small,
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small
 }));
 

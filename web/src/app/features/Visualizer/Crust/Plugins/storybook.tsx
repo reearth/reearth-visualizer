@@ -5,7 +5,7 @@ import { PluginProvider } from "./context";
 import type { Context } from "./types";
 
 // Mock function for actions
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const fn =
   () =>
   (..._args: any[]) => {};

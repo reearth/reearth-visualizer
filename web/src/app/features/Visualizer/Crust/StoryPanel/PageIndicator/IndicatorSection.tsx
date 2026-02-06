@@ -1,5 +1,6 @@
 import { Popup } from "@reearth/app/lib/reearth-ui";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 type Props = {
@@ -71,7 +72,7 @@ const Indicator = styled("div")<{
   height: "100%",
   width: "100%",
   background: highlighted ? theme.primary.strong : "#78a9ff",
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   borderLeft: !isFirstChild ? "1px solid #ffffff" : "none"
 }));
 
@@ -86,8 +87,8 @@ const PageNameWrapper = styled("div")<{ isHighlighted: boolean }>(
 const TitleWrapper = styled("div")(({ theme }) => ({
   fontSize: theme.fonts.sizes.footnote,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap",
-  cursor: "default"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap,
+  cursor: css.cursor.default
 }));
