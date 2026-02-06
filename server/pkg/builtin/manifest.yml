@@ -2443,38 +2443,6 @@ extensions:
                   label: Japanese
                 - key: cn
                   label: Chinese
-  - id: streetView
-    type: widget
-    name: Street View
-    singleOnly: true
-    widgetLayout:
-      defaultLocation:
-        zone: inner
-        section: right
-        area: top
-    schema:
-      groups:
-        - id: default
-          title: Street View 
-          fields:
-            - id: apiKey
-              type: string
-              title: API Key
-              description: Google street view API Key
-        - id: appearance
-          title: Appearance
-          fields:
-            - id: theme
-              type: string
-              title: Theme
-              defaultValue: light
-              choices:
-                - key: light
-                  label: Light
-                - key: dark
-                  label: Dark
-                - key: auto
-                  label: Auto
   - id: story
     name: Story
     type: story
