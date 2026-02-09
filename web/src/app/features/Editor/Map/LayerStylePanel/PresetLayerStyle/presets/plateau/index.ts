@@ -10,7 +10,7 @@ import {
   plateauLandslideRiskDebrisFlow,
   plateauLandslideRiskLandslide,
   plateauLandslideRiskSteepSlopeFailure
-} from "./landslideRisk";
+} from "./landslide";
 import { plateauLanduse } from "./landuse";
 import { plateauRiverFloodingRisk } from "./riverFloodingRisk";
 import { plateauTsunamiRisk } from "./tsunamiRisk";
