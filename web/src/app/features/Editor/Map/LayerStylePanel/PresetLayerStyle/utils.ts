@@ -5,12 +5,11 @@ export const getLayerStyleName = (
   layerStyles?: LayerStyle[]
 ) => {
   if (!layerStyles) return `${baseName}.01`;
+  const escapedBaseName = baseName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const baseNameRegex = new RegExp(`^${escapedBaseName}\\.(\\d+)$`);
   const nextNumber =
     layerStyles.reduce((max, style) => {
-      const escapedBaseName = baseName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const match = style.name?.match(
-        new RegExp(`^${escapedBaseName}\\.(\\d+)$`)
-      );
+      const match = style.name?.match(baseNameRegex);
       return match ? Math.max(max, parseInt(match[1], 10)) : max;
     }, 0) + 1;
 
