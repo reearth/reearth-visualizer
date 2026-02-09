@@ -1,5 +1,6 @@
 import { Icon } from "@reearth/app/lib/reearth-ui/components/Icon/index";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useEffect, useState } from "react";
 
 export type CheckBoxProps = {
@@ -55,10 +56,10 @@ export const CheckBox: FC<CheckBoxProps> = ({
 
 const BoxField = styled("div")<{ disabled?: boolean }>(
   ({ disabled, theme }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    boxSizing: "border-box",
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
+    justifyContent: css.justifyContent.center,
+    boxSizing: css.boxSizing.borderBox,
     width: "16px",
     height: "16px",
     border: `1px solid ${theme.outline.weak}`,

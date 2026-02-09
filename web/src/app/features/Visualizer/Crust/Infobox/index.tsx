@@ -4,6 +4,7 @@ import { DragAndDropList, Icon } from "@reearth/app/lib/reearth-ui";
 import { ValueType, ValueTypes } from "@reearth/app/utils/value";
 import { Layer, Spacing } from "@reearth/core";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, Fragment, ReactNode, memo, useMemo } from "react";
 
 import { EditModeProvider } from "../../shared/contexts/EditModeProvider";
@@ -208,15 +209,15 @@ const Wrapper = styled("div")<{
   position?: InfoboxPosition;
   padding?: Spacing;
 }>(({ position, theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  position: "absolute",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  position: css.position.absolute,
   top: "37px",
   width: `${INFOBOX_WIDTH}px`,
   background: "#ffffff",
   borderRadius: theme.radius.normal,
   zIndex: theme.zIndexes.visualizer.infobox,
-  boxSizing: "border-box",
+  boxSizing: css.boxSizing.borderBox,
   [position ?? POSITION_DEFAULT_VALUE]: "13px"
 }));
 
@@ -225,15 +226,15 @@ const Content = styled("div")<{
 }>(({ padding }) => ({
   minHeight: "370px",
   maxHeight: "515px",
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: `${padding?.top ?? `${PADDING_DEFAULT_VALUE}px`}`,
   paddingTop: padding?.top ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingBottom: padding?.bottom ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingLeft: padding?.left ?? `${PADDING_DEFAULT_VALUE}px`,
   paddingRight: padding?.right ?? `${PADDING_DEFAULT_VALUE}px`,
-  boxSizing: "border-box",
-  overflow: "auto"
+  boxSizing: css.boxSizing.borderBox,
+  overflow: css.overflow.auto
 }));
 
 const ItemWrapper = styled("div")(() => ({

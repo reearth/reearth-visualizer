@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.14.4 - 2026-02-04
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Story panel&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s scroll event doesn&[#39](https://github.com/reearth/reearth-visualizer/pull/39);t work after switch editor tabs ([#2044](https://github.com/reearth/reearth-visualizer/pull/2044)) [`c8ce05`](https://github.com/reearth/reearth-visualizer/commit/c8ce05)
+
+#### Miscellaneous Tasks
+
+- Bump up package version to 1.0.0-beta.14.4 ([#2045](https://github.com/reearth/reearth-visualizer/pull/2045)) [`11c585`](https://github.com/reearth/reearth-visualizer/commit/11c585)
+- Upgrade major version package and fix test failures in upgrade phase ([#2038](https://github.com/reearth/reearth-visualizer/pull/2038)) [`a20b8f`](https://github.com/reearth/reearth-visualizer/commit/a20b8f)
+- Downgrade lexical to stable version 0.38.2 ([#2039](https://github.com/reearth/reearth-visualizer/pull/2039)) [`96b011`](https://github.com/reearth/reearth-visualizer/commit/96b011)
+
+## 1.0.0-beta.14.3 - 2026-02-03
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up to 1.0.0-beta.14.3 ([#2043](https://github.com/reearth/reearth-visualizer/pull/2043)) [`ed74ad`](https://github.com/reearth/reearth-visualizer/commit/ed74ad)
+
 ## 1.0.0-beta.14.2 - 2026-02-02
 
 ### Web

@@ -16,6 +16,7 @@ import {
 import { Camera } from "@reearth/app/utils/value";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { useAtom } from "jotai";
 import { RESET } from "jotai/utils";
 import { FC, useCallback, useEffect, useMemo, useRef } from "react";
@@ -289,22 +290,22 @@ const PhotoOverlayEditor: FC = () => {
 export default PhotoOverlayEditor;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  position: "absolute",
+  position: css.position.absolute,
   top: theme.spacing.small,
   right: theme.spacing.small,
   zIndex: theme.zIndexes.editor.overlay,
-  display: "flex",
-  alignItems: "flex-start",
+  display: css.display.flex,
+  alignItems: css.alignItems.flexStart,
   gap: theme.spacing.small
 }));
 
 const InteractiveWrapper = styled("div")(() => ({
-  pointerEvents: "all"
+  pointerEvents: css.pointerEvents.all
 }));
 
 const FieldsWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.large,
   padding: theme.spacing.small
 }));
@@ -314,6 +315,6 @@ const Divider = styled("div")(({ theme }) => ({
 }));
 
 const ActionWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small
 }));

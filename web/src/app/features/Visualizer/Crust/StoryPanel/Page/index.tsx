@@ -8,6 +8,7 @@ import type { NLSLayer } from "@reearth/services/api/layer";
 import type { InstallableStoryBlock } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import {
   FC,
   Fragment,
@@ -40,6 +41,7 @@ type Props = {
   isEditable?: boolean;
   isAutoScrolling?: RefObject<boolean>;
   scrollTimeoutRef: RefObject<ReturnType<typeof setTimeout> | undefined>;
+  scrollResetKey?: string | number;
   children?: ReactNode;
   onCurrentPageChange?: (
     pageId: string,
@@ -95,6 +97,7 @@ const StoryPanel: FC<Props> = ({
   isEditable,
   scrollTimeoutRef,
   isAutoScrolling,
+  scrollResetKey,
   children,
   onCurrentPageChange,
   onPageSettingsToggle,
@@ -143,7 +146,8 @@ const StoryPanel: FC<Props> = ({
 
   const isActive = useElementOnScreen({
     wrapperRef,
-    elementRef: pageRef
+    elementRef: pageRef,
+    resetKey: scrollResetKey
   });
 
   // Debounce timer for page changes to prevent rapid switching
@@ -358,5 +362,5 @@ const StoryPanel: FC<Props> = ({
 export default StoryPanel;
 
 const PageTitleWrapper = styled("div")(() => ({
-  position: "relative"
+  position: css.position.relative
 }));

@@ -46,10 +46,10 @@ export default function AutoLinkPluginWithMathers() {
   useEffect(() => {
     if (!editor) return;
     const removeNodeListener = editor.registerNodeTransform(
-      AutoLinkNode,
+      AutoLinkNode as unknown as Parameters<typeof editor.registerNodeTransform>[0],
       (node) => {
         if (!node) return;
-        const dom = editor.getElementByKey(node.__key);
+        const dom = editor.getElementByKey(node.getKey());
         if (!dom) return;
         dom.setAttribute("target", "_blank");
       }
