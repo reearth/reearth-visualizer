@@ -41,21 +41,21 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
         with:
           node-version: "24"
 
       - name: Cache node modules
-        uses: actions/cache@v5
+        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
         id: cache-node-modules
         with:
           path: e2e/node_modules
-          key: e2e-node-modules-${{ runner.os }}-${{ hashFiles('e2e/package-lock.json') }}
+          key: e2e-node-modules-${{ runner.os }}-node-24-${{ hashFiles('e2e/package-lock.json') }}
           restore-keys: |
-            e2e-node-modules-${{ runner.os }}-
+            e2e-node-modules-${{ runner.os }}-node-24-
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
@@ -69,19 +69,28 @@ jobs:
           USE_IAP_AUTH: false
         run: npm run test:ui
 
+      - name: Upload global setup error screenshot
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: global-setup-error
+          path: e2e/global-setup-error.png
+          if-no-files-found: ignore
+          retention-days: 5
+
       - name: Authenticate to Google Cloud for GCS
-        if: always()
-        uses: google-github-actions/auth@v3
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           service_account: ${{ secrets.GC_SA_EMAIL }}
           workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: Setup Google Cloud SDK
-        if: always()
-        uses: google-github-actions/setup-gcloud@v3
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
+        uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3.0.1
 
       - name: Check Allure Results
-        if: always()
+        if: always() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)
         id: check-results
         run: |
           if [ -d "./out/allure-results" ] && [ "$(ls -A ./out/allure-results)" ]; then
