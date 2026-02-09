@@ -33,19 +33,7 @@ export const plateauLandslideRiskSteepSlopeFailure: PresetStyle = {
           ]
         }
       },
-      strokeColor: {
-        expression: {
-          conditions: [["true", 'color("#ffffff", 0)']]
-        }
-      },
       stroke: false
-    },
-    polyline: {
-      strokeColor: {
-        expression: {
-          conditions: [["true", 'color("#ffffff", 1)']]
-        }
-      }
     }
   }
 };
@@ -83,19 +71,7 @@ export const plateauLandslideRiskDebrisFlow: PresetStyle = {
           ]
         }
       },
-      strokeColor: {
-        expression: {
-          conditions: [["true", 'color("#ffffff", 0)']]
-        }
-      },
       stroke: false
-    },
-    polyline: {
-      strokeColor: {
-        expression: {
-          conditions: [["true", 'color("#ffffff", 1)']]
-        }
-      }
     }
   }
 };
@@ -133,19 +109,7 @@ export const plateauLandslideRiskLandslide: PresetStyle = {
           ]
         }
       },
-      strokeColor: {
-        expression: {
-          conditions: [["true", 'color("#ffffff", 0)']]
-        }
-      },
       stroke: false
-    },
-    polyline: {
-      strokeColor: {
-        expression: {
-          conditions: [["true", 'color("#ffffff", 1)']]
-        }
-      }
     }
   }
 };

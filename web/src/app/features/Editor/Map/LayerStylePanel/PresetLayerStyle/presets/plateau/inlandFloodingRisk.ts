@@ -8,14 +8,7 @@ export const plateauInlandFloodingRisk: PresetStyle = {
   style: {
     "3dtiles": {
       pbr: "withTexture",
-      color: {
-        expression: "rgba(0, 190, 190, 0.5)"
-      },
-      show: {
-        expression: {
-          conditions: [["true", "true"]]
-        }
-      },
+      color: "#00BEBE80",
       shadows: "disabled",
       selectedFeatureColor: "#00bebe"
     }
