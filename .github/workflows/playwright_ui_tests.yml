@@ -101,16 +101,13 @@ jobs:
 
       - name: Download previous Allure history from GCS
         if: always()
+        continue-on-error: true
         run: |
           mkdir -p ./allure-results/history
-          if ! output=$(gsutil -m cp -r gs://reearth-dev-visualizer-allure-reports/history/ ./allure-results/history/ 2>&1); then
-            if echo "$output" | grep -q "No URLs matched"; then
-              echo "No previous history found in GCS, skipping history download."
-            else
-              echo "Error downloading previous Allure history from GCS:"
-              echo "$output"
-              exit 1
-            fi
+          if ! output=$(gsutil -m cp -r gs://reearth-dev-visualizer-allure-reports/history ./allure-results/history 2>&1); then
+            echo "Warning: Could not download previous Allure history from GCS:"
+            echo "$output"
+            echo "Continuing without history..."
           fi
 
       - name: Generate Allure Report
