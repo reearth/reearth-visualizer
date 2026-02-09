@@ -1,19 +1,19 @@
 import { PresetStyleCategory } from "../types";
 
-import { plateauArea } from "./area";
-import { plateauBridge } from "./bridge";
-import { plateauBuildingColorByHeight } from "./buildingColorByHeight";
-import { plateauBuildingColorByUsage } from "./buildingColorByUsage";
-import { plateauFloodingRisk } from "./floodingRisk";
-import { plateauLandSlideRisk } from "./landSlideRisk";
-import { plateauLanduse } from "./landuse";
-import { plateauTraffic } from "./traffic";
 import {
-  plateauUrbanPlanningFirePrevention,
-  plateauUrbanPlanningHeightControlDistrict,
-  plateauUrbanPlanningUseDistrict
-} from "./urbanPlanning";
-import { plateauVegetation } from "./vegetation";
+  plateauBuildingColorByHeight,
+  plateauBuildingColorByUsage
+} from "./building";
+import { plateauHighTideRisk } from "./highTideRisk";
+import { plateauInlandFloodingRisk } from "./inlandFloodingRisk";
+import {
+  plateauLandslideRiskDebrisFlow,
+  plateauLandslideRiskLandslide,
+  plateauLandslideRiskSteepSlopeFailure
+} from "./landSlideRisk";
+import { plateauLanduse } from "./landuse";
+import { plateauRiverFloodingRisk } from "./riverFloodingRisk";
+import { plateauTsunamiRisk } from "./tsunamiRisk";
 
 export const plateauPresets: PresetStyleCategory = {
   id: "plateauPresets",
@@ -22,15 +22,13 @@ export const plateauPresets: PresetStyleCategory = {
   subs: [
     plateauBuildingColorByHeight,
     plateauBuildingColorByUsage,
-    plateauTraffic,
     plateauLanduse,
-    plateauFloodingRisk,
-    plateauLandSlideRisk,
-    plateauUrbanPlanningFirePrevention,
-    plateauUrbanPlanningHeightControlDistrict,
-    plateauUrbanPlanningUseDistrict,
-    plateauBridge,
-    plateauVegetation,
-    plateauArea
+    plateauRiverFloodingRisk,
+    plateauHighTideRisk,
+    plateauTsunamiRisk,
+    plateauInlandFloodingRisk,
+    plateauLandslideRiskSteepSlopeFailure,
+    plateauLandslideRiskDebrisFlow,
+    plateauLandslideRiskLandslide
   ]
 };

@@ -3,6 +3,7 @@ import { PresetStyle } from "../types";
 export const plateauLanduse: PresetStyle = {
   id: "plateauLanduse",
   title: "Land Use",
+  titleJa: "土地利用",
   testId: "preset-style-plateau-landuse",
   style: {
     polygon: {
