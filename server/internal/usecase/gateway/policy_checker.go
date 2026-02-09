@@ -60,7 +60,7 @@ func CreateGeneralOperationAllowedCheckRequest(workspaceID accountsID.WorkspaceI
 	}
 }
 
-func CreateCustomDomainCreationCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+func CreateCustomDomainCreationCheckRequest(workspaceID accountsID.WorkspaceID) PolicyCheckRequest {
 	return PolicyCheckRequest{
 		WorkspaceID: workspaceID,
 		CheckType:   PolicyCheckCustomDomainCreation,
@@ -68,7 +68,7 @@ func CreateCustomDomainCreationCheckRequest(workspaceID accountdomain.WorkspaceI
 	}
 }
 
-func CreateCustomDomainCountCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+func CreateCustomDomainCountCheckRequest(workspaceID accountsID.WorkspaceID) PolicyCheckRequest {
 	return PolicyCheckRequest{
 		WorkspaceID: workspaceID,
 		CheckType:   PolicyCheckCustomDomainCount,
