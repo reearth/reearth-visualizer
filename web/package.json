@@ -108,7 +108,7 @@
     "@emotion/styled": "11.14.1",
     "@floating-ui/dom": "1.7.4",
     "@floating-ui/react": "0.27.16",
-    "@googlemaps/js-api-loader": "1.16.8",
+    "@googlemaps/js-api-loader": "2.0.2",
     "@graphiql/toolkit": "0.11.3",
     "@hello-pangea/dnd": "18.0.1",
     "@lexical/code": "0.38.2",
