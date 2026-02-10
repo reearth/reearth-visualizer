@@ -60,7 +60,13 @@ const EditPanel: FC<Prop> = ({
       : await validateSceneAlias?.(alias, itemId);
 
     if (!result?.available) {
-      const description = result?.error?.message;
+      const errors =
+        result?.error && "errors" in result.error
+          ? (result.error.errors as { extensions?: { description?: string } }[])
+          : [];
+      const description = errors?.find(
+        (e) => e?.extensions?.description
+      )?.extensions?.description;
 
       setWaring(description as string);
       setIsAliasValid(false);

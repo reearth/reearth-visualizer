@@ -13,19 +13,19 @@ test("usePostMessage", () => {
     }
   };
 
-  type HookProps = { iFrame: P; pending: boolean };
+  type HookProps = { iFrame: P; pending?: boolean };
   const { result, rerender } = renderHook(
     ({ iFrame, pending }: HookProps) =>
       usePostMessage(iFrame, pending),
     {
-      initialProps: { iFrame: nullIFrame, pending: false }
+      initialProps: { iFrame: nullIFrame }
     }
   );
 
   result.current({ hoge: true });
   expect(iFrame.current?.postMessage).toBeCalledTimes(0);
 
-  rerender({ iFrame, pending: false });
+  rerender({ iFrame });
   expect(iFrame.current?.postMessage).toBeCalledTimes(1);
   expect(iFrame.current?.postMessage).toBeCalledWith({ hoge: true });
 

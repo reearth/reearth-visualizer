@@ -15,15 +15,13 @@ const AreaTree: FC = () => {
   });
 
   const prefectures: TreeItemType[] = useMemo(() => {
-    if (!prefecturesData?.areas) return [];
+    if (!prefecturesData) return [];
 
-    return prefecturesData.areas
-      .filter((area): area is NonNullable<typeof area> => !!area && !!area.name)
-      .map((area) => ({
-        id: `area-${area.code}`,
-        areaCode: area.code,
-        label: area.name ?? ""
-      }));
+    return prefecturesData.areas.map((area) => ({
+      id: `area-${area.code}`,
+      areaCode: area.code,
+      label: area.name
+    }));
   }, [prefecturesData]);
 
   return (

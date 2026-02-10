@@ -115,16 +115,11 @@ export default ({
   );
 
   const searchDatasets = useMemo(() => {
-    return searchData?.datasets
-      ?.filter(
-        (dataset): dataset is NonNullable<typeof dataset> & { id: string; name: string } =>
-          !!dataset && !!dataset.id && !!dataset.name
-      )
-      .map((dataset) => ({
-        id: dataset.id,
-        label: dataset.name,
-        type: dataset.type?.code as PlateauDatasetType
-      }));
+    return searchData?.datasets?.map((dataset) => ({
+      id: dataset.id,
+      label: dataset.name,
+      type: dataset.type.code as PlateauDatasetType
+    }));
   }, [searchData]);
 
   useEffect(() => {
