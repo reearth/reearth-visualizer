@@ -1,4 +1,4 @@
-name: Playwright UI Tests On Dev
+name: Playwright E2E Tests
 
 on:
   workflow_dispatch:
@@ -13,14 +13,25 @@ on:
         description: "URL to run tests against"
         type: string
         required: false
+  pull_request:
+    paths:
+      - "e2e/**"
+      - "web/**"
+      - ".github/workflows/playwright_ui_tests.yml"
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   test:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    environment: dev
     env:
       BASE_URL: ${{ inputs.url || secrets.REEARTH_WEB_E2E_BASEURL }}
     defaults:
@@ -29,23 +40,26 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@v6
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: playwright-${{ runner.os }}-
       - name: Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: "24"
 
-      - name: Install dependencies and Playwright browsers
-        run: |
-          npm ci
-          npx playwright install --with-deps
+      - name: Cache node modules
+        uses: actions/cache@v5
+        id: cache-node-modules
+        with:
+          path: e2e/node_modules
+          key: e2e-node-modules-${{ runner.os }}-${{ hashFiles('e2e/package-lock.json') }}
+          restore-keys: |
+            e2e-node-modules-${{ runner.os }}-
+  
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
       - name: Run Playwright tests
         env:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
@@ -63,9 +77,48 @@ jobs:
           if-no-files-found: ignore
           retention-days: 5
 
+      - name: Authenticate to Google Cloud for GCS
+        if: always()
+        uses: google-github-actions/auth@v3
+        with:
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Setup Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Check Allure Results
+        if: always()
+        run: |
+          if [ -d "./allure-results" ] && [ "$(ls -A ./allure-results)" ]; then
+            echo "allure-results directory exists and contains files"
+            ls -la ./allure-results | head -20
+          else
+            echo "allure-results directory is empty or does not exist"
+            exit 1
+          fi
+
+      - name: Download previous Allure history from GCS
+        if: always()
+        continue-on-error: true
+        run: |
+          mkdir -p ./allure-results/history
+          if ! output=$(gsutil -m cp -r gs://reearth-dev-visualizer-allure-reports/history ./allure-results/history 2>&1); then
+            echo "Warning: Could not download previous Allure history from GCS:"
+            echo "$output"
+            echo "Continuing without history..."
+          fi
+
       - name: Generate Allure Report
         if: always()
-        run: npm run allure:generate
+        run: rm -rf ./allure-report; npx allure generate --output ./allure-report ./allure-results
+
+      - name: Upload Allure Report to GCS
+        if: always()
+        continue-on-error: true
+        run: |
+          gsutil -m rsync -r -d ./allure-report gs://reearth-dev-visualizer-allure-reports/
 
       - name: Upload artifact - Allure Report
         if: always()
@@ -73,11 +126,4 @@ jobs:
         with:
           name: allure-report
           path: e2e/allure-report/
-          retention-days: 10
-      - name: Upload artifact - Allure Results
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: allure-results
-          path: e2e/allure-results/
           retention-days: 10
