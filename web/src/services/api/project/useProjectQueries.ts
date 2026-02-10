@@ -108,7 +108,12 @@ export const useValidateProjectAlias = () => {
       });
 
       if (error || !data?.checkProjectAlias) {
-        return { status: "error", error };
+        // Extract graphQLErrors for backward compatibility with UI code
+        const errors =
+          error && "errors" in error
+            ? (error.errors as { extensions?: { description?: string } }[])
+            : undefined;
+        return { status: "error", errors };
       }
 
       setNotification({

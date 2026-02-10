@@ -86,11 +86,7 @@ const GeneralSettings: FC<Props> = ({
       );
 
       if (!result?.available) {
-        const errors =
-          result?.error && "errors" in result.error
-            ? (result.error.errors as { extensions?: { description?: string } }[])
-            : [];
-        const description = errors?.find(
+        const description = result?.errors?.find(
           (e) => e?.extensions?.description
         )?.extensions?.description;
 

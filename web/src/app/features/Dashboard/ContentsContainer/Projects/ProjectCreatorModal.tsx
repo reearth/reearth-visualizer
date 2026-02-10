@@ -126,11 +126,9 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
         setAliasWarning("");
       } else {
         setAliasValid(false);
-        const errors =
-          result?.error && "errors" in result.error
-            ? (result.error.errors as { extensions?: { description?: string } }[])
-            : [];
-        setAliasWarning((errors?.[0]?.extensions?.description as string) ?? "");
+        setAliasWarning(
+          (result?.errors?.[0]?.extensions?.description as string) ?? ""
+        );
       }
     };
 

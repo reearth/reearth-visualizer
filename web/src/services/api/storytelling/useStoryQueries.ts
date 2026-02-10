@@ -48,7 +48,12 @@ export const useValidateStoryAlias = () => {
       });
 
       if (error || !data?.checkStoryAlias) {
-        return { status: "error", error };
+        // Extract graphQLErrors for backward compatibility with UI code
+        const errors =
+          error && "errors" in error
+            ? (error.errors as { extensions?: { description?: string } }[])
+            : undefined;
+        return { status: "error", errors };
       }
 
       setNotification({
