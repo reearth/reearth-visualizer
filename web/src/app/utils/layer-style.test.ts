@@ -1,7 +1,8 @@
-import { defaultStyle } from "@reearth/app/features/Editor/Map/LayerStylePanel/PresetLayerStyle/presetLayerStyles";
 import { LayerAppearanceTypes } from "@reearth/core";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
 import { describe, test, expect } from "vitest";
+
+import { defaultStyle } from "../features/Editor/Map/LayerStylePanel/PresetLayerStyle/presets";
 
 import { getLayerStyleValue } from "./layer-style";
 
@@ -37,17 +38,17 @@ describe("getLayerStyleValue", () => {
 
   test("should return default style when id is not found", () => {
     const result = getLayerStyleValue(mockLayerStyles, "nonexistent");
-    expect(result).toEqual(defaultStyle);
+    expect(result).toEqual(defaultStyle.style);
   });
 
   test("should return default style when layer styles is undefined", () => {
     const result = getLayerStyleValue(undefined, "style1");
-    expect(result).toEqual(defaultStyle);
+    expect(result).toEqual(defaultStyle.style);
   });
 
   test("should return default style when value is undefined", () => {
     const result = getLayerStyleValue(mockLayerStyles, "style4");
-    expect(result).toEqual(defaultStyle);
+    expect(result).toEqual(defaultStyle.style);
   });
 
   test("should return empty object for czml type", () => {
@@ -67,7 +68,7 @@ describe("getLayerStyleValue", () => {
 
   test("should return style value for other types", () => {
     const result = getLayerStyleValue(mockLayerStyles, undefined, "geojson");
-    expect(result).toEqual(defaultStyle);
+    expect(result).toEqual(defaultStyle.style);
   });
 
   test("should handle undefined type parameter", () => {
