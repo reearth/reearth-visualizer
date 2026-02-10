@@ -116,6 +116,7 @@ jobs:
 
       - name: Upload Allure Report to GCS
         if: always()
+        continue-on-error: true
         run: |
           gsutil -m rsync -r -d ./allure-report gs://reearth-dev-visualizer-allure-reports/
 
