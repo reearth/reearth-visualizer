@@ -60,7 +60,9 @@ export const convertWidgets = (
   | undefined => {
   const layoutConstraint = scene?.plugins
     ?.map((p) =>
-      p.plugin?.extensions.reduce<Record<string, WidgetLayoutConstraint & { floating: boolean }>>(
+      p.plugin?.extensions.reduce<
+        Record<string, WidgetLayoutConstraint & { floating: boolean }>
+      >(
         (b, e) =>
           e?.widgetLayout?.extendable
             ? {
