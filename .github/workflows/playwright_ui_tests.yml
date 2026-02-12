@@ -93,7 +93,7 @@ jobs:
         if: always()
         run: |
           mkdir -p ./out/allure-results
-          if ! output=$(gsutil -m cp -r gs://reearth-dev-visualizer-allure-reports/history ./out/allure-results/history 2>&1); then
+          if ! output=$(gsutil -m cp -r gs://reearth-oss-visualizer-allure-reports/history ./out/allure-results/history 2>&1); then
             if echo "$output" | grep -q "No URLs matched"; then
               echo "No previous history found in GCS, skipping history download."
             else
@@ -110,7 +110,7 @@ jobs:
       - name: Upload Allure Report to GCS
         if: always()
         run: |
-          gsutil -m rsync -r -d ./out/allure-report gs://reearth-dev-visualizer-allure-reports/
+          gsutil -m rsync -r -d ./out/allure-report gs://reearth-oss-visualizer-allure-reports/
 
       - name: Upload artifact - Allure Report
         if: always()
