@@ -1,6 +1,5 @@
-import { Global } from "@emotion/react";
+import { Global, css } from "@emotion/react";
 import "github-markdown-css/github-markdown.css";
-import { css } from "@reearth/services/theme";
 
 import { fontFamilies } from "./fonts";
 

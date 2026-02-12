@@ -4,24 +4,20 @@ import {
   PopupMenuItem
 } from "@reearth/app/lib/reearth-ui";
 import type { LayerStyle } from "@reearth/services/api/layerStyle";
-import { useT } from "@reearth/services/i18n/hooks";
-import { useEffect, FC, useCallback, useRef } from "react";
+import { useLang, useT } from "@reearth/services/i18n/hooks";
+import { useEffect, FC, useCallback, useRef, useMemo } from "react";
 
 import { LayerStyleAddProps } from "../../../hooks/useLayerStyles";
 
 import {
-  defaultStyle,
+  basicGeometryPresets,
+  geojsonPresets,
   professionalStyle,
-  pointStyle,
-  pointWithLabelStyle,
-  polylineStyle,
-  polygonStyle,
-  extrudedPolygonStyle,
-  threeDTilesStyle,
-  simpleStyle,
-  colorBuildingsByHeight,
-  getLayerStyleName
-} from "./presetLayerStyles";
+  defaultStyle,
+  plateauPresets
+} from "./presets";
+import type { PresetStyle, PresetStyleCategory } from "./presets/types";
+import { getLayerStyleName } from "./utils";
 
 type PresetLayerStyleProps = {
   layerStyles: LayerStyle[] | undefined;
@@ -36,6 +32,7 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
 }) => {
   const layerStyleAddedRef = useRef<string | undefined>(undefined);
   const t = useT();
+  const lang = useLang();
   const handleLayerStyleAddition = useCallback(
     (value?: Record<string, unknown>, styleName?: string) => {
       const name = getLayerStyleName(
@@ -61,105 +58,81 @@ const PresetLayerStyle: FC<PresetLayerStyleProps> = ({
     }
   }, [layerStyles, onLayerStyleSelect]);
 
-  const menuItems: PopupMenuItem[] = [
-    {
-      id: "empty",
-      title: "Empty",
-      onClick: () => handleLayerStyleAddition({}),
-      dataTestid: "preset-style-empty"
-    },
-    {
-      id: "default",
-      title: "Default",
-      onClick: () => handleLayerStyleAddition(defaultStyle, "Default"),
-      dataTestid: "preset-style-default"
-    },
-    {
-      id: "professional",
-      title: "Professional",
-      onClick: () =>
-        handleLayerStyleAddition(professionalStyle, "Professional"),
-      dataTestid: "preset-style-professional"
-    },
-    {
-      id: "basicGeometry",
-      title: "Basic Geometry",
-      icon: "folderSimple",
-      dataTestid: "preset-style-basic-geometry",
-      subItem: [
-        {
-          id: "point",
-          title: "Points",
-          onClick: () => handleLayerStyleAddition(pointStyle, "Points"),
-          dataTestid: "preset-style-points"
-        },
-        {
-          id: "pointWithLabel",
-          title: "Point with label",
-          onClick: () =>
-            handleLayerStyleAddition(pointWithLabelStyle, "Point_with_label"),
-          dataTestid: "preset-style-point-with-label"
-        },
-        {
-          id: "polyline",
-          title: "Polyline",
-          onClick: () => handleLayerStyleAddition(polylineStyle, "Polyline"),
-          dataTestid: "preset-style-polyline"
-        },
-        {
-          id: "polygon",
-          title: "Polygon",
-          onClick: () => handleLayerStyleAddition(polygonStyle, "Polygon"),
-          dataTestid: "preset-style-polygon"
-        },
-        {
-          id: "extrudedPolygon",
-          title: "Extruded polygon",
-          onClick: () =>
-            handleLayerStyleAddition(extrudedPolygonStyle, "Extruded_polygon"),
-          dataTestid: "preset-style-extruded-polygon"
-        },
-        {
-          id: "threedTiles",
-          title: "3D Tiles",
-          onClick: () => handleLayerStyleAddition(threeDTilesStyle, "3D_tiles"),
-          dataTestid: "preset-style-3d-tiles"
-        }
-      ]
-    },
-    {
-      id: "geojson",
-      title: "GeoJSON",
-      icon: "folderSimple",
-      dataTestid: "preset-style-geojson",
-      subItem: [
-        {
-          id: "simpleStyle",
-          title: "Simple Style",
-          onClick: () => handleLayerStyleAddition(simpleStyle, "Simple_style"),
-          dataTestid: "preset-style-simple-style"
-        }
-      ]
-    },
-    {
-      id: "plateau",
-      title: "Plateau",
-      icon: "folderSimple",
-      dataTestid: "preset-style-plateau",
-      subItem: [
-        {
-          id: "colorBuilding",
-          title: "Color buildings by height",
+  // Configuration for preset menu items
+  const presetConfigs: (
+    | { type: "empty" }
+    | { type: "simple"; preset: PresetStyle }
+    | { type: "category"; preset: PresetStyleCategory }
+  )[] = useMemo(
+    () => [
+      { type: "empty" },
+      { type: "simple", preset: defaultStyle },
+      { type: "simple", preset: professionalStyle },
+      { type: "category", preset: basicGeometryPresets },
+      { type: "category", preset: geojsonPresets },
+      { type: "category", preset: plateauPresets }
+    ],
+    []
+  );
+
+  // Convert preset config to PopupMenuItem
+  const createMenuItem = useCallback(
+    (
+      config:
+        | { type: "empty" }
+        | { type: "simple"; preset: PresetStyle }
+        | { type: "category"; preset: PresetStyleCategory }
+    ): PopupMenuItem => {
+      if (config.type === "empty") {
+        return {
+          id: "empty",
+          title: "Empty",
+          onClick: () => handleLayerStyleAddition({}),
+          dataTestid: "preset-style-empty"
+        };
+      }
+
+      if (config.type === "simple") {
+        const preset = config.preset;
+        return {
+          id: preset.id,
+          title:
+            lang === "ja" && preset.titleJa ? preset.titleJa : preset.title,
           onClick: () =>
             handleLayerStyleAddition(
-              colorBuildingsByHeight,
-              "Color_buildings_by_height"
+              preset.style,
+              lang === "ja" && preset.titleJa ? preset.titleJa : preset.title
             ),
-          dataTestid: "preset-style-color-buildings"
-        }
-      ]
-    }
-  ];
+          dataTestid: preset.testId
+        };
+      }
+
+      // type === "category"
+      const category = config.preset;
+      return {
+        id: category.id,
+        title: category.title,
+        icon: "folderSimple",
+        dataTestid: category.testId,
+        subItem: category.subs.map((sub) => ({
+          id: sub.id,
+          title: lang === "ja" && sub.titleJa ? sub.titleJa : sub.title,
+          onClick: () =>
+            handleLayerStyleAddition(
+              sub.style,
+              lang === "ja" && sub.titleJa ? sub.titleJa : sub.title
+            ),
+          dataTestid: sub.testId
+        }))
+      };
+    },
+    [handleLayerStyleAddition, lang]
+  );
+
+  const menuItems: PopupMenuItem[] = useMemo(
+    () => presetConfigs.map(createMenuItem),
+    [presetConfigs, createMenuItem]
+  );
 
   return (
     <PopupMenu

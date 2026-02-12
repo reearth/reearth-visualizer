@@ -1460,7 +1460,25 @@ extensions:
               en: 英語
               ja: 日本語
               cn: 中国語
-
+  streetView: 
+    name: ストリートビュー(実験版)
+    description: 地図上にGoogleストリートビューの画像を表示するウィジェット。
+    propertySchema:
+      default:
+        title: ストリートビュー
+        fields:
+          apiKey:
+            title: APIキー
+            description: GoogleストリートビューAPIキー
+      appearance:
+        title: 外観
+        fields:
+          theme:
+            title: テーマ
+            choices:
+              light: 明るい
+              dark: 暗い
+              auto: 自動
   photo-overlay:
     name: フォトオーバーレイ
     description: フォトオーバーレイ
