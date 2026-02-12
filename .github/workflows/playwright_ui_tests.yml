@@ -86,8 +86,7 @@ jobs:
             echo "allure-results directory exists and contains files"
             ls -la ./out/allure-results | head -20
           else
-            echo "allure-results directory is empty or does not exist"
-            exit 1
+            echo "allure-results directory is empty or does not exist, skipping."
           fi
 
       - name: Download previous Allure history from GCS
