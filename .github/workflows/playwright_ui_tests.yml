@@ -42,16 +42,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Authenticate to Google Cloud
-        id: auth
-        uses: google-github-actions/auth@v3
-        with:
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
-          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
-          token_format: "id_token"
-          id_token_audience: ${{ vars.GC_IAP_TARGET_AUDIENCE }}
-          id_token_include_email: true
-
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -76,15 +66,13 @@ jobs:
           REEARTH_E2E_PASSWORD: ${{ secrets.REEARTH_E2E_PASSWORD }}
           REEARTH_WEB_E2E_BASEURL: ${{ env.BASE_URL }}
           USE_IAP_AUTH: false
-          IAP_AUTH_METHOD: id-token
-          IAP_ID_TOKEN: ${{ steps.auth.outputs.id_token }}
         run: npm run test:ui
 
       - name: Authenticate to Google Cloud for GCS
         if: always()
         uses: google-github-actions/auth@v3
         with:
-          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+          service_account: ${{ secrets.GC_SA_EMAIL }}
           workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
 
       - name: Setup Google Cloud SDK
