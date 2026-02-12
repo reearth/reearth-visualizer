@@ -28,7 +28,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
-    runs-on: blacksmith-8vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.56.1-noble
     environment: dev
