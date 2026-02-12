@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.14.5 - 2026-02-12
+
+### Web
+
+#### 🚀 Features
+
+- Bumps package version to 1.0.0-beta.14.5 ([#2058](https://github.com/reearth/reearth-visualizer/pull/2058)) [`e7cbeb`](https://github.com/reearth/reearth-visualizer/commit/e7cbeb)
+- Add preset styles for plateau data ([#2046](https://github.com/reearth/reearth-visualizer/pull/2046)) [`21878f`](https://github.com/reearth/reearth-visualizer/commit/21878f)
+
+#### 🔧 Bug Fixes
+
+- Incorrect collect of floating widget ([#2052](https://github.com/reearth/reearth-visualizer/pull/2052)) [`76e2ac`](https://github.com/reearth/reearth-visualizer/commit/76e2ac)
+
+#### Miscellaneous Tasks
+
+- Fix import emotion css issue for local dev ([#2050](https://github.com/reearth/reearth-visualizer/pull/2050)) [`fec9dd`](https://github.com/reearth/reearth-visualizer/commit/fec9dd)
+
+### Server
+
+#### 🚀 Features
+
+- Street view definition ([#2053](https://github.com/reearth/reearth-visualizer/pull/2053)) [`283e79`](https://github.com/reearth/reearth-visualizer/commit/283e79)
+
+### Misc
+
+#### 
+
+- Update1 [`41770f`](https://github.com/reearth/reearth-visualizer/commit/41770f)
+- Update github workflow for allure report [`763ca8`](https://github.com/reearth/reearth-visualizer/commit/763ca8)
+- Update [`9f79a1`](https://github.com/reearth/reearth-visualizer/commit/9f79a1)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Separate Cloud Run deploy and traffic routing to avoid stale revision errors ([#2051](https://github.com/reearth/reearth-visualizer/pull/2051)) [`0e0385`](https://github.com/reearth/reearth-visualizer/commit/0e0385)
+
+### 
+
+#### 
+
+- Update1 [`41770f`](https://github.com/reearth/reearth-visualizer/commit/41770f)
+- Update github workflow for allure report [`763ca8`](https://github.com/reearth/reearth-visualizer/commit/763ca8)
+- Update [`9f79a1`](https://github.com/reearth/reearth-visualizer/commit/9f79a1)
+
 ## 1.0.0-beta.14.4 - 2026-02-04
 
 ### Web
