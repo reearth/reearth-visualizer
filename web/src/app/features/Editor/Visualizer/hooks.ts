@@ -206,6 +206,7 @@ export default ({
       visible: true
     }));
   }, [processedLayers, showStoryPanel]);
+
   const handleCoreLayerSelect = useCallback(
     (
       layerId?: string,
