@@ -4,31 +4,43 @@ import {
   CardHeader
 } from "@reearth/app/lib/reearth-widget-ui/components/ui/card";
 import { Close, Pegman } from "@reearth/app/lib/reearth-widget-ui/icons";
+import { useT } from "@reearth/services/i18n/hooks";
 import { forwardRef } from "react";
 
-export interface StreetViewContentProps {
+export type StreetViewContentProps = {
+  isTracking?: boolean;
+  theme?: "light" | "dark";
   handleClosePano: () => void;
-}
+};
 
 const StreetViewContent = forwardRef<HTMLDivElement, StreetViewContentProps>(
-  ({ handleClosePano }, ref) => {
+  ({ handleClosePano, isTracking, theme }, ref) => {
+    const t = useT();
     return (
-      <Card className="p-0 w-[550px] rounded-sm border-none">
-        <CardHeader className="flex flex-row p-2 justify-between items-center border-white/10 shadow-sm">
+      <Card
+        className="p-0 w-[440px] rounded-sm border-none"
+        style={{
+          background: theme === "dark" ? "#292929" : "",
+          color: theme === "dark" ? "#E0E0E0" : ""
+        }}
+      >
+        <CardHeader className="flex flex-row p-3 justify-between items-center">
           <div className="flex items-center gap-2">
             <Pegman />
-            <h4 className="text-sm m-0">Street View</h4>
+            <h5 className="m-0">{t("Street View")}</h5>
           </div>
           <div onClick={handleClosePano} className="cursor-pointer">
             <Close className="w-5 h-5" />
           </div>
         </CardHeader>
-
         <CardContent className="p-0">
-          <div
-            ref={ref}
-            className="w-full h-76 border border-white/10 rounded-sm overflow-hidden"
-          />
+          {isTracking ? (
+            <h5 className="pt-0 pb-4 px-4">
+              {t("Select a location on the map to view Street View")}
+            </h5>
+          ) : (
+            <div ref={ref} className="w-full h-62 overflow-hidden" />
+          )}
         </CardContent>
       </Card>
     );

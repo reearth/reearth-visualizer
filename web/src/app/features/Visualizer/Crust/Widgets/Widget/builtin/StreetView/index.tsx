@@ -1,4 +1,4 @@
-import { Button } from "@reearth/app/lib/reearth-widget-ui/components/ui/button";
+import { Pegman } from "@reearth/app/lib/reearth-widget-ui/icons";
 import { FC } from "react";
 
 import type { ComponentProps as WidgetProps } from "../..";
@@ -28,21 +28,24 @@ const StreetView: FC<Props> = ({ widget }) => {
 
   if (!showPano) {
     return (
-      <Button
-        type="button"
-        size="sm"
-        className="w-20 rounded-sm text-xs"
-        disabled={isTracking}
+      <div
+        className="p-2 rounded-sm cursor-pointer text-xs"
+        style={{
+          background: themeClass === "dark" ? "#292929" : "#F4F4F4",
+          color: themeClass === "dark" ? "#E0E0E0" : "#292929"
+        }}
         onClick={() => handleTracking(true)}
       >
-        Street View
-      </Button>
+        <Pegman />
+      </div>
     );
   }
 
   return (
     <div className={themeClass} data-theme-debug={themeClass}>
       <StreetViewContent
+        theme={themeClass}
+        isTracking={isTracking}
         ref={panoDivRef}
         handleClosePano={() => {
           handleClosePano();
