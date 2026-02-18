@@ -21,7 +21,20 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: 5,
-  reporter: [["html", { outputFolder: "./test-report", open: "never" }]],
+  reporter: [
+    [
+      "allure-playwright",
+      {
+        resultsDir: "./out/allure-results",
+        detail: true,
+        outputFolder: "./out/allure-results",
+        suiteTitle: false,
+        environmentInfo: {
+          node_version: process.version,
+        },
+      },
+    ],
+  ],
   use: {
     trace: "on-first-retry",
     actionTimeout: 35000,
