@@ -37,19 +37,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout reearth-visualizer
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Clean up Docker artifacts
+        run: sudo rm -rf tmp/ reearth-accounts/ || true
 
       - name: Start MongoDB and Fake GCS
         run: |
-          docker run -d --name fake-gcs-server \
-            -p 4443:4443 \
-            -v /tmp/gcs:/storage \
-            fsouza/fake-gcs-server:1.52.1 \
-            -scheme http
-      - name: checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-      - name: set up
+          docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
+          timeout 60 bash -c 'until docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "db.adminCommand({ ping: 1 })" 2>/dev/null; do sleep 2; done'
+          docker exec reearth-visualizer-reearth-mongo-1 mongosh --eval "rs.initiate({_id: 'rs0', members: [{_id: 0, host: 'reearth-mongo:27017'}]})" || true
+          timeout 30 bash -c 'until nc -z localhost 4443 2>/dev/null; do sleep 2; done'
+          sleep 5
+
+      - name: Checkout reearth-accounts
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: reearth/reearth-accounts
+          ref: main
+          path: reearth-accounts
+
+      - name: Start reearth-accounts
+        run: |
+          cd reearth-accounts/server
+          cp .env.docker.example .env.docker
+          sed -i 's/REEARTH_MOCK_AUTH=false/REEARTH_MOCK_AUTH=true/' .env.docker
+          cd ..
+          docker compose -f docker-compose.dev.yml up -d
+          timeout 60 bash -c 'until nc -z localhost 8090 2>/dev/null; do sleep 2; done'
+
+      - name: set up Go
         uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+
+      - name: set up
+        uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
         with:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
@@ -72,7 +93,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout reearth-visualizer
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Clean up Docker artifacts
+        run: sudo rm -rf tmp/ reearth-accounts/ || true
 
       - name: Setup .env.docker for reearth-visualizer
         run: |
@@ -88,7 +112,7 @@ jobs:
           sleep 5
 
       - name: Checkout reearth-accounts
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: reearth/reearth-accounts
           ref: main
