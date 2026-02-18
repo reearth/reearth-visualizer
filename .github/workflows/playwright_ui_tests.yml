@@ -82,15 +82,17 @@ jobs:
 
       - name: Check Allure Results
         if: always()
+        id: check-results
         run: |
           if [ -d "./out/allure-results" ] && [ "$(ls -A ./out/allure-results)" ]; then
-            true
+            echo "has_results=true" >> "$GITHUB_OUTPUT"
           else
-            exit 1
+            echo "has_results=false" >> "$GITHUB_OUTPUT"
+            echo "No allure results found, skipping report steps."
           fi
 
       - name: Load dashboard index and history from GCS
-        if: always()
+        if: always() && steps.check-results.outputs.has_results == 'true'
         run: |
           # Download index or create empty one if it does not exist
           if gsutil cp "gs://$BUCKET/index.json" /tmp/index.json 2>/tmp/gsutil_index_err.log; then
@@ -136,11 +138,11 @@ jobs:
           fi
 
       - name: Generate Allure Report
-        if: always()
+        if: always() && steps.check-results.outputs.has_results == 'true'
         run: rm -rf ./out/allure-report; npx allure generate --output ./out/allure-report ./out/allure-results
 
       - name: Determine Run ID
-        if: always()
+        if: always() && steps.check-results.outputs.has_results == 'true'
         id: run-id
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -161,7 +163,7 @@ jobs:
           echo "label=$LABEL" >> "$GITHUB_OUTPUT"
 
       - name: Upload Allure Report to GCS
-        if: always()
+        if: always() && steps.check-results.outputs.has_results == 'true'
         env:
           RUN_ID: ${{ steps.run-id.outputs.run_id }}
         run: |
@@ -171,7 +173,7 @@ jobs:
           fi
 
       - name: Update dashboard index.json
-        if: always()
+        if: always() && steps.check-results.outputs.has_results == 'true'
         env:
           RUN_ID: ${{ steps.run-id.outputs.run_id }}
           BRANCH: ${{ steps.run-id.outputs.branch }}
@@ -217,7 +219,7 @@ jobs:
             cp /tmp/index.json "$OBJECT"
 
       - name: Upload artifact - Allure Report
-        if: always()
+        if: always() && steps.check-results.outputs.has_results == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: allure-report
