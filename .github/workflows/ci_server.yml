@@ -39,6 +39,9 @@ jobs:
       - name: checkout reearth-visualizer
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
+      - name: Clean up Docker artifacts
+        run: sudo rm -rf tmp/ reearth-accounts/ || true
+
       - name: Start MongoDB and Fake GCS
         run: |
           docker compose -f docker-compose.dev.yml up -d reearth-mongo reearth-gcs
@@ -87,7 +90,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout reearth-visualizer
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Clean up Docker artifacts
+        run: sudo rm -rf tmp/ reearth-accounts/ || true
 
       - name: Setup .env.docker for reearth-visualizer
         run: |
@@ -103,7 +109,7 @@ jobs:
           sleep 5
 
       - name: Checkout reearth-accounts
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: reearth/reearth-accounts
           ref: main
