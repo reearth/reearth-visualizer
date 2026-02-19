@@ -217,11 +217,3 @@ jobs:
           gsutil -h "Content-Type:application/json" -h "Cache-Control:no-cache" \
             -h "x-goog-if-generation-match:${GEN}" \
             cp /tmp/index.json "$OBJECT"
-
-      - name: Upload artifact - Allure Report
-        if: always() && steps.check-results.outputs.has_results == 'true'
-        uses: actions/upload-artifact@v6
-        with:
-          name: allure-report
-          path: e2e/out/allure-report/
-          retention-days: 10
