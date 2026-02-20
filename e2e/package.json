@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:ui": "rm -rf .allure allure-results allure-report && npx playwright test --config=playwright.config.ts --reporter=line,allure-playwright",
-    "allure:generate": "npx allure generate allure-results -o allure-report",
-    "allure:open": "npx allure open allure-report --port 8080",
+    "test:ui": "rm -rf ./out && npx playwright test --config=playwright.config.ts",
+    "allure:generate": "rm -rf ./out/allure-report && npx allure generate ./out/allure-results --output ./out/allure-report",
+    "allure:serve": "npx allure serve --port 8080 ./out/allure-results",
     "test:local": "cross-env REEARTH_WEB_E2E_BASEURL=http://localhost:3000 npx playwright test --config=playwright.config.ts",
     "lint": "eslint .",
     "fix": "eslint --fix .",
