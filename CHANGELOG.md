@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.14.6 - 2026-02-20
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.14.6 ([#2061](https://github.com/reearth/reearth-visualizer/pull/2061)) [`42f7b5`](https://github.com/reearth/reearth-visualizer/commit/42f7b5)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v14 ([#2047](https://github.com/reearth/reearth-visualizer/pull/2047)) [`a00d3b`](https://github.com/reearth/reearth-visualizer/commit/a00d3b)
+
+#### 
+
+- Add filename to error logs for missing file debugging ([#2060](https://github.com/reearth/reearth-visualizer/pull/2060)) [`70c234`](https://github.com/reearth/reearth-visualizer/commit/70c234)
+- Update oss bucket [`884f30`](https://github.com/reearth/reearth-visualizer/commit/884f30)
+- Update the visualizer&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s Playwright config to match [`4b2ec4`](https://github.com/reearth/reearth-visualizer/commit/4b2ec4)
+- Update [`de071a`](https://github.com/reearth/reearth-visualizer/commit/de071a)
+- Change to oss [`8facce`](https://github.com/reearth/reearth-visualizer/commit/8facce)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v14 ([#2047](https://github.com/reearth/reearth-visualizer/pull/2047)) [`a00d3b`](https://github.com/reearth/reearth-visualizer/commit/a00d3b)
+
+#### 
+
+- Add filename to error logs for missing file debugging ([#2060](https://github.com/reearth/reearth-visualizer/pull/2060)) [`70c234`](https://github.com/reearth/reearth-visualizer/commit/70c234)
+- Update oss bucket [`884f30`](https://github.com/reearth/reearth-visualizer/commit/884f30)
+- Update the visualizer&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s Playwright config to match [`4b2ec4`](https://github.com/reearth/reearth-visualizer/commit/4b2ec4)
+- Update [`de071a`](https://github.com/reearth/reearth-visualizer/commit/de071a)
+- Change to oss [`8facce`](https://github.com/reearth/reearth-visualizer/commit/8facce)
+
 ## 1.0.0-beta.14.5 - 2026-02-12
 
 ### Web
