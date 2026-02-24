@@ -44,8 +44,16 @@ func HealthCheck(conf *config.Config, ver string) echo.HandlerFunc {
 		})
 	}
 
+	// Track registered auth issuers to avoid duplicates
+	registeredAuthIssuers := make(map[string]bool)
 	for _, a := range conf.Auths() {
 		if a.ISS != "" {
+			// Skip if this ISS is already registered
+			if registeredAuthIssuers[a.ISS] {
+				continue
+			}
+			registeredAuthIssuers[a.ISS] = true
+
 			u, err := url.Parse(a.ISS)
 			if err != nil {
 				log.Fatalf("invalid issuer URL: %v", err)

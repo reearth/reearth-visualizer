@@ -4,6 +4,7 @@
 
 TEST_DIR ?= ./...
 TARGET_TEST := ./...
+TEST_NAME ?=
 REEARTH_DB := mongodb://localhost
 REEARTH_DB_VIS := reearth
 MIGRATION_KEY ?=
@@ -24,42 +25,51 @@ help:
 	@echo "  make <target>"
 	@echo ""
 	@echo "Targets:"
-	@echo "  lint              Run golangci-lint with auto-fix (local)"
-	@echo "  lint-docker       Run golangci-lint in Docker container"
-	@echo "  test              Run unit tests (local)"
+	@echo ""
+	@echo "Testing:"
+	@echo "  lint              Run golangci-lint in Docker container"
+	@echo "  test              Run unit tests (local, excludes e2e)"
 	@echo "  test-docker       Run unit tests in Docker container"
-	@echo "  test-debug        Run unit tests with verbose output"
-	@echo "  e2e               Run end-to-end tests"
-	@echo "  build             Build the project"
-	@echo "  dev-install       Install dev tools"
-	@echo "  dev               Run the application with hot reload"
-	@echo "  run-app           Run the application"
+	@echo "  e2e               Run all e2e tests in Docker"
+	@echo "  e2e-docker        Run all e2e tests in Docker"
+	@echo "  e2e-test          Run specific e2e test (TEST_NAME=TestName)"
+	@echo ""
+	@echo "Build & Run:"
+	@echo "  build             Build the reearth binary"
 	@echo "  run               Start dev server with Docker Compose"
-	@echo "  run-db            Start MongoDB with Docker Compose"
-	@echo "  run-reset         Reset MongoDB data and add mock user"
-	@echo "  reset             Reset database and GCS, reinitialize with mock data"
+	@echo "  down              Stop Docker Compose services"
+	@echo "  restart           Restart dev server (down + run)"
+	@echo ""
+	@echo "Database:"
 	@echo "  migrate           Run database migration"
 	@echo "  migrate-with-key  Run database migration with specific MIGRATION_KEY"
-	@echo "  init              Initialize GCS bucket and create mock user"
-	@echo "  init-gcs          Initialize GCS bucket only"
-	@echo "  destroy           Remove ALL Docker resources and data (destructive)"
+	@echo ""
+	@echo "Code Generation:"
+	@echo "  generate          Run all code generation"
 	@echo "  gql               Generate GraphQL code"
-	@echo "  schematyper       Generate schema using schematyper"
-	@echo "  deep-copy         Generate deep-copy code for Initializer"
+	@echo "  grpc              Generate gRPC code"
+	@echo "  grpc-doc          Generate gRPC documentation"
+	@echo "  schematyper       Generate plugin manifest schema"
+	@echo "  deep-copy         Generate deep-copy code"
+	@echo "  error-msg         Generate i18n error messages"
+	@echo ""
+	@echo "Development Tools:"
+	@echo "  dev-install       Install dev tools (air, stringer, etc.)"
+	@echo "  init-gcs          Initialize GCS bucket"
 	@echo "  mockuser          Create a mock user"
 	@echo "  up-gcs            Start fake GCS server"
 	@echo "  down-gcs          Stop fake GCS server"
-	@echo "  down              Stop Docker Compose services"
+	@echo ""
+	@echo "Utility:"
 	@echo "  clean             Clean Go cache"
+	@echo "  reset             Reset database and GCS, reinitialize with mock data"
+	@echo "  destroy           ⚠️ Remove all Docker resources and data"
 
 # =======================
 # Test
 # =======================
 
 lint:
-	golangci-lint run --fix
-
-lint-docker:
 	@echo "Running golangci-lint in Docker container..."
 	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
 		${DOCKER_EXEC} golangci-lint run --fix --timeout=10m; \
@@ -73,8 +83,7 @@ test:
 	REEARTH_DB=${REEARTH_DB} go test ${TEST_DIR} -run ${TARGET_TEST}
 
 test-docker:
-	@echo "Running tests in Docker container..."
-	@echo "Note: Some e2e tests may fail due to MongoDB permission issues in Docker."
+	@echo "Running unit tests in Docker container (excluding e2e tests)..."
 	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
 		${DOCKER_EXEC} go test ${TEST_DIR} -run ${TARGET_TEST}; \
 	else \
@@ -83,11 +92,26 @@ test-docker:
 		exit 1; \
 	fi
 
-test-debug:
-	go test -v -timeout 10s ${TEST_DIR} | tee test.log
-
 e2e:
-	go test -v ./e2e/...
+	docker exec reearth-visualizer-reearth-visualizer-dev-1 sh -c "make e2e-docker"
+
+e2e-docker:
+	set -a && . ./.env.docker && set +a && go test -tags=e2e ./e2e/...
+
+e2e-test:
+	@if [ -z "$(TEST_NAME)" ]; then \
+		echo "Error: TEST_NAME is required"; \
+		echo "Usage: make e2e-test TEST_NAME=TestMockAuth"; \
+		exit 1; \
+	fi
+	@echo "Running e2e test: $(TEST_NAME)"
+	@if docker ps --format '{{.Names}}' | grep -q '^reearth-visualizer-reearth-visualizer-dev-1$$'; then \
+		${DOCKER_EXEC} sh -c "set -a && . ./.env.docker && set +a && go test -v -tags=e2e -run $(TEST_NAME) ./e2e"; \
+	else \
+		echo "Error: reearth-visualizer-dev container is not running."; \
+		echo "Please start the container with 'make run' first."; \
+		exit 1; \
+	fi
 
 # =======================
 # Build & Run
@@ -96,63 +120,15 @@ e2e:
 build:
 	go build -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
-dev: dev-install
-	air
-
-run-app:
-	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
-
 run:
 	${DOCKER_COMPOSE_DEV} up reearth-visualizer-dev
 
 down:
 	${DOCKER_COMPOSE_DEV} down
 
-clean:
-	go clean -modcache
-	go clean -cache
-	go clean -testcache
-
-run-clean-start: clean run-app
-
-# =======================
-# Docker
-# =======================
-
-run-db:
-	${DOCKER_COMPOSE} up -d reearth-mongo
-
-run-reset:
-	docker stop reearth-visualizer-reearth-mongo-1
-	rm -rf ../mongo data
-	make run-db
-	make mockuser
-
-reset:
-	@echo "==== Stopping database and GCS services ===="
-	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
-	@echo ""
-	@echo "==== Removing data directory (requires sudo password) ===="
-	sudo rm -rf tmp/gcs tmp/mongo 
-	@echo ""
-	@echo "==== Starting database and GCS services ===="
-	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
-	@echo ""
-	@echo "==== Waiting for services to be ready (3 seconds) ===="
-	@echo "3..."
-	sleep 1
-	@echo "2..."
-	sleep 1
-	@echo "1..."
-	sleep 1
-	make init
-	@echo "✓ Reset complete!"
-
-up-gcs:
-	${DOCKER_COMPOSE} up -d gcs
-
-down-gcs:
-	${DOCKER_COMPOSE} down gcs
+restart:
+	@$(MAKE) down
+	@$(MAKE) run
 
 # =======================
 # Migration
@@ -224,22 +200,6 @@ dev-install:
 		fi; \
 	done
 
-# =======================
-# Others
-# =======================
-
-init:
-	@echo "==== Initializing GCS bucket ===="
-	make init-gcs
-	@echo ""
-	@echo "==== Creating mock user ===="
-	make mockuser
-	@echo ""
-
-mockuser:
-	curl -s -D - -o /dev/null \
-		-H 'Content-Type: application/json' \
-		http://localhost:8080/api/mockuser | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \
@@ -247,28 +207,67 @@ init-gcs:
 		-d '{"name": "test-bucket"}' \
 		http://localhost:4443/storage/v1/b | head -n 1
 
+mockuser:
+	curl -s -D - -o /dev/null \
+		-H 'Content-Type: application/json' \
+		-d '{"email": "demo@example.com", "username": "Demo User"}' \
+		http://localhost:8080/api/signup | head -n 1
+
+# =======================
+# Utility
+# =======================
+
+clean:
+	go clean -modcache
+	go clean -cache
+	go clean -testcache
+
+up-gcs:
+	docker compose -f ../docker-compose.yml up -d gcs
+
+down-gcs:
+	docker compose -f ../docker-compose.yml down gcs
+
+reset:
+	@echo "==== Stopping database and GCS services ===="
+	${DOCKER_COMPOSE_DEV} down reearth-mongo reearth-gcs
+	@echo ""
+	@echo "==== Removing data directory ===="
+	rm -rf ../tmp/gcs
+	rm -rf ../tmp/mongo
+	@echo ""
+	@echo "==== Starting database and GCS services ===="
+	${DOCKER_COMPOSE_DEV} up -d reearth-mongo reearth-gcs
+	@echo ""
+	@echo "==== Waiting for services to be ready (3 seconds) ===="
+	@sleep 3
+	@echo ""
+	@echo "==== Initializing GCS bucket ===="
+	@$(MAKE) init-gcs
+	@echo ""
+	@echo "==== Creating mock user ===="
+	@$(MAKE) mockuser
+	@echo ""
+	@echo "✓ Reset complete!"
+
 destroy:
 	@echo "⚠️  WARNING: This will remove ALL Docker resources!"
 	@echo "This includes containers, images, volumes, and networks."
 	@echo ""
-	@read -p "Are you sure you want to continue? [y/N] " -n 1 -r; \
-	echo; \
-	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
-		containers=$$(docker ps -q); \
-		if [ -n "$$containers" ]; then \
-			docker stop $$containers; \
-		else \
-			echo "No running containers to stop."; \
-		fi; \
+	@read -p "Are you sure you want to continue? [y/N] " REPLY; \
+	if [ "$$REPLY" = "y" ] || [ "$$REPLY" = "Y" ]; then \
+		docker ps -q | xargs -r docker stop; \
 		docker system prune -a --volumes -f; \
 		docker network prune -f; \
 		echo "✓ All Docker resources have been removed"; \
-		echo "==== Removing data directory (requires sudo password) ===="; \
-		sudo rm -rf tmp/gcs tmp/mongo; \
+		echo "==== Removing data directory ===="; \
+		rm -rf ../tmp/gcs; \
+		rm -rf ../tmp/mongo; \
 		echo "✓ All data resources have been cleared"; \
 	else \
 		echo "✗ Operation cancelled"; \
 	fi
 
-.PHONY: default help lint lint-docker test test-docker test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-with-key
+.PHONY: default help lint test test-docker e2e e2e-docker e2e-test build run down restart \
+        migrate migrate-with-key generate gql grpc grpc-doc schematyper deep-copy error-msg dev-install init-gcs \
+        mockuser clean up-gcs down-gcs reset destroy

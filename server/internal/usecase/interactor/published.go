@@ -178,5 +178,5 @@ func renderIndex(index, url string, d interfaces.PublishedMetadata) string {
 			"noindex":     d.Noindex,
 			"url":         url,
 		})
-	return strings.Replace(index, "</head>", b.String()+"</head>", -1)
+	return strings.ReplaceAll(index, "</head>", b.String()+"</head>")
 }

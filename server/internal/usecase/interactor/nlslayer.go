@@ -27,12 +27,13 @@ import (
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 	"github.com/reearth/reearthx/idx"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
+
+	workspaceRepo "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
 var (
@@ -65,7 +66,7 @@ type NLSLayer struct {
 	propertyRepo  repo.Property
 	pluginRepo    repo.Plugin
 	file          gateway.File
-	workspaceRepo accountrepo.Workspace
+	workspaceRepo workspaceRepo.Repo
 	transaction   usecasex.Transaction
 
 	propertySchemaRepo repo.PropertySchema
@@ -1215,7 +1216,7 @@ func (i *NLSLayer) ImportNLSLayers(ctx context.Context, sceneID id.SceneID, data
 		nlayerIDs = append(nlayerIDs, newNLSLayerID)
 
 		// Replace new layer id
-		*data = bytes.Replace(*data, []byte(nlsLayerJSON.ID), []byte(newNLSLayerID.String()), -1)
+		*data = bytes.ReplaceAll(*data, []byte(nlsLayerJSON.ID), []byte(newNLSLayerID.String()))
 
 		nlBuilder := nlslayer.New().
 			ID(newNLSLayerID).Simple().

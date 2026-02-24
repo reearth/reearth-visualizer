@@ -1,12 +1,13 @@
 package gqlmodel
 
 import (
-	workspacepkg "github.com/reearth/reearth-accounts/server/pkg/workspace"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/samber/lo"
+
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
 
-func ToWorkspace(w *workspace.Workspace) *Workspace {
+func ToWorkspace(w *accountsWorkspace.Workspace) *Workspace {
 	if w == nil {
 		return nil
 	}
@@ -16,7 +17,7 @@ func ToWorkspace(w *workspace.Workspace) *Workspace {
 	for u, r := range memberMap {
 		members = append(members, &WorkspaceMember{
 			UserID: IDFrom(u),
-			Role:   ToRole(r.Role),
+			Role:   ToRole(accountsRole.RoleType(r.Role)),
 		})
 	}
 
@@ -29,7 +30,7 @@ func ToWorkspace(w *workspace.Workspace) *Workspace {
 	}
 }
 
-func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
+func ToWorkspaceFromAccounts(w *accountsWorkspace.Workspace) *Workspace {
 	if w == nil {
 		return nil
 	}
@@ -39,7 +40,7 @@ func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
 	for u, r := range memberMap {
 		members = append(members, &WorkspaceMember{
 			UserID: IDFrom(u),
-			Role:   ToRole(workspace.Role(r.Role)),
+			Role:   ToRole(accountsRole.RoleType(r.Role)),
 		})
 	}
 
@@ -53,30 +54,30 @@ func ToWorkspaceFromAccounts(w *workspacepkg.Workspace) *Workspace {
 	}
 }
 
-func ToRole(r workspace.Role) Role {
+func ToRole(r accountsRole.RoleType) Role {
 	switch r {
-	case workspace.RoleReader:
+	case accountsRole.RoleReader:
 		return RoleReader
-	case workspace.RoleWriter:
+	case accountsRole.RoleWriter:
 		return RoleWriter
-	case workspace.RoleMaintainer:
+	case accountsRole.RoleMaintainer:
 		return RoleMaintainer
-	case workspace.RoleOwner:
+	case accountsRole.RoleOwner:
 		return RoleOwner
 	}
 	return Role("")
 }
 
-func FromRole(r Role) workspace.Role {
+func FromRole(r Role) accountsRole.RoleType {
 	switch r {
 	case RoleReader:
-		return workspace.RoleReader
+		return accountsRole.RoleReader
 	case RoleWriter:
-		return workspace.RoleWriter
+		return accountsRole.RoleWriter
 	case RoleMaintainer:
-		return workspace.RoleMaintainer
+		return accountsRole.RoleMaintainer
 	case RoleOwner:
-		return workspace.RoleOwner
+		return accountsRole.RoleOwner
 	}
-	return workspace.Role("")
+	return accountsRole.RoleType("")
 }
