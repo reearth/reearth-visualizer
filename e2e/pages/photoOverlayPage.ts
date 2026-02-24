@@ -100,12 +100,31 @@ export class PhotoOverlayPage {
   }
 
   async selectFeatureAndOpenInspector(x: number, y: number) {
-    // First click activates the layer interaction mode
-    await this.clickOnCanvas(x, y);
-    await this.page.waitForTimeout(2000);
-    // Second click selects the feature on the canvas
-    await this.clickOnCanvas(x, y);
-    await this.page.waitForTimeout(3000);
+    const maxAttempts = 3;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      // First click activates the layer interaction mode
+      await this.clickOnCanvas(x, y);
+      await this.page.waitForTimeout(2000);
+      // Second click selects the feature on the canvas
+      await this.clickOnCanvas(x, y);
+      await this.page.waitForTimeout(3000);
+
+      const tabVisible = await this.featureInspectorTab
+        .isVisible()
+        .catch(() => false);
+      if (tabVisible) {
+        await this.goToFeatureInspectorTab();
+        await this.page.waitForTimeout(1000);
+        return;
+      }
+
+      if (attempt < maxAttempts - 1) {
+        // Click canvas elsewhere to reset, then retry
+        await this.clickOnCanvas(x + 100, y + 100);
+        await this.page.waitForTimeout(1000);
+      }
+    }
+    // Final attempt - click tab even if not visible to get a clear error
     await this.goToFeatureInspectorTab();
     await this.page.waitForTimeout(1000);
   }
