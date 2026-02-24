@@ -396,7 +396,7 @@ func (f *fileRepo) read(ctx context.Context, filename string) (io.ReadCloser, er
 
 	_, err = bucket.Object(filename).Attrs(ctx)
 	if err != nil && errors.Is(err, storage.ErrObjectNotExist) {
-		visualizer.WarnWithCallerLogging(ctx, "gcs: read attrs err")
+		visualizer.WarnWithCallerLogging(ctx, fmt.Sprintf("gcs: read attrs err: file not found: %s", filename))
 		return nil, rerror.ErrNotFound
 	}
 
