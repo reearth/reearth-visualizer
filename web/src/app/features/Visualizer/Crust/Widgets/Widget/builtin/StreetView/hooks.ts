@@ -26,6 +26,7 @@ import { usePanoramaHeadingPitchChange } from "./usePanoramaHeadingPitchChange";
 import { usePanoramaLocationChange } from "./usePanoramaLocationChange";
 import { usePanoramaZoomChange } from "./usePanoramaZoomChange";
 import { loadGoogleMaps } from "./useStreetView";
+import { pointFeature } from "./utils";
 
 export type Props = {
   layer: {
@@ -88,16 +89,6 @@ export default ({ widget, layer, setShowPano }: Props) => {
     navTimeout: null as number | null
   });
 
-  const pointFeature = useCallback((lng: number, lat: number) => {
-    return {
-      type: "Feature" as const,
-      geometry: {
-        type: "Point" as const,
-        coordinates: [lng, lat] as [number, number]
-      },
-      properties: {}
-    };
-  }, []);
 
   useEffect(() => {
     if (
@@ -236,15 +227,7 @@ export default ({ widget, layer, setShowPano }: Props) => {
       },
       frustum: { zoom: panoState.zoom }
     });
-  }, [
-    layers,
-    layer.layerId,
-    pointFeature,
-    panoState.location,
-    panoState.headingPitch.heading,
-    panoState.headingPitch.pitch,
-    panoState.zoom
-  ]);
+  }, [layers, layer.layerId, panoState.location, panoState.headingPitch.heading, panoState.headingPitch.pitch, panoState.zoom]);
 
   const handleClosePano = useCallback(() => {
     setShowPano?.(false);

@@ -7,7 +7,7 @@ import { useEffect, useRef, useCallback, useState } from "react";
 
 import { DEFAULT_PANO_ZOOM, FRUSTUM_LENGTH } from "./constant";
 import { GeoJSONPointFeature } from "./types";
-import { createPegmanPin } from "./utils";
+import { createPegmanPin, pointFeature } from "./utils";
 
 export function useEvent() {
   const visualizer = useVisualizer();
@@ -35,17 +35,6 @@ export function useEvent() {
     clickedRef.current = false;
     setIsTracking(value);
     setShowPano(true);
-  }, []);
-
-  const pointFeature = useCallback((lng: number, lat: number) => {
-    return {
-      type: "Feature" as const,
-      geometry: {
-        type: "Point" as const,
-        coordinates: [lng, lat] as [number, number]
-      },
-      properties: {}
-    };
   }, []);
 
   useEffect(() => {
@@ -153,7 +142,7 @@ export function useEvent() {
         rafRef.current = null;
       }
     };
-  }, [engine, layers, pointFeature]);
+  }, [engine, layers]);
 
   const handleClearLayer = useCallback(() => {
     clickedRef.current = false;

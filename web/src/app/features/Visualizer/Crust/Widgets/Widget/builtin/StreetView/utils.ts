@@ -33,3 +33,14 @@ export function createPegmanPin(color = "#3B3CD0") {
 
   return `data:image/svg+xml;base64,${btoa(svg)}`;
 }
+
+export const pointFeature = (lng: number, lat: number) => {
+  return {
+    type: "Feature" as const,
+    geometry: {
+      type: "Point" as const,
+      coordinates: [lng, lat] as [number, number]
+    },
+    properties: {}
+  };
+};

@@ -24,20 +24,20 @@ const StreetViewContent = forwardRef<HTMLDivElement, StreetViewContentProps>(
           color: theme === "dark" ? "#E0E0E0" : ""
         }}
       >
-        <CardHeader className="flex flex-row p-3 justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Pegman />
-            <h5 className="m-0">{t("Street View")}</h5>
+        <CardHeader className="flex flex-row p-1 justify-between items-center">
+          <div className="flex items-center">
+            <Pegman className="h-6 w-6" />
+            <div className="text-sm">{t("Street View")}</div>
           </div>
           <div onClick={handleClosePano} className="cursor-pointer">
-            <Close className="w-5 h-5" />
+            <Close className="w-5 h-4" />
           </div>
         </CardHeader>
         <CardContent className="p-0">
           {isTracking ? (
-            <h5 className="pt-0 pb-4 px-4">
+            <div className="px-2 pb-1 text-xs">
               {t("Select a location on the map to view Street View")}
-            </h5>
+            </div>
           ) : (
             <div ref={ref} className="w-full h-62 overflow-hidden" />
           )}
