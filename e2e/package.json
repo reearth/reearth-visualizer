@@ -37,6 +37,7 @@
   "dependencies": {
     "@faker-js/faker": "^10.1.0",
     "allure-playwright": "^3.4.1",
-    "google-auth-library": "^10.4.1"
+    "google-auth-library": "^10.4.1",
+    "playwright-cli": "^0.262.0"
   }
 }

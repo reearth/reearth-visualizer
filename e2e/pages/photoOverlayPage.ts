@@ -26,6 +26,9 @@ export class PhotoOverlayPage {
     "textareafield-input"
   );
   canvas: Locator = this.page.locator("canvas").first();
+  deletePhotoOverlayButton: Locator = this.page.getByTestId(
+    "photooverlay-delete-btn"
+  );
 
   async clickOnCanvas(x: number, y: number) {
     await this.canvas.waitFor({ state: "visible" });
@@ -89,5 +92,58 @@ export class PhotoOverlayPage {
   async verifyNoCrash() {
     const errorEl = this.page.getByText("Unexpected Application Error");
     await expect(errorEl).not.toBeVisible();
+  }
+
+  async deletePhotoOverlay() {
+    await this.deletePhotoOverlayButton.click();
+    await this.page.waitForTimeout(3000);
+  }
+
+  async selectFeatureAndOpenInspector(x: number, y: number) {
+    // First click activates the layer interaction mode
+    await this.clickOnCanvas(x, y);
+    await this.page.waitForTimeout(2000);
+    // Second click selects the feature on the canvas
+    await this.clickOnCanvas(x, y);
+    await this.page.waitForTimeout(3000);
+    await this.goToFeatureInspectorTab();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async verifyPhotoOverlayIsSet() {
+    const input = this.page.locator('input[value="Photo Overlay Set"]');
+    await expect(input).toBeVisible({ timeout: 10000 });
+  }
+
+  async verifyPhotoOverlayNotSet() {
+    const input = this.page.locator('input[value="Photo Overlay Set"]');
+    await expect(input).not.toBeVisible();
+  }
+
+  async selectSizeType(type: "Contain" | "Fixed") {
+    await this.editorPanel.getByText(type, { exact: true }).click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async verifyPhotoSizeSliderVisible() {
+    await expect(
+      this.editorPanel.getByText("Photo size", { exact: true })
+    ).toBeVisible();
+  }
+
+  async verifyPhotoSizeSliderHidden() {
+    await expect(
+      this.editorPanel.getByText("Photo size", { exact: true })
+    ).not.toBeVisible();
+  }
+
+  async clearAndSetDescription(text: string) {
+    await this.photoDescriptionTextarea.clear();
+    await this.photoDescriptionTextarea.fill(text);
+    await this.page.waitForTimeout(500);
+  }
+
+  async verifyDescriptionValue(expected: string) {
+    await expect(this.photoDescriptionTextarea).toHaveValue(expected);
   }
 }
