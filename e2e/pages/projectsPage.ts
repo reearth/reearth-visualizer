@@ -77,8 +77,10 @@ export class ProjectsPage {
   descriptionTextarea: Locator = this.page.getByTestId(
     "project-description-input"
   );
-  cancelButton: Locator = this.page.getByRole("button", { name: "Cancel" });
-  applyButton: Locator = this.page.getByRole("button", { name: "Apply" });
+  cancelButton: Locator = this.page.getByTestId(
+    "project-creator-cancel-btn"
+  );
+  applyButton: Locator = this.page.getByTestId("project-creator-apply-btn");
 
   // Notifications
   noticeBanner: Locator = this.page.getByText("Notice");

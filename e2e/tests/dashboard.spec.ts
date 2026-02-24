@@ -75,6 +75,8 @@ test.describe("DASHBOARD - Test cases", () => {
 
   test("Verify project creation modal", async () => {
     await dashBoardPage.projects.click();
+    await projectsPage.newProjectButton.waitFor({ state: "visible" });
+    await page.waitForTimeout(500);
     await projectsPage.newProjectButton.click();
     await expect(projectsPage.modalTitle).toBeVisible();
     await expect(projectsPage.projectNameLabel).toBeVisible();
@@ -134,6 +136,8 @@ test.describe("DASHBOARD - Test cases", () => {
   test("Verify project creation with special characters in name", async () => {
     await dashBoardPage.projects.click();
     const specialProjectDescription = "Test project with special characters";
+    await projectsPage.newProjectButton.waitFor({ state: "visible" });
+    await page.waitForTimeout(500);
     await projectsPage.newProjectButton.click();
     await projectsPage.createNewProject(
       specialProjectName,

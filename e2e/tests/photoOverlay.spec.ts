@@ -81,6 +81,8 @@ test.describe("Photo Overlay Feature", () => {
 
   test("Create a project for Photo Overlay testing", async () => {
     await dashBoardPage.projects.click();
+    await projectsPage.newProjectButton.waitFor({ state: "visible" });
+    await page.waitForTimeout(500);
     await projectsPage.newProjectButton.click();
     await projectsPage.createNewProject(
       projectName,
