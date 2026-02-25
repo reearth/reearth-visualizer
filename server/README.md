@@ -6,6 +6,50 @@ A back-end API server application for Re:Earth
 
 ## 🛠️ Useful Development Commands
 
+### Starting the Development Server
+
+There are two ways to start the development server depending on your workflow:
+
+#### Default: Using Docker Hub image for accounts API
+
+Starts all services including the accounts API from Docker Hub (`reearth/reearth-accounts-api`):
+
+```bash
+make run
+```
+
+This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+
+#### Local accounts development: Using local reearth-accounts repo
+
+If you are developing `reearth-accounts` locally and want to run it from source:
+
+**Terminal 1** — Start visualizer (without accounts API):
+
+```bash
+# In ~/reearth-visualizer/server
+make run-local
+```
+
+This starts: **visualizer** + **MongoDB** + **GCS** (no accounts API)
+
+**Terminal 2** — Start accounts API from local repo:
+
+```bash
+# In ~/reearth-accounts/server
+make run
+```
+
+The accounts API will join the `reearth` Docker network automatically.
+
+#### After startup: Initialize the environment
+
+After the services are running, initialize GCS and create the demo user:
+
+```bash
+make init
+```
+
 ### Database and Environment Reset
 
 Reset the development environment including database and GCS:
@@ -87,12 +131,15 @@ dev.bat test-docker
 
 ### Quick Reference
 
-| Command                                    | Description                                           |
-| ------------------------------------------ | ----------------------------------------------------- |
-| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data   |
-| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive) |
-| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                 |
-| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                         |
+| Command                                    | Description                                                    |
+| ------------------------------------------ | -------------------------------------------------------------- |
+| `make run`                                 | Start all services including accounts API from Docker Hub      |
+| `make run-local`                           | Start without accounts API (for local reearth-accounts dev)    |
+| `make init`                                | Initialize GCS bucket and create demo user                     |
+| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data            |
+| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive)          |
+| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                          |
+| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                                  |
 
 ## 🔐 Authentication Modes
 
@@ -117,8 +164,8 @@ REEARTH_MOCKAUTH=true
 
 ### 2. Re:Earth Accounts Mode
 
-Uses [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) for user authentication and verification.  
-You need to start the `reearth-accounts` service separately.
+Uses [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) for user authentication and verification.
+The accounts API is included by default with `make run`. To use a local reearth-accounts repo instead, use `make run-local` (see [Starting the Development Server](#starting-the-development-server)).
 
 **Change: web/.env**
 
