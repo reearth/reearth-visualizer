@@ -46,7 +46,7 @@ help:
 	@echo "  gql               Generate GraphQL code"
 	@echo "  schematyper       Generate schema using schematyper"
 	@echo "  deep-copy         Generate deep-copy code for Initializer"
-	@echo "  mockuser          Create a mock user"
+	@echo "  mockuser-accounts Create a mock user via accounts API"
 	@echo "  up-gcs            Start fake GCS server"
 	@echo "  down-gcs          Stop fake GCS server"
 	@echo "  down              Stop Docker Compose services"
@@ -233,13 +233,14 @@ init:
 	make init-gcs
 	@echo ""
 	@echo "==== Creating mock user ===="
-	make mockuser
+	make mockuser-accounts
 	@echo ""
 
-mockuser:
+mockuser-accounts:
 	curl -s -D - -o /dev/null \
 		-H 'Content-Type: application/json' \
-		http://localhost:8080/api/mockuser | head -n 1
+		-d '{"query":"mutation($$input:SignupInput!){signup(input:$$input){user{id name email}}}","variables":{"input":{"email":"demo@example.com","name":"Demo User","password":"Passw0rd!"}}}' \
+		http://localhost:8090/api/graphql | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \
@@ -271,4 +272,4 @@ destroy:
 	fi
 
 .PHONY: default help lint lint-docker test test-docker test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-with-key
+        gql mockuser-accounts schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-with-key

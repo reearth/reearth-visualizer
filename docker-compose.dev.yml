@@ -13,9 +13,33 @@ services:
     depends_on:
       - reearth-mongo
       - reearth-gcs
+      - reearth-accounts-api
     volumes:
       - ./server:/reearth-visualizer       # Mount source code for hot reload
       - /reearth-visualizer/tmp            # Exclude tmp directory
+    networks:
+      - reearth
+
+  reearth-accounts-api:
+    image: reearth/reearth-accounts-api:v1.0.0
+    hostname: reearth-accounts-dev
+    env_file:
+      - ./accounts/.env.docker
+    ports:
+      - 8090:8090
+    depends_on:
+      - reearth-mongo
+      - reearth-cerbos
+    networks:
+      - reearth
+
+  reearth-cerbos:
+    image: cerbos/cerbos:0.40.0
+    command: server --config=/policies/.cerbos.yaml
+    ports:
+      - 3593:3593
+    volumes:
+      - ./cerbos/policies:/policies
     networks:
       - reearth
 
