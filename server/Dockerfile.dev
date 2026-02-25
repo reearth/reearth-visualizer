@@ -1,6 +1,6 @@
 FROM golang:1.25.5-alpine
 
-RUN apk add --update --no-cache git ca-certificates build-base curl
+RUN apk add --update --no-cache git ca-certificates build-base curl binutils-gold
 
 # Install development tools
 RUN go install github.com/air-verse/air@v1.61.5 && \
