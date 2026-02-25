@@ -11,9 +11,13 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - reearth-mongo
-      - reearth-gcs
-      - reearth-accounts-api
+      reearth-mongo:
+        condition: service_started
+      reearth-gcs:
+        condition: service_started
+      reearth-accounts-api:
+        condition: service_started
+        required: false
     volumes:
       - ./server:/reearth-visualizer       # Mount source code for hot reload
       - /reearth-visualizer/tmp            # Exclude tmp directory
@@ -23,6 +27,8 @@ services:
   reearth-accounts-api:
     image: reearth/reearth-accounts-api:v1.0.0
     hostname: reearth-accounts-dev
+    profiles:
+      - accounts
     env_file:
       - ./accounts/.env.docker
     ports:
@@ -35,6 +41,8 @@ services:
 
   reearth-cerbos:
     image: cerbos/cerbos:0.40.0
+    profiles:
+      - accounts
     command: server --config=/policies/.cerbos.yaml
     ports:
       - 3593:3593
