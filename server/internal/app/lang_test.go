@@ -16,7 +16,7 @@ import (
 )
 
 func TestLanguageExtractor(t *testing.T) {
-	// Mock user with a language
+	// Demo User with a language
 	tests := []struct {
 		name       string
 		headerLang string

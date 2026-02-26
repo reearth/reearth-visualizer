@@ -6,6 +6,50 @@ A back-end API server application for Re:Earth
 
 ## 🛠️ Useful Development Commands
 
+### Starting the Development Server
+
+There are two ways to start the development server depending on your workflow:
+
+#### Default: Using Docker Hub image for accounts API
+
+Starts all services including the accounts API from Docker Hub (`reearth/reearth-accounts-api`):
+
+```bash
+make run
+```
+
+This starts: **visualizer** + **accounts API** + **Cerbos** + **MongoDB** + **GCS**
+
+#### Local accounts development: Using local reearth-accounts repo
+
+If you are developing `reearth-accounts` locally and want to run it from source:
+
+**Terminal 1** — Start visualizer (without accounts API):
+
+```bash
+# In ~/reearth-visualizer/server
+make run-local
+```
+
+This starts: **visualizer** + **MongoDB** + **GCS** (no accounts API)
+
+**Terminal 2** — Start accounts API from local repo:
+
+```bash
+# In ~/reearth-accounts/server
+make run
+```
+
+The accounts API will join the `reearth` Docker network automatically.
+
+#### After startup: Initialize the environment
+
+After the services are running, initialize GCS and create the demo user:
+
+```bash
+make init
+```
+
 ### Database and Environment Reset
 
 Reset the development environment including database and GCS:
@@ -87,57 +131,54 @@ dev.bat test-docker
 
 ### Quick Reference
 
-| Command                                    | Description                                           |
-| ------------------------------------------ | ----------------------------------------------------- |
-| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data   |
-| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive) |
-| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                 |
-| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                         |
+| Command                                    | Description                                                    |
+| ------------------------------------------ | -------------------------------------------------------------- |
+| `make run`                                 | Start all services including accounts API from Docker Hub      |
+| `make run-local`                           | Start without accounts API (for local reearth-accounts dev)    |
+| `make init`                                | Initialize GCS bucket and create demo user                     |
+| `make reset` / `dev.bat reset`             | Reset database and GCS, reinitialize with mock data            |
+| `make destroy` / `dev.bat destroy`         | ⚠️ Remove ALL Docker resources and data (destructive)          |
+| `make lint-docker` / `dev.bat lint-docker` | Run golangci-lint in Docker container                          |
+| `make test-docker` / `dev.bat test-docker` | Run tests in Docker container                                  |
 
-## 🔐 Authentication Modes
+## 🔐 Authentication
 
-The backend server can be launched in the following authentication modes:
+Authentication is handled by the shared service [Re:Earth Accounts](https://github.com/reearth/reearth-accounts).
+When using `make run`, a pre-built `reearth/reearth-accounts-api` container from Docker Hub is started automatically.
+
+There are two authentication modes: **Mock User** (default) and **Identity Provider (IdP)**.
 
 ### 1. Mock User Mode (Default)
 
-Launches in mock user mode.  
-This flag takes precedence, so any Auth0 configuration will be ignored.
+Uses a demo user for local development without requiring an external IdP.
+No additional configuration is needed — this is the default.
 
-**Change: web/.env**
+**web/.env**
 
 ```bash
 REEARTH_WEB_AUTH_PROVIDER=mock
 ```
 
-**Change: server/.env.docker**
+### 2. Identity Provider (IdP) Mode
+
+To use an IdP (e.g. Auth0), edit `accounts/.env.docker` with your Auth0 credentials:
 
 ```bash
-REEARTH_MOCKAUTH=true
+REEARTH_MOCK_AUTH=false
+REEARTH_AUTH0_DOMAIN=https://your-tenant.auth0.com/
+REEARTH_AUTH0_AUDIENCE=https://api.your-domain.com
+REEARTH_AUTH0_CLIENTID=your-auth0-client-id
+REEARTH_AUTH0_CLIENTSECRET=your-auth0-client-secret
+REEARTH_AUTH0_WEBCLIENTID=your-auth0-web-client-id
 ```
 
-### 2. Re:Earth Accounts Mode
-
-Uses [Re:Earth Accounts](https://github.com/reearth/reearth-accounts) for user authentication and verification.  
-You need to start the `reearth-accounts` service separately.
-
-**Change: web/.env**
+Also update **web/.env**:
 
 ```bash
 REEARTH_WEB_AUTH_PROVIDER=auth0
 ```
 
-**Change: server/.env.docker**
-
-```bash
-REEARTH_MOCKAUTH=false
-REEARTH_ACCOUNTSAPI_ENABLED=true
-```
-
-### 📢 When using an Identity Provider
-
-You need to add the Identity Provider user to Re:Earth
-
-**Unix/Linux/macOS:**
+After starting the server, you need to register the IdP user by providing the `sub` claim:
 
 ```bash
 curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- << EOF
@@ -150,19 +191,26 @@ curl -H 'Content-Type: application/json' http://localhost:8080/api/signup -d @- 
 EOF
 ```
 
-**Windows (Command Prompt):**
+### Developing reearth-accounts locally
 
-```cmd
-curl -H "Content-Type: application/json" http://localhost:8080/api/signup ^
-  -d "{\"sub\": \"auth0|xxxxxxxx1234567890xxxxxx\", \"email\": \"user@example.com\", \"username\": \"example user\", \"secret\": \"@Hoge123@Hoge123\"}"
+If you need to develop `reearth-accounts` itself, use `make run-local` instead of `make run`:
+
+**Terminal 1** — Start visualizer (without the accounts API container):
+
+```bash
+# In ~/reearth-visualizer/server
+make run-local
 ```
 
-**Windows (PowerShell):**
+**Terminal 2** — Clone and start accounts API from source:
 
-```powershell
-curl.exe -H "Content-Type: application/json" http://localhost:8080/api/signup `
-  -d '{"sub": "auth0|xxxxxxxx1234567890xxxxxx", "email": "user@example.com", "username": "example user", "secret": "@Hoge123@Hoge123"}'
+```bash
+git clone https://github.com/reearth/reearth-accounts.git ~/reearth-accounts
+cd ~/reearth-accounts/server
+make run
 ```
+
+The local accounts API will join the `reearth` Docker network automatically.
 
 ## Storage
 
