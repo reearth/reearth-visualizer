@@ -42,7 +42,7 @@ export class PhotoOverlayPage {
   }
 
   async goToFeatureInspectorTab() {
-    await this.featureInspectorTab.waitFor({ state: "visible", timeout: 10000 });
+    // await this.featureInspectorTab.waitFor({ state: "visible", timeout: 10000 });
     await this.featureInspectorTab.click();
     await this.page.waitForTimeout(500);
   }
