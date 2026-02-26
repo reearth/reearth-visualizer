@@ -7,16 +7,25 @@ export class ProjectsPage {
 
   // Search & Sort
   searchProjectInput: Locator = this.page.getByPlaceholder("Search project");
+  searchButton: Locator = this.page.getByTestId("projects-manager-header")
+    .locator('button:has(svg)').last();
   sortLabel: Locator = this.page.locator("p", { hasText: "Sort:" });
   sortDropdown: Locator = this.page.getByTestId("select-input");
 
-  // View Toggles
-  gridViewToggle: Locator = this.page.locator(
-    'button.css-sfuwxk svg path[d*="M6.8 2H2.6"]'
+  // Search Results
+  searchResultBreadcrumb: Locator = this.page.getByTestId(
+    "breadcrumb-search-result"
   );
-  listViewToggle: Locator = this.page.locator(
-    'button.css-zkhtif svg path[d*="M2.5 4H13.5"]'
+  allProjectsBreadcrumb: Locator = this.page.getByTestId(
+    "breadcrumb-all-projects"
   );
+  emptyContent: Locator = this.page.getByTestId("projects-empty-content");
+
+  // View Toggles — IconButton generates data-testid="icon-button-{icon}"
+  gridViewToggle: Locator = this.page.getByTestId("icon-button-grid");
+  listViewToggle: Locator = this.page.getByTestId("icon-button-list");
+  gridLayoutButton: Locator = this.page.getByTestId("icon-button-grid");
+  listLayoutButton: Locator = this.page.getByTestId("icon-button-list");
 
   // Table View Headers
   columnHeaderProjectName: Locator = this.page.getByTestId(
@@ -215,6 +224,113 @@ export class ProjectsPage {
         }
       }
     }
+  }
+
+  // List View - Project Row
+  listProjectItem(projectName: string): Locator {
+    return this.page.getByTestId(`project-list-item-${projectName}`);
+  }
+  listProjectTitle(projectName: string): Locator {
+    return this.page.getByTestId(`project-list-item-title-${projectName}`);
+  }
+  listProjectMenuButton(projectName: string): Locator {
+    return this.page.getByTestId(`project-list-item-menu-btn-${projectName}`);
+  }
+  listProjectStarButton(projectName: string): Locator {
+    return this.page
+      .getByTestId(`project-list-item-star-btn-wrapper-${projectName}`)
+      .locator("button");
+  }
+  listProjectUpdated(projectName: string): Locator {
+    // Note: data-testid on Typography is NOT forwarded to DOM,
+    // so we use the parent TimeCol's -col- test ID instead
+    return this.page.getByTestId(
+      `project-list-item-updated-col-${projectName}`
+    );
+  }
+  listProjectCreated(projectName: string): Locator {
+    return this.page.getByTestId(
+      `project-list-item-created-col-${projectName}`
+    );
+  }
+
+  // Grid View - Rename Input (shown during inline editing)
+  // Note: TextInput uses dataTestid prop (camelCase), not data-testid,
+  // so the passed data-testid is ignored. Locate the textbox within the card instead.
+  gridProjectTitleInput(projectName: string): Locator {
+    return this.page
+      .getByTestId(`project-grid-item-${projectName}`)
+      .getByRole("textbox");
+  }
+
+  // List View - Rename Input (shown during inline editing)
+  // Note: TextInput uses dataTestid prop (camelCase), not data-testid
+  listProjectTitleInput(projectName: string): Locator {
+    return this.page
+      .getByTestId(`project-list-item-${projectName}`)
+      .getByRole("textbox");
+  }
+
+  // Project context menu items
+  renameMenuItem: Locator = this.page.getByText("Rename");
+  exportMenuItem: Locator = this.page.getByText("Export");
+  projectSettingMenuItem: Locator = this.page.getByRole("link", {
+    name: "Project Setting"
+  });
+  projectAssetsMenuItem: Locator = this.page.getByRole("link", {
+    name: "Project Assets"
+  });
+
+  // Search actions
+  async searchProject(searchTerm: string) {
+    await this.searchProjectInput.fill(searchTerm);
+    await this.searchProjectInput.press("Enter");
+  }
+
+  async clearSearch() {
+    await this.searchProjectInput.fill("");
+    await this.searchProjectInput.press("Enter");
+  }
+
+  // Sort actions
+  async selectSortOption(optionLabel: string) {
+    await this.sortDropdown.click();
+    await this.page.waitForTimeout(500);
+    await this.page
+      .getByRole("option", { name: optionLabel })
+      .click();
+    await this.page.waitForTimeout(2000);
+  }
+
+  // Layout actions
+  async switchToListView() {
+    await this.listLayoutButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async switchToGridView() {
+    await this.gridLayoutButton.click();
+    await this.page.waitForTimeout(500);
+  }
+
+  // Rename actions
+  async renameProject(projectName: string, newName: string) {
+    const projectMenuButton = this.gridProjectMenuButton(projectName).first();
+    await projectMenuButton.click();
+    await this.renameMenuItem.click();
+    await this.page.waitForTimeout(500);
+    const input = this.gridProjectTitleInput(projectName);
+    await input.waitFor({ state: "visible" });
+    await input.fill(newName);
+    await input.press("Enter");
+    await this.page.waitForTimeout(1000);
+  }
+
+  // Export actions
+  async exportProject(projectName: string) {
+    const projectMenuButton = this.gridProjectMenuButton(projectName).first();
+    await projectMenuButton.click();
+    await this.exportMenuItem.click();
   }
 
   async importProject(zipFilePath: string) {
