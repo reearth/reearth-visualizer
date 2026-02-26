@@ -20,7 +20,7 @@ const StreetView: FC<Props> = ({ widget }) => {
     handleClearLayer
   } = useEvent();
 
-  const { themeClass, panoDivRef, handleClosePano } = useHooks({
+  const { themeClass, panoDivRef, apiKey, handleClosePano } = useHooks({
     widget,
     layer,
     setShowPano
@@ -30,20 +30,21 @@ const StreetView: FC<Props> = ({ widget }) => {
     <div className={themeClass} data-theme-debug={themeClass}>
       {!showPano ? (
         <div
-          className="p-0.5 rounded-sm cursor-pointer text-xs"
+          className="p-2 flex items-center justify-center rounded-sm cursor-pointer"
           style={{
             background: themeClass === "dark" ? "#292929" : "#fff",
             color: themeClass === "dark" ? "#E0E0E0" : "#292929"
           }}
           onClick={() => handleTracking(true)}
         >
-          <Pegman />
+          <Pegman className="h-5 w-5" />
         </div>
       ) : (
         <StreetViewContent
           theme={themeClass}
           isTracking={isTracking}
           ref={panoDivRef}
+          apiKey={apiKey}
           handleClosePano={() => {
             handleClosePano();
             handleClearLayer();

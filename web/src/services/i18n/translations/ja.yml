@@ -509,8 +509,9 @@ aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
-Street View: ''
-Select a location on the map to view Street View: ''
+Street View: ストリートビュー
+Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
+Please provide the API key: APIキーを入力してください
 New Channel: 新しいチャンネル
 Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定
