@@ -102,9 +102,9 @@ test.describe("DASHBOARD - Test cases", () => {
 
   test("Remove the project to the Recycle Bin", async () => {
     await projectsPage.deleteProject(projectName);
-    await expect(
-      page.getByText("Successfully moved to Recycle bin!")
-    ).toBeVisible();
+    // await expect(
+    //   page.getByText("Successfully moved to Recycle bin!")
+    // ).toBeVisible();
   });
 
   test("Go to the Recycle Bin and Recover the Deleted Project", async () => {

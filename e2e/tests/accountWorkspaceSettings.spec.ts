@@ -97,13 +97,13 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     const newPage = await newPagePromise;
 
     if (newPage) {
+      await newPage.waitForLoadState("domcontentloaded");
       const newUrl = newPage.url();
       expect(
         newUrl.includes("/settings/profile") ||
           newUrl.includes("/settings/account")
       ).toBeTruthy();
 
-      await newPage.waitForLoadState("domcontentloaded");
       settingsPage = newPage;
       accountSettings = new AccountSettingsPage(settingsPage);
       workspaceSettings = new WorkspaceSettingsPage(settingsPage);

@@ -42,6 +42,7 @@ export class PhotoOverlayPage {
   }
 
   async goToFeatureInspectorTab() {
+    await this.featureInspectorTab.waitFor({ state: "visible", timeout: 10000 });
     await this.featureInspectorTab.click();
     await this.page.waitForTimeout(500);
   }
@@ -100,7 +101,7 @@ export class PhotoOverlayPage {
   }
 
   async selectFeatureAndOpenInspector(x: number, y: number) {
-    const maxAttempts = 3;
+    const maxAttempts = 5;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       // First click activates the layer interaction mode
       await this.clickOnCanvas(x, y);
@@ -113,6 +114,19 @@ export class PhotoOverlayPage {
         .isVisible()
         .catch(() => false);
       if (tabVisible) {
+        await this.goToFeatureInspectorTab();
+        await this.page.waitForTimeout(1000);
+        return;
+      }
+
+      // Try double-click as an alternative selection method
+      await this.canvas.dblclick({ position: { x, y }, force: true });
+      await this.page.waitForTimeout(3000);
+
+      const tabVisibleAfterDblClick = await this.featureInspectorTab
+        .isVisible()
+        .catch(() => false);
+      if (tabVisibleAfterDblClick) {
         await this.goToFeatureInspectorTab();
         await this.page.waitForTimeout(1000);
         return;

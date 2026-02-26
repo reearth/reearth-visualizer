@@ -147,11 +147,8 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test("Select a feature and verify Photo Overlay section", async () => {
-    test.setTimeout(60000);
-    await photoOverlay.clickOnCanvas(400, 400);
-    await page.waitForTimeout(2000);
-    await photoOverlay.goToFeatureInspectorTab();
-    await page.waitForTimeout(1000);
+    test.setTimeout(90000);
+    await photoOverlay.selectFeatureAndOpenInspector(400, 400);
     await expect(page.getByText("Photo Overlay").first()).toBeVisible();
     await photoOverlay.verifyNoCrash();
   });
