@@ -24,6 +24,28 @@ services:
     networks:
       - reearth
 
+  reearth-visualizer-internal-api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    environment:
+      - SKIP_DOTENV=true
+      - REEARTH_VISUALIZER_INTERNALAPI_ACTIVE=true
+    env_file:
+      - ./server/.env.docker
+    ports:
+      - 50051:50051
+    depends_on:
+      reearth-mongo:
+        condition: service_started
+      reearth-gcs:
+        condition: service_started
+    volumes:
+      - ./server:/reearth-visualizer       # Mount source code for hot reload
+      - /reearth-visualizer/tmp            # Exclude tmp directory
+    networks:
+      - reearth
+
   reearth-accounts-api:
     image: reearth/reearth-accounts-api:v1.0.0
     hostname: reearth-accounts-dev
