@@ -26,6 +26,9 @@ export class PhotoOverlayPage {
     "textareafield-input"
   );
   canvas: Locator = this.page.locator("canvas").first();
+  deletePhotoOverlayButton: Locator = this.page.getByTestId(
+    "photooverlay-delete-btn"
+  );
 
   async clickOnCanvas(x: number, y: number) {
     await this.canvas.waitFor({ state: "visible" });
@@ -39,6 +42,7 @@ export class PhotoOverlayPage {
   }
 
   async goToFeatureInspectorTab() {
+    await this.page.waitForTimeout(10000); // Wait for any previous actions to settle
     await this.featureInspectorTab.click();
     await this.page.waitForTimeout(500);
   }
@@ -89,5 +93,90 @@ export class PhotoOverlayPage {
   async verifyNoCrash() {
     const errorEl = this.page.getByText("Unexpected Application Error");
     await expect(errorEl).not.toBeVisible();
+  }
+
+  async deletePhotoOverlay() {
+    await this.deletePhotoOverlayButton.click();
+    await this.page.waitForTimeout(3000);
+  }
+
+  async selectFeatureAndOpenInspector(x: number, y: number) {
+    const maxAttempts = 5;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      // First click activates the layer interaction mode
+      await this.clickOnCanvas(x, y);
+      await this.page.waitForTimeout(2000);
+      // Second click selects the feature on the canvas
+      await this.clickOnCanvas(x, y);
+      await this.page.waitForTimeout(3000);
+
+      const tabVisible = await this.featureInspectorTab
+        .isVisible()
+        .catch(() => false);
+      if (tabVisible) {
+        await this.goToFeatureInspectorTab();
+        await this.page.waitForTimeout(1000);
+        return;
+      }
+
+      // Try double-click as an alternative selection method
+      await this.canvas.dblclick({ position: { x, y }, force: true });
+      await this.page.waitForTimeout(3000);
+
+      const tabVisibleAfterDblClick = await this.featureInspectorTab
+        .isVisible()
+        .catch(() => false);
+      if (tabVisibleAfterDblClick) {
+        await this.goToFeatureInspectorTab();
+        await this.page.waitForTimeout(1000);
+        return;
+      }
+
+      if (attempt < maxAttempts - 1) {
+        // Click canvas elsewhere to reset, then retry
+        await this.clickOnCanvas(x + 100, y + 100);
+        await this.page.waitForTimeout(1000);
+      }
+    }
+    // Final attempt - click tab even if not visible to get a clear error
+    await this.goToFeatureInspectorTab();
+    await this.page.waitForTimeout(1000);
+  }
+
+  async verifyPhotoOverlayIsSet() {
+    const input = this.page.locator('input[value="Photo Overlay Set"]');
+    await expect(input).toBeVisible({ timeout: 10000 });
+  }
+
+  async verifyPhotoOverlayNotSet() {
+    const input = this.page.locator('input[value="Photo Overlay Set"]');
+    await expect(input).not.toBeVisible();
+  }
+
+  async selectSizeType(type: "Contain" | "Fixed") {
+    await this.editorPanel.getByText(type, { exact: true }).click();
+    await this.page.waitForTimeout(500);
+  }
+
+  async verifyPhotoSizeSliderVisible() {
+    await expect(
+      this.editorPanel.getByText("Photo size", { exact: true })
+    ).toBeVisible();
+  }
+
+  async verifyPhotoSizeSliderHidden() {
+    await expect(
+      this.editorPanel.getByText("Photo size", { exact: true })
+    ).not.toBeVisible();
+  }
+
+  async clearAndSetDescription(text: string) {
+    await this.photoDescriptionTextarea.clear();
+    await this.photoDescriptionTextarea.fill(text);
+    await this.page.waitForTimeout(500);
+  }
+
+  async verifyDescriptionValue(expected: string) {
+    await expect(this.photoDescriptionTextarea).toHaveValue(expected);
   }
 }
