@@ -2967,3 +2967,4 @@ extensions:
               title: Camera Duration
               defaultValue: 1
               description: The duration (in seconds) it takes for the camera to fly to the captured position.
+              

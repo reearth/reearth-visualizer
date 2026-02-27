@@ -148,7 +148,10 @@ Input Text: テキストを入力
 Value: 値
 Input data here: ここにデータを入力
 Auto Update Time: 自動時間更新
-'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': 有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
+'When enabled, the simulation clock will be updated to the time interval defined in the CZML file once it is loaded. Warning: If multiple CZML layers with this option enabled are loaded, the final simulation time will be set by the last loaded layer.': >-
+  有効にすると、CZML ファイルが読み込まれた際に、シミュレーションの時計が CZML
+  ファイルで定義された時間範囲に更新されます。警告：このオプションが有効な複数の CZML
+  レイヤーが読み込まれた場合、最終的なシミュレーション時間は最後に読み込まれたレイヤーによって設定されます。
 Invalid GeoJSON format: 不正なGeoJSON形式
 Please enter valid GeoJSON: 有効なGeoJSONを入力してください
 Prioritize Performance: パフォーマンスを優先
@@ -506,6 +509,9 @@ aria-label-adjust-angle: 角度調整
 aria-label-zoom-in: ズームイン
 aria-label-Go-to-the-home-position: ホームポジションに移動
 aria-label-zoom-out: ズームアウト
+Street View: ストリートビュー
+Select a location on the map to view Street View: 地図上の場所を選択してストリートビューを表示
+Please provide the API key: APIキーを入力してください
 New Channel: 新しいチャンネル
 Default Channel: デフォルトチャンネル
 Spacing settings: 余白設定
