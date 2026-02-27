@@ -93,7 +93,7 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 				if stream != nil {
 					_ = stream.Close()
 				}
-				return nil, nil, err
+				return nil, nil, fmt.Errorf("plugin %s file %s: %w", p.ID(), extensionFileName, err)
 			}
 
 			if _, err = io.Copy(zipEntry, stream); err != nil {

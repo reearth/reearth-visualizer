@@ -53,9 +53,9 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 			}
 
-			// Fallback to mock user if debug user not found
+			// Fallback to demo user if debug user not found
 			if u == nil {
-				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
+				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Demo User")
 				if err != nil {
 					uId, _ := user.IDFrom(authInfo.Sub)
 					mockUser = user.New().
@@ -80,7 +80,7 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 				log.Debugfc(ctx, "auth: op: %#v", op)
 
 			} else {
-				log.Errorfc(ctx, "Mock user information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "Demo User information not found: %s", req.URL.Path)
 			}
 
 			c.SetRequest(req.WithContext(ctx))
