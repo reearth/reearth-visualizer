@@ -1,4 +1,4 @@
-import { Loader } from "@googlemaps/js-api-loader";
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import { Card } from "@reearth/app/lib/reearth-widget-ui/components/ui/card";
 import { Input } from "@reearth/app/lib/reearth-widget-ui/components/ui/input";
 import {
@@ -79,16 +79,20 @@ type GooglePlace = {
   layerId?: string;
 };
 
-let loaderInstance: Loader | null = null;
+let isGoogleMapsConfigured = false;
 
-function getLoaderInstance(apiKey: string, language: string): Loader {
-  loaderInstance = new Loader({
-    apiKey,
-    libraries: ["places"],
-    language
-  });
-
-  return loaderInstance;
+async function loadGooglePlaces(
+  apiKey: string,
+  language: string
+): Promise<void> {
+  if (!isGoogleMapsConfigured) {
+    setOptions({
+      key: apiKey,
+      language
+    });
+    isGoogleMapsConfigured = true;
+  }
+  await importLibrary("places");
 }
 
 const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
@@ -137,9 +141,7 @@ const GoogleMapSearch: FC<GoogleMapSearchProps> = ({
     didLoadRef.current = true;
     setError(null);
 
-    const loader = getLoaderInstance(apiToken, language);
-    loader
-      .load()
+    loadGooglePlaces(apiToken, language)
       .then(() => {
         setGoogleLoaded(true);
       })
