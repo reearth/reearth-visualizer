@@ -5,3 +5,5 @@ export * from "./Repeat";
 export * from "./RepeatOnce";
 export * from "./SkipBack";
 export * from "./SkipForward";
+export * from "./Close";
+export * from "./Pegman";

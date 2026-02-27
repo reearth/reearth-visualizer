@@ -119,6 +119,7 @@ import Palette from "./Icons/Palette.svg?react";
 import Paperclip from "./Icons/Paperclip.svg?react";
 import PaperPlaneTilt from "./Icons/PaperPlaneTilt.svg?react";
 import Pause from "./Icons/Pause.svg?react";
+import Pegman from "./Icons/Pegman.svg?react";
 import PencilFilled from "./Icons/PencilFilled.svg?react";
 import PencilLilne from "./Icons/PencilLine.svg?react";
 import PencilSimple from "./Icons/PencilSimple.svg?react";
@@ -322,6 +323,7 @@ export default {
   paperclip: Paperclip,
   paperPlaneTilt: PaperPlaneTilt,
   pause: Pause,
+  pegman: Pegman,
   pencilFilled: PencilFilled,
   pencilLine: PencilLilne,
   pencilSimple: PencilSimple,
