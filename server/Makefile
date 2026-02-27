@@ -104,10 +104,10 @@ run-app:
 	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 run:
-	${DOCKER_COMPOSE_DEV} --profile accounts up reearth-visualizer-dev
+	${DOCKER_COMPOSE_DEV} --profile accounts up --build reearth-visualizer-dev
 
 run-internal:
-	${DOCKER_COMPOSE_DEV} up reearth-visualizer-internal-api
+	${DOCKER_COMPOSE_DEV} up --build reearth-visualizer-internal-api
 
 down:
 	${DOCKER_COMPOSE_DEV} --profile accounts down
