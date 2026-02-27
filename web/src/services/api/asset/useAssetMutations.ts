@@ -1,4 +1,5 @@
-import { FetchResult, useApolloClient, useMutation } from "@apollo/client";
+import { FetchResult } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client/react";
 import { CreateAssetInput, CreateAssetMutation } from "@reearth/services/gql";
 import {
   CREATE_ASSET,
@@ -40,7 +41,7 @@ export const useAssetMutations = () => {
           )
         );
 
-        if (!results || results.some((r) => r.errors)) {
+        if (!results || results.some((r) => r.error)) {
           setNotification({
             type: "error",
             text: t("Failed to add one or more assets.")
@@ -79,7 +80,7 @@ export const useAssetMutations = () => {
         )
       );
 
-      if (!results || results.some((r) => r.errors)) {
+      if (!results || results.some((r) => r.error)) {
         setNotification({
           type: "error",
           text: t("Failed to delete one or more assets.")
@@ -92,7 +93,7 @@ export const useAssetMutations = () => {
       }
 
       return {
-        status: !results || results.some((r) => r.errors) ? "error" : "success"
+        status: !results || results.some((r) => r.error) ? "error" : "success"
       };
     },
     [removeAssetMutation, t, setNotification]

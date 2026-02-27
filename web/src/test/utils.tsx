@@ -1,7 +1,5 @@
-import {
-  MockedProvider as MockedGqlProvider,
-  MockedResponse
-} from "@apollo/client/testing";
+import type { MockedResponse } from "@apollo/client/testing";
+import { MockedProvider as MockedGqlProvider } from "@apollo/client/testing/react";
 import { render as rtlRender } from "@testing-library/react";
 import { vitest } from "vitest";
 
@@ -75,7 +73,7 @@ const render = (
 ) => {
   const Wrapper: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
     return (
-      <MockedGqlProvider mocks={queryMocks} addTypename={false}>
+      <MockedGqlProvider mocks={queryMocks}>
         <ThemeProvider>
           <I18nProvider>{children}</I18nProvider>
         </ThemeProvider>

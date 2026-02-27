@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   SceneWidget,
   WidgetAlignSystemType,
@@ -41,12 +41,12 @@ export const useWidgetMutations = () => {
         };
 
       const [pluginId, extensionId] = id.split("/");
-      const { data, errors } = await addWidgetMutation({
+      const { data, error } = await addWidgetMutation({
         variables: { sceneId: sceneId ?? "", pluginId, extensionId, type }
       });
 
-      if (errors || !data?.addWidget) {
-        console.log("GraphQL: Failed to add widget", errors);
+      if (error || !data?.addWidget) {
+        console.log("GraphQL: Failed to add widget", error);
         setNotification({ type: "error", text: t("Failed to add widget.") });
 
         return { status: "error" };
@@ -81,7 +81,7 @@ export const useWidgetMutations = () => {
         };
       }
 
-      const { data, errors } = await updateWidgetMutation({
+      const { data, error } = await updateWidgetMutation({
         variables: {
           type,
           sceneId,
@@ -100,8 +100,8 @@ export const useWidgetMutations = () => {
         }
       });
 
-      if (errors || !data?.updateWidget) {
-        console.log("GraphQL: Failed to update widget", errors);
+      if (error || !data?.updateWidget) {
+        console.log("GraphQL: Failed to update widget", error);
         setNotification({ type: "error", text: t("Failed to update widget.") });
 
         return { status: "error" };
@@ -135,12 +135,12 @@ export const useWidgetMutations = () => {
         };
       }
 
-      const { data, errors } = await removeWidgetMutation({
+      const { data, error } = await removeWidgetMutation({
         variables: { sceneId: sceneId ?? "", widgetId, type }
       });
 
-      if (errors || !data?.removeWidget) {
-        console.log("GraphQL: Failed to remove widget", errors);
+      if (error || !data?.removeWidget) {
+        console.log("GraphQL: Failed to remove widget", error);
         setNotification({ type: "error", text: t("Failed to remove widget.") });
 
         return { status: "error" };
@@ -180,7 +180,7 @@ export const useWidgetMutations = () => {
         };
       }
 
-      const { data, errors } = await updateWidgetAlignSystemMutation({
+      const { data, error } = await updateWidgetAlignSystemMutation({
         variables: {
           sceneId,
           location: {
@@ -197,10 +197,10 @@ export const useWidgetMutations = () => {
         }
       });
 
-      if (errors || !data?.updateWidgetAlignSystem) {
+      if (error || !data?.updateWidgetAlignSystem) {
         console.log(
           "GraphQL: Failed to update the widget align system",
-          errors
+          error
         );
         setNotification({
           type: "error",

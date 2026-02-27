@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { GetAssetsQueryVariables } from "@reearth/services/gql";
 import { GET_ASSETS } from "@reearth/services/gql/queries/asset";
 import { useMemo } from "react";

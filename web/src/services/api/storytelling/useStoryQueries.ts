@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import { CustomOptions } from "@reearth/services/api/types";
 import { HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION } from "@reearth/services/gql";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
@@ -38,9 +38,8 @@ export const useValidateStoryAlias = () => {
     async (alias: string, storyId?: string) => {
       if (!alias) return null;
 
-      const { data, errors } = await fetchCheckProjectAlias({
+      const { data, error } = await fetchCheckProjectAlias({
         variables: { alias, storyId },
-        errorPolicy: "all",
         context: {
           headers: {
             [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
@@ -48,7 +47,12 @@ export const useValidateStoryAlias = () => {
         }
       });
 
-      if (errors || !data?.checkStoryAlias) {
+      if (error || !data?.checkStoryAlias) {
+        // Extract graphQLErrors for backward compatibility with UI code
+        const errors =
+          error && "errors" in error
+            ? (error.errors as { extensions?: { description?: string } }[])
+            : undefined;
         return { status: "error", errors };
       }
 

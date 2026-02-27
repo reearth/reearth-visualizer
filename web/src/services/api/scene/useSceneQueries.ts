@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import {
   CHECK_SCENE_ALIAS,
   GET_SCENE
@@ -51,9 +51,8 @@ export const useValidateSceneAlias = () => {
     async (alias: string, projectId?: string) => {
       if (!alias) return null;
 
-      const { data, errors } = await fetchCheckSceneAlias({
+      const { data, error } = await fetchCheckSceneAlias({
         variables: { alias, projectId },
-        errorPolicy: "all",
         context: {
           headers: {
             [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
@@ -61,7 +60,12 @@ export const useValidateSceneAlias = () => {
         }
       });
 
-      if (errors || !data?.checkSceneAlias) {
+      if (error || !data?.checkSceneAlias) {
+        // Extract graphQLErrors for backward compatibility with UI code
+        const errors =
+          error && "errors" in error
+            ? (error.errors as { extensions?: { description?: string } }[])
+            : undefined;
         return { status: "error", errors };
       }
 

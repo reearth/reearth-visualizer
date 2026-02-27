@@ -1,5 +1,4 @@
-import { OperationVariables } from "@apollo/client";
-import { GraphQLFormattedError } from "graphql/index";
+import type { ErrorLike, OperationVariables } from "@apollo/client";
 
 export type QueryReturn<T> = {
   data?: T | null | undefined;
@@ -8,7 +7,7 @@ export type QueryReturn<T> = {
 export type MutationReturn<T> = {
   data?: T | null | undefined;
   status: "success" | "error";
-  errors?: readonly GraphQLFormattedError[];
+  error?: ErrorLike;
 };
 
 export type CustomOptions = {

@@ -23,8 +23,8 @@ export const useAreas = (input?: AreasInput, options?: Options) => {
       data: data.data
         ? {
             ...data.data,
-            areas: data.data.areas.filter(
-              (a) => a.code !== TOKYO_SAMPLE_DATA_CITY_CODE
+            areas: (data.data.areas ?? []).filter(
+              (a) => a?.code !== TOKYO_SAMPLE_DATA_CITY_CODE
             )
           }
         : undefined
@@ -51,12 +51,12 @@ export const useAreaDatasets = (
   const nextDatasets = useMemo(
     () =>
       data?.area?.datasets
-        .map((d) =>
-          d.cityCode === TOKYO_SAMPLE_DATA_CITY_CODE
+        ?.map((d) =>
+          d?.cityCode === TOKYO_SAMPLE_DATA_CITY_CODE
             ? { ...d, cityCode: null, city: null }
             : d
         )
-        .sort((a, b) => a.type.order - b.type.order),
+        .sort((a, b) => (a?.type?.order ?? 0) - (b?.type?.order ?? 0)),
     [data]
   );
 

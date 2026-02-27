@@ -1,4 +1,4 @@
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import useLoadMore from "@reearth/app/hooks/useLoadMore";
 import { ManagerLayout } from "@reearth/app/ui/components/ManagerBase";
 import {
