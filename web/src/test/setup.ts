@@ -8,7 +8,7 @@ import { cleanup } from "@testing-library/react";
 import { afterEach, expect, vi } from "vitest";
 
 // Vitest on GitHub Actions requires TransformStream to run tests with Cesium
-import "web-streams-polyfill/es2018";
+import "web-streams-polyfill/polyfill";
 
 declare global {
   namespace Vi {

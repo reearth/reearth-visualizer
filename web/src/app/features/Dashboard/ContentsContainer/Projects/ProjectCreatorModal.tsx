@@ -20,6 +20,7 @@ import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useWorkspace } from "@reearth/services/state";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Project } from "../../type";
@@ -258,8 +259,8 @@ const ProjectCreatorModal: FC<ProjectCreatorModalProps> = ({
 export default ProjectCreatorModal;
 
 const Form = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.large,
   padding: theme.spacing.normal
 }));
@@ -271,8 +272,8 @@ const ContentWrapper = styled("div")(({ theme }) => ({
 }));
 
 const FormInputWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   gap: theme.spacing.smallest,
   width: "100%"
 }));

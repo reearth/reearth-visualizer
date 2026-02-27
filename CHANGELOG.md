@@ -2,6 +2,190 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.14.6 - 2026-02-20
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.14.6 ([#2061](https://github.com/reearth/reearth-visualizer/pull/2061)) [`42f7b5`](https://github.com/reearth/reearth-visualizer/commit/42f7b5)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v14 ([#2047](https://github.com/reearth/reearth-visualizer/pull/2047)) [`a00d3b`](https://github.com/reearth/reearth-visualizer/commit/a00d3b)
+
+#### 
+
+- Add filename to error logs for missing file debugging ([#2060](https://github.com/reearth/reearth-visualizer/pull/2060)) [`70c234`](https://github.com/reearth/reearth-visualizer/commit/70c234)
+- Update oss bucket [`884f30`](https://github.com/reearth/reearth-visualizer/commit/884f30)
+- Update the visualizer&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s Playwright config to match [`4b2ec4`](https://github.com/reearth/reearth-visualizer/commit/4b2ec4)
+- Update [`de071a`](https://github.com/reearth/reearth-visualizer/commit/de071a)
+- Change to oss [`8facce`](https://github.com/reearth/reearth-visualizer/commit/8facce)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update dawidd6&#x2F;action-download-artifact action to v14 ([#2047](https://github.com/reearth/reearth-visualizer/pull/2047)) [`a00d3b`](https://github.com/reearth/reearth-visualizer/commit/a00d3b)
+
+#### 
+
+- Add filename to error logs for missing file debugging ([#2060](https://github.com/reearth/reearth-visualizer/pull/2060)) [`70c234`](https://github.com/reearth/reearth-visualizer/commit/70c234)
+- Update oss bucket [`884f30`](https://github.com/reearth/reearth-visualizer/commit/884f30)
+- Update the visualizer&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s Playwright config to match [`4b2ec4`](https://github.com/reearth/reearth-visualizer/commit/4b2ec4)
+- Update [`de071a`](https://github.com/reearth/reearth-visualizer/commit/de071a)
+- Change to oss [`8facce`](https://github.com/reearth/reearth-visualizer/commit/8facce)
+
+## 1.0.0-beta.14.5 - 2026-02-12
+
+### Web
+
+#### 🚀 Features
+
+- Bumps package version to 1.0.0-beta.14.5 ([#2058](https://github.com/reearth/reearth-visualizer/pull/2058)) [`e7cbeb`](https://github.com/reearth/reearth-visualizer/commit/e7cbeb)
+- Add preset styles for plateau data ([#2046](https://github.com/reearth/reearth-visualizer/pull/2046)) [`21878f`](https://github.com/reearth/reearth-visualizer/commit/21878f)
+
+#### 🔧 Bug Fixes
+
+- Incorrect collect of floating widget ([#2052](https://github.com/reearth/reearth-visualizer/pull/2052)) [`76e2ac`](https://github.com/reearth/reearth-visualizer/commit/76e2ac)
+
+#### Miscellaneous Tasks
+
+- Fix import emotion css issue for local dev ([#2050](https://github.com/reearth/reearth-visualizer/pull/2050)) [`fec9dd`](https://github.com/reearth/reearth-visualizer/commit/fec9dd)
+
+### Server
+
+#### 🚀 Features
+
+- Street view definition ([#2053](https://github.com/reearth/reearth-visualizer/pull/2053)) [`283e79`](https://github.com/reearth/reearth-visualizer/commit/283e79)
+
+### Misc
+
+#### 
+
+- Update1 [`41770f`](https://github.com/reearth/reearth-visualizer/commit/41770f)
+- Update github workflow for allure report [`763ca8`](https://github.com/reearth/reearth-visualizer/commit/763ca8)
+- Update [`9f79a1`](https://github.com/reearth/reearth-visualizer/commit/9f79a1)
+
+### ci
+
+#### 🔧 Bug Fixes
+
+- Separate Cloud Run deploy and traffic routing to avoid stale revision errors ([#2051](https://github.com/reearth/reearth-visualizer/pull/2051)) [`0e0385`](https://github.com/reearth/reearth-visualizer/commit/0e0385)
+
+### 
+
+#### 
+
+- Update1 [`41770f`](https://github.com/reearth/reearth-visualizer/commit/41770f)
+- Update github workflow for allure report [`763ca8`](https://github.com/reearth/reearth-visualizer/commit/763ca8)
+- Update [`9f79a1`](https://github.com/reearth/reearth-visualizer/commit/9f79a1)
+
+## 1.0.0-beta.14.4 - 2026-02-04
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Story panel&[#39](https://github.com/reearth/reearth-visualizer/pull/39);s scroll event doesn&[#39](https://github.com/reearth/reearth-visualizer/pull/39);t work after switch editor tabs ([#2044](https://github.com/reearth/reearth-visualizer/pull/2044)) [`c8ce05`](https://github.com/reearth/reearth-visualizer/commit/c8ce05)
+
+#### Miscellaneous Tasks
+
+- Bump up package version to 1.0.0-beta.14.4 ([#2045](https://github.com/reearth/reearth-visualizer/pull/2045)) [`11c585`](https://github.com/reearth/reearth-visualizer/commit/11c585)
+- Upgrade major version package and fix test failures in upgrade phase ([#2038](https://github.com/reearth/reearth-visualizer/pull/2038)) [`a20b8f`](https://github.com/reearth/reearth-visualizer/commit/a20b8f)
+- Downgrade lexical to stable version 0.38.2 ([#2039](https://github.com/reearth/reearth-visualizer/pull/2039)) [`96b011`](https://github.com/reearth/reearth-visualizer/commit/96b011)
+
+## 1.0.0-beta.14.3 - 2026-02-03
+
+### Web
+
+#### Miscellaneous Tasks
+
+- Bump up to 1.0.0-beta.14.3 ([#2043](https://github.com/reearth/reearth-visualizer/pull/2043)) [`ed74ad`](https://github.com/reearth/reearth-visualizer/commit/ed74ad)
+
+## 1.0.0-beta.14.2 - 2026-02-02
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Unexpected remount of visualizer ([#2034](https://github.com/reearth/reearth-visualizer/pull/2034)) [`560c53`](https://github.com/reearth/reearth-visualizer/commit/560c53)
+
+#### ✨ Refactor
+
+- Remove default story name from tabs ([#2040](https://github.com/reearth/reearth-visualizer/pull/2040)) [`5c7595`](https://github.com/reearth/reearth-visualizer/commit/5c7595)
+- Enable custom domain extension base on policy check ([#2037](https://github.com/reearth/reearth-visualizer/pull/2037)) [`cb0509`](https://github.com/reearth/reearth-visualizer/commit/cb0509)
+- Improve exports for fast refresh([#2013](https://github.com/reearth/reearth-visualizer/pull/2013)) [`c4a154`](https://github.com/reearth/reearth-visualizer/commit/c4a154)
+
+#### 🧪 Testing
+
+- Added tests for photo overlay workflow ([#2041](https://github.com/reearth/reearth-visualizer/pull/2041)) [`6da78d`](https://github.com/reearth/reearth-visualizer/commit/6da78d)
+
+#### Miscellaneous Tasks
+
+- Bump up to 1.0.0-beta.14.2 ([#2035](https://github.com/reearth/reearth-visualizer/pull/2035)) [`8a8f3c`](https://github.com/reearth/reearth-visualizer/commit/8a8f3c)
+
+### Server
+
+#### 🚀 Features
+
+- Added GCS Read permission error ([#1801](https://github.com/reearth/reearth-visualizer/pull/1801)) [`491510`](https://github.com/reearth/reearth-visualizer/commit/491510)
+
+#### 🔧 Bug Fixes
+
+- Add prop to PolicyCheckPayload for showing custom domain section ([#2036](https://github.com/reearth/reearth-visualizer/pull/2036)) [`a52608`](https://github.com/reearth/reearth-visualizer/commit/a52608)
+
+### Misc
+
+#### Miscellaneous Tasks
+
+- Update uesteibar&#x2F;reviewer-lottery action to v4 ([#2031](https://github.com/reearth/reearth-visualizer/pull/2031)) [`e59427`](https://github.com/reearth/reearth-visualizer/commit/e59427)
+- Update github artifact actions ([#1807](https://github.com/reearth/reearth-visualizer/pull/1807)) [`86ffa9`](https://github.com/reearth/reearth-visualizer/commit/86ffa9)
+- Update step-security&#x2F;changed-files action to v47 ([#2029](https://github.com/reearth/reearth-visualizer/pull/2029)) [`27e3ff`](https://github.com/reearth/reearth-visualizer/commit/27e3ff)
+- Update toshimaru&#x2F;auto-author-assign action to v3 ([#2030](https://github.com/reearth/reearth-visualizer/pull/2030)) [`a7ae25`](https://github.com/reearth/reearth-visualizer/commit/a7ae25)
+- Update google-github-actions&#x2F;setup-gcloud action to v3 ([#2026](https://github.com/reearth/reearth-visualizer/pull/2026)) [`7eb960`](https://github.com/reearth/reearth-visualizer/commit/7eb960)
+- Update google-github-actions&#x2F;deploy-cloudrun action to v3 ([#2025](https://github.com/reearth/reearth-visualizer/pull/2025)) [`1f0ddb`](https://github.com/reearth/reearth-visualizer/commit/1f0ddb)
+- Update dawidd6&#x2F;action-download-artifact action to v3 ([#1653](https://github.com/reearth/reearth-visualizer/pull/1653)) [`0e6aae`](https://github.com/reearth/reearth-visualizer/commit/0e6aae)
+- Update actions&#x2F;setup-node action to v6 ([#1862](https://github.com/reearth/reearth-visualizer/pull/1862)) [`343ac1`](https://github.com/reearth/reearth-visualizer/commit/343ac1)
+- Update google-github-actions&#x2F;auth action to v3 ([#2024](https://github.com/reearth/reearth-visualizer/pull/2024)) [`b77651`](https://github.com/reearth/reearth-visualizer/commit/b77651)
+- Update dawidd6&#x2F;action-download-artifact action to v12 ([#2022](https://github.com/reearth/reearth-visualizer/pull/2022)) [`7da573`](https://github.com/reearth/reearth-visualizer/commit/7da573)
+- Update actions&#x2F;cache action to v5 ([#2021](https://github.com/reearth/reearth-visualizer/pull/2021)) [`04edb8`](https://github.com/reearth/reearth-visualizer/commit/04edb8)
+- Update golangci&#x2F;golangci-lint-action action to v9 ([#2023](https://github.com/reearth/reearth-visualizer/pull/2023)) [`8115a5`](https://github.com/reearth/reearth-visualizer/commit/8115a5)
+- Update amannn&#x2F;action-semantic-pull-request action to v6 ([#1967](https://github.com/reearth/reearth-visualizer/pull/1967)) [`ddbd4b`](https://github.com/reearth/reearth-visualizer/commit/ddbd4b)
+- Update actions&#x2F;github-script action to v8 ([#1960](https://github.com/reearth/reearth-visualizer/pull/1960)) [`71fac1`](https://github.com/reearth/reearth-visualizer/commit/71fac1)
+- Update actions&#x2F;checkout action to v6 ([#1959](https://github.com/reearth/reearth-visualizer/pull/1959)) [`ae644b`](https://github.com/reearth/reearth-visualizer/commit/ae644b)
+- Update actions&#x2F;create-github-app-token action to v2 ([#1629](https://github.com/reearth/reearth-visualizer/pull/1629)) [`3b0163`](https://github.com/reearth/reearth-visualizer/commit/3b0163)
+
+### ci
+
+#### Miscellaneous Tasks
+
+- Ignore some ci when branch name start with renovate&#x2F;* ([#2020](https://github.com/reearth/reearth-visualizer/pull/2020)) [`c8d4a3`](https://github.com/reearth/reearth-visualizer/commit/c8d4a3)
+- Update actions&#x2F;labeler action to v6 ([#1815](https://github.com/reearth/reearth-visualizer/pull/1815)) [`83e0de`](https://github.com/reearth/reearth-visualizer/commit/83e0de)
+
+### 
+
+#### Miscellaneous Tasks
+
+- Update uesteibar&#x2F;reviewer-lottery action to v4 ([#2031](https://github.com/reearth/reearth-visualizer/pull/2031)) [`e59427`](https://github.com/reearth/reearth-visualizer/commit/e59427)
+- Update github artifact actions ([#1807](https://github.com/reearth/reearth-visualizer/pull/1807)) [`86ffa9`](https://github.com/reearth/reearth-visualizer/commit/86ffa9)
+- Update step-security&#x2F;changed-files action to v47 ([#2029](https://github.com/reearth/reearth-visualizer/pull/2029)) [`27e3ff`](https://github.com/reearth/reearth-visualizer/commit/27e3ff)
+- Update toshimaru&#x2F;auto-author-assign action to v3 ([#2030](https://github.com/reearth/reearth-visualizer/pull/2030)) [`a7ae25`](https://github.com/reearth/reearth-visualizer/commit/a7ae25)
+- Update google-github-actions&#x2F;setup-gcloud action to v3 ([#2026](https://github.com/reearth/reearth-visualizer/pull/2026)) [`7eb960`](https://github.com/reearth/reearth-visualizer/commit/7eb960)
+- Update google-github-actions&#x2F;deploy-cloudrun action to v3 ([#2025](https://github.com/reearth/reearth-visualizer/pull/2025)) [`1f0ddb`](https://github.com/reearth/reearth-visualizer/commit/1f0ddb)
+- Update dawidd6&#x2F;action-download-artifact action to v3 ([#1653](https://github.com/reearth/reearth-visualizer/pull/1653)) [`0e6aae`](https://github.com/reearth/reearth-visualizer/commit/0e6aae)
+- Update actions&#x2F;setup-node action to v6 ([#1862](https://github.com/reearth/reearth-visualizer/pull/1862)) [`343ac1`](https://github.com/reearth/reearth-visualizer/commit/343ac1)
+- Update google-github-actions&#x2F;auth action to v3 ([#2024](https://github.com/reearth/reearth-visualizer/pull/2024)) [`b77651`](https://github.com/reearth/reearth-visualizer/commit/b77651)
+- Update dawidd6&#x2F;action-download-artifact action to v12 ([#2022](https://github.com/reearth/reearth-visualizer/pull/2022)) [`7da573`](https://github.com/reearth/reearth-visualizer/commit/7da573)
+- Update actions&#x2F;cache action to v5 ([#2021](https://github.com/reearth/reearth-visualizer/pull/2021)) [`04edb8`](https://github.com/reearth/reearth-visualizer/commit/04edb8)
+- Update golangci&#x2F;golangci-lint-action action to v9 ([#2023](https://github.com/reearth/reearth-visualizer/pull/2023)) [`8115a5`](https://github.com/reearth/reearth-visualizer/commit/8115a5)
+- Update amannn&#x2F;action-semantic-pull-request action to v6 ([#1967](https://github.com/reearth/reearth-visualizer/pull/1967)) [`ddbd4b`](https://github.com/reearth/reearth-visualizer/commit/ddbd4b)
+- Update actions&#x2F;github-script action to v8 ([#1960](https://github.com/reearth/reearth-visualizer/pull/1960)) [`71fac1`](https://github.com/reearth/reearth-visualizer/commit/71fac1)
+- Update actions&#x2F;checkout action to v6 ([#1959](https://github.com/reearth/reearth-visualizer/pull/1959)) [`ae644b`](https://github.com/reearth/reearth-visualizer/commit/ae644b)
+- Update actions&#x2F;create-github-app-token action to v2 ([#1629](https://github.com/reearth/reearth-visualizer/pull/1629)) [`3b0163`](https://github.com/reearth/reearth-visualizer/commit/3b0163)
+
 ## 1.0.0-beta.14.1 - 2026-01-22
 
 ### Web

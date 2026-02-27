@@ -121,6 +121,8 @@ export const WORKSPACE_POLICY_CHECK = gql(`
       workspaceId
       enableToCreatePrivateProject
       disableOperationByOverUsedSeat
+      enableCustomDomainCreation
+      overCustomDomainCount
     }
   }
 `);

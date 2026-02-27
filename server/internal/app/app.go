@@ -68,8 +68,8 @@ func initEcho(
 
 	var wrapHandler func(http.Handler) http.Handler
 	if cfg.Config.UseMockAuth() {
-		// Mock User Mode
-		log.Infof("[Auth] Mock User Mode")
+		// Demo User Mode
+		log.Infof("[Auth] Demo User Mode")
 
 		log.Infof("Using mock auth for local development")
 		wrapHandler = func(next http.Handler) http.Handler {
@@ -142,7 +142,7 @@ func initEcho(
 	apiRoot.GET("/ping", Ping(), privateCache)
 	apiRoot.GET("/health", HealthCheck(cfg.Config, "v1.0.0"))
 
-	// Registering an initial mock user (for local development)
+	// Registering an initial demo user (for local development)
 	apiRoot.GET("/mockuser", MockUser())
 
 	// Asset API for handling GCP files

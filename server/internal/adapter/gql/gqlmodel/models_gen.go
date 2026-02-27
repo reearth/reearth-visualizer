@@ -663,6 +663,8 @@ type PolicyCheckInput struct {
 type PolicyCheckPayload struct {
 	WorkspaceID                    ID   `json:"workspaceId"`
 	EnableToCreatePrivateProject   bool `json:"enableToCreatePrivateProject"`
+	EnableCustomDomainCreation     bool `json:"enableCustomDomainCreation"`
+	OverCustomDomainCount          bool `json:"overCustomDomainCount"`
 	DisableOperationByOverUsedSeat bool `json:"disableOperationByOverUsedSeat"`
 }
 

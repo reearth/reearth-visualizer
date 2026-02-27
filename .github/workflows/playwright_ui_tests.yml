@@ -1,4 +1,4 @@
-name: Playwright UI Tests On Dev
+name: Playwright E2E Tests
 
 on:
   workflow_dispatch:
@@ -13,39 +13,54 @@ on:
         description: "URL to run tests against"
         type: string
         required: false
+  pull_request:
+    paths:
+      - "e2e/**"
+      - "web/**"
+      - ".github/workflows/playwright_ui_tests.yml"
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   test:
+    permissions:
+      contents: read
+      id-token: write
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.56.1-noble
+    environment: dev
     env:
       BASE_URL: ${{ inputs.url || secrets.REEARTH_WEB_E2E_BASEURL }}
+      BUCKET: reearth-oss-visualizer-allure-reports
     defaults:
       run:
         working-directory: e2e
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        uses: actions/checkout@v6
 
-      - name: Cache Playwright browsers
-        uses: actions/cache@8b402f58fbc84540c8b491a91e594a4576fec3d7 # v5.0.2
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: playwright-${{ runner.os }}-
       - name: Setup Node.js
-        uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+        uses: actions/setup-node@v6
         with:
-          node-version: 20
+          node-version: "24"
 
-      - name: Install dependencies and Playwright browsers
-        run: |
-          npm ci
-          npx playwright install --with-deps
+      - name: Cache node modules
+        uses: actions/cache@v5
+        id: cache-node-modules
+        with:
+          path: e2e/node_modules
+          key: e2e-node-modules-${{ runner.os }}-${{ hashFiles('e2e/package-lock.json') }}
+          restore-keys: |
+            e2e-node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: npm ci
+
       - name: Run Playwright tests
         env:
           REEARTH_E2E_EMAIL: ${{ secrets.REEARTH_E2E_EMAIL }}
@@ -54,30 +69,151 @@ jobs:
           USE_IAP_AUTH: false
         run: npm run test:ui
 
-      - name: Upload global setup error screenshot
-        if: failure()
-        uses: actions/upload-artifact@v4
+      - name: Authenticate to Google Cloud for GCS
+        if: always()
+        uses: google-github-actions/auth@v3
         with:
-          name: global-setup-error
-          path: e2e/global-setup-error.png
-          if-no-files-found: ignore
-          retention-days: 5
+          service_account: ${{ secrets.GC_SA_EMAIL }}
+          workload_identity_provider: ${{ secrets.GC_WORKLOAD_IDENTITY_PROVIDER }}
+
+      - name: Setup Google Cloud SDK
+        if: always()
+        uses: google-github-actions/setup-gcloud@v3
+
+      - name: Check Allure Results
+        if: always()
+        id: check-results
+        run: |
+          if [ -d "./out/allure-results" ] && [ "$(ls -A ./out/allure-results)" ]; then
+            echo "has_results=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_results=false" >> "$GITHUB_OUTPUT"
+            echo "No allure results found, skipping report steps."
+          fi
+
+      - name: Load dashboard index and history from GCS
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        run: |
+          # Download index or create empty one if it does not exist
+          if gsutil cp "gs://$BUCKET/index.json" /tmp/index.json 2>/tmp/gsutil_index_err.log; then
+            echo "Downloaded existing index.json from GCS."
+          else
+            if grep -qiE "No URLs matched|Matched no objects|404" /tmp/gsutil_index_err.log; then
+              echo "No existing index.json found in bucket, starting with empty index."
+              echo '[]' > /tmp/index.json
+            else
+              echo "Failed to download index.json from GCS. Error output:"
+              cat /tmp/gsutil_index_err.log
+              rm -f /tmp/gsutil_index_err.log
+              exit 1
+            fi
+          fi
+          rm -f /tmp/gsutil_index_err.log || true
+
+          # Get most recent run for history
+          MOST_RECENT_RUN=$(python3 -c "
+          import json, sys
+          try:
+              with open('/tmp/index.json') as f:
+                  data = json.load(f)
+              print(data[0]['id'] if data else '')
+          except Exception:
+              print('')
+          ")
+
+          if [ -n "$MOST_RECENT_RUN" ]; then
+            echo "Found previous run: $MOST_RECENT_RUN"
+            mkdir -p ./out/allure-results/history
+            if ! gsutil -m rsync -r "gs://$BUCKET/runs/$MOST_RECENT_RUN/history/" ./out/allure-results/history/ 2>/tmp/gsutil_history_err.log; then
+              if grep -qE "Matched 0 objects|No URLs matched" /tmp/gsutil_history_err.log; then
+                echo "No history objects found for run $MOST_RECENT_RUN; continuing without history."
+              else
+                echo "Error syncing history from GCS:" >&2
+                cat /tmp/gsutil_history_err.log >&2
+              fi
+            fi
+            rm -f /tmp/gsutil_history_err.log || true
+          else
+            echo "No previous runs, starting fresh"
+          fi
 
       - name: Generate Allure Report
-        if: always()
-        run: npm run allure:generate
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        run: rm -rf ./out/allure-report; npx allure generate --output ./out/allure-report ./out/allure-results
 
-      - name: Upload artifact - Allure Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-report
-          path: e2e/allure-report/
-          retention-days: 10
-      - name: Upload artifact - Allure Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: e2e/allure-results/
-          retention-days: 10
+      - name: Determine Run ID
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        id: run-id
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            RUN_ID="pr-${{ github.event.pull_request.number }}"
+            BRANCH="PR #${{ github.event.pull_request.number }}"
+            COMMIT="${{ github.event.pull_request.head.sha }}"
+            LABEL="Pull request #${{ github.event.pull_request.number }}"
+          else
+            SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+            RUN_ID="run-${SHORT_SHA}-${{ github.run_number }}"
+            BRANCH="${{ github.ref_name }}"
+            COMMIT="${{ github.sha }}"
+            LABEL="${{ github.ref_name }} #${{ github.run_number }}"
+          fi
+          echo "run_id=$RUN_ID" >> "$GITHUB_OUTPUT"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "commit=$COMMIT" >> "$GITHUB_OUTPUT"
+          echo "label=$LABEL" >> "$GITHUB_OUTPUT"
+
+      - name: Upload Allure Report to GCS
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        env:
+          RUN_ID: ${{ steps.run-id.outputs.run_id }}
+        run: |
+          gsutil -m rsync -r -d ./out/allure-report "gs://$BUCKET/runs/$RUN_ID/"
+          if [ -f "./out/allure-report/widgets/summary.json" ]; then
+            gsutil cp ./out/allure-report/widgets/summary.json "gs://$BUCKET/runs/$RUN_ID/summary.json"
+          fi
+
+      - name: Update dashboard index.json
+        if: always() && steps.check-results.outputs.has_results == 'true'
+        env:
+          RUN_ID: ${{ steps.run-id.outputs.run_id }}
+          BRANCH: ${{ steps.run-id.outputs.branch }}
+          COMMIT: ${{ steps.run-id.outputs.commit }}
+          LABEL: ${{ steps.run-id.outputs.label }}
+        run: |
+          python3 -c "
+          import json, os
+          from datetime import datetime, timezone
+
+          with open('/tmp/index.json') as f:
+              runs = json.load(f)
+
+          run_id = os.environ['RUN_ID']
+          label = os.environ['LABEL']
+          branch = os.environ['BRANCH']
+          commit = os.environ['COMMIT']
+
+          runs = [r for r in runs if r.get('id') != run_id]
+
+          new_entry = {
+              'id': run_id,
+              'label': label,
+              'branch': branch,
+              'commit': commit,
+              'createdAt': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+              'path': f'runs/{run_id}/index.html'
+          }
+
+          runs.insert(0, new_entry)
+          runs = runs[:50]
+
+          with open('/tmp/index.json', 'w') as f:
+              json.dump(runs, f, indent=2)
+          "
+
+          OBJECT="gs://$BUCKET/index.json"
+          GEN=$(gsutil stat "$OBJECT" 2>/dev/null | awk '/Generation:/ {print $2}' || true)
+          if [ -z "$GEN" ]; then GEN=0; fi
+
+          gsutil -h "Content-Type:application/json" -h "Cache-Control:no-cache" \
+            -h "x-goog-if-generation-match:${GEN}" \
+            cp /tmp/index.json "$OBJECT"

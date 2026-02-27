@@ -1,4 +1,5 @@
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { Search, X } from "lucide-react";
 import { FC } from "react";
 import { createPortal } from "react-dom";
@@ -104,17 +105,17 @@ const MapGoogleSearch: FC = () => {
 export default MapGoogleSearch;
 
 const Container = styled("div")<{ show: boolean }>(({ show }) => ({
-  position: "relative",
+  position: css.position.relative,
   display: show ? "flex" : "none",
-  alignItems: "center",
+  alignItems: css.alignItems.center,
   flex: "0 1 419px", // flex-grow: 0, flex-shrink: 1, flex-basis: 419px
   maxWidth: "419px",
   minWidth: "200px"
 }));
 
 const SearchBox = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
   width: "100%",
   minHeight: "28px",
   background: theme.bg[1],
@@ -124,8 +125,8 @@ const SearchBox = styled("div")(({ theme }) => ({
 }));
 
 const InputWrapper = styled("div")(() => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: "8px",
   height: "18px"
 }));
@@ -141,16 +142,16 @@ const StyledInput = styled("input")(({ theme }) => ({
     color: theme.content.weak
   },
   "&:disabled": {
-    cursor: "not-allowed",
+    cursor: css.cursor.notAllowed,
     opacity: 0.5
   }
 }));
 
 const SearchIconWrapper = styled("div")<{ clickable?: boolean }>(
   ({ theme, clickable }) => ({
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    display: css.display.flex,
+    alignItems: css.alignItems.center,
+    justifyContent: css.justifyContent.center,
     color: theme.content.weak,
     flexShrink: 0,
     cursor: clickable ? "pointer" : "default",
@@ -164,12 +165,12 @@ const SearchIconWrapper = styled("div")<{ clickable?: boolean }>(
 );
 
 const SuggestionsList = styled("ul")(({ theme }) => ({
-  position: "fixed",
+  position: css.position.fixed,
   listStyle: "none",
   margin: 0,
   padding: 0,
   maxHeight: "240px",
-  overflowY: "auto",
+  overflowY: css.overflow.auto,
   borderRadius: theme.radius.small,
   background: theme.bg[2],
   border: `1px solid ${theme.outline.weak}`,
@@ -180,7 +181,7 @@ const SuggestionsList = styled("ul")(({ theme }) => ({
 
 const SuggestionItem = styled("li")(({ theme }) => ({
   padding: `${theme.spacing.small}px`,
-  cursor: "pointer",
+  cursor: css.cursor.pointer,
   fontSize: theme.fonts.sizes.body,
   color: theme.content.main,
   transition: "background 0.2s",

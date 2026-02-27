@@ -1,6 +1,7 @@
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled, useTheme } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC } from "react";
 
 const NotFound: FC = () => {
@@ -27,17 +28,17 @@ const NotFound: FC = () => {
 export default NotFound;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   height: "100%",
-  flexDirection: "column",
+  flexDirection: css.flexDirection.column,
   padding: theme.spacing.small
 }));
 
 const EmptyContent = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
+  display: css.display.flex,
+  flexDirection: css.flexDirection.column,
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.center,
   gap: theme.spacing.normal,
   margin: "auto"
 }));

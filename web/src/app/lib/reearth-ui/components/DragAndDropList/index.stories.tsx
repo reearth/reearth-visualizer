@@ -1,4 +1,5 @@
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { Meta, StoryFn } from "@storybook/react-vite";
 import { ReactNode, useState } from "react";
 
@@ -17,10 +18,10 @@ const meta: Meta<DragAndDropListProps<Item>> = {
 export default meta;
 
 const MockItem = styled("div")(({ theme }) => ({
-  display: "flex",
+  display: css.display.flex,
   gap: theme.spacing.small,
-  alignItems: "center",
-  justifyContent: "flex-start",
+  alignItems: css.alignItems.center,
+  justifyContent: css.justifyContent.flexStart,
   padding: theme.spacing.smallest,
   border: theme.outline.weakest,
   borderRadius: theme.radius.small,
@@ -51,8 +52,8 @@ export const Default: StoryFn = () => {
     <div
       style={{
         padding: "24px",
-        display: "flex",
-        justifyContent: "space-around"
+        display: css.display.flex,
+        justifyContent: css.justifyContent.spaceAround
       }}
     >
       <DefaultComponent />
@@ -105,8 +106,8 @@ export const Handle: StoryFn = () => {
     <div
       style={{
         padding: "24px",
-        display: "flex",
-        justifyContent: "space-around"
+        display: css.display.flex,
+        justifyContent: css.justifyContent.spaceAround
       }}
     >
       <HandleComponent handleClassName={handleClassName} />
@@ -154,8 +155,8 @@ export const Shared: StoryFn = () => {
     <div
       style={{
         padding: "24px",
-        display: "flex",
-        justifyContent: "space-around"
+        display: css.display.flex,
+        justifyContent: css.justifyContent.spaceAround
       }}
     >
       <SharedComponent />
@@ -168,8 +169,8 @@ export const Copy: StoryFn = () => {
     <div
       style={{
         padding: "24px",
-        display: "flex",
-        justifyContent: "space-around"
+        display: css.display.flex,
+        justifyContent: css.justifyContent.spaceAround
       }}
     >
       <SharedComponent group={{ name: "shared", pull: "clone" }} />

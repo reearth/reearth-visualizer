@@ -135,17 +135,8 @@ export default (alias?: string) => {
       }
     }
 
-    const floatingWidgets = data?.widgets
-      .filter((w) => !widgetsInWas.has(w.id))
-      .map(
-        (w): InternalWidget => ({
-          id: w.id,
-          extended: !!w.extended,
-          pluginId: w.pluginId,
-          extensionId: w.extensionId,
-          property: processProperty(w.property)
-        })
-      );
+    // Memo: floating widget is deprecated, we will remove it later
+    const floatingWidgets: InternalWidget[] = [];
 
     const widgets = data?.widgets
       .filter((w) => widgetsInWas.has(w.id))

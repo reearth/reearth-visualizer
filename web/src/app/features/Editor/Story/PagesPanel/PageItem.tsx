@@ -5,6 +5,7 @@ import { isEmptyString } from "@reearth/app/utils/string";
 import type { Page } from "@reearth/services/api/storytelling";
 import { useT } from "@reearth/services/i18n/hooks";
 import { styled } from "@reearth/services/theme";
+import { css } from "@reearth/services/theme/reearthTheme/common";
 import { FC, useCallback, useMemo, useState } from "react";
 
 import { useStoryPage } from "../context";
@@ -124,11 +125,11 @@ const PageItem: FC<PageItemProps> = ({
 export default PageItem;
 
 const Wrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
+  display: css.display.flex,
+  alignItems: css.alignItems.center,
   gap: theme.spacing.micro,
   width: "100%",
-  overflowX: "hidden"
+  overflowX: css.overflow.hidden
 }));
 
 const PageCount = styled("div")(({ theme }) => ({
@@ -143,7 +144,7 @@ const TitleWrapper = styled("div")(({ theme }) => ({
   color: theme.content.main,
   fontSize: theme.fonts.sizes.body,
   fontWeight: theme.fonts.weight.regular,
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  whiteSpace: "nowrap"
+  overflow: css.overflow.hidden,
+  textOverflow: css.textOverflow.ellipsis,
+  whiteSpace: css.whiteSpace.nowrap
 }));

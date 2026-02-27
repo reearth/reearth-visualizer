@@ -34,7 +34,8 @@ help:
 	@echo "  dev-install       Install dev tools"
 	@echo "  dev               Run the application with hot reload"
 	@echo "  run-app           Run the application"
-	@echo "  run               Start dev server with Docker Compose"
+	@echo "  run               Start dev server with Docker Compose (includes accounts API)"
+	@echo "  run-local         Start dev server without accounts API (use with local reearth-accounts)"
 	@echo "  run-db            Start MongoDB with Docker Compose"
 	@echo "  run-reset         Reset MongoDB data and add mock user"
 	@echo "  reset             Reset database and GCS, reinitialize with mock data"
@@ -46,7 +47,7 @@ help:
 	@echo "  gql               Generate GraphQL code"
 	@echo "  schematyper       Generate schema using schematyper"
 	@echo "  deep-copy         Generate deep-copy code for Initializer"
-	@echo "  mockuser          Create a mock user"
+	@echo "  mockuser-accounts Create a mock user via accounts API"
 	@echo "  up-gcs            Start fake GCS server"
 	@echo "  down-gcs          Stop fake GCS server"
 	@echo "  down              Stop Docker Compose services"
@@ -103,10 +104,13 @@ run-app:
 	go run -ldflags="-X main.version=0.0.1" ./cmd/reearth
 
 run:
+	${DOCKER_COMPOSE_DEV} --profile accounts up reearth-visualizer-dev
+
+run-local:
 	${DOCKER_COMPOSE_DEV} up reearth-visualizer-dev
 
 down:
-	${DOCKER_COMPOSE_DEV} down
+	${DOCKER_COMPOSE_DEV} --profile accounts down
 
 clean:
 	go clean -modcache
@@ -233,13 +237,14 @@ init:
 	make init-gcs
 	@echo ""
 	@echo "==== Creating mock user ===="
-	make mockuser
+	make mockuser-accounts
 	@echo ""
 
-mockuser:
+mockuser-accounts:
 	curl -s -D - -o /dev/null \
 		-H 'Content-Type: application/json' \
-		http://localhost:8080/api/mockuser | head -n 1
+		-d '{"query":"mutation($$input:SignupInput!){signup(input:$$input){user{id name email}}}","variables":{"input":{"email":"demo@example.com","name":"Demo User","password":"Passw0rd!"}}}' \
+		http://localhost:8090/api/graphql | head -n 1
 
 init-gcs:
 	curl -s -D - -o /dev/null \
@@ -270,5 +275,5 @@ destroy:
 		echo "✗ Operation cancelled"; \
 	fi
 
-.PHONY: default help lint lint-docker test test-docker test-debug e2e build dev-install dev run-app run-db stop-db run-reset run-clean-start clean \
-        gql mockuser schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-with-key
+.PHONY: default help lint lint-docker test test-docker test-debug e2e build dev-install dev run-app run run-local run-db stop-db run-reset run-clean-start clean \
+        gql mockuser-accounts schematyper deep-copy up-gcs down-gcs generate reset init init-gcs destroy down migrate migrate-with-key
