@@ -202,7 +202,7 @@ func MockUser() echo.HandlerFunc {
 		controller := http1.NewUserController(uc.User)
 
 		input := http1.SignupInput{
-			Username: "Mock User",
+			Username: "Demo User",
 			Email:    "mock@example.com",
 		}
 

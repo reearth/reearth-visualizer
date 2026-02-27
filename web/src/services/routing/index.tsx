@@ -25,43 +25,44 @@ const GraphQLPlayground = lazy(
 
 const router = createBrowserRouter([
   {
-    path: "dashboard/:workspaceId/",
+    path: "/dashboard/:workspaceId",
     element: <Dashboard />
   },
   {
-    path: "dashboard/:workspaceId/:tab",
+    path: "/dashboard/:workspaceId/:tab",
     element: <Dashboard />
   },
   {
-    path: "scene/:sceneId/:tab",
+    path: "/scene/:sceneId/:tab",
     element: <Editor />
   },
   {
-    path: "settings/projects/:projectId/:tab?/:subId?",
+    path: "/settings/projects/:projectId/:tab?/:subId?",
     element: <ProjectSettings />
   },
   {
-    path: "settings/account",
+    path: "/settings/account",
     element: <AccountSettingPage />
   },
   {
-    path: "settings/workspaces/:workspaceId",
+    path: "/settings/workspaces/:workspaceId",
     element: <WorkspaceSettingPage tab="workspace" />
   },
   {
-    path: "graphql",
+    path: "/graphql",
     element: <GraphQLPlayground />
   },
   {
     index: true,
+    path: "/",
     element: <RootPage />
   },
   {
-    path: "auth/*",
+    path: "/auth/*",
     element: <RootPage />
   },
   {
-    path: "plugin-playground",
+    path: "/plugin-playground",
     element: <PluginPlaygroundPage />
   },
   {

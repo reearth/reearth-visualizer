@@ -1,13 +1,11 @@
-import {
-  ApolloProvider,
-  ApolloClient,
-  ApolloLink,
-  InMemoryCache
-} from "@apollo/client";
+import { ApolloClient, ApolloLink, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client/react";
+import { useAuth } from "@reearth/services/auth/useAuth";
 import {
   GQLTask,
   useAddApiTask,
-  useRemoveApiTask
+  useRemoveApiTask,
+  useSetError
 } from "@reearth/services/state";
 import { useCallback, type ReactNode } from "react";
 
@@ -85,19 +83,22 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
     [removeApiTask]
   );
 
+  // Call hooks at component level, then pass to link factories
+  const { getAccessToken } = useAuth();
+  const { setErrors } = useSetError();
+
   const client = new ApolloClient({
-    uri: endpoint,
     link: ApolloLink.from([
       taskLink(addTask, removeTask),
-      errorLink(),
+      errorLink(setErrors),
       sentryLink(endpoint),
-      authLink(),
+      authLink(getAccessToken),
       langLink(),
       // https://github.com/apollographql/apollo-client/issues/6011#issuecomment-619468320
       uploadLink(endpoint) as unknown as ApolloLink
     ]),
     cache,
-    connectToDevTools: import.meta.env.DEV
+    devtools: { enabled: import.meta.env.DEV }
   });
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;

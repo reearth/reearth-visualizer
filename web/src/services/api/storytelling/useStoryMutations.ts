@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   CreateStoryInput,
@@ -29,13 +29,13 @@ export const useStoryMutations = () => {
     async (
       input: CreateStoryInput
     ): Promise<MutationReturn<CreateStoryMutation>> => {
-      const { data, errors } = await createStoryMutation({
+      const { data, error } = await createStoryMutation({
         variables: { input }
       });
-      if (errors || !data?.createStory?.story?.id) {
+      if (error || !data?.createStory?.story?.id) {
         setNotification({ type: "error", text: t("Failed to create story.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -53,13 +53,13 @@ export const useStoryMutations = () => {
   const updateStory = useCallback(
     async (input: UpdateStoryInput) => {
       if (!input.storyId) return { status: "error" };
-      const { data, errors } = await updateStoryMutation({
+      const { data, error } = await updateStoryMutation({
         variables: { input }
       });
-      if (errors || !data?.updateStory) {
+      if (error || !data?.updateStory) {
         setNotification({ type: "error", text: t("Failed to update story.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -79,11 +79,11 @@ export const useStoryMutations = () => {
 
       const gqlStatus = toGqlStatus(s);
 
-      const { data, errors } = await publishStoryMutation({
+      const { data, error } = await publishStoryMutation({
         variables: { storyId, alias, status: gqlStatus }
       });
 
-      if (errors || !data?.publishStory) {
+      if (error || !data?.publishStory) {
         setNotification({ type: "error", text: t("Failed to publish story.") });
 
         return { status: "error" };
@@ -114,11 +114,11 @@ export const useStoryMutations = () => {
 
       const gqlStatus = toGqlStatus(s);
 
-      const { data, errors } = await publishStoryMutation({
+      const { data, error } = await publishStoryMutation({
         variables: { storyId, alias, status: gqlStatus }
       });
 
-      if (errors || !data?.publishStory) {
+      if (error || !data?.publishStory) {
         setNotification({ type: "error", text: t("Failed to update story.") });
 
         return { status: "error" };

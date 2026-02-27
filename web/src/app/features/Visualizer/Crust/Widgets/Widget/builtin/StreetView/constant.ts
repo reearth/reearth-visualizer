@@ -1,0 +1,4 @@
+export const STREET_VIEW_HEIGHT = 2.5;
+export const FRUSTUM_LENGTH = 200;
+export const DEFAULT_PANO_ZOOM = 1;
+export const PANORAMA_NAVIGATION_DEBOUNCE_MS = 300;

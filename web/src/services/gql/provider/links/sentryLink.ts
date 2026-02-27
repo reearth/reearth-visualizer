@@ -1,5 +1,7 @@
-import { SentryLink } from "apollo-link-sentry";
+import { ApolloLink } from "@apollo/client/link";
 
-export default (endpoint: string) => {
-  return new SentryLink({ uri: endpoint });
+export default (_endpoint: string) => {
+  return new ApolloLink((operation, forward) => {
+    return forward(operation);
+  });
 };

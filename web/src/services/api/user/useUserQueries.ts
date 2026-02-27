@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { GET_USER_BY_SEARCH } from "@reearth/services/gql/queries/user";
 import { useMemo } from "react";
 

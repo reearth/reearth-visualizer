@@ -2,6 +2,7 @@ import {
   BUTTON_BUILTIN_WIDGET_ID,
   DATA_ATTRIBUTION_WIDGET_ID,
   GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID,
+  STREET_VIEW_WIDGET_ID,
   NAVIGATOR_BUILTIN_WIDGET_ID,
   TIMELINE_BUILTIN_WIDGET_ID
 } from "@reearth/services/api/widget/utils";
@@ -12,6 +13,7 @@ import Button from "./Button";
 import DataAttribution from "./DataAttribution";
 import GoogleMapSearch from "./GoogleMapSearch";
 import Navigator from "./Navigator";
+import GoogleStreetView from "./StreetView";
 import Timeline from "./Timeline";
 import {
   Component,
@@ -24,7 +26,8 @@ export type ReEarthBuiltinWidgets<T = unknown> = Record<
   | typeof NAVIGATOR_BUILTIN_WIDGET_ID
   | typeof DATA_ATTRIBUTION_WIDGET_ID
   | typeof GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID
-  | typeof TIMELINE_BUILTIN_WIDGET_ID,
+  | typeof TIMELINE_BUILTIN_WIDGET_ID
+  | typeof STREET_VIEW_WIDGET_ID,
   T
 >;
 
@@ -39,7 +42,8 @@ const REEARTH_BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> =
     },
     [DATA_ATTRIBUTION_WIDGET_ID]: {},
     [GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID]: {},
-    [TIMELINE_BUILTIN_WIDGET_ID]: {}
+    [TIMELINE_BUILTIN_WIDGET_ID]: {},
+    [STREET_VIEW_WIDGET_ID]: {}
   };
 
 const BUILTIN_WIDGET_OPTIONS: BuiltinWidgets<{ animation?: boolean }> =
@@ -50,7 +54,8 @@ const reearthBuiltin: BuiltinWidgets<Component> = {
   [NAVIGATOR_BUILTIN_WIDGET_ID]: Navigator,
   [DATA_ATTRIBUTION_WIDGET_ID]: DataAttribution,
   [GOOGLE_MAP_SEARCH_BUILTIN_WIDGET_ID]: GoogleMapSearch,
-  [TIMELINE_BUILTIN_WIDGET_ID]: Timeline
+  [TIMELINE_BUILTIN_WIDGET_ID]: Timeline,
+  [STREET_VIEW_WIDGET_ID]: GoogleStreetView
 };
 
 let cachedBuiltin:
