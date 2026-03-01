@@ -2,6 +2,8 @@
 node_modules
 /.env
 /.env.*
+accounts/.env.docker
+server/.env.docker
 /.idea
 *.log
 mongo/
