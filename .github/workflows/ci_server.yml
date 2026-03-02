@@ -62,7 +62,7 @@ jobs:
           cd reearth-accounts/server
           cp .env.docker.example .env.docker
           sed -i 's/REEARTH_MOCK_AUTH=false/REEARTH_MOCK_AUTH=true/' .env.docker
-          echo "REEARTH_CERBOSUSESSL=false" >> .env.docker
+          echo "REEARTH_ACCOUNTS_CERBOS_USE_SSL=false" >> .env.docker
           cd ..
           docker compose -f docker-compose.dev.yml up -d
           timeout 60 bash -c 'until nc -z localhost 8090 2>/dev/null; do sleep 2; done'
@@ -122,7 +122,7 @@ jobs:
           cp .env.docker.example .env.docker
           sed -i 's/REEARTH_MOCK_AUTH=false/REEARTH_MOCK_AUTH=true/' .env.docker
           echo "REEARTH_AUTH_ISS=https://reearth.io" >> .env.docker
-          echo "REEARTH_CERBOSUSESSL=false" >> .env.docker
+          echo "REEARTH_ACCOUNTS_CERBOS_USE_SSL=false" >> .env.docker
           cd ..
           docker compose -f docker-compose.dev.yml up -d
           docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' | grep -q "reearth" || docker network connect reearth reearth-accounts-reearth-accounts-dev-1
