@@ -62,6 +62,7 @@ jobs:
           cd reearth-accounts/server
           cp .env.docker.example .env.docker
           sed -i 's/REEARTH_MOCK_AUTH=false/REEARTH_MOCK_AUTH=true/' .env.docker
+          echo "REEARTH_CERBOSUSESSL=false" >> .env.docker
           cd ..
           docker compose -f docker-compose.dev.yml up -d
           timeout 60 bash -c 'until nc -z localhost 8090 2>/dev/null; do sleep 2; done'
@@ -121,6 +122,7 @@ jobs:
           cp .env.docker.example .env.docker
           sed -i 's/REEARTH_MOCK_AUTH=false/REEARTH_MOCK_AUTH=true/' .env.docker
           echo "REEARTH_AUTH_ISS=https://reearth.io" >> .env.docker
+          echo "REEARTH_CERBOSUSESSL=false" >> .env.docker
           cd ..
           docker compose -f docker-compose.dev.yml up -d
           docker inspect reearth-accounts-reearth-accounts-dev-1 --format='{{range $net, $config := .NetworkSettings.Networks}}{{$net}} {{end}}' | grep -q "reearth" || docker network connect reearth reearth-accounts-reearth-accounts-dev-1
@@ -129,7 +131,7 @@ jobs:
           timeout 60 bash -c 'until nc -z localhost 8090 2>/dev/null; do sleep 2; done'
 
       - name: set up Go
-        uses: actions/setup-go@44694675825211faa026b3c33043df3e48a5fa00 # v6.0.0
+        uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           go-version-file: server/go.mod
           cache-dependency-path: server/go.sum
