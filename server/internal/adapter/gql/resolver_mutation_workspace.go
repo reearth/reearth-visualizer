@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"github.com/reearth/reearth/server/internal/adapter"
-	"github.com/reearth/reearth/server/internal/adapter/accounts"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 
 	accountsGqlWorkspace "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace"
@@ -222,10 +221,12 @@ func (r *mutationResolver) updateWorkspaceWithAlias(ctx context.Context, workspa
 		return nil, fmt.Errorf("failed to build updateWorkspace request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
-
-	httpClient := &http.Client{
-		Transport: accounts.NewDynamicAuthTransport(),
+	req.Header.Set("X-Internal-Service", "visualizer-api")
+	if uid := adapter.UserID(ctx); uid != nil {
+		req.Header.Set("X-Reearth-Debug-User", *uid)
 	}
+
+	httpClient := &http.Client{Timeout: 30 * time.Second}
 	resp, err := httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed to call accounts GraphQL: %w", err)
