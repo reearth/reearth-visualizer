@@ -545,6 +545,12 @@ func (i *Project) Update(ctx context.Context, p interfaces.UpdateProjectParam, o
 		prj.UpdatePublicImage(*p.PublicImage)
 	}
 
+	if p.DeletePublicIconImage {
+		prj.UpdatePublicIconImage("")
+	} else if p.PublicIconImage != nil {
+		prj.UpdatePublicIconImage(*p.PublicIconImage)
+	}
+
 	if p.PublicNoIndex != nil {
 		prj.UpdatePublicNoIndex(*p.PublicNoIndex)
 	}

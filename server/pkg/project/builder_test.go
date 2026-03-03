@@ -122,6 +122,12 @@ func TestBuilder_PublicImage(t *testing.T) {
 	assert.Equal(t, "xxxxx", res.PublicImage())
 }
 
+func TestBuilder_PublicIconImage(t *testing.T) {
+	var tb = New().NewID()
+	res := tb.PublicIconImage("icon.png").MustBuild()
+	assert.Equal(t, "icon.png", res.PublicIconImage())
+}
+
 func TestBuilder_PublishedAt(t *testing.T) {
 	var tb = New().NewID()
 	d := time.Date(1986, 12, 11, 19, 30, 0, 0, time.UTC)
@@ -173,6 +179,7 @@ func TestBuilder_Build(t *testing.T) {
 		publicTitle       string
 		publicDescription string
 		publicImage       string
+		publicIconImage   string
 		id                id.ProjectID
 		isArchived        bool
 		updatedAt         time.Time
@@ -199,6 +206,7 @@ func TestBuilder_Build(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				id:                pid,
 				isArchived:        false,
 				updatedAt:         d,
@@ -217,6 +225,7 @@ func TestBuilder_Build(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				isArchived:        false,
 				updatedAt:         d,
 				publishedAt:       d,
@@ -257,6 +266,7 @@ func TestBuilder_Build(t *testing.T) {
 				UpdatedAt(tt.args.updatedAt).
 				PublishedAt(tt.args.publishedAt).
 				PublicImage(tt.args.publicImage).
+				PublicIconImage(tt.args.publicIconImage).
 				Workspace(tt.args.workspace).
 				ImageURL(tt.args.imageURL).
 				Name(tt.args.name).
@@ -287,6 +297,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 		publicTitle       string
 		publicDescription string
 		publicImage       string
+		publicIconImage   string
 		id                id.ProjectID
 		isArchived        bool
 		updatedAt         time.Time
@@ -316,6 +327,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				id:                pid,
 				isArchived:        false,
 				updatedAt:         d,
@@ -337,6 +349,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				isArchived:        false,
 				updatedAt:         d,
 				publishedAt:       d,
@@ -383,6 +396,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 					UpdatedAt(tt.args.updatedAt).
 					PublishedAt(tt.args.publishedAt).
 					PublicImage(tt.args.publicImage).
+					PublicIconImage(tt.args.publicIconImage).
 					Workspace(tt.args.workspace).
 					ImageURL(tt.args.imageURL).
 					Name(tt.args.name).

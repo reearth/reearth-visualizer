@@ -161,6 +161,11 @@ func (b *Builder) PublicImage(publicImage string) *Builder {
 	return b
 }
 
+func (b *Builder) PublicIconImage(publicIconImage string) *Builder {
+	b.p.publicIconImage = publicIconImage
+	return b
+}
+
 func (b *Builder) PublicNoIndex(publicNoIndex bool) *Builder {
 	b.p.publicNoIndex = publicNoIndex
 	return b

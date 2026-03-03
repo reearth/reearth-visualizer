@@ -35,6 +35,7 @@ type Story struct {
 	publicTitle       string
 	publicDescription string
 	publicImage       string
+	publicIconImage   string
 	publicNoIndex     bool
 	isBasicAuthActive bool
 	basicAuthUsername string
@@ -190,6 +191,10 @@ func (s *Story) PublicImage() string {
 	return s.publicImage
 }
 
+func (s *Story) PublicIconImage() string {
+	return s.publicIconImage
+}
+
 func (s *Story) PublicNoIndex() bool {
 	return s.publicNoIndex
 }
@@ -224,6 +229,10 @@ func (s *Story) SetPublicDescription(publicDescription string) {
 
 func (s *Story) SetPublicImage(publicImage string) {
 	s.publicImage = publicImage
+}
+
+func (s *Story) SetPublicIconImage(publicIconImage string) {
+	s.publicIconImage = publicIconImage
 }
 
 func (s *Story) SetPublicNoIndex(publicNoIndex bool) {

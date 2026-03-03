@@ -21,6 +21,7 @@ type Story implements Node {
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
+  publicIconImage: String!
   publicNoIndex: Boolean!
   isBasicAuthActive: Boolean!
   basicAuthUsername: String!
@@ -78,8 +79,10 @@ input UpdateStoryInput {
   publicTitle: String
   publicDescription: String
   publicImage: String
+  publicIconImage: String
   publicNoIndex: Boolean
   deletePublicImage: Boolean
+  deletePublicIconImage: Boolean
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String

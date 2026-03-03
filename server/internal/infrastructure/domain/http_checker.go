@@ -57,6 +57,9 @@ func (h *HTTPDomainChecker) CheckDomain(ctx context.Context, req gateway.DomainC
 		return &gateway.DomainCheckResponse{Allowed: false}, nil
 	}
 
+	if resp.StatusCode == http.StatusTooManyRequests {
+		return nil, rerror.ErrTooManyRequests
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, rerror.ErrInternalBy(fmt.Errorf("domain check returned status %d", resp.StatusCode))
 	}

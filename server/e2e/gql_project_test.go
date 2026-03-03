@@ -42,6 +42,7 @@ fragment ProjectFragment on Project {
   publicTitle
   publicDescription
   publicImage
+  publicIconImage
   publicNoIndex
   isBasicAuthActive
   basicAuthUsername
