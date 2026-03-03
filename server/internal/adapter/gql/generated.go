@@ -534,6 +534,7 @@ type ComplexityRoot struct {
 		Name              func(childComplexity int) int
 		ProjectAlias      func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
+		PublicIconImage   func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
 		PublicNoIndex     func(childComplexity int) int
 		PublicTitle       func(childComplexity int) int
@@ -838,6 +839,7 @@ type ComplexityRoot struct {
 		Property          func(childComplexity int) int
 		PropertyID        func(childComplexity int) int
 		PublicDescription func(childComplexity int) int
+		PublicIconImage   func(childComplexity int) int
 		PublicImage       func(childComplexity int) int
 		PublicNoIndex     func(childComplexity int) int
 		PublicTitle       func(childComplexity int) int
@@ -3533,6 +3535,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Project.PublicDescription(childComplexity), true
+	case "Project.publicIconImage":
+		if e.complexity.Project.PublicIconImage == nil {
+			break
+		}
+
+		return e.complexity.Project.PublicIconImage(childComplexity), true
 	case "Project.publicImage":
 		if e.complexity.Project.PublicImage == nil {
 			break
@@ -4850,6 +4858,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Story.PublicDescription(childComplexity), true
+	case "Story.publicIconImage":
+		if e.complexity.Story.PublicIconImage == nil {
+			break
+		}
+
+		return e.complexity.Story.PublicIconImage(childComplexity), true
 	case "Story.publicImage":
 		if e.complexity.Story.PublicImage == nil {
 			break
@@ -6431,6 +6445,7 @@ extend type Mutation {
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
+  publicIconImage: String!
   publicNoIndex: Boolean!
   isBasicAuthActive: Boolean!
   basicAuthUsername: String!
@@ -6510,8 +6525,10 @@ input UpdateProjectInput {
   publicTitle: String
   publicDescription: String
   publicImage: String
+  publicIconImage: String
   publicNoIndex: Boolean
   deletePublicImage: Boolean
+  deletePublicIconImage: Boolean
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
@@ -6978,6 +6995,7 @@ extend type Mutation {
   publicTitle: String!
   publicDescription: String!
   publicImage: String!
+  publicIconImage: String!
   publicNoIndex: Boolean!
   isBasicAuthActive: Boolean!
   basicAuthUsername: String!
@@ -7035,8 +7053,10 @@ input UpdateStoryInput {
   publicTitle: String
   publicDescription: String
   publicImage: String
+  publicIconImage: String
   publicNoIndex: Boolean
   deletePublicImage: Boolean
+  deletePublicIconImage: Boolean
   isBasicAuthActive: Boolean
   basicAuthUsername: String
   basicAuthPassword: String
@@ -10301,6 +10321,8 @@ func (ec *executionContext) fieldContext_CreateStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -10545,6 +10567,8 @@ func (ec *executionContext) fieldContext_DeleteStoryPagePayload_story(_ context.
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -13203,6 +13227,8 @@ func (ec *executionContext) fieldContext_MoveStoryBlockPayload_story(_ context.C
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -13393,6 +13419,8 @@ func (ec *executionContext) fieldContext_MoveStoryPagePayload_story(_ context.Co
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -13559,6 +13587,8 @@ func (ec *executionContext) fieldContext_MoveStoryPayload_stories(_ context.Cont
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -20627,6 +20657,35 @@ func (ec *executionContext) fieldContext_Project_publicImage(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_publicIconImage(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Project_publicIconImage,
+		func(ctx context.Context) (any, error) {
+			return obj.PublicIconImage, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Project_publicIconImage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_publicNoIndex(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Project) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -20964,6 +21023,8 @@ func (ec *executionContext) fieldContext_ProjectConnection_nodes(_ context.Conte
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Project_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -21150,6 +21211,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(_ context.Context, fie
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Project_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -21580,6 +21643,8 @@ func (ec *executionContext) fieldContext_ProjectPayload_project(_ context.Contex
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Project_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -25889,6 +25954,8 @@ func (ec *executionContext) fieldContext_RemoveStoryBlockPayload_story(_ context
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -26396,6 +26463,8 @@ func (ec *executionContext) fieldContext_Scene_project(_ context.Context, field 
 				return ec.fieldContext_Project_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Project_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Project_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Project_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -26594,6 +26663,8 @@ func (ec *executionContext) fieldContext_Scene_stories(_ context.Context, field 
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -28018,6 +28089,35 @@ func (ec *executionContext) fieldContext_Story_publicImage(_ context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _Story_publicIconImage(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Story_publicIconImage,
+		func(ctx context.Context) (any, error) {
+			return obj.PublicIconImage, nil
+		},
+		nil,
+		ec.marshalNString2string,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Story_publicIconImage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Story",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Story_publicNoIndex(ctx context.Context, field graphql.CollectedField, obj *gqlmodel.Story) (ret graphql.Marshaler) {
 	return graphql.ResolveField(
 		ctx,
@@ -29029,6 +29129,8 @@ func (ec *executionContext) fieldContext_StoryPagePayload_story(_ context.Contex
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -29108,6 +29210,8 @@ func (ec *executionContext) fieldContext_StoryPayload_story(_ context.Context, f
 				return ec.fieldContext_Story_publicDescription(ctx, field)
 			case "publicImage":
 				return ec.fieldContext_Story_publicImage(ctx, field)
+			case "publicIconImage":
+				return ec.fieldContext_Story_publicIconImage(ctx, field)
 			case "publicNoIndex":
 				return ec.fieldContext_Story_publicNoIndex(ctx, field)
 			case "isBasicAuthActive":
@@ -35871,7 +35975,7 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "projectAlias", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
+	fieldsInOrder := [...]string{"projectId", "name", "description", "archived", "imageUrl", "deleteImageUrl", "sceneId", "starred", "deleted", "visibility", "projectAlias", "publicTitle", "publicDescription", "publicImage", "publicIconImage", "publicNoIndex", "deletePublicImage", "deletePublicIconImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -35976,6 +36080,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.PublicImage = data
+		case "publicIconImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicIconImage"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PublicIconImage = data
 		case "publicNoIndex":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoIndex"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -35990,6 +36101,13 @@ func (ec *executionContext) unmarshalInputUpdateProjectInput(ctx context.Context
 				return it, err
 			}
 			it.DeletePublicImage = data
+		case "deletePublicIconImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletePublicIconImage"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletePublicIconImage = data
 		case "isBasicAuthActive":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isBasicAuthActive"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -36244,7 +36362,7 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "publicTitle", "publicDescription", "publicImage", "publicNoIndex", "deletePublicImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
+	fieldsInOrder := [...]string{"sceneId", "storyId", "title", "index", "panelPosition", "bgColor", "publicTitle", "publicDescription", "publicImage", "publicIconImage", "publicNoIndex", "deletePublicImage", "deletePublicIconImage", "isBasicAuthActive", "basicAuthUsername", "basicAuthPassword", "enableGa", "trackingId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36314,6 +36432,13 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 				return it, err
 			}
 			it.PublicImage = data
+		case "publicIconImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicIconImage"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PublicIconImage = data
 		case "publicNoIndex":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("publicNoIndex"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -36328,6 +36453,13 @@ func (ec *executionContext) unmarshalInputUpdateStoryInput(ctx context.Context, 
 				return it, err
 			}
 			it.DeletePublicImage = data
+		case "deletePublicIconImage":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deletePublicIconImage"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeletePublicIconImage = data
 		case "isBasicAuthActive":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isBasicAuthActive"))
 			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
@@ -41211,6 +41343,11 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "publicIconImage":
+			out.Values[i] = ec._Project_publicIconImage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "publicNoIndex":
 			out.Values[i] = ec._Project_publicNoIndex(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -44456,6 +44593,11 @@ func (ec *executionContext) _Story(ctx context.Context, sel ast.SelectionSet, ob
 			}
 		case "publicImage":
 			out.Values[i] = ec._Story_publicImage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "publicIconImage":
+			out.Values[i] = ec._Story_publicIconImage(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

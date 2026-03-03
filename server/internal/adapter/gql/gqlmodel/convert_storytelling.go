@@ -31,6 +31,7 @@ func ToStory(s *storytelling.Story) *Story {
 		PublicTitle:       s.PublicTitle(),
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
+		PublicIconImage:   s.PublicIconImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
 		IsBasicAuthActive: s.IsBasicAuthActive(),
 		BasicAuthUsername: s.BasicAuthUsername(),

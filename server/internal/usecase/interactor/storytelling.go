@@ -179,8 +179,16 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetPublicDescription(*inp.PublicDescription)
 	}
 
-	if inp.PublicImage != nil {
+	if inp.DeletePublicImage != nil && *inp.DeletePublicImage {
+		story.SetPublicImage("")
+	} else if inp.PublicImage != nil {
 		story.SetPublicImage(*inp.PublicImage)
+	}
+
+	if inp.DeletePublicIconImage != nil && *inp.DeletePublicIconImage {
+		story.SetPublicIconImage("")
+	} else if inp.PublicIconImage != nil {
+		story.SetPublicIconImage(*inp.PublicIconImage)
 	}
 
 	if inp.IsBasicAuthActive != nil {
