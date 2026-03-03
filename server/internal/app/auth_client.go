@@ -159,9 +159,35 @@ func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.Us
 	}
 
 	uid := u.ID()
-	workspaces, err := cfg.Repos.Workspace.FindByUser(ctx, uid)
-	if err != nil {
-		return nil, err
+
+	// Fetch workspaces from the accounts API (source of truth) which returns
+	// proper member data. Then sync to local repo so internal API and interactors
+	// can find workspaces by alias, ID, etc.
+	var workspaces accountsWorkspace.List
+	var err error
+	if cfg.AccountsAPIClient != nil {
+		workspaces, err = cfg.AccountsAPIClient.WorkspaceRepo.FindByUser(ctx, uid.String())
+		if err != nil {
+			log.Warnfc(ctx, "auth: accounts API FindByUser failed, falling back to local repo: %v", err)
+			workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			// Sync workspaces to local repo for internal API access
+			for _, ws := range workspaces {
+				if ws != nil {
+					if saveErr := cfg.Repos.Workspace.Save(ctx, ws); saveErr != nil {
+						log.Warnfc(ctx, "auth: failed to sync workspace %s to local repo: %v", ws.ID(), saveErr)
+					}
+				}
+			}
+		}
+	} else {
+		workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	wsList := accountsWorkspace.List(workspaces)

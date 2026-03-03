@@ -677,11 +677,45 @@ func (r *mutationResolver) updateMemberInLocalWorkspace(ctx context.Context, wid
 	return ws, nil
 }
 
-func (r *mutationResolver) syncWorkspaceToLocalRepo(ctx context.Context, workspace *accountsWorkspace.Workspace) error {
-	if workspace == nil || r.AccountRepos == nil || r.AccountRepos.Workspace == nil {
+func (r *mutationResolver) syncWorkspaceToLocalRepo(ctx context.Context, ws *accountsWorkspace.Workspace) error {
+	if ws == nil || r.AccountRepos == nil || r.AccountRepos.Workspace == nil {
 		return nil
 	}
-	return r.AccountRepos.Workspace.Save(ctx, workspace)
+
+	// The accounts API mutation responses return workspaces without member data.
+	// We must preserve existing members from the local repo, or for new workspaces,
+	// add the current user as owner. Without this, generateOperator's FindByUser
+	// query won't find the workspace (it queries members.<userId>: {$exists: true}).
+	existing, _ := r.AccountRepos.Workspace.FindByID(ctx, ws.ID())
+	if existing != nil {
+		// Workspace exists locally - preserve its members and metadata
+		ws = accountsWorkspace.New().
+			ID(ws.ID()).
+			Name(ws.Name()).
+			Alias(ws.Alias()).
+			Personal(ws.IsPersonal()).
+			Members(existing.Members().Users()).
+			Metadata(*existing.Metadata()).
+			MustBuild()
+	} else {
+		// New workspace - add the current user as owner so FindByUser can find it
+		members := make(map[accountsWorkspace.UserID]accountsWorkspace.Member)
+		if u := adapter.User(ctx); u != nil {
+			members[u.ID()] = accountsWorkspace.Member{
+				Role:      accountsRole.RoleOwner,
+				InvitedBy: u.ID(),
+			}
+		}
+		ws = accountsWorkspace.New().
+			ID(ws.ID()).
+			Name(ws.Name()).
+			Alias(ws.Alias()).
+			Personal(ws.IsPersonal()).
+			Members(members).
+			MustBuild()
+	}
+
+	return r.AccountRepos.Workspace.Save(ctx, ws)
 }
 
 func (r *mutationResolver) removeWorkspaceFromLocalRepo(ctx context.Context, workspaceID accountsID.WorkspaceID) error {
