@@ -59,6 +59,11 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		deletePublicImage = *input.DeletePublicImage
 	}
 
+	deletePublicIconImage := false
+	if input.DeletePublicIconImage != nil {
+		deletePublicIconImage = *input.DeletePublicIconImage
+	}
+
 	deleteImageURL := false
 	if input.DeleteImageURL != nil {
 		deleteImageURL = *input.DeleteImageURL
@@ -85,9 +90,11 @@ func (r *mutationResolver) UpdateProject(ctx context.Context, input gqlmodel.Upd
 		// publishment
 		PublicTitle:       input.PublicTitle,
 		PublicDescription: input.PublicDescription,
-		PublicImage:       input.PublicImage,
-		PublicNoIndex:     input.PublicNoIndex,
-		DeletePublicImage: deletePublicImage,
+		PublicImage:           input.PublicImage,
+		PublicIconImage:       input.PublicIconImage,
+		PublicNoIndex:         input.PublicNoIndex,
+		DeletePublicImage:     deletePublicImage,
+		DeletePublicIconImage: deletePublicIconImage,
 		IsBasicAuthActive: input.IsBasicAuthActive,
 		BasicAuthUsername: input.BasicAuthUsername,
 		BasicAuthPassword: input.BasicAuthPassword,

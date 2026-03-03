@@ -28,6 +28,7 @@ type StorytellingDocument struct {
 	PublicTitle       string
 	PublicDescription string
 	PublicImage       string
+	PublicIconImage   string
 	PublicNoIndex     bool
 	IsBasicAuthActive bool
 	BasicAuthUsername string
@@ -82,6 +83,7 @@ func NewStorytelling(s *storytelling.Story) (*StorytellingDocument, string) {
 		PublicTitle:       s.PublicTitle(),
 		PublicDescription: s.PublicDescription(),
 		PublicImage:       s.PublicImage(),
+		PublicIconImage:   s.PublicIconImage(),
 		PublicNoIndex:     s.PublicNoIndex(),
 		IsBasicAuthActive: s.IsBasicAuthActive(),
 		BasicAuthUsername: s.BasicAuthUsername(),
@@ -201,6 +203,7 @@ func (d *StorytellingDocument) Model() (*storytelling.Story, error) {
 		PublicTitle(d.PublicTitle).
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).
+		PublicIconImage(d.PublicIconImage).
 		PublicNoIndex(d.PublicNoIndex).
 		EnableGa(d.EnableGa).
 		TrackingID(d.TrackingID).

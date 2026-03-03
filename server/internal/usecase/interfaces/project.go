@@ -55,9 +55,11 @@ type UpdateProjectParam struct {
 	// publishment
 	PublicTitle       *string
 	PublicDescription *string
-	PublicImage       *string
-	PublicNoIndex     *bool
-	DeletePublicImage bool
+	PublicImage            *string
+	PublicIconImage        *string
+	PublicNoIndex          *bool
+	DeletePublicImage      bool
+	DeletePublicIconImage  bool
 	IsBasicAuthActive *bool
 	BasicAuthUsername *string
 	BasicAuthPassword *string

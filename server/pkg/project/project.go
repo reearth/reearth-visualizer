@@ -34,6 +34,7 @@ type Project struct {
 	publicTitle       string
 	publicDescription string
 	publicImage       string
+	publicIconImage   string
 	publicNoIndex     bool
 	isBasicAuthActive bool
 	basicAuthUsername string
@@ -220,6 +221,10 @@ func (p *Project) PublicImage() string {
 	return p.publicImage
 }
 
+func (p *Project) PublicIconImage() string {
+	return p.publicIconImage
+}
+
 func (p *Project) PublicNoIndex() bool {
 	return p.publicNoIndex
 }
@@ -266,6 +271,10 @@ func (p *Project) UpdatePublicDescription(publicDescription string) {
 
 func (p *Project) UpdatePublicImage(publicImage string) {
 	p.publicImage = publicImage
+}
+
+func (p *Project) UpdatePublicIconImage(publicIconImage string) {
+	p.publicIconImage = publicIconImage
 }
 
 func (p *Project) UpdatePublicNoIndex(publicNoIndex bool) {

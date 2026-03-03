@@ -28,12 +28,14 @@ type UpdateStoryInput struct {
 	// publishment
 	PublicTitle       *string
 	PublicDescription *string
-	PublicImage       *string
-	PublicNoIndex     *bool
-	IsBasicAuthActive *bool
-	BasicAuthUsername *string
-	BasicAuthPassword *string
-	DeletePublicImage *bool
+	PublicImage           *string
+	PublicIconImage       *string
+	PublicNoIndex         *bool
+	IsBasicAuthActive     *bool
+	BasicAuthUsername     *string
+	BasicAuthPassword     *string
+	DeletePublicImage     *bool
+	DeletePublicIconImage *bool
 	EnableGa          *bool
 	TrackingID        *string
 }
