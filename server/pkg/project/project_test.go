@@ -216,6 +216,12 @@ func TestProject_UpdatePublicImage(t *testing.T) {
 	assert.Equal(t, "xxx", p.PublicImage())
 }
 
+func TestProject_UpdatePublicIconImage(t *testing.T) {
+	p := &Project{}
+	p.UpdatePublicIconImage("icon.png")
+	assert.Equal(t, "icon.png", p.PublicIconImage())
+}
+
 func TestProject_PublicName(t *testing.T) {
 	tests := []struct {
 		name     string
