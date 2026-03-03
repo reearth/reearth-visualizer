@@ -361,8 +361,6 @@ message UpdateProjectRequest {
   optional string public_image = 13;
   optional bool public_no_index = 14;
   optional bool delete_public_image = 15;
-  optional string public_icon_image = 22;
-  optional bool delete_public_icon_image = 23;
   optional bool is_basic_auth_active = 16;
   optional string basic_auth_username = 17;
   optional string basic_auth_password = 18;
@@ -437,8 +435,6 @@ message UpdateProjectByWorkspaceAliasAndProjectAliasRequest {
   optional string public_image = 14;
   optional bool public_no_index = 15;
   optional bool delete_public_image = 16;
-  optional string public_icon_image = 23;
-  optional bool delete_public_icon_image = 24;
   optional bool is_basic_auth_active = 17;
   optional string basic_auth_username = 18;
   optional string basic_auth_password = 19;

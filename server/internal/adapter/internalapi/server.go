@@ -400,18 +400,16 @@ func (s server) UpdateProject(ctx context.Context, req *pb.UpdateProjectRequest)
 		ProjectAlias:   req.ProjectAlias,
 
 		// publishment
-		PublicTitle:           req.PublicTitle,
-		PublicDescription:     req.PublicDescription,
-		PublicImage:           req.PublicImage,
-		PublicIconImage:       req.PublicIconImage,
-		PublicNoIndex:         req.PublicNoIndex,
-		DeletePublicImage:     req.DeletePublicImage != nil && *req.DeletePublicImage,
-		DeletePublicIconImage: req.DeletePublicIconImage != nil && *req.DeletePublicIconImage,
-		IsBasicAuthActive:     req.IsBasicAuthActive,
-		BasicAuthUsername:     req.BasicAuthUsername,
-		BasicAuthPassword:     req.BasicAuthPassword,
-		EnableGa:              req.EnableGa,
-		TrackingID:            req.TrackingId,
+		PublicTitle:       req.PublicTitle,
+		PublicDescription: req.PublicDescription,
+		PublicImage:       req.PublicImage,
+		PublicNoIndex:     req.PublicNoIndex,
+		DeletePublicImage: req.DeletePublicImage != nil && *req.DeletePublicImage,
+		IsBasicAuthActive: req.IsBasicAuthActive,
+		BasicAuthUsername: req.BasicAuthUsername,
+		BasicAuthPassword: req.BasicAuthPassword,
+		EnableGa:          req.EnableGa,
+		TrackingID:        req.TrackingId,
 	}, op)
 	if err != nil {
 		return nil, err
@@ -598,18 +596,16 @@ func (s server) UpdateProjectByWorkspaceAliasAndProjectAlias(ctx context.Context
 		ProjectAlias:   req.NewProjectAlias,
 
 		// publishment
-		PublicTitle:           req.PublicTitle,
-		PublicDescription:     req.PublicDescription,
-		PublicImage:           req.PublicImage,
-		PublicIconImage:       req.PublicIconImage,
-		PublicNoIndex:         req.PublicNoIndex,
-		DeletePublicImage:     req.DeletePublicImage != nil && *req.DeletePublicImage,
-		DeletePublicIconImage: req.DeletePublicIconImage != nil && *req.DeletePublicIconImage,
-		IsBasicAuthActive:     req.IsBasicAuthActive,
-		BasicAuthUsername:     req.BasicAuthUsername,
-		BasicAuthPassword:     req.BasicAuthPassword,
-		EnableGa:              req.EnableGa,
-		TrackingID:            req.TrackingId,
+		PublicTitle:       req.PublicTitle,
+		PublicDescription: req.PublicDescription,
+		PublicImage:       req.PublicImage,
+		PublicNoIndex:     req.PublicNoIndex,
+		DeletePublicImage: req.DeletePublicImage != nil && *req.DeletePublicImage,
+		IsBasicAuthActive: req.IsBasicAuthActive,
+		BasicAuthUsername: req.BasicAuthUsername,
+		BasicAuthPassword: req.BasicAuthPassword,
+		EnableGa:          req.EnableGa,
+		TrackingID:        req.TrackingId,
 	}, op)
 	if err != nil {
 		return nil, err
