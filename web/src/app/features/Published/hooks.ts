@@ -301,7 +301,6 @@ export default (alias?: string) => {
             tiles: [{ id: "___default_tile___" }]
           };
         }
-        console.log("data", d);
         setData(d);
       } catch (e) {
         // TODO: display error for users
