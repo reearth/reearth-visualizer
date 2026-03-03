@@ -42,6 +42,7 @@ func TestInternalAPI_update(t *testing.T) {
 		publicTitle := "Public Title"
 		publicDescription := "Public Description"
 		publicImage := "https://example.com/public_image.png"
+		publicIconImage := "https://example.com/public_icon_image.png"
 		publicNoIndex := true
 		isBasicAuthActive := true
 		basicAuthUsername := "user"
@@ -62,6 +63,7 @@ func TestInternalAPI_update(t *testing.T) {
 			PublicTitle:       &publicTitle,
 			PublicDescription: &publicDescription,
 			PublicImage:       &publicImage,
+			PublicIconImage:   &publicIconImage,
 			PublicNoIndex:     &publicNoIndex,
 			IsBasicAuthActive: &isBasicAuthActive,
 			BasicAuthUsername: &basicAuthUsername,
@@ -82,10 +84,12 @@ func TestInternalAPI_update(t *testing.T) {
 
 		deleteImageUrl := true
 		deletePublicImage := true
+		deletePublicIconImage := true
 		_, err = client.UpdateProject(ctx, &pb.UpdateProjectRequest{
-			ProjectId:         pid1.String(),
-			DeleteImageUrl:    &deleteImageUrl,
-			DeletePublicImage: &deletePublicImage,
+			ProjectId:             pid1.String(),
+			DeleteImageUrl:        &deleteImageUrl,
+			DeletePublicImage:     &deletePublicImage,
+			DeletePublicIconImage: &deletePublicIconImage,
 		})
 		assert.Nil(t, err)
 		res2, err := client.GetProject(ctx, &pb.GetProjectRequest{

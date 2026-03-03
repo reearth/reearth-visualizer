@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v6.33.0
-// source: v1/schema.proto
+// source: schemas/internalapi/v1/schema.proto
 
 package v1
 
@@ -707,5 +707,5 @@ var ReEarthVisualizer_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "v1/schema.proto",
+	Metadata: "schemas/internalapi/v1/schema.proto",
 }
