@@ -189,40 +189,71 @@ jobs:
           COMMIT: ${{ steps.run-id.outputs.commit }}
           LABEL: ${{ steps.run-id.outputs.label }}
         run: |
-          python3 -c "
-          import json, os
-          from datetime import datetime, timezone
-
-          with open('/tmp/index.json') as f:
-              runs = json.load(f)
-
-          run_id = os.environ['RUN_ID']
-          label = os.environ['LABEL']
-          branch = os.environ['BRANCH']
-          commit = os.environ['COMMIT']
-
-          runs = [r for r in runs if r.get('id') != run_id]
-
-          new_entry = {
-              'id': run_id,
-              'label': label,
-              'branch': branch,
-              'commit': commit,
-              'createdAt': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-              'path': f'runs/{run_id}/index.html'
-          }
-
-          runs.insert(0, new_entry)
-          runs = runs[:50]
-
-          with open('/tmp/index.json', 'w') as f:
-              json.dump(runs, f, indent=2)
-          "
-
           OBJECT="gs://$BUCKET/index.json"
-          GEN=$(gsutil stat "$OBJECT" 2>/dev/null | awk '/Generation:/ {print $2}' || true)
-          if [ -z "$GEN" ]; then GEN=0; fi
+          MAX_RETRIES=5
 
-          gsutil -h "Content-Type:application/json" -h "Cache-Control:no-cache" \
-            -h "x-goog-if-generation-match:${GEN}" \
-            cp /tmp/index.json "$OBJECT"
+          for ATTEMPT in $(seq 1 "$MAX_RETRIES"); do
+            echo "Updating index.json (attempt ${ATTEMPT}/${MAX_RETRIES})"
+
+            if gsutil cp "$OBJECT" /tmp/index.current.json 2>/tmp/gsutil_index_fetch_err.log; then
+              echo "Fetched latest index.json from GCS."
+            else
+              if grep -qiE "No URLs matched|Matched no objects|404" /tmp/gsutil_index_fetch_err.log; then
+                echo "No existing index.json found in bucket, starting with empty index."
+                echo '[]' > /tmp/index.current.json
+              else
+                echo "Failed to download latest index.json from GCS. Error output:"
+                cat /tmp/gsutil_index_fetch_err.log
+                rm -f /tmp/gsutil_index_fetch_err.log
+                exit 1
+              fi
+            fi
+            rm -f /tmp/gsutil_index_fetch_err.log || true
+
+            python3 -c "
+            import json, os
+            from datetime import datetime, timezone
+
+            with open('/tmp/index.current.json') as f:
+                runs = json.load(f)
+
+            run_id = os.environ['RUN_ID']
+            label = os.environ['LABEL']
+            branch = os.environ['BRANCH']
+            commit = os.environ['COMMIT']
+
+            runs = [r for r in runs if r.get('id') != run_id]
+
+            new_entry = {
+                'id': run_id,
+                'label': label,
+                'branch': branch,
+                'commit': commit,
+                'createdAt': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+                'path': f'runs/{run_id}/index.html'
+            }
+
+            runs.insert(0, new_entry)
+            runs = runs[:50]
+
+            with open('/tmp/index.next.json', 'w') as f:
+                json.dump(runs, f, indent=2)
+            "
+
+            GEN=$(gsutil stat "$OBJECT" 2>/dev/null | awk '/Generation:/ {print $2}' || true)
+            if [ -z "$GEN" ]; then GEN=0; fi
+
+            if gsutil -h "Content-Type:application/json" -h "Cache-Control:no-cache" \
+              -h "x-goog-if-generation-match:${GEN}" \
+              cp /tmp/index.next.json "$OBJECT"; then
+              echo "index.json updated successfully."
+              break
+            fi
+
+            if [ "$ATTEMPT" -eq "$MAX_RETRIES" ]; then
+              echo "Failed to update index.json after ${MAX_RETRIES} attempts due to concurrent updates."
+              exit 1
+            fi
+
+            sleep $((ATTEMPT * 2))
+          done
