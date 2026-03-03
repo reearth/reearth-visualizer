@@ -98,6 +98,15 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
 
     if (newPage) {
       await newPage.waitForLoadState("domcontentloaded");
+      // In webkit, the URL may not be ready at domcontentloaded; wait for it
+      await newPage
+        .waitForURL(
+          (url) =>
+            url.pathname.includes("/settings/profile") ||
+            url.pathname.includes("/settings/account"),
+          { timeout: 10000 }
+        )
+        .catch(() => {});
       const newUrl = newPage.url();
       expect(
         newUrl.includes("/settings/profile") ||

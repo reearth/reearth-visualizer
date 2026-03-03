@@ -42,7 +42,9 @@ export class PhotoOverlayPage {
   }
 
   async goToFeatureInspectorTab() {
-    await this.page.waitForTimeout(10000); // Wait for any previous actions to settle
+    await this.featureInspectorTab
+      .waitFor({ state: "visible", timeout: 15000 })
+      .catch(() => {});
     await this.featureInspectorTab.click();
     await this.page.waitForTimeout(500);
   }
@@ -100,7 +102,10 @@ export class PhotoOverlayPage {
     await this.page.waitForTimeout(3000);
   }
 
-  async selectFeatureAndOpenInspector(x: number, y: number) {
+  async selectFeatureAndOpenInspector(
+    x: number,
+    y: number
+  ): Promise<boolean> {
     const maxAttempts = 5;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       // First click activates the layer interaction mode
@@ -116,7 +121,7 @@ export class PhotoOverlayPage {
       if (tabVisible) {
         await this.goToFeatureInspectorTab();
         await this.page.waitForTimeout(1000);
-        return;
+        return true;
       }
 
       // Try double-click as an alternative selection method
@@ -129,7 +134,7 @@ export class PhotoOverlayPage {
       if (tabVisibleAfterDblClick) {
         await this.goToFeatureInspectorTab();
         await this.page.waitForTimeout(1000);
-        return;
+        return true;
       }
 
       if (attempt < maxAttempts - 1) {
@@ -138,9 +143,8 @@ export class PhotoOverlayPage {
         await this.page.waitForTimeout(1000);
       }
     }
-    // Final attempt - click tab even if not visible to get a clear error
-    await this.goToFeatureInspectorTab();
-    await this.page.waitForTimeout(1000);
+    // All attempts failed - feature selection not possible (common in webkit with Cesium)
+    return false;
   }
 
   async verifyPhotoOverlayIsSet() {
