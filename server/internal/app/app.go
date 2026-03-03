@@ -235,6 +235,9 @@ func errorMessage(err error, log func(string, ...interface{})) (int, string) {
 	} else if errors.Is(err, rerror.ErrNotFound) {
 		code = http.StatusNotFound
 		msg = "not found"
+	} else if errors.Is(err, rerror.ErrTooManyRequests) {
+		code = http.StatusTooManyRequests
+		msg = "too many requests"
 	} else {
 		if ierr := rerror.UnwrapErrInternal(err); ierr != nil {
 			code = http.StatusInternalServerError
