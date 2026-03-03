@@ -33,3 +33,36 @@ func TestRenderIndex(t *testing.T) {
 		},
 	))
 }
+
+func TestRenderIndexWithIconImage(t *testing.T) {
+	result := renderIndex(
+		`<html><head>
+  <title>Foobar</title>
+  <link rel="icon" href="./src/favicon.ico" />
+</head></html>`,
+		"https://test.com",
+		interfaces.PublishedMetadata{
+			Title:     "Test",
+			IconImage: "https://example.com/favicon.ico",
+		},
+	)
+	// Should replace the default favicon with the custom one
+	assert.Contains(t, result, `<link rel="icon" href="https://example.com/favicon.ico" />`)
+	assert.NotContains(t, result, `./src/favicon.ico`)
+	assert.Contains(t, result, `<title>Test</title>`)
+}
+
+func TestRenderIndexWithoutIconImage(t *testing.T) {
+	result := renderIndex(
+		`<html><head>
+  <title>Foobar</title>
+  <link rel="icon" href="./src/favicon.ico" />
+</head></html>`,
+		"https://test.com",
+		interfaces.PublishedMetadata{
+			Title: "Test",
+		},
+	)
+	// Should keep the default favicon when no custom IconImage is provided
+	assert.Contains(t, result, `<link rel="icon" href="./src/favicon.ico" />`)
+}

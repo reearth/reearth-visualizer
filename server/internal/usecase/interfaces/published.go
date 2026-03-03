@@ -10,6 +10,7 @@ type HasPublicMeta interface {
 	PublicTitle() string
 	PublicDescription() string
 	PublicImage() string
+	PublicIconImage() string
 	PublicNoIndex() bool
 	IsBasicAuthActive() bool
 	BasicAuthUsername() string
@@ -21,6 +22,7 @@ type PublishedMetadata struct {
 	Title             string `json:"title,omitempty"`
 	Description       string `json:"description,omitempty"`
 	Image             string `json:"image,omitempty"`
+	IconImage         string `json:"iconImage,omitempty"`
 	Noindex           bool   `json:"noindex,omitempty"`
 	IsBasicAuthActive bool   `json:"isBasicAuthActive,omitempty"`
 	BasicAuthUsername string `json:"basicAuthUsername,omitempty"`
@@ -33,6 +35,7 @@ func PublishedMetadataFrom(i HasPublicMeta) PublishedMetadata {
 		Title:             i.PublicTitle(),
 		Description:       i.PublicDescription(),
 		Image:             i.PublicImage(),
+		IconImage:         i.PublicIconImage(),
 		Noindex:           i.PublicNoIndex(),
 		IsBasicAuthActive: i.IsBasicAuthActive(),
 		BasicAuthUsername: i.BasicAuthUsername(),
