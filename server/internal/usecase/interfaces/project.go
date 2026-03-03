@@ -53,18 +53,18 @@ type UpdateProjectParam struct {
 	ProjectAlias   *string
 
 	// publishment
-	PublicTitle       *string
-	PublicDescription *string
-	PublicImage            *string
-	PublicIconImage        *string
-	PublicNoIndex          *bool
-	DeletePublicImage      bool
-	DeletePublicIconImage  bool
-	IsBasicAuthActive *bool
-	BasicAuthUsername *string
-	BasicAuthPassword *string
-	EnableGa          *bool
-	TrackingID        *string
+	PublicTitle           *string
+	PublicDescription     *string
+	PublicImage           *string
+	PublicIconImage       *string
+	PublicNoIndex         *bool
+	DeletePublicImage     bool
+	DeletePublicIconImage bool
+	IsBasicAuthActive     *bool
+	BasicAuthUsername     *string
+	BasicAuthPassword     *string
+	EnableGa              *bool
+	TrackingID            *string
 }
 
 type PublishProjectParam struct {

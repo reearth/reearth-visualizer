@@ -26,8 +26,8 @@ type UpdateStoryInput struct {
 	BgColor       *string
 
 	// publishment
-	PublicTitle       *string
-	PublicDescription *string
+	PublicTitle           *string
+	PublicDescription     *string
 	PublicImage           *string
 	PublicIconImage       *string
 	PublicNoIndex         *bool
@@ -36,8 +36,8 @@ type UpdateStoryInput struct {
 	BasicAuthPassword     *string
 	DeletePublicImage     *bool
 	DeletePublicIconImage *bool
-	EnableGa          *bool
-	TrackingID        *string
+	EnableGa              *bool
+	TrackingID            *string
 }
 
 type MoveStoryInput struct {
