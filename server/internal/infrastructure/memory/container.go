@@ -1,8 +1,8 @@
 package memory
 
 import (
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -18,8 +18,8 @@ func New() *repo.Container {
 		PropertySchema:  NewPropertySchema(),
 		Property:        NewProperty(),
 		Scene:           NewScene(),
-		Workspace:       accountmemory.NewWorkspace(),
-		User:            accountmemory.NewUser(),
+		Workspace:       accountsInfra.NewMemoryWorkspace(),
+		User:            accountsInfra.NewMemoryUser(),
 		SceneLock:       NewSceneLock(),
 		Storytelling:    NewStorytelling(),
 		Lock:            NewLock(),

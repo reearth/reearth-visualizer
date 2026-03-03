@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/plugin"
 	"github.com/reearth/reearth/server/pkg/property"
 	"github.com/reearth/reearth/server/pkg/scene"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -33,7 +33,7 @@ func TestPluginMigrator_MigratePlugins(t *testing.T) {
 	pl1p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 	pl2p := property.New().NewID().Scene(sid).Schema(*pl1.Schema()).MustBuild()
 
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 	sc := scene.New().ID(sid).Workspace(tid).MustBuild()
 	sc.Plugins().Add(scene.NewPlugin(pid1, pl1p.ID().Ref()))
 

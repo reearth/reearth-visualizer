@@ -3,10 +3,10 @@ package interfaces
 import (
 	"context"
 
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/pkg/policy"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
 type Policy interface {
-	GetWorkspacePolicy(ctx context.Context, workspaceID workspace.ID) (*policy.WorkspacePolicy, error)
+	GetWorkspacePolicy(ctx context.Context, workspaceID accountsWorkspace.ID) (*policy.WorkspacePolicy, error)
 }

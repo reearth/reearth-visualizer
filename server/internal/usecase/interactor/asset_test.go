@@ -6,6 +6,9 @@ import (
 	"io"
 	"testing"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
 	"github.com/reearth/reearth/server/internal/usecase"
@@ -15,10 +18,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmemory"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,16 +25,19 @@ import (
 func TestAsset_Create(t *testing.T) {
 	ctx := context.Background()
 
-	ws := workspace.New().NewID().MustBuild()
+	ws := accountsWorkspace.New().NewID().MustBuild()
 	pid := id.NewProjectID()
 
 	gFile, err := fs.NewFile(afero.NewMemMapFs(), "")
 	assert.NoError(t, err)
 
+	wsRepo := accountsInfra.NewMemoryWorkspace()
+	_ = wsRepo.Save(ctx, ws)
+
 	uContainer := &Asset{
 		repos: &repo.Container{
 			Asset:     memory.NewAsset(),
-			Workspace: accountmemory.NewWorkspaceWith(ws),
+			Workspace: wsRepo,
 		},
 		gateways: &gateway.Container{
 			File: gFile,
@@ -56,8 +58,8 @@ func TestAsset_Create(t *testing.T) {
 			Size:        buflen,
 		},
 	}, &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: accountdomain.WorkspaceIDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	})
 	assert.NoError(t, err)

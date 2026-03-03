@@ -3,8 +3,8 @@ package gql
 import (
 	"context"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 func (r *Resolver) Query() QueryResolver {
@@ -197,7 +197,7 @@ func (r *queryResolver) VisibilityProjects(ctx context.Context, authenticated bo
 }
 
 func (r *queryResolver) WorkspacePolicyCheck(ctx context.Context, input gqlmodel.PolicyCheckInput) (*gqlmodel.PolicyCheckPayload, error) {
-	wid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
+	wid, err := gqlmodel.ToID[accountsID.Workspace](input.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}
