@@ -32,7 +32,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
 	github.com/reearth/reearth-accounts/server v0.0.0-20251114040111-9b5f5f67a6c7
-	github.com/reearth/reearthx v0.0.0-20251128044232-3067c04f34da // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
+	github.com/reearth/reearthx v0.0.0-20260224081706-d6fe6d381f8b // ref => https://github.com/reearth/reearthx/tree/fix/metadate-for-visualizer
 	github.com/samber/lo v1.52.0
 	github.com/spf13/afero v1.15.0
 	github.com/square/mongo-lock v0.0.0-20230808145049-cfcf499f6bf0
