@@ -94,6 +94,7 @@ export const UPDATE_PROJECT = gql(`
     $publicTitle: String
     $publicDescription: String
     $publicImage: String
+    $publicIconImage: String
     $deleteImageUrl: Boolean
     $deletePublicImage: Boolean
     $enableGa: Boolean
@@ -112,6 +113,7 @@ export const UPDATE_PROJECT = gql(`
         publicTitle: $publicTitle
         publicDescription: $publicDescription
         publicImage: $publicImage
+        publicIconImage: $publicIconImage
         deleteImageUrl: $deleteImageUrl
         deletePublicImage: $deletePublicImage
         enableGa: $enableGa
