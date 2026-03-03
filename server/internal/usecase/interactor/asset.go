@@ -6,9 +6,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 
 	"github.com/labstack/gommon/log"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -19,6 +21,7 @@ import (
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
+	"github.com/reearth/reearth/server/pkg/image"
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/account/accountdomain/workspace"
@@ -72,6 +75,42 @@ func (i *Asset) Create(ctx context.Context, inp interfaces.CreateAssetParam, ope
 	}
 
 	result, _, err := i.uploadAndSave(ctx, inp.File, ws, inp.ProjectID, inp.CoreSupport)
+	return result, err
+}
+
+func (i *Asset) CreateIconAsset(ctx context.Context, inp interfaces.CreateIconAssetParam, operator *usecase.Operator) (*asset.Asset, error) {
+	if inp.File == nil {
+		return nil, interfaces.ErrFileNotIncluded
+	}
+
+	ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !operator.IsWritableWorkspace(ws.ID()) {
+		return nil, interfaces.ErrOperationDenied
+	}
+
+	// Process the image: resize to 64x64, center-crop, convert to PNG
+	processedData, err := image.ProcessIconImage(inp.File.Content, inp.File.Size)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", interfaces.ErrInvalidIconImage, err)
+	}
+
+	// Create a new file with the processed PNG data
+	baseName := strings.TrimSuffix(path.Base(inp.File.Path), path.Ext(inp.File.Path))
+	pngFileName := baseName + ".png"
+
+	processedFile := &file.File{
+		Content:     io.NopCloser(bytes.NewReader(processedData)),
+		Path:        pngFileName,
+		Size:        int64(len(processedData)),
+		ContentType: "image/png",
+	}
+
+	// Use the existing uploadAndSave method with CoreSupport=true
+	result, _, err := i.uploadAndSave(ctx, processedFile, ws, inp.ProjectID, true)
 	return result, err
 }
 

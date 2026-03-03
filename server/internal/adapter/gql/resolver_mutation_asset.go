@@ -38,6 +38,33 @@ func (r *mutationResolver) CreateAsset(ctx context.Context, input gqlmodel.Creat
 	return &gqlmodel.CreateAssetPayload{Asset: gqlmodel.ToAsset(res)}, nil
 }
 
+func (r *mutationResolver) CreateIconAsset(ctx context.Context, input gqlmodel.CreateIconAssetInput) (*gqlmodel.CreateIconAssetPayload, error) {
+	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
+	if err != nil {
+		return nil, err
+	}
+
+	var pid *idx.ID[id.Project]
+	if input.ProjectID != nil {
+		pidValue, err := gqlmodel.ToID[id.Project](*input.ProjectID)
+		if err != nil {
+			return nil, err
+		}
+		pid = &pidValue
+	}
+
+	res, err := usecases(ctx).Asset.CreateIconAsset(ctx, interfaces.CreateIconAssetParam{
+		WorkspaceID: tid,
+		ProjectID:   pid,
+		File:        gqlmodel.FromFile(&input.File),
+	}, getOperator(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	return &gqlmodel.CreateIconAssetPayload{Asset: gqlmodel.ToAsset(res)}, nil
+}
+
 func (r *mutationResolver) UpdateAsset(ctx context.Context, input gqlmodel.UpdateAssetInput) (*gqlmodel.UpdateAssetPayload, error) {
 	aid, err := gqlmodel.ToID[id.Asset](input.AssetID)
 	if err != nil {
