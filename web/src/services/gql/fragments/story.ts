@@ -14,6 +14,7 @@ export const storyFragment = gql`
     publicDescription
     publishmentStatus
     publicImage
+    publicIconImage
     publicNoIndex
     enableGa
     trackingId

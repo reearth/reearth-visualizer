@@ -60,6 +60,7 @@ export type Story = {
   publicTitle?: string;
   publicDescription?: string;
   publicImage?: string;
+  publicIconImage?: string;
   isBasicAuthActive?: boolean;
   basicAuthUsername?: string;
   basicAuthPassword?: string;

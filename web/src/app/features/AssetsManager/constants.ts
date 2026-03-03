@@ -5,7 +5,8 @@ export const IMAGE_FILE_TYPES = [
   "gif",
   "svg",
   "tiff",
-  "webp"
+  "webp",
+  "ico"
 ] as const;
 
 export const MODEL_FILE_TYPES = ["glb", "gltf"] as const;

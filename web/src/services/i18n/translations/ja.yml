@@ -472,6 +472,8 @@ Write down your text: 文章を書く
 The Description setting will be applied to og:description.: 説明の設定はog:descriptionに適用されます。
 Image url: 画像URL
 The Thumbnail setting will be applied to og:image.: サムネイルの設定はog:imageに適用されます。
+Favicon: ファビコン
+The favicon setting will be applied to the icon shown in the browser tab.: ファビコンの設定は、ブラウザタブに表示されるアイコンに適用されます。
 Alias Setting: エイリアス設定
 Please publish your story before setting up your alias.: エイリアスを設定する前にストーリーを公開してください。
 Please publish your map project before setting up your alias.: エイリアスを設定する前にプロジェクトを公開してください。
