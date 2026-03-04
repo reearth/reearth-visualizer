@@ -281,7 +281,7 @@ const PublicSettingsDetail: FC<Props> = ({
               handleSubmitPublicInfo({ publicIconImage });
             }}
           />
-          <StyledImage
+          <StyledIconImage
             src={
               !localPublicInfo.publicIconImage
                 ? defaultProjectBackgroundImage
@@ -423,6 +423,15 @@ const ThumbnailField = styled.div`
 
 const StyledImage = styled("img")(({ theme }) => ({
   width: "100%",
+  marginTop: 24,
+  borderRadius: theme.radius.normal,
+  backgroundColor: theme.relative.dark
+}));
+
+const StyledIconImage = styled("img")(({ theme }) => ({
+  width: 64,
+  height: 64,
+  marginTop: 24,
   borderRadius: theme.radius.normal,
   backgroundColor: theme.relative.dark
 }));
