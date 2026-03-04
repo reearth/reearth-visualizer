@@ -11,7 +11,10 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
 	http1 "github.com/reearth/reearth/server/internal/adapter/http"
 	"github.com/reearth/reearth/server/internal/app/config"
@@ -33,6 +36,11 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 		}
 
 		ctx := c.Request().Context()
+
+		// Mock auth mode: create user in local repos
+		if cfg.Config.UseMockAuth() {
+			return signupMockUser(ctx, c, cfg, inp)
+		}
 
 		// Call reearth-accounts service for signup
 		if cfg.Config.UseReearthAccountAuth() && cfg.AccountsAPIClient != nil {
@@ -63,7 +71,7 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 					secret = *inp.Secret
 				}
 				u, err = cfg.AccountsAPIClient.UserRepo.Signup(ctx, userID, inp.Name,
-					inp.Email, inp.Password, secret, workspaceID)
+					inp.Email, inp.Password, secret, workspaceID, false)
 			}
 
 			if err != nil {
@@ -77,15 +85,7 @@ func Signup(cfg *ServerConfig) echo.HandlerFunc {
 			})
 		}
 
-		uc := adapter.Usecases(ctx)
-		controller := http1.NewUserController(uc.User)
-
-		output, err := controller.Signup(ctx, inp)
-		if err != nil {
-			return err
-		}
-
-		return c.JSON(http.StatusOK, output)
+		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: "accounts API client not configured"}
 	}
 }
 
@@ -196,22 +196,58 @@ func PublishedIndexMiddleware(pattern string, useParam, errorIfNotFound bool) ec
 	}
 }
 
+func signupMockUser(ctx context.Context, c echo.Context, cfg *ServerConfig, inp http1.SignupInput) error {
+	name := inp.Name
+	if name == "" && inp.Username != "" {
+		name = inp.Username
+	}
+
+	// Generate IDs upfront so user and workspace can reference each other
+	uID := accountsID.NewUserID()
+	wsID := accountsID.NewWorkspaceID()
+
+	// Create user with workspace reference (required for MongoDB deserialization)
+	u, err := accountsUser.New().
+		ID(uID).
+		Name(name).
+		Email(inp.Email).
+		Workspace(wsID).
+		Build()
+	if err != nil {
+		return &echo.HTTPError{Code: http.StatusBadRequest, Message: fmt.Sprintf("failed to create user: %v", err)}
+	}
+
+	// Create workspace for the user using builder pattern (same as test seeder)
+	ws := accountsWorkspace.New().
+		ID(wsID).
+		Name(name).
+		Members(map[accountsUser.ID]accountsWorkspace.Member{
+			uID: {Role: accountsRole.RoleOwner, InvitedBy: uID},
+		}).
+		MustBuild()
+
+	if err := cfg.AccountRepos.Workspace.Save(ctx, ws); err != nil {
+		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: fmt.Sprintf("failed to save workspace: %v", err)}
+	}
+
+	if err := cfg.AccountRepos.User.Save(ctx, u); err != nil {
+		return &echo.HTTPError{Code: http.StatusInternalServerError, Message: fmt.Sprintf("failed to save user: %v", err)}
+	}
+
+	return c.JSON(http.StatusOK, http1.SignupOutput{
+		ID:    u.ID().String(),
+		Name:  u.Name(),
+		Email: u.Email(),
+	})
+}
+
 func MockUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		uc := adapter.Usecases(c.Request().Context())
-		controller := http1.NewUserController(uc.User)
-
-		input := http1.SignupInput{
-			Username: "Demo User",
-			Email:    "mock@example.com",
-		}
-
-		output, err := controller.Signup(c.Request().Context(), input)
-		if err != nil {
-			return err
-		}
-
-		return c.JSON(http.StatusOK, output)
+		return c.JSON(http.StatusOK, http1.SignupOutput{
+			ID:    "mock-user-id",
+			Name:  "Demo User",
+			Email: "mock@example.com",
+		})
 	}
 }
 

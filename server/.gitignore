@@ -31,3 +31,4 @@ __debug_bin
 /coverage.txt
 /web
 tmp
+logs_*

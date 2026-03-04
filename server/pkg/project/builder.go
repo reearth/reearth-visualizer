@@ -4,9 +4,9 @@ import (
 	"net/url"
 	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
 )
 
@@ -53,7 +53,7 @@ func (b *Builder) NewID() *Builder {
 	return b
 }
 
-func (b *Builder) Workspace(workspace accountdomain.WorkspaceID) *Builder {
+func (b *Builder) Workspace(workspace accountsID.WorkspaceID) *Builder {
 	b.p.workspace = workspace
 	return b
 }

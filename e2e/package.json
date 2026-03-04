@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test:ui": "rm -rf ./out && npx playwright test --config=playwright.config.ts",
+    "test:ui": "rm -rf ./out && npx playwright test --config=playwright.config.ts --project=webkit",
+    "test:api": "SKIP_STORAGE_STATE=true npx playwright test --config=playwright.config.ts --project=api-setup --project=api-tests",
+    "test:api:local": "SKIP_STORAGE_STATE=true REEARTH_E2E_AUTH_MODE=mock REEARTH_WEB_E2E_BASEURL=http://localhost:3000 npx playwright test --config=playwright.config.ts --project=api-setup --project=api-tests",
     "allure:generate": "rm -rf ./out/allure-report && npx allure generate ./out/allure-results --output ./out/allure-report",
     "allure:serve": "npx allure serve --port 8080 ./out/allure-results",
-    "test:local": "cross-env REEARTH_WEB_E2E_BASEURL=http://localhost:3000 npx playwright test --config=playwright.config.ts",
+    "test:local": "cross-env REEARTH_WEB_E2E_BASEURL=http://localhost:3000 npx playwright test --config=playwright.config.ts --project=webkit",
     "lint": "eslint .",
     "fix": "eslint --fix .",
     "format": "prettier --write ."
