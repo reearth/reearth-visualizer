@@ -7,13 +7,14 @@ import (
 	"os/signal"
 
 	"github.com/labstack/echo/v4"
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/app/otel"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/log"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
@@ -46,8 +47,8 @@ type ServerConfig struct {
 	Debug             bool
 	Repos             *repo.Container
 	Gateways          *gateway.Container
-	AccountRepos      *accountrepo.Container
-	AccountGateways   *accountgateway.Container
+	AccountRepos      *accountsInfra.Container
+	AccountGateways   *accountsGateway.Container
 	AccountsAPIClient *gqlclient.Client
 	ServiceName       otel.OtelServiceName
 }
