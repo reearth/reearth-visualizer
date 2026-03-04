@@ -4,11 +4,12 @@ import (
 	"context"
 	"testing"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 	"github.com/reearth/reearthx/util"
 )
 
@@ -107,11 +108,11 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) 
 	defer util.MockNow(now)()
 
 	// Create metadata with photoURL
-	metadata := user.NewMetadata()
+	metadata := accountsUser.NewMetadata()
 	metadata.SetPhotoURL("https://example.com/photo.jpg")
 
 	// Create user with photoURL in metadata
-	u := user.New().
+	u := accountsUser.New().
 		ID(uID).
 		Workspace(wID).
 		Name(uName).
@@ -124,14 +125,13 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) 
 	}
 
 	// Create workspace for the user
-	m := workspace.Member{
-		Role: workspace.RoleOwner,
-	}
-	w := workspace.New().ID(wID).
+	w := accountsWorkspace.New().ID(wID).
 		Name(uName).
 		Personal(false).
-		Members(map[accountdomain.UserID]workspace.Member{u.ID(): m}).
-		Metadata(workspace.NewMetadata()).
+		Members(map[accountsID.UserID]accountsWorkspace.Member{u.ID(): {
+			Role: accountsRole.RoleOwner,
+		}}).
+		Metadata(accountsWorkspace.NewMetadata()).
 		MustBuild()
 	if err := r.Workspace.Save(ctx, w); err != nil {
 		return err
@@ -154,7 +154,7 @@ func seederWithPhotoURL(ctx context.Context, r *repo.Container, f gateway.File) 
 	}
 
 	// assign user3 to user1's workspace
-	if err := JoinMembers(ctx, r, wID, u3, workspace.RoleReader, uID); err != nil {
+	if err := JoinMembers(ctx, r, wID, u3, accountsRole.RoleReader, uID); err != nil {
 		return err
 	}
 

@@ -3,8 +3,8 @@ package gateway
 import (
 	"context"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type PolicyCheckType string
@@ -19,9 +19,9 @@ const (
 )
 
 type PolicyCheckRequest struct {
-	WorkspaceID accountdomain.WorkspaceID `json:"workspace_id"`
-	CheckType   PolicyCheckType           `json:"check_type"`
-	Value       int64                     `json:"value"`
+	WorkspaceID accountsID.WorkspaceID `json:"workspace_id"`
+	CheckType   PolicyCheckType        `json:"check_type"`
+	Value       int64                  `json:"value"`
 }
 
 type PolicyCheckResponse struct {
@@ -36,7 +36,7 @@ type PolicyChecker interface {
 	CheckPolicy(ctx context.Context, req PolicyCheckRequest) (*PolicyCheckResponse, error)
 }
 
-func CreateGeneralPolicyCheckRequest(workspaceID accountdomain.WorkspaceID, visibility project.Visibility) PolicyCheckRequest {
+func CreateGeneralPolicyCheckRequest(workspaceID accountsID.WorkspaceID, visibility project.Visibility) PolicyCheckRequest {
 	var checkType PolicyCheckType
 	if visibility == project.VisibilityPublic {
 		checkType = PolicyCheckGeneralPublicProjectCreation
@@ -51,7 +51,7 @@ func CreateGeneralPolicyCheckRequest(workspaceID accountdomain.WorkspaceID, visi
 	}
 }
 
-func CreateGeneralOperationAllowedCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+func CreateGeneralOperationAllowedCheckRequest(workspaceID accountsID.WorkspaceID) PolicyCheckRequest {
 	return PolicyCheckRequest{
 		WorkspaceID: workspaceID,
 		CheckType:   PolicyCheckGeneralOperationAllowed,
@@ -59,7 +59,7 @@ func CreateGeneralOperationAllowedCheckRequest(workspaceID accountdomain.Workspa
 	}
 }
 
-func CreateCustomDomainCreationCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+func CreateCustomDomainCreationCheckRequest(workspaceID accountsID.WorkspaceID) PolicyCheckRequest {
 	return PolicyCheckRequest{
 		WorkspaceID: workspaceID,
 		CheckType:   PolicyCheckCustomDomainCreation,
@@ -67,7 +67,7 @@ func CreateCustomDomainCreationCheckRequest(workspaceID accountdomain.WorkspaceI
 	}
 }
 
-func CreateCustomDomainCountCheckRequest(workspaceID accountdomain.WorkspaceID) PolicyCheckRequest {
+func CreateCustomDomainCountCheckRequest(workspaceID accountsID.WorkspaceID) PolicyCheckRequest {
 	return PolicyCheckRequest{
 		WorkspaceID: workspaceID,
 		CheckType:   PolicyCheckCustomDomainCount,

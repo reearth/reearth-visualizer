@@ -3,10 +3,10 @@ package adapter
 import (
 	"context"
 
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/appx"
 	"golang.org/x/text/language"
 )
@@ -41,7 +41,7 @@ func AttachLang(ctx context.Context, lang language.Tag) context.Context {
 	return context.WithValue(ctx, contextLang, lang)
 }
 
-func AttachUser(ctx context.Context, u *user.User) context.Context {
+func AttachUser(ctx context.Context, u *accountsUser.User) context.Context {
 	return context.WithValue(ctx, contextUser, u)
 }
 
@@ -77,9 +77,9 @@ func JwtToken(ctx context.Context) string {
 	return ""
 }
 
-func User(ctx context.Context) *user.User {
+func User(ctx context.Context) *accountsUser.User {
 	if v := ctx.Value(contextUser); v != nil {
-		if u, ok := v.(*user.User); ok {
+		if u, ok := v.(*accountsUser.User); ok {
 			return u
 		}
 	}
@@ -119,9 +119,9 @@ func Operator(ctx context.Context) *usecase.Operator {
 	return nil
 }
 
-func AcOperator(ctx context.Context) *accountusecase.Operator {
+func AcOperator(ctx context.Context) *accountsWorkspace.Operator {
 	if v := ctx.Value(contextOperator); v != nil {
-		if v2, ok := v.(*accountusecase.Operator); ok {
+		if v2, ok := v.(*accountsWorkspace.Operator); ok {
 			return v2
 		}
 	}
@@ -129,13 +129,6 @@ func AcOperator(ctx context.Context) *accountusecase.Operator {
 }
 
 func GetAuthInfo(ctx context.Context) *appx.AuthInfo {
-	if IsMockAuth(ctx) {
-		return &appx.AuthInfo{
-			Sub:   user.NewID().String(), // Use it if there is a Demo User in the DB
-			Name:  "Demo User",
-			Email: "mock@example.com",
-		}
-	}
 	if v := ctx.Value(ContextAuthInfo); v != nil {
 		if v2, ok := v.(appx.AuthInfo); ok {
 			return &v2

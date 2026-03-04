@@ -3,9 +3,9 @@ package gql
 import (
 	"context"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
 )
 
 func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.CreateWorkspaceInput) (*gqlmodel.CreateWorkspacePayload, error) {
@@ -18,7 +18,7 @@ func (r *mutationResolver) CreateWorkspace(ctx context.Context, input gqlmodel.C
 }
 
 func (r *mutationResolver) DeleteWorkspace(ctx context.Context, input gqlmodel.DeleteWorkspaceInput) (*gqlmodel.DeleteWorkspacePayload, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](input.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func (r *mutationResolver) DeleteWorkspace(ctx context.Context, input gqlmodel.D
 }
 
 func (r *mutationResolver) UpdateWorkspace(ctx context.Context, input gqlmodel.UpdateWorkspaceInput) (*gqlmodel.UpdateWorkspacePayload, error) {
-	tid, err := gqlmodel.ToID[accountdomain.Workspace](input.WorkspaceID)
+	tid, err := gqlmodel.ToID[accountsID.Workspace](input.WorkspaceID)
 	if err != nil {
 		return nil, err
 	}
@@ -45,12 +45,12 @@ func (r *mutationResolver) UpdateWorkspace(ctx context.Context, input gqlmodel.U
 }
 
 func (r *mutationResolver) AddMemberToWorkspace(ctx context.Context, input gqlmodel.AddMemberToWorkspaceInput) (*gqlmodel.AddMemberToWorkspacePayload, error) {
-	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.WorkspaceID, input.UserID)
+	tid, uid, err := gqlmodel.ToID2[accountsID.Workspace, accountsID.User](input.WorkspaceID, input.UserID)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, map[accountdomain.UserID]workspace.Role{uid: gqlmodel.FromRole(input.Role)}, getAcOperator(ctx))
+	res, err := usecases(ctx).Workspace.AddUserMember(ctx, tid, map[accountsID.UserID]accountsRole.RoleType{uid: gqlmodel.FromRole(input.Role)}, getAcOperator(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (r *mutationResolver) AddMemberToWorkspace(ctx context.Context, input gqlmo
 }
 
 func (r *mutationResolver) RemoveMemberFromWorkspace(ctx context.Context, input gqlmodel.RemoveMemberFromWorkspaceInput) (*gqlmodel.RemoveMemberFromWorkspacePayload, error) {
-	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.WorkspaceID, input.UserID)
+	tid, uid, err := gqlmodel.ToID2[accountsID.Workspace, accountsID.User](input.WorkspaceID, input.UserID)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func (r *mutationResolver) RemoveMemberFromWorkspace(ctx context.Context, input 
 }
 
 func (r *mutationResolver) UpdateMemberOfWorkspace(ctx context.Context, input gqlmodel.UpdateMemberOfWorkspaceInput) (*gqlmodel.UpdateMemberOfWorkspacePayload, error) {
-	tid, uid, err := gqlmodel.ToID2[accountdomain.Workspace, accountdomain.User](input.WorkspaceID, input.UserID)
+	tid, uid, err := gqlmodel.ToID2[accountsID.Workspace, accountsID.User](input.WorkspaceID, input.UserID)
 	if err != nil {
 		return nil, err
 	}

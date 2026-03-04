@@ -4,15 +4,16 @@ import (
 	"context"
 
 	"github.com/labstack/echo/v4"
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/interactor"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
 )
 
-func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.Container, ag *accountgateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
+func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountsInfra.Container, ag *accountsGateway.Container, config interactor.ContainerConfig) echo.MiddlewareFunc {
 	return ContextMiddleware(func(ctx context.Context) context.Context {
 		repos := r
 
@@ -28,10 +29,10 @@ func UsecaseMiddleware(r *repo.Container, g *gateway.Container, ar *accountrepo.
 			)
 		}
 
-		var ar2 *accountrepo.Container
+		var ar2 *accountsInfra.Container
 		if op := adapter.AcOperator(ctx); op != nil && ar != nil {
 			// apply filters to repos
-			ar2 = ar.Filtered(accountrepo.WorkspaceFilterFromOperator(op))
+			ar2 = ar.Filtered(accountsWorkspace.WorkspaceFilterFromOperator(op))
 		} else {
 			ar2 = ar
 		}

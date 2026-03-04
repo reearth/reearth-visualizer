@@ -3,12 +3,12 @@ package gql
 import (
 	"context"
 
+	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-	"github.com/reearth/reearthx/account/accountdomain/user"
 
-	"github.com/reearth/reearthx/account/accountusecase"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"golang.org/x/text/language"
 )
 
@@ -30,7 +30,7 @@ func AttachUsecases(ctx context.Context, u *interfaces.Container, enableDataLoad
 	return ctx
 }
 
-func getUser(ctx context.Context) *user.User {
+func getUser(ctx context.Context) *accountsUser.User {
 	return adapter.User(ctx)
 }
 
@@ -42,7 +42,7 @@ func getOperator(ctx context.Context) *usecase.Operator {
 	return adapter.Operator(ctx)
 }
 
-func getAcOperator(ctx context.Context) *accountusecase.Operator {
+func getAcOperator(ctx context.Context) *accountsWorkspace.Operator {
 	if op := getOperator(ctx); op != nil {
 		return op.AcOperator
 	}
