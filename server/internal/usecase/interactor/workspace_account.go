@@ -265,17 +265,9 @@ func (i *WorkspaceInteractor) UpdateIntegration(ctx context.Context, wId account
 	return ws, nil
 }
 
-func (i *WorkspaceInteractor) RemoveUserMember(ctx context.Context, id accountsWorkspace.ID, u accountsUser.ID, operator *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error) {
-	return i.RemoveMultipleUserMembers(ctx, id, accountsUser.IDList{u}, operator)
-}
-
-func (i *WorkspaceInteractor) RemoveMultipleUserMembers(ctx context.Context, id accountsWorkspace.ID, userIds accountsUser.IDList, operator *accountsWorkspace.Operator) (_ *accountsWorkspace.Workspace, err error) {
+func (i *WorkspaceInteractor) RemoveUserMember(ctx context.Context, id accountsWorkspace.ID, u accountsUser.ID, operator *accountsWorkspace.Operator) (_ *accountsWorkspace.Workspace, err error) {
 	if operator == nil || operator.User == nil {
 		return nil, errInvalidOperator
-	}
-
-	if userIds.Len() == 0 {
-		return nil, accountsWorkspace.ErrNoSpecifiedUsers
 	}
 
 	ws, err := i.repos.Workspace.FindByID(ctx, id)
@@ -288,25 +280,20 @@ func (i *WorkspaceInteractor) RemoveMultipleUserMembers(ctx context.Context, id 
 	}
 
 	isOwner := ws.Members().UserRole(*operator.User) == accountsRole.RoleOwner
+	isSelfLeave := *operator.User == u
 
-	for _, uId := range userIds {
-		isSelfLeave := *operator.User == uId
-
-		if !isOwner && !isSelfLeave {
-			return nil, interfaces.ErrOperationDenied
-		}
-		if isSelfLeave && ws.Members().IsOnlyOwner(uId) {
-			return nil, errOwnerCannotLeaveWorkspace
-		}
-
-		err := ws.Members().Leave(uId)
-		if err != nil {
-			return nil, err
-		}
+	if !isOwner && !isSelfLeave {
+		return nil, interfaces.ErrOperationDenied
+	}
+	if isSelfLeave && ws.Members().IsOnlyOwner(u) {
+		return nil, errOwnerCannotLeaveWorkspace
 	}
 
-	err = i.repos.Workspace.Save(ctx, ws)
-	if err != nil {
+	if err := ws.Members().Leave(u); err != nil {
+		return nil, err
+	}
+
+	if err = i.repos.Workspace.Save(ctx, ws); err != nil {
 		return nil, err
 	}
 
