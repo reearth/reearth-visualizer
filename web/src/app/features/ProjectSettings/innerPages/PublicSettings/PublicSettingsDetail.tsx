@@ -1,4 +1,7 @@
-import { IMAGE_TYPES } from "@reearth/app/features/AssetsManager/constants";
+import {
+  ICON_TYPES,
+  IMAGE_TYPES
+} from "@reearth/app/features/AssetsManager/constants";
 import { Typography } from "@reearth/app/lib/reearth-ui";
 import defaultProjectBackgroundImage from "@reearth/app/ui/assets/defaultProjectBackgroundImage.webp";
 import { AssetField, InputField, SwitchField } from "@reearth/app/ui/fields";
@@ -268,7 +271,7 @@ const PublicSettingsDetail: FC<Props> = ({
               "The favicon setting will be applied to the icon shown in the browser tab."
             )}
             inputMethod="asset"
-            assetsTypes={IMAGE_TYPES}
+            assetsTypes={ICON_TYPES}
             value={localPublicInfo.publicIconImage}
             onChange={(publicIconImage) => {
               setLocalPublicInfo((s) => ({
