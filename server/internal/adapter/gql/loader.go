@@ -50,8 +50,8 @@ func NewLoaders(usecases *interfaces.Container, accountsClient *gqlclient.Client
 		Property:  NewPropertyLoader(usecases.Property),
 		Scene:     NewSceneLoader(usecases.Scene),
 		Story:     NewStoryLoader(usecases.StoryTelling),
-		Workspace: NewWorkspaceLoader(accountsClient),
-		User:      NewUserLoader(accountsClient),
+		Workspace: NewWorkspaceLoader(accountsClient, usecases.Workspace),
+		User:      NewUserLoader(accountsClient, usecases.User),
 	}
 }
 
