@@ -29,14 +29,24 @@ type CreateAssetParam struct {
 	File        *file.File
 }
 
+type CreateIconAssetParam struct {
+	WorkspaceID accountsID.WorkspaceID
+	ProjectID   *id.ProjectID
+	File        *file.File
+}
+
 var (
-	ErrCreateAssetFailed error = errors.New("failed to create asset")
+	ErrCreateAssetFailed    error = errors.New("failed to create asset")
+	ErrInvalidIconImage     error = errors.New("invalid icon image")
+	ErrIconImageTooLarge    error = errors.New("icon image file too large")
+	ErrIconImageDimTooLarge error = errors.New("icon image dimensions too large")
 )
 
 type Asset interface {
 	Fetch(context.Context, []id.AssetID, *usecase.Operator) ([]*asset.Asset, error)
 	FindByWorkspaceProject(context.Context, accountsID.WorkspaceID, *id.ProjectID, *string, *asset.SortType, *usecasex.Pagination, *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error)
 	Create(context.Context, CreateAssetParam, *usecase.Operator) (*asset.Asset, error)
+	CreateIconAsset(context.Context, CreateIconAssetParam, *usecase.Operator) (*asset.Asset, error)
 	Update(context.Context, id.AssetID, *id.ProjectID, *usecase.Operator) (id.AssetID, *id.ProjectID, error)
 	Remove(context.Context, id.AssetID, *usecase.Operator) (id.AssetID, error)
 	ImportAssetFiles(context.Context, map[string]*zip.File, *[]byte, *project.Project, *usecase.Operator) (*[]byte, map[string]any, error)
