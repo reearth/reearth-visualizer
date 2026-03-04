@@ -93,11 +93,11 @@ test.describe("Project CRUD lifecycle via API", () => {
     expect(data.deleteProject.projectId).toBe(projectId);
   });
 
-  test("Verify project is gone from workspace", async ({ gqlClient }) => {
+  test("Verify project is gone", async ({ gqlClient }) => {
     const data = await gqlClient.query<{
-      projects: { nodes: { id: string }[] };
-    }>(GET_PROJECTS, { workspaceId, sort: { field: "CREATEDAT", direction: "DESC" }, pagination: { first: 20 } });
+      node: { id: string } | null;
+    }>(GET_PROJECT, { projectId });
 
-    expect(data.projects.nodes.find(p => p.id === projectId)).toBeUndefined();
+    expect(data.node).toBeNull();
   });
 });
