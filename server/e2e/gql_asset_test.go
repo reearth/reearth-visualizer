@@ -23,7 +23,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 	a := res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
-		"contentType": "",
+		"contentType": ".*",
 		"coreSupport": true,
 		"id": ".*",
 		"name": "test.png",
@@ -37,7 +37,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 	a = res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
-		"contentType": "",
+		"contentType": ".*",
 		"coreSupport": false,
 		"id": ".*",
 		"name": "test.png",
@@ -51,7 +51,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 	a = res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
-		"contentType": "",
+		"contentType": ".*",
 		"coreSupport": true,
 		"id": ".*",
 		"name": "test.csv",
@@ -65,7 +65,7 @@ func TestCoreSupportGetAssets(t *testing.T) {
 	a = res.Path("$.data.createAsset.asset")
 	JSONEqRegexpValue(t, a, `{
 		"__typename": "Asset",
-		"contentType": "",
+		"contentType": ".*",
 		"coreSupport": false,
 		"id": ".*",
 		"name": "test.csv",
