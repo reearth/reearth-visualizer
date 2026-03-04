@@ -9,8 +9,6 @@ if (!baseUrl) throw new Error("Missing REEARTH_WEB_E2E_BASEURL");
 
 export const BASE_URL = baseUrl.replace(/\/$/, "");
 
-// The GraphQL API lives on a separate host (api.<domain>), not on the frontend.
-// Derive it from the config endpoint, or fall back to REEARTH_E2E_API_URL if set.
 export const GRAPHQL_ENDPOINT =
   process.env.REEARTH_E2E_API_URL?.replace(/\/$/, "").concat("/graphql") ??
   deriveApiEndpoint(BASE_URL);

@@ -12,12 +12,13 @@ const storagePath = path.join(__dirname, "../.auth/user.json");
 setup("acquire API auth token", async ({ request }) => {
   fs.mkdirSync(path.dirname(tokenPath), { recursive: true });
 
-  // In auth0 mode, try to grab the token from browser storage state first
-  // (saved by the UI global-setup). Falls back to password grant if not available.
   if (AUTH_MODE === "auth0" && fs.existsSync(storagePath)) {
     const token = extractTokenFromStorage(storagePath);
     if (token) {
-      fs.writeFileSync(tokenPath, JSON.stringify({ token, extraHeaders: {} }, null, 2));
+      fs.writeFileSync(
+        tokenPath,
+        JSON.stringify({ token, extraHeaders: {} }, null, 2)
+      );
       return;
     }
   }
