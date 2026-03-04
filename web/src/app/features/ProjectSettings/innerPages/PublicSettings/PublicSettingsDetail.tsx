@@ -73,14 +73,22 @@ const PublicSettingsDetail: FC<Props> = ({
   const [localPublicInfo, setLocalPublicInfo] = useState({
     publicTitle: settingsItem.publicTitle,
     publicDescription: settingsItem.publicDescription,
-    publicImage: settingsItem.publicImage
+    publicImage: settingsItem.publicImage,
+    publicIconImage: settingsItem.publicIconImage
   });
 
   const handleSubmitPublicInfo = useCallback(
-    (publicImage?: string) => {
+    ({
+      publicImage,
+      publicIconImage
+    }: {
+      publicImage?: string;
+      publicIconImage?: string;
+    }) => {
       onUpdate({
         ...localPublicInfo,
-        publicImage
+        publicImage,
+        publicIconImage
       });
     },
     [localPublicInfo, onUpdate]
@@ -211,7 +219,7 @@ const PublicSettingsDetail: FC<Props> = ({
           onChange={(publicTitle: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicTitle }));
           }}
-          onChangeComplete={handleSubmitPublicInfo}
+          onChangeComplete={() => handleSubmitPublicInfo({})}
         />
         <TextAreaField
           title={t("Description")}
@@ -224,7 +232,7 @@ const PublicSettingsDetail: FC<Props> = ({
           onChange={(publicDescription: string) => {
             setLocalPublicInfo((s) => ({ ...s, publicDescription }));
           }}
-          onChangeComplete={handleSubmitPublicInfo}
+          onChangeComplete={() => handleSubmitPublicInfo({})}
         />
         <ThumbnailField>
           <AssetField
@@ -241,7 +249,7 @@ const PublicSettingsDetail: FC<Props> = ({
                 ...s,
                 publicImage: publicImage ?? ""
               }));
-              handleSubmitPublicInfo(publicImage);
+              handleSubmitPublicInfo({ publicImage });
             }}
           />
           <StyledImage
@@ -249,6 +257,32 @@ const PublicSettingsDetail: FC<Props> = ({
               !localPublicInfo.publicImage
                 ? defaultProjectBackgroundImage
                 : localPublicInfo.publicImage
+            }
+          />
+        </ThumbnailField>
+        <ThumbnailField>
+          <AssetField
+            title={t("Favicon")}
+            placeholder={t("Image url")}
+            description={t(
+              "The favicon setting will be applied to the icon shown in the browser tab."
+            )}
+            inputMethod="asset"
+            assetsTypes={IMAGE_TYPES}
+            value={localPublicInfo.publicIconImage}
+            onChange={(publicIconImage) => {
+              setLocalPublicInfo((s) => ({
+                ...s,
+                publicIconImage: publicIconImage ?? ""
+              }));
+              handleSubmitPublicInfo({ publicIconImage });
+            }}
+          />
+          <StyledImage
+            src={
+              !localPublicInfo.publicIconImage
+                ? defaultProjectBackgroundImage
+                : localPublicInfo.publicIconImage
             }
           />
         </ThumbnailField>

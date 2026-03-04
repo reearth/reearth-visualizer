@@ -55,6 +55,9 @@ func (h *HTTPPolicyChecker) CheckPolicy(ctx context.Context, req gateway.PolicyC
 		_ = resp.Body.Close()
 	}()
 
+	if resp.StatusCode == http.StatusTooManyRequests {
+		return nil, rerror.ErrTooManyRequests
+	}
 	if resp.StatusCode != http.StatusOK {
 		return nil, rerror.ErrInternalBy(fmt.Errorf("policy check returned status %d", resp.StatusCode))
 	}

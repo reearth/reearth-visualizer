@@ -39,6 +39,7 @@ func TestStoryBuilder(t *testing.T) {
 		PublicTitle("public title").
 		PublicDescription("public description").
 		PublicImage("/test.jpg").
+		PublicIconImage("/icon.png").
 		PublicNoIndex(true).
 		PublicBasicAuth(true, "user", "pass")
 
@@ -58,6 +59,7 @@ func TestStoryBuilder(t *testing.T) {
 		publicTitle:       "public title",
 		publicDescription: "public description",
 		publicImage:       "/test.jpg",
+		publicIconImage:   "/icon.png",
 		publicNoIndex:     true,
 		isBasicAuthActive: true,
 		basicAuthUsername: "user",

@@ -32,6 +32,7 @@ type ProjectDocument struct {
 	PublicTitle       string
 	PublicDescription string
 	PublicImage       string
+	PublicIconImage   string
 	PublicNoIndex     bool
 	IsBasicAuthActive bool
 	BasicAuthUsername string
@@ -77,6 +78,7 @@ func NewProject(p *project.Project) (*ProjectDocument, string) {
 		PublicTitle:       p.PublicTitle(),
 		PublicDescription: p.PublicDescription(),
 		PublicImage:       p.PublicImage(),
+		PublicIconImage:   p.PublicIconImage(),
 		PublicNoIndex:     p.PublicNoIndex(),
 		IsBasicAuthActive: p.IsBasicAuthActive(),
 		BasicAuthUsername: p.BasicAuthUsername(),
@@ -129,6 +131,7 @@ func (d *ProjectDocument) Model() (*project.Project, error) {
 		PublicTitle(d.PublicTitle).
 		PublicDescription(d.PublicDescription).
 		PublicImage(d.PublicImage).
+		PublicIconImage(d.PublicIconImage).
 		PublicNoIndex(d.PublicNoIndex).
 		IsBasicAuthActive(d.IsBasicAuthActive).
 		BasicAuthUsername(d.BasicAuthUsername).

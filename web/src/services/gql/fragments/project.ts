@@ -14,6 +14,7 @@ export const projectFragment = gql`
     publicTitle
     publicDescription
     publicImage
+    publicIconImage
     publishedAt
     publicNoIndex
     alias

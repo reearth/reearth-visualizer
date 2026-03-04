@@ -87,6 +87,7 @@ func TestToProject(t *testing.T) {
 				PublicTitle:       "",
 				PublicDescription: "",
 				PublicImage:       "",
+				PublicIconImage:   "",
 				PublicNoIndex:     false,
 				ImageURL:          lo.Must(url.Parse("https://example.com/hoge.gif")),
 				WorkspaceID:       IDFrom(wsId),

@@ -123,6 +123,11 @@ func (b *StoryBuilder) PublicImage(image string) *StoryBuilder {
 	return b
 }
 
+func (b *StoryBuilder) PublicIconImage(iconImage string) *StoryBuilder {
+	b.s.publicIconImage = iconImage
+	return b
+}
+
 func (b *StoryBuilder) PublicNoIndex(noIndex bool) *StoryBuilder {
 	b.s.publicNoIndex = noIndex
 	return b
