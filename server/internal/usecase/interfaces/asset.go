@@ -5,12 +5,12 @@ import (
 	"context"
 	"errors"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/pkg/asset"
 	"github.com/reearth/reearth/server/pkg/file"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/project"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/usecasex"
 )
 
@@ -23,14 +23,14 @@ const (
 )
 
 type CreateAssetParam struct {
-	WorkspaceID accountdomain.WorkspaceID
+	WorkspaceID accountsID.WorkspaceID
 	ProjectID   *id.ProjectID
 	CoreSupport bool
 	File        *file.File
 }
 
 type CreateIconAssetParam struct {
-	WorkspaceID accountdomain.WorkspaceID
+	WorkspaceID accountsID.WorkspaceID
 	ProjectID   *id.ProjectID
 	File        *file.File
 }
@@ -44,7 +44,7 @@ var (
 
 type Asset interface {
 	Fetch(context.Context, []id.AssetID, *usecase.Operator) ([]*asset.Asset, error)
-	FindByWorkspaceProject(context.Context, accountdomain.WorkspaceID, *id.ProjectID, *string, *asset.SortType, *usecasex.Pagination, *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error)
+	FindByWorkspaceProject(context.Context, accountsID.WorkspaceID, *id.ProjectID, *string, *asset.SortType, *usecasex.Pagination, *usecase.Operator) ([]*asset.Asset, *usecasex.PageInfo, error)
 	Create(context.Context, CreateAssetParam, *usecase.Operator) (*asset.Asset, error)
 	CreateIconAsset(context.Context, CreateIconAssetParam, *usecase.Operator) (*asset.Asset, error)
 	Update(context.Context, id.AssetID, *id.ProjectID, *usecase.Operator) (id.AssetID, *id.ProjectID, error)

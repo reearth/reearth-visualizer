@@ -7,6 +7,8 @@ import (
 	"errors"
 	"testing"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/infrastructure/fs"
 	"github.com/reearth/reearth/server/internal/infrastructure/memory"
@@ -17,9 +19,6 @@ import (
 	"github.com/reearth/reearth/server/pkg/project"
 	"github.com/reearth/reearth/server/pkg/scene"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/usecasex"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
@@ -43,7 +42,7 @@ func (m *MockPolicyChecker) CheckPolicy(ctx context.Context, req gateway.PolicyC
 // Test helper to create a project test environment
 type projectTestEnv struct {
 	ctx               context.Context
-	wsID              accountdomain.WorkspaceID
+	wsID              accountsID.WorkspaceID
 	projectUC         interfaces.Project
 	operator          *usecase.Operator
 	mockPolicyChecker *MockPolicyChecker
@@ -55,10 +54,10 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 
 	mockPolicyChecker := new(MockPolicyChecker)
 	db := memory.New()
-	wsID := accountdomain.NewWorkspaceID()
+	wsID := accountsID.NewWorkspaceID()
 
 	// Create workspace
-	ws := workspace.New().ID(wsID).MustBuild()
+	ws := accountsWorkspace.New().ID(wsID).MustBuild()
 	_ = db.Workspace.Save(ctx, ws)
 
 	// Create repositories
@@ -90,9 +89,9 @@ func setupProjectTestEnv(ctx context.Context, t *testing.T) *projectTestEnv {
 
 	// Create operator
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{wsID},
-			OwningWorkspaces:   workspace.IDList{wsID},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{wsID},
+			OwningWorkspaces:   accountsID.WorkspaceIDList{wsID},
 		},
 	}
 

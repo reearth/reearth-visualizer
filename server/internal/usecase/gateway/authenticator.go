@@ -3,9 +3,9 @@ package gateway
 import (
 	"context"
 
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 )
 
 type Authenticator interface {
-	UpdateUser(context.Context, accountgateway.AuthenticatorUpdateUserParam) (accountgateway.AuthenticatorUser, error)
+	UpdateUser(context.Context, accountsGateway.AuthenticatorUpdateUserParam) (accountsGateway.AuthenticatorUser, error)
 }

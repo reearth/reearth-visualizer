@@ -14,6 +14,8 @@ import (
 	"testing"
 
 	"github.com/gavv/httpexpect/v2"
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	"github.com/reearth/reearth/server/internal/app"
 	"github.com/reearth/reearth/server/internal/app/config"
 	"github.com/reearth/reearth/server/internal/app/otel"
@@ -24,9 +26,7 @@ import (
 	"github.com/reearth/reearth/server/internal/infrastructure/policy"
 	"github.com/reearth/reearth/server/internal/usecase/gateway"
 	"github.com/reearth/reearth/server/internal/usecase/repo"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
 	"github.com/reearth/reearthx/mailer"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/samber/lo"
@@ -68,7 +68,7 @@ func initRepos(t *testing.T, useMongo bool, seeder Seeder) (repos *repo.Containe
 	if useMongo {
 		db := mongotest.Connect(t)(t)
 		fmt.Println("db.Name():", db.Name())
-		accountRepos := lo.Must(accountmongo.New(ctx, db.Client(), db.Name(), false, false, nil))
+		accountRepos := lo.Must(accountsInfra.New(ctx, db.Client(), db.Name(), false, false, nil))
 		repos = lo.Must(mongo.New(ctx, db, accountRepos, false))
 	} else {
 		repos = memory.New()
@@ -103,13 +103,13 @@ func initGateway() *gateway.Container {
 	}
 }
 
-func initAccountGateway(ctx context.Context) *accountgateway.Container {
-	return &accountgateway.Container{
+func initAccountGateway(ctx context.Context) *accountsGateway.Container {
+	return &accountsGateway.Container{
 		Mailer: mailer.New(ctx, &mailer.Config{}),
 	}
 }
 
-func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container, *accountgateway.Container) {
+func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx context.Context) (*app.WebServer, *gateway.Container, *accountsGateway.Container) {
 	gateways := initGateway()
 	accountGateway := initAccountGateway(ctx)
 	return app.NewServer(ctx, &app.ServerConfig{
@@ -123,7 +123,7 @@ func initServerWithAccountGateway(cfg *config.Config, repos *repo.Container, ctx
 	}), gateways, accountGateway
 }
 
-func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container, *accountgateway.Container) {
+func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Container) (*httpexpect.Expect, *gateway.Container, *accountsGateway.Container) {
 	t.Helper()
 
 	if testing.Short() {
@@ -176,7 +176,7 @@ func StartGQLServerWithRepos(t *testing.T, cfg *config.Config, repos *repo.Conta
 	return httpexpect.Default(t, "http://"+l.Addr().String()), gateways, accountGateway
 }
 
-func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountrepo.Container) {
+func StartGQLServerAndRepos(t *testing.T, seeder Seeder) (*httpexpect.Expect, *accountsInfra.Container) {
 	repos, _, _ := initRepos(t, true, seeder)
 	e, _, _ := StartGQLServerWithRepos(t, disabledAuthConfig, repos)
 	return e, repos.AccountRepos()

@@ -21,3 +21,4 @@ exploration
 explore-app.ts
 explore-project-editor.ts
 global-setup-error-screenshot.png
+*.png

@@ -4,15 +4,14 @@ import (
 	"context"
 	"testing"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
+	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/infrastructure/mongo"
 	"github.com/reearth/reearth/server/internal/testutil/factory"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
 	"github.com/reearth/reearth/server/pkg/id"
-	"github.com/reearth/reearthx/account/accountdomain"
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountinfrastructure/accountmongo"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/mongox"
 	"github.com/reearth/reearthx/mongox/mongotest"
 	"github.com/stretchr/testify/assert"
@@ -34,11 +33,11 @@ func TestProjectMetadata_CreateAndFindByProjectID(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
+	_ = accountsInfra.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 
@@ -46,7 +45,7 @@ func TestProjectMetadata_CreateAndFindByProjectID(t *testing.T) {
 	license := "MIT"
 	topics := []string{"go", "test"}
 	starCount := int64(5)
-	userID := accountdomain.NewUserID()
+	userID := accountsID.NewUserID()
 	starredBy := []string{userID.String()}
 	param := interfaces.CreateProjectMetadataParam{
 		ProjectID:   pid,
@@ -84,11 +83,11 @@ func TestProjectMetadata_Update(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
+	_ = accountsInfra.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 
@@ -97,7 +96,7 @@ func TestProjectMetadata_Update(t *testing.T) {
 	license := "MIT"
 	topics := []string{"go", "test"}
 	starCount := int64(5)
-	userID := accountdomain.NewUserID()
+	userID := accountsID.NewUserID()
 	starredBy := []string{userID.String()}
 	param := interfaces.CreateProjectMetadataParam{
 		ProjectID:   pid,
@@ -117,7 +116,7 @@ func TestProjectMetadata_Update(t *testing.T) {
 	newLicense := "Apache-2.0"
 	newTopics := []string{"go", "update"}
 	newStarCount := int64(10)
-	newStarredBy := []string{accountdomain.NewUserID().String(), accountdomain.NewUserID().String()}
+	newStarredBy := []string{accountsID.NewUserID().String(), accountsID.NewUserID().String()}
 	updateParam := interfaces.UpdateProjectMetadataParam{
 		ID:        pid,
 		Readme:    &newReadme,
@@ -145,11 +144,11 @@ func TestProjectMetadata_FindByProjectID_NotFound(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
+	_ = accountsInfra.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 
@@ -166,21 +165,21 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 	uc := createNewProjectMetadataUC(client)
 
 	ws := factory.NewWorkspace()
-	_ = accountmongo.NewWorkspace(client).Save(ctx, ws)
+	_ = accountsInfra.NewMongoWorkspace(client).Save(ctx, ws)
 	pid := id.NewProjectID()
 	operator := &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
-			WritableWorkspaces: workspace.IDList{ws.ID()},
+		AcOperator: &accountsWorkspace.Operator{
+			WritableWorkspaces: accountsID.WorkspaceIDList{ws.ID()},
 		},
 	}
 
 	// Create initial metadata as user1
-	user1 := accountdomain.NewUserID()
+	user1 := accountsID.NewUserID()
 	readme := "readme content"
 	license := "MIT"
 	topics := []string{"go", "test"}
 	starCount := int64(5)
-	userID := accountdomain.NewUserID()
+	userID := accountsID.NewUserID()
 	starredBy := []string{userID.String()}
 	param := interfaces.CreateProjectMetadataParam{
 		ProjectID:   pid,
@@ -196,7 +195,7 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 	assert.NotNil(t, meta)
 
 	// Patch star count as user2 (should be allowed)
-	user2 := accountdomain.NewUserID()
+	user2 := accountsID.NewUserID()
 	newStarCount := int64(2)
 	newStarredBy := []string{user1.String(), user2.String()}
 	patchParam := interfaces.UpdateProjectMetadataByAnyUserParam{
@@ -219,7 +218,7 @@ func TestProjectMetadata_PatchStarCountForAnyUser(t *testing.T) {
 
 	{
 		newPid := id.NewProjectID()
-		user3 := accountdomain.NewUserID()
+		user3 := accountsID.NewUserID()
 		starCount2 := int64(1)
 		starredBy2 := []string{user3.String()}
 		patchParam2 := interfaces.UpdateProjectMetadataByAnyUserParam{

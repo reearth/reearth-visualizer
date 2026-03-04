@@ -10,7 +10,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/reearth/reearthx/account/accountusecase/accountgateway"
+	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"golang.org/x/oauth2"
@@ -33,13 +33,13 @@ type response struct {
 	ErrorDescription string `json:"error_description"`
 }
 
-func (u response) Into() accountgateway.AuthenticatorUser {
+func (u response) Into() accountsGateway.AuthenticatorUser {
 	name := u.UserName
 	if name == "" {
 		name = u.Name
 	}
 
-	return accountgateway.AuthenticatorUser{
+	return accountsGateway.AuthenticatorUser{
 		ID:            u.ID,
 		Name:          name,
 		Email:         u.Email,
@@ -72,7 +72,7 @@ func New(domain, clientID, clientSecret string) *Auth0 {
 	}
 }
 
-func (a *Auth0) UpdateUser(ctx context.Context, p accountgateway.AuthenticatorUpdateUserParam) (data accountgateway.AuthenticatorUser, err error) {
+func (a *Auth0) UpdateUser(ctx context.Context, p accountsGateway.AuthenticatorUpdateUserParam) (data accountsGateway.AuthenticatorUser, err error) {
 	if err != nil {
 		return
 	}
@@ -101,6 +101,13 @@ func (a *Auth0) UpdateUser(ctx context.Context, p accountgateway.AuthenticatorUp
 
 	data = r.Into()
 	return
+}
+
+func (a *Auth0) ResendVerificationEmail(ctx context.Context, userID string) error {
+	_, err := a.exec(ctx, http.MethodPost, "api/v2/jobs/verification-email", map[string]string{
+		"user_id": userID,
+	})
+	return err
 }
 
 func (a *Auth0) exec(ctx context.Context, method, path string, b any) (r response, err error) {
