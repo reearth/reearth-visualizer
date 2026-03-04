@@ -101,7 +101,9 @@ export const useAssetMutations = () => {
           )
         );
 
-        if (!results || results.some((r) => r.error)) {
+        const hasError = !results || results.some((r) => r.error);
+
+        if (hasError) {
           setNotification({
             type: "error",
             text: t("Failed to add one or more assets.")
@@ -115,7 +117,7 @@ export const useAssetMutations = () => {
 
         apolloCache.evict({ fieldName: "assets" });
 
-        return { data: results, result: "success" };
+        return { data: results, result: hasError ? "error" : "success" };
       } catch (_error) {
         setNotification({
           type: "error",
