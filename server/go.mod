@@ -28,7 +28,6 @@ require (
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/labstack/gommon v0.4.2
 	github.com/mitchellh/mapstructure v1.5.0
-	github.com/oklog/ulid/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/reearth/orb v0.0.0-20250123044717-f6f70ce16355
 	github.com/reearth/reearth-accounts/server v0.0.0-20260128022722-507516979112
@@ -48,7 +47,7 @@ require (
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/sdk v1.38.0
 	go.opentelemetry.io/otel/trace v1.38.0
-	go.uber.org/mock v0.6.0
+	go.uber.org/mock v0.6.0 // indirect
 	golang.org/x/exp v0.0.0-20251125195548-87e1e737ad39
 	golang.org/x/net v0.48.0
 	golang.org/x/oauth2 v0.33.0
