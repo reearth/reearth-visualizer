@@ -64,6 +64,16 @@ func TestProcessIconImage_InvalidFormat(t *testing.T) {
 	assert.ErrorIs(t, err, ErrInvalidImage)
 }
 
+func TestProcessIconImage_DimensionsTooLarge(t *testing.T) {
+	// Create an image that exceeds max dimensions
+	img := createTestImage(MaxImageDimSize+1, 100)
+	var buf bytes.Buffer
+	require.NoError(t, png.Encode(&buf, img))
+
+	_, err := ProcessIconImage(&buf, int64(buf.Len()))
+	assert.ErrorIs(t, err, ErrImageTooManyPx)
+}
+
 func createTestImage(width, height int) image.Image {
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 	for y := 0; y < height; y++ {

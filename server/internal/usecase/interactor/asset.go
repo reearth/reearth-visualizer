@@ -83,6 +83,13 @@ func (i *Asset) CreateIconAsset(ctx context.Context, inp interfaces.CreateIconAs
 		return nil, interfaces.ErrFileNotIncluded
 	}
 
+	// Ensure the file content is closed after processing
+	defer func() {
+		if inp.File.Content != nil {
+			_ = inp.File.Content.Close()
+		}
+	}()
+
 	ws, err := i.repos.Workspace.FindByID(ctx, inp.WorkspaceID)
 	if err != nil {
 		return nil, err
@@ -95,7 +102,15 @@ func (i *Asset) CreateIconAsset(ctx context.Context, inp interfaces.CreateIconAs
 	// Process the image: resize to 64x64, center-crop, convert to PNG
 	processedData, err := image.ProcessIconImage(inp.File.Content, inp.File.Size)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", interfaces.ErrInvalidIconImage, err)
+		// Map specific errors for better client-side handling
+		switch err {
+		case image.ErrImageTooLarge:
+			return nil, interfaces.ErrIconImageTooLarge
+		case image.ErrImageTooManyPx:
+			return nil, interfaces.ErrIconImageDimTooLarge
+		default:
+			return nil, fmt.Errorf("%w: %v", interfaces.ErrInvalidIconImage, err)
+		}
 	}
 
 	// Create a new file with the processed PNG data
@@ -277,6 +292,7 @@ func (i *Asset) uploadAndSave(ctx context.Context, f *file.File, ws *workspace.W
 		Name(path.Base(f.Path)).
 		Size(size).
 		URL(u.String()).
+		ContentType(f.ContentType).
 		CoreSupport(coreSupport).
 		Build()
 	if err != nil {

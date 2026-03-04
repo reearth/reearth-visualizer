@@ -36,8 +36,10 @@ type CreateIconAssetParam struct {
 }
 
 var (
-	ErrCreateAssetFailed error = errors.New("failed to create asset")
-	ErrInvalidIconImage  error = errors.New("invalid icon image")
+	ErrCreateAssetFailed    error = errors.New("failed to create asset")
+	ErrInvalidIconImage     error = errors.New("invalid icon image")
+	ErrIconImageTooLarge    error = errors.New("icon image file too large")
+	ErrIconImageDimTooLarge error = errors.New("icon image dimensions too large")
 )
 
 type Asset interface {

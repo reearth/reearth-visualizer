@@ -16,13 +16,16 @@ import (
 )
 
 const (
-	IconSize      = 64
-	MaxUploadSize = 10 * 1024 * 1024 // 10MB limit for icon uploads
+	IconSize        = 64
+	MaxUploadSize   = 10 * 1024 * 1024 // 10MB limit for icon uploads
+	MaxImagePixels  = 10000 * 10000    // 100 megapixels limit to prevent decompression bombs
+	MaxImageDimSize = 10000            // Max width or height
 )
 
 var (
 	ErrInvalidImage     = errors.New("invalid image format")
 	ErrImageTooLarge    = errors.New("image file too large")
+	ErrImageTooManyPx   = errors.New("image dimensions too large")
 	ErrProcessingFailed = errors.New("image processing failed")
 )
 
@@ -33,8 +36,30 @@ func ProcessIconImage(r io.Reader, size int64) ([]byte, error) {
 		return nil, ErrImageTooLarge
 	}
 
+	// Wrap reader with a limit to prevent reading more than declared size
+	limitedReader := io.LimitReader(r, MaxUploadSize+1)
+
+	// Buffer the data so we can read it twice (config check + full decode)
+	data, err := io.ReadAll(limitedReader)
+	if err != nil {
+		return nil, ErrInvalidImage
+	}
+	if int64(len(data)) > MaxUploadSize {
+		return nil, ErrImageTooLarge
+	}
+
+	// Check image dimensions before full decode to prevent decompression bombs
+	cfg, _, err := image.DecodeConfig(bytes.NewReader(data))
+	if err != nil {
+		return nil, ErrInvalidImage
+	}
+	if cfg.Width > MaxImageDimSize || cfg.Height > MaxImageDimSize ||
+		int64(cfg.Width)*int64(cfg.Height) > MaxImagePixels {
+		return nil, ErrImageTooManyPx
+	}
+
 	// Decode the source image
-	src, _, err := image.Decode(r)
+	src, _, err := image.Decode(bytes.NewReader(data))
 	if err != nil {
 		return nil, ErrInvalidImage
 	}
