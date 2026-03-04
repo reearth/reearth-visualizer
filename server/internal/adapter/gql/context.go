@@ -3,12 +3,12 @@ package gql
 import (
 	"context"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
 	"github.com/reearth/reearth/server/internal/usecase/interfaces"
-
-	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"golang.org/x/text/language"
 )
 
@@ -19,8 +19,8 @@ const (
 	contextDataloaders ContextKey = "dataloaders"
 )
 
-func AttachUsecases(ctx context.Context, u *interfaces.Container, enableDataLoaders bool) context.Context {
-	loaders := NewLoaders(u)
+func AttachUsecases(ctx context.Context, u *interfaces.Container, accountsClient *gqlclient.Client, enableDataLoaders bool) context.Context {
+	loaders := NewLoaders(u, accountsClient)
 	dataloaders := loaders.DataLoadersWith(ctx, enableDataLoaders)
 
 	ctx = adapter.AttachUsecases(ctx, u)
