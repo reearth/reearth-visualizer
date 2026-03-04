@@ -47,7 +47,7 @@ services:
       - reearth
 
   reearth-accounts-api:
-    image: reearth/reearth-accounts-api:v1.0.0
+    image: reearth/reearth-accounts-api:v1.1.0
     hostname: reearth-accounts-dev
     profiles:
       - accounts
@@ -62,7 +62,7 @@ services:
       - reearth
 
   reearth-cerbos:
-    image: cerbos/cerbos:0.40.0
+    image: cerbos/cerbos:0.51.0
     profiles:
       - accounts
     command: server --config=/policies/.cerbos.yaml
@@ -74,7 +74,7 @@ services:
       - reearth
 
   reearth-mongo:
-    image: mongo:7
+    image: mongo:8
     hostname: reearth-mongo
     ports:
       - 27017:27017
@@ -86,7 +86,7 @@ services:
       - reearth
 
   reearth-gcs:
-    image: fsouza/fake-gcs-server:1.52.1
+    image: fsouza/fake-gcs-server:1.54.0
     ports:
       - 4443:4443
     volumes:
