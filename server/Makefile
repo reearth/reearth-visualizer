@@ -124,7 +124,7 @@ run-clean-start: clean run-app
 # =======================
 
 run-db:
-	${DOCKER_COMPOSE} up -d reearth-mongo
+	${DOCKER_COMPOSE} up -d reearth-mongo reearth-accounts-api reearth-gcs
 
 run-reset:
 	docker stop reearth-visualizer-reearth-mongo-1
