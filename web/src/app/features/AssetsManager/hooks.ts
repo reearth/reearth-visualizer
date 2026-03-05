@@ -126,7 +126,7 @@ export default ({
     () =>
       assetsTypes
         ?.map((t) =>
-          t === "image"
+          t === "image" || t === "icon"
             ? IMAGE_FILE_TYPES
             : t === "file"
               ? GIS_FILE_TYPES
