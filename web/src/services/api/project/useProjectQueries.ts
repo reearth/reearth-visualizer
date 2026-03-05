@@ -31,8 +31,7 @@ export const useProject = (projectId?: string) => {
 export const useProjects = (input: GetProjectsQueryVariables) => {
   const { data, networkStatus, ...rest } = useQuery(GET_PROJECTS, {
     variables: input,
-    skip: !input.workspaceId,
-    notifyOnNetworkStatusChange: true
+    skip: !input.workspaceId
   });
 
   const projects = useMemo(
