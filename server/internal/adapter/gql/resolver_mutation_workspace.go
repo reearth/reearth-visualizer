@@ -3,9 +3,9 @@ package gql
 import (
 	"context"
 
+	gqlclientWorkspace "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
-	gqlclientWorkspace "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace"
 	"github.com/reearth/reearth/server/internal/adapter/gql/gqlmodel"
 )
 
