@@ -98,6 +98,11 @@ const Provider: React.FC<{ children?: ReactNode }> = ({ children }) => {
       uploadLink(endpoint) as unknown as ApolloLink
     ]),
     cache,
+    defaultOptions: {
+      watchQuery: {
+        notifyOnNetworkStatusChange: false
+      }
+    },
     devtools: { enabled: import.meta.env.DEV }
   });
 
