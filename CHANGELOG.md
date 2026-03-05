@@ -2,6 +2,80 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.0 - 2026-03-05
+
+### Web
+
+#### 🚀 Features
+
+- Use createIconAsset mutation for favicon uploads ([#2086](https://github.com/reearth/reearth-visualizer/pull/2086)) [`b2fabf`](https://github.com/reearth/reearth-visualizer/commit/b2fabf)
+- Settings for public icon image ([#2078](https://github.com/reearth/reearth-visualizer/pull/2078)) [`fe7adb`](https://github.com/reearth/reearth-visualizer/commit/fe7adb)
+- Street view widget ([#2049](https://github.com/reearth/reearth-visualizer/pull/2049)) [`f9d5bd`](https://github.com/reearth/reearth-visualizer/commit/f9d5bd)
+
+#### 🧪 Testing
+
+- Add more tests for photo overlay, dashboard and members ([#2064](https://github.com/reearth/reearth-visualizer/pull/2064)) [`708be2`](https://github.com/reearth/reearth-visualizer/commit/708be2)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.15.0 ([#2087](https://github.com/reearth/reearth-visualizer/pull/2087)) [`1984a0`](https://github.com/reearth/reearth-visualizer/commit/1984a0)
+- Upgrade Apollo Client package ([#2048](https://github.com/reearth/reearth-visualizer/pull/2048)) [`0072d3`](https://github.com/reearth/reearth-visualizer/commit/0072d3)
+- Upgrade googlemaps&#x2F;js-api-loader to version 2 ([#2056](https://github.com/reearth/reearth-visualizer/pull/2056)) [`33e58a`](https://github.com/reearth/reearth-visualizer/commit/33e58a)
+- Update core version ([#2059](https://github.com/reearth/reearth-visualizer/pull/2059)) [`32011f`](https://github.com/reearth/reearth-visualizer/commit/32011f)
+
+### Server
+
+#### 🚀 Features
+
+- Add createIconAsset mutation for optimized icon uploads ([#2079](https://github.com/reearth/reearth-visualizer/pull/2079)) [`1fa015`](https://github.com/reearth/reearth-visualizer/commit/1fa015)
+- Inject favicon on published page ([#2080](https://github.com/reearth/reearth-visualizer/pull/2080)) [`83b5de`](https://github.com/reearth/reearth-visualizer/commit/83b5de)
+- Migrate reearthx&#x2F;account imports to reearth-accounts ([#2077](https://github.com/reearth/reearth-visualizer/pull/2077)) [`b23eb4`](https://github.com/reearth/reearth-visualizer/commit/b23eb4)
+- Add publicIconImage field to Project and Story ([#2076](https://github.com/reearth/reearth-visualizer/pull/2076)) [`6acf60`](https://github.com/reearth/reearth-visualizer/commit/6acf60)
+- Add too many requests error handler ([#2074](https://github.com/reearth/reearth-visualizer/pull/2074)) [`802325`](https://github.com/reearth/reearth-visualizer/commit/802325)
+- Add reearth-visualizer-internal-api service to docker-compose ([#2068](https://github.com/reearth/reearth-visualizer/pull/2068)) [`0fc493`](https://github.com/reearth/reearth-visualizer/commit/0fc493)
+- Add reearth-accounts-api to docker-compose for unified local dev ([#2065](https://github.com/reearth/reearth-visualizer/pull/2065)) [`85c8a1`](https://github.com/reearth/reearth-visualizer/commit/85c8a1)
+
+#### 🔧 Bug Fixes
+
+- Remove .env.docker files from tracking ([#2069](https://github.com/reearth/reearth-visualizer/pull/2069)) [`1df57f`](https://github.com/reearth/reearth-visualizer/commit/1df57f)
+- Trim user name or email ([#1663](https://github.com/reearth/reearth-visualizer/pull/1663)) [`f798b3`](https://github.com/reearth/reearth-visualizer/commit/f798b3)
+
+#### 🧪 Testing
+
+- Api framework for e2e tests ([#2083](https://github.com/reearth/reearth-visualizer/pull/2083)) [`0b7b85`](https://github.com/reearth/reearth-visualizer/commit/0b7b85)
+
+### Misc
+
+#### 🔧 Bug Fixes
+
+- Track .env.docker.example files instead of .env.docker ([#2075](https://github.com/reearth/reearth-visualizer/pull/2075)) [`280bbf`](https://github.com/reearth/reearth-visualizer/commit/280bbf)
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to 4a7719e ([#2073](https://github.com/reearth/reearth-visualizer/pull/2073)) [`43484a`](https://github.com/reearth/reearth-visualizer/commit/43484a)
+- Update dawidd6&#x2F;action-download-artifact action to v16 ([#2072](https://github.com/reearth/reearth-visualizer/pull/2072)) [`b08527`](https://github.com/reearth/reearth-visualizer/commit/b08527)
+- Update actions&#x2F;upload-artifact action to v7 ([#2071](https://github.com/reearth/reearth-visualizer/pull/2071)) [`18c1ad`](https://github.com/reearth/reearth-visualizer/commit/18c1ad)
+- Update Go version from 1.25.5 to 1.26.0 ([#2067](https://github.com/reearth/reearth-visualizer/pull/2067)) [`51e487`](https://github.com/reearth/reearth-visualizer/commit/51e487)
+- Update actions&#x2F;download-artifact action to v8 ([#2066](https://github.com/reearth/reearth-visualizer/pull/2066)) [`dc8af5`](https://github.com/reearth/reearth-visualizer/commit/dc8af5)
+- Update dawidd6&#x2F;action-download-artifact action to v15 ([#2062](https://github.com/reearth/reearth-visualizer/pull/2062)) [`c351c5`](https://github.com/reearth/reearth-visualizer/commit/c351c5)
+- Update goreleaser&#x2F;goreleaser-action action to v7 ([#2063](https://github.com/reearth/reearth-visualizer/pull/2063)) [`9bc964`](https://github.com/reearth/reearth-visualizer/commit/9bc964)
+
+### 
+
+#### 🔧 Bug Fixes
+
+- Track .env.docker.example files instead of .env.docker ([#2075](https://github.com/reearth/reearth-visualizer/pull/2075)) [`280bbf`](https://github.com/reearth/reearth-visualizer/commit/280bbf)
+
+#### Miscellaneous Tasks
+
+- Update reearth&#x2F;actions digest to 4a7719e ([#2073](https://github.com/reearth/reearth-visualizer/pull/2073)) [`43484a`](https://github.com/reearth/reearth-visualizer/commit/43484a)
+- Update dawidd6&#x2F;action-download-artifact action to v16 ([#2072](https://github.com/reearth/reearth-visualizer/pull/2072)) [`b08527`](https://github.com/reearth/reearth-visualizer/commit/b08527)
+- Update actions&#x2F;upload-artifact action to v7 ([#2071](https://github.com/reearth/reearth-visualizer/pull/2071)) [`18c1ad`](https://github.com/reearth/reearth-visualizer/commit/18c1ad)
+- Update Go version from 1.25.5 to 1.26.0 ([#2067](https://github.com/reearth/reearth-visualizer/pull/2067)) [`51e487`](https://github.com/reearth/reearth-visualizer/commit/51e487)
+- Update actions&#x2F;download-artifact action to v8 ([#2066](https://github.com/reearth/reearth-visualizer/pull/2066)) [`dc8af5`](https://github.com/reearth/reearth-visualizer/commit/dc8af5)
+- Update dawidd6&#x2F;action-download-artifact action to v15 ([#2062](https://github.com/reearth/reearth-visualizer/pull/2062)) [`c351c5`](https://github.com/reearth/reearth-visualizer/commit/c351c5)
+- Update goreleaser&#x2F;goreleaser-action action to v7 ([#2063](https://github.com/reearth/reearth-visualizer/pull/2063)) [`9bc964`](https://github.com/reearth/reearth-visualizer/commit/9bc964)
+
 ## 1.0.0-beta.14.6 - 2026-02-20
 
 ### Web
