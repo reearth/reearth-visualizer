@@ -16,7 +16,7 @@ export default defineConfig({
     timeout: 35000
   },
   timeout: 120000,
-  testDir: "./tests",
+  testDir: "./",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
@@ -45,7 +45,7 @@ export default defineConfig({
   projects: [
     {
       name: "webkit",
-      testIgnore: /api\/.*\.ts/,
+      testMatch: /tests\/.*\.spec\.ts/,
       use: {
         ...devices["Desktop Safari"],
         screenshot: "only-on-failure",
@@ -55,6 +55,17 @@ export default defineConfig({
         },
         viewport: { width: 1920, height: 1080 }
       }
+    },
+    {
+      name: "api-setup",
+      testMatch: /api\/global\.setup\.ts/,
+      use: { storageState: undefined }
+    },
+    {
+      name: "api-tests",
+      testMatch: /api\/tests\/.*\.api\.spec\.ts/,
+      dependencies: ["api-setup"],
+      use: { storageState: undefined }
     }
   ]
 });

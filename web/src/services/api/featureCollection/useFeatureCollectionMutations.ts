@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { MutationReturn } from "@reearth/services/api/types";
 import {
   AddGeoJsonFeatureInput,
@@ -32,13 +32,13 @@ export const useFeatureCollectionMutations = () => {
     async (
       input: AddGeoJsonFeatureInput
     ): Promise<MutationReturn<AddGeoJsonFeatureMutation>> => {
-      const { data, errors } = await addGeoJsonFeatureMutation({
+      const { data, error } = await addGeoJsonFeatureMutation({
         variables: { input }
       });
-      if (errors || !data?.addGeoJSONFeature.id) {
+      if (error || !data?.addGeoJSONFeature.id) {
         setNotification({ type: "error", text: t("Failed to add layer.") });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -58,16 +58,16 @@ export const useFeatureCollectionMutations = () => {
       input: UpdateGeoJsonFeatureInput
     ): Promise<MutationReturn<UpdateGeoJsonFeatureMutation>> => {
       if (!input.layerId) return { status: "error" };
-      const { data, errors } = await updateGeoJsonFeatureMutation({
+      const { data, error } = await updateGeoJsonFeatureMutation({
         variables: { input }
       });
-      if (errors || !data?.updateGeoJSONFeature) {
+      if (error || !data?.updateGeoJSONFeature) {
         setNotification({
           type: "error",
           text: t("Failed to update the layer.")
         });
 
-        return { status: "error", errors };
+        return { status: "error", error };
       }
       setNotification({
         type: "success",
@@ -86,15 +86,15 @@ export const useFeatureCollectionMutations = () => {
   const deleteGeoJSONFeature = useCallback(
     async (input: DeleteGeoJsonFeatureInput) => {
       if (!input.layerId || !input.featureId) return { status: "error" };
-      const { data, errors } = await deleteGeoJsonFeatureMutation({
+      const { data, error } = await deleteGeoJsonFeatureMutation({
         variables: { input }
       });
-      if (errors || !data?.deleteGeoJSONFeature) {
+      if (error || !data?.deleteGeoJSONFeature) {
         setNotification({
           type: "error",
           text: t("Failed to delete the feature.")
         });
-        return { status: "error", errors };
+        return { status: "error", error };
       }
 
       setNotification({

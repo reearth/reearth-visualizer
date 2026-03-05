@@ -25,7 +25,10 @@ export const useDatasets = (input: DatasetsInput, options?: Options) => {
   });
 
   const nextDatasets = useMemo(
-    () => data?.datasets.slice().sort((a, b) => a.type.order - b.type.order),
+    () =>
+      data?.datasets
+        ?.slice()
+        .sort((a, b) => (a?.type?.order ?? 0) - (b?.type?.order ?? 0)),
     [data]
   );
 

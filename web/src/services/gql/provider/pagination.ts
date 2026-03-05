@@ -1,4 +1,4 @@
-import { ReadFieldFunction } from "@apollo/client/cache/core/types/common";
+import type { FieldFunctionOptions } from "@apollo/client/cache";
 import { isEqual } from "lodash-es";
 
 export function paginationMerge(
@@ -7,7 +7,7 @@ export function paginationMerge(
     pageInfo: { startCursor: string };
   } | null,
   incoming: { edges: { cursor: string }[]; pageInfo: { startCursor: string } },
-  { readField }: { readField: ReadFieldFunction }
+  { readField }: Pick<FieldFunctionOptions, "readField">
 ) {
   if (existing && incoming && isEqual(existing, incoming)) return incoming;
 
@@ -33,7 +33,7 @@ export function paginationMerge(
 function offsetFromCursor(
   items: { cursor: string }[],
   cursor: string,
-  readField: ReadFieldFunction
+  readField: FieldFunctionOptions["readField"]
 ) {
   if (items.length < 1) return -1;
   for (let i = 0; i < items.length; ++i) {

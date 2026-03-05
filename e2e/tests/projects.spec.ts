@@ -81,6 +81,8 @@ test.describe("Project Management", () => {
 
   test("Verify project creation modal", async () => {
     await dashBoardPage.projects.click();
+    await projectsPage.newProjectButton.waitFor({ state: "visible" });
+    await page.waitForTimeout(500);
     await projectsPage.newProjectButton.click();
     await expect(projectsPage.modalTitle).toBeVisible();
     await expect(projectsPage.projectNameLabel).toBeVisible();

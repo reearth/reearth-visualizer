@@ -1,4 +1,4 @@
-import { Loader } from "@googlemaps/js-api-loader";
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 import { useT } from "@reearth/services/i18n/hooks";
 import {
   useCallback,
@@ -17,7 +17,6 @@ const SEARCH_DEBOUNCE_MS = 500;
 
 // Google Maps configuration
 //TODO: Delete this and use BE API management system when available
-const GOOGLE_MAPS_LIBRARIES = ["places"];
 const GOOGLE_PLACES_SEARCH_FIELDS = [
   "displayName",
   "location",
@@ -94,7 +93,7 @@ declare global {
   }
 }
 
-let loaderInstance: Loader | null = null;
+let isGoogleMapsConfigured = false;
 
 /**
  * Load Google Maps API
@@ -105,14 +104,14 @@ const loadGoogleMaps = async (
   apiKey: string,
   language: string
 ): Promise<void> => {
-  if (!loaderInstance) {
-    loaderInstance = new Loader({
-      apiKey,
-      libraries: GOOGLE_MAPS_LIBRARIES as "places"[],
+  if (!isGoogleMapsConfigured) {
+    setOptions({
+      key: apiKey,
       language
     });
+    isGoogleMapsConfigured = true;
   }
-  await loaderInstance.load();
+  await importLibrary("places");
 };
 
 /**

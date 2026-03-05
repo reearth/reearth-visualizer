@@ -128,6 +128,7 @@ func ToProject(p *project.Project) *Project {
 		PublicTitle:       p.PublicTitle(),
 		PublicDescription: p.PublicDescription(),
 		PublicImage:       p.PublicImage(),
+		PublicIconImage:   p.PublicIconImage(),
 		PublicNoIndex:     p.PublicNoIndex(),
 		IsBasicAuthActive: p.IsBasicAuthActive(),
 		BasicAuthUsername: p.BasicAuthUsername(),

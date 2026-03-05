@@ -9,6 +9,7 @@ export type PublicSettingsType = {
   publicTitle?: string;
   publicDescription?: string;
   publicImage?: string;
+  publicIconImage?: string;
   publishmentStatus?: string;
 };
 
@@ -37,6 +38,7 @@ export type SettingsProject = {
   publicTitle: string;
   publicDescription: string;
   publicImage: string;
+  publicIconImage: string;
   isBasicAuthActive: boolean;
   basicAuthUsername: string;
   basicAuthPassword: string;

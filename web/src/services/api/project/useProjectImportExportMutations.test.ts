@@ -27,7 +27,7 @@ describe("useProjectImportExportMutations", () => {
       useRestful: () => ({ axios: mockAxios })
     }));
 
-    vi.doMock("@apollo/client", () => ({
+    vi.doMock("@apollo/client/react", () => ({
       useMutation: () => [mockExportProjectMutation]
     }));
 

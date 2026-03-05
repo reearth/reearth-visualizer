@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { GET_ME } from "@reearth/services/gql/queries/user";
 
 export const useMe = (options?: { skip?: boolean }) => {

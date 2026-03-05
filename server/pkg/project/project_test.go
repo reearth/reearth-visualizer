@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/alias"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -185,7 +185,7 @@ func TestProject_UpdatePublicTitle(t *testing.T) {
 
 func TestProject_UpdateWorkspace(t *testing.T) {
 	p := &Project{}
-	p.UpdateWorkspace(accountdomain.NewWorkspaceID())
+	p.UpdateWorkspace(accountsID.NewWorkspaceID())
 	assert.NotNil(t, p.Workspace())
 }
 
@@ -214,6 +214,12 @@ func TestProject_UpdatePublicImage(t *testing.T) {
 	p := &Project{}
 	p.UpdatePublicImage("xxx")
 	assert.Equal(t, "xxx", p.PublicImage())
+}
+
+func TestProject_UpdatePublicIconImage(t *testing.T) {
+	p := &Project{}
+	p.UpdatePublicIconImage("icon.png")
+	assert.Equal(t, "icon.png", p.PublicIconImage())
 }
 
 func TestProject_PublicName(t *testing.T) {

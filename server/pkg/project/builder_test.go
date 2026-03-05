@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 	"github.com/reearth/reearthx/idx"
 	"github.com/stretchr/testify/assert"
 )
@@ -112,7 +112,7 @@ func TestBuilder_Visualizer(t *testing.T) {
 
 func TestBuilder_Workspace(t *testing.T) {
 	var tb = New().NewID()
-	res := tb.Workspace(accountdomain.NewWorkspaceID()).MustBuild()
+	res := tb.Workspace(accountsID.NewWorkspaceID()).MustBuild()
 	assert.NotNil(t, res.Workspace())
 }
 
@@ -120,6 +120,12 @@ func TestBuilder_PublicImage(t *testing.T) {
 	var tb = New().NewID()
 	res := tb.PublicImage("xxxxx").MustBuild()
 	assert.Equal(t, "xxxxx", res.PublicImage())
+}
+
+func TestBuilder_PublicIconImage(t *testing.T) {
+	var tb = New().NewID()
+	res := tb.PublicIconImage("icon.png").MustBuild()
+	assert.Equal(t, "icon.png", res.PublicIconImage())
 }
 
 func TestBuilder_PublishedAt(t *testing.T) {
@@ -165,7 +171,7 @@ func TestBuilder_Build(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := id.NewProjectID()
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 
 	type args struct {
 		name, description string
@@ -173,13 +179,14 @@ func TestBuilder_Build(t *testing.T) {
 		publicTitle       string
 		publicDescription string
 		publicImage       string
+		publicIconImage   string
 		id                id.ProjectID
 		isArchived        bool
 		updatedAt         time.Time
 		publishedAt       time.Time
 		imageURL          *url.URL
 		publicNoIndex     bool
-		workspace         accountdomain.WorkspaceID
+		workspace         accountsID.WorkspaceID
 		visualizer        visualizer.Visualizer
 		publishmentStatus PublishmentStatus
 	}
@@ -199,6 +206,7 @@ func TestBuilder_Build(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				id:                pid,
 				isArchived:        false,
 				updatedAt:         d,
@@ -217,6 +225,7 @@ func TestBuilder_Build(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				isArchived:        false,
 				updatedAt:         d,
 				publishedAt:       d,
@@ -257,6 +266,7 @@ func TestBuilder_Build(t *testing.T) {
 				UpdatedAt(tt.args.updatedAt).
 				PublishedAt(tt.args.publishedAt).
 				PublicImage(tt.args.publicImage).
+				PublicIconImage(tt.args.publicIconImage).
 				Workspace(tt.args.workspace).
 				ImageURL(tt.args.imageURL).
 				Name(tt.args.name).
@@ -279,7 +289,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 	d := time.Date(1900, 1, 1, 00, 00, 0, 1, time.UTC)
 	i, _ := url.Parse("ttt://xxx.aa/")
 	pid := id.NewProjectID()
-	tid := accountdomain.NewWorkspaceID()
+	tid := accountsID.NewWorkspaceID()
 
 	type args struct {
 		name, description string
@@ -287,13 +297,14 @@ func TestBuilder_MustBuild(t *testing.T) {
 		publicTitle       string
 		publicDescription string
 		publicImage       string
+		publicIconImage   string
 		id                id.ProjectID
 		isArchived        bool
 		updatedAt         time.Time
 		publishedAt       time.Time
 		imageURL          *url.URL
 		publicNoIndex     bool
-		workspace         accountdomain.WorkspaceID
+		workspace         accountsID.WorkspaceID
 		visualizer        visualizer.Visualizer
 		publishmentStatus PublishmentStatus
 		trackingId        string
@@ -316,6 +327,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				id:                pid,
 				isArchived:        false,
 				updatedAt:         d,
@@ -337,6 +349,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 				publicTitle:       "ttt",
 				publicDescription: "dddd",
 				publicImage:       "iii",
+				publicIconImage:   "icon.png",
 				isArchived:        false,
 				updatedAt:         d,
 				publishedAt:       d,
@@ -383,6 +396,7 @@ func TestBuilder_MustBuild(t *testing.T) {
 					UpdatedAt(tt.args.updatedAt).
 					PublishedAt(tt.args.publishedAt).
 					PublicImage(tt.args.publicImage).
+					PublicIconImage(tt.args.publicIconImage).
 					Workspace(tt.args.workspace).
 					ImageURL(tt.args.imageURL).
 					Name(tt.args.name).

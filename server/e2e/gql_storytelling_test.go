@@ -499,6 +499,7 @@ func fetchSceneForStories(e *httpexpect.Expect, sID string) (GraphQLRequest, *ht
 				publicDescription
 				publishmentStatus
 				publicImage
+				publicIconImage
 				publicNoIndex
 				enableGa
 				trackingId

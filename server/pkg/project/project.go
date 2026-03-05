@@ -5,14 +5,14 @@ import (
 	"net/url"
 	"time"
 
+	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/id"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountdomain"
 )
 
 type Project struct {
 	id           id.ProjectID
-	workspace    accountdomain.WorkspaceID
+	workspace    accountsID.WorkspaceID
 	sceneId      id.SceneID
 	name         string
 	description  string
@@ -34,6 +34,7 @@ type Project struct {
 	publicTitle       string
 	publicDescription string
 	publicImage       string
+	publicIconImage   string
 	publicNoIndex     bool
 	isBasicAuthActive bool
 	basicAuthUsername string
@@ -48,7 +49,7 @@ func (p *Project) ID() id.ProjectID {
 	return p.id
 }
 
-func (p *Project) Workspace() accountdomain.WorkspaceID {
+func (p *Project) Workspace() accountsID.WorkspaceID {
 	return p.workspace
 }
 
@@ -115,7 +116,7 @@ func (p *Project) ProjectAlias() string {
 
 // setter ---------------------
 
-func (p *Project) UpdateWorkspace(workspace accountdomain.WorkspaceID) {
+func (p *Project) UpdateWorkspace(workspace accountsID.WorkspaceID) {
 	p.workspace = workspace
 }
 
@@ -220,6 +221,10 @@ func (p *Project) PublicImage() string {
 	return p.publicImage
 }
 
+func (p *Project) PublicIconImage() string {
+	return p.publicIconImage
+}
+
 func (p *Project) PublicNoIndex() bool {
 	return p.publicNoIndex
 }
@@ -266,6 +271,10 @@ func (p *Project) UpdatePublicDescription(publicDescription string) {
 
 func (p *Project) UpdatePublicImage(publicImage string) {
 	p.publicImage = publicImage
+}
+
+func (p *Project) UpdatePublicIconImage(publicIconImage string) {
+	p.publicIconImage = publicIconImage
 }
 
 func (p *Project) UpdatePublicNoIndex(publicNoIndex bool) {

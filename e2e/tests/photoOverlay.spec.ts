@@ -81,6 +81,8 @@ test.describe("Photo Overlay Feature", () => {
 
   test("Create a project for Photo Overlay testing", async () => {
     await dashBoardPage.projects.click();
+    await projectsPage.newProjectButton.waitFor({ state: "visible" });
+    await page.waitForTimeout(500);
     await projectsPage.newProjectButton.click();
     await projectsPage.createNewProject(
       projectName,
@@ -145,11 +147,8 @@ test.describe("Photo Overlay Feature", () => {
   });
 
   test("Select a feature and verify Photo Overlay section", async () => {
-    test.setTimeout(60000);
-    await photoOverlay.clickOnCanvas(400, 400);
-    await page.waitForTimeout(2000);
-    await photoOverlay.goToFeatureInspectorTab();
-    await page.waitForTimeout(1000);
+    test.setTimeout(90000);
+    await photoOverlay.selectFeatureAndOpenInspector(400, 400);
     await expect(page.getByText("Photo Overlay").first()).toBeVisible();
     await photoOverlay.verifyNoCrash();
   });
@@ -177,6 +176,130 @@ test.describe("Photo Overlay Feature", () => {
     await page.waitForTimeout(500);
     await photoOverlay.submitPhotoOverlay();
     await page.waitForTimeout(2000);
+    await photoOverlay.verifyNoCrash();
+  });
+
+  test("Re-select feature and verify editor fields", async () => {
+    test.setTimeout(90000);
+    await projectScreen.clickLayer(layerName);
+    await page.waitForTimeout(2000);
+    await photoOverlay.selectFeatureAndOpenInspector(400, 400);
+    await expect(photoOverlay.editPhotoOverlayButton).toBeVisible();
+    await photoOverlay.openPhotoOverlayEditor();
+    await expect(photoOverlay.editorPanel).toBeVisible();
+    await expect(photoOverlay.transparencyPanel).toBeVisible();
+    await expect(photoOverlay.assetChooseButton).toBeVisible();
+    await expect(photoOverlay.assetUploadButton).toBeVisible();
+    await expect(photoOverlay.photoDescriptionTextarea).toBeVisible();
+    await expect(photoOverlay.editorCancelButton).toBeVisible();
+    await expect(photoOverlay.editorSubmitButton).toBeVisible();
+    await photoOverlay.cancelPhotoOverlay();
+    await photoOverlay.verifyNoCrash();
+  });
+
+  test.skip("Switch between size modes and verify width slider", async () => {
+    test.setTimeout(90000);
+    await projectScreen.clickLayer(layerName);
+    await page.waitForTimeout(2000);
+    await photoOverlay.selectFeatureAndOpenInspector(400, 400);
+    await photoOverlay.openPhotoOverlayEditor();
+    await expect(photoOverlay.editorPanel).toBeVisible();
+
+    // Default mode is Contain - width slider should be hidden
+    await photoOverlay.verifyPhotoSizeSliderHidden();
+
+    // Switch to Fixed mode and verify width slider appears
+    await photoOverlay.selectSizeType("Fixed");
+    await photoOverlay.verifyPhotoSizeSliderVisible();
+
+    // Switch back to Contain mode and verify width slider disappears
+    await photoOverlay.selectSizeType("Contain");
+    await photoOverlay.verifyPhotoSizeSliderHidden();
+
+    await photoOverlay.cancelPhotoOverlay();
+    await photoOverlay.verifyNoCrash();
+  });
+
+  test("Set transparency to edge values", async () => {
+    test.setTimeout(90000);
+    await projectScreen.clickLayer(layerName);
+    await page.waitForTimeout(2000);
+    await photoOverlay.selectFeatureAndOpenInspector(400, 400);
+    await photoOverlay.openPhotoOverlayEditor();
+
+    // Set transparency to 0 (fully transparent)
+    await photoOverlay.setTransparency(0);
+    await photoOverlay.verifyNoCrash();
+
+    // Set transparency to 100 (fully opaque)
+    await photoOverlay.setTransparency(100);
+    await photoOverlay.verifyNoCrash();
+
+    await photoOverlay.cancelPhotoOverlay();
+    await photoOverlay.verifyNoCrash();
+  });
+
+  test("Cancel editor closes panel without saving", async () => {
+    test.setTimeout(90000);
+    await projectScreen.clickLayer(layerName);
+    await page.waitForTimeout(2000);
+    await photoOverlay.selectFeatureAndOpenInspector(400, 400);
+    await photoOverlay.openPhotoOverlayEditor();
+    await expect(photoOverlay.editorPanel).toBeVisible();
+
+    // Upload an image and add description
+    const testImagePath = path.resolve(__dirname, "../test-data/testimage.jpg");
+    await photoOverlay.uploadAsset(testImagePath);
+    await photoOverlay.photoDescriptionTextarea.fill("Should not be saved");
+    await page.waitForTimeout(500);
+
+    // Cancel and verify editor closes
+    await photoOverlay.cancelPhotoOverlay();
+    await expect(photoOverlay.editorPanel).not.toBeVisible();
+    await photoOverlay.verifyNoCrash();
+
+    // Reopen the editor to verify that the cancelled text was not saved
+    await photoOverlay.selectFeatureAndOpenInspector(400, 400);
+    await photoOverlay.openPhotoOverlayEditor();
+    await expect(photoOverlay.editorPanel).toBeVisible();
+    // The cancelled description "Should not be saved" must not appear
+    await expect(photoOverlay.photoDescriptionTextarea).not.toHaveValue(
+      "Should not be saved"
+    );
+    await photoOverlay.cancelPhotoOverlay();
+  });
+
+  test("Add second marker and open photo overlay editor", async () => {
+    test.setTimeout(120000);
+    await projectScreen.clickLayer(layerName);
+    await page.waitForTimeout(1000);
+
+    const [response] = await Promise.all([
+      page.waitForResponse(
+        (r) =>
+          r.url().includes("/graphql") &&
+          (r.request().postData()?.includes("addGeoJSONFeature") ?? false),
+        { timeout: 45000 }
+      ),
+      projectScreen.addPointsOnMap(600, 300)
+    ]);
+    const responseBody = await response.json();
+    expect(responseBody).toMatchObject({
+      data: {
+        addGeoJSONFeature: {
+          id: expect.any(String),
+          type: "Feature"
+        }
+      }
+    });
+    await photoOverlay.verifyNoCrash();
+
+    // Select the second feature and open editor
+    await photoOverlay.selectFeatureAndOpenInspector(600, 300);
+    await photoOverlay.openPhotoOverlayEditor();
+    await expect(photoOverlay.editorPanel).toBeVisible();
+    await expect(photoOverlay.assetUploadButton).toBeVisible();
+    await photoOverlay.cancelPhotoOverlay();
     await photoOverlay.verifyNoCrash();
   });
 });

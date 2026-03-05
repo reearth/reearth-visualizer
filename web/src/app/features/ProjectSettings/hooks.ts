@@ -1,4 +1,4 @@
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client/react";
 import { useProject } from "@reearth/services/api/project";
 import { useProjectMutations } from "@reearth/services/api/project/useProjectMutations";
 import {

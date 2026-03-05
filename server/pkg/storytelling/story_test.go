@@ -34,6 +34,7 @@ func TestStory_SettersGetters(t *testing.T) {
 		publicTitle:       "public title",
 		publicDescription: "public description",
 		publicImage:       "/test.jpg",
+		publicIconImage:   "/icon.png",
 		publicNoIndex:     true,
 	}
 
@@ -54,6 +55,7 @@ func TestStory_SettersGetters(t *testing.T) {
 	assert.Equal(t, "public title", s.PublicTitle())
 	assert.Equal(t, "public description", s.PublicDescription())
 	assert.Equal(t, "/test.jpg", s.PublicImage())
+	assert.Equal(t, "/icon.png", s.PublicIconImage())
 	assert.Equal(t, true, s.PublicNoIndex())
 
 	util.MockNow(now.Add(1 * time.Hour))
@@ -93,6 +95,9 @@ func TestStory_SettersGetters(t *testing.T) {
 
 	s.SetPublicImage("/test2.jpg")
 	assert.Equal(t, "/test2.jpg", s.PublicImage())
+
+	s.SetPublicIconImage("/icon2.png")
+	assert.Equal(t, "/icon2.png", s.PublicIconImage())
 
 	s.SetPublicNoIndex(false)
 	assert.Equal(t, false, s.PublicNoIndex())

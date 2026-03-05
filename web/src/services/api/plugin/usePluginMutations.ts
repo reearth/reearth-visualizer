@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import {
   INSTALL_PLUGIN,
   UPGRADE_PLUGIN,
@@ -24,11 +24,11 @@ export const usePluginMutations = () => {
     async (sceneId: string, pluginId: string) => {
       if (!sceneId || !pluginId) return;
 
-      const { errors } = await installPluginMutation({
+      const { error } = await installPluginMutation({
         variables: { sceneId, pluginId }
       });
 
-      if (errors) {
+      if (error) {
         setNotification({
           type: "error",
           text: t("Failed to install plugin.")
@@ -47,7 +47,7 @@ export const usePluginMutations = () => {
     async (sceneId: string, pluginId: string, oldPluginId: string) => {
       if (!sceneId || !pluginId || !oldPluginId) return;
 
-      const { errors } = await upgradePluginMutation({
+      const { error } = await upgradePluginMutation({
         variables: {
           sceneId,
           pluginId: oldPluginId,
@@ -55,7 +55,7 @@ export const usePluginMutations = () => {
         }
       });
 
-      if (errors) {
+      if (error) {
         setNotification({
           type: "error",
           text: t("Failed to upgrade plugin.")
@@ -92,7 +92,7 @@ export const usePluginMutations = () => {
             )
       );
 
-      if (!results || results.some((r) => r.errors)) {
+      if (!results || results.some((r) => r.error)) {
         setNotification({
           type: "error",
           text: t("Failed to install plugin.")
@@ -111,11 +111,11 @@ export const usePluginMutations = () => {
     async (sceneId: string, file?: File) => {
       if (!sceneId || !file) return;
 
-      const { errors } = await uploadPluginMutation({
+      const { error } = await uploadPluginMutation({
         variables: { sceneId: sceneId, file }
       });
 
-      if (errors) {
+      if (error) {
         setNotification({
           type: "error",
           text: t("Failed to install plugin.")
@@ -142,7 +142,7 @@ export const usePluginMutations = () => {
         variables: { sceneId: sceneId, pluginId: pluginId }
       });
 
-      if (results.errors || !results.data?.uninstallPlugin) {
+      if (results.error || !results.data?.uninstallPlugin) {
         setNotification({
           type: "error",
           text: t("Failed to uninstall plugin.")

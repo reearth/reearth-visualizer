@@ -59,7 +59,9 @@ func (m *Marketplace) FetchPluginPackage(ctx context.Context, pid id.PluginID) (
 	if res.StatusCode == http.StatusNotFound {
 		return nil, rerror.ErrNotFound
 	}
-
+	if res.StatusCode == http.StatusTooManyRequests {
+		return nil, rerror.ErrTooManyRequests
+	}
 	if res.StatusCode != http.StatusOK {
 		return nil, rerror.ErrInternalByWithContext(ctx, fmt.Errorf("status code is %d", res.StatusCode))
 	}
@@ -97,6 +99,9 @@ func (m *Marketplace) NotifyDownload(ctx context.Context, pid id.PluginID) error
 		_ = res.Body.Close()
 	}()
 
+	if res.StatusCode == http.StatusTooManyRequests {
+		return rerror.ErrTooManyRequests
+	}
 	if res.StatusCode != http.StatusOK && res.StatusCode != http.StatusNotFound {
 		return rerror.ErrInternalByWithContext(ctx, fmt.Errorf("status code is %d", res.StatusCode))
 	}

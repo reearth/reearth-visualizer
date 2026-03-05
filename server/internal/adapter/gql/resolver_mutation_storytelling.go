@@ -47,16 +47,18 @@ func (r *mutationResolver) UpdateStory(ctx context.Context, input gqlmodel.Updat
 		BgColor:       input.BgColor,
 
 		// publishment
-		PublicTitle:       input.PublicTitle,
-		PublicDescription: input.PublicDescription,
-		PublicImage:       input.PublicImage,
-		PublicNoIndex:     input.PublicNoIndex,
-		DeletePublicImage: input.DeletePublicImage,
-		IsBasicAuthActive: input.IsBasicAuthActive,
-		BasicAuthUsername: input.BasicAuthUsername,
-		BasicAuthPassword: input.BasicAuthPassword,
-		EnableGa:          input.EnableGa,
-		TrackingID:        input.TrackingID,
+		PublicTitle:           input.PublicTitle,
+		PublicDescription:     input.PublicDescription,
+		PublicImage:           input.PublicImage,
+		PublicIconImage:       input.PublicIconImage,
+		PublicNoIndex:         input.PublicNoIndex,
+		DeletePublicImage:     input.DeletePublicImage,
+		DeletePublicIconImage: input.DeletePublicIconImage,
+		IsBasicAuthActive:     input.IsBasicAuthActive,
+		BasicAuthUsername:     input.BasicAuthUsername,
+		BasicAuthPassword:     input.BasicAuthPassword,
+		EnableGa:              input.EnableGa,
+		TrackingID:            input.TrackingID,
 	}
 
 	res, err := usecases(ctx).StoryTelling.Update(ctx, inp, getOperator(ctx))

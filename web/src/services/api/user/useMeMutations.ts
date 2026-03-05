@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client/react";
 import { UPDATE_ME } from "@reearth/services/gql/queries/user";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useCallback } from "react";
@@ -18,15 +18,15 @@ export const useMeMutations = () => {
       password: string;
       passwordConfirmation: string;
     }) => {
-      const { data, errors } = await updateMeMutation({
+      const { data, error } = await updateMeMutation({
         variables: {
           password,
           passwordConfirmation
         }
       });
 
-      if (errors || !data?.updateMe) {
-        console.log("GraphQL: Failed to update password", errors);
+      if (error || !data?.updateMe) {
+        console.log("GraphQL: Failed to update password", error);
         setNotification({
           type: "error",
           text: t("Failed to update user password.")
@@ -45,9 +45,9 @@ export const useMeMutations = () => {
   const updateLanguage = useCallback(
     async (lang: string) => {
       if (!lang) return;
-      const { data, errors } = await updateMeMutation({ variables: { lang } });
-      if (errors || !data?.updateMe) {
-        console.log("GraphQL: Failed to update language", errors);
+      const { data, error } = await updateMeMutation({ variables: { lang } });
+      if (error || !data?.updateMe) {
+        console.log("GraphQL: Failed to update language", error);
         setNotification({
           type: "error",
           text: t("Failed to change language.")

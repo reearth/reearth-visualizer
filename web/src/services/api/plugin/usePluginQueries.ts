@@ -1,4 +1,4 @@
-import { useQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client/react";
 import { GET_SCENE } from "@reearth/services/gql/queries/scene";
 import { useLang } from "@reearth/services/i18n/hooks";
 import { useMemo } from "react";

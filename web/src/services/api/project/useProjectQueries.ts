@@ -1,4 +1,4 @@
-import { useLazyQuery, useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client/react";
 import {
   GetProjectsQueryVariables,
   HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION
@@ -98,9 +98,8 @@ export const useValidateProjectAlias = () => {
     async (alias: string, workspaceId: string, projectId?: string) => {
       if (!alias) return null;
 
-      const { data, errors } = await fetchCheckProjectAlias({
+      const { data, error } = await fetchCheckProjectAlias({
         variables: { alias, workspaceId, projectId },
-        errorPolicy: "all",
         context: {
           headers: {
             [HEADER_KEY_SKIP_GLOBAL_ERROR_NOTIFICATION]: "true"
@@ -108,7 +107,12 @@ export const useValidateProjectAlias = () => {
         }
       });
 
-      if (errors || !data?.checkProjectAlias) {
+      if (error || !data?.checkProjectAlias) {
+        // Extract graphQLErrors for backward compatibility with UI code
+        const errors =
+          error && "errors" in error
+            ? (error.errors as { extensions?: { description?: string } }[])
+            : undefined;
         return { status: "error", errors };
       }
 

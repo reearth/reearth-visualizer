@@ -4,29 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
 	"net/http"
 	"strings"
 
 	"github.com/labstack/echo/v4"
 	"github.com/reearth/reearth/server/internal/adapter"
 	"github.com/reearth/reearth/server/internal/usecase"
-	"github.com/reearth/reearthx/account/accountdomain/user"
-
-	"github.com/reearth/reearthx/account/accountdomain/workspace"
-	"github.com/reearth/reearthx/account/accountusecase"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 
-	"github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
+	accountsGqlError "github.com/reearth/reearth-accounts/server/pkg/gqlclient/gqlerror"
+	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 )
-
-type graphqlRequest struct {
-	Query         string                 `json:"query"`
-	OperationName string                 `json:"operationName"`
-	Variables     map[string]interface{} `json:"variables"`
-}
 
 func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
@@ -38,12 +29,12 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 
 			authInfo := adapter.GetAuthInfo(ctx)
 
-			var u *user.User
+			var u *accountsUser.User
 
 			// Check for debug user header first (for e2e tests)
 			if cfg.Debug {
 				if userID := req.Header.Get("X-Reearth-Debug-User"); userID != "" {
-					uid, err := user.IDFrom(userID)
+					uid, err := accountsUser.IDFrom(userID)
 					if err == nil {
 						u, err = cfg.AccountRepos.User.FindByID(ctx, uid)
 						if err != nil {
@@ -53,12 +44,12 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 				}
 			}
 
-			// Fallback to mock user if debug user not found
+			// Fallback to demo user if debug user not found
 			if u == nil {
-				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Mock User")
-				if err != nil {
-					uId, _ := user.IDFrom(authInfo.Sub)
-					mockUser = user.New().
+				mockUser, err := cfg.AccountRepos.User.FindByNameOrEmail(ctx, "Demo User")
+				if err != nil && authInfo != nil && authInfo.Sub != "" {
+					uId, _ := accountsUser.IDFrom(authInfo.Sub)
+					mockUser = accountsUser.New().
 						ID(uId).
 						Name(authInfo.Name).
 						Email(authInfo.Email).
@@ -80,7 +71,7 @@ func attachOpMiddlewareMockUser(cfg *ServerConfig) echo.MiddlewareFunc {
 				log.Debugfc(ctx, "auth: op: %#v", op)
 
 			} else {
-				log.Errorfc(ctx, "Mock user information not found: %s", req.URL.Path)
+				log.Errorfc(ctx, "Demo User information not found: %s", req.URL.Path)
 			}
 
 			c.SetRequest(req.WithContext(ctx))
@@ -108,7 +99,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 			token := strings.TrimPrefix(req.Header.Get("Authorization"), "Bearer ")
 			ctx = adapter.AttachJwtToken(ctx, token)
 
-			var u *user.User
+			var u *accountsUser.User
 
 			// debug mode
 			if cfg.Debug {
@@ -172,7 +163,7 @@ func attachOpMiddlewareReearthAccounts(cfg *ServerConfig) echo.MiddlewareFunc {
 }
 
 func handleAccountsAPIError(ctx context.Context, err error) error {
-	if gqlerror.IsUnauthorized(err) {
+	if accountsGqlError.IsUnauthorized(err) {
 		log.Warnfc(ctx, "accounts API: unauthorized: %s", err.Error())
 		return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized")
 	}
@@ -186,25 +177,25 @@ func handleAccountsAPIError(ctx context.Context, err error) error {
 	return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
 }
 
-func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *accountsUser.User) (*user.User, error) {
-	uId, _ := user.IDFrom(userModel.ID().String())
-	wid, _ := workspace.IDFrom(userModel.Workspace().String())
+func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *accountsUser.User) (*accountsUser.User, error) {
+	uId, _ := accountsUser.IDFrom(userModel.ID().String())
+	wid, _ := accountsWorkspace.IDFrom(userModel.Workspace().String())
 
-	usermetadata := user.MetadataFrom(
+	usermetadata := accountsUser.MetadataFrom(
 		userModel.Metadata().PhotoURL(),
 		userModel.Metadata().Description(),
 		userModel.Metadata().Website(),
 		userModel.Metadata().Lang(),
-		user.Theme(userModel.Metadata().Theme()),
+		accountsUser.Theme(userModel.Metadata().Theme()),
 	)
 
 	// Convert auths to user.Auth slice
-	auths := make([]user.Auth, 0, len(userModel.Auths()))
+	auths := make([]accountsUser.Auth, 0, len(userModel.Auths()))
 	for _, authStr := range userModel.Auths() {
-		auths = append(auths, user.AuthFrom(authStr.String()))
+		auths = append(auths, accountsUser.AuthFrom(authStr.String()))
 	}
 
-	u, err := user.New().
+	u, err := accountsUser.New().
 		ID(uId).
 		Name(userModel.Name()).
 		Alias(userModel.Alias()).
@@ -222,28 +213,57 @@ func buildAccountDomainUserFromUserModel(ctx context.Context, userModel *account
 	return u, nil
 }
 
-func generateOperator(ctx context.Context, cfg *ServerConfig, u *user.User) (*usecase.Operator, error) {
+func generateOperator(ctx context.Context, cfg *ServerConfig, u *accountsUser.User) (*usecase.Operator, error) {
 	if u == nil {
 		return nil, nil
 	}
 
 	uid := u.ID()
-	workspaces, err := cfg.Repos.Workspace.FindByUser(ctx, uid)
-	if err != nil {
-		return nil, err
+
+	// Fetch workspaces from the accounts API (source of truth) which returns
+	// proper member data. Then sync to local repo so internal API and interactors
+	// can find workspaces by alias, ID, etc.
+	var workspaces accountsWorkspace.List
+	var err error
+	if cfg.AccountsAPIClient != nil {
+		workspaces, err = cfg.AccountsAPIClient.WorkspaceRepo.FindByUser(ctx, uid.String())
+		if err != nil {
+			log.Warnfc(ctx, "auth: accounts API FindByUser failed, falling back to local repo: %v", err)
+			workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			// Sync workspaces to local repo for internal API access
+			for _, ws := range workspaces {
+				if ws != nil {
+					if saveErr := cfg.Repos.Workspace.Save(ctx, ws); saveErr != nil {
+						log.Warnfc(ctx, "auth: failed to sync workspace %s to local repo: %v", ws.ID(), saveErr)
+					}
+				}
+			}
+		}
+	} else {
+		workspaces, err = cfg.Repos.Workspace.FindByUser(ctx, uid)
+		if err != nil {
+			return nil, err
+		}
 	}
-	scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, workspaces.IDs()...)
+
+	wsList := accountsWorkspace.List(workspaces)
+
+	scenes, err := cfg.Repos.Scene.FindByWorkspace(ctx, wsList.IDs()...)
 	if err != nil {
 		return nil, err
 	}
 
-	readableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleReader).IDs()
-	writableWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleWriter).IDs()
-	maintainingWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleMaintainer).IDs()
-	owningWorkspaces := workspaces.FilterByUserRole(uid, workspace.RoleOwner).IDs()
+	readableWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleReader).IDs()
+	writableWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleWriter).IDs()
+	maintainingWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleMaintainer).IDs()
+	owningWorkspaces := wsList.FilterByUserRole(uid, accountsRole.RoleOwner).IDs()
 
 	return &usecase.Operator{
-		AcOperator: &accountusecase.Operator{
+		AcOperator: &accountsWorkspace.Operator{
 			User:                   &uid,
 			ReadableWorkspaces:     readableWorkspaces,
 			WritableWorkspaces:     writableWorkspaces,

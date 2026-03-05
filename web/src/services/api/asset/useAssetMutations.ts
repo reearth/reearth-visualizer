@@ -1,7 +1,14 @@
-import { FetchResult, useApolloClient, useMutation } from "@apollo/client";
-import { CreateAssetInput, CreateAssetMutation } from "@reearth/services/gql";
+import { FetchResult } from "@apollo/client";
+import { useApolloClient, useMutation } from "@apollo/client/react";
+import {
+  CreateAssetInput,
+  CreateAssetMutation,
+  CreateIconAssetInput,
+  CreateIconAssetMutation
+} from "@reearth/services/gql";
 import {
   CREATE_ASSET,
+  CREATE_ICON_ASSET,
   REMOVE_ASSET
 } from "@reearth/services/gql/queries/asset";
 import { useT } from "@reearth/services/i18n/hooks";
@@ -40,7 +47,7 @@ export const useAssetMutations = () => {
           )
         );
 
-        if (!results || results.some((r) => r.errors)) {
+        if (!results || results.some((r) => r.error)) {
           setNotification({
             type: "error",
             text: t("Failed to add one or more assets.")
@@ -67,6 +74,61 @@ export const useAssetMutations = () => {
     [apolloCache, createAssetMutation, t, setNotification]
   );
 
+  const [createIconAssetMutation] = useMutation(CREATE_ICON_ASSET, {
+    refetchQueries: ["GetAssets"]
+  });
+
+  const createIconAssets = useCallback(
+    async ({
+      workspaceId,
+      projectId,
+      file
+    }: CreateIconAssetInput): Promise<
+      | {
+          data: FetchResult<CreateIconAssetMutation>[];
+          result: string;
+        }
+      | undefined
+    > => {
+      if (!file || !workspaceId) return;
+
+      try {
+        const results = await Promise.all(
+          Array.from(file).map((f) =>
+            createIconAssetMutation({
+              variables: { workspaceId, projectId, file: f }
+            })
+          )
+        );
+
+        const hasError = !results || results.some((r) => r.error);
+
+        if (hasError) {
+          setNotification({
+            type: "error",
+            text: t("Failed to add one or more assets.")
+          });
+        } else {
+          setNotification({
+            type: "success",
+            text: t("Successfully added one or more assets.")
+          });
+        }
+
+        apolloCache.evict({ fieldName: "assets" });
+
+        return { data: results, result: hasError ? "error" : "success" };
+      } catch (_error) {
+        setNotification({
+          type: "error",
+          text: t("Failed to add one or more assets.")
+        });
+        return;
+      }
+    },
+    [apolloCache, createIconAssetMutation, t, setNotification]
+  );
+
   const [removeAssetMutation] = useMutation(REMOVE_ASSET, {
     refetchQueries: ["GetAssets"]
   });
@@ -79,7 +141,7 @@ export const useAssetMutations = () => {
         )
       );
 
-      if (!results || results.some((r) => r.errors)) {
+      if (!results || results.some((r) => r.error)) {
         setNotification({
           type: "error",
           text: t("Failed to delete one or more assets.")
@@ -92,7 +154,7 @@ export const useAssetMutations = () => {
       }
 
       return {
-        status: !results || results.some((r) => r.errors) ? "error" : "success"
+        status: !results || results.some((r) => r.error) ? "error" : "success"
       };
     },
     [removeAssetMutation, t, setNotification]
@@ -100,6 +162,7 @@ export const useAssetMutations = () => {
 
   return {
     createAssets,
+    createIconAssets,
     removeAssets
   };
 };

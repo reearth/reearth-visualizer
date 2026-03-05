@@ -21,7 +21,8 @@ import (
 	"github.com/reearth/reearth/server/pkg/scene/builder"
 	"github.com/reearth/reearth/server/pkg/storytelling"
 	"github.com/reearth/reearth/server/pkg/visualizer"
-	"github.com/reearth/reearthx/account/accountusecase/accountrepo"
+
+	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
 	"github.com/reearth/reearthx/log"
 	"github.com/reearth/reearthx/rerror"
 	"github.com/reearth/reearthx/usecasex"
@@ -34,7 +35,7 @@ type Storytelling struct {
 	storytellingRepo repo.Storytelling
 	pluginRepo       repo.Plugin
 	propertyRepo     repo.Property
-	workspaceRepo    accountrepo.Workspace
+	workspaceRepo    accountsWorkspace.Repo
 	projectRepo      repo.Project
 	sceneRepo        repo.Scene
 	file             gateway.File
@@ -179,8 +180,16 @@ func (i *Storytelling) Update(ctx context.Context, inp interfaces.UpdateStoryInp
 		story.SetPublicDescription(*inp.PublicDescription)
 	}
 
-	if inp.PublicImage != nil {
+	if inp.DeletePublicImage != nil && *inp.DeletePublicImage {
+		story.SetPublicImage("")
+	} else if inp.PublicImage != nil {
 		story.SetPublicImage(*inp.PublicImage)
+	}
+
+	if inp.DeletePublicIconImage != nil && *inp.DeletePublicIconImage {
+		story.SetPublicIconImage("")
+	} else if inp.PublicIconImage != nil {
+		story.SetPublicIconImage(*inp.PublicIconImage)
 	}
 
 	if inp.IsBasicAuthActive != nil {
