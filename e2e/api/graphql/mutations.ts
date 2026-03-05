@@ -27,3 +27,49 @@ export const DELETE_PROJECT = `
     deleteProject(input: $input) { projectId }
   }
 `;
+
+export const CREATE_WORKSPACE = `
+  mutation CreateWorkspace($input: CreateWorkspaceInput!) {
+    createWorkspace(input: $input) {
+      workspace { id name personal members { userId role } }
+    }
+  }
+`;
+
+export const UPDATE_WORKSPACE = `
+  mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
+    updateWorkspace(input: $input) {
+      workspace { id name members { userId role } }
+    }
+  }
+`;
+
+export const DELETE_WORKSPACE = `
+  mutation DeleteWorkspace($input: DeleteWorkspaceInput!) {
+    deleteWorkspace(input: $input) { workspaceId }
+  }
+`;
+
+export const ADD_MEMBER_TO_WORKSPACE = `
+  mutation AddMemberToWorkspace($input: AddMemberToWorkspaceInput!) {
+    addMemberToWorkspace(input: $input) {
+      workspace { id members { userId role } }
+    }
+  }
+`;
+
+export const REMOVE_MEMBER_FROM_WORKSPACE = `
+  mutation RemoveMemberFromWorkspace($input: RemoveMemberFromWorkspaceInput!) {
+    removeMemberFromWorkspace(input: $input) {
+      workspace { id members { userId role } }
+    }
+  }
+`;
+
+export const UPDATE_MEMBER_OF_WORKSPACE = `
+  mutation UpdateMemberOfWorkspace($input: UpdateMemberOfWorkspaceInput!) {
+    updateMemberOfWorkspace(input: $input) {
+      workspace { id members { userId role } }
+    }
+  }
+`;
