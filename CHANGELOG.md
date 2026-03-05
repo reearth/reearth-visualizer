@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.1 - 2026-03-05
+
+### Web
+
+#### 🔧 Bug Fixes
+
+- Components got rerendered after mutations ([#2090](https://github.com/reearth/reearth-visualizer/pull/2090)) [`777269`](https://github.com/reearth/reearth-visualizer/commit/777269)
+
+#### Miscellaneous Tasks
+
+- Update package version to 1.0.0-beta.15.1 ([#2091](https://github.com/reearth/reearth-visualizer/pull/2091)) [`168049`](https://github.com/reearth/reearth-visualizer/commit/168049)
+
 ## 1.0.0-beta.15.0 - 2026-03-05
 
 ### Web
