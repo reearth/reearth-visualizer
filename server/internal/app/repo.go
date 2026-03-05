@@ -68,16 +68,12 @@ func initReposAndGateways(ctx context.Context, conf *config.Config, debug bool) 
 	gateways := &gateway.Container{}
 	acGateways := &accountsGateway.Container{}
 
-	// Initialize Accounts API client if enabled
-	var accountsAPIClient *gqlclient.Client
-	if conf.AccountsAPI.Enabled {
-		log.Infof("accounts API: enabled at %s", conf.AccountsAPI.Host)
-		accountsAPIClient = gqlclient.NewClient(
-			conf.AccountsAPI.Host,
-			conf.AccountsAPI.Timeout,
-			adpaccounts.NewDynamicAuthTransport(),
-		)
-	}
+	// Initialize Accounts API client
+	accountsAPIClient := gqlclient.NewClient(
+		conf.AccountsAPI.Host,
+		conf.AccountsAPI.Timeout,
+		adpaccounts.NewDynamicAuthTransport(),
+	)
 
 	// Mongo
 
