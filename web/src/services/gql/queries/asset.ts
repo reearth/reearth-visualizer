@@ -55,6 +55,22 @@ export const CREATE_ASSET = gql(`
   }
 `);
 
+export const CREATE_ICON_ASSET = gql(`
+  mutation CreateIconAsset($workspaceId: ID!, $projectId: ID, $file: Upload!)  {
+    createIconAsset(input: { workspaceId: $workspaceId, projectId: $projectId, file: $file }) {
+      asset {
+        id
+        workspaceId
+        projectId
+        name
+        size
+        url
+        contentType
+      }
+    }
+  }
+`);
+
 export const UPDATE_ASSET = gql(`
   mutation UpdateAsset($assetId: ID!, $projectId: ID) {
     updateAsset(input: { assetId: $assetId projectId: $projectId }) {
