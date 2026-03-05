@@ -17,6 +17,11 @@ import {
   WORKSPACE_POLICY_CHECK
 } from "../graphql/queries";
 
+// Crockford Base32 charset used by oklog/ulid
+const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
+const generateFakeId = () =>
+  faker.string.fromCharacters(CROCKFORD, 26);
+
 test.describe.configure({ mode: "serial" });
 
 test.describe("Workspace CRUD lifecycle via API", () => {
@@ -156,7 +161,7 @@ test.describe("Workspace negative scenarios via API", () => {
   });
 
   test("Cannot update a non-existent workspace", async ({ gqlClient }) => {
-    const fakeId = "01ja000000000000000000000a";
+    const fakeId = generateFakeId();
     await expect(
       gqlClient.mutate(UPDATE_WORKSPACE, {
         input: { workspaceId: fakeId, name: "Ghost" }
@@ -165,7 +170,7 @@ test.describe("Workspace negative scenarios via API", () => {
   });
 
   test("Cannot delete a non-existent workspace", async ({ gqlClient }) => {
-    const fakeId = "01ja000000000000000000000a";
+    const fakeId = generateFakeId();
     await expect(
       gqlClient.mutate(DELETE_WORKSPACE, { input: { workspaceId: fakeId } })
     ).rejects.toThrow();
@@ -182,7 +187,7 @@ test.describe("Workspace negative scenarios via API", () => {
   test("Adding non-existent user does not add them to members", async ({
     gqlClient
   }) => {
-    const fakeUserId = "01ja000000000000000000000b";
+    const fakeUserId = generateFakeId();
     const { data: wsData } = await gqlClient.mutate<{
       createWorkspace: { workspace: { id: string } };
     }>(CREATE_WORKSPACE, {
@@ -227,7 +232,7 @@ test.describe("Workspace negative scenarios via API", () => {
   test("Cannot add member to non-existent workspace", async ({
     gqlClient
   }) => {
-    const fakeWsId = "01ja000000000000000000000c";
+    const fakeWsId = generateFakeId();
     await expect(
       gqlClient.mutate(ADD_MEMBER_TO_WORKSPACE, {
         input: { workspaceId: fakeWsId, userId: myUserId, role: "READER" }
@@ -236,7 +241,7 @@ test.describe("Workspace negative scenarios via API", () => {
   });
 
   test("Read non-existent workspace returns null", async ({ gqlClient }) => {
-    const fakeId = "01ja000000000000000000000a";
+    const fakeId = generateFakeId();
     const { status, data } = await gqlClient.query<{
       node: { id: string } | null;
     }>(GET_WORKSPACE, { workspaceId: fakeId });
