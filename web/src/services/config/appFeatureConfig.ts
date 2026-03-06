@@ -54,6 +54,7 @@ export type AppFeatureConfig = {
   externalAccountManagementUrl?: string;
   projectVisibility?: boolean;
   builtinTimelineWidget?: boolean;
+  useProjectSplitImport?: boolean;
 };
 
 const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
@@ -64,7 +65,8 @@ const DEFAULT_APP_FEATURE_CONFIG: AppFeatureConfig = {
   accountManagement: true,
   projectVisibility: false,
   externalAccountManagementUrl: undefined,
-  builtinTimelineWidget: true
+  builtinTimelineWidget: true,
+  useProjectSplitImport: true
 };
 
 let appFeatureConfig: AppFeatureConfig = {

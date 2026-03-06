@@ -2,6 +2,7 @@ import {
   useProject,
   useProjectImportExportMutations
 } from "@reearth/services/api/project";
+import { appFeature } from "@reearth/services/config/appFeatureConfig";
 import { ProjectImportStatus } from "@reearth/services/gql";
 import { useT } from "@reearth/services/i18n/hooks";
 import { useNotification } from "@reearth/services/state";
@@ -29,7 +30,8 @@ export default ({
     undefined
   );
 
-  const { importProject } = useProjectImportExportMutations();
+  const { importProject, importProjectWithSplitImport } =
+    useProjectImportExportMutations();
 
   const handleProjectImport = useCallback(
     async (event: ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +39,17 @@ export default ({
       if (!file || !workspaceId) return;
       setImportStatus(ProjectImportStatus.Uploading);
 
-      const result = await importProject(file, workspaceId);
+      const { useProjectSplitImport } = appFeature();
 
-      if (!result.project_id) {
+      const result = await (useProjectSplitImport
+        ? importProjectWithSplitImport(file, workspaceId)
+        : importProject(file, workspaceId));
+
+      if (
+        "error" in result ||
+        !("project_id" in result) ||
+        !result.project_id
+      ) {
         // We don't have error log if error happens during upload step
         // Error notification is sent by importProject
         setImportStatus(ProjectImportStatus.None);
@@ -51,7 +61,7 @@ export default ({
       setImportStatus(ProjectImportStatus.Processing);
       setImportingProjectId(projectId);
     },
-    [workspaceId, importProject]
+    [workspaceId, importProject, importProjectWithSplitImport]
   );
 
   const { refetch: refetchProject } = useProject(importingProjectId);
