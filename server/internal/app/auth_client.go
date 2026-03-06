@@ -174,7 +174,8 @@ func handleAccountsAPIError(ctx context.Context, err error) error {
 	}
 
 	// Handle rate limiting from accounts API
-	if strings.Contains(err.Error(), "429") || strings.Contains(err.Error(), "Too Many Requests") {
+	// Use specific pattern to avoid false positives from UUIDs/paths containing "429"
+	if strings.Contains(err.Error(), "429 Too Many Requests") {
 		log.Warnfc(ctx, "accounts API: rate limited: %s", err.Error())
 		return echo.NewHTTPError(http.StatusTooManyRequests, "too many requests")
 	}
