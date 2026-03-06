@@ -98,7 +98,7 @@ func GraphqlAPI(conf config.GraphQLConfig, accountsAPIClient *gqlclient.Client, 
 		defer span.End()
 
 		usecases := adapter.Usecases(ctx)
-		ctx = gql.AttachUsecases(ctx, usecases, enableDataLoaders)
+		ctx = gql.AttachUsecases(ctx, usecases, accountsAPIClient, enableDataLoaders)
 		c.SetRequest(req.WithContext(ctx))
 
 		srv.ServeHTTP(c.Response(), c.Request())

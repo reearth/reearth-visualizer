@@ -111,19 +111,22 @@ type UpdateMeParam struct {
 }
 
 // Workspace defines the interface for workspace-related use cases.
-// This replaces the old accountinterfaces.Workspace from reearthx.
+// User-facing mutations are primarily served by the reearth-accounts gqlclient API
+// (see resolver_mutation_workspace.go). The methods below are kept as fallback for
+// e2e tests where AccountsAPIClient is nil.
 type Workspace interface {
 	Fetch(context.Context, accountsWorkspace.IDList, *accountsWorkspace.Operator) (accountsWorkspace.List, error)
 	FindByUser(context.Context, accountsUser.ID, *accountsWorkspace.Operator) (accountsWorkspace.List, error)
+	// User mutation fallback (used when AccountsAPIClient is nil, e.g. e2e tests)
 	Create(context.Context, string, accountsUser.ID, *string, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	Update(context.Context, accountsWorkspace.ID, string, *string, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	AddUserMember(context.Context, accountsWorkspace.ID, map[accountsUser.ID]accountsRole.RoleType, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
-	AddIntegrationMember(context.Context, accountsWorkspace.ID, accountsWorkspace.IntegrationID, accountsRole.RoleType, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	UpdateUserMember(context.Context, accountsWorkspace.ID, accountsUser.ID, accountsRole.RoleType, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
-	UpdateIntegration(context.Context, accountsWorkspace.ID, accountsWorkspace.IntegrationID, accountsRole.RoleType, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	RemoveUserMember(context.Context, accountsWorkspace.ID, accountsUser.ID, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
-	RemoveMultipleUserMembers(context.Context, accountsWorkspace.ID, accountsUser.IDList, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
+	Remove(context.Context, accountsWorkspace.ID, *accountsWorkspace.Operator) error
+	// Integration member management (not yet migrated to accounts API)
+	AddIntegrationMember(context.Context, accountsWorkspace.ID, accountsWorkspace.IntegrationID, accountsRole.RoleType, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
+	UpdateIntegration(context.Context, accountsWorkspace.ID, accountsWorkspace.IntegrationID, accountsRole.RoleType, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	RemoveIntegration(context.Context, accountsWorkspace.ID, accountsWorkspace.IntegrationID, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
 	RemoveIntegrations(context.Context, accountsWorkspace.ID, accountsWorkspace.IntegrationIDList, *accountsWorkspace.Operator) (*accountsWorkspace.Workspace, error)
-	Remove(context.Context, accountsWorkspace.ID, *accountsWorkspace.Operator) error
 }
