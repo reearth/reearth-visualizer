@@ -173,6 +173,13 @@ func handleAccountsAPIError(ctx context.Context, err error) error {
 		return echo.NewHTTPError(http.StatusNotFound, "user not found")
 	}
 
+	// Handle rate limiting from accounts API
+	// Use specific pattern to avoid false positives from UUIDs/paths containing "429"
+	if strings.Contains(err.Error(), "429 Too Many Requests") {
+		log.Warnfc(ctx, "accounts API: rate limited: %s", err.Error())
+		return echo.NewHTTPError(http.StatusTooManyRequests, "too many requests")
+	}
+
 	log.Errorfc(ctx, "accounts API: failed to fetch user: %s", err.Error())
 	return echo.NewHTTPError(http.StatusInternalServerError, "failed to fetch user from accounts API")
 }
