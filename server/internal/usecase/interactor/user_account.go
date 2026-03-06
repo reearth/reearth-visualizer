@@ -14,6 +14,7 @@ import (
 	textTmpl "text/template"
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
 	accountsWorkspace "github.com/reearth/reearth-accounts/server/pkg/workspace"
@@ -74,20 +75,22 @@ type userInfo struct {
 }
 
 type UserInteractor struct {
-	repos           *accountsInfra.Container
-	gateways        *accountsGateway.Container
-	signupSecret    string
-	authSrvUIDomain string
-	query           interfaces.UserQuery
+	repos             *accountsInfra.Container
+	gateways          *accountsGateway.Container
+	signupSecret      string
+	authSrvUIDomain   string
+	query             interfaces.UserQuery
+	accountsAPIClient *gqlclient.Client
 }
 
-func NewUserInteractor(ar *accountsInfra.Container, ag *accountsGateway.Container, signupSecret, authSrvUIDomain string, users []accountsUser.Repo) interfaces.User {
+func NewUserInteractor(ar *accountsInfra.Container, ag *accountsGateway.Container, signupSecret, authSrvUIDomain string, users []accountsUser.Repo, accountsAPIClient *gqlclient.Client) interfaces.User {
 	return &UserInteractor{
-		repos:           ar,
-		gateways:        ag,
-		signupSecret:    signupSecret,
-		authSrvUIDomain: authSrvUIDomain,
-		query:           NewUserQueryInteractor(ar),
+		repos:             ar,
+		gateways:          ag,
+		signupSecret:      signupSecret,
+		authSrvUIDomain:   authSrvUIDomain,
+		query:             NewUserQueryInteractor(ar),
+		accountsAPIClient: accountsAPIClient,
 	}
 }
 
@@ -308,6 +311,14 @@ func (i *UserInteractor) RemoveMyAuth(ctx context.Context, authProvider string, 
 		return nil, errInvalidOperator
 	}
 
+	if i.accountsAPIClient != nil {
+		u, err := i.accountsAPIClient.UserRepo.RemoveMyAuth(ctx, authProvider)
+		if err != nil {
+			return nil, err
+		}
+		return u, nil
+	}
+
 	u, err = i.repos.User.FindByID(ctx, *operator.User)
 	if err != nil {
 		return nil, err
@@ -330,6 +341,10 @@ func (i *UserInteractor) DeleteMe(ctx context.Context, userID accountsUser.ID, o
 
 	if userID.IsNil() || userID != *operator.User {
 		return errors.New("invalid user id")
+	}
+
+	if i.accountsAPIClient != nil {
+		return i.accountsAPIClient.UserRepo.DeleteMe(ctx, userID.String())
 	}
 
 	u, err := i.repos.User.FindByID(ctx, userID)
@@ -373,6 +388,11 @@ func (i *UserInteractor) DeleteMe(ctx context.Context, userID accountsUser.ID, o
 }
 
 func (i *UserInteractor) CreateVerification(ctx context.Context, email string) error {
+	if i.accountsAPIClient != nil {
+		_, err := i.accountsAPIClient.UserRepo.CreateVerification(ctx, email)
+		return err
+	}
+
 	u, err := i.repos.User.FindByEmail(ctx, email)
 	if err != nil {
 		return err
@@ -395,6 +415,10 @@ func (i *UserInteractor) CreateVerification(ctx context.Context, email string) e
 }
 
 func (i *UserInteractor) VerifyUser(ctx context.Context, code string) (*accountsUser.User, error) {
+	if i.accountsAPIClient != nil {
+		return i.accountsAPIClient.UserRepo.VerifyUser(ctx, code)
+	}
+
 	u, err := i.repos.User.FindByVerification(ctx, code)
 	if err != nil {
 		return nil, err
@@ -412,6 +436,10 @@ func (i *UserInteractor) VerifyUser(ctx context.Context, code string) (*accounts
 }
 
 func (i *UserInteractor) StartPasswordReset(ctx context.Context, email string) error {
+	if i.accountsAPIClient != nil {
+		return i.accountsAPIClient.UserRepo.StartPasswordReset(ctx, email)
+	}
+
 	u, err := i.repos.User.FindByEmail(ctx, email)
 	if err != nil {
 		return err
@@ -456,6 +484,10 @@ func (i *UserInteractor) StartPasswordReset(ctx context.Context, email string) e
 }
 
 func (i *UserInteractor) PasswordReset(ctx context.Context, password string, token string) error {
+	if i.accountsAPIClient != nil {
+		return i.accountsAPIClient.UserRepo.PasswordReset(ctx, password, token)
+	}
+
 	u, err := i.repos.User.FindByPasswordResetRequest(ctx, token)
 	if err != nil {
 		return err

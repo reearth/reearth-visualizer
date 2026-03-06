@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	accountsGateway "github.com/reearth/reearth-accounts/server/pkg/gateway"
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
 	accountsID "github.com/reearth/reearth-accounts/server/pkg/id"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	"github.com/reearth/reearth/server/internal/adapter"
@@ -24,8 +25,9 @@ import (
 type ContainerConfig struct {
 	SignupSecret       string
 	AuthSrvUIDomain    string
-	PublishedIndexHTML string
-	PublishedIndexURL  *url.URL
+	PublishedIndexHTML  string
+	PublishedIndexURL   *url.URL
+	AccountsAPIClient  *gqlclient.Client
 }
 
 func NewContainer(
@@ -55,8 +57,8 @@ func NewContainer(
 		Published:       published,
 		Scene:           NewScene(r, g),
 		StoryTelling:    NewStorytelling(r, g),
-		Workspace:       NewWorkspaceInteractor(ar),
-		User:            NewUserInteractor(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users),
+		Workspace:       NewWorkspaceInteractor(ar, config.AccountsAPIClient),
+		User:            NewUserInteractor(ar, ag, config.SignupSecret, config.AuthSrvUIDomain, ar.Users, config.AccountsAPIClient),
 	}
 }
 

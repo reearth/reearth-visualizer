@@ -131,6 +131,7 @@ func initEcho(
 				PublishedIndexHTML: publishedIndexHTML,
 				PublishedIndexURL:  cfg.Config.Published.IndexURL,
 				AuthSrvUIDomain:    cfg.Config.Host_Web,
+				AccountsAPIClient:  cfg.AccountsAPIClient,
 			},
 		),
 	)

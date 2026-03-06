@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/reearth/reearth-accounts/server/pkg/gqlclient"
+	wsGqlClient "github.com/reearth/reearth-accounts/server/pkg/gqlclient/workspace"
 	accountsInfra "github.com/reearth/reearth-accounts/server/pkg/infrastructure"
 	accountsRole "github.com/reearth/reearth-accounts/server/pkg/role"
 	accountsUser "github.com/reearth/reearth-accounts/server/pkg/user"
@@ -22,14 +24,16 @@ var (
 )
 
 type WorkspaceInteractor struct {
-	repos     *accountsInfra.Container
-	userquery interfaces.UserQuery
+	repos             *accountsInfra.Container
+	userquery         interfaces.UserQuery
+	accountsAPIClient *gqlclient.Client
 }
 
-func NewWorkspaceInteractor(ar *accountsInfra.Container) interfaces.Workspace {
+func NewWorkspaceInteractor(ar *accountsInfra.Container, accountsAPIClient *gqlclient.Client) interfaces.Workspace {
 	return &WorkspaceInteractor{
-		repos:     ar,
-		userquery: NewUserQueryInteractor(ar),
+		repos:             ar,
+		userquery:         NewUserQueryInteractor(ar),
+		accountsAPIClient: accountsAPIClient,
 	}
 }
 
@@ -50,6 +54,27 @@ func (i *WorkspaceInteractor) Create(ctx context.Context, name string, firstUser
 
 	if len(strings.TrimSpace(name)) == 0 {
 		return nil, accountsUser.ErrInvalidName
+	}
+
+	if i.accountsAPIClient != nil {
+		wsAlias := ""
+		if alias != nil && *alias != "" {
+			wsAlias = *alias
+		}
+		desc := ""
+		apiWs, err := i.accountsAPIClient.WorkspaceRepo.CreateWorkspace(ctx, wsGqlClient.CreateWorkspaceInput{
+			Alias: wsAlias, Name: name, Description: &desc,
+		})
+		if err != nil {
+			return nil, err
+		}
+		operator.AddNewWorkspace(apiWs.ID())
+		ws, err := i.repos.Workspace.FindByID(ctx, apiWs.ID())
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
 	}
 
 	firstUsers, err := i.userquery.FetchByID(ctx, []accountsUser.ID{firstUser})
@@ -101,6 +126,26 @@ func (i *WorkspaceInteractor) Update(ctx context.Context, id accountsWorkspace.I
 		return nil, errInvalidOperator
 	}
 
+	if i.accountsAPIClient != nil {
+		input := wsGqlClient.UpdateWorkspaceInput{
+			WorkspaceID: id.String(),
+			Name:        &name,
+		}
+		if alias != nil {
+			input.Alias = alias
+		}
+		_, err := i.accountsAPIClient.WorkspaceRepo.UpdateWorkspace(ctx, input)
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
+	}
+
 	ws, err := i.repos.Workspace.FindByID(ctx, id)
 	if err != nil {
 		return nil, err
@@ -141,6 +186,25 @@ func (i *WorkspaceInteractor) Update(ctx context.Context, id accountsWorkspace.I
 func (i *WorkspaceInteractor) AddUserMember(ctx context.Context, workspaceID accountsWorkspace.ID, users map[accountsUser.ID]accountsRole.RoleType, operator *accountsWorkspace.Operator) (_ *accountsWorkspace.Workspace, err error) {
 	if operator == nil || operator.User == nil {
 		return nil, errInvalidOperator
+	}
+
+	if i.accountsAPIClient != nil {
+		members := make([]wsGqlClient.WorkspaceMemberInput, 0, len(users))
+		for uid, r := range users {
+			members = append(members, wsGqlClient.WorkspaceMemberInput{UserID: uid.String(), Role: string(r)})
+		}
+		_, err := i.accountsAPIClient.WorkspaceRepo.AddUsersToWorkspace(ctx, wsGqlClient.AddUsersToWorkspaceInput{
+			WorkspaceID: workspaceID.String(), Users: members,
+		})
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, workspaceID)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
 	}
 
 	ids := make([]accountsUser.ID, 0, len(users))
@@ -186,6 +250,19 @@ func (i *WorkspaceInteractor) AddIntegrationMember(ctx context.Context, wId acco
 		return nil, errInvalidOperator
 	}
 
+	if i.accountsAPIClient != nil {
+		_, err := i.accountsAPIClient.WorkspaceRepo.AddIntegrationToWorkspace(ctx, wId.String(), iId.String(), string(r))
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, wId)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
+	}
+
 	ws, err := i.repos.Workspace.FindByID(ctx, wId)
 	if err != nil {
 		return nil, err
@@ -208,6 +285,21 @@ func (i *WorkspaceInteractor) AddIntegrationMember(ctx context.Context, wId acco
 func (i *WorkspaceInteractor) UpdateUserMember(ctx context.Context, id accountsWorkspace.ID, u accountsUser.ID, r accountsRole.RoleType, operator *accountsWorkspace.Operator) (_ *accountsWorkspace.Workspace, err error) {
 	if operator == nil || operator.User == nil {
 		return nil, errInvalidOperator
+	}
+
+	if i.accountsAPIClient != nil {
+		_, err := i.accountsAPIClient.WorkspaceRepo.UpdateUserOfWorkspace(ctx, wsGqlClient.UpdateUserOfWorkspaceInput{
+			WorkspaceID: id.String(), UserID: u.String(), Role: string(r),
+		})
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
 	}
 
 	if !operator.IsOwningWorkspace(id) {
@@ -246,6 +338,19 @@ func (i *WorkspaceInteractor) UpdateIntegration(ctx context.Context, wId account
 		return nil, errInvalidOperator
 	}
 
+	if i.accountsAPIClient != nil {
+		_, err := i.accountsAPIClient.WorkspaceRepo.UpdateIntegrationOfWorkspace(ctx, wId.String(), iId.String(), string(r))
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, wId)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
+	}
+
 	ws, err := i.repos.Workspace.FindByID(ctx, wId)
 	if err != nil {
 		return nil, err
@@ -276,6 +381,23 @@ func (i *WorkspaceInteractor) RemoveMultipleUserMembers(ctx context.Context, id 
 
 	if userIds.Len() == 0 {
 		return nil, accountsWorkspace.ErrNoSpecifiedUsers
+	}
+
+	if i.accountsAPIClient != nil {
+		ids := make([]string, len(userIds))
+		for j, uid := range userIds {
+			ids[j] = uid.String()
+		}
+		_, err := i.accountsAPIClient.WorkspaceRepo.RemoveMultipleUsersFromWorkspace(ctx, id.String(), ids)
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
 	}
 
 	ws, err := i.repos.Workspace.FindByID(ctx, id)
@@ -319,6 +441,19 @@ func (i *WorkspaceInteractor) RemoveIntegration(ctx context.Context, wId account
 		return nil, errInvalidOperator
 	}
 
+	if i.accountsAPIClient != nil {
+		_, err := i.accountsAPIClient.WorkspaceRepo.RemoveIntegrationFromWorkspace(ctx, wId.String(), iId.String())
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, wId)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
+	}
+
 	ws, err := i.repos.Workspace.FindByID(ctx, wId)
 	if err != nil {
 		return nil, err
@@ -341,6 +476,23 @@ func (i *WorkspaceInteractor) RemoveIntegration(ctx context.Context, wId account
 func (i *WorkspaceInteractor) RemoveIntegrations(ctx context.Context, wId accountsWorkspace.ID, iIds accountsWorkspace.IntegrationIDList, operator *accountsWorkspace.Operator) (_ *accountsWorkspace.Workspace, err error) {
 	if operator == nil || operator.User == nil {
 		return nil, errInvalidOperator
+	}
+
+	if i.accountsAPIClient != nil {
+		ids := make([]string, len(iIds))
+		for j, iid := range iIds {
+			ids[j] = iid.String()
+		}
+		_, err := i.accountsAPIClient.WorkspaceRepo.RemoveIntegrationsFromWorkspace(ctx, wId.String(), ids)
+		if err != nil {
+			return nil, err
+		}
+		ws, err := i.repos.Workspace.FindByID(ctx, wId)
+		if err != nil {
+			return nil, err
+		}
+		applyDefaultPolicyAc(ws, operator)
+		return ws, nil
 	}
 
 	ws, err := i.repos.Workspace.FindByID(ctx, wId)
@@ -369,6 +521,10 @@ func (i *WorkspaceInteractor) Remove(ctx context.Context, id accountsWorkspace.I
 
 	if !operator.IsOwningWorkspace(id) {
 		return interfaces.ErrOperationDenied
+	}
+
+	if i.accountsAPIClient != nil {
+		return i.accountsAPIClient.WorkspaceRepo.DeleteWorkspace(ctx, id.String())
 	}
 
 	ws, err := i.repos.Workspace.FindByID(ctx, id)
