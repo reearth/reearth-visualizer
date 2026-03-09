@@ -46,7 +46,7 @@ export default ({
         : importProject(file, workspaceId));
 
       if (
-        "error" in result ||
+        result.status === "error" ||
         !("project_id" in result) ||
         !result.project_id
       ) {
