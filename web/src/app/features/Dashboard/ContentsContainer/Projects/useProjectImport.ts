@@ -51,7 +51,7 @@ export default ({
         !result.project_id
       ) {
         // We don't have error log if error happens during upload step
-        // Error notification is sent by importProject
+        // Error notification is handled by the import mutation
         setImportStatus(ProjectImportStatus.None);
         setImportingProjectId(undefined);
         return;
