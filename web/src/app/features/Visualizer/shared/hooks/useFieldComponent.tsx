@@ -161,12 +161,13 @@ export const FieldComponent = ({
     />
   ) : field?.type === "number" ? (
     <NumberField
+      key={field?.id}
       title={field?.title}
       value={field?.type === "number" ? (field?.value as number) : undefined}
       description={field?.description}
       min={field?.min}
       max={field?.max}
-      onBlur={handlePropertyValueUpdate(
+      onChangeComplete={handlePropertyValueUpdate(
         groupId,
         propertyId,
         fieldId,
