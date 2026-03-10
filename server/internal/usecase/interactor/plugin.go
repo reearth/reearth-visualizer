@@ -82,27 +82,24 @@ func (i *Plugin) ExportPlugins(ctx context.Context, sce *scene.Scene, zipWriter 
 	for _, p := range plugins {
 		for _, extension := range p.Extensions() {
 			extensionFileName := fmt.Sprintf("%s.js", extension.ID().String())
-			zipEntryPath := fmt.Sprintf("plugins/%s/%s", p.ID().String(), extensionFileName)
-			zipEntry, err := zipWriter.Create(zipEntryPath)
-			if err != nil {
-				return nil, nil, err
-			}
 
 			stream, err := i.file.ReadPluginFile(ctx, p.ID(), extensionFileName)
 			if err != nil {
 				if stream != nil {
 					_ = stream.Close()
 				}
-				return nil, nil, fmt.Errorf("plugin %s file %s: %w", p.ID(), extensionFileName, err)
-			}
-
-			if _, err = io.Copy(zipEntry, stream); err != nil {
+				log.Warnfc(ctx, "plugin %s: skipping file %s: %v", p.ID(), extensionFileName, err)
+			} else {
+				zipEntryPath := fmt.Sprintf("plugins/%s/%s", p.ID().String(), extensionFileName)
+				zipEntry, err := zipWriter.Create(zipEntryPath)
+				if err != nil {
+					return nil, nil, err
+				}
+				if _, err = io.Copy(zipEntry, stream); err != nil {
+					_ = stream.Close()
+					return nil, nil, err
+				}
 				_ = stream.Close()
-				return nil, nil, err
-			}
-
-			if err := stream.Close(); err != nil {
-				return nil, nil, err
 			}
 
 			schema, err := i.propertySchemaRepo.FindByID(ctx, extension.Schema())
