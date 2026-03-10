@@ -20,7 +20,24 @@ services:
       - 27017:27017
     volumes:
       - ./mongo:/data/db
-  gcs:
+  reearth-accounts-api:
+    image: reearth/reearth-accounts-api:v1.0.0
+    hostname: reearth-accounts-dev
+    env_file:
+      - ./accounts/.env.docker
+    ports:
+      - 8090:8090
+    depends_on:
+      - reearth-mongo
+      - reearth-cerbos
+  reearth-cerbos:
+    image: cerbos/cerbos:0.40.0
+    command: server --config=/policies/.cerbos.yaml
+    ports:
+      - 3593:3593
+    volumes:
+      - ./cerbos/policies:/policies
+  reearth-gcs:
     image: fsouza/fake-gcs-server:1.52.1
     ports:
       - 4443:4443

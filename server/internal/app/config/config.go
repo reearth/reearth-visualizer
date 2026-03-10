@@ -89,8 +89,7 @@ type Config struct {
 }
 
 type AccountsAPIConfig struct {
-	Enabled bool   `default:"false"`
-	Host    string `default:"http://localhost:8081"`
+	Host    string `default:"http://localhost:8090"`
 	Timeout int    `default:"30"`
 }
 
@@ -176,10 +175,6 @@ func (c *Config) Print() string {
 
 func (c *Config) UseMockAuth() bool {
 	return c.Dev && c.MockAuth
-}
-
-func (c *Config) UseReearthAccountAuth() bool {
-	return c.AccountsAPI.Enabled
 }
 
 func (c *Config) secrets() []string {
