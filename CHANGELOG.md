@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.0-beta.15.2 - 2026-03-10
+
+### Web
+
+#### ✨ Refactor
+
+- Use project split import on oss ([#2093](https://github.com/reearth/reearth-visualizer/pull/2093)) [`cd64c1`](https://github.com/reearth/reearth-visualizer/commit/cd64c1)
+
+#### Miscellaneous Tasks
+
+- Bump version to 1.0.0-beta.15.2 ([#2096](https://github.com/reearth/reearth-visualizer/pull/2096)) [`075809`](https://github.com/reearth/reearth-visualizer/commit/075809)
+- Update core version ([#2095](https://github.com/reearth/reearth-visualizer/pull/2095)) [`d5e8ef`](https://github.com/reearth/reearth-visualizer/commit/d5e8ef)
+
+### Server
+
+#### 🔧 Bug Fixes
+
+- Remove workspace sync that overwrites integration members ([#2094](https://github.com/reearth/reearth-visualizer/pull/2094)) [`6c0dc4`](https://github.com/reearth/reearth-visualizer/commit/6c0dc4)
+
 ## 1.0.0-beta.15.1 - 2026-03-05
 
 ### Web
