@@ -2,6 +2,7 @@ import { test, expect } from "../fixtures/api-test-fixtures";
 import {
   CREATE_PROJECT,
   CREATE_SCENE,
+  DELETE_PROJECT,
   UPDATE_PROPERTY_VALUE,
   REMOVE_PROPERTY_FIELD,
   UNLINK_PROPERTY_VALUE,
@@ -12,13 +13,12 @@ import {
 } from "../graphql/mutations";
 import { GET_ME, GET_SCENE } from "../graphql/queries";
 
-type PropertyItem =
-  | {
-      id: string;
-      schemaGroupId: string;
-      groups?: { id: string; schemaGroupId: string }[];
-      fields?: { id: string; fieldId: string; type: string; value: unknown }[];
-    };
+type PropertyItem = {
+  id: string;
+  schemaGroupId: string;
+  groups?: { id: string; schemaGroupId: string }[];
+  fields?: { id: string; fieldId: string; type: string; value: unknown }[];
+};
 
 type SceneNode = {
   node: {
@@ -40,6 +40,17 @@ test.describe("Property operations via API", () => {
   let sceneId: string;
   let propertyId: string;
   let tilesGroupId: string;
+
+  test.afterAll(async ({ gqlClient }) => {
+    if (!projectId) return;
+    try {
+      await gqlClient.mutate(DELETE_PROJECT, {
+        input: { projectId }
+      });
+    } catch {
+      // already deleted or does not exist
+    }
+  });
 
   test("Setup: create project with scene", async ({ gqlClient }) => {
     const { data: meData } = await gqlClient.query<{
@@ -98,6 +109,7 @@ test.describe("Property operations via API", () => {
       const tilesItem = data.addPropertyItem.property.items.find(
         (i) => i.schemaGroupId === "tiles"
       );
+      expect(tilesItem?.groups?.length).toBeGreaterThan(0);
       tilesGroupId = tilesItem!.groups![0].id;
     }
 

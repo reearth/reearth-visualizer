@@ -79,9 +79,3 @@ export const GET_SCENE = `
     }
   }
 `;
-
-export const GET_PUBLISHED_DATA = `
-  query GetPublishedData($name: String!) {
-    __typename
-  }
-`;

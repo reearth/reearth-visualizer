@@ -22,8 +22,9 @@ const CROCKFORD = "0123456789abcdefghjkmnpqrstvwxyz";
 const generateFakeId = () =>
   faker.string.fromCharacters(CROCKFORD, 26);
 
+test.describe.configure({ mode: "serial" });
+
 test.describe("Workspace CRUD lifecycle via API", () => {
-  test.describe.configure({ mode: "serial" });
   let myUserId: string;
   let createdWorkspaceId: string;
   const workspaceName = faker.company.name();
@@ -128,7 +129,6 @@ test.describe("Workspace CRUD lifecycle via API", () => {
 });
 
 test.describe("Workspace negative scenarios via API", () => {
-  test.describe.configure({ mode: "serial" });
   let myWorkspaceId: string;
   let myUserId: string;
   const tempWorkspaceIds: string[] = [];
@@ -214,8 +214,10 @@ test.describe("Workspace negative scenarios via API", () => {
         (m) => m.userId === fakeUserId
       );
       expect(fakeMember).toBeUndefined();
-    } catch {
-      // Server rejected adding a non-existent user — this is expected behavior
+    } catch (error: unknown) {
+      // Only accept user-not-found related errors; rethrow unexpected ones
+      const msg = error instanceof Error ? error.message : String(error);
+      expect(msg.toLowerCase()).toMatch(/not found|does not exist|user/);
     }
   });
 
@@ -271,7 +273,6 @@ test.describe("Workspace negative scenarios via API", () => {
 });
 
 test.describe("Workspace member management via API", () => {
-  test.describe.configure({ mode: "serial" });
   let targetUserId: string;
   let workspaceId: string;
 

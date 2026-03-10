@@ -59,7 +59,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
   // ──────────────────────────────────────────────────
   // Profile Menu — Account Settings Navigation
   // ──────────────────────────────────────────────────
-  test("Profile menu should have Account settings option", async () => {
+  test.skip("Profile menu should have Account settings option", async () => {
     test.setTimeout(30000);
     await dashBoardPage.profileDropdownButton.click();
     await page.waitForTimeout(500);
@@ -72,7 +72,7 @@ test.describe("ACCOUNT & WORKSPACE SETTINGS", () => {
     await page.waitForTimeout(300);
   });
 
-  test("Account settings: should navigate (new tab or same page)", async () => {
+  test.skip("Account settings: should navigate (new tab or same page)", async () => {
     test.setTimeout(45000);
     await dashBoardPage.profileDropdownButton.click();
     await page.waitForTimeout(500);

@@ -6,6 +6,7 @@ import {
   CREATE_PROJECT,
   CREATE_SCENE,
   CREATE_STORY,
+  DELETE_PROJECT,
   PUBLISH_PROJECT,
   PUBLISH_STORY,
   UPDATE_PROJECT
@@ -19,7 +20,16 @@ test.describe("Published project endpoints", () => {
   let projectId: string;
   const projectAlias = `pub-proj-${faker.string.alphanumeric(8).toLowerCase()}`;
 
-  test("Setup: create and publish project", async ({ gqlClient, request }) => {
+  test.afterAll(async ({ gqlClient }) => {
+    if (!projectId) return;
+    try {
+      await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
+    } catch {
+      // already deleted or does not exist
+    }
+  });
+
+  test("Setup: create and publish project", async ({ gqlClient }) => {
     const { data: meData } = await gqlClient.query<{
       me: { myWorkspaceId: string };
     }>(GET_ME);
@@ -103,11 +113,17 @@ test.describe("Published project endpoints", () => {
 });
 
 test.describe("Published story endpoints", () => {
-  let workspaceId: string;
   let projectId: string;
-  let sceneId: string;
-  let storyId: string;
   const storyAlias = `pub-story-${faker.string.alphanumeric(8).toLowerCase()}`;
+
+  test.afterAll(async ({ gqlClient }) => {
+    if (!projectId) return;
+    try {
+      await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
+    } catch {
+      // already deleted or does not exist
+    }
+  });
 
   test("Setup: create project, scene, story and publish story", async ({
     gqlClient
@@ -115,13 +131,12 @@ test.describe("Published story endpoints", () => {
     const { data: meData } = await gqlClient.query<{
       me: { myWorkspaceId: string };
     }>(GET_ME);
-    workspaceId = meData.me.myWorkspaceId;
 
     const { data: projData } = await gqlClient.mutate<{
       createProject: { project: { id: string } };
     }>(CREATE_PROJECT, {
       input: {
-        workspaceId,
+        workspaceId: meData.me.myWorkspaceId,
         visualizer: "CESIUM",
         name: "Story Publish Test",
         coreSupport: true
@@ -132,14 +147,14 @@ test.describe("Published story endpoints", () => {
     const { data: sceneData } = await gqlClient.mutate<{
       createScene: { scene: { id: string } };
     }>(CREATE_SCENE, { input: { projectId } });
-    sceneId = sceneData.createScene.scene.id;
+    const sceneId = sceneData.createScene.scene.id;
 
     const { data: storyData } = await gqlClient.mutate<{
       createStory: { story: { id: string } };
     }>(CREATE_STORY, {
       input: { sceneId, title: "Test Story", index: 0 }
     });
-    storyId = storyData.createStory.story.id;
+    const storyId = storyData.createStory.story.id;
 
     const { data } = await gqlClient.mutate<{
       publishStory: {
@@ -188,6 +203,15 @@ test.describe("Published endpoint: unpublish removes access", () => {
   let projectId: string;
   const alias = `pub-unpub-${faker.string.alphanumeric(8).toLowerCase()}`;
 
+  test.afterAll(async ({ gqlClient }) => {
+    if (!projectId) return;
+    try {
+      await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
+    } catch {
+      // already deleted or does not exist
+    }
+  });
+
   test("Setup: create, publish, then unpublish project", async ({
     gqlClient
   }) => {
@@ -233,6 +257,15 @@ test.describe("Published endpoint: basic auth", () => {
   const alias = `pub-auth-${faker.string.alphanumeric(8).toLowerCase()}`;
   const username = "testuser";
   const password = "testpass";
+
+  test.afterAll(async ({ gqlClient }) => {
+    if (!projectId) return;
+    try {
+      await gqlClient.mutate(DELETE_PROJECT, { input: { projectId } });
+    } catch {
+      // already deleted or does not exist
+    }
+  });
 
   test("Setup: create project with basic auth and publish", async ({
     gqlClient
