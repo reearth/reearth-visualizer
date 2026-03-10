@@ -211,6 +211,72 @@ func Server(t *testing.T, seeder Seeder) *httpexpect.Expect {
 	return e
 }
 
+func initGatewayWithFile(fileGw gateway.File) *gateway.Container {
+	return &gateway.Container{
+		File:          fileGw,
+		PolicyChecker: policy.NewPermissiveChecker(),
+		DomainChecker: domain.NewDefaultChecker(),
+	}
+}
+
+func initServerWithFileGateway(cfg *config.Config, repos *repo.Container, ctx context.Context, fileGw gateway.File) (*app.WebServer, *gateway.Container, *accountsGateway.Container) {
+	gateways := initGatewayWithFile(fileGw)
+	accountGateway := initAccountGateway(ctx)
+	return app.NewServer(ctx, &app.ServerConfig{
+		Config:          cfg,
+		Repos:           repos,
+		AccountRepos:    repos.AccountRepos(),
+		Gateways:        gateways,
+		AccountGateways: accountGateway,
+		Debug:           true,
+		ServiceName:     otel.OtelVisualizerServiceName,
+	}), gateways, accountGateway
+}
+
+func ServerAndReposWithFileGateway(t *testing.T, seeder Seeder, fileGw gateway.File) (*httpexpect.Expect, *repo.Container, *gateway.Container) {
+	t.Helper()
+
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
+
+	ctx := context.Background()
+	db := mongotest.Connect(t)(t)
+	accountRepos := lo.Must(accountsInfra.New(ctx, db.Client(), db.Name(), false, false, nil))
+	repos := lo.Must(mongo.New(ctx, db, accountRepos, false))
+
+	if seeder != nil {
+		if err := seeder(ctx, repos, fileGw); err != nil {
+			t.Fatalf("failed to seed the db: %s", err)
+		}
+	}
+
+	srv, gateways, _ := initServerWithFileGateway(disabledAuthConfig, repos, ctx, fileGw)
+
+	ch := make(chan error)
+	l, err := net.Listen("tcp", ":0")
+	if err != nil {
+		t.Fatalf("server failed to listen: %v", err)
+	}
+	go func() {
+		if err := srv.Serve(l); err != http.ErrServerClosed {
+			ch <- err
+		}
+		close(ch)
+	}()
+
+	t.Cleanup(func() {
+		if err := srv.Shutdown(context.Background()); err != nil {
+			t.Fatalf("server shutdown: %v", err)
+		}
+		if err := <-ch; err != nil {
+			t.Fatalf("server serve: %v", err)
+		}
+	})
+
+	return httpexpect.Default(t, "http://"+l.Addr().String()), repos, gateways
+}
+
 func ServerPingTest(t *testing.T) *httpexpect.Expect {
 	e, _, _ := startServer(t, disabledAuthConfig, false, nil)
 	return e
