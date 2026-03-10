@@ -48,3 +48,40 @@ export const WORKSPACE_POLICY_CHECK = `
     }
   }
 `;
+
+export const GET_SCENE = `
+  query GetScene($sceneId: ID!) {
+    node(id: $sceneId, type: SCENE) {
+      id
+      ... on Scene {
+        projectId
+        property {
+          id
+          items {
+            ... on PropertyGroupList {
+              id
+              schemaGroupId
+              groups {
+                id
+                schemaGroupId
+                fields { id fieldId type value }
+              }
+            }
+            ... on PropertyGroup {
+              id
+              schemaGroupId
+              fields { id fieldId type value }
+            }
+          }
+        }
+        stories { id alias publishmentStatus }
+      }
+    }
+  }
+`;
+
+export const GET_PUBLISHED_DATA = `
+  query GetPublishedData($name: String!) {
+    __typename
+  }
+`;
