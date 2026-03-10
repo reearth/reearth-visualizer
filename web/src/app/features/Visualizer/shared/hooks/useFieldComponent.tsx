@@ -166,7 +166,7 @@ export const FieldComponent = ({
       description={field?.description}
       min={field?.min}
       max={field?.max}
-      onBlur={handlePropertyValueUpdate(
+      onChangeComplete={handlePropertyValueUpdate(
         groupId,
         propertyId,
         fieldId,

@@ -7,7 +7,7 @@ import { FC, useEffect, useState } from "react";
 export type NumberFieldProps = {
   onChangeComplete?: (value?: number) => void;
 } & CommonFieldProps &
-  NumberInputProps;
+  Omit<NumberInputProps, "onBlur">;
 const NumberField: FC<NumberFieldProps> = ({
   title,
   description,
